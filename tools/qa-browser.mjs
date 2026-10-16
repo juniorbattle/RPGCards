@@ -31,6 +31,7 @@ async function checkView(page, v, stats) {
   if (p.manual) return;
   const want = expectedView(v);
   stats.viewChecks++;
+  if (p.holding && want === 'B' && p.view === 'A') { stats.holds++; return; } // observation du rival en début de tour
   if (p.view !== want) stats.viewErrors.push(`tour ${v.turn} ${v.phase} : vue ${p.view}, attendue ${want}`);
 }
 
@@ -160,7 +161,7 @@ async function runDuel(browser, base, run) {
   watchConsole(page, consoleIssues);
   await page.goto(`${base}/?seed=${run.seed}&autostart=1&qa=1&aiDelay=0&reducedMotion=1&pace=${run.watchSequence ? 'fast' : 'normal'}&tech=${run.tech}`);
   await page.waitForFunction(() => !!window.__lqv);
-  const stats = { turns: 0, drags: 0, clicks: 0, keyboard: 0, tactics: 0, repels: 0, leaks: [], viewChecks: 0, viewErrors: [], lostClicks: [], tech: {}, moods: new Set(), sequencesWatched: 0, sequencesSkipped: 0, manualToggleChecked: null };
+  const stats = { turns: 0, drags: 0, clicks: 0, keyboard: 0, tactics: 0, repels: 0, leaks: [], viewChecks: 0, viewErrors: [], lostClicks: [], tech: {}, moods: new Set(), sequencesWatched: 0, sequencesSkipped: 0, manualToggleChecked: null, holds: 0 };
   let outcome = 'running';
   const t0 = Date.now();
   try {

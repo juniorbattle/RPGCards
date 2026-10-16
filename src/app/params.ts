@@ -24,6 +24,10 @@ export interface AppParams {
   rival: string | null;
   /** Captures : temps de résolution sur lequel figer (avec freeze=1). */
   beat: number | null;
+  /** Captures : conserver le temps d’observation du rival en début de tour malgré freeze=1. */
+  intro: boolean;
+  /** Revue visuelle uniquement : humeur imposée au rival (planche de comparaison), jamais en jeu normal. */
+  pose: string | null;
 }
 
 export function readParams(search = window.location.search): AppParams {
@@ -52,6 +56,8 @@ export function readParams(search = window.location.search): AppParams {
     view: q.get('view') === 'A' || q.get('cam') === 'frontal' ? 'A' : q.get('view') === 'B' || q.get('cam') === 'tilted' ? 'B' : 'auto',
     pace: q.get('pace') === 'fast' ? 'fast' : q.get('pace') === 'instant' ? 'instant' : 'normal',
     rival: q.get('rival'),
+    intro: q.get('intro') === '1',
+    pose: q.get('qa') === '1' ? q.get('pose') : null,
     beat: q.has('beat') ? Math.max(0, Math.floor(Number(q.get('beat')) || 0)) : null,
   };
 }

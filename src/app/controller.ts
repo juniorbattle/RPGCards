@@ -97,6 +97,8 @@ export class Controller {
   private exprQueue: Expression[] = [];
   private exprTimer = 0;
   private dragging = false;
+  private holdTimer = 0;
+  private lastTurn = 0;
 
   constructor(public config: GameConfig, public params: AppParams, public arena: ArenaHandle | null, public scenario: Scenario | null = null, public rival: RivalPersonality) {
     this.expr = new ExpressionDirector('p2', rival, params.artSeed ^ config.seed);
@@ -240,9 +242,29 @@ export class Controller {
   }
 
   private updateView(): void {
+    // Nouveau tour : on regarde d’abord le rival (vue A), puis la caméra descend vers la table.
+    if (this.view.turn !== this.lastTurn) {
+      this.lastTurn = this.view.turn;
+      const instant = this.params.pace === 'instant' || (this.params.freeze && !this.params.intro);
+      if (!instant) {
+        this.director.startHold();
+        window.clearTimeout(this.holdTimer);
+        if (!this.params.freeze) this.holdTimer = window.setTimeout(() => this.endHold(), 1400 * this.paceFactor());
+      }
+    }
     const forced = this.params.view;
     this.viewMode = forced === 'A' || forced === 'B' ? forced : this.director.update(this.directorInput());
     this.arena?.setView(this.viewMode);
+  }
+
+  /** Fin du temps d’observation (minuterie, ou le joueur commence à manipuler). */
+  endHold(): void {
+    if (!this.director.holding) return;
+    window.clearTimeout(this.holdTimer);
+    const before = this.viewMode;
+    this.director.releaseHold(this.directorInput());
+    this.updateView();
+    if (this.viewMode !== before) this.renderFn();
   }
 
   toggleView(): void {
@@ -253,6 +275,7 @@ export class Controller {
   }
 
   setDragging(v: boolean): void {
+    if (v) this.endHold();
     if (v === this.dragging) return;
     this.dragging = v;
     const before = this.viewMode;
@@ -303,6 +326,7 @@ export class Controller {
   }
 
   private showExpression(e: Expression): void {
+    if (this.params.pose) e = { mood: this.params.pose as Expression['mood'], intensity: 1, gaze: 'player', gesture: null, hold: 0, cause: 'pose de revue (QA)' };
     this.rivalExpression = e;
     this.arena?.expression(e);
     const cap = document.querySelector('[data-rival-caption]');
@@ -461,6 +485,7 @@ export class Controller {
   }
 
   clickHandCard(cardId: string): void {
+    this.endHold(); // le joueur manipule : la caméra passe à la table sans attendre
     const v = this.view;
     if (v.phase === 'START' && v.awaitingMe) {
       if (this.ui.recentrageArmed) {

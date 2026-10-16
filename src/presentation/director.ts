@@ -40,6 +40,7 @@ export class PresentationDirector {
   private override: ViewMode | null = null;
   private phaseKey = '';
   private frozen = false;
+  private hold = false;
   private current: ViewMode = 'A';
   /** Nombre de bascules de vue effectives (QA). */
   switches = 0;
@@ -51,7 +52,9 @@ export class PresentationDirector {
       this.phaseKey = key;
       this.override = null; // une préférence manuelle ne survit pas à la phase
     }
-    const want = this.override ?? naturalView(i);
+    // Début de tour : temps d’observation du rival en A avant la manipulation (chorégraphie §2.1).
+    const natural = naturalView(i);
+    const want = this.override ?? (this.hold && natural === 'B' ? 'A' : natural);
     if (!this.frozen && want !== this.current) {
       this.current = want;
       this.switches++;
@@ -70,6 +73,20 @@ export class PresentationDirector {
   setFrozen(v: boolean, i: DirectorInput): ViewMode {
     this.frozen = v;
     return this.update(i);
+  }
+
+  /** Démarre / arrête le temps d’observation du rival (la minuterie appartient à l’appelant). */
+  startHold(): void {
+    this.hold = true;
+  }
+
+  releaseHold(i: DirectorInput): ViewMode {
+    this.hold = false;
+    return this.update(i);
+  }
+
+  get holding(): boolean {
+    return this.hold;
   }
 
   get view(): ViewMode {

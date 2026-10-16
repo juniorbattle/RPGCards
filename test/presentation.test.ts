@@ -19,6 +19,12 @@ describe('PresentationDirector (vues A/B pilotées par phase)', () => {
     expect(naturalView(at('RESOLVED', false))).toBe('A');
     expect(naturalView(at('ENDED', false))).toBe('A');
   });
+  it('début de tour : temps d’observation du rival en A, puis B pour composer', () => {
+    const dir = new PresentationDirector();
+    dir.startHold();
+    expect(dir.update(at('COMMIT', true, 1))).toBe('A');
+    expect(dir.releaseHold(at('COMMIT', true, 1))).toBe('B');
+  });
   it('bascule manuelle valable jusqu’au changement de phase ; gel pendant un glisser', () => {
     const dir = new PresentationDirector();
     expect(dir.update(at('TACTICS'))).toBe('A');

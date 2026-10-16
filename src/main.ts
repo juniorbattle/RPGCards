@@ -141,7 +141,7 @@ function start(config: GameConfig, scenarioId: string | null): void {
       hash: () => c.match.hash(),
       record: () => c.match.record(),
       arenaStats: () => arena?.stats() ?? null,
-      presentation: () => ({ view: c.viewMode, switches: c.director.switches, manual: c.director.manual, rival: c.rivalExpression, personality: c.rival.id }),
+      presentation: () => ({ view: c.viewMode, switches: c.director.switches, manual: c.director.manual, holding: c.director.holding, sequencing: c.sequencing, rival: c.rivalExpression, personality: c.rival.id }),
       artCache: () => artCacheSize(),
     };
   }

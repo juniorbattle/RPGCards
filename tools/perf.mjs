@@ -15,11 +15,22 @@ const server = await startPreview(4183);
 const browser = await launch();
 const scene = {};
 try {
-  for (const cam of ['tilted', 'frontal']) {
+  for (const v of ['A', 'B']) {
     const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
-    await page.goto(`${server.base}/?scenario=signature&qa=1&aiDelay=0&cam=${cam}&reducedMotion=0`);
+    await page.goto(`${server.base}/?scenario=signature&qa=1&aiDelay=0&view=${v}&reducedMotion=0`);
     await page.waitForTimeout(6000);
-    scene[cam] = await page.evaluate(() => window.__lqv.arenaStats());
+    scene[`view${v}`] = await page.evaluate(() => window.__lqv.arenaStats());
+    // Chronométrage GPU : extension de requêtes temporelles (absente sous SwiftShader en général).
+    scene[`gpuTimerQuery${v}`] = await page.evaluate(() => {
+      const c = document.createElement('canvas');
+      const gl = c.getContext('webgl2');
+      return !!gl && !!gl.getExtension('EXT_disjoint_timer_query_webgl2');
+    });
+    scene[`renderer${v}`] = await page.evaluate(() => {
+      const gl = document.createElement('canvas').getContext('webgl2');
+      const ext = gl?.getExtension('WEBGL_debug_renderer_info');
+      return ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : null;
+    });
     await page.close();
   }
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
