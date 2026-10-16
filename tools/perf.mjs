@@ -3,7 +3,7 @@
 import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
-import { launch, startPreview } from './browser.mjs';
+import { launch, startPreview, waitDecision } from './browser.mjs';
 
 mkdirSync('artifacts/qa', { recursive: true });
 const commit = execSync('git rev-parse --short HEAD').toString().trim();
@@ -31,6 +31,43 @@ try {
       const ext = gl?.getExtension('WEBGL_debug_renderer_info');
       return ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : null;
     });
+    await page.close();
+  }
+  // M03.2 — Clash joué en temps réel (non figé, mouvement complet) : intervalles requestAnimationFrame
+  // pendant la scène de Clash (ASSAUT III + soutien Rang contre GARDE IV : absorption). Sous SwiftShader,
+  // ces intervalles mesurent le rendu logiciel du conteneur, pas un GPU.
+  {
+    const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+    await page.goto(`${server.base}/?scenario=clash-ag&qa=1&aiDelay=0&reducedMotion=0`);
+    await page.waitForFunction(() => !!window.__lqv);
+    const v = await waitDecision(page);
+    const card = v.me.hand.find((x) => x.defId.startsWith('Cendre-3'));
+    await page.click(`[data-key="hand-${card.cardId}"]`);
+    await page.click('[data-drop="primary"]');
+    await page.click('[data-key="stance-assault"]');
+    await page.click('[data-key="act-commit"]');
+    for (let i = 0; i < 6; i++) {
+      const w = await waitDecision(page);
+      if (w.phase === 'LECTURE') { await page.click('[data-key="act-lecture-pass"]'); continue; }
+      if (w.phase === 'TACTICS' && w.awaitingMe) {
+        await page.click('[data-key="zone-me-0"]');
+        await page.click('[data-key="menu-0-rank"]');
+        await page.click('[data-key="act-tactics"]');
+        continue;
+      }
+      break;
+    }
+    await page.waitForFunction(() => window.__lqv.presentation().stage, null, { timeout: 20000 });
+    const deltas = await page.evaluate(() => new Promise((res) => {
+      const out = [];
+      let last = performance.now();
+      const t0 = last;
+      const step = (t) => { out.push(t - last); last = t; if (t - t0 < 2500) requestAnimationFrame(step); else res(out); };
+      requestAnimationFrame(step);
+    }));
+    const sorted = deltas.slice(1).sort((a, b) => a - b);
+    const q = (k) => Math.round(sorted[Math.min(sorted.length - 1, Math.floor(k * sorted.length))] * 10) / 10;
+    scene.clashRealtime = { scenario: 'clash-ag (absorption)', window: '2,5 s depuis l’apparition de la scène de Clash', frames: sorted.length, medianMs: q(0.5), p95Ms: q(0.95), maxMs: Math.round(sorted[sorted.length - 1] * 10) / 10, over50ms: sorted.filter((d) => d > 50).length, arena: await page.evaluate(() => window.__lqv.arenaStats()) };
     await page.close();
   }
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
