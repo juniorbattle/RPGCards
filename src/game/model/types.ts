@@ -55,7 +55,7 @@ export type Command =
   | { type: 'start'; player: PlayerId; discard: string[]; technique: StartTechnique | null }
   | { type: 'prepare'; player: PlayerId; reveal: SlotIndex[] }
   | { type: 'dissipate'; player: PlayerId; targetSlot: SlotIndex | null }
-  | { type: 'commit'; player: PlayerId; primaryId: string; stance: Stance; secondaryId: string | null; replaceSlot: SlotIndex | null }
+  | { type: 'commit'; player: PlayerId; primaryId: string; stance: Stance; secondaryId: string | null; replaceSlot: SlotIndex | null; slot?: SlotIndex }
   | { type: 'lecture'; player: PlayerId; use: boolean }
   | { type: 'lectureStance'; player: PlayerId; stance: Stance }
   | { type: 'tactics'; player: PlayerId; plans: [TacticPlan | null, TacticPlan | null]; technique: TacticsTechnique | null }
@@ -166,6 +166,8 @@ export interface ClashReport {
   powers: Record<PlayerId, number>;
   stances: Record<PlayerId, Stance>;
   zeroDamageRankWin: boolean;
+  /** Usages annulés par Interférence (public après verrouillage commun). */
+  cancelled: Record<PlayerId, SlotIndex[]>;
   effects: Array<{ player: PlayerId; effect: EffectId; status: 'success' | 'failed' | 'cancelled'; detail: string }>;
 }
 

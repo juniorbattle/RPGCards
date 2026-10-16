@@ -1,0 +1,315 @@
+/**
+ * Générateur d’illustrations de cartes — Canvas 2D, 100 % code, seedé.
+ *
+ * Entrées : defId (famille, rang, rareté, effet), artSeed. Sortie : dataURL PNG 240×336.
+ * Coût : ~1 canvas 240×336 par définition (34 au maximum), généré à la demande, mis en cache
+ * par (artSeed, defId). Invalidation : changement d’artSeed. N’utilise jamais la RNG gameplay.
+ */
+import { cardDef, type CardDef, type Family } from '../game/catalog/cards';
+import { hashString, makeRng } from '../game/engine/rng';
+import { drawEmblem } from './emblems';
+import { FAMILY_PALETTE } from './palette';
+
+export const ART_W = 240;
+export const ART_H = 336;
+
+type Ctx = CanvasRenderingContext2D;
+type Rng = () => number;
+
+const cache = new Map<string, string>();
+let backCache: { seed: number; url: string } | null = null;
+
+export function artCacheSize(): number {
+  return cache.size;
+}
+
+function canvas(w: number, h: number): { c: HTMLCanvasElement; ctx: Ctx } {
+  const c = document.createElement('canvas');
+  c.width = w;
+  c.height = h;
+  const ctx = c.getContext('2d');
+  if (!ctx) throw new Error('Canvas 2D indisponible');
+  return { c, ctx };
+}
+
+function bg(ctx: Ctx, def: CardDef, rng: Rng): void {
+  const p = FAMILY_PALETTE[def.family];
+  const g = ctx.createRadialGradient(ART_W * (0.35 + rng() * 0.3), ART_H * 0.38, 10, ART_W / 2, ART_H / 2, ART_H * 0.75);
+  g.addColorStop(0, p.light);
+  g.addColorStop(0.45, p.mid);
+  g.addColorStop(1, p.deep);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, ART_W, ART_H);
+}
+
+// --- Motifs par famille ---------------------------------------------------
+
+function motifCendre(ctx: Ctx, def: CardDef, rng: Rng, intensity: number): void {
+  const p = FAMILY_PALETTE.Cendre;
+  // Langues de flamme ascendantes (courbes de Bézier superposées)
+  const tongues = 5 + Math.round(intensity * 7);
+  for (let i = 0; i < tongues; i++) {
+    const x = ART_W * (0.1 + rng() * 0.8);
+    const h = ART_H * (0.35 + rng() * 0.45 * intensity);
+    const w = 18 + rng() * 26;
+    const g = ctx.createLinearGradient(x, ART_H, x, ART_H - h);
+    g.addColorStop(0, `${p.glow}cc`);
+    g.addColorStop(0.6, `${p.accent}55`);
+    g.addColorStop(1, `${p.accent}00`);
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.moveTo(x - w, ART_H);
+    ctx.bezierCurveTo(x - w * 0.6, ART_H - h * 0.5, x + w * (rng() - 0.5), ART_H - h * 0.7, x + (rng() - 0.5) * 20, ART_H - h);
+    ctx.bezierCurveTo(x + w * 0.3, ART_H - h * 0.6, x + w * 0.7, ART_H - h * 0.4, x + w, ART_H);
+    ctx.fill();
+  }
+  // Escarbilles losanges
+  const embers = 18 + Math.round(intensity * 40);
+  for (let i = 0; i < embers; i++) {
+    const x = rng() * ART_W;
+    const y = rng() * ART_H * 0.85;
+    const s = 1.5 + rng() * 4 * intensity;
+    ctx.fillStyle = rng() < 0.5 ? p.accent : p.glow;
+    ctx.globalAlpha = 0.35 + rng() * 0.6;
+    ctx.beginPath();
+    ctx.moveTo(x, y - s); ctx.lineTo(x + s * 0.6, y); ctx.lineTo(x, y + s); ctx.lineTo(x - s * 0.6, y); ctx.closePath();
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+function motifVoile(ctx: Ctx, def: CardDef, rng: Rng, intensity: number): void {
+  const p = FAMILY_PALETTE.Voile;
+  // Voiles ondulants (bandes sinusoïdales translucides)
+  const bands = 4 + Math.round(intensity * 5);
+  for (let b = 0; b < bands; b++) {
+    const y0 = ART_H * (0.15 + (b / bands) * 0.8);
+    const amp = 8 + rng() * 22;
+    const freq = 0.015 + rng() * 0.02;
+    const phase = rng() * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(0, y0);
+    for (let x = 0; x <= ART_W; x += 6) ctx.lineTo(x, y0 + Math.sin(x * freq + phase) * amp);
+    ctx.lineTo(ART_W, y0 + 40);
+    for (let x = ART_W; x >= 0; x -= 6) ctx.lineTo(x, y0 + 30 + Math.sin(x * freq + phase + 0.8) * amp * 0.8);
+    ctx.closePath();
+    ctx.fillStyle = b % 2 ? `${p.accent}22` : `${p.light}33`;
+    ctx.fill();
+  }
+  // Yeux / fragments de miroir (losanges creux)
+  const shards = 6 + Math.round(intensity * 10);
+  ctx.lineWidth = 1.2;
+  for (let i = 0; i < shards; i++) {
+    const x = rng() * ART_W;
+    const y = rng() * ART_H;
+    const s = 4 + rng() * 12;
+    ctx.strokeStyle = `${p.accent}${rng() < 0.5 ? '88' : '44'}`;
+    ctx.beginPath();
+    ctx.moveTo(x, y - s); ctx.lineTo(x + s, y); ctx.lineTo(x, y + s); ctx.lineTo(x - s, y); ctx.closePath();
+    ctx.stroke();
+  }
+}
+
+function branch(ctx: Ctx, rng: Rng, x: number, y: number, ang: number, len: number, depth: number, color: string, thorn: string): void {
+  if (depth <= 0 || len < 6) return;
+  const x2 = x + Math.cos(ang) * len;
+  const y2 = y + Math.sin(ang) * len;
+  ctx.strokeStyle = color;
+  ctx.lineWidth = Math.max(1, depth * 0.9);
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.quadraticCurveTo((x + x2) / 2 + (rng() - 0.5) * len * 0.4, (y + y2) / 2 + (rng() - 0.5) * len * 0.4, x2, y2);
+  ctx.stroke();
+  // épines
+  if (rng() < 0.8) {
+    const t = 0.5;
+    const tx = x + (x2 - x) * t;
+    const ty = y + (y2 - y) * t;
+    const na = ang + (rng() < 0.5 ? 1 : -1) * 1.2;
+    ctx.fillStyle = thorn;
+    ctx.beginPath();
+    ctx.moveTo(tx, ty);
+    ctx.lineTo(tx + Math.cos(na) * 6, ty + Math.sin(na) * 6);
+    ctx.lineTo(tx + Math.cos(ang) * 3, ty + Math.sin(ang) * 3);
+    ctx.fill();
+  }
+  const n = rng() < 0.35 ? 3 : 2;
+  for (let i = 0; i < n; i++) branch(ctx, rng, x2, y2, ang + (rng() - 0.5) * 1.3, len * (0.62 + rng() * 0.2), depth - 1, color, thorn);
+}
+
+function motifRonce(ctx: Ctx, def: CardDef, rng: Rng, intensity: number): void {
+  const p = FAMILY_PALETTE.Ronce;
+  const roots = 2 + Math.round(intensity * 3);
+  for (let i = 0; i < roots; i++) {
+    const fromLeft = i % 2 === 0;
+    branch(ctx, rng, fromLeft ? -4 : ART_W + 4, ART_H * (0.25 + rng() * 0.7), fromLeft ? -0.4 - rng() * 0.4 : Math.PI + 0.4 + rng() * 0.4, 46 + rng() * 26, 4 + Math.round(intensity * 2), `${p.light}cc`, p.accent);
+  }
+  // petites fleurs
+  const flowers = 3 + Math.round(intensity * 6);
+  for (let i = 0; i < flowers; i++) {
+    ctx.fillStyle = `${p.accent}${rng() < 0.5 ? 'aa' : '66'}`;
+    drawEmblem(ctx, 'Ronce', rng() * ART_W, rng() * ART_H, 4 + rng() * 6);
+  }
+}
+
+function motifAstre(ctx: Ctx, def: CardDef, rng: Rng, intensity: number): void {
+  const p = FAMILY_PALETTE.Astre;
+  // champ d’étoiles
+  const stars = 40 + Math.round(intensity * 90);
+  for (let i = 0; i < stars; i++) {
+    ctx.fillStyle = rng() < 0.2 ? p.accent : '#ffffff';
+    ctx.globalAlpha = 0.25 + rng() * 0.75;
+    const s = rng() < 0.92 ? 1 : 2;
+    ctx.fillRect(rng() * ART_W, rng() * ART_H, s, s);
+  }
+  ctx.globalAlpha = 1;
+  // orbites
+  ctx.strokeStyle = `${p.accent}55`;
+  ctx.lineWidth = 1;
+  const orbits = 1 + Math.round(intensity * 3);
+  for (let i = 0; i < orbits; i++) {
+    ctx.beginPath();
+    ctx.ellipse(ART_W / 2, ART_H * 0.42, 40 + i * 22, 14 + i * 9, -0.35 + rng() * 0.2, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  // constellation
+  const pts = Array.from({ length: 4 + Math.round(intensity * 4) }, () => [20 + rng() * (ART_W - 40), 20 + rng() * (ART_H - 40)] as const);
+  ctx.strokeStyle = `${p.accent}99`;
+  ctx.beginPath();
+  pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+  ctx.stroke();
+  ctx.fillStyle = p.accent;
+  for (const [x, y] of pts) drawEmblem(ctx, 'Astre', x, y, 4);
+}
+
+const MOTIFS: Record<Family, (ctx: Ctx, def: CardDef, rng: Rng, intensity: number) => void> = {
+  Cendre: motifCendre, Voile: motifVoile, Ronce: motifRonce, Astre: motifAstre,
+};
+
+function centralEmblem(ctx: Ctx, def: CardDef, rng: Rng): void {
+  const p = FAMILY_PALETTE[def.family];
+  const cx = ART_W / 2;
+  const cy = ART_H * 0.42;
+  const r = def.signature ? 58 : 34 + (def.rank ?? 1) * 6;
+  // halo
+  const halo = ctx.createRadialGradient(cx, cy, 4, cx, cy, r * 1.9);
+  halo.addColorStop(0, `${p.glow}aa`);
+  halo.addColorStop(1, `${p.glow}00`);
+  ctx.fillStyle = halo;
+  ctx.fillRect(0, 0, ART_W, ART_H);
+  // anneau de rang : n segments
+  const segs = def.signature ? 12 : (def.rank ?? 1);
+  ctx.strokeStyle = p.accent;
+  ctx.lineWidth = def.signature ? 3 : 4;
+  for (let i = 0; i < segs; i++) {
+    const a0 = -Math.PI / 2 + (i * 2 * Math.PI) / segs + 0.12;
+    const a1 = -Math.PI / 2 + ((i + 1) * 2 * Math.PI) / segs - 0.12;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 1.32, a0, a1);
+    ctx.stroke();
+  }
+  // emblème
+  ctx.fillStyle = p.deep;
+  drawEmblem(ctx, def.family, cx + 3, cy + 4, r);
+  const g = ctx.createLinearGradient(cx - r, cy - r, cx + r, cy + r);
+  g.addColorStop(0, p.ink);
+  g.addColorStop(0.5, p.accent);
+  g.addColorStop(1, p.light);
+  ctx.fillStyle = g;
+  drawEmblem(ctx, def.family, cx, cy, r);
+  if (def.signature) {
+    // Signature : double emblème tournant + rayons prismatiques
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    for (let i = 0; i < 16; i++) {
+      const a = (i / 16) * Math.PI * 2 + rng() * 0.1;
+      ctx.strokeStyle = ['#ff8fa3', '#ffd36b', '#8fdc6a', '#8fb8ff'][i % 4]!;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(a) * r * 1.5, cy + Math.sin(a) * r * 1.5);
+      ctx.lineTo(cx + Math.cos(a) * r * 2.4, cy + Math.sin(a) * r * 2.4);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+  // variante : glyphe d’effet discret (petits points en couronne)
+  if (def.effect && !def.signature) {
+    ctx.fillStyle = p.ink;
+    const n = 3 + (hashString(def.effect) % 4);
+    for (let i = 0; i < n; i++) {
+      const a = Math.PI * 0.15 + (i / (n - 1 || 1)) * Math.PI * 0.7;
+      ctx.beginPath();
+      ctx.arc(cx + Math.cos(a) * r * 1.62, cy + Math.sin(a) * r * 1.62, 2.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+}
+
+function vignette(ctx: Ctx): void {
+  const v = ctx.createRadialGradient(ART_W / 2, ART_H / 2, ART_H * 0.25, ART_W / 2, ART_H / 2, ART_H * 0.72);
+  v.addColorStop(0, 'rgba(0,0,0,0)');
+  v.addColorStop(1, 'rgba(0,0,0,0.55)');
+  ctx.fillStyle = v;
+  ctx.fillRect(0, 0, ART_W, ART_H);
+}
+
+export function cardArtUrl(defId: string, artSeed: number): string {
+  const key = `${artSeed}|${defId}`;
+  const hit = cache.get(key);
+  if (hit) return hit;
+  const def = cardDef(defId);
+  const rng = makeRng(hashString(key));
+  const { c, ctx } = canvas(ART_W, ART_H);
+  bg(ctx, def, rng);
+  const intensity = def.signature ? 1 : 0.35 + ((def.rank ?? 1) - 1) * 0.2 + (def.effect ? 0.05 : 0);
+  MOTIFS[def.family](ctx, def, rng, intensity);
+  centralEmblem(ctx, def, rng);
+  vignette(ctx);
+  const url = c.toDataURL('image/png');
+  cache.set(key, url);
+  return url;
+}
+
+/** Verso commun (secret) : mandala des quatre voies, identique pour toutes les cartes. */
+export function cardBackUrl(artSeed: number): string {
+  if (backCache && backCache.seed === artSeed) return backCache.url;
+  const rng = makeRng(hashString(`back|${artSeed}`));
+  const { c, ctx } = canvas(ART_W, ART_H);
+  const g = ctx.createLinearGradient(0, 0, ART_W, ART_H);
+  g.addColorStop(0, '#16131f');
+  g.addColorStop(1, '#2a2337');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, ART_W, ART_H);
+  // treillis
+  ctx.strokeStyle = 'rgba(214,196,160,0.10)';
+  ctx.lineWidth = 1;
+  for (let i = -ART_H; i < ART_W + ART_H; i += 14) {
+    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i + ART_H, ART_H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(i, ART_H); ctx.lineTo(i + ART_H, 0); ctx.stroke();
+  }
+  const cx = ART_W / 2;
+  const cy = ART_H / 2;
+  ctx.strokeStyle = 'rgba(232,208,150,0.75)';
+  ctx.lineWidth = 2;
+  for (let k = 0; k < 3; k++) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, 30 + k * 22 + rng() * 2, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+  const fams: Family[] = ['Cendre', 'Voile', 'Ronce', 'Astre'];
+  fams.forEach((f, i) => {
+    const a = -Math.PI / 2 + (i * Math.PI) / 2;
+    ctx.fillStyle = FAMILY_PALETTE[f].accent;
+    drawEmblem(ctx, f, cx + Math.cos(a) * 74, cy + Math.sin(a) * 74, 15);
+  });
+  ctx.fillStyle = 'rgba(232,208,150,0.9)';
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - 22); ctx.lineTo(cx + 22, cy); ctx.lineTo(cx, cy + 22); ctx.lineTo(cx - 22, cy); ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(232,208,150,0.6)';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(8, 8, ART_W - 16, ART_H - 16);
+  const url = c.toDataURL('image/png');
+  backCache = { seed: artSeed, url };
+  return url;
+}

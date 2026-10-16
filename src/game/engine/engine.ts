@@ -259,6 +259,7 @@ function validate(state: GameState, cmd: PlayerCommand): void {
         const full = p.slots.every((x) => x !== null);
         if (full && cmd.replaceSlot === null) throw new RuleError('Deux emplacements occupés : choisissez la Secondaire à remplacer.');
         if (!full && cmd.replaceSlot !== null) throw new RuleError('Remplacement possible uniquement si les deux emplacements sont occupés.');
+        if (cmd.slot !== undefined && cmd.replaceSlot === null && p.slots[cmd.slot] !== null) throw new RuleError('Emplacement occupé : utilisez l’emplacement libre.');
       } else if (cmd.replaceSlot !== null) throw new RuleError('Remplacement sans nouvelle Secondaire.');
       return;
     }
@@ -515,7 +516,7 @@ function applyCommit(ctx: Ctx): void {
         if (p.mask && (p.mask.source === c.replaceSlot || p.mask.target === c.replaceSlot)) p.mask = null;
         ctx.emit('public', 'replaced', { player: pid, slot: c.replaceSlot, defId: ctx.def(old.cardId).defId });
         placedSlot = c.replaceSlot;
-      } else placedSlot = p.slots[0] === null ? 0 : 1;
+      } else placedSlot = c.slot !== undefined && p.slots[c.slot] === null ? c.slot : p.slots[0] === null ? 0 : 1;
       p.hand.splice(p.hand.indexOf(c.secondaryId), 1);
       p.slots[placedSlot] = { cardId: c.secondaryId, placedTurn: s.turn, active: false, revealedTurn: null };
     }
@@ -757,6 +758,7 @@ function buildReport(ctx: Ctx, input: ClashInput, out: ReturnType<typeof compute
     baseDamage: out.baseDamage, fixedDamage: out.fixedDamage, damage: out.damage, absorbed: out.absorbed,
     powers: { p1: input.p1.primary.power, p2: input.p2.primary.power },
     stances: { p1: input.p1.stance, p2: input.p2.stance },
+    cancelled: { p1: out.uses.p1.filter((u) => u.cancelled).map((u) => u.slot), p2: out.uses.p2.filter((u) => u.cancelled).map((u) => u.slot) },
     zeroDamageRankWin: out.zeroDamageRankWin, effects: out.effects,
   };
 }

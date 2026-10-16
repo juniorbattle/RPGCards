@@ -1,0 +1,356 @@
+{
+  "commit": "83f9384",
+  "date": "2026-10-16T02:54:23.009Z",
+  "note": "Chromium headless + WebGL logiciel SwiftShader ; arène figée (freeze=1).",
+  "shots": [
+    {
+      "id": "U00-preparation-duel",
+      "path": "screenshots/qa/U00-preparation-duel.png",
+      "desc": "Écran de préparation : Signature et deux Techniques par tuiles cliquables (aucun select)",
+      "url": "/?seed=101&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": null,
+      "phase": null
+    },
+    {
+      "id": "U01a-main-plateau-engagement",
+      "path": "screenshots/qa/U01a-main-plateau-engagement.png",
+      "desc": "Main de 4, plateau vide, phase Engagement",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "seed": 101
+    },
+    {
+      "id": "U05-glisser-en-cours",
+      "path": "screenshots/qa/U05-glisser-en-cours.png",
+      "desc": "Glisser-déposer pointeur en cours : fantôme, destinations légales surlignées",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "seed": 101
+    },
+    {
+      "id": "U01b-carte-selectionnee-cases-legales",
+      "path": "screenshots/qa/U01b-carte-selectionnee-cases-legales.png",
+      "desc": "Clic sur une carte : cases compatibles surlignées (alternative au glisser)",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "seed": 101
+    },
+    {
+      "id": "U01c-primaire-assaut-garde-avant-verrouillage",
+      "path": "screenshots/qa/U01c-primaire-assaut-garde-avant-verrouillage.png",
+      "desc": "Primaire posée avec choix ASSAUT/GARDE, Secondaire en pose cachée, non verrouillées (annulables)",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "seed": 101
+    },
+    {
+      "id": "U02-secondaire-chargement-resolution",
+      "path": "screenshots/qa/U02-secondaire-chargement-resolution.png",
+      "desc": "Après résolution : Secondaire en CHARGEMENT (inutilisable ce tour), résultat du Clash expliqué",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "RESOLVED",
+      "seed": 101
+    },
+    {
+      "id": "U03a-reserve-cachee-inactive",
+      "path": "screenshots/qa/U03a-reserve-cachee-inactive.png",
+      "desc": "Tour suivant : la Secondaire est en RÉSERVE CACHÉE / INACTIVE (garder ou révéler)",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 2,
+      "phase": "PREPARE",
+      "seed": 101
+    },
+    {
+      "id": "U03b-revelation-volontaire-choisie",
+      "path": "screenshots/qa/U03b-revelation-volontaire-choisie.png",
+      "desc": "Révélation volontaire sélectionnée (secrète jusqu’à application simultanée)",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 2,
+      "phase": "PREPARE",
+      "seed": 101
+    },
+    {
+      "id": "U03c-secondaire-active-prete",
+      "path": "screenshots/qa/U03c-secondaire-active-prete.png",
+      "desc": "Secondaire révélée : ACTIVE / PRÊTE ; journal de révélation",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 2,
+      "phase": "COMMIT",
+      "seed": 101
+    },
+    {
+      "id": "U06-primaires-revelees-simultanement",
+      "path": "screenshots/qa/U06-primaires-revelees-simultanement.png",
+      "desc": "Primaires révélées simultanément ; prévision provisoire sans information cachée",
+      "url": "/?scenario=interference&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "TACTICS",
+      "scenario": "interference"
+    },
+    {
+      "id": "U04-menu-contextuel-secondaire",
+      "path": "screenshots/qa/U04-menu-contextuel-secondaire.png",
+      "desc": "Menu contextuel sur Secondaire active : Conserver / Rang (+affinité) / Dégâts (×) / Interférer",
+      "url": "/?scenario=interference&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "TACTICS",
+      "scenario": "interference"
+    },
+    {
+      "id": "U04b-ciblage-interference",
+      "path": "screenshots/qa/U04b-ciblage-interference.png",
+      "desc": "Interférer : ciblage direct sur le terrain adverse (cibles légales surlignées)",
+      "url": "/?scenario=interference&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "TACTICS",
+      "scenario": "interference"
+    },
+    {
+      "id": "U04c-choix-tactiques-secrets",
+      "path": "screenshots/qa/U04c-choix-tactiques-secrets.png",
+      "desc": "Choix verrouillables affichés au seul propriétaire ; rival verrouillé sans fuite",
+      "url": "/?scenario=interference&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "TACTICS",
+      "scenario": "interference"
+    },
+    {
+      "id": "U09-interference-resultat",
+      "path": "screenshots/qa/U09-interference-resultat.png",
+      "desc": "Interférences simultanées en une passe : soutien annulé, journal détaillé",
+      "url": "/?scenario=interference&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "RESOLVED",
+      "scenario": "interference"
+    },
+    {
+      "id": "U07a-T2-soutien-rang-provisoire",
+      "path": "screenshots/qa/U07a-T2-soutien-rang-provisoire.png",
+      "desc": "T2 : Cendre I en Amplifier le Rang (+2 affinité) — prévision provisoire 5 contre 4",
+      "url": "/?scenario=t2&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 2,
+      "phase": "TACTICS",
+      "scenario": "t2"
+    },
+    {
+      "id": "U07b-T2-victoire-rang-zero-degat",
+      "path": "screenshots/qa/U07b-T2-victoire-rang-zero-degat.png",
+      "desc": "T2 : « Vous dominez au Rang (5 contre 4), mais 0 blessure : la Garde absorbe »",
+      "url": "/?scenario=t2&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 2,
+      "phase": "RESOLVED",
+      "scenario": "t2"
+    },
+    {
+      "id": "U10-signature-infini-contre-garde",
+      "path": "screenshots/qa/U10-signature-infini-contre-garde.png",
+      "desc": "Signature ∞ (P14, ×5+×4) contre Garde IV renforcée : priorité ∞, (14−12)×9 = 18",
+      "url": "/?scenario=signature&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "RESOLVED",
+      "scenario": "signature"
+    },
+    {
+      "id": "U11-double-ko-prolongation",
+      "path": "screenshots/qa/U11-double-ko-prolongation.png",
+      "desc": "Contrecoup → double K.-O. → prolongation : 1 PV chacun, cartes conservées",
+      "url": "/?scenario=doubleko&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "RESOLVED",
+      "scenario": "doubleko"
+    },
+    {
+      "id": "U12a-mobile-portrait-engagement",
+      "path": "screenshots/qa/U12a-mobile-portrait-engagement.png",
+      "desc": "Mobile portrait 390×844 : main, plateau, HUD",
+      "url": "/?seed=404&autostart=1&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "seed": 404
+    },
+    {
+      "id": "U12b-mobile-pose-tactile",
+      "path": "screenshots/qa/U12b-mobile-pose-tactile.png",
+      "desc": "Mobile : pose par toucher-toucher, mode GARDE choisi",
+      "url": "/?seed=404&autostart=1&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "seed": 404
+    },
+    {
+      "id": "U12c-clavier-focus-visible",
+      "path": "screenshots/qa/U12c-clavier-focus-visible.png",
+      "desc": "Clavier seul : carte sélectionnée (Entrée), focus visible sur la case Primaire",
+      "url": "/?seed=303&autostart=1&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "seed": 303
+    },
+    {
+      "id": "cam-tilted-1920",
+      "path": "screenshots/qa/cam-tilted-1920.png",
+      "desc": "Caméra exploratoire « tilted » à 1920×1080 (même état)",
+      "url": "/?scenario=signature&cam=tilted&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "turn": 5,
+      "phase": "COMMIT",
+      "cam": "tilted"
+    },
+    {
+      "id": "cam-tilted-arene-seule",
+      "path": "screenshots/qa/cam-tilted-arene-seule.png",
+      "desc": "Arène Three.js seule, caméra « tilted »",
+      "url": "/?scenario=signature&cam=tilted&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "turn": 5,
+      "phase": "COMMIT",
+      "cam": "tilted"
+    },
+    {
+      "id": "cam-frontal-1920",
+      "path": "screenshots/qa/cam-frontal-1920.png",
+      "desc": "Caméra exploratoire « frontal » à 1920×1080 (même état)",
+      "url": "/?scenario=signature&cam=frontal&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "turn": 5,
+      "phase": "COMMIT",
+      "cam": "frontal"
+    },
+    {
+      "id": "cam-frontal-arene-seule",
+      "path": "screenshots/qa/cam-frontal-arene-seule.png",
+      "desc": "Arène Three.js seule, caméra « frontal »",
+      "url": "/?scenario=signature&cam=frontal&qa=1&aiDelay=0&freeze=1&reducedMotion=1",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "turn": 5,
+      "phase": "COMMIT",
+      "cam": "frontal"
+    },
+    {
+      "id": "art-galerie-seed7",
+      "path": "screenshots/qa/art-galerie-seed7.png",
+      "desc": "Galerie : 32 cartes ordinaires (Basic + variantes) + 4 Signatures + verso, artSeed 7",
+      "url": "/?gallery=1&artSeed=7",
+      "viewport": {
+        "width": 1280,
+        "height": 1100
+      },
+      "turn": null,
+      "phase": null
+    },
+    {
+      "id": "art-galerie-seed99",
+      "path": "screenshots/qa/art-galerie-seed99.png",
+      "desc": "Même galerie, artSeed 99 : motifs différents, identités et lisibilité inchangées",
+      "url": "/?gallery=1&artSeed=99",
+      "viewport": {
+        "width": 1280,
+        "height": 1100
+      },
+      "turn": null,
+      "phase": null
+    }
+  ],
+  "consoleIssues": []
+}
