@@ -95,18 +95,26 @@ async function textSamples(page) {
       if (x1 - x0 < 4 || y1 - y0 < 4) return;
       const cs = getComputedStyle(el);
       if (cs.visibility === 'hidden' || cs.display === 'none' || Number(cs.opacity) === 0) return;
-      out.push({ kind, x: x0, y: y0, w: x1 - x0, h: y1 - y0, rgb: cs.color.match(/[\d.]+/g).slice(0, 3).map(Number) });
+      const [cr, cg, cb, ca = 1] = cs.color.match(/[\d.]+/g).map(Number);
+      out.push({ kind, x: x0, y: y0, w: x1 - x0, h: y1 - y0, rgba: [cr, cg, cb, ca] });
     };
-    document.querySelectorAll('.zone > .zone-label').forEach((el) => add('étiquettes de cases', el));
-    document.querySelectorAll('.empty-hint').forEach((el) => add('aides des cases', el));
+    // Pendant un Clash, ce qui se lit est le verdict et ses conséquences ; les cases sont sous la scène.
+    if (document.querySelector('#stage .clash-stage')) {
+      document.querySelectorAll('.cs-verdict b').forEach((el) => add('verdict du Clash', el));
+      document.querySelectorAll('.cs-bullets li').forEach((el) => add('conséquences du Clash', el));
+    } else {
+      document.querySelectorAll('.zone > .zone-label').forEach((el) => add('étiquettes de cases', el));
+      document.querySelectorAll('.empty-hint').forEach((el) => add('aides des cases', el));
+    }
     document.querySelectorAll('.command .msg').forEach((el) => add('texte des commandes', el));
     document.querySelectorAll('.hand .card .name').forEach((el) => add('noms des cartes (main)', el));
     return out;
   });
 }
 
-/** Contraste WCAG texte / fond RÉEL : fond = luminance médiane des pixels de la boîte sur la capture
- *  (le texte clair y est minoritaire). Par type : contraste minimal, nombre d’éléments, part ≥ 4,5:1. */
+/** Contraste WCAG texte / fond RÉEL : fond = pixel de luminance médiane de la boîte sur la capture
+ *  (le texte clair y est minoritaire) ; une couleur de texte semi-transparente est d’abord composée sur
+ *  ce fond. Par type : contraste minimal, nombre d’éléments, part ≥ 4,5:1. */
 async function contrast(helper, png, items) {
   const ratios = await helper.evaluate(async ({ src, items }) => {
     const img = new Image();
@@ -121,11 +129,12 @@ async function contrast(helper, png, items) {
     const L = (r, gg, b) => 0.2126 * lin(r) + 0.7152 * lin(gg) + 0.0722 * lin(b);
     return items.map((it) => {
       const d = g.getImageData(Math.round(it.x), Math.round(it.y), Math.max(1, Math.round(it.w)), Math.max(1, Math.round(it.h))).data;
-      const ls = [];
-      for (let i = 0; i < d.length; i += 4) ls.push(L(d[i], d[i + 1], d[i + 2]));
-      ls.sort((a, b) => a - b);
-      const bg = ls[Math.floor(ls.length / 2)];
-      const fg = L(...it.rgb);
+      const px = [];
+      for (let i = 0; i < d.length; i += 4) px.push([L(d[i], d[i + 1], d[i + 2]), d[i], d[i + 1], d[i + 2]]);
+      px.sort((a, b) => a[0] - b[0]);
+      const [bg, br, bgG, bb] = px[Math.floor(px.length / 2)];
+      const [r, gg, b, a] = it.rgba;
+      const fg = L(a * r + (1 - a) * br, a * gg + (1 - a) * bgG, a * b + (1 - a) * bb);
       return { kind: it.kind, ratio: (Math.max(fg, bg) + 0.05) / (Math.min(fg, bg) + 0.05) };
     });
   }, { src: `data:image/png;base64,${png.toString('base64')}`, items });
