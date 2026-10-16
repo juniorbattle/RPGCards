@@ -1,5 +1,10 @@
 # AGENTS.md — Les Quatre Voies (nouveau dépôt indépendant)
 
+## Extension du mandat — M02 : duel face à face
+
+Le mandat M02 approuvé est dans `docs/missions/M02_CONFRONTATION_FACE_A_FACE_ET_LISIBILITE.md` (à lire après `JOURNAL.md`). Il fait évoluer la **présentation**, pas le règlement : la **vue frontale du rival, son visage et sa posture visibles** deviennent le défaut ; la vue inclinée sert aux manipulations, tout en gardant le rival observable. Caméras orchestrées par phases, sans mouvement obligatoire à chaque clic, et **aucune fuite de secrets par expressions ou IA**. Les tells psychologiques exploitant de vraies intentions secrètes et un éventuel Sang-froid sont explicitement hors-scope tant que non ratifiés. Pas de grande production de décors ; art procédural autonome, gameplay + ergonomie prioritaires. Conserver le socle M01, travailler sur une nouvelle branche et ne pas modifier `main`.
+
+
 ## Mandat de production en vigueur — autonomie M01 et Three.js requis
 
 Le responsable autorise une **mission large** : configurer correctement `RPGCards` puis enchaîner de façon autonome jusqu'à un **MVP duel jouable**. **Vite + TypeScript + Three.js obligatoires** en production ; Three.js fournit une scène/rendu même minimal, le moteur est TS pur et les cartes interactives peuvent rester en DOM/CSS/SVG pour l'ergonomie. Ne pas attendre une validation opérateur entre les lots 0–3 si les règles et critères sont respectés. Document de mandat : `PROMPT_CLAUDE_CODE_MISSION_01.md`.
