@@ -3,12 +3,12 @@
 // déterministes `?scenario=rupture | rupture-cachee | dissipation | masque` (rival scripté, mode démo).
 // Assertions : résultat, coût et Insight, cibles légales / refusées, zones, journal (sans doublon),
 // informations cachées (DOM, scène du Clash, export public), console. Sortie : artifacts/qa/qa-techniques.json
-// + captures screenshots/qa/m03-1b/.
+// + captures $TECH_OUT (défaut screenshots/qa/m03-1b/ ; une passe ultérieure garde ses preuves à part).
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { launch, startPreview, view, waitDecision, watchConsole } from './browser.mjs';
 
-const OUT = 'screenshots/qa/m03-1b';
+const OUT = process.env.TECH_OUT ?? 'screenshots/qa/m03-1b';
 mkdirSync(OUT, { recursive: true });
 mkdirSync('artifacts/qa', { recursive: true });
 const commit = execSync('git rev-parse --short HEAD').toString().trim();
