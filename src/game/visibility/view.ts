@@ -128,15 +128,6 @@ function side(state: GameState, pid: PlayerId, viewer: PlayerId): SideView {
   };
 }
 
-function redactClash(report: ClashReport | null, viewer: PlayerId): ClashReport | null {
-  if (!report) return null;
-  const r = structuredClone(report);
-  const o = other(viewer);
-  if (r.publicScores[o] === '?') r.scores[o] = Number.NaN;
-  if (r.publicMultipliers[o] === '?') r.multipliers[o] = Number.NaN;
-  return r;
-}
-
 export function viewFor(state: GameState, viewer: PlayerId): PlayerView {
   const o = other(viewer);
   const rel = (pid: PlayerId): 'me' | 'opp' => (pid === viewer ? 'me' : 'opp');
@@ -155,7 +146,8 @@ export function viewFor(state: GameState, viewer: PlayerId): PlayerView {
       primaries: prim ? { me: { ...prim[viewer] }, opp: { ...prim[o] } } : null,
       tactics: tac ? { me: structuredClone(tac[viewer]), opp: structuredClone(tac[o]) } : null,
     },
-    lastClash: redactClash(state.lastClash, viewer),
+    // Rapport public par construction (valeurs camouflées à null dès le moteur) : simple copie.
+    lastClash: state.lastClash ? structuredClone(state.lastClash) : null,
     repel: state.repel ? { mine: state.repel.owner === viewer, kind: state.repel.kind, choices: state.repel.owner === viewer ? [...state.repel.choices] : [] } : null,
     lectureUsers: state.lectureUsers.map(rel),
     lectureSeen: state.lectureUsers.includes(viewer) ? state.players[o].primary?.initialStance ?? null : null,
