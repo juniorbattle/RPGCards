@@ -54,7 +54,7 @@ button { font: inherit; color: inherit; }
   --hand-h: clamp(118px, 22vh, 260px);
   --hand-w: calc(var(--hand-h) / 1.4);
   --a-head: 0.205; --a-edge: 0.455;
-  --b-head: 0.11; --b-edge: 0.29;
+  --b-head: 0.148; --b-edge: 0.305;
 }
 
 /* Modules : fond sombre translucide, liseré doré fin, coins ornés. */
@@ -163,11 +163,11 @@ button { font: inherit; color: inherit; }
 .view-b .side.me { top: 46.5%; --zh: 20.5vh; --ft: 36deg; --ct: 12deg; --zw: calc(var(--zh) * 1.42); }
 .row { display: grid; grid-template-columns: repeat(3, var(--zw)); gap: calc(var(--zw) * 0.14); align-items: end; }
 .zone { position: relative; width: var(--zw); height: var(--zh); pointer-events: auto; display: grid; place-items: center; transition: filter 0.15s; }
-.zone-floor { position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--zh) / cos(var(--ft))); transform-origin: 50% 100%; transform: perspective(calc(var(--zw) * 3.2)) rotateX(var(--ft)); border: 2px dashed rgba(217, 178, 106, 0.6); border-radius: 12px; background: radial-gradient(ellipse at 50% 60%, rgba(30, 20, 14, 0.25), rgba(0, 0, 0, 0.45)); pointer-events: none; transition: border-color 0.15s, box-shadow 0.15s, background 0.15s; }
+.zone-floor { position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--zh) / cos(var(--ft))); transform-origin: 50% 100%; transform: perspective(calc(var(--zw) * 3.2)) rotateX(var(--ft)); border: 2px dashed rgba(232, 196, 128, 0.82); border-radius: 12px; background: radial-gradient(ellipse at 50% 60%, rgba(60, 40, 22, 0.14), rgba(0, 0, 0, 0.3)); pointer-events: none; transition: border-color 0.15s, box-shadow 0.15s, background 0.15s; }
 .zone.primary .zone-floor { border-color: rgba(255, 214, 140, 0.9); box-shadow: 0 0 18px rgba(255, 200, 120, 0.25), inset 0 0 18px rgba(255, 200, 120, 0.12); }
-.zone > .zone-label { position: absolute; bottom: calc(100% + 3px); left: 0; right: 0; text-align: center; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; color: rgba(244, 237, 226, 0.85); text-transform: uppercase; white-space: nowrap; text-shadow: 0 1px 3px #000; pointer-events: none; }
+.zone > .zone-label { position: absolute; bottom: calc(100% + 3px); left: 0; right: 0; text-align: center; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em; color: rgba(250, 244, 232, 0.95); text-transform: uppercase; white-space: nowrap; text-shadow: 0 1px 3px #000, 0 0 6px rgba(0, 0, 0, 0.8); pointer-events: none; }
 .zone.primary > .zone-label { color: var(--gold-hi); }
-.empty-hint { position: relative; font-size: 0.72rem; color: rgba(244, 237, 226, 0.6); text-align: center; padding: 0.3rem; text-shadow: 0 1px 2px #000; pointer-events: none; }
+.empty-hint { position: relative; font-size: 0.72rem; color: rgba(244, 237, 226, 0.78); text-align: center; padding: 0.3rem; text-shadow: 0 1px 2px #000, 0 0 5px rgba(0, 0, 0, 0.8); pointer-events: none; }
 .zone > .card.on-board { position: absolute; left: 50%; bottom: 2%; transform-origin: 50% 100%; transform: translateX(-50%) perspective(calc(var(--card-w) * 6)) rotateX(var(--ct)); }
 .zone > .card.on-board.hand-card { transform: translateX(-50%); }
 .zone.legal .zone-floor { border-style: solid; border-color: var(--ok); box-shadow: 0 0 0 3px rgba(143, 220, 106, 0.25), inset 0 0 20px rgba(143, 220, 106, 0.2); }

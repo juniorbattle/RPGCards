@@ -47,8 +47,17 @@ const GAZE: Record<Gaze, [number, number]> = {
   away: [0.75, 0.15],
 };
 
-export const RIVAL_Z = -2.9;
-export const HEAD_WORLD = new THREE.Vector3(0, 3.1, RIVAL_Z);
+/**
+ * M03.2 — le rival « en buste derrière la table », aux proportions de la preview : tête agrandie
+ * (`HEAD_SCALE`), épaules proches du bord (`NECK_Y`), assis plus près de la table. La caméra cadre
+ * `HEAD_WORLD` : abaisser la tête resserre donc le cadrage et grandit tout le personnage à l’écran.
+ */
+export const RIVAL_Z = -2.7;
+const NECK_Y = 1.72;
+const HEAD_SCALE = 1.34;
+export const HEAD_WORLD = new THREE.Vector3(0, NECK_Y + 0.6 * HEAD_SCALE, RIVAL_Z);
+/** Poitrine du rival (origine des effets qui le visent). */
+export const CHEST_WORLD = new THREE.Vector3(0, NECK_Y - 0.35, RIVAL_Z + 0.4);
 
 function plane(w: number, h: number, map: THREE.Texture, order: number, opts: { lit?: boolean } = {}): THREE.Mesh {
   const mat = opts.lit === false
@@ -76,12 +85,13 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
 
   const body = new THREE.Group(); // respiration, inclinaison
   group.add(body);
-  const torso = plane(2.4, 2.0, torsoTexture(p, artSeed), 1);
-  torso.position.set(0, 1.75, 0);
+  const torso = plane(2.7, 2.1, torsoTexture(p, artSeed), 1);
+  torso.position.set(0, NECK_Y - 0.8, 0);
   body.add(torso);
 
   const neckPivot = new THREE.Group();
-  neckPivot.position.set(0, 2.5, 0.02);
+  neckPivot.position.set(0, NECK_Y, 0.02);
+  neckPivot.scale.setScalar(HEAD_SCALE);
   body.add(neckPivot);
   if (p.look.outfit === 'cloak') {
     // Capuche derrière la tête (suit l’inclinaison du cou).
@@ -109,7 +119,7 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
     face.add(e);
     const sc = plane(0.27, 0.17, sclera, 3);
     e.add(sc);
-    const ir = plane(0.125, 0.125, iris, 4);
+    const ir = plane(0.14, 0.14, iris, 4);
     ir.position.z = 0.002;
     e.add(ir);
     const lidGeo = new THREE.PlaneGeometry(0.29, 0.19);
@@ -136,11 +146,11 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
 
   // Mains jointes tenant l’éventail de cartes au bord de la table (preview M03) ; taille publique de la main.
   const handT = handTexture(p);
-  const handL = plane(0.5, 0.5, handT, 7);
-  const handR = plane(0.5, 0.5, handT, 7);
+  const handL = plane(0.46, 0.46, handT, 7);
+  const handR = plane(0.46, 0.46, handT, 7);
   handR.scale.x = -1;
-  const handLRest = new THREE.Vector3(-0.34, 1.16, 0.72);
-  const handRRest = new THREE.Vector3(0.34, 1.14, 0.72);
+  const handLRest = new THREE.Vector3(-0.34, 1.24, 0.72);
+  const handRRest = new THREE.Vector3(0.34, 1.22, 0.72);
   handL.position.copy(handLRest);
   handR.position.copy(handRRest);
   group.add(handL, handR);
@@ -262,7 +272,7 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
       body.scale.y = 1 + breath;
       neckPivot.rotation.z = cur.tilt + (reduced ? 0 : Math.sin(t * 0.7) * 0.012);
       neckPivot.rotation.x = cur.gy * -0.06;
-      neckPivot.position.y = 2.5;
+      neckPivot.position.y = NECK_Y;
       group.position.z = RIVAL_Z;
       body.position.y = 0;
       handL.position.copy(handLRest);
@@ -279,7 +289,7 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
           if (g === 'shake-head') neckPivot.rotation.y = Math.sin(u * Math.PI * 4) * 0.1 * (1 - u);
           if (g === 'tilt') neckPivot.rotation.z += env * 0.08;
           if (g === 'recoil') { group.position.z = RIVAL_Z - env * 0.25; neckPivot.rotation.x -= env * 0.12; }
-          if (g === 'laugh') { neckPivot.position.y = 2.5 + Math.abs(Math.sin(u * Math.PI * 6)) * 0.035; neckPivot.rotation.x -= env * 0.1; }
+          if (g === 'laugh') { neckPivot.position.y = NECK_Y + Math.abs(Math.sin(u * Math.PI * 6)) * 0.035; neckPivot.rotation.x -= env * 0.1; }
           if (g === 'lean-in') group.position.z = RIVAL_Z + env * 0.3;
         }
         if (g === 'slump') { body.position.y = -0.12 * (reduced ? 1 : Math.min(1, u * 2)); neckPivot.rotation.x += 0.12; }
