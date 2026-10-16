@@ -22,7 +22,9 @@ export interface Beat {
   events: GameEvent[];
 }
 
-const ORDER: BeatKind[] = ['tactics', 'interference', 'rank', 'outcome', 'damage', 'heal', 'effect', 'insight', 'destination', 'repel', 'overtime', 'victory'];
+/** Ordre pédagogique des temps (le moteur reste l’ordre de vérité ; ici on présente). */
+export const BEAT_ORDER: BeatKind[] = ['tactics', 'interference', 'rank', 'outcome', 'damage', 'heal', 'effect', 'insight', 'destination', 'repel', 'overtime', 'victory'];
+const ORDER = BEAT_ORDER;
 const MODE: Record<string, string> = { keep: 'conserve', rank: 'Rang', damage: 'Dégâts', interfere: 'Interférence' };
 
 export interface BeatContext {

@@ -13,6 +13,8 @@ export interface RivalPersonality {
   id: 'braise' | 'ronce' | 'voile';
   name: string;
   title: string;
+  /** Accord des libellés d’humeur (« concentré » / « concentrée »). */
+  gender: 'f' | 'm';
   family: Family;
   aiProfile: 'offensif' | 'prudent' | 'lecteur';
   techniques: TechniqueId[];
@@ -42,17 +44,17 @@ export type Mood =
 
 export const PERSONALITIES: RivalPersonality[] = [
   {
-    id: 'braise', name: 'Kaï', title: 'la Braise du quai', family: 'Cendre', aiProfile: 'offensif',
+    id: 'braise', name: 'Kaï', title: 'la Braise du quai', gender: 'm', family: 'Cendre', aiProfile: 'offensif',
     techniques: ['Sondage', 'Lecture'], expressiveness: 1, restMood: 'confident',
     look: { skin: '#e2a982', skinShade: '#b9785a', hair: '#2a1410', hairHi: '#c2411d', hairStyle: 'spiky', outfit: 'jacket', cloth: '#7a2410', clothHi: '#d0541f', trim: '#ffb347', eyes: '#d98a1e', jaw: 0.8, mark: 'scar', headband: true },
   },
   {
-    id: 'ronce', name: 'Maëlle', title: 'gardienne des Ronces', family: 'Ronce', aiProfile: 'prudent',
+    id: 'ronce', name: 'Maëlle', title: 'gardienne des Ronces', gender: 'f', family: 'Ronce', aiProfile: 'prudent',
     techniques: ['Ancrage', 'Rupture'], expressiveness: 0.55, restMood: 'neutral',
     look: { skin: '#c98e6a', skinShade: '#9a6248', hair: '#3b2a1a', hairHi: '#7a5a34', hairStyle: 'braid', outfit: 'cloak', cloth: '#1d4a29', clothHi: '#3f8a46', trim: '#d4ec7a', eyes: '#4f9a4a', jaw: 0.3, mark: 'freckles', headband: false },
   },
   {
-    id: 'voile', name: 'Sélène', title: 'liseuse du Voile', family: 'Voile', aiProfile: 'lecteur',
+    id: 'voile', name: 'Sélène', title: 'liseuse du Voile', gender: 'f', family: 'Voile', aiProfile: 'lecteur',
     techniques: ['Lecture', 'Dissipation'], expressiveness: 0.75, restMood: 'smug',
     look: { skin: '#f0c9b0', skinShade: '#c99a82', hair: '#c9cbe8', hairHi: '#ffffff', hairStyle: 'bob', outfit: 'coat', cloth: '#2f2d6e', clothHi: '#5d63c4', trim: '#a8e6ff', eyes: '#8a5cd6', jaw: 0.45, mark: 'beauty', headband: true },
   },

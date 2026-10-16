@@ -1,17 +1,24 @@
 /**
  * Rendu du plateau de duel à partir de la PlayerView (p1) et de l’état d’UI local.
  * Aucune lecture de l’état brut : les cartes adverses cachées sont des versos sans identifiant.
+ *
+ * Composition M03 (preview validée `reference/REFERENCE_VISUELLE_VALIDEE_M03.jpg`) :
+ * scène plein cadre ; HUD rival haut-gauche, bulle du rival haut-droite ; emplacements posés sur
+ * la table au centre ; main centrée en bas ; HUD joueur compact bas-gauche (portrait) ;
+ * commandes + Techniques bas-droite ; journal en tiroir rétractable ; inspection flottante.
  */
-import { cardDef, cardTitle, EFFECTS, FAMILY_THEME, rankLabel } from '../game/catalog/cards';
+import { cardDef, cardTitle, EFFECTS, FAMILY_THEME, rankLabel, type Family } from '../game/catalog/cards';
 import { TECHNIQUES, type TechniqueId } from '../game/catalog/techniques';
-import type { SlotIndex } from '../game/model/types';
+import type { SlotIndex, Stance } from '../game/model/types';
 import { verdictText } from '../game/visibility/journal';
 import type { SideView, SlotView } from '../game/visibility/view';
 import { emblemSvg } from '../art/emblems';
 import { RARITY_FRAME } from '../art/palette';
-import { rivalCaption, type Controller } from '../app/controller';
+import { playerFigure, portraitUrl } from '../art/portrait';
+import type { Controller } from '../app/controller';
 import { backEl, cardEl } from './cardView';
 import { cls, h } from './dom';
+import { moodLabel, rivalLine } from './rivalLines';
 
 const PHASES: Array<{ id: string; label: string; match: string[] }> = [
   { id: 'start', label: 'Début', match: ['START'] },
@@ -23,6 +30,22 @@ const PHASES: Array<{ id: string; label: string; match: string[] }> = [
 ];
 
 const MODE_LABEL: Record<string, string> = { keep: 'CONSERVER', rank: 'RANG', damage: 'DÉGÂTS', interfere: 'INTERFÈRE' };
+
+/** Icônes de posture (formes distinctes, indépendantes de la couleur). */
+export const STANCE_ICON: Record<Stance, string> = {
+  assault: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 10h11V5.5L22 12l-9 6.5V14H2z" fill="currentColor"/></svg>',
+  guard: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 3v6c0 5.4-3.4 9.4-8 11-4.6-1.6-8-5.6-8-11V5z" fill="currentColor"/><path d="M12 5.2l5 1.9v4c0 3.6-2.1 6.4-5 7.7z" fill="rgba(255,255,255,.35)"/></svg>',
+};
+
+/** Bandeau de posture RÉVÉLÉE (ASSAUT rouge à pointe / GARDE bleu à bouclier). */
+export function stanceBanner(st: Stance, extra?: string): HTMLElement {
+  const label = st === 'assault' ? 'ASSAUT' : 'GARDE';
+  return h('span', { class: cls('stance-banner', st), role: 'img', 'aria-label': `Mode ${label}${extra ? ` (${extra})` : ''}` },
+    h('span', { class: 'sb-icon', html: STANCE_ICON[st] }),
+    h('span', { class: 'sb-text' }, label),
+    extra ? h('span', { class: 'sb-extra' }, extra) : null,
+  );
+}
 
 export interface BoardHooks {
   onToggleTool(tool: string): void;
@@ -36,7 +59,20 @@ export function renderApp(root: HTMLElement, c: Controller, hooks: BoardHooks): 
 
   root.classList.toggle('view-a', c.viewMode === 'A');
   root.classList.toggle('view-b', c.viewMode === 'B');
-  root.replaceChildren(topbar(c, hooks), board(c), sidebar(c));
+  root.classList.toggle('sequencing', c.sequencing);
+  root.classList.toggle('drawer-open', c.ui.journalOpen);
+  root.replaceChildren(
+    phasebar(c),
+    tools(c, hooks),
+    hud(c, c.view.opp, 'opp'),
+    rivalBubble(c),
+    board(c),
+    hand(c),
+    hud(c, c.view.me, 'me'),
+    command(c),
+    inspector(c),
+    drawer(c, hooks),
+  );
   if (c.ui.toast) root.append(h('div', { class: cls('toast', c.ui.toast.kind === 'info' && 'info'), role: 'status', 'aria-live': 'polite' }, c.ui.toast.text));
   if (c.view.phase === 'ENDED' && !c.sequencing) root.append(endOverlay(c));
 
@@ -47,95 +83,86 @@ export function renderApp(root: HTMLElement, c: Controller, hooks: BoardHooks): 
 }
 
 // ---------------------------------------------------------------------------
+// Bandeau de phase (haut-centre) et outils (haut-droite)
 
-function topbar(c: Controller, hooks: BoardHooks): HTMLElement {
+/** Frise compacte : numéro de tour, losanges d’étapes, nom de la phase courante (lisible, discret). */
+function phasebar(c: Controller): HTMLElement {
   const phase = c.view.phase;
   const nowIdx = PHASES.findIndex((p) => p.match.includes(phase));
-  return h('header', { class: 'topbar' },
-    h('div', { class: 'brand' }, 'Les Quatre Voies', h('small', null, `Tour ${c.view.turn} · seed ${c.view.seed}${c.scenario ? ` · démo « ${c.scenario.title} »` : ''}`)),
-    h('nav', { class: 'timeline', 'aria-label': 'Phases du tour' },
-      PHASES.map((p, i) => h('span', { class: cls('step', i < nowIdx && 'done', i === nowIdx && 'now'), 'aria-current': i === nowIdx ? 'step' : null }, p.label))),
-    h('div', { class: 'tools' },
-      h('button', { class: 'tool journal-toggle', 'data-key': 'tool-journal', 'aria-pressed': String(c.ui.journalOpen), onclick: () => hooks.onToggleTool('journal') }, 'Journal'),
-      h('button', { class: 'tool', 'data-key': 'tool-smaller', title: 'Réduire le texte', onclick: () => hooks.onToggleTool('smaller') }, 'A−'),
-      h('button', { class: 'tool', 'data-key': 'tool-bigger', title: 'Agrandir le texte', onclick: () => hooks.onToggleTool('bigger') }, 'A+'),
-      h('button', { class: 'tool', 'data-key': 'tool-motion', 'aria-pressed': String(c.params.reducedMotion), title: 'Mouvement réduit', onclick: () => hooks.onToggleTool('motion') }, 'Mvt réduit'),
-      h('button', { class: 'tool tool-view', 'data-key': 'tool-cam', 'aria-pressed': String(c.director.manual), title: 'Basculer entre la vue Rival (confrontation) et la vue Plateau (manipulation) — touche V. La vue revient au cadrage de la phase suivante.', onclick: () => hooks.onToggleTool('cam') }, c.viewMode === 'A' ? 'Vue plateau ⤓' : 'Voir le rival ⤒'),
-      h('button', { class: 'tool', 'data-key': 'tool-pace', title: 'Rythme des animations (n’affecte pas les règles)', onclick: () => hooks.onToggleTool('pace') }, `Rythme : ${c.params.pace === 'normal' ? 'normal' : c.params.pace === 'fast' ? 'rapide' : 'instantané'}`),
-      h('button', { class: 'tool', 'data-key': 'tool-help', onclick: () => hooks.onToggleTool('help') }, '?'),
-    ),
+  return h('nav', { class: 'phasebar', 'aria-label': `Tour ${c.view.turn} — phase ${PHASES[nowIdx]?.label ?? phase}` },
+    h('span', { class: 'turn-no' }, `Tour ${c.view.turn}`),
+    PHASES.map((p, i) => h('span', { class: cls('step', i < nowIdx && 'done', i === nowIdx && 'now'), title: p.label, 'aria-current': i === nowIdx ? 'step' : null }, i === nowIdx ? p.label : '')),
   );
 }
 
-function board(c: Controller): HTMLElement {
-  const v = c.view;
-  return h('main', { class: 'board', 'aria-label': 'Plateau de duel' },
-    stage(c),
-    sideRow(c, 'opp'),
-    strip(c),
-    sideRow(c, 'me'),
-    hud(c, v.me, 'me'),
-    hand(c),
+function tools(c: Controller, hooks: BoardHooks): HTMLElement {
+  const pace = c.params.pace === 'normal' ? 'normal' : c.params.pace === 'fast' ? 'rapide' : 'instantané';
+  return h('div', { class: 'tools', role: 'toolbar', 'aria-label': 'Outils' },
+    h('button', { class: 'tool tool-view', 'data-key': 'tool-cam', 'aria-pressed': String(c.director.manual), title: 'Basculer entre la vue Rival (confrontation) et la vue Plateau (manipulation) — touche V. La vue revient au cadrage de la phase suivante.', onclick: () => hooks.onToggleTool('cam') }, c.viewMode === 'A' ? 'Vue plateau ⤓' : 'Voir le rival ⤒'),
+    h('button', { class: 'tool', 'data-key': 'tool-journal', 'aria-pressed': String(c.ui.journalOpen), title: 'Journal du duel (texte intégral, public + vos informations privées)', onclick: () => hooks.onToggleTool('journal') }, 'Journal'),
+    h('button', { class: 'tool', 'data-key': 'tool-pace', title: 'Rythme des animations (n’affecte pas les règles)', onclick: () => hooks.onToggleTool('pace') }, `Rythme : ${pace}`),
+    h('button', { class: 'tool', 'data-key': 'tool-motion', 'aria-pressed': String(c.params.reducedMotion), title: 'Mouvement réduit', onclick: () => hooks.onToggleTool('motion') }, 'Mvt réduit'),
+    h('button', { class: 'tool sq', 'data-key': 'tool-smaller', title: 'Réduire le texte', 'aria-label': 'Réduire le texte', onclick: () => hooks.onToggleTool('smaller') }, 'A−'),
+    h('button', { class: 'tool sq', 'data-key': 'tool-bigger', title: 'Agrandir le texte', 'aria-label': 'Agrandir le texte', onclick: () => hooks.onToggleTool('bigger') }, 'A+'),
+    h('button', { class: 'tool sq', 'data-key': 'tool-help', title: 'Aide', 'aria-label': 'Aide', onclick: () => hooks.onToggleTool('help') }, '?'),
   );
 }
 
-// --- Scène du rival -------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Rival : bulle (humeur + réplique) — faits publics uniquement
 
-/**
- * Bande « scène » : en vue A, espace transparent où l’arène cadre le visage et le buste du rival
- * (`.stage-window` → `arena.setStage`) ; en vue B, HUD adverse en ligne + portrait vivant.
- */
-function stage(c: Controller): HTMLElement {
-  const v = c.view;
+function rivalBubble(c: Controller): HTMLElement {
   const e = c.rivalExpression;
-  const plate = h('div', { class: 'rival-plate', 'aria-live': 'polite' },
-    h('b', null, c.rival.name), h('span', { class: 'rival-title' }, ` · ${c.rival.title}`),
-    h('div', { class: 'rival-caption', 'data-rival-caption': '' }, e ? rivalCaptionText(e) : ''),
-  );
-  if (c.viewMode === 'A') {
-    return h('section', { class: 'stage', 'aria-label': `Rival : ${c.rival.name}` },
-      h('div', { class: 'stage-window', 'aria-hidden': 'true' }),
-      hud(c, v.opp, 'opp'),
-      plate,
-    );
-  }
-  return h('section', { class: 'stage', 'aria-label': `Rival : ${c.rival.name}` },
-    hud(c, v.opp, 'opp'),
-    h('div', { class: 'rival-portrait', title: 'Portrait vivant du rival (V : revenir à la vue Rival)' },
-      h('div', { class: 'portrait-window', 'aria-hidden': 'true' }),
-      plate,
-    ),
+  return h('aside', { class: 'rival-bubble', 'aria-live': 'polite', 'aria-label': `${c.rival.name}, ${c.rival.title}`, title: e ? `Réagit à : ${e.cause} (fait public)` : '' },
+    h('div', { class: 'rb-name' }, h('b', null, c.rival.name), h('span', { class: 'rb-emblem', html: emblemSvg(c.rival.family, 16) }), h('span', { class: 'rb-title' }, c.rival.title)),
+    h('div', { class: 'rb-mood', 'data-rival-caption': '' }, e ? moodLabel(e, c.rival) : ''),
+    h('div', { class: 'rb-line', 'data-rival-line': '' }, e ? `« ${rivalLine(e, c.rival, c.config.seed)} »` : ''),
   );
 }
 
-function rivalCaptionText(e: { mood: string; cause: string }): string {
-  return rivalCaption(e as never);
+/** Mise à jour ciblée de la bulle (sans re-rendu global). */
+export function patchRivalBubble(root: ParentNode, c: Controller): void {
+  const e = c.rivalExpression;
+  if (!e) return;
+  const mood = root.querySelector('[data-rival-caption]');
+  const line = root.querySelector('[data-rival-line]');
+  if (mood) mood.textContent = moodLabel(e, c.rival);
+  if (line) line.textContent = `« ${rivalLine(e, c.rival, c.config.seed)} »`;
+  root.querySelector('.rival-bubble')?.setAttribute('title', `Réagit à : ${e.cause} (fait public)`);
 }
 
-// --- HUD -------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// HUD compacts (même famille visuelle : rival haut-gauche, joueur bas-gauche)
 
 function hud(c: Controller, s: SideView, who: 'me' | 'opp'): HTMLElement {
   const v = c.view;
-  const hpShown = c.displayHp(who);
-  const pct = Math.max(0, Math.min(100, (hpShown / s.maxHp) * 100));
   const awaiting = who === 'me' ? v.awaitingMe : v.awaitingOpponent;
-  const lockText = who === 'me'
-    ? (s.locked ? 'Décision verrouillée' : awaiting ? 'À vous de décider' : 'Rien à décider')
-    : (s.locked ? 'Rival : verrouillé (secret)' : awaiting ? (c.aiThinking ? 'Le rival réfléchit' : 'Rival : en attente') : 'Rival');
-  const floaters = c.ui.floaters.filter((f) => f.side === who).map((f) => h('span', { class: cls('floater', f.heal && 'heal'), 'data-floater': String(f.id), 'aria-hidden': 'true' }, f.text));
   const focus = c.currentBeat()?.focus ?? [];
-  return h('section', { class: cls('hud', who, focus.includes(`${who}-hp`) && 'beat-hit', focus.includes(`${who}-insight`) && 'beat-insight'), 'aria-label': who === 'me' ? 'Votre duelliste' : 'Duelliste rival' },
-    h('span', { class: 'who' }, who === 'me' ? 'Vous' : s.name, ' ', h('span', { html: emblemSvg(s.signatureFamily, 14), title: `Signature ${s.signatureFamily}` })),
+  const counts = c.displayCounts(who);
+  const fam: Family = s.signatureFamily;
+  const status = who === 'opp'
+    ? h('span', { class: cls('lockchip', s.locked && 'locked', awaiting && !s.locked && c.aiThinking && 'thinking') }, s.locked ? 'Verrouillé (secret)' : awaiting ? (c.aiThinking ? 'Réfléchit' : 'En attente') : 'Rival')
+    : null;
+  const body = h('div', { class: 'hud-body' },
+    h('div', { class: 'who' }, h('span', { class: 'name' }, who === 'me' ? 'Vous' : s.name), h('span', { class: 'fam-icon', html: emblemSvg(fam, 15), title: `Signature ${fam}` })),
     hpEl(c, s, who),
-    h('div', { class: 'insight', title: 'Insight (0 à 2)', 'aria-label': `Insight ${s.insight} sur 2` }, 'Insight', h('span', { class: cls('pip', s.insight >= 1 && 'on') }), h('span', { class: cls('pip', s.insight >= 2 && 'on') })),
+    h('div', { class: 'insight', title: 'Insight (0 à 2)', 'aria-label': `Insight ${s.insight} sur 2` }, h('span', { class: 'lbl' }, 'Insight'), h('span', { class: cls('pip', s.insight >= 1 && 'on') }), h('span', { class: cls('pip', s.insight >= 2 && 'on') })),
     h('div', { class: 'counts' },
-      who === 'opp' ? h('span', { class: 'opp-hand', 'aria-label': `Main adverse : ${s.handCount} cartes cachées` }, Array.from({ length: s.handCount }, () => h('span', { class: 'mini-back' }))) : null,
-      h('span', null, 'Main ', h('b', null, String(s.handCount))),
-      h('span', null, 'Pioche ', h('b', null, String(s.deckCount))),
-      h('span', { title: s.discard.map((d) => cardTitle(cardDef(d))).join(', ') || 'vide' }, 'Défausse ', h('b', null, String(s.discard.length))),
+      h('span', null, 'Main ', h('b', null, String(counts.hand))),
+      h('span', { class: 'sep', 'aria-hidden': 'true' }, '|'),
+      h('span', null, 'Pioche ', h('b', null, String(counts.deck))),
+      h('span', { class: 'sep', 'aria-hidden': 'true' }, '|'),
+      h('span', { title: s.discard.map((d) => cardTitle(cardDef(d))).join(', ') || 'vide' }, 'Déf. ', h('b', { 'data-discard': who }, String(counts.discard))),
     ),
-    techChips(c, s, who),
-    h('span', { class: cls('lockchip', s.locked && 'locked', who === 'opp' && awaiting && !s.locked && c.aiThinking && 'thinking') }, lockText),
+    who === 'opp' ? h('div', { class: 'hud-chips' }, status, oppTechChips(c, s)) : null,
+  );
+  return h('section', {
+    class: cls('hud', who, `fam-${fam}`, focus.includes(`${who}-hp`) && 'beat-hit', focus.includes(`${who}-insight`) && 'beat-insight'),
+    'aria-label': who === 'me' ? 'Votre duelliste' : `Duelliste rival : ${s.name}`,
+  },
+  who === 'me' ? h('div', { class: 'portrait' }, h('img', { src: portraitUrl(playerFigure(c.mySignature), c.artSeed), alt: 'Votre portrait', draggable: 'false' })) : null,
+  who === 'opp' ? h('div', { class: 'portrait mini' }, h('img', { src: portraitUrl(c.rival, c.artSeed), alt: `Portrait de ${s.name}`, draggable: 'false' })) : null,
+  body,
   );
 }
 
@@ -150,60 +177,88 @@ function hpEl(c: Controller, s: SideView, who: 'me' | 'opp'): HTMLElement {
   );
 }
 
-function techChips(c: Controller, s: SideView, who: 'me' | 'opp'): HTMLElement {
+function oppTechChips(c: Controller, s: SideView): HTMLElement {
+  return h('span', { class: 'opp-techs', title: 'Techniques équipées du rival (profil public)' },
+    s.techniques.map((t) => h('span', { class: cls('tech', 'mini', s.techniqueUsed === t && 'used') }, `${t} (${TECHNIQUES[t].cost})`)));
+}
+
+/** Techniques du joueur : périphérie basse, sous les commandes (preview validée). */
+function techChips(c: Controller): HTMLElement {
   const v = c.view;
-  return h('div', { class: 'techs', 'aria-label': 'Techniques équipées' }, s.techniques.map((t) => {
+  const s = v.me;
+  return h('div', { class: 'techs', 'aria-label': 'Vos Techniques équipées' }, s.techniques.map((t) => {
     const def = TECHNIQUES[t];
     const used = s.techniqueUsed === t;
     let usable = false;
     let armed = false;
     let onclick: (() => void) | null = null;
-    if (who === 'me' && v.awaitingMe && c.canUseTech(t)) {
+    if (v.awaitingMe && c.canUseTech(t)) {
       if (v.phase === 'START' && (t === 'Sondage' || t === 'Recentrage')) { usable = true; armed = c.ui.startTech?.id === t || (t === 'Recentrage' && c.ui.recentrageArmed); onclick = () => c.toggleStartTech(t); }
       if (v.phase === 'TACTICS' && (t === 'Ancrage' || t === 'Rupture')) { usable = true; armed = c.ui.tacticsTech?.id === t || c.ui.techTargeting === t; onclick = () => c.toggleTacticsTech(t); }
     }
     return h('button', {
-      class: cls('tech', usable && 'usable', armed && 'armed', used && 'used'), type: 'button', 'data-key': `tech-${who}-${t}`,
+      class: cls('tech', usable && 'usable', armed && 'armed', used && 'used'), type: 'button', 'data-key': `tech-me-${t}`,
       title: `${t} — coût ${def.cost} Insight · ${def.timing}\n${def.text}`, 'aria-pressed': usable ? String(armed) : null, disabled: !usable,
       onclick,
     }, `${t} (${def.cost})`);
   }));
 }
 
-// --- Rangées de cartes ------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Plateau : emplacements posés sur la table
+
+function board(c: Controller): HTMLElement {
+  return h('main', { class: 'board', 'aria-label': 'Plateau de duel' }, sideRow(c, 'opp'), sideRow(c, 'me'));
+}
 
 function sideRow(c: Controller, who: 'me' | 'opp'): HTMLElement {
-  const v = c.view;
-  const s = who === 'me' ? v.me : v.opp;
+  const bv = c.boardView();
+  const s = who === 'me' ? bv.me : bv.opp;
   const z0 = slotZone(c, who, 0, s.slots[0] ?? null);
   const z1 = slotZone(c, who, 1, s.slots[1] ?? null);
   return h('section', { class: cls('side', who), 'aria-label': who === 'me' ? 'Votre terrain' : 'Terrain adverse' },
     h('div', { class: 'row' }, z0, primaryZone(c, who), z1));
 }
 
+/** Coquille d’emplacement : sol en perspective (décor) + libellé ; la carte se pose dessus. */
+function zoneShell(classes: Array<string | false | null | undefined>, label: string, attrs: Record<string, unknown>): HTMLElement {
+  return h('div', { class: cls('zone', ...classes), ...attrs },
+    h('span', { class: 'zone-label' }, label),
+    h('span', { class: 'zone-floor', 'aria-hidden': 'true' }),
+  );
+}
+
 function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
   const v = c.view;
   const s = who === 'me' ? v.me : v.opp;
-  const label = h('span', { class: 'zone-label' }, 'Primaire');
-  const zone = h('div', { class: cls('zone', 'primary', c.currentBeat()?.focus.includes(`${who}-primary`) && 'beat-focus'), 'data-drop': who === 'me' ? 'primary' : null, 'data-focus-key': `${who}-primary` }, label);
+  const zone = zoneShell(['primary', c.currentBeat()?.focus.includes(`${who}-primary`) && 'beat-focus'], 'Primaire', { 'data-drop': who === 'me' ? 'primary' : null, 'data-focus-key': `${who}-primary` });
   const revealed = v.reveal.primaries?.[who];
   if (revealed) {
-    const st = revealed.stance;
-    zone.append(h('span', { class: cls('stance-tag', st) }, st === 'assault' ? 'ASSAUT' : 'GARDE'));
-    const el = cardEl(revealed.defId, { artSeed: c.artSeed, classes: [c.ui.flipPrimaries && 'flip-in'], tag: 'div', banner: v.phase === 'RESOLVED' || v.phase === 'ENDED' || v.phase === 'REPEL' ? 'RÉSOLUE' : null, attrs: { tabindex: '0', 'data-key': `prim-${who}`, onmouseenter: () => inspect(c, revealed.defId), onfocus: () => inspect(c, revealed.defId) } });
-    zone.append(el);
+    // Après le Clash, les deux Primaires rejoignent la défausse (même la gagnante) : l’emplacement
+    // se vide dès que la mise en scène les a nettoyées (ou si la séquence est terminée).
+    const shown = c.primaryOnBoard();
+    if (shown === 'card') {
+      zone.append(cardEl(revealed.defId, { artSeed: c.artSeed, classes: [c.ui.flipPrimaries && 'flip-in', 'on-board'], tag: 'div', attrs: { tabindex: '0', 'data-key': `prim-${who}`, onmouseenter: () => inspect(c, revealed.defId), onmouseleave: () => inspect(c, null), onfocus: () => inspect(c, revealed.defId), onblur: () => inspect(c, null) } }));
+      zone.append(stanceBanner(revealed.stance));
+    } else if (shown === 'stage') {
+      zone.classList.add('lifted');
+      zone.append(h('span', { class: 'empty-hint' }, 'En Clash…'));
+    } else {
+      zone.classList.add('spent');
+      zone.append(h('span', { class: 'empty-hint' }, 'Défaussée'));
+    }
     return zone;
   }
   if (who === 'opp') {
-    if (s.primary) zone.append(backEl(c.artSeed, { banner: 'ENGAGÉE · SECRÈTE', label: 'Primaire adverse engagée, face cachée' }));
-    else zone.append(h('span', { class: 'empty-hint' }, v.phase === 'COMMIT' ? 'Le rival engage…' : ''));
+    if (s.primary) zone.append(backEl(c.artSeed, { banner: 'ENGAGÉE · SECRÈTE', label: 'Primaire adverse engagée, face cachée', classes: ['on-board'] }));
+    else zone.append(h('span', { class: 'empty-hint' }, v.phase === 'COMMIT' ? 'Le rival engage…' : 'Vide'));
     return zone;
   }
-  // Moi : brouillon (non verrouillé) ou engagement verrouillé
+  // Moi : brouillon (non verrouillé) ou engagement verrouillé (mon mode reste SECRET pour le rival).
   if (v.me.primary?.card) {
     const st = v.me.primary.stance!;
-    zone.append(h('span', { class: cls('stance-tag', st) }, st === 'assault' ? 'ASSAUT' : 'GARDE'));
-    zone.append(cardEl(v.me.primary.card.defId, { artSeed: c.artSeed, tag: 'div', banner: 'VERROUILLÉE · SECRÈTE', attrs: { tabindex: '0', 'data-key': 'prim-me-locked' } }));
+    zone.append(cardEl(v.me.primary.card.defId, { artSeed: c.artSeed, tag: 'div', banner: 'VERROUILLÉE · SECRÈTE', classes: ['on-board'], attrs: { tabindex: '0', 'data-key': 'prim-me-locked' } }));
+    zone.append(h('span', { class: cls('secret-stance', st), title: 'Votre mode, encore secret pour le rival' }, h('span', { class: 'sb-icon', html: STANCE_ICON[st] }), st === 'assault' ? 'Assaut (secret)' : 'Garde (secret)'));
     if (v.phase === 'LECTURE_CHANGE' && v.awaitingMe) zone.append(stanceChips(c, c.ui.lectureStance));
     return zone;
   }
@@ -220,31 +275,37 @@ function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
   }
   if (dr.primaryId && committing) {
     const defId = c.defIdOf(dr.primaryId);
-    zone.append(cardEl(defId, { artSeed: c.artSeed, state: 'draft', tag: 'div', banner: dr.stance ? `${dr.stance === 'assault' ? 'ASSAUT' : 'GARDE'} · NON VERROUILLÉE` : 'CHOISIR ASSAUT / GARDE', attrs: { 'data-drag-card': dr.primaryId, onmouseenter: () => inspect(c, defId) } }));
+    zone.append(cardEl(defId, { artSeed: c.artSeed, state: 'draft', tag: 'div', banner: dr.stance ? `${dr.stance === 'assault' ? 'ASSAUT' : 'GARDE'} · NON VERROUILLÉE` : 'CHOISIR ASSAUT / GARDE', classes: ['on-board'], attrs: { 'data-drag-card': dr.primaryId, onmouseenter: () => inspect(c, defId), onmouseleave: () => inspect(c, null) } }));
     zone.append(stanceChips(c, dr.stance));
-  } else if (committing) zone.append(h('span', { class: 'empty-hint' }, 'Glissez ou cliquez une carte ici'));
+  } else if (committing) zone.append(h('span', { class: 'empty-hint' }, 'Glissez une carte ici'));
+  else zone.append(h('span', { class: 'empty-hint' }, 'Vide'));
   return zone;
 }
 
-function stanceChips(c: Controller, current: 'assault' | 'guard' | null): HTMLElement {
+function stanceChips(c: Controller, current: Stance | null): HTMLElement {
+  const chip = (st: Stance, key: string, title: string) =>
+    h('button', { class: cls('chip', st), type: 'button', 'data-key': key, 'aria-pressed': String(current === st), title, onclick: (e: Event) => { e.stopPropagation(); c.setStance(st); } },
+      h('span', { class: 'sb-icon', html: STANCE_ICON[st] }), st === 'assault' ? 'ASSAUT' : 'GARDE');
   return h('div', { class: 'stance', role: 'group', 'aria-label': 'Mode de la Primaire' },
-    h('button', { class: 'chip assault', type: 'button', 'data-key': 'stance-assault', 'aria-pressed': String(current === 'assault'), title: 'Assaut (touche A)', onclick: (e: Event) => { e.stopPropagation(); c.setStance('assault'); } }, 'ASSAUT'),
-    h('button', { class: 'chip guard', type: 'button', 'data-key': 'stance-guard', 'aria-pressed': String(current === 'guard'), title: 'Garde (touche G)', onclick: (e: Event) => { e.stopPropagation(); c.setStance('guard'); } }, 'GARDE'),
+    chip('assault', 'stance-assault', 'Assaut (touche A) : inflige des dégâts si vous dominez'),
+    chip('guard', 'stance-guard', 'Garde (touche G) : absorbe, gagne les égalités'),
   );
 }
 
-function inspect(c: Controller, defId: string): void {
+/** Inspection flottante (survol / focus / appui long) : mise à jour CIBLÉE, jamais de re-rendu global. */
+function inspect(c: Controller, defId: string | null): void {
   if (c.ui.inspect === defId) return;
+  if (defId === null && document.querySelector('.inspector.pinned')) return;
   c.ui.inspect = defId;
-  const side = document.querySelector('.inspector');
-  if (side) side.replaceWith(inspector(c));
+  const el = document.querySelector('.inspector');
+  if (el) el.replaceWith(inspector(c));
 }
 
 function slotZone(c: Controller, who: 'me' | 'opp', slot: SlotIndex, s: SlotView | null): HTMLElement {
   const v = c.view;
   const key = who === 'me' ? (`slot${slot}` as const) : (`opp${slot}` as const);
   const bf = c.currentBeat()?.focus ?? [];
-  const zone = h('div', { class: cls('zone', (bf.includes(`${who}-slot-${slot}`) || bf.includes(`${who}-slots`)) && 'beat-focus'), 'data-drop': who === 'me' ? key : null, 'data-focus-key': `${who}-slot-${slot}` }, h('span', { class: 'zone-label' }, `Secondaire ${slot + 1}`));
+  const zone = zoneShell([(bf.includes(`${who}-slot-${slot}`) || bf.includes(`${who}-slots`)) && 'beat-focus'], `Secondaire ${slot + 1}`, { 'data-drop': who === 'me' ? key : null, 'data-focus-key': `${who}-slot-${slot}` });
   let interactive = false;
 
   // Brouillon de pose (moi, phase Engagement)
@@ -258,16 +319,16 @@ function slotZone(c: Controller, who: 'me' | 'opp', slot: SlotIndex, s: SlotView
 
   if (draftHere) {
     const defId = c.defIdOf(dr.secondaryId!);
-    zone.append(cardEl(defId, { artSeed: c.artSeed, state: 'draft', tag: 'div', banner: s ? 'REMPLACE · NON VERROUILLÉE' : 'POSE CACHÉE · NON VERROUILLÉE', attrs: { 'data-drag-card': dr.secondaryId, onmouseenter: () => inspect(c, defId) } }));
+    zone.append(cardEl(defId, { artSeed: c.artSeed, state: 'draft', tag: 'div', banner: s ? 'REMPLACE · NON VERROUILLÉE' : 'POSE CACHÉE · NON VERROUILLÉE', classes: ['on-board'], attrs: { 'data-drag-card': dr.secondaryId, onmouseenter: () => inspect(c, defId), onmouseleave: () => inspect(c, null) } }));
   } else if (s) {
     if (who === 'me' || s.card) {
       const defId = s.card!.defId;
       const state = s.masked && who === 'opp' ? 'masked' : s.state;
       const willReveal = who === 'me' && v.phase === 'PREPARE' && c.ui.reveal.includes(slot);
       const banner = who === 'me' && s.masked ? 'ACTIVE · MASQUÉE (rival)' : willReveal ? 'SERA RÉVÉLÉE' : null;
-      zone.append(cardEl(defId, { artSeed: c.artSeed, state, banner, tag: 'div', classes: [willReveal && 'will-reveal', s.maskSource && 'mask-source'], attrs: { onmouseenter: () => inspect(c, defId) } }));
+      zone.append(cardEl(defId, { artSeed: c.artSeed, state, banner, tag: 'div', classes: ['on-board', willReveal && 'will-reveal', s.maskSource && 'mask-source'], attrs: { onmouseenter: () => inspect(c, defId), onmouseleave: () => inspect(c, null) } }));
     } else {
-      zone.append(backEl(c.artSeed, { state: s.masked ? 'masked' : s.state === 'active' ? 'masked' : s.state }));
+      zone.append(backEl(c.artSeed, { state: s.masked ? 'masked' : s.state === 'active' ? 'masked' : s.state, classes: ['on-board'] }));
     }
   } else zone.append(h('span', { class: 'empty-hint' }, committing ? 'Nouvelle Secondaire (facultative)' : 'Vide'));
 
@@ -278,7 +339,7 @@ function slotZone(c: Controller, who: 'me' | 'opp', slot: SlotIndex, s: SlotView
     if (v.phase === 'TACTICS' && s?.state === 'active') {
       const plan = c.ui.plans[slot];
       if (v.awaitingMe && plan) zone.append(planBadge(plan.mode, plan.mode === 'interfere' ? `→ case ${plan.target! + 1}` : plan.mode === 'keep' ? '' : c.supportLabel(slot, plan.mode as 'rank' | 'damage'), false));
-      if (c.ui.tacticsTech?.id === 'Ancrage' && c.ui.tacticsTech.slot === slot) zone.append(h('span', { class: 'plan-badge', style: 'top:auto;bottom:calc(100% + 4px)' }, 'ANCRAGE'));
+      if (c.ui.tacticsTech?.id === 'Ancrage' && c.ui.tacticsTech.slot === slot) zone.append(h('span', { class: 'plan-badge anchor' }, 'ANCRAGE'));
       if (c.ui.menuSlot === slot) zone.append(tacticsMenu(c, slot));
       if (c.ui.targetingFor === slot) zone.classList.add('targeted');
     }
@@ -292,15 +353,17 @@ function slotZone(c: Controller, who: 'me' | 'opp', slot: SlotIndex, s: SlotView
     if (v.phase === 'TACTICS' && targetedBy >= 0) zone.append(h('span', { class: 'plan-badge' }, `CIBLE de votre case ${targetedBy + 1}`));
     if (c.ui.tacticsTech?.id === 'Rupture' && c.ui.tacticsTech.targetSlot === slot) zone.classList.add('targeted');
     if (v.phase === 'DISSIPATION' && v.awaitingMe && s?.maskSource) { zone.classList.add(c.ui.dissipTarget === slot ? 'targeted' : 'targetable'); interactive = true; }
-    if (v.phase === 'REPEL' && v.repel?.mine && s) { zone.classList.add(v.repel.choices.includes(slot) ? 'targetable' : 'illegal'); interactive = true; }
+    if (v.phase === 'REPEL' && v.repel?.mine && s && !c.sequencing) { zone.classList.add(v.repel.choices.includes(slot) ? 'targetable' : 'illegal'); interactive = true; }
+    if (v.phase === 'REPEL' && v.repel?.mine && c.sequencing && v.opp.slots[slot]) { zone.classList.add(v.repel.choices.includes(slot) ? 'targetable' : 'illegal'); interactive = true; }
   }
 
-  // Tactiques révélées (publiques) après verrouillage commun
+  // Tactiques révélées (publiques) après verrouillage commun ; ANNULÉ seulement une fois l’Interférence jouée.
   const revealed = v.reveal.tactics?.[who]?.[slot];
-  if (revealed && (v.phase !== 'TACTICS' || !v.awaitingMe)) {
+  if (revealed && (v.phase !== 'TACTICS' || !v.awaitingMe) && c.tacticShown(who, slot)) {
     const extra = revealed.mode === 'rank' ? (revealed.value !== null ? `+${revealed.value}` : '?') : revealed.mode === 'damage' ? (revealed.value !== null ? `×${revealed.value}` : '×?') : revealed.mode === 'interfere' ? `→ case ${(revealed.target ?? 0) + 1}` : '';
-    const cancelled = !!v.lastClash?.cancelled[who === 'me' ? v.viewer : (v.viewer === 'p1' ? 'p2' : 'p1')]?.includes(slot);
+    const cancelled = c.cancelShown() && !!v.lastClash?.cancelled[who === 'me' ? v.viewer : (v.viewer === 'p1' ? 'p2' : 'p1')]?.includes(slot);
     zone.append(planBadge(revealed.mode, cancelled ? `${extra} · ANNULÉ` : extra, cancelled));
+    if (cancelled) zone.classList.add('cancelled');
   }
 
   if (interactive) {
@@ -344,9 +407,10 @@ function tacticsMenu(c: Controller, slot: SlotIndex): HTMLElement {
   return menu;
 }
 
-// --- Bande centrale -----------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Commandes du tour (bas-droite) : phase, consigne, actions, Techniques
 
-function strip(c: Controller): HTMLElement {
+function command(c: Controller): HTMLElement {
   const v = c.view;
   const msg = h('div', { class: 'msg', role: 'status', 'aria-live': 'polite' });
   const actions = h('div', { class: 'btn-row' });
@@ -354,7 +418,8 @@ function strip(c: Controller): HTMLElement {
   const sub = (t: string) => h('span', { class: 'sub' }, t);
   const btn = (label: string, onclick: () => void, opts: { disabled?: boolean; ghost?: boolean; key: string } = { key: '' }) =>
     h('button', { class: cls('btn', opts.ghost && 'ghost'), type: 'button', 'data-key': opts.key, 'data-primary-action': opts.ghost ? null : 'true', disabled: !!opts.disabled, onclick }, label);
-
+  const nowIdx = PHASES.findIndex((p) => p.match.includes(v.phase));
+  const head = (who: string) => h('div', { class: 'cmd-phase' }, h('span', { class: 'ph' }, PHASES[nowIdx]?.label ?? v.phase), h('span', { class: 'who' }, who));
   const waitOpp = () => { msg.append(title(c.aiThinking ? 'Le rival réfléchit…' : 'En attente du rival'), sub('Ses choix restent secrets jusqu’à la révélation simultanée.')); };
 
   const beat = c.currentBeat();
@@ -362,26 +427,27 @@ function strip(c: Controller): HTMLElement {
     actions.append(btn('Passer ⏭', () => c.skipSequence(), { key: 'act-skip', ghost: true }));
     if (v.phase === 'RESOLVED') actions.append(btn('Tour suivant', () => c.nextTurn(), { key: 'act-next' }));
     if (v.phase === 'REPEL' && v.repel?.mine) actions.append(btn('Renoncer au Repoussement', () => c.skipRepel(), { key: 'act-repel-skip', ghost: true }));
-    return h('section', { class: 'strip seq', 'aria-label': 'Résolution du Clash' }, beatMsg(c), actions);
+    return h('section', { class: 'command seq', 'aria-label': 'Résolution du Clash' }, h('div', { class: 'cmd-phase' }, h('span', { class: 'ph' }, 'Résolution'), h('span', { class: 'who', 'data-beat-step': '' }, `${c.seq.index + 1} / ${c.seq.beats.length}`)), beatMsg(c), actions, techChips(c));
   }
+  let who = v.awaitingMe ? '◆ À vous de jouer' : '';
   switch (v.phase) {
     case 'START':
       if (v.awaitingMe) {
         const excess = Math.max(0, v.me.handCount - 4);
-        msg.append(title('Début du tour'), sub(excess ? `Main de ${v.me.handCount} cartes : cliquez ${excess} carte(s) à défausser pour revenir à 4.` : 'Techniques précoces disponibles (Sondage / Recentrage), facultatives.'));
+        msg.append(title('Début du tour'), sub(excess ? `Main de ${v.me.handCount} cartes : cliquez ${excess} carte(s) à défausser pour revenir à 4.` : 'Techniques précoces (Sondage / Recentrage) facultatives, ci-dessous.'));
         if (c.ui.startTech) msg.append(sub(` · Technique armée : ${c.ui.startTech.id}`));
         actions.append(btn('Valider', () => c.lockStart(), { key: 'act-start', disabled: c.ui.trim.length !== excess }));
       } else waitOpp();
       break;
     case 'PREPARE':
       if (v.awaitingMe) {
-        msg.append(title('Préparation — révélation volontaire'), sub('Cliquez vos réserves cachées à révéler (elles deviennent ACTIVES). Ou gardez-les cachées (inactives). Choix secret, appliqué simultanément.'));
+        msg.append(title('Préparation'), sub('Cliquez vos réserves cachées à révéler (elles deviennent ACTIVES), ou gardez-les cachées.'));
         actions.append(btn(c.ui.reveal.length ? `Révéler (${c.ui.reveal.length}) et valider` : 'Garder cachées et valider', () => c.lockPrepare(), { key: 'act-prepare' }));
       } else waitOpp();
       break;
     case 'DISSIPATION':
       if (v.awaitingMe) {
-        msg.append(title('Dissipation possible (1 Insight)'), sub('Cliquez la Dissimulation adverse pour neutraliser son camouflage, ou passez.'));
+        msg.append(title('Dissipation (1 Insight)'), sub('Cliquez la Dissimulation adverse pour neutraliser son camouflage, ou passez.'));
         actions.append(btn('Dissiper', () => c.lockDissipation(true), { key: 'act-dissip', disabled: c.ui.dissipTarget === null }), btn('Passer', () => c.lockDissipation(false), { key: 'act-dissip-pass', ghost: true }));
       } else waitOpp();
       break;
@@ -390,20 +456,20 @@ function strip(c: Controller): HTMLElement {
         const dr = c.ui.draft;
         const prim = dr.primaryId ? cardDef(c.defIdOf(dr.primaryId)) : null;
         msg.append(title('Engagement secret'));
-        if (prim) msg.append(sub(`${cardTitle(prim)} · Rang ${rankLabel(prim)} · Puissance ${prim.power}${dr.stance ? ` · ${dr.stance === 'assault' ? 'ASSAUT : dégâts de base ' + prim.power + ' contre un Assaut dominé' : 'GARDE : absorbe jusqu’à ' + prim.power + ', gagne les égalités'}` : ' · choisissez ASSAUT ou GARDE'}`));
-        else msg.append(sub('Glissez (ou cliquez puis cliquez la case) une carte sur la Primaire — obligatoire. Une nouvelle Secondaire facultative se pose face cachée en CHARGEMENT.'));
+        if (prim) msg.append(sub(`${cardTitle(prim)} · Rang ${rankLabel(prim)} · Puissance ${prim.power}${dr.stance ? ` · ${dr.stance === 'assault' ? `ASSAUT : ${prim.power} dégâts de base si vous dominez` : `GARDE : absorbe jusqu’à ${prim.power}, gagne les égalités`}` : ' · choisissez ASSAUT ou GARDE'}`));
+        else msg.append(sub('Glissez une carte sur la Primaire (ou cliquez-la puis la case). Secondaire facultative, posée cachée.'));
         actions.append(btn('Verrouiller l’engagement', () => c.lockCommit(), { key: 'act-commit', disabled: !dr.primaryId || !dr.stance }));
       } else waitOpp();
       break;
     case 'LECTURE':
       if (v.awaitingMe) {
-        msg.append(title('Lecture (2 Insight)'), sub('Observer le mode initial adverse, puis éventuellement changer le mode de votre Primaire.'));
+        msg.append(title('Lecture (2 Insight)'), sub('Observer le mode initial adverse, puis éventuellement changer le vôtre.'));
         actions.append(btn('Utiliser Lecture', () => c.lecture(true), { key: 'act-lecture' }), btn('Passer', () => c.lecture(false), { key: 'act-lecture-pass', ghost: true }));
       } else waitOpp();
       break;
     case 'LECTURE_CHANGE':
       if (v.awaitingMe) {
-        msg.append(title(`Lecture : le rival a engagé en ${v.lectureSeen === 'assault' ? 'ASSAUT' : 'GARDE'} (mode initial)`), sub('Changez éventuellement votre mode (boutons sous votre Primaire), puis validez.'));
+        msg.append(title(`Lecture : le rival a engagé en ${v.lectureSeen === 'assault' ? 'ASSAUT' : 'GARDE'}`), sub('Mode initial (information autorisée). Changez éventuellement le vôtre, puis validez.'));
         actions.append(btn('Valider le mode', () => c.lockLectureStance(), { key: 'act-lecture-stance' }));
       } else waitOpp();
       break;
@@ -411,57 +477,60 @@ function strip(c: Controller): HTMLElement {
       if (v.awaitingMe) {
         const p = c.preview();
         msg.append(title('Choix tactiques secrets'));
-        if (p) msg.append(h('span', { class: 'result' }, `Provisoire : score ${p.myScore} contre ${p.oppScore} · M ×${p.myMult} · ${p.outcome}${p.dealt || p.taken ? ` · infligés ${p.dealt} / subis ${p.taken}` : ''}`), sub(' — sous réserve des actions secrètes adverses (hypothèse : le rival conserve).'));
-        if (c.ui.targetingFor !== null) msg.append(sub(' · Ciblage d’Interférence en cours (Échap pour annuler).'));
+        if (p) msg.append(h('span', { class: 'result' }, `Provisoire : ${p.myScore} contre ${p.oppScore} · ×${p.myMult} · ${p.outcome}${p.dealt || p.taken ? ` · ${p.dealt} / ${p.taken}` : ''}`), sub(' (hypothèse : le rival conserve).'));
+        if (c.ui.targetingFor !== null) msg.append(sub(' · Ciblage d’Interférence (Échap pour annuler).'));
         actions.append(btn('Verrouiller les choix', () => c.lockTactics(), { key: 'act-tactics', disabled: c.ui.techTargeting !== null }));
       } else waitOpp();
       break;
     case 'REPEL':
       if (v.repel?.mine) {
-        msg.append(title(`Repoussement (${v.repel.kind === 'emprise' ? 'Emprise' : v.repel.kind === 'flamme' ? 'Flamme conquérante' : v.repel.kind === 'rupture' ? 'Rupture' : 'Garde victorieuse'})`), sub('Cliquez une Secondaire adverse surlignée pour la renvoyer à son propriétaire.'));
+        msg.append(title(`Repoussement (${v.repel.kind === 'emprise' ? 'Emprise' : v.repel.kind === 'flamme' ? 'Flamme conquérante' : v.repel.kind === 'rupture' ? 'Rupture' : 'Garde victorieuse'})`), sub('Cliquez une Secondaire adverse surlignée pour la renvoyer.'));
         actions.append(btn('Renoncer', () => c.skipRepel(), { key: 'act-repel-skip', ghost: true }));
-      } else { msg.append(title('Le rival choisit un Repoussement'), sub('Aucune réaction possible.')); }
+      } else { msg.append(title('Le rival choisit un Repoussement'), sub('Aucune réaction possible.')); who = ''; }
       break;
     case 'RESOLVED':
     case 'ENDED': {
       const r = v.lastClash;
+      who = '';
       if (r) {
         msg.append(title(`Clash du tour ${r.turn}`), h('span', { class: cls('result', r.zeroDamageRankWin && 'zero') }, verdictText(r, 'p1')),
-          sub(` PV perdus : vous ${r.damage.p1}${r.fixedDamage.p1 ? ` (dont ${r.fixedDamage.p1} fixes)` : ''}, rival ${r.damage.p2}${r.fixedDamage.p2 ? ` (dont ${r.fixedDamage.p2} fixes)` : ''}.`));
+          sub(` PV perdus : vous ${r.damage.p1}, rival ${r.damage.p2}. Primaires défaussées.`));
       } else msg.append(title('Tour résolu'));
       if (v.overtime && v.phase === 'RESOLVED' && v.me.hp === 1 && v.opp.hp === 1) msg.append(sub(` · PROLONGATION ${v.overtime} : 1 PV chacun.`));
       if (v.phase === 'RESOLVED') actions.append(btn('Tour suivant', () => c.nextTurn(), { key: 'act-next' }));
       break;
     }
   }
-  return h('section', { class: 'strip', 'aria-label': 'Phase et résultat' }, msg, actions);
+  return h('section', { class: 'command', 'aria-label': 'Commandes du tour' }, head(who), msg, actions, techChips(c));
 }
 
 function beatMsg(c: Controller): HTMLElement {
   const beat = c.currentBeat()!;
-  const q = c.seq!;
   return h('div', { class: cls('msg', 'beat', `tone-${beat.tone}`), role: 'status', 'aria-live': 'polite' },
-    h('span', { class: 'beat-step' }, `Résolution · ${q.index + 1}/${q.beats.length}`),
     h('span', { class: 'beat-title' }, beat.title),
     h('span', { class: 'beat-detail' }, beat.detail),
   );
 }
 
 /**
- * Mise à jour CIBLÉE d’un temps de résolution : message, PV, surbrillances, journal.
+ * Mise à jour CIBLÉE d’un temps de résolution : message, PV, compteurs, surbrillances, journal.
  * Les boutons (Passer, Tour suivant, cibles) ne sont PAS recréés : aucun clic ne peut être perdu.
  */
 export function patchBeat(root: HTMLElement, c: Controller): void {
   const beat = c.currentBeat();
-  const msg = root.querySelector('.strip .msg');
+  const msg = root.querySelector('.command .msg');
   if (!beat || !msg || !msg.classList.contains('beat')) { return; }
   msg.replaceWith(beatMsg(c));
+  const step = root.querySelector('[data-beat-step]');
+  if (step && c.seq) step.textContent = `${c.seq.index + 1} / ${c.seq.beats.length}`;
   for (const who of ['me', 'opp'] as const) {
     const side = who === 'me' ? c.view.me : c.view.opp;
     root.querySelector(`.hud.${who} .hp`)?.replaceWith(hpEl(c, side, who));
-    const hud = root.querySelector(`.hud.${who}`);
-    hud?.classList.toggle('beat-hit', beat.focus.includes(`${who}-hp`));
-    hud?.classList.toggle('beat-insight', beat.focus.includes(`${who}-insight`));
+    const d = root.querySelector(`[data-discard="${who}"]`);
+    if (d) d.textContent = String(c.displayCounts(who).discard);
+    const hudEl = root.querySelector(`.hud.${who}`);
+    hudEl?.classList.toggle('beat-hit', beat.focus.includes(`${who}-hp`));
+    hudEl?.classList.toggle('beat-insight', beat.focus.includes(`${who}-insight`));
   }
   root.querySelectorAll<HTMLElement>('[data-focus-key]').forEach((z) => {
     const k = z.dataset.focusKey!;
@@ -476,19 +545,20 @@ export function patchBeat(root: HTMLElement, c: Controller): void {
   }
 }
 
-// --- Main ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Main (bas-centre)
 
 function hand(c: Controller): HTMLElement {
   const v = c.view;
   const dr = c.ui.draft;
   const cards = (v.me.hand ?? []).filter((x) => !(v.phase === 'COMMIT' && v.awaitingMe && (x.cardId === dr.primaryId || x.cardId === dr.secondaryId)));
-  const wrap = h('section', { class: 'hand', 'aria-label': 'Votre main', 'data-drop': 'hand' });
+  const wrap = h('section', { class: 'hand', 'aria-label': 'Votre main', 'data-drop': 'hand', style: `--n:${Math.max(4, cards.length)}` });
   if (!cards.length) wrap.append(h('span', { class: 'hand-empty' }, (v.me.hand ?? []).length ? 'Cartes posées (non verrouillées)' : 'Main vide'));
   cards.forEach((x, i) => {
     const el = cardEl(x.defId, {
       artSeed: c.artSeed,
       classes: ['hand-card', c.ui.selected === x.cardId && 'selected', c.ui.trim.includes(x.cardId) && 'trim-mark'],
-      attrs: { 'data-drag-card': x.cardId, 'data-key': `hand-${x.cardId}`, 'aria-pressed': String(c.ui.selected === x.cardId), 'aria-keyshortcuts': String(i + 1), onfocus: () => inspect(c, x.defId), onmouseenter: () => inspect(c, x.defId) },
+      attrs: { 'data-drag-card': x.cardId, 'data-key': `hand-${x.cardId}`, 'aria-pressed': String(c.ui.selected === x.cardId), 'aria-keyshortcuts': String(i + 1), onfocus: () => inspect(c, x.defId), onblur: () => inspect(c, null), onmouseenter: () => inspect(c, x.defId), onmouseleave: () => inspect(c, null) },
     });
     if (c.ui.startTech?.id === 'Recentrage' && c.ui.startTech.cardId === x.cardId) el.append(h('span', { class: 'state-banner' }, 'RECENTRAGE'));
     wrap.append(el);
@@ -496,28 +566,21 @@ function hand(c: Controller): HTMLElement {
   return wrap;
 }
 
-// --- Barre latérale -------------------------------------------------------------
-
-function sidebar(c: Controller): HTMLElement {
-  return h('aside', { class: cls('sidebar', c.ui.journalOpen && 'open'), 'aria-label': 'Inspection et journal' }, inspector(c), journal(c));
-}
+// ---------------------------------------------------------------------------
+// Inspection flottante et tiroir du journal
 
 function inspector(c: Controller): HTMLElement {
   const id = c.ui.inspect;
-  if (!id) {
-    return h('section', { class: 'inspector' }, h('div', { class: 'placeholder' },
-      h('b', null, 'Inspection'), ' — survolez, focalisez ou appuyez longuement sur une carte visible pour lire ses détails. ',
-      'Rang = priorité du Clash ; Puissance = dégâts / absorption. Raccourcis : 1-4 main, A/G mode, Échap annuler, Entrée/N action principale.'));
-  }
+  if (!id) return h('section', { class: 'inspector', 'aria-hidden': 'true' });
   const def = cardDef(id);
   const fr = RARITY_FRAME[def.rarity];
-  return h('section', { class: 'inspector', style: `--fb:${fr.b}` },
+  return h('section', { class: 'inspector show', style: `--fb:${fr.b}`, 'aria-label': `Inspection : ${cardTitle(def)}` },
     cardEl(id, { artSeed: c.artSeed, tag: 'div' }),
-    h('div', null,
+    h('div', { class: 'insp-text' },
       h('h3', null, cardTitle(def)),
       h('div', { class: 'meta' }, `${def.family} ${emblemText(def.family)} · ${fr.label} · ${FAMILY_THEME[def.family]}`),
       h('div', { class: 'stats-line' }, 'Rang ', h('b', null, def.signature ? '∞ (priorité absolue)' : `${rankLabel(def)} (${def.rank})`), ' · Puissance ', h('b', null, String(def.power))),
-      def.effect ? h('div', { class: 'eff' }, h('em', null, EFFECTS[def.effect].name), ` — ${EFFECTS[def.effect].role}. ${EFFECTS[def.effect].text}`) : h('div', { class: 'eff' }, 'Basic : aucun effet individuel. Fonctions Basic : Primaire Assaut/Garde ; Secondaire Rang, Dégâts, Interférer, Conserver.'),
+      def.effect ? h('div', { class: 'eff' }, h('em', null, EFFECTS[def.effect].name), ` — ${EFFECTS[def.effect].role}. ${EFFECTS[def.effect].text}`) : h('div', { class: 'eff' }, 'Basic : aucun effet individuel. Primaire Assaut/Garde ; Secondaire Rang, Dégâts, Interférer, Conserver.'),
       def.signature ? h('div', { class: 'eff' }, 'Signature : uniquement Primaire. ∞ domine tout score ordinaire ; Puissance finie, absorbable par une Garde.') : null,
     ),
   );
@@ -525,6 +588,13 @@ function inspector(c: Controller): HTMLElement {
 
 function emblemText(f: string): string {
   return { Cendre: '◆', Voile: '◈', Ronce: '✿', Astre: '✦' }[f] ?? '';
+}
+
+function drawer(c: Controller, hooks: BoardHooks): HTMLElement {
+  return h('aside', { class: cls('drawer', c.ui.journalOpen && 'open'), 'aria-label': 'Journal du duel', 'aria-hidden': c.ui.journalOpen ? null : 'true' },
+    h('div', { class: 'drawer-head' }, h('b', null, 'Journal'), h('span', { class: 'sub' }, 'public + vos informations privées'),
+      h('button', { class: 'tool sq', type: 'button', 'data-key': 'drawer-close', 'aria-label': 'Fermer le journal', onclick: () => hooks.onToggleTool('journal') }, '✕')),
+    journal(c));
 }
 
 function journal(c: Controller): HTMLElement {
@@ -537,15 +607,13 @@ function journal(c: Controller): HTMLElement {
   const turns = [...byTurn.keys()].sort((a, b) => a - b);
   const last = turns[turns.length - 1];
   return h('section', { class: 'journal', 'aria-label': 'Journal du duel', 'aria-live': 'off', tabindex: '0' },
-    h('h4', null, 'Journal (public + vos informations privées)'),
     turns.map((t) => {
       const lines = byTurn.get(t)!.filter((l) => l.tone !== 'system' || !/^— TOUR/.test(l.text));
       const clash = lines.find((l) => l.tone === 'clash' && /^CLASH/.test(l.text));
       const summary = clash ? clash.text.replace(/^CLASH — Scores : /, '').slice(0, 90) : `${lines.length} évènement(s)`;
-      const details = h('details', { class: 'turn', open: t === last ? true : null },
+      return h('details', { class: 'turn', open: t === last ? true : null },
         h('summary', null, h('b', null, `Tour ${t}`), h('span', { class: 'turn-sum' }, ` — ${summary}`)),
         lines.map((l) => h('div', { class: cls('line', l.tone) }, l.text)));
-      return details;
     }));
 }
 

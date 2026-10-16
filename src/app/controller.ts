@@ -17,7 +17,7 @@ import type { ArenaHandle } from '../scene/arena';
 import { PresentationDirector, type DirectorInput, type ViewMode } from '../presentation/director';
 import { ExpressionDirector, type Expression } from '../presentation/expression';
 import type { RivalPersonality } from '../presentation/personalities';
-import { buildResolutionBeats, hpAfterBeat, hpBeforeSequence, resolutionStart, type Beat } from '../presentation/beats';
+import { BEAT_ORDER, buildResolutionBeats, hpAfterBeat, hpBeforeSequence, resolutionStart, type Beat, type BeatKind } from '../presentation/beats';
 import type { AppParams } from './params';
 import type { Scenario } from './scenarios';
 
@@ -92,8 +92,13 @@ export class Controller {
   readonly expr: ExpressionDirector;
   /** Dernière expression visible du rival (affichage d’une légende, QA). */
   rivalExpression: Expression | null = null;
-  /** Séquence de résolution en cours (présentation pure ; l’état moteur est déjà final). */
-  seq: { beats: Beat[]; index: number; hp: Record<PlayerId, number>; hidden: Set<number>; done: boolean; rendered: boolean } | null = null;
+  /**
+   * Séquence de résolution en cours (présentation pure ; l’état moteur est déjà final).
+   * `before` = vue du joueur juste avant la résolution : le plateau la montre jusqu’au temps des
+   * destinations (les Secondaires engagées restent visibles pendant le Clash, puis partent).
+   */
+  seq: { beats: Beat[]; index: number; hp: Record<PlayerId, number>; hidden: Set<number>; done: boolean; rendered: boolean; before: PlayerView | null; events: GameEvent[] } | null = null;
+  private exprFn: (() => void) | null = null;
   private seqTimer = 0;
   private exprQueue: Expression[] = [];
   private exprTimer = 0;
@@ -123,17 +128,23 @@ export class Controller {
     this.beatFn = fn;
   }
 
+  /** Mise à jour ciblée de la bulle du rival (nouvelle expression publique). */
+  onExpression(fn: () => void): void {
+    this.exprFn = fn;
+  }
+
   get artSeed(): number {
     return this.params.artSeed;
   }
 
   // ------------------------------------------------------------------------
   refresh(newEvents: GameEvent[]): void {
+    const before = (this.view as PlayerView | undefined) ?? null;
     this.view = viewFor(this.match.state, 'p1');
     // Une résolution de Clash est présentée par temps successifs ; le reste est immédiat.
     const start = resolutionStart(newEvents);
     const immediate = start >= 0 ? newEvents.slice(0, start) : newEvents;
-    if (start >= 0) this.startSequence(newEvents.slice(start));
+    if (start >= 0) this.startSequence(newEvents.slice(start), before);
     this.rebuildJournal();
     const key = `${this.view.turn}:${this.view.phase}`;
     if (key !== this.ui.phaseKey) {
@@ -160,11 +171,56 @@ export class Controller {
   // ------------------------------------------------------------------------
   // Séquence de résolution (M02 §4)
 
-  private startSequence(events: GameEvent[]): void {
+  private startSequence(events: GameEvent[], before: PlayerView | null): void {
     window.clearTimeout(this.seqTimer);
-    const beats = buildResolutionBeats(events, { viewer: 'p1', primaries: this.match.state.reveal.primaries });
+    const beats = buildResolutionBeats(events, { viewer: 'p1', primaries: this.view.reveal.primaries ? { p1: this.view.reveal.primaries.me, p2: this.view.reveal.primaries.opp } : null });
     const finalHp = { p1: this.view.me.hp, p2: this.view.opp.hp };
-    this.seq = { beats, index: -1, hp: hpBeforeSequence(events, finalHp), hidden: new Set(visibleEvents(events, 'p1').map((e) => e.seq)), done: false, rendered: false };
+    this.seq = { beats, index: -1, hp: hpBeforeSequence(events, finalHp), hidden: new Set(visibleEvents(events, 'p1').map((e) => e.seq)), done: false, rendered: false, before, events: visibleEvents(events, 'p1') };
+  }
+
+  /** Vrai si la séquence a atteint (ou dépassé) l’étape `kind` — ou s’il n’y a pas de séquence. */
+  reached(kind: BeatKind): boolean {
+    const q = this.seq;
+    if (!q || q.done) return true;
+    const cur = q.beats[q.index];
+    if (!cur) return false;
+    return BEAT_ORDER.indexOf(cur.kind) >= BEAT_ORDER.indexOf(kind);
+  }
+
+  /** Vue du plateau : instantané d’avant la résolution tant que les cartes engagées n’ont pas « quitté » la table. */
+  boardView(): PlayerView {
+    const q = this.seq;
+    if (q && !q.done && q.before && !this.reached('destination')) return q.before;
+    return this.view;
+  }
+
+  /** Main / pioche / défausse affichées (mises en scène avec le départ des cartes vers la défausse). */
+  displayCounts(who: 'me' | 'opp'): { hand: number; deck: number; discard: number } {
+    const s = who === 'me' ? this.boardView().me : this.boardView().opp;
+    return { hand: s.handCount, deck: s.deckCount, discard: s.discard.length };
+  }
+
+  /** Où montrer une Primaire révélée : sur sa case, sur la scène du Clash, ou nulle part (défaussée). */
+  primaryOnBoard(): 'card' | 'stage' | 'gone' {
+    const ph = this.view.phase;
+    if (this.sequencing) {
+      if (!this.reached('rank')) return 'card';
+      if (!this.reached('destination')) return 'stage';
+      return 'gone';
+    }
+    return ph === 'LECTURE' || ph === 'LECTURE_CHANGE' || ph === 'TACTICS' ? 'card' : 'gone';
+  }
+
+  /** Badge de tactique révélée : visible sur une carte encore présente sur la case. */
+  tacticShown(who: 'me' | 'opp', slot: SlotIndex): boolean {
+    if (this.sequencing && !this.reached('tactics')) return false;
+    const s = who === 'me' ? this.boardView().me.slots[slot] : this.boardView().opp.slots[slot];
+    return !!s;
+  }
+
+  /** ANNULÉ (Interférence) : affiché une fois le temps des Interférences joué. */
+  cancelShown(): boolean {
+    return this.reached('interference');
   }
 
   private beatDelay(b: Beat): number {
@@ -343,8 +399,7 @@ export class Controller {
     if (this.params.pose) e = { mood: this.params.pose as Expression['mood'], intensity: 1, gaze: 'player', gesture: null, hold: 0, cause: 'pose de revue (QA)' };
     this.rivalExpression = e;
     this.arena?.expression(e);
-    const cap = document.querySelector('[data-rival-caption]');
-    if (cap) cap.textContent = rivalCaption(e);
+    this.exprFn?.();
   }
 
   /** Facteur de rythme des animations (présentation seulement, jamais le moteur). */
