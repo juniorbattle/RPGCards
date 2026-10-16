@@ -43,7 +43,8 @@ export interface SideView {
   /** Uniquement pour soi-même. */
   hand: CardRef[] | null;
   deckCount: number;
-  discard: string[];
+  /** Défausse publique ; `null` : carte camouflée défaussée ce tour, nommée à la fin du tour (ARB-005). */
+  discard: Array<string | null>;
   slots: [SlotView | null, SlotView | null];
   /** Primaire : identité/mode visibles pour soi, ou après révélation simultanée. */
   primary: null | { committed: true; card: CardRef | null; stance: Stance | null; initialStance: Stance | null };
@@ -121,7 +122,7 @@ function side(state: GameState, pid: PlayerId, viewer: PlayerId): SideView {
     handCount: p.hand.length,
     hand: self ? p.hand.map((id) => ({ cardId: id, defId: state.cards[id]!.defId })) : null,
     deckCount: p.deck.length,
-    discard: p.discard.map((id) => state.cards[id]!.defId),
+    discard: p.discard.map((id) => (!self && p.maskedDiscards.includes(id) ? null : state.cards[id]!.defId)),
     slots,
     primary,
     locked: !!state.pending[pid],

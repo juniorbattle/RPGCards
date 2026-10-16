@@ -60,13 +60,15 @@ export function describeEvent(ev: GameEvent, viewer: PlayerId): JournalLine | nu
     case 'masking':
       return line(`Dissimulation : la Secondaire ${me(d.player) ? 'de votre' : 'du rival en'} ${slotName(d.target)} est masquée jusqu’à la fin du tour.`, 'effect');
     case 'dissipation':
-      return line(`Dissipation neutralise le camouflage : ${t(d.defId)} (${slotName(d.slot)}) redevient visible.`, 'effect');
+      return line(`Dissipation neutralise le camouflage : ${t(d.defId)} (${slotName(d.slot)}) redevient visible ; ce qui a déjà été observé reste acquis.`, 'effect');
     case 'locked':
       return null;
     case 'committed':
       if (d.own) return line(`[Privé] Engagement : ${t(d.primaryDefId)} en ${STANCE[d.stance as Stance]}${d.secondaryDefId ? ` + ${t(d.secondaryDefId)} en Secondaire (${slotName(d.placedSlot)}, CHARGEMENT)` : ''}.`);
       return line(`${verb(d.player, 'engagez', 'engage')} une Primaire face cachée${d.placedSlot !== null ? ` et ${me(d.player) ? 'préparez' : 'prépare'} une Secondaire en ${slotName(d.placedSlot)} (chargement)` : ''}.`);
     case 'replaced':
+      if (d.own) return line(`[Privé] Votre Secondaire masquée remplacée (${slotName(d.slot)}) : ${t(d.defId)}.`);
+      if (d.masked) return line(`${verb(d.player, 'remplacez', 'remplace')} la Secondaire en ${slotName(d.slot)} : une Secondaire ${d.family} masquée rejoint la défausse (nommée en fin de tour).`);
       return line(`${verb(d.player, 'remplacez', 'remplace')} la Secondaire en ${slotName(d.slot)} : ${t(d.defId)} rejoint la défausse.`);
     case 'lecture':
       return line(`[Privé] Lecture : mode initial adverse ${STANCE[d.opponentInitialStance as Stance]}.`);
@@ -107,15 +109,21 @@ export function describeEvent(ev: GameEvent, viewer: PlayerId): JournalLine | nu
       return line(`CLASH — Scores : Vous ${sc[viewer]} / Rival ${sc[o]}. ${verdictText(d as unknown as ClashReport, viewer)} PV perdus : Vous ${d.damage[viewer]} / Rival ${d.damage[o]}.`, 'clash');
     }
     case 'effect': {
-      const name = d.technique ? String(d.effect).replace(/^./, (c: string) => c.toUpperCase()) : EFFECTS[d.effect as EffectId]?.name ?? String(d.effect);
       const status = d.status === 'success' ? 'RÉUSSI' : d.status === 'cancelled' ? 'ANNULÉ' : 'CONDITION NON REMPLIE';
-      return line(`${name} (${me(d.player) ? 'vous' : 'rival'}) : ${status} — ${d.detail}.`, 'effect');
+      // Origine camouflée (ADR 011) : famille et case seulement, jamais de nom d’effet.
+      if (d.masked) return line(`Effet de ${me(d.player) ? 'votre' : 'la'} Secondaire ${d.family} masquée${me(d.player) ? '' : ' du rival'} (${slotName(d.slot)}) : ${status} — ${d.detail}.`, 'effect');
+      const name = d.technique ? String(d.effect).replace(/^./, (c: string) => c.toUpperCase()) : EFFECTS[d.effect as EffectId]?.name ?? String(d.effect);
+      if (d.own) return line(`[Privé] ${name} (votre Secondaire masquée, ${slotName(d.slot)}) : ${status} — ${d.detail}.`);
+      const detail = d.by ? `neutralisation par l’effet de ${me(d.by.player) ? 'votre' : 'la'} Secondaire ${d.by.family} masquée${me(d.by.player) ? '' : ' du rival'} (${slotName(d.by.slot)})` : d.detail;
+      return line(`${name} (${me(d.player) ? 'vous' : 'rival'}) : ${status} — ${detail}.`, 'effect');
     }
     case 'damage':
       return line(`${verb(d.player, 'perdez', 'perd')} ${d.amount} PV${d.fixed ? ` (dont ${d.fixed} fixes)` : ''} → ${d.hp} PV.`, 'damage');
     case 'heal':
+      if (d.own) return line(`[Privé] Soin de votre Secondaire masquée : ${d.amount} PV → ${d.hp} PV (non annoncé au rival).`);
       return line(`${verb(d.player, 'récupérez', 'récupère')} ${d.amount} PV → ${d.hp} PV.`, 'effect');
     case 'insight':
+      if (d.own) return line(`[Privé] Motifs réels de l’Insight : ${(d.reasons as string[]).join(', ')}${d.gain ? '' : ' (gain plafonné)'} — l’effet de votre carte masquée n’est pas nommé au rival.`);
       return d.gain
         ? line(`${verb(d.player, 'gagnez', 'gagne')} 1 Insight (${(d.reasons as string[]).join(', ')}) → ${d.insight}/2.`, 'effect')
         : line(`${subj(d.player)} : gain d’Insight plafonné (${(d.reasons as string[]).join(', ')}).`);

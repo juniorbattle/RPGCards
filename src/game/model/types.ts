@@ -82,6 +82,11 @@ export interface PlayerState {
   primary: { cardId: string; stance: Stance; initialStance: Stance } | null;
   /** Camouflage Dissimulation actif ce tour : source (Dissimulation) et cible masquée. */
   mask: { source: SlotIndex; target: SlotIndex } | null;
+  /**
+   * Instances défaussées CE tour alors qu’elles étaient camouflées (consommées ou remplacées) : leur
+   * identité ne devient publique qu’à la fin du tour (ARB-005) ; la vue adverse les montre `null`.
+   */
+  maskedDiscards: string[];
 }
 
 /** Données privées de résolution conservées pendant la fenêtre REPEL. */
@@ -91,6 +96,8 @@ export interface PendingRepel {
   choices: SlotIndex[];
   toBottom: boolean;
   racine: boolean;
+  /** Case de la Racine engagée si elle était camouflée (déjà consommée) : son effet reste privé. */
+  racineHiddenSlot?: SlotIndex;
 }
 
 export interface GameConfig {
@@ -175,7 +182,26 @@ export interface ClashReport {
   zeroDamageRankWin: boolean;
   /** Usages annulés par Interférence (public après verrouillage commun). */
   cancelled: Record<PlayerId, SlotIndex[]>;
-  effects: Array<{ player: PlayerId; effect: EffectId; status: 'success' | 'failed' | 'cancelled'; detail: string }>;
+  /** Effets tels que PUBLIÉS (ADR 011) : ceux d’une Secondaire camouflée n’y figurent que sous forme générique. */
+  effects: PublicEffect[];
+}
+
+/**
+ * Payload PUBLIC d’un événement `effect` (ADR 011), construit par liste blanche. Effet d’une carte
+ * publique : nom, statut, motif (inchangé). Effet d’une Secondaire camouflée : `effect: null`, origine
+ * générique (famille et case, publiques) et SEULE conséquence publiquement observable, jamais un échec.
+ */
+export interface PublicEffect {
+  player: PlayerId;
+  effect: EffectId | 'rupture' | null;
+  status: 'success' | 'failed' | 'cancelled';
+  detail: string;
+  technique?: true;
+  masked?: true;
+  family?: Family;
+  slot?: SlotIndex;
+  /** Effet de Primaire neutralisé par une Secondaire camouflée : origine générique (famille, case). */
+  by?: { player: PlayerId; family: Family; slot: SlotIndex };
 }
 
 export interface RevealedTactic {

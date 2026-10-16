@@ -7,11 +7,12 @@ import { buildDeck, cardDef, EFFECTS, type CardDef } from '../catalog/cards';
 import { INSIGHT_MAX, INSIGHT_START, TECHNIQUES, type TechniqueId } from '../catalog/techniques';
 import {
   other, PLAYERS, RuleError, SLOTS,
-  type ClashReport, type Command, type GameConfig, type GameEvent, type GameState, type Phase,
+  type ClashReport, type Command, type GameConfig, type GameEvent, type GameState, type Phase, type PublicEffect,
   type PlayerCommand, type PlayerId, type PlayerState, type SecondarySlot, type SecondaryState,
   type SlotIndex, type Stance, type TacticPlan, type Visibility,
 } from '../model/types';
 import { computeClash, rankSupport, damageCoefficient, type ClashInput, type ClashUse } from './clash';
+import { hiddenSource, ownerEffect, publicEffect, publishInsight, type Concealment, type Observed } from './publication';
 import { nextInt, seedToState, shuffleInPlace } from './rng';
 import { assertInvariants } from './invariants';
 
@@ -102,7 +103,7 @@ export function createGame(config: GameConfig = DEFAULT_CONFIG): { state: GameSt
       id: pid, name: pc.name, hp: pc.hp, maxHp: pc.hp,
       insight: Math.max(0, Math.min(INSIGHT_MAX, pc.insightStart ?? INSIGHT_START)),
       insightGained: 0, techniqueUsed: null, techniques, signatureFamily: pc.signature,
-      deck: ids, hand: [], discard: [], slots: [null, null], primary: null, mask: null,
+      deck: ids, hand: [], discard: [], slots: [null, null], primary: null, mask: null, maskedDiscards: [],
     };
   }
   const ctx = new Ctx(state);
@@ -199,6 +200,7 @@ function beginTurn(ctx: Ctx): void {
     p.insightGained = 0;
     p.techniqueUsed = null;
     p.mask = null;
+    p.maskedDiscards = [];
     p.primary = null;
     if (p.hand.length <= 4) drawTo4(ctx, pid);
   }
@@ -468,18 +470,20 @@ function applyPrepare(ctx: Ctx): void {
     }
     if (p.mask) ctx.emit('public', 'masking', { player: pid, source: p.mask.source, target: p.mask.target });
   }
-  // Effets de révélation (ordre déterministe p1 puis p2).
+  // Effets de révélation (ordre déterministe p1 puis p2). Celui d’une carte camouflée n’a aucune
+  // conséquence publique (observation privée) : il n’est annoncé qu’à son propriétaire (ADR 011).
   for (const pid of PLAYERS) {
     const p = s.players[pid];
     for (const i of revealed[pid]) {
       const def = ctx.def(p.slots[i]!.cardId);
+      const announce = (data: Record<string, unknown>) => (concealed(s, pid, i) ? ctx.emit(pid, 'effect', { ...data, own: true, slot: i }) : ctx.emit('public', 'effect', data));
       if (def.effect === 'eclaireur') {
         const seen = randomHandCard(ctx, other(pid));
-        ctx.emit('public', 'effect', { player: pid, effect: 'eclaireur', status: 'success', detail: 'une carte de main adverse observée' });
+        announce({ player: pid, effect: 'eclaireur', status: 'success', detail: 'une carte de main adverse observée' });
         ctx.emit(pid, 'peek', { player: pid, source: 'Éclaireur', defIds: seen ? [ctx.def(seen).defId] : [] });
       } else if (def.effect === 'repere') {
         const top = p.deck[p.deck.length - 1];
-        ctx.emit('public', 'effect', { player: pid, effect: 'repere', status: 'success', detail: 'sommet de pioche observé' });
+        announce({ player: pid, effect: 'repere', status: 'success', detail: 'sommet de pioche observé' });
         ctx.emit(pid, 'peek', { player: pid, source: 'Repère', defIds: top ? [ctx.def(top).defId] : [], own: true });
       } else if (def.effect === 'dissimulation') {
         ctx.emit('public', 'effect', { player: pid, effect: 'dissimulation', status: p.mask ? 'success' : 'failed', detail: p.mask ? 'l’autre Secondaire est masquée jusqu’à la fin du tour' : 'aucune autre Secondaire active' });
@@ -522,10 +526,17 @@ function applyCommit(ctx: Ctx): void {
     if (c.secondaryId) {
       if (c.replaceSlot !== null) {
         const old = p.slots[c.replaceSlot]!;
+        // Camouflage évalué AVANT de retirer la carte : remplacée ce tour, elle n’est nommée publiquement
+        // qu’à la fin du tour, comme une carte camouflée consommée (ARB-005).
+        const hidden = concealed(s, pid, c.replaceSlot);
         p.slots[c.replaceSlot] = null;
         p.discard.push(old.cardId);
+        if (hidden) p.maskedDiscards.push(old.cardId);
         if (p.mask && (p.mask.source === c.replaceSlot || p.mask.target === c.replaceSlot)) p.mask = null;
-        ctx.emit('public', 'replaced', { player: pid, slot: c.replaceSlot, defId: ctx.def(old.cardId).defId });
+        if (hidden) {
+          ctx.emit('public', 'replaced', { player: pid, slot: c.replaceSlot, defId: null, masked: true, family: ctx.def(old.cardId).family });
+          ctx.emit(pid, 'replaced', { player: pid, slot: c.replaceSlot, defId: ctx.def(old.cardId).defId, own: true });
+        } else ctx.emit('public', 'replaced', { player: pid, slot: c.replaceSlot, defId: ctx.def(old.cardId).defId });
         placedSlot = c.replaceSlot;
       } else placedSlot = c.slot !== undefined && p.slots[c.slot] === null ? c.slot : p.slots[0] === null ? 0 : 1;
       p.hand.splice(p.hand.indexOf(c.secondaryId), 1);
@@ -665,26 +676,49 @@ function resolveClash(ctx: Ctx): void {
       ctx.emit('public', 'damage', { player: pid, amount: d, base: out.baseDamage[pid], fixed: out.fixedDamage[pid], before, hp: p.hp });
     }
   }
+  // Publication (ADR 011) : camouflage évalué au verrouillage, les cases sont encore occupées.
+  const conceal: Concealment = {
+    hidden: (pid, slot) => concealed(s, pid, slot),
+    family: (pid, slot) => ctx.def(s.players[pid].slots[slot]!.cardId).family,
+  };
+  const seen: Observed = { healed: { p1: 0, p2: 0 }, insightOnlyHidden: { p1: false, p2: false } };
   for (const pid of PLAYERS) {
     const h = out.heal[pid];
     if (h > 0) {
       const p = s.players[pid];
       const before = p.hp;
       p.hp = Math.min(p.maxHp, p.hp + h);
-      ctx.emit('public', 'heal', { player: pid, amount: p.hp - before, hp: p.hp });
+      seen.healed[pid] = p.hp - before;
+      const data = { player: pid, amount: p.hp - before, hp: p.hp };
+      // Un soin nul venu d’une source camouflée n’a aucune conséquence publique.
+      const fromHidden = out.effects.some((e) => e.player === pid && e.consequence?.kind === 'heal' && hiddenSource(e, conceal));
+      if (fromHidden && seen.healed[pid] === 0) ctx.emit(pid, 'heal', { ...data, own: true });
+      else ctx.emit('public', 'heal', data);
     }
   }
   // Insight : +1 maximum par tour, réserve ≤ 2.
   for (const pid of PLAYERS) {
     const p = s.players[pid];
-    if (!out.insightReasons[pid].length) continue;
-    if (p.insightGained === 0 && p.insight < INSIGHT_MAX) {
+    if (!out.insightSources[pid].length) continue;
+    const gained = p.insightGained === 0 && p.insight < INSIGHT_MAX;
+    if (gained) {
       p.insight += 1;
       p.insightGained = 1;
-      ctx.emit('public', 'insight', { player: pid, gain: 1, reasons: out.insightReasons[pid], insight: p.insight });
-    } else ctx.emit('public', 'insight', { player: pid, gain: 0, reasons: out.insightReasons[pid], insight: p.insight, capped: true });
+    }
+    const pub = publishInsight(pid, out.insightSources[pid], gained, p.insight, conceal);
+    seen.insightOnlyHidden[pid] = pub.onlyHidden;
+    if (pub.public) ctx.emit('public', 'insight', pub.public);
+    if (pub.own) ctx.emit(pid, 'insight', pub.own);
   }
-  for (const e of out.effects) ctx.emit('public', 'effect', { ...e });
+  const publicEffects: PublicEffect[] = [];
+  for (const e of out.effects) {
+    const pub = publicEffect(e, out.effects, conceal, seen);
+    if (pub) {
+      publicEffects.push(pub);
+      ctx.emit('public', 'effect', { ...pub });
+    }
+    if (hiddenSource(e, conceal)) ctx.emit(e.player, 'effect', ownerEffect(e));
+  }
   for (const pid of PLAYERS) {
     if (!out.detourPeek[pid]) continue;
     const seen = randomHandCard(ctx, other(pid));
@@ -692,12 +726,16 @@ function resolveClash(ctx: Ctx): void {
   }
 
   // Rapport public.
-  const report = buildReport(ctx, input, out, maskedRank, maskedMult);
+  const report = buildReport(ctx, input, out, maskedRank, maskedMult, publicEffects);
   s.lastClash = report;
   ctx.emit('public', 'clash', report as unknown as Record<string, unknown>);
   for (const pid of PLAYERS) {
     if (maskedRank[pid] || maskedMult[pid]) ctx.emit(pid, 'clash', { own: true, player: pid, score: out.scores[pid], multiplier: out.multipliers[pid] });
   }
+
+  // Racine camouflée : son effet éventuel, résolu au Repoussement, restera privé (case notée avant consommation).
+  const racineUse = out.repelRight?.racine ? out.uses[out.repelRight.owner].find((u) => u.def.effect === 'racine' && u.mode === 'rank' && !u.cancelled) : undefined;
+  const racineHiddenSlot = racineUse && concealed(s, out.repelRight!.owner, racineUse.slot) ? racineUse.slot : undefined;
 
   // Consommation des Secondaires engagées (avant le choix de Repoussement).
   for (const pid of PLAYERS) {
@@ -715,7 +753,10 @@ function resolveClash(ctx: Ctx): void {
       p.slots[u.slot] = null;
       if (dest === 'top') p.deck.push(sl.cardId);
       else if (dest === 'bottom') p.deck.unshift(sl.cardId);
-      else p.discard.push(sl.cardId);
+      else {
+        p.discard.push(sl.cardId);
+        if (masked) p.maskedDiscards.push(sl.cardId);
+      }
       ctx.emit('public', 'destination', { player: pid, slot: u.slot, dest, defId: masked ? null : ctx.def(sl.cardId).defId });
     }
   }
@@ -740,7 +781,7 @@ function resolveClash(ctx: Ctx): void {
     let choices: SlotIndex[] = [];
     if (r.kind === 'emprise') choices = SLOTS.filter((i) => !!o.slots[i]);
     else choices = SLOTS.filter((i) => o.slots[i] && !o.slots[i]!.active);
-    if (choices.length) s.repel = { owner: r.owner, kind: r.kind, choices, toBottom: r.toBottom, racine: r.racine };
+    if (choices.length) s.repel = { owner: r.owner, kind: r.kind, choices, toBottom: r.toBottom, racine: r.racine, ...(racineHiddenSlot !== undefined ? { racineHiddenSlot } : {}) };
     else if (r.kind !== 'emprise' && out.ruptureClaim) {
       const t = out.ruptureClaim.target;
       if (o.slots[t]?.active) s.repel = { owner: r.owner, kind: 'rupture', choices: [t], toBottom: false, racine: false };
@@ -760,7 +801,7 @@ function resolveClash(ctx: Ctx): void {
   endTurn(ctx);
 }
 
-function buildReport(ctx: Ctx, input: ClashInput, out: ReturnType<typeof computeClash>, maskedRank: Record<PlayerId, boolean>, maskedMult: Record<PlayerId, boolean>): ClashReport {
+function buildReport(ctx: Ctx, input: ClashInput, out: ReturnType<typeof computeClash>, maskedRank: Record<PlayerId, boolean>, maskedMult: Record<PlayerId, boolean>, effects: PublicEffect[]): ClashReport {
   const s = ctx.s;
   const fmt = (n: number) => (Number.isFinite(n) ? String(n) : '∞');
   const publicScores = { p1: maskedRank.p1 ? '?' : fmt(out.scores.p1), p2: maskedRank.p2 ? '?' : fmt(out.scores.p2) };
@@ -777,7 +818,7 @@ function buildReport(ctx: Ctx, input: ClashInput, out: ReturnType<typeof compute
     powers: { p1: input.p1.primary.power, p2: input.p2.primary.power },
     stances: { p1: input.p1.stance, p2: input.p2.stance },
     cancelled: { p1: out.uses.p1.filter((u) => u.cancelled).map((u) => u.slot), p2: out.uses.p2.filter((u) => u.cancelled).map((u) => u.slot) },
-    zeroDamageRankWin: out.zeroDamageRankWin, effects: out.effects,
+    zeroDamageRankWin: out.zeroDamageRankWin, effects: effects.map((e) => ({ ...e })),
   };
 }
 
@@ -817,7 +858,10 @@ function applyRepel(ctx: Ctx): void {
     if (r.kind === 'rupture') ctx.emit('public', 'effect', { player: r.owner, effect: 'rupture', status: 'success', detail: 'Secondaire active renvoyée en main adverse', technique: true });
     if (r.toBottom && wasHidden) ctx.emit('public', 'effect', { player: r.owner, effect: 'entrave', status: 'success', detail: 'carte repoussée placée sous la pioche adverse' });
     if (r.racine && wasHidden) {
-      ctx.emit('public', 'effect', { player: r.owner, effect: 'racine', status: 'success', detail: 'identité de la carte repoussée observée' });
+      const data = { player: r.owner, effect: 'racine', status: 'success', detail: 'identité de la carte repoussée observée' };
+      // Observation privée d’une Racine camouflée : aucune conséquence publique (ADR 011).
+      if (r.racineHiddenSlot !== undefined) ctx.emit(r.owner, 'effect', { ...data, own: true, slot: r.racineHiddenSlot });
+      else ctx.emit('public', 'effect', data);
       ctx.emit(r.owner, 'peek', { player: r.owner, source: 'Racine', defIds: [ctx.def(sl.cardId).defId] });
     }
   }
@@ -834,7 +878,11 @@ function endTurn(ctx: Ctx): void {
     for (const pid of PLAYERS) s.players[pid].hp = 1;
     ctx.emit('public', 'overtime', { overtime: s.overtime });
   }
-  for (const pid of PLAYERS) s.players[pid].mask = null;
+  // Fin du tour : les camouflages expirent ; les cartes camouflées défaussées deviennent publiques (ARB-005).
+  for (const pid of PLAYERS) {
+    s.players[pid].mask = null;
+    s.players[pid].maskedDiscards = [];
+  }
   s.phase = 'RESOLVED';
   s.awaiting = [];
   s.pending = {};

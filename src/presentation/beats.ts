@@ -147,18 +147,24 @@ export function buildResolutionBeats(events: readonly GameEvent[], ctx: BeatCont
     beats.push({ kind: 'heal', title: `${who(d.player)} ${d.player === me ? 'récupérez' : 'récupère'} ${d.amount} PV`, detail: 'Soin appliqué après le Clash (sans dépasser le maximum).', tone: d.player === me ? 'good' : 'bad', focus: [`${side(d.player)}-hp`], events: [e] });
   }
 
-  // 6. Effets nommés (ARMÉ → RÉUSSI / CONDITION NON REMPLIE / ANNULÉ)
-  const effects = vis.filter((x) => x.kind === 'effect');
+  // 6. Effets nommés (ARMÉ → RÉUSSI / CONDITION NON REMPLIE / ANNULÉ). L’effet d’une Secondaire
+  // camouflée n’a qu’une forme générique publique (ADR 011) ; son propriétaire lit la forme privée.
+  const ownSlot = (x: GameEvent) => `${x.data.player}|${x.data.slot}`;
+  const owned = new Set(vis.filter((x) => x.kind === 'effect' && x.data.own).map(ownSlot));
+  const effects = vis.filter((x) => x.kind === 'effect' && !(x.data.masked && owned.has(ownSlot(x))));
   if (effects.length) {
     const lines = effects.map((e) => {
       const d = e.data as Record<string, any>;
-      const name = d.technique ? String(d.effect).replace(/^./, (c: string) => c.toUpperCase()) : EFFECTS[d.effect as EffectId]?.name ?? String(d.effect);
       const st = d.status === 'success' ? 'RÉUSSI' : d.status === 'cancelled' ? 'ANNULÉ' : 'non rempli';
-      return `${name} (${d.player === me ? 'vous' : 'rival'}) : ${st}`;
+      if (d.masked) return `Effet masqué (${d.player === me ? 'vous' : 'rival'}, ${d.family}) : ${st}`;
+      const name = d.technique ? String(d.effect).replace(/^./, (c: string) => c.toUpperCase()) : EFFECTS[d.effect as EffectId]?.name ?? String(d.effect);
+      return `${name} (${d.own ? 'vous, masquée' : d.player === me ? 'vous' : 'rival'}) : ${st}`;
     });
     beats.push({ kind: 'effect', title: lines[0]! + (lines.length > 1 ? ` (+${lines.length - 1})` : ''), detail: lines.join(' · '), tone: 'neutral', focus: [], events: effects });
   }
-  const ins = vis.filter((x) => x.kind === 'insight' && x.data.gain);
+  // Insight : la forme privée complète (propriétaire d’une carte masquée) remplace la forme publique.
+  const insOwn = new Set(vis.filter((x) => x.kind === 'insight' && x.data.own).map((x) => x.data.player));
+  const ins = vis.filter((x) => x.kind === 'insight' && x.data.gain && (x.data.own || !insOwn.has(x.data.player)));
   if (ins.length) beats.push({ kind: 'insight', title: ins.map((e) => `${who(e.data.player)} : +1 Insight`).join(' · '), detail: ins.map((e) => `${who(e.data.player)} (${(e.data.reasons as string[]).join(', ')})`).join(' · '), tone: 'neutral', focus: ins.map((e) => `${side(e.data.player)}-insight`), events: ins });
 
   // 7. Destinations des Secondaires engagées, Repoussement
