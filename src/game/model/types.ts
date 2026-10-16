@@ -149,15 +149,22 @@ export type EventKind =
   | 'tacticsRevealed' | 'interference' | 'clash' | 'effect' | 'damage' | 'heal'
   | 'insight' | 'destination' | 'repel' | 'repelSkipped' | 'overtime' | 'victory' | 'turnEnd';
 
-/** Rapport public de Clash : seules des informations autorisées après verrouillage. */
+/**
+ * Rapport public de Clash : seules des informations autorisées après verrouillage. Public PAR
+ * CONSTRUCTION : `GameState.lastClash`, l’événement public `clash` et `PlayerView.lastClash` (copie)
+ * portent ce même rapport. Une valeur camouflée par Dissimulation ce tour y vaut `null` (affichée
+ * `'?'`) ; sa valeur réelle ne parvient qu’à son propriétaire, par l’événement privé `clash` (`own`).
+ */
 export interface ClashReport {
   turn: number;
   outcome: 'win' | 'tie-assault' | 'double-guard';
   winner: PlayerId | null;
   guardWin: boolean;
-  scores: Record<PlayerId, number | 'inf'>;
+  /** `null` : soutien Rang camouflé (`publicScores` = '?'). */
+  scores: Record<PlayerId, number | 'inf' | null>;
   publicScores: Record<PlayerId, string>;
-  multipliers: Record<PlayerId, number>;
+  /** `null` : soutien Dégâts camouflé (`publicMultipliers` = '?'). */
+  multipliers: Record<PlayerId, number | null>;
   publicMultipliers: Record<PlayerId, string>;
   baseDamage: Record<PlayerId, number>;
   fixedDamage: Record<PlayerId, number>;
