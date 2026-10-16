@@ -1,6 +1,6 @@
 {
-  "commit": "6bac3a8",
-  "date": "2026-10-16T08:03:24.831Z",
+  "commit": "0a95929",
+  "date": "2026-10-16T08:51:48.610Z",
   "note": "Chromium headless + WebGL logiciel SwiftShader. Captures figées = pose FINALE de l’étape (freeze=1&beat=N) ; pellicule = mouvement réel.",
   "cases": [
     {

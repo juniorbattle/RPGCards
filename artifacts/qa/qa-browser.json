@@ -1,6 +1,6 @@
 {
-  "commit": "94f8e05",
-  "date": "2026-10-16T06:12:54.491Z",
+  "commit": "0a95929",
+  "date": "2026-10-16T08:41:17.438Z",
   "chromium": "141.0.7390.37",
   "runs": [
     {
@@ -25,29 +25,37 @@
         13
       ],
       "overtime": 0,
-      "ms": 99867,
+      "ms": 104540,
       "consoleIssues": [],
       "turns": 12,
       "drags": 26,
       "clicks": 0,
       "keyboard": 0,
-      "tactics": 12,
+      "tactics": 10,
       "repels": 3,
       "leaks": [],
-      "viewChecks": 54,
+      "viewChecks": 50,
       "viewErrors": [],
       "lostClicks": [],
       "moods": [
         "focused",
         "smug",
         "surprised",
-        "annoyed",
         "triumphant"
       ],
       "sequencesWatched": 0,
       "sequencesSkipped": 9,
       "manualToggleChecked": "ok",
       "holds": 13,
+      "layoutChecked": [
+        "COMMIT",
+        "TACTICS"
+      ],
+      "layoutIssues": [],
+      "stanceChecks": 24,
+      "stanceIssues": [],
+      "stageGhosts": [],
+      "stagesSeen": 0,
       "viewSwitches": 28,
       "personality": "voile"
     },
@@ -72,7 +80,7 @@
         0
       ],
       "overtime": 0,
-      "ms": 161145,
+      "ms": 370991,
       "consoleIssues": [],
       "turns": 13,
       "drags": 0,
@@ -88,13 +96,22 @@
         "neutral",
         "focused",
         "smug",
-        "annoyed",
+        "confident",
         "defeated"
       ],
       "sequencesWatched": 13,
       "sequencesSkipped": 0,
       "manualToggleChecked": "ok",
       "holds": 14,
+      "layoutChecked": [
+        "COMMIT",
+        "TACTICS"
+      ],
+      "layoutIssues": [],
+      "stanceChecks": 25,
+      "stanceIssues": [],
+      "stageGhosts": [],
+      "stagesSeen": 10,
       "viewSwitches": 30,
       "personality": "ronce"
     },
@@ -118,7 +135,7 @@
         1
       ],
       "overtime": 2,
-      "ms": 55481,
+      "ms": 61325,
       "consoleIssues": [],
       "turns": 9,
       "drags": 0,
@@ -141,6 +158,15 @@
       "sequencesSkipped": 8,
       "manualToggleChecked": "ok",
       "holds": 10,
+      "layoutChecked": [
+        "COMMIT",
+        "TACTICS"
+      ],
+      "layoutIssues": [],
+      "stanceChecks": 18,
+      "stanceIssues": [],
+      "stageGhosts": [],
+      "stagesSeen": 0,
       "viewSwitches": 22,
       "personality": "braise"
     },
@@ -165,7 +191,7 @@
         0
       ],
       "overtime": 0,
-      "ms": 68933,
+      "ms": 77231,
       "consoleIssues": [],
       "turns": 18,
       "drags": 19,
@@ -181,7 +207,7 @@
         "focused",
         "smug",
         "surprised",
-        "confident",
+        "pained",
         "pleased",
         "defeated"
       ],
@@ -189,6 +215,15 @@
       "sequencesSkipped": 16,
       "manualToggleChecked": "ok",
       "holds": 19,
+      "layoutChecked": [
+        "COMMIT",
+        "TACTICS"
+      ],
+      "layoutIssues": [],
+      "stanceChecks": 34,
+      "stanceIssues": [],
+      "stageGhosts": [],
+      "stagesSeen": 0,
       "viewSwitches": 42,
       "personality": "voile"
     }
@@ -197,11 +232,11 @@
     "focused",
     "smug",
     "surprised",
-    "annoyed",
     "triumphant",
     "neutral",
-    "defeated",
     "confident",
+    "defeated",
+    "pained",
     "pleased"
   ]
 }
