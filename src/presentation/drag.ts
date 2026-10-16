@@ -12,6 +12,7 @@ export class DragManager {
   private hoverZone: HTMLElement | null = null;
   private longPress = 0;
   private suppressClick = false;
+  private longPressed = false;
 
   constructor(private root: HTMLElement, private c: Controller, private onDone: () => void) {
     root.addEventListener('pointerdown', this.down, { passive: false });
@@ -28,14 +29,16 @@ export class DragManager {
     const el = (e.target as HTMLElement).closest<HTMLElement>('[data-drag-card]');
     if (!el || e.button > 0) return;
     this.start = { x: e.clientX, y: e.clientY, id: el.dataset.dragCard!, el, pointerId: e.pointerId };
+    this.longPressed = false;
     window.clearTimeout(this.longPress);
     if (e.pointerType !== 'mouse') {
       this.longPress = window.setTimeout(() => {
+        // Appui long = inspection ; il n’ANNULE PAS un glisser qui commencerait ensuite (des
+        // mouvements peuvent arriver en retard si le fil principal est chargé).
         if (this.start && !this.dragging) {
           const def = el.dataset.def;
           if (def) { this.c.ui.inspect = def; this.c.ui.journalOpen = true; this.onDone(); }
-          this.suppressClick = true;
-          this.start = null;
+          this.longPressed = true;
         }
       }, 450);
     }
@@ -111,6 +114,8 @@ export class DragManager {
     const st = this.start;
     this.start = null;
     if (!this.dragging) {
+      // Appui long sans déplacement : inspection seulement (pas de sélection).
+      if (this.longPressed) { this.longPressed = false; this.suppressClick = true; window.setTimeout(() => { this.suppressClick = false; }, 0); return; }
       // Clic simple sur carte de main / brouillon.
       if (this.suppressClick) return;
       this.suppressClick = true;
