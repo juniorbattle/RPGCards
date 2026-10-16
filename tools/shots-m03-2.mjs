@@ -35,6 +35,30 @@ const CASES = [
   { id: '12-mobile-portrait-clash', vp: [390, 844], mobile: true, url: `?scenario=clash-ag&${Q}`, ...CLASH('Cendre-3', 'assault', 'rank'), desc: 'Mobile portrait : Clash (absorption), temps « issue »' },
 ];
 
+// --- Planche d’expressions : 3 rivaux × 6 humeurs imposées (pose QA), même recadrage avant / après -------
+// Recadrage fixe (haut-centre de la vue A, 1280×720) : la différence de taille du visage reste visible.
+const MOODS = [['confident', 'sûr·e de soi'], ['surprised', 'surpris·e'], ['pained', 'touché·e'], ['annoyed', 'contrarié·e'], ['triumphant', 'triomphant·e'], ['defeated', 'abattu·e']];
+const RIVALS = [['braise', 'Kaï · Braise'], ['ronce', 'Maëlle · Ronces'], ['voile', 'Sélène · Voile']];
+const FACE_CLIP = { x: 448, y: 0, width: 384, height: 340 };
+async function expressions(server, which) {
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 });
+  const out = {};
+  try {
+    for (const [r] of RIVALS) for (const [m] of MOODS) {
+      const page = await ctx.newPage();
+      watchConsole(page, manifest.issues);
+      await page.goto(`${server.base}/?seed=202&autostart=1&rival=${r}&${Q}&intro=1&pose=${m}`);
+      await page.waitForFunction(() => !!window.__lqv);
+      await page.waitForTimeout(900);
+      out[`${r}-${m}`] = (await page.screenshot({ clip: FACE_CLIP })).toString('base64');
+      await page.close();
+    }
+  } finally {
+    await ctx.close();
+  }
+  return out;
+}
+
 // --- Hauteur du visage du rival (yeux → menton) : projection exacte du cadrage ancré (arena.frame) -------
 const GEOM = {
   avant: { rivalZ: -2.9, neckY: 2.5, scale: 1 },
@@ -278,30 +302,6 @@ try {
 } finally {
   serverAfter.stop();
   serverBefore?.stop();
-}
-
-// --- Planche d’expressions : 3 rivaux × 6 humeurs imposées (pose QA), même recadrage avant / après -------
-// Recadrage fixe (haut-centre de la vue A, 1280×720) : la différence de taille du visage reste visible.
-const MOODS = [['confident', 'sûr·e de soi'], ['surprised', 'surpris·e'], ['pained', 'touché·e'], ['annoyed', 'contrarié·e'], ['triumphant', 'triomphant·e'], ['defeated', 'abattu·e']];
-const RIVALS = [['braise', 'Kaï · Braise'], ['ronce', 'Maëlle · Ronces'], ['voile', 'Sélène · Voile']];
-const FACE_CLIP = { x: 448, y: 0, width: 384, height: 340 };
-async function expressions(server, which) {
-  const ctx = await browser.newContext({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 });
-  const out = {};
-  try {
-    for (const [r] of RIVALS) for (const [m] of MOODS) {
-      const page = await ctx.newPage();
-      watchConsole(page, manifest.issues);
-      await page.goto(`${server.base}/?seed=202&autostart=1&rival=${r}&${Q}&intro=1&pose=${m}`);
-      await page.waitForFunction(() => !!window.__lqv);
-      await page.waitForTimeout(900);
-      out[`${r}-${m}`] = (await page.screenshot({ clip: FACE_CLIP })).toString('base64');
-      await page.close();
-    }
-  } finally {
-    await ctx.close();
-  }
-  return out;
 }
 
 // --- Planches : preview (recadrage) | avant | après ---------------------------------------------------
