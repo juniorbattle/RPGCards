@@ -313,3 +313,26 @@ button { font: inherit; color: inherit; }
   .view-b .portrait-window { height: 5.6rem; }
   .view-b .rival-portrait .rival-plate { display: none; }
 }
+
+/* --- M02 : séquence de résolution, focalisations, journal aéré --------- */
+.strip .msg.beat { display: grid; gap: 0.1rem; }
+.beat-step { font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-dim); }
+.beat-title { font-family: Georgia, serif; font-size: 1.12rem; color: #fff; line-height: 1.2; }
+.beat-detail { font-size: 0.78rem; color: var(--ink-dim); }
+.msg.tone-good .beat-title { color: #c9f2b4; }
+.msg.tone-bad .beat-title { color: #ffb6a8; }
+.msg.tone-warn .beat-title { color: var(--warn); }
+.zone.beat-focus { border-style: solid; border-color: var(--gold-hi); box-shadow: 0 0 0 3px rgba(255,231,176,0.35), 0 0 26px rgba(255,231,176,0.35); }
+.hud.beat-hit .hp .bar { box-shadow: 0 0 0 2px var(--bad), 0 0 18px rgba(255,106,90,0.7); }
+.hud.beat-insight .insight { color: var(--gold-hi); }
+.journal details.turn { border-bottom: 1px solid rgba(255,255,255,0.06); padding: 0.15rem 0; }
+.journal details.turn > summary { cursor: pointer; list-style: none; padding: 0.3rem 0.2rem; color: var(--gold); font-size: 0.74rem; }
+.journal details.turn > summary::-webkit-details-marker { display: none; }
+.journal details.turn > summary::before { content: '▸ '; color: var(--ink-dim); }
+.journal details.turn[open] > summary::before { content: '▾ '; }
+.journal .turn-sum { color: var(--ink-dim); font-weight: 400; }
+.journal .line { padding: 0.28rem 0.3rem; line-height: 1.4; }
+
+.side.me .plan-badge { top: auto; bottom: 6px; }
+.brand small { display: inline-block; max-width: 20rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
+.timeline { min-width: 0; }

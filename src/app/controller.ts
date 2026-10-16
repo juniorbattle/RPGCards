@@ -6,16 +6,18 @@
 import { cardDef, type Family } from '../game/catalog/cards';
 import { TECHNIQUES, type TechniqueId } from '../game/catalog/techniques';
 import { decide, PROFILES } from '../game/ai/policy';
+import { buildMemory } from '../game/ai/memory';
 import { computeClash, damageCoefficient, rankSupport, type ClashUse } from '../game/engine/clash';
 import { checkCommand } from '../game/engine/engine';
 import { Match } from '../game/match';
-import type { GameConfig, GameEvent, PlayerCommand, SlotIndex, Stance, StartTechnique, TacticPlan, TacticsTechnique } from '../game/model/types';
+import type { GameConfig, GameEvent, PlayerCommand, PlayerId, SlotIndex, Stance, StartTechnique, TacticPlan, TacticsTechnique } from '../game/model/types';
 import { buildJournal, type JournalLine } from '../game/visibility/journal';
 import { viewFor, visibleEvents, type PlayerView } from '../game/visibility/view';
 import type { ArenaHandle } from '../scene/arena';
 import { PresentationDirector, type DirectorInput, type ViewMode } from '../presentation/director';
 import { ExpressionDirector, type Expression } from '../presentation/expression';
 import type { RivalPersonality } from '../presentation/personalities';
+import { buildResolutionBeats, hpAfterBeat, hpBeforeSequence, resolutionStart, type Beat } from '../presentation/beats';
 import type { AppParams } from './params';
 import type { Scenario } from './scenarios';
 
@@ -89,6 +91,9 @@ export class Controller {
   readonly expr: ExpressionDirector;
   /** Dernière expression visible du rival (affichage d’une légende, QA). */
   rivalExpression: Expression | null = null;
+  /** Séquence de résolution en cours (présentation pure ; l’état moteur est déjà final). */
+  seq: { beats: Beat[]; index: number; hp: Record<PlayerId, number>; hidden: Set<number>; done: boolean } | null = null;
+  private seqTimer = 0;
   private exprQueue: Expression[] = [];
   private exprTimer = 0;
   private dragging = false;
@@ -117,20 +122,113 @@ export class Controller {
   // ------------------------------------------------------------------------
   refresh(newEvents: GameEvent[]): void {
     this.view = viewFor(this.match.state, 'p1');
-    this.journal = buildJournal(visibleEvents(this.match.events, 'p1'), 'p1');
+    // Une résolution de Clash est présentée par temps successifs ; le reste est immédiat.
+    const start = resolutionStart(newEvents);
+    const immediate = start >= 0 ? newEvents.slice(0, start) : newEvents;
+    if (start >= 0) this.startSequence(newEvents.slice(start));
+    this.rebuildJournal();
     const key = `${this.view.turn}:${this.view.phase}`;
     if (key !== this.ui.phaseKey) {
       this.ui = freshUi(key, this.ui);
       // Préremplissages ergonomiques (jamais de choix caché imposé) :
       if (this.view.phase === 'LECTURE_CHANGE') this.ui.lectureStance = this.view.me.primary?.stance ?? null;
     }
-    this.playFx(newEvents);
+    this.playFx(immediate);
     this.updateView();
     this.arena?.setRivalHand(this.view.opp.handCount);
     // Réactions du rival : uniquement des faits PUBLICS (filtrage interne de l’ExpressionDirector).
-    this.pushReactions(this.expr.observe(newEvents));
+    this.pushReactions(this.expr.observe(immediate));
+    if (start >= 0) this.advanceBeat();
+    else this.renderFn();
+    this.scheduleAi();
+  }
+
+  private rebuildJournal(): void {
+    const hidden = this.seq && !this.seq.done ? this.seq.hidden : null;
+    const evs = visibleEvents(this.match.events, 'p1').filter((e) => !hidden || !hidden.has(e.seq));
+    this.journal = buildJournal(evs, 'p1');
+  }
+
+  // ------------------------------------------------------------------------
+  // Séquence de résolution (M02 §4)
+
+  private startSequence(events: GameEvent[]): void {
+    window.clearTimeout(this.seqTimer);
+    const beats = buildResolutionBeats(events, { viewer: 'p1', primaries: this.match.state.reveal.primaries });
+    const finalHp = { p1: this.view.me.hp, p2: this.view.opp.hp };
+    this.seq = { beats, index: -1, hp: hpBeforeSequence(events, finalHp), hidden: new Set(visibleEvents(events, 'p1').map((e) => e.seq)), done: false };
+  }
+
+  private beatDelay(b: Beat): number {
+    const base = b.kind === 'rank' || b.kind === 'outcome' ? 1700 : b.kind === 'damage' || b.kind === 'overtime' || b.kind === 'victory' ? 1500 : 1150;
+    return base * this.paceFactor();
+  }
+
+  /** Joue le temps suivant (FX, réactions, PV, journal) puis programme le suivant. */
+  advanceBeat(): void {
+    const q = this.seq;
+    if (!q || q.done) return;
+    window.clearTimeout(this.seqTimer);
+    this.seqTimer = 0;
+    const stopAt = this.params.freeze && this.params.beat !== null ? this.params.beat : null;
+    for (;;) {
+      q.index++;
+      const b = q.beats[q.index];
+      if (!b) return this.finishSequence();
+      q.hp = hpAfterBeat(q.hp, b);
+      for (const e of b.events) q.hidden.delete(e.seq);
+      this.playFx(b.events);
+      this.pushReactions(this.expr.observe(b.events));
+      // Captures (freeze) : arrêt sur le temps demandé ; rythme instantané : enchaînement immédiat.
+      if (stopAt !== null && q.index >= stopAt) break;
+      if (this.params.freeze || this.params.pace === 'instant') continue;
+      break;
+    }
+    this.rebuildJournal();
+    this.renderFn();
+    if (!this.params.freeze && this.params.pace !== 'instant') this.seqTimer = window.setTimeout(() => this.advanceBeat(), this.beatDelay(q.beats[q.index]!));
+  }
+
+  /** Termine immédiatement la séquence (bouton Passer, ou nouvelle commande valide). */
+  skipSequence(): void {
+    const q = this.seq;
+    if (!q || q.done) return;
+    window.clearTimeout(this.seqTimer);
+    let last: Beat | null = null;
+    for (q.index++; q.index < q.beats.length; q.index++) {
+      const b = q.beats[q.index]!;
+      q.hp = hpAfterBeat(q.hp, b);
+      last = b;
+    }
+    if (last) this.pushReactions(this.expr.observe(last.events));
+    this.finishSequence();
+  }
+
+  private finishSequence(): void {
+    if (!this.seq) return;
+    window.clearTimeout(this.seqTimer);
+    this.seqTimer = 0;
+    this.seq.done = true;
+    this.seq.index = this.seq.beats.length;
+    this.rebuildJournal();
     this.renderFn();
     this.scheduleAi();
+  }
+
+  get sequencing(): boolean {
+    return !!this.seq && !this.seq.done;
+  }
+
+  currentBeat(): Beat | null {
+    const q = this.seq;
+    return q && !q.done ? q.beats[q.index] ?? null : null;
+  }
+
+  /** PV affichés : mis en scène pendant la séquence, sinon PV réels publics. */
+  displayHp(who: 'me' | 'opp'): number {
+    const pid: PlayerId = who === 'me' ? 'p1' : 'p2';
+    if (this.sequencing) return this.seq!.hp[pid];
+    return who === 'me' ? this.view.me.hp : this.view.opp.hp;
   }
 
   // ------------------------------------------------------------------------
@@ -280,6 +378,7 @@ export class Controller {
   private scheduleAi(): void {
     const v2 = viewFor(this.match.state, 'p2');
     if (!v2.awaitingMe || this.aiTimer) return;
+    if (this.sequencing) return; // le rival attend la fin de la mise en scène (relancé à la fin)
     this.aiThinking = true;
     const run = () => {
       this.aiTimer = 0;
@@ -287,7 +386,9 @@ export class Controller {
       if (!view.awaitingMe) { this.aiThinking = false; return; }
       const key = `${view.turn}:${view.phase}`;
       const script = this.scenario?.rival[key];
-      const cmd = script ? script(this.match.state) : decide(view, PROFILES[this.rival.aiProfile] ?? PROFILES.equilibre!, this.config.seed ^ 0xa7);
+      // Mémoire : uniquement les événements visibles du siège du rival (p2).
+      const memory = buildMemory(visibleEvents(this.match.events, 'p2'), 'p2');
+      const cmd = script ? script(this.match.state) : decide(view, PROFILES[this.rival.aiProfile] ?? PROFILES.equilibre!, this.config.seed ^ 0xa7, memory);
       this.aiThinking = false;
       if (cmd) this.apply(cmd);
     };
@@ -297,6 +398,8 @@ export class Controller {
 
   /** Point d’entrée unique vers le moteur ; refus explicite sans mutation. */
   apply(cmd: PlayerCommand | { type: 'nextTurn' }): boolean {
+    // Une animation ne bloque jamais une commande valide : la séquence est achevée d’abord.
+    if (this.sequencing && (cmd.type === 'nextTurn' || checkCommand(this.match.state, cmd) === null)) this.skipSequence();
     if (cmd.type !== 'nextTurn') {
       const reason = checkCommand(this.match.state, cmd);
       if (reason) {

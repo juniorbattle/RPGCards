@@ -9,6 +9,7 @@ import { computeClash, type ClashInput, type ClashSideInput, type ClashUse } fro
 import { hashString, makeRng } from '../engine/rng';
 import type { PlayerCommand, SlotIndex, Stance, TacticPlan, TacticsTechnique } from '../model/types';
 import type { PlayerView, SlotView } from '../visibility/view';
+import { assaultPrior, type AiMemory } from './memory';
 
 export interface AiProfile {
   name: string;
@@ -19,12 +20,21 @@ export interface AiProfile {
   bluff: number;
   /** Probabilité d’utiliser une Technique quand elle est pertinente. */
   techniqueRate: number;
+  /** Préférence de mode à l’engagement (+ = Assaut). */
+  stanceBias: number;
+  /** Valeur d’option d’une Secondaire conservée. */
+  keepValue: number;
+  /** Bonus par Interférence planifiée (profil lecteur/interférent). */
+  interfereBonus: number;
+  /** Poids donné aux cartes adverses observées légalement (mémoire). */
+  memoryWeight: number;
 }
 
 export const PROFILES: Record<string, AiProfile> = {
-  equilibre: { name: 'Équilibré', aggression: 1, caution: 0.9, bluff: 0.12, techniqueRate: 0.55 },
-  offensif: { name: 'Offensif', aggression: 1.3, caution: 0.6, bluff: 0.05, techniqueRate: 0.4 },
-  prudent: { name: 'Prudent', aggression: 0.8, caution: 1.3, bluff: 0.2, techniqueRate: 0.7 },
+  equilibre: { name: 'Équilibré', aggression: 1, caution: 0.9, bluff: 0.12, techniqueRate: 0.55, stanceBias: 0, keepValue: 1.2, interfereBonus: 0, memoryWeight: 0.4 },
+  offensif: { name: 'Offensif', aggression: 1.35, caution: 0.55, bluff: 0.05, techniqueRate: 0.4, stanceBias: 4, keepValue: 0.6, interfereBonus: 0, memoryWeight: 0.3 },
+  prudent: { name: 'Prudent', aggression: 0.8, caution: 1.4, bluff: 0.2, techniqueRate: 0.7, stanceBias: -3, keepValue: 2.2, interfereBonus: 0.5, memoryWeight: 0.4 },
+  lecteur: { name: 'Lecteur / interférent', aggression: 1, caution: 1, bluff: 0.3, techniqueRate: 0.8, stanceBias: 0, keepValue: 1.4, interfereBonus: 3, memoryWeight: 0.75 },
 };
 
 const RANKS: OrdinaryRank[] = [1, 2, 3, 4];
@@ -106,7 +116,7 @@ function score(view: PlayerView, e: Eval, prof: AiProfile): number {
   if (e.taken >= view.me.hp) v -= 300;
   if (e.guardWin) v += 4;
   if (e.won) v += 1.5;
-  v += e.kept * 1.2; // valeur d’option des Secondaires conservées
+  v += e.kept * prof.keepValue; // valeur d’option des Secondaires conservées
   return v;
 }
 
@@ -119,7 +129,7 @@ function oppScenarios(oppActive: Array<{ slot: SlotIndex; def: CardDef; masked: 
 
 // ---------------------------------------------------------------------------
 
-export function decide(view: PlayerView, profile: AiProfile = PROFILES.equilibre!, aiSeed = 1): PlayerCommand | null {
+export function decide(view: PlayerView, profile: AiProfile = PROFILES.equilibre!, aiSeed = 1, memory: AiMemory | null = null): PlayerCommand | null {
   if (!view.awaitingMe) return null;
   const rng = makeRng(hashString(`${aiSeed}|${view.seed}|${view.turn}|${view.phase}|${view.me.handCount}|${view.me.insight}`));
   const pid = view.viewer;
@@ -146,7 +156,7 @@ export function decide(view: PlayerView, profile: AiProfile = PROFILES.equilibre
       return { type: 'dissipate', player: pid, targetSlot: use && src ? src.slot : null };
     }
     case 'COMMIT':
-      return decideCommit(view, profile, rng);
+      return decideCommit(view, profile, rng, memory);
     case 'LECTURE':
       return { type: 'lecture', player: pid, use: canTech(view, 'Lecture') && rng() < profile.techniqueRate * 0.6 };
     case 'LECTURE_CHANGE': {
@@ -181,14 +191,20 @@ function cardCost(def: CardDef): number {
   return (def.rank ?? 0) * 0.9 + (def.effect ? 0.5 : 0);
 }
 
-function decideCommit(view: PlayerView, profile: AiProfile, rng: () => number): PlayerCommand {
+function decideCommit(view: PlayerView, profile: AiProfile, rng: () => number, memory: AiMemory | null): PlayerCommand {
   const pid = view.viewer;
   const hand = (view.me.hand ?? []).map((c) => ({ ...c, def: cardDef(c.defId) }));
   const myActive = activeDefs(view.me.slots, false);
   const oppActiveRaw = activeDefs(view.opp.slots, true);
   const pool = unknownOpponentPool(view);
   const samples: CardDef[] = [];
-  for (let i = 0; i < 14 && pool.length; i++) samples.push(pool[Math.floor(rng() * pool.length)]!);
+  // Mémoire autorisée : les cartes vues dans la main adverse (et non vues la quitter) pèsent davantage.
+  const known = pool.filter((d) => memory?.knownOppHand.includes(d.identity));
+  for (let i = 0; i < 14 && pool.length; i++) {
+    const fromMemory = known.length && rng() < profile.memoryWeight;
+    samples.push(fromMemory ? known[Math.floor(rng() * known.length)]! : pool[Math.floor(rng() * pool.length)]!);
+  }
+  const pAssault = assaultPrior(memory);
   if (!samples.length) samples.push(basicDef('Cendre', 2));
 
   let best: { v: number; cardId: string; stance: Stance } | null = null;
@@ -196,7 +212,7 @@ function decideCommit(view: PlayerView, profile: AiProfile, rng: () => number): 
     for (const stance of ['assault', 'guard'] as Stance[]) {
       let total = 0;
       for (const oppPrim of samples) {
-        const oppStance: Stance = rng() < 0.6 ? 'assault' : 'guard';
+        const oppStance: Stance = rng() < pAssault ? 'assault' : 'guard';
         const oppActive = oppActiveRaw.map((a) => ({ ...a, masked: a.def === GENERIC_MASKED }));
         // Supposition : l’adversaire engage ses actives au mieux pour lui en Rang/Dégâts.
         const oppUses: ClashUse[] = oppActive.map((a) => ({ slot: a.slot, def: a.def, mode: oppStance === 'assault' && rng() < 0.5 ? 'damage' : 'rank' }));
@@ -210,7 +226,7 @@ function decideCommit(view: PlayerView, profile: AiProfile, rng: () => number): 
         }
         total += bestCombo;
       }
-      const v = total / samples.length - cardCost(c.def) + rng() * 1.5;
+      const v = total / samples.length - cardCost(c.def) + rng() * 1.5 + (stance === 'assault' ? profile.stanceBias : 0);
       if (!best || v > best.v) best = { v, cardId: c.cardId, stance };
     }
   }
@@ -259,6 +275,7 @@ function decideTactics(view: PlayerView, profile: AiProfile, rng: () => number):
         { primary: oppPrim, stance: oppStance, active: oppActive, uses: sc.uses });
       v += sc.w * score(view, e, profile);
     }
+    v += profile.interfereBonus * combo.uses.filter((u) => u.mode === 'interfere').length;
     v += rng() * 0.6;
     if (!best || v > best.v) best = { v, combo };
   }
