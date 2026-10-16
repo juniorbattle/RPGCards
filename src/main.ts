@@ -6,7 +6,7 @@ import { artCacheSize } from './art/cardArt';
 import { Controller } from './app/controller';
 import { readParams, type AppParams } from './app/params';
 import { SCENARIOS } from './app/scenarios';
-import { patchBeat, patchRivalBubble, renderApp } from './presentation/board';
+import { patchBeat, patchInspector, patchRivalBubble, renderApp } from './presentation/board';
 import { backEl, cardEl } from './presentation/cardView';
 import { cls, h } from './presentation/dom';
 import { DragManager } from './presentation/drag';
@@ -93,7 +93,12 @@ function start(config: GameConfig, scenarioId: string | null): void {
   window.addEventListener('resize', () => syncLayout());
   // Jeton du regard de début de tour lu au DÉBUT de l’interaction (voir endHold).
   let downToken = -1;
-  app.addEventListener('pointerdown', () => { pointerHeld = true; downToken = c.holdToken; }, true);
+  app.addEventListener('pointerdown', (e) => {
+    pointerHeld = true;
+    downToken = c.holdToken;
+    // Tactile : le toucher suivant referme l’inspection ouverte par un appui long (panneau non interactif).
+    if (e.pointerType !== 'mouse' && c.ui.inspect) { c.ui.inspect = null; patchInspector(app, c); }
+  }, true);
   const release = () => { pointerHeld = false; if (pendingRender) window.setTimeout(render, 0); };
   window.addEventListener('pointerup', release, true);
   window.addEventListener('pointercancel', release, true);

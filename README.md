@@ -17,9 +17,8 @@ npm run typecheck    # tsc --noEmit, TypeScript strict
 npm test             # Vitest : moteur, Clash, visibilité, IA
 npm run build        # typecheck + build Vite → dist/
 npm run qa:browser   # duels complets pilotés par l’UI (Chromium headless) → artifacts/qa/
-npm run shots        # captures déterministes U00–U12 + caméras + galerie → screenshots/qa/
-node tools/shots-m03.mjs    # captures M03 + planches preview ↔ runtime → screenshots/qa/m03/
-node tools/clash-shots.mjs  # chaque type de Clash : poses, mouvement réduit, pellicules → screenshots/qa/m03/clash/
+npm run shots        # captures M03 + planches preview ↔ runtime → screenshots/qa/m03/
+npm run shots:clash  # chaque type de Clash : poses, mouvement réduit, pellicules → screenshots/qa/m03/clash/
 npm run perf         # mesures moteur + scène (machine courante) → artifacts/qa/perf.json
 npm run sim          # (optionnel) 200 duels IA/IA headless
 ```

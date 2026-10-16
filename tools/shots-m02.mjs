@@ -1,3 +1,4 @@
+// HISTORIQUE (M02) : dépend du gabarit M02 (`.stage-window`), remplacé en M03 par tools/shots-m03.mjs.
 // Captures M02 déterministes (freeze=1 : arène figée, réactions figées sur le dernier fait public).
 // Sortie : screenshots/qa/m02/*.png + manifest.json (seed, scénario, viewport, vue, humeur du rival).
 import { mkdirSync, writeFileSync } from 'node:fs';

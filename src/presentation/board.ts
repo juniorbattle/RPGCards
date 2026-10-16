@@ -253,7 +253,7 @@ function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
     // se vide dès que la mise en scène les a nettoyées (ou si la séquence est terminée).
     const shown = c.primaryOnBoard();
     if (shown === 'card') {
-      zone.append(cardEl(revealed.defId, { artSeed: c.artSeed, classes: [c.ui.flipPrimaries && 'flip-in', 'on-board'], tag: 'div', attrs: { tabindex: '0', 'data-key': `prim-${who}`, onmouseenter: () => inspect(c, revealed.defId), onmouseleave: () => inspect(c, null), onfocus: () => inspect(c, revealed.defId), onblur: () => inspect(c, null) } }));
+      zone.append(cardEl(revealed.defId, { artSeed: c.artSeed, classes: [c.ui.flipPrimaries && 'flip-in', 'on-board'], tag: 'div', attrs: { tabindex: '0', 'data-key': `prim-${who}`, ...inspectHooks(c, revealed.defId, true) } }));
       zone.append(stanceBanner(revealed.stance));
     } else if (shown === 'stage') {
       zone.classList.add('lifted');
@@ -290,7 +290,7 @@ function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
   }
   if (dr.primaryId && committing) {
     const defId = c.defIdOf(dr.primaryId);
-    zone.append(cardEl(defId, { artSeed: c.artSeed, state: 'draft', tag: 'div', banner: dr.stance ? `${dr.stance === 'assault' ? 'ASSAUT' : 'GARDE'} · NON VERROUILLÉE` : 'CHOISIR ASSAUT / GARDE', classes: ['on-board'], attrs: { 'data-drag-card': dr.primaryId, onmouseenter: () => inspect(c, defId), onmouseleave: () => inspect(c, null) } }));
+    zone.append(cardEl(defId, { artSeed: c.artSeed, state: 'draft', tag: 'div', banner: dr.stance ? `${dr.stance === 'assault' ? 'ASSAUT' : 'GARDE'} · NON VERROUILLÉE` : 'CHOISIR ASSAUT / GARDE', classes: ['on-board'], attrs: { 'data-drag-card': dr.primaryId, ...inspectHooks(c, defId, false) } }));
     zone.append(stanceChips(c, dr.stance));
   } else if (committing) zone.append(h('span', { class: 'empty-hint' }, 'Glissez une carte ici'));
   else zone.append(h('span', { class: 'empty-hint' }, 'Vide'));
@@ -307,13 +307,34 @@ function stanceChips(c: Controller, current: Stance | null): HTMLElement {
   );
 }
 
-/** Inspection flottante (survol / focus / appui long) : mise à jour CIBLÉE, jamais de re-rendu global. */
+/** Inspection flottante (survol souris / focus clavier / appui long tactile) : mise à jour CIBLÉE. */
 function inspect(c: Controller, defId: string | null): void {
   if (c.ui.inspect === defId) return;
-  if (defId === null && document.querySelector('.inspector.pinned')) return;
   c.ui.inspect = defId;
   const el = document.querySelector('.inspector');
   if (el) el.replaceWith(inspector(c));
+}
+
+/** Rafraîchit l’inspection sans re-rendu global (fermeture au toucher suivant, main.ts). */
+export function patchInspector(root: ParentNode, c: Controller): void {
+  root.querySelector('.inspector')?.replaceWith(inspector(c));
+}
+
+/**
+ * Déclencheurs d’inspection : survol par une VRAIE souris (pas les événements souris émulés après un
+ * toucher) et focus CLAVIER (`:focus-visible`). Au tactile, seul l’appui long inspecte (drag.ts) :
+ * un simple toucher ne fait jamais apparaître un panneau par-dessus les cibles.
+ */
+function inspectHooks(c: Controller, defId: string, focusable: boolean): Record<string, unknown> {
+  const hooks: Record<string, unknown> = {
+    onpointerenter: (e: PointerEvent) => { if (e.pointerType === 'mouse') inspect(c, defId); },
+    onpointerleave: (e: PointerEvent) => { if (e.pointerType === 'mouse') inspect(c, null); },
+  };
+  if (focusable) {
+    hooks.onfocus = (e: FocusEvent) => { if ((e.target as HTMLElement).matches(':focus-visible')) inspect(c, defId); };
+    hooks.onblur = () => inspect(c, null);
+  }
+  return hooks;
 }
 
 function slotZone(c: Controller, who: 'me' | 'opp', slot: SlotIndex, s: SlotView | null): HTMLElement {
@@ -334,14 +355,14 @@ function slotZone(c: Controller, who: 'me' | 'opp', slot: SlotIndex, s: SlotView
 
   if (draftHere) {
     const defId = c.defIdOf(dr.secondaryId!);
-    zone.append(cardEl(defId, { artSeed: c.artSeed, state: 'draft', tag: 'div', banner: s ? 'REMPLACE · NON VERROUILLÉE' : 'POSE CACHÉE · NON VERROUILLÉE', classes: ['on-board'], attrs: { 'data-drag-card': dr.secondaryId, onmouseenter: () => inspect(c, defId), onmouseleave: () => inspect(c, null) } }));
+    zone.append(cardEl(defId, { artSeed: c.artSeed, state: 'draft', tag: 'div', banner: s ? 'REMPLACE · NON VERROUILLÉE' : 'POSE CACHÉE · NON VERROUILLÉE', classes: ['on-board'], attrs: { 'data-drag-card': dr.secondaryId, ...inspectHooks(c, defId, false) } }));
   } else if (s) {
     if (who === 'me' || s.card) {
       const defId = s.card!.defId;
       const state = s.masked && who === 'opp' ? 'masked' : s.state;
       const willReveal = who === 'me' && v.phase === 'PREPARE' && c.ui.reveal.includes(slot);
       const banner = who === 'me' && s.masked ? 'ACTIVE · MASQUÉE (rival)' : willReveal ? 'SERA RÉVÉLÉE' : null;
-      zone.append(cardEl(defId, { artSeed: c.artSeed, state, banner, tag: 'div', classes: ['on-board', willReveal && 'will-reveal', s.maskSource && 'mask-source'], attrs: { onmouseenter: () => inspect(c, defId), onmouseleave: () => inspect(c, null) } }));
+      zone.append(cardEl(defId, { artSeed: c.artSeed, state, banner, tag: 'div', classes: ['on-board', willReveal && 'will-reveal', s.maskSource && 'mask-source'], attrs: { ...inspectHooks(c, defId, false) } }));
     } else {
       zone.append(backEl(c.artSeed, { state: s.masked ? 'masked' : s.state === 'active' ? 'masked' : s.state, classes: ['on-board'] }));
     }
@@ -580,7 +601,7 @@ function hand(c: Controller): HTMLElement {
     const el = cardEl(x.defId, {
       artSeed: c.artSeed,
       classes: ['hand-card', c.ui.selected === x.cardId && 'selected', c.ui.trim.includes(x.cardId) && 'trim-mark'],
-      attrs: { 'data-drag-card': x.cardId, 'data-key': `hand-${x.cardId}`, 'aria-pressed': String(c.ui.selected === x.cardId), 'aria-keyshortcuts': String(i + 1), onfocus: () => inspect(c, x.defId), onblur: () => inspect(c, null), onmouseenter: () => inspect(c, x.defId), onmouseleave: () => inspect(c, null) },
+      attrs: { 'data-drag-card': x.cardId, 'data-key': `hand-${x.cardId}`, 'aria-pressed': String(c.ui.selected === x.cardId), 'aria-keyshortcuts': String(i + 1), ...inspectHooks(c, x.defId, true) },
     });
     if (c.ui.startTech?.id === 'Recentrage' && c.ui.startTech.cardId === x.cardId) el.append(h('span', { class: 'state-banner' }, 'RECENTRAGE'));
     wrap.append(el);
@@ -596,7 +617,7 @@ function inspector(c: Controller): HTMLElement {
   if (!id) return h('section', { class: 'inspector', 'aria-hidden': 'true' });
   const def = cardDef(id);
   const fr = RARITY_FRAME[def.rarity];
-  return h('section', { class: 'inspector show', style: `--fb:${fr.b}`, 'aria-label': `Inspection : ${cardTitle(def)}`, title: 'Toucher pour fermer', onclick: () => { c.ui.inspect = null; document.querySelector('.inspector')?.replaceWith(inspector(c)); } },
+  return h('section', { class: 'inspector show', style: `--fb:${fr.b}`, 'aria-label': `Inspection : ${cardTitle(def)}` },
     cardEl(id, { artSeed: c.artSeed, tag: 'div' }),
     h('div', { class: 'insp-text' },
       h('h3', null, cardTitle(def)),

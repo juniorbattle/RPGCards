@@ -307,7 +307,6 @@ button { font: inherit; color: inherit; }
 /* --- Inspection flottante (gauche) ------------------------------------------ */
 .inspector { position: absolute; z-index: 6; left: var(--g); top: calc(var(--g) + 19vh); width: var(--hud-w); display: none; pointer-events: none; }
 .inspector.show { display: grid; grid-template-columns: auto 1fr; gap: 0.6rem; padding: 0.6rem; }
-@media (hover: none) { .inspector.show { pointer-events: auto; cursor: pointer; } }
 .inspector .card { --card-w: clamp(72px, 6.4vw, 110px); --card-h: calc(var(--card-w) * 1.4); --radius: calc(var(--card-w) * 0.07); cursor: default; }
 .inspector h3 { margin: 0 0 0.2rem; font-family: Georgia, serif; font-size: 0.98rem; color: var(--gold-hi); }
 .inspector .meta { font-size: 0.72rem; color: var(--ink-dim); margin-bottom: 0.3rem; }
