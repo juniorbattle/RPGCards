@@ -4,6 +4,10 @@
 
 Le développement se fait **directement sur `main`** : commit puis push sur `main` après validation (typecheck, tests, build ; QA navigateur quand le rendu change). **Pas de branche provisoire ni de PR**, sauf demande explicite du responsable. Ne jamais réécrire l’historique de `main` (pas de force-push, pas de rebase de commits publiés). Les branches `claude/*` M01–M03 sont de l’historique, déjà intégré.
 
+## Mandat actif depuis 2026-10-16 — M03.1B confidentialité des effets, puis M03.2 fidélité
+
+Lire **`docs/missions/M03_CONTINUATION_DEPUIS_MAIN.md`**, puis `M03_1B_CONFIDENTIALITE_EFFETS_ET_QA.md`, `M03_2_FIDELITE_VISUELLE_RUNTIME.md` et l'ADR 011. **Priorité à la fuite indirecte des noms d'effets de Secondaires camouflées** signalée au JOURNAL passe 4. Les valeurs brutes de score/multiplicateur ont **déjà été protégées sur main** ; ne pas refaire cette passe. Après tests de confidentialité, couvrir Rupture/Dissipation par l'UI, puis peaufiner la fidélité visuelle à la preview M03. **Respecter la règle de branche ci-dessus : développement sur main**, pas sur une ancienne branche. Aucun changement de règle V3.0/V3.2, aucun secret exposé par le journal ou les expressions du rival. Le cadrage visuel M03 reste structurellement approuvé, pas artistiquement finalisé.
+
 ## Mandat actif M03 — Preview de référence validée + impact des cartes
 
 Lire `docs/missions/M03_PREVIEW_VALIDEE_HUD_CLASH.md` et inspecter `reference/REFERENCE_VISUELLE_VALIDEE_M03.jpg` **avant de modifier le rendu**. C'est la référence visuelle approuvée pour la composition du duel : **HUD joueur compact bas-gauche, similaire au HUD du rival haut-gauche, centre dégagé, mains lisibles**, modes ASSAUT/GARDE visibles après révélation. La nouvelle animation des Clashes doit être pilotée par les événements et le verdict du moteur M02 ; même le gagnant part à la défausse après sa pose momentanée. Garder Three.js/TS, Art by Code, caméra frontale + inclinée, secret et tests. Les choix M02 contraires à cette direction de présentation sont dépassés, mais **aucune mécanique de gameplay n'est changée**.

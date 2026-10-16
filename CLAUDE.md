@@ -4,6 +4,10 @@
 
 Le développement se fait **directement sur `main`** : commit puis push sur `main` après validation (typecheck, tests, build ; QA navigateur quand le rendu change). **Pas de branche provisoire ni de PR**, sauf demande explicite du responsable. Ne jamais réécrire l’historique de `main` (pas de force-push, pas de rebase de commits publiés). Les branches `claude/*` M01–M03 sont de l’historique, déjà intégré.
 
+## Mission active — M03.1B + M03.2 depuis main (2026-10-16)
+
+Lire `docs/missions/M03_CONTINUATION_DEPUIS_MAIN.md` et ses deux contrats associés, puis l'ADR 011. **Démarrer sur le dernier main**, où la passe 4 a déjà corrigé les scores bruts. Corriger maintenant les **noms d'effets / raisons Insight / détails de rapport** qui révèlent une Secondaire camouflée, puis tester Rupture et Dissipation dans l'UI, puis rapprocher réellement le runtime de la preview approuvée (rival en A/B, éclairage, lisibilité Clash, mobile paysage). Respecter la règle actuelle « directement sur main » ci-dessus, et ne pas modifier les règles du duel. Le travail n'est pas considéré livré par la seule présence des documents : coder, tester, capturer, mesurer, documenter.
+
 ## MANDAT ACTIF — M03 : fidélité visuelle et animation de Clash
 
 **Mission actuellement approuvée** : lire et exécuter `docs/missions/M03_PREVIEW_VALIDEE_HUD_CLASH.md` ainsi que `reference/REFERENCE_VISUELLE_VALIDEE_M03.jpg` (image validée par le responsable). M03 **prévaut sur M02 uniquement pour la direction visuelle, les positions des HUD et le motion design** ; aucune règle V3.0/V3.2 n'est modifiée. Reprendre les modules M02 existants, ne pas repartir de zéro. HUD rival haut-gauche, HUD joueur compact bas-gauche, centre libre, badges ASSAUT/GARDE, Clashes physiques animés via les événements déjà résolus. Développer sur `main` (voir « Règle de branche »).

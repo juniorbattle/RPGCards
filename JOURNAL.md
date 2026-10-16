@@ -2,7 +2,7 @@
 
 **Nature :** journal de production du **nouveau projet**, et non journal copié de RPG-ArtByCode.  
 **Convention :** passes chronologiques, plus récente en bas ; statut `[OK]`, `[KO]`, `[?]` ; preuves vérifiables.  
-**Dernière passe :** 4 — visibilité : le rapport public du Clash ne publie plus la valeur brute d’un soutien camouflé par Dissimulation (développée sur `claude/practical-cannon-5io9n5` avant la « Règle de branche », intégrée à `main` par fusion).
+**Dernière passe :** 4 + mandat documentaire 4B — visibilité : le rapport public du Clash ne publie plus la valeur brute d’un soutien camouflé par Dissimulation (développée sur `claude/practical-cannon-5io9n5` avant la « Règle de branche », intégrée à `main` par fusion).
 
 ## État initial connu
 
@@ -19,7 +19,7 @@
 2. **Écarts de fidélité restants** : visages et personnages moins « peints » que la preview (couches 2D plates), décor moins dense, pas de bloom ni de profondeur de champ, typographie système ; mobile pensé en portrait 390×844 (la preview montre un mobile paysage).
 3. **Arbitrages encore proposés** (ADR 004) : ARB-002 (profil du rival public), ARB-001, ARB-005, ARB-011 ; ratification éventuelle du delta D-01 (V3.3) ; **nouveau (passe 4)** : les effets d’utilisation d’une Secondaire camouflée sont annoncés publiquement par leur nom avant la fin du tour (Ferveur, Étincelle…), voir passe 4 `[?]`.
 4. **Mesure sur GPU réel** (hors conteneur) : vues A/B, bougies (shader de points), scène du Clash (WAAPI) ; budget mobile.
-5. QA : scénarios Rupture / Dissipation côté humain (tâche proposée). Les scores bruts du rapport public du Clash sont masqués depuis la passe 4.
+5. **Mandat M03.1B autorisé :** corriger les noms d'effets individuels/raisons Insight qui dévoilent une Secondaire camouflée, sans altérer la passe 4 (scores bruts déjà corrigés) ; puis QA navigateur Rupture/Dissipation. **M03.2 :** améliorer fidélité visuelle (rival plus présent A/B, éclairage, résolution, paysage mobile), avec comparaisons réelles.
 6. IA : modèle du joueur, niveaux de difficulté ; découpage du bundle Three.js.
 
 ## Principes à garder
@@ -200,3 +200,11 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **Pensée :** un champ public se garantit à la source. Masquer tard, dans une seule projection (le `NaN` de `viewFor`), laissait l’événement public brut ; écrire `null` dans le rapport lui-même rend l’état, l’événement et la vue publics par construction, et un test qui énumère les nombres du rapport rend la non-fuite vérifiable.
 - **À reprendre :** voir section globale en tête de fichier ; en priorité pour ce chantier, l’arbitrage sur l’annonce publique des effets d’une Secondaire camouflée.
 - **Intégration :** passe réalisée sur branche avant la décision « Règle de branche » ; fusionnée dans `main` par un commit de fusion (sans réécriture), ce qui garde valides les hashs cités (`ca2e635`). Revalidée après fusion : voir le message du commit de fusion.
+
+## Mandat documentaire 4B — Reprise M03.1B → M03.2 sur main (2026-10-16)
+
+- **[OK] Autorisation opérateur :** poursuivre autonomement après la passe 4 déjà fusionnée sur `main`. Nouvelle priorité M03.1B : empêcher que les noms d'effets uniques (Ferveur, Étincelle, etc.), leurs motifs d'Insight et `ClashReport.effects` dévoilent une Secondaire actuellement camouflée ; publier les conséquences publiques mais non l'identité encore secrète. Document : `docs/missions/M03_CONTINUATION_DEPUIS_MAIN.md`, ADR 011.
+- **[OK] Discipline des branches :** la règle actuelle du responsable exige un développement **sur main**, avec commits testés, sans branche/PR provisoire. La précédente préparation M03.1/M03.2 sur une branche obsolète n'est plus le point de départ.
+- **[OK] Travaux consécutifs autorisés :** tests Rupture/Dissipation via UI, puis cadrages A/B, présence rival, éclairage, hiérarchie de résolution et mobile paysage, tout en préservant les règles et six chorégraphies du Clash.
+- **[?] État de ce commit :** mandat **documentaire seulement** ; aucun correctif de noms d'effets, scénario QA ou art M03.2 n'est encore implémenté ni testé. La baseline de passe 4 est 93/93 selon journal et doit être revalidée avant modification.
+- **À reprendre :** diagnostic du HEAD main, test reproduisant fuite d'effet, redaction sûre à la source et non-régression ; QA Techniques ; raffinement visuel avec comparatifs, `docs/RAPPORT_M03_1B.md` et `docs/RAPPORT_M03_2.md`.
