@@ -8,7 +8,7 @@ import { hashString, makeRng } from '../game/engine/rng';
 import type { Expression, Gaze, Gesture } from '../presentation/expression';
 import type { Mood, RivalPersonality } from '../presentation/personalities';
 import {
-  browTexture, handTexture, headTexture, irisTexture, lidTexture, MOUTHS, mouthTexture, scleraTexture, torsoTexture,
+  browTexture, handTexture, headTexture, hoodTexture, irisTexture, lidTexture, MOUTHS, mouthTexture, scleraTexture, torsoTexture,
   type MouthShape,
 } from './rivalTextures';
 
@@ -83,6 +83,12 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
   const neckPivot = new THREE.Group();
   neckPivot.position.set(0, 2.5, 0.02);
   body.add(neckPivot);
+  if (p.look.outfit === 'cloak') {
+    // Capuche derrière la tête (suit l’inclinaison du cou).
+    const hood = plane(1.62, 1.82, hoodTexture(p), 1);
+    hood.position.set(0, 0.5, -0.02);
+    neckPivot.add(hood);
+  }
   const head = plane(1.15, 1.4, headTexture(p, artSeed), 2);
   head.position.set(0, 0.6, 0);
   neckPivot.add(head);
@@ -99,21 +105,21 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
   const eyes: Array<{ iris: THREE.Mesh; lid: THREE.Mesh; brow: THREE.Mesh; side: number }> = [];
   for (const side of [-1, 1]) {
     const e = new THREE.Group();
-    e.position.set(side * 0.2, 0.02, 0);
+    e.position.set(side * 0.21, 0.02, 0);
     face.add(e);
-    const sc = plane(0.24, 0.15, sclera, 3);
+    const sc = plane(0.27, 0.17, sclera, 3);
     e.add(sc);
-    const ir = plane(0.105, 0.105, iris, 4);
+    const ir = plane(0.125, 0.125, iris, 4);
     ir.position.z = 0.002;
     e.add(ir);
-    const lidGeo = new THREE.PlaneGeometry(0.26, 0.17);
-    lidGeo.translate(0, -0.085, 0); // pivot sur le bord supérieur
+    const lidGeo = new THREE.PlaneGeometry(0.29, 0.19);
+    lidGeo.translate(0, -0.095, 0); // pivot sur le bord supérieur
     const lid = new THREE.Mesh(lidGeo, new THREE.MeshLambertMaterial({ map: lidT, transparent: true, depthWrite: false }));
     lid.renderOrder = 5;
-    lid.position.set(0, 0.085, 0.004);
+    lid.position.set(0, 0.095, 0.004);
     e.add(lid);
-    const brow = plane(0.3, 0.075, browT, 6);
-    brow.position.set(side * 0.2, 0.19, 0.006);
+    const brow = plane(0.32, 0.08, browT, 6);
+    brow.position.set(side * 0.21, 0.2, 0.006);
     if (side > 0) brow.scale.x = -1;
     face.add(brow);
     eyes.push({ iris: ir, lid, brow, side });
@@ -246,7 +252,7 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
         e.lid.visible = lidVal > 0.01;
         const raise = e.side < 0 ? cur.browL : cur.browR;
         const wide = Math.max(0, -cur.lid) * 0.05;
-        e.brow.position.y = 0.19 + raise * 0.06 + wide;
+        e.brow.position.y = 0.2 + raise * 0.06 + wide;
         e.brow.rotation.z = e.side * -cur.browAngle * 0.35;
       }
       flushMat.opacity = cur.flush * 0.35;

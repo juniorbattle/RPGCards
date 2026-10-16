@@ -17,11 +17,19 @@ import type { ArenaHandle } from '../scene/arena';
 import { PresentationDirector, type DirectorInput, type ViewMode } from '../presentation/director';
 import { ExpressionDirector, type Expression } from '../presentation/expression';
 import type { RivalPersonality } from '../presentation/personalities';
+import { buildClashScript, stepForBeat, type ClashScript, type MotionStep } from '../presentation/clashMotion';
 import { BEAT_ORDER, buildResolutionBeats, hpAfterBeat, hpBeforeSequence, resolutionStart, type Beat, type BeatKind } from '../presentation/beats';
 import type { AppParams } from './params';
 import type { Scenario } from './scenarios';
 
 export type DropKey = 'primary' | 'slot0' | 'slot1' | 'hand';
+
+/** Intentions de mise en scène du Clash (consommées par la scène DOM, jamais par le moteur). */
+export type MotionEvent =
+  | { type: 'begin'; script: ClashScript | null }
+  | { type: 'step'; step: MotionStep }
+  | { type: 'end' }
+  | { type: 'stop' };
 
 export interface UiState {
   phaseKey: string;
@@ -97,8 +105,9 @@ export class Controller {
    * `before` = vue du joueur juste avant la résolution : le plateau la montre jusqu’au temps des
    * destinations (les Secondaires engagées restent visibles pendant le Clash, puis partent).
    */
-  seq: { beats: Beat[]; index: number; hp: Record<PlayerId, number>; hidden: Set<number>; done: boolean; rendered: boolean; before: PlayerView | null; events: GameEvent[] } | null = null;
+  seq: { beats: Beat[]; index: number; hp: Record<PlayerId, number>; hidden: Set<number>; done: boolean; rendered: boolean; before: PlayerView | null; events: GameEvent[]; script: ClashScript | null } | null = null;
   private exprFn: (() => void) | null = null;
+  private motionFn: ((m: MotionEvent) => void) | null = null;
   private seqTimer = 0;
   private exprQueue: Expression[] = [];
   private exprTimer = 0;
@@ -131,6 +140,11 @@ export class Controller {
   /** Mise à jour ciblée de la bulle du rival (nouvelle expression publique). */
   onExpression(fn: () => void): void {
     this.exprFn = fn;
+  }
+
+  /** Mise en scène du Clash (M03) : intentions dérivées du résultat résolu. */
+  onMotion(fn: (m: MotionEvent) => void): void {
+    this.motionFn = fn;
   }
 
   get artSeed(): number {
@@ -175,7 +189,11 @@ export class Controller {
     window.clearTimeout(this.seqTimer);
     const beats = buildResolutionBeats(events, { viewer: 'p1', primaries: this.view.reveal.primaries ? { p1: this.view.reveal.primaries.me, p2: this.view.reveal.primaries.opp } : null });
     const finalHp = { p1: this.view.me.hp, p2: this.view.opp.hp };
-    this.seq = { beats, index: -1, hp: hpBeforeSequence(events, finalHp), hidden: new Set(visibleEvents(events, 'p1').map((e) => e.seq)), done: false, rendered: false, before, events: visibleEvents(events, 'p1') };
+    const vis = visibleEvents(events, 'p1');
+    const prim = this.view.reveal.primaries;
+    const script = buildClashScript(vis, 'p1', prim ? { p1: prim.me, p2: prim.opp } : null);
+    this.seq = { beats, index: -1, hp: hpBeforeSequence(events, finalHp), hidden: new Set(vis.map((e) => e.seq)), done: false, rendered: false, before, events: vis, script };
+    this.motionFn?.({ type: 'begin', script });
   }
 
   /** Vrai si la séquence a atteint (ou dépassé) l’étape `kind` — ou s’il n’y a pas de séquence. */
@@ -243,6 +261,9 @@ export class Controller {
       for (const e of b.events) q.hidden.delete(e.seq);
       this.playFx(b.events);
       this.pushReactions(this.expr.observe(b.events));
+      // Chorégraphie du Clash : émise AVANT la mise à jour du plateau (les cartes quittent leurs cases).
+      const step = stepForBeat(b.kind);
+      if (step) this.motionFn?.({ type: 'step', step });
       // Captures (freeze) : arrêt sur le temps demandé ; rythme instantané : enchaînement immédiat.
       if (stopAt !== null && q.index >= stopAt) break;
       if (this.params.freeze || this.params.pace === 'instant') continue;
@@ -253,6 +274,12 @@ export class Controller {
     if (!q.rendered || !this.beatFn) { q.rendered = true; this.renderFn(); }
     else this.beatFn();
     if (!this.params.freeze && this.params.pace !== 'instant') this.seqTimer = window.setTimeout(() => this.advanceBeat(), this.beatDelay(q.beats[q.index]!));
+  }
+
+  /** QA uniquement (`?qa=1`) : fige la séquence sur le temps courant (pellicules déterministes). */
+  pauseSequence(): void {
+    window.clearTimeout(this.seqTimer);
+    this.seqTimer = 0;
   }
 
   /** Termine immédiatement la séquence (bouton Passer, ou nouvelle commande valide). */
@@ -267,6 +294,7 @@ export class Controller {
       last = b;
     }
     if (last) this.pushReactions(this.expr.observe(last.events));
+    this.motionFn?.({ type: 'stop' });
     this.finishSequence();
   }
 
@@ -276,6 +304,7 @@ export class Controller {
     this.seqTimer = 0;
     this.seq.done = true;
     this.seq.index = this.seq.beats.length;
+    this.motionFn?.({ type: 'end' });
     this.rebuildJournal();
     this.renderFn();
     this.scheduleAi();

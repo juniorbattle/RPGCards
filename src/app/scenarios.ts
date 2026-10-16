@@ -64,6 +64,30 @@ export const SCENARIOS: Record<string, Scenario> = {
       '5:TACTICS': () => ({ type: 'tactics', player: 'p2', plans: [{ mode: 'rank' }, null], technique: null }),
     },
   },
+  'clash-aa': {
+    id: 'clash-aa',
+    title: 'Clash — le rival attaque (ASSAUT)',
+    description: 'Le rival engage Ronce III en ASSAUT. Votre choix décide de la chorégraphie : Cendre IV en Assaut (vous dominez), Cendre III en Assaut (égalité : impacts simultanés), Astre II en Assaut (le rival domine), ou une Garde (Assaut contre Garde).',
+    config: base(),
+    build: (cfg) => fixture(cfg,
+      { hand: ['Cendre-4', 'Cendre-3', 'Astre-2', 'Voile-1'] },
+      { hand: ['Ronce-3', 'Astre-2', 'Voile-1', 'Cendre-1'] }),
+    rival: {
+      '5:COMMIT': (s) => ({ type: 'commit', player: 'p2', primaryId: idOf(s, 'p2', d('Ronce-3')), stance: 'assault', secondaryId: null, replaceSlot: null }),
+    },
+  },
+  'clash-ag': {
+    id: 'clash-ag',
+    title: 'Clash — le rival se met en GARDE',
+    description: 'Le rival engage Cendre IV en GARDE (Puissance 12). Cendre III + Cendre I en Rang : victoire au Rang SANS blessure (absorption) ; Cendre III seule : la Garde tient ; Brasier Originel ∞ : la Garde cède ; votre propre Garde : Garde contre Garde.',
+    config: base({ signature: 'Cendre' }),
+    build: (cfg) => fixture(cfg,
+      { hand: ['Cendre-3', 'sig-Cendre', 'Ronce-4', 'Astre-2'], slots: [{ def: 'Cendre-1', active: true }, null] },
+      { hand: ['Cendre-4', 'Ronce-2', 'Astre-1', 'Voile-1'] }),
+    rival: {
+      '5:COMMIT': (s) => ({ type: 'commit', player: 'p2', primaryId: idOf(s, 'p2', d('Cendre-4')), stance: 'guard', secondaryId: null, replaceSlot: null }),
+    },
+  },
   doubleko: {
     id: 'doubleko',
     title: 'Double K.-O. — prolongation',
