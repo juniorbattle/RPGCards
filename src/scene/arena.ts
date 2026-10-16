@@ -385,8 +385,8 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     transients.push({ obj, t0: clock, dur, update });
     if (still()) {
       update(0.35);
-      renderOnce();
-      window.setTimeout(() => { scene.remove(obj); disposeObj(obj); renderOnce(); }, 700);
+      requestRender();
+      window.setTimeout(() => { scene.remove(obj); disposeObj(obj); requestRender(); }, 700);
       transients.pop();
     }
   }
@@ -561,6 +561,20 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     }
   }
 
+  /**
+   * Rendu à la demande (mouvement réduit / gel) : les demandes d’une même image sont FUSIONNÉES
+   * en un seul rendu. Évite les rafales de rendus synchrones (fil principal bloqué en rendu logiciel).
+   */
+  let renderQueued = false;
+  function requestRender(): void {
+    if (renderQueued) return;
+    renderQueued = true;
+    requestAnimationFrame(() => {
+      renderQueued = false;
+      if (still()) renderOnce();
+    });
+  }
+
   function loop(now: number): void {
     raf = requestAnimationFrame(loop);
     const realDt = (now - last) / 1000;
@@ -591,7 +605,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     raf = requestAnimationFrame(loop);
   }
 
-  const onResize = () => { resize(); if (still()) renderOnce(); };
+  const onResize = () => { resize(); if (still()) requestRender(); };
   const onVis = () => { if (document.hidden) cancelAnimationFrame(raf); else start(); };
   window.addEventListener('resize', onResize);
   document.addEventListener('visibilitychange', onVis);
@@ -649,37 +663,37 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
           ring(0xffe08a, zOf(fx.side), 5, 1.6);
           break;
       }
-      if (still()) renderOnce();
+      if (still()) requestRender();
     },
     setView(v: ViewMode) {
       if (v === view) return;
       view = v;
       blendFrom = blend;
       blendT = 0;
-      if (still()) { update(0); renderOnce(); }
+      if (still()) { update(0); requestRender(); }
     },
     setStage(r: Rect | null) {
       if (sameRect(r, stage)) return;
       stage = r;
-      if (still()) renderOnce();
+      if (still()) requestRender();
     },
     setBoard(r: Rect | null) {
       if (sameRect(r, boardRect)) return;
       boardRect = r;
-      if (still()) renderOnce();
+      if (still()) requestRender();
     },
     setPortrait(r: Rect | null) {
       if (sameRect(r, portrait)) return;
       portrait = r;
-      if (still()) renderOnce();
+      if (still()) requestRender();
     },
     expression(e: Expression) {
       rival.setExpression(e);
-      if (still()) { rival.update(0, clock, true); renderOnce(); }
+      if (still()) { rival.update(0, clock, true); requestRender(); }
     },
     setRivalHand(n: number) {
       rival.setHandCount(n);
-      if (still()) renderOnce();
+      if (still()) requestRender();
     },
     setFamilies(me: Family, opp: Family) {
       meHex = FAMILY_PALETTE[me].hex;

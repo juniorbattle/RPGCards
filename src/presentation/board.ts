@@ -126,11 +126,7 @@ function hud(c: Controller, s: SideView, who: 'me' | 'opp'): HTMLElement {
   const focus = c.currentBeat()?.focus ?? [];
   return h('section', { class: cls('hud', who, focus.includes(`${who}-hp`) && 'beat-hit', focus.includes(`${who}-insight`) && 'beat-insight'), 'aria-label': who === 'me' ? 'Votre duelliste' : 'Duelliste rival' },
     h('span', { class: 'who' }, who === 'me' ? 'Vous' : s.name, ' ', h('span', { html: emblemSvg(s.signatureFamily, 14), title: `Signature ${s.signatureFamily}` })),
-    h('div', { class: 'hp' },
-      h('div', { class: 'bar', role: 'meter', 'aria-valuemin': '0', 'aria-valuemax': String(s.maxHp), 'aria-valuenow': String(hpShown), 'aria-label': 'Points de vie' }, h('div', { class: 'fill', style: `width:${pct}%` })),
-      h('div', { class: 'label' }, h('b', null, `${hpShown}`), ` / ${s.maxHp} PV`),
-      ...floaters,
-    ),
+    hpEl(c, s, who),
     h('div', { class: 'insight', title: 'Insight (0 à 2)', 'aria-label': `Insight ${s.insight} sur 2` }, 'Insight', h('span', { class: cls('pip', s.insight >= 1 && 'on') }), h('span', { class: cls('pip', s.insight >= 2 && 'on') })),
     h('div', { class: 'counts' },
       who === 'opp' ? h('span', { class: 'opp-hand', 'aria-label': `Main adverse : ${s.handCount} cartes cachées` }, Array.from({ length: s.handCount }, () => h('span', { class: 'mini-back' }))) : null,
@@ -140,6 +136,17 @@ function hud(c: Controller, s: SideView, who: 'me' | 'opp'): HTMLElement {
     ),
     techChips(c, s, who),
     h('span', { class: cls('lockchip', s.locked && 'locked', who === 'opp' && awaiting && !s.locked && c.aiThinking && 'thinking') }, lockText),
+  );
+}
+
+function hpEl(c: Controller, s: SideView, who: 'me' | 'opp'): HTMLElement {
+  const hpShown = c.displayHp(who);
+  const pct = Math.max(0, Math.min(100, (hpShown / s.maxHp) * 100));
+  const floaters = c.ui.floaters.filter((f) => f.side === who).map((f) => h('span', { class: cls('floater', f.heal && 'heal'), 'data-floater': String(f.id), 'aria-hidden': 'true' }, f.text));
+  return h('div', { class: 'hp' },
+    h('div', { class: 'bar', role: 'meter', 'aria-valuemin': '0', 'aria-valuemax': String(s.maxHp), 'aria-valuenow': String(hpShown), 'aria-label': 'Points de vie' }, h('div', { class: 'fill', style: `width:${pct}%` })),
+    h('div', { class: 'label' }, h('b', null, `${hpShown}`), ` / ${s.maxHp} PV`),
+    ...floaters,
   );
 }
 
@@ -178,7 +185,7 @@ function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
   const v = c.view;
   const s = who === 'me' ? v.me : v.opp;
   const label = h('span', { class: 'zone-label' }, 'Primaire');
-  const zone = h('div', { class: cls('zone', 'primary', c.currentBeat()?.focus.includes(`${who}-primary`) && 'beat-focus'), 'data-drop': who === 'me' ? 'primary' : null }, label);
+  const zone = h('div', { class: cls('zone', 'primary', c.currentBeat()?.focus.includes(`${who}-primary`) && 'beat-focus'), 'data-drop': who === 'me' ? 'primary' : null, 'data-focus-key': `${who}-primary` }, label);
   const revealed = v.reveal.primaries?.[who];
   if (revealed) {
     const st = revealed.stance;
@@ -237,7 +244,7 @@ function slotZone(c: Controller, who: 'me' | 'opp', slot: SlotIndex, s: SlotView
   const v = c.view;
   const key = who === 'me' ? (`slot${slot}` as const) : (`opp${slot}` as const);
   const bf = c.currentBeat()?.focus ?? [];
-  const zone = h('div', { class: cls('zone', (bf.includes(`${who}-slot-${slot}`) || bf.includes(`${who}-slots`)) && 'beat-focus'), 'data-drop': who === 'me' ? key : null }, h('span', { class: 'zone-label' }, `Secondaire ${slot + 1}`));
+  const zone = h('div', { class: cls('zone', (bf.includes(`${who}-slot-${slot}`) || bf.includes(`${who}-slots`)) && 'beat-focus'), 'data-drop': who === 'me' ? key : null, 'data-focus-key': `${who}-slot-${slot}` }, h('span', { class: 'zone-label' }, `Secondaire ${slot + 1}`));
   let interactive = false;
 
   // Brouillon de pose (moi, phase Engagement)
@@ -352,17 +359,10 @@ function strip(c: Controller): HTMLElement {
 
   const beat = c.currentBeat();
   if (beat && c.seq) {
-    const q = c.seq;
-    msg.classList.add('beat', `tone-${beat.tone}`);
-    msg.append(
-      h('span', { class: 'beat-step' }, `Résolution · ${q.index + 1}/${q.beats.length}`),
-      h('span', { class: 'beat-title' }, beat.title),
-      h('span', { class: 'beat-detail' }, beat.detail),
-    );
     actions.append(btn('Passer ⏭', () => c.skipSequence(), { key: 'act-skip', ghost: true }));
     if (v.phase === 'RESOLVED') actions.append(btn('Tour suivant', () => c.nextTurn(), { key: 'act-next' }));
     if (v.phase === 'REPEL' && v.repel?.mine) actions.append(btn('Renoncer au Repoussement', () => c.skipRepel(), { key: 'act-repel-skip', ghost: true }));
-    return h('section', { class: 'strip', 'aria-label': 'Résolution du Clash' }, msg, actions);
+    return h('section', { class: 'strip seq', 'aria-label': 'Résolution du Clash' }, beatMsg(c), actions);
   }
   switch (v.phase) {
     case 'START':
@@ -435,6 +435,45 @@ function strip(c: Controller): HTMLElement {
     }
   }
   return h('section', { class: 'strip', 'aria-label': 'Phase et résultat' }, msg, actions);
+}
+
+function beatMsg(c: Controller): HTMLElement {
+  const beat = c.currentBeat()!;
+  const q = c.seq!;
+  return h('div', { class: cls('msg', 'beat', `tone-${beat.tone}`), role: 'status', 'aria-live': 'polite' },
+    h('span', { class: 'beat-step' }, `Résolution · ${q.index + 1}/${q.beats.length}`),
+    h('span', { class: 'beat-title' }, beat.title),
+    h('span', { class: 'beat-detail' }, beat.detail),
+  );
+}
+
+/**
+ * Mise à jour CIBLÉE d’un temps de résolution : message, PV, surbrillances, journal.
+ * Les boutons (Passer, Tour suivant, cibles) ne sont PAS recréés : aucun clic ne peut être perdu.
+ */
+export function patchBeat(root: HTMLElement, c: Controller): void {
+  const beat = c.currentBeat();
+  const msg = root.querySelector('.strip .msg');
+  if (!beat || !msg || !msg.classList.contains('beat')) { return; }
+  msg.replaceWith(beatMsg(c));
+  for (const who of ['me', 'opp'] as const) {
+    const side = who === 'me' ? c.view.me : c.view.opp;
+    root.querySelector(`.hud.${who} .hp`)?.replaceWith(hpEl(c, side, who));
+    const hud = root.querySelector(`.hud.${who}`);
+    hud?.classList.toggle('beat-hit', beat.focus.includes(`${who}-hp`));
+    hud?.classList.toggle('beat-insight', beat.focus.includes(`${who}-insight`));
+  }
+  root.querySelectorAll<HTMLElement>('[data-focus-key]').forEach((z) => {
+    const k = z.dataset.focusKey!;
+    const group = k.replace(/-slot-\d$/, '-slots');
+    z.classList.toggle('beat-focus', beat.focus.includes(k) || (group !== k && beat.focus.includes(group)));
+  });
+  const j = root.querySelector('.journal');
+  if (j) {
+    const next = journal(c);
+    j.replaceWith(next);
+    next.scrollTop = next.scrollHeight;
+  }
 }
 
 // --- Main ---------------------------------------------------------------------
