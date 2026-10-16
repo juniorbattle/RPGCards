@@ -1,12 +1,14 @@
-// Démonstrations M03 de chaque type de Clash, jouées PAR L’INTERFACE dans des scénarios déterministes.
+// Démonstrations de chaque type de Clash, jouées PAR L’INTERFACE dans des scénarios déterministes.
 // Pour chaque cas : captures figées (freeze=1&beat=N) aux temps Rang (présentation), Issue (impact),
-// Blessures ; + une capture en mouvement réduit ; + une pellicule en mouvement réel (non figée).
-// Sortie : screenshots/qa/m03/clash/*.png + clash-manifest.json
-import { mkdirSync, writeFileSync } from 'node:fs';
+// Blessures ; + une capture en mouvement réduit ; + une pellicule de l’animation réelle, échantillonnée
+// à des instants exacts (séquence en pause + stageSeek) — ce n’est PAS un enregistrement temps réel.
+// Sortie : $CLASH_OUT (défaut screenshots/qa/m03-2/clash ; les preuves M03 restent dans m03/clash)
+// *.png + pellicule-*.png (planches) + clash-manifest.json
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { launch, startPreview, waitDecision, watchConsole } from './browser.mjs';
 
-const OUT = 'screenshots/qa/m03/clash';
+const OUT = process.env.CLASH_OUT ?? 'screenshots/qa/m03-2/clash';
 mkdirSync(OUT, { recursive: true });
 const commit = execSync('git rev-parse --short HEAD').toString().trim();
 const ONLY = process.env.CLASH_ONLY ?? '';
@@ -24,7 +26,9 @@ const CASES = [
   { name: 'interferences', scenario: 'interference', prim: 'Cendre-4', stance: 'assault', plans: [{ slot: 0, mode: 'damage' }, { slot: 1, mode: 'interfere', target: 0 }], expect: null, label: 'Interférences mutuelles : soutiens ANNULÉS, puis Clash' },
 ].filter((c) => !ONLY || ONLY.split(',').includes(c.name));
 
-const manifest = { commit, date: new Date().toISOString(), note: 'Chromium headless + WebGL logiciel SwiftShader. Captures figées = pose FINALE de l’étape (freeze=1&beat=N) ; pellicule = mouvement réel.', cases: [] };
+const FILM_MS = [0, 200, 380, 470, 620, 1000];
+const films = [];
+const manifest = { commit, date: new Date().toISOString(), note: 'Chromium headless + WebGL logiciel SwiftShader. Captures figées = pose FINALE de l’étape (freeze=1&beat=N) ; pellicule = animation réelle échantillonnée à des instants exacts (pause + stageSeek), pas un enregistrement temps réel.', cases: [] };
 
 async function drive(page, c) {
   const v = await waitDecision(page);
@@ -127,19 +131,33 @@ try {
     // « issue » et les animations de la scène sont placées à des instants précis (pellicule exacte).
     await page.evaluate(() => window.__lqv.pauseSequence());
     const frames = [];
-    for (const [i, ms] of [0, 200, 380, 470, 620, 1000].entries()) {
+    for (const [i, ms] of FILM_MS.entries()) {
       await page.evaluate((t) => window.__lqv.stageSeek(t), ms);
       await page.waitForTimeout(120);
       const file = `${c.name}-film-${i}-${ms}ms.png`;
       await page.screenshot({ path: `${OUT}/${file}` });
       frames.push(file);
     }
-    manifest.cases.find((x) => x.name === name)?.shots.push({ film: frames });
+    manifest.cases.find((x) => x.name === name)?.shots.push({ film: frames, instantsMs: FILM_MS, method: 'pause + stageSeek (positions exactes, pas temps réel)' });
+    films.push({ name, label: c.label, frames });
     await page.click('[data-key="act-skip"]');
     await page.waitForTimeout(300);
     const ghosts = await page.evaluate(() => document.querySelectorAll('#stage .clash-stage').length);
     if (ghosts) issues.push(`${name} : ${ghosts} scène(s) de Clash fantôme(s) après « Passer »`);
     await ctx.close();
+  }
+  // Planches de pellicule : instants explicitement indiqués, méthode rappelée en titre.
+  for (const f of films) {
+    const cells = f.frames.map((file, i) => `<figure style="margin:0"><img src="data:image/png;base64,${readFileSync(`${OUT}/${file}`).toString('base64')}" style="width:300px;border:1px solid #4a3f2a;border-radius:4px;display:block"><figcaption style="font-size:12px;color:#e2c48a;margin-top:3px">t = ${FILM_MS[i]} ms</figcaption></figure>`).join('');
+    const html = `<!doctype html><meta charset="utf-8"><body style="margin:0;background:#0c0a10;color:#f3ece0;font-family:system-ui;padding:12px">
+<h2 style="font-family:Georgia;color:#ffe7b0;margin:0 0 4px;font-size:17px">Pellicule — ${f.label}</h2>
+<div style="font-size:12px;color:#ff9a7a;margin-bottom:8px">Positions EXACTES de l’animation réelle de la scène de Clash (séquence en pause, stageSeek à chaque instant) — PAS un enregistrement en temps réel. Build ${commit}, 1280×720, SwiftShader (CPU).</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap;max-width:1880px">${cells}</div></body>`;
+    const page = await browser.newPage({ viewport: { width: 1900, height: 400 } });
+    await page.setContent(html);
+    await page.waitForTimeout(150);
+    await page.screenshot({ path: `${OUT}/pellicule-${f.name}.png`, fullPage: true });
+    await page.close();
   }
 } finally {
   await browser.close();

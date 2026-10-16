@@ -10,9 +10,8 @@ export async function launch() {
   return chromium.launch({ executablePath: CHROMIUM, args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 }
 
-/** Démarre `vite preview` sur le build courant (dist/, ou `LQV_DIST` pour un build d’itération séparé). */
-export async function startPreview(port = 4179) {
-  const outDir = process.env.LQV_DIST || 'dist';
+/** Démarre `vite preview` sur le build courant (dist/, ou `LQV_DIST`, ou `outDir` : build d’itération / « avant »). */
+export async function startPreview(port = 4179, outDir = process.env.LQV_DIST || 'dist') {
   if (!existsSync(`${outDir}/index.html`)) throw new Error(`${outDir}/ absent : lancer \`npm run build\` avant.`);
   const proc = spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--port', String(port), '--strictPort', '--outDir', outDir], { stdio: ['ignore', 'pipe', 'pipe'] });
   let out = '';
