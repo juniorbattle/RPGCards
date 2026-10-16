@@ -1,5 +1,10 @@
 # AGENTS.md — Les Quatre Voies (nouveau dépôt indépendant)
 
+## Mandat actif M03 — Preview de référence validée + impact des cartes
+
+Lire `docs/missions/M03_PREVIEW_VALIDEE_HUD_CLASH.md` et inspecter `reference/REFERENCE_VISUELLE_VALIDEE_M03.jpg` **avant de modifier le rendu**. C'est la référence visuelle approuvée pour la composition du duel : **HUD joueur compact bas-gauche, similaire au HUD du rival haut-gauche, centre dégagé, mains lisibles**, modes ASSAUT/GARDE visibles après révélation. La nouvelle animation des Clashes doit être pilotée par les événements et le verdict du moteur M02 ; même le gagnant part à la défausse après sa pose momentanée. Garder Three.js/TS, Art by Code, caméra frontale + inclinée, secret et tests. Les choix M02 contraires à cette direction de présentation sont dépassés, mais **aucune mécanique de gameplay n'est changée**.
+
+
 ## Extension du mandat — M02 : duel face à face
 
 Le mandat M02 approuvé est dans `docs/missions/M02_CONFRONTATION_FACE_A_FACE_ET_LISIBILITE.md` (à lire après `JOURNAL.md`). Il fait évoluer la **présentation**, pas le règlement : la **vue frontale du rival, son visage et sa posture visibles** deviennent le défaut ; la vue inclinée sert aux manipulations, tout en gardant le rival observable. Caméras orchestrées par phases, sans mouvement obligatoire à chaque clic, et **aucune fuite de secrets par expressions ou IA**. Les tells psychologiques exploitant de vraies intentions secrètes et un éventuel Sang-froid sont explicitement hors-scope tant que non ratifiés. Pas de grande production de décors ; art procédural autonome, gameplay + ergonomie prioritaires. Conserver le socle M01, travailler sur une nouvelle branche et ne pas modifier `main`.
