@@ -1,6 +1,6 @@
 {
-  "commit": "142b437",
-  "date": "2026-10-16T05:12:18.250Z",
+  "commit": "d4a4baf",
+  "date": "2026-10-16T05:16:14.226Z",
   "chromium": "141.0.7390.37",
   "runs": [
     {
@@ -12,43 +12,183 @@
       },
       "mode": "drag",
       "tech": {
+        "Lecture": 1,
         "Ancrage": 2
       },
       "useLecture": true,
       "outcome": "ended",
       "phase": "ENDED",
       "winner": "opp",
-      "turn": 10,
+      "turn": 13,
       "hp": [
         0,
-        55
+        13
       ],
       "overtime": 0,
-      "ms": 127592,
+      "ms": 150353,
       "consoleIssues": [],
-      "turns": 9,
-      "drags": 20,
+      "turns": 12,
+      "drags": 26,
       "clicks": 0,
       "keyboard": 0,
-      "tactics": 8,
-      "repels": 1,
-      "leaks": [
-        "choix tactique adverse visible avant verrouillage commun"
-      ],
-      "viewChecks": 36,
+      "tactics": 12,
+      "repels": 3,
+      "leaks": [],
+      "viewChecks": 54,
       "viewErrors": [],
       "lostClicks": [],
       "moods": [
         "smug",
         "surprised",
         "focused",
-        "confident",
         "triumphant"
       ],
       "sequencesWatched": 0,
-      "sequencesSkipped": 7,
+      "sequencesSkipped": 9,
+      "manualToggleChecked": "ok",
+      "viewSwitches": 28,
+      "personality": "voile"
+    },
+    {
+      "name": "desktop-1920-click",
+      "seed": 202,
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "mode": "click",
+      "tech": {
+        "Sondage": 6
+      },
+      "watchSequence": true,
+      "outcome": "ended",
+      "phase": "ENDED",
+      "winner": "me",
+      "turn": 14,
+      "hp": [
+        23,
+        0
+      ],
+      "overtime": 0,
+      "ms": 370487,
+      "consoleIssues": [],
+      "turns": 13,
+      "drags": 0,
+      "clicks": 14,
+      "keyboard": 0,
+      "tactics": 11,
+      "repels": 2,
+      "leaks": [],
+      "viewChecks": 57,
+      "viewErrors": [],
+      "lostClicks": [],
+      "moods": [
+        "neutral",
+        "focused",
+        "smug",
+        "annoyed",
+        "confident",
+        "defeated"
+      ],
+      "sequencesWatched": 13,
+      "sequencesSkipped": 0,
+      "manualToggleChecked": "ok",
+      "viewSwitches": 30,
+      "personality": "ronce"
+    },
+    {
+      "name": "desktop-1280-keyboard",
+      "seed": 303,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "mode": "keyboard",
+      "tech": {
+        "Recentrage": 1
+      },
+      "outcome": "ended",
+      "phase": "ENDED",
+      "winner": "opp",
+      "turn": 10,
+      "hp": [
+        0,
+        1
+      ],
+      "overtime": 2,
+      "ms": 93291,
+      "consoleIssues": [],
+      "turns": 9,
+      "drags": 0,
+      "clicks": 0,
+      "keyboard": 10,
+      "tactics": 8,
+      "repels": 0,
+      "leaks": [],
+      "viewChecks": 37,
+      "viewErrors": [],
+      "lostClicks": [],
+      "moods": [
+        "confident",
+        "focused",
+        "pained",
+        "thinking",
+        "smug",
+        "surprised",
+        "shocked",
+        "triumphant"
+      ],
+      "sequencesWatched": 0,
+      "sequencesSkipped": 8,
       "manualToggleChecked": "ok",
       "viewSwitches": 22,
+      "personality": "braise"
+    },
+    {
+      "name": "mobile-390-touch",
+      "seed": 404,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "touch",
+      "tech": {
+        "Ancrage": 4
+      },
+      "isMobile": true,
+      "outcome": "ended",
+      "phase": "ENDED",
+      "winner": "me",
+      "turn": 19,
+      "hp": [
+        6,
+        0
+      ],
+      "overtime": 0,
+      "ms": 97270,
+      "consoleIssues": [],
+      "turns": 18,
+      "drags": 19,
+      "clicks": 16,
+      "keyboard": 0,
+      "tactics": 18,
+      "repels": 1,
+      "leaks": [],
+      "viewChecks": 68,
+      "viewErrors": [],
+      "lostClicks": [],
+      "moods": [
+        "focused",
+        "smug",
+        "surprised",
+        "annoyed",
+        "pleased",
+        "defeated"
+      ],
+      "sequencesWatched": 0,
+      "sequencesSkipped": 16,
+      "manualToggleChecked": "ok",
+      "viewSwitches": 42,
       "personality": "voile"
     }
   ],
@@ -56,7 +196,14 @@
     "smug",
     "surprised",
     "focused",
+    "triumphant",
+    "neutral",
+    "annoyed",
     "confident",
-    "triumphant"
+    "defeated",
+    "pained",
+    "thinking",
+    "shocked",
+    "pleased"
   ]
 }
