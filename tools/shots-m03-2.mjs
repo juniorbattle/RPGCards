@@ -85,6 +85,61 @@ async function analyze(helper, png, regions) {
   }, { src: `data:image/png;base64,${png.toString('base64')}`, regions });
 }
 
+/** Textes à lire (boîte visible + couleur calculée) pour la mesure de contraste sur la capture. */
+async function textSamples(page) {
+  return page.evaluate(() => {
+    const out = [];
+    const add = (kind, el) => {
+      const r = el.getBoundingClientRect();
+      const x0 = Math.max(0, r.left), y0 = Math.max(0, r.top), x1 = Math.min(innerWidth, r.right), y1 = Math.min(innerHeight, r.bottom);
+      if (x1 - x0 < 4 || y1 - y0 < 4) return;
+      const cs = getComputedStyle(el);
+      if (cs.visibility === 'hidden' || cs.display === 'none' || Number(cs.opacity) === 0) return;
+      out.push({ kind, x: x0, y: y0, w: x1 - x0, h: y1 - y0, rgb: cs.color.match(/[\d.]+/g).slice(0, 3).map(Number) });
+    };
+    document.querySelectorAll('.zone > .zone-label').forEach((el) => add('étiquettes de cases', el));
+    document.querySelectorAll('.empty-hint').forEach((el) => add('aides des cases', el));
+    document.querySelectorAll('.command .msg').forEach((el) => add('texte des commandes', el));
+    document.querySelectorAll('.hand .card .name').forEach((el) => add('noms des cartes (main)', el));
+    return out;
+  });
+}
+
+/** Contraste WCAG texte / fond RÉEL : fond = luminance médiane des pixels de la boîte sur la capture
+ *  (le texte clair y est minoritaire). Par type : contraste minimal, nombre d’éléments, part ≥ 4,5:1. */
+async function contrast(helper, png, items) {
+  const ratios = await helper.evaluate(async ({ src, items }) => {
+    const img = new Image();
+    img.src = src;
+    await img.decode();
+    const c = document.createElement('canvas');
+    c.width = img.width;
+    c.height = img.height;
+    const g = c.getContext('2d');
+    g.drawImage(img, 0, 0);
+    const lin = (v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+    const L = (r, gg, b) => 0.2126 * lin(r) + 0.7152 * lin(gg) + 0.0722 * lin(b);
+    return items.map((it) => {
+      const d = g.getImageData(Math.round(it.x), Math.round(it.y), Math.max(1, Math.round(it.w)), Math.max(1, Math.round(it.h))).data;
+      const ls = [];
+      for (let i = 0; i < d.length; i += 4) ls.push(L(d[i], d[i + 1], d[i + 2]));
+      ls.sort((a, b) => a - b);
+      const bg = ls[Math.floor(ls.length / 2)];
+      const fg = L(...it.rgb);
+      return { kind: it.kind, ratio: (Math.max(fg, bg) + 0.05) / (Math.min(fg, bg) + 0.05) };
+    });
+  }, { src: `data:image/png;base64,${png.toString('base64')}`, items });
+  const out = {};
+  for (const r of ratios) {
+    const o = (out[r.kind] ??= { min: Infinity, n: 0, aa: 0 });
+    o.min = Math.min(o.min, r.ratio);
+    o.n++;
+    if (r.ratio >= 4.5) o.aa++;
+  }
+  for (const o of Object.values(out)) o.min = Math.round(o.min * 10) / 10;
+  return out;
+}
+
 /** Composition : chevauchements main / cases / commandes / HUD, débordement horizontal (comme qa-browser). */
 async function layout(page) {
   return page.evaluate(() => {
@@ -188,8 +243,9 @@ async function capture(browser, helper, server, which, c) {
     visage: [0.44, Math.max(0, vw.head - 0.06), 0.56, Math.min(1, vw.head + 0.08)],
   };
   const lum = await analyze(helper, png, regions);
+  const con = await contrast(helper, png, await textSamples(page));
   await ctx.close();
-  return { file, view: p.view, rival: p.rival ? `${p.personality}:${p.rival.mood}` : null, lum, ...lay, faceH: p.view === 'A' ? faceHeight(which, lay.anchors.A, w, h) : null, driveError };
+  return { file, view: p.view, rival: p.rival ? `${p.personality}:${p.rival.mood}` : null, lum, contrast: con, ...lay, faceH: p.view === 'A' ? faceHeight(which, lay.anchors.A, w, h) : null, driveError };
 }
 
 const browser = await launch();
@@ -197,13 +253,14 @@ const helper = await (await browser.newContext()).newPage();
 const serverAfter = await startPreview(4201);
 const serverBefore = BEFORE && existsSync(`${BEFORE}/index.html`) ? await startPreview(4202, BEFORE) : null;
 const faces = {};
+const conLine = (c) => Object.entries(c ?? {}).map(([k, o]) => `${k} ${o.min}:1 (${o.aa}/${o.n} ≥ 4,5)`).join(', ') || '–';
 try {
   for (const c of CASES) {
     const entry = { id: c.id, desc: c.desc, viewport: `${c.vp[0]}×${c.vp[1]}`, url: c.url, panel: c.panel ?? null };
     entry.apres = await capture(browser, helper, serverAfter, 'apres', c);
     if (serverBefore) entry.avant = await capture(browser, helper, serverBefore, 'avant', c);
     manifest.cases.push(entry);
-    const f = (x) => (x ? `visage ${x.faceH ?? '–'} px · lum. table ${x.lum.table} / visage ${x.lum.visage} · main ${x.handCardPx ?? '–'} px · chevauchements ${x.overlaps.length}${x.overlaps.length ? ` (${x.overlaps.slice(0, 3).join(', ')})` : ''}${x.driveError ? ` · PARCOURS IMPOSSIBLE : ${x.driveError}` : ''}` : '');
+    const f = (x) => (x ? `visage ${x.faceH ?? '–'} px · lum. table ${x.lum.table} / visage ${x.lum.visage} · main ${x.handCardPx ?? '–'} px · contraste min ${conLine(x.contrast)} · chevauchements ${x.overlaps.length}${x.overlaps.length ? ` (${x.overlaps.slice(0, 3).join(', ')})` : ''}${x.driveError ? ` · PARCOURS IMPOSSIBLE : ${x.driveError}` : ''}` : '');
     console.log(`✓ ${c.id} — après : ${f(entry.apres)}${entry.avant ? `\n    avant : ${f(entry.avant)}` : ''}`);
   }
   faces.apres = await expressions(serverAfter, 'apres');
@@ -253,7 +310,7 @@ try {
     const colW = portrait ? 300 : 620;
     const fig = (cap, inner) => `<figure style="margin:0"><figcaption style="font-size:12px;color:#b9ae9c;margin-bottom:4px">${cap}</figcaption>${inner}</figure>`;
     const img = (f) => `<img src="${png64(f)}" style="width:${colW}px;border:1px solid #6b5530;border-radius:6px;display:block">`;
-    const metric = (x) => (x ? `<div style="font-size:11px;color:#d8cdb8;margin-top:4px">${x.faceH ? `visage ${x.faceH} px · ` : ''}luminance table ${x.lum.table} · visage ${x.lum.visage} · image ${x.lum.image}${x.handCardPx ? ` · carte de main ${x.handCardPx} px` : ''} · chevauchements ${x.overlaps.length}${x.overlaps.length ? ` (${x.overlaps.slice(0, 3).join(', ')})` : ''}${x.driveError ? `<br><b style="color:#ff9a7a">Parcours impossible par l’interface : ${x.driveError.replace(/</g, '&lt;').slice(0, 160)}</b>` : ''}</div>` : '');
+    const metric = (x) => (x ? `<div style="font-size:11px;color:#d8cdb8;margin-top:4px">${x.faceH ? `visage ${x.faceH} px · ` : ''}luminance table ${x.lum.table} · visage ${x.lum.visage} · image ${x.lum.image}${x.handCardPx ? ` · carte de main ${x.handCardPx} px` : ''}<br>contraste minimal mesuré : ${conLine(x.contrast)}<br>chevauchements ${x.overlaps.length}${x.overlaps.length ? ` (${x.overlaps.slice(0, 3).join(', ')})` : ''}${x.driveError ? `<br><b style="color:#ff9a7a">Parcours impossible par l’interface : ${x.driveError.replace(/</g, '&lt;').slice(0, 160)}</b>` : ''}</div>` : '');
     const cols = [];
     if (e.panel) cols.push(fig(`Preview validée (document de revue, panneau ${e.panel})`, crop(PANELS[e.panel], portrait ? 300 : 520)));
     if (e.avant) cols.push(fig(`AVANT — runtime M03, build ${BEFORE_SHA} (même seed, même taille, même phase)`, img(e.avant.file) + metric(e.avant)));

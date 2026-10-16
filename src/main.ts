@@ -31,7 +31,7 @@ function ensureArena(p: RivalPersonality): ArenaHandle | null {
   if (arena && arenaFor === p.id) return arena;
   arena?.dispose();
   try {
-    arena = createArena(arenaHost, { artSeed: params.artSeed, view: params.view === 'B' ? 'B' : 'A', reducedMotion: params.reducedMotion, freeze: params.freeze, personality: p });
+    arena = createArena(arenaHost, { artSeed: params.artSeed, view: params.view === 'B' ? 'B' : 'A', reducedMotion: params.reducedMotion, freeze: params.freeze, personality: p, ablate: params.ablate });
   } catch (err) {
     console.warn('Three.js indisponible, repli CSS', err);
     arena = null;

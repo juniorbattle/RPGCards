@@ -28,6 +28,8 @@ export interface AppParams {
   intro: boolean;
   /** Revue visuelle uniquement : humeur imposée au rival (planche de comparaison), jamais en jeu normal. */
   pose: string | null;
+  /** QA (`qa=1`) : éléments de la scène retirés pour mesurer leur coût (voir ArenaOptions.ablate). */
+  ablate: string[];
 }
 
 export function readParams(search = window.location.search): AppParams {
@@ -58,6 +60,7 @@ export function readParams(search = window.location.search): AppParams {
     rival: q.get('rival'),
     intro: q.get('intro') === '1',
     pose: q.get('qa') === '1' ? q.get('pose') : null,
+    ablate: q.get('qa') === '1' ? (q.get('ablate') ?? '').split(',').filter(Boolean) : [],
     beat: q.has('beat') ? Math.max(0, Math.floor(Number(q.get('beat')) || 0)) : null,
   };
 }
