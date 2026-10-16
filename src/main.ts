@@ -89,14 +89,19 @@ function start(config: GameConfig, scenarioId: string | null): void {
     arena?.setPortrait(c.viewMode === 'B' ? rectOf('.rival-portrait .portrait-window') : null);
   };
   window.addEventListener('resize', () => syncRects());
-  app.addEventListener('pointerdown', () => { pointerHeld = true; }, true);
+  // Jeton du regard de début de tour lu au DÉBUT de l’interaction (voir endHold).
+  let downToken = -1;
+  app.addEventListener('pointerdown', () => { pointerHeld = true; downToken = c.holdToken; }, true);
   const release = () => { pointerHeld = false; if (pendingRender) window.setTimeout(render, 0); };
   window.addEventListener('pointerup', release, true);
   window.addEventListener('pointercancel', release, true);
   // Fin du regard de début de tour APRÈS l’interaction (clic, toucher, dépôt) : jamais pendant.
-  const afterInteraction = () => window.setTimeout(() => c.endHold(), 0);
-  app.addEventListener('pointerup', afterInteraction);
-  window.addEventListener('keydown', (e) => { if (!['Tab', 'Shift', 'Control', 'Alt', 'Meta', 'v', 'V', 'Escape'].includes(e.key)) afterInteraction(); });
+  // Le clic qui lance le tour (« Tour suivant ») ne l’achève pas : son jeton est périmé.
+  const afterInteraction = (token: number) => window.setTimeout(() => c.endHold(token), 0);
+  app.addEventListener('pointerup', () => afterInteraction(downToken));
+  window.addEventListener('keydown', (e) => {
+    if (!['Tab', 'Shift', 'Control', 'Alt', 'Meta', 'v', 'V', 'Escape'].includes(e.key)) afterInteraction(c.holdToken);
+  }, true);
   const tool = (t: string) => {
     if (t === 'smaller' || t === 'bigger') {
       params.scale = Math.min(1.5, Math.max(0.8, params.scale + (t === 'bigger' ? 0.1 : -0.1)));

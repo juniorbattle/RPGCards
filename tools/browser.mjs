@@ -47,10 +47,27 @@ export async function waitDecision(page, timeout = 8000) {
   return view(page);
 }
 
+/**
+ * Positions de départ / d’arrivée une fois la mise en page stabilisée (deux mesures identiques
+ * à 120 ms d’intervalle) : on vise comme un joueur, sur ce qui est affiché.
+ */
+export async function stableBoxes(page, fromSel, toSel, timeout = 3000) {
+  const measure = async () => [await page.locator(fromSel).first().boundingBox(), await page.locator(toSel).first().boundingBox()];
+  const same = (p, q) => JSON.stringify(p) === JSON.stringify(q);
+  let prev = await measure();
+  const t0 = Date.now();
+  while (Date.now() - t0 < timeout) {
+    await page.waitForTimeout(120);
+    const cur = await measure();
+    if (same(prev, cur)) return cur;
+    prev = cur;
+  }
+  return prev;
+}
+
 /** Glisser-déposer réel par pointeur souris (Pointer Events). */
 export async function dragTo(page, fromSel, toSel) {
-  const a = await page.locator(fromSel).first().boundingBox();
-  const b = await page.locator(toSel).first().boundingBox();
+  const [a, b] = await stableBoxes(page, fromSel, toSel);
   if (!a || !b) throw new Error(`dragTo: cible introuvable ${fromSel} -> ${toSel}`);
   await page.mouse.move(a.x + a.width / 2, a.y + a.height / 2);
   await page.mouse.down();
@@ -89,8 +106,7 @@ export async function secretAudit(page) {
 
 /** Glisser tactile réel via CDP (touchStart/Move/End → Pointer Events pointerType « touch »). */
 export async function touchDrag(page, fromSel, toSel) {
-  const a = await page.locator(fromSel).first().boundingBox();
-  const b = await page.locator(toSel).first().boundingBox();
+  const [a, b] = await stableBoxes(page, fromSel, toSel);
   if (!a || !b) throw new Error(`touchDrag: cible introuvable ${fromSel} -> ${toSel}`);
   const cdp = await page.context().newCDPSession(page);
   const p0 = { x: a.x + a.width / 2, y: a.y + a.height / 2 };

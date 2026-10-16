@@ -1,7 +1,7 @@
 /**
  * Glisser-déposer par Pointer Events (souris, stylet, tactile) — sans API HTML5 DnD
  * (inutilisable au tactile). Un mouvement < 6 px est un clic ; un appui long (> 450 ms)
- * sans mouvement ouvre l’inspection. Les cibles déclarent `data-drop`.
+ * relâché sans glisser ouvre l’inspection. Les cibles déclarent `data-drop`.
  */
 import type { Controller, DropKey } from '../app/controller';
 
@@ -33,13 +33,10 @@ export class DragManager {
     window.clearTimeout(this.longPress);
     if (e.pointerType !== 'mouse') {
       this.longPress = window.setTimeout(() => {
-        // Appui long = inspection ; il n’ANNULE PAS un glisser qui commencerait ensuite (des
-        // mouvements peuvent arriver en retard si le fil principal est chargé).
-        if (this.start && !this.dragging) {
-          const def = el.dataset.def;
-          if (def) { this.c.ui.inspect = def; this.c.ui.journalOpen = true; this.onDone(); }
-          this.longPressed = true;
-        }
+        // Appui long = inspection, appliquée au relâchement s’il n’y a pas eu de glisser : des
+        // mouvements peuvent arriver après la minuterie si le fil principal est chargé, et le
+        // glisser doit alors l’emporter (ni annulé, ni recouvert par le panneau d’inspection).
+        if (this.start && !this.dragging) this.longPressed = true;
       }, 450);
     }
   };
@@ -115,7 +112,14 @@ export class DragManager {
     this.start = null;
     if (!this.dragging) {
       // Appui long sans déplacement : inspection seulement (pas de sélection).
-      if (this.longPressed) { this.longPressed = false; this.suppressClick = true; window.setTimeout(() => { this.suppressClick = false; }, 0); return; }
+      if (this.longPressed) {
+        this.longPressed = false;
+        this.suppressClick = true;
+        window.setTimeout(() => { this.suppressClick = false; }, 0);
+        const def = st.el.dataset.def;
+        if (def) { this.c.ui.inspect = def; this.c.ui.journalOpen = true; this.onDone(); }
+        return;
+      }
       // Clic simple sur carte de main / brouillon.
       if (this.suppressClick) return;
       this.suppressClick = true;
