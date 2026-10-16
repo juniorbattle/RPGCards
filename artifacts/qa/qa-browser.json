@@ -1,0 +1,136 @@
+{
+  "commit": "83f9384",
+  "date": "2026-10-16T02:46:23.060Z",
+  "chromium": "141.0.7390.37",
+  "runs": [
+    {
+      "name": "desktop-1280-drag",
+      "seed": 101,
+      "mode": "drag",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "outcome": "ended",
+      "phase": "ENDED",
+      "winner": "opp",
+      "turn": 10,
+      "hp": [
+        0,
+        55
+      ],
+      "overtime": 0,
+      "ms": 79231,
+      "consoleIssues": [],
+      "turns": 9,
+      "drags": 20,
+      "clicks": 0,
+      "keyboard": 0,
+      "tactics": 8,
+      "repels": 1,
+      "leaks": []
+    },
+    {
+      "name": "desktop-1920-click",
+      "seed": 202,
+      "mode": "click",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "outcome": "ended",
+      "phase": "ENDED",
+      "winner": "opp",
+      "turn": 13,
+      "hp": [
+        0,
+        17
+      ],
+      "overtime": 0,
+      "ms": 128056,
+      "consoleIssues": [],
+      "turns": 12,
+      "drags": 0,
+      "clicks": 13,
+      "keyboard": 0,
+      "tactics": 12,
+      "repels": 2,
+      "leaks": []
+    },
+    {
+      "name": "desktop-1280-keyboard",
+      "seed": 303,
+      "mode": "keyboard",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "outcome": "ended",
+      "phase": "ENDED",
+      "winner": "opp",
+      "turn": 10,
+      "hp": [
+        0,
+        45
+      ],
+      "overtime": 0,
+      "ms": 51804,
+      "consoleIssues": [],
+      "turns": 9,
+      "drags": 0,
+      "clicks": 0,
+      "keyboard": 10,
+      "tactics": 9,
+      "repels": 1,
+      "leaks": []
+    },
+    {
+      "name": "mobile-390-touch",
+      "seed": 404,
+      "mode": "touch",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "outcome": "ended",
+      "phase": "ENDED",
+      "winner": "opp",
+      "turn": 8,
+      "hp": [
+        0,
+        61
+      ],
+      "overtime": 0,
+      "ms": 28014,
+      "consoleIssues": [],
+      "turns": 7,
+      "drags": 8,
+      "clicks": 8,
+      "keyboard": 0,
+      "tactics": 6,
+      "repels": 0,
+      "leaks": []
+    }
+  ],
+  "rejection": {
+    "signatureAsSecondary": "Une Signature ne peut jamais être Secondaire (Primaire uniquement).",
+    "lockDisabledWithoutStance": true,
+    "menuDamageLabel": "Amplifier les dégâts×5 (même famille) au multiplicateur",
+    "signatureClash": {
+      "scores": {
+        "p1": "∞",
+        "p2": "8"
+      },
+      "damage": {
+        "p1": 0,
+        "p2": 18
+      },
+      "mult": {
+        "p1": "9",
+        "p2": "1"
+      },
+      "winner": "p1"
+    },
+    "consoleIssues": []
+  }
+}

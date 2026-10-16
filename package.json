@@ -14,7 +14,7 @@
     "qa:browser": "node tools/qa-browser.mjs",
     "shots": "node tools/shots.mjs",
     "perf": "node tools/perf.mjs",
-    "sim": "node --import tsx tools/sim.ts"
+    "sim": "tsx tools/perf-engine.ts 200"
   },
   "engines": {
     "node": ">=20"

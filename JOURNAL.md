@@ -2,7 +2,7 @@
 
 **Nature :** journal de production du **nouveau projet**, et non journal copié de RPG-ArtByCode.  
 **Convention :** passes chronologiques, plus récente en bas ; statut `[OK]`, `[KO]`, `[?]` ; preuves vérifiables.  
-**Dernière passe :** 0B — mission M01 autonome Three.js/MVP cadrée (aucun code de production créé par Claude Code encore).
+**Dernière passe :** 1 — M01 : socle Vite/TS/Three.js, moteur de duel V3.0 + delta V3.2, MVP jouable contre IA, art procédural, QA navigateur (branche `claude/jolly-keller-w17gmp`).
 
 ## État initial connu
 
@@ -15,15 +15,18 @@
 
 ## À reprendre (prioritaire)
 
-1. Lire le kit entier, inventorier les contradictions et qualifier chaque élément historique / expérimental / normatif.
-2. Initialiser architecture production TypeScript/Vite ; planifier les modules du duel sans copier l'UI de test.
-3. Porter et vérifier le moteur avec la nouvelle affinité de Rang ; tests des secrets, interactions exceptionnelles et invariants.
-4. Construire une première expérience duel jouable à la souris/tactile/clavier, drag & drop et états explicites.
-5. Déployer un générateur procédural minimal de cartes/plateau/effets indépendants du moteur ; seed et preuves visuelles.
-6. Capturer les écrans, faire un rapport QA et obtenir validation sur la base M1-M3 avant environnement HD-2D étendu.
+1. **Arbitrages responsable** (ADR 004) : ARB-002 (profil rival public ?), ARB-004 (famille sous Dissimulation), confirmations ARB-001/003/005/011 ; ratification ou non du delta D-01 en V3.3.
+2. Revue des captures et choix de piste caméra (ADR 003 : `tilted` par défaut, `frontal` comparatif) avant tout investissement HD-2D.
+3. QA navigateur : exercer Dissipation/Recentrage/Sondage côté humain dans `qa:browser` ; test explicite du repli sans WebGL.
+4. IA : mémoire des cartes vues (événements privés), personnalités (bluff, spécialiste Interférence), niveau de difficulté.
+5. Lisibilité : animation de résolution séquencée (révélation → interférences → impact) consommant les événements ; prévisualisation des dégâts en Engagement.
+6. Mesures GPU réelles (hors conteneur) ; découpage du bundle (Three.js ≈ 600 kB non compressé).
 
 ## Principes à garder
 
+- Une seule arithmétique : `computeClash` (pur) sert moteur, IA et prévisualisation ; ne jamais dupliquer une formule de règle dans l’UI.
+- Les fenêtres optionnelles s’ouvrent sur information **publique** uniquement ; une vue (`viewFor`) est une copie filtrée, jamais l’état brut.
+- Aucun re-rendu global pendant une interaction pointeur (cause d’un clic perdu observé en QA, passe 1).
 - Séparer Règles / Présentation / Génération artistique / IA.
 - Instrumenter avant optimiser ; captures et chiffres doivent venir du même build, seed et machine précisés.
 - Conserver les échecs et leurs causes ; n'inventer ni approbation ni résultat.
