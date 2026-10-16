@@ -1,13 +1,17 @@
 # CLAUDE.md — Point d'entrée Claude Code
 
+## Règle de branche — décision du responsable (2026-10-16)
+
+Le développement se fait **directement sur `main`** : commit puis push sur `main` après validation (typecheck, tests, build ; QA navigateur quand le rendu change). **Pas de branche provisoire ni de PR**, sauf demande explicite du responsable. Ne jamais réécrire l’historique de `main` (pas de force-push, pas de rebase de commits publiés). Les branches `claude/*` M01–M03 sont de l’historique, déjà intégré.
+
 ## MANDAT ACTIF — M03 : fidélité visuelle et animation de Clash
 
-**Mission actuellement approuvée** : lire et exécuter `docs/missions/M03_PREVIEW_VALIDEE_HUD_CLASH.md` ainsi que `reference/REFERENCE_VISUELLE_VALIDEE_M03.jpg` (image validée par le responsable). M03 **prévaut sur M02 uniquement pour la direction visuelle, les positions des HUD et le motion design** ; aucune règle V3.0/V3.2 n'est modifiée. Reprendre les modules M02 existants, ne pas repartir de zéro. HUD rival haut-gauche, HUD joueur compact bas-gauche, centre libre, badges ASSAUT/GARDE, Clashes physiques animés via les événements déjà résolus. Développer sur cette branche M03 ou une branche fille, jamais sur `main` sans accord.
+**Mission actuellement approuvée** : lire et exécuter `docs/missions/M03_PREVIEW_VALIDEE_HUD_CLASH.md` ainsi que `reference/REFERENCE_VISUELLE_VALIDEE_M03.jpg` (image validée par le responsable). M03 **prévaut sur M02 uniquement pour la direction visuelle, les positions des HUD et le motion design** ; aucune règle V3.0/V3.2 n'est modifiée. Reprendre les modules M02 existants, ne pas repartir de zéro. HUD rival haut-gauche, HUD joueur compact bas-gauche, centre libre, badges ASSAUT/GARDE, Clashes physiques animés via les événements déjà résolus. Développer sur `main` (voir « Règle de branche »).
 
 
 ## MANDAT ACTIF — M02 (nouveau, prioritaire sur le cadrage visuel M01)
 
-**Après la lecture obligatoire de `AGENTS.md` et `JOURNAL.md`**, exécuter la mission `docs/missions/M02_CONFRONTATION_FACE_A_FACE_ET_LISIBILITE.md`. Le moteur M01 constitue la base existante, ne pas recommencer un projet neuf. **Vue frontale de confrontation par défaut avec adversaire visible**, vue inclinée complémentaire pendant manipulation, retour frontal pour révélation/tactique, personnage procédural expressif, résolution séquencée, UX fluide. **Aucune mécanique de tells informatifs ou Sang-froid n'est encore ratifiée.** Développement sur branche séparée dérivée du MVP, `main` inchangée.
+**Après la lecture obligatoire de `AGENTS.md` et `JOURNAL.md`**, exécuter la mission `docs/missions/M02_CONFRONTATION_FACE_A_FACE_ET_LISIBILITE.md`. Le moteur M01 constitue la base existante, ne pas recommencer un projet neuf. **Vue frontale de confrontation par défaut avec adversaire visible**, vue inclinée complémentaire pendant manipulation, retour frontal pour révélation/tactique, personnage procédural expressif, résolution séquencée, UX fluide. **Aucune mécanique de tells informatifs ou Sang-froid n'est encore ratifiée.** (Historique : M02 a été développée sur branche puis intégrée à `main` ; on travaille désormais sur `main`.)
 
 
 **Mandat M01 actualisé :** projet `RPGCards` déjà initialisé sur `main` ; configure **Three.js + Vite + TypeScript**, puis poursuis **de manière autonome jusqu'au premier MVP de duel jouable**. Lire en priorité le chapitre « MANDAT ACTUALISÉ » de `PROMPT_CLAUDE_CODE_MISSION_01.md` ; les consignes plus anciennes « Three.js optionnel », « attendre validation après chaque lot » ne s'appliquent plus. Si un environnement est prototypé, choisir provisoirement entre **tilted top-down** et **frontale 2.5D** ; aucun décor/cadrage/design définitif à ce stade.

@@ -7,7 +7,7 @@
 - L'agent reçoit le prompt courant ; lit AGENTS, JOURNAL, gouvernance et contrats concernés.
 - Il **ne ramène aucun contexte d'un autre projet** sans demande explicite de ce prompt ou contrat. Le dépôt RPG-ArtByCode est mentionné précisément comme **référence procédurale** dans la mission présente ; il peut être audité à ce titre seulement.
 - Avant modifications : git status, base SHA, branches, risques, diagnostic, plan bref et critères de sortie.
-- Si la mission ne contient pas de phase d'implémentation autorisée, livrer une analyse et s'arrêter. **Ici, l'implémentation du premier lot est expressément autorisée** sous les contraintes de branche et réception.
+- Si la mission ne contient pas de phase d'implémentation autorisée, livrer une analyse et s'arrêter. **Ici, l'implémentation du premier lot est expressément autorisée** sous les contraintes de réception ; le travail se fait directement sur `main` (voir `AGENTS.md`, « Règle de branche »).
 
 ## Pendant
 

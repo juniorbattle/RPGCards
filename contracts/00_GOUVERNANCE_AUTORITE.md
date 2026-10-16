@@ -33,4 +33,4 @@ Le contrat V3.0 indiquait qu'un soutien Rang n'a pas d'affinité. Un simulateur 
 
 ## Gouvernance git
 
-Nouveau repo, branche de travail, `main` non modifiée sans accord ; demandes de PR documentées. Journal et ADR font partie des commits de travail. Si l'environnement ne permet pas les branches/commits, fournir patchs et blocage exact.
+Nouveau repo, développement directement sur `main` (décision du responsable, 2026-10-16) : commit + push après typecheck, tests et build ; pas de branche provisoire ni de PR sauf demande explicite ; jamais de réécriture de l'historique de `main`. Journal et ADR font partie des commits de travail. Si l'environnement ne permet pas les commits, fournir patchs et blocage exact.
