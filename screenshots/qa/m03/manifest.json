@@ -1,0 +1,222 @@
+{
+  "commit": "0a95929",
+  "date": "2026-10-16T08:58:35.130Z",
+  "note": "Chromium headless + WebGL logiciel SwiftShader ; freeze=1 sauf mention.",
+  "shots": [
+    {
+      "id": "01-vue-A-confrontation-1280",
+      "path": "screenshots/qa/m03/01-vue-A-confrontation-1280.png",
+      "desc": "Vue A frontale : rival face à vous, HUD rival haut-gauche, HUD joueur bas-gauche, emplacements sur la table, main en bas (1280)",
+      "url": "/?seed=202&autostart=1&rival=ronce&qa=1&aiDelay=0&freeze=1&intro=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "ronce:focused"
+    },
+    {
+      "id": "02-vue-B-placement-1280",
+      "path": "screenshots/qa/m03/02-vue-B-placement-1280.png",
+      "desc": "Vue B inclinée : Primaire posée par glisser, choix ASSAUT/GARDE, rival toujours visible (1280)",
+      "url": "/?seed=202&autostart=1&rival=ronce&qa=1&aiDelay=0&freeze=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "B",
+      "rival": "ronce:focused"
+    },
+    {
+      "id": "01-vue-A-confrontation-1920",
+      "path": "screenshots/qa/m03/01-vue-A-confrontation-1920.png",
+      "desc": "Vue A frontale : rival face à vous, HUD rival haut-gauche, HUD joueur bas-gauche, emplacements sur la table, main en bas (1920)",
+      "url": "/?seed=202&autostart=1&rival=ronce&qa=1&aiDelay=0&freeze=1&intro=1",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "ronce:focused"
+    },
+    {
+      "id": "02-vue-B-placement-1920",
+      "path": "screenshots/qa/m03/02-vue-B-placement-1920.png",
+      "desc": "Vue B inclinée : Primaire posée par glisser, choix ASSAUT/GARDE, rival toujours visible (1920)",
+      "url": "/?seed=202&autostart=1&rival=ronce&qa=1&aiDelay=0&freeze=1",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "B",
+      "rival": "ronce:focused"
+    },
+    {
+      "id": "03-tactique-postures-revelees-1280",
+      "path": "screenshots/qa/m03/03-tactique-postures-revelees-1280.png",
+      "desc": "Tactique (vue A) : bandeaux ASSAUT (rouge, pointe) / GARDE (bleu, bouclier) sur les Primaires révélées",
+      "url": "/?scenario=interference&qa=1&aiDelay=0&freeze=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "TACTICS",
+      "view": "A",
+      "rival": "ronce:focused"
+    },
+    {
+      "id": "04-tactique-menu-1280",
+      "path": "screenshots/qa/m03/04-tactique-menu-1280.png",
+      "desc": "Menu tactique d’une Secondaire active, centre et commandes dégagés",
+      "url": "/?scenario=interference&qa=1&aiDelay=0&freeze=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "TACTICS",
+      "view": "A",
+      "rival": "ronce:focused"
+    },
+    {
+      "id": "05-avant-revelation-secret-1280",
+      "path": "screenshots/qa/m03/05-avant-revelation-secret-1280.png",
+      "desc": "Avant la révélation : Primaire adverse face cachée, aucun bandeau de mode adverse",
+      "url": "/?scenario=clash-ag&qa=1&aiDelay=0&freeze=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "TACTICS",
+      "view": "A",
+      "rival": "ronce:focused"
+    },
+    {
+      "id": "06-mobile-vue-A",
+      "path": "screenshots/qa/m03/06-mobile-vue-A.png",
+      "desc": "Mobile : mini-HUD rival en haut (portrait), rival visible, deux rangées, consigne, main, mini-HUD joueur",
+      "url": "/?seed=404&autostart=1&rival=ronce&qa=1&aiDelay=0&freeze=1&intro=1",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "ronce:focused"
+    },
+    {
+      "id": "07-mobile-vue-B-pose-tactile",
+      "path": "screenshots/qa/m03/07-mobile-vue-B-pose-tactile.png",
+      "desc": "Mobile : vue B, pose tactile, GARDE choisie, rival visible",
+      "url": "/?seed=404&autostart=1&rival=ronce&qa=1&aiDelay=0&freeze=1",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "B",
+      "rival": "ronce:focused"
+    },
+    {
+      "id": "08-mobile-clash-absorption",
+      "path": "screenshots/qa/m03/08-mobile-clash-absorption.png",
+      "desc": "Mobile : scène du Clash (victoire au Rang, 0 blessure, absorption)",
+      "url": "/?scenario=clash-ag&qa=1&aiDelay=0&freeze=1&beat=2",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "turn": 5,
+      "phase": "RESOLVED",
+      "view": "A",
+      "rival": "ronce:relieved"
+    },
+    {
+      "id": "09-journal-tiroir",
+      "path": "screenshots/qa/m03/09-journal-tiroir.png",
+      "desc": "Journal intégral dans un tiroir rétractable (plus de colonne permanente)",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "B",
+      "rival": "voile:focused"
+    },
+    {
+      "id": "10-inspection-flottante",
+      "path": "screenshots/qa/m03/10-inspection-flottante.png",
+      "desc": "Inspection au survol : panneau flottant à gauche, sans masquer le centre",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "B",
+      "rival": "voile:focused"
+    },
+    {
+      "id": "11-mouvement-reduit",
+      "path": "screenshots/qa/m03/11-mouvement-reduit.png",
+      "desc": "Mouvement réduit : mêmes informations, transitions instantanées",
+      "url": "/?scenario=clash-aa&qa=1&aiDelay=0&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "COMMIT",
+      "view": "B",
+      "rival": "ronce:neutral"
+    }
+  ],
+  "comparisons": [
+    {
+      "id": "comparaison-1-vue-A",
+      "panel": 1,
+      "runtime": "screenshots/qa/m03/01-vue-A-confrontation-1280.png"
+    },
+    {
+      "id": "comparaison-2-vue-B",
+      "panel": 2,
+      "runtime": "screenshots/qa/m03/02-vue-B-placement-1280.png"
+    },
+    {
+      "id": "comparaison-3-revelation",
+      "panel": 3,
+      "runtime": "screenshots/qa/m03/clash/ag-absorption-01-presentation.png"
+    },
+    {
+      "id": "comparaison-4-resolution",
+      "panel": 4,
+      "runtime": "screenshots/qa/m03/clash/ag-absorption-02-impact.png"
+    },
+    {
+      "id": "comparaison-5-cartes-postures",
+      "panel": 5,
+      "runtime": "screenshots/qa/m03/03-tactique-postures-revelees-1280.png"
+    },
+    {
+      "id": "comparaison-6-mobile",
+      "panel": 6,
+      "runtime": "screenshots/qa/m03/06-mobile-vue-A.png"
+    }
+  ],
+  "issues": []
+}
