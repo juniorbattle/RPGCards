@@ -1,0 +1,20 @@
+
+> les-quatre-voies-simulateur@0.1.0 simulate
+> node tools/batch.mjs --count=300 --hp=90 --seed=20261015 --csv=docs/SIMULATIONS_300.csv
+
+{
+  "type": "simulations-heuristiques",
+  "games": 300,
+  "finished": 300,
+  "averageTurns": 20,
+  "heroWinRate": 52,
+  "extensionRate": 3,
+  "parameters": {
+    "hp": 90,
+    "strategy": "mixed",
+    "seed": 20261015,
+    "maxTurns": 180
+  },
+  "warning": "Les politiques sont heuristiques. Ne pas confondre avec un équilibre humain mesuré."
+}
+CSV enregistré : docs/SIMULATIONS_300.csv
