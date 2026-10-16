@@ -740,15 +740,6 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     });
   }
 
-  function dome(color: number, z: number): void {
-    const m = new THREE.Mesh(new THREE.SphereGeometry(1.6, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshBasicMaterial({ color, wireframe: true, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }));
-    m.position.set(0, TABLE_TOP, z);
-    addTransient(m, 1.2, (k) => {
-      m.scale.setScalar(0.6 + 0.4 * Math.min(1, k * 3));
-      (m.material as THREE.MeshBasicMaterial).opacity = 0.55 * (1 - k);
-    });
-  }
-
   const zOf = (side: 'me' | 'opp') => (side === 'me' ? ME_Z : TABLE_FAR_Z + 0.6);
   const chestOf = (side: 'me' | 'opp') => (side === 'me' ? new THREE.Vector3(0, TABLE_TOP + 0.4, 2.6) : new THREE.Vector3(0, 2.1, RIVAL_Z + 0.4));
   let meHex = 0xffffff;
@@ -938,16 +929,18 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
           center.intensity = 9;
           ring(color, CLASH_Z, 6, 1.0);
           burst(color, new THREE.Vector3(0, TABLE_TOP + 0.2, CLASH_Z), 70);
-          shake = still() ? 0 : 0.35;
+          shake = still() ? 0 : 0.18;
           break;
         }
         case 'damage':
           burst(0xff4a3a, chestOf(fx.side), Math.min(140, 30 + fx.amount * 2));
           ring(0xff4a3a, zOf(fx.side), 2.5, 0.7);
-          shake = still() ? 0 : Math.min(0.7, 0.2 + fx.amount / 70);
+          shake = still() ? 0 : Math.min(0.35, 0.1 + fx.amount / 120);
           break;
         case 'guard':
-          dome(fx.side === 'me' ? meHex : oppHex, zOf(fx.side));
+          // M03 : le bouclier est mis en scène par la scène du Clash (DOM) ; l’arène ne fait
+          // qu’un anneau discret sur la table, du côté de la Garde victorieuse.
+          ring(fx.side === 'me' ? meHex : oppHex, zOf(fx.side), 2.2, 0.8);
           break;
         case 'interfere':
           ring(0xb48cff, zOf(fx.side), 2, 0.6);

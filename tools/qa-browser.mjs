@@ -1,4 +1,4 @@
-// QA navigateur M02 : duels complets PAR L’INTERFACE (glisser souris, clic, clavier, glisser tactile)
+// QA navigateur M02/M03 : duels complets PAR L’INTERFACE (glisser souris, clic, clavier, glisser tactile)
 // sur 1280×720, 1920×1080 et mobile 390×844. Vérifie : issue atteinte, erreurs console, fuites de
 // secrets dans le DOM, VUE attendue à chaque phase (A confrontation / B manipulation), bascule
 // manuelle en pleine tactique, Techniques humaines exercées, séquence de résolution (jouée/sautée),
@@ -35,6 +35,69 @@ async function checkView(page, v, stats) {
   if (p.view !== want) stats.viewErrors.push(`tour ${v.turn} ${v.phase} : vue ${p.view}, attendue ${want}`);
 }
 
+/**
+ * M03 — composition : HUD rival haut-gauche, HUD joueur bas-gauche, bande centrale libre de tout HUD,
+ * aucun chevauchement main / commandes / emplacements / HUD joueur.
+ */
+async function layoutAudit(page) {
+  return page.evaluate(() => {
+    const W = innerWidth;
+    const H = innerHeight;
+    const issues = [];
+    const r = (el) => el?.getBoundingClientRect();
+    const opp = r(document.querySelector('.hud.opp'));
+    const me = r(document.querySelector('.hud.me'));
+    const mobile = W < 700;
+    if (!opp || opp.left > W * 0.05 || opp.top > H * 0.05 || (!mobile && opp.right > W * 0.42)) issues.push('HUD rival hors du coin haut-gauche');
+    if (!me || me.left > W * 0.05 || me.bottom < H * 0.95 || (!mobile && me.right > W * 0.42)) issues.push('HUD joueur hors du coin bas-gauche');
+    if (!mobile) {
+      const band = { left: W * 0.3, right: W * 0.7, top: H * 0.15, bottom: H * 0.62 };
+      for (const el of document.querySelectorAll('.hud, .command')) {
+        const b = r(el);
+        if (b.right > band.left && b.left < band.right && b.bottom > band.top && b.top < band.bottom) issues.push(`module ${el.className} dans la zone centrale`);
+      }
+    }
+    const boxes = [];
+    document.querySelectorAll('.hand .card').forEach((el) => boxes.push(['main', r(el)]));
+    document.querySelectorAll('.side .zone').forEach((el) => boxes.push(['case', r(el)]));
+    for (const sel of ['.command', '.hud.me', '.hud.opp']) { const el = document.querySelector(sel); if (el) boxes.push([sel, r(el)]); }
+    const hit = (a, b) => a.right - 2 > b.left && a.left + 2 < b.right && a.bottom - 2 > b.top && a.top + 2 < b.bottom;
+    for (let i = 0; i < boxes.length; i++) {
+      for (let j = i + 1; j < boxes.length; j++) {
+        const [na, a] = boxes[i];
+        const [nb, b] = boxes[j];
+        if (na === nb && na !== '.command') continue;
+        if (hit(a, b)) issues.push(`chevauchement ${na} / ${nb}`);
+      }
+    }
+    if (document.documentElement.scrollWidth > W + 1) issues.push('défilement horizontal');
+    return [...new Set(issues)];
+  });
+}
+
+/** M03 §3 — ASSAUT/GARDE : bandeau sur chaque Primaire RÉVÉLÉE ; rien avant la révélation officielle. */
+async function stanceAudit(page) {
+  return page.evaluate(() => {
+    const v = window.__lqv.view();
+    const issues = [];
+    const oppBanners = document.querySelectorAll('.side.opp .stance-banner, .side.opp .secret-stance');
+    if (!v.reveal.primaries) {
+      if (oppBanners.length) issues.push('mode de la Primaire adverse affiché avant sa révélation');
+      return issues;
+    }
+    if (window.__lqv.controller.primaryOnBoard() !== 'card') return issues;
+    for (const who of ['me', 'opp']) {
+      const want = v.reveal.primaries[who].stance;
+      const zone = document.querySelector(`[data-focus-key="${who}-primary"]`);
+      const b = zone?.querySelector('.stance-banner');
+      if (!b) issues.push(`bandeau de posture absent (${who})`);
+      else if (!b.classList.contains(want)) issues.push(`bandeau ${who} incohérent : ${b.className} au lieu de ${want}`);
+      else if (!/ASSAUT|GARDE/.test(b.textContent ?? '') || !b.querySelector('svg')) issues.push(`bandeau ${who} sans texte ou sans symbole`);
+    }
+    return issues;
+  });
+}
+
 async function playTurn(page, run, stats) {
   const { mode } = run;
   for (let guard = 0; guard < 24; guard++) {
@@ -42,11 +105,29 @@ async function playTurn(page, run, stats) {
     if (process.env.QA_TRACE) console.log(`  [${run.name}] tour ${v.turn} ${v.phase} awaiting=${v.awaitingMe}`);
     if (v.phase === 'ENDED') return 'ended';
     await checkView(page, v, stats);
+    if (v.phase !== 'RESOLVED' && v.phase !== 'REPEL') {
+      // Aucune scène de Clash fantôme hors résolution (nettoyage après passage/saut/nouveau tour).
+      const ghosts = await page.evaluate(() => document.querySelectorAll('#stage .clash-stage').length);
+      if (ghosts) stats.stageGhosts.push(`tour ${v.turn} ${v.phase} : ${ghosts} scène(s) de Clash résiduelle(s)`);
+    }
+    if ((v.phase === 'COMMIT' || v.phase === 'TACTICS') && v.awaitingMe && !stats.layoutChecked.includes(v.phase)) {
+      stats.layoutChecked.push(v.phase);
+      stats.layoutIssues.push(...(await layoutAudit(page)).map((x) => `${v.phase} : ${x}`));
+    }
+    if (v.phase === 'TACTICS' || v.phase === 'COMMIT' || v.phase === 'LECTURE') {
+      stats.stanceChecks++;
+      stats.stanceIssues.push(...(await stanceAudit(page)).map((x) => `tour ${v.turn} ${v.phase} : ${x}`));
+    }
     if (v.phase === 'RESOLVED') {
       if (run.watchSequence) {
-        // Laisse la séquence se jouer en entier (rythme rapide) avant le tour suivant.
+        // Laisse la séquence se jouer en entier (rythme rapide, mouvement réel) avant le tour suivant.
+        const seen = await page.waitForFunction(() => window.__lqv.presentation().stage || !window.__lqv.controller.sequencing, null, { timeout: 30000 }).then(() => page.evaluate(() => window.__lqv.presentation().stage));
+        if (seen) stats.stagesSeen++;
         await page.waitForFunction(() => !window.__lqv.controller.sequencing, null, { timeout: 30000 });
         stats.sequencesWatched++;
+        await page.waitForTimeout(1200);
+        const ghosts = await page.evaluate(() => document.querySelectorAll('#stage .clash-stage').length);
+        if (ghosts) stats.stageGhosts.push(`tour ${v.turn} : scène de Clash encore présente après la séquence`);
       } else if (await page.evaluate(() => window.__lqv.controller.sequencing)) stats.sequencesSkipped++;
       await sample(page, stats);
       await page.click('[data-key="act-next"]');
@@ -159,7 +240,7 @@ async function runDuel(browser, base, run) {
   page.setDefaultTimeout(10000);
   const consoleIssues = [];
   watchConsole(page, consoleIssues);
-  await page.goto(`${base}/?seed=${run.seed}&autostart=1&qa=1&aiDelay=0&reducedMotion=1&pace=${run.watchSequence ? 'fast' : 'normal'}&tech=${run.tech}`);
+  await page.goto(`${base}/?seed=${run.seed}&autostart=1&qa=1&aiDelay=0&reducedMotion=${run.watchSequence ? 0 : 1}&pace=${run.watchSequence ? 'fast' : 'normal'}&tech=${run.tech}`);
   await page.waitForFunction(() => !!window.__lqv);
   if (process.env.QA_DEBUG) {
     // Trace des événements pointeur (diagnostic d’un glisser qui n’aboutit pas).
@@ -175,7 +256,7 @@ async function runDuel(browser, base, run) {
       }
     });
   }
-  const stats = { turns: 0, drags: 0, clicks: 0, keyboard: 0, tactics: 0, repels: 0, leaks: [], viewChecks: 0, viewErrors: [], lostClicks: [], tech: {}, moods: new Set(), sequencesWatched: 0, sequencesSkipped: 0, manualToggleChecked: null, holds: 0 };
+  const stats = { turns: 0, drags: 0, clicks: 0, keyboard: 0, tactics: 0, repels: 0, leaks: [], viewChecks: 0, viewErrors: [], lostClicks: [], tech: {}, moods: new Set(), sequencesWatched: 0, sequencesSkipped: 0, manualToggleChecked: null, holds: 0, layoutChecked: [], layoutIssues: [], stanceChecks: 0, stanceIssues: [], stageGhosts: [], stagesSeen: 0 };
   let outcome = 'running';
   const t0 = Date.now();
   try {
@@ -217,7 +298,7 @@ try {
   for (const p of plans) {
     const r = await runDuel(browser, server.base, p);
     report.runs.push(r);
-    console.log(`${r.name}: ${r.outcome} au tour ${r.turn} · rival ${r.personality} · gagnant ${r.winner} · vues ${r.viewChecks} contrôles/${r.viewErrors.length} écarts, ${r.viewSwitches} bascules, V ${r.manualToggleChecked} · techniques ${JSON.stringify(r.tech)} · séquences vues ${r.sequencesWatched}/sautées ${r.sequencesSkipped} · humeurs ${r.moods.length} · console ${r.consoleIssues.length} · fuites ${r.leaks.length} · clics perdus ${r.lostClicks.length} · ${r.ms} ms`);
+    console.log(`${r.name}: ${r.outcome} au tour ${r.turn} · rival ${r.personality} · gagnant ${r.winner} · vues ${r.viewChecks} contrôles/${r.viewErrors.length} écarts, ${r.viewSwitches} bascules, V ${r.manualToggleChecked} · techniques ${JSON.stringify(r.tech)} · séquences vues ${r.sequencesWatched}/sautées ${r.sequencesSkipped} (scènes de Clash ${r.stagesSeen}, fantômes ${r.stageGhosts.length}) · postures ${r.stanceChecks} contrôles/${r.stanceIssues.length} écarts · composition ${r.layoutIssues.length} écart(s) · humeurs ${r.moods.length} · console ${r.consoleIssues.length} · fuites ${r.leaks.length} · clics perdus ${r.lostClicks.length} · ${r.ms} ms`);
   }
 } finally {
   await browser.close();
@@ -226,10 +307,10 @@ try {
 const moods = new Set(report.runs.flatMap((r) => r.moods));
 report.distinctMoods = [...moods];
 writeFileSync(`${OUT}/qa-browser.json`, JSON.stringify(report, null, 2));
-const failed = report.runs.filter((r) => r.outcome !== 'ended' || r.consoleIssues.length || r.leaks.length || r.viewErrors.length || r.lostClicks.length || r.manualToggleChecked !== 'ok');
+const failed = report.runs.filter((r) => r.outcome !== 'ended' || r.consoleIssues.length || r.leaks.length || r.viewErrors.length || r.lostClicks.length || r.manualToggleChecked !== 'ok' || r.layoutIssues.length || r.stanceIssues.length || r.stageGhosts.length);
 console.log(`humeurs distinctes du rival sur l’ensemble : ${moods.size} (${[...moods].join(', ')})`);
 if (failed.length) {
-  console.error(`ÉCHEC QA : ${failed.map((r) => `${r.name} ${r.error ?? ''} ${r.viewErrors.slice(0, 2).join(' | ')}`).join(' ; ')}`);
+  console.error(`ÉCHEC QA : ${failed.map((r) => `${r.name} ${r.error ?? ''} ${[...r.viewErrors, ...r.layoutIssues, ...r.stanceIssues, ...r.stageGhosts].slice(0, 4).join(' | ')}`).join(' ; ')}`);
   process.exit(1);
 }
-console.log(`QA navigateur M02 OK (${report.runs.length} duels complets) — rapport ${OUT}/qa-browser.json`);
+console.log(`QA navigateur M03 OK (${report.runs.length} duels complets) — rapport ${OUT}/qa-browser.json`);

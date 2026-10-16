@@ -6,7 +6,7 @@
 import type { Family } from '../game/catalog/cards';
 import { FAMILY_PALETTE } from './palette';
 import {
-  browCanvas, headCanvas, irisCanvas, lidCanvas, mouthCanvas, scleraCanvas, torsoCanvas,
+  browCanvas, headCanvas, hoodCanvas, irisCanvas, lidCanvas, mouthCanvas, scleraCanvas, torsoCanvas,
   type Figure, type Look, type MouthShape,
 } from '../scene/rivalTextures';
 
@@ -63,20 +63,21 @@ export function portraitUrl(f: Figure, artSeed: number, mouth: MouthShape = 'neu
   ctx.fill();
 
   put(torsoCanvas(f, artSeed), 0, 1.75, 2.4, 2.0);
+  if (f.look.outfit === 'cloak') put(hoodCanvas(f), 0, 3.0, 1.62, 1.82);
   put(headCanvas(f, artSeed), 0, 3.1, 1.15, 1.4);
   const sclera = scleraCanvas();
   const iris = irisCanvas(f.look.eyes);
   const lid = lidCanvas(f);
   const brow = browCanvas(f);
   for (const side of [-1, 1]) {
-    const ex = side * 0.2;
+    const ex = side * 0.21;
     const ey = 3.12;
-    put(sclera, ex, ey, 0.24, 0.15);
-    put(iris, ex, ey + 0.0015, 0.105, 0.105);
+    put(sclera, ex, ey, 0.27, 0.17);
+    put(iris, ex, ey + 0.0015, 0.125, 0.125);
     // Paupière au repos : comprimée à 16 % de sa hauteur depuis son bord supérieur (comme le rig 3D).
-    const lh = 0.17 * 0.16;
-    ctx.drawImage(lid, 0, 0, lid.width, lid.height, (ex - 0.13 - x0) * k, (y1 - (ey + 0.085)) * k, 0.26 * k, lh * k);
-    put(brow, ex, ey + 0.17, 0.3, 0.075, side > 0);
+    const lh = 0.19 * 0.16;
+    ctx.drawImage(lid, 0, 0, lid.width, lid.height, (ex - 0.145 - x0) * k, (y1 - (ey + 0.095)) * k, 0.29 * k, lh * k);
+    put(brow, ex, ey + 0.18, 0.32, 0.08, side > 0);
   }
   put(mouthCanvas(mouth), 0, 2.8, 0.36, 0.18);
   // Lumière de bougie (côté gauche) + ombre basse.

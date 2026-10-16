@@ -19,6 +19,9 @@ import type { Controller } from '../app/controller';
 import { backEl, cardEl } from './cardView';
 import { cls, h } from './dom';
 import { moodLabel, rivalLine } from './rivalLines';
+import { STANCE_ICON, stanceBanner } from './stance';
+
+export { STANCE_ICON, stanceBanner };
 
 const PHASES: Array<{ id: string; label: string; match: string[] }> = [
   { id: 'start', label: 'Début', match: ['START'] },
@@ -31,28 +34,18 @@ const PHASES: Array<{ id: string; label: string; match: string[] }> = [
 
 const MODE_LABEL: Record<string, string> = { keep: 'CONSERVER', rank: 'RANG', damage: 'DÉGÂTS', interfere: 'INTERFÈRE' };
 
-/** Icônes de posture (formes distinctes, indépendantes de la couleur). */
-export const STANCE_ICON: Record<Stance, string> = {
-  assault: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 10h11V5.5L22 12l-9 6.5V14H2z" fill="currentColor"/></svg>',
-  guard: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 3v6c0 5.4-3.4 9.4-8 11-4.6-1.6-8-5.6-8-11V5z" fill="currentColor"/><path d="M12 5.2l5 1.9v4c0 3.6-2.1 6.4-5 7.7z" fill="rgba(255,255,255,.35)"/></svg>',
-};
-
-/** Bandeau de posture RÉVÉLÉE (ASSAUT rouge à pointe / GARDE bleu à bouclier). */
-export function stanceBanner(st: Stance, extra?: string): HTMLElement {
-  const label = st === 'assault' ? 'ASSAUT' : 'GARDE';
-  return h('span', { class: cls('stance-banner', st), role: 'img', 'aria-label': `Mode ${label}${extra ? ` (${extra})` : ''}` },
-    h('span', { class: 'sb-icon', html: STANCE_ICON[st] }),
-    h('span', { class: 'sb-text' }, label),
-    extra ? h('span', { class: 'sb-extra' }, extra) : null,
-  );
-}
-
 export interface BoardHooks {
   onToggleTool(tool: string): void;
 }
 
+/** Éléments qui glissent de leur ancienne place lors d’un passage de vue A ↔ B. */
+const FLIP_TARGETS = ['.side.opp .row', '.side.me .row', '.hand'];
+
 export function renderApp(root: HTMLElement, c: Controller, hooks: BoardHooks): void {
   const focusKey = (document.activeElement as HTMLElement | null)?.dataset?.key ?? null;
+  const viewChanged = !!root.dataset.view && root.dataset.view !== c.viewMode;
+  const animate = viewChanged && !c.params.reducedMotion && !c.params.freeze;
+  const before = animate ? FLIP_TARGETS.map((sel) => root.querySelector(sel)?.getBoundingClientRect() ?? null) : null;
   const journalEl = root.querySelector('.journal');
   const stick = journalEl ? journalEl.scrollTop + journalEl.clientHeight >= journalEl.scrollHeight - 20 : true;
   const prevScroll = journalEl?.scrollTop ?? 0;
@@ -61,6 +54,7 @@ export function renderApp(root: HTMLElement, c: Controller, hooks: BoardHooks): 
   root.classList.toggle('view-b', c.viewMode === 'B');
   root.classList.toggle('sequencing', c.sequencing);
   root.classList.toggle('drawer-open', c.ui.journalOpen);
+  root.dataset.boardKey = boardKey(c);
   root.replaceChildren(
     phasebar(c),
     tools(c, hooks),
@@ -80,6 +74,22 @@ export function renderApp(root: HTMLElement, c: Controller, hooks: BoardHooks): 
   if (j) j.scrollTop = stick ? j.scrollHeight : prevScroll;
   if (focusKey) (root.querySelector(`[data-key="${CSS.escape(focusKey)}"]`) as HTMLElement | null)?.focus({ preventScroll: true });
   c.ui.flipPrimaries = false;
+  root.dataset.view = c.viewMode;
+  // FLIP : chaque rangée / la main part de son ancienne boîte et rejoint la nouvelle (0,45 s).
+  if (before) {
+    FLIP_TARGETS.forEach((sel, i) => {
+      const old = before[i];
+      const el = root.querySelector<HTMLElement>(sel);
+      if (!old || !el) return;
+      const now = el.getBoundingClientRect();
+      if (now.width < 1 || now.height < 1) return;
+      const k = old.height / now.height;
+      el.animate([
+        { transform: `translate(${old.left - now.left}px, ${old.top - now.top}px) scale(${k})`, transformOrigin: 'top left' },
+        { transform: 'none', transformOrigin: 'top left' },
+      ], { duration: 450, easing: 'cubic-bezier(.2,.7,.2,1)' });
+    });
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -206,6 +216,11 @@ function techChips(c: Controller): HTMLElement {
 
 // ---------------------------------------------------------------------------
 // Plateau : emplacements posés sur la table
+
+/** État mis en scène du plateau : change quand les cartes quittent la table pendant la résolution. */
+export function boardKey(c: Controller): string {
+  return [c.primaryOnBoard(), c.reached('tactics'), c.cancelShown(), c.reached('destination')].join('|');
+}
 
 function board(c: Controller): HTMLElement {
   return h('main', { class: 'board', 'aria-label': 'Plateau de duel' }, sideRow(c, 'opp'), sideRow(c, 'me'));
@@ -531,6 +546,13 @@ export function patchBeat(root: HTMLElement, c: Controller): void {
     const hudEl = root.querySelector(`.hud.${who}`);
     hudEl?.classList.toggle('beat-hit', beat.focus.includes(`${who}-hp`));
     hudEl?.classList.toggle('beat-insight', beat.focus.includes(`${who}-insight`));
+  }
+  // Plateau re-rendu seulement quand son état mis en scène change (Primaires → scène → défausse,
+  // Secondaires engagées → destinations) ; jamais sous un pointeur enfoncé (différé par main.ts).
+  const key = boardKey(c);
+  if (root.dataset.boardKey !== key) {
+    root.querySelector('.board')?.replaceWith(board(c));
+    root.dataset.boardKey = key;
   }
   root.querySelectorAll<HTMLElement>('[data-focus-key]').forEach((z) => {
     const k = z.dataset.focusKey!;

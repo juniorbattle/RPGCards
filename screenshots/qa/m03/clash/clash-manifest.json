@@ -1,0 +1,454 @@
+{
+  "commit": "6bac3a8",
+  "date": "2026-10-16T08:03:24.831Z",
+  "note": "Chromium headless + WebGL logiciel SwiftShader. Captures figées = pose FINALE de l’étape (freeze=1&beat=N) ; pellicule = mouvement réel.",
+  "cases": [
+    {
+      "name": "aa-gagne",
+      "scenario": "clash-aa",
+      "prim": "Cendre-4",
+      "stance": "assault",
+      "expect": "aa-win",
+      "label": "ASSAUT contre ASSAUT — vous dominez (IV contre III)",
+      "shots": [
+        {
+          "file": "aa-gagne-01-presentation.png",
+          "beat": "rank",
+          "stage": true,
+          "rival": "focused"
+        },
+        {
+          "file": "aa-gagne-02-impact.png",
+          "beat": "outcome",
+          "stage": true,
+          "rival": "focused"
+        },
+        {
+          "file": "aa-gagne-03-blessures.png",
+          "beat": "damage",
+          "stage": true,
+          "rival": "pained"
+        },
+        {
+          "file": "aa-gagne-mvt-reduit.png",
+          "beat": "outcome",
+          "reducedMotion": true
+        },
+        {
+          "film": [
+            "aa-gagne-film-0-0ms.png",
+            "aa-gagne-film-1-200ms.png",
+            "aa-gagne-film-2-380ms.png",
+            "aa-gagne-film-3-470ms.png",
+            "aa-gagne-film-4-620ms.png",
+            "aa-gagne-film-5-1000ms.png"
+          ]
+        }
+      ],
+      "beats": [
+        "tactics",
+        "rank",
+        "outcome",
+        "damage"
+      ],
+      "outcome": "aa-win",
+      "verdict": "VOUS DOMINEZ AU RANG"
+    },
+    {
+      "name": "aa-perd",
+      "scenario": "clash-aa",
+      "prim": "Astre-2",
+      "stance": "assault",
+      "expect": "aa-win",
+      "label": "ASSAUT contre ASSAUT — le rival domine (III contre II)",
+      "shots": [
+        {
+          "file": "aa-perd-01-presentation.png",
+          "beat": "rank",
+          "stage": true,
+          "rival": "focused"
+        },
+        {
+          "file": "aa-perd-02-impact.png",
+          "beat": "outcome",
+          "stage": true,
+          "rival": "pleased"
+        },
+        {
+          "file": "aa-perd-03-blessures.png",
+          "beat": "damage",
+          "stage": true,
+          "rival": "confident"
+        },
+        {
+          "file": "aa-perd-mvt-reduit.png",
+          "beat": "outcome",
+          "reducedMotion": true
+        }
+      ],
+      "beats": [
+        "tactics",
+        "rank",
+        "outcome",
+        "damage"
+      ],
+      "outcome": "aa-win",
+      "verdict": "LE RIVAL DOMINE AU RANG"
+    },
+    {
+      "name": "aa-egalite",
+      "scenario": "clash-aa",
+      "prim": "Cendre-3",
+      "stance": "assault",
+      "expect": "aa-tie",
+      "label": "ASSAUT contre ASSAUT — égalité III/III : impacts simultanés",
+      "shots": [
+        {
+          "file": "aa-egalite-01-presentation.png",
+          "beat": "rank",
+          "stage": true,
+          "rival": "focused"
+        },
+        {
+          "file": "aa-egalite-02-impact.png",
+          "beat": "outcome",
+          "stage": true,
+          "rival": "shocked"
+        },
+        {
+          "file": "aa-egalite-03-blessures.png",
+          "beat": "damage",
+          "stage": true,
+          "rival": "pained"
+        },
+        {
+          "file": "aa-egalite-mvt-reduit.png",
+          "beat": "outcome",
+          "reducedMotion": true
+        }
+      ],
+      "beats": [
+        "tactics",
+        "rank",
+        "outcome",
+        "damage"
+      ],
+      "outcome": "aa-tie",
+      "verdict": "ÉGALITÉ — IMPACTS SIMULTANÉS"
+    },
+    {
+      "name": "ag-garde-tient",
+      "scenario": "clash-ag",
+      "prim": "Cendre-3",
+      "stance": "assault",
+      "expect": "guard-holds",
+      "label": "Votre ASSAUT III contre GARDE IV — la Garde gagne au Rang, Assaut repoussé",
+      "shots": [
+        {
+          "file": "ag-garde-tient-01-presentation.png",
+          "beat": "rank",
+          "stage": true,
+          "rival": "focused"
+        },
+        {
+          "file": "ag-garde-tient-02-impact.png",
+          "beat": "outcome",
+          "stage": true,
+          "rival": "pleased"
+        },
+        {
+          "file": "ag-garde-tient-mvt-reduit.png",
+          "beat": "outcome",
+          "reducedMotion": true
+        },
+        {
+          "film": [
+            "ag-garde-tient-film-0-0ms.png",
+            "ag-garde-tient-film-1-200ms.png",
+            "ag-garde-tient-film-2-380ms.png",
+            "ag-garde-tient-film-3-470ms.png",
+            "ag-garde-tient-film-4-620ms.png",
+            "ag-garde-tient-film-5-1000ms.png"
+          ]
+        }
+      ],
+      "beats": [
+        "tactics",
+        "rank",
+        "outcome",
+        "insight"
+      ],
+      "outcome": "guard-holds",
+      "verdict": "GARDE VICTORIEUSE"
+    },
+    {
+      "name": "ag-absorption",
+      "scenario": "clash-ag",
+      "prim": "Cendre-3",
+      "stance": "assault",
+      "plan": "rank",
+      "expect": "guard-absorbs",
+      "label": "T2 : ASSAUT 5 (III + Cendre I +2) contre GARDE IV P12 — victoire au Rang, 0 blessure (absorption)",
+      "shots": [
+        {
+          "file": "ag-absorption-01-presentation.png",
+          "beat": "rank",
+          "stage": true,
+          "rival": "focused"
+        },
+        {
+          "file": "ag-absorption-02-impact.png",
+          "beat": "outcome",
+          "stage": true,
+          "rival": "relieved"
+        },
+        {
+          "file": "ag-absorption-mvt-reduit.png",
+          "beat": "outcome",
+          "reducedMotion": true
+        },
+        {
+          "film": [
+            "ag-absorption-film-0-0ms.png",
+            "ag-absorption-film-1-200ms.png",
+            "ag-absorption-film-2-380ms.png",
+            "ag-absorption-film-3-470ms.png",
+            "ag-absorption-film-4-620ms.png",
+            "ag-absorption-film-5-1000ms.png"
+          ]
+        }
+      ],
+      "beats": [
+        "tactics",
+        "rank",
+        "outcome",
+        "destination"
+      ],
+      "outcome": "guard-absorbs",
+      "verdict": "VICTOIRE AU RANG · 0 BLESSURE · ABSORPTION"
+    },
+    {
+      "name": "ag-garde-cede",
+      "scenario": "clash-ag",
+      "prim": "sig-Cendre",
+      "stance": "assault",
+      "expect": "guard-breaks",
+      "label": "Brasier Originel ∞ (P14) contre GARDE IV (P12) — la Garde cède, 2 blessures",
+      "shots": [
+        {
+          "file": "ag-garde-cede-01-presentation.png",
+          "beat": "rank",
+          "stage": true,
+          "rival": "focused"
+        },
+        {
+          "file": "ag-garde-cede-02-impact.png",
+          "beat": "outcome",
+          "stage": true,
+          "rival": "focused"
+        },
+        {
+          "file": "ag-garde-cede-03-blessures.png",
+          "beat": "damage",
+          "stage": true,
+          "rival": "pained"
+        },
+        {
+          "file": "ag-garde-cede-mvt-reduit.png",
+          "beat": "outcome",
+          "reducedMotion": true
+        }
+      ],
+      "beats": [
+        "tactics",
+        "rank",
+        "outcome",
+        "damage",
+        "effect"
+      ],
+      "outcome": "guard-breaks",
+      "verdict": "LA GARDE CÈDE"
+    },
+    {
+      "name": "gg-neutre",
+      "scenario": "clash-ag",
+      "prim": "Ronce-4",
+      "stance": "guard",
+      "expect": "gg-neutral",
+      "label": "GARDE contre GARDE — neutralité",
+      "shots": [
+        {
+          "file": "gg-neutre-01-presentation.png",
+          "beat": "rank",
+          "stage": true,
+          "rival": "focused"
+        },
+        {
+          "file": "gg-neutre-02-impact.png",
+          "beat": "outcome",
+          "stage": true,
+          "rival": "thinking"
+        },
+        {
+          "file": "gg-neutre-mvt-reduit.png",
+          "beat": "outcome",
+          "reducedMotion": true
+        }
+      ],
+      "beats": [
+        "tactics",
+        "rank",
+        "outcome"
+      ],
+      "outcome": "gg-neutral",
+      "verdict": "DEUX GARDES — AUCUN CLASH"
+    },
+    {
+      "name": "ga-votre-garde",
+      "scenario": "clash-aa",
+      "prim": "Cendre-4",
+      "stance": "guard",
+      "expect": "guard-holds",
+      "label": "Votre GARDE IV contre ASSAUT III du rival — votre Garde tient",
+      "shots": [
+        {
+          "file": "ga-votre-garde-01-presentation.png",
+          "beat": "rank",
+          "stage": true,
+          "rival": "focused"
+        },
+        {
+          "file": "ga-votre-garde-02-impact.png",
+          "beat": "outcome",
+          "stage": true,
+          "rival": "annoyed"
+        },
+        {
+          "file": "ga-votre-garde-mvt-reduit.png",
+          "beat": "outcome",
+          "reducedMotion": true
+        }
+      ],
+      "beats": [
+        "tactics",
+        "rank",
+        "outcome",
+        "insight"
+      ],
+      "outcome": "guard-holds",
+      "verdict": "GARDE VICTORIEUSE"
+    },
+    {
+      "name": "double-ko",
+      "scenario": "doubleko",
+      "prim": "Cendre-4-contrecoup",
+      "stance": "assault",
+      "expect": "aa-win",
+      "label": "Double K.-O. : Contrecoup contre Signature ∞ — prolongation à 1 PV",
+      "shots": [
+        {
+          "file": "double-ko-01-presentation.png",
+          "beat": "rank",
+          "stage": true,
+          "rival": "confident"
+        },
+        {
+          "file": "double-ko-02-impact.png",
+          "beat": "outcome",
+          "stage": true,
+          "rival": "pleased"
+        },
+        {
+          "file": "double-ko-03-blessures.png",
+          "beat": "damage",
+          "stage": true,
+          "rival": "pained"
+        },
+        {
+          "file": "double-ko-05-prolongation.png",
+          "beat": "overtime",
+          "stage": false,
+          "rival": "shocked"
+        },
+        {
+          "file": "double-ko-mvt-reduit.png",
+          "beat": "outcome",
+          "reducedMotion": true
+        }
+      ],
+      "beats": [
+        "tactics",
+        "rank",
+        "outcome",
+        "damage",
+        "effect",
+        "overtime"
+      ],
+      "outcome": "aa-win",
+      "verdict": "LE RIVAL DOMINE AU RANG"
+    },
+    {
+      "name": "interferences",
+      "scenario": "interference",
+      "prim": "Cendre-4",
+      "stance": "assault",
+      "plans": [
+        {
+          "slot": 0,
+          "mode": "damage"
+        },
+        {
+          "slot": 1,
+          "mode": "interfere",
+          "target": 0
+        }
+      ],
+      "expect": null,
+      "label": "Interférences mutuelles : soutiens ANNULÉS, puis Clash",
+      "shots": [
+        {
+          "file": "interferences-03-presentation.png",
+          "beat": "rank",
+          "stage": true,
+          "rival": "pleased"
+        },
+        {
+          "file": "interferences-01-interference.png",
+          "beat": "interference",
+          "stage": false,
+          "rival": "annoyed"
+        },
+        {
+          "file": "interferences-04-impact.png",
+          "beat": "outcome",
+          "stage": true,
+          "rival": "pleased"
+        },
+        {
+          "file": "interferences-05-blessures.png",
+          "beat": "damage",
+          "stage": true,
+          "rival": "pained"
+        },
+        {
+          "file": "interferences-mvt-reduit.png",
+          "beat": "outcome",
+          "reducedMotion": true
+        }
+      ],
+      "beats": [
+        "tactics",
+        "interference",
+        "interference",
+        "rank",
+        "outcome",
+        "damage",
+        "insight",
+        "destination"
+      ],
+      "outcome": "guard-breaks",
+      "verdict": "LA GARDE CÈDE"
+    }
+  ],
+  "issues": []
+}

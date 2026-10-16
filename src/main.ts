@@ -10,6 +10,7 @@ import { patchBeat, patchRivalBubble, renderApp } from './presentation/board';
 import { backEl, cardEl } from './presentation/cardView';
 import { cls, h } from './presentation/dom';
 import { DragManager } from './presentation/drag';
+import { ClashStage } from './presentation/clashStage';
 import { createArena, type ArenaHandle, type ArenaLayout } from './scene/arena';
 import { viewFor } from './game/visibility/view';
 import { PERSONALITIES, personalityFor, type RivalPersonality } from './presentation/personalities';
@@ -121,6 +122,16 @@ function start(config: GameConfig, scenarioId: string | null): void {
   };
   c.onRender(render);
   c.onExpression(() => patchRivalBubble(app, c));
+  // Scène du Clash : hôte HORS de #app (les re-rendus du plateau n’interrompent jamais l’animation).
+  let stageHost = document.getElementById('stage');
+  if (!stageHost) { stageHost = document.createElement('div'); stageHost.id = 'stage'; document.body.append(stageHost); }
+  const stage = new ClashStage(stageHost, { artSeed: params.artSeed, rivalName: personality.name, reduced: () => params.reducedMotion, freeze: () => params.freeze, pace: () => c.paceFactor() });
+  c.onMotion((m) => {
+    if (m.type === 'begin') stage.begin(m.script);
+    else if (m.type === 'step') stage.step(m.step);
+    else if (m.type === 'end') stage.end();
+    else stage.stop();
+  });
   c.onBeat(() => {
     if (drag?.dragging || pointerHeld) { pendingRender = true; return; }
     patchBeat(app, c);
@@ -156,8 +167,10 @@ function start(config: GameConfig, scenarioId: string | null): void {
       hash: () => c.match.hash(),
       record: () => c.match.record(),
       arenaStats: () => arena?.stats() ?? null,
-      presentation: () => ({ view: c.viewMode, switches: c.director.switches, manual: c.director.manual, holding: c.director.holding, sequencing: c.sequencing, rival: c.rivalExpression, personality: c.rival.id }),
+      presentation: () => ({ view: c.viewMode, switches: c.director.switches, manual: c.director.manual, holding: c.director.holding, sequencing: c.sequencing, rival: c.rivalExpression, personality: c.rival.id, stage: stage.active, clash: c.seq?.script ? { outcome: c.seq.script.outcome, winner: c.seq.script.winner, verdict: c.seq.script.verdict } : null, beat: c.currentBeat()?.kind ?? null }),
       artCache: () => artCacheSize(),
+      pauseSequence: () => c.pauseSequence(),
+      stageSeek: (ms: number) => stage.seek(ms),
     };
   }
 }
