@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { cardDef } from '../src/game/catalog/cards';
 import { applyCommand, checkCommand, createGame, DEFAULT_CONFIG } from '../src/game/engine/engine';
 import { autoplay } from '../src/game/match';
+import type { ClashReport } from '../src/game/model/types';
 import { replay } from '../src/game/replay/replay';
 import { buildJournal } from '../src/game/visibility/journal';
 import { viewFor, visibleEvents } from '../src/game/visibility/view';
@@ -428,5 +429,56 @@ describe('M02 §6 — Dissimulation : famille visible, information connue jamais
     expect(tac.p1![1]!.defId).toBe('Cendre-3-ferveur');
     expect(tac.p1![1]!.value).toBe(4);
     expect(r.state.lastClash!.publicScores.p1).toBe('8');
+  });
+});
+
+describe('Dissimulation — le rapport public du Clash ne publie aucune valeur masquée', () => {
+  // Voile III Dissimulation (case 1) et Cendre II Basic (case 2) révélées ensemble : la Cendre II est
+  // camouflée ce tour puis engagée par Cendre IV (Rang 4, P12) en Assaut contre la Garde Ronce II
+  // (Rang 2, P6), sans Interférence. Réel : Rang → score 4 + (2 + 1) = 7 ; Dégâts → ×(2 + 1) = ×3.
+  // Aucune valeur publique du rapport ne vaut 7 (resp. 3) : leur absence prouve la non-fuite.
+  function maskedSupport(mode: 'rank' | 'damage') {
+    const s = fixture(config({ v1: ['Voile-3'] }),
+      { hand: ['Cendre-4', 'Astre-1'], slots: [{ def: 'Voile-3-dissimulation' }, { def: 'Cendre-2' }] },
+      { hand: ['Ronce-2', 'Astre-3'], slots: [{ def: 'Voile-4', active: true }, null] });
+    s.phase = 'PREPARE';
+    s.awaiting = ['p1'];
+    const r = new Runner(s).apply({ type: 'prepare', player: 'p1', reveal: [0, 1] });
+    r.commit('p1', 'Cendre-4', 'assault').commit('p2', 'Ronce-2', 'guard');
+    return r.tactics('p1', [{ mode: 'keep' }, { mode }]).tactics('p2', [{ mode: 'keep' }, null]);
+  }
+  const numbers = (x: unknown): number[] => (typeof x === 'number' ? [x] : x && typeof x === 'object' ? Object.values(x).flatMap(numbers) : []);
+  const publicReport = (r: Runner): ClashReport => {
+    const pub = r.ev('clash', 'public');
+    expect(pub).toHaveLength(1);
+    return pub[0]!.data as unknown as ClashReport;
+  };
+
+  it('soutien Rang camouflé : le score réel (7) n’est que dans l’événement privé du propriétaire', () => {
+    const r = maskedSupport('rank');
+    expect(r.ev('clash', 'p1').map((e) => e.data)).toEqual([{ own: true, player: 'p1', score: 7, multiplier: 1 }]);
+    expect(r.ev('clash', 'p2')).toHaveLength(0);
+    const rep = publicReport(r);
+    expect(rep.publicScores).toEqual({ p1: '?', p2: '2' });
+    expect(rep.scores).toEqual({ p1: null, p2: 2 });
+    expect(numbers(rep)).not.toContain(7);
+    // Issue inchangée ; l’état et la vue adverse portent ce même rapport public.
+    expect(rep.winner).toBe('p1');
+    expect(rep.damage).toEqual({ p1: 0, p2: 6 });
+    expect(r.state.lastClash).toEqual(rep);
+    expect(viewFor(r.state, 'p2').lastClash).toEqual(rep);
+  });
+
+  it('soutien Dégâts camouflé : le multiplicateur réel (×3) n’est que dans l’événement privé du propriétaire', () => {
+    const r = maskedSupport('damage');
+    expect(r.ev('clash', 'p1').map((e) => e.data)).toEqual([{ own: true, player: 'p1', score: 4, multiplier: 3 }]);
+    const rep = publicReport(r);
+    expect(rep.publicMultipliers).toEqual({ p1: '?', p2: '1' });
+    expect(rep.multipliers).toEqual({ p1: null, p2: 1 });
+    expect(numbers(rep)).not.toContain(3);
+    // Le score n’est pas camouflé (soutien en Dégâts) ; les PV perdus restent publics.
+    expect(rep.scores).toEqual({ p1: 4, p2: 2 });
+    expect(rep.damage).toEqual({ p1: 0, p2: (12 - 6) * 3 });
+    expect(viewFor(r.state, 'p2').lastClash).toEqual(rep);
   });
 });
