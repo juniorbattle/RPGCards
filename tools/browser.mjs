@@ -14,8 +14,11 @@ export async function launch() {
 export async function startPreview(port = 4179) {
   if (!existsSync('dist/index.html')) throw new Error('dist/ absent : lancer `npm run build` avant.');
   const proc = spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--port', String(port), '--strictPort'], { stdio: ['ignore', 'pipe', 'pipe'] });
+  let out = '';
+  proc.stdout.on('data', (d) => { out += d; });
+  proc.stderr.on('data', (d) => { out += d; });
   const base = `http://localhost:${port}`;
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 200; i++) {
     try {
       const r = await fetch(base);
       if (r.ok) return { base, stop: () => proc.kill() };
@@ -23,7 +26,7 @@ export async function startPreview(port = 4179) {
     await new Promise((r) => setTimeout(r, 200));
   }
   proc.kill();
-  throw new Error('vite preview ne démarre pas');
+  throw new Error(`vite preview ne démarre pas (port ${port}) : ${out.slice(0, 400)}`);
 }
 
 export function watchConsole(page, sink) {

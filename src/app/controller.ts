@@ -85,6 +85,7 @@ export class Controller {
   private aiTimer = 0;
   private toastSeq = 0;
   private renderFn: () => void = () => {};
+  private beatFn: (() => void) | null = null;
   readonly mySignature: Family;
   readonly director = new PresentationDirector();
   viewMode: ViewMode = 'A';
@@ -92,7 +93,7 @@ export class Controller {
   /** Dernière expression visible du rival (affichage d’une légende, QA). */
   rivalExpression: Expression | null = null;
   /** Séquence de résolution en cours (présentation pure ; l’état moteur est déjà final). */
-  seq: { beats: Beat[]; index: number; hp: Record<PlayerId, number>; hidden: Set<number>; done: boolean } | null = null;
+  seq: { beats: Beat[]; index: number; hp: Record<PlayerId, number>; hidden: Set<number>; done: boolean; rendered: boolean } | null = null;
   private seqTimer = 0;
   private exprQueue: Expression[] = [];
   private exprTimer = 0;
@@ -115,6 +116,11 @@ export class Controller {
 
   onRender(fn: () => void): void {
     this.renderFn = fn;
+  }
+
+  /** Mise à jour ciblée d’un temps de résolution (sans recréer les boutons). */
+  onBeat(fn: () => void): void {
+    this.beatFn = fn;
   }
 
   get artSeed(): number {
@@ -158,7 +164,7 @@ export class Controller {
     window.clearTimeout(this.seqTimer);
     const beats = buildResolutionBeats(events, { viewer: 'p1', primaries: this.match.state.reveal.primaries });
     const finalHp = { p1: this.view.me.hp, p2: this.view.opp.hp };
-    this.seq = { beats, index: -1, hp: hpBeforeSequence(events, finalHp), hidden: new Set(visibleEvents(events, 'p1').map((e) => e.seq)), done: false };
+    this.seq = { beats, index: -1, hp: hpBeforeSequence(events, finalHp), hidden: new Set(visibleEvents(events, 'p1').map((e) => e.seq)), done: false, rendered: false };
   }
 
   private beatDelay(b: Beat): number {
@@ -187,7 +193,9 @@ export class Controller {
       break;
     }
     this.rebuildJournal();
-    this.renderFn();
+    // Premier temps : rendu complet (le bandeau passe en mode résolution) ; ensuite, patch ciblé.
+    if (!q.rendered || !this.beatFn) { q.rendered = true; this.renderFn(); }
+    else this.beatFn();
     if (!this.params.freeze && this.params.pace !== 'instant') this.seqTimer = window.setTimeout(() => this.advanceBeat(), this.beatDelay(q.beats[q.index]!));
   }
 

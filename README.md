@@ -2,6 +2,8 @@
 
 Duel de cartes tactique (noyau du futur RPG urbain) : **moteur de règles TypeScript pur**, plateau à **manipulation directe** (glisser-déposer, clic-pour-poser, tactile, clavier), **adversaire IA non omniscient**, **art procédural par code** et **arène Three.js** provisoire.
 
+**M02 — confrontation face à face** (branche `claude/m02-confrontation-face-a-face`) : un **rival procédural expressif** se tient de l’autre côté d’une table de duel ; **vue A « confrontation »** frontale par défaut, **vue B « manipulation »** inclinée pour composer (avec portrait vivant du rival), transitions pilotées par les phases ; **résolution séquencée** (Interférences → Rang → absorption/dégâts → conséquences) ; IA à **mémoire autorisée** et 3 profils. Les expressions ne lisent que des faits publics : **aucun tell** ni mécanique psychologique n’est introduit.
+
 > Règlement appliqué : **V3.0 (`source/CONTRAT_REGLES_V3_0_HISTORIQUE.md`) + avenant mandaté V3.2 (`contracts/02_…`)**. Delta à connaître : en *Amplifier le Rang*, un soutien de **même famille** que la Primaire vaut **Rang imprimé + 1** (D-01). Le texte historique V3.0 n’est pas modifié ; la ratification éventuelle en V3.3 appartient au responsable.
 
 ## Démarrage
@@ -29,7 +31,7 @@ npm run sim          # (optionnel) 200 duels IA/IA headless
 5. **Révélation simultanée** des Primaires, puis **choix tactiques secrets** : cliquer une Secondaire active → *Conserver / Amplifier le Rang (+affinité) / Amplifier les dégâts (×) / Interférer* (puis cliquer la cible). Prévision provisoire affichée, sans information cachée.
 6. **Résolution** : journal détaillé (scores, soutiens, affinité, absorption, raison des 0 dégâts), FX Three.js dérivés des événements, *Tour suivant*.
 
-Clavier : `Tab`, `Entrée/Espace`, `1–4` (main), `A`/`G` (mode), `Échap` (annuler), `N` (action principale). Tactile : glisser, ou toucher-toucher ; appui long = inspection. Boutons `A−/A+` (taille du texte), *Mvt réduit*, *Vue* (caméra exploratoire), *Journal* (mobile).
+Clavier : `Tab`, `Entrée/Espace`, `1–4` (main), `A`/`G` (mode), `Échap` (annuler), `N` (action principale), `V` (vue rival ↔ vue plateau). Tactile : glisser, ou toucher-toucher ; appui long = inspection. Boutons `A−/A+` (taille du texte), *Mvt réduit*, *Vue* (caméra exploratoire), *Journal* (mobile).
 
 ### Paramètres d’URL (implémentés)
 
@@ -40,7 +42,10 @@ Clavier : `Tab`, `Entrée/Espace`, `1–4` (main), `A`/`G` (mode), `Échap` (ann
 | `sig=Cendre\|Voile\|Ronce\|Astre`, `tech=Lecture,Ancrage` | configuration du joueur |
 | `autostart=1` | passe l’écran de préparation |
 | `scenario=t2\|interference\|signature\|doubleko` | **démonstrations** avec rival **scripté** (identifié comme tel dans la barre de titre) |
-| `cam=tilted\|frontal` | caméra exploratoire (provisoire, ADR 003) |
+| `view=A\|B` | vue figée (QA) : A confrontation, B manipulation ; défaut `auto` piloté par les phases (ADR 006). `cam=frontal\|tilted` = alias M01 |
+| `rival=braise\|ronce\|voile` | personnalité du rival (sinon dérivée de la seed) |
+| `pace=normal\|fast\|instant` | rythme de présentation de la résolution (n’affecte jamais les règles) |
+| `beat=N`, `intro=1`, `pose=<humeur>` | captures : temps de résolution figé, temps d’observation conservé, humeur imposée (revue QA, avec `qa=1` uniquement) |
 | `reducedMotion=1`, `freeze=1` | mouvement réduit ; arène et animations figées (captures) |
 | `scale=1.2`, `hp=90`, `aiDelay=650` | taille du texte, PV de départ, délai de l’IA (ms) |
 | `gallery=1` | galerie de revue art (toutes les définitions + verso) |
@@ -52,11 +57,14 @@ Clavier : `Tab`, `Entrée/Espace`, `1–4` (main), `A`/`G` (mode), `Échap` (ann
 src/game/      moteur pur (aucun DOM) : catalog/ model/ engine/ (phases, clash.ts pur, invariants, rng)
                visibility/ (viewFor, journal filtré) ai/ replay/ fixtures/ match.ts
 src/art/       générateurs Canvas/SVG seedés (illustrations, emblèmes, verso, palettes provisoires)
-src/scene/     arène Three.js procédurale + FX déclenchés par événements, 2 caméras exploratoires
-src/presentation/  DOM : plateau, cartes, glisser-déposer Pointer Events
+src/scene/     arène Three.js (table, décor en couches), rival 2.5D procédural (rival.ts, rivalTextures.ts),
+               caméras A/B interpolées, portrait vivant, FX déclenchés par événements
+src/presentation/  DOM : plateau, cartes, glisser-déposer ; modules purs director (vues), expression (rival),
+               beats (séquence de résolution), personalities
 src/app/       contrôleur (humain + IA sur sa vue), paramètres, scénarios de démonstration
 test/          Vitest ; tools/ QA navigateur, captures, perf
-docs/adr/      décisions (001 stack, 002 UI, 003 caméra, 004 arbitrages de règles, 005 outillage)
+docs/adr/      décisions (001 stack, 002 UI, 003 caméra M01 remplacée, 004 arbitrages, 005 outillage,
+               006 vues A/B, 007 rival & expressions, 008 séquence de résolution)
 ```
 
 Voir `JOURNAL.md` pour l’état exact, les preuves et les limites ; `docs/adr/004-…` pour les interprétations à arbitrer.

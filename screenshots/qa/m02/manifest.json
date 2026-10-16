@@ -1,0 +1,582 @@
+{
+  "commit": "fea2c8f",
+  "date": "2026-10-16T05:28:57.840Z",
+  "note": "Chromium headless + WebGL logiciel SwiftShader ; freeze=1 (arène et réactions figées).",
+  "shots": [
+    {
+      "id": "01-frontale-entree-duel-1280",
+      "path": "screenshots/qa/m02/01-frontale-entree-duel-1280.png",
+      "desc": "Entrée du duel : vue A confrontation, visage et buste du rival, plateau lisible",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "voile:focused (engage une carte)"
+    },
+    {
+      "id": "02-inclinee-engagement-1280",
+      "path": "screenshots/qa/m02/02-inclinee-engagement-1280.png",
+      "desc": "Vue B manipulation : Primaire posée par glisser, ASSAUT/GARDE, portrait vivant du rival",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "B",
+      "rival": "voile:focused (engage une carte)"
+    },
+    {
+      "id": "03-frontale-apres-verrouillage-1280",
+      "path": "screenshots/qa/m02/03-frontale-apres-verrouillage-1280.png",
+      "desc": "Engagement verrouillé : retour en vue A, le rival réagit (fait public : verrouillage)",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "RESOLVED",
+      "view": "A",
+      "rival": "voile:confident (vous perdez 12 PV)"
+    },
+    {
+      "id": "04-frontale-primaires-revelees",
+      "path": "screenshots/qa/m02/04-frontale-primaires-revelees.png",
+      "desc": "Révélation simultanée des Primaires en vue A : réaction du rival",
+      "url": "/?scenario=interference&qa=1&aiDelay=0&freeze=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "TACTICS",
+      "view": "A",
+      "rival": "ronce:focused (Primaires révélées)"
+    },
+    {
+      "id": "05-frontale-tactique-menu",
+      "path": "screenshots/qa/m02/05-frontale-tactique-menu.png",
+      "desc": "Choix tactique en vue A : menu contextuel, rival observable, prévision provisoire",
+      "url": "/?scenario=interference&qa=1&aiDelay=0&freeze=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "TACTICS",
+      "view": "A",
+      "rival": "ronce:focused (Primaires révélées)"
+    },
+    {
+      "id": "06-frontale-ciblage-interference",
+      "path": "screenshots/qa/m02/06-frontale-ciblage-interference.png",
+      "desc": "Ciblage d’Interférence direct sur le terrain adverse, en vue A",
+      "url": "/?scenario=interference&qa=1&aiDelay=0&freeze=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "TACTICS",
+      "view": "A",
+      "rival": "ronce:focused (Primaires révélées)"
+    },
+    {
+      "id": "07-bascule-manuelle-B-en-tactique",
+      "path": "screenshots/qa/m02/07-bascule-manuelle-B-en-tactique.png",
+      "desc": "Bascule manuelle (V) vers la vue B pendant la tactique : ciblage conservé, portrait du rival",
+      "url": "/?scenario=interference&qa=1&aiDelay=0&freeze=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "TACTICS",
+      "view": "B",
+      "rival": "ronce:focused (Primaires révélées)"
+    },
+    {
+      "id": "08-resolution-interference",
+      "path": "screenshots/qa/m02/08-resolution-interference.png",
+      "desc": "Temps « Interférence » : soutien annulé, mise en évidence des cases",
+      "url": "/?scenario=interference&qa=1&aiDelay=0&freeze=1&beat=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "RESOLVED",
+      "view": "A",
+      "rival": "ronce:annoyed (son soutien est annulé)"
+    },
+    {
+      "id": "09-resolution-rang",
+      "path": "screenshots/qa/m02/09-resolution-rang.png",
+      "desc": "Temps « Rang » : scores et contributions",
+      "url": "/?scenario=interference&qa=1&aiDelay=0&freeze=1&beat=3",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "RESOLVED",
+      "view": "A",
+      "rival": "ronce:pleased (son Interférence réussit)"
+    },
+    {
+      "id": "10-resolution-degats",
+      "path": "screenshots/qa/m02/10-resolution-degats.png",
+      "desc": "Temps « Dégâts » : PV mis en scène, réaction du rival",
+      "url": "/?scenario=interference&qa=1&aiDelay=0&freeze=1&beat=5",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "RESOLVED",
+      "view": "A",
+      "rival": "ronce:pained (perd 3 PV)"
+    },
+    {
+      "id": "11-T2-rang-5-contre-4",
+      "path": "screenshots/qa/m02/11-T2-rang-5-contre-4.png",
+      "desc": "T2 : Rang 5 (Cendre III 3 + Cendre I +2 affinité) contre 4",
+      "url": "/?scenario=t2&qa=1&aiDelay=0&freeze=1&beat=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 2,
+      "phase": "RESOLVED",
+      "view": "A",
+      "rival": "ronce:focused (vous avez verrouillé)"
+    },
+    {
+      "id": "12-T2-zero-blessure",
+      "path": "screenshots/qa/m02/12-T2-zero-blessure.png",
+      "desc": "T2 : victoire au Rang mais 0 blessure, la Garde absorbe — réaction du rival",
+      "url": "/?scenario=t2&qa=1&aiDelay=0&freeze=1&beat=2",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 2,
+      "phase": "RESOLVED",
+      "view": "A",
+      "rival": "ronce:relieved (perd au Rang mais absorbe tout)"
+    },
+    {
+      "id": "13-reaction-signature-revelee",
+      "path": "screenshots/qa/m02/13-reaction-signature-revelee.png",
+      "desc": "Réaction du rival à une Signature ∞ révélée (fait public)",
+      "url": "/?scenario=signature&qa=1&aiDelay=0&freeze=1&beat=3",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "TACTICS",
+      "view": "A",
+      "rival": "ronce:surprised (Signature adverse révélée)"
+    },
+    {
+      "id": "14-reaction-degats-subis",
+      "path": "screenshots/qa/m02/14-reaction-degats-subis.png",
+      "desc": "Signature ∞ : (14 − 12) × 9 = 18 ; le rival encaisse",
+      "url": "/?scenario=signature&qa=1&aiDelay=0&freeze=1&beat=3",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "RESOLVED",
+      "view": "A",
+      "rival": "ronce:pained (perd 18 PV)"
+    },
+    {
+      "id": "15-reaction-double-ko",
+      "path": "screenshots/qa/m02/15-reaction-double-ko.png",
+      "desc": "Double K.-O. → prolongation 1 PV chacun ; stupéfaction du rival",
+      "url": "/?scenario=doubleko&qa=1&aiDelay=0&freeze=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 5,
+      "phase": "RESOLVED",
+      "view": "A",
+      "rival": "ronce:shocked (double K.-O.)"
+    },
+    {
+      "id": "16-personnalite-braise",
+      "path": "screenshots/qa/m02/16-personnalite-braise.png",
+      "desc": "Personnalité « braise » en vue A (apparence, tempérament, profil IA cohérents)",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=braise",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "braise:focused (engage une carte)"
+    },
+    {
+      "id": "17-planche-braise-confident",
+      "path": "screenshots/qa/m02/17-planche-braise-confident.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : braise / confident",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=braise&pose=confident",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "braise:confident (pose de revue (QA))"
+    },
+    {
+      "id": "17-planche-braise-surprised",
+      "path": "screenshots/qa/m02/17-planche-braise-surprised.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : braise / surprised",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=braise&pose=surprised",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "braise:surprised (pose de revue (QA))"
+    },
+    {
+      "id": "17-planche-braise-pained",
+      "path": "screenshots/qa/m02/17-planche-braise-pained.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : braise / pained",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=braise&pose=pained",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "braise:pained (pose de revue (QA))"
+    },
+    {
+      "id": "17-planche-braise-annoyed",
+      "path": "screenshots/qa/m02/17-planche-braise-annoyed.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : braise / annoyed",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=braise&pose=annoyed",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "braise:annoyed (pose de revue (QA))"
+    },
+    {
+      "id": "17-planche-braise-triumphant",
+      "path": "screenshots/qa/m02/17-planche-braise-triumphant.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : braise / triumphant",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=braise&pose=triumphant",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "braise:triumphant (pose de revue (QA))"
+    },
+    {
+      "id": "17-planche-braise-defeated",
+      "path": "screenshots/qa/m02/17-planche-braise-defeated.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : braise / defeated",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=braise&pose=defeated",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "braise:defeated (pose de revue (QA))"
+    },
+    {
+      "id": "16-personnalite-ronce",
+      "path": "screenshots/qa/m02/16-personnalite-ronce.png",
+      "desc": "Personnalité « ronce » en vue A (apparence, tempérament, profil IA cohérents)",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=ronce",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "ronce:focused (engage une carte)"
+    },
+    {
+      "id": "17-planche-ronce-confident",
+      "path": "screenshots/qa/m02/17-planche-ronce-confident.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : ronce / confident",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=ronce&pose=confident",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "ronce:confident (pose de revue (QA))"
+    },
+    {
+      "id": "17-planche-ronce-surprised",
+      "path": "screenshots/qa/m02/17-planche-ronce-surprised.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : ronce / surprised",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=ronce&pose=surprised",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "ronce:surprised (pose de revue (QA))"
+    },
+    {
+      "id": "17-planche-ronce-pained",
+      "path": "screenshots/qa/m02/17-planche-ronce-pained.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : ronce / pained",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=ronce&pose=pained",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "ronce:pained (pose de revue (QA))"
+    },
+    {
+      "id": "17-planche-ronce-annoyed",
+      "path": "screenshots/qa/m02/17-planche-ronce-annoyed.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : ronce / annoyed",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=ronce&pose=annoyed",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "ronce:annoyed (pose de revue (QA))"
+    },
+    {
+      "id": "17-planche-ronce-triumphant",
+      "path": "screenshots/qa/m02/17-planche-ronce-triumphant.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : ronce / triumphant",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=ronce&pose=triumphant",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "ronce:triumphant (pose de revue (QA))"
+    },
+    {
+      "id": "17-planche-ronce-defeated",
+      "path": "screenshots/qa/m02/17-planche-ronce-defeated.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : ronce / defeated",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=ronce&pose=defeated",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "ronce:defeated (pose de revue (QA))"
+    },
+    {
+      "id": "16-personnalite-voile",
+      "path": "screenshots/qa/m02/16-personnalite-voile.png",
+      "desc": "Personnalité « voile » en vue A (apparence, tempérament, profil IA cohérents)",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=voile",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "voile:focused (engage une carte)"
+    },
+    {
+      "id": "17-planche-voile-confident",
+      "path": "screenshots/qa/m02/17-planche-voile-confident.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : voile / confident",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=voile&pose=confident",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "voile:confident (pose de revue (QA))"
+    },
+    {
+      "id": "17-planche-voile-surprised",
+      "path": "screenshots/qa/m02/17-planche-voile-surprised.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : voile / surprised",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=voile&pose=surprised",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "voile:surprised (pose de revue (QA))"
+    },
+    {
+      "id": "17-planche-voile-pained",
+      "path": "screenshots/qa/m02/17-planche-voile-pained.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : voile / pained",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=voile&pose=pained",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "voile:pained (pose de revue (QA))"
+    },
+    {
+      "id": "17-planche-voile-annoyed",
+      "path": "screenshots/qa/m02/17-planche-voile-annoyed.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : voile / annoyed",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=voile&pose=annoyed",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "voile:annoyed (pose de revue (QA))"
+    },
+    {
+      "id": "17-planche-voile-triumphant",
+      "path": "screenshots/qa/m02/17-planche-voile-triumphant.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : voile / triumphant",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=voile&pose=triumphant",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "voile:triumphant (pose de revue (QA))"
+    },
+    {
+      "id": "17-planche-voile-defeated",
+      "path": "screenshots/qa/m02/17-planche-voile-defeated.png",
+      "desc": "Planche (pose de revue QA, pas un état de jeu) : voile / defeated",
+      "url": "/?seed=101&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1&rival=voile&pose=defeated",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "voile:defeated (pose de revue (QA))"
+    },
+    {
+      "id": "18-frontale-1920",
+      "path": "screenshots/qa/m02/18-frontale-1920.png",
+      "desc": "Vue A en 1920×1080",
+      "url": "/?seed=202&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "ronce:focused (engage une carte)"
+    },
+    {
+      "id": "19-inclinee-1920",
+      "path": "screenshots/qa/m02/19-inclinee-1920.png",
+      "desc": "Vue B en 1920×1080",
+      "url": "/?seed=202&autostart=1&qa=1&aiDelay=0&freeze=1",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "B",
+      "rival": "ronce:focused (engage une carte)"
+    },
+    {
+      "id": "20-mobile-frontale",
+      "path": "screenshots/qa/m02/20-mobile-frontale.png",
+      "desc": "Mobile 390×844 : vue A",
+      "url": "/?seed=404&autostart=1&qa=1&aiDelay=0&freeze=1&intro=1",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "A",
+      "rival": "voile:focused (engage une carte)"
+    },
+    {
+      "id": "21-mobile-inclinee-pose-tactile",
+      "path": "screenshots/qa/m02/21-mobile-inclinee-pose-tactile.png",
+      "desc": "Mobile : vue B, pose tactile, portrait vivant",
+      "url": "/?seed=404&autostart=1&qa=1&aiDelay=0&freeze=1",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "turn": 1,
+      "phase": "COMMIT",
+      "view": "B",
+      "rival": "voile:focused (engage une carte)"
+    },
+    {
+      "id": "22-mouvement-reduit",
+      "path": "screenshots/qa/m02/22-mouvement-reduit.png",
+      "desc": "Mouvement réduit : transitions instantanées, aucun mouvement imposé",
+      "url": "/?scenario=t2&qa=1&aiDelay=0&reducedMotion=1",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "turn": 2,
+      "phase": "PREPARE",
+      "view": "B",
+      "rival": "ronce:neutral (vous observe)"
+    }
+  ],
+  "consoleIssues": []
+}

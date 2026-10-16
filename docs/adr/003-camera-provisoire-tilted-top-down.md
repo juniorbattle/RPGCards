@@ -1,6 +1,6 @@
 # ADR 003 — Caméra PROVISOIRE : vue de dessus inclinée par défaut, frontale 2.5D comparative
 Date : 2026-10-16
-Statut : proposé — **exploratoire, non figé** (aucune direction artistique définitive)
+Statut : **remplacé par ADR 006 (M02)** — conservé pour l’historique des captures comparatives M01
 
 **Contexte.** Le mandat autorise deux pistes HD-2D : *tilted top-down* ou *frontale 2.5D*. Le plateau de cartes doit rester lisible et prioritaire.
 
