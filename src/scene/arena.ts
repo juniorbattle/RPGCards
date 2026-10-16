@@ -42,6 +42,10 @@ export interface ArenaOptions {
   reducedMotion: boolean;
   freeze: boolean;
   personality: RivalPersonality;
+  /** Mesure de coût (QA, `?qa=1&ablate=…` uniquement) : éléments retirés du rendu — `candles`
+   *  (corps, flammes, halos, lumières), `banners` (bannières, tringles), `dust` (poussières), `fill`
+   *  (fill frontal et lampe de table ajoutés en M03.2). Vide en jeu. */
+  ablate?: readonly string[];
 }
 
 export interface ArenaStats {
@@ -592,6 +596,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   const bannerOrder: Family[] = ['Cendre', 'Ronce', 'Astre', 'Voile'];
   const bannerX = [-3.5, -1.85, 1.85, 3.5];
   const banners: THREE.Mesh[] = [];
+  const rods: THREE.Mesh[] = [];
   bannerOrder.forEach((f, i) => {
     const mat = new THREE.MeshStandardMaterial({ map: bannerTexture(f, opts.artSeed), transparent: true, side: THREE.DoubleSide, roughness: 0.85, emissive: new THREE.Color(0xffffff), emissiveMap: null, emissiveIntensity: 0 });
     mat.emissiveMap = mat.map;
@@ -604,6 +609,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     rod.rotation.z = Math.PI / 2;
     rod.position.set(bannerX[i]!, 3.57, -7.18);
     scene.add(rod);
+    rods.push(rod);
   });
 
   // plantes en pot (silhouettes éclairées)
@@ -651,6 +657,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     bodies.setMatrixAt(i, m4);
   });
   scene.add(bodies);
+  const candleFx: THREE.Points[] = [];
   const pointsOf = (sizeK: number, yOff: number, tex: THREE.Texture, flicker: number, tint: [number, number, number]) => {
     const geo = new THREE.BufferGeometry();
     const pos = new Float32Array(candles.length * 3);
@@ -676,6 +683,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     const pts = new THREE.Points(geo, mat);
     pts.frustumCulled = false;
     scene.add(pts);
+    candleFx.push(pts);
     return mat;
   };
   const haloMat = pointsOf(0.62, 0.06, haloTexture(), 0.18, [1, 0.85, 0.7]);
@@ -694,7 +702,16 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   }
   const motesGeo = new THREE.BufferGeometry();
   motesGeo.setAttribute('position', new THREE.BufferAttribute(mpos, 3));
-  scene.add(new THREE.Points(motesGeo, new THREE.PointsMaterial({ color: 0xffcf8a, size: 0.04, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false })));
+  const motes = new THREE.Points(motesGeo, new THREE.PointsMaterial({ color: 0xffcf8a, size: 0.04, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }));
+  scene.add(motes);
+
+  // Mesure de coût (QA uniquement) : retrait d’éléments du rendu, sans autre effet.
+  const ablate = new Set(opts.ablate ?? []);
+  const hide = (objs: THREE.Object3D[]) => objs.forEach((o) => { o.visible = false; });
+  if (ablate.has('candles')) hide([bodies, ...candleFx, ...candleLights]);
+  if (ablate.has('banners')) hide([...banners, ...rods]);
+  if (ablate.has('dust')) hide([motes]);
+  if (ablate.has('fill')) hide([fill, tableLamp]);
 
   // --- Rival
   const backTex = new THREE.CanvasTexture(cardBackCanvas(opts.artSeed));

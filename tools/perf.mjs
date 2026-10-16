@@ -14,6 +14,18 @@ console.log('moteur', engine);
 const server = await startPreview(4183);
 const browser = await launch();
 const scene = {};
+/** Statistiques de l’arène (vue imposée, 1280×720) : moyenne de 4 relevés après 5 s de mise en régime. */
+async function measure(v, ablate = '') {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+  await page.goto(`${server.base}/?scenario=signature&qa=1&aiDelay=0&view=${v}&reducedMotion=0${ablate ? `&ablate=${ablate}` : ''}`);
+  await page.waitForTimeout(5000);
+  const samples = [];
+  for (let i = 0; i < 4; i++) { samples.push(await page.evaluate(() => window.__lqv.arenaStats())); await page.waitForTimeout(500); }
+  await page.close();
+  const avg = (k) => Math.round((samples.reduce((a, x) => a + x[k], 0) / samples.length) * 100) / 100;
+  const last = samples[samples.length - 1];
+  return { drawCalls: last.drawCalls, triangles: last.triangles, frameMs: avg('frameMs'), fps: avg('fps') };
+}
 try {
   for (const v of ['A', 'B']) {
     const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
@@ -32,6 +44,13 @@ try {
       return ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : null;
     });
     await page.close();
+  }
+  // M03.2 — coût des éléments du décor (vue A) : chaque mesure retire un élément (paramètre QA
+  // `ablate`, inerte hors qa=1). Aucun post-traitement n’existe (pas d’EffectComposer) : le tone
+  // mapping ACES est calculé dans les shaders des matériaux.
+  scene.ablationViewA = {};
+  for (const a of ['', 'candles', 'banners', 'dust', 'fill', 'candles,banners,dust,fill']) {
+    scene.ablationViewA[a || 'complet'] = await measure('A', a);
   }
   // M03.2 — Clash joué en temps réel (non figé, mouvement complet) : intervalles requestAnimationFrame
   // pendant la scène de Clash (ASSAUT III + soutien Rang contre GARDE IV : absorption). Sous SwiftShader,
