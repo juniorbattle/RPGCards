@@ -538,12 +538,17 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   const rim = new THREE.PointLight(0xffffff, 7, 7, 1.6);
   rim.position.set(0, 3.8, RIVAL_Z - 1.3);
   scene.add(rim);
+  // Intensité de base par lumière (M03.2 : bougies de table moins fortes, sans reflet disproportionné) ;
+  // le vacillement module autour de cette base.
   const candleLights: THREE.PointLight[] = [];
+  const candleBase: number[] = [];
   for (const [x, y, z] of [[-3.6, TABLE_TOP + 0.7, -1.9], [3.6, TABLE_TOP + 0.7, -1.9], [-5.6, 2.4, -6.4], [5.6, 2.4, -6.4]] as const) {
-    const l = new THREE.PointLight(0xffa458, z > -3 ? 2.2 : 3.2, 8, 1.8);
+    const base = z > -3 ? 2.8 : 3.4;
+    const l = new THREE.PointLight(0xffa458, base, 8, 1.8);
     l.position.set(x, y, z);
     scene.add(l);
     candleLights.push(l);
+    candleBase.push(base);
   }
   const center = new THREE.PointLight(0xffd9a0, 0, 9, 1.6);
   center.position.set(0, TABLE_TOP + 1.2, CLASH_Z);
@@ -839,7 +844,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
       m.uniforms.uTime!.value = clock;
       m.uniforms.uStill!.value = still() ? 1 : 0;
     }
-    candleLights.forEach((l, i) => { l.intensity = still() ? 3.6 : 3.4 + Math.sin(clock * 7.3 + i * 2.1) * 0.25 + Math.sin(clock * 13.1 + i) * 0.15; });
+    candleLights.forEach((l, i) => { const b = candleBase[i]!; l.intensity = still() ? b : b * (0.944 + Math.sin(clock * 7.3 + i * 2.1) * 0.07 + Math.sin(clock * 13.1 + i) * 0.04); });
     banners.forEach((b, i) => { b.rotation.y = still() ? 0 : Math.sin(clock * 0.6 + i * 1.3) * 0.035; });
     center.intensity = Math.max(0, center.intensity - dt * 6);
     rival.update(dt, clock, still());
