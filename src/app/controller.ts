@@ -99,6 +99,7 @@ export class Controller {
   private exprTimer = 0;
   private dragging = false;
   private lastTurn = 0;
+  private holdSeq = 0;
 
   constructor(public config: GameConfig, public params: AppParams, public arena: ArenaHandle | null, public scenario: Scenario | null = null, public rival: RivalPersonality) {
     this.expr = new ExpressionDirector('p2', rival, params.artSeed ^ config.seed);
@@ -255,16 +256,26 @@ export class Controller {
       const instant = this.params.pace === 'instant' || (this.params.freeze && !this.params.intro);
       // Pas de minuterie : une réorganisation déclenchée par le temps pourrait dévier un clic en
       // cours. Le regard vers le rival dure jusqu’à la première interaction du joueur (voir main.ts).
-      if (!instant) this.director.startHold();
+      if (!instant) { this.director.startHold(); this.holdSeq++; }
     }
     const forced = this.params.view;
     this.viewMode = forced === 'A' || forced === 'B' ? forced : this.director.update(this.directorInput());
     this.arena?.setView(this.viewMode);
   }
 
-  /** Fin du temps d’observation (minuterie, ou le joueur commence à manipuler). */
-  endHold(): void {
+  /** Jeton du temps d’observation en cours (change à chaque nouveau tour observé). */
+  get holdToken(): number {
+    return this.holdSeq;
+  }
+
+  /**
+   * Fin du temps d’observation : le joueur commence à manipuler. `token` = jeton lu au DÉBUT de
+   * l’interaction ; une interaction commencée avant ce tour (le clic « Tour suivant » lui-même)
+   * ne l’achève donc pas.
+   */
+  endHold(token?: number): void {
     if (!this.director.holding) return;
+    if (token !== undefined && token !== this.holdSeq) return;
     const before = this.viewMode;
     this.director.releaseHold(this.directorInput());
     this.updateView();

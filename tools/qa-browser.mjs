@@ -161,6 +161,20 @@ async function runDuel(browser, base, run) {
   watchConsole(page, consoleIssues);
   await page.goto(`${base}/?seed=${run.seed}&autostart=1&qa=1&aiDelay=0&reducedMotion=1&pace=${run.watchSequence ? 'fast' : 'normal'}&tech=${run.tech}`);
   await page.waitForFunction(() => !!window.__lqv);
+  if (process.env.QA_DEBUG) {
+    // Trace des événements pointeur (diagnostic d’un glisser qui n’aboutit pas).
+    await page.evaluate(() => {
+      window.__ptr = [];
+      const t0 = performance.now();
+      for (const type of ['pointerdown', 'pointermove', 'pointerup', 'pointercancel', 'touchstart', 'touchend', 'touchcancel', 'click']) {
+        window.addEventListener(type, (e) => {
+          const t = e.target;
+          window.__ptr.push(`${Math.round(performance.now() - t0)} ${type} ${Math.round(e.clientX ?? e.touches?.[0]?.clientX ?? -1)},${Math.round(e.clientY ?? e.touches?.[0]?.clientY ?? -1)} ${t?.dataset?.key ?? t?.closest?.('[data-key]')?.dataset?.key ?? t?.className ?? ''} prevented=${e.defaultPrevented}`);
+          if (window.__ptr.length > 200) window.__ptr.shift();
+        }, true);
+      }
+    });
+  }
   const stats = { turns: 0, drags: 0, clicks: 0, keyboard: 0, tactics: 0, repels: 0, leaks: [], viewChecks: 0, viewErrors: [], lostClicks: [], tech: {}, moods: new Set(), sequencesWatched: 0, sequencesSkipped: 0, manualToggleChecked: null, holds: 0 };
   let outcome = 'running';
   const t0 = Date.now();
@@ -169,6 +183,10 @@ async function runDuel(browser, base, run) {
   } catch (err) {
     mkdirSync(`${OUT}/tmp`, { recursive: true });
     await page.screenshot({ path: `${OUT}/tmp/fail-${run.name}.png` });
+    if (process.env.QA_DEBUG) {
+      const dbg = await page.evaluate(() => ({ ptr: window.__ptr?.slice(-60), toast: window.__lqv.controller.ui.toast, pres: window.__lqv.presentation(), drag: window.__lqv.controller.ui }));
+      console.error(JSON.stringify(dbg, null, 1));
+    }
     console.error(`[${run.name}] échec : ${String(err.message).split('\n')[0]}`);
     outcome = 'error';
     stats.error = String(err.message).split('\n')[0];

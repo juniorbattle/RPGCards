@@ -29,9 +29,9 @@ npm run sim          # (optionnel) 200 duels IA/IA headless
 3. **Préparation** : cliquer ses Secondaires en *RÉSERVE CACHÉE* pour les révéler (→ *ACTIVE · PRÊTE*) ou les garder cachées.
 4. **Engagement** : glisser une carte sur **Primaire** (ou cliquer la carte puis la case), choisir **ASSAUT / GARDE** ; nouvelle Secondaire facultative posée face cachée (*CHARGEMENT · INUTILISABLE*). Annulable jusqu’au verrouillage.
 5. **Révélation simultanée** des Primaires, puis **choix tactiques secrets** : cliquer une Secondaire active → *Conserver / Amplifier le Rang (+affinité) / Amplifier les dégâts (×) / Interférer* (puis cliquer la cible). Prévision provisoire affichée, sans information cachée.
-6. **Résolution** : journal détaillé (scores, soutiens, affinité, absorption, raison des 0 dégâts), FX Three.js dérivés des événements, *Tour suivant*.
+6. **Résolution séquencée** (M02) : choix révélés → Interférences → Rang décomposé → issue / absorption (raison des 0 dégâts) → dégâts → conséquences, un temps à la fois, le rival réagissant ; *Passer* et *Tour suivant* toujours disponibles ; journal regroupé par tour.
 
-Clavier : `Tab`, `Entrée/Espace`, `1–4` (main), `A`/`G` (mode), `Échap` (annuler), `N` (action principale), `V` (vue rival ↔ vue plateau). Tactile : glisser, ou toucher-toucher ; appui long = inspection. Boutons `A−/A+` (taille du texte), *Mvt réduit*, *Vue* (caméra exploratoire), *Journal* (mobile).
+Clavier : `Tab`, `Entrée/Espace`, `1–4` (main), `A`/`G` (mode), `Échap` (annuler), `N` (action principale), `V` (vue rival ↔ vue plateau). Tactile : glisser, ou toucher-toucher ; appui long = inspection. Boutons `A−/A+` (taille du texte), *Mvt réduit*, *Vue plateau ⤓ / Voir le rival ⤒* (bascule A↔B, comme `V`), *Rythme* (normal / rapide / instantané), *Journal* (mobile).
 
 ### Paramètres d’URL (implémentés)
 
