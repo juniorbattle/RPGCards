@@ -3,7 +3,7 @@
 
 **Type : mission de production et de raffinement, développement concret attendu.**  
 **Source :** `juniorbattle/RPGCards`, branche de référence `claude/m02-confrontation-face-a-face` (dernier commit livré dans le rapport M02 : `e978d2d`; vérifier le HEAD réel).  
-**Référence graphique OBLIGATOIRE :** `reference/REFERENCE_VISUELLE_VALIDEE_M03.png` dans le kit joint. L'image vient du responsable du projet : **elle a été explicitement validée**. La décrire à nouveau ou l'approximer de mémoire n'est pas un substitut à son inspection visuelle.
+**Référence graphique OBLIGATOIRE :** `reference/REFERENCE_VISUELLE_VALIDEE_M03.jpg` **présente sur cette branche GitHub** (version haute qualité de revue) et, dans le kit joint, `reference/REFERENCE_VISUELLE_VALIDEE_M03.png` (**original PNG exact validé par le responsable**). L'image a été explicitement approuvée. La décrire à nouveau ou l'approximer de mémoire n'est pas un substitut à son inspection visuelle.
 
 ### 0 — Priorité des instructions
 
