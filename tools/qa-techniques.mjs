@@ -168,28 +168,27 @@ const CASES = {
     let v = await untilPhase(page, (x) => x.phase === 'COMMIT' && x.awaitingMe);
     check(r.issues, v.opp.slots[1]?.masked === true, 'Secondaire du rival non masquée');
     await commitPrimary(page, 'Ronce-2', 'guard', m.touch);
-    // Séquence complète au rythme normal : aucune étape ne doit nommer la carte camouflée.
-    let steps = 0;
+    // Séquence inspectée TEMPS PAR TEMPS (pause + avance par le crochet QA) : déterministe sous
+    // SwiftShader, où une capture d’écran dure plus qu’un temps de la séquence.
+    await page.waitForFunction(() => window.__lqv.presentation().sequencing, null, { timeout: 15000 });
+    await lqv(page, () => window.__lqv.pauseSequence());
     const seen = new Set();
-    const t0 = Date.now();
-    while (Date.now() - t0 < 40000) {
+    for (let i = 0; i < 24; i++) {
       const p = await lqv(page, () => window.__lqv.presentation());
-      if (!p.sequencing && steps > 0) break;
-      if (p.sequencing) {
-        steps++;
-        if (p.beat) seen.add(p.beat);
-        // Après le temps « destinations », la défausse du HUD est celle de fin de tour (ARB-005) : seule
-        // son infobulle peut alors nommer la carte ; avant, rien ne la nomme.
-        const late = ['destination', 'repel', 'overtime', 'victory'].includes(p.beat);
-        const leaks = await lqv(page, ({ pats, late }) => {
-          const app = document.getElementById('app').cloneNode(true);
-          if (late) app.querySelectorAll('[data-discard-list]').forEach((x) => x.removeAttribute('title'));
-          const html = app.innerHTML + (document.getElementById('stage')?.innerHTML ?? '');
-          return pats.filter((x) => new RegExp(x, 'i').test(html));
-        }, { pats: forbidden, late });
-        check(r.issues, leaks.length === 0, `temps ${p.beat} : ${leaks}`);
-        if (p.beat === 'insight' || p.beat === 'effect') await page.screenshot({ path: `${OUT}/masque-${m.name}-${p.beat}.png` });
-      }
+      if (!p.sequencing) break;
+      if (p.beat) seen.add(p.beat);
+      // Après le temps « destinations », la défausse du HUD est celle de fin de tour (ARB-005) : seule
+      // son infobulle peut alors nommer la carte ; avant, rien ne la nomme.
+      const late = ['destination', 'repel', 'overtime', 'victory'].includes(p.beat);
+      const leaks = await lqv(page, ({ pats, late }) => {
+        const app = document.getElementById('app').cloneNode(true);
+        if (late) app.querySelectorAll('[data-discard-list]').forEach((x) => x.removeAttribute('title'));
+        const html = app.innerHTML + (document.getElementById('stage')?.innerHTML ?? '');
+        return pats.filter((x) => new RegExp(x, 'i').test(html));
+      }, { pats: forbidden, late });
+      check(r.issues, leaks.length === 0, `temps ${p.beat} : ${leaks}`);
+      if (p.beat === 'insight' || p.beat === 'effect') await page.screenshot({ path: `${OUT}/masque-${m.name}-${p.beat}.png` });
+      await lqv(page, () => { window.__lqv.controller.advanceBeat(); window.__lqv.pauseSequence(); });
       await page.waitForTimeout(120);
     }
     r.beats = [...seen];

@@ -1,6 +1,6 @@
 {
-  "commit": "0a95929",
-  "date": "2026-10-16T08:41:17.438Z",
+  "commit": "c9e32fe",
+  "date": "2026-10-16T22:45:02.932Z",
   "chromium": "141.0.7390.37",
   "runs": [
     {
@@ -25,7 +25,7 @@
         13
       ],
       "overtime": 0,
-      "ms": 104540,
+      "ms": 123097,
       "consoleIssues": [],
       "turns": 12,
       "drags": 26,
@@ -41,6 +41,7 @@
         "focused",
         "smug",
         "surprised",
+        "annoyed",
         "triumphant"
       ],
       "sequencesWatched": 0,
@@ -80,7 +81,7 @@
         0
       ],
       "overtime": 0,
-      "ms": 370991,
+      "ms": 511645,
       "consoleIssues": [],
       "turns": 13,
       "drags": 0,
@@ -135,7 +136,7 @@
         1
       ],
       "overtime": 2,
-      "ms": 61325,
+      "ms": 77081,
       "consoleIssues": [],
       "turns": 9,
       "drags": 0,
@@ -149,6 +150,7 @@
       "lostClicks": [],
       "moods": [
         "confident",
+        "pained",
         "focused",
         "triumphant",
         "smug",
@@ -191,7 +193,7 @@
         0
       ],
       "overtime": 0,
-      "ms": 77231,
+      "ms": 109402,
       "consoleIssues": [],
       "turns": 18,
       "drags": 19,
@@ -206,9 +208,9 @@
       "moods": [
         "focused",
         "smug",
-        "surprised",
         "pained",
-        "pleased",
+        "annoyed",
+        "surprised",
         "defeated"
       ],
       "sequencesWatched": 0,
@@ -232,11 +234,11 @@
     "focused",
     "smug",
     "surprised",
+    "annoyed",
     "triumphant",
     "neutral",
     "confident",
     "defeated",
-    "pained",
-    "pleased"
+    "pained"
   ]
 }
