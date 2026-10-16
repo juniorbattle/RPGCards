@@ -1,11 +1,18 @@
 /**
  * Textures procédurales du rival (Canvas 2D → CanvasTexture), générées UNE fois par
  * (personnalité, artSeed). Aucune image, police ou modèle externe.
+ * Les fonctions `*Canvas` dessinent sur un canvas réutilisable (portraits 2D des HUD, M03) ;
+ * les fonctions `*Texture` les enveloppent pour Three.js.
  */
 import * as THREE from 'three';
 import { hashString, makeRng } from '../game/engine/rng';
 import { drawEmblem } from '../art/emblems';
+import type { Family } from '../game/catalog/cards';
 import type { RivalPersonality } from '../presentation/personalities';
+
+/** Apparence dessinable (rival ou joueur). */
+export type Look = RivalPersonality['look'];
+export interface Figure { id: string; family: Family; look: Look }
 
 type Ctx = CanvasRenderingContext2D;
 
@@ -27,7 +34,7 @@ export const HEAD_W = 256;
 export const HEAD_H = 312;
 
 /** Tête : cou, visage, oreilles, nez, ombrages, cheveux (arrière + mèches avant). Yeux/sourcils/bouche = meshes séparés. */
-export function headTexture(p: RivalPersonality, seed: number): THREE.CanvasTexture {
+export function headCanvas(p: Figure, seed: number): HTMLCanvasElement {
   const { c, ctx } = cv(HEAD_W, HEAD_H);
   const L = p.look;
   const rng = makeRng(hashString(`head|${p.id}|${seed}`));
@@ -102,13 +109,20 @@ export function headTexture(p: RivalPersonality, seed: number): THREE.CanvasText
     ctx.fillStyle = L.cloth;
     drawEmblem(ctx, p.family, cx, cy - 78, 9);
   }
-  return tex(c);
+  return c;
+}
+
+export function headTexture(p: Figure, seed: number): THREE.CanvasTexture {
+  return tex(headCanvas(p, seed));
 }
 
 /** Buste : épaules, vêtement, col, emblème de famille, bras. */
-export function torsoTexture(p: RivalPersonality, seed: number): THREE.CanvasTexture {
-  const W = 384;
-  const H = 320;
+export const TORSO_W = 384;
+export const TORSO_H = 320;
+
+export function torsoCanvas(p: Figure, seed: number): HTMLCanvasElement {
+  const W = TORSO_W;
+  const H = TORSO_H;
   const { c, ctx } = cv(W, H);
   const L = p.look;
   const rng = makeRng(hashString(`torso|${p.id}|${seed}`));
@@ -150,10 +164,14 @@ export function torsoTexture(p: RivalPersonality, seed: number): THREE.CanvasTex
   ctx.strokeStyle = 'rgba(0,0,0,0.35)';
   ctx.lineWidth = 4;
   for (const s of [-1, 1]) { ctx.beginPath(); ctx.moveTo(W / 2 + s * 118, 110); ctx.quadraticCurveTo(W / 2 + s * 130, 220, W / 2 + s * 116, H); ctx.stroke(); }
-  return tex(c);
+  return c;
 }
 
-export function handTexture(p: RivalPersonality): THREE.CanvasTexture {
+export function torsoTexture(p: Figure, seed: number): THREE.CanvasTexture {
+  return tex(torsoCanvas(p, seed));
+}
+
+export function handTexture(p: Figure): THREE.CanvasTexture {
   const { c, ctx } = cv(128, 128);
   const L = p.look;
   ctx.fillStyle = L.cloth;
@@ -168,17 +186,21 @@ export function handTexture(p: RivalPersonality): THREE.CanvasTexture {
 }
 
 /** Œil : sclère + liseré (fixe), iris mobile séparé, paupière séparée. */
-export function scleraTexture(): THREE.CanvasTexture {
+export function scleraCanvas(): HTMLCanvasElement {
   const { c, ctx } = cv(64, 40);
   ctx.fillStyle = '#f6f1ea';
   ctx.beginPath(); ctx.ellipse(32, 20, 30, 17, 0, 0, Math.PI * 2); ctx.fill();
   ctx.strokeStyle = '#2a1a16';
   ctx.lineWidth = 3;
   ctx.beginPath(); ctx.ellipse(32, 20, 30, 17, 0, Math.PI * 1.05, Math.PI * 1.95); ctx.stroke();
-  return tex(c);
+  return c;
 }
 
-export function irisTexture(color: string): THREE.CanvasTexture {
+export function scleraTexture(): THREE.CanvasTexture {
+  return tex(scleraCanvas());
+}
+
+export function irisCanvas(color: string): HTMLCanvasElement {
   const { c, ctx } = cv(64, 64);
   const g = ctx.createRadialGradient(32, 32, 4, 32, 32, 30);
   g.addColorStop(0, '#000');
@@ -189,30 +211,42 @@ export function irisTexture(color: string): THREE.CanvasTexture {
   ctx.beginPath(); ctx.arc(32, 32, 30, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = 'rgba(255,255,255,0.85)';
   ctx.beginPath(); ctx.arc(22, 22, 6, 0, Math.PI * 2); ctx.fill();
-  return tex(c);
+  return c;
 }
 
-export function lidTexture(p: RivalPersonality): THREE.CanvasTexture {
+export function irisTexture(color: string): THREE.CanvasTexture {
+  return tex(irisCanvas(color));
+}
+
+export function lidCanvas(p: Figure): HTMLCanvasElement {
   const { c, ctx } = cv(64, 40);
   ctx.fillStyle = p.look.skinShade;
   ctx.fillRect(0, 0, 64, 40);
   ctx.strokeStyle = '#1a0f0c';
   ctx.lineWidth = 4;
   ctx.beginPath(); ctx.moveTo(0, 38); ctx.quadraticCurveTo(32, 42, 64, 38); ctx.stroke();
-  return tex(c);
+  return c;
 }
 
-export function browTexture(p: RivalPersonality): THREE.CanvasTexture {
+export function lidTexture(p: Figure): THREE.CanvasTexture {
+  return tex(lidCanvas(p));
+}
+
+export function browCanvas(p: Figure): HTMLCanvasElement {
   const { c, ctx } = cv(64, 16);
   ctx.fillStyle = p.look.hairStyle === 'bob' ? '#8a8aa8' : p.look.hair;
   ctx.beginPath(); ctx.moveTo(2, 12); ctx.quadraticCurveTo(30, 0, 62, 6); ctx.lineTo(60, 12); ctx.quadraticCurveTo(30, 8, 4, 15); ctx.closePath(); ctx.fill();
-  return tex(c);
+  return c;
+}
+
+export function browTexture(p: Figure): THREE.CanvasTexture {
+  return tex(browCanvas(p));
 }
 
 export type MouthShape = 'neutral' | 'smile' | 'grin' | 'frown' | 'grimace' | 'open' | 'smirk' | 'tight';
 export const MOUTHS: MouthShape[] = ['neutral', 'smile', 'grin', 'frown', 'grimace', 'open', 'smirk', 'tight'];
 
-export function mouthTexture(shape: MouthShape): THREE.CanvasTexture {
+export function mouthCanvas(shape: MouthShape): HTMLCanvasElement {
   const { c, ctx } = cv(96, 48);
   const lip = '#7a3030';
   ctx.lineCap = 'round';
@@ -237,5 +271,9 @@ export function mouthTexture(shape: MouthShape): THREE.CanvasTexture {
     case 'open':
       ctx.fillStyle = '#2a0e0e'; ctx.beginPath(); ctx.ellipse(48, 25, 13, 16, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); break;
   }
-  return tex(c);
+  return c;
+}
+
+export function mouthTexture(shape: MouthShape): THREE.CanvasTexture {
+  return tex(mouthCanvas(shape));
 }

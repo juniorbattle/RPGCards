@@ -6,11 +6,11 @@ import { artCacheSize } from './art/cardArt';
 import { Controller } from './app/controller';
 import { readParams, type AppParams } from './app/params';
 import { SCENARIOS } from './app/scenarios';
-import { patchBeat, renderApp } from './presentation/board';
+import { patchBeat, patchRivalBubble, renderApp } from './presentation/board';
 import { backEl, cardEl } from './presentation/cardView';
 import { cls, h } from './presentation/dom';
 import { DragManager } from './presentation/drag';
-import { createArena, type ArenaHandle, type Rect } from './scene/arena';
+import { createArena, type ArenaHandle, type ArenaLayout } from './scene/arena';
 import { viewFor } from './game/visibility/view';
 import { PERSONALITIES, personalityFor, type RivalPersonality } from './presentation/personalities';
 
@@ -74,21 +74,22 @@ function start(config: GameConfig, scenarioId: string | null): void {
     if (drag?.dragging || pointerHeld) { pendingRender = true; return; }
     pendingRender = false;
     renderApp(app, c, { onToggleTool: tool });
-    syncRects();
+    syncLayout();
   };
-  /** Rectangles DOM → arène : bande où cadrer le rival (vue A) et portrait vivant (vue B). */
-  const rectOf = (sel: string): Rect | null => {
-    const el = app.querySelector(sel) as HTMLElement | null;
-    if (!el) return null;
-    const r = el.getBoundingClientRect();
-    return r.width > 4 && r.height > 4 ? { x: Math.round(r.left), y: Math.round(r.top), w: Math.round(r.width), h: Math.round(r.height) } : null;
+  /**
+   * Ancrage caméra ↔ mise en page : la feuille de style fixe, par vue et par gabarit (bureau,
+   * mobile), les hauteurs d’écran de la tête du rival et du bord lointain de la table.
+   */
+  const syncLayout = () => {
+    const cs = getComputedStyle(app);
+    const num = (name: string, fb: number) => { const v = parseFloat(cs.getPropertyValue(name)); return Number.isFinite(v) ? v : fb; };
+    const l: ArenaLayout = {
+      A: { head: num('--a-head', 0.2), edge: num('--a-edge', 0.42) },
+      B: { head: num('--b-head', 0.12), edge: num('--b-edge', 0.3) },
+    };
+    arena?.setLayout(l);
   };
-  const syncRects = () => {
-    arena?.setStage(rectOf('.stage-window'));
-    arena?.setBoard(rectOf('.board'));
-    arena?.setPortrait(c.viewMode === 'B' ? rectOf('.rival-portrait .portrait-window') : null);
-  };
-  window.addEventListener('resize', () => syncRects());
+  window.addEventListener('resize', () => syncLayout());
   // Jeton du regard de début de tour lu au DÉBUT de l’interaction (voir endHold).
   let downToken = -1;
   app.addEventListener('pointerdown', () => { pointerHeld = true; downToken = c.holdToken; }, true);
@@ -119,6 +120,7 @@ function start(config: GameConfig, scenarioId: string | null): void {
     render();
   };
   c.onRender(render);
+  c.onExpression(() => patchRivalBubble(app, c));
   c.onBeat(() => {
     if (drag?.dragging || pointerHeld) { pendingRender = true; return; }
     patchBeat(app, c);

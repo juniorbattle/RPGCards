@@ -87,6 +87,9 @@ export async function secretAudit(page) {
     const allowed = new Set();
     for (const s of v.opp.slots) if (s?.card) allowed.add(s.card.defId);
     if (v.reveal.primaries) allowed.add(v.reveal.primaries.opp.defId);
+    // M03 : pendant la séquence de résolution, le plateau montre l’instantané d’avant résolution
+    // (Secondaires engagées encore visibles) — ces identités sont PUBLIQUES (choix tactiques révélés).
+    for (const t of v.reveal.tactics?.opp ?? []) if (t?.defId) allowed.add(t.defId);
     const issues = [];
     document.querySelectorAll('.side.opp [data-def], .hud.opp [data-def]').forEach((el) => {
       if (!allowed.has(el.getAttribute('data-def'))) issues.push(`carte adverse non autorisée dans le DOM : ${el.getAttribute('data-def')}`);

@@ -128,23 +128,26 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
   flush.position.set(0, -0.12, 0.003);
   face.add(flush);
 
-  // Mains + éventail de cartes (taille publique de la main)
+  // Mains jointes tenant l’éventail de cartes au bord de la table (preview M03) ; taille publique de la main.
   const handT = handTexture(p);
-  const handL = plane(0.52, 0.52, handT, 7);
-  const handR = plane(0.52, 0.52, handT, 7);
+  const handL = plane(0.5, 0.5, handT, 7);
+  const handR = plane(0.5, 0.5, handT, 7);
   handR.scale.x = -1;
-  const handLRest = new THREE.Vector3(-0.8, 1.2, 0.65);
-  const handRRest = new THREE.Vector3(0.8, 1.15, 0.65);
+  const handLRest = new THREE.Vector3(-0.34, 1.16, 0.72);
+  const handRRest = new THREE.Vector3(0.34, 1.14, 0.72);
   handL.position.copy(handLRest);
   handR.position.copy(handRRest);
   group.add(handL, handR);
   const fan = new THREE.Group();
-  fan.position.set(0.02, 0.2, -0.01);
-  handL.add(fan);
+  fan.position.set(0, 1.08, 0.7);
+  group.add(fan);
   const fanCards: THREE.Mesh[] = [];
   for (let i = 0; i < 6; i++) {
-    const c = plane(0.3, 0.42, backTexture, 6, { lit: true });
-    c.position.set(0, 0.12, -0.002 * i);
+    const geo = new THREE.PlaneGeometry(0.42, 0.6);
+    geo.translate(0, 0.3, 0); // pivot au bas de la carte : vrai éventail
+    const c = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: backTexture, transparent: true, depthWrite: false, side: THREE.DoubleSide }));
+    c.renderOrder = 6;
+    c.position.set(0, 0, 0.002 * i);
     fan.add(c);
     fanCards.push(c);
   }
@@ -171,9 +174,9 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
     handCount = Math.max(0, Math.min(6, n));
     fanCards.forEach((c, i) => {
       c.visible = i < handCount;
-      const a = handCount <= 1 ? 0 : (i - (handCount - 1) / 2) * 0.22;
+      const a = handCount <= 1 ? 0 : (i - (handCount - 1) / 2) * 0.24;
       c.rotation.z = -a;
-      c.position.x = Math.sin(a) * -0.18;
+      c.position.x = a * 0.2;
     });
   }
   setHandCount(4);
