@@ -50,7 +50,7 @@ describe('ClashMotionDirector — six chorégraphies pilotées par le moteur', (
     expect(script.actors.me.damageTaken).toBeGreaterThan(0);
     expect(script.actors.opp.damageTaken).toBeGreaterThan(0);
     expect(script.verdict).toMatch(/SIMULTANÉS/);
-    expect(script.bullets).toContain('Blessures simultanées.');
+    expect(script.bullets).toContain(`Blessures simultanées : vous −${script.actors.me.damageTaken} PV, rival −${script.actors.opp.damageTaken} PV.`);
   });
 
   it('ASSAUT contre GARDE, la Garde gagne au Rang (égalité incluse) : Assaut repoussé, 0 dégât', () => {
@@ -85,12 +85,12 @@ describe('ClashMotionDirector — six chorégraphies pilotées par le moteur', (
     expect(script.absorption).toEqual({ assault: 9, guard: 12, absorbed: 9 });
     expect(script.actors.me.score).toBe('5');
     expect(script.actors.opp.score).toBe('4');
-    // Liste des conséquences (panneau « Résolution » de la preview), toutes issues du rapport moteur.
+    // Conséquences essentielles (panneau « Résolution » de la preview, M03.2 : trois au plus), toutes
+    // issues du rapport moteur ; le départ des deux Primaires en défausse est montré par la scène.
     expect(script.bullets).toEqual([
       'Vous gagnez au Rang (5 contre 4).',
       'La Garde absorbe toute la Puissance (9 ≤ 12).',
       'Aucune blessure infligée.',
-      'Cendre III et Cendre IV sont consommées : les deux Primaires vont en défausse.',
     ]);
   });
 
@@ -160,6 +160,9 @@ describe('ClashMotionDirector — six chorégraphies pilotées par le moteur', (
         if (s.outcome === 'guard-absorbs') { expect(r.zeroDamageRankWin).toBe(true); expect(s.verdict).not.toMatch(/GARDE VICTORIEUSE/); }
         if (s.outcome === 'guard-breaks') expect(r.damage[r.winner === 'p1' ? 'p2' : 'p1']).toBeGreaterThan(0);
         if (s.winner) expect(r.winner).toBe(s.winner === 'me' ? 'p1' : 'p2');
+        // M03.2 : verdict + trois conséquences essentielles au plus (pas de surcharge centrale).
+        expect(s.bullets.length).toBeGreaterThanOrEqual(1);
+        expect(s.bullets.length).toBeLessThanOrEqual(3);
       }
     }
     expect(n).toBeGreaterThan(200);

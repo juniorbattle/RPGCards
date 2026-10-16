@@ -407,6 +407,10 @@ export class ClashStage {
         const dy = target.top + target.height / 2 - (rest.top + rest.height * 0.4);
         this.anim(p.body, [{ transform: `translate(${dx}px, ${dy}px) scale(0.12)`, opacity: 0 }], 620, { easing: 'cubic-bezier(.5,0,.8,.4)', delay: s === 'me' ? 60 : 0 });
       } else this.anim(p.body, [{ opacity: 0 }], 260, { instant });
+      // Les DEUX Primaires partent en défausse, gagnante comprise : dit sur la carte elle-même.
+      const tag = h('div', { class: 'cs-discard-tag', 'aria-hidden': 'true' }, '→ DÉFAUSSE');
+      p.body.append(tag);
+      this.anim(tag, [{ opacity: 0, transform: 'translate(-50%, 6px)' }, { opacity: 1, transform: 'translate(-50%, 0)', offset: 0.25 }, { opacity: 1, transform: 'translate(-50%, 0)' }], 420, { instant });
       this.anim(p.dmg, [{ opacity: 0 }], 260, { instant });
       if (p.shield) this.anim(p.shield, [{ opacity: 0 }], 200, { instant });
     }
