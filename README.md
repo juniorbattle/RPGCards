@@ -1,5 +1,12 @@
 # RPGCards — Les Quatre Voies
 
+## Mission active — Three.js + MVP autonome
+
+Le kit est déjà publié sur `main`. Claude Code prend en charge la **mise en place du runtime Three.js + Vite + TypeScript**, le moteur de duel normatif et une UI de manipulation directe des cartes. La mission est volontairement **large et autonome** : produire rapidement une première version jouable contre IA, puis durcir avec tests et captures. Le mandat détaillé et prioritaire est `PROMPT_CLAUDE_CODE_MISSION_01.md`.
+
+Le HD-2D futur peut explorer deux caméras provisoires : **vue de dessus inclinée (tilted top-down)** ou **perspective frontale 2.5D**. Aucun décor urbain, cadrage exact ou langage visuel définitif n'est fixé ; priorité au duel jouable. Claude Code effectue le développement sur sa propre branche, sans fusion automatique.
+
+
 Dépôt de production : https://github.com/juniorbattle/RPGCards
 
 ## Démarrage pour Claude Code

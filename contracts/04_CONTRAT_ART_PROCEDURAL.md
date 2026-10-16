@@ -1,5 +1,12 @@
 # 04 — Contrat maître : ART BY CODE / HD-2D OUVERT
 
+## Avenant de portée visuelle pour M01 — 15 octobre 2026
+
+**Three.js est maintenant une exigence du runtime de production** (scene graph, scène/arène de duel et effet visuel procédural minimal), aux côtés de **Vite + TypeScript**. Cela ne signifie **pas** que l'interface des cartes ou leurs textes doivent être en 3D : privilégier DOM/CSS/SVG/Canvas 2D pour accessibilité, drag/drop, zoom et netteté, avec synchronisation aux événements du moteur de règles.
+
+Si l'agent développe un décor provisoire, deux orientations sont explicitement possibles : **tilted top-down / vue de dessus inclinée** ou **vue frontale en perspective 2.5D**. Choisir provisoirement par critère de lisibilité, enregistrer un ADR et des captures, et maintenir l'environnement interchangeable. Ne pas figer architecture de la ville, palettes, caméras A-D d'un autre projet, costumes ou design définitif. Le premier MVP privilégie le duel fonctionnel + un plateau visuel cohérent.
+
+
 ## Principe et référence
 
 Nous recherchons la discipline procédurale utilisée dans [RPG-ArtByCode](https://github.com/juniorbattle/RPG-ArtByCode), observée sur le `main` consulté : `Vite`, `TypeScript`, `Three.js`, géométries/textures/sprites/lumières générés par code, graines reproductibles, outils `shots/compare/diff/perf`, journal factuel. **Ne pas** importer ses façades, canal, caméras A-D, atmosphère, sprites, shaders et zones comme données du nouveau RPG de cartes. HD-2D est un horizon d'intégration, non une obligation d'utiliser Three.js pour la lecture d'une carte 2D.

@@ -1,5 +1,14 @@
 # MISSION 01 — critères d'acceptation opérateur
 
+## Critères ajoutés par le mandat M01 autonome
+
+- Une **scène Three.js réelle** est montée et reliée au rythme du duel (au minimum arène/plateau procédural et feedback du Clash) ; la seule présence de `three` dans `package.json` n'est pas suffisante.
+- Une **tranche verticale complète jouable contre une IA** doit être livrée rapidement, pas un projet « bien architecturé » mais sans boucle de duel finissable. Les lots de réalisation s'enchaînent de manière autonome tant qu'aucun arbitrage canonique n'est bloquant.
+- HUD et cartes peuvent être en DOM/CSS/SVG/Canvas, avec **clic ET drag/drop**, parce que la lisibilité et l'accessibilité priment sur la 3D pour l'interaction.
+- Si l'agent aborde l'environnement, un **cadrage HD-2D exploratoire** de dessus inclinée ou frontal 2.5D est autorisé. Aucun décor, caméra ou design final ne peut être présenté comme déjà approuvé.
+- Distinguer clairement « MVP de duel jouable », « conformité complète au catalogue/Techniques » et « RPG de ville achevé » ; fournir la matrice des fonctions présentes, incomplètes et testées.
+
+
 ## Objet
 
 Première tranche exécutable de Les Quatre Voies : moteur canonique + UI de manipulation directe + art procédural minimum. **Pas d'objectif de décor/caméra HD-2D final.**

@@ -1,5 +1,12 @@
 # AGENTS.md — Les Quatre Voies (nouveau dépôt indépendant)
 
+## Mandat de production en vigueur — autonomie M01 et Three.js requis
+
+Le responsable autorise une **mission large** : configurer correctement `RPGCards` puis enchaîner de façon autonome jusqu'à un **MVP duel jouable**. **Vite + TypeScript + Three.js obligatoires** en production ; Three.js fournit une scène/rendu même minimal, le moteur est TS pur et les cartes interactives peuvent rester en DOM/CSS/SVG pour l'ergonomie. Ne pas attendre une validation opérateur entre les lots 0–3 si les règles et critères sont respectés. Document de mandat : `PROMPT_CLAUDE_CODE_MISSION_01.md`.
+
+Si un environnement est abordé, les cadrages **tilted top-down** (vue de dessus inclinée) et **perspective frontale 2.5D** sont des pistes autorisées, **non figées**. L'interface de duel et le gameplay passent avant décors/caméras/ville. La palette, la caméra et la direction artistique définitives ne sont pas encore validées. Les décisions structurelles sont tracées en ADR et dans le journal. Développer sur branche, ne pas modifier `main` sans accord.
+
+
 > Cette mission est distincte de RPG-ArtByCode / Cité du Tournoi / RPGThreeJS. Ne pas importer leurs missions, cartes, décors, images, palettages, géométries, shaders ou règles de jeu. Seuls les **principes de production vérifiés** de RPG-ArtByCode sont des exemples à évaluer : art par code, graine, mesure, captures, revue, journal.
 
 ## Rôle et autorité

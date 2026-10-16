@@ -1,5 +1,12 @@
 # Plan de développement — Tranches verticales et portes de validation
 
+## Mode d'exécution autonome — mandat mis à jour
+
+La mission M01 peut **enchaîner Lot 0, Lot 1, Lot 2, Lot 3 et QA initiale sans arrêt d'approbation** si chaque lot conserve les contrats et satisfait ses tests. Claude Code doit viser le **premier MVP jouable rapidement**, puis renforcer la couverture : pas d'arrêt artificiel après l'architecture ou un simulateur non interactif. `Three.js` est requis dans le runtime visuel ; l'interface des cartes peut exploiter des éléments DOM/SVG superposés. Le tout reste un jeu **HD-2D par code**, mais sans investissement initial dans des décors urbains complets.
+
+Un environnement minimal peut choisir **une vue de dessus inclinée** ou **une perspective frontale 2.5D** ; ce n'est pas un choix final de mise en scène. Le lot est déclaré **partiel** si son fonctionnement n'a pas été démontré. Une règle ambiguë ne donne pas licence d'inventer une mécanique canonique.
+
+
 Le projet entier est un RPG ; le mandat 01 se concentre sur le noyau jouable. Chaque lot a son propre test et **gate** ; aucune implémentation massive hors-scope ou rendu spectaculaire servant à masquer un moteur incomplet.
 
 | Lot | Produit attendu | Conditions de sortie |
