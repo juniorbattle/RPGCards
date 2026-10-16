@@ -1,3 +1,4 @@
+// HISTORIQUE (M02) : dépend du gabarit M02 (`.stage-window`), remplacé en M03 par tools/shots-m03.mjs.
 // Assemble les crops « 17-planche-* » en une planche comparative (personnalités × humeurs).
 import { readFileSync, writeFileSync } from 'node:fs';
 import { launch } from './browser.mjs';

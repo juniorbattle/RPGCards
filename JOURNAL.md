@@ -163,7 +163,7 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
   - Mobile vue B : emplacements latéraux hors écran (une règle bureau plus spécifique écrasait la largeur mobile) ; bulle du rival sur les libellés ; pastille de phase sur les commandes → valeurs mobiles explicites par vue, bulle déplacée, frise masquée.
   - Coche « victoire au Rang » visible avant l’impact (classe posée au début de l’étape) → animation calée sur l’impact.
   - Dôme filaire de l’arène (FX M02 « Garde ») en concurrence avec le bouclier de la scène → anneau discret sur la table.
-  - Appui long tactile : ouvrait encore le tiroir du journal (héritage M02) → inspection flottante, fermée d’un toucher.
+  - Appui long tactile : ouvrait encore le tiroir du journal (héritage M02) → inspection flottante. Premier correctif (`6f1b9c7`, panneau rendu interactif au tactile pour se fermer d’un toucher) : **échec QA mobile au tour 4** — un simple toucher sur une carte déclenchait l’inspection (événements souris émulés + focus) et le panneau interceptait le toucher destiné au menu tactique. Correctif : inspection au survol d’une VRAIE souris et au focus CLAVIER seulement ; au tactile, appui long uniquement ; panneau jamais interactif, refermé au toucher suivant.
 - **[?] Incertitudes / arbitrages :** face-à-face rival à gauche / joueur à droite (comme la preview) ; durée des chorégraphies ; mobile portrait vs paysage ; le rapport public du Clash contient encore les scores bruts (non lus par l’UI ni l’IA ; tâche de correction proposée) ; ARB-002 inchangé.
 - **Tests :** <!-- J3_TESTS -->
 - **Perf / visuels :** <!-- J3_PERF -->

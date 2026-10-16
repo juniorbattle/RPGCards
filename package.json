@@ -12,9 +12,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "qa:browser": "node tools/qa-browser.mjs",
-    "shots": "node tools/shots.mjs",
+    "shots": "node tools/shots-m03.mjs",
     "perf": "node tools/perf.mjs",
-    "sim": "tsx tools/perf-engine.ts 200"
+    "sim": "tsx tools/perf-engine.ts 200",
+    "shots:clash": "node tools/clash-shots.mjs"
   },
   "engines": {
     "node": ">=20"
