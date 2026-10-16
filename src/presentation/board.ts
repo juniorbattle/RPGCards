@@ -472,7 +472,7 @@ function command(c: Controller): HTMLElement {
         const prim = dr.primaryId ? cardDef(c.defIdOf(dr.primaryId)) : null;
         msg.append(title('Engagement secret'));
         if (prim) msg.append(sub(`${cardTitle(prim)} · Rang ${rankLabel(prim)} · Puissance ${prim.power}${dr.stance ? ` · ${dr.stance === 'assault' ? `ASSAUT : ${prim.power} dégâts de base si vous dominez` : `GARDE : absorbe jusqu’à ${prim.power}, gagne les égalités`}` : ' · choisissez ASSAUT ou GARDE'}`));
-        else msg.append(sub('Glissez une carte sur la Primaire (ou cliquez-la puis la case). Secondaire facultative, posée cachée.'));
+        else msg.append(sub('Glissez une carte sur la Primaire (ou cliquez-la puis la case). Secondaire facultative.'));
         actions.append(btn('Verrouiller l’engagement', () => c.lockCommit(), { key: 'act-commit', disabled: !dr.primaryId || !dr.stance }));
       } else waitOpp();
       break;
@@ -596,7 +596,7 @@ function inspector(c: Controller): HTMLElement {
   if (!id) return h('section', { class: 'inspector', 'aria-hidden': 'true' });
   const def = cardDef(id);
   const fr = RARITY_FRAME[def.rarity];
-  return h('section', { class: 'inspector show', style: `--fb:${fr.b}`, 'aria-label': `Inspection : ${cardTitle(def)}` },
+  return h('section', { class: 'inspector show', style: `--fb:${fr.b}`, 'aria-label': `Inspection : ${cardTitle(def)}`, title: 'Toucher pour fermer', onclick: () => { c.ui.inspect = null; document.querySelector('.inspector')?.replaceWith(inspector(c)); } },
     cardEl(id, { artSeed: c.artSeed, tag: 'div' }),
     h('div', { class: 'insp-text' },
       h('h3', null, cardTitle(def)),

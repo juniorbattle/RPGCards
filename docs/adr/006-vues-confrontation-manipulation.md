@@ -1,6 +1,6 @@
 # ADR 006 — Deux vues complémentaires pilotées par les phases : A « confrontation », B « manipulation »
 Date : 2026-10-16
-Statut : proposé (mandat M02 §1–2 ; valeurs de caméra NON définitives)
+Statut : proposé (mandat M02 §1–2 ; valeurs de caméra NON définitives) — **amendé par ADR 009 (M03)** : cadrage ancré sur la mise en page, rival visible en vue B, portrait incrusté retiré
 
 **Contexte.** M02 remplace le défaut M01 `cam=tilted` : le joueur doit **faire face** au rival (visage, buste) tout en manipulant ses cartes sans gêne. ADR 003 (caméra exploratoire M01) est **remplacé** par celui-ci.
 

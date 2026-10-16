@@ -50,6 +50,7 @@ describe('ClashMotionDirector — six chorégraphies pilotées par le moteur', (
     expect(script.actors.me.damageTaken).toBeGreaterThan(0);
     expect(script.actors.opp.damageTaken).toBeGreaterThan(0);
     expect(script.verdict).toMatch(/SIMULTANÉS/);
+    expect(script.bullets).toContain('Blessures simultanées.');
   });
 
   it('ASSAUT contre GARDE, la Garde gagne au Rang (égalité incluse) : Assaut repoussé, 0 dégât', () => {
@@ -84,6 +85,13 @@ describe('ClashMotionDirector — six chorégraphies pilotées par le moteur', (
     expect(script.absorption).toEqual({ assault: 9, guard: 12, absorbed: 9 });
     expect(script.actors.me.score).toBe('5');
     expect(script.actors.opp.score).toBe('4');
+    // Liste des conséquences (panneau « Résolution » de la preview), toutes issues du rapport moteur.
+    expect(script.bullets).toEqual([
+      'Vous gagnez au Rang (5 contre 4).',
+      'La Garde absorbe toute la Puissance (9 ≤ 12).',
+      'Aucune blessure infligée.',
+      'Cendre III et Cendre IV sont consommées : les deux Primaires vont en défausse.',
+    ]);
   });
 
   it('GARDE contre GARDE : neutralité, aucun vainqueur ni blessure', () => {

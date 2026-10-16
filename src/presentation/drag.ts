@@ -117,7 +117,8 @@ export class DragManager {
         this.suppressClick = true;
         window.setTimeout(() => { this.suppressClick = false; }, 0);
         const def = st.el.dataset.def;
-        if (def) { this.c.ui.inspect = def; this.c.ui.journalOpen = true; this.onDone(); }
+        // M03 : inspection flottante (le journal n’est plus ouvert pour l’afficher).
+        if (def) { this.c.ui.inspect = def; this.onDone(); }
         return;
       }
       // Clic simple sur carte de main / brouillon.

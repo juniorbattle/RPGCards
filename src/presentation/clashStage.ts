@@ -153,11 +153,12 @@ export class ClashStage {
     const flash = h('div', { class: 'cs-flash' });
     const ring = h('div', { class: 'cs-ring' });
     const ring2 = h('div', { class: 'cs-ring alt' });
-    const verdict = h('div', { class: cls('cs-verdict', `tone-${sc.tone}`) }, h('b', null, sc.verdict), h('small', null, sc.detail));
+    const verdict = h('div', { class: cls('cs-verdict', `tone-${sc.tone}`) }, h('b', null, sc.verdict),
+      h('ul', { class: 'cs-bullets' }, sc.bullets.map((t) => h('li', null, t))));
     this.root = h('div', {
       class: cls('clash-stage', `cs-${sc.outcome}`, this.deps.reduced() && 'cs-still'),
       role: 'img',
-      'aria-label': `Clash : ${sc.actors.opp.stance === 'assault' ? 'Assaut' : 'Garde'} du rival contre votre ${sc.actors.me.stance === 'assault' ? 'Assaut' : 'Garde'} — ${sc.verdict}. ${sc.detail}`,
+      'aria-label': `Clash : ${sc.actors.opp.stance === 'assault' ? 'Assaut' : 'Garde'} du rival contre votre ${sc.actors.me.stance === 'assault' ? 'Assaut' : 'Garde'} — ${sc.verdict}. ${sc.bullets.join(' ')}`,
     }, backdrop, opp.slot, vs, me.slot, flash, ring, ring2, verdict);
     this.host.replaceChildren(this.root);
     this.parts = { opp, me };

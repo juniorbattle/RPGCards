@@ -275,7 +275,7 @@ button { font: inherit; color: inherit; }
 .menu button small { color: var(--ink-dim); font-size: 0.68rem; }
 
 /* --- Commandes (bas-droite) ------------------------------------------------ */
-.command { position: absolute; z-index: 5; right: var(--g); bottom: var(--g); width: var(--cmd-w); height: clamp(150px, 22.5vh, 250px); display: flex; flex-direction: column; gap: 0.35rem; padding: 0.6rem 0.75rem; }
+.command { position: absolute; z-index: 5; right: var(--g); bottom: var(--g); width: var(--cmd-w); height: calc(clamp(150px, 22.5vh, 250px) * var(--ui-scale)); display: flex; flex-direction: column; gap: 0.35rem; padding: 0.6rem 0.75rem; }
 .cmd-phase { display: flex; justify-content: space-between; align-items: baseline; gap: 0.4rem; font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-dim); }
 .cmd-phase .ph { color: var(--gold); font-weight: 800; }
 .cmd-phase .who { letter-spacing: 0.04em; text-transform: none; color: var(--gold-hi); font-size: 0.74rem; }
@@ -307,6 +307,7 @@ button { font: inherit; color: inherit; }
 /* --- Inspection flottante (gauche) ------------------------------------------ */
 .inspector { position: absolute; z-index: 6; left: var(--g); top: calc(var(--g) + 19vh); width: var(--hud-w); display: none; pointer-events: none; }
 .inspector.show { display: grid; grid-template-columns: auto 1fr; gap: 0.6rem; padding: 0.6rem; }
+@media (hover: none) { .inspector.show { pointer-events: auto; cursor: pointer; } }
 .inspector .card { --card-w: clamp(72px, 6.4vw, 110px); --card-h: calc(var(--card-w) * 1.4); --radius: calc(var(--card-w) * 0.07); cursor: default; }
 .inspector h3 { margin: 0 0 0.2rem; font-family: Georgia, serif; font-size: 0.98rem; color: var(--gold-hi); }
 .inspector .meta { font-size: 0.72rem; color: var(--ink-dim); margin-bottom: 0.3rem; }
@@ -394,7 +395,7 @@ button { font: inherit; color: inherit; }
   .row { gap: 3vw; }
   .zone > .zone-label { font-size: 0.58rem; letter-spacing: 0.06em; }
   .empty-hint { font-size: 0.62rem; }
-  .command { left: var(--g); right: var(--g); width: auto; bottom: calc(var(--g) + 4.6rem + var(--hand-h) + 0.8rem); height: 6.6rem; padding: 0.4rem 0.55rem; flex-direction: row; flex-wrap: wrap; align-content: flex-start; }
+  .command { left: var(--g); right: var(--g); width: auto; bottom: calc(var(--g) + 4.6rem + var(--hand-h) + 0.8rem); height: calc(6.6rem * var(--ui-scale)); padding: 0.4rem 0.55rem; flex-direction: row; flex-wrap: wrap; align-content: flex-start; }
   .command .cmd-phase { flex-basis: 100%; }
   .command .msg { flex: 1 1 55%; -webkit-line-clamp: 3; font-size: 0.78rem; }
   .command .btn-row { flex: 0 0 auto; align-self: flex-end; flex-direction: column; }
@@ -413,7 +414,7 @@ button { font: inherit; color: inherit; }
    M03 — Scène du Clash : face-à-face des Primaires (copies de représentation)
    ========================================================================== */
 #stage { position: fixed; inset: 0; z-index: 2; pointer-events: none; }
-.clash-stage { position: absolute; inset: 0; pointer-events: none; --cs-h: min(31vh, 320px); --cs-w: calc(var(--cs-h) / 1.4); --cs-gap: calc(var(--cs-w) * 1.05); --cs-top: calc(47% - var(--cs-h) / 2); --vs: calc(var(--cs-gap) * 0.86); }
+.clash-stage { position: absolute; inset: 0; pointer-events: none; --cs-h: min(28vh, 310px); --cs-w: calc(var(--cs-h) / 1.4); --cs-gap: calc(var(--cs-w) * 1.05); --cs-top: calc(44% - var(--cs-h) / 2); --vs: calc(var(--cs-gap) * 0.86); }
 .cs-backdrop { position: absolute; inset: 0; background: radial-gradient(ellipse 46% 42% at 50% 48%, rgba(6, 4, 6, 0.72), rgba(6, 4, 6, 0.35) 60%, rgba(6, 4, 6, 0) 85%); }
 .cs-slot { position: absolute; top: var(--cs-top); width: var(--cs-w); }
 .cs-slot.opp { left: calc(50% - var(--cs-gap) / 2 - var(--cs-w)); }
@@ -455,9 +456,11 @@ button { font: inherit; color: inherit; }
 .cs-ring[data-c='blue'] { border-color: rgba(150, 195, 255, 0.95); box-shadow: 0 0 22px rgba(110, 160, 255, 0.85), inset 0 0 22px rgba(110, 160, 255, 0.6); }
 .cs-ring[data-c='red'] { border-color: rgba(255, 140, 110, 0.95); box-shadow: 0 0 22px rgba(255, 90, 60, 0.85), inset 0 0 22px rgba(255, 90, 60, 0.6); }
 .cs-ring.alt { border-width: 2px; }
-.cs-verdict { position: absolute; left: 0; right: 0; top: calc(var(--cs-top) + var(--cs-h) + 2.1rem); display: grid; justify-items: center; gap: 0.25rem; opacity: 0; text-align: center; padding: 0 1rem; }
+.cs-verdict { position: absolute; left: 0; right: 0; top: calc(var(--cs-top) + var(--cs-h) + 1.55rem); display: grid; justify-items: center; gap: 0.25rem; opacity: 0; text-align: center; padding: 0 1rem; }
 .cs-verdict b { font-family: Georgia, serif; font-size: clamp(1rem, 1.7vw, 1.6rem); letter-spacing: 0.06em; color: var(--gold-hi); text-shadow: 0 2px 10px #000, 0 0 18px rgba(255, 200, 120, 0.4); padding: 0.15rem 1rem; background: linear-gradient(90deg, rgba(10, 7, 10, 0), rgba(10, 7, 10, 0.82) 15%, rgba(10, 7, 10, 0.82) 85%, rgba(10, 7, 10, 0)); border-block: 1px solid var(--line); }
-.cs-verdict small { max-width: min(46rem, 80vw); font-size: 0.84rem; color: var(--ink); text-shadow: 0 1px 4px #000; background: rgba(10, 7, 10, 0.7); padding: 0.2rem 0.7rem; border-radius: 6px; }
+.cs-bullets { margin: 0; padding: 0.3rem 0.8rem 0.3rem 0.6rem; list-style: none; display: grid; gap: 0.05rem; max-width: min(40rem, 80vw); text-align: left; font-size: 0.78rem; line-height: 1.3; color: var(--ink); background: rgba(10, 7, 10, 0.78); border: 1px solid var(--line-dim); border-radius: 8px; text-shadow: 0 1px 3px #000; }
+.cs-bullets li { display: flex; gap: 0.45rem; align-items: baseline; }
+.cs-bullets li::before { content: ''; flex: 0 0 auto; width: 0.5rem; height: 0.5rem; transform: rotate(45deg) translateY(-1px); border: 1px solid var(--gold); background: rgba(217, 178, 106, 0.35); }
 .cs-verdict.tone-good b { color: #d6f5c4; }
 .cs-verdict.tone-bad b { color: #ffc0b2; }
 .cs-verdict.tone-warn b { color: #ffd27a; }
@@ -469,5 +472,5 @@ button { font: inherit; color: inherit; }
   .cs-score b { font-size: 1.05rem; }
   .cs-owner { font-size: 0.72rem; }
   .cs-verdict b { font-size: 0.95rem; }
-  .cs-verdict small { font-size: 0.72rem; }
+  .cs-bullets { font-size: 0.7rem; }
 }
