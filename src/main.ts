@@ -1,5 +1,5 @@
 import './styles.css';
-import { CATALOG, FAMILIES, SIGNATURES, type Family } from './game/catalog/cards';
+import { CATALOG, cardDef, cardTitle, EFFECTS, FAMILIES, SIGNATURES, type Family } from './game/catalog/cards';
 import { TECHNIQUE_IDS, TECHNIQUES, type TechniqueId } from './game/catalog/techniques';
 import type { GameConfig } from './game/model/types';
 import { artCacheSize } from './art/cardArt';
@@ -12,7 +12,8 @@ import { cls, h } from './presentation/dom';
 import { DragManager } from './presentation/drag';
 import { ClashStage } from './presentation/clashStage';
 import { createArena, type ArenaHandle, type ArenaLayout } from './scene/arena';
-import { viewFor } from './game/visibility/view';
+import { viewFor, visibleEvents } from './game/visibility/view';
+import { buildMemory } from './game/ai/memory';
 import { PERSONALITIES, personalityFor, type RivalPersonality } from './presentation/personalities';
 
 const params = readParams();
@@ -176,6 +177,11 @@ function start(config: GameConfig, scenarioId: string | null): void {
       artCache: () => artCacheSize(),
       pauseSequence: () => c.pauseSequence(),
       stageSeek: (ms: number) => stage.seek(ms),
+      // QA M03.1B : ce que le SIÈGE du rival peut voir (vue, mémoire) — jamais affiché, sert aux assertions.
+      rivalView: () => viewFor(c.match.state, 'p2'),
+      rivalMemory: () => buildMemory(visibleEvents(c.match.events, 'p2'), 'p2'),
+      events: () => c.match.events,
+      cardInfo: (defId: string) => ({ title: cardTitle(cardDef(defId)), name: cardDef(defId).name, effect: cardDef(defId).effect ? EFFECTS[cardDef(defId).effect!].name : null }),
     };
   }
 }
