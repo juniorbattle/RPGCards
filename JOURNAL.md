@@ -172,3 +172,9 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **Perf / visuels :** même machine (Xeon 2,10 GHz, 4 cœurs, 16 Go, Node 22.22.0), Chromium headless **SwiftShader (CPU)**. Moteur : 22.41 ms/duel, 367.6 µs/commande (inchangé). Scène 1280×720 : vue A 80 draw calls / 1650 triangles, 36.45 ms CPU par image ; vue B 78 / 1634, 31.69 ms ; FPS 4.1–4.1 **non représentatifs d’un GPU**. Bundle JS ≈ 688 kB (190 kB gzip). Détails : `artifacts/qa/perf.json`, `docs/RAPPORT_M03.md` §7.
 - **Pensée :** une animation fidèle et honnête se construit en aval du moteur : classer le résultat résolu (pur, testé sur de vrais duels), puis le projeter sur des copies jetables ; les écarts de cette passe sont venus, encore, du temps réel et du tactile (gel confondu avec mouvement réduit, panneau qui intercepte un toucher), d’où l’intérêt de la QA de composition automatisée et des pellicules exactes.
 - **À reprendre :** voir section globale en tête de fichier.
+
+## Intégration dans `main` — décision opérateur (2026-10-16)
+
+- **[OK]** Sur demande explicite du responsable (« commit/push vers main, ne pas s’éterniser sur les branches provisoires ; projet au début, sans enjeu »), `main` avance en avance rapide (fast-forward, aucun conflit, aucune réécriture) jusqu’au livrable M03 : M01 → M02 → contrat M03 → M03.
+- **Suite :** développer directement sur `main` (commits validés : typecheck, tests, build, QA) ; les branches `claude/*` M01–M03 restent en historique.
+- **[?]** `CLAUDE.md` / `AGENTS.md` mentionnent encore « branche séparée, `main` inchangée » : à mettre à jour par le responsable (non modifiés ici).

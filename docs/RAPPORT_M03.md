@@ -1,6 +1,6 @@
 # Rapport M03 — Fidélité à la preview validée, HUD et chorégraphies du Clash
 
-Branche `claude/m03-ui-fidele-et-clash-anime`, dérivée de `claude/m03-direction-visuelle-et-clash` (contrat M03 + preview), elle-même issue du livrable M02 `e978d2d`. `main` intacte, aucune fusion.
+Branche `claude/m03-ui-fidele-et-clash-anime`, dérivée de `claude/m03-direction-visuelle-et-clash` (contrat M03 + preview), elle-même issue du livrable M02 `e978d2d`. **Intégrée dans `main` (avance rapide) sur décision du responsable.**
 Règles : **V3.0 + delta V3.2 inchangés** (aucune modification du moteur de règles).
 Référence : `reference/REFERENCE_VISUELLE_VALIDEE_M03.jpg` — **document de revue uniquement** (planches de comparaison), jamais chargé par le jeu.
 Preuves : toutes au commit **`0a95929`** (les commits suivants n’ajoutent que la documentation et ces preuves) — `test/*.test.ts`, `artifacts/qa/qa-browser.json`, `artifacts/qa/perf.json`, `screenshots/qa/m03/` (+ `manifest.json`), `screenshots/qa/m03/clash/` (+ `clash-manifest.json`).
@@ -28,7 +28,7 @@ Preuves : toutes au commit **`0a95929`** (les commits suivants n’ajoutent que 
 | 9 | Duels complets souris, clic, clavier, tactile ; console propre ; absence de fuite ; scénarios déterministes de chaque Clash | OK | §4 et §5 |
 | 10 | typecheck, test, build, QA sur un SHA donné ; SwiftShader distingué du GPU ; tactile et mouvement réduit testés | OK | §5, §6, §7 |
 | 11 | Captures avant / après / preview en A et B, résolutions AA et AG, Secondaires, HUD compact, mobile ; rapport d’écarts | OK | §3 (planches), §8 (écarts) ; « avant » = `screenshots/qa/m02/` |
-| 12 | JOURNAL, ADR, diff/commit, recommandations ; aucune fusion `main` | OK | `JOURNAL.md` passe 3, ADR 009–010 (+ 006 amendé), ce rapport |
+| 12 | JOURNAL, ADR, diff/commit, recommandations ; fusion `main` seulement avec accord | OK (accord donné : avance rapide) | `JOURNAL.md` passe 3, ADR 009–010 (+ 006 amendé), ce rapport |
 
 ## 3. Captures comparées à la preview (planches réelles)
 
