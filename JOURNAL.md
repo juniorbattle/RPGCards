@@ -2,7 +2,7 @@
 
 **Nature :** journal de production du **nouveau projet**, et non journal copié de RPG-ArtByCode.  
 **Convention :** passes chronologiques, plus récente en bas ; statut `[OK]`, `[KO]`, `[?]` ; preuves vérifiables.  
-**Dernière passe :** 1 — M01 : socle Vite/TS/Three.js, moteur de duel V3.0 + delta V3.2, MVP jouable contre IA, art procédural, QA navigateur (branche `claude/jolly-keller-w17gmp`).
+**Dernière passe :** 2 — M02 : confrontation face à face (vues A/B, rival procédural expressif), résolution séquencée, IA à mémoire autorisée (branche `claude/m02-confrontation-face-a-face`).
 
 ## État initial connu
 
@@ -15,15 +15,17 @@
 
 ## À reprendre (prioritaire)
 
-1. **Arbitrages responsable** (ADR 004) : ARB-002 (profil rival public ?), ARB-004 (famille sous Dissimulation), confirmations ARB-001/003/005/011 ; ratification ou non du delta D-01 en V3.3.
-2. Revue des captures et choix de piste caméra (ADR 003 : `tilted` par défaut, `frontal` comparatif) avant tout investissement HD-2D.
-3. QA navigateur : exercer Dissipation/Recentrage/Sondage côté humain dans `qa:browser` ; test explicite du repli sans WebGL.
-4. IA : mémoire des cartes vues (événements privés), personnalités (bluff, spécialiste Interférence), niveau de difficulté.
-5. Lisibilité : animation de résolution séquencée (révélation → interférences → impact) consommant les événements ; prévisualisation des dégâts en Engagement.
-6. Mesures GPU réelles (hors conteneur) ; découpage du bundle (Three.js ≈ 600 kB non compressé).
+1. **Revue opérateur M02** : principe A/B et temps d’observation (ADR 006), style et personnalités du rival (ADR 007), granularité de la résolution (ADR 008) ; captures `screenshots/qa/m02/`.
+2. **Arbitrages encore proposés** (ADR 004) : ARB-002 (profil du rival public), ARB-001, ARB-005, ARB-011 ; ratification éventuelle du delta D-01 (V3.3).
+3. **Mesure sur GPU réel** (hors conteneur) : vues A et B, portrait, FX ; budget mobile.
+4. QA : forcer des situations Rupture / Dissipation côté humain (scénarios dédiés) ; accélérer la QA (rendu logiciel lent).
+5. Rival : transitions de gabarit DOM adoucies, mains/gestes plus riches, regard vers la carte inspectée, sans jamais lire un secret ; préparer (sans l’activer) le contrat des futurs « tells ».
+6. IA : modèle du joueur (tendances publiques par situation), niveaux de difficulté ; découpage du bundle Three.js.
 
 ## Principes à garder
 
+- La présentation (vues, expressions, séquence) est pilotée par des modules PURS testés, alimentés par des faits publics ; la 3D et le DOM ne font qu’exécuter.
+- Pendant une mise en scène, ne jamais recréer les éléments interactifs (patch ciblé) ; en rendu à la demande, fusionner les rendus d’une même image.
 - Une seule arithmétique : `computeClash` (pur) sert moteur, IA et prévisualisation ; ne jamais dupliquer une formule de règle dans l’UI.
 - Les fenêtres optionnelles s’ouvrent sur information **publique** uniquement ; une vue (`viewFor`) est une copie filtrée, jamais l’état brut.
 - Aucun re-rendu global pendant une interaction pointeur (cause d’un clic perdu observé en QA, passe 1).
