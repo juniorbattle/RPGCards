@@ -1,6 +1,6 @@
 {
-  "commit": "aca18a8",
-  "date": "2026-10-16T05:45:00.106Z",
+  "commit": "94f8e05",
+  "date": "2026-10-16T06:12:54.491Z",
   "chromium": "141.0.7390.37",
   "runs": [
     {
@@ -12,42 +12,43 @@
       },
       "mode": "drag",
       "tech": {
-        "Lecture": 1
+        "Lecture": 1,
+        "Ancrage": 2
       },
       "useLecture": true,
-      "outcome": "error",
-      "phase": "COMMIT",
-      "winner": null,
-      "turn": 7,
+      "outcome": "ended",
+      "phase": "ENDED",
+      "winner": "opp",
+      "turn": 13,
       "hp": [
-        30,
-        40
+        0,
+        13
       ],
       "overtime": 0,
-      "ms": 54114,
+      "ms": 99867,
       "consoleIssues": [],
-      "turns": 6,
-      "drags": 13,
+      "turns": 12,
+      "drags": 26,
       "clicks": 0,
       "keyboard": 0,
-      "tactics": 5,
-      "repels": 2,
+      "tactics": 12,
+      "repels": 3,
       "leaks": [],
-      "viewChecks": 28,
+      "viewChecks": 54,
       "viewErrors": [],
       "lostClicks": [],
       "moods": [
         "focused",
         "smug",
         "surprised",
-        "annoyed"
+        "annoyed",
+        "triumphant"
       ],
       "sequencesWatched": 0,
-      "sequencesSkipped": 4,
+      "sequencesSkipped": 9,
       "manualToggleChecked": "ok",
-      "holds": 11,
-      "error": "page.click: Timeout 10000ms exceeded.",
-      "viewSwitches": 15,
+      "holds": 13,
+      "viewSwitches": 28,
       "personality": "voile"
     },
     {
@@ -71,7 +72,7 @@
         0
       ],
       "overtime": 0,
-      "ms": 159545,
+      "ms": 161145,
       "consoleIssues": [],
       "turns": 13,
       "drags": 0,
@@ -93,7 +94,7 @@
       "sequencesWatched": 13,
       "sequencesSkipped": 0,
       "manualToggleChecked": "ok",
-      "holds": 11,
+      "holds": 14,
       "viewSwitches": 30,
       "personality": "ronce"
     },
@@ -117,7 +118,7 @@
         1
       ],
       "overtime": 2,
-      "ms": 53746,
+      "ms": 55481,
       "consoleIssues": [],
       "turns": 9,
       "drags": 0,
@@ -139,7 +140,7 @@
       "sequencesWatched": 0,
       "sequencesSkipped": 8,
       "manualToggleChecked": "ok",
-      "holds": 16,
+      "holds": 10,
       "viewSwitches": 22,
       "personality": "braise"
     },
@@ -164,7 +165,7 @@
         0
       ],
       "overtime": 0,
-      "ms": 70609,
+      "ms": 68933,
       "consoleIssues": [],
       "turns": 18,
       "drags": 19,
@@ -181,15 +182,14 @@
         "smug",
         "surprised",
         "confident",
-        "annoyed",
         "pleased",
         "defeated"
       ],
       "sequencesWatched": 0,
       "sequencesSkipped": 16,
       "manualToggleChecked": "ok",
-      "holds": 34,
-      "viewSwitches": 40,
+      "holds": 19,
+      "viewSwitches": 42,
       "personality": "voile"
     }
   ],
@@ -198,10 +198,10 @@
     "smug",
     "surprised",
     "annoyed",
+    "triumphant",
     "neutral",
     "defeated",
     "confident",
-    "triumphant",
     "pleased"
   ]
 }
