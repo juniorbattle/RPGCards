@@ -45,6 +45,8 @@ export interface ClashScript {
   /** Grand libellé de l’issue (et sous-titre explicatif), sans information cachée. */
   verdict: string;
   detail: string;
+  /** Conséquences en liste (preview M03, panneau « Résolution ») : Rang, absorption, blessures, défausse. */
+  bullets: string[];
   tone: 'good' | 'bad' | 'warn' | 'neutral';
   /** Absorption de la Garde (AG, Assaut vainqueur) : Puissance d’Assaut contre Puissance de Garde. */
   absorption: { assault: number; guard: number; absorbed: number } | null;
@@ -172,8 +174,27 @@ export function scriptFromReport(
       tone = 'neutral';
   }
   if (overtime) detail += ' Double K.-O. : prolongation, 1 PV chacun.';
+  // Conséquences, dans l’ordre de lecture (toutes issues du rapport public du moteur).
+  const bullets: string[] = [];
+  const nm = (side: Side) => cardDef(actors[side].defId).name;
+  if (outcome === 'gg-neutral') bullets.push('Deux Gardes : aucun Clash offensif.');
+  else if (outcome === 'aa-tie') bullets.push(`Égalité de Rang (${actors.me.score} contre ${actors.opp.score}) : aucun vainqueur.`);
+  else if (outcome === 'guard-holds') bullets.push(`${winner === 'me' ? 'Votre Garde gagne' : 'La Garde du rival gagne'} au Rang (${actors[winner!].score} contre ${actors[attacker!].score}${actors[winner!].score === actors[attacker!].score ? ', égalité pour la Garde' : ''}).`);
+  else bullets.push(`${winner === 'me' ? 'Vous gagnez' : 'Le rival gagne'} au Rang (${actors[winner!].score} contre ${actors[winner === 'me' ? 'opp' : 'me'].score}).`);
+  if (absorption && outcome === 'guard-absorbs') bullets.push(`La Garde absorbe toute la Puissance (${absorption.assault} ≤ ${absorption.guard}).`);
+  if (absorption && outcome === 'guard-breaks') bullets.push(`La Garde absorbe ${absorption.absorbed} : la Puissance ${absorption.assault} passe (${absorption.assault} > ${absorption.guard}).`);
+  if (outcome === 'guard-holds') bullets.push('Assaut repoussé.');
+  const hurt = (side: Side) => actors[side].damageTaken;
+  if (hurt('me') === 0 && hurt('opp') === 0) bullets.push('Aucune blessure infligée.');
+  else {
+    if (hurt('opp') > 0) bullets.push(`Le rival perd ${hurt('opp')} PV.`);
+    if (hurt('me') > 0) bullets.push(`Vous perdez ${hurt('me')} PV.`);
+    if (hurt('opp') > 0 && hurt('me') > 0) bullets.push('Blessures simultanées.');
+  }
+  if (overtime) bullets.push('Double K.-O. : prolongation à 1 PV chacun.');
+  bullets.push(`${nm('me')} et ${nm('opp')} sont consommées : les deux Primaires vont en défausse.`);
   return {
-    turn: r.turn, outcome, winner, attacker, actors, verdict, detail, tone, absorption, overtime, finalBlow,
+    turn: r.turn, outcome, winner, attacker, actors, verdict, detail, bullets, tone, absorption, overtime, finalBlow,
     cancelled: { me: r.cancelled?.[viewer] ?? [], opp: r.cancelled?.[opp] ?? [] },
   };
 }

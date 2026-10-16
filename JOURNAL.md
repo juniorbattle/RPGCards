@@ -2,7 +2,7 @@
 
 **Nature :** journal de production du **nouveau projet**, et non journal copié de RPG-ArtByCode.  
 **Convention :** passes chronologiques, plus récente en bas ; statut `[OK]`, `[KO]`, `[?]` ; preuves vérifiables.  
-**Dernière passe :** 2 — M02 : confrontation face à face (vues A/B, rival procédural expressif), résolution séquencée, IA à mémoire autorisée (branche `claude/m02-confrontation-face-a-face`).
+**Dernière passe :** 3 — M03 : composition fidèle à la preview validée (HUD compacts, centre libre, salle aux bougies), bandeaux ASSAUT/GARDE, chorégraphies physiques du Clash pilotées par le moteur (branche `claude/m03-ui-fidele-et-clash-anime`).
 
 ## État initial connu
 
@@ -15,16 +15,18 @@
 
 ## À reprendre (prioritaire)
 
-1. **Revue opérateur M02** : principe A/B et temps d’observation (ADR 006), style et personnalités du rival (ADR 007), granularité de la résolution (ADR 008) ; captures `screenshots/qa/m02/`.
-2. **Arbitrages encore proposés** (ADR 004) : ARB-002 (profil du rival public), ARB-001, ARB-005, ARB-011 ; ratification éventuelle du delta D-01 (V3.3).
-3. **Mesure sur GPU réel** (hors conteneur) : vues A et B, portrait, FX ; budget mobile.
-4. QA : forcer des situations Rupture / Dissipation côté humain (scénarios dédiés) ; accélérer la QA (rendu logiciel lent).
-5. Rival : transitions de gabarit DOM adoucies, mains/gestes plus riches, regard vers la carte inspectée, sans jamais lire un secret ; préparer (sans l’activer) le contrat des futurs « tells ».
-6. IA : modèle du joueur (tendances publiques par situation), niveaux de difficulté ; découpage du bundle Three.js.
+1. **Revue opérateur M03** : composition et proportions (ADR 009), six chorégraphies du Clash et leur durée (ADR 010), écarts visuels restants (`docs/RAPPORT_M03.md` §8) ; planches `screenshots/qa/m03/comparaison-*.png`, démonstrations `screenshots/qa/m03/clash/`.
+2. **Écarts de fidélité restants** : visages et personnages moins « peints » que la preview (couches 2D plates), décor moins dense, pas de bloom ni de profondeur de champ, typographie système ; mobile pensé en portrait 390×844 (la preview montre un mobile paysage).
+3. **Arbitrages encore proposés** (ADR 004) : ARB-002 (profil du rival public), ARB-001, ARB-005, ARB-011 ; ratification éventuelle du delta D-01 (V3.3).
+4. **Mesure sur GPU réel** (hors conteneur) : vues A/B, bougies (shader de points), scène du Clash (WAAPI) ; budget mobile.
+5. QA : scénarios Rupture / Dissipation côté humain (tâche proposée) ; masquer les scores bruts du rapport public du Clash (tâche proposée, aucune fuite affichée aujourd’hui).
+6. IA : modèle du joueur, niveaux de difficulté ; découpage du bundle Three.js.
 
 ## Principes à garder
 
-- La présentation (vues, expressions, séquence) est pilotée par des modules PURS testés, alimentés par des faits publics ; la 3D et le DOM ne font qu’exécuter.
+- La présentation (vues, expressions, séquence, chorégraphies) est pilotée par des modules PURS testés, alimentés par des faits publics ; la 3D et le DOM ne font qu’exécuter.
+- Une animation de Clash n’est qu’une COPIE de représentation : elle lit le résultat résolu (rapport public), ne décide jamais du vainqueur et se nettoie entièrement (« Passer », nouvelle phase).
+- La caméra s’ancre sur la mise en page (variables CSS) : la composition se règle dans la feuille de style, la 3D suit.
 - Pendant une mise en scène, ne jamais recréer les éléments interactifs (patch ciblé) ; en rendu à la demande, fusionner les rendus d’une même image.
 - Une seule arithmétique : `computeClash` (pur) sert moteur, IA et prévisualisation ; ne jamais dupliquer une formule de règle dans l’UI.
 - Les fenêtres optionnelles s’ouvrent sur information **publique** uniquement ; une vue (`viewFor`) est une copie filtrée, jamais l’état brut.
@@ -142,3 +144,28 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **[OK] Mandat de présentation :** composition du duel fidèle à la preview validée (fichier `reference/REFERENCE_VISUELLE_VALIDEE_M03.jpg`, original PNG transmis dans le kit), HUD rival haut-gauche, HUD joueur compact bas-gauche, zone centrale libre, cartes reconnaissables, badge ASSAUT/GARDE après révélation.
 - **[OK] Nouveau contrat de motion design :** AA collision et impact simultané en égalité, AG défense victorieuse / absorption totale sans blessure / blessure positive, GG neutralité, perdant visuellement réduit puis nettoyé ; Primaires gagnantes aussi défaussées comme exigé par les règles.
 - **[?] État :** directives M03 documentaires publiées ; **aucune implémentation M03 ni QA M03 n'est revendiquée**. M02 est le point de départ ; lancer les lots P0–P5 et mettre à jour cette section après tests/captures réels.
+
+## Passe 3 — M03 : fidélité à la preview validée, HUD et chorégraphies du Clash — 2026-10-16, branche `claude/m03-ui-fidele-et-clash-anime`, départ `61e2510` (contrat M03 sur M02 `e978d2d`)
+
+- **Mission / contraintes :** `docs/missions/M03_PREVIEW_VALIDEE_HUD_CLASH.md` + preview `reference/REFERENCE_VISUELLE_VALIDEE_M03.jpg` (référence de composition approuvée, document de revue uniquement) ; HUD joueur compact bas-gauche symétrique du HUD rival, centre libre, main en bas, commandes et Techniques en périphérie, journal rétractable ; bandeaux ASSAUT/GARDE après révélation ; Clashes physiques dérivés du moteur ; Primaires toutes défaussées ; rythmes normal/rapide/instantané/mouvement réduit ; aucune règle modifiée ; pas de tells ni de Sang-froid ; `main` intacte.
+- **Lecture initiale :** AGENTS, CLAUDE, JOURNAL, contrat M03, preview (inspectée panneau par panneau, recadrages agrandis), rapport M02, ADR 006–008, code du plateau, de l’arène, du rival, du séquenceur et de la QA.
+- **Modifications :**
+  - Composition (ADR 009) : `board.ts` réécrit en calques (frise de phase, outils, HUD rival, bulle, plateau, main, HUD joueur, commandes, inspection, tiroir) ; `styles.css` réécrit (modules fins à liseré doré, coins ornés, emplacements en perspective, mobile dédié) ; portrait procédural du joueur (`art/portrait.ts`, mêmes couches que le rival) ; bulle du rival (`rivalLines.ts`, pur) ; caméra ancrée sur la mise en page (`setLayout`) ; vue B qui garde le rival visible ; passage A↔B en FLIP.
+  - Arène : salle aux bougies (fond peint arches + ciel, piliers, balustrade, bannières des quatre familles, plantes, table vernie à incrustations, bougies instanciées + flammes/halos en points animés par shader) ; rival : mains jointes et éventail, yeux plus grands (cils, reflets), modelé, mèches, capuche.
+  - Postures : `stance.ts` (bandeaux ASSAUT pointe / GARDE bouclier), sur les Primaires révélées et dans le face-à-face ; avant révélation, votre mode marqué « secret », rien côté rival.
+  - Clash (ADR 010) : `clashMotion.ts` (pur, six chorégraphies + liste de conséquences), `clashStage.ts` (scène DOM, WAAPI, hôte `#stage` hors du plateau re-rendu), intégration au séquenceur M02 (rang → face-à-face, issue → impact, blessures → chiffres, destinations → nettoyage vers la défausse) ; plateau « d’avant résolution » pendant la séquence ; compteurs de défausse mis en scène.
+  - Scénarios `clash-aa`, `clash-ag` ; outils `clash-shots.mjs`, `shots-m03.mjs`, `snap.mjs` ; QA M03 (composition, postures, scènes fantômes) ; crochets QA `pauseSequence` / `stageSeek`.
+- **[OK] Succès :** <!-- J3_OK -->
+- **[KO] Échecs / tentatives abandonnées :**
+  - Captures figées de Clash d’abord sans déplacement : le gel empruntait la branche « mouvement réduit » → distinction mouvement réduit (aucun déplacement) / gel (pose finale de la chorégraphie).
+  - Pellicule en temps réel impossible sous SwiftShader : une capture d’écran dure plus que la séquence entière (la scène avait disparu dès la 3e image) → crochets QA `pauseSequence` + `stageSeek` (positionnement exact des animations).
+  - Propriétés CSS enregistrées (`@property`) pour animer la géométrie des emplacements : sans effet, `renderApp` recrée les rangées → animation FLIP des rangées et de la main.
+  - Mobile vue B : emplacements latéraux hors écran (une règle bureau plus spécifique écrasait la largeur mobile) ; bulle du rival sur les libellés ; pastille de phase sur les commandes → valeurs mobiles explicites par vue, bulle déplacée, frise masquée.
+  - Coche « victoire au Rang » visible avant l’impact (classe posée au début de l’étape) → animation calée sur l’impact.
+  - Dôme filaire de l’arène (FX M02 « Garde ») en concurrence avec le bouclier de la scène → anneau discret sur la table.
+  - Appui long tactile : ouvrait encore le tiroir du journal (héritage M02) → inspection flottante, fermée d’un toucher.
+- **[?] Incertitudes / arbitrages :** face-à-face rival à gauche / joueur à droite (comme la preview) ; durée des chorégraphies ; mobile portrait vs paysage ; le rapport public du Clash contient encore les scores bruts (non lus par l’UI ni l’IA ; tâche de correction proposée) ; ARB-002 inchangé.
+- **Tests :** <!-- J3_TESTS -->
+- **Perf / visuels :** <!-- J3_PERF -->
+- **Pensée :** <!-- J3_PENSEE -->
+- **À reprendre :** voir section globale en tête de fichier.
