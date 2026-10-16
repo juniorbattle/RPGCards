@@ -175,6 +175,20 @@ async function playTurn(page, run, stats) {
       const stance = stats.turns % 3 === 2 ? 'guard' : 'assault';
       if (mode === 'keyboard') await page.keyboard.press(stance === 'guard' ? 'g' : 'a');
       else await page.click(`[data-key="stance-${stance}"]`);
+      // M03.2 — rotation de l’écran EN PLEIN engagement : l’état du tour et le brouillon survivent.
+      const rot = run.rotate?.[stats.rotations.length];
+      if (rot && stats.turns >= rot.afterTurns) {
+        const snap = () => page.evaluate(() => ({ s: JSON.stringify(window.__lqv.state()), draft: JSON.stringify(window.__lqv.controller.ui.draft) }));
+        const before = await snap();
+        await page.setViewportSize(rot.viewport);
+        await page.waitForTimeout(450);
+        const after = await snap();
+        const ok = before.s === after.s && before.draft === after.draft;
+        stats.rotations.push(`${rot.viewport.width}×${rot.viewport.height} tour ${v.turn} : ${ok ? 'état conservé' : 'ÉTAT PERDU'}`);
+        if (!ok) stats.layoutIssues.push(`rotation ${rot.viewport.width}×${rot.viewport.height} : état ou brouillon modifié`);
+        stats.layoutChecked = [];
+        stats.layoutIssues.push(...(await layoutAudit(page)).map((x) => `${rot.viewport.width}×${rot.viewport.height} COMMIT : ${x}`));
+      }
       if (sec && freeSlot >= 0) {
         if (mode === 'drag') { await dragTo(page, `[data-key="hand-${sec.cardId}"]`, `[data-drop="slot${freeSlot}"]`); stats.drags++; }
         else if (mode === 'touch') { await page.tap(`[data-key="hand-${sec.cardId}"]`); await page.tap(`[data-drop="slot${freeSlot}"]`); stats.clicks++; }
@@ -256,7 +270,7 @@ async function runDuel(browser, base, run) {
       }
     });
   }
-  const stats = { turns: 0, drags: 0, clicks: 0, keyboard: 0, tactics: 0, repels: 0, leaks: [], viewChecks: 0, viewErrors: [], lostClicks: [], tech: {}, moods: new Set(), sequencesWatched: 0, sequencesSkipped: 0, manualToggleChecked: null, holds: 0, layoutChecked: [], layoutIssues: [], stanceChecks: 0, stanceIssues: [], stageGhosts: [], stagesSeen: 0 };
+  const stats = { turns: 0, drags: 0, clicks: 0, keyboard: 0, tactics: 0, repels: 0, leaks: [], viewChecks: 0, viewErrors: [], lostClicks: [], tech: {}, moods: new Set(), sequencesWatched: 0, sequencesSkipped: 0, manualToggleChecked: null, holds: 0, layoutChecked: [], layoutIssues: [], stanceChecks: 0, stanceIssues: [], stageGhosts: [], stagesSeen: 0, rotations: [] };
   let outcome = 'running';
   const t0 = Date.now();
   try {
@@ -293,12 +307,15 @@ try {
     { name: 'desktop-1920-click', seed: 202, viewport: { width: 1920, height: 1080 }, mode: 'click', tech: 'Sondage,Rupture', watchSequence: true },
     { name: 'desktop-1280-keyboard', seed: 303, viewport: { width: 1280, height: 720 }, mode: 'keyboard', tech: 'Recentrage,Dissipation' },
     { name: 'mobile-390-touch', seed: 404, viewport: { width: 390, height: 844 }, mode: 'touch', tech: 'Lecture,Ancrage', isMobile: true },
+    // M03.2 : téléphone tourné en plein tour (portrait ↔ paysage), puis petite tablette paysage.
+    { name: 'mobile-rotation-touch', seed: 505, viewport: { width: 390, height: 844 }, mode: 'touch', tech: 'Sondage,Rupture', isMobile: true,
+      rotate: [{ afterTurns: 1, viewport: { width: 844, height: 390 } }, { afterTurns: 4, viewport: { width: 390, height: 844 } }, { afterTurns: 6, viewport: { width: 844, height: 390 } }, { afterTurns: 9, viewport: { width: 960, height: 540 } }] },
   ];
   const plans = only ? plans0.filter((p) => p.name.includes(only)) : plans0;
   for (const p of plans) {
     const r = await runDuel(browser, server.base, p);
     report.runs.push(r);
-    console.log(`${r.name}: ${r.outcome} au tour ${r.turn} · rival ${r.personality} · gagnant ${r.winner} · vues ${r.viewChecks} contrôles/${r.viewErrors.length} écarts, ${r.viewSwitches} bascules, V ${r.manualToggleChecked} · techniques ${JSON.stringify(r.tech)} · séquences vues ${r.sequencesWatched}/sautées ${r.sequencesSkipped} (scènes de Clash ${r.stagesSeen}, fantômes ${r.stageGhosts.length}) · postures ${r.stanceChecks} contrôles/${r.stanceIssues.length} écarts · composition ${r.layoutIssues.length} écart(s) · humeurs ${r.moods.length} · console ${r.consoleIssues.length} · fuites ${r.leaks.length} · clics perdus ${r.lostClicks.length} · ${r.ms} ms`);
+    console.log(`${r.name}: ${r.outcome} au tour ${r.turn} · rival ${r.personality} · gagnant ${r.winner} · vues ${r.viewChecks} contrôles/${r.viewErrors.length} écarts, ${r.viewSwitches} bascules, V ${r.manualToggleChecked} · techniques ${JSON.stringify(r.tech)} · séquences vues ${r.sequencesWatched}/sautées ${r.sequencesSkipped} (scènes de Clash ${r.stagesSeen}, fantômes ${r.stageGhosts.length}) · postures ${r.stanceChecks} contrôles/${r.stanceIssues.length} écarts · composition ${r.layoutIssues.length} écart(s)${r.layoutIssues.length ? ` [${r.layoutIssues.slice(0, 3).join(' | ')}]` : ''} · humeurs ${r.moods.length} · console ${r.consoleIssues.length} · fuites ${r.leaks.length} · clics perdus ${r.lostClicks.length}${r.rotations.length ? ` · rotations ${r.rotations.join(' ; ')}` : ''} · ${r.ms} ms`);
   }
 } finally {
   await browser.close();
