@@ -1,6 +1,6 @@
 {
-  "commit": "fea2c8f",
-  "date": "2026-10-16T05:28:57.840Z",
+  "commit": "aca18a8",
+  "date": "2026-10-16T05:50:48.571Z",
   "note": "Chromium headless + WebGL logiciel SwiftShader ; freeze=1 (arène et réactions figées).",
   "shots": [
     {
@@ -574,7 +574,7 @@
       },
       "turn": 2,
       "phase": "PREPARE",
-      "view": "B",
+      "view": "A",
       "rival": "ronce:neutral (vous observe)"
     }
   ],

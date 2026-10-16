@@ -98,7 +98,6 @@ export class Controller {
   private exprQueue: Expression[] = [];
   private exprTimer = 0;
   private dragging = false;
-  private holdTimer = 0;
   private lastTurn = 0;
 
   constructor(public config: GameConfig, public params: AppParams, public arena: ArenaHandle | null, public scenario: Scenario | null = null, public rival: RivalPersonality) {
@@ -254,11 +253,9 @@ export class Controller {
     if (this.view.turn !== this.lastTurn) {
       this.lastTurn = this.view.turn;
       const instant = this.params.pace === 'instant' || (this.params.freeze && !this.params.intro);
-      if (!instant) {
-        this.director.startHold();
-        window.clearTimeout(this.holdTimer);
-        if (!this.params.freeze) this.holdTimer = window.setTimeout(() => this.endHold(), 1400 * this.paceFactor());
-      }
+      // Pas de minuterie : une réorganisation déclenchée par le temps pourrait dévier un clic en
+      // cours. Le regard vers le rival dure jusqu’à la première interaction du joueur (voir main.ts).
+      if (!instant) this.director.startHold();
     }
     const forced = this.params.view;
     this.viewMode = forced === 'A' || forced === 'B' ? forced : this.director.update(this.directorInput());
@@ -268,7 +265,6 @@ export class Controller {
   /** Fin du temps d’observation (minuterie, ou le joueur commence à manipuler). */
   endHold(): void {
     if (!this.director.holding) return;
-    window.clearTimeout(this.holdTimer);
     const before = this.viewMode;
     this.director.releaseHold(this.directorInput());
     this.updateView();
@@ -283,7 +279,6 @@ export class Controller {
   }
 
   setDragging(v: boolean): void {
-    if (v) this.endHold();
     if (v === this.dragging) return;
     this.dragging = v;
     const before = this.viewMode;
@@ -493,7 +488,6 @@ export class Controller {
   }
 
   clickHandCard(cardId: string): void {
-    this.endHold(); // le joueur manipule : la caméra passe à la table sans attendre
     const v = this.view;
     if (v.phase === 'START' && v.awaitingMe) {
       if (this.ui.recentrageArmed) {

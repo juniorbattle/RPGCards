@@ -93,6 +93,10 @@ function start(config: GameConfig, scenarioId: string | null): void {
   const release = () => { pointerHeld = false; if (pendingRender) window.setTimeout(render, 0); };
   window.addEventListener('pointerup', release, true);
   window.addEventListener('pointercancel', release, true);
+  // Fin du regard de début de tour APRÈS l’interaction (clic, toucher, dépôt) : jamais pendant.
+  const afterInteraction = () => window.setTimeout(() => c.endHold(), 0);
+  app.addEventListener('pointerup', afterInteraction);
+  window.addEventListener('keydown', (e) => { if (!['Tab', 'Shift', 'Control', 'Alt', 'Meta', 'v', 'V', 'Escape'].includes(e.key)) afterInteraction(); });
   const tool = (t: string) => {
     if (t === 'smaller' || t === 'bigger') {
       params.scale = Math.min(1.5, Math.max(0.8, params.scale + (t === 'bigger' ? 0.1 : -0.1)));
