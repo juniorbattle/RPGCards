@@ -241,10 +241,12 @@ function sideRow(c: Controller, who: 'me' | 'opp'): HTMLElement {
     h('div', { class: 'row' }, z0, primaryZone(c, who), z1));
 }
 
-/** Coquille d’emplacement : sol en perspective (décor) + libellé ; la carte se pose dessus. */
+/** Coquille d’emplacement : sol en perspective (décor) + libellé ; la carte se pose dessus. Le libellé
+ *  court (« S1 », comme la preview mobile) sert au petit écran paysage ; la case porte son propre nom
+ *  accessible (aria-label). */
 function zoneShell(classes: Array<string | false | null | undefined>, label: string, attrs: Record<string, unknown>): HTMLElement {
   return h('div', { class: cls('zone', ...classes), ...attrs },
-    h('span', { class: 'zone-label' }, label),
+    h('span', { class: 'zone-label', 'data-short': label.replace(/^Secondaire /, 'S') }, label),
     h('span', { class: 'zone-floor', 'aria-hidden': 'true' }),
   );
 }
