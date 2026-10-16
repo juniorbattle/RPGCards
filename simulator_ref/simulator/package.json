@@ -1,0 +1,16 @@
+{
+  "name": "les-quatre-voies-simulateur",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node tools/server.mjs",
+    "test": "node --test test/*.test.mjs",
+    "build": "node tools/build.mjs",
+    "check": "npm test && npm run build",
+    "simulate": "node tools/batch.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
