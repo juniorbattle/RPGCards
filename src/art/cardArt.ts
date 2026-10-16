@@ -17,7 +17,7 @@ type Ctx = CanvasRenderingContext2D;
 type Rng = () => number;
 
 const cache = new Map<string, string>();
-let backCache: { seed: number; url: string } | null = null;
+let backCache: { seed: number; url: string; canvas: HTMLCanvasElement } | null = null;
 
 export function artCacheSize(): number {
   return cache.size;
@@ -310,6 +310,12 @@ export function cardBackUrl(artSeed: number): string {
   ctx.lineWidth = 3;
   ctx.strokeRect(8, 8, ART_W - 16, ART_H - 16);
   const url = c.toDataURL('image/png');
-  backCache = { seed: artSeed, url };
+  backCache = { seed: artSeed, url, canvas: c };
   return url;
+}
+
+/** Verso commun sous forme de canvas (texture Three.js), même génération que `cardBackUrl`. */
+export function cardBackCanvas(artSeed: number): HTMLCanvasElement {
+  cardBackUrl(artSeed);
+  return backCache!.canvas;
 }

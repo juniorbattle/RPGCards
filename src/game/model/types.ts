@@ -176,6 +176,8 @@ export interface RevealedTactic {
   mode: TacticMode;
   target: SlotIndex | null;
   defId: string | null;
+  /** Famille toujours publique (§13.2), même sous camouflage. */
+  family: Family;
   masked: boolean;
   value: number | null;
   affinity: boolean | null;

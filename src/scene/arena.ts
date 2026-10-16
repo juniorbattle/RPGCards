@@ -1,19 +1,27 @@
 /**
- * Arène de duel Three.js — mise en scène PROVISOIRE, 100 % procédurale (aucun asset téléchargé).
+ * Arène de duel Three.js — M02 « confrontation face à face ». Mise en scène PROVISOIRE, 100 % code.
  *
- * - Sol : CanvasTexture générée (cercle rituel, emblèmes des quatre voies, glyphes) — seed art.
- * - Deux estrades (joueur proche / rival lointain), quatre piliers à cristaux émissifs, bannières.
- * - Particules flottantes (Points), brouillard, éclairage simple.
- * - FX déclenchés par les ÉVÉNEMENTS du moteur (jamais l’inverse) : onde de Clash, éclat de dégâts,
- *   dôme de Garde, anneau prismatique de Signature, prolongation, victoire.
- * - Deux préréglages de caméra exploratoires : `tilted` (vue de dessus inclinée) et `frontal` (2.5D).
+ * - Une table de duel sépare le joueur (côté caméra) du rival, debout derrière la table.
+ * - Vue A « confrontation » : caméra frontale à hauteur de regard ; le rival (visage + buste) est
+ *   cadré dans la bande libre que le DOM lui réserve (`setStage`), quelle que soit la taille d’écran.
+ * - Vue B « manipulation » : caméra inclinée vers la table ; le rival reste visible en haut et, si
+ *   demandé, dans un PORTRAIT vivant incrusté (`setPortrait`, même renderer, scissor).
+ * - Transitions A↔B interpolées, interruptibles, instantanées en mouvement réduit / gel.
+ * - FX déclenchés par les événements du moteur ; expressions du rival fournies par l’ExpressionDirector.
+ * Aucun asset externe ; ni le moteur ni l’IA ne dépendent de ce module.
  */
 import * as THREE from 'three';
 import { FAMILIES, type Family } from '../game/catalog/cards';
 import { hashString, makeRng } from '../game/engine/rng';
 import { drawEmblem } from '../art/emblems';
 import { FAMILY_PALETTE } from '../art/palette';
+import { cardBackCanvas } from '../art/cardArt';
+import type { ViewMode } from '../presentation/director';
+import type { Expression, Gesture } from '../presentation/expression';
+import type { Mood, RivalPersonality } from '../presentation/personalities';
+import { createRival, HEAD_WORLD, RIVAL_Z, type RivalRig } from './rival';
 
+/** Conservé pour compatibilité des paramètres d’URL M01 (`cam=`) : tilted ≙ B, frontal ≙ A. */
 export type CameraPreset = 'tilted' | 'frontal';
 
 export type ArenaFx =
@@ -28,9 +36,10 @@ export type ArenaFx =
 
 export interface ArenaOptions {
   artSeed: number;
-  preset: CameraPreset;
+  view: ViewMode;
   reducedMotion: boolean;
   freeze: boolean;
+  personality: RivalPersonality;
 }
 
 export interface ArenaStats {
@@ -40,24 +49,36 @@ export interface ArenaStats {
   triangles: number;
   textures: number;
   geometries: number;
+  view: ViewMode;
+  blend: number;
+  portrait: boolean;
+  rival: { mood: Mood; gesture: Gesture | null; cause: string };
 }
+
+export interface Rect { x: number; y: number; w: number; h: number }
 
 export interface ArenaHandle {
   fx(fx: ArenaFx): void;
-  setPreset(p: CameraPreset): void;
+  setView(v: ViewMode): void;
+  /** Bande d’écran (px CSS) où le rival doit apparaître en vue A. */
+  setStage(r: Rect | null): void;
+  /** Zone du plateau DOM (px CSS) : centre horizontal de la vue B. */
+  setBoard(r: Rect | null): void;
+  /** Cadre DOM (px CSS) du portrait vivant du rival, ou null. */
+  setPortrait(r: Rect | null): void;
+  expression(e: Expression): void;
+  setRivalHand(n: number): void;
   setFamilies(me: Family, opp: Family): void;
   setReducedMotion(v: boolean): void;
   stats(): ArenaStats;
   dispose(): void;
 }
 
-const PRESETS: Record<CameraPreset, { pos: THREE.Vector3; look: THREE.Vector3; fov: number }> = {
-  tilted: { pos: new THREE.Vector3(0, 14.5, 8.4), look: new THREE.Vector3(0, 0, -0.4), fov: 42 },
-  frontal: { pos: new THREE.Vector3(0, 2.6, 13.5), look: new THREE.Vector3(0, 2.2, -1), fov: 40 },
-};
-
-const ME_Z = 3.2;
-const OPP_Z = -3.6;
+const TABLE_TOP = 1.05;
+const ME_Z = 1.6;
+const OPP_Z = -1.9;
+const VIEW_B = { pos: new THREE.Vector3(0, 10.2, 6.4), look: new THREE.Vector3(0, TABLE_TOP, 0.35), fov: 46 };
+const VIEW_A = { pos: new THREE.Vector3(0, 2.8, 6.4), look: new THREE.Vector3(0, 2.62, RIVAL_Z), worldH: 2.25 };
 
 function floorTexture(seed: number): THREE.CanvasTexture {
   const size = 1024;
@@ -169,6 +190,55 @@ function bannerTexture(family: Family, seed: number): THREE.CanvasTexture {
   return tex;
 }
 
+/** Plateau de table : feutre sombre, liseré, cercle de Clash central, deux zones de duellistes. */
+function tableTexture(seed: number): THREE.CanvasTexture {
+  const W = 1024;
+  const H = 640;
+  const c = document.createElement('canvas');
+  c.width = W;
+  c.height = H;
+  const ctx = c.getContext('2d')!;
+  const rng = makeRng(hashString(`table|${seed}`));
+  const g = ctx.createRadialGradient(W / 2, H / 2, 40, W / 2, H / 2, W * 0.6);
+  g.addColorStop(0, '#2b1f2e');
+  g.addColorStop(1, '#120d16');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+  // grain du feutre
+  for (let i = 0; i < 2600; i++) {
+    ctx.fillStyle = `rgba(255,255,255,${rng() * 0.025})`;
+    ctx.fillRect(rng() * W, rng() * H, 2, 2);
+  }
+  ctx.strokeStyle = 'rgba(226,196,138,0.55)';
+  ctx.lineWidth = 6;
+  ctx.strokeRect(18, 18, W - 36, H - 36);
+  ctx.lineWidth = 2;
+  ctx.strokeRect(34, 34, W - 68, H - 68);
+  // cercle de Clash
+  ctx.strokeStyle = 'rgba(226,196,138,0.4)';
+  for (const r of [70, 100]) { ctx.beginPath(); ctx.arc(W / 2, H / 2, r, 0, Math.PI * 2); ctx.stroke(); }
+  FAMILIES.forEach((f, i) => {
+    const a = Math.PI / 4 + (i * Math.PI) / 2;
+    ctx.fillStyle = `${FAMILY_PALETTE[f].accent}99`;
+    drawEmblem(ctx, f, W / 2 + Math.cos(a) * 85, H / 2 + Math.sin(a) * 85, 10);
+  });
+  // ligne médiane
+  ctx.setLineDash([12, 10]);
+  ctx.beginPath(); ctx.moveTo(60, H / 2); ctx.lineTo(W / 2 - 120, H / 2); ctx.moveTo(W / 2 + 120, H / 2); ctx.lineTo(W - 60, H / 2); ctx.stroke();
+  ctx.setLineDash([]);
+  // emplacements (3 par côté, rappel visuel des zones DOM)
+  for (const y of [H * 0.2, H * 0.8]) {
+    for (const x of [W / 2 - 170, W / 2, W / 2 + 170]) {
+      ctx.strokeStyle = 'rgba(226,196,138,0.22)';
+      ctx.strokeRect(x - 46, y - 62, 92, 124);
+    }
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 4;
+  return t;
+}
+
 interface Transient {
   obj: THREE.Object3D;
   t0: number;
@@ -185,6 +255,8 @@ export function webglAvailable(): boolean {
   }
 }
 
+const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+
 export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHandle | null {
   if (!webglAvailable()) return null;
   let renderer: THREE.WebGLRenderer;
@@ -195,114 +267,123 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMappingExposure = 1.08;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.autoClear = false;
   renderer.domElement.className = 'arena-canvas';
   renderer.domElement.setAttribute('aria-hidden', 'true');
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x0c0a10);
-  scene.fog = new THREE.Fog(0x0c0a10, 16, 34);
+  scene.background = new THREE.Color(0x0d0a12);
+  scene.fog = new THREE.Fog(0x0d0a12, 14, 30);
 
-  const camera = new THREE.PerspectiveCamera(PRESETS[opts.preset].fov, 1, 0.1, 100);
-  let preset = opts.preset;
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  const portraitCam = new THREE.PerspectiveCamera(17, 1, 0.1, 50);
+  portraitCam.position.set(0, HEAD_WORLD.y + 0.05, 1.6);
+  portraitCam.lookAt(HEAD_WORLD.x, HEAD_WORLD.y - 0.12, HEAD_WORLD.z);
+
   let reduced = opts.reducedMotion;
+  let view: ViewMode = opts.view;
+  let blend = view === 'B' ? 1 : 0; // 0 = A, 1 = B
+  let blendFrom = blend;
+  let blendT = 1;
+  let stage: Rect | null = null;
+  let boardRect: Rect | null = null;
+  let portrait: Rect | null = null;
 
-  // Lumières
-  scene.add(new THREE.HemisphereLight(0x9a8fb8, 0x1a1420, 0.7));
-  const key = new THREE.DirectionalLight(0xffe6c0, 1.3);
-  key.position.set(4, 12, 6);
+  // Lumières : clé frontale chaude, contre-jour coloré derrière le rival, remplissage froid.
+  scene.add(new THREE.HemisphereLight(0x9a8fb8, 0x1a1420, 0.75));
+  const key = new THREE.DirectionalLight(0xffe6c0, 1.25);
+  key.position.set(2.5, 6, 8);
   scene.add(key);
-  const center = new THREE.PointLight(0xffd9a0, 0, 12, 1.6);
-  center.position.set(0, 2.2, 0);
+  const rim = new THREE.PointLight(0xffffff, 6, 7, 1.6);
+  rim.position.set(0, 3.6, RIVAL_Z - 1.4);
+  scene.add(rim);
+  const faceFill = new THREE.PointLight(0xfff0e0, 1.6, 6, 1.8);
+  faceFill.position.set(-1.2, 3.2, 0.2);
+  scene.add(faceFill);
+  const center = new THREE.PointLight(0xffd9a0, 0, 8, 1.6);
+  center.position.set(0, TABLE_TOP + 1.2, -0.2);
   scene.add(center);
 
-  // Sol
+  // Sol rituel
   const floorTex = floorTexture(opts.artSeed);
-  // Même texture en carte émissive : seuls les tracés clairs (cercle rituel, emblèmes) « brillent ».
-  const floor = new THREE.Mesh(new THREE.CircleGeometry(11, 64), new THREE.MeshStandardMaterial({ map: floorTex, emissiveMap: floorTex, emissive: 0xffd9a0, emissiveIntensity: 0.22, roughness: 0.92, metalness: 0.05 }));
+  const floor = new THREE.Mesh(new THREE.CircleGeometry(11, 64), new THREE.MeshStandardMaterial({ map: floorTex, emissiveMap: floorTex, emissive: 0xffd9a0, emissiveIntensity: 0.18, roughness: 0.92, metalness: 0.05 }));
   floor.rotation.x = -Math.PI / 2;
-  // la texture du cercle (diamètre 860/1024) correspond au rayon ~ 12.6 : on l’échelonne
-  floorTex.repeat.set(1, 1);
   scene.add(floor);
 
-  // Estrades
-  const daisMat = (hex: number) => new THREE.MeshStandardMaterial({ color: 0x1c1822, roughness: 0.8, metalness: 0.1, emissive: hex, emissiveIntensity: 0.04 });
-  const meDais = new THREE.Mesh(new THREE.CylinderGeometry(2.3, 2.5, 0.22, 6), daisMat(0xffffff));
-  meDais.position.set(0, 0.11, ME_Z);
-  const oppDais = new THREE.Mesh(new THREE.CylinderGeometry(2.3, 2.5, 0.22, 6), daisMat(0xffffff));
-  oppDais.position.set(0, 0.11, OPP_Z);
-  scene.add(meDais, oppDais);
-  const meRim = new THREE.Mesh(new THREE.TorusGeometry(2.42, 0.025, 6, 6), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.55 }));
-  meRim.rotation.x = -Math.PI / 2;
-  meRim.rotation.z = Math.PI / 6; // aligne les sommets du liseré sur l’hexagone de l’estrade
-  meRim.position.set(0, 0.23, ME_Z);
-  const oppRim = meRim.clone();
-  oppRim.material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.55 });
-  oppRim.position.set(0, 0.23, OPP_Z);
-  scene.add(meRim, oppRim);
-  const meLight = new THREE.PointLight(0xffffff, 0.22, 6, 2);
-  meLight.position.set(0, 1.2, ME_Z);
-  const oppLight = new THREE.PointLight(0xffffff, 0.22, 6, 2);
-  oppLight.position.set(0, 1.2, OPP_Z);
-  scene.add(meLight, oppLight);
+  // Table de duel
+  const tableTex = tableTexture(opts.artSeed);
+  const woodMat = new THREE.MeshStandardMaterial({ color: 0x3a2618, roughness: 0.75, metalness: 0.05 });
+  const topMat = new THREE.MeshStandardMaterial({ map: tableTex, roughness: 0.95 });
+  const table = new THREE.Mesh(new THREE.BoxGeometry(7.4, 0.24, 7.2), [woodMat, woodMat, topMat, woodMat, woodMat, woodMat]);
+  table.position.set(0, TABLE_TOP - 0.12, 1.2);
+  scene.add(table);
+  const apron = new THREE.Mesh(new THREE.BoxGeometry(7.0, 0.9, 6.8), new THREE.MeshStandardMaterial({ color: 0x24170f, roughness: 0.9 }));
+  apron.position.set(0, TABLE_TOP - 0.7, 1.2);
+  scene.add(apron);
+  const trimMat = new THREE.MeshStandardMaterial({ color: 0xc9a25a, roughness: 0.4, metalness: 0.7 });
+  const trim = new THREE.Mesh(new THREE.BoxGeometry(7.5, 0.05, 0.08), trimMat);
+  trim.position.set(0, TABLE_TOP, 4.8);
+  scene.add(trim);
 
-  // Piliers et cristaux des quatre voies
+  // Fond : piliers, cristaux, bannières, arche (couches de profondeur 2.5D)
   const crystals: THREE.Mesh[] = [];
   const crystalLights: THREE.PointLight[] = [];
   FAMILIES.forEach((f, i) => {
-    const x = i % 2 === 0 ? -9.4 : 9.4;
-    const z = i < 2 ? -6.5 : 2.2;
-    const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.6, 4.2, 8), new THREE.MeshStandardMaterial({ color: 0x2b2632, roughness: 0.85 }));
-    pillar.position.set(x, 2.1, z);
-    const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.55, 0.35, 8), new THREE.MeshStandardMaterial({ color: 0x3a3341, roughness: 0.7 }));
-    cap.position.set(x, 4.35, z);
+    const x = [-5.6, 5.6, -8.4, 8.4][i]!;
+    const z = [-6.2, -6.2, -3.2, -3.2][i]!;
+    const pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.6, 5.2, 8), new THREE.MeshStandardMaterial({ color: 0x2b2632, roughness: 0.85 }));
+    pillar.position.set(x, 2.6, z);
     const hex = FAMILY_PALETTE[f].hex;
-    const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.42, 0), new THREE.MeshStandardMaterial({ color: hex, emissive: hex, emissiveIntensity: 1.6, roughness: 0.25, metalness: 0.1 }));
-    crystal.position.set(x, 5.1, z);
-    const l = new THREE.PointLight(hex, 1.3, 9, 1.6);
-    l.position.set(x, 5.1, z);
-    scene.add(pillar, cap, crystal, l);
+    const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.38, 0), new THREE.MeshStandardMaterial({ color: hex, emissive: hex, emissiveIntensity: 1.6, roughness: 0.25 }));
+    crystal.position.set(x, 5.7, z);
+    const l = new THREE.PointLight(hex, 1.2, 8, 1.6);
+    l.position.set(x, 5.6, z);
+    scene.add(pillar, crystal, l);
     crystals.push(crystal);
     crystalLights.push(l);
-    // bannière (lisible surtout en vue frontale)
-    const banner = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 3.6), new THREE.MeshStandardMaterial({ map: bannerTexture(f, opts.artSeed), transparent: true, side: THREE.DoubleSide, roughness: 0.9 }));
-    banner.position.set(x * 0.62, 3.0, -9.2);
+    const banner = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 3.3), new THREE.MeshStandardMaterial({ map: bannerTexture(f, opts.artSeed), transparent: true, side: THREE.DoubleSide, roughness: 0.9 }));
+    banner.position.set([-3.4, 3.4, -1.3, 1.3][i]!, 3.9, -8.6);
     scene.add(banner);
   });
-  // Arche de fond (frontale 2.5D : couche de profondeur)
-  const archMat = new THREE.MeshStandardMaterial({ color: 0x241f2a, roughness: 0.9 });
-  const arch = new THREE.Mesh(new THREE.TorusGeometry(5.4, 0.35, 8, 24, Math.PI), archMat);
-  arch.position.set(0, 0, -10.5);
+  const arch = new THREE.Mesh(new THREE.TorusGeometry(5.2, 0.32, 8, 24, Math.PI), new THREE.MeshStandardMaterial({ color: 0x241f2a, roughness: 0.9 }));
+  arch.position.set(0, 0, -9.2);
   scene.add(arch);
 
-  // Particules (positions déterministes, seed art)
-  const N = 420;
+  // Particules
+  const N = 300;
   const prng = makeRng(hashString(`motes|${opts.artSeed}`));
   const pos = new Float32Array(N * 3);
   const speed = new Float32Array(N);
   for (let i = 0; i < N; i++) {
-    pos[i * 3] = (prng() - 0.5) * 22;
+    pos[i * 3] = (prng() - 0.5) * 18;
     pos[i * 3 + 1] = prng() * 7;
-    pos[i * 3 + 2] = (prng() - 0.5) * 18;
-    speed[i] = 0.12 + prng() * 0.35;
+    pos[i * 3 + 2] = -2 - prng() * 9;
+    speed[i] = 0.1 + prng() * 0.3;
   }
   const motesGeo = new THREE.BufferGeometry();
   motesGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  const motes = new THREE.Points(motesGeo, new THREE.PointsMaterial({ color: 0xffd9a0, size: 0.06, transparent: true, opacity: 0.75, blending: THREE.AdditiveBlending, depthWrite: false }));
-  scene.add(motes);
+  scene.add(new THREE.Points(motesGeo, new THREE.PointsMaterial({ color: 0xffd9a0, size: 0.05, transparent: true, opacity: 0.7, blending: THREE.AdditiveBlending, depthWrite: false })));
+
+  // Rival
+  const backTex = new THREE.CanvasTexture(cardBackCanvas(opts.artSeed));
+  backTex.colorSpace = THREE.SRGBColorSpace;
+  const rival: RivalRig = createRival(opts.personality, opts.artSeed, backTex);
+  scene.add(rival.group);
+  rim.color.setHex(FAMILY_PALETTE[opts.personality.family].hex);
 
   // --- FX transitoires ----------------------------------------------------
   const transients: Transient[] = [];
   let clock = 0;
   let shake = 0;
+  const still = () => reduced || opts.freeze;
 
   function addTransient(obj: THREE.Object3D, dur: number, update: (k: number) => void): void {
     scene.add(obj);
     transients.push({ obj, t0: clock, dur, update });
-    if (reduced || opts.freeze) {
-      // mouvement réduit : état final lisible immédiatement, sans animation prolongée
+    if (still()) {
       update(0.35);
       renderOnce();
       window.setTimeout(() => { scene.remove(obj); disposeObj(obj); renderOnce(); }, 700);
@@ -310,35 +391,35 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     }
   }
 
-  function ring(color: number, z: number, maxScale: number, dur: number): void {
-    const m = new THREE.Mesh(new THREE.RingGeometry(0.6, 0.85, 48), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.9, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
+  function ring(color: number, z: number, maxScale: number, dur: number, y = TABLE_TOP + 0.03): void {
+    const m = new THREE.Mesh(new THREE.RingGeometry(0.4, 0.55, 48), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.9, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
     m.rotation.x = -Math.PI / 2;
-    m.position.set(0, 0.45, z);
+    m.position.set(0, y, z);
     addTransient(m, dur, (k) => {
       m.scale.setScalar(1 + k * maxScale);
       (m.material as THREE.MeshBasicMaterial).opacity = 0.9 * (1 - k);
     });
   }
 
-  function burst(color: number, z: number, count: number): void {
+  function burst(color: number, origin: THREE.Vector3, count: number): void {
     const g = new THREE.BufferGeometry();
     const p = new Float32Array(count * 3);
     const v: number[] = [];
-    const r = makeRng(hashString(`burst|${clock.toFixed(2)}|${z}`));
+    const r = makeRng(hashString(`burst|${clock.toFixed(2)}|${origin.z}`));
     for (let i = 0; i < count; i++) {
-      p[i * 3] = 0; p[i * 3 + 1] = 1; p[i * 3 + 2] = z;
+      p[i * 3] = origin.x; p[i * 3 + 1] = origin.y; p[i * 3 + 2] = origin.z;
       const a = r() * Math.PI * 2;
-      const s = 2 + r() * 5;
-      v.push(Math.cos(a) * s, 1 + r() * 4, Math.sin(a) * s * 0.6);
+      const s = 1 + r() * 3;
+      v.push(Math.cos(a) * s, 0.5 + r() * 3, Math.sin(a) * s * 0.4 + 0.6);
     }
     g.setAttribute('position', new THREE.BufferAttribute(p, 3));
-    const pts = new THREE.Points(g, new THREE.PointsMaterial({ color, size: 0.16, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false }));
-    addTransient(pts, 1.1, (k) => {
+    const pts = new THREE.Points(g, new THREE.PointsMaterial({ color, size: 0.09, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false }));
+    addTransient(pts, 1.0, (k) => {
       const arr = g.attributes.position!.array as Float32Array;
       for (let i = 0; i < count; i++) {
-        arr[i * 3] = v[i * 3]! * k;
-        arr[i * 3 + 1] = 1 + v[i * 3 + 1]! * k - 4 * k * k;
-        arr[i * 3 + 2] = z + v[i * 3 + 2]! * k;
+        arr[i * 3] = origin.x + v[i * 3]! * k;
+        arr[i * 3 + 1] = origin.y + v[i * 3 + 1]! * k - 3 * k * k;
+        arr[i * 3 + 2] = origin.z + v[i * 3 + 2]! * k;
       }
       g.attributes.position!.needsUpdate = true;
       (pts.material as THREE.PointsMaterial).opacity = 1 - k;
@@ -346,17 +427,76 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   }
 
   function dome(color: number, z: number): void {
-    const m = new THREE.Mesh(new THREE.SphereGeometry(2.6, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshBasicMaterial({ color, wireframe: true, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false }));
-    m.position.set(0, 0.35, z);
+    const m = new THREE.Mesh(new THREE.SphereGeometry(1.6, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshBasicMaterial({ color, wireframe: true, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }));
+    m.position.set(0, TABLE_TOP, z);
     addTransient(m, 1.2, (k) => {
       m.scale.setScalar(0.6 + 0.4 * Math.min(1, k * 3));
-      (m.material as THREE.MeshBasicMaterial).opacity = 0.6 * (1 - k);
+      (m.material as THREE.MeshBasicMaterial).opacity = 0.55 * (1 - k);
     });
   }
 
   const zOf = (side: 'me' | 'opp') => (side === 'me' ? ME_Z : OPP_Z);
+  const chestOf = (side: 'me' | 'opp') => (side === 'me' ? new THREE.Vector3(0, TABLE_TOP + 0.4, 2.2) : new THREE.Vector3(0, 2.1, RIVAL_Z + 0.4));
   let meHex = 0xffffff;
-  let oppHex = 0xffffff;
+  let oppHex = FAMILY_PALETTE[opts.personality.family].hex;
+
+  // --- Caméra : cadrage A (bande du rival) / B (table), mélange interpolé ---------------
+  const tmpPos = new THREE.Vector3();
+  const tmpLook = new THREE.Vector3();
+  let W = 1;
+  let H = 1;
+
+  /**
+   * Projection de la vue A : le point visé tombe au centre de la bande `stage` (px CSS), et la
+   * hauteur monde `worldH` (visage + buste + bord de table) remplit la hauteur de cette bande.
+   * Implémenté par `setViewOffset` sur un frustum virtuel élargi (aucune déformation).
+   */
+  function frameA(): { fov: number; Fw: number; F: number; offX: number; offY: number } {
+    const band = stage ?? { x: 0, y: H * 0.06, w: W, h: H * 0.42 };
+    const ay = Math.min(0.9, Math.max(0.1, (band.y + band.h / 2) / H));
+    const ax = Math.min(0.9, Math.max(0.1, (band.x + band.w / 2) / W));
+    const dist = VIEW_A.pos.distanceTo(VIEW_A.look);
+    const Hw = (VIEW_A.worldH * H) / Math.max(80, band.h);
+    const F = ay < 0.5 ? 2 * (1 - ay) * H : 2 * ay * H;
+    const offY = ay < 0.5 ? (1 - 2 * ay) * H : 0;
+    const Fw = ax < 0.5 ? 2 * (1 - ax) * W : 2 * ax * W;
+    const offX = ax < 0.5 ? (1 - 2 * ax) * W : 0;
+    const fov = (2 * Math.atan((Hw * F) / H / (2 * dist)) * 180) / Math.PI;
+    return { fov, Fw, F, offX, offY };
+  }
+
+  function placeCamera(t: number): void {
+    const b = ease(Math.min(1, Math.max(0, blend)));
+    tmpPos.lerpVectors(VIEW_A.pos, VIEW_B.pos, b);
+    tmpLook.lerpVectors(VIEW_A.look, VIEW_B.look, b);
+    const drift = still() ? 0 : 1;
+    tmpPos.x += Math.sin(t * 0.13) * 0.12 * drift;
+    tmpPos.y += Math.sin(t * 0.21) * 0.04 * drift;
+    if (shake > 0) {
+      tmpPos.x += Math.sin(t * 90) * shake * 0.06;
+      tmpPos.y += Math.cos(t * 77) * shake * 0.04;
+    }
+    camera.position.copy(tmpPos);
+    camera.lookAt(tmpLook);
+    const A = frameA();
+    // Vue B : centrée horizontalement sur le plateau DOM (le journal latéral décentre l’écran).
+    const bx = boardRect ? Math.min(0.9, Math.max(0.1, (boardRect.x + boardRect.w / 2) / W)) : 0.5;
+    const BFw = bx < 0.5 ? 2 * (1 - bx) * W : 2 * bx * W;
+    const BoffX = bx < 0.5 ? (1 - 2 * bx) * W : 0;
+    const fov = A.fov + (VIEW_B.fov - A.fov) * b;
+    const F = A.F + (H - A.F) * b;
+    const Fw = A.Fw + (BFw - A.Fw) * b;
+    camera.fov = Math.min(110, Math.max(10, fov));
+    camera.aspect = Fw / F;
+    camera.setViewOffset(Fw, F, A.offX + (BoffX - A.offX) * b, A.offY * (1 - b), W, H);
+    camera.updateProjectionMatrix();
+  }
+
+  function resize(): void {
+    W = container.clientWidth || window.innerWidth;
+    H = container.clientHeight || window.innerHeight;
+    renderer.setSize(W, H, false);
+  }
 
   // --- Boucle -------------------------------------------------------------
   let raf = 0;
@@ -365,32 +505,16 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   let frameMs = 0;
   let frames = 0;
   let acc = 0;
-
-  function resize(): void {
-    const w = container.clientWidth || window.innerWidth;
-    const h = container.clientHeight || window.innerHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    // Écran étroit (portrait) : recul de caméra pour conserver l’arène dans le cadre.
-    const pr = PRESETS[preset];
-    camera.fov = pr.fov * (camera.aspect < 0.8 ? 1.35 : 1);
-    camera.updateProjectionMatrix();
-  }
-
-  function placeCamera(t: number): void {
-    const pr = PRESETS[preset];
-    const drift = reduced || opts.freeze ? 0 : 1;
-    camera.position.set(pr.pos.x + Math.sin(t * 0.13) * 0.25 * drift, pr.pos.y + Math.sin(t * 0.21) * 0.08 * drift, pr.pos.z);
-    if (shake > 0) {
-      camera.position.x += (Math.sin(t * 90) * shake) * 0.12;
-      camera.position.y += (Math.cos(t * 77) * shake) * 0.08;
-    }
-    camera.lookAt(pr.look);
-  }
+  let portraitShown = false;
 
   function update(dt: number): void {
     clock += dt;
     shake = Math.max(0, shake - dt * 2.5);
+    if (blendT < 1) {
+      blendT = still() ? 1 : Math.min(1, blendT + dt / 0.85);
+      const target = view === 'B' ? 1 : 0;
+      blend = blendFrom + (target - blendFrom) * blendT;
+    }
     const arr = motesGeo.attributes.position!.array as Float32Array;
     for (let i = 0; i < N; i++) {
       arr[i * 3 + 1]! += speed[i]! * dt;
@@ -399,10 +523,10 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     motesGeo.attributes.position!.needsUpdate = true;
     crystals.forEach((c, i) => {
       c.rotation.y = clock * (0.4 + i * 0.07);
-      c.position.y = 5.1 + Math.sin(clock * 1.1 + i) * 0.12;
-      crystalLights[i]!.intensity = 1.2 + Math.sin(clock * 3.1 + i * 1.7) * 0.15;
+      crystalLights[i]!.intensity = 1.1 + Math.sin(clock * 3.1 + i * 1.7) * 0.12;
     });
     center.intensity = Math.max(0, center.intensity - dt * 6);
+    rival.update(dt, clock, still());
     for (let i = transients.length - 1; i >= 0; i--) {
       const tr = transients[i]!;
       const k = Math.min(1, (clock - tr.t0) / tr.dur);
@@ -417,7 +541,24 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
 
   function renderOnce(): void {
     placeCamera(clock);
+    renderer.setScissorTest(false);
+    renderer.setViewport(0, 0, W, H);
+    renderer.clear();
     renderer.render(scene, camera);
+    // Portrait vivant : affiché dès que la vue s’éloigne de A (le visage sort du cadre principal).
+    portraitShown = !!portrait && blend > 0.5;
+    if (portraitShown && portrait) {
+      const r = portrait;
+      portraitCam.aspect = r.w / r.h;
+      portraitCam.updateProjectionMatrix();
+      renderer.setScissorTest(true);
+      renderer.setScissor(r.x, H - r.y - r.h, r.w, r.h);
+      renderer.setViewport(r.x, H - r.y - r.h, r.w, r.h);
+      renderer.clear();
+      renderer.render(scene, portraitCam);
+      renderer.setScissorTest(false);
+      renderer.setViewport(0, 0, W, H);
+    }
   }
 
   function loop(now: number): void {
@@ -430,7 +571,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     renderOnce();
     frameMs = frameMs * 0.9 + (performance.now() - t0) * 0.1;
     frames++;
-    acc += realDt; // temps réel (non plafonné) pour une mesure FPS honnête
+    acc += realDt;
     if (acc >= 1) {
       fps = frames / acc;
       frames = 0;
@@ -440,9 +581,8 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
 
   function start(): void {
     cancelAnimationFrame(raf);
-    if (opts.freeze || reduced) {
-      // Image fixe déterministe (captures) ou mouvement réduit : rendu à la demande.
-      clock = 1.234;
+    if (still()) {
+      clock = clock || 1.234;
       update(0);
       renderOnce();
       return;
@@ -451,7 +591,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     raf = requestAnimationFrame(loop);
   }
 
-  const onResize = () => { resize(); if (opts.freeze || reduced) renderOnce(); };
+  const onResize = () => { resize(); if (still()) renderOnce(); };
   const onVis = () => { if (document.hidden) cancelAnimationFrame(raf); else start(); };
   window.addEventListener('resize', onResize);
   document.addEventListener('visibilitychange', onVis);
@@ -468,67 +608,82 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     });
   }
 
+  const sameRect = (a: Rect | null, b: Rect | null) => (!a && !b) || (!!a && !!b && a.x === b.x && a.y === b.y && a.w === b.w && a.h === b.h);
+
   return {
     fx(fx: ArenaFx) {
       switch (fx.type) {
         case 'reveal':
-          center.intensity = 6;
-          ring(0xffe0a8, 0, 3, 0.8);
+          center.intensity = 5;
+          ring(0xffe0a8, -0.15, 3, 0.8);
           break;
         case 'clash': {
           const color = fx.family ? FAMILY_PALETTE[fx.family].hex : 0xffe0a8;
           center.color.setHex(color);
-          center.intensity = 10;
-          ring(color, 0, 7, 1.0);
-          burst(color, 0, 90);
-          shake = reduced ? 0 : 0.6;
+          center.intensity = 9;
+          ring(color, -0.15, 6, 1.0);
+          burst(color, new THREE.Vector3(0, TABLE_TOP + 0.2, -0.15), 70);
+          shake = still() ? 0 : 0.5;
           break;
         }
         case 'damage':
-          burst(0xff4a3a, zOf(fx.side), Math.min(160, 30 + fx.amount * 2));
-          ring(0xff4a3a, zOf(fx.side), 3, 0.7);
-          (fx.side === 'me' ? meLight : oppLight).intensity = 4;
-          shake = reduced ? 0 : Math.min(1.2, 0.3 + fx.amount / 60);
+          burst(0xff4a3a, chestOf(fx.side), Math.min(140, 30 + fx.amount * 2));
+          ring(0xff4a3a, zOf(fx.side), 2.5, 0.7);
+          shake = still() ? 0 : Math.min(1, 0.25 + fx.amount / 60);
           break;
         case 'guard':
           dome(fx.side === 'me' ? meHex : oppHex, zOf(fx.side));
           break;
         case 'interfere':
-          ring(0xb48cff, zOf(fx.side) * 0.5, 2.2, 0.6);
+          ring(0xb48cff, zOf(fx.side), 2, 0.6);
           break;
         case 'signature':
-          [0xff8fa3, 0xffd36b, 0x8fdc6a, 0x8fb8ff].forEach((c, i) => ring(c, zOf(fx.side), 2.5 + i * 0.8, 1.1 + i * 0.12));
+          [0xff8fa3, 0xffd36b, 0x8fdc6a, 0x8fb8ff].forEach((c, i) => ring(c, zOf(fx.side), 2 + i * 0.6, 1.1 + i * 0.12));
           break;
         case 'overtime':
-          ring(0xffffff, 0, 8, 1.4);
-          ring(0xff4a3a, 0, 6, 1.2);
+          ring(0xffffff, -0.15, 7, 1.4);
+          ring(0xff4a3a, -0.15, 5, 1.2);
           break;
         case 'victory':
-          burst(0xffe08a, zOf(fx.side), 200);
-          ring(0xffe08a, zOf(fx.side), 6, 1.6);
+          burst(0xffe08a, chestOf(fx.side), 160);
+          ring(0xffe08a, zOf(fx.side), 5, 1.6);
           break;
       }
-      // retour d’intensité des estrades
-      window.setTimeout(() => { meLight.intensity = 0.22; oppLight.intensity = 0.22; if (reduced || opts.freeze) renderOnce(); }, 600);
-      if (reduced || opts.freeze) renderOnce();
+      if (still()) renderOnce();
     },
-    setPreset(p: CameraPreset) {
-      preset = p;
-      resize();
-      renderOnce();
+    setView(v: ViewMode) {
+      if (v === view) return;
+      view = v;
+      blendFrom = blend;
+      blendT = 0;
+      if (still()) { update(0); renderOnce(); }
+    },
+    setStage(r: Rect | null) {
+      if (sameRect(r, stage)) return;
+      stage = r;
+      if (still()) renderOnce();
+    },
+    setBoard(r: Rect | null) {
+      if (sameRect(r, boardRect)) return;
+      boardRect = r;
+      if (still()) renderOnce();
+    },
+    setPortrait(r: Rect | null) {
+      if (sameRect(r, portrait)) return;
+      portrait = r;
+      if (still()) renderOnce();
+    },
+    expression(e: Expression) {
+      rival.setExpression(e);
+      if (still()) { rival.update(0, clock, true); renderOnce(); }
+    },
+    setRivalHand(n: number) {
+      rival.setHandCount(n);
+      if (still()) renderOnce();
     },
     setFamilies(me: Family, opp: Family) {
       meHex = FAMILY_PALETTE[me].hex;
       oppHex = FAMILY_PALETTE[opp].hex;
-      (meRim.material as THREE.MeshBasicMaterial).color.setHex(meHex);
-      (oppRim.material as THREE.MeshBasicMaterial).color.setHex(oppHex);
-      meLight.color.setHex(meHex);
-      oppLight.color.setHex(oppHex);
-      (meDais.material as THREE.MeshStandardMaterial).emissive.setHex(meHex);
-      (meDais.material as THREE.MeshStandardMaterial).emissiveIntensity = 0.035;
-      (oppDais.material as THREE.MeshStandardMaterial).emissive.setHex(oppHex);
-      (oppDais.material as THREE.MeshStandardMaterial).emissiveIntensity = 0.035;
-      renderOnce();
     },
     setReducedMotion(v: boolean) {
       reduced = v;
@@ -536,12 +691,16 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     },
     stats(): ArenaStats {
       const info = renderer.info;
-      return { fps: Math.round(fps * 10) / 10, frameMs: Math.round(frameMs * 100) / 100, drawCalls: info.render.calls, triangles: info.render.triangles, textures: info.memory.textures, geometries: info.memory.geometries };
+      return {
+        fps: Math.round(fps * 10) / 10, frameMs: Math.round(frameMs * 100) / 100, drawCalls: info.render.calls, triangles: info.render.triangles,
+        textures: info.memory.textures, geometries: info.memory.geometries, view, blend: Math.round(blend * 100) / 100, portrait: portraitShown, rival: rival.current(),
+      };
     },
     dispose() {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', onResize);
       document.removeEventListener('visibilitychange', onVis);
+      rival.dispose();
       scene.traverse((o) => disposeObj(o));
       renderer.dispose();
       renderer.domElement.remove();

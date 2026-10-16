@@ -75,6 +75,7 @@ export class DragManager {
   private begin(): void {
     if (!this.start) return;
     this.dragging = true;
+    this.c.setDragging(true); // aucune transition de vue sous le pointeur
     const src = this.start.el;
     const rect = src.getBoundingClientRect();
     const g = src.cloneNode(true) as HTMLElement;
@@ -138,5 +139,6 @@ export class DragManager {
     this.ghost?.remove();
     this.ghost = null;
     this.hoverZone = null;
+    this.c.setDragging(false);
   }
 }

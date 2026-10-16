@@ -55,7 +55,7 @@ export function describeEvent(ev: GameEvent, viewer: PlayerId): JournalLine | nu
     case 'secondaryRevealed':
       if (d.own) return line(`[Privé] Votre Secondaire masquée (${slotName(d.slot)}) : ${t(d.defId)}.`);
       return line(d.masked
-        ? `${verb(d.player, 'révélez', 'révèle')} la Secondaire en ${slotName(d.slot)} — identité masquée par un effet.`
+        ? `${verb(d.player, 'révélez', 'révèle')} une Secondaire ${d.family ?? ''} en ${slotName(d.slot)} — identité, Rang et Puissance masqués par un effet.`
         : `${verb(d.player, 'révélez et activez', 'révèle et active')} ${t(d.defId)} (${slotName(d.slot)}).`);
     case 'masking':
       return line(`Dissimulation : la Secondaire ${me(d.player) ? 'de votre' : 'du rival en'} ${slotName(d.target)} est masquée jusqu’à la fin du tour.`, 'effect');
@@ -87,7 +87,7 @@ export function describeEvent(ev: GameEvent, viewer: PlayerId): JournalLine | nu
         const list = (d[pid] as Array<RevealedTactic | null>).filter(Boolean) as RevealedTactic[];
         if (!list.length) continue;
         const items = list.map((x) => {
-          const who = x.masked ? `Secondaire masquée (${slotName(x.slot)})` : t(x.defId);
+          const who = x.masked ? `Secondaire ${x.family} masquée (${slotName(x.slot)})` : t(x.defId);
           let extra = '';
           if (x.mode === 'rank') extra = x.value === null ? ' · bonus masqué' : ` · +${x.value} au Rang${x.affinity ? ' (affinité +1)' : ''}`;
           if (x.mode === 'damage') extra = x.value === null ? ' · coefficient masqué' : ` · ×${x.value}${x.affinity ? ' (même famille)' : ''}`;
@@ -99,7 +99,7 @@ export function describeEvent(ev: GameEvent, viewer: PlayerId): JournalLine | nu
       return line(parts.length ? `Choix tactiques verrouillés et révélés — ${parts.join(' / ')}.` : 'Choix tactiques : aucune Secondaire engagée.', 'clash');
     }
     case 'interference':
-      return line(`${verb(d.player, 'Interférez', 'Interfère')} sur ${slotName(d.target)} (${t(d.targetDefId)}) : ${d.success ? 'RÉUSSIE — usage annulé' : `ÉCHEC — ${d.reason}`}${d.cancelled ? ' (cette Interférence est elle-même annulée)' : ''}.`, 'effect');
+      return line(`${verb(d.player, 'Interférez', 'Interfère')} sur ${slotName(d.target)} (${d.targetDefId ? t(d.targetDefId) : d.targetFamily ? `${d.targetFamily} masquée` : 'carte masquée'}) : ${d.success ? 'RÉUSSIE — usage annulé' : `ÉCHEC — ${d.reason}`}${d.cancelled ? ' (cette Interférence est elle-même annulée)' : ''}.`, 'effect');
     case 'clash': {
       if (d.own) return line(`[Privé] Votre score réel : ${Number.isFinite(d.score) ? d.score : '∞'} ; multiplicateur ×${d.multiplier}.`);
       const sc = d.publicScores as Record<PlayerId, string>;

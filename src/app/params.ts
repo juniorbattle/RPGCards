@@ -1,7 +1,6 @@
 /** Paramètres d’URL réellement implémentés (documentés dans README). */
 import { FAMILIES, type Family } from '../game/catalog/cards';
 import { TECHNIQUE_IDS, type TechniqueId } from '../game/catalog/techniques';
-import type { CameraPreset } from '../scene/arena';
 
 export interface AppParams {
   seed: number;
@@ -11,13 +10,18 @@ export interface AppParams {
   autostart: boolean;
   reducedMotion: boolean;
   freeze: boolean;
-  cam: CameraPreset;
   qa: boolean;
   scenario: string | null;
   scale: number;
   hp: number;
   aiDelay: number;
   gallery: boolean;
+  /** Vue : `auto` (pilotée par les phases), ou figée `A` (confrontation) / `B` (manipulation) pour la QA. */
+  view: 'auto' | 'A' | 'B';
+  /** Rythme de présentation (n’affecte jamais le moteur). */
+  pace: 'normal' | 'fast' | 'instant';
+  /** Personnalité de rival forcée (braise | ronce | voile). */
+  rival: string | null;
 }
 
 export function readParams(search = window.location.search): AppParams {
@@ -37,12 +41,14 @@ export function readParams(search = window.location.search): AppParams {
     autostart: q.get('autostart') === '1' || q.has('scenario'),
     reducedMotion: q.has('reducedMotion') ? q.get('reducedMotion') === '1' : !!prefersReduced,
     freeze: q.get('freeze') === '1',
-    cam: q.get('cam') === 'frontal' ? 'frontal' : 'tilted',
     qa: q.get('qa') === '1',
     scenario: q.get('scenario'),
     scale: Math.min(1.5, Math.max(0.8, num('scale', 1))),
     hp: Math.max(1, Math.floor(num('hp', 90))),
     aiDelay: Math.max(0, num('aiDelay', 650)),
     gallery: q.get('gallery') === '1',
+    view: q.get('view') === 'A' || q.get('cam') === 'frontal' ? 'A' : q.get('view') === 'B' || q.get('cam') === 'tilted' ? 'B' : 'auto',
+    pace: q.get('pace') === 'fast' ? 'fast' : q.get('pace') === 'instant' ? 'instant' : 'normal',
+    rival: q.get('rival'),
   };
 }
