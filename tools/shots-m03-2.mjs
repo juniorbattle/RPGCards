@@ -196,7 +196,8 @@ async function layout(page) {
     return {
       overlaps: [...new Set(issues)],
       handCardPx: hand ? Math.round(r(hand).height) : null,
-      zoneLabelPx: label ? parseFloat(getComputedStyle(label).fontSize) : null,
+      // libellé court des petits écrans : le texte visible est le ::after (le libellé long a une taille 0)
+      zoneLabelPx: label ? (parseFloat(getComputedStyle(label).fontSize) || parseFloat(getComputedStyle(label, '::after').fontSize)) : null,
       anchors: { A: { head: parseFloat(cs.getPropertyValue('--a-head')), edge: parseFloat(cs.getPropertyValue('--a-edge')) }, B: { head: parseFloat(cs.getPropertyValue('--b-head')), edge: parseFloat(cs.getPropertyValue('--b-edge')) } },
     };
   });
