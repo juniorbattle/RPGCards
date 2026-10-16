@@ -1,5 +1,10 @@
 # CLAUDE.md — Point d'entrée Claude Code
 
+## MANDAT ACTIF — M02 (nouveau, prioritaire sur le cadrage visuel M01)
+
+**Après la lecture obligatoire de `AGENTS.md` et `JOURNAL.md`**, exécuter la mission `docs/missions/M02_CONFRONTATION_FACE_A_FACE_ET_LISIBILITE.md`. Le moteur M01 constitue la base existante, ne pas recommencer un projet neuf. **Vue frontale de confrontation par défaut avec adversaire visible**, vue inclinée complémentaire pendant manipulation, retour frontal pour révélation/tactique, personnage procédural expressif, résolution séquencée, UX fluide. **Aucune mécanique de tells informatifs ou Sang-froid n'est encore ratifiée.** Développement sur branche séparée dérivée du MVP, `main` inchangée.
+
+
 **Mandat M01 actualisé :** projet `RPGCards` déjà initialisé sur `main` ; configure **Three.js + Vite + TypeScript**, puis poursuis **de manière autonome jusqu'au premier MVP de duel jouable**. Lire en priorité le chapitre « MANDAT ACTUALISÉ » de `PROMPT_CLAUDE_CODE_MISSION_01.md` ; les consignes plus anciennes « Three.js optionnel », « attendre validation après chaque lot » ne s'appliquent plus. Si un environnement est prototypé, choisir provisoirement entre **tilted top-down** et **frontale 2.5D** ; aucun décor/cadrage/design définitif à ce stade.
 
 
