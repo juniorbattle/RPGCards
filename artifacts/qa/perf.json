@@ -1,6 +1,6 @@
 {
-  "commit": "83f9384",
-  "date": "2026-10-16T02:56:48.182Z",
+  "commit": "b3ca579",
+  "date": "2026-10-16T03:03:57.289Z",
   "machine": {
     "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
     "cores": 4,
@@ -11,10 +11,10 @@
   "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU",
   "engine": {
     "duels": 200,
-    "ms": 5574,
-    "msPerDuel": 27.87,
+    "ms": 6014,
+    "msPerDuel": 30.07,
     "commands": 13597,
-    "usPerCommand": 409.9,
+    "usPerCommand": 442.3,
     "avgTurns": 10.83,
     "duelsWithOvertime": 21,
     "wins": {
@@ -25,24 +25,24 @@
   "scene": {
     "tilted": {
       "fps": 4.8,
-      "frameMs": 1.17,
+      "frameMs": 1.42,
       "drawCalls": 19,
       "triangles": 784,
       "textures": 5,
       "geometries": 14
     },
     "frontal": {
-      "fps": 6.7,
-      "frameMs": 1.16,
+      "fps": 3.9,
+      "frameMs": 1.18,
       "drawCalls": 23,
       "triangles": 864,
       "textures": 5,
       "geometries": 18
     },
     "galleryLoad": {
-      "domContentLoadedMs": 1562,
-      "loadMs": 2557,
-      "artGeneration37CardsMs": 1345.2
+      "domContentLoadedMs": 1666,
+      "loadMs": 2574,
+      "artGeneration37CardsMs": 1417.5
     }
   }
 }
