@@ -765,10 +765,14 @@ function buildReport(ctx: Ctx, input: ClashInput, out: ReturnType<typeof compute
   const fmt = (n: number) => (Number.isFinite(n) ? String(n) : '∞');
   const publicScores = { p1: maskedRank.p1 ? '?' : fmt(out.scores.p1), p2: maskedRank.p2 ? '?' : fmt(out.scores.p2) };
   const publicMultipliers = { p1: maskedMult.p1 ? '?' : String(out.multipliers.p1), p2: maskedMult.p2 ? '?' : String(out.multipliers.p2) };
+  // Public par construction : une valeur camouflée est remplacée par '?' à l’affichage ET par null
+  // dans le champ brut ; son propriétaire la reçoit par l’événement privé `clash` (`own`).
+  const score = (p: PlayerId) => (maskedRank[p] ? null : Number.isFinite(out.scores[p]) ? out.scores[p] : 'inf' as const);
+  const mult = (p: PlayerId) => (maskedMult[p] ? null : out.multipliers[p]);
   return {
     turn: s.turn, outcome: out.outcome, winner: out.winner, guardWin: out.guardWin,
-    scores: { p1: Number.isFinite(out.scores.p1) ? out.scores.p1 : 'inf', p2: Number.isFinite(out.scores.p2) ? out.scores.p2 : 'inf' },
-    publicScores, multipliers: out.multipliers, publicMultipliers,
+    scores: { p1: score('p1'), p2: score('p2') },
+    publicScores, multipliers: { p1: mult('p1'), p2: mult('p2') }, publicMultipliers,
     baseDamage: out.baseDamage, fixedDamage: out.fixedDamage, damage: out.damage, absorbed: out.absorbed,
     powers: { p1: input.p1.primary.power, p2: input.p2.primary.power },
     stances: { p1: input.p1.stance, p2: input.p2.stance },
