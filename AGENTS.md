@@ -1,5 +1,10 @@
 # AGENTS.md — Les Quatre Voies (nouveau dépôt indépendant)
 
+## MANDAT PRIORITAIRE EN COURS — M03.1 → M03.2 (2026-10-16)
+
+Lire **`docs/missions/M03_CONTINUATION_AUTONOME.md`**, puis **`M03_1_SECURITE_ET_COUVERTURE_QA.md`** et **`M03_2_FIDELITE_RUNTIME_ET_FLUIDITE.md`** avant reprise du développement. Le mandat opérateur autorise à **enchaîner les deux** de manière autonome, mais **la correction de fuite d'informations publiques est une porte bloquante** avant les travaux de fidélité visuelle. Reprendre le runtime M03 déjà écrit, sans refonte du moteur et sans modifier `main`. L'image `reference/REFERENCE_VISUELLE_VALIDEE_M03.jpg` sert exclusivement de référence comparative, jamais d'asset runtime. ADR 009 : structure approuvée, finition visuelle à poursuivre. ADR 010 : chorégraphies retenues comme base. Les arbitrages gameplay de l'ADR 004 restent en suspens lorsqu'ils ne sont pas explicitement tranchés.
+
+
 ## Mandat actif M03 — Preview de référence validée + impact des cartes
 
 Lire `docs/missions/M03_PREVIEW_VALIDEE_HUD_CLASH.md` et inspecter `reference/REFERENCE_VISUELLE_VALIDEE_M03.jpg` **avant de modifier le rendu**. C'est la référence visuelle approuvée pour la composition du duel : **HUD joueur compact bas-gauche, similaire au HUD du rival haut-gauche, centre dégagé, mains lisibles**, modes ASSAUT/GARDE visibles après révélation. La nouvelle animation des Clashes doit être pilotée par les événements et le verdict du moteur M02 ; même le gagnant part à la défausse après sa pose momentanée. Garder Three.js/TS, Art by Code, caméra frontale + inclinée, secret et tests. Les choix M02 contraires à cette direction de présentation sont dépassés, mais **aucune mécanique de gameplay n'est changée**.

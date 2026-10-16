@@ -2,7 +2,7 @@
 
 **Nature :** journal de production du **nouveau projet**, et non journal copié de RPG-ArtByCode.  
 **Convention :** passes chronologiques, plus récente en bas ; statut `[OK]`, `[KO]`, `[?]` ; preuves vérifiables.  
-**Dernière passe :** 3 — M03 : composition fidèle à la preview validée (HUD compacts, centre libre, salle aux bougies), bandeaux ASSAUT/GARDE, chorégraphies physiques du Clash pilotées par le moteur (branche `claude/m03-ui-fidele-et-clash-anime`).
+**Dernière passe :** 3 + mandat 3A — M03 : composition fidèle à la preview validée (HUD compacts, centre libre, salle aux bougies), bandeaux ASSAUT/GARDE, chorégraphies physiques du Clash pilotées par le moteur (branche `claude/m03-ui-fidele-et-clash-anime`).
 
 ## État initial connu
 
@@ -172,3 +172,11 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **Perf / visuels :** même machine (Xeon 2,10 GHz, 4 cœurs, 16 Go, Node 22.22.0), Chromium headless **SwiftShader (CPU)**. Moteur : 22.41 ms/duel, 367.6 µs/commande (inchangé). Scène 1280×720 : vue A 80 draw calls / 1650 triangles, 36.45 ms CPU par image ; vue B 78 / 1634, 31.69 ms ; FPS 4.1–4.1 **non représentatifs d’un GPU**. Bundle JS ≈ 688 kB (190 kB gzip). Détails : `artifacts/qa/perf.json`, `docs/RAPPORT_M03.md` §7.
 - **Pensée :** une animation fidèle et honnête se construit en aval du moteur : classer le résultat résolu (pur, testé sur de vrais duels), puis le projeter sur des copies jetables ; les écarts de cette passe sont venus, encore, du temps réel et du tactile (gel confondu avec mouvement réduit, panneau qui intercepte un toucher), d’où l’intérêt de la QA de composition automatisée et des pellicules exactes.
 - **À reprendre :** voir section globale en tête de fichier.
+
+## Mandat 3A — Continuation M03.1/M03.2 (2026-10-16)
+
+- **[OK] Autorisation opérateur :** engager de façon autonome le lot M03.1 (sécurisation des événements publics et scénarios Rupture/Dissipation), suivi de M03.2 (fidélité visuelle améliorée à la preview : avatar plus présent, vue B mieux cadrée, éclairage, résolution et mobile paysage). Contrat : `docs/missions/M03_CONTINUATION_AUTONOME.md`.
+- **[OK] Réception M03 :** ADR 009 approuvée pour sa STRUCTURE seulement (HUD coins, centre libre, vues A/B), détails visuels à peaufiner ; ADR 010 retenue comme base pour les six chorégraphies. Aucun nouveau gameplay approuvé.
+- **[KO identifié, non corrigé ici]** : rapport de Clash `vis=public` incluant les valeurs brutes `scores` et `multipliers` malgré `publicScores` / `publicMultipliers` pouvant être « ? ». La P0 M03.1 doit corriger et tester la vraie forme des objets émis.
+- **[?] Exécution :** ce commit est documentaire ; **aucun correctif M03.1, aucun visuel M03.2 et aucun test nouveau ne sont revendiqués**. Claude doit implémenter sur une branche fille, exécuter la QA et documenter les résultats réels.
+- **À reprendre :** inspecter état de branche/HEAD, reproduire le défaut de visibilité, corriger/valider M03.1, puis poursuivre M03.2 si la porte sécurité est verte. Rapports distincts, captures et mesures.

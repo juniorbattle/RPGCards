@@ -41,3 +41,7 @@ commandes / emplacements / HUD, pas de défilement horizontal, sur 1280, 1920 et
 
 **Question d’approbation.** Valider la composition, les proportions et le décor (provisoire) ; les
 répliques du rival (couleur, sans information cachée) ; le portrait procédural du joueur.
+
+## Revue opérateur M03 — Mandat M03.2 (2026-10-16)
+
+**Statut de réception : structure approuvée ; fidélité visuelle non figée.** Sont validés : HUD compacts aux coins, centre dégagé, main basse, journal en tiroir, personnage face au joueur et deux vues pilotées par phase. Sont encore à améliorer : taille du rival en A/B, proportions, éclairage et lisibilité de la résolution, paysage mobile. Voir `docs/missions/M03_2_FIDELITE_RUNTIME_ET_FLUIDITE.md`. Nul besoin de recréer l'interface.

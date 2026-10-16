@@ -47,3 +47,7 @@ Clash classé conformément au rapport). `qa:browser` : scènes vues, aucune sc�
 
 **Question d’approbation.** Valider les six chorégraphies, leur durée et l’emplacement du face-à-face
 (rival à gauche, joueur à droite, comme la preview).
+
+## Revue opérateur M03 — Mandat M03.2 (2026-10-16)
+
+**Statut de réception : six chorégraphies approuvées comme base de production.** L'impact simultané AA, les trois issues AG, la Garde victorieuse, l'absorption sans blessure et GG doivent conserver exactement leur sémantique. Le peaufinage du tempo/contraste, de l'organisation des légendes et du rendu doit respecter les événements et la défausse des deux Primaires. Aucun recalcul de gameplay.

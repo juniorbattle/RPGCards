@@ -1,5 +1,10 @@
 # CLAUDE.md — Point d'entrée Claude Code
 
+## MANDAT ACTIF — CONTINUATION M03.1 + M03.2
+
+**Mission approuvée aujourd'hui :** `docs/missions/M03_CONTINUATION_AUTONOME.md` (lire ses deux documents fils). **P0 avant P1 :** supprimer la diffusion des `scores` et `multipliers` bruts via les rapports de Clash publics, tester Dissimulation, puis vérifier Rupture et Dissipation en QA navigateur ; **seulement ensuite** optimiser cadrage, lisibilité, éclairage procédural et mobile paysage à partir de la preview déjà validée. **Pas de modification V3.0/V3.2**, pas de fusion `main`, pas de nouveau décor complet. Reprendre M03 depuis la branche courante et fournir deux rapports distincts plus les preuves réelles.
+
+
 ## MANDAT ACTIF — M03 : fidélité visuelle et animation de Clash
 
 **Mission actuellement approuvée** : lire et exécuter `docs/missions/M03_PREVIEW_VALIDEE_HUD_CLASH.md` ainsi que `reference/REFERENCE_VISUELLE_VALIDEE_M03.jpg` (image validée par le responsable). M03 **prévaut sur M02 uniquement pour la direction visuelle, les positions des HUD et le motion design** ; aucune règle V3.0/V3.2 n'est modifiée. Reprendre les modules M02 existants, ne pas repartir de zéro. HUD rival haut-gauche, HUD joueur compact bas-gauche, centre libre, badges ASSAUT/GARDE, Clashes physiques animés via les événements déjà résolus. Développer sur cette branche M03 ou une branche fille, jamais sur `main` sans accord.
