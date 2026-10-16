@@ -1,5 +1,9 @@
 # AGENTS.md — Les Quatre Voies (nouveau dépôt indépendant)
 
+## Règle de branche — décision du responsable (2026-10-16)
+
+Le développement se fait **directement sur `main`** : commit puis push sur `main` après validation (typecheck, tests, build ; QA navigateur quand le rendu change). **Pas de branche provisoire ni de PR**, sauf demande explicite du responsable. Ne jamais réécrire l’historique de `main` (pas de force-push, pas de rebase de commits publiés). Les branches `claude/*` M01–M03 sont de l’historique, déjà intégré.
+
 ## Mandat actif M03 — Preview de référence validée + impact des cartes
 
 Lire `docs/missions/M03_PREVIEW_VALIDEE_HUD_CLASH.md` et inspecter `reference/REFERENCE_VISUELLE_VALIDEE_M03.jpg` **avant de modifier le rendu**. C'est la référence visuelle approuvée pour la composition du duel : **HUD joueur compact bas-gauche, similaire au HUD du rival haut-gauche, centre dégagé, mains lisibles**, modes ASSAUT/GARDE visibles après révélation. La nouvelle animation des Clashes doit être pilotée par les événements et le verdict du moteur M02 ; même le gagnant part à la défausse après sa pose momentanée. Garder Three.js/TS, Art by Code, caméra frontale + inclinée, secret et tests. Les choix M02 contraires à cette direction de présentation sont dépassés, mais **aucune mécanique de gameplay n'est changée**.
@@ -7,14 +11,14 @@ Lire `docs/missions/M03_PREVIEW_VALIDEE_HUD_CLASH.md` et inspecter `reference/RE
 
 ## Extension du mandat — M02 : duel face à face
 
-Le mandat M02 approuvé est dans `docs/missions/M02_CONFRONTATION_FACE_A_FACE_ET_LISIBILITE.md` (à lire après `JOURNAL.md`). Il fait évoluer la **présentation**, pas le règlement : la **vue frontale du rival, son visage et sa posture visibles** deviennent le défaut ; la vue inclinée sert aux manipulations, tout en gardant le rival observable. Caméras orchestrées par phases, sans mouvement obligatoire à chaque clic, et **aucune fuite de secrets par expressions ou IA**. Les tells psychologiques exploitant de vraies intentions secrètes et un éventuel Sang-froid sont explicitement hors-scope tant que non ratifiés. Pas de grande production de décors ; art procédural autonome, gameplay + ergonomie prioritaires. Conserver le socle M01, travailler sur une nouvelle branche et ne pas modifier `main`.
+Le mandat M02 approuvé est dans `docs/missions/M02_CONFRONTATION_FACE_A_FACE_ET_LISIBILITE.md` (à lire après `JOURNAL.md`). Il fait évoluer la **présentation**, pas le règlement : la **vue frontale du rival, son visage et sa posture visibles** deviennent le défaut ; la vue inclinée sert aux manipulations, tout en gardant le rival observable. Caméras orchestrées par phases, sans mouvement obligatoire à chaque clic, et **aucune fuite de secrets par expressions ou IA**. Les tells psychologiques exploitant de vraies intentions secrètes et un éventuel Sang-froid sont explicitement hors-scope tant que non ratifiés. Pas de grande production de décors ; art procédural autonome, gameplay + ergonomie prioritaires. Conserver le socle M01 ; travailler sur `main` (voir « Règle de branche »).
 
 
 ## Mandat de production en vigueur — autonomie M01 et Three.js requis
 
 Le responsable autorise une **mission large** : configurer correctement `RPGCards` puis enchaîner de façon autonome jusqu'à un **MVP duel jouable**. **Vite + TypeScript + Three.js obligatoires** en production ; Three.js fournit une scène/rendu même minimal, le moteur est TS pur et les cartes interactives peuvent rester en DOM/CSS/SVG pour l'ergonomie. Ne pas attendre une validation opérateur entre les lots 0–3 si les règles et critères sont respectés. Document de mandat : `PROMPT_CLAUDE_CODE_MISSION_01.md`.
 
-Si un environnement est abordé, les cadrages **tilted top-down** (vue de dessus inclinée) et **perspective frontale 2.5D** sont des pistes autorisées, **non figées**. L'interface de duel et le gameplay passent avant décors/caméras/ville. La palette, la caméra et la direction artistique définitives ne sont pas encore validées. Les décisions structurelles sont tracées en ADR et dans le journal. Développer sur branche, ne pas modifier `main` sans accord.
+Si un environnement est abordé, les cadrages **tilted top-down** (vue de dessus inclinée) et **perspective frontale 2.5D** sont des pistes autorisées, **non figées**. L'interface de duel et le gameplay passent avant décors/caméras/ville. La palette, la caméra et la direction artistique définitives ne sont pas encore validées. Les décisions structurelles sont tracées en ADR et dans le journal. Développer sur `main` (commits validés, voir « Règle de branche »).
 
 
 > Cette mission est distincte de RPG-ArtByCode / Cité du Tournoi / RPGThreeJS. Ne pas importer leurs missions, cartes, décors, images, palettages, géométries, shaders ou règles de jeu. Seuls les **principes de production vérifiés** de RPG-ArtByCode sont des exemples à évaluer : art par code, graine, mesure, captures, revue, journal.
@@ -29,7 +33,7 @@ Tu es l'agent de développement principal du **RPG de cartes Les Quatre Voies**.
 
 ## Non négociable
 
-- Nouveau dépôt isolé ; `main` et sources de référence ne sont pas modifiés sans autorisation. Créer une branche de travail nommée de façon lisible ; proposition de PR en fin de passe.
+- Nouveau dépôt isolé ; le développement se fait directement sur `main` (commit + push après typecheck, tests, build). Les sources de référence (`source/`, `contracts/`, `simulator_ref/`) ne sont pas modifiées sans autorisation. Pas de branche provisoire ni de PR, sauf demande explicite.
 - TypeScript strict ; moteur de combat pur et déterministe sans DOM, renderer ni timers. Distinguer états privé / public / par joueur, notamment pour les choix tactiques secrets et l'IA.
 - Les **17 cartes** (16 identités ordinaires + 1 Signature Primaire seulement), main 4, deux Secondaires persistantes, leurs 3 états, Interférences en une passe, Insight 0..2, règles V3.0 + delta : tests obligatoires.
 - Choix des actions de Secondaires **après révélation des Primaires**, secrètement et simultanément. Ne pas inventer une phase d'Interférence réactive supplémentaire.
@@ -46,7 +50,7 @@ Tu es l'agent de développement principal du **RPG de cartes Les Quatre Voies**.
 3. Implémenter une tranche verticale **exécutable** et testable, puis tests unitaires / invariants / QA navigateur. Si un outil de capture ou GPU est indisponible, déclarer la limite.
 4. Fournir screenshots reproductibles (seed et état public), logs, diff et compte rendu de performance de la machine utilisée quand pertinents. Conserver les preuves utiles dans `artifacts/qa/` ou `screenshots/qa/` après création de ces répertoires.
 5. **Avant de terminer la passe, mettre à jour `JOURNAL.md`** : `[OK]`, `[KO]`, `[?]`, preuves, les causes, « Pensée », prochaines actions. Écrire un ADR dans `docs/adr/` pour toute décision d'architecture structurante.
-6. Rendre au responsable : branche/commit, fichiers touchés, tests exécutés et leur résultat, captures, limites, décisions nécessitant accord, recommandations ordonnées.
+6. Rendre au responsable : commit(s) poussé(s) sur `main`, fichiers touchés, tests exécutés et leur résultat, captures, limites, décisions nécessitant accord, recommandations ordonnées.
 
 ## Garde-fous de technique
 

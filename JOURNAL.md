@@ -177,4 +177,4 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 
 - **[OK]** Sur demande explicite du responsable (« commit/push vers main, ne pas s’éterniser sur les branches provisoires ; projet au début, sans enjeu »), `main` avance en avance rapide (fast-forward, aucun conflit, aucune réécriture) jusqu’au livrable M03 : M01 → M02 → contrat M03 → M03.
 - **Suite :** développer directement sur `main` (commits validés : typecheck, tests, build, QA) ; les branches `claude/*` M01–M03 restent en historique.
-- **[?]** `CLAUDE.md` / `AGENTS.md` mentionnent encore « branche séparée, `main` inchangée » : à mettre à jour par le responsable (non modifiés ici).
+- **[OK]** `CLAUDE.md` et `AGENTS.md` mis à jour sur demande du responsable : section « Règle de branche » (développement direct sur `main`, pas de branche provisoire ni de PR sauf demande, pas de réécriture d’historique) ; anciennes consignes « branche séparée / `main` inchangée » retirées, y compris dans `contracts/00_GOUVERNANCE_AUTORITE.md` (§ dépôt) et `docs/PROTOCOLE_AGENTS_JOURNAL.md`.
