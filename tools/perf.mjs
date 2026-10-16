@@ -6,7 +6,10 @@ import os from 'node:os';
 import { launch, startPreview, waitDecision } from './browser.mjs';
 
 mkdirSync('artifacts/qa', { recursive: true });
-const commit = execSync('git rev-parse --short HEAD').toString().trim();
+// Build mesuré : dist/ du commit courant, ou un autre build (LQV_DIST + LQV_BUILD_SHA, ex. l’« avant »
+// M03.2) écrit dans LQV_PERF_OUT pour une comparaison sur la même machine, dans la même session.
+const commit = process.env.LQV_BUILD_SHA ?? execSync('git rev-parse --short HEAD').toString().trim();
+const OUT = process.env.LQV_PERF_OUT ?? 'artifacts/qa/perf.json';
 const machine = { cpu: os.cpus()[0]?.model, cores: os.cpus().length, memGB: Math.round(os.totalmem() / 2 ** 30), platform: `${os.platform()} ${os.release()}`, node: process.version };
 const engine = JSON.parse(execSync('npx tsx tools/perf-engine.ts 200').toString().trim().split('\n').pop());
 console.log('moteur', engine);
@@ -48,9 +51,12 @@ try {
   // M03.2 — coût des éléments du décor (vue A) : chaque mesure retire un élément (paramètre QA
   // `ablate`, inerte hors qa=1). Aucun post-traitement n’existe (pas d’EffectComposer) : le tone
   // mapping ACES est calculé dans les shaders des matériaux.
-  scene.ablationViewA = {};
-  for (const a of ['', 'candles', 'banners', 'dust', 'fill', 'candles,banners,dust,fill']) {
-    scene.ablationViewA[a || 'complet'] = await measure('A', a);
+  // (LQV_PERF_ABLATE=0 pour un build antérieur qui ignore `ablate`.)
+  if (process.env.LQV_PERF_ABLATE !== '0') {
+    scene.ablationViewA = {};
+    for (const a of ['', 'candles', 'banners', 'dust', 'fill', 'candles,banners,dust,fill']) {
+      scene.ablationViewA[a || 'complet'] = await measure('A', a);
+    }
   }
   // M03.2 — Clash joué en temps réel (non figé, mouvement complet) : intervalles requestAnimationFrame
   // pendant la scène de Clash (ASSAUT III + soutien Rang contre GARDE IV : absorption). Sous SwiftShader,
@@ -100,5 +106,5 @@ try {
   server.stop();
 }
 const report = { commit, date: new Date().toISOString(), machine, renderer: 'Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU', engine, scene };
-writeFileSync('artifacts/qa/perf.json', JSON.stringify(report, null, 2));
+writeFileSync(OUT, JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));
