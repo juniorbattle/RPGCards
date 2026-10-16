@@ -660,8 +660,9 @@ function resolveClash(ctx: Ctx): void {
     const p = s.players[pid];
     const d = out.damage[pid];
     if (d > 0) {
+      const before = p.hp;
       p.hp = Math.max(0, p.hp - d);
-      ctx.emit('public', 'damage', { player: pid, amount: d, base: out.baseDamage[pid], fixed: out.fixedDamage[pid], hp: p.hp });
+      ctx.emit('public', 'damage', { player: pid, amount: d, base: out.baseDamage[pid], fixed: out.fixedDamage[pid], before, hp: p.hp });
     }
   }
   for (const pid of PLAYERS) {

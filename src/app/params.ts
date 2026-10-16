@@ -22,6 +22,8 @@ export interface AppParams {
   pace: 'normal' | 'fast' | 'instant';
   /** Personnalité de rival forcée (braise | ronce | voile). */
   rival: string | null;
+  /** Captures : temps de résolution sur lequel figer (avec freeze=1). */
+  beat: number | null;
 }
 
 export function readParams(search = window.location.search): AppParams {
@@ -50,5 +52,6 @@ export function readParams(search = window.location.search): AppParams {
     view: q.get('view') === 'A' || q.get('cam') === 'frontal' ? 'A' : q.get('view') === 'B' || q.get('cam') === 'tilted' ? 'B' : 'auto',
     pace: q.get('pace') === 'fast' ? 'fast' : q.get('pace') === 'instant' ? 'instant' : 'normal',
     rival: q.get('rival'),
+    beat: q.has('beat') ? Math.max(0, Math.floor(Number(q.get('beat')) || 0)) : null,
   };
 }

@@ -4,6 +4,8 @@
  * Aucune dépendance DOM — utilisé par l’application, les tests et les outils.
  */
 import { decide, PROFILES, type AiProfile } from './ai/policy';
+import { buildMemory } from './ai/memory';
+import { visibleEvents } from './visibility/view';
 import { applyCommand, createGame } from './engine/engine';
 import type { Command, GameConfig, GameEvent, GameState, PlayerCommand, PlayerId } from './model/types';
 import { CATALOG_VERSION, hashGame, type ReplayRecord } from './replay/replay';
@@ -45,7 +47,7 @@ export class Match {
         if (!ai) continue;
         const v = this.view(pid);
         if (!v.awaitingMe) continue;
-        const cmd = decide(v, ai.profile, ai.seed);
+        const cmd = decide(v, ai.profile, ai.seed, buildMemory(visibleEvents(this.events, pid), pid));
         if (cmd) {
           produced.push(...this.submit(cmd));
           acted = true;

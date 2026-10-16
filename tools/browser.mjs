@@ -75,8 +75,10 @@ export async function secretAudit(page) {
     if (/p2#\d\d/.test(document.getElementById('app').innerHTML)) issues.push('identifiant d’instance adverse présent dans le DOM');
     // Le journal ne contient aucune ligne d’événement privé adverse.
     if (v.phase === 'TACTICS' && v.awaitingMe && v.opp.locked) {
-      const txt = document.querySelector('.journal')?.textContent ?? '';
-      if (/Rival : .*→ (AMPLIFIER|INTERFÉRER|CONSERVER)/.test(txt.split('— TOUR ').pop() ?? '')) issues.push('choix tactique adverse visible avant verrouillage commun');
+      // Journal groupé par tour (M02) : seul le bloc du tour courant est examiné.
+      const turns = document.querySelectorAll('.journal details.turn');
+      const txt = turns.length ? turns[turns.length - 1].textContent ?? '' : document.querySelector('.journal')?.textContent ?? '';
+      if (/Rival : .*→ (AMPLIFIER|INTERFÉRER|CONSERVER)/.test(txt)) issues.push('choix tactique adverse visible avant verrouillage commun');
     }
     return issues;
   });

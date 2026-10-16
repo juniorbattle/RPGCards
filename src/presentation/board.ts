@@ -38,7 +38,7 @@ export function renderApp(root: HTMLElement, c: Controller, hooks: BoardHooks): 
   root.classList.toggle('view-b', c.viewMode === 'B');
   root.replaceChildren(topbar(c, hooks), board(c), sidebar(c));
   if (c.ui.toast) root.append(h('div', { class: cls('toast', c.ui.toast.kind === 'info' && 'info'), role: 'status', 'aria-live': 'polite' }, c.ui.toast.text));
-  if (c.view.phase === 'ENDED') root.append(endOverlay(c));
+  if (c.view.phase === 'ENDED' && !c.sequencing) root.append(endOverlay(c));
 
   const j = root.querySelector('.journal');
   if (j) j.scrollTop = stick ? j.scrollHeight : prevScroll;
@@ -116,17 +116,19 @@ function rivalCaptionText(e: { mood: string; cause: string }): string {
 
 function hud(c: Controller, s: SideView, who: 'me' | 'opp'): HTMLElement {
   const v = c.view;
-  const pct = Math.max(0, Math.min(100, (s.hp / s.maxHp) * 100));
+  const hpShown = c.displayHp(who);
+  const pct = Math.max(0, Math.min(100, (hpShown / s.maxHp) * 100));
   const awaiting = who === 'me' ? v.awaitingMe : v.awaitingOpponent;
   const lockText = who === 'me'
     ? (s.locked ? 'Décision verrouillée' : awaiting ? 'À vous de décider' : 'Rien à décider')
     : (s.locked ? 'Rival : verrouillé (secret)' : awaiting ? (c.aiThinking ? 'Le rival réfléchit' : 'Rival : en attente') : 'Rival');
   const floaters = c.ui.floaters.filter((f) => f.side === who).map((f) => h('span', { class: cls('floater', f.heal && 'heal'), 'data-floater': String(f.id), 'aria-hidden': 'true' }, f.text));
-  return h('section', { class: cls('hud', who), 'aria-label': who === 'me' ? 'Votre duelliste' : 'Duelliste rival' },
+  const focus = c.currentBeat()?.focus ?? [];
+  return h('section', { class: cls('hud', who, focus.includes(`${who}-hp`) && 'beat-hit', focus.includes(`${who}-insight`) && 'beat-insight'), 'aria-label': who === 'me' ? 'Votre duelliste' : 'Duelliste rival' },
     h('span', { class: 'who' }, who === 'me' ? 'Vous' : s.name, ' ', h('span', { html: emblemSvg(s.signatureFamily, 14), title: `Signature ${s.signatureFamily}` })),
     h('div', { class: 'hp' },
-      h('div', { class: 'bar', role: 'meter', 'aria-valuemin': '0', 'aria-valuemax': String(s.maxHp), 'aria-valuenow': String(s.hp), 'aria-label': 'Points de vie' }, h('div', { class: 'fill', style: `width:${pct}%` })),
-      h('div', { class: 'label' }, h('b', null, `${s.hp}`), ` / ${s.maxHp} PV`),
+      h('div', { class: 'bar', role: 'meter', 'aria-valuemin': '0', 'aria-valuemax': String(s.maxHp), 'aria-valuenow': String(hpShown), 'aria-label': 'Points de vie' }, h('div', { class: 'fill', style: `width:${pct}%` })),
+      h('div', { class: 'label' }, h('b', null, `${hpShown}`), ` / ${s.maxHp} PV`),
       ...floaters,
     ),
     h('div', { class: 'insight', title: 'Insight (0 à 2)', 'aria-label': `Insight ${s.insight} sur 2` }, 'Insight', h('span', { class: cls('pip', s.insight >= 1 && 'on') }), h('span', { class: cls('pip', s.insight >= 2 && 'on') })),
@@ -176,7 +178,7 @@ function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
   const v = c.view;
   const s = who === 'me' ? v.me : v.opp;
   const label = h('span', { class: 'zone-label' }, 'Primaire');
-  const zone = h('div', { class: cls('zone', 'primary'), 'data-drop': who === 'me' ? 'primary' : null }, label);
+  const zone = h('div', { class: cls('zone', 'primary', c.currentBeat()?.focus.includes(`${who}-primary`) && 'beat-focus'), 'data-drop': who === 'me' ? 'primary' : null }, label);
   const revealed = v.reveal.primaries?.[who];
   if (revealed) {
     const st = revealed.stance;
@@ -234,7 +236,8 @@ function inspect(c: Controller, defId: string): void {
 function slotZone(c: Controller, who: 'me' | 'opp', slot: SlotIndex, s: SlotView | null): HTMLElement {
   const v = c.view;
   const key = who === 'me' ? (`slot${slot}` as const) : (`opp${slot}` as const);
-  const zone = h('div', { class: 'zone', 'data-drop': who === 'me' ? key : null }, h('span', { class: 'zone-label' }, `Secondaire ${slot + 1}`));
+  const bf = c.currentBeat()?.focus ?? [];
+  const zone = h('div', { class: cls('zone', (bf.includes(`${who}-slot-${slot}`) || bf.includes(`${who}-slots`)) && 'beat-focus'), 'data-drop': who === 'me' ? key : null }, h('span', { class: 'zone-label' }, `Secondaire ${slot + 1}`));
   let interactive = false;
 
   // Brouillon de pose (moi, phase Engagement)
@@ -347,6 +350,20 @@ function strip(c: Controller): HTMLElement {
 
   const waitOpp = () => { msg.append(title(c.aiThinking ? 'Le rival réfléchit…' : 'En attente du rival'), sub('Ses choix restent secrets jusqu’à la révélation simultanée.')); };
 
+  const beat = c.currentBeat();
+  if (beat && c.seq) {
+    const q = c.seq;
+    msg.classList.add('beat', `tone-${beat.tone}`);
+    msg.append(
+      h('span', { class: 'beat-step' }, `Résolution · ${q.index + 1}/${q.beats.length}`),
+      h('span', { class: 'beat-title' }, beat.title),
+      h('span', { class: 'beat-detail' }, beat.detail),
+    );
+    actions.append(btn('Passer ⏭', () => c.skipSequence(), { key: 'act-skip', ghost: true }));
+    if (v.phase === 'RESOLVED') actions.append(btn('Tour suivant', () => c.nextTurn(), { key: 'act-next' }));
+    if (v.phase === 'REPEL' && v.repel?.mine) actions.append(btn('Renoncer au Repoussement', () => c.skipRepel(), { key: 'act-repel-skip', ghost: true }));
+    return h('section', { class: 'strip', 'aria-label': 'Résolution du Clash' }, msg, actions);
+  }
   switch (v.phase) {
     case 'START':
       if (v.awaitingMe) {
@@ -472,9 +489,25 @@ function emblemText(f: string): string {
 }
 
 function journal(c: Controller): HTMLElement {
+  // Regroupement par tour : tour courant ouvert, tours précédents repliés (résumé = verdict du Clash).
+  const byTurn = new Map<number, typeof c.journal>();
+  for (const l of c.journal) {
+    if (!byTurn.has(l.turn)) byTurn.set(l.turn, []);
+    byTurn.get(l.turn)!.push(l);
+  }
+  const turns = [...byTurn.keys()].sort((a, b) => a - b);
+  const last = turns[turns.length - 1];
   return h('section', { class: 'journal', 'aria-label': 'Journal du duel', 'aria-live': 'off', tabindex: '0' },
     h('h4', null, 'Journal (public + vos informations privées)'),
-    c.journal.map((l) => h('div', { class: cls('line', l.tone) }, l.text)));
+    turns.map((t) => {
+      const lines = byTurn.get(t)!.filter((l) => l.tone !== 'system' || !/^— TOUR/.test(l.text));
+      const clash = lines.find((l) => l.tone === 'clash' && /^CLASH/.test(l.text));
+      const summary = clash ? clash.text.replace(/^CLASH — Scores : /, '').slice(0, 90) : `${lines.length} évènement(s)`;
+      const details = h('details', { class: 'turn', open: t === last ? true : null },
+        h('summary', null, h('b', null, `Tour ${t}`), h('span', { class: 'turn-sum' }, ` — ${summary}`)),
+        lines.map((l) => h('div', { class: cls('line', l.tone) }, l.text)));
+      return details;
+    }));
 }
 
 function endOverlay(c: Controller): HTMLElement {
