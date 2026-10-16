@@ -32,10 +32,13 @@ function tex(c: HTMLCanvasElement): THREE.CanvasTexture {
 
 export const HEAD_W = 256;
 export const HEAD_H = 312;
+/** Sur-échantillonnage des textures de tête (M03.2 : le visage occupe ~16 % de la hauteur d’écran). */
+const RES = 2;
 
 /** Tête : cou, visage, oreilles, nez, ombrages, cheveux (arrière + mèches avant). Yeux/sourcils/bouche = meshes séparés. */
 export function headCanvas(p: Figure, seed: number): HTMLCanvasElement {
-  const { c, ctx } = cv(HEAD_W, HEAD_H);
+  const { c, ctx } = cv(HEAD_W * RES, HEAD_H * RES);
+  ctx.scale(RES, RES);
   const L = p.look;
   const rng = makeRng(hashString(`head|${p.id}|${seed}`));
   const cx = 128;
@@ -60,12 +63,16 @@ export function headCanvas(p: Figure, seed: number): HTMLCanvasElement {
   } else {
     ctx.beginPath(); ctx.ellipse(cx, cy - 20, 98, 108, 0, 0, Math.PI * 2); ctx.fill();
   }
-  // cou
-  const neck = ctx.createLinearGradient(0, 230, 0, HEAD_H);
+  // cou court (M03.2 : les épaules montent près du menton) qui se fond dans l’ombre du col
+  const neck = ctx.createLinearGradient(0, 226, 0, 292);
   neck.addColorStop(0, L.skinShade);
-  neck.addColorStop(1, L.skin);
+  neck.addColorStop(0.7, L.skin);
+  neck.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = neck;
-  ctx.fillRect(cx - 34, 220, 68, HEAD_H - 220);
+  ctx.fillRect(cx - 32, 220, 64, 72);
+  // ombre portée du menton sur le cou
+  ctx.fillStyle = 'rgba(40,18,12,0.35)';
+  ctx.beginPath(); ctx.ellipse(cx, cy + 100, 34, 12, 0, 0, Math.PI * 2); ctx.fill();
   // oreilles
   ctx.fillStyle = L.skinShade;
   for (const s of [-1, 1]) { ctx.beginPath(); ctx.ellipse(cx + s * 84, cy + 4, 13, 24, 0, 0, Math.PI * 2); ctx.fill(); }
@@ -103,14 +110,32 @@ export function headCanvas(p: Figure, seed: number): HTMLCanvasElement {
   js.addColorStop(1, 'rgba(60,25,15,0.22)');
   ctx.fillStyle = js;
   ctx.fillRect(0, 0, HEAD_W, HEAD_H);
+  // M03.2 — modelé peint : ombre propre côté droit, ombre de la ligne des cheveux, rebond chaud de bougie
+  const core = ctx.createLinearGradient(cx - 6, 0, cx + 86, 0);
+  core.addColorStop(0, 'rgba(70,30,20,0)');
+  core.addColorStop(1, 'rgba(70,30,20,0.3)');
+  ctx.fillStyle = core;
+  ctx.fillRect(0, 0, HEAD_W, HEAD_H);
+  const hairline = ctx.createLinearGradient(0, cy - 118, 0, cy - 58);
+  hairline.addColorStop(0, 'rgba(45,18,10,0.42)');
+  hairline.addColorStop(1, 'rgba(45,18,10,0)');
+  ctx.fillStyle = hairline;
+  ctx.fillRect(0, 0, HEAD_W, HEAD_H);
+  const bounce = ctx.createRadialGradient(cx - 74, cy + 18, 2, cx - 74, cy + 18, 46);
+  bounce.addColorStop(0, 'rgba(255,186,110,0.3)');
+  bounce.addColorStop(1, 'rgba(255,186,110,0)');
+  ctx.fillStyle = bounce;
+  ctx.fillRect(0, 0, HEAD_W, HEAD_H);
   ctx.restore();
-  ctx.strokeStyle = 'rgba(70,32,22,0.35)';
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = 'rgba(58,24,16,0.55)';
+  ctx.lineWidth = 2.6;
   ctx.stroke();
   // orbites (ombres douces)
   ctx.fillStyle = 'rgba(80,40,30,0.1)';
   for (const s of [-1, 1]) { ctx.beginPath(); ctx.ellipse(cx + s * 46, cy - 2, 32, 19, 0, 0, Math.PI * 2); ctx.fill(); }
-  // nez
+  // nez : ombre douce du côté droit de l’arête, puis trait et narines
+  ctx.fillStyle = 'rgba(90,45,30,0.16)';
+  ctx.beginPath(); ctx.ellipse(cx + 11, cy + 26, 7, 15, 0.15, 0, Math.PI * 2); ctx.fill();
   ctx.strokeStyle = 'rgba(90,45,30,0.42)';
   ctx.lineWidth = 2.5;
   ctx.beginPath(); ctx.moveTo(cx + 5, cy + 10); ctx.quadraticCurveTo(cx + 12, cy + 34, cx + 3, cy + 41); ctx.stroke();
@@ -259,9 +284,12 @@ export function torsoCanvas(p: Figure, seed: number): HTMLCanvasElement {
     ctx.fillRect(W / 2 - 6, 30, 12, H - 30);
     for (let i = 0; i < 5; i++) { ctx.beginPath(); ctx.arc(W / 2 + 20, 70 + i * 44, 5, 0, Math.PI * 2); ctx.fill(); }
   }
-  // emblème de famille
-  ctx.fillStyle = L.trim;
-  drawEmblem(ctx, p.family, W / 2 - 92, 120, 22);
+  // emblème de famille, haut de poitrine (M03.2 : au-dessus des mains qui tiennent l’éventail) ; la
+  // cape le remplace par son fermoir, la capuche portant déjà la couleur de la famille
+  if (p.look.outfit !== 'cloak') {
+    ctx.fillStyle = L.trim;
+    drawEmblem(ctx, p.family, W / 2 - 92, 84, 22);
+  }
   // contour bras
   ctx.strokeStyle = 'rgba(0,0,0,0.35)';
   ctx.lineWidth = 4;
@@ -273,17 +301,51 @@ export function torsoTexture(p: Figure, seed: number): THREE.CanvasTexture {
   return tex(torsoCanvas(p, seed));
 }
 
+/** Main gauche vue de face tenant l’éventail (M03.2) : manche, dos de la main, doigts repliés sur les
+ *  cartes, pouce devant ; la main droite est la même texture en miroir. */
 export function handTexture(p: Figure): THREE.CanvasTexture {
-  const { c, ctx } = cv(128, 128);
+  const { c, ctx } = cv(256, 256);
+  ctx.scale(2, 2);
   const L = p.look;
-  ctx.fillStyle = L.cloth;
-  ctx.fillRect(28, 0, 72, 40);
+  // manche et revers
+  const sl = ctx.createLinearGradient(0, 0, 0, 46);
+  sl.addColorStop(0, L.cloth);
+  sl.addColorStop(1, L.clothHi);
+  ctx.fillStyle = sl;
+  ctx.beginPath(); ctx.moveTo(22, 0); ctx.lineTo(106, 0); ctx.lineTo(100, 44); ctx.lineTo(28, 44); ctx.closePath(); ctx.fill();
   ctx.fillStyle = L.trim;
-  ctx.fillRect(28, 34, 72, 8);
+  ctx.fillRect(26, 38, 76, 8);
+  // dos de la main (dégradé chaud, contour sombre)
+  const back = ctx.createLinearGradient(30, 46, 98, 110);
+  back.addColorStop(0, L.skin);
+  back.addColorStop(1, L.skinShade);
+  ctx.fillStyle = back;
+  ctx.beginPath();
+  ctx.moveTo(32, 46);
+  ctx.quadraticCurveTo(28, 86, 44, 104);
+  ctx.lineTo(92, 104);
+  ctx.quadraticCurveTo(102, 80, 96, 46);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(60,26,16,0.55)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // quatre doigts repliés (phalanges arrondies), ombre entre les doigts
+  for (let i = 0; i < 4; i++) {
+    const x = 44 + i * 13.5;
+    const fg = ctx.createLinearGradient(0, 96, 0, 122);
+    fg.addColorStop(0, L.skin);
+    fg.addColorStop(1, L.skinShade);
+    ctx.fillStyle = fg;
+    ctx.beginPath(); ctx.ellipse(x, 110, 7, 12, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.stroke();
+  }
+  // pouce devant, sur la gauche, et reflet de bougie sur le dos de la main
   ctx.fillStyle = L.skin;
-  ctx.beginPath(); ctx.ellipse(64, 76, 34, 30, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.fillStyle = L.skinShade;
-  for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.ellipse(40 + i * 16, 104, 7, 12, 0, 0, Math.PI * 2); ctx.fill(); }
+  ctx.beginPath(); ctx.ellipse(28, 84, 9, 17, -0.5, 0, Math.PI * 2); ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(255,220,180,0.28)';
+  ctx.beginPath(); ctx.ellipse(56, 66, 16, 8, -0.3, 0, Math.PI * 2); ctx.fill();
   return tex(c);
 }
 
@@ -343,12 +405,32 @@ export function irisTexture(color: string): THREE.CanvasTexture {
 }
 
 export function lidCanvas(p: Figure): HTMLCanvasElement {
-  const { c, ctx } = cv(64, 40);
-  ctx.fillStyle = p.look.skinShade;
-  ctx.fillRect(0, 0, 64, 40);
+  const { c, ctx } = cv(128, 80);
+  // M03.2 : paupière fondue dans le modelé du visage (haut et côtés transparents, plus de bandeau
+  // rectangulaire), peau → ombre près du bord ciliaire, puis trait de cils.
+  const g = ctx.createLinearGradient(0, 0, 0, 80);
+  g.addColorStop(0, p.look.skin);
+  g.addColorStop(1, p.look.skinShade);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 128, 80);
+  ctx.globalCompositeOperation = 'destination-in';
+  const v = ctx.createLinearGradient(0, 0, 0, 80);
+  v.addColorStop(0, 'rgba(0,0,0,0)');
+  v.addColorStop(0.45, 'rgba(0,0,0,1)');
+  ctx.fillStyle = v;
+  ctx.fillRect(0, 0, 128, 80);
+  const hz = ctx.createLinearGradient(0, 0, 128, 0);
+  hz.addColorStop(0, 'rgba(0,0,0,0)');
+  hz.addColorStop(0.16, 'rgba(0,0,0,1)');
+  hz.addColorStop(0.84, 'rgba(0,0,0,1)');
+  hz.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = hz;
+  ctx.fillRect(0, 0, 128, 80);
+  ctx.globalCompositeOperation = 'source-over';
   ctx.strokeStyle = '#1a0f0c';
-  ctx.lineWidth = 4;
-  ctx.beginPath(); ctx.moveTo(0, 38); ctx.quadraticCurveTo(32, 42, 64, 38); ctx.stroke();
+  ctx.lineCap = 'round';
+  ctx.lineWidth = 7;
+  ctx.beginPath(); ctx.moveTo(6, 74); ctx.quadraticCurveTo(64, 84, 122, 74); ctx.stroke();
   return c;
 }
 
@@ -378,7 +460,11 @@ export function mouthCanvas(shape: MouthShape): HTMLCanvasElement {
   ctx.lineWidth = 5;
   const W = 96;
   switch (shape) {
-    case 'neutral': ctx.beginPath(); ctx.moveTo(26, 24); ctx.quadraticCurveTo(48, 27, 70, 24); ctx.stroke(); break;
+    case 'neutral':
+      // lèvre inférieure pleine (rosée) sous la ligne de bouche
+      ctx.fillStyle = 'rgba(196,110,100,0.85)';
+      ctx.beginPath(); ctx.moveTo(30, 25); ctx.quadraticCurveTo(48, 37, 66, 25); ctx.quadraticCurveTo(48, 28, 30, 25); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(26, 24); ctx.quadraticCurveTo(48, 27, 70, 24); ctx.stroke(); break;
     case 'tight': ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(32, 24); ctx.lineTo(64, 24); ctx.stroke(); break;
     case 'smile': ctx.beginPath(); ctx.moveTo(20, 18); ctx.quadraticCurveTo(48, 38, 76, 18); ctx.stroke(); break;
     case 'smirk': ctx.beginPath(); ctx.moveTo(26, 26); ctx.quadraticCurveTo(52, 30, 74, 16); ctx.stroke(); break;

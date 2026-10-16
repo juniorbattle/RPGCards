@@ -21,7 +21,7 @@ import { cardBackCanvas } from '../art/cardArt';
 import type { ViewMode } from '../presentation/director';
 import type { Expression, Gesture } from '../presentation/expression';
 import type { Mood, RivalPersonality } from '../presentation/personalities';
-import { createRival, HEAD_WORLD, RIVAL_Z, type RivalRig } from './rival';
+import { CHEST_WORLD, createRival, HEAD_WORLD, RIVAL_Z, type RivalRig } from './rival';
 
 /** Conservé pour compatibilité des paramètres d’URL M01 (`cam=`) : tilted ≙ B, frontal ≙ A. */
 export type CameraPreset = 'tilted' | 'frontal';
@@ -85,7 +85,7 @@ const CLASH_Z = 0.1;
 const ME_Z = 1.9;
 const VIEW_A = { pos: new THREE.Vector3(0, 3.15, 8.6), look: new THREE.Vector3(0, 2.45, RIVAL_Z) };
 const VIEW_B = { pos: new THREE.Vector3(0, 7.9, 7.6), look: new THREE.Vector3(0, 1.0, -0.6) };
-const DEFAULT_LAYOUT: ArenaLayout = { A: { head: 0.205, edge: 0.455 }, B: { head: 0.11, edge: 0.29 } };
+const DEFAULT_LAYOUT: ArenaLayout = { A: { head: 0.205, edge: 0.455 }, B: { head: 0.148, edge: 0.305 } };
 
 type Ctx2 = CanvasRenderingContext2D;
 
@@ -133,9 +133,9 @@ function backdropTexture(seed: number): THREE.CanvasTexture {
   // Mur percé d’arches : on peint le mur dans un calque puis on évide les arches.
   const wall = canvas(W, H);
   const wg = wall.ctx.createLinearGradient(0, 0, 0, H);
-  wg.addColorStop(0, '#1b120f');
-  wg.addColorStop(0.6, '#24170f');
-  wg.addColorStop(1, '#120c0a');
+  wg.addColorStop(0, '#2a1c15');
+  wg.addColorStop(0.6, '#3a2617');
+  wg.addColorStop(1, '#1c130e');
   wall.ctx.fillStyle = wg;
   wall.ctx.fillRect(0, 0, W, H);
   // appareillage de pierre
@@ -204,7 +204,7 @@ function backdropTexture(seed: number): THREE.CanvasTexture {
   // halos chauds des bougies peints sur le mur
   for (const [x, y, r] of [[0.19, 0.62, 170], [0.81, 0.62, 170], [0.36, 0.7, 120], [0.64, 0.7, 120]] as const) {
     const g = ctx.createRadialGradient(x * W, y * H, 4, x * W, y * H, r);
-    g.addColorStop(0, 'rgba(255,170,80,0.32)');
+    g.addColorStop(0, 'rgba(255,170,80,0.42)');
     g.addColorStop(1, 'rgba(255,140,60,0)');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
@@ -218,10 +218,11 @@ function backdropTexture(seed: number): THREE.CanvasTexture {
   return texture(c, 2);
 }
 
-/** Bannière d’une famille : étoffe, liseré doré, grand emblème lumineux, pointe. */
+/** Bannière d’une famille : étoffe, liseré doré, grand emblème lumineux, pointe (M03.2 : plus courte,
+ *  1:2, pour rester entière au-dessus du rival agrandi). */
 function bannerTexture(family: Family, seed: number): THREE.CanvasTexture {
   const W = 256;
-  const H = 768;
+  const H = 512;
   const { c, ctx } = canvas(W, H);
   const p = FAMILY_PALETTE[family];
   const rng = makeRng(hashString(`banner|${family}|${seed}`));
@@ -245,15 +246,15 @@ function bannerTexture(family: Family, seed: number): THREE.CanvasTexture {
   ctx.strokeStyle = '#d9b26a';
   ctx.lineWidth = 6;
   ctx.beginPath();
-  ctx.moveTo(14, 0); ctx.lineTo(14, H - 120); ctx.lineTo(W / 2, H - 40); ctx.lineTo(W - 14, H - 120); ctx.lineTo(W - 14, 0);
+  ctx.moveTo(14, 0); ctx.lineTo(14, H - 100); ctx.lineTo(W / 2, H - 34); ctx.lineTo(W - 14, H - 100); ctx.lineTo(W - 14, 0);
   ctx.stroke();
   ctx.lineWidth = 2;
   ctx.strokeStyle = 'rgba(255,220,150,0.6)';
   ctx.beginPath();
-  ctx.moveTo(26, 0); ctx.lineTo(26, H - 132); ctx.lineTo(W / 2, H - 58); ctx.lineTo(W - 26, H - 132); ctx.lineTo(W - 26, 0);
+  ctx.moveTo(26, 0); ctx.lineTo(26, H - 112); ctx.lineTo(W / 2, H - 52); ctx.lineTo(W - 26, H - 112); ctx.lineTo(W - 26, 0);
   ctx.stroke();
   // losange décoratif + emblème lumineux
-  const ey = 250;
+  const ey = 170;
   ctx.fillStyle = 'rgba(0,0,0,0.35)';
   ctx.beginPath(); ctx.moveTo(W / 2, ey - 112); ctx.lineTo(W / 2 + 86, ey); ctx.lineTo(W / 2, ey + 112); ctx.lineTo(W / 2 - 86, ey); ctx.closePath(); ctx.fill();
   ctx.strokeStyle = '#d9b26a';
@@ -265,14 +266,14 @@ function bannerTexture(family: Family, seed: number): THREE.CanvasTexture {
   drawEmblem(ctx, family, W / 2, ey, 60);
   ctx.shadowBlur = 0;
   // petits motifs
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 2; i++) {
     ctx.fillStyle = `${p.accent}${i % 2 ? '55' : '88'}`;
-    drawEmblem(ctx, family, W / 2, 430 + i * 52, 10 + (i % 2) * 4);
+    drawEmblem(ctx, family, W / 2, 330 + i * 44, 10 + (i % 2) * 4);
   }
   // pointe
   ctx.globalCompositeOperation = 'destination-out';
   ctx.beginPath();
-  ctx.moveTo(0, H); ctx.lineTo(0, H - 118); ctx.lineTo(W / 2, H - 34); ctx.lineTo(W, H - 118); ctx.lineTo(W, H);
+  ctx.moveTo(0, H); ctx.lineTo(0, H - 98); ctx.lineTo(W / 2, H - 28); ctx.lineTo(W, H - 98); ctx.lineTo(W, H);
   ctx.closePath();
   ctx.fill();
   return texture(c);
@@ -284,10 +285,11 @@ function tableTexture(seed: number): THREE.CanvasTexture {
   const H = 1024;
   const { c, ctx } = canvas(W, H);
   const rng = makeRng(hashString(`table|${seed}`));
+  // M03.2 : bois verni plus clair et plus chaud (la preview montre une table lumineuse).
   const g = ctx.createLinearGradient(0, 0, 0, H);
-  g.addColorStop(0, '#3a2416');
-  g.addColorStop(0.5, '#2c1b11');
-  g.addColorStop(1, '#22150d');
+  g.addColorStop(0, '#553420');
+  g.addColorStop(0.5, '#452a19');
+  g.addColorStop(1, '#341f12');
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, W, H);
   // veinage
@@ -301,7 +303,7 @@ function tableTexture(seed: number): THREE.CanvasTexture {
     ctx.stroke();
   }
   // reflets de vernis (bandes chaudes)
-  for (const [y, a] of [[0.3, 0.06], [0.62, 0.05]] as const) {
+  for (const [y, a] of [[0.3, 0.1], [0.62, 0.08]] as const) {
     const sh = ctx.createLinearGradient(0, H * (y - 0.08), 0, H * (y + 0.08));
     sh.addColorStop(0, 'rgba(255,190,120,0)');
     sh.addColorStop(0.5, `rgba(255,190,120,${a})`);
@@ -500,7 +502,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
   renderer.setPixelRatio(pixelRatio);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.22;
+  renderer.toneMappingExposure = 1.3;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.domElement.className = 'arena-canvas';
   renderer.domElement.setAttribute('aria-hidden', 'true');
@@ -520,17 +522,25 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   let layout: ArenaLayout = DEFAULT_LAYOUT;
 
   // --- Lumières : ambiance chaude de bougies, clé sur le visage du rival, contre-jour de famille.
-  scene.add(new THREE.HemisphereLight(0xffcf9a, 0x2a1a14, 0.85));
-  const key = new THREE.DirectionalLight(0xffe2bc, 1.05);
+  // M03.2 : visage et table plus éclairés (fill frontal doux, lampe chaude au-dessus du plateau).
+  scene.add(new THREE.HemisphereLight(0xffd4a4, 0x2a1a14, 1.0));
+  const key = new THREE.DirectionalLight(0xffe2bc, 1.35);
   key.position.set(-2.5, 6, 9);
-  key.target.position.set(0, 2.4, RIVAL_Z);
+  key.target.position.copy(HEAD_WORLD);
   scene.add(key, key.target);
+  const fill = new THREE.DirectionalLight(0xffd2a8, 0.5);
+  fill.position.set(1.5, 2.2, 7);
+  fill.target.position.copy(HEAD_WORLD);
+  scene.add(fill, fill.target);
+  const tableLamp = new THREE.PointLight(0xffd6a0, 2.4, 11, 1.5);
+  tableLamp.position.set(0, 3.6, 0.6);
+  scene.add(tableLamp);
   const rim = new THREE.PointLight(0xffffff, 7, 7, 1.6);
   rim.position.set(0, 3.8, RIVAL_Z - 1.3);
   scene.add(rim);
   const candleLights: THREE.PointLight[] = [];
   for (const [x, y, z] of [[-3.6, TABLE_TOP + 0.7, -1.9], [3.6, TABLE_TOP + 0.7, -1.9], [-5.6, 2.4, -6.4], [5.6, 2.4, -6.4]] as const) {
-    const l = new THREE.PointLight(0xffa458, 3.6, 8, 1.8);
+    const l = new THREE.PointLight(0xffa458, z > -3 ? 2.2 : 3.2, 8, 1.8);
     l.position.set(x, y, z);
     scene.add(l);
     candleLights.push(l);
@@ -581,13 +591,13 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     const mat = new THREE.MeshStandardMaterial({ map: bannerTexture(f, opts.artSeed), transparent: true, side: THREE.DoubleSide, roughness: 0.85, emissive: new THREE.Color(0xffffff), emissiveMap: null, emissiveIntensity: 0 });
     mat.emissiveMap = mat.map;
     mat.emissiveIntensity = 0.32;
-    const b = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 3.6), mat);
-    b.position.set(bannerX[i]!, 3.75, -7.2);
+    const b = new THREE.Mesh(new THREE.PlaneGeometry(0.95, 1.9), mat);
+    b.position.set(bannerX[i]!, 2.6, -7.2);
     scene.add(b);
     banners.push(b);
-    const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.5, 6), brass);
+    const rod = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 1.2, 6), brass);
     rod.rotation.z = Math.PI / 2;
-    rod.position.set(bannerX[i]!, 5.57, -7.18);
+    rod.position.set(bannerX[i]!, 3.57, -7.18);
     scene.add(rod);
   });
 
@@ -602,7 +612,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   // --- Table de duel
   const tableTex = tableTexture(opts.artSeed);
   const tableDepth = TABLE_NEAR_Z - TABLE_FAR_Z;
-  const topMat = new THREE.MeshStandardMaterial({ map: tableTex, roughness: 0.48, metalness: 0.08 });
+  const topMat = new THREE.MeshStandardMaterial({ map: tableTex, roughness: 0.66, metalness: 0.05 });
   const woodMat = new THREE.MeshStandardMaterial({ color: 0x2a1910, roughness: 0.55 });
   const table = new THREE.Mesh(new THREE.BoxGeometry(TABLE_W, 0.24, tableDepth), [woodMat, woodMat, topMat, woodMat, woodMat, woodMat]);
   table.position.set(0, TABLE_TOP - 0.12, (TABLE_FAR_Z + TABLE_NEAR_Z) / 2);
@@ -663,8 +673,8 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     scene.add(pts);
     return mat;
   };
-  const haloMat = pointsOf(1.15, 0.06, haloTexture(), 0.18, [1, 0.85, 0.7]);
-  const flameMat = pointsOf(0.24, 0.06, flameTexture(), 0.35, [1, 1, 1]);
+  const haloMat = pointsOf(0.62, 0.06, haloTexture(), 0.18, [1, 0.85, 0.7]);
+  const flameMat = pointsOf(0.2, 0.06, flameTexture(), 0.35, [1, 1, 1]);
 
   // --- Poussières dorées
   const N = 140;
@@ -741,7 +751,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   }
 
   const zOf = (side: 'me' | 'opp') => (side === 'me' ? ME_Z : TABLE_FAR_Z + 0.6);
-  const chestOf = (side: 'me' | 'opp') => (side === 'me' ? new THREE.Vector3(0, TABLE_TOP + 0.4, 2.6) : new THREE.Vector3(0, 2.1, RIVAL_Z + 0.4));
+  const chestOf = (side: 'me' | 'opp') => (side === 'me' ? new THREE.Vector3(0, TABLE_TOP + 0.4, 2.6) : CHEST_WORLD.clone());
   let meHex = 0xffffff;
   let oppHex = FAMILY_PALETTE[opts.personality.family].hex;
 
