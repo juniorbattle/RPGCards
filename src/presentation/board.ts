@@ -144,6 +144,12 @@ export function patchRivalBubble(root: ParentNode, c: Controller): void {
 // ---------------------------------------------------------------------------
 // HUD compacts (même famille visuelle : rival haut-gauche, joueur bas-gauche)
 
+/** Défausse listée au survol : celle du plateau MIS EN SCÈNE (comme les compteurs), carte camouflée non nommée. */
+function discardTitle(c: Controller, who: 'me' | 'opp'): string {
+  const s = who === 'me' ? c.boardView().me : c.boardView().opp;
+  return s.discard.map((d) => (d ? cardTitle(cardDef(d)) : 'carte masquée (nommée en fin de tour)')).join(', ') || 'vide';
+}
+
 function hud(c: Controller, s: SideView, who: 'me' | 'opp'): HTMLElement {
   const v = c.view;
   const awaiting = who === 'me' ? v.awaitingMe : v.awaitingOpponent;
@@ -162,7 +168,7 @@ function hud(c: Controller, s: SideView, who: 'me' | 'opp'): HTMLElement {
       h('span', { class: 'sep', 'aria-hidden': 'true' }, '|'),
       h('span', null, 'Pioche ', h('b', null, String(counts.deck))),
       h('span', { class: 'sep', 'aria-hidden': 'true' }, '|'),
-      h('span', { title: s.discard.map((d) => cardTitle(cardDef(d))).join(', ') || 'vide' }, 'Déf. ', h('b', { 'data-discard': who }, String(counts.discard))),
+      h('span', { 'data-discard-list': who, title: discardTitle(c, who) }, 'Déf. ', h('b', { 'data-discard': who }, String(counts.discard))),
     ),
     who === 'opp' ? h('div', { class: 'hud-chips' }, status, oppTechChips(c, s)) : null,
   );
@@ -564,6 +570,7 @@ export function patchBeat(root: HTMLElement, c: Controller): void {
     root.querySelector(`.hud.${who} .hp`)?.replaceWith(hpEl(c, side, who));
     const d = root.querySelector(`[data-discard="${who}"]`);
     if (d) d.textContent = String(c.displayCounts(who).discard);
+    root.querySelector(`[data-discard-list="${who}"]`)?.setAttribute('title', discardTitle(c, who));
     const hudEl = root.querySelector(`.hud.${who}`);
     hudEl?.classList.toggle('beat-hit', beat.focus.includes(`${who}-hp`));
     hudEl?.classList.toggle('beat-insight', beat.focus.includes(`${who}-insight`));

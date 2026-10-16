@@ -28,3 +28,9 @@ Base : règlement V3.0 + avenant mandaté V3.2 (D-01 affinité de Rang +1 ; D-02
 - ARB-003 : découle du contrat (§12.3) selon l’opérateur — maintenu, testé.
 - ARB-001, ARB-002, ARB-005, ARB-011 : **toujours proposés**, non ratifiés ; comportement M01 conservé et non bloquant pour M02.
 - Correctif M02 : la consommation d’une carte masquée et un Repoussement évaluent désormais le camouflage **avant** de retirer la carte (fuite détectée par le test G24 pendant le refactor, jamais livrée).
+
+## Note M03.1B (2026-10-16) — ARB-005 appliqué de façon cohérente, non tranché
+
+- ARB-005 reste **proposé** (non ratifié) ; sa chronologie implémentée (« identité visible en défausse publique à la fin du tour ») est désormais appliquée partout : la vue adverse ne nomme plus pendant la fenêtre de Repoussement une carte camouflée qui vient d’être consommée (elle y figurait en clair dans `viewFor().opp.discard`), et une carte camouflée **remplacée** pendant l’engagement n’est plus nommée par l’événement public `replaced` (elle l’était aussitôt) : elle rejoint la défausse masquée, nommée à la fin du tour.
+- **Point à arbitrer (ARB-005b)** : si l’opérateur juge qu’une carte remplacée sort du périmètre de Dissimulation (« l’autre Secondaire ») et devient aussitôt une carte « réellement défaussée » publique (§13.2), il suffit de revenir à la publication immédiate dans `applyCommit` ; aucune issue de jeu n’en dépend.
+- Effets d’une Secondaire camouflée : voir ADR 011 (conséquences publiques, origine privée).

@@ -3,7 +3,7 @@
  * Utilisé par le moteur (données réelles), l’IA et la prévisualisation UI (hypothèses
  * construites uniquement à partir d’informations autorisées).
  */
-import type { CardDef, EffectId } from '../catalog/cards';
+import { EFFECTS, type CardDef, type EffectId } from '../catalog/cards';
 import type { PlayerId, SlotIndex, Stance, TacticMode } from '../model/types';
 
 export interface ClashUse {
@@ -34,11 +34,45 @@ export interface UseResult extends ClashUse {
   targetEngaged: boolean;
 }
 
+/**
+ * Origine typée d’un effet (ADR 011) : l’effet propre de la Primaire (publique après révélation) ou
+ * l’effet d’utilisation d’une Secondaire engagée, repérée par sa case. Sert à décider, au moment de
+ * la publication, si la source était camouflée — jamais par rapprochement de noms.
+ */
+export type EffectSource = { kind: 'primary' } | { kind: 'secondary'; slot: SlotIndex };
+
+/**
+ * Conséquence d’un effet RÉUSSI, telle qu’elle s’observe dans l’état public : dégâts fixes, soin,
+ * Insight, destination de la carte, neutralisation d’un effet de Primaire, ou rien de public (`peek`).
+ */
+export type EffectConsequence =
+  | { kind: 'fixed-damage'; amount: number }
+  | { kind: 'heal' }
+  | { kind: 'insight' }
+  | { kind: 'destination'; dest: 'top' | 'bottom' }
+  | { kind: 'neutralize' }
+  | { kind: 'peek' };
+
 export interface EffectOutcome {
   player: PlayerId;
   effect: EffectId;
   status: 'success' | 'failed' | 'cancelled';
   detail: string;
+  source: EffectSource;
+  consequence?: EffectConsequence;
+  /** Effet de Primaire neutralisé par Silence : case de la Secondaire adverse qui l’a neutralisé. */
+  silencedBy?: { player: PlayerId; slot: SlotIndex };
+}
+
+/** Motif d’un gain d’Insight : naturel (Garde victorieuse, Interférence réussie) ou effet de carte. */
+export type InsightSource =
+  | { kind: 'guard-win' }
+  | { kind: 'interference' }
+  | { kind: 'effect'; effect: EffectId; slot: SlotIndex };
+
+/** Libellé public ou privé d’un motif d’Insight (« Garde victorieuse », « Ferveur »…). */
+export function insightLabel(x: InsightSource): string {
+  return x.kind === 'guard-win' ? 'Garde victorieuse' : x.kind === 'interference' ? 'Interférence réussie' : EFFECTS[x.effect].name;
 }
 
 export interface ClashOutcome {
@@ -58,7 +92,9 @@ export interface ClashOutcome {
   absorbed: number;
   zeroDamageRankWin: boolean;
   heal: Record<PlayerId, number>;
+  /** Libellés des motifs d’Insight (dérivés de `insightSources`). */
   insightReasons: Record<PlayerId, string[]>;
+  insightSources: Record<PlayerId, InsightSource[]>;
   destinations: Record<PlayerId, Partial<Record<SlotIndex, 'discard' | 'top' | 'bottom' | 'stay'>>>;
   effects: EffectOutcome[];
   /** Repoussement potentiel du vainqueur (cibles calculées par le moteur après consommation). */
@@ -118,8 +154,11 @@ export function computeClash(input: ClashInput): ClashOutcome {
 
   // 3. Silence : neutralise l’effet de Primaire adverse encore en attente.
   const silenced: Record<PlayerId, boolean> = { p1: false, p2: false };
+  const silencer: Record<PlayerId, { player: PlayerId; slot: SlotIndex } | undefined> = { p1: undefined, p2: undefined };
   for (const p of IDS) {
-    silenced[OPP[p]] = uses[p].some((u) => u.def.effect === 'silence' && u.mode === 'interfere' && u.success && !u.cancelled && u.targetRank === 4);
+    const s = uses[p].find((u) => u.def.effect === 'silence' && u.mode === 'interfere' && u.success && !u.cancelled && u.targetRank === 4);
+    silenced[OPP[p]] = !!s;
+    if (s) silencer[OPP[p]] = { player: p, slot: s.slot };
   }
 
   // 4. Scores et multiplicateurs.
@@ -169,32 +208,35 @@ export function computeClash(input: ClashInput): ClashOutcome {
   // 5-6. Effets fixes après formule (Braise, Étincelle, Contrecoup), simultanés.
   const fixedDamage: Record<PlayerId, number> = { p1: 0, p2: 0 };
   const effects: EffectOutcome[] = [];
+  const PRIMARY: EffectSource = { kind: 'primary' };
+  const sec = (u: ClashUse): EffectSource => ({ kind: 'secondary', slot: u.slot });
+  const muted = (p: PlayerId) => (silencer[p] ? { silencedBy: silencer[p] } : {});
   const bothAssault = s1 === 'assault' && s2 === 'assault';
   for (const p of IDS) {
     const o = OPP[p];
     const prim = input[p].primary;
     const eff = prim.effect;
     if (eff === 'braise' && input[p].stance === 'assault') {
-      if (silenced[p]) effects.push({ player: p, effect: eff, status: 'cancelled', detail: 'neutralisée par Silence' });
+      if (silenced[p]) effects.push({ player: p, effect: eff, status: 'cancelled', detail: 'neutralisée par Silence', source: PRIMARY, ...muted(p) });
       else if (bothAssault && winner === p && !uses[p].some((u) => u.mode === 'damage' && !u.cancelled)) {
         fixedDamage[o] += 2;
-        effects.push({ player: p, effect: eff, status: 'success', detail: '+2 dégâts fixes' });
-      } else effects.push({ player: p, effect: eff, status: 'failed', detail: bothAssault && winner === p ? 'soutien Dégâts valide présent' : 'pas de victoire contre un Assaut' });
+        effects.push({ player: p, effect: eff, status: 'success', detail: '+2 dégâts fixes', source: PRIMARY });
+      } else effects.push({ player: p, effect: eff, status: 'failed', detail: bothAssault && winner === p ? 'soutien Dégâts valide présent' : 'pas de victoire contre un Assaut', source: PRIMARY });
     }
     if (eff === 'contrecoup' && input[p].stance === 'assault') {
-      if (silenced[p]) effects.push({ player: p, effect: eff, status: 'cancelled', detail: 'neutralisé par Silence' });
+      if (silenced[p]) effects.push({ player: p, effect: eff, status: 'cancelled', detail: 'neutralisé par Silence', source: PRIMARY, ...muted(p) });
       else if (bothAssault && winner === o) {
         fixedDamage[o] += 3;
-        effects.push({ player: p, effect: eff, status: 'success', detail: '3 dégâts fixes simultanés' });
-      } else effects.push({ player: p, effect: eff, status: 'failed', detail: 'pas de défaite contre un Assaut' });
+        effects.push({ player: p, effect: eff, status: 'success', detail: '3 dégâts fixes simultanés', source: PRIMARY });
+      } else effects.push({ player: p, effect: eff, status: 'failed', detail: 'pas de défaite contre un Assaut', source: PRIMARY });
     }
     const etincelle = uses[p].find((u) => u.def.effect === 'etincelle' && u.mode === 'rank');
     if (etincelle && input[p].stance === 'assault') {
-      if (etincelle.cancelled) effects.push({ player: p, effect: 'etincelle', status: 'cancelled', detail: 'Interférée' });
+      if (etincelle.cancelled) effects.push({ player: p, effect: 'etincelle', status: 'cancelled', detail: 'Interférée', source: sec(etincelle) });
       else if (winner === p && baseDamage[o] > 0 && Number.isFinite(scores[p]) && Number.isFinite(scores[o]) && scores[p] - scores[o] === 1) {
         fixedDamage[o] += 2;
-        effects.push({ player: p, effect: 'etincelle', status: 'success', detail: '+2 dégâts fixes (avance exacte de 1)' });
-      } else effects.push({ player: p, effect: 'etincelle', status: 'failed', detail: 'victoire blessante avec exactement 1 point d’avance requise' });
+        effects.push({ player: p, effect: 'etincelle', status: 'success', detail: '+2 dégâts fixes (avance exacte de 1)', source: sec(etincelle), consequence: { kind: 'fixed-damage', amount: 2 } });
+      } else effects.push({ player: p, effect: 'etincelle', status: 'failed', detail: 'victoire blessante avec exactement 1 point d’avance requise', source: sec(etincelle) });
     }
   }
   const damage: Record<PlayerId, number> = { p1: baseDamage.p1 + fixedDamage.p1, p2: baseDamage.p2 + fixedDamage.p2 };
@@ -202,35 +244,35 @@ export function computeClash(input: ClashInput): ClashOutcome {
 
   // Soins, Insight, destinations.
   const heal: Record<PlayerId, number> = { p1: 0, p2: 0 };
-  const insightReasons: Record<PlayerId, string[]> = { p1: [], p2: [] };
+  const insightSources: Record<PlayerId, InsightSource[]> = { p1: [], p2: [] };
   const destinations: ClashOutcome['destinations'] = { p1: {}, p2: {} };
   const detourPeek: Record<PlayerId, boolean> = { p1: false, p2: false };
 
   for (const p of IDS) {
     const o = OPP[p];
     const side = input[p];
-    if (guardWin && winner === p) insightReasons[p].push('Garde victorieuse');
-    if (uses[p].some((u) => u.mode === 'interfere' && u.success)) insightReasons[p].push('Interférence réussie');
+    if (guardWin && winner === p) insightSources[p].push({ kind: 'guard-win' });
+    if (uses[p].some((u) => u.mode === 'interfere' && u.success)) insightSources[p].push({ kind: 'interference' });
 
     for (const u of uses[p]) {
       const e = u.def.effect;
       if (e === 'ecaille' && u.mode === 'rank' && side.stance === 'guard') {
-        if (u.cancelled) effects.push({ player: p, effect: e, status: 'cancelled', detail: 'Interférée' });
-        else if (guardWin && winner === p) { heal[p] += 2; effects.push({ player: p, effect: e, status: 'success', detail: 'soin 2 PV' }); }
-        else effects.push({ player: p, effect: e, status: 'failed', detail: 'la Garde ne gagne pas' });
+        if (u.cancelled) effects.push({ player: p, effect: e, status: 'cancelled', detail: 'Interférée', source: sec(u) });
+        else if (guardWin && winner === p) { heal[p] += 2; effects.push({ player: p, effect: e, status: 'success', detail: 'soin 2 PV', source: sec(u), consequence: { kind: 'heal' } }); }
+        else effects.push({ player: p, effect: e, status: 'failed', detail: 'la Garde ne gagne pas', source: sec(u) });
       }
       if (e === 'ferveur' && u.mode === 'damage') {
-        if (u.cancelled) effects.push({ player: p, effect: e, status: 'cancelled', detail: 'Interférée' });
-        else if (winner === p && side.primary.family === 'Cendre' && damage[o] > 0) { insightReasons[p].push('Ferveur'); effects.push({ player: p, effect: e, status: 'success', detail: '+1 Insight (sous limite)' }); }
-        else effects.push({ player: p, effect: e, status: 'failed', detail: 'Primaire Cendre gagnante et blessante requise' });
+        if (u.cancelled) effects.push({ player: p, effect: e, status: 'cancelled', detail: 'Interférée', source: sec(u) });
+        else if (winner === p && side.primary.family === 'Cendre' && damage[o] > 0) { insightSources[p].push({ kind: 'effect', effect: e, slot: u.slot }); effects.push({ player: p, effect: e, status: 'success', detail: '+1 Insight (sous limite)', source: sec(u), consequence: { kind: 'insight' } }); }
+        else effects.push({ player: p, effect: e, status: 'failed', detail: 'Primaire Cendre gagnante et blessante requise', source: sec(u) });
       }
       if (e === 'detour' && u.mode === 'interfere') {
-        if (u.success && !u.cancelled) { detourPeek[p] = true; effects.push({ player: p, effect: e, status: 'success', detail: 'observe une carte de main adverse' }); }
-        else effects.push({ player: p, effect: e, status: u.cancelled ? 'cancelled' : 'failed', detail: u.cancelled ? 'annulée' : 'Interférence sans succès' });
+        if (u.success && !u.cancelled) { detourPeek[p] = true; effects.push({ player: p, effect: e, status: 'success', detail: 'observe une carte de main adverse', source: sec(u), consequence: { kind: 'peek' } }); }
+        else effects.push({ player: p, effect: e, status: u.cancelled ? 'cancelled' : 'failed', detail: u.cancelled ? 'annulée' : 'Interférence sans succès', source: sec(u) });
       }
       if (e === 'silence' && u.mode === 'interfere') {
-        if (silenced[o]) effects.push({ player: p, effect: e, status: 'success', detail: 'effet de Primaire adverse en attente neutralisé' });
-        else effects.push({ player: p, effect: e, status: u.cancelled ? 'cancelled' : 'failed', detail: u.cancelled ? 'annulée' : 'succès contre une Secondaire de Rang IV requis' });
+        if (silencer[o]?.slot === u.slot && silenced[o]) effects.push({ player: p, effect: e, status: 'success', detail: 'effet de Primaire adverse en attente neutralisé', source: sec(u), consequence: { kind: 'neutralize' } });
+        else effects.push({ player: p, effect: e, status: u.cancelled ? 'cancelled' : 'failed', detail: u.cancelled ? 'annulée' : 'succès contre une Secondaire de Rang IV requis', source: sec(u) });
       }
     }
 
@@ -239,21 +281,22 @@ export function computeClash(input: ClashInput): ClashOutcome {
     const cycleOk = side.primary.effect === 'cycle' && !silenced[p] && winner === p && valid.length === 1 &&
       (valid[0]!.mode === 'damage' || (valid[0]!.mode === 'interfere' && valid[0]!.success));
     if (side.primary.effect === 'cycle') {
-      effects.push({ player: p, effect: 'cycle', status: silenced[p] ? 'cancelled' : cycleOk ? 'success' : 'failed', detail: silenced[p] ? 'neutralisé par Silence' : cycleOk ? 'soutien replacé au sommet de la pioche' : 'victoire avec exactement un soutien valide requise' });
+      effects.push({ player: p, effect: 'cycle', status: silenced[p] ? 'cancelled' : cycleOk ? 'success' : 'failed', detail: silenced[p] ? 'neutralisé par Silence' : cycleOk ? 'soutien replacé au sommet de la pioche' : 'victoire avec exactement un soutien valide requise', source: PRIMARY, ...(silenced[p] ? muted(p) : {}) });
     }
     for (const u of uses[p]) {
       let dest: 'discard' | 'top' | 'bottom' | 'stay' = 'discard';
       if (side.ancrageSlot === u.slot && u.cancelled) dest = 'stay';
       else if (u.def.effect === 'tenacite' && u.mode === 'rank' && !u.cancelled && side.stance === 'guard' && winner === o) {
         dest = 'bottom';
-        effects.push({ player: p, effect: 'tenacite', status: 'success', detail: 'retour sous la pioche' });
+        effects.push({ player: p, effect: 'tenacite', status: 'success', detail: 'retour sous la pioche', source: sec(u), consequence: { kind: 'destination', dest: 'bottom' } });
       } else if (u.def.effect === 'relance' && u.mode === 'interfere' && u.success && !u.cancelled && u.targetRank === 3) {
         dest = 'top';
-        effects.push({ player: p, effect: 'relance', status: 'success', detail: 'retour au sommet de la pioche' });
+        effects.push({ player: p, effect: 'relance', status: 'success', detail: 'retour au sommet de la pioche', source: sec(u), consequence: { kind: 'destination', dest: 'top' } });
       } else if (cycleOk && u === valid[0]) dest = 'top';
       destinations[p][u.slot] = dest;
     }
   }
+  const insightReasons: Record<PlayerId, string[]> = { p1: insightSources.p1.map(insightLabel), p2: insightSources.p2.map(insightLabel) };
 
   // Repoussement (un seul au maximum) : droits calculés ici, cibles après consommation.
   let repelRight: ClashOutcome['repelRight'] = null;
@@ -274,18 +317,18 @@ export function computeClash(input: ClashInput): ClashOutcome {
   for (const p of IDS) {
     const eff = input[p].primary.effect;
     if (eff === 'flamme' && !(repelRight?.kind === 'flamme' && repelRight.owner === p)) {
-      effects.push({ player: p, effect: eff, status: silenced[p] ? 'cancelled' : 'failed', detail: silenced[p] ? 'neutralisée par Silence' : 'victoire en Assaut blessante avec soutien Dégâts valide requise' });
+      effects.push({ player: p, effect: eff, status: silenced[p] ? 'cancelled' : 'failed', detail: silenced[p] ? 'neutralisée par Silence' : 'victoire en Assaut blessante avec soutien Dégâts valide requise', source: PRIMARY, ...(silenced[p] ? muted(p) : {}) });
     }
     if (eff === 'emprise' && !(repelRight?.kind === 'emprise' && repelRight.owner === p)) {
-      effects.push({ player: p, effect: eff, status: silenced[p] ? 'cancelled' : 'failed', detail: silenced[p] ? 'neutralisée par Silence' : 'Garde victorieuse requise' });
+      effects.push({ player: p, effect: eff, status: silenced[p] ? 'cancelled' : 'failed', detail: silenced[p] ? 'neutralisée par Silence' : 'Garde victorieuse requise', source: PRIMARY, ...(silenced[p] ? muted(p) : {}) });
     }
     if (eff === 'entrave' && input[p].stance === 'guard' && silenced[p]) {
-      effects.push({ player: p, effect: eff, status: 'cancelled', detail: 'neutralisée par Silence' });
+      effects.push({ player: p, effect: eff, status: 'cancelled', detail: 'neutralisée par Silence', source: PRIMARY, ...muted(p) });
     }
   }
 
   return {
     uses, silenced, scores, multipliers, outcome, winner, guardWin, baseDamage, fixedDamage, damage,
-    absorbed, zeroDamageRankWin, heal, insightReasons, destinations, effects, repelRight, ruptureClaim, detourPeek,
+    absorbed, zeroDamageRankWin, heal, insightReasons, insightSources, destinations, effects, repelRight, ruptureClaim, detourPeek,
   };
 }

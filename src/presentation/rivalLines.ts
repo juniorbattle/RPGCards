@@ -46,7 +46,7 @@ const LINES: Record<Voice, Record<Mood, string[]>> = {
   },
   ronce: {
     neutral: ['Prenez votre temps.', 'Je vous écoute.'],
-    focused: ['Voyons comment vous allez répondre.', 'Chaque racine compte.'],
+    focused: ['Voyons comment vous allez répondre.', 'Chaque appui compte.'],
     confident: ['Ma défense est prête.', 'Je suis sereine.'],
     smug: ['Patience…', 'Vous l’aviez vu venir ?'],
     pleased: ['La ronce tient bon.', 'Bien.'],
