@@ -9,7 +9,7 @@ import { verdictText } from '../game/visibility/journal';
 import type { SideView, SlotView } from '../game/visibility/view';
 import { emblemSvg } from '../art/emblems';
 import { RARITY_FRAME } from '../art/palette';
-import type { Controller } from '../app/controller';
+import { rivalCaption, type Controller } from '../app/controller';
 import { backEl, cardEl } from './cardView';
 import { cls, h } from './dom';
 
@@ -34,6 +34,8 @@ export function renderApp(root: HTMLElement, c: Controller, hooks: BoardHooks): 
   const stick = journalEl ? journalEl.scrollTop + journalEl.clientHeight >= journalEl.scrollHeight - 20 : true;
   const prevScroll = journalEl?.scrollTop ?? 0;
 
+  root.classList.toggle('view-a', c.viewMode === 'A');
+  root.classList.toggle('view-b', c.viewMode === 'B');
   root.replaceChildren(topbar(c, hooks), board(c), sidebar(c));
   if (c.ui.toast) root.append(h('div', { class: cls('toast', c.ui.toast.kind === 'info' && 'info'), role: 'status', 'aria-live': 'polite' }, c.ui.toast.text));
   if (c.view.phase === 'ENDED') root.append(endOverlay(c));
@@ -58,7 +60,8 @@ function topbar(c: Controller, hooks: BoardHooks): HTMLElement {
       h('button', { class: 'tool', 'data-key': 'tool-smaller', title: 'Réduire le texte', onclick: () => hooks.onToggleTool('smaller') }, 'A−'),
       h('button', { class: 'tool', 'data-key': 'tool-bigger', title: 'Agrandir le texte', onclick: () => hooks.onToggleTool('bigger') }, 'A+'),
       h('button', { class: 'tool', 'data-key': 'tool-motion', 'aria-pressed': String(c.params.reducedMotion), title: 'Mouvement réduit', onclick: () => hooks.onToggleTool('motion') }, 'Mvt réduit'),
-      h('button', { class: 'tool', 'data-key': 'tool-cam', title: 'Caméra exploratoire (provisoire)', onclick: () => hooks.onToggleTool('cam') }, c.params.cam === 'tilted' ? 'Vue inclinée' : 'Vue frontale'),
+      h('button', { class: 'tool tool-view', 'data-key': 'tool-cam', 'aria-pressed': String(c.director.manual), title: 'Basculer entre la vue Rival (confrontation) et la vue Plateau (manipulation) — touche V. La vue revient au cadrage de la phase suivante.', onclick: () => hooks.onToggleTool('cam') }, c.viewMode === 'A' ? 'Vue plateau ⤓' : 'Voir le rival ⤒'),
+      h('button', { class: 'tool', 'data-key': 'tool-pace', title: 'Rythme des animations (n’affecte pas les règles)', onclick: () => hooks.onToggleTool('pace') }, `Rythme : ${c.params.pace === 'normal' ? 'normal' : c.params.pace === 'fast' ? 'rapide' : 'instantané'}`),
       h('button', { class: 'tool', 'data-key': 'tool-help', onclick: () => hooks.onToggleTool('help') }, '?'),
     ),
   );
@@ -67,13 +70,46 @@ function topbar(c: Controller, hooks: BoardHooks): HTMLElement {
 function board(c: Controller): HTMLElement {
   const v = c.view;
   return h('main', { class: 'board', 'aria-label': 'Plateau de duel' },
-    hud(c, v.opp, 'opp'),
+    stage(c),
     sideRow(c, 'opp'),
     strip(c),
     sideRow(c, 'me'),
     hud(c, v.me, 'me'),
     hand(c),
   );
+}
+
+// --- Scène du rival -------------------------------------------------------------
+
+/**
+ * Bande « scène » : en vue A, espace transparent où l’arène cadre le visage et le buste du rival
+ * (`.stage-window` → `arena.setStage`) ; en vue B, HUD adverse en ligne + portrait vivant.
+ */
+function stage(c: Controller): HTMLElement {
+  const v = c.view;
+  const e = c.rivalExpression;
+  const plate = h('div', { class: 'rival-plate', 'aria-live': 'polite' },
+    h('b', null, c.rival.name), h('span', { class: 'rival-title' }, ` · ${c.rival.title}`),
+    h('div', { class: 'rival-caption', 'data-rival-caption': '' }, e ? rivalCaptionText(e) : ''),
+  );
+  if (c.viewMode === 'A') {
+    return h('section', { class: 'stage', 'aria-label': `Rival : ${c.rival.name}` },
+      h('div', { class: 'stage-window', 'aria-hidden': 'true' }),
+      hud(c, v.opp, 'opp'),
+      plate,
+    );
+  }
+  return h('section', { class: 'stage', 'aria-label': `Rival : ${c.rival.name}` },
+    hud(c, v.opp, 'opp'),
+    h('div', { class: 'rival-portrait', title: 'Portrait vivant du rival (V : revenir à la vue Rival)' },
+      h('div', { class: 'portrait-window', 'aria-hidden': 'true' }),
+      plate,
+    ),
+  );
+}
+
+function rivalCaptionText(e: { mood: string; cause: string }): string {
+  return rivalCaption(e as never);
 }
 
 // --- HUD -------------------------------------------------------------------

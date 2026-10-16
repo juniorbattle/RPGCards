@@ -48,6 +48,17 @@ export function defOf(state: GameState, cardId: string): CardDef {
   return cardDef(inst.defId);
 }
 
+/**
+ * Camouflage effectif (Dissimulation) : la carte ciblée n’est masquée que si son identité n’était
+ * pas déjà publique avant ce tour (§11.3 : une information vue n’est jamais « désapprise »).
+ * La FAMILLE reste visible (§13.2, instruction opérateur M02 §6).
+ */
+export function concealed(state: GameState, pid: PlayerId, slot: SlotIndex): boolean {
+  const p = state.players[pid];
+  const sl = p.slots[slot];
+  return !!sl && p.mask?.target === slot && sl.revealedTurn === state.turn;
+}
+
 export function secondaryState(state: GameState, slot: SecondarySlot): SecondaryState {
   if (slot.active) return 'active';
   return slot.placedTurn >= state.turn ? 'charging' : 'hidden';
@@ -450,9 +461,9 @@ function applyPrepare(ctx: Ctx): void {
   for (const pid of PLAYERS) {
     const p = s.players[pid];
     for (const i of revealed[pid]) {
-      const masked = p.mask?.target === i && p.slots[i]!.revealedTurn === s.turn;
+      const masked = concealed(s, pid, i);
       const defId = ctx.def(p.slots[i]!.cardId).defId;
-      ctx.emit('public', 'secondaryRevealed', { player: pid, slot: i, defId: masked ? null : defId, masked });
+      ctx.emit('public', 'secondaryRevealed', { player: pid, slot: i, defId: masked ? null : defId, masked, family: ctx.def(p.slots[i]!.cardId).family });
       if (masked) ctx.emit(pid, 'secondaryRevealed', { player: pid, slot: i, defId, masked: true, own: true });
     }
     if (p.mask) ctx.emit('public', 'masking', { player: pid, source: p.mask.source, target: p.mask.target });
@@ -609,11 +620,11 @@ function resolveClash(ctx: Ctx): void {
     tacticsData[pid] = SLOTS.map((i) => {
       const plan = plansOf[pid][i];
       if (!plan || !p.slots[i]?.active) return null;
-      const masked = p.mask?.target === i;
+      const masked = concealed(s, pid, i);
       const def = ctx.def(p.slots[i]!.cardId);
       const prim = input[pid].primary;
       const value = plan.mode === 'rank' ? rankSupport(def, prim) : plan.mode === 'damage' ? damageCoefficient(def, prim) : null;
-      return { slot: i, mode: plan.mode, target: plan.target ?? null, defId: masked ? null : def.defId, masked, value: masked ? null : value, affinity: masked ? null : def.family === prim.family };
+      return { slot: i, mode: plan.mode, target: plan.target ?? null, defId: masked ? null : def.defId, family: def.family, masked, value: masked ? null : value, affinity: masked ? null : def.family === prim.family };
     });
   }
   s.reveal.tactics = tacticsData as NonNullable<GameState['reveal']['tactics']>;
@@ -625,11 +636,12 @@ function resolveClash(ctx: Ctx): void {
     for (const u of out.uses[pid]) {
       if (u.mode !== 'interfere') continue;
       const o = s.players[other(pid)];
-      const tMasked = o.mask?.target === u.target;
+      const tMasked = u.target !== undefined && concealed(s, other(pid), u.target);
       ctx.emit('public', 'interference', {
         player: pid, slot: u.slot, target: u.target, success: u.success, cancelled: u.cancelled,
         reason: u.success ? 'cible engagée annulée' : !u.targetEngaged ? 'cible Conservée' : 'Rang imprimé insuffisant',
         targetDefId: tMasked ? null : u.targetRank !== null ? ctx.def(o.slots[u.target!]!.cardId).defId : null,
+        targetFamily: u.targetRank !== null ? ctx.def(o.slots[u.target!]!.cardId).family : null,
       });
     }
   }
@@ -639,7 +651,7 @@ function resolveClash(ctx: Ctx): void {
   const maskedMult: Record<PlayerId, boolean> = { p1: false, p2: false };
   for (const pid of PLAYERS) {
     const m = s.players[pid].mask;
-    if (!m) continue;
+    if (!m || !concealed(s, pid, m.target)) continue;
     const u = out.uses[pid].find((x) => x.slot === m.target && !x.cancelled);
     if (u?.mode === 'rank') maskedRank[pid] = true;
     if (u?.mode === 'damage') maskedMult[pid] = true;
@@ -696,9 +708,10 @@ function resolveClash(ctx: Ctx): void {
         ctx.emit('public', 'destination', { player: pid, slot: u.slot, dest, reason: 'Ancrage' });
         continue;
       }
+      // Une carte masquée ce tour n’est pas nommée publiquement avant la fin du tour
+      // (évalué AVANT de retirer la carte de son emplacement).
+      const masked = concealed(s, pid, u.slot);
       p.slots[u.slot] = null;
-      // Une carte masquée ce tour n’est pas nommée publiquement avant la fin du tour.
-      const masked = p.mask?.target === u.slot;
       if (dest === 'top') p.deck.push(sl.cardId);
       else if (dest === 'bottom') p.deck.unshift(sl.cardId);
       else p.discard.push(sl.cardId);
@@ -784,7 +797,7 @@ function applyRepel(ctx: Ctx): void {
   } else {
     const o = s.players[other(r.owner)];
     const sl = o.slots[slot]!;
-    const wasMasked = o.mask?.target === slot;
+    const wasMasked = concealed(s, other(r.owner), slot);
     o.slots[slot] = null;
     if (o.mask && (o.mask.source === slot || o.mask.target === slot)) o.mask = null;
     const wasHidden = !sl.active;

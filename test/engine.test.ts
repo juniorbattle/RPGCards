@@ -392,3 +392,41 @@ describe('Déterminisme, replay et parcours multi-seeds (G26, G27)', () => {
     expect(a).not.toEqual(c);
   });
 });
+
+describe('M02 §6 — Dissimulation : famille visible, information connue jamais effacée', () => {
+  function revealBoth(otherActiveBefore: boolean) {
+    const s = fixture(config({ v1: ['Voile-3', 'Cendre-3'] }),
+      { hand: ['Cendre-4', 'Astre-1'], slots: [{ def: 'Voile-3-dissimulation' }, { def: 'Cendre-3-ferveur', active: otherActiveBefore }] },
+      { hand: ['Ronce-2', 'Astre-3'], slots: [{ def: 'Voile-4', active: true }, null] });
+    s.phase = 'PREPARE';
+    s.awaiting = ['p1'];
+    return new Runner(s).apply({ type: 'prepare', player: 'p1', reveal: otherActiveBefore ? [0] : [0, 1] });
+  }
+  it('carte révélée et masquée le même tour : identité cachée, FAMILLE visible (vue, événement, journal)', () => {
+    const r = revealBoth(false);
+    const v2 = viewFor(r.state, 'p2');
+    expect(v2.opp.slots[1]!.card).toBeNull();
+    expect(v2.opp.slots[1]!.masked).toBe(true);
+    expect(v2.opp.slots[1]!.family).toBe('Cendre');
+    const ev = r.ev('secondaryRevealed', 'public').find((e) => e.data.slot === 1)!;
+    expect(ev.data.defId).toBeNull();
+    expect(ev.data.family).toBe('Cendre');
+    const j = buildJournal(visibleEvents(r.events, 'p2'), 'p2').map((l) => l.text).join('\n');
+    expect(j).toMatch(/Secondaire Cendre en case 2 — identité, Rang et Puissance masqués/);
+    expect(j).not.toMatch(/Ferveur|Cendre III/);
+  });
+  it('carte déjà publique avant le tour : le camouflage ne l’efface pas (vue + tactiques révélées + score public)', () => {
+    const r = revealBoth(true);
+    expect(r.state.players.p1.mask).not.toBeNull();
+    const v2 = viewFor(r.state, 'p2');
+    expect(v2.opp.slots[1]!.card?.defId).toBe('Cendre-3-ferveur');
+    expect(v2.opp.slots[1]!.masked).toBe(false);
+    r.commit('p1', 'Cendre-4', 'assault').commit('p2', 'Ronce-2', 'guard');
+    r.tactics('p1', [{ mode: 'keep' }, { mode: 'rank' }]);
+    r.tactics('p2', [{ mode: 'keep' }, null]);
+    const tac = r.ev('tacticsRevealed', 'public')[0]!.data as Record<string, Array<{ defId: string | null; value: number | null } | null>>;
+    expect(tac.p1![1]!.defId).toBe('Cendre-3-ferveur');
+    expect(tac.p1![1]!.value).toBe(4);
+    expect(r.state.lastClash!.publicScores.p1).toBe('8');
+  });
+});

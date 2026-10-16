@@ -13,6 +13,9 @@ import type { GameConfig, GameEvent, PlayerCommand, SlotIndex, Stance, StartTech
 import { buildJournal, type JournalLine } from '../game/visibility/journal';
 import { viewFor, visibleEvents, type PlayerView } from '../game/visibility/view';
 import type { ArenaHandle } from '../scene/arena';
+import { PresentationDirector, type DirectorInput, type ViewMode } from '../presentation/director';
+import { ExpressionDirector, type Expression } from '../presentation/expression';
+import type { RivalPersonality } from '../presentation/personalities';
 import type { AppParams } from './params';
 import type { Scenario } from './scenarios';
 
@@ -81,8 +84,17 @@ export class Controller {
   private toastSeq = 0;
   private renderFn: () => void = () => {};
   readonly mySignature: Family;
+  readonly director = new PresentationDirector();
+  viewMode: ViewMode = 'A';
+  readonly expr: ExpressionDirector;
+  /** Dernière expression visible du rival (affichage d’une légende, QA). */
+  rivalExpression: Expression | null = null;
+  private exprQueue: Expression[] = [];
+  private exprTimer = 0;
+  private dragging = false;
 
-  constructor(public config: GameConfig, public params: AppParams, public arena: ArenaHandle | null, public scenario: Scenario | null = null) {
+  constructor(public config: GameConfig, public params: AppParams, public arena: ArenaHandle | null, public scenario: Scenario | null = null, public rival: RivalPersonality) {
+    this.expr = new ExpressionDirector('p2', rival, params.artSeed ^ config.seed);
     this.match = new Match(config);
     if (scenario) {
       this.match.state = scenario.build(config);
@@ -113,8 +125,95 @@ export class Controller {
       if (this.view.phase === 'LECTURE_CHANGE') this.ui.lectureStance = this.view.me.primary?.stance ?? null;
     }
     this.playFx(newEvents);
+    this.updateView();
+    this.arena?.setRivalHand(this.view.opp.handCount);
+    // Réactions du rival : uniquement des faits PUBLICS (filtrage interne de l’ExpressionDirector).
+    this.pushReactions(this.expr.observe(newEvents));
     this.renderFn();
     this.scheduleAi();
+  }
+
+  // ------------------------------------------------------------------------
+  // Vues A/B (présentation uniquement)
+
+  directorInput(): DirectorInput {
+    const v = this.view;
+    return { phase: v.phase, turn: v.turn, awaitingMe: v.awaitingMe, repelMine: !!v.repel?.mine };
+  }
+
+  private updateView(): void {
+    const forced = this.params.view;
+    this.viewMode = forced === 'A' || forced === 'B' ? forced : this.director.update(this.directorInput());
+    this.arena?.setView(this.viewMode);
+  }
+
+  toggleView(): void {
+    if (this.params.view !== 'auto') this.params.view = 'auto';
+    this.viewMode = this.director.toggle(this.directorInput());
+    this.arena?.setView(this.viewMode);
+    this.renderFn();
+  }
+
+  setDragging(v: boolean): void {
+    if (v === this.dragging) return;
+    this.dragging = v;
+    const before = this.viewMode;
+    this.director.setFrozen(v, this.directorInput());
+    if (!v) {
+      this.updateView();
+      if (this.viewMode !== before) this.renderFn();
+    }
+  }
+
+  // ------------------------------------------------------------------------
+  // Expressions du rival
+
+  baselineExpression(): Expression {
+    const v = this.view;
+    return this.expr.baseline({
+      phase: v.phase,
+      rivalDeciding: v.awaitingOpponent,
+      playerDeciding: v.awaitingMe,
+      rivalHpRatio: v.opp.hp / v.opp.maxHp,
+      playerHpRatio: v.me.hp / v.me.maxHp,
+    });
+  }
+
+  private pushReactions(list: Expression[]): void {
+    if (this.params.freeze) {
+      // Captures : on fige la dernière réaction ; l’expression de base n’écrase pas une réaction.
+      if (list.length) this.showExpression(list[list.length - 1]!);
+      else if (!this.rivalExpression || this.rivalExpression.hold === 0) this.showExpression(this.baselineExpression());
+      return;
+    }
+    if (list.length) {
+      this.exprQueue.push(...list);
+      if (this.exprQueue.length > 4) this.exprQueue = this.exprQueue.slice(-4);
+    }
+    if (!this.exprTimer) this.pumpExpression();
+  }
+
+  private pumpExpression(): void {
+    const next = this.exprQueue.shift();
+    if (!next) {
+      this.exprTimer = 0;
+      this.showExpression(this.baselineExpression());
+      return;
+    }
+    this.showExpression(next);
+    this.exprTimer = window.setTimeout(() => this.pumpExpression(), next.hold * 1000 * this.paceFactor());
+  }
+
+  private showExpression(e: Expression): void {
+    this.rivalExpression = e;
+    this.arena?.expression(e);
+    const cap = document.querySelector('[data-rival-caption]');
+    if (cap) cap.textContent = rivalCaption(e);
+  }
+
+  /** Facteur de rythme des animations (présentation seulement, jamais le moteur). */
+  paceFactor(): number {
+    return this.params.pace === 'fast' ? 0.45 : this.params.pace === 'instant' ? 0.15 : 1;
   }
 
   private playFx(events: GameEvent[]): void {
@@ -188,7 +287,7 @@ export class Controller {
       if (!view.awaitingMe) { this.aiThinking = false; return; }
       const key = `${view.turn}:${view.phase}`;
       const script = this.scenario?.rival[key];
-      const cmd = script ? script(this.match.state) : decide(view, PROFILES.equilibre, this.config.seed ^ 0xa7);
+      const cmd = script ? script(this.match.state) : decide(view, PROFILES[this.rival.aiProfile] ?? PROFILES.equilibre!, this.config.seed ^ 0xa7);
       this.aiThinking = false;
       if (cmd) this.apply(cmd);
     };
@@ -527,4 +626,15 @@ export class Controller {
     if (mode === 'rank') return `+${rankSupport(sd, pd)}${sd.family === pd.family ? ' (affinité +1)' : ''}`;
     return `×${damageCoefficient(sd, pd)}${sd.family === pd.family ? ' (même famille)' : sd.effect === 'prisme' ? ' (Prisme)' : sd.effect === 'convergence' ? ' (Convergence)' : ''}`;
   }
+}
+
+const MOOD_LABEL: Record<string, string> = {
+  neutral: 'impassible', focused: 'concentré·e', confident: 'sûr·e de soi', smug: 'narquois·e', pleased: 'satisfait·e',
+  triumphant: 'triomphant·e', surprised: 'surpris·e', pained: 'touché·e', annoyed: 'contrarié·e', angry: 'furieux·se',
+  relieved: 'soulagé·e', defeated: 'abattu·e', thinking: 'réfléchit', shocked: 'stupéfait·e',
+};
+
+/** Légende lisible de l’expression du rival (faits publics uniquement). */
+export function rivalCaption(e: Expression): string {
+  return `${MOOD_LABEL[e.mood] ?? e.mood} — ${e.cause}`;
 }

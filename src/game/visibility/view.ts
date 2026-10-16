@@ -21,8 +21,10 @@ export interface SlotView {
   revealedTurn: number | null;
   /** Identité visible pour ce spectateur (null = face cachée / masquée). */
   card: CardRef | null;
-  /** Masquée par Dissimulation (vue adverse). */
+  /** Masquée par Dissimulation (vue adverse) — identité, Rang, Puissance cachés. */
   masked: boolean;
+  /** Famille publique d’une carte active (visible même masquée, §13.2) ; null si face cachée. */
+  family: Family | null;
   /** Source d’un camouflage actif (carte Dissimulation). */
   maskSource: boolean;
 }
@@ -90,7 +92,8 @@ function side(state: GameState, pid: PlayerId, viewer: PlayerId): SideView {
       placedTurn: sl.placedTurn,
       revealedTurn: sl.revealedTurn,
       card: visible ? { cardId: inst.id, defId: inst.defId } : null,
-      masked: maskedNow,
+      masked: maskedNow && !knownBefore,
+      family: sl.active || self ? cardDef(inst.defId).family : null,
       maskSource: p.mask?.source === i,
     };
   }) as [SlotView | null, SlotView | null];
