@@ -2,7 +2,7 @@
 
 **Nature :** journal de production du **nouveau projet**, et non journal copié de RPG-ArtByCode.  
 **Convention :** passes chronologiques, plus récente en bas ; statut `[OK]`, `[KO]`, `[?]` ; preuves vérifiables.  
-**Dernière passe :** 4 + mandat documentaire 4B — visibilité : le rapport public du Clash ne publie plus la valeur brute d’un soutien camouflé par Dissimulation (développée sur `claude/practical-cannon-5io9n5` avant la « Règle de branche », intégrée à `main` par fusion).
+**Dernière passe :** 5 — M03.1B sur `main` : l’origine des effets d’une Secondaire camouflée n’est plus publiée (ADR 011) ; Rupture et Dissipation vérifiées par l’interface. (M03.2 en cours.)
 
 ## État initial connu
 
@@ -17,9 +17,9 @@
 
 1. **Revue opérateur M03** : composition et proportions (ADR 009), six chorégraphies du Clash et leur durée (ADR 010), écarts visuels restants (`docs/RAPPORT_M03.md` §8) ; planches `screenshots/qa/m03/comparaison-*.png`, démonstrations `screenshots/qa/m03/clash/`.
 2. **Écarts de fidélité restants** : visages et personnages moins « peints » que la preview (couches 2D plates), décor moins dense, pas de bloom ni de profondeur de champ, typographie système ; mobile pensé en portrait 390×844 (la preview montre un mobile paysage).
-3. **Arbitrages encore proposés** (ADR 004) : ARB-002 (profil du rival public), ARB-001, ARB-005, ARB-011 ; ratification éventuelle du delta D-01 (V3.3) ; **nouveau (passe 4)** : les effets d’utilisation d’une Secondaire camouflée sont annoncés publiquement par leur nom avant la fin du tour (Ferveur, Étincelle…), voir passe 4 `[?]`.
+3. **Arbitrages encore proposés** (ADR 004) : ARB-002 (profil du rival public), ARB-001, ARB-005 (+ ARB-005b : carte camouflée remplacée pendant l’engagement, nommée en fin de tour depuis la passe 5), ARB-011 ; ratification éventuelle du delta D-01 (V3.3). Inférences restantes documentées (`docs/RAPPORT_M03_1B.md` §6).
 4. **Mesure sur GPU réel** (hors conteneur) : vues A/B, bougies (shader de points), scène du Clash (WAAPI) ; budget mobile.
-5. **Mandat M03.1B autorisé :** corriger les noms d'effets individuels/raisons Insight qui dévoilent une Secondaire camouflée, sans altérer la passe 4 (scores bruts déjà corrigés) ; puis QA navigateur Rupture/Dissipation. **M03.2 :** améliorer fidélité visuelle (rival plus présent A/B, éclairage, résolution, paysage mobile), avec comparaisons réelles.
+5. **M03.1B livré** (passe 5, `987ff27` + `c9e32fe`). **M03.2 en cours** : rival plus présent en A/B, éclairage, lisibilité du Clash, mobile paysage, comparaisons réelles avant / après / preview, `docs/RAPPORT_M03_2.md`.
 6. IA : modèle du joueur, niveaux de difficulté ; découpage du bundle Three.js.
 
 ## Principes à garder
@@ -31,6 +31,7 @@
 - Une seule arithmétique : `computeClash` (pur) sert moteur, IA et prévisualisation ; ne jamais dupliquer une formule de règle dans l’UI.
 - Les fenêtres optionnelles s’ouvrent sur information **publique** uniquement ; une vue (`viewFor`) est une copie filtrée, jamais l’état brut.
 - Un rapport public l’est par construction, à la source : une valeur camouflée y vaut `null` (affichage `?`) dans l’état, l’événement et la vue ; sa valeur réelle ne voyage que dans l’événement privé de son propriétaire (passe 4).
+- Publier par liste blanche à partir d’une origine TYPÉE (Primaire / Secondaire + case), jamais par rapprochement de noms ; une source camouflée ne publie que la conséquence observable d’un succès, et rien pour un échec (passe 5). Un test de non-fuite inspecte récursivement TOUTES les surfaces adverses (événements, vue, journal, séquence, scène, IA, réactions).
 - Aucun re-rendu global pendant une interaction pointeur (cause d’un clic perdu observé en QA, passe 1).
 - Un effet différé d’une interaction (`setTimeout` après `pointerup`) ne s’applique qu’à l’état où elle a commencé (jeton) : sinon il frappe l’état que cette interaction vient de créer (passe 2, regard de début de tour).
 - Séparer Règles / Présentation / Génération artistique / IA.
@@ -208,3 +209,26 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **[OK] Travaux consécutifs autorisés :** tests Rupture/Dissipation via UI, puis cadrages A/B, présence rival, éclairage, hiérarchie de résolution et mobile paysage, tout en préservant les règles et six chorégraphies du Clash.
 - **[?] État de ce commit :** mandat **documentaire seulement** ; aucun correctif de noms d'effets, scénario QA ou art M03.2 n'est encore implémenté ni testé. La baseline de passe 4 est 93/93 selon journal et doit être revalidée avant modification.
 - **À reprendre :** diagnostic du HEAD main, test reproduisant fuite d'effet, redaction sûre à la source et non-régression ; QA Techniques ; raffinement visuel avec comparatifs, `docs/RAPPORT_M03_1B.md` et `docs/RAPPORT_M03_2.md`.
+
+## Passe 5 — M03.1B : confidentialité des effets camouflés + QA des Techniques — 2026-10-16, sur `main`, départ `55a57f3`, commits `987ff27` (P0) et `c9e32fe` (P1)
+
+- **Mission / contraintes :** `docs/missions/M03_CONTINUATION_DEPUIS_MAIN.md` → `M03_1B_CONFIDENTIALITE_EFFETS_ET_QA.md`, ADR 011 ; développement direct sur `main` ; ne pas refaire la passe 4 ; aucune règle, issue, coût ni RNG modifiés ; porte bloquante avant M03.2.
+- **Lecture initiale :** AGENTS, CLAUDE, JOURNAL (passe 4, mandat 4B), missions M03.1B/M03.2, ADR 004 et 011, règlement V3.0 §10, §11.3, §12, §13, §14.10, delta V3.2 D-04 ; `engine.ts`, `clash.ts`, `types.ts`, `view.ts`, `journal.ts`, `beats.ts`, `clashMotion.ts`, `expression.ts`, `rivalLines.ts`, `ai/memory.ts`, `ai/policy.ts`, `replay.ts`, `board.ts`, `controller.ts`, `scenarios.ts`, outils QA.
+- **Diagnostic :** baseline `55a57f3` : typecheck 0, 93/93, build OK. Surfaces fautives : événements publics `effect` (nom + motif), `insight.reasons`, `ClashReport.effects` (état, événement, vue), effets de révélation (Éclaireur, Repère), effet de Racine (fenêtre de Repoussement), détail « neutralisée par Silence » d’une Primaire, défausse de la vue adverse pendant le Repoussement, événement `replaced` d’une carte camouflée.
+- **Modifications :**
+  - P0 `987ff27` : `clash.ts` (origine typée `source`, conséquence observable, `silencedBy`, `insightSources`) ; `publication.ts` (nouveau : payloads publics par liste blanche, événements privés `own` du propriétaire) ; `engine.ts` (Insight, soins, effets, rapport, Racine, révélation, remplacement ; `PlayerState.maskedDiscards`) ; `view.ts` (défausse adverse `null` jusqu’à la fin du tour) ; `journal.ts`, `beats.ts` (formes génériques / privées) ; `board.ts` (infobulle de défausse = plateau mis en scène) ; `rivalLines.ts` (réplique sans nom de carte) ; `test/concealment.test.ts` (20 tests) ; ADR 011 (implémentation), ADR 004 (note ARB-005/005b).
+  - P1 `c9e32fe` : scénarios `rupture`, `rupture-cachee`, `dissipation`, `masque` ; `test/scenarios.test.ts` (4) ; `tools/qa-techniques.mjs` (`npm run qa:techniques`) ; audit de secrets élargi (`tools/browser.mjs`) ; crochets QA `rivalView`, `rivalMemory`, `events`, `cardInfo`.
+- **[OK] Succès :**
+  - Reproduction d’abord : 17/20 tests de non-fuite échouent sur `55a57f3` (fuites citées au rapport §2), 20/20 après correctif.
+  - Règles inchangées : 900 duels IA/IA (3 configurations × 3 paires de profils × 100 seeds) et 480 tours forcés (15 variantes camouflées × 4 modes × 4 graines × 2 propriétaires) rejoués sur les deux moteurs : **0 écart** de commandes, d’états après chaque commande, de vainqueurs (900/900), de durées et de vérité des effets.
+  - `npm test` **117/117** ; `qa:browser` 4/4 duels, 0 fuite, 0 erreur ; `qa:techniques` 8/8 parcours (souris + tactile).
+- **[KO] Échecs / tentatives abandonnées :**
+  - Premier script de comparaison : un seul écart signalé, le compteur `eventSeq` (un événement privé de plus) → exclu de la comparaison d’états (compteur, pas une règle).
+  - Test de propriété IA/IA trop pauvre (16 cartes camouflées en 120 duels) → ajout d’une propriété « forcée » (toutes les variantes, tous les modes, face à l’IA).
+  - Faux positifs du test de fuite : nom d’effet présent chez l’AUTRE camp (Détour adverse public), réplique générique « Chaque racine compte. » → filtrage des champs décrivant l’autre camp ; réplique reformulée.
+  - QA : chaîne `&&` lancée en arrière-plan en entier (sorties perdues) ; échantillonnage temporel de la séquence raté sous SwiftShader (`masque` souris) → séquence avancée temps par temps par le crochet QA.
+- **[?] Incertitudes / arbitrages :** ARB-005b (carte camouflée remplacée : nommée en fin de tour, comme une consommée) — appliqué de façon cohérente et signalé, non tranché ; inférences restantes par les conséquences publiques (rapport §6) ; l’archive de replay complète n’est pas un export public.
+- **Tests :** voir rapport §8 (commandes et résultats exacts).
+- **Perf / visuels :** sans changement de rendu hors textes du journal / de la séquence et infobulle de défausse.
+- **Pensée :** une fuite d’information se corrige là où la donnée naît ; tant que l’origine d’un effet n’était qu’un nom, impossible de savoir s’il venait de la carte camouflée — l’origine typée rend la décision de publication triviale et testable.
+- **À reprendre :** M03.2 (fidélité visuelle) ; arbitrages ARB-005/005b.

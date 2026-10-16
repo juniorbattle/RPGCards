@@ -6,6 +6,8 @@ Duel de cartes tactique (noyau du futur RPG urbain) : **moteur de règles TypeSc
 
 **M03 — fidélité à la preview validée et Clash physique** (branche `claude/m03-ui-fidele-et-clash-anime`) : composition fidèle à `reference/REFERENCE_VISUELLE_VALIDEE_M03.jpg` (document de revue, jamais utilisé au runtime) — scène plein cadre, **HUD rival haut-gauche**, **HUD joueur compact bas-gauche avec portrait procédural**, bulle du rival, **main en bas**, commandes et Techniques bas-droite, journal en tiroir ; salle aux bougies et bannières des quatre familles ; **bandeaux ASSAUT (rouge, pointe) / GARDE (bleu, bouclier)** sur chaque Primaire révélée ; **les cartes s’affrontent** : six chorégraphies (Assaut contre Assaut dominé ou égalité, Garde victorieuse, Garde qui cède, victoire au Rang sans blessure, Garde contre Garde) dérivées du résultat résolu par le moteur, puis les deux Primaires rejoignent la défausse.
 
+**M03.1B — confidentialité des effets camouflés et QA des Techniques** (sur `main`) : l’effet d’une Secondaire camouflée par Dissimulation ne publie plus son nom, son motif d’Insight ni son détail ; seules ses conséquences publiques (dégâts fixes, soin, gain d’Insight, destination, neutralisation) sont annoncées avec une origine générique, le propriétaire recevant tout en privé (ADR 011, `docs/RAPPORT_M03_1B.md`) ; Rupture et Dissipation sont jouables et vérifiées par l’interface (scénarios ci-dessous).
+
 > Règlement appliqué : **V3.0 (`source/CONTRAT_REGLES_V3_0_HISTORIQUE.md`) + avenant mandaté V3.2 (`contracts/02_…`)**. Delta à connaître : en *Amplifier le Rang*, un soutien de **même famille** que la Primaire vaut **Rang imprimé + 1** (D-01). Le texte historique V3.0 n’est pas modifié ; la ratification éventuelle en V3.3 appartient au responsable.
 
 ## Démarrage
@@ -17,13 +19,14 @@ npm run typecheck    # tsc --noEmit, TypeScript strict
 npm test             # Vitest : moteur, Clash, visibilité, IA
 npm run build        # typecheck + build Vite → dist/
 npm run qa:browser   # duels complets pilotés par l’UI (Chromium headless) → artifacts/qa/
+npm run qa:techniques # Rupture / Dissipation / effet camouflé par l’UI (souris + tactile) → screenshots/qa/m03-1b/
 npm run shots        # captures M03 + planches preview ↔ runtime → screenshots/qa/m03/
 npm run shots:clash  # chaque type de Clash : poses, mouvement réduit, pellicules → screenshots/qa/m03/clash/
 npm run perf         # mesures moteur + scène (machine courante) → artifacts/qa/perf.json
 npm run sim          # (optionnel) 200 duels IA/IA headless
 ```
 
-`qa:browser`, `shots` et `perf` exigent un build (`npm run build`) et un Chromium local (`/opt/pw-browsers/chromium` par défaut, sinon `CHROMIUM_PATH=…`). Aucun navigateur n’est téléchargé.
+`qa:browser`, `qa:techniques`, `shots` et `perf` exigent un build (`npm run build`) et un Chromium local (`/opt/pw-browsers/chromium` par défaut, sinon `CHROMIUM_PATH=…`). Aucun navigateur n’est téléchargé.
 
 ## Jouer
 
@@ -45,6 +48,7 @@ Clavier : `Tab`, `Entrée/Espace`, `1–4` (main), `A`/`G` (mode), `Échap` (ann
 | `sig=Cendre\|Voile\|Ronce\|Astre`, `tech=Lecture,Ancrage` | configuration du joueur |
 | `autostart=1` | passe l’écran de préparation |
 | `scenario=t2\|interference\|signature\|doubleko\|clash-aa\|clash-ag` | **démonstrations** avec rival **scripté** (identifié comme tel) ; `clash-aa` : le rival attaque (votre carte décide : vous dominez, égalité, il domine, ou votre Garde) ; `clash-ag` : le rival se met en Garde (absorption, Garde qui tient, Garde qui cède ∞, Garde contre Garde) |
+| `scenario=rupture\|rupture-cachee\|dissipation\|masque` | **QA des Techniques** (rival scripté) : `rupture` — Garde Ronce IV gagnante, Rupture (2 Insight) renvoie la Secondaire active visée ; `rupture-cachee` — une cible cachée existe : Repoussement Basic, Rupture échoue sans remboursement ; `dissipation` — levez le camouflage de Dissimulation (1 Insight) ; `masque` — l’effet d’une Secondaire camouflée du rival reste anonyme |
 | `view=A\|B` | vue figée (QA) : A confrontation, B manipulation ; défaut `auto` piloté par les phases (ADR 006). `cam=frontal\|tilted` = alias M01 |
 | `rival=braise\|ronce\|voile` | personnalité du rival (sinon dérivée de la seed) |
 | `pace=normal\|fast\|instant` | rythme de présentation de la résolution (n’affecte jamais les règles) |
