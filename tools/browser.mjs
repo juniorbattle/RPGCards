@@ -94,6 +94,23 @@ export async function secretAudit(page) {
     document.querySelectorAll('.side.opp [data-def], .hud.opp [data-def]').forEach((el) => {
       if (!allowed.has(el.getAttribute('data-def'))) issues.push(`carte adverse non autorisée dans le DOM : ${el.getAttribute('data-def')}`);
     });
+    // M03.1B / ADR 011 : Secondaire du rival camouflée ce tour (et non dissipée) → ni définition, ni nom,
+    // ni nom d’effet dans le DOM du jeu ni dans la scène du Clash, tant que le tour n’est pas fini.
+    const evs = window.__lqv.events?.() ?? [];
+    // Seules les surfaces qui parlent du RIVAL sont lues (vos propres cartes peuvent porter les mêmes noms).
+    if (v.phase !== 'RESOLVED' && v.phase !== 'ENDED' && !evs.some((e) => e.turn === v.turn && e.kind === 'dissipation' && e.data.target === 'p2')) {
+      const rivalHtml = [...document.querySelectorAll('.side.opp, .hud.opp, .rival-bubble, #stage .cs-slot.opp')].map((x) => x.outerHTML).join('');
+      const rivalText = [...document.querySelectorAll('.journal .line, .command .msg, #stage .cs-verdict')].map((x) => x.textContent ?? '')
+        .flatMap((t) => t.split(' · ')).filter((t) => /rival/.test(t) && !/^\[Privé\]/.test(t)).join('\n');
+      for (const e of evs) {
+        if (e.turn !== v.turn || e.kind !== 'secondaryRevealed' || e.vis !== 'p2' || !e.data.own) continue;
+        const info = window.__lqv.cardInfo(e.data.defId);
+        for (const needle of [e.data.defId, info.title, info.effect].filter(Boolean)) {
+          const insightLine = rivalText.split('\n').some((t) => /Le rival (gagne 1 Insight|: gain d’Insight plafonné) \(/.test(t) && t.includes(needle));
+          if (rivalHtml.includes(needle) || rivalText.includes(`${needle} (rival`) || insightLine) issues.push(`carte camouflée du rival nommée dans le DOM : ${needle}`);
+        }
+      }
+    }
     // Aucun identifiant d’instance adverse dans le DOM (ex. « p2#07 »).
     if (/p2#\d\d/.test(document.getElementById('app').innerHTML)) issues.push('identifiant d’instance adverse présent dans le DOM');
     // Le journal ne contient aucune ligne d’événement privé adverse.

@@ -12,6 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "qa:browser": "node tools/qa-browser.mjs",
+    "qa:techniques": "node tools/qa-techniques.mjs",
     "shots": "node tools/shots-m03.mjs",
     "perf": "node tools/perf.mjs",
     "sim": "tsx tools/perf-engine.ts 200",
