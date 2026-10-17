@@ -1,6 +1,6 @@
 # RPGCards — Les Quatre Voies
 
-> **Mandat de production actif M04–M06 (16 octobre 2026)** : la **composition actuelle du duel desktop M03.2 est APPROUVÉE** (rival de face en buste expressif, deux vues, HUD et six chorégraphies). La priorité est désormais un **jeu solo opérationnel** avec accueil, deck, rivaux, parcours, résultats et sauvegarde ; mobile paysage et détails d'art secondaires sont différés. Voir `docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md` et l'ADR 013. **Le programme est prescrit, non encore implémenté.**
+> **Mandat de production actif M04–M06 (16 octobre 2026)** : la **composition actuelle du duel desktop M03.2 est APPROUVÉE** (rival de face en buste expressif, deux vues, HUD et six chorégraphies). La priorité est désormais un **jeu solo opérationnel** avec accueil, deck, rivaux, parcours, résultats et sauvegarde ; mobile paysage et détails d'art secondaires sont différés. Voir `docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md` et l'ADR 013. **M04 livré** (`docs/RAPPORT_M04.md`) : `npm run dev` ouvre le jeu sur un accueil — profil, deck légal, rencontres, duel, résultat, aide, options, sauvegarde locale.
 
 Duel de cartes tactique (noyau du futur RPG urbain) : **moteur de règles TypeScript pur**, plateau à **manipulation directe** (glisser-déposer, clic-pour-poser, tactile, clavier), **adversaire IA non omniscient**, **art procédural par code** et **arène Three.js** provisoire.
 
