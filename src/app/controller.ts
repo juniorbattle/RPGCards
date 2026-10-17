@@ -10,7 +10,7 @@ import { buildMemory } from '../game/ai/memory';
 import { computeClash, damageCoefficient, rankSupport, type ClashUse } from '../game/engine/clash';
 import { checkCommand } from '../game/engine/engine';
 import { Match } from '../game/match';
-import type { GameConfig, GameEvent, PlayerCommand, PlayerId, SlotIndex, Stance, StartTechnique, TacticPlan, TacticsTechnique } from '../game/model/types';
+import type { Command, GameConfig, GameEvent, PlayerCommand, PlayerId, SlotIndex, Stance, StartTechnique, TacticPlan, TacticsTechnique } from '../game/model/types';
 import { buildJournal, type JournalLine } from '../game/visibility/journal';
 import { viewFor, visibleEvents, type PlayerView } from '../game/visibility/view';
 import type { ArenaHandle } from '../scene/arena';
@@ -114,14 +114,22 @@ export class Controller {
   private dragging = false;
   private lastTurn = 0;
   private holdSeq = 0;
+  private commandFn: (() => void) | null = null;
+  /** Vrai après `dispose()` : plus aucune minuterie, commande ni rendu (sortie du duel sans rechargement). */
+  disposed = false;
 
-  constructor(public config: GameConfig, public params: AppParams, public arena: ArenaHandle | null, public scenario: Scenario | null = null, public rival: RivalPersonality) {
+  /**
+   * `resume` : commandes déjà jouées de ce duel (reprise après fermeture). Elles sont rejouées sur le
+   * moteur pur avant le premier affichage, sans mise en scène : même état, même journal, mêmes secrets.
+   */
+  constructor(public config: GameConfig, public params: AppParams, public arena: ArenaHandle | null, public scenario: Scenario | null = null, public rival: RivalPersonality, resume: readonly Command[] = []) {
     this.expr = new ExpressionDirector('p2', rival, params.artSeed ^ config.seed);
     this.match = new Match(config);
     if (scenario) {
       this.match.state = scenario.build(config);
       this.match.events = [];
     }
+    for (const cmd of resume) this.match.submit(cmd);
     this.mySignature = config.players.p1.signature;
     this.ui = freshUi('');
     this.arena?.setFamilies(config.players.p1.signature, config.players.p2.signature);
@@ -145,6 +153,22 @@ export class Controller {
   /** Mise en scène du Clash (M03) : intentions dérivées du résultat résolu. */
   onMotion(fn: (m: MotionEvent) => void): void {
     this.motionFn = fn;
+  }
+
+  /** Après chaque commande acceptée par le moteur (joueur OU rival) : point de sauvegarde. */
+  onCommand(fn: () => void): void {
+    this.commandFn = fn;
+  }
+
+  /** Arrête toutes les minuteries (IA, séquence, expressions) : le contrôleur devient inerte. */
+  dispose(): void {
+    this.disposed = true;
+    window.clearTimeout(this.aiTimer);
+    window.clearTimeout(this.seqTimer);
+    window.clearTimeout(this.exprTimer);
+    this.aiTimer = this.seqTimer = this.exprTimer = 0;
+    this.renderFn = () => {};
+    this.beatFn = this.exprFn = this.motionFn = this.commandFn = null;
   }
 
   get artSeed(): number {
@@ -249,7 +273,7 @@ export class Controller {
   /** Joue le temps suivant (FX, réactions, PV, journal) puis programme le suivant. */
   advanceBeat(): void {
     const q = this.seq;
-    if (!q || q.done) return;
+    if (!q || q.done || this.disposed) return;
     window.clearTimeout(this.seqTimer);
     this.seqTimer = 0;
     const stopAt = this.params.freeze && this.params.beat !== null ? this.params.beat : null;
@@ -414,6 +438,7 @@ export class Controller {
   }
 
   private pumpExpression(): void {
+    if (this.disposed) return;
     const next = this.exprQueue.shift();
     if (!next) {
       this.exprTimer = 0;
@@ -498,12 +523,14 @@ export class Controller {
   // IA : décide uniquement sur viewFor('p2') (ou script de scénario identifié).
 
   private scheduleAi(): void {
+    if (this.disposed) return;
     const v2 = viewFor(this.match.state, 'p2');
     if (!v2.awaitingMe || this.aiTimer) return;
     if (this.sequencing) return; // le rival attend la fin de la mise en scène (relancé à la fin)
     this.aiThinking = true;
     const run = () => {
       this.aiTimer = 0;
+      if (this.disposed) return;
       const view = viewFor(this.match.state, 'p2');
       if (!view.awaitingMe) { this.aiThinking = false; return; }
       const key = `${view.turn}:${view.phase}`;
@@ -520,6 +547,7 @@ export class Controller {
 
   /** Point d’entrée unique vers le moteur ; refus explicite sans mutation. */
   apply(cmd: PlayerCommand | { type: 'nextTurn' }): boolean {
+    if (this.disposed) return false;
     // Une animation ne bloque jamais une commande valide : la séquence est achevée d’abord.
     if (this.sequencing && (cmd.type === 'nextTurn' || checkCommand(this.match.state, cmd) === null)) this.skipSequence();
     if (cmd.type !== 'nextTurn') {
@@ -531,6 +559,7 @@ export class Controller {
     }
     const evs = this.match.submit(cmd);
     this.refresh(evs);
+    this.commandFn?.();
     return true;
   }
 

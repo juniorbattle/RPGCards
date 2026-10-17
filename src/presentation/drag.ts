@@ -14,15 +14,25 @@ export class DragManager {
   private suppressClick = false;
   private longPressed = false;
 
-  constructor(private root: HTMLElement, private c: Controller, private onDone: () => void) {
-    root.addEventListener('pointerdown', this.down, { passive: false });
-    window.addEventListener('pointermove', this.move, { passive: false });
-    window.addEventListener('pointerup', this.up);
-    window.addEventListener('pointercancel', this.cancel);
+  /** `signal` : retire tous les écouteurs à la fin de la session de duel (M04). */
+  constructor(private root: HTMLElement, private c: Controller, private onDone: () => void, signal?: AbortSignal) {
+    root.addEventListener('pointerdown', this.down, { passive: false, signal });
+    window.addEventListener('pointermove', this.move, { passive: false, signal });
+    window.addEventListener('pointerup', this.up, { signal });
+    window.addEventListener('pointercancel', this.cancel, { signal });
     // Clic de carte (main / brouillon) : géré ici pour distinguer clic et glisser.
     root.addEventListener('click', (e) => {
       if (this.suppressClick) { e.stopPropagation(); e.preventDefault(); this.suppressClick = false; }
-    }, true);
+    }, { capture: true, signal });
+  }
+
+  /** Fin de session : minuterie d’appui long et fantôme éventuel retirés. */
+  dispose(): void {
+    window.clearTimeout(this.longPress);
+    this.ghost?.remove();
+    this.ghost = null;
+    this.start = null;
+    this.dragging = false;
   }
 
   private down = (e: PointerEvent): void => {
