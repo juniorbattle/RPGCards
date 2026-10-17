@@ -17,7 +17,9 @@
     "perf": "node tools/perf.mjs",
     "sim": "tsx tools/perf-engine.ts 200",
     "shots:clash": "node tools/clash-shots.mjs",
-    "shots:m03-2": "node tools/shots-m03-2.mjs"
+    "shots:m03-2": "node tools/shots-m03-2.mjs",
+    "qa:product": "node tools/qa-product.mjs",
+    "shots:m04": "node tools/shots-m04.mjs"
   },
   "engines": {
     "node": ">=20"

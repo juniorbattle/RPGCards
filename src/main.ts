@@ -8,6 +8,7 @@ import { backEl, cardEl } from './presentation/cardView';
 import { cls, h } from './presentation/dom';
 import { createArena, type ArenaHandle } from './scene/arena';
 import { DuelSession } from './app/duelSession';
+import { Shell } from './shell/shell';
 import { PERSONALITIES, personalityFor, type RivalPersonality } from './presentation/personalities';
 
 const params = readParams();
@@ -127,6 +128,18 @@ function gallery(): void {
   (window as unknown as Record<string, unknown>).__artGenMs = Math.round((performance.now() - t0) * 10) / 10;
 }
 
+function resetArena(): void {
+  arena?.dispose();
+  arena = null;
+  arenaFor = null;
+}
+
+// Entrées : galerie de revue (`?gallery=1`), duel direct QA (`?autostart=1`, `?scenario=`), ancien
+// écran de configuration (`?setup=1`) ; sinon le JEU (accueil, deck, rencontres, sauvegarde — M04).
 if (params.gallery) gallery();
 else if (params.autostart) start(makeConfig(params, params.sig ?? 'Cendre', params.techs ?? ['Lecture', 'Ancrage']), params.scenario);
-else setupScreen();
+else if (new URLSearchParams(window.location.search).get('setup') === '1') setupScreen();
+else {
+  const shell = new Shell({ shellHost: document.getElementById('shell')!, app, params, ensureArena, resetArena, arena: () => arena });
+  if (params.qa) (window as unknown as Record<string, unknown>).__lqvShell = shell;
+}
