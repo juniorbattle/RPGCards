@@ -1,0 +1,157 @@
+{
+  "commit": "64863ac",
+  "date": "2026-10-17T10:46:07.161Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "cores": 16,
+    "memGB": 31,
+    "platform": "win32 10.0.26200",
+    "node": "v22.14.0"
+  },
+  "renderer": "Chrome headless, GPU réel : ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11) — arguments : --force_high_performance_gpu",
+  "gpu": true,
+  "chromeArgs": [
+    "--force_high_performance_gpu"
+  ],
+  "engine": {
+    "duels": 200,
+    "ms": 14318,
+    "msPerDuel": 71.59,
+    "commands": 12190,
+    "usPerCommand": 1174.6,
+    "avgTurns": 9.84,
+    "duelsWithOvertime": 18,
+    "wins": {
+      "p1": 147,
+      "p2": 53
+    }
+  },
+  "scene": {
+    "viewA": {
+      "frame": 837,
+      "fps": 163.1,
+      "frameMs": 2.69,
+      "drawCalls": 73,
+      "triangles": 1560,
+      "textures": 21,
+      "geometries": 46,
+      "view": "A",
+      "blend": 0,
+      "portrait": false,
+      "rival": {
+        "mood": "neutral",
+        "gesture": "place-card",
+        "cause": "vous observe"
+      }
+    },
+    "gpuTimerQueryA": true,
+    "rendererA": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "viewB": {
+      "frame": 963,
+      "fps": 162,
+      "frameMs": 2.38,
+      "drawCalls": 75,
+      "triangles": 1608,
+      "textures": 21,
+      "geometries": 46,
+      "view": "B",
+      "blend": 1,
+      "portrait": false,
+      "rival": {
+        "mood": "neutral",
+        "gesture": "place-card",
+        "cause": "vous observe"
+      }
+    },
+    "gpuTimerQueryB": true,
+    "rendererB": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "ablationViewA": {
+      "complet": {
+        "drawCalls": 73,
+        "triangles": 1560,
+        "medianFrameMs": 2.16,
+        "medianFps": 111.3,
+        "frameMs": [
+          1.35,
+          2.53,
+          2.16
+        ]
+      },
+      "candles": {
+        "drawCalls": 70,
+        "triangles": 520,
+        "medianFrameMs": 1.8,
+        "medianFps": 118.75,
+        "frameMs": [
+          1.56,
+          1.8,
+          2.12
+        ]
+      },
+      "banners": {
+        "drawCalls": 61,
+        "triangles": 1448,
+        "medianFrameMs": 2.06,
+        "medianFps": 148.6,
+        "frameMs": [
+          2.54,
+          1.98,
+          2.06
+        ]
+      },
+      "dust": {
+        "drawCalls": 72,
+        "triangles": 1560,
+        "medianFrameMs": 2.38,
+        "medianFps": 142.35,
+        "frameMs": [
+          2.38,
+          2.64,
+          2.12
+        ]
+      },
+      "candles,banners,dust": {
+        "drawCalls": 57,
+        "triangles": 408,
+        "medianFrameMs": 1.96,
+        "medianFps": 124.95,
+        "frameMs": [
+          1.96,
+          2.11,
+          0.99
+        ]
+      }
+    },
+    "clashRealtime": {
+      "scenario": "clash-ag (absorption)",
+      "window": "2,5 s depuis l’apparition de la scène de Clash",
+      "frames": 374,
+      "medianMs": 6.1,
+      "p95Ms": 6.2,
+      "maxMs": 84.9,
+      "over50ms": 2,
+      "arena": {
+        "frame": 873,
+        "fps": 148.1,
+        "frameMs": 2.01,
+        "drawCalls": 74,
+        "triangles": 1748,
+        "textures": 22,
+        "geometries": 54,
+        "view": "A",
+        "blend": 0,
+        "portrait": false,
+        "rival": {
+          "mood": "relieved",
+          "gesture": null,
+          "cause": "perd au Rang mais absorbe tout"
+        }
+      }
+    },
+    "galleryLoad": {
+      "domContentLoadedMs": 331,
+      "loadMs": 362,
+      "artGeneration37CardsMs": 245.8
+    }
+  }
+}

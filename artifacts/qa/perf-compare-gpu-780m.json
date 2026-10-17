@@ -1,0 +1,237 @@
+{
+  "date": "2026-10-17T10:50:41.384Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "cores": 16,
+    "memGB": 31,
+    "node": "v22.14.0"
+  },
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "gpu": true,
+  "chromeArgs": [],
+  "protocol": "7 rondes entrelacées par vue, 1280×720, scénario signature, 5 s de mise en régime, moyenne de 6 relevés",
+  "builds": {
+    "avant": "110525d",
+    "apres": "64863ac"
+  },
+  "summary": {
+    "A": {
+      "avant": {
+        "medianFrameMs": 2.93,
+        "minFrameMs": 2.13,
+        "maxFrameMs": 3.11,
+        "medianFps": 95.32,
+        "drawCalls": 73,
+        "triangles": 1560
+      },
+      "apres": {
+        "medianFrameMs": 2.29,
+        "minFrameMs": 1.71,
+        "maxFrameMs": 2.94,
+        "medianFps": 128.23,
+        "drawCalls": 73,
+        "triangles": 1560
+      }
+    },
+    "B": {
+      "avant": {
+        "medianFrameMs": 1.95,
+        "minFrameMs": 1.16,
+        "maxFrameMs": 2.8,
+        "medianFps": 142.52,
+        "drawCalls": 75,
+        "triangles": 1608
+      },
+      "apres": {
+        "medianFrameMs": 1.73,
+        "minFrameMs": 1.3,
+        "maxFrameMs": 2.93,
+        "medianFps": 141.8,
+        "drawCalls": 75,
+        "triangles": 1608
+      }
+    }
+  },
+  "runs": {
+    "A": {
+      "avant": [
+        {
+          "frameMs": 2.13,
+          "fps": 101.7,
+          "drawCalls": 73,
+          "triangles": 1560
+        },
+        {
+          "frameMs": 2.69,
+          "fps": 117.72,
+          "drawCalls": 73,
+          "triangles": 1560
+        },
+        {
+          "frameMs": 2.72,
+          "fps": 72.53,
+          "drawCalls": 73,
+          "triangles": 1560
+        },
+        {
+          "frameMs": 2.93,
+          "fps": 95.32,
+          "drawCalls": 73,
+          "triangles": 1560
+        },
+        {
+          "frameMs": 2.93,
+          "fps": 91.9,
+          "drawCalls": 73,
+          "triangles": 1560
+        },
+        {
+          "frameMs": 2.95,
+          "fps": 122.67,
+          "drawCalls": 73,
+          "triangles": 1560
+        },
+        {
+          "frameMs": 3.11,
+          "fps": 95.12,
+          "drawCalls": 73,
+          "triangles": 1560
+        }
+      ],
+      "apres": [
+        {
+          "frameMs": 2.24,
+          "fps": 145.43,
+          "drawCalls": 73,
+          "triangles": 1560
+        },
+        {
+          "frameMs": 2.91,
+          "fps": 128.23,
+          "drawCalls": 73,
+          "triangles": 1560
+        },
+        {
+          "frameMs": 2.94,
+          "fps": 90.03,
+          "drawCalls": 73,
+          "triangles": 1560
+        },
+        {
+          "frameMs": 2.55,
+          "fps": 81.18,
+          "drawCalls": 73,
+          "triangles": 1560
+        },
+        {
+          "frameMs": 2.29,
+          "fps": 107.83,
+          "drawCalls": 73,
+          "triangles": 1560
+        },
+        {
+          "frameMs": 2.19,
+          "fps": 151.77,
+          "drawCalls": 73,
+          "triangles": 1560
+        },
+        {
+          "frameMs": 1.71,
+          "fps": 147.33,
+          "drawCalls": 73,
+          "triangles": 1560
+        }
+      ]
+    },
+    "B": {
+      "avant": [
+        {
+          "frameMs": 1.95,
+          "fps": 135.08,
+          "drawCalls": 75,
+          "triangles": 1608
+        },
+        {
+          "frameMs": 1.24,
+          "fps": 154.55,
+          "drawCalls": 75,
+          "triangles": 1608
+        },
+        {
+          "frameMs": 2.1,
+          "fps": 116.5,
+          "drawCalls": 75,
+          "triangles": 1608
+        },
+        {
+          "frameMs": 1.16,
+          "fps": 162.03,
+          "drawCalls": 75,
+          "triangles": 1608
+        },
+        {
+          "frameMs": 1.17,
+          "fps": 163.37,
+          "drawCalls": 75,
+          "triangles": 1608
+        },
+        {
+          "frameMs": 2.8,
+          "fps": 142.52,
+          "drawCalls": 75,
+          "triangles": 1608
+        },
+        {
+          "frameMs": 2.46,
+          "fps": 139.78,
+          "drawCalls": 75,
+          "triangles": 1608
+        }
+      ],
+      "apres": [
+        {
+          "frameMs": 1.73,
+          "fps": 98.03,
+          "drawCalls": 75,
+          "triangles": 1608
+        },
+        {
+          "frameMs": 1.3,
+          "fps": 150.1,
+          "drawCalls": 75,
+          "triangles": 1608
+        },
+        {
+          "frameMs": 2.41,
+          "fps": 96.18,
+          "drawCalls": 75,
+          "triangles": 1608
+        },
+        {
+          "frameMs": 1.31,
+          "fps": 163.18,
+          "drawCalls": 75,
+          "triangles": 1608
+        },
+        {
+          "frameMs": 1.49,
+          "fps": 163.03,
+          "drawCalls": 75,
+          "triangles": 1608
+        },
+        {
+          "frameMs": 2.73,
+          "fps": 141.8,
+          "drawCalls": 75,
+          "triangles": 1608
+        },
+        {
+          "frameMs": 2.93,
+          "fps": 79.07,
+          "drawCalls": 75,
+          "triangles": 1608
+        }
+      ]
+    }
+  }
+}
