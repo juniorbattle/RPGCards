@@ -41,6 +41,8 @@ export interface BoardHooks {
    * d’écran de fin historique — l’enveloppe présente le résultat. Absent : comportement QA historique.
    */
   product?: { menu: true };
+  /** Conseil contextuel non intrusif (M04), au-dessus des commandes ; « Compris » → outil `tip:<id>`. */
+  tip?: () => { id: string; title: string; text: string } | null;
 }
 
 /** Éléments qui glissent de leur ancienne place lors d’un passage de vue A ↔ B. */
@@ -72,6 +74,8 @@ export function renderApp(root: HTMLElement, c: Controller, hooks: BoardHooks): 
     inspector(c),
     drawer(c, hooks),
   );
+  const tip = tipBox(c, hooks);
+  if (tip) root.append(tip);
   if (c.ui.toast) root.append(h('div', { class: cls('toast', c.ui.toast.kind === 'info' && 'info'), role: 'status', 'aria-live': 'polite' }, c.ui.toast.text));
   if (c.view.phase === 'ENDED' && !c.sequencing && !hooks.product) root.append(endOverlay(c));
 
@@ -673,6 +677,15 @@ function journal(c: Controller): HTMLElement {
         h('summary', null, h('b', null, `Tour ${t}`), h('span', { class: 'turn-sum' }, ` — ${summary}`)),
         lines.map((l) => h('div', { class: cls('line', l.tone) }, l.text)));
     }));
+}
+
+function tipBox(c: Controller, hooks: BoardHooks): HTMLElement | null {
+  const t = c.sequencing ? null : hooks.tip?.();
+  if (!t) return null;
+  return h('aside', { class: 'tip', role: 'note', 'aria-label': `Conseil : ${t.title}`, 'data-tip': t.id },
+    h('b', { class: 'tip-title' }, t.title),
+    h('span', { class: 'tip-text' }, t.text),
+    h('button', { class: 'tool tip-ok', type: 'button', 'data-key': 'tip-ok', onclick: () => hooks.onToggleTool(`tip:${t.id}`) }, 'Compris'));
 }
 
 function endOverlay(c: Controller): HTMLElement {

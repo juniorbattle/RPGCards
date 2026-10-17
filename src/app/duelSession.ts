@@ -31,6 +31,8 @@ export interface DuelSessionOptions {
   onTool?: (tool: string) => boolean;
   /** Mode produit : pas d’écran de fin historique (l’enveloppe présente le résultat). */
   product?: BoardHooks['product'];
+  /** Conseil contextuel du moment (mode produit). */
+  tip?: (c: Controller) => ReturnType<NonNullable<BoardHooks['tip']>>;
   /** Après chaque commande acceptée (sauvegarde). */
   onCommand?: (c: Controller) => void;
   /** Fin de duel (phase ENDED) et mise en scène terminée. */
@@ -54,7 +56,7 @@ export class DuelSession {
     let pointerHeld = false;
     let pendingRender = false;
     let drag: DragManager | null = null;
-    const hooks: BoardHooks = { onToggleTool: (t) => this.tool(t), product: o.product };
+    const hooks: BoardHooks = { onToggleTool: (t) => this.tool(t), product: o.product, tip: o.tip ? () => o.tip!(c) : undefined };
     // Aucun re-rendu pendant qu’un pointeur est enfoncé (glisser OU clic en cours) : un rendu
     // asynchrone (verrouillage de l’IA) ne doit jamais avaler une interaction humaine.
     const render = () => {

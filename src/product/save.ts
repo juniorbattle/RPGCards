@@ -65,6 +65,8 @@ export interface SaveData {
   history: DuelSummary[];
   /** Nombre de duels commencés (dérive la seed de chaque duel). */
   duelCounter: number;
+  /** Conseils contextuels déjà lus (« Compris »). */
+  tipsSeen: string[];
 }
 
 export const HISTORY_MAX = 60;
@@ -73,7 +75,7 @@ export const DEFAULT_OPTIONS: Options = { pace: 'normal', reducedMotion: null, s
 
 export function newSave(now: Date, name: string, seed: number, deck: DeckChoice): SaveData {
   const t = now.toISOString();
-  return { schemaVersion: SCHEMA_VERSION, gameVersion: GAME_VERSION, createdAt: t, updatedAt: t, profile: { name, seed: seed >>> 0 }, deck: structuredClone(deck), options: { ...DEFAULT_OPTIONS }, history: [], duelCounter: 0 };
+  return { schemaVersion: SCHEMA_VERSION, gameVersion: GAME_VERSION, createdAt: t, updatedAt: t, profile: { name, seed: seed >>> 0 }, deck: structuredClone(deck), options: { ...DEFAULT_OPTIONS }, history: [], duelCounter: 0, tipsSeen: [] };
 }
 
 // ---------------------------------------------------------------------------
@@ -127,6 +129,7 @@ export function validateSave(x: unknown): Errs {
   if (!Array.isArray(x.history)) errs.push('history : liste attendue');
   else x.history.forEach((h, i) => checkSummary(h, errs, `history[${i}]`));
   if (!isInt(x.duelCounter) || x.duelCounter < 0) errs.push('duelCounter');
+  if (!Array.isArray(x.tipsSeen) || !x.tipsSeen.every(isStr)) errs.push('tipsSeen');
   return errs;
 }
 
