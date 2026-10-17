@@ -52,11 +52,16 @@ try {
   // `ablate`, inerte hors qa=1). Aucun post-traitement n’existe (pas d’EffectComposer) : le tone
   // mapping ACES est calculé dans les shaders des matériaux.
   // (LQV_PERF_ABLATE=0 pour un build antérieur qui ignore `ablate`.)
+  // Rondes entrelacées (ordre inversé une ronde sur deux), médiane par variante : la charge du
+  // conteneur varie trop pour un relevé isolé.
   if (process.env.LQV_PERF_ABLATE !== '0') {
-    scene.ablationViewA = {};
-    for (const a of ['', 'candles', 'banners', 'dust', 'fill', 'candles,banners,dust,fill']) {
-      scene.ablationViewA[a || 'complet'] = await measure('A', a);
+    const variants = ['', 'candles', 'banners', 'dust', 'candles,banners,dust'];
+    const runs = Object.fromEntries(variants.map((a) => [a || 'complet', []]));
+    for (let r = 0; r < 3; r++) {
+      for (const a of r % 2 ? [...variants].reverse() : variants) runs[a || 'complet'].push(await measure('A', a));
     }
+    const med = (xs) => [...xs].sort((x, y) => x - y)[Math.floor(xs.length / 2)];
+    scene.ablationViewA = Object.fromEntries(Object.entries(runs).map(([k, xs]) => [k, { drawCalls: xs[0].drawCalls, triangles: xs[0].triangles, medianFrameMs: med(xs.map((x) => x.frameMs)), medianFps: med(xs.map((x) => x.fps)), frameMs: xs.map((x) => x.frameMs) }]));
   }
   // M03.2 — Clash joué en temps réel (non figé, mouvement complet) : intervalles requestAnimationFrame
   // pendant la scène de Clash (ASSAUT III + soutien Rang contre GARDE IV : absorption). Sous SwiftShader,
