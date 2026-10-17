@@ -9,7 +9,9 @@ import { execSync } from 'node:child_process';
 import * as THREE from 'three';
 import { dragTo, launch, startPreview, view, waitDecision, watchConsole } from './browser.mjs';
 
-const OUT = 'screenshots/qa/m03-2';
+// M032_ONLY=id1,id2 : sous-ensemble de cas (vérification rapide), écrit dans M032_OUT (jamais dans les preuves).
+const ONLY = process.env.M032_ONLY ? process.env.M032_ONLY.split(',') : null;
+const OUT = process.env.M032_OUT ?? (ONLY ? 'artifacts/qa/tmp/m03-2-partiel' : 'screenshots/qa/m03-2');
 mkdirSync(OUT, { recursive: true });
 const commit = execSync('git rev-parse --short HEAD').toString().trim();
 const BEFORE = process.env.LQV_BEFORE ?? '';
@@ -289,7 +291,7 @@ const serverBefore = BEFORE && existsSync(`${BEFORE}/index.html`) ? await startP
 const faces = {};
 const conLine = (c) => Object.entries(c ?? {}).map(([k, o]) => `${k} ${o.min}:1 (${o.aa}/${o.n} ≥ 4,5)`).join(', ') || '–';
 try {
-  for (const c of CASES) {
+  for (const c of CASES.filter((x) => !ONLY || ONLY.includes(x.id))) {
     const entry = { id: c.id, desc: c.desc, viewport: `${c.vp[0]}×${c.vp[1]}`, url: c.url, panel: c.panel ?? null };
     entry.apres = await capture(browser, helper, serverAfter, 'apres', c);
     if (serverBefore) entry.avant = await capture(browser, helper, serverBefore, 'avant', c);
@@ -297,9 +299,11 @@ try {
     const f = (x) => (x ? `visage ${x.faceH ?? '–'} px · lum. table ${x.lum.table} / visage ${x.lum.visage} · main ${x.handCardPx ?? '–'} px · contraste min ${conLine(x.contrast)} · chevauchements ${x.overlaps.length}${x.overlaps.length ? ` (${x.overlaps.slice(0, 3).join(', ')})` : ''}${x.driveError ? ` · PARCOURS IMPOSSIBLE : ${x.driveError}` : ''}` : '');
     console.log(`✓ ${c.id} — après : ${f(entry.apres)}${entry.avant ? `\n    avant : ${f(entry.avant)}` : ''}`);
   }
-  faces.apres = await expressions(serverAfter, 'apres');
-  if (serverBefore) faces.avant = await expressions(serverBefore, 'avant');
-  console.log(`✓ 13-expressions — ${Object.keys(faces.apres).length} poses après${faces.avant ? `, ${Object.keys(faces.avant).length} avant` : ''}`);
+  if (!ONLY) {
+    faces.apres = await expressions(serverAfter, 'apres');
+    if (serverBefore) faces.avant = await expressions(serverBefore, 'avant');
+  }
+  if (faces.apres) console.log(`✓ 13-expressions — ${Object.keys(faces.apres).length} poses après${faces.avant ? `, ${Object.keys(faces.avant).length} avant` : ''}`);
 } finally {
   serverAfter.stop();
   serverBefore?.stop();
