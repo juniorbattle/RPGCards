@@ -209,3 +209,20 @@
   .sh-face { width: 5rem; height: 5rem; }
 }
 #app[hidden] { display: none !important; }
+
+/* --- M05 : série, duel en cours, progression ------------------------------------------------- */
+.sh-active { display: flex; gap: 0.8rem; align-items: center; justify-content: space-between; flex-wrap: wrap; padding: 0.7rem 0.9rem; border: 1px solid var(--gold-hi); border-radius: 12px; background: linear-gradient(180deg, rgba(60, 44, 14, 0.85), rgba(30, 22, 8, 0.9)); font-size: 0.86rem; }
+.sh-active b { color: var(--gold-hi); }
+.sh-series { display: grid; gap: 0.6rem; padding: 0.8rem; border: 1px solid var(--line); border-radius: 14px; background: rgba(20, 14, 10, 0.55); }
+.sh-series-head { display: flex; gap: 0.8rem; align-items: baseline; flex-wrap: wrap; }
+.sh-series-head h2 { margin: 0; }
+.sh-series-head .btn { margin-left: auto; }
+.sh-enc.st-locked { opacity: 0.62; filter: saturate(0.6); }
+.sh-enc.st-done { border-style: double; border-width: 3px; }
+.sh-lock { margin: 0; font-size: 0.78rem; color: var(--ink-dim); }
+.sh-enc-reward { margin: 0; font-size: 0.74rem; color: #e0d2ff; }
+.sh-effects { display: grid; gap: 0.45rem; padding: 0.7rem 0.9rem; border: 1px solid rgba(180, 140, 255, 0.55); border-radius: 12px; background: rgba(20, 14, 30, 0.75); font-size: 0.86rem; }
+.sh-effects p { margin: 0; }
+.sh-effects .ok { color: #c8f2b2; }
+.sh-effects ul, .sh-effects ol { margin: 0.25rem 0 0; padding-left: 1.2rem; display: grid; gap: 0.1rem; font-size: 0.82rem; }
+.sh-recap b { color: var(--gold-hi); font-family: Georgia, serif; font-size: 1.05rem; }

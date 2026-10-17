@@ -84,10 +84,13 @@ describe('ExpressionDirector (rival) — événements publics uniquement', () =>
     expect(gestures.size).toBeGreaterThanOrEqual(4);
   });
 
-  it('trois personnalités distinctes, choix déterministe par seed', () => {
-    expect(new Set(PERSONALITIES.map((p) => p.id)).size).toBe(3);
-    expect(new Set(PERSONALITIES.map((p) => p.aiProfile)).size).toBe(3);
+  it('personnalités distinctes (4 depuis M05), choix déterministe par seed parmi les trois historiques', () => {
+    expect(new Set(PERSONALITIES.map((p) => p.id)).size).toBe(4);
+    expect(new Set(PERSONALITIES.map((p) => p.aiProfile)).size).toBe(4);
+    expect(new Set(PERSONALITIES.map((p) => p.family)).size).toBe(4);
     expect(personalityFor(7).id).toBe(personalityFor(7).id);
+    // Les seeds QA M02–M03 gardent le même adversaire : Orin n’est jamais tiré par seed.
+    for (let s = 0; s < 60; s++) expect(['braise', 'ronce', 'voile']).toContain(personalityFor(s).id);
     expect(personalityFor(1, 'voile').id).toBe('voile');
   });
 });

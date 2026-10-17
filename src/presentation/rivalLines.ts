@@ -76,6 +76,22 @@ const LINES: Record<Voice, Record<Mood, string[]>> = {
     thinking: ['Voyons…', 'Laissez-moi lire la table…'],
     shocked: ['Les deux ?!', 'Quelle audace !'],
   },
+  astre: {
+    neutral: ['Les astres tournent.', 'Rien ne presse.'],
+    focused: ['Tout revient à sa place.', 'Je calcule.'],
+    confident: ['Le cycle est de mon côté.', 'Chaque carte revient.'],
+    smug: ['Prévisible.', 'Comme prévu.'],
+    pleased: ['Bonne orbite.', 'Voilà.'],
+    triumphant: ['La boucle est bouclée.', 'Les astres ont parlé.'],
+    surprised: ['Une étoile filante…', 'Tiens !'],
+    pained: ['Hm. Bien visé.', 'Ça dévie ma course.'],
+    annoyed: ['Contretemps.', 'Mauvaise conjonction.'],
+    angry: ['Assez d’éclipses !', 'Vous déréglez tout.'],
+    relieved: ['Rien de perdu.', 'Le ciel est clair.'],
+    defeated: ['Une nuit sans étoiles.', 'Vous avez lu le ciel mieux que moi.'],
+    thinking: ['Laissez-moi tracer la route…', 'Hmm…'],
+    shocked: ['Collision !', 'Tous les deux ?!'],
+  },
 };
 
 /** Répliques dédiées à des faits publics précis (la cause vient de l’ExpressionDirector). */

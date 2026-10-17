@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "gameVersion": "0.4.0",
+  "createdAt": "2026-10-17T03:31:30.833Z",
+  "updatedAt": "2026-10-17T03:32:37.810Z",
+  "profile": {
+    "name": "Profil M04",
+    "seed": 12852549
+  },
+  "deck": {
+    "signature": "Cendre",
+    "variants": [
+      "Cendre-1-etincelle",
+      "Voile-1-eclaireur",
+      "Ronce-1-racine",
+      "Astre-1-repere"
+    ],
+    "techniques": [
+      "Lecture",
+      "Ancrage"
+    ]
+  },
+  "options": {
+    "pace": "normal",
+    "reducedMotion": null,
+    "scale": 1,
+    "tips": true,
+    "fullCollection": false,
+    "artSeed": 7
+  },
+  "history": [
+    {
+      "id": "d1",
+      "encounterId": "libre-braise",
+      "rival": "braise",
+      "outcome": "victory",
+      "turns": 8,
+      "overtime": 0,
+      "dealt": 95,
+      "taken": 47,
+      "hp": {
+        "me": 43,
+        "opp": 0
+      },
+      "seed": 101,
+      "signature": "Cendre",
+      "at": "2026-10-17T03:32:36.000Z"
+    },
+    {
+      "id": "d2",
+      "encounterId": "libre-braise",
+      "rival": "braise",
+      "outcome": "abandon",
+      "turns": 1,
+      "overtime": 0,
+      "dealt": 0,
+      "taken": 0,
+      "hp": {
+        "me": 90,
+        "opp": 80
+      },
+      "seed": 101,
+      "signature": "Cendre",
+      "at": "2026-10-17T03:32:37.810Z"
+    }
+  ],
+  "duelCounter": 2,
+  "tipsSeen": []
+}

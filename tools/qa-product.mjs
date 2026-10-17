@@ -3,7 +3,7 @@
 // clavier, glisser), résultat, retour, rechargement, abandon, deck illégal refusé, sauvegarde
 // illisible. Chaque duel est audité comme en M03 (vues, composition, postures, secrets).
 // Sortie : artifacts/qa/qa-product.json. `?qa=1` n’expose que des crochets de lecture.
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { launch, startPreview, view, watchConsole } from './browser.mjs';
 import { newStats, playTurn, pres, sample } from './duel-driver.mjs';
@@ -17,6 +17,10 @@ const shellState = (page) => page.evaluate(() => {
   const s = window.__lqvShell;
   return { screen: s.flow.screen, overlay: s.flow.overlay, encounter: s.flow.encounterId, save: s.save ? JSON.parse(JSON.stringify(s.save)) : null, last: s.lastResult, load: s.load.status, live: !!s.live };
 });
+// Captures facultatives du runtime réel pendant les parcours (QA_SHOTS=dossier).
+const SHOTS = process.env.QA_SHOTS ?? null;
+if (SHOTS) mkdirSync(SHOTS, { recursive: true });
+const snap = async (page, name) => { if (!SHOTS) return; await page.waitForTimeout(350); await page.screenshot({ path: `${SHOTS}/${name}.png` }); };
 const screenIs = (page, id, timeout = 15000) => page.waitForSelector(`[data-screen="${id}"]`, { timeout });
 
 /** Joue un duel produit jusqu’au K.-O. par l’interface ; renvoie le gagnant moteur et les audits. */
@@ -29,6 +33,11 @@ async function playDuel(page, run, mode) {
   await sample(page, stats);
   const p = await pres(page);
   return { outcome, winner: v.winner, turn: v.turn, hp: [v.me.hp, v.opp.hp], personality: p.personality, ...stats, moods: [...stats.moods], leaks: [...new Set(stats.leaks)] };
+}
+
+/** Une seule décision (le pilote joue jusqu’au prochain choix, puis rend la main). */
+async function playTurnOnce(page, stats = newStats()) {
+  return playTurn(page, { name: 'once', useLecture: false, mode: 'click', maxDecisions: 1 }, stats);
 }
 
 async function newProfile(page, { name, sig, techs }) {
@@ -110,7 +119,7 @@ const runs = {
   'B-1920-glisser-abandon': () => withPage(browser, server.base, { width: 1920, height: 1080 }, async (page, check, res) => {
     await page.goto(`${server.base}/?${Q}&reducedMotion=1`);
     await newProfile(page, { name: 'QA Glisser', sig: 'Cendre', techs: ['Lecture', 'Ancrage'] });
-    await page.click('[data-key="enc-libre-voile"]');
+    await page.click('[data-key="enc-libre-braise"]');
     await page.click('[data-key="prep-start"]');
     const duel = await playDuel(page, { name: 'B', useLecture: false }, 'drag');
     res.duel = duel;
@@ -148,7 +157,7 @@ const runs = {
     await screenIs(page, 'home');
     check((await page.textContent('.sh-save-status')).includes('plus légal'), 'accueil : deck enregistré signalé illégal');
     await page.click('[data-key="home-continue"]');
-    await page.click('[data-key="enc-libre-ronce"]');
+    await page.click('[data-key="enc-libre-braise"]');
     await screenIs(page, 'prep');
     check(await page.locator('[data-key="prep-start"][disabled]').count() === 1, 'préparation : « Commencer » désactivé');
     const refused = await page.evaluate(() => { window.__lqvShell.startDuel(); return window.__lqvShell.flow.screen; });
@@ -188,6 +197,175 @@ const runs = {
     await screenIs(page, 'board');
     check(await page.evaluate(() => JSON.parse(localStorage.getItem('lqv.save.corrupt')).text.includes('"schemaVersion":99')), 'nouvelle partie : la sauvegarde future est conservée à part');
   }),
+  // E — M05 : la série complète (3 manches) jouée par l’interface, revanches comprises, puis récapitulatif,
+  // déblocages, Orin débloqué, deck enrichi des nouveautés et Technique apprise ; rechargement final.
+  'E-serie-complete-1280': () => withPage(browser, server.base, { width: 1280, height: 720 }, async (page, check, res) => {
+    await page.goto(`${server.base}/?${Q}&reducedMotion=1&profileSeed=${process.env.QA_PROFILE_SEED ?? 20261017}`);
+    await newProfile(page, { name: 'QA Série', sig: 'Cendre', techs: ['Lecture', 'Ancrage'] });
+    res.duels = [];
+    let step = 0;
+    for (let n = 0; n < Number(process.env.QA_SERIES_MAX ?? 16) && step < 3; n++) {
+      await screenIs(page, 'board');
+      await page.click(`[data-key="enc-quai-${step + 1}"]`);
+      await screenIs(page, 'prep');
+      await page.click('[data-key="prep-start"]');
+      const d = await playDuel(page, { name: `E${n}`, useLecture: n % 2 === 0 }, n % 3 === 1 ? 'drag' : 'click');
+      await screenIs(page, 'result', 40000);
+      const st = await shellState(page);
+      await snap(page, `E-resultat-duel${n + 1}-manche${step + 1}-${st.last?.outcome}`);
+      res.duels.push({ manche: step + 1, rival: d.personality, winner: d.winner, turns: d.turn, leaks: d.leaks.length, viewErrors: d.viewErrors.length, layout: d.layoutIssues.length, lost: d.lostClicks.length, outcome: st.last?.outcome, unlocked: st.save.collection.variants.length });
+      for (const x of [...d.leaks, ...d.viewErrors, ...d.layoutIssues, ...d.lostClicks, ...d.stanceIssues]) res.fails.push(`manche ${step + 1} duel ${n} : ${x}`);
+      check(d.outcome === 'ended' && st.last?.outcome === (d.winner === 'me' ? 'victory' : 'defeat'), `manche ${step + 1} (${d.personality}) : duel ${n + 1} terminé, ${st.last?.outcome}`);
+      if (st.last?.outcome === 'victory') {
+        step++;
+        check(st.save.progress.series.step === step, `série à la manche ${step}`);
+        if (step < 3) { await page.click('[data-key="result-next"]'); await screenIs(page, 'prep'); await page.click('[data-key="prep-back"]'); }
+      } else {
+        check(st.save.progress.series.step === step, 'défaite : la série n’avance pas');
+        await page.click('[data-key="result-board"]');
+      }
+    }
+    const st = await shellState(page);
+    check(step === 3 && st.save.progress.series.completed === 1, `série remportée (${res.duels.length} duels joués)`);
+    if (step === 3) {
+      check((await page.textContent('.sh-recap'))?.includes('remporté'), 'récapitulatif de série affiché');
+      await snap(page, 'E-recapitulatif-serie');
+      check(st.save.collection.techniques.includes('Rupture') && st.save.collection.techniques.includes('Dissipation') && st.save.collection.variants.length === 13, 'déblocages : 9 variantes + Rupture + Dissipation');
+      await page.click('[data-key="result-board"]');
+      check(await page.locator('[data-key="enc-libre-astre"]:not([disabled])').count() === 1, 'Orin débloqué en duel libre');
+      await snap(page, 'E-rencontres-apres-serie');
+      await page.click('[data-key="board-collection"]');
+      await snap(page, 'E-collection-apres-serie');
+      await page.click('[data-key="coll-back"]');
+      await page.click('[data-key="enc-libre-astre"]');
+      await snap(page, 'E-preparation-orin');
+      await page.click('[data-key="prep-back"]');
+      await page.click('[data-key="board-deck"]');
+      await page.click('[data-key="ver-Cendre-3-variant"]');
+      await page.click('[data-key="deck-tech-Lecture"]');
+      await page.click('[data-key="deck-tech-Rupture"]');
+      await page.click('[data-key="deck-save"]');
+      const s2 = await shellState(page);
+      check(s2.save.deck.variants.includes('Cendre-3-ferveur') && s2.save.deck.techniques.includes('Rupture'), 'deck enrichi : variante débloquée et Technique apprise équipées');
+      await page.reload();
+      await screenIs(page, 'home');
+      const s3 = await shellState(page);
+      check(s3.save.progress.series.completed === 1 && s3.save.deck.techniques.includes('Rupture') && s3.save.history.length === res.duels.length, 'après rechargement : série, collection, deck et historique intacts');
+    }
+  }),
+  // F — M05 : reprise EXACTE en plein duel (rechargement pendant l’engagement), Sauvegarder et quitter,
+  // abandon depuis le tableau ; le duel repris se termine et n’est compté qu’une fois.
+  'F-reprise-en-plein-duel': () => withPage(browser, server.base, { width: 1280, height: 720 }, async (page, check, res) => {
+    await page.goto(`${server.base}/?${Q}&reducedMotion=1&profileSeed=777`);
+    await newProfile(page, { name: 'QA Reprise', sig: 'Ronce', techs: ['Sondage', 'Ancrage'] });
+    await snap(page, 'F-rencontres-debut');
+    await page.click('[data-key="enc-quai-1"]');
+    await page.click('[data-key="prep-start"]');
+    await page.waitForFunction(() => !!window.__lqv);
+    const st0 = newStats();
+    for (let i = 0; i < 3; i++) await playTurn(page, { name: 'F', useLecture: false, mode: 'click' }, st0);
+    // Au milieu d’un engagement : brouillon non verrouillé (Primaire posée), puis fermeture brutale.
+    const { waitDecision } = await import('./browser.mjs');
+    let v = await waitDecision(page);
+    while (v.phase !== 'COMMIT') { await playTurnOnce(page); v = await waitDecision(page); }
+    const before = await page.evaluate(() => ({ hash: window.__lqv.hash(), view: JSON.stringify(window.__lqv.view()), turn: window.__lqv.view().turn }));
+    await page.click(`[data-key="hand-${v.me.hand[0].cardId}"]`);
+    await page.click('[data-drop="primary"]');
+    const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('lqv.save')).activeDuel);
+    check(saved && saved.hash === before.hash && saved.turn === before.turn, `duel sauvegardé à chaque commande (tour ${before.turn}, ${saved?.commands.length} commandes)`);
+    await page.reload();
+    await screenIs(page, 'home');
+    check((await page.textContent('[data-key="home-continue"]')).includes('Reprendre le duel contre Kaï'), 'accueil : « Reprendre le duel contre Kaï »');
+    await snap(page, 'F-accueil-reprendre');
+    await page.click('[data-key="home-continue"]');
+    await page.waitForFunction(() => !!window.__lqv);
+    const after = await page.evaluate(() => ({ hash: window.__lqv.hash(), view: JSON.stringify(window.__lqv.view()), draft: window.__lqv.controller.ui.draft.primaryId }));
+    check(after.hash === before.hash, 'reprise exacte : même hash (état, zones, RNG, journal)');
+    check(after.view === before.view, 'reprise exacte : vue du joueur identique (main, cases, PV, Insight, phase)');
+    check(after.draft === null, 'brouillon non verrouillé non conservé (annoncé dans le menu)');
+    // Sauvegarder et quitter, puis reprendre depuis le tableau.
+    await page.click('[data-key="tool-menu"]');
+    await page.click('[data-key="menu-quit"]');
+    await screenIs(page, 'board');
+    check(await page.locator('.sh-active').count() === 1 && await page.locator('[data-key="enc-libre-braise"][disabled]').count() === 1, 'tableau : duel en cours signalé, autres rencontres bloquées');
+    await snap(page, 'F-rencontres-duel-en-cours');
+    await page.click('[data-key="board-resume"]');
+    await page.waitForFunction(() => !!window.__lqv);
+    check(await page.evaluate(() => window.__lqv.hash()) === before.hash, 'Sauvegarder et quitter → Reprendre : même état');
+    const d = await playDuel(page, { name: 'F2', useLecture: false }, 'click');
+    res.duel = d;
+    await screenIs(page, 'result', 40000);
+    const st = await shellState(page);
+    check(st.save.history.length === 1 && st.save.activeDuel === null, 'duel repris terminé : compté une seule fois, plus de duel en cours');
+    // Rechargement pendant la résolution d’un Clash : reprise à l’état résolu, sans plantage.
+    await page.click('[data-key="result-board"]');
+    await page.click(`[data-key="enc-${st.save.progress.series.step === 1 ? 'quai-2' : 'quai-1'}"]`);
+    await page.click('[data-key="prep-start"]');
+    await page.waitForFunction(() => !!window.__lqv);
+    const st2 = newStats();
+    for (let i = 0; i < 12; i++) {
+      const w = await waitDecision(page);
+      if (w.phase === 'TACTICS' && w.awaitingMe) break;
+      await playTurnOnce(page, st2);
+    }
+    await page.click('[data-key="act-tactics"]');
+    await page.waitForFunction(() => window.__lqv.view().phase === 'RESOLVED' || window.__lqv.view().phase === 'REPEL' || window.__lqv.view().phase === 'ENDED');
+    const h1 = await page.evaluate(() => window.__lqv.hash());
+    await page.reload();
+    await page.click('[data-key="home-continue"]');
+    await page.waitForFunction(() => !!window.__lqv);
+    check(await page.evaluate(() => window.__lqv.hash()) === h1, 'rechargement pendant la résolution : état résolu retrouvé');
+    // Abandon depuis le tableau (sans rouvrir le duel).
+    await page.click('[data-key="tool-menu"]');
+    await page.click('[data-key="menu-quit"]');
+    await page.click('[data-key="board-abandon"]');
+    await page.click('[data-key="confirm-ok"]');
+    await screenIs(page, 'result');
+    const st3 = await shellState(page);
+    check(st3.last?.outcome === 'abandon' && st3.save.activeDuel === null && st3.save.history.length === 2, 'abandon depuis le tableau : classé à part, duel retiré');
+  }),
+  // G — M05 : migration d’une VRAIE sauvegarde v1 (écrite par le build M04) au premier chargement.
+  'G-migration-v1-reelle': () => withPage(browser, server.base, { width: 1280, height: 720 }, async (page, check) => {
+    const v1 = readFileSync('test/fixtures/save-v1-m04.json', 'utf8');
+    await page.goto(`${server.base}/?${Q}&reducedMotion=1`);
+    await page.evaluate((t) => { localStorage.clear(); localStorage.setItem('lqv.save', t); }, v1);
+    await page.reload();
+    await screenIs(page, 'home');
+    check((await page.textContent('.sh-save-status')).includes('schéma 1'), 'accueil : migration depuis le schéma 1 annoncée');
+    await snap(page, 'G-accueil-migration-v1');
+    const st = await shellState(page);
+    const old = JSON.parse(v1);
+    check(st.save.profile.name === old.profile.name && st.save.history.length === old.history.length && JSON.stringify(st.save.deck) === JSON.stringify(old.deck), 'profil, deck et historique conservés');
+    const wins = [...new Set(old.history.filter((h) => h.outcome === 'victory').map((h) => h.rival))];
+    check(wins.every((r) => st.save.progress.defeated.includes(r)), `rivaux vaincus reconstitués depuis l’historique (${wins.join(', ') || 'aucun'})`);
+    await page.click('[data-key="home-continue"]');
+    await screenIs(page, 'board');
+    check(await page.evaluate(() => JSON.parse(localStorage.getItem('lqv.save')).schemaVersion) === 2, 'réécrite au schéma 2 dès la première écriture');
+  }),
+  // H — M05 : duel sauvegardé altéré ⇒ reprise refusée avec raison ; recommencer depuis le début.
+  'H-reprise-alteree-refusee': () => withPage(browser, server.base, { width: 1280, height: 720 }, async (page, check) => {
+    await page.goto(`${server.base}/?${Q}&reducedMotion=1&profileSeed=4242`);
+    await newProfile(page, { name: 'QA Altéré', sig: 'Astre', techs: ['Lecture', 'Ancrage'] });
+    await page.click('[data-key="enc-quai-1"]');
+    await page.click('[data-key="prep-start"]');
+    await page.waitForFunction(() => !!window.__lqv);
+    const st0 = newStats();
+    for (let i = 0; i < 2; i++) await playTurn(page, { name: 'H', useLecture: false, mode: 'click' }, st0);
+    await page.evaluate(() => { const s = JSON.parse(localStorage.getItem('lqv.save')); s.activeDuel.config.players.p2.hp = 5; localStorage.setItem('lqv.save', JSON.stringify(s)); });
+    await page.reload();
+    await page.click('[data-key="home-continue"]');
+    await page.waitForSelector('.sh-confirm');
+    // Deux refus légitimes selon l’altération : le rejeu échoue (commande devenue illégale) ou il
+    // aboutit à un autre état (hash différent). Dans les deux cas, une raison est affichée.
+    const why = await page.textContent('.sh-confirm');
+    check(/ne retrouve pas|a échoué/.test(why), `reprise refusée, raison affichée : « ${why.match(/Le rejeu[^.]*\./)?.[0] ?? why.slice(0, 80)} »`);
+    await snap(page, 'H-reprise-refusee');
+    check(!(await page.evaluate(() => !!window.__lqv)), 'aucun duel ouvert sur un état non vérifié');
+    await page.click('[data-key="confirm-ok"]');
+    await page.waitForFunction(() => !!window.__lqv);
+    const v = await page.evaluate(() => window.__lqv.view());
+    check(v.turn === 1 && v.opp.hp === 5, 'recommencé depuis le début avec la configuration enregistrée (tour 1)');
+  }),
 };
 try {
   for (const [name, fn] of Object.entries(runs)) {
@@ -204,7 +382,7 @@ try {
   await browser.close();
   server.stop();
 }
-writeFileSync(`${OUT}/qa-product.json`, JSON.stringify(report, null, 2));
+writeFileSync(`${OUT}/qa-product${only ? `-${only}` : ''}.json`, JSON.stringify(report, null, 2));
 const bad = Object.entries(report.runs).filter(([, r]) => r.fails.length || r.consoleIssues.length || (r.duel && (r.duel.outcome !== 'ended' || r.duel.leaks.length || r.duel.viewErrors.length || r.duel.layoutIssues.length || r.duel.stanceIssues.length || r.duel.lostClicks.length || r.duel.stageGhosts.length)));
 if (bad.length) { console.error(`ÉCHEC QA produit : ${bad.map(([n]) => n).join(', ')}`); process.exit(1); }
-console.log(`QA produit OK (${Object.keys(report.runs).length} parcours) — ${OUT}/qa-product.json`);
+console.log(`QA produit OK (${Object.keys(report.runs).length} parcours) — ${OUT}/qa-product${only ? `-${only}` : ""}.json`);

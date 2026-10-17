@@ -10,15 +10,18 @@
  * - un stockage indisponible (navigation privée, quota) n’empêche pas de jouer : il est signalé.
  * Aucune donnée ne quitte le navigateur (pas de compte, pas de réseau).
  */
-import { FAMILIES, type Family } from '../game/catalog/cards';
+import { CATALOG, FAMILIES, type Family } from '../game/catalog/cards';
 import { TECHNIQUE_IDS, type TechniqueId } from '../game/catalog/techniques';
-import type { DeckChoice } from './deck';
+import type { Command, GameConfig } from '../game/model/types';
+import { STARTER_COLLECTION } from './collection';
+import type { Collection, DeckChoice } from './deck';
+import { deriveFromHistory, newProgress, type Progress } from './progression';
 import { GAME_VERSION } from './version';
 
 export const SAVE_KEY = 'lqv.save';
 export const BACKUP_KEY = 'lqv.save.backup';
 export const CORRUPT_KEY = 'lqv.save.corrupt';
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2;
 
 export type Pace = 'normal' | 'fast' | 'instant';
 
@@ -67,6 +70,30 @@ export interface SaveData {
   duelCounter: number;
   /** Conseils contextuels déjà lus (« Compris »). */
   tipsSeen: string[];
+  /** Schéma 2 (M05) : cartes et Techniques équipables (déblocages de prototype). */
+  collection: Collection;
+  /** Schéma 2 (M05) : série, rivaux rencontrés / vaincus, journal des déblocages. */
+  progress: Progress;
+  /**
+   * Schéma 2 (M05) : duel en cours, repris EXACTEMENT après fermeture par rejeu des commandes sur le
+   * moteur pur (vérifié par hash). Contient des informations privées des deux sièges : reste local,
+   * n’est jamais affiché ni exporté vers un affichage public.
+   */
+  activeDuel: ActiveDuel | null;
+}
+
+export interface ActiveDuel {
+  id: string;
+  encounterId: string;
+  seed: number;
+  startedAt: string;
+  rules: string;
+  catalog: string;
+  config: GameConfig;
+  commands: Command[];
+  /** Hash état + journal après les commandes (contrôle de la reprise). */
+  hash: string;
+  turn: number;
 }
 
 export const HISTORY_MAX = 60;
@@ -75,7 +102,7 @@ export const DEFAULT_OPTIONS: Options = { pace: 'normal', reducedMotion: null, s
 
 export function newSave(now: Date, name: string, seed: number, deck: DeckChoice): SaveData {
   const t = now.toISOString();
-  return { schemaVersion: SCHEMA_VERSION, gameVersion: GAME_VERSION, createdAt: t, updatedAt: t, profile: { name, seed: seed >>> 0 }, deck: structuredClone(deck), options: { ...DEFAULT_OPTIONS }, history: [], duelCounter: 0, tipsSeen: [] };
+  return { schemaVersion: SCHEMA_VERSION, gameVersion: GAME_VERSION, createdAt: t, updatedAt: t, profile: { name, seed: seed >>> 0 }, deck: structuredClone(deck), options: { ...DEFAULT_OPTIONS }, history: [], duelCounter: 0, tipsSeen: [], collection: structuredClone(STARTER_COLLECTION), progress: newProgress(), activeDuel: null };
 }
 
 // ---------------------------------------------------------------------------
@@ -115,6 +142,32 @@ function checkSummary(x: unknown, errs: Errs, at: string): void {
   if (!isIso(x.at)) errs.push(`${at}.at`);
 }
 
+const RIVAL_IDS = ['braise', 'ronce', 'voile', 'astre'];
+
+function checkCollection(x: unknown, errs: Errs): void {
+  if (!isObj(x)) { errs.push('collection : objet attendu'); return; }
+  if (!Array.isArray(x.variants) || !x.variants.every((v) => isStr(v) && CATALOG[v] && CATALOG[v]!.rarity !== 'Basic' && !CATALOG[v]!.signature)) errs.push('collection.variants : variantes inconnues');
+  if (!Array.isArray(x.signatures) || !x.signatures.every((f) => (FAMILIES as readonly unknown[]).includes(f))) errs.push('collection.signatures');
+  if (!Array.isArray(x.techniques) || !x.techniques.every((t) => (TECHNIQUE_IDS as readonly unknown[]).includes(t))) errs.push('collection.techniques');
+}
+
+function checkProgress(x: unknown, errs: Errs): void {
+  if (!isObj(x)) { errs.push('progress : objet attendu'); return; }
+  if (!isObj(x.series) || !isInt(x.series.step) || x.series.step < 0 || x.series.step > 3 || !isInt(x.series.completed) || x.series.completed < 0) errs.push('progress.series');
+  for (const k of ['met', 'defeated']) if (!Array.isArray(x[k]) || !(x[k] as unknown[]).every((r) => RIVAL_IDS.includes(r as string))) errs.push(`progress.${k}`);
+  if (!Array.isArray(x.unlockLog) || !x.unlockLog.every((u) => isObj(u) && isIso(u.at) && isStr(u.duel) && RIVAL_IDS.includes(u.rival as string) && Array.isArray(u.items) && u.items.every(isStr))) errs.push('progress.unlockLog');
+}
+
+function checkActiveDuel(x: unknown, errs: Errs): void {
+  if (x === null) return;
+  if (!isObj(x)) { errs.push('activeDuel : objet ou null attendu'); return; }
+  for (const k of ['id', 'encounterId', 'rules', 'catalog', 'hash']) if (!isStr(x[k])) errs.push(`activeDuel.${k}`);
+  if (!isInt(x.seed) || !isInt(x.turn) || !isIso(x.startedAt)) errs.push('activeDuel.seed/turn/startedAt');
+  const c = x.config;
+  if (!isObj(c) || !isInt(c.seed) || !isObj(c.players) || !isObj(c.players.p1) || !isObj(c.players.p2)) errs.push('activeDuel.config');
+  if (!Array.isArray(x.commands) || !x.commands.every((m) => isObj(m) && isStr(m.type))) errs.push('activeDuel.commands');
+}
+
 /** Valide une sauvegarde AU SCHÉMA COURANT ; liste vide = valide. */
 export function validateSave(x: unknown): Errs {
   const errs: Errs = [];
@@ -130,6 +183,9 @@ export function validateSave(x: unknown): Errs {
   else x.history.forEach((h, i) => checkSummary(h, errs, `history[${i}]`));
   if (!isInt(x.duelCounter) || x.duelCounter < 0) errs.push('duelCounter');
   if (!Array.isArray(x.tipsSeen) || !x.tipsSeen.every(isStr)) errs.push('tipsSeen');
+  checkCollection(x.collection, errs);
+  checkProgress(x.progress, errs);
+  checkActiveDuel(x.activeDuel, errs);
   return errs;
 }
 
@@ -158,8 +214,18 @@ export function parseSave(text: string): ParseResult {
   return { ok: true, save: cur as SaveData, migratedFrom: from === SCHEMA_VERSION ? null : from };
 }
 
-/** Migrations successives `v → v+1` (aucune avant le schéma 1, le premier publié). */
-const MIGRATIONS: Record<number, (x: Record<string, unknown>) => Record<string, unknown>> = {};
+/**
+ * Migrations successives `v → v+1`.
+ * 1 → 2 (M05) : collection et progression RECONSTITUÉES depuis l’historique (premières victoires →
+ * déblocages), série à la manche 1 (les duels libres M04 n’en faisaient pas partie), aucun duel en cours.
+ */
+const MIGRATIONS: Record<number, (x: Record<string, unknown>) => Record<string, unknown>> = {
+  1: (x) => {
+    const history = Array.isArray(x.history) ? (x.history as DuelSummary[]) : [];
+    const { collection, progress } = deriveFromHistory(history);
+    return { ...x, schemaVersion: 2, collection, progress, activeDuel: null };
+  },
+};
 
 // ---------------------------------------------------------------------------
 // Stockage
