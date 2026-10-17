@@ -18,9 +18,13 @@ import type { ArenaHandle } from '../scene/arena';
 import type { RivalPersonality } from '../presentation/personalities';
 import { FULL_COLLECTION, STARTER_COLLECTION } from '../product/collection';
 import { validateDeck, type Collection, type DeckChoice } from '../product/deck';
-import { ENCOUNTERS, encounterById, encounterConfig, personalityOf, type Encounter } from '../product/encounters';
+import { encounterById, encounterConfig, personalityOf, type Encounter } from '../product/encounters';
 import { INITIAL_FLOW, transition, type DuelOverlay, type FlowContext, type FlowEvent, type FlowState } from '../product/flow';
-import { DEFAULT_OPTIONS, HISTORY_MAX, SaveStore, duelSeed, newSave, type DuelSummary, type LoadResult, type SaveData } from '../product/save';
+import { applyOutcome, playableEncounters, type OutcomeEffect } from '../product/progression';
+import { DEFAULT_OPTIONS, HISTORY_MAX, SaveStore, duelSeed, newSave, type ActiveDuel, type DuelSummary, type LoadResult, type SaveData } from '../product/save';
+import { CATALOG_VERSION, replay } from '../game/replay/replay';
+import { RULES, verifyActiveCore } from '../product/resume';
+import type { Command, GameConfig } from '../game/model/types';
 import { summarize } from '../product/stats';
 import { confirmDialog, h, shellToast } from './ui';
 import { renderBoard, renderHome, renderPrep, renderResult } from './screens';
@@ -41,7 +45,7 @@ export interface ShellDeps {
   arena(): ArenaHandle | null;
 }
 
-/** Duel en cours dans cette page (M04 : non repris après fermeture — voir M05). */
+/** Duel en cours dans cette page (son état durable est `save.activeDuel`). */
 interface LiveDuel {
   id: string;
   encounter: Encounter;
@@ -55,8 +59,9 @@ export class Shell {
   readonly store: SaveStore;
   load: LoadResult;
   live: LiveDuel | null = null;
-  /** Dernier résultat (écran Résultat). */
+  /** Dernier résultat (écran Résultat) et ses effets de progression. */
   lastResult: DuelSummary | null = null;
+  lastEffect: OutcomeEffect | null = null;
   /** Brouillon du deck en cours d’édition (null = pas d’édition). */
   deckDraft: DeckChoice | null = null;
   /** Sous-état de l’accueil : menu, ou création d’un profil. */
@@ -69,6 +74,8 @@ export class Shell {
     this.store = new SaveStore(SaveStore.browser());
     this.load = this.store.load();
     if (this.load.status === 'ok') this.save = this.load.save;
+    // Sauvegarde migrée : réécrite tout de suite au schéma courant (l’originale devient la copie de secours).
+    if (this.load.status === 'ok' && this.load.migratedFrom !== null) this.persist();
     // Paramètres d’URL explicitement fournis (QA) : prioritaires sur les options sauvegardées.
     this.explicit = new Set([...new URLSearchParams(window.location.search).keys()]);
     this.applyOptions();
@@ -85,7 +92,7 @@ export class Shell {
 
   collection(): Collection {
     if (!this.save) return STARTER_COLLECTION;
-    return this.save.options.fullCollection ? FULL_COLLECTION : STARTER_COLLECTION;
+    return this.save.options.fullCollection ? FULL_COLLECTION : this.save.collection;
   }
 
   deckIssues(deck: DeckChoice | null = this.save?.deck ?? null) {
@@ -93,11 +100,12 @@ export class Shell {
   }
 
   playable(): string[] {
-    return this.save ? ENCOUNTERS.map((e) => e.id) : [];
+    return this.save ? playableEncounters(this.save.progress) : [];
   }
 
   flowContext(): FlowContext {
-    return { hasSave: !!this.save, deckLegal: this.deckIssues().length === 0, activeDuel: this.live ? this.live.encounter.id : null, playable: this.playable() };
+    const active = this.save?.activeDuel?.encounterId ?? this.live?.encounter.id ?? null;
+    return { hasSave: !!this.save, deckLegal: this.deckIssues().length === 0, activeDuel: active, playable: this.playable() };
   }
 
   /** Transition du flux ; un refus est affiché (jamais un clic sans effet). */
@@ -107,6 +115,8 @@ export class Shell {
     const from = this.flow.screen;
     this.flow = r.state;
     if (from === 'deck' && this.flow.screen !== 'deck') this.deckDraft = null;
+    // Entrée dans le duel sans session (Continuer / Reprendre) : reprise du duel sauvegardé.
+    if (this.flow.screen === 'duel' && !this.live && e.type !== 'startDuel') { this.resumeActive(); return true; }
     this.render();
     return true;
   }
@@ -158,7 +168,9 @@ export class Shell {
   // Profil
 
   async newGame(name: string, deck: DeckChoice): Promise<void> {
-    const seed = (crypto.getRandomValues(new Uint32Array(1))[0] ?? Date.now()) >>> 0;
+    // Seed de profil aléatoire ; QA seulement (`?qa=1&profileSeed=…`) : imposée, pour des parcours reproductibles.
+    const forced = this.params.qa ? Number(new URLSearchParams(window.location.search).get('profileSeed')) : NaN;
+    const seed = Number.isInteger(forced) && forced > 0 ? forced >>> 0 : (crypto.getRandomValues(new Uint32Array(1))[0] ?? Date.now()) >>> 0;
     const s = newSave(new Date(), name.trim() || 'Duelliste', seed, deck);
     // Les options déjà réglées (accessibilité) survivent à une nouvelle partie.
     if (this.save) s.options = { ...this.save.options };
@@ -197,22 +209,98 @@ export class Shell {
     this.save.duelCounter = n + 1;
     this.persist();
     const config = encounterConfig(enc, this.save.deck, seed);
-    this.launch({ id: `d${n + 1}`, encounter: enc, seed }, config);
+    const id = `d${n + 1}`;
+    this.save.activeDuel = { id, encounterId: enc.id, seed, startedAt: new Date().toISOString(), rules: RULES, catalog: CATALOG_VERSION, config: structuredClone(config), commands: [], hash: '', turn: 0 };
+    this.launch({ id, encounter: enc, seed }, config);
   }
 
-  private launch(meta: Omit<LiveDuel, 'session'>, config: ReturnType<typeof encounterConfig>): void {
+  /**
+   * Reprise EXACTE d’un duel sauvegardé : rejeu des commandes sur le moteur pur, contrôlé par hash
+   * (même état, mêmes zones, même RNG, mêmes secrets) avant tout affichage. Si le contrôle échoue
+   * (version du catalogue ou des règles différente, données altérées), rien n’est inventé : le joueur
+   * choisit de recommencer ce duel depuis le début ou de le retirer (non compté).
+   */
+  resumeActive(): void {
+    const a = this.save?.activeDuel;
+    const enc = a ? encounterById(a.encounterId) : null;
+    if (!a || !enc) { this.flow = { ...INITIAL_FLOW, screen: 'board' }; this.render(); return; }
+    const check = verifyActive(a);
+    if (!check.ok) {
+      this.flow = { ...INITIAL_FLOW, screen: 'board' };
+      this.render();
+      void this.unresumable(a, check.reason);
+      return;
+    }
+    this.flow = { ...this.flow, screen: 'duel', encounterId: enc.id, overlay: null, back: [] };
+    this.launch({ id: a.id, encounter: enc, seed: a.seed }, a.config, a.commands);
+  }
+
+  private async unresumable(a: ActiveDuel, reason: string): Promise<void> {
+    const r = await confirmDialog({ title: 'Reprise exacte impossible', text: `${reason} Vous pouvez recommencer ce duel depuis le début (même rival, même seed) ou le retirer sans qu’il soit compté.`, confirm: 'Recommencer depuis le début', alt: { label: 'Retirer ce duel', key: 'drop' }, cancel: 'Plus tard' });
+    if (!this.save) return;
+    if (r === 'confirm') {
+      this.save.activeDuel = { ...a, commands: [], hash: '', turn: 0, rules: RULES, catalog: CATALOG_VERSION };
+      this.persist();
+      this.resumeActive();
+    } else if (r === 'drop') {
+      this.save.activeDuel = null;
+      this.persist();
+      this.toast('Duel en cours retiré (non compté).', 'info');
+      this.render();
+    }
+  }
+
+  /** Abandon d’un duel sauvegardé depuis le tableau (sans le rouvrir) : résumé calculé par rejeu. */
+  async abandonActive(): Promise<void> {
+    const a = this.save?.activeDuel;
+    if (!a || !this.save) return;
+    const check = verifyActive(a);
+    if (!check.ok) { void this.unresumable(a, check.reason); return; }
+    const enc = encounterById(a.encounterId)!;
+    const r = await confirmDialog({ title: 'Abandonner le duel en cours ?', text: `Le duel contre ${personalityOf(enc.rival).name} (tour ${a.turn}) sera compté comme un ABANDON, distinct d’une défaite par K.-O.`, confirm: 'Abandonner', danger: true });
+    if (r !== 'confirm') return;
+    const rep = replay({ format: 'lqv-replay/1', rules: a.rules as 'V3.0+delta-V3.2', catalog: a.catalog, config: a.config, commands: a.commands });
+    this.recordEnd({ id: a.id, encounter: enc, seed: a.seed }, viewFor(rep.state, 'p1'), rep.events, a.config.players.p1.signature, true);
+  }
+
+  /** Quitter un duel en le gardant pour plus tard (reprise exacte). */
+  saveAndQuit(): void {
+    const live = this.live;
+    if (!live) return;
+    live.session.dispose();
+    this.live = null;
+    this.persist();
+    this.flow = { ...INITIAL_FLOW, screen: 'board' };
+    this.toast('Duel sauvegardé : reprenez-le depuis le tableau ou l’accueil.', 'ok');
+    this.render();
+  }
+
+  private launch(meta: Omit<LiveDuel, 'session'>, config: GameConfig, resume: readonly Command[] = []): void {
     const personality = personalityOf(meta.encounter.rival);
     const arena = this.d.ensureArena(personality);
     arena?.setPaused(false);
     this.d.app.hidden = false;
     const session = new DuelSession({
-      app: this.d.app, arena, config, params: this.params, scenario: null, personality, product: { menu: true },
+      app: this.d.app, arena, config, params: this.params, scenario: null, personality, product: { menu: true }, resume,
       tip: (c) => this.tipFor(c),
       onTool: (t) => this.duelTool(t),
+      onCommand: (c) => this.duelCommand(meta.id, c),
       onEnded: (c) => this.duelEnded(c, false),
     });
     this.live = { ...meta, session };
+    // Premier point de sauvegarde (avant toute commande) : le duel existe et sera repris s’il est fermé.
+    this.duelCommand(meta.id, session.controller);
     this.render();
+  }
+
+  /** Point de sauvegarde après chaque commande acceptée (joueur ou rival). */
+  private duelCommand(id: string, c: Controller): void {
+    const a = this.save?.activeDuel;
+    if (!a || a.id !== id) return;
+    a.commands = structuredClone(c.match.commands);
+    a.hash = c.match.hash();
+    a.turn = c.match.state.turn;
+    this.persist();
   }
 
   private tipFor(c: Controller) {
@@ -257,14 +345,25 @@ export class Shell {
   private duelEnded(c: Controller, abandoned: boolean): void {
     const live = this.live;
     if (!live || !this.save) return;
-    const sum = summarize({ id: live.id, encounterId: live.encounter.id, rival: live.encounter.rival, seed: live.seed, signature: this.save.deck.signature, view: viewFor(c.match.state, 'p1'), events: c.match.events, abandoned, at: new Date() });
-    this.save.history = [...this.save.history, sum].slice(-HISTORY_MAX);
-    this.persist();
-    this.lastResult = sum;
     live.session.dispose();
     this.live = null;
+    this.recordEnd(live, viewFor(c.match.state, 'p1'), c.match.events, c.config.players.p1.signature, abandoned);
+  }
+
+  private recordEnd(meta: Omit<LiveDuel, 'session'>, view: ReturnType<typeof viewFor>, events: Controller['match']['events'], signature: DeckChoice['signature'], abandoned: boolean): void {
+    if (!this.save) return;
+    const sum = summarize({ id: meta.id, encounterId: meta.encounter.id, rival: meta.encounter.rival, seed: meta.seed, signature, view, events, abandoned, at: new Date() });
+    const eff = applyOutcome(this.save.collection, this.save.progress, sum);
+    // Une seule écriture : résultat, progression, collection et fin du duel en cours, ensemble.
+    this.save.history = [...this.save.history, sum].slice(-HISTORY_MAX);
+    this.save.collection = eff.collection;
+    this.save.progress = eff.progress;
+    this.save.activeDuel = null;
+    this.persist();
+    this.lastResult = sum;
+    this.lastEffect = eff;
     this.d.app.hidden = true;
-    this.flow = { ...this.flow, screen: 'result', overlay: null, back: [] };
+    this.flow = { ...this.flow, screen: 'result', encounterId: meta.encounter.id, overlay: null, back: [] };
     this.render();
   }
 
@@ -331,7 +430,9 @@ export class Shell {
           menuBtn('Reprendre le duel', () => this.setOverlay(null), 'menu-resume', true),
           menuBtn('Options', () => this.setOverlay('options'), 'menu-options'),
           menuBtn('Aide et règles', () => this.setOverlay('help'), 'menu-help'),
-          menuBtn('Abandonner le duel…', () => void this.abandon(), 'menu-abandon', false, true))));
+          menuBtn('Sauvegarder et quitter', () => this.saveAndQuit(), 'menu-quit'),
+          menuBtn('Abandonner le duel…', () => void this.abandon(), 'menu-abandon', false, true)),
+        h('p', { class: 'sh-note' }, 'Le duel est sauvegardé à chaque action : en le quittant (ou en fermant la page), vous le reprendrez exactement où il en est. Seuls vos choix non verrouillés du moment sont à refaire.')));
   }
 
   private onKey(e: KeyboardEvent): void {
@@ -358,6 +459,8 @@ export class Shell {
     return cardTitle(cardDef(defId));
   }
 }
+
+export const verifyActive = verifyActiveCore;
 
 function menuBtn(label: string, onclick: () => void, key: string, primary = false, danger = false): HTMLElement {
   return h('button', { class: `sh-menu-item${danger ? ' danger' : ''}`, type: 'button', 'data-key': key, 'data-shell-primary': primary ? 'true' : null, onclick }, label);

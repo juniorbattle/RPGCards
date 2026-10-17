@@ -92,7 +92,7 @@ export async function stanceAudit(page) {
 
 export async function playTurn(page, run, stats) {
   const { mode } = run;
-  for (let guard = 0; guard < 24; guard++) {
+  for (let guard = 0; guard < (run.maxDecisions ?? 24); guard++) {
     const v = await waitDecision(page);
     if (process.env.QA_TRACE) console.log(`  [${run.name}] tour ${v.turn} ${v.phase} awaiting=${v.awaitingMe}`);
     if (v.phase === 'ENDED') return 'ended';

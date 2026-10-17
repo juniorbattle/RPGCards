@@ -41,6 +41,10 @@ export const RIVALS: Record<RivalPersonality['id'], RivalSheet> = {
     id: 'voile', hp: 100, variants: FAMILIES.flatMap((f) => ids(f, [1, 2, 3, 4])), techniques: ['Lecture', 'Dissipation'], difficulty: 3,
     style: 'Lectrice : observe vos habitudes publiques, interfère volontiers et camoufle ses soutiens.',
   },
+  astre: {
+    id: 'astre', hp: 110, variants: FAMILIES.flatMap((f) => ids(f, [1, 2, 3, 4])), techniques: ['Recentrage', 'Ancrage'], difficulty: 3,
+    style: 'Équilibré : alterne Assauts et Gardes, recycle ses soutiens et protège ses Secondaires engagées.',
+  },
 };
 
 export const DIFFICULTY_LABEL: Record<1 | 2 | 3, string> = { 1: 'Abordable', 2: 'Coriace', 3: 'Redoutable' };
@@ -48,12 +52,20 @@ export const DIFFICULTY_LABEL: Record<1 | 2 | 3, string> = { 1: 'Abordable', 2: 
 export interface Encounter {
   id: string;
   rival: RivalPersonality['id'];
-  kind: 'free';
+  /** `series` : étape d’une mini-série (dans l’ordre) ; `free` : rencontre libre, rejouable. */
+  kind: 'series' | 'free';
   title: string;
+  /** Étape 1..3 de la série. */
+  step?: number;
 }
 
-/** Duels libres contre chacun des rivaux (M04). */
-export const ENCOUNTERS: Encounter[] = PERSONALITIES.map((p) => ({ id: `libre-${p.id}`, rival: p.id, kind: 'free', title: `Duel libre — ${p.name}` }));
+/** Mini-série rejouable de trois duels (M05) : difficulté croissante, déclarative (données ci-dessus). */
+export const SERIES = { id: 'quai', title: 'Tournoi du Quai', steps: ['braise', 'ronce', 'voile'] as RivalPersonality['id'][] };
+
+export const ENCOUNTERS: Encounter[] = [
+  ...SERIES.steps.map((rival, i) => ({ id: `quai-${i + 1}`, rival, kind: 'series' as const, step: i + 1, title: `${SERIES.title} — manche ${i + 1} sur ${SERIES.steps.length}` })),
+  ...PERSONALITIES.map((p) => ({ id: `libre-${p.id}`, rival: p.id, kind: 'free' as const, title: `Duel libre — ${p.name}` })),
+];
 
 export function encounterById(id: string): Encounter | null {
   return ENCOUNTERS.find((e) => e.id === id) ?? null;

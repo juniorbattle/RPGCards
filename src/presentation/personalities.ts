@@ -10,13 +10,13 @@ export type HairStyle = 'spiky' | 'braid' | 'bob';
 export type Outfit = 'jacket' | 'cloak' | 'coat';
 
 export interface RivalPersonality {
-  id: 'braise' | 'ronce' | 'voile';
+  id: 'braise' | 'ronce' | 'voile' | 'astre';
   name: string;
   title: string;
   /** Accord des libellés d’humeur (« concentré » / « concentrée »). */
   gender: 'f' | 'm';
   family: Family;
-  aiProfile: 'offensif' | 'prudent' | 'lecteur';
+  aiProfile: 'offensif' | 'prudent' | 'lecteur' | 'equilibre';
   techniques: TechniqueId[];
   /** Tempérament : amplitude des réactions (0..1), humeur de repos. */
   expressiveness: number;
@@ -58,10 +58,18 @@ export const PERSONALITIES: RivalPersonality[] = [
     techniques: ['Lecture', 'Dissipation'], expressiveness: 0.75, restMood: 'smug',
     look: { skin: '#f0c9b0', skinShade: '#c99a82', hair: '#c9cbe8', hairHi: '#ffffff', hairStyle: 'bob', outfit: 'coat', cloth: '#2f2d6e', clothHi: '#5d63c4', trim: '#a8e6ff', eyes: '#8a5cd6', jaw: 0.45, mark: 'beauty', headband: true },
   },
+  // M05 : quatrième rival (famille Astre, profil « équilibré » déjà présent dans l’IA). Ajouté EN FIN
+  // de liste : `personalityFor(seed)` (entrées QA historiques) ne choisit toujours que parmi les trois premiers.
+  {
+    id: 'astre', name: 'Orin', title: 'l’arpenteur des Astres', gender: 'm', family: 'Astre', aiProfile: 'equilibre',
+    techniques: ['Recentrage', 'Ancrage'], expressiveness: 0.65, restMood: 'thinking',
+    look: { skin: '#9a6444', skinShade: '#6e432c', hair: '#1c1f33', hairHi: '#6f80c4', hairStyle: 'spiky', outfit: 'coat', cloth: '#3b3214', clothHi: '#b8962f', trim: '#ffe08a', eyes: '#e0b23a', jaw: 0.6, mark: null, headband: false },
+  },
 ];
 
 export function personalityFor(seed: number, forced?: string | null): RivalPersonality {
   const byId = PERSONALITIES.find((p) => p.id === forced);
   if (byId) return byId;
+  // Toujours parmi les trois rivaux historiques : les seeds QA M02–M03 gardent le même adversaire.
   return PERSONALITIES[((seed % 3) + 3) % 3]!;
 }
