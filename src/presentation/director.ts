@@ -3,11 +3,11 @@
  * à partir de la phase VISIBLE et de ce que le joueur doit faire. Module pur (aucun DOM/Three) :
  * il ne lit ni l’état brut ni un secret, et ne modifie jamais le moteur.
  *
- * Chorégraphie (mission M02 §2) :
- *  - attente, début de tour, engagement verrouillé, révélation, tactique, résolution, fin → A
- *  - préparation (révélation volontaire), Dissipation, engagement à composer → B
- *  - le joueur peut demander l’autre vue ; ce choix vaut jusqu’au prochain changement de phase
- *  - aucune transition pendant un glisser en cours (la vue est gelée puis rattrapée)
+ * Chorégraphie (ADR 016, qui remplace la bascule par phase de M02 §2) :
+ *  - toutes les phases → A : la caméra reste proche, sur le visage du rival, y compris pendant la
+ *    pose des cartes (s’éloigner vers la table cassait l’immersion) ;
+ *  - le joueur peut demander la vue B ; ce choix vaut jusqu’au prochain changement de phase ;
+ *  - aucune transition pendant un glisser en cours (la vue est gelée puis rattrapée).
  */
 import type { Phase } from '../game/model/types';
 
@@ -20,20 +20,9 @@ export interface DirectorInput {
   repelMine: boolean;
 }
 
-/** Vue « naturelle » d’une situation, sans préférence manuelle. */
-export function naturalView(i: DirectorInput): ViewMode {
-  switch (i.phase) {
-    case 'PREPARE':
-    case 'DISSIPATION':
-    case 'COMMIT':
-      return i.awaitingMe ? 'B' : 'A';
-    case 'START':
-      // Régulation de main / Recentrage : manipulation de cartes de la main.
-      return i.awaitingMe ? 'B' : 'A';
-    default:
-      // LECTURE (lire le rival), TACTICS (observer le rival en choisissant), REPEL, RESOLVED, ENDED
-      return 'A';
-  }
+/** Vue « naturelle » d’une situation, sans préférence manuelle : toujours la vue frontale (ADR 016). */
+export function naturalView(_i: DirectorInput): ViewMode {
+  return 'A';
 }
 
 export class PresentationDirector {
@@ -53,6 +42,7 @@ export class PresentationDirector {
       this.override = null; // une préférence manuelle ne survit pas à la phase
     }
     // Début de tour : temps d’observation du rival en A avant la manipulation (chorégraphie §2.1).
+    // Sans effet depuis l’ADR 016 (la vue naturelle est toujours A) ; gardé si une vue B revenait.
     const natural = naturalView(i);
     const want = this.override ?? (this.hold && natural === 'B' ? 'A' : natural);
     if (!this.frozen && want !== this.current) {

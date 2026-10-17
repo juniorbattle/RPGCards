@@ -1,0 +1,359 @@
+{
+  "commit": "68ebe4b",
+  "date": "2026-10-17T23:29:24.059Z",
+  "chromium": "155.0.8059.80",
+  "runs": [
+    {
+      "name": "desktop-1280-drag",
+      "seed": 101,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "mode": "drag",
+      "tech": {
+        "Lecture": 1,
+        "Ancrage": 2
+      },
+      "useLecture": true,
+      "outcome": "ended",
+      "renderCheck": {
+        "renders": 179,
+        "mismatches": []
+      },
+      "phase": "ENDED",
+      "winner": "opp",
+      "turn": 13,
+      "hp": [
+        0,
+        13
+      ],
+      "overtime": 0,
+      "ms": 41018,
+      "consoleIssues": [],
+      "turns": 12,
+      "drags": 26,
+      "clicks": 0,
+      "keyboard": 0,
+      "tactics": 12,
+      "repels": 3,
+      "leaks": [],
+      "viewChecks": 54,
+      "viewErrors": [],
+      "lostClicks": [],
+      "moods": [
+        "focused",
+        "smug",
+        "surprised",
+        "confident"
+      ],
+      "sequencesWatched": 0,
+      "sequencesSkipped": 9,
+      "manualToggleChecked": "ok",
+      "holds": 0,
+      "layoutChecked": [
+        "COMMIT",
+        "TACTICS"
+      ],
+      "layoutIssues": [],
+      "stanceChecks": 26,
+      "stanceIssues": [],
+      "stageGhosts": [],
+      "stagesSeen": 0,
+      "rotations": [],
+      "viewSwitches": 2,
+      "personality": "voile"
+    },
+    {
+      "name": "desktop-1920-click",
+      "seed": 202,
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "mode": "click",
+      "tech": {
+        "Sondage": 6
+      },
+      "watchSequence": true,
+      "outcome": "ended",
+      "renderCheck": {
+        "renders": 216,
+        "mismatches": []
+      },
+      "phase": "ENDED",
+      "winner": "me",
+      "turn": 14,
+      "hp": [
+        23,
+        0
+      ],
+      "overtime": 0,
+      "ms": 177254,
+      "consoleIssues": [],
+      "turns": 13,
+      "drags": 0,
+      "clicks": 14,
+      "keyboard": 0,
+      "tactics": 11,
+      "repels": 2,
+      "leaks": [],
+      "viewChecks": 57,
+      "viewErrors": [],
+      "lostClicks": [],
+      "moods": [
+        "neutral",
+        "focused",
+        "smug",
+        "defeated"
+      ],
+      "sequencesWatched": 13,
+      "sequencesSkipped": 0,
+      "manualToggleChecked": "ok",
+      "holds": 0,
+      "layoutChecked": [
+        "COMMIT",
+        "TACTICS"
+      ],
+      "layoutIssues": [],
+      "stanceChecks": 25,
+      "stanceIssues": [],
+      "stageGhosts": [],
+      "stagesSeen": 10,
+      "rotations": [],
+      "viewSwitches": 2,
+      "personality": "ronce"
+    },
+    {
+      "name": "desktop-1280-keyboard",
+      "seed": 303,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "mode": "keyboard",
+      "tech": {
+        "Recentrage": 1
+      },
+      "outcome": "ended",
+      "renderCheck": {
+        "renders": 152,
+        "mismatches": []
+      },
+      "phase": "ENDED",
+      "winner": "opp",
+      "turn": 10,
+      "hp": [
+        0,
+        1
+      ],
+      "overtime": 2,
+      "ms": 31243,
+      "consoleIssues": [],
+      "turns": 9,
+      "drags": 0,
+      "clicks": 0,
+      "keyboard": 10,
+      "tactics": 8,
+      "repels": 0,
+      "leaks": [],
+      "viewChecks": 36,
+      "viewErrors": [],
+      "lostClicks": [],
+      "moods": [
+        "confident",
+        "focused",
+        "triumphant",
+        "smug"
+      ],
+      "sequencesWatched": 0,
+      "sequencesSkipped": 8,
+      "manualToggleChecked": "ok",
+      "holds": 0,
+      "layoutChecked": [
+        "COMMIT",
+        "TACTICS"
+      ],
+      "layoutIssues": [],
+      "stanceChecks": 18,
+      "stanceIssues": [],
+      "stageGhosts": [],
+      "stagesSeen": 0,
+      "rotations": [],
+      "viewSwitches": 2,
+      "personality": "braise"
+    },
+    {
+      "name": "mobile-390-touch",
+      "seed": 404,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "touch",
+      "tech": {
+        "Ancrage": 4
+      },
+      "isMobile": true,
+      "outcome": "ended",
+      "renderCheck": {
+        "renders": 272,
+        "mismatches": []
+      },
+      "phase": "ENDED",
+      "winner": "me",
+      "turn": 19,
+      "hp": [
+        6,
+        0
+      ],
+      "overtime": 0,
+      "ms": 35165,
+      "consoleIssues": [],
+      "turns": 18,
+      "drags": 19,
+      "clicks": 16,
+      "keyboard": 0,
+      "tactics": 18,
+      "repels": 1,
+      "leaks": [],
+      "viewChecks": 68,
+      "viewErrors": [],
+      "lostClicks": [],
+      "moods": [
+        "focused",
+        "smug",
+        "surprised",
+        "defeated"
+      ],
+      "sequencesWatched": 0,
+      "sequencesSkipped": 16,
+      "manualToggleChecked": "ok",
+      "holds": 0,
+      "layoutChecked": [
+        "COMMIT",
+        "TACTICS"
+      ],
+      "layoutIssues": [],
+      "stanceChecks": 34,
+      "stanceIssues": [],
+      "stageGhosts": [],
+      "stagesSeen": 0,
+      "rotations": [],
+      "viewSwitches": 2,
+      "personality": "voile"
+    },
+    {
+      "name": "mobile-rotation-touch",
+      "seed": 505,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "touch",
+      "tech": {
+        "Sondage": 2
+      },
+      "isMobile": true,
+      "rotate": [
+        {
+          "afterTurns": 1,
+          "viewport": {
+            "width": 844,
+            "height": 390
+          }
+        },
+        {
+          "afterTurns": 4,
+          "viewport": {
+            "width": 390,
+            "height": 844
+          }
+        },
+        {
+          "afterTurns": 6,
+          "viewport": {
+            "width": 844,
+            "height": 390
+          }
+        },
+        {
+          "afterTurns": 9,
+          "viewport": {
+            "width": 960,
+            "height": 540
+          }
+        }
+      ],
+      "outcome": "ended",
+      "renderCheck": {
+        "renders": 215,
+        "mismatches": []
+      },
+      "phase": "ENDED",
+      "winner": "opp",
+      "turn": 16,
+      "hp": [
+        0,
+        51
+      ],
+      "overtime": 0,
+      "ms": 53740,
+      "consoleIssues": [],
+      "turns": 15,
+      "drags": 16,
+      "clicks": 16,
+      "keyboard": 0,
+      "tactics": 11,
+      "repels": 1,
+      "leaks": [],
+      "viewChecks": 56,
+      "viewErrors": [],
+      "lostClicks": [],
+      "moods": [
+        "neutral",
+        "focused",
+        "pleased",
+        "smug",
+        "confident",
+        "annoyed",
+        "triumphant"
+      ],
+      "sequencesWatched": 0,
+      "sequencesSkipped": 10,
+      "manualToggleChecked": "ok",
+      "holds": 0,
+      "layoutChecked": [
+        "TACTICS",
+        "COMMIT"
+      ],
+      "layoutIssues": [],
+      "stanceChecks": 27,
+      "stanceIssues": [],
+      "stageGhosts": [
+        "tour 2 COMMIT : 1 scène(s) de Clash résiduelle(s)",
+        "tour 3 COMMIT : 1 scène(s) de Clash résiduelle(s)"
+      ],
+      "stagesSeen": 0,
+      "rotations": [
+        "844×390 tour 2 : état conservé",
+        "390×844 tour 5 : état conservé",
+        "844×390 tour 7 : état conservé",
+        "960×540 tour 10 : état conservé"
+      ],
+      "viewSwitches": 2,
+      "personality": "ronce"
+    }
+  ],
+  "distinctMoods": [
+    "focused",
+    "smug",
+    "surprised",
+    "confident",
+    "neutral",
+    "defeated",
+    "triumphant",
+    "pleased",
+    "annoyed"
+  ]
+}

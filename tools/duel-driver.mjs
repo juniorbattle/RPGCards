@@ -40,9 +40,9 @@ export async function sample(page, stats) {
   return p;
 }
 
-/** Vue attendue (chorégraphie M02 §2) quand aucune bascule manuelle n’est active. */
-export function expectedView(v) {
-  if (['PREPARE', 'DISSIPATION', 'COMMIT', 'START'].includes(v.phase) && v.awaitingMe) return 'B';
+/** Vue attendue quand aucune bascule manuelle n’est active : toujours la vue frontale (ADR 016,
+ *  qui remplace la bascule vers B pendant la pose de M02 §2). */
+export function expectedView(_v) {
   return 'A';
 }
 

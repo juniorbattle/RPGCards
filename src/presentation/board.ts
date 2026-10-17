@@ -175,7 +175,7 @@ function tools(c: Controller, hooks: BoardHooks): HTMLElement {
   const pace = c.params.pace === 'normal' ? 'normal' : c.params.pace === 'fast' ? 'rapide' : 'instantané';
   return h('div', { class: 'tools', role: 'toolbar', 'aria-label': 'Outils' },
     hooks.product ? h('button', { class: 'tool tool-menu', 'data-key': 'tool-menu', title: 'Menu du duel : reprendre, options, aide, quitter (Échap pour fermer)', 'aria-haspopup': 'dialog', onclick: () => hooks.onToggleTool('menu') }, 'Menu') : null,
-    h('button', { class: 'tool tool-view', 'data-key': 'tool-cam', 'aria-pressed': String(c.director.manual), title: 'Basculer entre la vue Rival (confrontation) et la vue Plateau (manipulation) — touche V. La vue revient au cadrage de la phase suivante.', onclick: () => hooks.onToggleTool('cam') }, c.viewMode === 'A' ? 'Vue plateau ⤓' : 'Voir le rival ⤒'),
+    h('button', { class: 'tool tool-view', 'data-key': 'tool-cam', 'aria-pressed': String(c.director.manual), title: 'Basculer entre la vue Rival (face au rival) et la vue Plateau (table inclinée) — touche V. La vue revient face au rival à la phase suivante.', onclick: () => hooks.onToggleTool('cam') }, c.viewMode === 'A' ? 'Vue plateau ⤓' : 'Voir le rival ⤒'),
     h('button', { class: 'tool', 'data-key': 'tool-journal', 'aria-pressed': String(c.ui.journalOpen), title: 'Journal du duel (texte intégral, public + vos informations privées)', onclick: () => hooks.onToggleTool('journal') }, 'Journal'),
     h('button', { class: 'tool', 'data-key': 'tool-pace', title: 'Rythme des animations (n’affecte pas les règles)', onclick: () => hooks.onToggleTool('pace') }, `Rythme : ${pace}`),
     h('button', { class: 'tool', 'data-key': 'tool-motion', 'aria-pressed': String(c.params.reducedMotion), title: 'Mouvement réduit', onclick: () => hooks.onToggleTool('motion') }, 'Mvt réduit'),
@@ -441,7 +441,7 @@ function slotZone(c: Controller, who: 'me' | 'opp', slot: SlotIndex, s: SlotView
     } else {
       zone.append(backEl(c.artSeed, { state: s.masked ? 'masked' : s.state === 'active' ? 'masked' : s.state, classes: ['on-board'] }));
     }
-  } else zone.append(h('span', { class: 'empty-hint' }, committing ? 'Nouvelle Secondaire (facultative)' : 'Vide'));
+  } else zone.append(h('span', { class: 'empty-hint' }, committing ? 'Facultative' : 'Vide'));
 
   // Interactions selon la phase
   if (who === 'me') {

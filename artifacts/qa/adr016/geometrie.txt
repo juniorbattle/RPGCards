@@ -1,0 +1,53 @@
+Géométrie des cases et des cartes posées (ADR 016) — boîtes écran getBoundingClientRect, px CSS.
+Chrome 155, Radeon 780M, seed 101, autostart, tour 1, phase Engagement. « cx » = centre horizontal, y haut–bas.
+Avant = build de main 68ebe4b (pose en vue B, bascule automatique). Après = arbre de travail de cette passe (vue A).
+Script : geom.mjs (scratchpad de la session), même pilote que tools/snap.mjs.
+
+##### AVANT (68ebe4b)
+1280×720 — engagement, cases vides
+  vue B · haut de la main 552
+  opp cadre 126×59 @496,238–297  ·  cadre 126×59 @640,238–297  ·  cadre 126×59 @784,238–297
+  me  cadre 210×127 @401,355–482  ·  cadre 210×127 @640,355–482  ·  cadre 210×127 @879,355–482
+1280×720 — Primaire et Secondaire 1 posées
+  vue B · haut de la main 552
+  opp cadre 126×59 @496,238–297  ·  cadre 126×59 @640,238–297  ·  cadre 126×59 @784,238–297
+  me  cadre 210×127 @401,355–482 | carte 101×132 @401,347–479  ·  cadre 210×127 @640,355–482 | carte 101×132 @640,347–479  ·  cadre 210×127 @879,355–482
+  ASSAUT / GARDE : ASSAUT 551–641 × 471–496 ; GARDE 646–729 × 471–496
+1920×1080 — engagement, cases vides
+  vue B · haut de la main 830
+  opp cadre 189×89 @745,357–446  ·  cadre 189×89 @960,357–446  ·  cadre 189×89 @1175,357–446
+  me  cadre 314×191 @602,533–724  ·  cadre 314×191 @960,533–724  ·  cadre 314×191 @1318,533–724
+1920×1080 — Primaire et Secondaire 1 posées
+  vue B · haut de la main 830
+  opp cadre 189×89 @745,357–446  ·  cadre 189×89 @960,357–446  ·  cadre 189×89 @1175,357–446
+  me  cadre 314×191 @602,533–724 | carte 152×198 @602,521–719  ·  cadre 314×191 @960,533–724 | carte 152×198 @960,521–719  ·  cadre 314×191 @1318,533–724
+  ASSAUT / GARDE : ASSAUT 859–961 × 710–739 ; GARDE 966–1061 × 710–739
+
+##### APRÈS
+1280×720 — engagement, cases vides
+  vue A · haut de la main 552
+  opp cadre 86×83 @450,348–431  ·  cadre 86×83 @640,348–431  ·  cadre 86×83 @830,348–431
+  me  cadre 86×83 @450,461–543  ·  cadre 86×83 @640,461–543  ·  cadre 86×83 @830,461–543
+1280×720 — Primaire et Secondaire 1 posées
+  vue A · haut de la main 552
+  opp cadre 86×83 @450,348–431  ·  cadre 86×83 @640,348–431  ·  cadre 86×83 @830,348–431
+  me  cadre 86×83 @450,461–543 (masqué) | carte 76×76 @450,463–540  ·  cadre 86×83 @640,461–543 (masqué) | carte 76×76 @640,463–540  ·  cadre 86×83 @830,461–543
+  ASSAUT / GARDE : ASSAUT 505–596 × 496–521 ; GARDE 684–768 × 496–521
+1920×1080 — engagement, cases vides
+  vue A · haut de la main 830
+  opp cadre 129×124 @675,522–646  ·  cadre 129×124 @960,522–646  ·  cadre 129×124 @1245,522–646
+  me  cadre 129×124 @675,691–815  ·  cadre 129×124 @960,691–815  ·  cadre 129×124 @1245,691–815
+1920×1080 — Primaire et Secondaire 1 posées
+  vue A · haut de la main 830
+  opp cadre 129×124 @675,522–646  ·  cadre 129×124 @960,522–646  ·  cadre 129×124 @1245,522–646
+  me  cadre 129×124 @675,691–815 (masqué) | carte 115×114 @675,695–809  ·  cadre 129×124 @960,691–815 (masqué) | carte 115×114 @960,695–809  ·  cadre 129×124 @1245,691–815
+  ASSAUT / GARDE : ASSAUT 794–896 × 753–782 ; GARDE 1024–1119 × 753–782
+
+Projection de la caméra A (même calcul que frame() de src/scene/arena.ts, ancres bureau head 0,205 / edge 0,455) :
+point de la table à la profondeur z → ordonnée écran (fraction de la hauteur) et px par unité monde (en vh).
+  z −2,35 (bord lointain) : 45,5 %  · 16,77 vh/unité
+  z −1    : 50,4 %  · 19,09 vh/unité
+  z  0    : 55,0 %  · 21,28 vh/unité
+  z  1,9  : 67,5 %  · 27,20 vh/unité
+  z  2,5  : 73,0 %  · 29,82 vh/unité
+  Rangée du rival vers z −1 et rangée du joueur vers z 2,5 : rapport d'échelle 19,09 / 29,82 = 0,64.

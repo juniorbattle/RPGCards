@@ -7,35 +7,33 @@ import { ExpressionDirector } from '../src/presentation/expression';
 import { PERSONALITIES, personalityFor } from '../src/presentation/personalities';
 import { config, d, fixture, idOf } from './helpers';
 
-describe('PresentationDirector (vues A/B pilotées par phase)', () => {
+describe('PresentationDirector (vue A permanente, B à la demande — ADR 016)', () => {
   const at = (phase: string, awaitingMe = true, turn = 3) => ({ phase: phase as never, turn, awaitingMe, repelMine: false });
-  it('chorégraphie M02 §2 : A par défaut, B pour composer, retour A après verrouillage, A en tactique', () => {
-    expect(naturalView(at('START', false))).toBe('A');
-    expect(naturalView(at('PREPARE'))).toBe('B');
-    expect(naturalView(at('COMMIT'))).toBe('B');
-    expect(naturalView(at('COMMIT', false))).toBe('A'); // engagement verrouillé
-    expect(naturalView(at('LECTURE'))).toBe('A');
-    expect(naturalView(at('TACTICS'))).toBe('A');
-    expect(naturalView(at('RESOLVED', false))).toBe('A');
-    expect(naturalView(at('ENDED', false))).toBe('A');
+  it('toutes les phases restent en vue frontale, pose des cartes comprise', () => {
+    for (const phase of ['START', 'PREPARE', 'DISSIPATION', 'COMMIT', 'LECTURE', 'LECTURE_CHANGE', 'TACTICS', 'REPEL', 'RESOLVED', 'ENDED']) {
+      expect(naturalView(at(phase))).toBe('A');
+      expect(naturalView(at(phase, false))).toBe('A');
+    }
   });
-  it('début de tour : temps d’observation du rival en A, puis B pour composer', () => {
+  it('aucune bascule automatique sur tout un tour (temps d’observation compris)', () => {
     const dir = new PresentationDirector();
     dir.startHold();
     expect(dir.update(at('COMMIT', true, 1))).toBe('A');
-    expect(dir.releaseHold(at('COMMIT', true, 1))).toBe('B');
+    expect(dir.releaseHold(at('COMMIT', true, 1))).toBe('A');
+    for (const phase of ['PREPARE', 'COMMIT', 'TACTICS', 'RESOLVED']) dir.update(at(phase, true, 2));
+    expect(dir.switches).toBe(0);
   });
   it('bascule manuelle valable jusqu’au changement de phase ; gel pendant un glisser', () => {
     const dir = new PresentationDirector();
-    expect(dir.update(at('TACTICS'))).toBe('A');
-    expect(dir.toggle(at('TACTICS'))).toBe('B');
-    expect(dir.update(at('TACTICS'))).toBe('B');
-    expect(dir.update(at('RESOLVED', false))).toBe('A'); // nouvelle phase : préférence oubliée
-    dir.update(at('COMMIT', true, 4));
-    expect(dir.view).toBe('B');
+    expect(dir.update(at('COMMIT', true, 4))).toBe('A');
+    expect(dir.toggle(at('COMMIT', true, 4))).toBe('B');
+    expect(dir.update(at('COMMIT', true, 4))).toBe('B');
     dir.setFrozen(true, at('COMMIT', true, 4));
     expect(dir.update(at('COMMIT', false, 4))).toBe('B'); // gelé : pas de transition sous le pointeur
-    expect(dir.setFrozen(false, at('COMMIT', false, 4))).toBe('A'); // rattrapage après le glisser
+    expect(dir.setFrozen(false, at('COMMIT', false, 4))).toBe('A'); // rattrapage après le glisser : préférence oubliée
+    expect(dir.update(at('TACTICS'))).toBe('A');
+    expect(dir.toggle(at('TACTICS'))).toBe('B');
+    expect(dir.toggle(at('TACTICS'))).toBe('A');
   });
 });
 

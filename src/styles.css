@@ -154,22 +154,34 @@ button { font: inherit; color: inherit; }
 /* Passage A ↔ B : les rangées et la main glissent de leur ancienne place (FLIP, board.ts) ;
    aucune transformation CSS de centrage sur ces éléments pour laisser la place à l’animation. */
 .board { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
+/* Cases au format des cartes (ADR 016) : le cadre est le contour de la carte posée (même taille à 6 % près,
+   même inclinaison --ct, même perspective) ; colonnes au pas de deux largeurs de carte. Vue A (pose comprise) :
+   les deux rangées ont la même taille et la même inclinaison, donc six cadres identiques en colonnes alignées,
+   posés sur la table entre son bord lointain (--a-edge) et la main. */
 .side { position: absolute; left: 0; right: 0; display: flex; justify-content: center; pointer-events: none;
-  --zh: 13vh; --zw: calc(var(--zh) * 1.62); --ft: 52deg; --ct: 28deg;
-  --card-w: calc(var(--zh) * 0.94 / cos(var(--ct)) / 1.4); --card-h: calc(var(--card-w) * 1.4); --radius: calc(var(--card-w) * 0.07); }
-.view-a .side.opp { top: 48.2%; --zh: 11.6vh; --ft: 58deg; --ct: 32deg; }
-.view-a .side.me { top: 63.2%; --zh: 12.4vh; --ft: 52deg; --ct: 26deg; }
-.view-b .side.opp { top: 30.5%; --zh: 10.8vh; --ft: 58deg; --ct: 32deg; }
-.view-b .side.me { top: 46.5%; --zh: 20.5vh; --ft: 36deg; --ct: 12deg; --zw: calc(var(--zh) * 1.42); }
+  --zh: 13vh; --ct: 28deg;
+  --card-w: calc(var(--zh) * 0.94 / cos(var(--ct)) / 1.4); --card-h: calc(var(--card-w) * 1.4); --radius: calc(var(--card-w) * 0.07);
+  --zw: calc(var(--card-w) * 1.76); }
+.view-a .side.opp { top: 46.8%; --zh: 12.8vh; --ct: 36deg; }
+.view-a .side.me { top: 62.4%; --zh: 12.8vh; --ct: 36deg; }
+.view-b .side.opp { top: 30.5%; --zh: 10.8vh; --ct: 32deg; }
+.view-b .side.me { top: 46.5%; --zh: 20.5vh; --ct: 12deg; }
 .row { display: grid; grid-template-columns: repeat(3, var(--zw)); gap: calc(var(--zw) * 0.14); align-items: end; }
 .zone { position: relative; width: var(--zw); height: var(--zh); pointer-events: auto; display: grid; place-items: center; transition: filter 0.15s; }
-.zone-floor { position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--zh) / cos(var(--ft))); transform-origin: 50% 100%; transform: perspective(calc(var(--zw) * 3.2)) rotateX(var(--ft)); border: 2px dashed rgba(232, 196, 128, 0.82); border-radius: 12px; background: radial-gradient(ellipse at 50% 60%, rgba(60, 40, 22, 0.14), rgba(0, 0, 0, 0.3)); pointer-events: none; transition: border-color 0.15s, box-shadow 0.15s, background 0.15s; }
+/* Cadre de case : rectangle de la carte élargi de --fm, même axe de rotation (bas de la carte) et même centre de
+   perspective que la carte posée, qui le recouvre donc exactement. */
+.zone-floor { --fm: calc(var(--card-w) * 0.06); position: absolute; left: 50%; bottom: calc(2% - var(--fm)); width: calc(var(--card-w) + 2 * var(--fm)); height: calc(var(--card-h) + 2 * var(--fm)); box-sizing: border-box; transform-origin: 50% calc(100% - var(--fm)); transform: translateX(-50%) perspective(calc(var(--card-w) * 6)) rotateX(var(--ct)); border: 2px dashed rgba(232, 196, 128, 0.82); border-radius: calc(var(--radius) + var(--fm)); background: radial-gradient(ellipse at 50% 60%, rgba(60, 40, 22, 0.14), rgba(0, 0, 0, 0.3)); pointer-events: none; transition: border-color 0.15s, box-shadow 0.15s, background 0.15s; }
+/* Case occupée : le cadre s’efface sous la carte posée. Il ne reparaît, en liseré autour de la carte, que pour
+   signaler une cible (pose, Dissipation, interférence, temps de résolution). Seule la visibilité change : aucune
+   transition ne part sur un cadre gardé par le re-rendu ciblé (ADR 015). */
+.zone:has(> .card) > .zone-floor { visibility: hidden; }
+.zone:has(> .card):is(.legal, .hover-legal, .hover-illegal, .targetable, .targeted, .beat-focus) > .zone-floor { visibility: visible; }
 .zone.primary .zone-floor { border-color: rgba(255, 214, 140, 0.9); box-shadow: 0 0 18px rgba(255, 200, 120, 0.25), inset 0 0 18px rgba(255, 200, 120, 0.12); }
 /* Étiquette de case : boîte ajustée au texte sur un voile sombre diffus (lisible sur le bois éclairé M03.2). */
 .zone > .zone-label { position: absolute; bottom: calc(100% + 3px); left: 50%; transform: translateX(-50%); padding: 0.06rem 0.65rem; border-radius: 999px; background: radial-gradient(closest-side, rgba(10, 7, 6, 0.86), rgba(10, 7, 6, 0.74) 74%, rgba(10, 7, 6, 0)); text-align: center; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em; color: #faf4e8; text-transform: uppercase; white-space: nowrap; text-shadow: 0 1px 3px #000, 0 0 6px rgba(0, 0, 0, 0.8); pointer-events: none; }
 .zone.primary > .zone-label { color: var(--gold-hi); }
 /* Aide de case sur une pastille sombre translucide : lisible (≥ 4,5:1) sur la table éclairée M03.2. */
-.empty-hint { position: relative; max-width: 92%; font-size: 0.72rem; color: #f1e9dc; text-align: center; padding: 0.12rem 0.5rem; border-radius: 999px; background: rgba(12, 8, 6, 0.5); text-shadow: 0 1px 2px #000; pointer-events: none; }
+.empty-hint { position: relative; max-width: min(92%, calc(var(--card-w) * 1.1)); font-size: 0.72rem; color: #f1e9dc; text-align: center; padding: 0.12rem 0.5rem; border-radius: 999px; background: rgba(12, 8, 6, 0.5); text-shadow: 0 1px 2px #000; pointer-events: none; }
 .zone > .card.on-board { position: absolute; left: 50%; bottom: 2%; transform-origin: 50% 100%; transform: translateX(-50%) perspective(calc(var(--card-w) * 6)) rotateX(var(--ct)); }
 .zone > .card.on-board.hand-card { transform: translateX(-50%); }
 .zone.legal .zone-floor { border-style: solid; border-color: var(--ok); box-shadow: 0 0 0 3px rgba(143, 220, 106, 0.25), inset 0 0 20px rgba(143, 220, 106, 0.2); }
@@ -364,6 +376,18 @@ button { font: inherit; color: inherit; }
 #app.view-switch .side .card, #app.view-switch .side .zone, #app.view-switch .side .zone-floor { transition: none !important; }
 @media (prefers-reduced-motion: reduce) { .card, .hp .fill, .side, .drawer { transition: none; } }
 
+/* Bureau, vue A (pose comprise, ADR 016) : colonnes communes aux deux rangées, assez espacées pour ASSAUT /
+   GARDE ; une seule ligne d’étiquettes, entre les rangées (celles du rival chevauchaient ses mains) ;
+   ASSAUT / GARDE de part et d’autre de la Primaire, au-dessus de la main et non dessous (la main est
+   dessinée par-dessus le plateau). */
+@media (min-width: 821px) and (min-height: 561px) {
+  .view-a .side { --zw: calc(var(--card-w) * 2.18); }
+  .view-a .side.opp .zone-label { display: none; }
+  .view-a .zone > .stance { bottom: 22%; display: grid; grid-template-columns: 6rem calc(var(--card-w) + 0.8rem) 6rem; gap: 0; pointer-events: none; }
+  .view-a .zone > .stance .chip { pointer-events: auto; justify-self: end; }
+  .view-a .zone > .stance .chip.guard { grid-column: 3; justify-self: start; }
+}
+
 /* --- Grand écran -------------------------------------------------------------- */
 @media (min-width: 1700px) { :root { font-size: calc(17px * var(--ui-scale)); } }
 
@@ -392,10 +416,10 @@ button { font: inherit; color: inherit; }
   .rb-title { display: none; }
   .rb-line { font-size: 0.86rem; }
   .side { --zw: min(calc(var(--zh) * 1.35), 29vw); --card-w: min(calc(var(--zh) * 0.94 / cos(var(--ct)) / 1.4), calc(var(--zw) * 0.74)); }
-  .view-a .side.opp { top: 30.7%; --zh: 9.2vh; --ft: 56deg; --ct: 30deg; --zw: min(calc(var(--zh) * 1.35), 29vw); }
-  .view-a .side.me { top: 43.6%; --zh: 11.4vh; --ft: 48deg; --ct: 22deg; --zw: min(calc(var(--zh) * 1.3), 29vw); }
-  .view-b .side.opp { top: 22.6%; --zh: 7.2vh; --ft: 58deg; --ct: 30deg; --zw: min(calc(var(--zh) * 1.4), 29vw); }
-  .view-b .side.me { top: 33%; --zh: 15.5vh; --ft: 34deg; --ct: 12deg; --zw: min(calc(var(--zh) * 1.2), 29vw); }
+  .view-a .side.opp { top: 30.7%; --zh: 9.2vh; --ct: 30deg; --zw: min(calc(var(--zh) * 1.35), 29vw); }
+  .view-a .side.me { top: 43.6%; --zh: 11.4vh; --ct: 22deg; --zw: min(calc(var(--zh) * 1.3), 29vw); }
+  .view-b .side.opp { top: 22.6%; --zh: 7.2vh; --ct: 30deg; --zw: min(calc(var(--zh) * 1.4), 29vw); }
+  .view-b .side.me { top: 33%; --zh: 15.5vh; --ct: 12deg; --zw: min(calc(var(--zh) * 1.2), 29vw); }
   .row { gap: 3vw; }
   /* libellés courts « S1 · PRIMAIRE · S2 » (preview mobile) : plus grands que les libellés longs */
   .zone > .zone-label { font-size: 0; letter-spacing: 0; padding: 0.04rem 0.5rem; }
@@ -439,10 +463,10 @@ button { font: inherit; color: inherit; }
   .rival-bubble::after { display: none; }
   .rb-title { display: none; }
   .rb-line { font-size: 0.86rem; }
-  .view-a .side.opp { top: 40.5%; --zh: 10.5vh; --ft: 58deg; --ct: 32deg; }
-  .view-a .side.me { top: 54%; --zh: 12vh; --ft: 52deg; --ct: 26deg; }
-  .view-b .side.opp { top: 29%; --zh: 9vh; --ft: 58deg; --ct: 32deg; }
-  .view-b .side.me { top: 41.5%; --zh: 18vh; --ft: 38deg; --ct: 14deg; --zw: calc(var(--zh) * 1.42); }
+  .view-a .side.opp { top: 40.5%; --zh: 10.5vh; --ct: 32deg; }
+  .view-a .side.me { top: 54%; --zh: 12vh; --ct: 26deg; }
+  .view-b .side.opp { top: 29%; --zh: 9vh; --ct: 32deg; }
+  .view-b .side.me { top: 41.5%; --zh: 18vh; --ct: 14deg; --zw: calc(var(--zh) * 1.42); }
   /* libellés courts « S1 · PRIMAIRE · S2 » (preview mobile), plus grands */
   .zone > .zone-label { font-size: 0; letter-spacing: 0; padding: 0.04rem 0.55rem; }
   .zone > .zone-label::after { content: attr(data-short); font-size: 0.8rem; letter-spacing: 0.08em; }
@@ -537,7 +561,9 @@ button { font: inherit; color: inherit; }
 }
 
 /* M04 — conseil contextuel (mode produit) : au-dessus des commandes, bord droit ; centre libre. */
-.tip { position: absolute; z-index: 5; right: var(--g); bottom: calc(var(--g) * 2 + clamp(150px, 22.5vh, 250px) * var(--ui-scale)); width: var(--cmd-w); display: grid; gap: 0.25rem; padding: 0.5rem 0.7rem 0.55rem; border-radius: 10px; border: 1px solid rgba(180, 140, 255, 0.65); background: rgba(16, 11, 24, 0.9); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.6); font-size: 0.76rem; line-height: 1.38; }
+/* Sous le plateau (z 3) : un menu tactique ouvert passe au-dessus du conseil au lieu d’être recouvert (ADR 016 :
+   colonnes plus espacées ; le menu de la Secondaire droite débordait déjà en partie sous le conseil). */
+.tip { position: absolute; z-index: 2; right: var(--g); bottom: calc(var(--g) * 2 + clamp(150px, 22.5vh, 250px) * var(--ui-scale)); width: var(--cmd-w); display: grid; gap: 0.25rem; padding: 0.5rem 0.7rem 0.55rem; border-radius: 10px; border: 1px solid rgba(180, 140, 255, 0.65); background: rgba(16, 11, 24, 0.9); box-shadow: 0 8px 22px rgba(0, 0, 0, 0.6); font-size: 0.76rem; line-height: 1.38; }
 .tip-title { color: #e0d2ff; font-size: 0.8rem; }
 .tip-text { color: #eee6f8; }
 .tip-ok { justify-self: end; }
