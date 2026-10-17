@@ -1,0 +1,1343 @@
+{
+  "commit": "99e03e1",
+  "before": "runtime M03 — build de 0ab0584 (LQV_BEFORE)",
+  "date": "2026-10-17T01:00:11.492Z",
+  "note": "Chromium headless + WebGL logiciel SwiftShader (CPU) ; freeze=1 ; captures réelles.",
+  "cases": [
+    {
+      "id": "01-vue-A-1280",
+      "desc": "Vue A frontale (observation de début de tour)",
+      "viewport": "1280×720",
+      "url": "?seed=202&autostart=1&rival=ronce&qa=1&aiDelay=0&freeze=1&intro=1",
+      "panel": 1,
+      "apres": {
+        "file": "screenshots/qa/m03-2/01-vue-A-1280-apres.png",
+        "view": "A",
+        "rival": "ronce:focused",
+        "lum": {
+          "image": 0.0612,
+          "table": 0.0498,
+          "visage": 0.172
+        },
+        "contrast": {
+          "étiquettes de cases": {
+            "min": 10.3,
+            "n": 6,
+            "aa": 6
+          },
+          "aides des cases": {
+            "min": 10.3,
+            "n": 6,
+            "aa": 6
+          },
+          "texte des commandes": {
+            "min": 16.4,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 15.5,
+            "n": 4,
+            "aa": 4
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 158,
+        "zoneLabelPx": 10.2,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.148,
+            "edge": 0.305
+          }
+        },
+        "faceH": 83,
+        "driveError": null
+      },
+      "avant": {
+        "file": "screenshots/qa/m03-2/01-vue-A-1280-avant.png",
+        "view": "A",
+        "rival": "ronce:focused",
+        "lum": {
+          "image": 0.048,
+          "table": 0.0322,
+          "visage": 0.0375
+        },
+        "contrast": {
+          "étiquettes de cases": {
+            "min": 11.5,
+            "n": 6,
+            "aa": 6
+          },
+          "aides des cases": {
+            "min": 4.6,
+            "n": 6,
+            "aa": 6
+          },
+          "texte des commandes": {
+            "min": 16.8,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 15.5,
+            "n": 4,
+            "aa": 4
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 158,
+        "zoneLabelPx": 9.9,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.11,
+            "edge": 0.29
+          }
+        },
+        "faceH": 45,
+        "driveError": null
+      }
+    },
+    {
+      "id": "01-vue-A-1920",
+      "desc": "Vue A frontale, 1920×1080",
+      "viewport": "1920×1080",
+      "url": "?seed=202&autostart=1&rival=ronce&qa=1&aiDelay=0&freeze=1&intro=1",
+      "panel": 1,
+      "apres": {
+        "file": "screenshots/qa/m03-2/01-vue-A-1920-apres.png",
+        "view": "A",
+        "rival": "ronce:focused",
+        "lum": {
+          "image": 0.061,
+          "table": 0.0449,
+          "visage": 0.1727
+        },
+        "contrast": {
+          "étiquettes de cases": {
+            "min": 9.8,
+            "n": 6,
+            "aa": 6
+          },
+          "aides des cases": {
+            "min": 9.2,
+            "n": 6,
+            "aa": 6
+          },
+          "texte des commandes": {
+            "min": 16.6,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 15.5,
+            "n": 4,
+            "aa": 4
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 238,
+        "zoneLabelPx": 11.56,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.148,
+            "edge": 0.305
+          }
+        },
+        "faceH": 125,
+        "driveError": null
+      },
+      "avant": {
+        "file": "screenshots/qa/m03-2/01-vue-A-1920-avant.png",
+        "view": "A",
+        "rival": "ronce:focused",
+        "lum": {
+          "image": 0.0456,
+          "table": 0.0292,
+          "visage": 0.0384
+        },
+        "contrast": {
+          "étiquettes de cases": {
+            "min": 11.9,
+            "n": 6,
+            "aa": 6
+          },
+          "aides des cases": {
+            "min": 3.6,
+            "n": 6,
+            "aa": 5
+          },
+          "texte des commandes": {
+            "min": 16.9,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 15.5,
+            "n": 4,
+            "aa": 4
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 238,
+        "zoneLabelPx": 11.22,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.11,
+            "edge": 0.29
+          }
+        },
+        "faceH": 67,
+        "driveError": null
+      }
+    },
+    {
+      "id": "02-vue-B-1280",
+      "desc": "Vue B inclinée : Primaire posée, choix ASSAUT / GARDE",
+      "viewport": "1280×720",
+      "url": "?seed=202&autostart=1&rival=ronce&qa=1&aiDelay=0&freeze=1",
+      "panel": 2,
+      "apres": {
+        "file": "screenshots/qa/m03-2/02-vue-B-1280-apres.png",
+        "view": "B",
+        "rival": "ronce:focused",
+        "lum": {
+          "image": 0.0432,
+          "table": 0.0602,
+          "visage": 0.1041
+        },
+        "contrast": {
+          "étiquettes de cases": {
+            "min": 10.6,
+            "n": 6,
+            "aa": 6
+          },
+          "aides des cases": {
+            "min": 14.3,
+            "n": 5,
+            "aa": 5
+          },
+          "texte des commandes": {
+            "min": 16.6,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 17.5,
+            "n": 3,
+            "aa": 3
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 158,
+        "zoneLabelPx": 10.2,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.148,
+            "edge": 0.305
+          }
+        },
+        "faceH": null,
+        "driveError": null
+      },
+      "avant": {
+        "file": "screenshots/qa/m03-2/02-vue-B-1280-avant.png",
+        "view": "B",
+        "rival": "ronce:focused",
+        "lum": {
+          "image": 0.0338,
+          "table": 0.0314,
+          "visage": 0.023
+        },
+        "contrast": {
+          "étiquettes de cases": {
+            "min": 8.3,
+            "n": 6,
+            "aa": 6
+          },
+          "aides des cases": {
+            "min": 6,
+            "n": 5,
+            "aa": 5
+          },
+          "texte des commandes": {
+            "min": 16.8,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 17.5,
+            "n": 3,
+            "aa": 3
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 158,
+        "zoneLabelPx": 9.9,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.11,
+            "edge": 0.29
+          }
+        },
+        "faceH": null,
+        "driveError": null
+      }
+    },
+    {
+      "id": "03-tactique-1280",
+      "desc": "Phase tactique (vue A) : Primaires révélées, Secondaires actives",
+      "viewport": "1280×720",
+      "url": "?scenario=interference&qa=1&aiDelay=0&freeze=1",
+      "panel": 5,
+      "apres": {
+        "file": "screenshots/qa/m03-2/03-tactique-1280-apres.png",
+        "view": "A",
+        "rival": "ronce:focused",
+        "lum": {
+          "image": 0.0736,
+          "table": 0.1178,
+          "visage": 0.225
+        },
+        "contrast": {
+          "étiquettes de cases": {
+            "min": 4.9,
+            "n": 6,
+            "aa": 6
+          },
+          "aides des cases": {
+            "min": 11.3,
+            "n": 1,
+            "aa": 1
+          },
+          "texte des commandes": {
+            "min": 16.6,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 18,
+            "n": 3,
+            "aa": 3
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 158,
+        "zoneLabelPx": 10.2,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.148,
+            "edge": 0.305
+          }
+        },
+        "faceH": 83,
+        "driveError": null
+      },
+      "avant": {
+        "file": "screenshots/qa/m03-2/03-tactique-1280-avant.png",
+        "view": "A",
+        "rival": "ronce:focused",
+        "lum": {
+          "image": 0.0556,
+          "table": 0.0824,
+          "visage": 0.0634
+        },
+        "contrast": {
+          "étiquettes de cases": {
+            "min": 4,
+            "n": 6,
+            "aa": 5
+          },
+          "aides des cases": {
+            "min": 6.2,
+            "n": 1,
+            "aa": 1
+          },
+          "texte des commandes": {
+            "min": 16.9,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 18,
+            "n": 3,
+            "aa": 3
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 158,
+        "zoneLabelPx": 9.9,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.11,
+            "edge": 0.29
+          }
+        },
+        "faceH": 45,
+        "driveError": null
+      }
+    },
+    {
+      "id": "04-clash-aa",
+      "desc": "Choc ASSAUT contre ASSAUT (vous dominez), temps « issue »",
+      "viewport": "1280×720",
+      "url": "?scenario=clash-aa&qa=1&aiDelay=0&freeze=1",
+      "panel": 3,
+      "apres": {
+        "file": "screenshots/qa/m03-2/04-clash-aa-apres.png",
+        "view": "A",
+        "rival": "ronce:focused",
+        "lum": {
+          "image": 0.0563,
+          "table": 0.0923,
+          "visage": 0.0851
+        },
+        "contrast": {
+          "verdict du Clash": {
+            "min": 14.7,
+            "n": 1,
+            "aa": 1
+          },
+          "conséquences du Clash": {
+            "min": 16.6,
+            "n": 2,
+            "aa": 2
+          },
+          "texte des commandes": {
+            "min": 16.5,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 15.9,
+            "n": 3,
+            "aa": 3
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 158,
+        "zoneLabelPx": 10.2,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.148,
+            "edge": 0.305
+          }
+        },
+        "faceH": 83,
+        "driveError": null
+      },
+      "avant": {
+        "file": "screenshots/qa/m03-2/04-clash-aa-avant.png",
+        "view": "A",
+        "rival": "ronce:focused",
+        "lum": {
+          "image": 0.0539,
+          "table": 0.0659,
+          "visage": 0.0475
+        },
+        "contrast": {
+          "verdict du Clash": {
+            "min": 14.4,
+            "n": 1,
+            "aa": 1
+          },
+          "conséquences du Clash": {
+            "min": 16.6,
+            "n": 3,
+            "aa": 3
+          },
+          "texte des commandes": {
+            "min": 16.9,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 15.9,
+            "n": 3,
+            "aa": 3
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 158,
+        "zoneLabelPx": 9.9,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.11,
+            "edge": 0.29
+          }
+        },
+        "faceH": 45,
+        "driveError": null
+      }
+    },
+    {
+      "id": "05-clash-ag-garde",
+      "desc": "ASSAUT contre GARDE : Garde victorieuse, temps « issue »",
+      "viewport": "1280×720",
+      "url": "?scenario=clash-ag&qa=1&aiDelay=0&freeze=1",
+      "panel": null,
+      "apres": {
+        "file": "screenshots/qa/m03-2/05-clash-ag-garde-apres.png",
+        "view": "A",
+        "rival": "ronce:pleased",
+        "lum": {
+          "image": 0.0602,
+          "table": 0.103,
+          "visage": 0.0857
+        },
+        "contrast": {
+          "verdict du Clash": {
+            "min": 11.3,
+            "n": 1,
+            "aa": 1
+          },
+          "conséquences du Clash": {
+            "min": 16.6,
+            "n": 2,
+            "aa": 2
+          },
+          "texte des commandes": {
+            "min": 16.5,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 15.3,
+            "n": 3,
+            "aa": 3
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 158,
+        "zoneLabelPx": 10.2,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.148,
+            "edge": 0.305
+          }
+        },
+        "faceH": 83,
+        "driveError": null
+      },
+      "avant": {
+        "file": "screenshots/qa/m03-2/05-clash-ag-garde-avant.png",
+        "view": "A",
+        "rival": "ronce:pleased",
+        "lum": {
+          "image": 0.0582,
+          "table": 0.0677,
+          "visage": 0.0362
+        },
+        "contrast": {
+          "verdict du Clash": {
+            "min": 11,
+            "n": 1,
+            "aa": 1
+          },
+          "conséquences du Clash": {
+            "min": 16.1,
+            "n": 4,
+            "aa": 4
+          },
+          "texte des commandes": {
+            "min": 16.9,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 15.3,
+            "n": 3,
+            "aa": 3
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 158,
+        "zoneLabelPx": 9.9,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.11,
+            "edge": 0.29
+          }
+        },
+        "faceH": 45,
+        "driveError": null
+      }
+    },
+    {
+      "id": "06-clash-ag-absorption",
+      "desc": "Victoire au Rang, 0 blessure (absorption), temps « issue »",
+      "viewport": "1280×720",
+      "url": "?scenario=clash-ag&qa=1&aiDelay=0&freeze=1",
+      "panel": 4,
+      "apres": {
+        "file": "screenshots/qa/m03-2/06-clash-ag-absorption-apres.png",
+        "view": "A",
+        "rival": "ronce:relieved",
+        "lum": {
+          "image": 0.0592,
+          "table": 0.0967,
+          "visage": 0.0858
+        },
+        "contrast": {
+          "verdict du Clash": {
+            "min": 12.7,
+            "n": 1,
+            "aa": 1
+          },
+          "conséquences du Clash": {
+            "min": 16.6,
+            "n": 3,
+            "aa": 3
+          },
+          "texte des commandes": {
+            "min": 16.5,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 15.3,
+            "n": 3,
+            "aa": 3
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 158,
+        "zoneLabelPx": 10.2,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.148,
+            "edge": 0.305
+          }
+        },
+        "faceH": 83,
+        "driveError": null
+      },
+      "avant": {
+        "file": "screenshots/qa/m03-2/06-clash-ag-absorption-avant.png",
+        "view": "A",
+        "rival": "ronce:relieved",
+        "lum": {
+          "image": 0.0564,
+          "table": 0.0756,
+          "visage": 0.0365
+        },
+        "contrast": {
+          "verdict du Clash": {
+            "min": 12.7,
+            "n": 1,
+            "aa": 1
+          },
+          "conséquences du Clash": {
+            "min": 16.1,
+            "n": 4,
+            "aa": 4
+          },
+          "texte des commandes": {
+            "min": 16.9,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 15.3,
+            "n": 3,
+            "aa": 3
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 158,
+        "zoneLabelPx": 9.9,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.11,
+            "edge": 0.29
+          }
+        },
+        "faceH": 45,
+        "driveError": null
+      }
+    },
+    {
+      "id": "07-clash-gg",
+      "desc": "GARDE contre GARDE (neutre), temps « issue »",
+      "viewport": "1280×720",
+      "url": "?scenario=clash-ag&qa=1&aiDelay=0&freeze=1",
+      "panel": null,
+      "apres": {
+        "file": "screenshots/qa/m03-2/07-clash-gg-apres.png",
+        "view": "A",
+        "rival": "ronce:thinking",
+        "lum": {
+          "image": 0.0662,
+          "table": 0.1348,
+          "visage": 0.1017
+        },
+        "contrast": {
+          "verdict du Clash": {
+            "min": 14,
+            "n": 1,
+            "aa": 1
+          },
+          "conséquences du Clash": {
+            "min": 16.2,
+            "n": 2,
+            "aa": 2
+          },
+          "texte des commandes": {
+            "min": 16.5,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 15.4,
+            "n": 3,
+            "aa": 3
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 158,
+        "zoneLabelPx": 10.2,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.148,
+            "edge": 0.305
+          }
+        },
+        "faceH": 83,
+        "driveError": null
+      },
+      "avant": {
+        "file": "screenshots/qa/m03-2/07-clash-gg-avant.png",
+        "view": "A",
+        "rival": "ronce:thinking",
+        "lum": {
+          "image": 0.0637,
+          "table": 0.0786,
+          "visage": 0.0449
+        },
+        "contrast": {
+          "verdict du Clash": {
+            "min": 13.7,
+            "n": 1,
+            "aa": 1
+          },
+          "conséquences du Clash": {
+            "min": 15.8,
+            "n": 3,
+            "aa": 3
+          },
+          "texte des commandes": {
+            "min": 16.9,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 15.4,
+            "n": 3,
+            "aa": 3
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 158,
+        "zoneLabelPx": 9.9,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.11,
+            "edge": 0.29
+          }
+        },
+        "faceH": 45,
+        "driveError": null
+      }
+    },
+    {
+      "id": "08-mobile-portrait",
+      "desc": "Mobile portrait 390×844, vue A",
+      "viewport": "390×844",
+      "url": "?seed=404&autostart=1&rival=ronce&qa=1&aiDelay=0&freeze=1&intro=1",
+      "panel": null,
+      "apres": {
+        "file": "screenshots/qa/m03-2/08-mobile-portrait-apres.png",
+        "view": "A",
+        "rival": "ronce:focused",
+        "lum": {
+          "image": 0.0542,
+          "table": 0.0398,
+          "visage": 0.1715
+        },
+        "contrast": {
+          "étiquettes de cases": {
+            "min": 10,
+            "n": 6,
+            "aa": 6
+          },
+          "aides des cases": {
+            "min": 13.7,
+            "n": 6,
+            "aa": 6
+          },
+          "texte des commandes": {
+            "min": 16.8,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 14.9,
+            "n": 4,
+            "aa": 4
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 121,
+        "zoneLabelPx": 9.36,
+        "anchors": {
+          "A": {
+            "head": 0.158,
+            "edge": 0.285
+          },
+          "B": {
+            "head": 0.13,
+            "edge": 0.215
+          }
+        },
+        "faceH": 50,
+        "driveError": null
+      },
+      "avant": {
+        "file": "screenshots/qa/m03-2/08-mobile-portrait-avant.png",
+        "view": "A",
+        "rival": "ronce:focused",
+        "lum": {
+          "image": 0.0466,
+          "table": 0.0149,
+          "visage": 0.0373
+        },
+        "contrast": {
+          "étiquettes de cases": {
+            "min": 6.9,
+            "n": 6,
+            "aa": 6
+          },
+          "aides des cases": {
+            "min": 6.2,
+            "n": 6,
+            "aa": 6
+          },
+          "texte des commandes": {
+            "min": 16.9,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 14.9,
+            "n": 4,
+            "aa": 4
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 121,
+        "zoneLabelPx": 7.54,
+        "anchors": {
+          "A": {
+            "head": 0.158,
+            "edge": 0.285
+          },
+          "B": {
+            "head": 0.13,
+            "edge": 0.215
+          }
+        },
+        "faceH": 27,
+        "driveError": null
+      }
+    },
+    {
+      "id": "09-mobile-paysage",
+      "desc": "Mobile paysage 844×390, vue A",
+      "viewport": "844×390",
+      "url": "?seed=404&autostart=1&rival=ronce&qa=1&aiDelay=0&freeze=1&intro=1",
+      "panel": 6,
+      "apres": {
+        "file": "screenshots/qa/m03-2/09-mobile-paysage-apres.png",
+        "view": "A",
+        "rival": "ronce:focused",
+        "lum": {
+          "image": 0.0526,
+          "table": 0.0547,
+          "visage": 0.1156
+        },
+        "contrast": {
+          "étiquettes de cases": {
+            "min": 8.4,
+            "n": 6,
+            "aa": 6
+          },
+          "aides des cases": {
+            "min": 10.2,
+            "n": 6,
+            "aa": 6
+          },
+          "texte des commandes": {
+            "min": 16.6,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 14.7,
+            "n": 4,
+            "aa": 4
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 98,
+        "zoneLabelPx": 9.6,
+        "anchors": {
+          "A": {
+            "head": 0.19,
+            "edge": 0.385
+          },
+          "B": {
+            "head": 0.13,
+            "edge": 0.275
+          }
+        },
+        "faceH": 35,
+        "driveError": null
+      },
+      "avant": {
+        "file": "screenshots/qa/m03-2/09-mobile-paysage-avant.png",
+        "view": "A",
+        "rival": "ronce:focused",
+        "lum": {
+          "image": 0.0591,
+          "table": 0.0767,
+          "visage": 0.0435
+        },
+        "contrast": {
+          "étiquettes de cases": {
+            "min": 6.7,
+            "n": 6,
+            "aa": 6
+          },
+          "aides des cases": {
+            "min": 4.5,
+            "n": 6,
+            "aa": 6
+          },
+          "texte des commandes": {
+            "min": 16.7,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 15,
+            "n": 4,
+            "aa": 4
+          }
+        },
+        "overlaps": [
+          "main / case",
+          "main / .hud.me"
+        ],
+        "handCardPx": 118,
+        "zoneLabelPx": 9.9,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.11,
+            "edge": 0.29
+          }
+        },
+        "faceH": 24,
+        "driveError": null
+      }
+    },
+    {
+      "id": "10-paysage-960",
+      "desc": "Petite tablette paysage 960×540, vue A",
+      "viewport": "960×540",
+      "url": "?seed=404&autostart=1&rival=ronce&qa=1&aiDelay=0&freeze=1&intro=1",
+      "panel": null,
+      "apres": {
+        "file": "screenshots/qa/m03-2/10-paysage-960-apres.png",
+        "view": "A",
+        "rival": "ronce:focused",
+        "lum": {
+          "image": 0.0548,
+          "table": 0.0465,
+          "visage": 0.1351
+        },
+        "contrast": {
+          "étiquettes de cases": {
+            "min": 7.9,
+            "n": 6,
+            "aa": 6
+          },
+          "aides des cases": {
+            "min": 9.3,
+            "n": 6,
+            "aa": 6
+          },
+          "texte des commandes": {
+            "min": 16.6,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 15.1,
+            "n": 4,
+            "aa": 4
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 135,
+        "zoneLabelPx": 9.6,
+        "anchors": {
+          "A": {
+            "head": 0.19,
+            "edge": 0.385
+          },
+          "B": {
+            "head": 0.13,
+            "edge": 0.275
+          }
+        },
+        "faceH": 49,
+        "driveError": null
+      },
+      "avant": {
+        "file": "screenshots/qa/m03-2/10-paysage-960-avant.png",
+        "view": "A",
+        "rival": "ronce:focused",
+        "lum": {
+          "image": 0.053,
+          "table": 0.0373,
+          "visage": 0.0373
+        },
+        "contrast": {
+          "étiquettes de cases": {
+            "min": 7.2,
+            "n": 6,
+            "aa": 6
+          },
+          "aides des cases": {
+            "min": 5.2,
+            "n": 6,
+            "aa": 6
+          },
+          "texte des commandes": {
+            "min": 16.8,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 14.9,
+            "n": 4,
+            "aa": 4
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 119,
+        "zoneLabelPx": 9.9,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.11,
+            "edge": 0.29
+          }
+        },
+        "faceH": 34,
+        "driveError": null
+      }
+    },
+    {
+      "id": "11-mobile-paysage-clash",
+      "desc": "Mobile paysage : Clash (absorption), temps « issue »",
+      "viewport": "844×390",
+      "url": "?scenario=clash-ag&qa=1&aiDelay=0&freeze=1",
+      "panel": null,
+      "apres": {
+        "file": "screenshots/qa/m03-2/11-mobile-paysage-clash-apres.png",
+        "view": "A",
+        "rival": "ronce:relieved",
+        "lum": {
+          "image": 0.0499,
+          "table": 0.0847,
+          "visage": 0.0673
+        },
+        "contrast": {
+          "verdict du Clash": {
+            "min": 13.2,
+            "n": 1,
+            "aa": 1
+          },
+          "conséquences du Clash": {
+            "min": 17,
+            "n": 3,
+            "aa": 3
+          },
+          "texte des commandes": {
+            "min": 16.7,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 14.8,
+            "n": 3,
+            "aa": 3
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 98,
+        "zoneLabelPx": 9.6,
+        "anchors": {
+          "A": {
+            "head": 0.19,
+            "edge": 0.385
+          },
+          "B": {
+            "head": 0.13,
+            "edge": 0.275
+          }
+        },
+        "faceH": 35,
+        "driveError": null
+      },
+      "avant": {
+        "file": "screenshots/qa/m03-2/11-mobile-paysage-clash-avant.png",
+        "view": "A",
+        "rival": "ronce:focused",
+        "lum": {
+          "image": 0.0582,
+          "table": 0.0506,
+          "visage": 0.0549
+        },
+        "contrast": {
+          "étiquettes de cases": {
+            "min": 3.5,
+            "n": 6,
+            "aa": 4
+          },
+          "aides des cases": {
+            "min": 5.6,
+            "n": 3,
+            "aa": 3
+          },
+          "texte des commandes": {
+            "min": 15.9,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 14.9,
+            "n": 3,
+            "aa": 3
+          }
+        },
+        "overlaps": [
+          "main / case"
+        ],
+        "handCardPx": 118,
+        "zoneLabelPx": 9.9,
+        "anchors": {
+          "A": {
+            "head": 0.205,
+            "edge": 0.455
+          },
+          "B": {
+            "head": 0.11,
+            "edge": 0.29
+          }
+        },
+        "faceH": 24,
+        "driveError": "page.tap: Timeout 5000ms exceeded."
+      }
+    },
+    {
+      "id": "12-mobile-portrait-clash",
+      "desc": "Mobile portrait : Clash (absorption), temps « issue »",
+      "viewport": "390×844",
+      "url": "?scenario=clash-ag&qa=1&aiDelay=0&freeze=1",
+      "panel": null,
+      "apres": {
+        "file": "screenshots/qa/m03-2/12-mobile-portrait-clash-apres.png",
+        "view": "A",
+        "rival": "ronce:relieved",
+        "lum": {
+          "image": 0.0714,
+          "table": 0.1551,
+          "visage": 0.1366
+        },
+        "contrast": {
+          "verdict du Clash": {
+            "min": 13.2,
+            "n": 1,
+            "aa": 1
+          },
+          "conséquences du Clash": {
+            "min": 17.1,
+            "n": 3,
+            "aa": 3
+          },
+          "texte des commandes": {
+            "min": 17.1,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 14.9,
+            "n": 3,
+            "aa": 3
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 121,
+        "zoneLabelPx": 9.36,
+        "anchors": {
+          "A": {
+            "head": 0.158,
+            "edge": 0.285
+          },
+          "B": {
+            "head": 0.13,
+            "edge": 0.215
+          }
+        },
+        "faceH": 50,
+        "driveError": null
+      },
+      "avant": {
+        "file": "screenshots/qa/m03-2/12-mobile-portrait-clash-avant.png",
+        "view": "A",
+        "rival": "ronce:relieved",
+        "lum": {
+          "image": 0.0753,
+          "table": 0.1462,
+          "visage": 0.0468
+        },
+        "contrast": {
+          "verdict du Clash": {
+            "min": 13.3,
+            "n": 1,
+            "aa": 1
+          },
+          "conséquences du Clash": {
+            "min": 17.1,
+            "n": 4,
+            "aa": 4
+          },
+          "texte des commandes": {
+            "min": 17.1,
+            "n": 1,
+            "aa": 1
+          },
+          "noms des cartes (main)": {
+            "min": 14.9,
+            "n": 3,
+            "aa": 3
+          }
+        },
+        "overlaps": [],
+        "handCardPx": 121,
+        "zoneLabelPx": 7.54,
+        "anchors": {
+          "A": {
+            "head": 0.158,
+            "edge": 0.285
+          },
+          "B": {
+            "head": 0.13,
+            "edge": 0.215
+          }
+        },
+        "faceH": 27,
+        "driveError": null
+      }
+    }
+  ],
+  "comparisons": [
+    "screenshots/qa/m03-2/comparaison-01-vue-A-1280.png",
+    "screenshots/qa/m03-2/comparaison-01-vue-A-1920.png",
+    "screenshots/qa/m03-2/comparaison-02-vue-B-1280.png",
+    "screenshots/qa/m03-2/comparaison-03-tactique-1280.png",
+    "screenshots/qa/m03-2/comparaison-04-clash-aa.png",
+    "screenshots/qa/m03-2/comparaison-05-clash-ag-garde.png",
+    "screenshots/qa/m03-2/comparaison-06-clash-ag-absorption.png",
+    "screenshots/qa/m03-2/comparaison-07-clash-gg.png",
+    "screenshots/qa/m03-2/comparaison-08-mobile-portrait.png",
+    "screenshots/qa/m03-2/comparaison-09-mobile-paysage.png",
+    "screenshots/qa/m03-2/comparaison-10-paysage-960.png",
+    "screenshots/qa/m03-2/comparaison-11-mobile-paysage-clash.png",
+    "screenshots/qa/m03-2/comparaison-12-mobile-portrait-clash.png",
+    "screenshots/qa/m03-2/13-expressions.png"
+  ],
+  "issues": []
+}

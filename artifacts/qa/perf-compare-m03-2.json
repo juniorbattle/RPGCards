@@ -1,0 +1,187 @@
+{
+  "date": "2026-10-17T01:40:46.854Z",
+  "machine": {
+    "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+    "cores": 4,
+    "memGB": 16,
+    "node": "v22.22.0"
+  },
+  "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — jamais une mesure de GPU",
+  "protocol": "5 rondes entrelacées par vue, 1280×720, scénario signature, 5 s de mise en régime, moyenne de 6 relevés",
+  "builds": {
+    "avant": "0ab0584",
+    "apres": "99e03e1"
+  },
+  "summary": {
+    "A": {
+      "avant": {
+        "medianFrameMs": 36.35,
+        "minFrameMs": 30.87,
+        "maxFrameMs": 56.86,
+        "medianFps": 3.03,
+        "drawCalls": 80,
+        "triangles": 1650
+      },
+      "apres": {
+        "medianFrameMs": 44.63,
+        "minFrameMs": 40.07,
+        "maxFrameMs": 56.14,
+        "medianFps": 2.57,
+        "drawCalls": 73,
+        "triangles": 1560
+      }
+    },
+    "B": {
+      "avant": {
+        "medianFrameMs": 38.42,
+        "minFrameMs": 33.21,
+        "maxFrameMs": 40.8,
+        "medianFps": 3.03,
+        "drawCalls": 78,
+        "triangles": 1634
+      },
+      "apres": {
+        "medianFrameMs": 38.09,
+        "minFrameMs": 33.6,
+        "maxFrameMs": 38.5,
+        "medianFps": 3.02,
+        "drawCalls": 75,
+        "triangles": 1608
+      }
+    }
+  },
+  "runs": {
+    "A": {
+      "avant": [
+        {
+          "frameMs": 56.86,
+          "fps": 2.92,
+          "drawCalls": 80,
+          "triangles": 1650
+        },
+        {
+          "frameMs": 30.87,
+          "fps": 3.05,
+          "drawCalls": 80,
+          "triangles": 1650
+        },
+        {
+          "frameMs": 37.88,
+          "fps": 2.33,
+          "drawCalls": 80,
+          "triangles": 1650
+        },
+        {
+          "frameMs": 36.35,
+          "fps": 3.03,
+          "drawCalls": 80,
+          "triangles": 1650
+        },
+        {
+          "frameMs": 35.82,
+          "fps": 3.07,
+          "drawCalls": 80,
+          "triangles": 1650
+        }
+      ],
+      "apres": [
+        {
+          "frameMs": 50.9,
+          "fps": 2.57,
+          "drawCalls": 73,
+          "triangles": 1560
+        },
+        {
+          "frameMs": 40.07,
+          "fps": 2.65,
+          "drawCalls": 73,
+          "triangles": 1560
+        },
+        {
+          "frameMs": 44.63,
+          "fps": 2.52,
+          "drawCalls": 73,
+          "triangles": 1560
+        },
+        {
+          "frameMs": 43.58,
+          "fps": 2.77,
+          "drawCalls": 73,
+          "triangles": 1560
+        },
+        {
+          "frameMs": 56.14,
+          "fps": 2.25,
+          "drawCalls": 73,
+          "triangles": 1560
+        }
+      ]
+    },
+    "B": {
+      "avant": [
+        {
+          "frameMs": 38.42,
+          "fps": 2.98,
+          "drawCalls": 78,
+          "triangles": 1634
+        },
+        {
+          "frameMs": 37.47,
+          "fps": 3.87,
+          "drawCalls": 78,
+          "triangles": 1634
+        },
+        {
+          "frameMs": 40.8,
+          "fps": 2.63,
+          "drawCalls": 78,
+          "triangles": 1634
+        },
+        {
+          "frameMs": 38.66,
+          "fps": 3.03,
+          "drawCalls": 78,
+          "triangles": 1634
+        },
+        {
+          "frameMs": 33.21,
+          "fps": 3.97,
+          "drawCalls": 78,
+          "triangles": 1634
+        }
+      ],
+      "apres": [
+        {
+          "frameMs": 37.9,
+          "fps": 3.02,
+          "drawCalls": 75,
+          "triangles": 1608
+        },
+        {
+          "frameMs": 38.47,
+          "fps": 3,
+          "drawCalls": 75,
+          "triangles": 1608
+        },
+        {
+          "frameMs": 38.5,
+          "fps": 3.33,
+          "drawCalls": 75,
+          "triangles": 1608
+        },
+        {
+          "frameMs": 38.09,
+          "fps": 3.02,
+          "drawCalls": 75,
+          "triangles": 1608
+        },
+        {
+          "frameMs": 33.6,
+          "fps": 3.1,
+          "drawCalls": 75,
+          "triangles": 1608
+        }
+      ]
+    }
+  }
+}
