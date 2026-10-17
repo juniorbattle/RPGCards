@@ -1,7 +1,8 @@
 # ADR 013 — Baseline visuelle desktop verrouillée par le responsable
 
 Date : 2026-10-16
-Statut : **APPROUVÉ — référence de production visuelle du duel**.
+Statut : **APPROUVÉ — référence de production visuelle du duel**. **Amendé par l'ADR 016** (2026-10-17) : vue A
+pendant toute la partie, pose comprise, vue B seulement à la demande ; cases au format des cartes.
 
 ## Décision
 

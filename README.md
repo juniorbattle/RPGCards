@@ -43,6 +43,8 @@ Mesures sur **GPU réel** (poste de l’opérateur, le conteneur n’en a pas) :
 
 `qa:browser`, `qa:techniques`, `shots`, `shots:clash`, `shots:m03-2` et `perf` exigent un build (`npm run build`) et un Chromium local (`/opt/pw-browsers/chromium` par défaut, sinon `CHROMIUM_PATH=…`). Aucun navigateur n’est téléchargé.
 
+Deux QA lancées en même temps depuis deux arbres de travail ne doivent pas partager un port : `LQV_PREVIEW_PORT=<port>` remplace le port par défaut (4179) de `qa:browser`, `qa:product`, `qa:rc`, `shots:m04` et `video`. Un port déjà pris est refusé : le serveur de prévisualisation doit être le sien, sinon on testerait le build de l’autre arbre.
+
 ## Jouer
 
 `npm run dev` (ou `npm run build && npm run preview`) ouvre le **jeu** :

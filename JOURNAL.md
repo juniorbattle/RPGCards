@@ -2,7 +2,7 @@
 
 **Nature :** journal de production du **nouveau projet**, et non journal copié de RPG-ArtByCode.  
 **Convention :** passes chronologiques, plus récente en bas ; statut `[OK]`, `[KO]`, `[?]` ; preuves vérifiables.  
-**Dernière passe :** 13 — **re-rendu ciblé du plateau** : `renderApp` ne touche plus que les nœuds qui changent, même DOM et même comportement vérifiés rendu par rendu (`renderCheck`, ADR 015). Temps processeur par commande 9,6 → 7,4 ms (Radeon 780M) et 8,2 → 6,4 ms (RTX 4060) en médiane (`docs/RAPPORT_M06_RC.md` §5.6). Règles, composition et secrets inchangés. (Passe 12 : à-coups tracés, deux causes corrigées ; passe 11 : mesures GPU de la RC ; passe 10 : RC locale desktop.) Ce n’est pas la ville RPG finale.
+**Dernière passe :** 14 — **vue frontale pendant la pose, cases au format des cartes** (demande du responsable, ADR 016) : plus de bascule automatique vers la vue inclinée, qui reste à la demande (V) ; six cadres identiques au contour des cartes, alignés en colonnes, masqués sous une carte posée. QA identique à `main` sur ce poste. (Passe 13 : re-rendu ciblé du plateau ; passe 12 : à-coups tracés ; passe 11 : mesures GPU de la RC ; passe 10 : RC locale desktop.) Ce n’est pas la ville RPG finale.
 
 ## État initial connu
 
@@ -15,7 +15,7 @@
 
 ## À reprendre (prioritaire)
 
-1. **PRIORITÉ OPÉRATEUR M04–M06 (16 octobre) :** vue frontale et proportions du rival **approuvées et figées comme baseline desktop (ADR 013)**. Construire une boucle opérationnelle menu → deck → rencontres → duels → résultat/progression → sauvegarde/reprise (docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md), puis stabiliser une release candidate locale. Mobile paysage et polish artistiques secondaires reportés. **M04 (passe 8), M05 (passe 9) et M06 (passe 10, RC 0.6.0-rc.1) livrés**, RC mesurée sur GPU réel (passe 11) ; à faire : revue opérateur de la RC et des arbitrages (`docs/RAPPORT_M06_RC.md` §9, ADR 014), contenu canonique de progression.
+1. **PRIORITÉ OPÉRATEUR M04–M06 (16 octobre) :** vue frontale et proportions du rival **approuvées et figées comme baseline desktop (ADR 013)**, amendée par l’**ADR 016** (passe 14 : vue A pendant la pose, vue B à la demande, cases au format des cartes ; captures à revoir : `screenshots/qa/adr016/`). Construire une boucle opérationnelle menu → deck → rencontres → duels → résultat/progression → sauvegarde/reprise (docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md), puis stabiliser une release candidate locale. Mobile paysage et polish artistiques secondaires reportés. **M04 (passe 8), M05 (passe 9) et M06 (passe 10, RC 0.6.0-rc.1) livrés**, RC mesurée sur GPU réel (passe 11) ; à faire : revue opérateur de la RC et des arbitrages (`docs/RAPPORT_M06_RC.md` §9, ADR 014), contenu canonique de progression.
 2. **Écarts de fidélité restants** (`docs/RAPPORT_M03_2.md` §8) : personnages en plans 2,5D (pas de volume ni de chevelure détaillée), décor moins dense, ni bloom ni profondeur de champ, table encore plus sombre que la preview, typographie système ; paysage = gabarit compact du bureau (textes ≈ 9,5 px à 844×390), pas l’interface simplifiée du panneau 6.
 3. **Arbitrages encore proposés** (ADR 004) : ARB-002 (profil du rival public), ARB-001, ARB-005 (+ ARB-005b : carte camouflée remplacée pendant l’engagement, nommée en fin de tour depuis la passe 5), ARB-011 ; ratification éventuelle du delta D-01 (V3.3). Inférences restantes documentées (`docs/RAPPORT_M03_1B.md` §6).
 4. **Mesure sur GPU réel** : **faite** sur le portable de l’opérateur (passe 11, Radeon 780M + RTX 4060 : plafond de l’écran 165 Hz en jeu, aucun compromis requis). **À-coups tracés en passe 12** (rapport §5.5) : liaison WebGL des anneaux FX et illustrations au clic corrigées. Restent :
@@ -57,6 +57,8 @@
 - Un re-rendu ciblé doit reproduire les effets de bord de la recréation : remplacer tout élément dont un attribut change ou qui est animé, `blur` au retrait de l’élément focalisé, entrée du pointeur sur l’élément neuf. On le vérifie contre un rendu complet à chaque rendu (`renderCheck`), y compris « aucune transition CSS sur un élément gardé » (passe 13).
 - Un sélecteur qui finit par `*` sous une classe basculée invalide tout le sous-arbre : cibler les éléments concernés (passe 13).
 - Sur un poste partagé, comparer deux builds en temps PROCESSEUR des tâches (`tdur`) et commande par commande, pas en temps mural par duel (passe 13).
+- Un cadre de pose a la forme et la transformation de ce qu’il reçoit : la carte le recouvre exactement, et il suffit de le masquer sous une carte posée (passe 14).
+- Deux sessions qui lancent leurs QA en même temps se disputent les ports : un serveur de test doit prouver qu’il est le sien avant qu’on lui fasse confiance (`startPreview`, `LQV_PREVIEW_PORT`, passe 14).
 - Conserver les échecs et leurs causes ; n'inventer ni approbation ni résultat.
 - Les choix visuels du projet RPG-ArtByCode sont une référence de **méthode**, jamais un cahier des charges visuel importé.
 - Le joueur interagit par des cartes, pas par des sélecteurs HTML comme mécanisme central.
@@ -497,3 +499,87 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
   - temps GPU par image ;
   - poste de bureau ;
   - revue opérateur de la RC.
+
+## Passe 14 — Vue frontale pendant la pose, cases au format des cartes (ADR 016) — 2026-10-17, worktree local avancé sur `main`, départ `68ebe4b`, commit sur `main`
+
+- **Mission / contraintes :** retours du responsable en séance.
+  - Le cadre de pose est trop gros par rapport aux cartes, et les cadres n'ont pas les mêmes dimensions entre eux.
+  - Le cadre doit disparaître quand une carte est posée.
+  - Les cartes du joueur et du rival doivent être alignées et posées sur la table, de façon précise et cadrée.
+  - La caméra qui s'éloigne casse l'immersion : il faut privilégier la vue proche, face au rival.
+  - Trois options de caméra lui ont été proposées. Choix explicite : « Toujours la vue de face » ; vue B seulement à la demande.
+  - Règles V3.0/V3.2 (`src/game` intact), secrets, HUD et cadrage du rival inchangés.
+- **Lecture initiale :**
+  - ADR 013 ;
+  - `director.ts`, `board.ts` (cases), `styles.css` (plateau, mobile) ;
+  - `arena.ts` (`frame()`, ancres caméra) ;
+  - `duel-driver.mjs` (vue attendue, audit de composition) ;
+  - `test/presentation.test.ts`.
+- **Diagnostic** (`main` `68ebe4b`, 1280×720, captures `screenshots/qa/adr016/avant-*`) :
+  - **Cadres.** Le cadre était un « sol » en trapèze de proportions paysage. Pendant la pose (vue B) : rival 126×59 px, joueur 210×127 px. Colonnes non alignées : pas de ±144 px côté rival contre ±239 px côté joueur. La carte posée (101 px de large) n'occupait que la moitié de son cadre et dépassait au-dessus ; le cadre restait visible autour d'elle.
+  - **Caméra.** Bascule automatique en vue B à chaque préparation, Dissipation et engagement (22 à 42 bascules par duel de QA).
+  - **Projection de la caméra A** (même calcul que `frame()`) : la table est vue presque rasante. À sa vraie profondeur, la rangée du rival serait 0,64 fois plus petite que celle du joueur, soit des cartes vers 45 px de large. D'où des cases identiques plutôt qu'une perspective exacte.
+- **Modifications :**
+  - `src/presentation/director.ts` : `naturalView` renvoie toujours `A`. La bascule manuelle (bouton, V) et le gel pendant un glisser sont inchangés. Le temps d'observation en début de tour devient sans effet.
+  - `src/styles.css` :
+    - le cadre (`.zone-floor`) est le rectangle de la carte élargi de 6 %, avec la même inclinaison, la même perspective et le même axe que la carte posée ;
+    - `.zone:has(> .card)` masque le cadre ; il reparaît en liseré pour les cibles (`legal`, survol, `targetable`, `targeted`, `beat-focus`). Seule la visibilité change, donc aucune transition ne part (ADR 015) ;
+    - vue A : deux rangées de même taille (`--zh` 12,8vh, inclinaison 36°), placées entre le bord lointain de la table et la main ;
+    - bureau seulement : colonnes communes (pas de 2,48 largeurs de carte), étiquettes du rival masquées (une seule ligne entre les rangées ; elles chevauchaient ses mains), ASSAUT / GARDE de part et d'autre de la Primaire ;
+    - variable `--ft` (ancien sol) retirée ;
+    - conseil contextuel (`.tip`) passé sous le plateau (z-index 5 → 2) : un menu tactique ouvert reste au-dessus (voir Échecs).
+  - `src/presentation/board.ts` : aide de case « Nouvelle Secondaire (facultative) » → « Facultative », plus l'info-bulle du bouton de vue.
+  - Textes d'aide : `src/main.ts` (aide du duel), `src/shell/help.ts`.
+  - `test/presentation.test.ts` : vue A dans toutes les phases, aucune bascule automatique sur un tour, bascule manuelle et gel.
+  - `tools/duel-driver.mjs` : `expectedView` attend toujours A.
+  - `tools/browser.mjs` : `startPreview` n'accepte que son propre serveur ; `LQV_PREVIEW_PORT` choisit le port (voir Échecs).
+  - Docs : ADR 016 (nouveau), ADR 013 (renvoi), AGENTS (renvoi), README (`LQV_PREVIEW_PORT`), captures `screenshots/qa/adr016/`.
+- **[OK] Géométrie mesurée** (`getBoundingClientRect`, seed 101, tour 1, engagement ; avant = pose en vue B, après = vue A) :
+
+  | | Cadre rival | Cadre joueur | Colonnes rival / joueur | Carte posée | ASSAUT / GARDE |
+  |---|---|---|---|---|---|
+  | 1280×720 avant | 126×59 | 210×127 | ±144 / ±239 px | 101 px de large, cadre visible autour | sous la carte, y 471–496 |
+  | 1280×720 après | 86×83 | 86×83 | ±190 / ±190 px | 76 px, cadre masqué | x 505–596 et 684–768, y 496–521, main à 552 |
+  | 1920×1080 avant | 189×89 | 314×191 | ±215 / ±358 px | 152 px | sous la carte |
+  | 1920×1080 après | 129×124 | 129×124 | ±285 / ±285 px | 115 px, cadre masqué | de part et d'autre, main à 830 |
+
+  - En vue A, la carte posée passe de 66 px (rangée du joueur, tactique) à 76 px.
+  - Elle est plus petite qu'en ancienne vue B (101 px) : c'est le prix de la vue proche. La vue B reste à un clic.
+- **[OK] Non-régression sur ce poste** (SwiftShader, port dédié `LQV_PREVIEW_PORT=4311`, rapports `artifacts/qa/adr016/`) :
+  - **`LQV_RENDER_CHECK=1 npm run qa:browser` : 4/5, comme sur `main`.**
+    - Les cinq duels finissent comme sur `main` (tour final et vainqueur) : 13 rival, 14 joueur, 10 rival, 19 joueur, 16 rival.
+    - Vue A à chaque contrôle : 271 contrôles, 0 écart. 2 bascules par duel (le contrôle manuel de V), contre 22 à 42 avant.
+    - Composition, postures, fuites et clics perdus : 0.
+    - 1034 rendus comparés à un rendu complet, 0 écart.
+    - Seul échec : le connu `mobile-rotation-touch` (scène du Clash en fondu aux tours 2 et 3). Un passage précédent l'avait réussi (5/5) : variation de timing, pas une correction.
+  - **`npm run qa:product` : 8/8**, 0 erreur console. Parcours A et F : tour 10, rival vainqueur, comme sur `main`.
+  - **`npm run qa:rc` : 8/9, comme en passe 12.** Seul échec : contraste du rang « II » dans l'éditeur de deck (3,5–3,6:1), hors plateau. Le rapport de la RC `artifacts/qa/qa-rc.json` a été restauré ; celui de cette passe est dans `artifacts/qa/adr016/qa-rc.json`.
+  - Les rapports portent `commit: 68ebe4b` : ils viennent de l'arbre de travail, et le commit de la passe contient exactement ce code.
+- **[KO] Échecs / tentatives abandonnées :**
+  - **Première version** (cases au format carte, sans autre réglage) : en vue A, les boutons ASSAUT / GARDE tombaient sous la main, qui est dessinée par-dessus le plateau. Les aides « Nouvelle Secondaire (facultative) » débordaient des cadres. Corrigé par le placement latéral des boutons, l'écart des colonnes et une aide plus courte.
+  - **QA faussée par une autre session.** Deux sessions lançaient `qa:browser` et `qa:product` en même temps sur le port 4179.
+    - Le second `vite preview` s'arrêtait (`--strictPort`), mais `startPreview` acceptait la réponse du serveur de l'autre session.
+    - Ma première `qa:browser` a donc testé l'autre build, avec bascules en B et « vue B, attendue A ». Résultat jeté.
+    - Correctif : le serveur doit annoncer son adresse avant toute requête ; sinon, erreur explicite. Vérifié : port pris → refus ; port libre → démarrage en 1,2 s.
+  - **`qa:product` 5/8 au premier passage valide** (A, E, F : `page.click` expiré après 15 s).
+    - Cause, d'après les captures d'échec : les parcours produit affichent les conseils ; le conseil « Primaires révélées — choix secrets » recouvrait le menu tactique de la Secondaire droite, et le pilote ne pouvait plus cliquer « Amplifier » ni « Interférer ».
+    - Le chevauchement existait déjà sur `main` : à 1280×720, le centre du menu tombait environ 7 px avant le bord du conseil (calcul à partir des règles CSS). Les colonnes plus espacées l'ont fait passer dessous.
+    - Correctif : conseil sous le plateau.
+  - **Premier `npm test`** : 3 tests de propriétés IA/moteur en échec sous la charge du poste, verts à la relance. Le 4e échec était un test du directeur mal écrit (bascule avant la première mise à jour de phase), corrigé.
+- **[?] Incertitudes / arbitrages :**
+  - Mobile (différé) : même vue A permanente et mêmes cadres au format carte ; positions et tailles mobiles inchangées, couvertes par `qa:browser` (deux parcours mobiles).
+  - Perspective exacte des rangées : écartée pour la lisibilité. À rouvrir si le responsable préfère des rangées convergentes (rival plus petit).
+  - Inclinaison de 36° : les cartes posées semblent davantage couchées sur la table, mais leur texte est plus écrasé verticalement (boîte 76×76 px pour une carte 1:1,4). Le panneau d'inspection reste lisible.
+- **Tests :**
+  - `npx tsc --noEmit` 0 erreur ; `npm test` 146/146 ; `npm run build` OK (JS 773,46 Ko / 216,92 Ko gzip, contre 773,69 / 216,99) ; `git diff 68ebe4b -- src/game` vide.
+- **Perf / visuels :**
+  - Captures : `screenshots/qa/adr016/` (Chrome 155, Radeon 780M, 1280×720 et 1920×1080).
+  - Avant = build de `68ebe4b`. Les deux captures de résolution viennent de tours différents (1 et 3).
+  - Aucun coût de rendu ajouté. La pose ne déclenche plus de bascule de caméra (environ 0,85 s d'interpolation et un FLIP des rangées, par tour).
+- **Pensée :**
+  - Un cadre de pose doit avoir la forme et la transformation de ce qu'il reçoit : la carte le recouvre alors exactement, et le masquer sous une carte posée suffit.
+  - Deux outils de QA lancés en parallèle par deux sessions se partagent les ports : un serveur de test doit prouver qu'il est le sien avant qu'on lui fasse confiance.
+- **À reprendre :**
+  - revue opérateur des captures `screenshots/qa/adr016/` (taille des cartes posées, inclinaison 36°, étiquettes du rival masquées) ;
+  - arbitrages ouverts 4b / 4c ;
+  - pré-génération des illustrations (session dédiée, en cours).

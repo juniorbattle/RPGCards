@@ -43,19 +43,29 @@ export function rendererLabel(renderer) {
   return `Chrome ${mode}, GPU réel : ${renderer ?? 'moteur de rendu inconnu'}${EXTRA_ARGS.length ? ` — arguments : ${EXTRA_ARGS.join(' ')}` : ''}`;
 }
 
-/** Démarre `vite preview` sur le build courant (dist/, ou `LQV_DIST`, ou `outDir` : build d’itération / « avant »). */
-export async function startPreview(port = 4179, outDir = process.env.LQV_DIST || 'dist') {
+/**
+ * Démarre `vite preview` sur le build courant (dist/, ou `LQV_DIST`, ou `outDir` : build d’itération / « avant »).
+ * Port par défaut : `LQV_PREVIEW_PORT`, sinon 4179. On n’accepte que NOTRE serveur : il doit annoncer son adresse
+ * avant la première requête. Un port déjà pris par une autre session (`--strictPort` refuse) est une erreur ; sans ce
+ * contrôle, la QA testait silencieusement le build de l’autre serveur (constaté le 2026-10-17, ADR 016).
+ */
+export async function startPreview(port = Number(process.env.LQV_PREVIEW_PORT) || 4179, outDir = process.env.LQV_DIST || 'dist') {
   if (!existsSync(`${outDir}/index.html`)) throw new Error(`${outDir}/ absent : lancer \`npm run build\` avant.`);
   const proc = spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--port', String(port), '--strictPort', '--outDir', outDir], { stdio: ['ignore', 'pipe', 'pipe'] });
   let out = '';
+  let exited = false;
   proc.stdout.on('data', (d) => { out += d; });
   proc.stderr.on('data', (d) => { out += d; });
+  proc.on('exit', () => { exited = true; });
   const base = `http://localhost:${port}`;
   for (let i = 0; i < 200; i++) {
-    try {
-      const r = await fetch(base);
-      if (r.ok) return { base, stop: () => proc.kill() };
-    } catch { /* attente */ }
+    if (exited) throw new Error(`vite preview s’est arrêté (port ${port} déjà pris ? LQV_PREVIEW_PORT pour en choisir un autre) : ${out.slice(0, 400)}`);
+    if (out.replace(/\x1b\[[0-9;]*m/g, '').includes(`:${port}/`)) {
+      try {
+        const r = await fetch(base);
+        if (r.ok) return { base, stop: () => proc.kill() };
+      } catch { /* attente */ }
+    }
     await new Promise((r) => setTimeout(r, 200));
   }
   proc.kill();

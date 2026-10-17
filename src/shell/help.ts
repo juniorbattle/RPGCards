@@ -40,7 +40,7 @@ const SECTIONS: Array<[string, string[]]> = [
     'Le rival est une IA qui ne voit que ce que vous verriez à sa place. Ses expressions et répliques réagissent aux seuls faits publics : ce ne sont pas des indices sur ses choix secrets.',
   ]],
   ['Vues, commandes et raccourcis', [
-    'La caméra se pose face au rival pour les révélations et le Clash, et s’incline vers la table quand vous composez ; V ou le bouton de vue bascule à tout moment.',
+    'La caméra reste face au rival pendant tout le duel, pose des cartes comprise ; V ou le bouton de vue l’incline vers la table à la demande.',
     'Clavier : Tab / Maj+Tab pour naviguer, Entrée ou Espace pour sélectionner et poser, 1 à 4 cartes de main, A / G posture, V vue, N action principale, Échap annuler. Tactile : glisser, ou toucher puis toucher la case ; appui long = inspection.',
     'Menu (haut-droite) : pause, options, aide, abandon (compté à part, ce n’est pas un K.-O.). « Passer » saute la mise en scène sans rien changer au résultat.',
   ]],
