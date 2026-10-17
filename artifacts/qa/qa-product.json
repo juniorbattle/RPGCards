@@ -1,0 +1,147 @@
+{
+  "commit": "e05af56",
+  "date": "2026-10-17T02:49:35.486Z",
+  "chromium": "141.0.7390.37",
+  "runs": {
+    "A-nouveau-joueur-1280-clic": {
+      "consoleIssues": [],
+      "checks": [
+        "OK profil créé avec Signature et Techniques choisies",
+        "OK deck modifié : enregistrement possible",
+        "OK variante retirée enregistrée (Basic à la place)",
+        "OK duel joué jusqu’au K.-O. (tour 8)",
+        "OK résultat enregistré (defeat) = vainqueur moteur (opp)",
+        "OK tours du résumé = tours du moteur",
+        "OK session de duel retirée (crochets, plateau, scène)",
+        "OK bilan du rival mis à jour sur le tableau",
+        "OK après rechargement : bouton Continuer",
+        "OK après rechargement : profil, deck et historique intacts"
+      ],
+      "fails": [],
+      "duel": {
+        "outcome": "ended",
+        "winner": "opp",
+        "turn": 8,
+        "hp": [
+          0,
+          35
+        ],
+        "personality": "braise",
+        "turns": 7,
+        "drags": 0,
+        "clicks": 8,
+        "keyboard": 0,
+        "tactics": 6,
+        "repels": 1,
+        "leaks": [],
+        "viewChecks": 30,
+        "viewErrors": [],
+        "lostClicks": [],
+        "tech": {
+          "Sondage": 2
+        },
+        "moods": [
+          "confident",
+          "focused",
+          "surprised",
+          "triumphant",
+          "smug"
+        ],
+        "sequencesWatched": 0,
+        "sequencesSkipped": 5,
+        "manualToggleChecked": "ok",
+        "holds": 8,
+        "layoutChecked": [
+          "COMMIT",
+          "TACTICS"
+        ],
+        "layoutIssues": [],
+        "stanceChecks": 14,
+        "stanceIssues": [],
+        "stageGhosts": [],
+        "stagesSeen": 0,
+        "rotations": []
+      },
+      "ms": 81001
+    },
+    "B-1920-glisser-abandon": {
+      "consoleIssues": [],
+      "checks": [
+        "OK duel glisser joué jusqu’au K.-O. (tour 8)",
+        "OK abandon annulé : le duel continue",
+        "OK abandon classé à part (ni victoire ni défaite)",
+        "OK écran Résultat : « Abandon »"
+      ],
+      "fails": [],
+      "duel": {
+        "outcome": "ended",
+        "winner": "opp",
+        "turn": 8,
+        "hp": [
+          0,
+          97
+        ],
+        "personality": "voile",
+        "turns": 7,
+        "drags": 16,
+        "clicks": 0,
+        "keyboard": 0,
+        "tactics": 6,
+        "repels": 0,
+        "leaks": [],
+        "viewChecks": 27,
+        "viewErrors": [],
+        "lostClicks": [],
+        "tech": {
+          "Ancrage": 1
+        },
+        "moods": [
+          "focused",
+          "smug",
+          "surprised"
+        ],
+        "sequencesWatched": 0,
+        "sequencesSkipped": 6,
+        "manualToggleChecked": "ok",
+        "holds": 8,
+        "layoutChecked": [
+          "COMMIT",
+          "TACTICS"
+        ],
+        "layoutIssues": [],
+        "stanceChecks": 14,
+        "stanceIssues": [],
+        "stageGhosts": [],
+        "stagesSeen": 0,
+        "rotations": []
+      },
+      "keyboardTurns": 2,
+      "ms": 164710
+    },
+    "C-deck-illegal-refuse": {
+      "consoleIssues": [],
+      "checks": [
+        "OK accueil : deck enregistré signalé illégal",
+        "OK préparation : « Commencer » désactivé",
+        "OK lancement forcé refusé par le flux (aucun duel créé)",
+        "OK éditeur : raison affichée",
+        "OK deck corrigé : duel possible"
+      ],
+      "fails": [],
+      "ms": 12582
+    },
+    "D-sauvegarde-illisible": {
+      "consoleIssues": [],
+      "checks": [
+        "OK illisible : diagnostic + restauration proposée",
+        "OK illisible conservée tant que le joueur n’a rien choisi",
+        "OK copie de secours restaurée",
+        "OK fichier illisible mis à l’écart (lqv.save.corrupt)",
+        "OK schéma futur refusé explicitement",
+        "OK nouvelle partie : la sauvegarde future est conservée à part"
+      ],
+      "fails": [],
+      "ms": 16152
+    }
+  }
+}

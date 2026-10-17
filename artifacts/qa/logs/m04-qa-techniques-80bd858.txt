@@ -1,0 +1,9 @@
+✓ rupture · souris-1280 · 29028 ms
+✓ rupture · tactile-390 · 15694 ms
+✓ rupture-cachee · souris-1280 · 20401 ms
+✓ rupture-cachee · tactile-390 · 16289 ms
+✓ dissipation · souris-1280 · 30409 ms
+✓ dissipation · tactile-390 · 17314 ms
+✓ masque · souris-1280 · 17260 ms
+✓ masque · tactile-390 · 13702 ms
+8/8 parcours sans problème

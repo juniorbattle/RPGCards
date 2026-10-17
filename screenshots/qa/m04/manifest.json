@@ -1,0 +1,308 @@
+{
+  "commit": "80bd858",
+  "date": "2026-10-17T03:32:42.871Z",
+  "renderer": "Chromium headless + SwiftShader (CPU)",
+  "shots": [
+    {
+      "file": "screenshots/qa/m04/01-accueil-vide-1280.png",
+      "desc": "Accueil, aucune sauvegarde",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/02-nouveau-duelliste-1280.png",
+      "desc": "Création du profil : Signature (voie) et deux Techniques",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/03-rencontres-1280.png",
+      "desc": "Tableau des rencontres (données de prototype signalées)",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/04-deck-1280.png",
+      "desc": "Éditeur de deck : modification non enregistrée, inspection, état légal",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/05-collection-1280.png",
+      "desc": "Collection filtrée (Voile) : possédées / non possédées / dans le deck",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/06-preparation-1280.png",
+      "desc": "Préparation : dossier public du rival, votre deck, conditions du duel",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/11-aide-1280.png",
+      "desc": "Aide intégrée",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/12-options-1280.png",
+      "desc": "Options (présentation, sauvegarde)",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/13-accueil-sauvegarde-1280.png",
+      "desc": "Accueil avec sauvegarde : Continuer",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/07-duel-vue-A-1280.png",
+      "desc": "Duel lancé depuis le jeu : vue A (observation du rival), conseil contextuel",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/08-duel-vue-B-1280.png",
+      "desc": "Vue B : Primaire posée, choix ASSAUT / GARDE",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/09-menu-pause-1280.png",
+      "desc": "Menu du duel (pause) : reprendre, options, aide, abandon",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/10-clash-1280.png",
+      "desc": "Clash en cours (chorégraphie M03.2, temps réel, rythme rapide)",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/14-resultat-1280.png",
+      "desc": "Résultat après un duel complet joué par l’interface (7 tours)",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/15-retour-rencontres-1280.png",
+      "desc": "Retour au tableau : bilan et historique mis à jour",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/01-accueil-vide-1920.png",
+      "desc": "Accueil, aucune sauvegarde",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/02-nouveau-duelliste-1920.png",
+      "desc": "Création du profil : Signature (voie) et deux Techniques",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/03-rencontres-1920.png",
+      "desc": "Tableau des rencontres (données de prototype signalées)",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/04-deck-1920.png",
+      "desc": "Éditeur de deck : modification non enregistrée, inspection, état légal",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/05-collection-1920.png",
+      "desc": "Collection filtrée (Voile) : possédées / non possédées / dans le deck",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/06-preparation-1920.png",
+      "desc": "Préparation : dossier public du rival, votre deck, conditions du duel",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/11-aide-1920.png",
+      "desc": "Aide intégrée",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/12-options-1920.png",
+      "desc": "Options (présentation, sauvegarde)",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/13-accueil-sauvegarde-1920.png",
+      "desc": "Accueil avec sauvegarde : Continuer",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/07-duel-vue-A-1920.png",
+      "desc": "Duel lancé depuis le jeu : vue A (observation du rival), conseil contextuel",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/08-duel-vue-B-1920.png",
+      "desc": "Vue B : Primaire posée, choix ASSAUT / GARDE",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/09-menu-pause-1920.png",
+      "desc": "Menu du duel (pause) : reprendre, options, aide, abandon",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/10-clash-1920.png",
+      "desc": "Clash en cours (chorégraphie M03.2, temps réel, rythme rapide)",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/14-resultat-1920.png",
+      "desc": "Résultat après un duel complet joué par l’interface (7 tours)",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/15-retour-rencontres-1920.png",
+      "desc": "Retour au tableau : bilan et historique mis à jour",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/16-mobile-accueil-390.png",
+      "desc": "Smoke portrait : accueil",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/17-mobile-rencontres-390.png",
+      "desc": "Smoke portrait : rencontres",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "file": "screenshots/qa/m04/18-mobile-duel-390.png",
+      "desc": "Smoke portrait : duel lancé depuis le jeu (gabarit M03.2)",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      }
+    }
+  ],
+  "framing": [
+    {
+      "viewport": "1280",
+      "anchorsJeu": {
+        "head": 0.205,
+        "edge": 0.455
+      },
+      "anchorsQA": {
+        "head": 0.205,
+        "edge": 0.455
+      },
+      "visageJeuPx": 83,
+      "visageQAPx": 83,
+      "sceneDiff": {
+        "meanAbs": 0,
+        "pctOver24": 0
+      }
+    },
+    {
+      "viewport": "1920",
+      "anchorsJeu": {
+        "head": 0.205,
+        "edge": 0.455
+      },
+      "anchorsQA": {
+        "head": 0.205,
+        "edge": 0.455
+      },
+      "visageJeuPx": 125,
+      "visageQAPx": 125,
+      "sceneDiff": {
+        "meanAbs": 0,
+        "pctOver24": 0
+      }
+    }
+  ],
+  "issues": []
+}

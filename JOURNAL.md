@@ -2,7 +2,7 @@
 
 **Nature :** journal de production du **nouveau projet**, et non journal copié de RPG-ArtByCode.  
 **Convention :** passes chronologiques, plus récente en bas ; statut `[OK]`, `[KO]`, `[?]` ; preuves vérifiables.  
-**Dernière passe :** 6 + mandat 7 — M03.2 sur `main` : rival rapproché et expressif dans les deux vues, plateau éclairé avec contraste mesuré, Clash allégé, gabarit mobile paysage (ADR 012, `docs/RAPPORT_M03_2.md`).
+**Dernière passe :** 8 — M04 sur `main` : le jeu s’ouvre sur un accueil (profil, deck légal, rencontres, préparation, duel M03.2 inchangé, résultat, aide, options, sauvegarde versionnée) — `docs/RAPPORT_M04.md`, ADR 014 (proposé).
 
 ## État initial connu
 
@@ -15,7 +15,7 @@
 
 ## À reprendre (prioritaire)
 
-1. **PRIORITÉ OPÉRATEUR M04–M06 (16 octobre) :** vue frontale et proportions du rival **approuvées et figées comme baseline desktop (ADR 013)**. Construire une boucle opérationnelle menu → deck → rencontres → duels → résultat/progression → sauvegarde/reprise (docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md), puis stabiliser une release candidate locale. Mobile paysage et polish artistiques secondaires reportés.
+1. **PRIORITÉ OPÉRATEUR M04–M06 (16 octobre) :** vue frontale et proportions du rival **approuvées et figées comme baseline desktop (ADR 013)**. Construire une boucle opérationnelle menu → deck → rencontres → duels → résultat/progression → sauvegarde/reprise (docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md), puis stabiliser une release candidate locale. Mobile paysage et polish artistiques secondaires reportés. **M04 livré (passe 8)** ; en cours : M05 (série, déblocages de prototype, sauvegarde v2, reprise exacte en plein duel), puis M06 (RC).
 2. **Écarts de fidélité restants** (`docs/RAPPORT_M03_2.md` §8) : personnages en plans 2,5D (pas de volume ni de chevelure détaillée), décor moins dense, ni bloom ni profondeur de champ, table encore plus sombre que la preview, typographie système ; paysage = gabarit compact du bureau (textes ≈ 9,5 px à 844×390), pas l’interface simplifiée du panneau 6.
 3. **Arbitrages encore proposés** (ADR 004) : ARB-002 (profil du rival public), ARB-001, ARB-005 (+ ARB-005b : carte camouflée remplacée pendant l’engagement, nommée en fin de tour depuis la passe 5), ARB-011 ; ratification éventuelle du delta D-01 (V3.3). Inférences restantes documentées (`docs/RAPPORT_M03_1B.md` §6).
 4. **Mesure sur GPU réel** (hors conteneur) : vues A/B, bougies (shader de points), scène du Clash (WAAPI) ; budget mobile.
@@ -267,3 +267,14 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **[OK] Report :** mobile paysage et détails visuels secondaires ne sont plus prioritaires ; maintenir les fonctionnalités existantes sans refonte. Ne pas engager de ville complète ni d'économie canonique à ce stade.
 - **[?] Exécution :** ce commit **n'implémente pas** ces chantiers : mandat documentaire seulement. La base précédente est le runtime M03.2 ; Claude Code doit coder et tester les lots successifs sur main selon la règle de branche actuelle.
 - **À reprendre :** baseline tests/boot ; M04 produit ; M05 progression/persistance ; M06 QA de parcours complet, performance honnête, captures et rapport. Aucun changement silencieux aux règles ou secrets.
+
+## Passe 8 — M04 : enveloppe de jeu, deck légal, transition de duel (2026-10-17)
+
+- **Départ :** `4bfb585` (mandat M04–M06). Audit : moteur, IA, duel M03.2, `buildDeck` réutilisables ; le duel ne pouvait pas être QUITTÉ (écouteurs et minuteries jamais retirés, fin = rechargement de page) ; arène recréée à chaque rival sans libérer ses textures ; ni sauvegarde, ni écran produit, ni choix de variantes.
+- **[OK] Session de duel démontable** (`74085cc`) : `DuelSession` (AbortController, `Controller.dispose`, `DragManager.dispose`, scène du Clash arrêtée) ; arène unique (`setRival`, `setPaused`). Entrées QA historiques inchangées.
+- **[OK] Modules purs** (`e05af56`) : flux d’écrans `product/flow` (distinct des phases du duel), deck validé par le catalogue (`product/deck`), sauvegarde versionnée avec copie de secours et mise à l’écart des illisibles (`product/save`), rivaux de prototype (`product/encounters`), résumé public (`product/stats`) ; 18 tests.
+- **[OK] Écrans** (`80bd858`) : accueil, création de profil (Signature + 2 Techniques), deck (16 identités × Basic/variante, Signature, Techniques, inspection, état légal), collection filtrable, rencontres, préparation (dossier public du rival), duel M03.2 + Menu (pause, options, aide, abandon confirmé) + conseils contextuels (dont « Pourquoi 0 dégât ? »), résultat (rival visible avec sa réaction finale), aide, options (export / import / effacement).
+- **Preuves (build `80bd858`) :** typecheck, 135/135, build ; `qa:product` 4/4 parcours, 25/25 contrôles (nouveau joueur → duel complet → résultat = vainqueur moteur → rechargement ; glisser 1920 + clavier + abandon ; deck illégal refusé ; sauvegarde illisible restaurée / schéma futur refusé) ; `qa:browser` M03 5/5 (267 vues / 0 écart, 0 fuite) ; `qa:techniques` 8/8 ; `shots:m04` 33 captures ; **scène 3D d’un duel lancé depuis le jeu = entrée historique au pixel près (0/255)**, visage 83 px (720 p) / 125 px (1080 p).
+- **[?] Limites M04 :** pas de reprise d’un duel interrompu (livrée en M05) ; données des rivaux et collection de départ = prototypes signalés ; `src/game` inchangé.
+- **Pensée :** pour prouver qu’une enveloppe ne touche pas une scène approuvée, comparer la scène elle-même (calques DOM masqués) plutôt que la page : la première mesure « 4 % de pixels différents » ne venait que des calques (PV du rival, bouton Menu, conseil), la scène était identique.
+- **À reprendre :** M05 (série de trois manches, rencontres libres, déblocages de prototype, collection, sauvegarde v2 avec migration testée sur une vraie sauvegarde v1, reprise exacte en plein duel), puis M06.
