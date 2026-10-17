@@ -1,0 +1,4692 @@
+{
+  "commit": "b6f0c98",
+  "date": "2026-10-17T12:19:48.639Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "cores": 16,
+    "memGB": 31,
+    "platform": "win32 10.0.26200",
+    "node": "v22.14.0"
+  },
+  "chrome": "155.0.8059.80",
+  "gpu": true,
+  "chromeArgs": [],
+  "renderer": "ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "trace": true,
+  "traceCategories": [
+    "devtools.timeline",
+    "disabled-by-default-devtools.timeline",
+    "toplevel",
+    "blink.user_timing",
+    "blink.console",
+    "v8.execute",
+    "v8",
+    "disabled-by-default-v8.gc",
+    "disabled-by-default-v8.cpu_profiler",
+    "gpu.angle",
+    "gpu",
+    "skia.gpu",
+    "disabled-by-default-skia.gpu",
+    "viz"
+  ],
+  "maxTurns": 2,
+  "freshBrowserPerDuel": true,
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "builds": [
+    {
+      "name": "avant",
+      "dir": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/be9911ea-dda9-4c96-861e-c0cef3c1d91a/scratchpad/dist-base"
+    },
+    {
+      "name": "apres",
+      "dir": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/be9911ea-dda9-4c96-861e-c0cef3c1d91a/scratchpad/dist-full"
+    }
+  ],
+  "drivers": [
+    "lean"
+  ],
+  "rounds": 1,
+  "runs": [
+    {
+      "name": "r1-avant-lean",
+      "round": 1,
+      "build": "avant",
+      "driver": "lean",
+      "outcome": "next",
+      "turns": 3,
+      "winner": null,
+      "hash": "64285b7c90109da6",
+      "durationS": 39,
+      "sequencesWatched": 2,
+      "stagesSeen": 2,
+      "consoleIssues": [],
+      "all": {
+        "frames": 1523,
+        "medianMs": 12.1,
+        "p95Ms": 18.3,
+        "p99Ms": 42.5,
+        "maxMs": 206,
+        "over16_7ms": 162,
+        "over33_3ms": 37,
+        "over50ms": 9,
+        "over100ms": 3
+      },
+      "byView": {
+        "A": {
+          "frames": 379,
+          "medianMs": 12.1,
+          "p95Ms": 18.2,
+          "p99Ms": 84.8,
+          "maxMs": 206,
+          "over16_7ms": 33,
+          "over33_3ms": 8,
+          "over50ms": 5,
+          "over100ms": 2
+        },
+        "B": {
+          "frames": 147,
+          "medianMs": 12.1,
+          "p95Ms": 42.3,
+          "p99Ms": 48.3,
+          "maxMs": 54.6,
+          "over16_7ms": 30,
+          "over33_3ms": 13,
+          "over50ms": 1,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 997,
+          "medianMs": 12.1,
+          "p95Ms": 18.2,
+          "p99Ms": 42.4,
+          "maxMs": 127.3,
+          "over16_7ms": 99,
+          "over33_3ms": 16,
+          "over50ms": 3,
+          "over100ms": 1
+        }
+      },
+      "loafCount": 11,
+      "rawTrace": "artifacts/qa/tmp/traces/r1-avant-lean.json.gz",
+      "pageRecord": "artifacts/qa/tmp/traces/r1-avant-lean.page.json",
+      "hitches": {
+        "count": 9,
+        "over100": 3,
+        "byCause": {
+          "gpu-ipc": 4,
+          "fil principal libre (attente GPU / compositeur / horloge)": 5
+        },
+        "trace": {
+          "mainThread": "CrRendererMain",
+          "gpuThread": "CrGpuMain",
+          "syncMark": "lqv-sync-1792239595664-0",
+          "profileSamples": 36077,
+          "events": 2013618,
+          "trimmed": {
+            "file": "artifacts/qa/tmp/gpu2t-r1-avant-lean-pics.json.gz",
+            "events": 297615
+          }
+        },
+        "hitches": [
+          {
+            "atS": 0.9,
+            "dtMs": 103,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 114,
+                "blockingMs": 55,
+                "styleLayoutMs": 0,
+                "renderMs": 37,
+                "scripts": [
+                  {
+                    "ms": 63,
+                    "invoker": "BUTTON.onclick",
+                    "type": "event-listener",
+                    "fn": "base/src/presentation/board.ts:515 ",
+                    "forcedStyleLayoutMs": 22
+                  },
+                  {
+                    "ms": 37,
+                    "invoker": "FrameRequestCallback",
+                    "type": "user-callback",
+                    "fn": "base/src/scene/arena.ts:920 loop",
+                    "forcedStyleLayoutMs": 0
+                  }
+                ]
+              }
+            ],
+            "trace": {
+              "busyMs": 102.9,
+              "busyPct": 100,
+              "categories": [
+                {
+                  "k": "gpu-ipc",
+                  "ms": 49.8
+                },
+                {
+                  "k": "script",
+                  "ms": 26.7
+                },
+                {
+                  "k": "layout",
+                  "ms": 18.2
+                },
+                {
+                  "k": "style",
+                  "ms": 4.2
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 2.2
+                },
+                {
+                  "k": "html",
+                  "ms": 0.5
+                },
+                {
+                  "k": "other",
+                  "ms": 0.4
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "CommandBufferProxyImpl::WaitForGetOffset",
+                  "ms": 49.2
+                },
+                {
+                  "k": "FunctionCall",
+                  "ms": 23.8
+                },
+                {
+                  "k": "Layout",
+                  "ms": 18.1
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 4.2
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 2.2
+                },
+                {
+                  "k": "RunMicrotasks",
+                  "ms": 1.2
+                },
+                {
+                  "k": "V8.HandleInterrupts",
+                  "ms": 0.8
+                },
+                {
+                  "k": "ParseHTML",
+                  "ms": 0.5
+                }
+              ],
+              "longTasks": [
+                {
+                  "startMs": -3.1,
+                  "durMs": 68.4,
+                  "top": [
+                    "ThreadControllerImpl::RunTask 67.3 ms",
+                    "BlinkScheduler_PerformMicrotaskCheckpoint 0 ms"
+                  ]
+                },
+                {
+                  "startMs": 65.5,
+                  "durMs": 42,
+                  "top": [
+                    "ThreadControllerImpl::RunTask 41.9 ms",
+                    "BlinkScheduler_PerformMicrotaskCheckpoint 0 ms"
+                  ]
+                }
+              ],
+              "jsSelf": [
+                {
+                  "k": "getProgramInfoLog",
+                  "ms": 27.2
+                },
+                {
+                  "k": "toDataURL",
+                  "ms": 24.8
+                },
+                {
+                  "k": "base/src/presentation/board.ts:51 renderApp",
+                  "ms": 20
+                },
+                {
+                  "k": "(program)",
+                  "ms": 5.5
+                },
+                {
+                  "k": "base/src/presentation/dom.ts:4 h",
+                  "ms": 2.7
+                },
+                {
+                  "k": "replaceChildren",
+                  "ms": 2.3
+                },
+                {
+                  "k": "append",
+                  "ms": 1.5
+                },
+                {
+                  "k": "base/src/presentation/board.ts:89 ",
+                  "ms": 1.3
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "base/src/app/controller.ts:549 apply",
+                  "ms": 60
+                },
+                {
+                  "k": "base/src/app/controller.ts:654 lockCommit",
+                  "ms": 60
+                },
+                {
+                  "k": "base/src/presentation/board.ts:515 J_.i.append.a.key",
+                  "ms": 60
+                },
+                {
+                  "k": "base/src/app/controller.ts:179 refresh",
+                  "ms": 59.5
+                },
+                {
+                  "k": "base/src/presentation/board.ts:51 renderApp",
+                  "ms": 55.3
+                },
+                {
+                  "k": "base/src/app/duelSession.ts:62 render",
+                  "ms": 55.3
+                },
+                {
+                  "k": "base/src/app/controller.ts:274 advanceBeat",
+                  "ms": 55.3
+                },
+                {
+                  "k": "base/src/scene/arena.ts:920 loop",
+                  "ms": 36.4
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16363 render",
+                  "ms": 35.8
+                },
+                {
+                  "k": "base/src/scene/arena.ts:898 renderOnce",
+                  "ms": 35.8
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 24.1
+                },
+                {
+                  "k": "CommandBufferService:PutChanged",
+                  "ms": 16.3
+                },
+                {
+                  "k": "bool __cdecl GrGpu::readPixels(GrSurface *, SkIRect, GrColorType, GrColorType, void *, size_t)",
+                  "ms": 9
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 2.7
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 1.1
+                },
+                {
+                  "k": "DXGISwapChainImageBacking::Present",
+                  "ms": 1
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 1.1
+                  },
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 0.6
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 0.2
+                  }
+                ]
+              }
+            },
+            "cause": "gpu-ipc"
+          },
+          {
+            "atS": 1.1,
+            "dtMs": 206,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 203,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 35.2,
+              "busyPct": 17,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 7.3
+                },
+                {
+                  "k": "gc",
+                  "ms": 6.9
+                },
+                {
+                  "k": "other",
+                  "ms": 1.6
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.7
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 0.3
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 6.2
+                },
+                {
+                  "k": "V8.GC_MC_EVACUATE_UPDATE_POINTERS_TO_NEW_ROOTS",
+                  "ms": 1.3
+                },
+                {
+                  "k": "V8.HandleInterrupts",
+                  "ms": 0.9
+                },
+                {
+                  "k": "V8.GC_MARK_COMPACTOR",
+                  "ms": 0.8
+                },
+                {
+                  "k": "V8.GC_MC_CLEAR_WEAK_REFERENCES_TRIVIAL",
+                  "ms": 0.7
+                },
+                {
+                  "k": "Receive mojo message",
+                  "ms": 0.6
+                },
+                {
+                  "k": "LiveObjectVisitor::VisitMarkedObjectsNoFail",
+                  "ms": 0.6
+                },
+                {
+                  "k": "V8.GC_MC_EVACUATE_UPDATE_POINTERS_POINTER_TABLES",
+                  "ms": 0.5
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 20.6
+                },
+                {
+                  "k": "(garbage collector)",
+                  "ms": 8.4
+                },
+                {
+                  "k": "base/src/scene/rival.ts:220 update",
+                  "ms": 0.7
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:4964 setValueT1",
+                  "ms": 0.7
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:6826 getParameters",
+                  "ms": 0.7
+                },
+                {
+                  "k": "bindTexture",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:14037 refreshUniformsCommon",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:1656 getBindingState",
+                  "ms": 0.6
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "base/src/scene/arena.ts:920 loop",
+                  "ms": 6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16363 render",
+                  "ms": 5.3
+                },
+                {
+                  "k": "base/src/scene/arena.ts:898 renderOnce",
+                  "ms": 5.3
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 4.5
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16843 renderObject",
+                  "ms": 4.5
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16814 renderObjects",
+                  "ms": 4.5
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16663 renderScene",
+                  "ms": 4.5
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:17021 setProgram",
+                  "ms": 3.9
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:5536 upload",
+                  "ms": 1.9
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:4964 setValueT1",
+                  "ms": 1.3
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 122.4
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 25.1
+                },
+                {
+                  "k": "CompileEvent::wait",
+                  "ms": 17.3
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 6.4
+                },
+                {
+                  "k": "RasterDecoderImpl::DoRasterCHROMIUM::Deserializing",
+                  "ms": 3.8
+                },
+                {
+                  "k": "FillRRectOp",
+                  "ms": 2.5
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 1
+                  },
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 0.7
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.4
+                  },
+                  {
+                    "k": "RunTask",
+                    "ms": 0.3
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 2.1,
+            "dtMs": 66.7,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|rank",
+            "ctxEnd": "1|REPEL|rank",
+            "loaf": [
+              {
+                "durationMs": 67,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 3.1,
+              "busyPct": 5,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 2.2
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.3
+                },
+                {
+                  "k": "style",
+                  "ms": 0.1
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 0.1
+                },
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 2.1
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.2
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.1
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.1
+                },
+                {
+                  "k": "FireAnimationFrame",
+                  "ms": 0
+                },
+                {
+                  "k": "UpdateLayer",
+                  "ms": 0
+                },
+                {
+                  "k": "CommandBufferProxyImpl::Flush",
+                  "ms": 0
+                },
+                {
+                  "k": "WidgetBase::WillBeginMainFrame",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 1.3
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16874 getProgram",
+                  "ms": 1.1
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:3878 update",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:7154 getProgramCacheKey",
+                  "ms": 0.1
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16363 render",
+                  "ms": 1.8
+                },
+                {
+                  "k": "base/src/scene/arena.ts:898 renderOnce",
+                  "ms": 1.8
+                },
+                {
+                  "k": "base/src/scene/arena.ts:920 loop",
+                  "ms": 1.8
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16874 getProgram",
+                  "ms": 1.2
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:17021 setProgram",
+                  "ms": 1.2
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 1.2
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16843 renderObject",
+                  "ms": 1.2
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16814 renderObjects",
+                  "ms": 1.2
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16663 renderScene",
+                  "ms": 1.2
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:3878 update",
+                  "ms": 0.6
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 24.4
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 13.6
+                },
+                {
+                  "k": "CompileEvent::wait",
+                  "ms": 3.8
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 3.2
+                },
+                {
+                  "k": "TextureOp",
+                  "ms": 2.3
+                },
+                {
+                  "k": "RasterDecoderImpl::DoRasterCHROMIUM::Deserializing",
+                  "ms": 2.1
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 0.3
+                  },
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 0.3
+                  },
+                  {
+                    "k": "SurfaceDrawContext::addDrawOp",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.1
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 3.9,
+            "dtMs": 127.3,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 131,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 3.4,
+              "busyPct": 3,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 1.8
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.8
+                },
+                {
+                  "k": "style",
+                  "ms": 0.2
+                },
+                {
+                  "k": "other",
+                  "ms": 0.1
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 1.8
+                },
+                {
+                  "k": "Layerize",
+                  "ms": 0.5
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.2
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.1
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.1
+                },
+                {
+                  "k": "v8.callFunction",
+                  "ms": 0
+                },
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                },
+                {
+                  "k": "TimerFire",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 1.8
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16874 getProgram",
+                  "ms": 1
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.core.js:4539 copy",
+                  "ms": 0.6
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16363 render",
+                  "ms": 1.6
+                },
+                {
+                  "k": "base/src/scene/arena.ts:898 renderOnce",
+                  "ms": 1.6
+                },
+                {
+                  "k": "base/src/scene/arena.ts:920 loop",
+                  "ms": 1.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16874 getProgram",
+                  "ms": 1
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:17021 setProgram",
+                  "ms": 1
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 1
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16843 renderObject",
+                  "ms": 1
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16814 renderObjects",
+                  "ms": 1
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16663 renderScene",
+                  "ms": 1
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.core.js:4539 copy",
+                  "ms": 0.6
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 67.6
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 19.5
+                },
+                {
+                  "k": "CompileEvent::wait",
+                  "ms": 9.8
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 5.2
+                },
+                {
+                  "k": "RasterDecoderImpl::DoRasterCHROMIUM::Deserializing",
+                  "ms": 2.3
+                },
+                {
+                  "k": "CommandBufferService:PutChanged",
+                  "ms": 2.1
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 0.4
+                  },
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 0.3
+                  },
+                  {
+                    "k": "SurfaceDrawContext::addDrawOp",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "RunTask",
+                    "ms": 0.2
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 6.7,
+            "dtMs": 54.4,
+            "tag": "clash",
+            "ctxStart": "1|RESOLVED|",
+            "ctxEnd": "1|RESOLVED|",
+            "loaf": [
+              {
+                "durationMs": 53,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 5.6,
+              "busyPct": 10,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 2.5
+                },
+                {
+                  "k": "gc",
+                  "ms": 1.5
+                },
+                {
+                  "k": "style",
+                  "ms": 0.6
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.5
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 0.1
+                },
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 2.3
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.6
+                },
+                {
+                  "k": "V8.GC_SCAVENGER_SCAVENGE_FINALIZE",
+                  "ms": 0.5
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.3
+                },
+                {
+                  "k": "MinorGC",
+                  "ms": 0.2
+                },
+                {
+                  "k": "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+                  "ms": 0.1
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.1
+                },
+                {
+                  "k": "V8.GC_SCAVENGER_SCAVENGE",
+                  "ms": 0.1
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 2.8
+                },
+                {
+                  "k": "(garbage collector)",
+                  "ms": 1.2
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:14037 refreshUniformsCommon",
+                  "ms": 0.9
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16549 projectObject",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:6816 getChannel",
+                  "ms": 0.6
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16363 render",
+                  "ms": 2
+                },
+                {
+                  "k": "base/src/scene/arena.ts:898 renderOnce",
+                  "ms": 2
+                },
+                {
+                  "k": "base/src/scene/arena.ts:920 loop",
+                  "ms": 2
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:17021 setProgram",
+                  "ms": 1.4
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 1.4
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16843 renderObject",
+                  "ms": 1.4
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16814 renderObjects",
+                  "ms": 1.4
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16663 renderScene",
+                  "ms": 1.4
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:14037 refreshUniformsCommon",
+                  "ms": 0.9
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:13957 refreshMaterialUniforms",
+                  "ms": 0.9
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 11.5
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 11.3
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 5.8
+                },
+                {
+                  "k": "RasterDecoderImpl::DoRasterCHROMIUM::Deserializing",
+                  "ms": 2.6
+                },
+                {
+                  "k": "virtual GrRenderTask::ExecutionResult __cdecl skgpu::ganesh::OpsTask::onExecute(GrOpFlushState *)",
+                  "ms": 1.9
+                },
+                {
+                  "k": "CompileEvent::wait",
+                  "ms": 1.9
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "virtual void __cdecl (anonymous namespace)::FillRectOpImpl::onPrePrepareDraws(GrRecordingContext *, const GrSurfaceProxyView &, GrAppliedClip *, const GrDstProxyView &, GrXferBarrierFlags, GrLoadOp)",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.1
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 8,
+            "dtMs": 97.1,
+            "tag": "A",
+            "ctxStart": "2|COMMIT|",
+            "ctxEnd": "2|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 101,
+                "blockingMs": 48,
+                "styleLayoutMs": 0,
+                "renderMs": 4,
+                "scripts": [
+                  {
+                    "ms": 91,
+                    "invoker": "BUTTON.onclick",
+                    "type": "event-listener",
+                    "fn": "base/src/presentation/board.ts:554 ",
+                    "forcedStyleLayoutMs": 14
+                  }
+                ]
+              }
+            ],
+            "trace": {
+              "busyMs": 97,
+              "busyPct": 100,
+              "categories": [
+                {
+                  "k": "gpu-ipc",
+                  "ms": 45.6
+                },
+                {
+                  "k": "script",
+                  "ms": 31.2
+                },
+                {
+                  "k": "layout",
+                  "ms": 9.9
+                },
+                {
+                  "k": "style",
+                  "ms": 4.4
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 1.5
+                },
+                {
+                  "k": "html",
+                  "ms": 0.8
+                },
+                {
+                  "k": "other",
+                  "ms": 0.6
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "CommandBufferProxyImpl::WaitForGetOffset",
+                  "ms": 45.4
+                },
+                {
+                  "k": "FunctionCall",
+                  "ms": 28.3
+                },
+                {
+                  "k": "Layout",
+                  "ms": 9.8
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 4.4
+                },
+                {
+                  "k": "RunMicrotasks",
+                  "ms": 1.9
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 1.5
+                },
+                {
+                  "k": "ParseHTML",
+                  "ms": 0.8
+                },
+                {
+                  "k": "V8.HandleInterrupts",
+                  "ms": 0.5
+                }
+              ],
+              "longTasks": [
+                {
+                  "startMs": -1.2,
+                  "durMs": 96.9,
+                  "top": [
+                    "ThreadControllerImpl::RunTask 94.4 ms",
+                    "BlinkScheduler_PerformMicrotaskCheckpoint 0 ms"
+                  ]
+                }
+              ],
+              "jsSelf": [
+                {
+                  "k": "toDataURL",
+                  "ms": 52.7
+                },
+                {
+                  "k": "base/src/presentation/board.ts:51 renderApp",
+                  "ms": 14.6
+                },
+                {
+                  "k": "(program)",
+                  "ms": 5.8
+                },
+                {
+                  "k": "setAttribute",
+                  "ms": 4.8
+                },
+                {
+                  "k": "base/src/presentation/dom.ts:4 h",
+                  "ms": 2.3
+                },
+                {
+                  "k": "base/src/game/engine/clash.ts:129 computeClash",
+                  "ms": 2.1
+                },
+                {
+                  "k": "fillRect",
+                  "ms": 1.2
+                },
+                {
+                  "k": "base/src/game/ai/policy.ts:194 decideCommit",
+                  "ms": 1.1
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "base/src/app/controller.ts:549 apply",
+                  "ms": 88.9
+                },
+                {
+                  "k": "base/src/app/controller.ts:825 nextTurn",
+                  "ms": 88.9
+                },
+                {
+                  "k": "base/src/presentation/board.ts:554 J_.e.phase.i.append.a.key",
+                  "ms": 88.9
+                },
+                {
+                  "k": "base/src/app/controller.ts:179 refresh",
+                  "ms": 88.1
+                },
+                {
+                  "k": "base/src/app/duelSession.ts:62 render",
+                  "ms": 82.1
+                },
+                {
+                  "k": "base/src/presentation/board.ts:51 renderApp",
+                  "ms": 81.5
+                },
+                {
+                  "k": "base/src/presentation/cardView.ts:33 cardEl",
+                  "ms": 58.1
+                },
+                {
+                  "k": "base/src/art/cardArt.ts:256 cardArtUrl",
+                  "ms": 54.5
+                },
+                {
+                  "k": "base/src/app/controller.ts:531 run",
+                  "ms": 47.8
+                },
+                {
+                  "k": "base/src/app/controller.ts:525 scheduleAi",
+                  "ms": 47.8
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "CommandBufferService:PutChanged",
+                  "ms": 16.6
+                },
+                {
+                  "k": "bool __cdecl GrGpu::readPixels(GrSurface *, SkIRect, GrColorType, GrColorType, void *, size_t)",
+                  "ms": 15.3
+                },
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 5.9
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 3.1
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 1.5
+                },
+                {
+                  "k": "TextureOp",
+                  "ms": 1.3
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 1.1
+                  },
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 0.7
+                  },
+                  {
+                    "k": "SurfaceDrawContext::addDrawOp",
+                    "ms": 0.4
+                  },
+                  {
+                    "k": "virtual void __cdecl (anonymous namespace)::FillRectOpImpl::onPrePrepareDraws(GrRecordingContext *, const GrSurfaceProxyView &, GrAppliedClip *, const GrDstProxyView &, GrXferBarrierFlags, GrLoadOp)",
+                    "ms": 0.2
+                  }
+                ]
+              }
+            },
+            "cause": "gpu-ipc"
+          },
+          {
+            "atS": 8.2,
+            "dtMs": 54.6,
+            "tag": "B",
+            "ctxStart": "2|COMMIT|",
+            "ctxEnd": "2|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 50,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 6.6,
+              "busyPct": 12,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 3.1
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 1.3
+                },
+                {
+                  "k": "style",
+                  "ms": 0.6
+                },
+                {
+                  "k": "other",
+                  "ms": 0.4
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 0.1
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 2.5
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Layerize",
+                  "ms": 0.4
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.4
+                },
+                {
+                  "k": "RunMicrotasks",
+                  "ms": 0.3
+                },
+                {
+                  "k": "Receive mojo message",
+                  "ms": 0.3
+                },
+                {
+                  "k": "Paint",
+                  "ms": 0.3
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.3
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 2.8
+                },
+                {
+                  "k": "getBoundingClientRect",
+                  "ms": 0.7
+                },
+                {
+                  "k": "checkElementStates",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:4763 setValueV1i",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.core.js:14280 updateMatrixWorld",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:1599 setup",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16874 getProgram",
+                  "ms": 0.5
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16363 render",
+                  "ms": 2.3
+                },
+                {
+                  "k": "base/src/scene/arena.ts:898 renderOnce",
+                  "ms": 2.3
+                },
+                {
+                  "k": "base/src/scene/arena.ts:920 loop",
+                  "ms": 2.3
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 1.7
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16843 renderObject",
+                  "ms": 1.7
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16814 renderObjects",
+                  "ms": 1.7
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16663 renderScene",
+                  "ms": 1.7
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:17021 setProgram",
+                  "ms": 1.1
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:4763 setValueV1i",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:5520 setValue",
+                  "ms": 0.6
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "FillRectOp",
+                  "ms": 10.1
+                },
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 7.3
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 5.3
+                },
+                {
+                  "k": "RasterDecoderImpl::DoRasterCHROMIUM::Deserializing",
+                  "ms": 3.5
+                },
+                {
+                  "k": "DrawAtlasPathOp",
+                  "ms": 2.5
+                },
+                {
+                  "k": "AtlasTextOp",
+                  "ms": 1.8
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 0.5
+                  },
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 0.5
+                  },
+                  {
+                    "k": "SurfaceDrawContext::addDrawOp",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "virtual void __cdecl (anonymous namespace)::FillRectOpImpl::onPrePrepareDraws(GrRecordingContext *, const GrSurfaceProxyView &, GrAppliedClip *, const GrDstProxyView &, GrXferBarrierFlags, GrLoadOp)",
+                    "ms": 0.1
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 9.5,
+            "dtMs": 84.8,
+            "tag": "A",
+            "ctxStart": "2|RESOLVED|tactics",
+            "ctxEnd": "2|RESOLVED|tactics",
+            "loaf": [
+              {
+                "durationMs": 90,
+                "blockingMs": 34,
+                "styleLayoutMs": 0,
+                "renderMs": 9,
+                "scripts": [
+                  {
+                    "ms": 73,
+                    "invoker": "BUTTON.onclick",
+                    "type": "event-listener",
+                    "fn": "base/src/presentation/board.ts:515 ",
+                    "forcedStyleLayoutMs": 15
+                  },
+                  {
+                    "ms": 8,
+                    "invoker": "FrameRequestCallback",
+                    "type": "user-callback",
+                    "fn": "base/src/scene/arena.ts:920 loop",
+                    "forcedStyleLayoutMs": 0
+                  }
+                ]
+              }
+            ],
+            "trace": {
+              "busyMs": 84.8,
+              "busyPct": 100,
+              "categories": [
+                {
+                  "k": "gpu-ipc",
+                  "ms": 41.2
+                },
+                {
+                  "k": "script",
+                  "ms": 23.8
+                },
+                {
+                  "k": "layout",
+                  "ms": 9
+                },
+                {
+                  "k": "style",
+                  "ms": 6.2
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 1.8
+                },
+                {
+                  "k": "other",
+                  "ms": 0.6
+                },
+                {
+                  "k": "html",
+                  "ms": 0.6
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "CommandBufferProxyImpl::WaitForGetOffset",
+                  "ms": 40.9
+                },
+                {
+                  "k": "FunctionCall",
+                  "ms": 21.8
+                },
+                {
+                  "k": "Layout",
+                  "ms": 8.9
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 6.2
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 1.2
+                },
+                {
+                  "k": "RunMicrotasks",
+                  "ms": 1
+                },
+                {
+                  "k": "ParseHTML",
+                  "ms": 0.6
+                },
+                {
+                  "k": "V8.HandleInterrupts",
+                  "ms": 0.5
+                }
+              ],
+              "longTasks": [
+                {
+                  "startMs": -1.1,
+                  "durMs": 76.5,
+                  "top": [
+                    "ThreadControllerImpl::RunTask 75.6 ms",
+                    "BlinkScheduler_PerformMicrotaskCheckpoint 0 ms"
+                  ]
+                },
+                {
+                  "startMs": 75.4,
+                  "durMs": 13.4,
+                  "top": [
+                    "ThreadControllerImpl::RunTask 13.4 ms",
+                    "BlinkScheduler_PerformMicrotaskCheckpoint 0 ms"
+                  ]
+                }
+              ],
+              "jsSelf": [
+                {
+                  "k": "toDataURL",
+                  "ms": 42
+                },
+                {
+                  "k": "base/src/presentation/board.ts:51 renderApp",
+                  "ms": 12.7
+                },
+                {
+                  "k": "(program)",
+                  "ms": 4.3
+                },
+                {
+                  "k": "base/src/presentation/dom.ts:4 h",
+                  "ms": 4
+                },
+                {
+                  "k": "replaceChildren",
+                  "ms": 3
+                },
+                {
+                  "k": "getProgramInfoLog",
+                  "ms": 2.9
+                },
+                {
+                  "k": "base/src/art/cardArt.ts:113 branch",
+                  "ms": 1.2
+                },
+                {
+                  "k": "getBoundingClientRect",
+                  "ms": 1.1
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "base/src/app/controller.ts:179 refresh",
+                  "ms": 71.8
+                },
+                {
+                  "k": "base/src/app/controller.ts:549 apply",
+                  "ms": 71.8
+                },
+                {
+                  "k": "base/src/app/controller.ts:654 lockCommit",
+                  "ms": 71.8
+                },
+                {
+                  "k": "base/src/presentation/board.ts:515 J_.i.append.a.key",
+                  "ms": 71.8
+                },
+                {
+                  "k": "base/src/app/duelSession.ts:62 render",
+                  "ms": 68.8
+                },
+                {
+                  "k": "base/src/presentation/board.ts:51 renderApp",
+                  "ms": 68.1
+                },
+                {
+                  "k": "base/src/presentation/board.ts:245 sideRow",
+                  "ms": 47.1
+                },
+                {
+                  "k": "base/src/presentation/board.ts:241 board",
+                  "ms": 47.1
+                },
+                {
+                  "k": "base/src/presentation/board.ts:264 primaryZone",
+                  "ms": 46
+                },
+                {
+                  "k": "base/src/presentation/cardView.ts:33 cardEl",
+                  "ms": 46
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "CommandBufferService:PutChanged",
+                  "ms": 10.8
+                },
+                {
+                  "k": "AAConvexPathOp",
+                  "ms": 3.9
+                },
+                {
+                  "k": "SurfaceDrawContext::internalDrawPath",
+                  "ms": 3.8
+                },
+                {
+                  "k": "AAHairlineOp",
+                  "ms": 2.9
+                },
+                {
+                  "k": "SurfaceDrawContext::drawPath",
+                  "ms": 2.6
+                },
+                {
+                  "k": "SurfaceDrawContext::addDrawOp",
+                  "ms": 2.5
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 1
+                  },
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 0.7
+                  },
+                  {
+                    "k": "SurfaceDrawContext::addDrawOp",
+                    "ms": 0.4
+                  },
+                  {
+                    "k": "virtual void __cdecl (anonymous namespace)::FillRectOpImpl::onPrePrepareDraws(GrRecordingContext *, const GrSurfaceProxyView &, GrAppliedClip *, const GrDstProxyView &, GrXferBarrierFlags, GrLoadOp)",
+                    "ms": 0.2
+                  }
+                ]
+              }
+            },
+            "cause": "gpu-ipc"
+          },
+          {
+            "atS": 16.9,
+            "dtMs": 54.4,
+            "tag": "A",
+            "ctxStart": "3|PREPARE|",
+            "ctxEnd": "3|PREPARE|",
+            "loaf": [
+              {
+                "durationMs": 63,
+                "blockingMs": 11,
+                "styleLayoutMs": 1,
+                "renderMs": 3,
+                "scripts": [
+                  {
+                    "ms": 56,
+                    "invoker": "BUTTON.onclick",
+                    "type": "event-listener",
+                    "fn": "base/src/presentation/board.ts:554 ",
+                    "forcedStyleLayoutMs": 10
+                  }
+                ]
+              }
+            ],
+            "trace": {
+              "busyMs": 54.4,
+              "busyPct": 100,
+              "categories": [
+                {
+                  "k": "gpu-ipc",
+                  "ms": 31.9
+                },
+                {
+                  "k": "script",
+                  "ms": 12.1
+                },
+                {
+                  "k": "layout",
+                  "ms": 5.3
+                },
+                {
+                  "k": "style",
+                  "ms": 3.6
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.8
+                },
+                {
+                  "k": "html",
+                  "ms": 0.3
+                },
+                {
+                  "k": "other",
+                  "ms": 0.2
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "CommandBufferProxyImpl::WaitForGetOffset",
+                  "ms": 31.9
+                },
+                {
+                  "k": "FunctionCall",
+                  "ms": 11.1
+                },
+                {
+                  "k": "Layout",
+                  "ms": 5.3
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 3.6
+                },
+                {
+                  "k": "RunMicrotasks",
+                  "ms": 0.9
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.8
+                },
+                {
+                  "k": "ParseHTML",
+                  "ms": 0.3
+                },
+                {
+                  "k": "RasterImplementation::ReadbackImagePixels",
+                  "ms": 0.2
+                }
+              ],
+              "longTasks": [
+                {
+                  "startMs": -6,
+                  "durMs": 59.3,
+                  "top": [
+                    "ThreadControllerImpl::RunTask 57.9 ms",
+                    "BlinkScheduler_PerformMicrotaskCheckpoint 0 ms"
+                  ]
+                }
+              ],
+              "jsSelf": [
+                {
+                  "k": "toDataURL",
+                  "ms": 34.3
+                },
+                {
+                  "k": "base/src/presentation/board.ts:51 renderApp",
+                  "ms": 8.9
+                },
+                {
+                  "k": "(program)",
+                  "ms": 2.8
+                },
+                {
+                  "k": "base/src/presentation/dom.ts:4 h",
+                  "ms": 1.9
+                },
+                {
+                  "k": "base/src/art/emblems.ts:66 emblemSvg",
+                  "ms": 1.3
+                },
+                {
+                  "k": "replaceChildren",
+                  "ms": 1.1
+                },
+                {
+                  "k": "append",
+                  "ms": 0.6
+                },
+                {
+                  "k": "setAttribute",
+                  "ms": 0.6
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "base/src/app/controller.ts:179 refresh",
+                  "ms": 49.7
+                },
+                {
+                  "k": "base/src/app/controller.ts:549 apply",
+                  "ms": 49.7
+                },
+                {
+                  "k": "base/src/app/controller.ts:825 nextTurn",
+                  "ms": 49.7
+                },
+                {
+                  "k": "base/src/presentation/board.ts:554 J_.e.phase.i.append.a.key",
+                  "ms": 49.7
+                },
+                {
+                  "k": "base/src/presentation/board.ts:51 renderApp",
+                  "ms": 49.2
+                },
+                {
+                  "k": "base/src/app/duelSession.ts:62 render",
+                  "ms": 49.2
+                },
+                {
+                  "k": "base/src/presentation/cardView.ts:33 cardEl",
+                  "ms": 36.8
+                },
+                {
+                  "k": "base/src/presentation/board.ts:619 ",
+                  "ms": 36.8
+                },
+                {
+                  "k": "base/src/presentation/board.ts:613 hand",
+                  "ms": 36.8
+                },
+                {
+                  "k": "base/src/art/cardArt.ts:256 cardArtUrl",
+                  "ms": 34.3
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "bool __cdecl GrGpu::readPixels(GrSurface *, SkIRect, GrColorType, GrColorType, void *, size_t)",
+                  "ms": 17.4
+                },
+                {
+                  "k": "CommandBufferService:PutChanged",
+                  "ms": 8.2
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 1.8
+                },
+                {
+                  "k": "DXGISwapChainImageBacking::Present",
+                  "ms": 1.1
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 1.1
+                },
+                {
+                  "k": "TextureOp",
+                  "ms": 0.8
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 0.8
+                  },
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 0.7
+                  },
+                  {
+                    "k": "SurfaceDrawContext::addDrawOp",
+                    "ms": 0.3
+                  },
+                  {
+                    "k": "SurfaceDrawContext::drawTextureSet",
+                    "ms": 0.2
+                  }
+                ]
+              }
+            },
+            "cause": "gpu-ipc"
+          }
+        ]
+      }
+    },
+    {
+      "name": "r1-apres-lean",
+      "round": 1,
+      "build": "apres",
+      "driver": "lean",
+      "outcome": "next",
+      "turns": 3,
+      "winner": null,
+      "hash": "64285b7c90109da6",
+      "durationS": 34,
+      "sequencesWatched": 2,
+      "stagesSeen": 2,
+      "consoleIssues": [],
+      "all": {
+        "frames": 1350,
+        "medianMs": 12.1,
+        "p95Ms": 24.1,
+        "p99Ms": 48.7,
+        "maxMs": 224.2,
+        "over16_7ms": 316,
+        "over33_3ms": 30,
+        "over50ms": 13,
+        "over100ms": 2
+      },
+      "byView": {
+        "A": {
+          "frames": 375,
+          "medianMs": 6.2,
+          "p95Ms": 18.3,
+          "p99Ms": 48.6,
+          "maxMs": 224.2,
+          "over16_7ms": 60,
+          "over33_3ms": 6,
+          "over50ms": 3,
+          "over100ms": 1
+        },
+        "B": {
+          "frames": 129,
+          "medianMs": 12.1,
+          "p95Ms": 48.5,
+          "p99Ms": 72.7,
+          "maxMs": 78.7,
+          "over16_7ms": 41,
+          "over33_3ms": 14,
+          "over50ms": 5,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 846,
+          "medianMs": 12.1,
+          "p95Ms": 18.5,
+          "p99Ms": 42.4,
+          "maxMs": 109,
+          "over16_7ms": 215,
+          "over33_3ms": 10,
+          "over50ms": 5,
+          "over100ms": 1
+        }
+      },
+      "loafCount": 15,
+      "rawTrace": "artifacts/qa/tmp/traces/r1-apres-lean.json.gz",
+      "pageRecord": "artifacts/qa/tmp/traces/r1-apres-lean.page.json",
+      "hitches": {
+        "count": 13,
+        "over100": 2,
+        "byCause": {
+          "script : renderApp (src/presentation/board.ts:51)": 1,
+          "fil principal libre (attente GPU / compositeur / horloge)": 10,
+          "script : J_.i.append.a.key (src/presentation/board.ts:515)": 1,
+          "gc": 1
+        },
+        "trace": {
+          "mainThread": "CrRendererMain",
+          "gpuThread": "CrGpuMain",
+          "syncMark": "lqv-sync-1792239641008-0",
+          "profileSamples": 35391,
+          "events": 1772303,
+          "trimmed": {
+            "file": "artifacts/qa/tmp/gpu2t-r1-apres-lean-pics.json.gz",
+            "events": 322768
+          }
+        },
+        "hitches": [
+          {
+            "atS": 0.2,
+            "dtMs": 72.6,
+            "tag": "B",
+            "ctxStart": "1|START|",
+            "ctxEnd": "1|START|",
+            "loaf": [
+              {
+                "durationMs": 51,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 28.3,
+              "busyPct": 39,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 10.6
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 8
+                },
+                {
+                  "k": "style",
+                  "ms": 2.7
+                },
+                {
+                  "k": "layout",
+                  "ms": 2.6
+                },
+                {
+                  "k": "other",
+                  "ms": 2.4
+                },
+                {
+                  "k": "html",
+                  "ms": 0.4
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 0.1
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 9.6
+                },
+                {
+                  "k": "Paint",
+                  "ms": 3.6
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 2.7
+                },
+                {
+                  "k": "Layout",
+                  "ms": 2.6
+                },
+                {
+                  "k": "Receive mojo message",
+                  "ms": 2.3
+                },
+                {
+                  "k": "PaintImage",
+                  "ms": 1.3
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 1.3
+                },
+                {
+                  "k": "Layerize",
+                  "ms": 1.1
+                }
+              ],
+              "longTasks": [
+                {
+                  "startMs": 4.4,
+                  "durMs": 12,
+                  "top": [
+                    "ThreadControllerImpl::RunTask 12 ms",
+                    "BlinkScheduler_PerformMicrotaskCheckpoint 0 ms"
+                  ]
+                }
+              ],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 13.5
+                },
+                {
+                  "k": "src/presentation/board.ts:51 renderApp",
+                  "ms": 4.6
+                },
+                {
+                  "k": "src/presentation/dom.ts:4 h",
+                  "ms": 2
+                },
+                {
+                  "k": "replaceChildren",
+                  "ms": 1.1
+                },
+                {
+                  "k": "addEventListener",
+                  "ms": 1
+                },
+                {
+                  "k": "three/build/three.module.js:5410 setValue",
+                  "ms": 0.7
+                },
+                {
+                  "k": "src/presentation/board.ts:358 slotZone",
+                  "ms": 0.6
+                },
+                {
+                  "k": "src/scene/arena.ts:934 loop",
+                  "ms": 0.6
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "src/presentation/board.ts:51 renderApp",
+                  "ms": 11.3
+                },
+                {
+                  "k": "src/app/duelSession.ts:62 render",
+                  "ms": 11.3
+                },
+                {
+                  "k": "src/app/controller.ts:385 endHold",
+                  "ms": 11.3
+                },
+                {
+                  "k": "src/app/duelSession.ts:85 afterInteraction",
+                  "ms": 11.3
+                },
+                {
+                  "k": "src/presentation/dom.ts:4 h",
+                  "ms": 3.8
+                },
+                {
+                  "k": "src/scene/arena.ts:934 loop",
+                  "ms": 3.4
+                },
+                {
+                  "k": "three/build/three.module.js:16363 render",
+                  "ms": 2.2
+                },
+                {
+                  "k": "src/scene/arena.ts:912 renderOnce",
+                  "ms": 2.2
+                },
+                {
+                  "k": "three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 1.7
+                },
+                {
+                  "k": "three/build/three.module.js:16843 renderObject",
+                  "ms": 1.7
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "CommandBufferService:PutChanged",
+                  "ms": 22.2
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 11.8
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 7.6
+                },
+                {
+                  "k": "virtual GrRenderTask::ExecutionResult __cdecl skgpu::ganesh::OpsTask::onExecute(GrOpFlushState *)",
+                  "ms": 3.1
+                },
+                {
+                  "k": "RasterDecoderImpl::DoRasterCHROMIUM::Deserializing",
+                  "ms": 2.4
+                },
+                {
+                  "k": "TextureOp",
+                  "ms": 2.4
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 1.2
+                  },
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 1.1
+                  },
+                  {
+                    "k": "SurfaceDrawContext::addDrawOp",
+                    "ms": 0.6
+                  },
+                  {
+                    "k": "virtual void __cdecl (anonymous namespace)::FillRectOpImpl::onPrePrepareDraws(GrRecordingContext *, const GrSurfaceProxyView &, GrAppliedClip *, const GrDstProxyView &, GrXferBarrierFlags, GrLoadOp)",
+                    "ms": 0.3
+                  }
+                ]
+              }
+            },
+            "cause": "script : renderApp (src/presentation/board.ts:51)"
+          },
+          {
+            "atS": 0.3,
+            "dtMs": 78.7,
+            "tag": "B",
+            "ctxStart": "1|COMMIT|",
+            "ctxEnd": "1|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 74,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 11,
+              "busyPct": 14,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 6.9
+                },
+                {
+                  "k": "other",
+                  "ms": 2.5
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.5
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 0.4
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 6.2
+                },
+                {
+                  "k": "Receive mojo message",
+                  "ms": 2.5
+                },
+                {
+                  "k": "RunMicrotasks",
+                  "ms": 0.4
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.3
+                },
+                {
+                  "k": "CommandBufferProxyImpl::Flush",
+                  "ms": 0.3
+                },
+                {
+                  "k": "FireAnimationFrame",
+                  "ms": 0.2
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.1
+                },
+                {
+                  "k": "UpdateLayer",
+                  "ms": 0.1
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 3
+                },
+                {
+                  "k": "three/build/three.module.js:4609 setValueV3f",
+                  "ms": 0.9
+                },
+                {
+                  "k": "query",
+                  "ms": 0.8
+                },
+                {
+                  "k": "three/build/three.module.js:16874 getProgram",
+                  "ms": 0.6
+                },
+                {
+                  "k": "drawElements",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.core.js:15920 getRGB",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 0.6
+                },
+                {
+                  "k": "step",
+                  "ms": 0.6
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "three/build/three.module.js:16363 render",
+                  "ms": 5.5
+                },
+                {
+                  "k": "src/scene/arena.ts:912 renderOnce",
+                  "ms": 5.5
+                },
+                {
+                  "k": "src/scene/arena.ts:934 loop",
+                  "ms": 5.5
+                },
+                {
+                  "k": "three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 4.9
+                },
+                {
+                  "k": "three/build/three.module.js:16843 renderObject",
+                  "ms": 4.9
+                },
+                {
+                  "k": "three/build/three.module.js:16814 renderObjects",
+                  "ms": 4.9
+                },
+                {
+                  "k": "three/build/three.module.js:16663 renderScene",
+                  "ms": 4.9
+                },
+                {
+                  "k": "three/build/three.module.js:17021 setProgram",
+                  "ms": 3.3
+                },
+                {
+                  "k": "three/build/three.module.js:13928 refreshTransformUniform",
+                  "ms": 1.1
+                },
+                {
+                  "k": "three/build/three.module.js:14037 refreshUniformsCommon",
+                  "ms": 1.1
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "FillRectOp",
+                  "ms": 17.2
+                },
+                {
+                  "k": "CommandBufferService:PutChanged",
+                  "ms": 7.8
+                },
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 6.3
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 5.9
+                },
+                {
+                  "k": "RasterDecoderImpl::DoRasterCHROMIUM::Deserializing",
+                  "ms": 4.1
+                },
+                {
+                  "k": "SurfaceDrawContext::addDrawOp",
+                  "ms": 3
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 0.7
+                  },
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 0.5
+                  },
+                  {
+                    "k": "SurfaceDrawContext::addDrawOp",
+                    "ms": 0.4
+                  },
+                  {
+                    "k": "SurfaceDrawContext::drawFilledQuad",
+                    "ms": 0.3
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 0.4,
+            "dtMs": 72.7,
+            "tag": "B",
+            "ctxStart": "1|COMMIT|",
+            "ctxEnd": "1|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 72,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 9.6,
+              "busyPct": 13,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 4
+                },
+                {
+                  "k": "other",
+                  "ms": 3
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 1
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 0.2
+                },
+                {
+                  "k": "style",
+                  "ms": 0.2
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 3.2
+                },
+                {
+                  "k": "Receive mojo message",
+                  "ms": 2.9
+                },
+                {
+                  "k": "RunMicrotasks",
+                  "ms": 0.4
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.4
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.2
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.2
+                },
+                {
+                  "k": "CommandBufferProxyImpl::Flush",
+                  "ms": 0.2
+                },
+                {
+                  "k": "Paint",
+                  "ms": 0.2
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 4.6
+                },
+                {
+                  "k": "bindVertexArray",
+                  "ms": 0.8
+                },
+                {
+                  "k": "three/build/three.module.js:5410 setValue",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:16363 render",
+                  "ms": 0.6
+                },
+                {
+                  "k": "(natif)",
+                  "ms": 0.6
+                },
+                {
+                  "k": "serialize",
+                  "ms": 0.6
+                },
+                {
+                  "k": "query",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.core.js:11843 multiplyMatrices",
+                  "ms": 0.6
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "three/build/three.module.js:16363 render",
+                  "ms": 2.8
+                },
+                {
+                  "k": "src/scene/arena.ts:912 renderOnce",
+                  "ms": 2.8
+                },
+                {
+                  "k": "src/scene/arena.ts:934 loop",
+                  "ms": 2.8
+                },
+                {
+                  "k": "three/build/three.module.js:16843 renderObject",
+                  "ms": 2.2
+                },
+                {
+                  "k": "three/build/three.module.js:16814 renderObjects",
+                  "ms": 2.2
+                },
+                {
+                  "k": "three/build/three.module.js:16663 renderScene",
+                  "ms": 2.2
+                },
+                {
+                  "k": "three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 1.6
+                },
+                {
+                  "k": "three/build/three.module.js:1644 bindVertexArrayObject",
+                  "ms": 0.8
+                },
+                {
+                  "k": "three/build/three.module.js:1599 setup",
+                  "ms": 0.8
+                },
+                {
+                  "k": "three/build/three.module.js:17021 setProgram",
+                  "ms": 0.8
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 13.8
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 13.1
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 6.4
+                },
+                {
+                  "k": "RasterDecoderImpl::DoRasterCHROMIUM::Deserializing",
+                  "ms": 3.5
+                },
+                {
+                  "k": "AtlasTextOp",
+                  "ms": 3
+                },
+                {
+                  "k": "TextureOp",
+                  "ms": 2.9
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 0.8
+                  },
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 0.7
+                  },
+                  {
+                    "k": "SurfaceDrawContext::addDrawOp",
+                    "ms": 0.3
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.3
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 0.6,
+            "dtMs": 66.8,
+            "tag": "B",
+            "ctxStart": "1|COMMIT|",
+            "ctxEnd": "1|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 63,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 5.6,
+              "busyPct": 8,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 2.8
+                },
+                {
+                  "k": "other",
+                  "ms": 2
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.2
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 0.1
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 2.4
+                },
+                {
+                  "k": "Receive mojo message",
+                  "ms": 1.9
+                },
+                {
+                  "k": "RunMicrotasks",
+                  "ms": 0.3
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.1
+                },
+                {
+                  "k": "UpdateLayer",
+                  "ms": 0.1
+                },
+                {
+                  "k": "v8.callFunction",
+                  "ms": 0.1
+                },
+                {
+                  "k": "V8.BytecodeBudgetInterrupt",
+                  "ms": 0.1
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 2.6
+                },
+                {
+                  "k": "query",
+                  "ms": 0.6
+                },
+                {
+                  "k": "bufferSubData",
+                  "ms": 0.6
+                },
+                {
+                  "k": "(natif)",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:4514 arraysEqual",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:17021 setProgram",
+                  "ms": 0.5
+                },
+                {
+                  "k": "three/build/three.module.js:6826 getParameters",
+                  "ms": 0.3
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "three/build/three.module.js:16363 render",
+                  "ms": 1.9
+                },
+                {
+                  "k": "src/scene/arena.ts:912 renderOnce",
+                  "ms": 1.9
+                },
+                {
+                  "k": "src/scene/arena.ts:934 loop",
+                  "ms": 1.9
+                },
+                {
+                  "k": "three/build/three.module.js:17021 setProgram",
+                  "ms": 1.4
+                },
+                {
+                  "k": "three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 1.4
+                },
+                {
+                  "k": "three/build/three.module.js:16843 renderObject",
+                  "ms": 1.4
+                },
+                {
+                  "k": "three/build/three.module.js:16814 renderObjects",
+                  "ms": 1.4
+                },
+                {
+                  "k": "three/build/three.module.js:16663 renderScene",
+                  "ms": 1.4
+                },
+                {
+                  "k": "three/build/three.module.js:140 updateBuffer",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:241 update",
+                  "ms": 0.6
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "CommandBufferService:PutChanged",
+                  "ms": 13.1
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 11.1
+                },
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 6.1
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 4.3
+                },
+                {
+                  "k": "RasterDecoderImpl::DoRasterCHROMIUM::Deserializing",
+                  "ms": 3.1
+                },
+                {
+                  "k": "SurfaceDrawContext::addDrawOp",
+                  "ms": 2.2
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 0.5
+                  },
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 0.4
+                  },
+                  {
+                    "k": "SurfaceDrawContext::addDrawOp",
+                    "ms": 0.3
+                  },
+                  {
+                    "k": "virtual void __cdecl (anonymous namespace)::FillRectOpImpl::onPrePrepareDraws(GrRecordingContext *, const GrSurfaceProxyView &, GrAppliedClip *, const GrDstProxyView &, GrXferBarrierFlags, GrLoadOp)",
+                    "ms": 0.1
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 0.8,
+            "dtMs": 54.5,
+            "tag": "B",
+            "ctxStart": "1|COMMIT|",
+            "ctxEnd": "1|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 57,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 6.3,
+              "busyPct": 12,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 2.8
+                },
+                {
+                  "k": "other",
+                  "ms": 2
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.7
+                },
+                {
+                  "k": "style",
+                  "ms": 0.2
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 0.1
+                },
+                {
+                  "k": "gc",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 2.5
+                },
+                {
+                  "k": "Receive mojo message",
+                  "ms": 2
+                },
+                {
+                  "k": "RunMicrotasks",
+                  "ms": 0.3
+                },
+                {
+                  "k": "Paint",
+                  "ms": 0.2
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.2
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.2
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.1
+                },
+                {
+                  "k": "Layerize",
+                  "ms": 0.1
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 3.3
+                },
+                {
+                  "k": "three/build/three.module.js:6826 getParameters",
+                  "ms": 1.3
+                },
+                {
+                  "k": "(natif)",
+                  "ms": 0.6
+                },
+                {
+                  "k": "drawElements",
+                  "ms": 0.6
+                },
+                {
+                  "k": "evaluate",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:4514 arraysEqual",
+                  "ms": 0.2
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 2.1
+                },
+                {
+                  "k": "three/build/three.module.js:16843 renderObject",
+                  "ms": 2.1
+                },
+                {
+                  "k": "three/build/three.module.js:16814 renderObjects",
+                  "ms": 2.1
+                },
+                {
+                  "k": "three/build/three.module.js:16663 renderScene",
+                  "ms": 2.1
+                },
+                {
+                  "k": "three/build/three.module.js:16363 render",
+                  "ms": 2.1
+                },
+                {
+                  "k": "src/scene/arena.ts:912 renderOnce",
+                  "ms": 2.1
+                },
+                {
+                  "k": "src/scene/arena.ts:934 loop",
+                  "ms": 2.1
+                },
+                {
+                  "k": "three/build/three.module.js:17021 setProgram",
+                  "ms": 1.5
+                },
+                {
+                  "k": "three/build/three.module.js:6826 getParameters",
+                  "ms": 1.3
+                },
+                {
+                  "k": "three/build/three.module.js:16874 getProgram",
+                  "ms": 1.3
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "CommandBufferService:PutChanged",
+                  "ms": 10.2
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 8.5
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 5
+                },
+                {
+                  "k": "RasterDecoderImpl::DoRasterCHROMIUM::Deserializing",
+                  "ms": 3.3
+                },
+                {
+                  "k": "SurfaceDrawContext::addDrawOp",
+                  "ms": 2.5
+                },
+                {
+                  "k": "virtual GrRenderTask::ExecutionResult __cdecl skgpu::ganesh::OpsTask::onExecute(GrOpFlushState *)",
+                  "ms": 2.1
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 0.3
+                  },
+                  {
+                    "k": "virtual void __cdecl (anonymous namespace)::FillRectOpImpl::onPrePrepareDraws(GrRecordingContext *, const GrSurfaceProxyView &, GrAppliedClip *, const GrDstProxyView &, GrXferBarrierFlags, GrLoadOp)",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "virtual void __cdecl skgpu::ganesh::OpsTask::onPrePrepare(GrRecordingContext *)",
+                    "ms": 0.1
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 1,
+            "dtMs": 60.7,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 66,
+                "blockingMs": 10,
+                "styleLayoutMs": 0,
+                "renderMs": 12,
+                "scripts": [
+                  {
+                    "ms": 45,
+                    "invoker": "BUTTON.onclick",
+                    "type": "event-listener",
+                    "fn": "src/presentation/board.ts:515 ",
+                    "forcedStyleLayoutMs": 25
+                  },
+                  {
+                    "ms": 12,
+                    "invoker": "FrameRequestCallback",
+                    "type": "user-callback",
+                    "fn": "src/scene/arena.ts:934 loop",
+                    "forcedStyleLayoutMs": 0
+                  }
+                ]
+              }
+            ],
+            "trace": {
+              "busyMs": 60.7,
+              "busyPct": 100,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 25.8
+                },
+                {
+                  "k": "layout",
+                  "ms": 20.7
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 5.4
+                },
+                {
+                  "k": "style",
+                  "ms": 5.2
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 1.4
+                },
+                {
+                  "k": "html",
+                  "ms": 0.2
+                },
+                {
+                  "k": "other",
+                  "ms": 0.1
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 22.5
+                },
+                {
+                  "k": "Layout",
+                  "ms": 20.4
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 5.2
+                },
+                {
+                  "k": "CommandBufferProxyImpl::WaitForGetOffset",
+                  "ms": 5
+                },
+                {
+                  "k": "RunMicrotasks",
+                  "ms": 1.6
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 1.4
+                },
+                {
+                  "k": "V8.DeoptimizeCode",
+                  "ms": 0.6
+                },
+                {
+                  "k": "V8.HandleInterrupts",
+                  "ms": 0.6
+                }
+              ],
+              "longTasks": [
+                {
+                  "startMs": -0.1,
+                  "durMs": 48.5,
+                  "top": [
+                    "ThreadControllerImpl::RunTask 47.5 ms",
+                    "BlinkScheduler_PerformMicrotaskCheckpoint 0 ms"
+                  ]
+                },
+                {
+                  "startMs": 48.4,
+                  "durMs": 18.2,
+                  "top": [
+                    "ThreadControllerImpl::RunTask 18.1 ms",
+                    "BlinkScheduler_PerformMicrotaskCheckpoint 0 ms"
+                  ]
+                }
+              ],
+              "jsSelf": [
+                {
+                  "k": "src/presentation/board.ts:51 renderApp",
+                  "ms": 23.3
+                },
+                {
+                  "k": "toDataURL",
+                  "ms": 6.5
+                },
+                {
+                  "k": "(program)",
+                  "ms": 5.9
+                },
+                {
+                  "k": "getProgramInfoLog",
+                  "ms": 4.5
+                },
+                {
+                  "k": "replaceChildren",
+                  "ms": 2.8
+                },
+                {
+                  "k": "setAttribute",
+                  "ms": 1.8
+                },
+                {
+                  "k": "three/build/three.module.js:6826 getParameters",
+                  "ms": 1.7
+                },
+                {
+                  "k": "three/build/three.module.js:16874 getProgram",
+                  "ms": 0.7
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "src/presentation/board.ts:515 J_.i.append.a.key",
+                  "ms": 43
+                },
+                {
+                  "k": "src/app/controller.ts:549 apply",
+                  "ms": 42.3
+                },
+                {
+                  "k": "src/app/controller.ts:654 lockCommit",
+                  "ms": 42.3
+                },
+                {
+                  "k": "src/app/controller.ts:179 refresh",
+                  "ms": 40.5
+                },
+                {
+                  "k": "src/app/duelSession.ts:62 render",
+                  "ms": 37.3
+                },
+                {
+                  "k": "src/app/controller.ts:274 advanceBeat",
+                  "ms": 37.3
+                },
+                {
+                  "k": "src/presentation/board.ts:51 renderApp",
+                  "ms": 36.7
+                },
+                {
+                  "k": "src/scene/arena.ts:934 loop",
+                  "ms": 11.5
+                },
+                {
+                  "k": "src/scene/arena.ts:912 renderOnce",
+                  "ms": 11
+                },
+                {
+                  "k": "three/build/three.module.js:16363 render",
+                  "ms": 10.5
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "CommandBufferService:PutChanged",
+                  "ms": 40.2
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 2.6
+                },
+                {
+                  "k": "DXGISwapChainImageBacking::Present",
+                  "ms": 2.2
+                },
+                {
+                  "k": "TextureOp",
+                  "ms": 1.5
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 1.2
+                },
+                {
+                  "k": "SkiaOutputSurfaceImplOnGpu::SwapBuffers",
+                  "ms": 0.7
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 1.3
+                  },
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 1.2
+                  },
+                  {
+                    "k": "SurfaceDrawContext::addDrawOp",
+                    "ms": 0.7
+                  },
+                  {
+                    "k": "virtual void __cdecl (anonymous namespace)::FillRectOpImpl::onPrePrepareDraws(GrRecordingContext *, const GrSurfaceProxyView &, GrAppliedClip *, const GrDstProxyView &, GrXferBarrierFlags, GrLoadOp)",
+                    "ms": 0.4
+                  }
+                ]
+              }
+            },
+            "cause": "script : J_.i.append.a.key (src/presentation/board.ts:515)"
+          },
+          {
+            "atS": 1.2,
+            "dtMs": 224.2,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 227,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 6,
+              "busyPct": 3,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 2.6
+                },
+                {
+                  "k": "gc",
+                  "ms": 1.4
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.4
+                },
+                {
+                  "k": "other",
+                  "ms": 0.4
+                },
+                {
+                  "k": "style",
+                  "ms": 0.3
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 0.1
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 2.5
+                },
+                {
+                  "k": "Receive mojo message",
+                  "ms": 0.3
+                },
+                {
+                  "k": "V8.GC_HEAP_ENSURE_SWEEPING_COMPLETED",
+                  "ms": 0.3
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.3
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.2
+                },
+                {
+                  "k": "V8.GC_SCAVENGER_TRACED_HANDLES_COMPUTE_WEAKNESS_PARALLEL",
+                  "ms": 0.2
+                },
+                {
+                  "k": "V8.GC_SCAVENGER_SCAVENGE_PARALLEL_PHASE",
+                  "ms": 0.2
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.2
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 2.1
+                },
+                {
+                  "k": "(garbage collector)",
+                  "ms": 1.7
+                },
+                {
+                  "k": "three/build/three.core.js:10340 copy",
+                  "ms": 0.8
+                },
+                {
+                  "k": "three/build/three.module.js:5554 seqWithValue",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:6826 getParameters",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:5410 setValue",
+                  "ms": 0.3
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "three/build/three.module.js:16363 render",
+                  "ms": 2.2
+                },
+                {
+                  "k": "src/scene/arena.ts:912 renderOnce",
+                  "ms": 2.2
+                },
+                {
+                  "k": "src/scene/arena.ts:934 loop",
+                  "ms": 2.2
+                },
+                {
+                  "k": "three/build/three.module.js:17021 setProgram",
+                  "ms": 1.5
+                },
+                {
+                  "k": "three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 1.5
+                },
+                {
+                  "k": "three/build/three.module.js:16843 renderObject",
+                  "ms": 1.5
+                },
+                {
+                  "k": "three/build/three.module.js:16814 renderObjects",
+                  "ms": 1.5
+                },
+                {
+                  "k": "three/build/three.module.js:16663 renderScene",
+                  "ms": 1.5
+                },
+                {
+                  "k": "three/build/three.core.js:10340 copy",
+                  "ms": 0.8
+                },
+                {
+                  "k": "three/build/three.core.js:26484 intersectsObject",
+                  "ms": 0.8
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 134.3
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 26.6
+                },
+                {
+                  "k": "CompileEvent::wait",
+                  "ms": 18
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 5.7
+                },
+                {
+                  "k": "CommandBufferService:PutChanged",
+                  "ms": 5
+                },
+                {
+                  "k": "RasterDecoderImpl::DoRasterCHROMIUM::Deserializing",
+                  "ms": 3.4
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "RunTask",
+                    "ms": 0.3
+                  },
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 0.1
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 1.5,
+            "dtMs": 66.7,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 62,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 4.7,
+              "busyPct": 7,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 2.9
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.6
+                },
+                {
+                  "k": "style",
+                  "ms": 0.2
+                },
+                {
+                  "k": "other",
+                  "ms": 0.2
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 0.1
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 2.6
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.4
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.2
+                },
+                {
+                  "k": "V8.HandleInterrupts",
+                  "ms": 0.2
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.2
+                },
+                {
+                  "k": "WidgetBase::WillBeginMainFrame",
+                  "ms": 0.1
+                },
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0.1
+                },
+                {
+                  "k": "CommandBufferProxyImpl::Flush",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 2.8
+                },
+                {
+                  "k": "three/build/three.module.js:6826 getParameters",
+                  "ms": 0.7
+                },
+                {
+                  "k": "src/scene/arena.ts:896 ",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:1723 needsUpdate",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:4568 setValueV1f",
+                  "ms": 0.6
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "src/scene/arena.ts:934 loop",
+                  "ms": 2.5
+                },
+                {
+                  "k": "three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 1.9
+                },
+                {
+                  "k": "three/build/three.module.js:16843 renderObject",
+                  "ms": 1.9
+                },
+                {
+                  "k": "three/build/three.module.js:16814 renderObjects",
+                  "ms": 1.9
+                },
+                {
+                  "k": "three/build/three.module.js:16663 renderScene",
+                  "ms": 1.9
+                },
+                {
+                  "k": "three/build/three.module.js:16363 render",
+                  "ms": 1.9
+                },
+                {
+                  "k": "src/scene/arena.ts:912 renderOnce",
+                  "ms": 1.9
+                },
+                {
+                  "k": "three/build/three.module.js:17021 setProgram",
+                  "ms": 1.2
+                },
+                {
+                  "k": "three/build/three.module.js:6826 getParameters",
+                  "ms": 0.7
+                },
+                {
+                  "k": "three/build/three.module.js:16874 getProgram",
+                  "ms": 0.7
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 22.2
+                },
+                {
+                  "k": "CommandBufferService:PutChanged",
+                  "ms": 15.5
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 7.4
+                },
+                {
+                  "k": "CompileEvent::wait",
+                  "ms": 4.5
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 2.5
+                },
+                {
+                  "k": "TextureOp",
+                  "ms": 1.9
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 1
+                  },
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 0.8
+                  },
+                  {
+                    "k": "SurfaceDrawContext::addDrawOp",
+                    "ms": 0.5
+                  },
+                  {
+                    "k": "SurfaceDrawContext::drawTextureSet",
+                    "ms": 0.3
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 2.2,
+            "dtMs": 72.8,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|rank",
+            "ctxEnd": "1|REPEL|rank",
+            "loaf": [
+              {
+                "durationMs": 74,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 5,
+              "busyPct": 7,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 3.8
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.3
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 0.2
+                },
+                {
+                  "k": "style",
+                  "ms": 0.1
+                },
+                {
+                  "k": "other",
+                  "ms": 0.1
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 3.8
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.2
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.1
+                },
+                {
+                  "k": "CommandBufferProxyImpl::Flush",
+                  "ms": 0.1
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.1
+                },
+                {
+                  "k": "UpdateLayer",
+                  "ms": 0
+                },
+                {
+                  "k": "FireAnimationFrame",
+                  "ms": 0
+                },
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 1.1
+                },
+                {
+                  "k": "three/build/three.core.js:14280 updateMatrixWorld",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:16874 getProgram",
+                  "ms": 0.6
+                },
+                {
+                  "k": "uniformMatrix3fv",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:4528 copyArray",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:4609 setValueV3f",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:5410 setValue",
+                  "ms": 0.4
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "three/build/three.module.js:16363 render",
+                  "ms": 3.1
+                },
+                {
+                  "k": "src/scene/arena.ts:912 renderOnce",
+                  "ms": 3.1
+                },
+                {
+                  "k": "src/scene/arena.ts:934 loop",
+                  "ms": 3.1
+                },
+                {
+                  "k": "three/build/three.module.js:17021 setProgram",
+                  "ms": 2.5
+                },
+                {
+                  "k": "three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 2.5
+                },
+                {
+                  "k": "three/build/three.module.js:16843 renderObject",
+                  "ms": 2.5
+                },
+                {
+                  "k": "three/build/three.module.js:16814 renderObjects",
+                  "ms": 2.5
+                },
+                {
+                  "k": "three/build/three.module.js:16663 renderScene",
+                  "ms": 2.5
+                },
+                {
+                  "k": "three/build/three.module.js:5520 setValue",
+                  "ms": 1.2
+                },
+                {
+                  "k": "three/build/three.core.js:14280 updateMatrixWorld",
+                  "ms": 0.6
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 25.9
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 15
+                },
+                {
+                  "k": "CompileEvent::wait",
+                  "ms": 4.6
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 3.5
+                },
+                {
+                  "k": "RasterDecoderImpl::DoRasterCHROMIUM::Deserializing",
+                  "ms": 2.6
+                },
+                {
+                  "k": "TextureOp",
+                  "ms": 1.7
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "RunTask",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "Surface::ActivateFrame",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 0.1
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 4,
+            "dtMs": 109,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 110,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 5.1,
+              "busyPct": 5,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 2.7
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 1.1
+                },
+                {
+                  "k": "style",
+                  "ms": 0.2
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 0.2
+                },
+                {
+                  "k": "other",
+                  "ms": 0.1
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 2.7
+                },
+                {
+                  "k": "Layerize",
+                  "ms": 0.7
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.2
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.2
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.2
+                },
+                {
+                  "k": "CommandBufferProxyImpl::Flush",
+                  "ms": 0.2
+                },
+                {
+                  "k": "FireAnimationFrame",
+                  "ms": 0
+                },
+                {
+                  "k": "v8.callFunction",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 2.1
+                },
+                {
+                  "k": "three/build/three.module.js:1723 needsUpdate",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:16549 projectObject",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:16998 updateCommonMaterialProperties",
+                  "ms": 0.6
+                },
+                {
+                  "k": "step",
+                  "ms": 0.6
+                },
+                {
+                  "k": "drawElements",
+                  "ms": 0.6
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "three/build/three.module.js:16363 render",
+                  "ms": 2.3
+                },
+                {
+                  "k": "src/scene/arena.ts:912 renderOnce",
+                  "ms": 2.3
+                },
+                {
+                  "k": "src/scene/arena.ts:934 loop",
+                  "ms": 2.3
+                },
+                {
+                  "k": "three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 1.7
+                },
+                {
+                  "k": "three/build/three.module.js:16843 renderObject",
+                  "ms": 1.7
+                },
+                {
+                  "k": "three/build/three.module.js:16814 renderObjects",
+                  "ms": 1.7
+                },
+                {
+                  "k": "three/build/three.module.js:16663 renderScene",
+                  "ms": 1.7
+                },
+                {
+                  "k": "three/build/three.module.js:1723 needsUpdate",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:1599 setup",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:16549 projectObject",
+                  "ms": 0.6
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 46.4
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 17.6
+                },
+                {
+                  "k": "CommandBufferService:PutChanged",
+                  "ms": 11.2
+                },
+                {
+                  "k": "CompileEvent::wait",
+                  "ms": 7.1
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 4.1
+                },
+                {
+                  "k": "RasterDecoderImpl::DoRasterCHROMIUM::Deserializing",
+                  "ms": 2.2
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 0.5
+                  },
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 0.4
+                  },
+                  {
+                    "k": "SurfaceDrawContext::addDrawOp",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "RunTask",
+                    "ms": 0.2
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 6.8,
+            "dtMs": 60.5,
+            "tag": "clash",
+            "ctxStart": "1|RESOLVED|",
+            "ctxEnd": "1|RESOLVED|",
+            "loaf": [
+              {
+                "durationMs": 61,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 3.5,
+              "busyPct": 6,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 2.2
+                },
+                {
+                  "k": "style",
+                  "ms": 0.4
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.4
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 0.1
+                },
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 2.2
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.4
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.2
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.1
+                },
+                {
+                  "k": "CommandBufferProxyImpl::Flush",
+                  "ms": 0
+                },
+                {
+                  "k": "UpdateLayer",
+                  "ms": 0
+                },
+                {
+                  "k": "FireAnimationFrame",
+                  "ms": 0
+                },
+                {
+                  "k": "v8.callFunction",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 1.4
+                },
+                {
+                  "k": "three/build/three.module.js:16874 getProgram",
+                  "ms": 0.8
+                },
+                {
+                  "k": "three/build/three.module.js:241 update",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:6826 getParameters",
+                  "ms": 0.6
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "three/build/three.module.js:16363 render",
+                  "ms": 1.9
+                },
+                {
+                  "k": "src/scene/arena.ts:912 renderOnce",
+                  "ms": 1.9
+                },
+                {
+                  "k": "src/scene/arena.ts:934 loop",
+                  "ms": 1.9
+                },
+                {
+                  "k": "three/build/three.module.js:16874 getProgram",
+                  "ms": 1.4
+                },
+                {
+                  "k": "three/build/three.module.js:17021 setProgram",
+                  "ms": 1.4
+                },
+                {
+                  "k": "three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 1.4
+                },
+                {
+                  "k": "three/build/three.module.js:16843 renderObject",
+                  "ms": 1.4
+                },
+                {
+                  "k": "three/build/three.module.js:16814 renderObjects",
+                  "ms": 1.4
+                },
+                {
+                  "k": "three/build/three.module.js:16663 renderScene",
+                  "ms": 1.4
+                },
+                {
+                  "k": "three/build/three.module.js:241 update",
+                  "ms": 0.6
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 12.4
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 11.4
+                },
+                {
+                  "k": "CommandBufferService:PutChanged",
+                  "ms": 8.8
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 4.4
+                },
+                {
+                  "k": "RasterDecoderImpl::DoRasterCHROMIUM::Deserializing",
+                  "ms": 2.1
+                },
+                {
+                  "k": "CompileEvent::wait",
+                  "ms": 2.1
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 0.6
+                  },
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 0.3
+                  },
+                  {
+                    "k": "SurfaceDrawContext::addDrawOp",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "virtual void __cdecl (anonymous namespace)::FillRectOpImpl::onPrePrepareDraws(GrRecordingContext *, const GrSurfaceProxyView &, GrAppliedClip *, const GrDstProxyView &, GrXferBarrierFlags, GrLoadOp)",
+                    "ms": 0.1
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 10.7,
+            "dtMs": 66.6,
+            "tag": "clash",
+            "ctxStart": "2|RESOLVED|rank",
+            "ctxEnd": "2|RESOLVED|rank",
+            "loaf": [
+              {
+                "durationMs": 63,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 4.1,
+              "busyPct": 6,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 2.5
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.5
+                },
+                {
+                  "k": "style",
+                  "ms": 0.2
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 0.1
+                },
+                {
+                  "k": "other",
+                  "ms": 0.1
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 2.4
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.2
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.2
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.2
+                },
+                {
+                  "k": "CommandBufferProxyImpl::Flush",
+                  "ms": 0.1
+                },
+                {
+                  "k": "FireAnimationFrame",
+                  "ms": 0.1
+                },
+                {
+                  "k": "WidgetBase::WillBeginMainFrame",
+                  "ms": 0
+                },
+                {
+                  "k": "v8.callFunction",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 1.6
+                },
+                {
+                  "k": "src/scene/arena.ts:878 update",
+                  "ms": 1.1
+                },
+                {
+                  "k": "three/build/three.module.js:4528 copyArray",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:6826 getParameters",
+                  "ms": 0.5
+                },
+                {
+                  "k": "three/build/three.module.js:4609 setValueV3f",
+                  "ms": 0.3
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "src/scene/arena.ts:934 loop",
+                  "ms": 2.4
+                },
+                {
+                  "k": "three/build/three.module.js:17021 setProgram",
+                  "ms": 1.3
+                },
+                {
+                  "k": "three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 1.3
+                },
+                {
+                  "k": "three/build/three.module.js:16843 renderObject",
+                  "ms": 1.3
+                },
+                {
+                  "k": "three/build/three.module.js:16814 renderObjects",
+                  "ms": 1.3
+                },
+                {
+                  "k": "three/build/three.module.js:16663 renderScene",
+                  "ms": 1.3
+                },
+                {
+                  "k": "three/build/three.module.js:16363 render",
+                  "ms": 1.3
+                },
+                {
+                  "k": "src/scene/arena.ts:912 renderOnce",
+                  "ms": 1.3
+                },
+                {
+                  "k": "src/scene/arena.ts:878 update",
+                  "ms": 1.1
+                },
+                {
+                  "k": "three/build/three.module.js:4528 copyArray",
+                  "ms": 0.6
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "CommandBufferService:PutChanged",
+                  "ms": 18.1
+                },
+                {
+                  "k": "FillRectOp",
+                  "ms": 11.7
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 5.8
+                },
+                {
+                  "k": "RasterDecoderImpl::DoRasterCHROMIUM::Deserializing",
+                  "ms": 3.3
+                },
+                {
+                  "k": "TextureOp",
+                  "ms": 2
+                },
+                {
+                  "k": "bool __cdecl GrGpu::writePixels(GrSurface *, SkIRect, GrColorType, GrColorType, const GrMipLevel *, int, bool)",
+                  "ms": 1.9
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 0.7
+                  },
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 0.5
+                  },
+                  {
+                    "k": "virtual void __cdecl (anonymous namespace)::FillRectOpImpl::onPrePrepareDraws(GrRecordingContext *, const GrSurfaceProxyView &, GrAppliedClip *, const GrDstProxyView &, GrXferBarrierFlags, GrLoadOp)",
+                    "ms": 0.3
+                  },
+                  {
+                    "k": "SurfaceDrawContext::addDrawOp",
+                    "ms": 0.2
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 15.6,
+            "dtMs": 66.6,
+            "tag": "clash",
+            "ctxStart": "2|RESOLVED|",
+            "ctxEnd": "2|RESOLVED|",
+            "loaf": [
+              {
+                "durationMs": 56,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 33.6,
+              "busyPct": 50,
+              "categories": [
+                {
+                  "k": "gc",
+                  "ms": 8.8
+                },
+                {
+                  "k": "script",
+                  "ms": 3
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 1
+                },
+                {
+                  "k": "style",
+                  "ms": 0.6
+                },
+                {
+                  "k": "other",
+                  "ms": 0.6
+                },
+                {
+                  "k": "gpu-ipc",
+                  "ms": 0.1
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 2.9
+                },
+                {
+                  "k": "V8.GC_MARK_COMPACTOR",
+                  "ms": 2
+                },
+                {
+                  "k": "V8.GC_HEAP_EMBEDDER_TRACING_EPILOGUE",
+                  "ms": 1.1
+                },
+                {
+                  "k": "V8.GC_MC_CLEAR_SWEEP_EXTERNAL_POINTER_TABLE",
+                  "ms": 1
+                },
+                {
+                  "k": "V8.GC_MC_EVACUATE_UPDATE_POINTERS_TO_NEW_ROOTS",
+                  "ms": 0.8
+                },
+                {
+                  "k": "V8.GC_MC_EVACUATE_UPDATE_POINTERS_POINTER_TABLES",
+                  "ms": 0.7
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.6
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 22.3
+                },
+                {
+                  "k": "(garbage collector)",
+                  "ms": 8.6
+                },
+                {
+                  "k": "three/build/three.module.js:1599 setup",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:4734 setValueM4",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.core.js:4777 applyMatrix4",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:17422 markUniformsLightsNeedsUpdate",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:16874 getProgram",
+                  "ms": 0.2
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "three/build/three.module.js:16363 render",
+                  "ms": 2.7
+                },
+                {
+                  "k": "src/scene/arena.ts:912 renderOnce",
+                  "ms": 2.7
+                },
+                {
+                  "k": "src/scene/arena.ts:934 loop",
+                  "ms": 2.7
+                },
+                {
+                  "k": "three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 2
+                },
+                {
+                  "k": "three/build/three.module.js:16843 renderObject",
+                  "ms": 2
+                },
+                {
+                  "k": "three/build/three.module.js:16814 renderObjects",
+                  "ms": 2
+                },
+                {
+                  "k": "three/build/three.module.js:16663 renderScene",
+                  "ms": 2
+                },
+                {
+                  "k": "three/build/three.module.js:17021 setProgram",
+                  "ms": 1.4
+                },
+                {
+                  "k": "three/build/three.module.js:1599 setup",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:4734 setValueM4",
+                  "ms": 0.6
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "FillRectOp",
+                  "ms": 17.3
+                },
+                {
+                  "k": "GrDrawingManager::flush",
+                  "ms": 9.3
+                },
+                {
+                  "k": "RasterDecoderImpl::DoRasterCHROMIUM::Deserializing",
+                  "ms": 3.4
+                },
+                {
+                  "k": "virtual GrRenderTask::ExecutionResult __cdecl skgpu::ganesh::OpsTask::onExecute(GrOpFlushState *)",
+                  "ms": 2.8
+                },
+                {
+                  "k": "SurfaceDrawContext::addDrawOp",
+                  "ms": 2.5
+                },
+                {
+                  "k": "TextureOp",
+                  "ms": 2.4
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "DirectRenderer::DrawRenderPass",
+                    "ms": 1.1
+                  },
+                  {
+                    "k": "Graphics.Pipeline",
+                    "ms": 0.7
+                  },
+                  {
+                    "k": "SurfaceDrawContext::addDrawOp",
+                    "ms": 0.4
+                  },
+                  {
+                    "k": "virtual void __cdecl (anonymous namespace)::FillRectOpImpl::onPrePrepareDraws(GrRecordingContext *, const GrSurfaceProxyView &, GrAppliedClip *, const GrDstProxyView &, GrXferBarrierFlags, GrLoadOp)",
+                    "ms": 0.3
+                  }
+                ]
+              }
+            },
+            "cause": "gc"
+          }
+        ]
+      }
+    }
+  ],
+  "rendererLabel": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+}

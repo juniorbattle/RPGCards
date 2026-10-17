@@ -1,0 +1,648 @@
+{
+  "commit": "b6f0c98",
+  "date": "2026-10-17T13:13:33.957Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "cores": 16,
+    "memGB": 31,
+    "platform": "win32 10.0.26200",
+    "node": "v22.14.0"
+  },
+  "chrome": "155.0.8059.80",
+  "gpu": true,
+  "chromeArgs": [
+    "--force_high_performance_gpu"
+  ],
+  "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "trace": false,
+  "traceCategories": null,
+  "maxTurns": 80,
+  "freshBrowserPerDuel": false,
+  "persistentProfile": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/be9911ea-dda9-4c96-861e-c0cef3c1d91a/scratchpad/pf-rtx",
+  "aiDelay": 650,
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "builds": [
+    {
+      "name": "avant",
+      "dir": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/be9911ea-dda9-4c96-861e-c0cef3c1d91a/scratchpad/dist-base"
+    },
+    {
+      "name": "apres",
+      "dir": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/be9911ea-dda9-4c96-861e-c0cef3c1d91a/scratchpad/dist-final"
+    }
+  ],
+  "drivers": [
+    "lean"
+  ],
+  "rounds": 3,
+  "runs": [
+    {
+      "name": "r1-avant-lean",
+      "round": 1,
+      "build": "avant",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 120,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19479,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 6.4,
+        "maxMs": 115.1,
+        "over16_7ms": 39,
+        "over33_3ms": 5,
+        "over50ms": 3,
+        "over100ms": 1
+      },
+      "byView": {
+        "A": {
+          "frames": 8044,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.4,
+          "maxMs": 115.1,
+          "over16_7ms": 12,
+          "over33_3ms": 2,
+          "over50ms": 1,
+          "over100ms": 1
+        },
+        "B": {
+          "frames": 727,
+          "medianMs": 6.1,
+          "p95Ms": 6.4,
+          "p99Ms": 18.2,
+          "maxMs": 30.3,
+          "over16_7ms": 10,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10708,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.4,
+          "maxMs": 66.6,
+          "over16_7ms": 17,
+          "over33_3ms": 3,
+          "over50ms": 2,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 4,
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/final-rtx4060-r1-avant-lean.page.json",
+      "hitches": {
+        "count": 3,
+        "over100": 1,
+        "byCause": {
+          "LoAF sans script": 3
+        },
+        "trace": null,
+        "hitches": [
+          {
+            "atS": 0.9,
+            "dtMs": 115.1,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 119,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 2,
+            "dtMs": 60.6,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|rank",
+            "ctxEnd": "1|REPEL|rank",
+            "loaf": [
+              {
+                "durationMs": 63,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 3.8,
+            "dtMs": 66.6,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 67,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          }
+        ]
+      }
+    },
+    {
+      "name": "r1-apres-lean",
+      "round": 1,
+      "build": "apres",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 121,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19493,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 6.4,
+        "maxMs": 115.2,
+        "over16_7ms": 26,
+        "over33_3ms": 3,
+        "over50ms": 3,
+        "over100ms": 1
+      },
+      "byView": {
+        "A": {
+          "frames": 8049,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.4,
+          "maxMs": 115.2,
+          "over16_7ms": 6,
+          "over33_3ms": 1,
+          "over50ms": 1,
+          "over100ms": 1
+        },
+        "B": {
+          "frames": 726,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 18.1,
+          "maxMs": 24.3,
+          "over16_7ms": 9,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10718,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.4,
+          "maxMs": 78.8,
+          "over16_7ms": 11,
+          "over33_3ms": 2,
+          "over50ms": 2,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 3,
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/final-rtx4060-r1-apres-lean.page.json",
+      "hitches": {
+        "count": 3,
+        "over100": 1,
+        "byCause": {
+          "LoAF sans script": 3
+        },
+        "trace": null,
+        "hitches": [
+          {
+            "atS": 0.9,
+            "dtMs": 115.2,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 120,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 2,
+            "dtMs": 78.8,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|rank",
+            "ctxEnd": "1|REPEL|rank",
+            "loaf": [
+              {
+                "durationMs": 80,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 1,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 3.7,
+            "dtMs": 72.7,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 76,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          }
+        ]
+      }
+    },
+    {
+      "name": "r2-apres-lean",
+      "round": 2,
+      "build": "apres",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 120,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19541,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 6.4,
+        "maxMs": 54.5,
+        "over16_7ms": 19,
+        "over33_3ms": 2,
+        "over50ms": 1,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 8070,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.4,
+          "maxMs": 54.5,
+          "over16_7ms": 7,
+          "over33_3ms": 1,
+          "over50ms": 1,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 715,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 18.1,
+          "maxMs": 24.2,
+          "over16_7ms": 8,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10756,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.3,
+          "maxMs": 36.3,
+          "over16_7ms": 4,
+          "over33_3ms": 1,
+          "over50ms": 0,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 1,
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/final-rtx4060-r2-apres-lean.page.json",
+      "hitches": {
+        "count": 1,
+        "over100": 0,
+        "byCause": {
+          "LoAF sans script": 1
+        },
+        "trace": null,
+        "hitches": [
+          {
+            "atS": 0.8,
+            "dtMs": 54.5,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 56,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          }
+        ]
+      }
+    },
+    {
+      "name": "r2-avant-lean",
+      "round": 2,
+      "build": "avant",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 120,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19553,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 6.3,
+        "maxMs": 30.3,
+        "over16_7ms": 17,
+        "over33_3ms": 0,
+        "over50ms": 0,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 8081,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.3,
+          "maxMs": 24.2,
+          "over16_7ms": 10,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 710,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 12.1,
+          "maxMs": 30.3,
+          "over16_7ms": 2,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10762,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.3,
+          "maxMs": 18.3,
+          "over16_7ms": 5,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 0,
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/final-rtx4060-r2-avant-lean.page.json",
+      "hitches": {
+        "count": 0,
+        "over100": 0,
+        "byCause": {},
+        "trace": null,
+        "hitches": []
+      }
+    },
+    {
+      "name": "r3-avant-lean",
+      "round": 3,
+      "build": "avant",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 120,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19554,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 6.3,
+        "maxMs": 30.3,
+        "over16_7ms": 23,
+        "over33_3ms": 0,
+        "over50ms": 0,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 8070,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.4,
+          "maxMs": 30.3,
+          "over16_7ms": 12,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 721,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 17.5,
+          "maxMs": 23.7,
+          "over16_7ms": 8,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10763,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.3,
+          "maxMs": 18.1,
+          "over16_7ms": 3,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 0,
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/final-rtx4060-r3-avant-lean.page.json",
+      "hitches": {
+        "count": 0,
+        "over100": 0,
+        "byCause": {},
+        "trace": null,
+        "hitches": []
+      }
+    },
+    {
+      "name": "r3-apres-lean",
+      "round": 3,
+      "build": "apres",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 120,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19540,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 6.3,
+        "maxMs": 48.4,
+        "over16_7ms": 18,
+        "over33_3ms": 3,
+        "over50ms": 0,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 8077,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.4,
+          "maxMs": 48.4,
+          "over16_7ms": 4,
+          "over33_3ms": 1,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 706,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 18.1,
+          "maxMs": 24.2,
+          "over16_7ms": 8,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10757,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.3,
+          "maxMs": 36.3,
+          "over16_7ms": 6,
+          "over33_3ms": 2,
+          "over50ms": 0,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 1,
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/final-rtx4060-r3-apres-lean.page.json",
+      "hitches": {
+        "count": 0,
+        "over100": 0,
+        "byCause": {},
+        "trace": null,
+        "hitches": []
+      }
+    }
+  ],
+  "rendererLabel": "Chrome headless, GPU réel : ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11) — arguments : --force_high_performance_gpu",
+  "summary": {
+    "avant": {
+      "duels": 3,
+      "over50": [
+        3,
+        0,
+        0
+      ],
+      "over100": [
+        1,
+        0,
+        0
+      ],
+      "maxMs": [
+        115.1,
+        30.3,
+        30.3
+      ],
+      "p99Ms": [
+        6.4,
+        6.3,
+        6.3
+      ],
+      "causes": {
+        "fil principal libre (GPU : Skia / compositeur)": 3
+      },
+      "over50Total": 3
+    },
+    "apres": {
+      "duels": 3,
+      "over50": [
+        3,
+        1,
+        0
+      ],
+      "over100": [
+        1,
+        0,
+        0
+      ],
+      "maxMs": [
+        115.2,
+        54.5,
+        48.4
+      ],
+      "p99Ms": [
+        6.4,
+        6.4,
+        6.3
+      ],
+      "causes": {
+        "fil principal libre (GPU : Skia / compositeur)": 4
+      },
+      "over50Total": 4
+    }
+  }
+}

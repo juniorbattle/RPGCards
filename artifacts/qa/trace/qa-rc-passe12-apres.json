@@ -1,0 +1,373 @@
+{
+  "commit": "b6f0c98",
+  "date": "2026-10-17T13:38:25.640Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "cores": 16
+  },
+  "renderer": "Chromium headless + SwiftShader (CPU) — jamais une mesure de GPU",
+  "runs": {
+    "I-sans-webgl": {
+      "checks": [
+        "OK WebGL réellement indisponible dans ce navigateur",
+        "OK repli CSS de l’arène (aucun canvas)",
+        "OK duel complet sans WebGL (9 tours)",
+        "OK résultat enregistré sans WebGL",
+        "OK aucune fuite de secret"
+      ],
+      "fails": [],
+      "consoleIssues": [],
+      "leaks": 0,
+      "ms": 16330
+    },
+    "J-longevite-12-duels": {
+      "checks": [
+        "OK textures GPU stables par rival sur 3 tours (20/20/20/20)",
+        "OK géométries stables par rival après la première image en vue B (53/54/53/53 ; 1re mesure 47)",
+        "OK aucune scène de Clash, plateau ni crochet résiduel hors duel",
+        "OK nœuds DOM stables au tableau (154–169)",
+        "OK tas JS après GC : 13.1 Mo (4e duel) → 14.6 Mo (12e)"
+      ],
+      "fails": [],
+      "consoleIssues": [],
+      "samples": [
+        {
+          "i": 1,
+          "rival": "braise",
+          "textures": 20,
+          "geometries": 47,
+          "heapMB": 10.3,
+          "dom": 154,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 2,
+          "rival": "ronce",
+          "textures": 20,
+          "geometries": 54,
+          "heapMB": 11.5,
+          "dom": 157,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 3,
+          "rival": "voile",
+          "textures": 20,
+          "geometries": 53,
+          "heapMB": 12.4,
+          "dom": 160,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 4,
+          "rival": "astre",
+          "textures": 20,
+          "geometries": 53,
+          "heapMB": 13.1,
+          "dom": 163,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 5,
+          "rival": "braise",
+          "textures": 20,
+          "geometries": 53,
+          "heapMB": 13.2,
+          "dom": 166,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 6,
+          "rival": "ronce",
+          "textures": 20,
+          "geometries": 54,
+          "heapMB": 13.4,
+          "dom": 169,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 7,
+          "rival": "voile",
+          "textures": 20,
+          "geometries": 53,
+          "heapMB": 13.7,
+          "dom": 169,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 8,
+          "rival": "astre",
+          "textures": 20,
+          "geometries": 53,
+          "heapMB": 13.8,
+          "dom": 169,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 9,
+          "rival": "braise",
+          "textures": 20,
+          "geometries": 53,
+          "heapMB": 14.1,
+          "dom": 169,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 10,
+          "rival": "ronce",
+          "textures": 20,
+          "geometries": 54,
+          "heapMB": 14.4,
+          "dom": 169,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 11,
+          "rival": "voile",
+          "textures": 20,
+          "geometries": 53,
+          "heapMB": 14.5,
+          "dom": 169,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 12,
+          "rival": "astre",
+          "textures": 20,
+          "geometries": 53,
+          "heapMB": 14.6,
+          "dom": 169,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        }
+      ],
+      "ms": 38125
+    },
+    "K-moteur-independant-des-animations": {
+      "checks": [
+        "OK séquences de résolution jouées en entier (6, scènes de Clash 6)",
+        "OK rejeu hors navigateur : même hash (bdd000d52e9af80c, 41 commandes)",
+        "OK duel en cours sauvegardé = enregistrement du moteur"
+      ],
+      "fails": [],
+      "consoleIssues": [],
+      "sequencesWatched": 6,
+      "replay": {
+        "hash": "bdd000d52e9af80c",
+        "phase": "PREPARE",
+        "turn": 7,
+        "winner": null,
+        "commands": 41
+      },
+      "ms": 76974
+    },
+    "L-mode-demo-reversible": {
+      "checks": [
+        "OK démo : Signature Astre, Rupture + Dissipation, 8 variantes enregistrées",
+        "OK le moteur reçoit exactement ce deck (17 cartes, Signature et Techniques)",
+        "OK retour en progression : deck signalé illégal",
+        "OK et refusé au lancement",
+        "OK historique intact (le mode démo ne touche pas aux résultats)"
+      ],
+      "fails": [],
+      "consoleIssues": [],
+      "ms": 4210
+    },
+    "M-stockage-refuse": {
+      "checks": [
+        "OK accueil : stockage indisponible signalé",
+        "OK au plus un message d’échec d’écriture (1)",
+        "OK la partie continue en mémoire (résultat présent)"
+      ],
+      "fails": [],
+      "consoleIssues": [],
+      "ms": 4356
+    },
+    "N-recommencer-effacer-confirmes": {
+      "checks": [
+        "OK Recommencer annulé : profil conservé",
+        "OK Recommencer confirmé : nouveau profil",
+        "OK l’ancien profil reste en copie de secours",
+        "OK Effacer annulé : sauvegarde conservée",
+        "OK Effacer confirmé : plus de sauvegarde, accueil vierge"
+      ],
+      "fails": [],
+      "consoleIssues": [],
+      "ms": 2317
+    },
+    "S-contraste-ecrans": {
+      "checks": [
+        "OK accueil vide : 9 textes, min 7.5:1",
+        "OK nouveau duelliste : 51 textes, min 7:1",
+        "OK rencontres : 60 textes, min 6.5:1",
+        "ÉCHEC deck : 106 textes, min 3.5:1 — sous le seuil : rank « II » 3.6:1 ; rank « II » 3.5:1 ; rank « II » 3.6:1",
+        "OK collection : 190 textes, min 5:1",
+        "OK préparation : 34 textes, min 7.1:1",
+        "OK menu du duel : 8 textes, min 9.1:1",
+        "OK options (duel) : 26 textes, min 9.1:1",
+        "OK résultat : 16 textes, min 7:1",
+        "OK accueil avec sauvegarde : 15 textes, min 7.6:1",
+        "OK aide : 16 textes, min 10.8:1"
+      ],
+      "fails": [
+        "deck : 106 textes, min 3.5:1 — sous le seuil : rank « II » 3.6:1 ; rank « II » 3.5:1 ; rank « II » 3.6:1"
+      ],
+      "consoleIssues": [],
+      "screens": {
+        "accueil vide": {
+          "textes": 9,
+          "min": 7.5,
+          "sousSeuil": [],
+          "desactives": 0,
+          "minDesactives": null
+        },
+        "nouveau duelliste": {
+          "textes": 51,
+          "min": 7,
+          "sousSeuil": [],
+          "desactives": 0,
+          "minDesactives": null
+        },
+        "rencontres": {
+          "textes": 60,
+          "min": 6.5,
+          "sousSeuil": [],
+          "desactives": 0,
+          "minDesactives": null
+        },
+        "deck": {
+          "textes": 106,
+          "min": 3.5,
+          "sousSeuil": [
+            "rank « II » 3.6:1",
+            "rank « II » 3.5:1",
+            "rank « II » 3.6:1"
+          ],
+          "desactives": 12,
+          "minDesactives": 6.5
+        },
+        "collection": {
+          "textes": 190,
+          "min": 5,
+          "sousSeuil": [],
+          "desactives": 0,
+          "minDesactives": null
+        },
+        "préparation": {
+          "textes": 34,
+          "min": 7.1,
+          "sousSeuil": [],
+          "desactives": 0,
+          "minDesactives": null
+        },
+        "menu du duel": {
+          "textes": 8,
+          "min": 9.1,
+          "sousSeuil": [],
+          "desactives": 0,
+          "minDesactives": null
+        },
+        "options (duel)": {
+          "textes": 26,
+          "min": 9.1,
+          "sousSeuil": [],
+          "desactives": 2,
+          "minDesactives": 4.4
+        },
+        "résultat": {
+          "textes": 16,
+          "min": 7,
+          "sousSeuil": [],
+          "desactives": 0,
+          "minDesactives": null
+        },
+        "accueil avec sauvegarde": {
+          "textes": 15,
+          "min": 7.6,
+          "sousSeuil": [],
+          "desactives": 0,
+          "minDesactives": null
+        },
+        "aide": {
+          "textes": 16,
+          "min": 10.8,
+          "sousSeuil": [],
+          "desactives": 0,
+          "minDesactives": null
+        }
+      },
+      "ms": 9373
+    },
+    "T-clavier-seul": {
+      "checks": [
+        "OK focus initial sur l’action principale (home-new)",
+        "OK création : focus sur « Créer le duelliste »",
+        "OK rencontres : « Jouer la manche » atteint au Tab",
+        "OK préparation : focus sur « Commencer le duel »",
+        "OK Échap sur un écran de jeu ne fait rien perdre",
+        "OK duel joué au clavier (2 engagement(s), 2 tour(s))"
+      ],
+      "fails": [],
+      "consoleIssues": [],
+      "ms": 4026
+    },
+    "P-cout-cpu-ecrans": {
+      "checks": [
+        "OK accueil : aucune image 3D calculée pendant 4 s (scène figée ; 0 image)",
+        "OK duel : la scène est rendue en continu (36 images en 4 s)"
+      ],
+      "fails": [],
+      "consoleIssues": [],
+      "homeReadyMs": 1357,
+      "cpu": {
+        "accueil": 0,
+        "rencontres": 0,
+        "preparation": 0,
+        "duel": 22
+      },
+      "framesAccueil": 0,
+      "arena": {
+        "frame": 63,
+        "fps": 9.5,
+        "frameMs": 1.87,
+        "drawCalls": 71,
+        "triangles": 1556,
+        "textures": 21,
+        "geometries": 48,
+        "view": "A",
+        "blend": 0,
+        "portrait": false,
+        "rival": {
+          "mood": "confident",
+          "gesture": null,
+          "cause": "vous observe"
+        }
+      },
+      "framesDuel4s": 36,
+      "ms": 23422
+    }
+  }
+}

@@ -1,0 +1,470 @@
+{
+  "commit": "b6f0c98",
+  "date": "2026-10-17T11:26:40.606Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "cores": 16,
+    "memGB": 31,
+    "platform": "win32 10.0.26200",
+    "node": "v22.14.0"
+  },
+  "chrome": "155.0.8059.80",
+  "gpu": true,
+  "chromeArgs": [],
+  "renderer": "ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "trace": false,
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "builds": [
+    {
+      "name": "courant",
+      "dir": "dist"
+    }
+  ],
+  "drivers": [
+    "lean"
+  ],
+  "rounds": 1,
+  "runs": [
+    {
+      "name": "r1-courant-lean",
+      "round": 1,
+      "build": "courant",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e075a96b",
+      "durationS": 106,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 16410,
+        "medianMs": 6.1,
+        "p95Ms": 6.3,
+        "p99Ms": 18.1,
+        "maxMs": 218.1,
+        "over16_7ms": 181,
+        "over33_3ms": 31,
+        "over50ms": 18,
+        "over100ms": 3
+      },
+      "byView": {
+        "A": {
+          "frames": 5359,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 12.2,
+          "maxMs": 218.1,
+          "over16_7ms": 35,
+          "over33_3ms": 7,
+          "over50ms": 5,
+          "over100ms": 2
+        },
+        "B": {
+          "frames": 713,
+          "medianMs": 6.1,
+          "p95Ms": 18.2,
+          "p99Ms": 42.4,
+          "maxMs": 78.7,
+          "over16_7ms": 57,
+          "over33_3ms": 13,
+          "over50ms": 5,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10338,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 12.2,
+          "maxMs": 103,
+          "over16_7ms": 89,
+          "over33_3ms": 11,
+          "over50ms": 8,
+          "over100ms": 1
+        }
+      },
+      "loafCount": 17,
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/r1-courant-lean.page.json",
+      "hitches": {
+        "count": 18,
+        "over100": 3,
+        "byCause": {
+          "aucune LoAF (attente hors fil principal ?)": 1,
+          "script : src/presentation/board.ts:493 ": 1,
+          "LoAF sans script": 12,
+          "script : src/presentation/board.ts:515 ": 2,
+          "script : src/scene/arena.ts:920 loop": 1,
+          "script : src/presentation/board.ts:554 ": 1
+        },
+        "trace": null,
+        "hitches": [
+          {
+            "atS": 0.3,
+            "dtMs": 59.8,
+            "tag": "B",
+            "ctxStart": "1|START|",
+            "ctxEnd": "1|START|",
+            "loaf": [],
+            "cause": "aucune LoAF (attente hors fil principal ?)"
+          },
+          {
+            "atS": 0.3,
+            "dtMs": 61.3,
+            "tag": "B",
+            "ctxStart": "1|START|",
+            "ctxEnd": "1|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 56,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": [
+                  {
+                    "ms": 38,
+                    "invoker": "BUTTON.onclick",
+                    "type": "event-listener",
+                    "fn": "src/presentation/board.ts:493 ",
+                    "forcedStyleLayoutMs": 21
+                  }
+                ]
+              }
+            ],
+            "cause": "script : src/presentation/board.ts:493 "
+          },
+          {
+            "atS": 0.5,
+            "dtMs": 54.5,
+            "tag": "B",
+            "ctxStart": "1|COMMIT|",
+            "ctxEnd": "1|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 56,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 5,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 1,
+            "dtMs": 97.1,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 104,
+                "blockingMs": 47,
+                "styleLayoutMs": 0,
+                "renderMs": 40,
+                "scripts": [
+                  {
+                    "ms": 55,
+                    "invoker": "BUTTON.onclick",
+                    "type": "event-listener",
+                    "fn": "src/presentation/board.ts:515 ",
+                    "forcedStyleLayoutMs": 23
+                  },
+                  {
+                    "ms": 40,
+                    "invoker": "FrameRequestCallback",
+                    "type": "user-callback",
+                    "fn": "src/scene/arena.ts:920 loop",
+                    "forcedStyleLayoutMs": 0
+                  }
+                ]
+              }
+            ],
+            "cause": "script : src/presentation/board.ts:515 "
+          },
+          {
+            "atS": 1.3,
+            "dtMs": 218.1,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 216,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 5,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 1.6,
+            "dtMs": 67.1,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 62,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 2.3,
+            "dtMs": 91.3,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|rank",
+            "ctxEnd": "1|REPEL|rank",
+            "loaf": [
+              {
+                "durationMs": 96,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 3,
+            "dtMs": 54.5,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|rank",
+            "ctxEnd": "1|REPEL|rank",
+            "loaf": [
+              {
+                "durationMs": 56,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 3.9,
+            "dtMs": 54.6,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 56,
+                "blockingMs": 6,
+                "styleLayoutMs": 0,
+                "renderMs": 45,
+                "scripts": [
+                  {
+                    "ms": 43,
+                    "invoker": "FrameRequestCallback",
+                    "type": "user-callback",
+                    "fn": "src/scene/arena.ts:920 loop",
+                    "forcedStyleLayoutMs": 0
+                  },
+                  {
+                    "ms": 12,
+                    "invoker": "TimerHandler:setTimeout",
+                    "type": "user-callback",
+                    "fn": "src/app/controller.ts:300 ",
+                    "forcedStyleLayoutMs": 5
+                  }
+                ]
+              }
+            ],
+            "cause": "script : src/scene/arena.ts:920 loop"
+          },
+          {
+            "atS": 4,
+            "dtMs": 103,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 102,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 4.7,
+            "dtMs": 66.7,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 65,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 5.7,
+            "dtMs": 66.7,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|insight",
+            "ctxEnd": "1|REPEL|insight",
+            "loaf": [
+              {
+                "durationMs": 64,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 6.9,
+            "dtMs": 72.8,
+            "tag": "clash",
+            "ctxStart": "1|RESOLVED|",
+            "ctxEnd": "1|RESOLVED|",
+            "loaf": [
+              {
+                "durationMs": 75,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 8.2,
+            "dtMs": 103.5,
+            "tag": "A",
+            "ctxStart": "2|COMMIT|",
+            "ctxEnd": "2|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 112,
+                "blockingMs": 55,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": [
+                  {
+                    "ms": 99,
+                    "invoker": "BUTTON.onclick",
+                    "type": "event-listener",
+                    "fn": "src/presentation/board.ts:554 ",
+                    "forcedStyleLayoutMs": 18
+                  }
+                ]
+              }
+            ],
+            "cause": "script : src/presentation/board.ts:554 "
+          },
+          {
+            "atS": 8.4,
+            "dtMs": 66.7,
+            "tag": "B",
+            "ctxStart": "2|COMMIT|",
+            "ctxEnd": "2|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 63,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 9.7,
+            "dtMs": 84.7,
+            "tag": "A",
+            "ctxStart": "2|RESOLVED|tactics",
+            "ctxEnd": "2|RESOLVED|tactics",
+            "loaf": [
+              {
+                "durationMs": 85,
+                "blockingMs": 34,
+                "styleLayoutMs": 0,
+                "renderMs": 9,
+                "scripts": [
+                  {
+                    "ms": 70,
+                    "invoker": "BUTTON.onclick",
+                    "type": "event-listener",
+                    "fn": "src/presentation/board.ts:515 ",
+                    "forcedStyleLayoutMs": 19
+                  },
+                  {
+                    "ms": 9,
+                    "invoker": "FrameRequestCallback",
+                    "type": "user-callback",
+                    "fn": "src/scene/arena.ts:920 loop",
+                    "forcedStyleLayoutMs": 0
+                  }
+                ]
+              }
+            ],
+            "cause": "script : src/presentation/board.ts:515 "
+          },
+          {
+            "atS": 10.9,
+            "dtMs": 60.6,
+            "tag": "clash",
+            "ctxStart": "2|RESOLVED|rank",
+            "ctxEnd": "2|RESOLVED|rank",
+            "loaf": [
+              {
+                "durationMs": 59,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 102.9,
+            "dtMs": 78.7,
+            "tag": "B",
+            "ctxStart": "13|COMMIT|",
+            "ctxEnd": "13|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 80,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 1,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          }
+        ]
+      }
+    }
+  ],
+  "rendererLabel": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+}

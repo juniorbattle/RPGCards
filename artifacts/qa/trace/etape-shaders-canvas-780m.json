@@ -1,0 +1,1530 @@
+{
+  "commit": "b6f0c98",
+  "date": "2026-10-17T12:26:44.861Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "cores": 16,
+    "memGB": 31,
+    "platform": "win32 10.0.26200",
+    "node": "v22.14.0"
+  },
+  "chrome": "155.0.8059.80",
+  "gpu": true,
+  "chromeArgs": [],
+  "renderer": "ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "trace": false,
+  "traceCategories": null,
+  "maxTurns": 80,
+  "freshBrowserPerDuel": false,
+  "persistentProfile": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/be9911ea-dda9-4c96-861e-c0cef3c1d91a/scratchpad/prof-780m",
+  "aiDelay": 650,
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "builds": [
+    {
+      "name": "avant",
+      "dir": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/be9911ea-dda9-4c96-861e-c0cef3c1d91a/scratchpad/dist-base"
+    },
+    {
+      "name": "apres",
+      "dir": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/be9911ea-dda9-4c96-861e-c0cef3c1d91a/scratchpad/dist-full"
+    }
+  ],
+  "drivers": [
+    "lean"
+  ],
+  "rounds": 3,
+  "runs": [
+    {
+      "name": "r1-avant-lean",
+      "round": 1,
+      "build": "avant",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 123,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 13593,
+        "medianMs": 6.1,
+        "p95Ms": 18.3,
+        "p99Ms": 30.3,
+        "maxMs": 163.7,
+        "over16_7ms": 1532,
+        "over33_3ms": 115,
+        "over50ms": 12,
+        "over100ms": 3
+      },
+      "byView": {
+        "A": {
+          "frames": 5288,
+          "medianMs": 6.1,
+          "p95Ms": 18.3,
+          "p99Ms": 30.3,
+          "maxMs": 163.7,
+          "over16_7ms": 618,
+          "over33_3ms": 45,
+          "over50ms": 6,
+          "over100ms": 1
+        },
+        "B": {
+          "frames": 714,
+          "medianMs": 6.1,
+          "p95Ms": 36.3,
+          "p99Ms": 42.5,
+          "maxMs": 54.5,
+          "over16_7ms": 152,
+          "over33_3ms": 39,
+          "over50ms": 1,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 7591,
+          "medianMs": 6.1,
+          "p95Ms": 18.2,
+          "p99Ms": 24.4,
+          "maxMs": 109.1,
+          "over16_7ms": 762,
+          "over33_3ms": 31,
+          "over50ms": 5,
+          "over100ms": 2
+        }
+      },
+      "loafCount": 22,
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/r1-avant-lean.page.json",
+      "hitches": {
+        "count": 12,
+        "over100": 3,
+        "byCause": {
+          "script : base/src/presentation/drag.ts:118 up": 1,
+          "script : base/src/app/controller.ts:531 run": 2,
+          "LoAF sans script": 5,
+          "script : base/src/presentation/board.ts:515 ": 1,
+          "script : base/src/presentation/board.ts:554 ": 1,
+          "script : base/src/scene/arena.ts:920 loop": 2
+        },
+        "trace": null,
+        "hitches": [
+          {
+            "atS": 0.3,
+            "dtMs": 54.5,
+            "tag": "B",
+            "ctxStart": "1|COMMIT|",
+            "ctxEnd": "1|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 55,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 4,
+                "scripts": [
+                  {
+                    "ms": 10,
+                    "invoker": "DOMWindow.onpointerup",
+                    "type": "event-listener",
+                    "fn": "base/src/presentation/drag.ts:118 up",
+                    "forcedStyleLayoutMs": 5
+                  }
+                ]
+              }
+            ],
+            "cause": "script : base/src/presentation/drag.ts:118 up"
+          },
+          {
+            "atS": 1,
+            "dtMs": 96.9,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 107,
+                "blockingMs": 47,
+                "styleLayoutMs": 0,
+                "renderMs": 39,
+                "scripts": [
+                  {
+                    "ms": 58,
+                    "invoker": "TimerHandler:setTimeout",
+                    "type": "user-callback",
+                    "fn": "base/src/app/controller.ts:531 run",
+                    "forcedStyleLayoutMs": 22
+                  },
+                  {
+                    "ms": 37,
+                    "invoker": "FrameRequestCallback",
+                    "type": "user-callback",
+                    "fn": "base/src/scene/arena.ts:920 loop",
+                    "forcedStyleLayoutMs": 0
+                  }
+                ]
+              }
+            ],
+            "cause": "script : base/src/app/controller.ts:531 run"
+          },
+          {
+            "atS": 1.1,
+            "dtMs": 163.7,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 167,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 5,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 2.2,
+            "dtMs": 109.1,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|rank",
+            "ctxEnd": "1|REPEL|rank",
+            "loaf": [
+              {
+                "durationMs": 108,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 4,
+            "dtMs": 103,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 102,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 6.8,
+            "dtMs": 66.5,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|",
+            "ctxEnd": "1|REPEL|",
+            "loaf": [
+              {
+                "durationMs": 67,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 1,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 8.7,
+            "dtMs": 54.4,
+            "tag": "A",
+            "ctxStart": "2|PREPARE|",
+            "ctxEnd": "2|PREPARE|",
+            "loaf": [
+              {
+                "durationMs": 53,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 10.7,
+            "dtMs": 66.6,
+            "tag": "A",
+            "ctxStart": "2|TACTICS|",
+            "ctxEnd": "2|TACTICS|",
+            "loaf": [
+              {
+                "durationMs": 76,
+                "blockingMs": 21,
+                "styleLayoutMs": 0,
+                "renderMs": 7,
+                "scripts": [
+                  {
+                    "ms": 62,
+                    "invoker": "BUTTON.onclick",
+                    "type": "event-listener",
+                    "fn": "base/src/presentation/board.ts:515 ",
+                    "forcedStyleLayoutMs": 7
+                  },
+                  {
+                    "ms": 7,
+                    "invoker": "FrameRequestCallback",
+                    "type": "user-callback",
+                    "fn": "base/src/scene/arena.ts:920 loop",
+                    "forcedStyleLayoutMs": 0
+                  }
+                ]
+              }
+            ],
+            "cause": "script : base/src/presentation/board.ts:515 "
+          },
+          {
+            "atS": 70.3,
+            "dtMs": 72.8,
+            "tag": "A",
+            "ctxStart": "8|PREPARE|",
+            "ctxEnd": "8|PREPARE|",
+            "loaf": [
+              {
+                "durationMs": 89,
+                "blockingMs": 38,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": [
+                  {
+                    "ms": 83,
+                    "invoker": "BUTTON.onclick",
+                    "type": "event-listener",
+                    "fn": "base/src/presentation/board.ts:554 ",
+                    "forcedStyleLayoutMs": 4
+                  }
+                ]
+              }
+            ],
+            "cause": "script : base/src/presentation/board.ts:554 "
+          },
+          {
+            "atS": 85.9,
+            "dtMs": 60.7,
+            "tag": "A",
+            "ctxStart": "10|TACTICS|",
+            "ctxEnd": "10|TACTICS|",
+            "loaf": [
+              {
+                "durationMs": 66,
+                "blockingMs": 15,
+                "styleLayoutMs": 0,
+                "renderMs": 9,
+                "scripts": [
+                  {
+                    "ms": 56,
+                    "invoker": "TimerHandler:setTimeout",
+                    "type": "user-callback",
+                    "fn": "base/src/app/controller.ts:531 run",
+                    "forcedStyleLayoutMs": 5
+                  },
+                  {
+                    "ms": 6,
+                    "invoker": "FrameRequestCallback",
+                    "type": "user-callback",
+                    "fn": "base/src/scene/arena.ts:920 loop",
+                    "forcedStyleLayoutMs": 0
+                  }
+                ]
+              }
+            ],
+            "cause": "script : base/src/app/controller.ts:531 run"
+          },
+          {
+            "atS": 89.5,
+            "dtMs": 54.4,
+            "tag": "clash",
+            "ctxStart": "10|RESOLVED|outcome",
+            "ctxEnd": "10|RESOLVED|outcome",
+            "loaf": [
+              {
+                "durationMs": 54,
+                "blockingMs": 3,
+                "styleLayoutMs": 0,
+                "renderMs": 47,
+                "scripts": [
+                  {
+                    "ms": 46,
+                    "invoker": "FrameRequestCallback",
+                    "type": "user-callback",
+                    "fn": "base/src/scene/arena.ts:920 loop",
+                    "forcedStyleLayoutMs": 0
+                  },
+                  {
+                    "ms": 7,
+                    "invoker": "TimerHandler:setTimeout",
+                    "type": "user-callback",
+                    "fn": "base/src/app/controller.ts:300 ",
+                    "forcedStyleLayoutMs": 3
+                  }
+                ]
+              }
+            ],
+            "cause": "script : base/src/scene/arena.ts:920 loop"
+          },
+          {
+            "atS": 102.1,
+            "dtMs": 54.3,
+            "tag": "clash",
+            "ctxStart": "11|RESOLVED|damage",
+            "ctxEnd": "11|RESOLVED|damage",
+            "loaf": [
+              {
+                "durationMs": 68,
+                "blockingMs": 7,
+                "styleLayoutMs": 0,
+                "renderMs": 52,
+                "scripts": [
+                  {
+                    "ms": 50,
+                    "invoker": "FrameRequestCallback",
+                    "type": "user-callback",
+                    "fn": "base/src/scene/arena.ts:920 loop",
+                    "forcedStyleLayoutMs": 0
+                  }
+                ]
+              }
+            ],
+            "cause": "script : base/src/scene/arena.ts:920 loop"
+          }
+        ]
+      }
+    },
+    {
+      "name": "r1-apres-lean",
+      "round": 1,
+      "build": "apres",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 122,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 14412,
+        "medianMs": 6.1,
+        "p95Ms": 18.2,
+        "p99Ms": 30.2,
+        "maxMs": 175.7,
+        "over16_7ms": 1065,
+        "over33_3ms": 87,
+        "over50ms": 16,
+        "over100ms": 2
+      },
+      "byView": {
+        "A": {
+          "frames": 5806,
+          "medianMs": 6.1,
+          "p95Ms": 18.2,
+          "p99Ms": 24.5,
+          "maxMs": 175.7,
+          "over16_7ms": 394,
+          "over33_3ms": 29,
+          "over50ms": 6,
+          "over100ms": 1
+        },
+        "B": {
+          "frames": 683,
+          "medianMs": 6.1,
+          "p95Ms": 30.3,
+          "p99Ms": 48.4,
+          "maxMs": 66.8,
+          "over16_7ms": 140,
+          "over33_3ms": 29,
+          "over50ms": 5,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 7923,
+          "medianMs": 6.1,
+          "p95Ms": 18.1,
+          "p99Ms": 24.2,
+          "maxMs": 163.6,
+          "over16_7ms": 531,
+          "over33_3ms": 29,
+          "over50ms": 5,
+          "over100ms": 1
+        }
+      },
+      "loafCount": 15,
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/r1-apres-lean.page.json",
+      "hitches": {
+        "count": 16,
+        "over100": 2,
+        "byCause": {
+          "aucune LoAF (attente hors fil principal ?)": 2,
+          "script : src/presentation/board.ts:493 ": 1,
+          "script : src/presentation/board.ts:306 ": 1,
+          "LoAF sans script": 10,
+          "script : src/presentation/board.ts:499 ": 1,
+          "script : src/app/controller.ts:531 run": 1
+        },
+        "trace": null,
+        "hitches": [
+          {
+            "atS": 0.2,
+            "dtMs": 54.6,
+            "tag": "B",
+            "ctxStart": "1|START|",
+            "ctxEnd": "1|START|",
+            "loaf": [],
+            "cause": "aucune LoAF (attente hors fil principal ?)"
+          },
+          {
+            "atS": 0.2,
+            "dtMs": 66.8,
+            "tag": "B",
+            "ctxStart": "1|START|",
+            "ctxEnd": "1|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 69,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": [
+                  {
+                    "ms": 16,
+                    "invoker": "BUTTON.onclick",
+                    "type": "event-listener",
+                    "fn": "src/presentation/board.ts:493 ",
+                    "forcedStyleLayoutMs": 9
+                  }
+                ]
+              }
+            ],
+            "cause": "script : src/presentation/board.ts:493 "
+          },
+          {
+            "atS": 0.3,
+            "dtMs": 54.7,
+            "tag": "B",
+            "ctxStart": "1|COMMIT|",
+            "ctxEnd": "1|COMMIT|",
+            "loaf": [],
+            "cause": "aucune LoAF (attente hors fil principal ?)"
+          },
+          {
+            "atS": 0.4,
+            "dtMs": 54.6,
+            "tag": "B",
+            "ctxStart": "1|COMMIT|",
+            "ctxEnd": "1|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 58,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 4,
+                "scripts": [
+                  {
+                    "ms": 14,
+                    "invoker": "DIV.onclick",
+                    "type": "event-listener",
+                    "fn": "src/presentation/board.ts:306 ",
+                    "forcedStyleLayoutMs": 9
+                  }
+                ]
+              }
+            ],
+            "cause": "script : src/presentation/board.ts:306 "
+          },
+          {
+            "atS": 1.1,
+            "dtMs": 175.7,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 176,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 2.2,
+            "dtMs": 90.5,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|rank",
+            "ctxEnd": "1|REPEL|rank",
+            "loaf": [
+              {
+                "durationMs": 93,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 4,
+            "dtMs": 163.6,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 166,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 4.5,
+            "dtMs": 78.9,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 78,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 8.6,
+            "dtMs": 66.6,
+            "tag": "A",
+            "ctxStart": "2|PREPARE|",
+            "ctxEnd": "2|PREPARE|",
+            "loaf": [
+              {
+                "durationMs": 68,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 17.5,
+            "dtMs": 54.5,
+            "tag": "clash",
+            "ctxStart": "2|RESOLVED|",
+            "ctxEnd": "2|RESOLVED|",
+            "loaf": [
+              {
+                "durationMs": 52,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 18.9,
+            "dtMs": 54.6,
+            "tag": "A",
+            "ctxStart": "3|PREPARE|",
+            "ctxEnd": "3|PREPARE|",
+            "loaf": [
+              {
+                "durationMs": 52,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": [
+                  {
+                    "ms": 14,
+                    "invoker": "BUTTON.onclick",
+                    "type": "event-listener",
+                    "fn": "src/presentation/board.ts:499 ",
+                    "forcedStyleLayoutMs": 8
+                  }
+                ]
+              }
+            ],
+            "cause": "script : src/presentation/board.ts:499 "
+          },
+          {
+            "atS": 19.5,
+            "dtMs": 66.6,
+            "tag": "B",
+            "ctxStart": "3|COMMIT|",
+            "ctxEnd": "3|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 66,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 20.8,
+            "dtMs": 60.5,
+            "tag": "A",
+            "ctxStart": "3|RESOLVED|tactics",
+            "ctxEnd": "3|RESOLVED|tactics",
+            "loaf": [
+              {
+                "durationMs": 59,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 44.7,
+            "dtMs": 66.5,
+            "tag": "clash",
+            "ctxStart": "5|REPEL|outcome",
+            "ctxEnd": "5|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 62,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 85.3,
+            "dtMs": 54.4,
+            "tag": "A",
+            "ctxStart": "10|TACTICS|",
+            "ctxEnd": "10|TACTICS|",
+            "loaf": [
+              {
+                "durationMs": 52,
+                "blockingMs": 2,
+                "styleLayoutMs": 1,
+                "renderMs": 11,
+                "scripts": [
+                  {
+                    "ms": 41,
+                    "invoker": "TimerHandler:setTimeout",
+                    "type": "user-callback",
+                    "fn": "src/app/controller.ts:531 run",
+                    "forcedStyleLayoutMs": 6
+                  }
+                ]
+              }
+            ],
+            "cause": "script : src/app/controller.ts:531 run"
+          },
+          {
+            "atS": 115.1,
+            "dtMs": 60.7,
+            "tag": "A",
+            "ctxStart": "12|RESOLVED|",
+            "ctxEnd": "12|RESOLVED|",
+            "loaf": [
+              {
+                "durationMs": 55,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          }
+        ]
+      }
+    },
+    {
+      "name": "r2-apres-lean",
+      "round": 2,
+      "build": "apres",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 121,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 15275,
+        "medianMs": 6.1,
+        "p95Ms": 18.2,
+        "p99Ms": 24.2,
+        "maxMs": 66.8,
+        "over16_7ms": 1030,
+        "over33_3ms": 39,
+        "over50ms": 4,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 6435,
+          "medianMs": 6.1,
+          "p95Ms": 18,
+          "p99Ms": 24.2,
+          "maxMs": 66.7,
+          "over16_7ms": 333,
+          "over33_3ms": 8,
+          "over50ms": 1,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 670,
+          "medianMs": 6.1,
+          "p95Ms": 24.3,
+          "p99Ms": 42.3,
+          "maxMs": 66.8,
+          "over16_7ms": 117,
+          "over33_3ms": 13,
+          "over50ms": 2,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 8170,
+          "medianMs": 6.1,
+          "p95Ms": 18.2,
+          "p99Ms": 24.2,
+          "maxMs": 60.5,
+          "over16_7ms": 580,
+          "over33_3ms": 18,
+          "over50ms": 1,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 6,
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/r2-apres-lean.page.json",
+      "hitches": {
+        "count": 4,
+        "over100": 0,
+        "byCause": {
+          "LoAF sans script": 2,
+          "script : src/presentation/drag.ts:118 up": 1,
+          "script : src/scene/arena.ts:934 loop": 1
+        },
+        "trace": null,
+        "hitches": [
+          {
+            "atS": 0.2,
+            "dtMs": 66.8,
+            "tag": "B",
+            "ctxStart": "1|START|",
+            "ctxEnd": "1|START|",
+            "loaf": [
+              {
+                "durationMs": 56,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 0.3,
+            "dtMs": 54.5,
+            "tag": "B",
+            "ctxStart": "1|COMMIT|",
+            "ctxEnd": "1|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 54,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 7,
+                "scripts": [
+                  {
+                    "ms": 12,
+                    "invoker": "DOMWindow.onpointerup",
+                    "type": "event-listener",
+                    "fn": "src/presentation/drag.ts:118 up",
+                    "forcedStyleLayoutMs": 7
+                  }
+                ]
+              }
+            ],
+            "cause": "script : src/presentation/drag.ts:118 up"
+          },
+          {
+            "atS": 0.9,
+            "dtMs": 66.7,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 77,
+                "blockingMs": 25,
+                "styleLayoutMs": 0,
+                "renderMs": 40,
+                "scripts": [
+                  {
+                    "ms": 38,
+                    "invoker": "FrameRequestCallback",
+                    "type": "user-callback",
+                    "fn": "src/scene/arena.ts:934 loop",
+                    "forcedStyleLayoutMs": 0
+                  },
+                  {
+                    "ms": 35,
+                    "invoker": "TimerHandler:setTimeout",
+                    "type": "user-callback",
+                    "fn": "src/app/controller.ts:531 run",
+                    "forcedStyleLayoutMs": 19
+                  }
+                ]
+              }
+            ],
+            "cause": "script : src/scene/arena.ts:934 loop"
+          },
+          {
+            "atS": 33.3,
+            "dtMs": 60.5,
+            "tag": "clash",
+            "ctxStart": "4|RESOLVED|outcome",
+            "ctxEnd": "4|RESOLVED|outcome",
+            "loaf": [
+              {
+                "durationMs": 61,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          }
+        ]
+      }
+    },
+    {
+      "name": "r2-avant-lean",
+      "round": 2,
+      "build": "avant",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 121,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 17574,
+        "medianMs": 6.1,
+        "p95Ms": 12.1,
+        "p99Ms": 18.2,
+        "maxMs": 78.7,
+        "over16_7ms": 301,
+        "over33_3ms": 16,
+        "over50ms": 2,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 7109,
+          "medianMs": 6.1,
+          "p95Ms": 12.1,
+          "p99Ms": 18.2,
+          "maxMs": 78.7,
+          "over16_7ms": 121,
+          "over33_3ms": 8,
+          "over50ms": 2,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 704,
+          "medianMs": 6.1,
+          "p95Ms": 18.3,
+          "p99Ms": 30.3,
+          "maxMs": 36.5,
+          "over16_7ms": 55,
+          "over33_3ms": 3,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 9761,
+          "medianMs": 6.1,
+          "p95Ms": 12.1,
+          "p99Ms": 18.1,
+          "maxMs": 36.4,
+          "over16_7ms": 125,
+          "over33_3ms": 5,
+          "over50ms": 0,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 3,
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/r2-avant-lean.page.json",
+      "hitches": {
+        "count": 2,
+        "over100": 0,
+        "byCause": {
+          "script : base/src/app/controller.ts:531 run": 1,
+          "script : base/src/presentation/board.ts:554 ": 1
+        },
+        "trace": null,
+        "hitches": [
+          {
+            "atS": 0.8,
+            "dtMs": 66.6,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 76,
+                "blockingMs": 18,
+                "styleLayoutMs": 0,
+                "renderMs": 11,
+                "scripts": [
+                  {
+                    "ms": 57,
+                    "invoker": "TimerHandler:setTimeout",
+                    "type": "user-callback",
+                    "fn": "base/src/app/controller.ts:531 run",
+                    "forcedStyleLayoutMs": 14
+                  },
+                  {
+                    "ms": 10,
+                    "invoker": "FrameRequestCallback",
+                    "type": "user-callback",
+                    "fn": "base/src/scene/arena.ts:920 loop",
+                    "forcedStyleLayoutMs": 0
+                  }
+                ]
+              }
+            ],
+            "cause": "script : base/src/app/controller.ts:531 run"
+          },
+          {
+            "atS": 28.5,
+            "dtMs": 78.7,
+            "tag": "A",
+            "ctxStart": "4|START|",
+            "ctxEnd": "4|START|",
+            "loaf": [
+              {
+                "durationMs": 104,
+                "blockingMs": 49,
+                "styleLayoutMs": 0,
+                "renderMs": 4,
+                "scripts": [
+                  {
+                    "ms": 94,
+                    "invoker": "BUTTON.onclick",
+                    "type": "event-listener",
+                    "fn": "base/src/presentation/board.ts:554 ",
+                    "forcedStyleLayoutMs": 4
+                  }
+                ]
+              }
+            ],
+            "cause": "script : base/src/presentation/board.ts:554 "
+          }
+        ]
+      }
+    },
+    {
+      "name": "r3-avant-lean",
+      "round": 3,
+      "build": "avant",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 122,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 15569,
+        "medianMs": 6.1,
+        "p95Ms": 18.1,
+        "p99Ms": 30,
+        "maxMs": 109,
+        "over16_7ms": 921,
+        "over33_3ms": 74,
+        "over50ms": 13,
+        "over100ms": 1
+      },
+      "byView": {
+        "A": {
+          "frames": 6399,
+          "medianMs": 6.1,
+          "p95Ms": 18,
+          "p99Ms": 30.3,
+          "maxMs": 109,
+          "over16_7ms": 336,
+          "over33_3ms": 38,
+          "over50ms": 5,
+          "over100ms": 1
+        },
+        "B": {
+          "frames": 771,
+          "medianMs": 6.1,
+          "p95Ms": 30.2,
+          "p99Ms": 48.4,
+          "maxMs": 60.6,
+          "over16_7ms": 129,
+          "over33_3ms": 17,
+          "over50ms": 5,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 8399,
+          "medianMs": 6.1,
+          "p95Ms": 18.1,
+          "p99Ms": 24.2,
+          "maxMs": 60.6,
+          "over16_7ms": 456,
+          "over33_3ms": 19,
+          "over50ms": 3,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 14,
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/r3-avant-lean.page.json",
+      "hitches": {
+        "count": 13,
+        "over100": 1,
+        "byCause": {
+          "LoAF sans script": 5,
+          "script : base/src/app/controller.ts:531 run": 4,
+          "aucune LoAF (attente hors fil principal ?)": 2,
+          "script : base/src/presentation/board.ts:554 ": 2
+        },
+        "trace": null,
+        "hitches": [
+          {
+            "atS": 0.4,
+            "dtMs": 60.6,
+            "tag": "B",
+            "ctxStart": "1|COMMIT|",
+            "ctxEnd": "1|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 62,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 1,
+            "dtMs": 109,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 115,
+                "blockingMs": 63,
+                "styleLayoutMs": 0,
+                "renderMs": 41,
+                "scripts": [
+                  {
+                    "ms": 73,
+                    "invoker": "TimerHandler:setTimeout",
+                    "type": "user-callback",
+                    "fn": "base/src/app/controller.ts:531 run",
+                    "forcedStyleLayoutMs": 19
+                  },
+                  {
+                    "ms": 39,
+                    "invoker": "FrameRequestCallback",
+                    "type": "user-callback",
+                    "fn": "base/src/scene/arena.ts:920 loop",
+                    "forcedStyleLayoutMs": 0
+                  }
+                ]
+              }
+            ],
+            "cause": "script : base/src/app/controller.ts:531 run"
+          },
+          {
+            "atS": 2.2,
+            "dtMs": 54.5,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|rank",
+            "ctxEnd": "1|REPEL|rank",
+            "loaf": [
+              {
+                "durationMs": 57,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 6.8,
+            "dtMs": 54.6,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|",
+            "ctxEnd": "1|REPEL|",
+            "loaf": [
+              {
+                "durationMs": 51,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 1,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 9.4,
+            "dtMs": 54.5,
+            "tag": "A",
+            "ctxStart": "2|COMMIT|",
+            "ctxEnd": "2|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 57,
+                "blockingMs": 6,
+                "styleLayoutMs": 0,
+                "renderMs": 5,
+                "scripts": [
+                  {
+                    "ms": 51,
+                    "invoker": "TimerHandler:setTimeout",
+                    "type": "user-callback",
+                    "fn": "base/src/app/controller.ts:531 run",
+                    "forcedStyleLayoutMs": 8
+                  }
+                ]
+              }
+            ],
+            "cause": "script : base/src/app/controller.ts:531 run"
+          },
+          {
+            "atS": 9.6,
+            "dtMs": 54.7,
+            "tag": "B",
+            "ctxStart": "2|COMMIT|",
+            "ctxEnd": "2|COMMIT|",
+            "loaf": [],
+            "cause": "aucune LoAF (attente hors fil principal ?)"
+          },
+          {
+            "atS": 9.6,
+            "dtMs": 54.7,
+            "tag": "B",
+            "ctxStart": "2|COMMIT|",
+            "ctxEnd": "2|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 56,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 5,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 19.4,
+            "dtMs": 54.6,
+            "tag": "B",
+            "ctxStart": "3|COMMIT|",
+            "ctxEnd": "3|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 56,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 5,
+                "scripts": [
+                  {
+                    "ms": 43,
+                    "invoker": "TimerHandler:setTimeout",
+                    "type": "user-callback",
+                    "fn": "base/src/app/controller.ts:531 run",
+                    "forcedStyleLayoutMs": 6
+                  }
+                ]
+              }
+            ],
+            "cause": "script : base/src/app/controller.ts:531 run"
+          },
+          {
+            "atS": 28.9,
+            "dtMs": 60.6,
+            "tag": "A",
+            "ctxStart": "4|START|",
+            "ctxEnd": "4|START|",
+            "loaf": [
+              {
+                "durationMs": 59,
+                "blockingMs": 7,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": [
+                  {
+                    "ms": 52,
+                    "invoker": "BUTTON.onclick",
+                    "type": "event-listener",
+                    "fn": "base/src/presentation/board.ts:554 ",
+                    "forcedStyleLayoutMs": 5
+                  }
+                ]
+              }
+            ],
+            "cause": "script : base/src/presentation/board.ts:554 "
+          },
+          {
+            "atS": 70.3,
+            "dtMs": 79.1,
+            "tag": "A",
+            "ctxStart": "8|PREPARE|",
+            "ctxEnd": "8|PREPARE|",
+            "loaf": [
+              {
+                "durationMs": 80,
+                "blockingMs": 23,
+                "styleLayoutMs": 0,
+                "renderMs": 4,
+                "scripts": [
+                  {
+                    "ms": 66,
+                    "invoker": "BUTTON.onclick",
+                    "type": "event-listener",
+                    "fn": "base/src/presentation/board.ts:554 ",
+                    "forcedStyleLayoutMs": 9
+                  }
+                ]
+              }
+            ],
+            "cause": "script : base/src/presentation/board.ts:554 "
+          },
+          {
+            "atS": 70.5,
+            "dtMs": 54.4,
+            "tag": "B",
+            "ctxStart": "8|PREPARE|",
+            "ctxEnd": "8|PREPARE|",
+            "loaf": [],
+            "cause": "aucune LoAF (attente hors fil principal ?)"
+          },
+          {
+            "atS": 85.9,
+            "dtMs": 78.8,
+            "tag": "A",
+            "ctxStart": "10|TACTICS|",
+            "ctxEnd": "10|TACTICS|",
+            "loaf": [
+              {
+                "durationMs": 86,
+                "blockingMs": 35,
+                "styleLayoutMs": 1,
+                "renderMs": 16,
+                "scripts": [
+                  {
+                    "ms": 69,
+                    "invoker": "TimerHandler:setTimeout",
+                    "type": "user-callback",
+                    "fn": "base/src/app/controller.ts:531 run",
+                    "forcedStyleLayoutMs": 8
+                  },
+                  {
+                    "ms": 11,
+                    "invoker": "FrameRequestCallback",
+                    "type": "user-callback",
+                    "fn": "base/src/scene/arena.ts:920 loop",
+                    "forcedStyleLayoutMs": 0
+                  }
+                ]
+              }
+            ],
+            "cause": "script : base/src/app/controller.ts:531 run"
+          },
+          {
+            "atS": 87.8,
+            "dtMs": 60.6,
+            "tag": "clash",
+            "ctxStart": "10|RESOLVED|rank",
+            "ctxEnd": "10|RESOLVED|rank",
+            "loaf": [
+              {
+                "durationMs": 59,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          }
+        ]
+      }
+    },
+    {
+      "name": "r3-apres-lean",
+      "round": 3,
+      "build": "apres",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 122,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 13792,
+        "medianMs": 6.1,
+        "p95Ms": 18.2,
+        "p99Ms": 24.2,
+        "maxMs": 66.7,
+        "over16_7ms": 932,
+        "over33_3ms": 48,
+        "over50ms": 2,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 5739,
+          "medianMs": 6.1,
+          "p95Ms": 18.1,
+          "p99Ms": 24.2,
+          "maxMs": 66.7,
+          "over16_7ms": 314,
+          "over33_3ms": 18,
+          "over50ms": 2,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 657,
+          "medianMs": 11.9,
+          "p95Ms": 30.2,
+          "p99Ms": 36.4,
+          "maxMs": 48.5,
+          "over16_7ms": 128,
+          "over33_3ms": 17,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 7396,
+          "medianMs": 6.1,
+          "p95Ms": 18.2,
+          "p99Ms": 18.4,
+          "maxMs": 48.6,
+          "over16_7ms": 490,
+          "over33_3ms": 13,
+          "over50ms": 0,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 4,
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/r3-apres-lean.page.json",
+      "hitches": {
+        "count": 2,
+        "over100": 0,
+        "byCause": {
+          "LoAF sans script": 1,
+          "script : src/presentation/drag.ts:118 up": 1
+        },
+        "trace": null,
+        "hitches": [
+          {
+            "atS": 18.8,
+            "dtMs": 66.7,
+            "tag": "A",
+            "ctxStart": "3|PREPARE|",
+            "ctxEnd": "3|PREPARE|",
+            "loaf": [
+              {
+                "durationMs": 67,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 51,
+            "dtMs": 54.5,
+            "tag": "A",
+            "ctxStart": "6|COMMIT|",
+            "ctxEnd": "6|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 54,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 6,
+                "scripts": [
+                  {
+                    "ms": 15,
+                    "invoker": "DOMWindow.onpointerup",
+                    "type": "event-listener",
+                    "fn": "src/presentation/drag.ts:118 up",
+                    "forcedStyleLayoutMs": 8
+                  }
+                ]
+              }
+            ],
+            "cause": "script : src/presentation/drag.ts:118 up"
+          }
+        ]
+      }
+    }
+  ],
+  "rendererLabel": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+}

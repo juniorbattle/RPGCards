@@ -1,0 +1,1483 @@
+{
+  "commit": "b6f0c98",
+  "date": "2026-10-17T13:26:00.943Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "cores": 16,
+    "memGB": 31,
+    "platform": "win32 10.0.26200",
+    "node": "v22.14.0"
+  },
+  "chrome": "155.0.8059.80",
+  "gpu": true,
+  "chromeArgs": [],
+  "renderer": "ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "trace": true,
+  "traceCategories": [
+    "devtools.timeline",
+    "disabled-by-default-devtools.timeline",
+    "toplevel",
+    "blink.user_timing",
+    "blink.console",
+    "v8.execute",
+    "v8",
+    "disabled-by-default-v8.gc",
+    "disabled-by-default-v8.cpu_profiler",
+    "gpu.angle"
+  ],
+  "maxTurns": 80,
+  "freshBrowserPerDuel": true,
+  "persistentProfile": null,
+  "aiDelay": 650,
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "builds": [
+    {
+      "name": "avant",
+      "dir": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/be9911ea-dda9-4c96-861e-c0cef3c1d91a/scratchpad/dist-base"
+    },
+    {
+      "name": "apres",
+      "dir": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/be9911ea-dda9-4c96-861e-c0cef3c1d91a/scratchpad/dist-final"
+    }
+  ],
+  "drivers": [
+    "lean"
+  ],
+  "rounds": 1,
+  "runs": [
+    {
+      "name": "r1-avant-lean",
+      "round": 1,
+      "build": "avant",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 144,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19414,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 12,
+        "maxMs": 97,
+        "over16_7ms": 32,
+        "over33_3ms": 7,
+        "over50ms": 4,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 7912,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 12,
+          "maxMs": 97,
+          "over16_7ms": 16,
+          "over33_3ms": 4,
+          "over50ms": 1,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 780,
+          "medianMs": 6.1,
+          "p95Ms": 12.1,
+          "p99Ms": 12.2,
+          "maxMs": 61,
+          "over16_7ms": 6,
+          "over33_3ms": 1,
+          "over50ms": 1,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10722,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.3,
+          "maxMs": 60.7,
+          "over16_7ms": 10,
+          "over33_3ms": 2,
+          "over50ms": 2,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 7,
+      "rawTrace": "artifacts/qa/tmp/traces/trace-froide-780m-r1-avant-lean.json.gz",
+      "pageRecord": "artifacts/qa/tmp/traces/trace-froide-780m-r1-avant-lean.page.json",
+      "hitches": {
+        "count": 4,
+        "over100": 0,
+        "byCause": {
+          "fil principal libre (attente GPU / compositeur / horloge)": 4
+        },
+        "trace": {
+          "mainThread": "CrRendererMain",
+          "gpuThread": "CrGpuMain",
+          "syncMark": "lqv-sync-1792243566810-0",
+          "profileSamples": 264254,
+          "events": 2407376,
+          "trimmed": {
+            "file": "artifacts/qa/trace/trace-froide-780m-r1-avant-lean-pics.json.gz",
+            "events": 28714
+          }
+        },
+        "hitches": [
+          {
+            "atS": 0.9,
+            "dtMs": 97,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 97,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 2.4,
+              "busyPct": 2,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 1.7
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.2
+                },
+                {
+                  "k": "style",
+                  "ms": 0.1
+                },
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 1.6
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.1
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.1
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.1
+                },
+                {
+                  "k": "V8.HandleInterrupts",
+                  "ms": 0.1
+                },
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                },
+                {
+                  "k": "UpdateLayer",
+                  "ms": 0
+                },
+                {
+                  "k": "FireAnimationFrame",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 1
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:7602 push",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:5410 setValue",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:13940 refreshFogUniforms",
+                  "ms": 0.4
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16363 render",
+                  "ms": 1.5
+                },
+                {
+                  "k": "base/src/scene/arena.ts:898 renderOnce",
+                  "ms": 1.5
+                },
+                {
+                  "k": "base/src/scene/arena.ts:920 loop",
+                  "ms": 1.5
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:17021 setProgram",
+                  "ms": 0.9
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 0.9
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16843 renderObject",
+                  "ms": 0.9
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16814 renderObjects",
+                  "ms": 0.9
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16663 renderScene",
+                  "ms": 0.9
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:7602 push",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16549 projectObject",
+                  "ms": 0.6
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 67.5
+                },
+                {
+                  "k": "GPUTask",
+                  "ms": 20.1
+                },
+                {
+                  "k": "CompileEvent::wait",
+                  "ms": 7.8
+                },
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 3.6
+                },
+                {
+                  "k": "RunTask",
+                  "ms": 0
+                },
+                {
+                  "k": "ProgramD3D::link",
+                  "ms": 0
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 1
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "RunTask",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 2,
+            "dtMs": 54.6,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|rank",
+            "ctxEnd": "1|REPEL|rank",
+            "loaf": [
+              {
+                "durationMs": 55,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 1.8,
+              "busyPct": 3,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 1.3
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.2
+                },
+                {
+                  "k": "style",
+                  "ms": 0.1
+                },
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 1.3
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.1
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.1
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0
+                },
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                },
+                {
+                  "k": "UpdateLayer",
+                  "ms": 0
+                },
+                {
+                  "k": "FireAnimationFrame",
+                  "ms": 0
+                },
+                {
+                  "k": "v8.callFunction",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 0.9
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:6826 getParameters",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:5536 upload",
+                  "ms": 0.2
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:17021 setProgram",
+                  "ms": 0.8
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 0.8
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16843 renderObject",
+                  "ms": 0.8
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16814 renderObjects",
+                  "ms": 0.8
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16663 renderScene",
+                  "ms": 0.8
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16363 render",
+                  "ms": 0.8
+                },
+                {
+                  "k": "base/src/scene/arena.ts:898 renderOnce",
+                  "ms": 0.8
+                },
+                {
+                  "k": "base/src/scene/arena.ts:920 loop",
+                  "ms": 0.8
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:6826 getParameters",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16874 getProgram",
+                  "ms": 0.6
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 25.1
+                },
+                {
+                  "k": "GPUTask",
+                  "ms": 23.5
+                },
+                {
+                  "k": "CompileEvent::wait",
+                  "ms": 3.7
+                },
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 2.3
+                },
+                {
+                  "k": "RunTask",
+                  "ms": 0.1
+                },
+                {
+                  "k": "ProgramD3D::link",
+                  "ms": 0
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 0.9
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "RunTask",
+                    "ms": 0
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 3.7,
+            "dtMs": 60.7,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 60,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 2.5,
+              "busyPct": 4,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 1.6
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.5
+                },
+                {
+                  "k": "style",
+                  "ms": 0.1
+                },
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 1.3
+                },
+                {
+                  "k": "Layerize",
+                  "ms": 0.3
+                },
+                {
+                  "k": "V8.HandleInterrupts",
+                  "ms": 0.3
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.1
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.1
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.1
+                },
+                {
+                  "k": "UpdateLayer",
+                  "ms": 0
+                },
+                {
+                  "k": "FireAnimationFrame",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 1.4
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.core.js:15920 getRGB",
+                  "ms": 0.6
+                },
+                {
+                  "k": "base/src/scene/rival.ts:220 update",
+                  "ms": 0.6
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "base/src/scene/arena.ts:920 loop",
+                  "ms": 1.1
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.core.js:15920 getRGB",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:13940 refreshFogUniforms",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:17021 setProgram",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16843 renderObject",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16814 renderObjects",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16663 renderScene",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16363 render",
+                  "ms": 0.6
+                },
+                {
+                  "k": "base/src/scene/arena.ts:898 renderOnce",
+                  "ms": 0.6
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 33.7
+                },
+                {
+                  "k": "GPUTask",
+                  "ms": 19.7
+                },
+                {
+                  "k": "CompileEvent::wait",
+                  "ms": 5.4
+                },
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 1.8
+                },
+                {
+                  "k": "RunTask",
+                  "ms": 0.1
+                },
+                {
+                  "k": "ProgramD3D::link",
+                  "ms": 0
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 1.6
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "RunTask",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 114.9,
+            "dtMs": 61,
+            "tag": "B",
+            "ctxStart": "13|COMMIT|",
+            "ctxEnd": "13|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 61,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 3.9,
+              "busyPct": 6,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 3.3
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.2
+                },
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 3.3
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.1
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.1
+                },
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                },
+                {
+                  "k": "FireAnimationFrame",
+                  "ms": 0
+                },
+                {
+                  "k": "v8.callFunction",
+                  "ms": 0
+                },
+                {
+                  "k": "UpdateLayer",
+                  "ms": 0
+                },
+                {
+                  "k": "Layerize",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 1.4
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:4514 arraysEqual",
+                  "ms": 0.9
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16874 getProgram",
+                  "ms": 0.8
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.core.js:10340 copy",
+                  "ms": 0.6
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:4568 setValueV1f",
+                  "ms": 0.3
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:6826 getParameters",
+                  "ms": 0.3
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16363 render",
+                  "ms": 2.9
+                },
+                {
+                  "k": "base/src/scene/arena.ts:898 renderOnce",
+                  "ms": 2.9
+                },
+                {
+                  "k": "base/src/scene/arena.ts:920 loop",
+                  "ms": 2.9
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:17021 setProgram",
+                  "ms": 2.3
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 2.3
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16843 renderObject",
+                  "ms": 2.3
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16814 renderObjects",
+                  "ms": 2.3
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16663 renderScene",
+                  "ms": 2.3
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:16874 getProgram",
+                  "ms": 1.1
+                },
+                {
+                  "k": "Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/node_modules/three/build/three.module.js:4514 arraysEqual",
+                  "ms": 0.9
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "GPUTask",
+                  "ms": 6.7
+                },
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 2.8
+                },
+                {
+                  "k": "RunTask",
+                  "ms": 0.1
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 0.9
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "RunTask",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          }
+        ]
+      }
+    },
+    {
+      "name": "r1-apres-lean",
+      "round": 1,
+      "build": "apres",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 144,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19448,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 6.5,
+        "maxMs": 97.1,
+        "over16_7ms": 31,
+        "over33_3ms": 7,
+        "over50ms": 3,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 7951,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.4,
+          "maxMs": 97.1,
+          "over16_7ms": 16,
+          "over33_3ms": 4,
+          "over50ms": 1,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 777,
+          "medianMs": 6.1,
+          "p95Ms": 12.1,
+          "p99Ms": 12.3,
+          "maxMs": 54.5,
+          "over16_7ms": 6,
+          "over33_3ms": 1,
+          "over50ms": 1,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10720,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.3,
+          "maxMs": 54.6,
+          "over16_7ms": 9,
+          "over33_3ms": 2,
+          "over50ms": 1,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 3,
+      "rawTrace": "artifacts/qa/tmp/traces/trace-froide-780m-r1-apres-lean.json.gz",
+      "pageRecord": "artifacts/qa/tmp/traces/trace-froide-780m-r1-apres-lean.page.json",
+      "hitches": {
+        "count": 3,
+        "over100": 0,
+        "byCause": {
+          "fil principal libre (attente GPU / compositeur / horloge)": 3
+        },
+        "trace": {
+          "mainThread": "CrRendererMain",
+          "gpuThread": "CrGpuMain",
+          "syncMark": "lqv-sync-1792243716553-0",
+          "profileSamples": 264208,
+          "events": 2412830,
+          "trimmed": {
+            "file": "artifacts/qa/trace/trace-froide-780m-r1-apres-lean-pics.json.gz",
+            "events": 22766
+          }
+        },
+        "hitches": [
+          {
+            "atS": 0.9,
+            "dtMs": 97.1,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 97,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 2.1,
+              "busyPct": 2,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 1.4
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.2
+                },
+                {
+                  "k": "style",
+                  "ms": 0.1
+                },
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 1.4
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.1
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.1
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.1
+                },
+                {
+                  "k": "UpdateLayer",
+                  "ms": 0
+                },
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                },
+                {
+                  "k": "FireAnimationFrame",
+                  "ms": 0
+                },
+                {
+                  "k": "v8.callFunction",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 1.4
+                },
+                {
+                  "k": "three/build/three.module.js:5520 setValue",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:5410 setValue",
+                  "ms": 0.5
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "three/build/three.module.js:17021 setProgram",
+                  "ms": 1.1
+                },
+                {
+                  "k": "three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 1.1
+                },
+                {
+                  "k": "three/build/three.module.js:16843 renderObject",
+                  "ms": 1.1
+                },
+                {
+                  "k": "three/build/three.module.js:16814 renderObjects",
+                  "ms": 1.1
+                },
+                {
+                  "k": "three/build/three.module.js:16663 renderScene",
+                  "ms": 1.1
+                },
+                {
+                  "k": "three/build/three.module.js:16363 render",
+                  "ms": 1.1
+                },
+                {
+                  "k": "src/scene/arena.ts:918 renderOnce",
+                  "ms": 1.1
+                },
+                {
+                  "k": "src/scene/arena.ts:941 loop",
+                  "ms": 1.1
+                },
+                {
+                  "k": "three/build/three.module.js:5520 setValue",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:5410 setValue",
+                  "ms": 0.5
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 66.8
+                },
+                {
+                  "k": "GPUTask",
+                  "ms": 20
+                },
+                {
+                  "k": "CompileEvent::wait",
+                  "ms": 8.1
+                },
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 2.7
+                },
+                {
+                  "k": "RunTask",
+                  "ms": 0.1
+                },
+                {
+                  "k": "ProgramD3D::link",
+                  "ms": 0
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 1
+                  },
+                  {
+                    "k": "RunTask",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 3.7,
+            "dtMs": 54.6,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 55,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 2.4,
+              "busyPct": 4,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 1.5
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.5
+                },
+                {
+                  "k": "style",
+                  "ms": 0.1
+                },
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 1.5
+                },
+                {
+                  "k": "Layerize",
+                  "ms": 0.3
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.1
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.1
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.1
+                },
+                {
+                  "k": "UpdateLayer",
+                  "ms": 0
+                },
+                {
+                  "k": "FireAnimationFrame",
+                  "ms": 0
+                },
+                {
+                  "k": "v8.callFunction",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 1.3
+                },
+                {
+                  "k": "three/build/three.module.js:1656 getBindingState",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:16874 getProgram",
+                  "ms": 0.5
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 1
+                },
+                {
+                  "k": "three/build/three.module.js:16843 renderObject",
+                  "ms": 1
+                },
+                {
+                  "k": "three/build/three.module.js:16814 renderObjects",
+                  "ms": 1
+                },
+                {
+                  "k": "three/build/three.module.js:16663 renderScene",
+                  "ms": 1
+                },
+                {
+                  "k": "three/build/three.module.js:16363 render",
+                  "ms": 1
+                },
+                {
+                  "k": "src/scene/arena.ts:918 renderOnce",
+                  "ms": 1
+                },
+                {
+                  "k": "src/scene/arena.ts:941 loop",
+                  "ms": 1
+                },
+                {
+                  "k": "three/build/three.module.js:1656 getBindingState",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:1599 setup",
+                  "ms": 0.6
+                },
+                {
+                  "k": "three/build/three.module.js:16874 getProgram",
+                  "ms": 0.5
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "Program::MainLinkLoadEvent::wait",
+                  "ms": 32.7
+                },
+                {
+                  "k": "GPUTask",
+                  "ms": 17.9
+                },
+                {
+                  "k": "CompileEvent::wait",
+                  "ms": 3.7
+                },
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 0.5
+                },
+                {
+                  "k": "RunTask",
+                  "ms": 0
+                },
+                {
+                  "k": "ProgramD3D::link",
+                  "ms": 0
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 0.7
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "RunTask",
+                    "ms": 0
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 117.7,
+            "dtMs": 54.5,
+            "tag": "B",
+            "ctxStart": "14|COMMIT|",
+            "ctxEnd": "14|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 55,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 3.6,
+              "busyPct": 7,
+              "categories": [
+                {
+                  "k": "script",
+                  "ms": 2.4
+                },
+                {
+                  "k": "paint/commit",
+                  "ms": 0.3
+                },
+                {
+                  "k": "style",
+                  "ms": 0.2
+                },
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "FunctionCall",
+                  "ms": 2.1
+                },
+                {
+                  "k": "v8.callFunction",
+                  "ms": 0.3
+                },
+                {
+                  "k": "UpdateLayoutTree",
+                  "ms": 0.2
+                },
+                {
+                  "k": "PrePaint",
+                  "ms": 0.1
+                },
+                {
+                  "k": "Commit",
+                  "ms": 0.1
+                },
+                {
+                  "k": "FireAnimationFrame",
+                  "ms": 0.1
+                },
+                {
+                  "k": "UpdateLayer",
+                  "ms": 0
+                },
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [
+                {
+                  "k": "(program)",
+                  "ms": 1.8
+                },
+                {
+                  "k": "three/build/three.module.js:6826 getParameters",
+                  "ms": 0.7
+                },
+                {
+                  "k": "three/build/three.module.js:14037 refreshUniformsCommon",
+                  "ms": 0.6
+                },
+                {
+                  "k": "getBoundingClientRect",
+                  "ms": 0.5
+                }
+              ],
+              "jsInclusive": [
+                {
+                  "k": "three/build/three.module.js:17021 setProgram",
+                  "ms": 1.3
+                },
+                {
+                  "k": "three/build/three.module.js:15935 renderBufferDirect",
+                  "ms": 1.3
+                },
+                {
+                  "k": "three/build/three.module.js:16843 renderObject",
+                  "ms": 1.3
+                },
+                {
+                  "k": "three/build/three.module.js:16814 renderObjects",
+                  "ms": 1.3
+                },
+                {
+                  "k": "three/build/three.module.js:16663 renderScene",
+                  "ms": 1.3
+                },
+                {
+                  "k": "three/build/three.module.js:16363 render",
+                  "ms": 1.3
+                },
+                {
+                  "k": "src/scene/arena.ts:918 renderOnce",
+                  "ms": 1.3
+                },
+                {
+                  "k": "src/scene/arena.ts:941 loop",
+                  "ms": 1.3
+                },
+                {
+                  "k": "three/build/three.module.js:6826 getParameters",
+                  "ms": 0.7
+                },
+                {
+                  "k": "three/build/three.module.js:16874 getProgram",
+                  "ms": 0.7
+                }
+              ],
+              "gpuMain": [
+                {
+                  "k": "GPUTask",
+                  "ms": 9.3
+                },
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 2.9
+                },
+                {
+                  "k": "RunTask",
+                  "ms": 0
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 3
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "RunTask",
+                    "ms": 0.1
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          }
+        ]
+      }
+    }
+  ],
+  "rendererLabel": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "summary": {
+    "avant": {
+      "duels": 1,
+      "over50": [
+        4
+      ],
+      "over100": [
+        0
+      ],
+      "maxMs": [
+        97
+      ],
+      "p99Ms": [
+        12
+      ],
+      "causes": {
+        "fil principal libre (GPU : Skia / compositeur)": 4
+      },
+      "over50Total": 4
+    },
+    "apres": {
+      "duels": 1,
+      "over50": [
+        3
+      ],
+      "over100": [
+        0
+      ],
+      "maxMs": [
+        97.1
+      ],
+      "p99Ms": [
+        6.5
+      ],
+      "causes": {
+        "fil principal libre (GPU : Skia / compositeur)": 3
+      },
+      "over50Total": 3
+    }
+  }
+}

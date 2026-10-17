@@ -16,6 +16,7 @@
     "shots": "node tools/shots-m03.mjs",
     "perf": "node tools/perf.mjs",
     "perf:play": "node tools/perf-play.mjs",
+    "perf:trace": "node tools/perf-trace.mjs",
     "sim": "tsx tools/perf-engine.ts 200",
     "shots:clash": "node tools/clash-shots.mjs",
     "shots:m03-2": "node tools/shots-m03-2.mjs",
