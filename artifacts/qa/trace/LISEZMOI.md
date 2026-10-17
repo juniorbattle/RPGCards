@@ -52,3 +52,26 @@ Nouveaux champs de `perf:trace` :
 
 Les traces légères (`LQV_TRACE_LIGHT=1` : tâches de premier niveau et repères) restent dans `artifacts/qa/tmp/` ;
 leurs extraits « pics » n’ont pas été versionnés (sans intérêt dans DevTools).
+
+## Passe 15 — illustrations pré-générées dans un worker (2026-10-17)
+
+« avant » = `main` `68ebe4b` ; « après » = `68ebe4b` plus la passe 15, même code que le commit. Les deux builds ont été
+construits par `npm run build` et servis depuis un dossier hors du dépôt. Synthèse : `docs/RAPPORT_M06_RC.md` §5.7.
+
+Nouveaux champs :
+- `art` (par commande, dans les relevés de page et `hitches.trace.commandTasks`) : illustrations générées sur place
+  pendant la commande ;
+- `commandPairs.withArt` et `withoutArt` (idem dans `commandPairsCpu`) : écart apparié des commandes qui génèrent une
+  illustration dans l’un des builds, et des autres (témoin).
+
+| Fichier | Commande (préfixe commun `LQV_GPU=1 CHROMIUM_PATH=<Chrome> LQV_TRACE_AIDELAY=650 LQV_TRACE_BUILDS=avant=<dist 68ebe4b>,apres=<dist passe 15> LQV_TRACE=1 LQV_TRACE_LIGHT=1 LQV_TRACE_ROUNDS=3 LQV_TRACE_USERDATA=<dossier neuf>`) | Ce qu’il montre |
+|---|---|---|
+| `passe15-cpu-rtx4060.json` | `LQV_CHROME_ARGS=--force_high_performance_gpu`, poste calme | commandes qui généraient : 11,9 → 6,2 ms ; apparié −4,6 ms, 31 sur 32 ; autres −0,2 ms ; même hash dans les 3 rondes |
+| `passe15-cpu-780m.json` | charge modérée (13 à 1 454 images > 16,7 ms par duel) | 12,4 → 8,8 ms ; apparié −3,8 ms, 27 sur 36 ; autres −0,1 ms |
+| `passe15-cpu-780m-charge.json` | sous forte charge : QA SwiftShader d’une autre session pendant toute la série | 24,1 → 14,6 ms ; apparié −10,6 ms, 35 sur 36 ; autres +1,0 ms ; à-coups dominés par la charge |
+| `qa-browser-passe15-{apres,apres-rendercheck}.json` | `CHROMIUM_PATH=<Chrome> LQV_QA_OUT=… [LQV_RENDER_CHECK=1] npm run qa:browser` (SwiftShader), sur `68ebe4b` + passe 15 | non-régression, duel par duel identique à la passe 13 ; 180 illustrations du worker comparées, 0 écart |
+| `qa-product-passe15-apres.json` | idem avec `npm run qa:product` | 8 parcours sur 8 |
+| `qa-browser-passe15-fusion-rendercheck.json`, `qa-product-passe15-fusion.json` | mêmes commandes, sur le résultat fusionné avec `main` (passe 14, ADR 016) | non-régression après intégration |
+
+Une première série RTX, lancée pendant la QA de l’autre session, a été interrompue et écartée. Les extraits « pics » n’ont
+pas été versionnés.

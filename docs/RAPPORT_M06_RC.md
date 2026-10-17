@@ -71,7 +71,7 @@ Porte de démarrage, sur un **clone propre du commit final `382ad1f`** (code app
 - Équité des sièges : la logique d’IA n’a pas évolué en M04–M06 (aucune nouvelle mesure de sièges nécessaire) ;
   la difficulté des rivaux vient de leurs données (PV, deck, Techniques, profil), jamais d’une IA qui tricherait.
 
-## 5. Performance (SwiftShader §5.1–5.2 · protocole GPU §5.3 · mesures sur GPU réel §5.4 · à-coups §5.5 · re-rendu ciblé §5.6)
+## 5. Performance (SwiftShader §5.1–5.2 · protocole GPU §5.3 · mesures sur GPU réel §5.4 · à-coups §5.5 · re-rendu ciblé §5.6 · illustrations pré-générées §5.7)
 
 ### 5.1 Le duel : même scène, même coût
 
@@ -381,6 +381,83 @@ ceux du re-rendu complet, vérifiés par `?renderCheck=1`.
 - `qa:product` : 8/8 avant comme après ; avec `LQV_RENDER_CHECK=1`, 8/8 et 0 erreur console.
 - Règles inchangées : `git diff 4ccce89 -- src/game` vide ; `npm test` 146/146.
 
+### 5.7 Illustrations pré-générées hors du fil principal (passe 15, 2026-10-17)
+
+**Changement.**
+- Un worker (`src/art/cardArtWorker.ts`) dessine les 36 illustrations du catalogue avec le même code que la page
+  (`drawCardArt`). Il les trame sur un OffscreenCanvas, par le processeur, et les encode en PNG hors du fil principal.
+- Il démarre à l’accueil (`Shell.applyParams`) ou à la création d’un duel. La page range chaque data URL dans le
+  cache, et la première arrivée gagne : l’`src` d’une carte affichée ne change jamais.
+- Une carte demandée avant son illustration est générée sur place, comme avant.
+- Le worker ne reçoit que la graine d’art : rien sur les decks, donc rien sur les cartes du rival.
+
+**Même image.** `?qa=1&artCheck=1` compare chaque illustration du worker à `toDataURL` dans la page. Résultat :
+- 36 data URL sur 36 identiques sur la 780M (graine 7), et 36 sur 36 sous SwiftShader (graine 31337) ;
+- 180 sur 180 dans les 5 duels de `qa:browser` avec `LQV_RENDER_CHECK=1`.
+
+**Avant / après dans les commandes** (profil V8, 780M, duel complet seed 202, 90 commandes) :
+- avant : 14 illustrations générées dans 12 commandes, soit 68 à 70 ms par duel, dont 59 à 60 ms d’encodage PNG ;
+- ces commandes ont un temps synchrone médian de 12,7 à 12,8 ms, contre 4,5 à 4,8 ms pour les autres ;
+- après : aucune illustration générée dans une commande, les 36 sont en cache dès le début du duel.
+
+**Protocole.**
+- `perf:trace` avec `LQV_TRACE=1 LQV_TRACE_LIGHT=1`, 3 rondes ABBA, un profil persistant par build, rival à 650 ms.
+- Duels complets : 14 tours et même vainqueur dans les 18 duels.
+- « Avant » = `68ebe4b` ; « après » = `68ebe4b` plus cette passe, même code que le commit.
+- Nouveau : le champ `art` compte, par commande, les illustrations générées sur place.
+- L’appariement sépare les commandes qui génèrent une illustration dans l’un des builds (`withArt`) des autres
+  (`withoutArt`), qui servent de témoin.
+
+**Temps processeur des tâches** (ms ; « générant » = commandes de même rang que celles qui généraient dans « avant ») :
+
+| Série | Charge du poste : images > 16,7 ms par duel | Générant : médiane avant → après | Générant, apparié : médiane, plus rapides | Autres, apparié | Toutes, apparié |
+|---|---|---|---|---|---|
+| RTX 4060, poste calme | 6 à 377 | 11,9 → 6,2 | −4,6 ms, 31 sur 32 | −0,2 ms | −0,3 ms (moyenne −1,2), 160 sur 249 |
+| Radeon 780M, charge modérée | 13 à 1 454 | 12,4 → 8,8 | −3,8 ms (moyenne −2,3), 27 sur 36 | −0,1 ms | −0,4 ms, 142 sur 264 |
+| Radeon 780M, sous forte charge (QA SwiftShader d’une autre session) | 768 à 2 852 | 24,1 → 14,6 | −10,6 ms, 35 sur 36 | +1,0 ms | −0,2 ms, 120 sur 235 |
+
+**Mesure dans la page, RTX au calme :**
+- toutes commandes : médiane 3,6 → 3,4 ms, p95 10,7 → 5,3 ms, maximum 39,9 → 15,6 ms ;
+- « Tour suivant » : médiane 5,9 → 3,8 ms, p95 13,2 → 5,0 ms ;
+- clic jusqu’à l’image (Event Timing) : médiane 24 ms dans les deux builds, p95 48 → 32 ms, maximum 104 → 56 ms.
+
+Sur la 780M en charge modérée, « Tour suivant » passe de 6,9 à 5,6 ms en médiane, et de 19,6 à 10,5 ms en p95.
+
+**À-coups > 50 ms** (3 duels par série) :
+- RTX : 7 → 3 ; 780M en charge modérée : 6 → 10 ; 780M sous forte charge : 127 → 147.
+- Sur la 780M en charge modérée, 8 des 10 à-coups « après » tombent dans les 2,2 premières secondes de la ronde 1, sur un
+  profil froid, avec le fil principal presque inoccupé. Une exception : un clic de 61 ms, dont 43 ms de style et de mise
+  en page forcés au premier clic.
+- Ce n’est pas lié au worker : sur les 9 paires de duels, les 3 premières secondes comptent 30 à-coups avant et 14 après.
+
+**Lecture.**
+- Le gain se concentre sur les commandes qui montraient une carte pour la première fois, soit environ une sur huit. La
+  médiane de toutes les commandes bouge à peine (−0,2 à −0,4 ms), comme prévu. La queue de distribution, elle,
+  raccourcit nettement.
+- Ces commandes restent plus chères que les autres : 6,2 contre 4,1 ms sur la RTX, 8,8 contre 5,8 ms sur la 780M.
+  L’écart vient de la construction de la face DOM, du chargement de l’image depuis sa data URL et des changements réels
+  du plateau. Ce découpage n’a pas été profilé en détail.
+- Inversions d’engagement (la course entre le pilote et le rival à 650 ms) :
+  - 780M sous forte charge : 20 à 26 par ronde ; il y en a aussi 8 entre deux duels « avant » ;
+  - RTX : aucune, et le même hash final dans les 3 rondes ;
+  - 780M en charge modérée : 0 à 2.
+  Partout, la partie est la même : mêmes tours, même vainqueur.
+
+**Défaut d’outil trouvé.** `trace-analyze` lisait la carte des sources du premier `.js` d’`assets/`, qui est désormais
+celle du worker : aucune commande n’était reconnue et les profils sortaient vides. Il lit maintenant `index-*.js`.
+
+**Non-régression sur ce poste :**
+- Sur `68ebe4b` + passe (SwiftShader ; `artifacts/qa/trace/qa-{browser,product}-passe15-apres*.json`) :
+  - `qa:browser` : 4/5, mêmes résultats duel par duel que la passe 13 ; seul échec, le connu
+    `mobile-rotation-touch` (§7) ;
+  - avec `LQV_RENDER_CHECK=1` : 1106 rendus comparés, 0 écart ; 180 illustrations comparées, 0 écart ;
+  - `qa:product` : 8/8.
+- Sur le résultat fusionné avec `main` `56efb70` (passe 14, ADR 016 ; `qa-{browser,product}-passe15-fusion*.json`) :
+  - `qa:browser` avec `LQV_RENDER_CHECK=1` : 4/5, mêmes résultats duel par duel que la QA de la passe 14 ;
+    1034 rendus et 180 illustrations comparés, 0 écart ;
+  - `qa:product` : 8/8, 0 erreur console.
+- Règles inchangées : `git diff 68ebe4b -- src/game` vide ; `npm test` 146/146.
+
 ## 6. Défauts trouvés et corrigés pendant M04–M06
 
 | Défaut | Trouvé par | Correctif |
@@ -403,7 +480,7 @@ ceux du re-rendu complet, vérifiés par `?renderCheck=1`.
 | Progression (récompenses, collection de départ), PV et decks des rivaux, Orin | **prototypes non canoniques**, réglables par donnée | arbitrage de contenu |
 | PV du joueur fixes (90) | aucune progression de PV ratifiée | à décider avec la progression |
 | Mesure sur GPU réel | **faite sur un portable** (passe 11, §5.4 : Radeon 780M et RTX 4060, plafond de l’écran en jeu) ; poste de bureau non mesuré | temps GPU par image |
-| À-coups du fil principal | **tracés et attribués** (passe 12, §5.5) ; deux causes du jeu corrigées (liaison WebGL des anneaux, illustrations au clic) ; reste les shaders Skia au premier duel d’un profil Chrome. **Re-rendu ciblé du plateau** fait (passe 13, §5.6, ADR 015) : temps processeur par commande −1,5 à −2 ms en médiane appariée (9,6 → 7,4 ms sur la 780M, 8,2 → 6,4 ms sur la RTX 4060) | pré-générer les illustrations hors commande (≈ 2 ms par commande en moyenne aux premiers tours) |
+| À-coups du fil principal | **tracés et attribués** (passe 12, §5.5) ; deux causes du jeu corrigées (liaison WebGL des anneaux, illustrations au clic) ; reste les shaders Skia au premier duel d’un profil Chrome. **Re-rendu ciblé du plateau** fait (passe 13, §5.6, ADR 015) : temps processeur par commande −1,5 à −2 ms en médiane appariée (9,6 → 7,4 ms sur la 780M, 8,2 → 6,4 ms sur la RTX 4060) ; **illustrations pré-générées** dans un worker (passe 15, §5.7) : commandes qui montraient une carte pour la première fois −4,6 ms (RTX 4060) et −3,8 ms (780M) en médiane appariée | coût restant des commandes qui montrent une carte pour la première fois (≈ 2 à 3 ms) |
 | Scène du Clash encore en fondu au début du tour suivant quand la séquence s’est terminée seule (≤ 300 ms en mouvement réduit, ≤ 760 ms sinon) | `qa:browser` échoue sur `mobile-rotation-touch` sur le poste de l’opérateur (2 « fantômes », tours 2 et 3), **aussi sur la RC intacte** avec ses propres outils ; passe dans le conteneur (plus lent) | arrêter la scène au tour suivant (coupe la fin du fondu de défausse : à arbitrer, ADR 013) |
 | Contraste du rang « II » sur les vignettes de l’éditeur de deck | `qa:rc` mesure 3,5–3,6:1 sur le poste de l’opérateur (seuil 4,5:1), **aussi sur la RC intacte** ; ≥ 4,5:1 dans le conteneur | vérifier le rendu des textes sous Windows ; renforcer le contour du chiffre si confirmé |
 | Mobile paysage | pas de nouveau travail (mandat) ; portrait vérifié en smoke-test | chantier dédié |

@@ -94,11 +94,13 @@ function installRecorder() {
     const phase = c.view.phase;
     const view0 = c.viewMode;
     const d = depth++;
+    // Illustrations générées sur place pendant la commande (passe 14 : pré-générées par un worker).
+    const art0 = window.__lqv?.artCache?.() ?? 0;
     const t0 = performance.now();
     let ok;
     try { ok = apply(cmd); } finally { depth--; }
     const t1 = performance.now();
-    rec.cmds.push({ t: t0, sync: t1 - t0, flush: d === 0 ? settle() : 0, type: cmd.type, player: cmd.player ?? '', phase, viewChange: view0 !== c.viewMode, depth: d, ok });
+    rec.cmds.push({ t: t0, sync: t1 - t0, flush: d === 0 ? settle() : 0, type: cmd.type, player: cmd.player ?? '', phase, viewChange: view0 !== c.viewMode, depth: d, ok, art: (window.__lqv?.artCache?.() ?? 0) - art0 });
     return ok;
   };
   const wrap = (field, sink) => {

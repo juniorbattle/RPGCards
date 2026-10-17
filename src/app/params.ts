@@ -32,6 +32,8 @@ export interface AppParams {
   ablate: string[];
   /** QA (`qa=1&renderCheck=1`) : chaque rendu ciblé du plateau est comparé à un rendu complet (passe 13). */
   renderCheck: boolean;
+  /** QA (`qa=1&artCheck=1`) : chaque illustration pré-générée par le worker est comparée à une génération synchrone (passe 14). */
+  artCheck: boolean;
 }
 
 export function readParams(search = window.location.search): AppParams {
@@ -65,5 +67,6 @@ export function readParams(search = window.location.search): AppParams {
     ablate: q.get('qa') === '1' ? (q.get('ablate') ?? '').split(',').filter(Boolean) : [],
     beat: q.has('beat') ? Math.max(0, Math.floor(Number(q.get('beat')) || 0)) : null,
     renderCheck: q.get('qa') === '1' && q.get('renderCheck') === '1',
+    artCheck: q.get('qa') === '1' && q.get('artCheck') === '1',
   };
 }
