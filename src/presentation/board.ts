@@ -36,6 +36,11 @@ const MODE_LABEL: Record<string, string> = { keep: 'CONSERVER', rank: 'RANG', da
 
 export interface BoardHooks {
   onToggleTool(tool: string): void;
+  /**
+   * Mode produit (M04) : bouton « Menu » dans la barre d’outils (pause, options, abandon) et pas
+   * d’écran de fin historique — l’enveloppe présente le résultat. Absent : comportement QA historique.
+   */
+  product?: { menu: true };
 }
 
 /** Éléments qui glissent de leur ancienne place lors d’un passage de vue A ↔ B. */
@@ -68,7 +73,7 @@ export function renderApp(root: HTMLElement, c: Controller, hooks: BoardHooks): 
     drawer(c, hooks),
   );
   if (c.ui.toast) root.append(h('div', { class: cls('toast', c.ui.toast.kind === 'info' && 'info'), role: 'status', 'aria-live': 'polite' }, c.ui.toast.text));
-  if (c.view.phase === 'ENDED' && !c.sequencing) root.append(endOverlay(c));
+  if (c.view.phase === 'ENDED' && !c.sequencing && !hooks.product) root.append(endOverlay(c));
 
   const j = root.querySelector('.journal');
   if (j) j.scrollTop = stick ? j.scrollHeight : prevScroll;
@@ -108,6 +113,7 @@ function phasebar(c: Controller): HTMLElement {
 function tools(c: Controller, hooks: BoardHooks): HTMLElement {
   const pace = c.params.pace === 'normal' ? 'normal' : c.params.pace === 'fast' ? 'rapide' : 'instantané';
   return h('div', { class: 'tools', role: 'toolbar', 'aria-label': 'Outils' },
+    hooks.product ? h('button', { class: 'tool tool-menu', 'data-key': 'tool-menu', title: 'Menu du duel : reprendre, options, aide, quitter (Échap pour fermer)', 'aria-haspopup': 'dialog', onclick: () => hooks.onToggleTool('menu') }, 'Menu') : null,
     h('button', { class: 'tool tool-view', 'data-key': 'tool-cam', 'aria-pressed': String(c.director.manual), title: 'Basculer entre la vue Rival (confrontation) et la vue Plateau (manipulation) — touche V. La vue revient au cadrage de la phase suivante.', onclick: () => hooks.onToggleTool('cam') }, c.viewMode === 'A' ? 'Vue plateau ⤓' : 'Voir le rival ⤒'),
     h('button', { class: 'tool', 'data-key': 'tool-journal', 'aria-pressed': String(c.ui.journalOpen), title: 'Journal du duel (texte intégral, public + vos informations privées)', onclick: () => hooks.onToggleTool('journal') }, 'Journal'),
     h('button', { class: 'tool', 'data-key': 'tool-pace', title: 'Rythme des animations (n’affecte pas les règles)', onclick: () => hooks.onToggleTool('pace') }, `Rythme : ${pace}`),

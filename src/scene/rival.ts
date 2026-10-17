@@ -314,7 +314,8 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
         const m = o as THREE.Mesh;
         m.geometry?.dispose();
         const mat = m.material as THREE.MeshLambertMaterial | undefined;
-        mat?.map?.dispose();
+        // Le verso des cartes est partagé avec l’arène (qui le libère elle-même).
+        if (mat?.map && mat.map !== backTexture) mat.map.dispose();
         mat?.dispose();
       });
     },

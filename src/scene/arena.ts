@@ -75,6 +75,10 @@ export interface ArenaHandle {
   setRivalHand(n: number): void;
   setFamilies(me: Family, opp: Family): void;
   setReducedMotion(v: boolean): void;
+  /** M04 : change le rival assis à la table (même scène, même contexte WebGL, mêmes réglages). */
+  setRival(p: RivalPersonality): void;
+  /** M04 : fige la scène (une image, aucune boucle) pendant les écrans de menu ; reprend ensuite. */
+  setPaused(v: boolean): void;
   stats(): ArenaStats;
   dispose(): void;
 }
@@ -726,7 +730,8 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   // --- Rival
   const backTex = new THREE.CanvasTexture(cardBackCanvas(opts.artSeed));
   backTex.colorSpace = THREE.SRGBColorSpace;
-  const rival: RivalRig = createRival(opts.personality, opts.artSeed, backTex);
+  let rival: RivalRig = createRival(opts.personality, opts.artSeed, backTex);
+  let rivalId = opts.personality.id;
   scene.add(rival.group);
   rim.color.setHex(FAMILY_PALETTE[opts.personality.family].hex);
 
@@ -734,7 +739,8 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   const transients: Transient[] = [];
   let clock = 0;
   let shake = 0;
-  const still = () => reduced || opts.freeze;
+  let paused = false;
+  const still = () => reduced || opts.freeze || paused;
 
   function addTransient(obj: THREE.Object3D, dur: number, update: (k: number) => void): void {
     scene.add(obj);
@@ -1029,6 +1035,23 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
       reduced = v;
       start();
     },
+    setRival(p: RivalPersonality) {
+      if (p.id === rivalId) return;
+      scene.remove(rival.group);
+      rival.dispose();
+      rival = createRival(p, opts.artSeed, backTex);
+      rivalId = p.id;
+      scene.add(rival.group);
+      rim.color.setHex(FAMILY_PALETTE[p.family].hex);
+      oppHex = FAMILY_PALETTE[p.family].hex;
+      rival.update(0, clock, true);
+      if (still()) requestRender();
+    },
+    setPaused(v: boolean) {
+      if (v === paused) return;
+      paused = v;
+      start();
+    },
     stats(): ArenaStats {
       const info = renderer.info;
       return {
@@ -1041,7 +1064,12 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
       window.removeEventListener('resize', onResize);
       document.removeEventListener('visibilitychange', onVis);
       rival.dispose();
+      scene.traverse((o) => {
+        const mat = (o as THREE.Mesh).material as THREE.MeshBasicMaterial | THREE.MeshBasicMaterial[] | undefined;
+        for (const m of Array.isArray(mat) ? mat : mat ? [mat] : []) m.map?.dispose();
+      });
       scene.traverse((o) => disposeObj(o));
+      backTex.dispose();
       renderer.dispose();
       renderer.domElement.remove();
     },
