@@ -2,7 +2,7 @@
 
 **Nature :** journal de production du **nouveau projet**, et non journal copié de RPG-ArtByCode.  
 **Convention :** passes chronologiques, plus récente en bas ; statut `[OK]`, `[KO]`, `[?]` ; preuves vérifiables.  
-**Dernière passe :** 8 — M04 sur `main` : le jeu s’ouvre sur un accueil (profil, deck légal, rencontres, préparation, duel M03.2 inchangé, résultat, aide, options, sauvegarde versionnée) — `docs/RAPPORT_M04.md`, ADR 014 (proposé).
+**Dernière passe :** 9 — M05 sur `main` : série du Quai (3 manches), duels libres, Orin (Astre), déblocages de prototype, sauvegarde v2 migrée depuis v1, reprise EXACTE en plein duel — `docs/RAPPORT_M05.md`, ADR 014 (proposé).
 
 ## État initial connu
 
@@ -15,7 +15,7 @@
 
 ## À reprendre (prioritaire)
 
-1. **PRIORITÉ OPÉRATEUR M04–M06 (16 octobre) :** vue frontale et proportions du rival **approuvées et figées comme baseline desktop (ADR 013)**. Construire une boucle opérationnelle menu → deck → rencontres → duels → résultat/progression → sauvegarde/reprise (docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md), puis stabiliser une release candidate locale. Mobile paysage et polish artistiques secondaires reportés. **M04 livré (passe 8)** ; en cours : M05 (série, déblocages de prototype, sauvegarde v2, reprise exacte en plein duel), puis M06 (RC).
+1. **PRIORITÉ OPÉRATEUR M04–M06 (16 octobre) :** vue frontale et proportions du rival **approuvées et figées comme baseline desktop (ADR 013)**. Construire une boucle opérationnelle menu → deck → rencontres → duels → résultat/progression → sauvegarde/reprise (docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md), puis stabiliser une release candidate locale. Mobile paysage et polish artistiques secondaires reportés. **M04 livré (passe 8), M05 livré (passe 9)** ; en cours : M06 (release candidate : campagne QA, performance, rapport RC).
 2. **Écarts de fidélité restants** (`docs/RAPPORT_M03_2.md` §8) : personnages en plans 2,5D (pas de volume ni de chevelure détaillée), décor moins dense, ni bloom ni profondeur de champ, table encore plus sombre que la preview, typographie système ; paysage = gabarit compact du bureau (textes ≈ 9,5 px à 844×390), pas l’interface simplifiée du panneau 6.
 3. **Arbitrages encore proposés** (ADR 004) : ARB-002 (profil du rival public), ARB-001, ARB-005 (+ ARB-005b : carte camouflée remplacée pendant l’engagement, nommée en fin de tour depuis la passe 5), ARB-011 ; ratification éventuelle du delta D-01 (V3.3). Inférences restantes documentées (`docs/RAPPORT_M03_1B.md` §6).
 4. **Mesure sur GPU réel** (hors conteneur) : vues A/B, bougies (shader de points), scène du Clash (WAAPI) ; budget mobile.
@@ -278,3 +278,15 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **[?] Limites M04 :** pas de reprise d’un duel interrompu (livrée en M05) ; données des rivaux et collection de départ = prototypes signalés ; `src/game` inchangé.
 - **Pensée :** pour prouver qu’une enveloppe ne touche pas une scène approuvée, comparer la scène elle-même (calques DOM masqués) plutôt que la page : la première mesure « 4 % de pixels différents » ne venait que des calques (PV du rival, bouton Menu, conseil), la scène était identique.
 - **À reprendre :** M05 (série de trois manches, rencontres libres, déblocages de prototype, collection, sauvegarde v2 avec migration testée sur une vraie sauvegarde v1, reprise exacte en plein duel), puis M06.
+
+## Passe 9 — M05 : rencontres, collection, progression, sauvegarde et reprise (2026-10-17)
+
+- **Départ :** `9491570` (M04 livré). Code `e6e54c1`.
+- **[OK] Boucle RPG compacte :** série « Tournoi du Quai » (Kaï → Maëlle → Sélène, difficulté déclarative par PV / deck / Techniques / profil d’IA), duels libres ouverts au fil des rencontres, **Orin** (Astre, profil `equilibre` existant, ajouté en fin de liste : les seeds QA historiques ne changent pas), revanche, manche suivante, récapitulatif, journal de progression.
+- **[OK] Progression de prototype :** première victoire ⇒ variantes de famille II–IV + Technique distinctive (Rupture, Dissipation) ; rien sur défaite / abandon / victoire répétée ; aucune monnaie, aucun rang, aucun bonus ; collection consultable avec « comment l’obtenir ».
+- **[OK] Sauvegarde v2 + migration 1 → 2** reconstituée depuis l’historique, testée sur une **vraie** sauvegarde écrite par le build M04 (`test/fixtures/save-v1-m04.json`, produite en jouant ce build).
+- **[OK] Reprise exacte en plein duel** par rejeu des commandes sur le moteur pur, contrôlée par hash ; refus motivé sinon (recommencer depuis le début / retirer) ; Sauvegarder et quitter ; abandon depuis le tableau.
+- **Preuves :** 146/146 ; `qa:product` 8 parcours — E : **série entière jouée par l’interface** (8 duels, 5 défaites contre Sélène avant la victoire), F : reprise au hash près après rechargement en plein engagement et en pleine résolution, G : migration réelle, H : reprise altérée refusée ; captures `screenshots/qa/m05/`.
+- **[KO → corrigé] Test H :** l’altération faisait échouer le rejeu (commande devenue illégale) au lieu de produire un autre hash ; le jeu refusait correctement, l’assertion ne connaissait qu’un motif. Assertion élargie, H relancé 3/3.
+- **Pensée :** une reprise « exacte » se prouve par le hash ET par la vue du joueur, aux instants délicats (brouillon non verrouillé, résolution en cours), pas seulement en début de tour ; et un test de refus doit accepter tous les refus légitimes sans en accepter d’illégitime.
+- **À reprendre :** M06 (porte RC) — sans WebGL, longévité, moteur indépendant des animations, stockage refusé, réinitialisations, contraste des nouveaux écrans, coût CPU des écrans, vidéo du parcours, rapport RC.

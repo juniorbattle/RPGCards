@@ -1,0 +1,11 @@
+A-nouveau-joueur-1280-clic: 10/10 contrôles · duel : ended tour 10, gagnant opp, rival braise, vues 39/0 écarts, composition 0, postures 0, fuites 0, clics perdus 0 · console 0 · 96420 ms
+B-1920-glisser-abandon: 4/4 contrôles · duel : ended tour 5, gagnant me, rival braise, vues 17/0 écarts, composition 0, postures 0, fuites 0, clics perdus 0 · console 0 · 107130 ms
+C-deck-illegal-refuse: 5/5 contrôles · console 0 · 11739 ms
+D-sauvegarde-illisible: 6/6 contrôles · console 0 · 15855 ms
+E-serie-complete-1280: 22/22 contrôles · console 0 · 731517 ms
+F-reprise-en-plein-duel: 10/10 contrôles · duel : ended tour 10, gagnant opp, rival braise, vues 24/0 écarts, composition 0, postures 0, fuites 0, clics perdus 0 · console 0 · 114904 ms
+G-migration-v1-reelle: 4/4 contrôles · console 0 · 9267 ms
+H-reprise-alteree-refusee: 2/3 contrôles · console 0 · 26793 ms
+   ÉCHEC reprise refusée : raison affichée (rejeu ≠ hash)
+ÉCHEC QA produit : H-reprise-alteree-refusee
+EXIT 1

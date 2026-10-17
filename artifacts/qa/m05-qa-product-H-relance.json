@@ -1,0 +1,17 @@
+{
+  "commit": "9491570",
+  "date": "2026-10-17T04:03:33.779Z",
+  "chromium": "141.0.7390.37",
+  "runs": {
+    "H-reprise-alteree-refusee": {
+      "consoleIssues": [],
+      "checks": [
+        "OK reprise refusée, raison affichée : « Le rejeu du duel a échoué (Le Clash doit être résolu avant le tour suivant. »",
+        "OK aucun duel ouvert sur un état non vérifié",
+        "OK recommencé depuis le début avec la configuration enregistrée (tour 1)"
+      ],
+      "fails": [],
+      "ms": 29261
+    }
+  }
+}
