@@ -71,7 +71,7 @@ Porte de démarrage, sur un **clone propre du commit final `382ad1f`** (code app
 - Équité des sièges : la logique d’IA n’a pas évolué en M04–M06 (aucune nouvelle mesure de sièges nécessaire) ;
   la difficulté des rivaux vient de leurs données (PV, deck, Techniques, profil), jamais d’une IA qui tricherait.
 
-## 5. Performance (SwiftShader §5.1–5.2 · protocole GPU §5.3 · mesures sur GPU réel §5.4 · à-coups §5.5)
+## 5. Performance (SwiftShader §5.1–5.2 · protocole GPU §5.3 · mesures sur GPU réel §5.4 · à-coups §5.5 · re-rendu ciblé §5.6)
 
 ### 5.1 Le duel : même scène, même coût
 
@@ -289,6 +289,98 @@ Reste le coût du re-rendu complet du plateau à chaque commande (35–60 ms). I
 12 duels finals, et plus souvent sur un poste chargé. C’est le prochain chantier de fluidité, sans toucher à la composition
 approuvée.
 
+### 5.6 Re-rendu ciblé du plateau (passe 13, 2026-10-17)
+
+**Changement.** `renderApp` construit toujours l’arbre complet, mais ne remplace plus tout `#app`. Seuls
+les nœuds qui diffèrent sont touchés (`patchChildren`, ADR 015). Le DOM obtenu et le comportement sont
+ceux du re-rendu complet, vérifiés par `?renderCheck=1`.
+
+**Poste, builds, protocole.**
+- Même portable que §5.4 ; Chrome 155.0.8059.80 headless, ANGLE Direct3D 11.
+- « Avant » = `main` `4ccce89` (bundle identique à la passe 12) ; « après » = passe 13.
+- `npm run perf:trace` :
+  - pilote `lean`, seed 202, 14 tours, 90 commandes par duel, rival à 650 ms ;
+  - builds entrelacés ABBA en 3 rondes, profil persistant par build (premier duel froid, suivants chauds).
+- Deux mesures par commande :
+  - **dans la page** : `apply()` synchrone (moteur + rendu, style et mise en page forcés compris), puis
+    style / mise en page restants forcés juste après ;
+  - **temps processeur** du fil principal de la tâche qui exécute la commande (`tdur` de la trace,
+    `LQV_TRACE=1 LQV_TRACE_LIGHT=1` : tâches de premier niveau seulement, surcoût minimal).
+- Pourquoi le temps processeur : le poste est partagé. D’un duel à l’autre, le nombre d’images
+  > 16,7 ms a varié de 25 à 409. Une première série en temps mural seul (`passe13-commandes-780m.json`,
+  4 rondes) donnait une médiane 6,8 → 6,0 ms mais des écarts par ronde incohérents (+0,7 à −1,8 ms) :
+  le build le moins chargé l’emportait.
+- Comparaison appariée : même commande, même ronde. Les deux engagements d’un tour sont secrets et
+  simultanés. Le build plus rapide laisse parfois le joueur verrouiller avant les 650 ms du rival :
+  l’ordre s’inverse et le hash final change, mais pas la partie (même vainqueur, mêmes 14 tours).
+  L’appariement se fait donc par type et phase de commande ; ces inversions sont comptées.
+
+**Mécanisme** (rendu sans changement d’état, 780M, tour 4, 248 éléments ; trace CDP, script de session) :
+
+| | Avant | Après |
+|---|---|---|
+| Temps du rendu | 4,5–6,5 ms | 2,4–3,2 ms |
+| Éléments restylés | 232–233 | 26–27 |
+| Objets remis en page | 337–339 sur 342–344 | 48–50 sur 342–344 |
+
+**Par commande, temps processeur de la tâche** (`passe13-cpu-780m.json`, `passe13-cpu-rtx4060.json`) :
+
+| GPU | Famille | Avant, médiane / moyenne (ms) | Après, médiane / moyenne (ms) |
+|---|---|---|---|
+| Radeon 780M | toutes (≈ 265) | 9,6 / 11,2 | **7,4 / 9,1** |
+| Radeon 780M | clic de commande | 9,2 / 9,8 | 6,7 / 7,4 |
+| Radeon 780M | clic « Tour suivant » | 11,1 / 13,0 | 8,1 / 11,1 |
+| Radeon 780M | réponse du rival | 10,0 / 12,2 | 8,0 / 10,4 |
+| RTX 4060 | toutes (≈ 267) | 8,2 / 9,3 | **6,4 / 8,3** |
+| RTX 4060 | clic de commande | 7,7 / 8,2 | 5,9 / 6,3 |
+| RTX 4060 | clic « Tour suivant » | 8,5 / 10,9 | 8,0 / 10,5 |
+| RTX 4060 | réponse du rival | 8,9 / 10,2 | 7,8 / 10,1 |
+
+**Appariés, après − avant** (temps processeur, médiane de l’écart, part des commandes plus rapides) :
+- **780M** : −1,2 / −3,7 / −1,8 ms par ronde, soit **−2,0 ms** ; plus rapide dans 214 commandes sur 264.
+  Somme par duel : 1038 → 921, 999 → 723, 931 → 783 ms (−11 à −28 %).
+- **RTX 4060** : 0 / −1,6 / −2,7 ms par ronde, soit **−1,5 ms** ; plus rapide dans 158 sur 265.
+  Somme : 893 → 822, 819 → 741, 780 → 654 ms (−8 à −16 %). Deux inversions d’engagement en rondes 1 et 2.
+- Mesure dans la page, appariée : −1,6 ms (780M, 227 / 270) et −1,2 ms (RTX, 167 / 270).
+
+**Autres familles** (mesure dans la page, médianes, 780M puis RTX) :
+- commandes avec changement de vue : 8,3 → 6,2 et 6,9 → 5,2 ms ;
+- rendus hors commande (sélection, pose, menus, Échap…) : 6,7 → 4,4 et 5,5 → 3,7 ms ;
+- clics jusqu’à l’image suivante (Event Timing ≥ 16 ms) : médiane 40 → 32 ms sur les deux GPU ;
+  moyenne 46,6 → 33,2 et 39,1 → 31,0 ms ;
+- temps de résolution (`patchBeat`, inchangé) : 3,5 → 3,4 et 2,7 → 3,0 ms, dans le bruit.
+
+**À-coups > 50 ms** (3 duels par build et par GPU) :
+- 780M : 7 → 6 ; RTX : 11 → 5.
+- Causes inchangées : shaders Skia du premier duel d’un profil, fil principal libre (§5.5).
+
+**Ce qu’il reste dans une commande** (profil V8, 780M) :
+- ce qui change réellement (cases, cartes, bandeaux d’une nouvelle phase) ;
+- la construction de l’arbre complet : ≈ 1,3–2 ms, gardée pour n’avoir qu’un code de rendu,
+  vérifiable par `renderCheck` ;
+- la génération d’une illustration à sa première apparition : ≈ 2 ms par commande en moyenne,
+  concentrée sur les premiers tours (hors périmètre de cette passe).
+
+**Défauts trouvés pendant la mise au point** (corrigés avant mesure) :
+- **`blur` pendant le retrait.** Chrome 155 envoie `blur` à l’élément focalisé quand on le retire, élément
+  encore attaché. L’écouteur d’inspection remplaçait alors `.inspector` en plein patch : deux
+  inspecteurs, puis une exception. Le re-rendu complet absorbait ce cas. Correctif : `blur` explicite au
+  même moment qu’avant, et retrait robuste.
+- **Glissement FLIP non interrompu.** Une rangée gardée poursuivait son glissement A ↔ B à travers un
+  rendu ; avant, elle était recréée et se posait aussitôt. Le pilote de QA visait alors une case en
+  mouvement : glisser-déposer raté dans 6 des 9 duels pilotés en glisser. Correctif : tout élément animé est remplacé.
+- **Classe `view-switch` avec `.side *`.** Le sélecteur universel faisait restyler tout `#app` deux fois
+  par passage de vue (≈ 250 éléments × 2). Correctif : sélecteurs ciblés (≈ 110–145 + ≈ 20 éléments).
+- **Appariement en cascade.** Au premier essai, un frère changé (l’inspecteur) faisait remplacer tout
+  le journal. Correctif : recherche vers l’avant du premier nœud compatible.
+
+**Non-régression sur ce poste** (SwiftShader ; fichiers `artifacts/qa/trace/qa-{browser,product}-passe13-*.json`) :
+- `qa:browser` : 4/5 avant comme après, mêmes résultats duel par duel. Seul échec : le connu
+  `mobile-rotation-touch` (§7).
+- `qa:browser` avec `LQV_RENDER_CHECK=1` : 1106 rendus comparés à un rendu complet, 0 écart.
+- `qa:product` : 8/8 avant comme après ; avec `LQV_RENDER_CHECK=1`, 8/8 et 0 erreur console.
+- Règles inchangées : `git diff 4ccce89 -- src/game` vide ; `npm test` 146/146.
+
 ## 6. Défauts trouvés et corrigés pendant M04–M06
 
 | Défaut | Trouvé par | Correctif |
@@ -311,7 +403,7 @@ approuvée.
 | Progression (récompenses, collection de départ), PV et decks des rivaux, Orin | **prototypes non canoniques**, réglables par donnée | arbitrage de contenu |
 | PV du joueur fixes (90) | aucune progression de PV ratifiée | à décider avec la progression |
 | Mesure sur GPU réel | **faite sur un portable** (passe 11, §5.4 : Radeon 780M et RTX 4060, plafond de l’écran en jeu) ; poste de bureau non mesuré | temps GPU par image |
-| À-coups du fil principal | **tracés et attribués** (passe 12, §5.5) ; deux causes du jeu corrigées (liaison WebGL des anneaux, illustrations au clic) ; restent les shaders Skia au premier duel d’un profil Chrome et le re-rendu complet du plateau (35–60 ms par commande) | re-rendu ciblé du plateau (patchs), sans toucher la composition |
+| À-coups du fil principal | **tracés et attribués** (passe 12, §5.5) ; deux causes du jeu corrigées (liaison WebGL des anneaux, illustrations au clic) ; reste les shaders Skia au premier duel d’un profil Chrome. **Re-rendu ciblé du plateau** fait (passe 13, §5.6, ADR 015) : temps processeur par commande −1,5 à −2 ms en médiane appariée (9,6 → 7,4 ms sur la 780M, 8,2 → 6,4 ms sur la RTX 4060) | pré-générer les illustrations hors commande (≈ 2 ms par commande en moyenne aux premiers tours) |
 | Scène du Clash encore en fondu au début du tour suivant quand la séquence s’est terminée seule (≤ 300 ms en mouvement réduit, ≤ 760 ms sinon) | `qa:browser` échoue sur `mobile-rotation-touch` sur le poste de l’opérateur (2 « fantômes », tours 2 et 3), **aussi sur la RC intacte** avec ses propres outils ; passe dans le conteneur (plus lent) | arrêter la scène au tour suivant (coupe la fin du fondu de défausse : à arbitrer, ADR 013) |
 | Contraste du rang « II » sur les vignettes de l’éditeur de deck | `qa:rc` mesure 3,5–3,6:1 sur le poste de l’opérateur (seuil 4,5:1), **aussi sur la RC intacte** ; ≥ 4,5:1 dans le conteneur | vérifier le rendu des textes sous Windows ; renforcer le contour du chiffre si confirmé |
 | Mobile paysage | pas de nouveau travail (mandat) ; portrait vérifié en smoke-test | chantier dédié |

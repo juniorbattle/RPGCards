@@ -30,6 +30,8 @@ export interface AppParams {
   pose: string | null;
   /** QA (`qa=1`) : éléments de la scène retirés pour mesurer leur coût (voir ArenaOptions.ablate). */
   ablate: string[];
+  /** QA (`qa=1&renderCheck=1`) : chaque rendu ciblé du plateau est comparé à un rendu complet (passe 13). */
+  renderCheck: boolean;
 }
 
 export function readParams(search = window.location.search): AppParams {
@@ -62,5 +64,6 @@ export function readParams(search = window.location.search): AppParams {
     pose: q.get('qa') === '1' ? q.get('pose') : null,
     ablate: q.get('qa') === '1' ? (q.get('ablate') ?? '').split(',').filter(Boolean) : [],
     beat: q.has('beat') ? Math.max(0, Math.floor(Number(q.get('beat')) || 0)) : null,
+    renderCheck: q.get('qa') === '1' && q.get('renderCheck') === '1',
   };
 }

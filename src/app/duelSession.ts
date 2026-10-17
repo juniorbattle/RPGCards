@@ -9,7 +9,7 @@ import type { Command, GameConfig } from '../game/model/types';
 import { artCacheSize } from '../art/cardArt';
 import { buildMemory } from '../game/ai/memory';
 import { viewFor, visibleEvents } from '../game/visibility/view';
-import { patchBeat, patchInspector, patchRivalBubble, renderApp, type BoardHooks } from '../presentation/board';
+import { patchBeat, patchInspector, patchRivalBubble, renderApp, renderCheckStats, type BoardHooks } from '../presentation/board';
 import { ClashStage } from '../presentation/clashStage';
 import { DragManager } from '../presentation/drag';
 import type { RivalPersonality } from '../presentation/personalities';
@@ -202,6 +202,8 @@ export class DuelSession {
       rivalView: () => viewFor(c.match.state, 'p2'),
       rivalMemory: () => buildMemory(visibleEvents(c.match.events, 'p2'), 'p2'),
       events: () => c.match.events,
+      // QA passe 13 (`renderCheck=1`) : rendus ciblés comparés à un rendu complet du même état.
+      renderCheck: () => renderCheckStats(),
       cardInfo: (defId: string) => ({ title: cardTitle(cardDef(defId)), name: cardDef(defId).name, effect: cardDef(defId).effect ? EFFECTS[cardDef(defId).effect!].name : null }),
     };
   }

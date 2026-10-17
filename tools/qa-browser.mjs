@@ -2,7 +2,9 @@
 // sur 1280×720, 1920×1080 et mobile 390×844. Vérifie : issue atteinte, erreurs console, fuites de
 // secrets dans le DOM, VUE attendue à chaque phase (A confrontation / B manipulation), bascule
 // manuelle en pleine tactique, Techniques humaines exercées, séquence de résolution (jouée/sautée),
-// humeurs du rival observées. Sortie : artifacts/qa/qa-browser.json
+// humeurs du rival observées. Sortie : artifacts/qa/qa-browser.json (ou `LQV_QA_OUT`).
+// `LQV_RENDER_CHECK=1` (passe 13) : chaque rendu ciblé du plateau est comparé dans la page à un rendu
+// complet du même état ; toute différence est une erreur console, donc un échec.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { launch, startPreview, view, watchConsole } from './browser.mjs';
@@ -11,6 +13,8 @@ import { playTurn, pres, sample } from './duel-driver.mjs';
 const OUT = 'artifacts/qa';
 mkdirSync(OUT, { recursive: true });
 const commit = execSync('git rev-parse --short HEAD').toString().trim();
+const RENDER_CHECK = process.env.LQV_RENDER_CHECK === '1';
+const REPORT = process.env.LQV_QA_OUT ?? `${OUT}/qa-browser.json`;
 
 async function runDuel(browser, base, run) {
   const ctx = await browser.newContext({ viewport: run.viewport, isMobile: !!run.isMobile, hasTouch: !!run.isMobile, deviceScaleFactor: 1 });
@@ -18,7 +22,7 @@ async function runDuel(browser, base, run) {
   page.setDefaultTimeout(10000);
   const consoleIssues = [];
   watchConsole(page, consoleIssues);
-  await page.goto(`${base}/?seed=${run.seed}&autostart=1&qa=1&aiDelay=0&reducedMotion=${run.watchSequence ? 0 : 1}&pace=${run.watchSequence ? 'fast' : 'normal'}&tech=${run.tech}`);
+  await page.goto(`${base}/?seed=${run.seed}&autostart=1&qa=1&aiDelay=0&reducedMotion=${run.watchSequence ? 0 : 1}&pace=${run.watchSequence ? 'fast' : 'normal'}&tech=${run.tech}${RENDER_CHECK ? '&renderCheck=1' : ''}`);
   await page.waitForFunction(() => !!window.__lqv);
   if (process.env.QA_DEBUG) {
     // Trace des événements pointeur (diagnostic d’un glisser qui n’aboutit pas).
@@ -54,9 +58,10 @@ async function runDuel(browser, base, run) {
   await sample(page, stats);
   const v = await view(page);
   const p = await pres(page);
+  const renderCheck = RENDER_CHECK ? await page.evaluate(() => window.__lqvRenderCheck?.() ?? null) : null;
   await ctx.close();
   return {
-    ...run, outcome, phase: v.phase, winner: v.winner, turn: v.turn, hp: [v.me.hp, v.opp.hp], overtime: v.overtime, ms: Date.now() - t0, consoleIssues,
+    ...run, outcome, renderCheck, phase: v.phase, winner: v.winner, turn: v.turn, hp: [v.me.hp, v.opp.hp], overtime: v.overtime, ms: Date.now() - t0, consoleIssues,
     ...stats, moods: [...stats.moods], leaks: [...new Set(stats.leaks)], viewSwitches: p.switches, personality: p.personality,
   };
 }
@@ -79,7 +84,7 @@ try {
   for (const p of plans) {
     const r = await runDuel(browser, server.base, p);
     report.runs.push(r);
-    console.log(`${r.name}: ${r.outcome} au tour ${r.turn} · rival ${r.personality} · gagnant ${r.winner} · vues ${r.viewChecks} contrôles/${r.viewErrors.length} écarts, ${r.viewSwitches} bascules, V ${r.manualToggleChecked} · techniques ${JSON.stringify(r.tech)} · séquences vues ${r.sequencesWatched}/sautées ${r.sequencesSkipped} (scènes de Clash ${r.stagesSeen}, fantômes ${r.stageGhosts.length}) · postures ${r.stanceChecks} contrôles/${r.stanceIssues.length} écarts · composition ${r.layoutIssues.length} écart(s)${r.layoutIssues.length ? ` [${r.layoutIssues.slice(0, 3).join(' | ')}]` : ''} · humeurs ${r.moods.length} · console ${r.consoleIssues.length} · fuites ${r.leaks.length} · clics perdus ${r.lostClicks.length}${r.rotations.length ? ` · rotations ${r.rotations.join(' ; ')}` : ''} · ${r.ms} ms`);
+    console.log(`${r.name}: ${r.outcome} au tour ${r.turn} · rival ${r.personality} · gagnant ${r.winner} · vues ${r.viewChecks} contrôles/${r.viewErrors.length} écarts, ${r.viewSwitches} bascules, V ${r.manualToggleChecked} · techniques ${JSON.stringify(r.tech)} · séquences vues ${r.sequencesWatched}/sautées ${r.sequencesSkipped} (scènes de Clash ${r.stagesSeen}, fantômes ${r.stageGhosts.length}) · postures ${r.stanceChecks} contrôles/${r.stanceIssues.length} écarts · composition ${r.layoutIssues.length} écart(s)${r.layoutIssues.length ? ` [${r.layoutIssues.slice(0, 3).join(' | ')}]` : ''} · humeurs ${r.moods.length} · console ${r.consoleIssues.length} · fuites ${r.leaks.length} · clics perdus ${r.lostClicks.length}${r.rotations.length ? ` · rotations ${r.rotations.join(' ; ')}` : ''}${r.renderCheck ? ` · rendus comparés ${r.renderCheck.renders}, écarts ${r.renderCheck.mismatches.length}` : ''} · ${r.ms} ms`);
   }
 } finally {
   await browser.close();
@@ -87,11 +92,11 @@ try {
 }
 const moods = new Set(report.runs.flatMap((r) => r.moods));
 report.distinctMoods = [...moods];
-writeFileSync(`${OUT}/qa-browser.json`, JSON.stringify(report, null, 2));
-const failed = report.runs.filter((r) => r.outcome !== 'ended' || r.consoleIssues.length || r.leaks.length || r.viewErrors.length || r.lostClicks.length || r.manualToggleChecked !== 'ok' || r.layoutIssues.length || r.stanceIssues.length || r.stageGhosts.length);
+writeFileSync(REPORT, JSON.stringify(report, null, 2));
+const failed = report.runs.filter((r) => r.outcome !== 'ended' || r.consoleIssues.length || r.leaks.length || r.viewErrors.length || r.lostClicks.length || r.manualToggleChecked !== 'ok' || r.layoutIssues.length || r.stanceIssues.length || r.stageGhosts.length || (RENDER_CHECK && (!r.renderCheck?.renders || r.renderCheck.mismatches.length)));
 console.log(`humeurs distinctes du rival sur l’ensemble : ${moods.size} (${[...moods].join(', ')})`);
 if (failed.length) {
   console.error(`ÉCHEC QA : ${failed.map((r) => `${r.name} ${r.error ?? ''} ${[...r.viewErrors, ...r.layoutIssues, ...r.stanceIssues, ...r.stageGhosts].slice(0, 4).join(' | ')}`).join(' ; ')}`);
   process.exit(1);
 }
-console.log(`QA navigateur M03 OK (${report.runs.length} duels complets) — rapport ${OUT}/qa-browser.json`);
+console.log(`QA navigateur M03 OK (${report.runs.length} duels complets) — rapport ${REPORT}`);

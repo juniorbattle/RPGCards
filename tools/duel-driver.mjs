@@ -8,8 +8,9 @@ const rankOf = (defId) => (defId.startsWith('sig-') ? 5 : Number(defId.split('-'
 
 /**
  * Attente SANS sondage (mode `run.lean`, mesures de fluidité, passe 12) : une seule évaluation par
- * attente, résolue dans la page quand le plateau est re-rendu (`renderApp` remplace les enfants de
- * #app, la classe `sequencing` change) et que la condition est vraie ; filet de sécurité à 1 s.
+ * attente, résolue dans la page quand le plateau est re-rendu (mutation dans #app : depuis la passe 13,
+ * `renderApp` ne remplace plus que les nœuds modifiés, d’où `subtree`) et que la condition est vraie ;
+ * filet de sécurité à 1 s.
  * `until` : 'decision' (même condition que waitDecision) ou 'sequenceDone'. Renvoie la vue p1.
  */
 export async function waitLean(page, until, timeout = 30000) {
@@ -27,7 +28,7 @@ export async function waitLean(page, until, timeout = 30000) {
     const done = () => { mo?.disconnect(); clearInterval(iv); clearTimeout(to); resolve({ ...c.view, clashScripted: !!c.seq?.script }); };
     if (test()) { done(); return; }
     mo = new MutationObserver(() => { if (test()) done(); });
-    mo.observe(app, { childList: true, attributes: true, attributeFilter: ['class'] });
+    mo.observe(app, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
     iv = setInterval(() => { if (test()) done(); }, 1000);
     to = setTimeout(done, timeout);
   }), { until, timeout });

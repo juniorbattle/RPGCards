@@ -1,0 +1,1656 @@
+{
+  "commit": "4ccce89",
+  "date": "2026-10-17T20:26:56.305Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "cores": 16,
+    "memGB": 31,
+    "platform": "win32 10.0.26200",
+    "node": "v22.14.0"
+  },
+  "chrome": "155.0.8059.80",
+  "gpu": true,
+  "chromeArgs": [],
+  "renderer": "ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "trace": false,
+  "traceCategories": null,
+  "maxTurns": 80,
+  "freshBrowserPerDuel": false,
+  "persistentProfile": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-competent-euler-d2ddee/528f01d5-a38a-4169-8ab2-043ce1713e7d/scratchpad/profils-780m",
+  "aiDelay": 650,
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "builds": [
+    {
+      "name": "avant",
+      "dir": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-competent-euler-d2ddee/528f01d5-a38a-4169-8ab2-043ce1713e7d/scratchpad/dist-avant"
+    },
+    {
+      "name": "apres",
+      "dir": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-competent-euler-d2ddee/528f01d5-a38a-4169-8ab2-043ce1713e7d/scratchpad/dist-apres"
+    }
+  ],
+  "drivers": [
+    "lean"
+  ],
+  "rounds": 4,
+  "runs": [
+    {
+      "name": "r1-avant-lean",
+      "round": 1,
+      "build": "avant",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 121,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19138,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 12.2,
+        "maxMs": 139.4,
+        "over16_7ms": 156,
+        "over33_3ms": 9,
+        "over50ms": 3,
+        "over100ms": 1
+      },
+      "byView": {
+        "A": {
+          "frames": 7708,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 12.2,
+          "maxMs": 139.4,
+          "over16_7ms": 63,
+          "over33_3ms": 3,
+          "over50ms": 1,
+          "over100ms": 1
+        },
+        "B": {
+          "frames": 758,
+          "medianMs": 6.1,
+          "p95Ms": 18.2,
+          "p99Ms": 24.3,
+          "maxMs": 36.3,
+          "over16_7ms": 62,
+          "over33_3ms": 1,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10672,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.4,
+          "maxMs": 84.9,
+          "over16_7ms": 31,
+          "over33_3ms": 5,
+          "over50ms": 2,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 3,
+      "commands": {
+        "toutes commandes": {
+          "n": 90,
+          "medianMs": 7.1,
+          "p75Ms": 8.6,
+          "p95Ms": 16.5,
+          "maxMs": 28.1,
+          "meanMs": 8.5,
+          "sumMs": 762.3
+        },
+        "clic de commande": {
+          "n": 44,
+          "medianMs": 7.1,
+          "p75Ms": 8.2,
+          "p95Ms": 13.6,
+          "maxMs": 16.7,
+          "meanMs": 7.6,
+          "sumMs": 336.4
+        },
+        "clic « Tour suivant »": {
+          "n": 13,
+          "medianMs": 6.8,
+          "p75Ms": 13.3,
+          "p95Ms": 22.8,
+          "maxMs": 22.8,
+          "meanMs": 10.6,
+          "sumMs": 138.3
+        },
+        "réponse du rival": {
+          "n": 33,
+          "medianMs": 7.4,
+          "p75Ms": 8.4,
+          "p95Ms": 16.5,
+          "maxMs": 28.1,
+          "meanMs": 8.7,
+          "sumMs": 287.6
+        },
+        "commandes avec changement de vue": {
+          "n": 22,
+          "medianMs": 8.2,
+          "p75Ms": 8.7,
+          "p95Ms": 14.1,
+          "maxMs": 16.7,
+          "meanMs": 8.7,
+          "sumMs": 191.6
+        },
+        "rendus hors commande": {
+          "n": 134,
+          "medianMs": 6.3,
+          "p75Ms": 7.3,
+          "p95Ms": 9,
+          "maxMs": 11.8,
+          "meanMs": 6.5,
+          "sumMs": 871.2
+        },
+        "temps de résolution": {
+          "n": 45,
+          "medianMs": 3.3,
+          "p75Ms": 3.7,
+          "p95Ms": 4.3,
+          "maxMs": 4.7,
+          "meanMs": 3.3,
+          "sumMs": 150.2
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 138,
+          "medianMs": 40,
+          "p75Ms": 48,
+          "p95Ms": 64,
+          "maxMs": 80,
+          "meanMs": 44.2,
+          "sumMs": 6104
+        }
+      },
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/passe13-commandes-780m-r1-avant-lean.page.json",
+      "hitches": {
+        "count": 3,
+        "over100": 1,
+        "byCause": {
+          "LoAF sans script": 3
+        },
+        "trace": null,
+        "hitches": [
+          {
+            "atS": 1,
+            "dtMs": 139.4,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 141,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 2.1,
+            "dtMs": 66.7,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|rank",
+            "ctxEnd": "1|REPEL|rank",
+            "loaf": [
+              {
+                "durationMs": 70,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 3.8,
+            "dtMs": 84.9,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 85,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          }
+        ]
+      }
+    },
+    {
+      "name": "r1-apres-lean",
+      "round": 1,
+      "build": "apres",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf26cfd88bf",
+      "durationS": 121,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19218,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 12.1,
+        "maxMs": 145.3,
+        "over16_7ms": 97,
+        "over33_3ms": 8,
+        "over50ms": 5,
+        "over100ms": 1
+      },
+      "byView": {
+        "A": {
+          "frames": 7885,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 12.1,
+          "maxMs": 145.3,
+          "over16_7ms": 26,
+          "over33_3ms": 2,
+          "over50ms": 1,
+          "over100ms": 1
+        },
+        "B": {
+          "frames": 684,
+          "medianMs": 6.1,
+          "p95Ms": 18.1,
+          "p99Ms": 24.3,
+          "maxMs": 47.7,
+          "over16_7ms": 40,
+          "over33_3ms": 1,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10649,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.5,
+          "maxMs": 90.9,
+          "over16_7ms": 31,
+          "over33_3ms": 5,
+          "over50ms": 4,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 7,
+      "commands": {
+        "toutes commandes": {
+          "n": 90,
+          "medianMs": 6.2,
+          "p75Ms": 7.8,
+          "p95Ms": 17.9,
+          "maxMs": 27.8,
+          "meanMs": 7.5,
+          "sumMs": 672.2
+        },
+        "clic de commande": {
+          "n": 44,
+          "medianMs": 6.3,
+          "p75Ms": 7,
+          "p95Ms": 11.6,
+          "maxMs": 19.5,
+          "meanMs": 6.6,
+          "sumMs": 290.2
+        },
+        "clic « Tour suivant »": {
+          "n": 13,
+          "medianMs": 6.4,
+          "p75Ms": 11.1,
+          "p95Ms": 22.6,
+          "maxMs": 22.6,
+          "meanMs": 9.6,
+          "sumMs": 124.5
+        },
+        "réponse du rival": {
+          "n": 33,
+          "medianMs": 6.1,
+          "p75Ms": 7.9,
+          "p95Ms": 19.5,
+          "maxMs": 27.8,
+          "meanMs": 7.8,
+          "sumMs": 257.5
+        },
+        "commandes avec changement de vue": {
+          "n": 22,
+          "medianMs": 6.9,
+          "p75Ms": 8,
+          "p95Ms": 12.3,
+          "maxMs": 19.5,
+          "meanMs": 7.6,
+          "sumMs": 168.1
+        },
+        "rendus hors commande": {
+          "n": 134,
+          "medianMs": 4.7,
+          "p75Ms": 5.6,
+          "p95Ms": 7.2,
+          "maxMs": 9.6,
+          "meanMs": 4.9,
+          "sumMs": 650.9
+        },
+        "temps de résolution": {
+          "n": 45,
+          "medianMs": 3.4,
+          "p75Ms": 3.9,
+          "p95Ms": 5.3,
+          "maxMs": 5.5,
+          "meanMs": 3.5,
+          "sumMs": 157
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 138,
+          "medianMs": 32,
+          "p75Ms": 40,
+          "p95Ms": 56,
+          "maxMs": 64,
+          "meanMs": 34,
+          "sumMs": 4696
+        }
+      },
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/passe13-commandes-780m-r1-apres-lean.page.json",
+      "hitches": {
+        "count": 5,
+        "over100": 1,
+        "byCause": {
+          "LoAF sans script": 5
+        },
+        "trace": null,
+        "hitches": [
+          {
+            "atS": 1,
+            "dtMs": 145.3,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 145,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 2.1,
+            "dtMs": 90.9,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|rank",
+            "ctxEnd": "1|REPEL|rank",
+            "loaf": [
+              {
+                "durationMs": 94,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 3.8,
+            "dtMs": 66.7,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 67,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 4.4,
+            "dtMs": 54.5,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 55,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          },
+          {
+            "atS": 62.7,
+            "dtMs": 60.7,
+            "tag": "clash",
+            "ctxStart": "7|RESOLVED|rank",
+            "ctxEnd": "7|RESOLVED|rank",
+            "loaf": [
+              {
+                "durationMs": 63,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          }
+        ]
+      }
+    },
+    {
+      "name": "r2-apres-lean",
+      "round": 2,
+      "build": "apres",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 121,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19437,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 12.1,
+        "maxMs": 30.4,
+        "over16_7ms": 69,
+        "over33_3ms": 0,
+        "over50ms": 0,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 7894,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 12,
+          "maxMs": 30.4,
+          "over16_7ms": 27,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 801,
+          "medianMs": 6.1,
+          "p95Ms": 12.2,
+          "p99Ms": 18.2,
+          "maxMs": 30.3,
+          "over16_7ms": 23,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10742,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.4,
+          "maxMs": 24.3,
+          "over16_7ms": 19,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 0,
+      "commands": {
+        "toutes commandes": {
+          "n": 90,
+          "medianMs": 6,
+          "p75Ms": 7.1,
+          "p95Ms": 16,
+          "maxMs": 27.3,
+          "meanMs": 7.3,
+          "sumMs": 657.3
+        },
+        "clic de commande": {
+          "n": 44,
+          "medianMs": 5.5,
+          "p75Ms": 6.5,
+          "p95Ms": 11.4,
+          "maxMs": 17.4,
+          "meanMs": 6.1,
+          "sumMs": 269.1
+        },
+        "clic « Tour suivant »": {
+          "n": 13,
+          "medianMs": 7.3,
+          "p75Ms": 10.7,
+          "p95Ms": 25.7,
+          "maxMs": 25.7,
+          "meanMs": 10.3,
+          "sumMs": 133.3
+        },
+        "réponse du rival": {
+          "n": 33,
+          "medianMs": 6.4,
+          "p75Ms": 7.1,
+          "p95Ms": 16,
+          "maxMs": 27.3,
+          "meanMs": 7.7,
+          "sumMs": 254.9
+        },
+        "commandes avec changement de vue": {
+          "n": 22,
+          "medianMs": 6.4,
+          "p75Ms": 7.1,
+          "p95Ms": 11.4,
+          "maxMs": 17.4,
+          "meanMs": 7.2,
+          "sumMs": 158.6
+        },
+        "rendus hors commande": {
+          "n": 134,
+          "medianMs": 4.5,
+          "p75Ms": 5.3,
+          "p95Ms": 6.8,
+          "maxMs": 9.5,
+          "meanMs": 4.7,
+          "sumMs": 625.7
+        },
+        "temps de résolution": {
+          "n": 45,
+          "medianMs": 3.2,
+          "p75Ms": 3.9,
+          "p95Ms": 4.9,
+          "maxMs": 6,
+          "meanMs": 3.4,
+          "sumMs": 153.8
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 138,
+          "medianMs": 32,
+          "p75Ms": 40,
+          "p95Ms": 48,
+          "maxMs": 64,
+          "meanMs": 31.9,
+          "sumMs": 4400
+        }
+      },
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/passe13-commandes-780m-r2-apres-lean.page.json",
+      "hitches": {
+        "count": 0,
+        "over100": 0,
+        "byCause": {},
+        "trace": null,
+        "hitches": []
+      }
+    },
+    {
+      "name": "r2-avant-lean",
+      "round": 2,
+      "build": "avant",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 120,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19375,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 12.1,
+        "maxMs": 48.4,
+        "over16_7ms": 83,
+        "over33_3ms": 1,
+        "over50ms": 0,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 7862,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 12.1,
+          "maxMs": 30.3,
+          "over16_7ms": 33,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 779,
+          "medianMs": 6.1,
+          "p95Ms": 12.4,
+          "p99Ms": 24.1,
+          "maxMs": 30.3,
+          "over16_7ms": 35,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10734,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.4,
+          "maxMs": 48.4,
+          "over16_7ms": 15,
+          "over33_3ms": 1,
+          "over50ms": 0,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 0,
+      "commands": {
+        "toutes commandes": {
+          "n": 90,
+          "medianMs": 5.9,
+          "p75Ms": 7.5,
+          "p95Ms": 15.7,
+          "maxMs": 26.6,
+          "meanMs": 7.2,
+          "sumMs": 651.9
+        },
+        "clic de commande": {
+          "n": 44,
+          "medianMs": 5.6,
+          "p75Ms": 7.5,
+          "p95Ms": 8.5,
+          "maxMs": 15.7,
+          "meanMs": 6.4,
+          "sumMs": 279.4
+        },
+        "clic « Tour suivant »": {
+          "n": 13,
+          "medianMs": 5.8,
+          "p75Ms": 11.5,
+          "p95Ms": 23.3,
+          "maxMs": 23.3,
+          "meanMs": 9.2,
+          "sumMs": 119.5
+        },
+        "réponse du rival": {
+          "n": 33,
+          "medianMs": 6.4,
+          "p75Ms": 7.3,
+          "p95Ms": 16.5,
+          "maxMs": 26.6,
+          "meanMs": 7.7,
+          "sumMs": 253
+        },
+        "commandes avec changement de vue": {
+          "n": 22,
+          "medianMs": 7.1,
+          "p75Ms": 7.8,
+          "p95Ms": 11.1,
+          "maxMs": 15.4,
+          "meanMs": 7.4,
+          "sumMs": 163
+        },
+        "rendus hors commande": {
+          "n": 134,
+          "medianMs": 5.1,
+          "p75Ms": 6.2,
+          "p95Ms": 8.4,
+          "maxMs": 11.5,
+          "meanMs": 5.5,
+          "sumMs": 737.5
+        },
+        "temps de résolution": {
+          "n": 45,
+          "medianMs": 2.9,
+          "p75Ms": 3.5,
+          "p95Ms": 4.9,
+          "maxMs": 5.3,
+          "meanMs": 3.1,
+          "sumMs": 138.1
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 138,
+          "medianMs": 32,
+          "p75Ms": 40,
+          "p95Ms": 56,
+          "maxMs": 64,
+          "meanMs": 34.8,
+          "sumMs": 4800
+        }
+      },
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/passe13-commandes-780m-r2-avant-lean.page.json",
+      "hitches": {
+        "count": 0,
+        "over100": 0,
+        "byCause": {},
+        "trace": null,
+        "hitches": []
+      }
+    },
+    {
+      "name": "r3-avant-lean",
+      "round": 3,
+      "build": "avant",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 120,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19526,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 6.5,
+        "maxMs": 24.1,
+        "over16_7ms": 25,
+        "over33_3ms": 0,
+        "over50ms": 0,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 7971,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.5,
+          "maxMs": 24.1,
+          "over16_7ms": 11,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 772,
+          "medianMs": 6.1,
+          "p95Ms": 12.1,
+          "p99Ms": 18.1,
+          "maxMs": 18.2,
+          "over16_7ms": 14,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10783,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.3,
+          "maxMs": 12.2,
+          "over16_7ms": 0,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 0,
+      "commands": {
+        "toutes commandes": {
+          "n": 90,
+          "medianMs": 4.9,
+          "p75Ms": 7.3,
+          "p95Ms": 11,
+          "maxMs": 17.6,
+          "meanMs": 5.9,
+          "sumMs": 531.5
+        },
+        "clic de commande": {
+          "n": 44,
+          "medianMs": 5,
+          "p75Ms": 6.9,
+          "p95Ms": 9,
+          "maxMs": 13.2,
+          "meanMs": 5.6,
+          "sumMs": 245.7
+        },
+        "clic « Tour suivant »": {
+          "n": 13,
+          "medianMs": 6.6,
+          "p75Ms": 7.1,
+          "p95Ms": 13.1,
+          "maxMs": 13.1,
+          "meanMs": 6.6,
+          "sumMs": 85.9
+        },
+        "réponse du rival": {
+          "n": 33,
+          "medianMs": 4.7,
+          "p75Ms": 7.5,
+          "p95Ms": 10.2,
+          "maxMs": 17.6,
+          "meanMs": 6.1,
+          "sumMs": 199.9
+        },
+        "commandes avec changement de vue": {
+          "n": 22,
+          "medianMs": 5.2,
+          "p75Ms": 8.1,
+          "p95Ms": 9,
+          "maxMs": 11,
+          "meanMs": 6,
+          "sumMs": 132.3
+        },
+        "rendus hors commande": {
+          "n": 134,
+          "medianMs": 4,
+          "p75Ms": 5.3,
+          "p95Ms": 7.3,
+          "maxMs": 9.7,
+          "meanMs": 4.5,
+          "sumMs": 606.3
+        },
+        "temps de résolution": {
+          "n": 45,
+          "medianMs": 2.1,
+          "p75Ms": 2.4,
+          "p95Ms": 4.2,
+          "maxMs": 4.7,
+          "meanMs": 2.3,
+          "sumMs": 103.2
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 138,
+          "medianMs": 24,
+          "p75Ms": 32,
+          "p95Ms": 40,
+          "maxMs": 48,
+          "meanMs": 29.3,
+          "sumMs": 4040
+        }
+      },
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/passe13-commandes-780m-r3-avant-lean.page.json",
+      "hitches": {
+        "count": 0,
+        "over100": 0,
+        "byCause": {},
+        "trace": null,
+        "hitches": []
+      }
+    },
+    {
+      "name": "r3-apres-lean",
+      "round": 3,
+      "build": "apres",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 121,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19464,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 12,
+        "maxMs": 48.5,
+        "over16_7ms": 56,
+        "over33_3ms": 2,
+        "over50ms": 0,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 7918,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 7.1,
+          "maxMs": 48.5,
+          "over16_7ms": 24,
+          "over33_3ms": 2,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 796,
+          "medianMs": 6.1,
+          "p95Ms": 12.2,
+          "p99Ms": 18.3,
+          "maxMs": 24.3,
+          "over16_7ms": 20,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10750,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.4,
+          "maxMs": 30.4,
+          "over16_7ms": 12,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 0,
+      "commands": {
+        "toutes commandes": {
+          "n": 90,
+          "medianMs": 5.6,
+          "p75Ms": 6.8,
+          "p95Ms": 12.3,
+          "maxMs": 30.8,
+          "meanMs": 6.7,
+          "sumMs": 605
+        },
+        "clic de commande": {
+          "n": 44,
+          "medianMs": 5.2,
+          "p75Ms": 6.2,
+          "p95Ms": 10.6,
+          "maxMs": 15.8,
+          "meanMs": 5.6,
+          "sumMs": 246.1
+        },
+        "clic « Tour suivant »": {
+          "n": 13,
+          "medianMs": 6.4,
+          "p75Ms": 11.4,
+          "p95Ms": 22.3,
+          "maxMs": 22.3,
+          "meanMs": 8.7,
+          "sumMs": 112.7
+        },
+        "réponse du rival": {
+          "n": 33,
+          "medianMs": 6.2,
+          "p75Ms": 7.8,
+          "p95Ms": 16.5,
+          "maxMs": 30.8,
+          "meanMs": 7.5,
+          "sumMs": 246.2
+        },
+        "commandes avec changement de vue": {
+          "n": 22,
+          "medianMs": 6.2,
+          "p75Ms": 6.9,
+          "p95Ms": 11.4,
+          "maxMs": 15.8,
+          "meanMs": 6.8,
+          "sumMs": 149.1
+        },
+        "rendus hors commande": {
+          "n": 134,
+          "medianMs": 4.3,
+          "p75Ms": 5.1,
+          "p95Ms": 6.6,
+          "maxMs": 7.9,
+          "meanMs": 4.4,
+          "sumMs": 588.9
+        },
+        "temps de résolution": {
+          "n": 45,
+          "medianMs": 3.2,
+          "p75Ms": 3.7,
+          "p95Ms": 5.1,
+          "maxMs": 5.9,
+          "meanMs": 3.3,
+          "sumMs": 148.5
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 138,
+          "medianMs": 32,
+          "p75Ms": 32,
+          "p95Ms": 40,
+          "maxMs": 72,
+          "meanMs": 29,
+          "sumMs": 4000
+        }
+      },
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/passe13-commandes-780m-r3-apres-lean.page.json",
+      "hitches": {
+        "count": 0,
+        "over100": 0,
+        "byCause": {},
+        "trace": null,
+        "hitches": []
+      }
+    },
+    {
+      "name": "r4-apres-lean",
+      "round": 4,
+      "build": "apres",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 121,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19068,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 12.2,
+        "maxMs": 60.6,
+        "over16_7ms": 155,
+        "over33_3ms": 8,
+        "over50ms": 1,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 7710,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 12.2,
+          "maxMs": 48.4,
+          "over16_7ms": 57,
+          "over33_3ms": 2,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 776,
+          "medianMs": 6.1,
+          "p95Ms": 18.2,
+          "p99Ms": 24.3,
+          "maxMs": 36.4,
+          "over16_7ms": 49,
+          "over33_3ms": 2,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10582,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 12.1,
+          "maxMs": 60.6,
+          "over16_7ms": 49,
+          "over33_3ms": 4,
+          "over50ms": 1,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 1,
+      "commands": {
+        "toutes commandes": {
+          "n": 90,
+          "medianMs": 6.3,
+          "p75Ms": 8.3,
+          "p95Ms": 14.8,
+          "maxMs": 27.5,
+          "meanMs": 7.3,
+          "sumMs": 661.2
+        },
+        "clic de commande": {
+          "n": 44,
+          "medianMs": 6,
+          "p75Ms": 7.2,
+          "p95Ms": 10.3,
+          "maxMs": 11.4,
+          "meanMs": 6.2,
+          "sumMs": 271.1
+        },
+        "clic « Tour suivant »": {
+          "n": 13,
+          "medianMs": 8.1,
+          "p75Ms": 11.6,
+          "p95Ms": 23,
+          "maxMs": 23,
+          "meanMs": 9.8,
+          "sumMs": 127.1
+        },
+        "réponse du rival": {
+          "n": 33,
+          "medianMs": 6.8,
+          "p75Ms": 8.3,
+          "p95Ms": 22.9,
+          "maxMs": 27.5,
+          "meanMs": 8,
+          "sumMs": 263
+        },
+        "commandes avec changement de vue": {
+          "n": 22,
+          "medianMs": 6.7,
+          "p75Ms": 8.4,
+          "p95Ms": 10.6,
+          "maxMs": 14.8,
+          "meanMs": 7,
+          "sumMs": 154.2
+        },
+        "rendus hors commande": {
+          "n": 134,
+          "medianMs": 4.8,
+          "p75Ms": 5.8,
+          "p95Ms": 8.2,
+          "maxMs": 10.1,
+          "meanMs": 4.9,
+          "sumMs": 658.4
+        },
+        "temps de résolution": {
+          "n": 45,
+          "medianMs": 3.4,
+          "p75Ms": 4,
+          "p95Ms": 5.2,
+          "maxMs": 5.5,
+          "meanMs": 3.4,
+          "sumMs": 151.1
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 138,
+          "medianMs": 32,
+          "p75Ms": 40,
+          "p95Ms": 72,
+          "maxMs": 112,
+          "meanMs": 36.6,
+          "sumMs": 5048
+        }
+      },
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/passe13-commandes-780m-r4-apres-lean.page.json",
+      "hitches": {
+        "count": 1,
+        "over100": 0,
+        "byCause": {
+          "LoAF sans script": 1
+        },
+        "trace": null,
+        "hitches": [
+          {
+            "atS": 43.7,
+            "dtMs": 60.6,
+            "tag": "clash",
+            "ctxStart": "5|REPEL|outcome",
+            "ctxEnd": "5|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 59,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          }
+        ]
+      }
+    },
+    {
+      "name": "r4-avant-lean",
+      "round": 4,
+      "build": "avant",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 122,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 18090,
+        "medianMs": 6.1,
+        "p95Ms": 12.1,
+        "p99Ms": 18.2,
+        "maxMs": 54.7,
+        "over16_7ms": 409,
+        "over33_3ms": 19,
+        "over50ms": 1,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 7179,
+          "medianMs": 6.1,
+          "p95Ms": 12.1,
+          "p99Ms": 18.3,
+          "maxMs": 42.5,
+          "over16_7ms": 175,
+          "over33_3ms": 12,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 783,
+          "medianMs": 6.1,
+          "p95Ms": 18.3,
+          "p99Ms": 30.3,
+          "maxMs": 36.4,
+          "over16_7ms": 93,
+          "over33_3ms": 4,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10128,
+          "medianMs": 6.1,
+          "p95Ms": 6.7,
+          "p99Ms": 18.2,
+          "maxMs": 54.7,
+          "over16_7ms": 141,
+          "over33_3ms": 3,
+          "over50ms": 1,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 1,
+      "commands": {
+        "toutes commandes": {
+          "n": 90,
+          "medianMs": 8.1,
+          "p75Ms": 10.7,
+          "p95Ms": 22.4,
+          "maxMs": 37.2,
+          "meanMs": 9.9,
+          "sumMs": 888.7
+        },
+        "clic de commande": {
+          "n": 44,
+          "medianMs": 7.7,
+          "p75Ms": 9.6,
+          "p95Ms": 13,
+          "maxMs": 23.8,
+          "meanMs": 8.7,
+          "sumMs": 383.6
+        },
+        "clic « Tour suivant »": {
+          "n": 13,
+          "medianMs": 7.4,
+          "p75Ms": 13.6,
+          "p95Ms": 32.4,
+          "maxMs": 32.4,
+          "meanMs": 12.1,
+          "sumMs": 157.3
+        },
+        "réponse du rival": {
+          "n": 33,
+          "medianMs": 8.6,
+          "p75Ms": 10.7,
+          "p95Ms": 23.1,
+          "maxMs": 37.2,
+          "meanMs": 10.5,
+          "sumMs": 347.8
+        },
+        "commandes avec changement de vue": {
+          "n": 22,
+          "medianMs": 8.4,
+          "p75Ms": 10.4,
+          "p95Ms": 17.7,
+          "maxMs": 22.4,
+          "meanMs": 9.7,
+          "sumMs": 214.3
+        },
+        "rendus hors commande": {
+          "n": 134,
+          "medianMs": 7,
+          "p75Ms": 8.1,
+          "p95Ms": 10.9,
+          "maxMs": 13.7,
+          "meanMs": 7.2,
+          "sumMs": 960.7
+        },
+        "temps de résolution": {
+          "n": 45,
+          "medianMs": 3.5,
+          "p75Ms": 4.3,
+          "p95Ms": 5.6,
+          "maxMs": 6,
+          "meanMs": 3.8,
+          "sumMs": 169.8
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 138,
+          "medianMs": 40,
+          "p75Ms": 56,
+          "p95Ms": 80,
+          "maxMs": 104,
+          "meanMs": 48.9,
+          "sumMs": 6744
+        }
+      },
+      "rawTrace": null,
+      "pageRecord": "artifacts/qa/tmp/traces/passe13-commandes-780m-r4-avant-lean.page.json",
+      "hitches": {
+        "count": 1,
+        "over100": 0,
+        "byCause": {
+          "LoAF sans script": 1
+        },
+        "trace": null,
+        "hitches": [
+          {
+            "atS": 44.1,
+            "dtMs": 54.7,
+            "tag": "clash",
+            "ctxStart": "5|REPEL|outcome",
+            "ctxEnd": "5|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 55,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "cause": "LoAF sans script"
+          }
+        ]
+      }
+    }
+  ],
+  "rendererLabel": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "summary": {
+    "avant": {
+      "duels": 4,
+      "over50": [
+        3,
+        0,
+        0,
+        1
+      ],
+      "over100": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "maxMs": [
+        139.4,
+        48.4,
+        24.1,
+        54.7
+      ],
+      "p99Ms": [
+        12.2,
+        12.1,
+        6.5,
+        18.2
+      ],
+      "causes": {
+        "fil principal libre (GPU : Skia / compositeur)": 4
+      },
+      "over50Total": 4
+    },
+    "apres": {
+      "duels": 4,
+      "over50": [
+        5,
+        0,
+        0,
+        1
+      ],
+      "over100": [
+        1,
+        0,
+        0,
+        0
+      ],
+      "maxMs": [
+        145.3,
+        30.4,
+        48.5,
+        60.6
+      ],
+      "p99Ms": [
+        12.1,
+        12.1,
+        12,
+        12.2
+      ],
+      "causes": {
+        "fil principal libre (GPU : Skia / compositeur)": 6
+      },
+      "over50Total": 6
+    }
+  },
+  "commandSummary": {
+    "avant": {
+      "duels": 4,
+      "families": {
+        "toutes commandes": {
+          "n": 360,
+          "medianMs": 6.8,
+          "p75Ms": 8.5,
+          "p95Ms": 16.5,
+          "maxMs": 37.2,
+          "meanMs": 7.9,
+          "sumMs": 2834.4
+        },
+        "clic de commande": {
+          "n": 176,
+          "medianMs": 6.6,
+          "p75Ms": 7.8,
+          "p95Ms": 13,
+          "maxMs": 23.8,
+          "meanMs": 7.1,
+          "sumMs": 1245.1
+        },
+        "clic « Tour suivant »": {
+          "n": 52,
+          "medianMs": 6.9,
+          "p75Ms": 13,
+          "p95Ms": 22.8,
+          "maxMs": 32.4,
+          "meanMs": 9.6,
+          "sumMs": 501
+        },
+        "réponse du rival": {
+          "n": 132,
+          "medianMs": 6.9,
+          "p75Ms": 9.1,
+          "p95Ms": 17.6,
+          "maxMs": 37.2,
+          "meanMs": 8.2,
+          "sumMs": 1088.3
+        },
+        "commandes avec changement de vue": {
+          "n": 88,
+          "medianMs": 7.6,
+          "p75Ms": 8.6,
+          "p95Ms": 14.1,
+          "maxMs": 22.4,
+          "meanMs": 8,
+          "sumMs": 701.2
+        },
+        "rendus hors commande": {
+          "n": 536,
+          "medianMs": 5.7,
+          "p75Ms": 7.1,
+          "p95Ms": 9,
+          "maxMs": 13.7,
+          "meanMs": 5.9,
+          "sumMs": 3175.7
+        },
+        "temps de résolution": {
+          "n": 180,
+          "medianMs": 3.1,
+          "p75Ms": 3.7,
+          "p95Ms": 5,
+          "maxMs": 6,
+          "meanMs": 3.1,
+          "sumMs": 561.3
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 552,
+          "medianMs": 40,
+          "p75Ms": 40,
+          "p95Ms": 64,
+          "maxMs": 104,
+          "meanMs": 39.3,
+          "sumMs": 21688
+        }
+      }
+    },
+    "apres": {
+      "duels": 4,
+      "families": {
+        "toutes commandes": {
+          "n": 360,
+          "medianMs": 6,
+          "p75Ms": 7.5,
+          "p95Ms": 15.9,
+          "maxMs": 30.8,
+          "meanMs": 7.2,
+          "sumMs": 2595.7
+        },
+        "clic de commande": {
+          "n": 176,
+          "medianMs": 5.6,
+          "p75Ms": 6.6,
+          "p95Ms": 11.4,
+          "maxMs": 19.5,
+          "meanMs": 6.1,
+          "sumMs": 1076.5
+        },
+        "clic « Tour suivant »": {
+          "n": 52,
+          "medianMs": 7.2,
+          "p75Ms": 11.4,
+          "p95Ms": 22.6,
+          "maxMs": 25.7,
+          "meanMs": 9.6,
+          "sumMs": 497.6
+        },
+        "réponse du rival": {
+          "n": 132,
+          "medianMs": 6.3,
+          "p75Ms": 7.9,
+          "p95Ms": 17,
+          "maxMs": 30.8,
+          "meanMs": 7.7,
+          "sumMs": 1021.6
+        },
+        "commandes avec changement de vue": {
+          "n": 88,
+          "medianMs": 6.5,
+          "p75Ms": 7.9,
+          "p95Ms": 12.3,
+          "maxMs": 19.5,
+          "meanMs": 7.2,
+          "sumMs": 630
+        },
+        "rendus hors commande": {
+          "n": 536,
+          "medianMs": 4.5,
+          "p75Ms": 5.5,
+          "p95Ms": 7.3,
+          "maxMs": 10.1,
+          "meanMs": 4.7,
+          "sumMs": 2523.9
+        },
+        "temps de résolution": {
+          "n": 180,
+          "medianMs": 3.3,
+          "p75Ms": 3.9,
+          "p95Ms": 5.2,
+          "maxMs": 6,
+          "meanMs": 3.4,
+          "sumMs": 610.4
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 552,
+          "medianMs": 32,
+          "p75Ms": 40,
+          "p95Ms": 56,
+          "maxMs": 112,
+          "meanMs": 32.9,
+          "sumMs": 18144
+        }
+      }
+    }
+  },
+  "commandPairs": {
+    "metric": "page",
+    "diff": "apres − avant",
+    "rounds": [
+      {
+        "round": 1,
+        "comparable": true,
+        "sameHash": false,
+        "playerSwaps": 2,
+        "n": 90,
+        "medianDiffMs": -1.1,
+        "meanDiffMs": -1,
+        "fasterIn": 70,
+        "sumA": 762.3,
+        "sumB": 672.2
+      },
+      {
+        "round": 2,
+        "comparable": true,
+        "sameHash": true,
+        "playerSwaps": 0,
+        "n": 90,
+        "medianDiffMs": 0.1,
+        "meanDiffMs": 0.1,
+        "fasterIn": 38,
+        "sumA": 651.9,
+        "sumB": 657.3
+      },
+      {
+        "round": 3,
+        "comparable": true,
+        "sameHash": true,
+        "playerSwaps": 0,
+        "n": 90,
+        "medianDiffMs": 0.7,
+        "meanDiffMs": 0.8,
+        "fasterIn": 33,
+        "sumA": 531.5,
+        "sumB": 605
+      },
+      {
+        "round": 4,
+        "comparable": true,
+        "sameHash": true,
+        "playerSwaps": 0,
+        "n": 90,
+        "medianDiffMs": -1.8,
+        "meanDiffMs": -2.5,
+        "fasterIn": 73,
+        "sumA": 888.7,
+        "sumB": 661.2
+      }
+    ],
+    "all": {
+      "n": 360,
+      "medianDiffMs": -0.6,
+      "meanDiffMs": -0.7,
+      "fasterIn": 214
+    }
+  }
+}

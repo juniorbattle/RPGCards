@@ -17,7 +17,7 @@ import { RARITY_FRAME } from '../art/palette';
 import { playerFigure, portraitUrl } from '../art/portrait';
 import type { Controller } from '../app/controller';
 import { backEl, cardEl } from './cardView';
-import { cls, h } from './dom';
+import { animatedIn, cls, domDifference, fresh, h, listen, patchChildren, tracked } from './dom';
 import { moodLabel, rivalLine } from './rivalLines';
 import { STANCE_ICON, stanceBanner } from './stance';
 
@@ -48,21 +48,10 @@ export interface BoardHooks {
 /** Éléments qui glissent de leur ancienne place lors d’un passage de vue A ↔ B. */
 const FLIP_TARGETS = ['.side.opp .row', '.side.me .row', '.hand'];
 
-export function renderApp(root: HTMLElement, c: Controller, hooks: BoardHooks): void {
-  const focusKey = (document.activeElement as HTMLElement | null)?.dataset?.key ?? null;
-  const viewChanged = !!root.dataset.view && root.dataset.view !== c.viewMode;
-  const animate = viewChanged && !c.params.reducedMotion && !c.params.freeze;
-  const before = animate ? FLIP_TARGETS.map((sel) => root.querySelector(sel)?.getBoundingClientRect() ?? null) : null;
-  const journalEl = root.querySelector('.journal');
-  const stick = journalEl ? journalEl.scrollTop + journalEl.clientHeight >= journalEl.scrollHeight - 20 : true;
-  const prevScroll = journalEl?.scrollTop ?? 0;
-
-  root.classList.toggle('view-a', c.viewMode === 'A');
-  root.classList.toggle('view-b', c.viewMode === 'B');
-  root.classList.toggle('sequencing', c.sequencing);
-  root.classList.toggle('drawer-open', c.ui.journalOpen);
-  root.dataset.boardKey = boardKey(c);
-  root.replaceChildren(
+/** Contenu complet de #app pour l’état courant (arbre neuf, hors document). */
+function buildApp(c: Controller, hooks: BoardHooks): DocumentFragment {
+  const f = document.createDocumentFragment();
+  f.append(
     phasebar(c),
     tools(c, hooks),
     hud(c, c.view.opp, 'opp'),
@@ -75,12 +64,70 @@ export function renderApp(root: HTMLElement, c: Controller, hooks: BoardHooks): 
     drawer(c, hooks),
   );
   const tip = tipBox(c, hooks);
-  if (tip) root.append(tip);
-  if (c.ui.toast) root.append(h('div', { class: cls('toast', c.ui.toast.kind === 'info' && 'info'), role: 'status', 'aria-live': 'polite' }, c.ui.toast.text));
-  if (c.view.phase === 'ENDED' && !c.sequencing && !hooks.product) root.append(endOverlay(c));
+  if (tip) f.append(tip);
+  if (c.ui.toast) f.append(fresh(h('div', { class: cls('toast', c.ui.toast.kind === 'info' && 'info'), role: 'status', 'aria-live': 'polite' }, c.ui.toast.text)));
+  if (c.view.phase === 'ENDED' && !c.sequencing && !hooks.product) f.append(endOverlay(c));
+  return f;
+}
+
+/** QA (`?qa=1&renderCheck=1`) : chaque rendu ciblé est comparé à un rendu complet du même état. */
+const renderCheck = { renders: 0, mismatches: [] as string[] };
+export const renderCheckStats = () => ({ renders: renderCheck.renders, mismatches: [...renderCheck.mismatches] });
+
+/**
+ * Rendu du plateau (passe 13) : l’arbre complet est construit comme avant, puis `patchChildren` ne
+ * touche dans #app que les nœuds qui diffèrent. Le DOM obtenu est nœud pour nœud celui de l’ancien
+ * `replaceChildren` (vérifié par `renderCheck`), et le comportement aussi : un élément dont un
+ * attribut change, qui porte une animation en cours, qui est marqué `fresh` ou qui est sous la souris
+ * avec des écouteurs de survol est remplacé par sa version neuve ; l’élément focalisé reçoit `blur` puis
+ * le focus comme avant ; aucune transition CSS ne démarre sur un élément gardé.
+ */
+export function renderApp(root: HTMLElement, c: Controller, hooks: BoardHooks): void {
+  const check = c.params.qa && c.params.renderCheck;
+  const animsBefore = check ? new Set(document.getAnimations()) : null;
+  const moving = animatedIn(root);
+  const focusKey = (document.activeElement as HTMLElement | null)?.dataset?.key ?? null;
+  const viewChanged = !!root.dataset.view && root.dataset.view !== c.viewMode;
+  const animate = viewChanged && !c.params.reducedMotion && !c.params.freeze;
+  const before = animate ? FLIP_TARGETS.map((sel) => root.querySelector(sel)?.getBoundingClientRect() ?? null) : null;
+  const journalEl = root.querySelector('.journal');
+  const stick = journalEl ? journalEl.scrollTop + journalEl.clientHeight >= journalEl.scrollHeight - 20 : true;
+  const prevScroll = journalEl?.scrollTop ?? 0;
+
+  const { tree: next, ctx } = tracked(() => buildApp(c, hooks));
+  Object.assign(ctx, moving);
+  const ref = check ? buildApp(c, hooks) : null;
+  // `replaceChildren` retirait l’élément focalisé : Chrome lui envoie alors `blur` (encore attaché,
+  // avant le retrait), et ses écouteurs agissent sur l’état et le DOM en place. Même chose ici, au même
+  // moment (après la construction du nouvel arbre) ; le focus est rendu plus bas, comme avant.
+  const active = document.activeElement;
+  if (active instanceof HTMLElement && active !== root && root.contains(active)) active.blur();
+  // Passage A ↔ B : les variables CSS de la vue changent l’inclinaison et la taille des cartes posées.
+  // Cartes et cases sont gardées, mais sans transition CSS pendant ce rendu (`view-switch`, retiré plus
+  // bas après le calcul du style), exactement comme lorsqu’elles étaient recréées.
+  if (viewChanged) root.classList.add('view-switch');
+  root.classList.toggle('view-a', c.viewMode === 'A');
+  root.classList.toggle('view-b', c.viewMode === 'B');
+  root.classList.toggle('sequencing', c.sequencing);
+  root.classList.toggle('drawer-open', c.ui.journalOpen);
+  root.dataset.boardKey = boardKey(c);
+  patchChildren(root, next, ctx);
+  if (ref) {
+    (window as unknown as Record<string, unknown>).__lqvRenderCheck = renderCheckStats;
+    renderCheck.renders++;
+    const d = domDifference(root, ref);
+    if (d) {
+      renderCheck.mismatches.push(`tour ${c.view.turn} ${c.view.phase} : ${d}`);
+      console.error(`renderCheck : ${d}`);
+    }
+  }
 
   const j = root.querySelector('.journal');
   if (j) j.scrollTop = stick ? j.scrollHeight : prevScroll;
+  if (viewChanged) {
+    void root.offsetWidth; // style calculé ici, transitions coupées
+    root.classList.remove('view-switch');
+  }
   if (focusKey) (root.querySelector(`[data-key="${CSS.escape(focusKey)}"]`) as HTMLElement | null)?.focus({ preventScroll: true });
   c.ui.flipPrimaries = false;
   root.dataset.view = c.viewMode;
@@ -98,6 +145,16 @@ export function renderApp(root: HTMLElement, c: Controller, hooks: BoardHooks): 
         { transform: 'none', transformOrigin: 'top left' },
       ], { duration: 450, easing: 'cubic-bezier(.2,.7,.2,1)' });
     });
+  }
+  // QA : aucune transition CSS ne doit démarrer sur un élément gardé (le re-rendu complet n’en démarrait pas).
+  if (animsBefore) {
+    for (const a of document.getAnimations()) {
+      const target = (a.effect as KeyframeEffect | null)?.target ?? null;
+      if (animsBefore.has(a) || !(a instanceof CSSTransition) || !target || !root.contains(target)) continue;
+      const d = `transition CSS ${a.transitionProperty} sur ${target.localName}.${target.getAttribute('class') ?? ''}`;
+      renderCheck.mismatches.push(`tour ${c.view.turn} ${c.view.phase} : ${d}`);
+      console.error(`renderCheck : ${d}`);
+    }
   }
 }
 
@@ -133,11 +190,11 @@ function tools(c: Controller, hooks: BoardHooks): HTMLElement {
 
 function rivalBubble(c: Controller): HTMLElement {
   const e = c.rivalExpression;
-  return h('aside', { class: 'rival-bubble', 'aria-live': 'polite', 'aria-label': `${c.rival.name}, ${c.rival.title}`, title: e ? `Réagit à : ${e.cause} (fait public)` : '' },
+  return fresh(h('aside', { class: 'rival-bubble', 'aria-live': 'polite', 'aria-label': `${c.rival.name}, ${c.rival.title}`, title: e ? `Réagit à : ${e.cause} (fait public)` : '' },
     h('div', { class: 'rb-name' }, h('b', null, c.rival.name), h('span', { class: 'rb-emblem', html: emblemSvg(c.rival.family, 16) }), h('span', { class: 'rb-title' }, c.rival.title)),
     h('div', { class: 'rb-mood', 'data-rival-caption': '' }, e ? moodLabel(e, c.rival) : ''),
     h('div', { class: 'rb-line', 'data-rival-line': '' }, e ? `« ${rivalLine(e, c.rival, c.config.seed)} »` : ''),
-  );
+  ));
 }
 
 /** Mise à jour ciblée de la bulle (sans re-rendu global). */
@@ -167,7 +224,7 @@ function hud(c: Controller, s: SideView, who: 'me' | 'opp'): HTMLElement {
   const counts = c.displayCounts(who);
   const fam: Family = s.signatureFamily;
   const status = who === 'opp'
-    ? h('span', { class: cls('lockchip', s.locked && 'locked', awaiting && !s.locked && c.aiThinking && 'thinking') }, s.locked ? 'Verrouillé (secret)' : awaiting ? (c.aiThinking ? 'Réfléchit' : 'En attente') : 'Rival')
+    ? fresh(h('span', { class: cls('lockchip', s.locked && 'locked', awaiting && !s.locked && c.aiThinking && 'thinking') }, s.locked ? 'Verrouillé (secret)' : awaiting ? (c.aiThinking ? 'Réfléchit' : 'En attente') : 'Rival'), awaiting && !s.locked && c.aiThinking)
     : null;
   const body = h('div', { class: 'hud-body' },
     h('div', { class: 'who' }, h('span', { class: 'name' }, who === 'me' ? 'Vous' : s.name), h('span', { class: 'fam-icon', html: emblemSvg(fam, 15), title: `Signature ${fam}` })),
@@ -182,25 +239,25 @@ function hud(c: Controller, s: SideView, who: 'me' | 'opp'): HTMLElement {
     ),
     who === 'opp' ? h('div', { class: 'hud-chips' }, status, oppTechChips(c, s)) : null,
   );
-  return h('section', {
+  return fresh(h('section', {
     class: cls('hud', who, `fam-${fam}`, focus.includes(`${who}-hp`) && 'beat-hit', focus.includes(`${who}-insight`) && 'beat-insight'),
     'aria-label': who === 'me' ? 'Votre duelliste' : `Duelliste rival : ${s.name}`,
   },
   who === 'me' ? h('div', { class: 'portrait' }, h('img', { src: portraitUrl(playerFigure(c.mySignature), c.artSeed), alt: 'Votre portrait', draggable: 'false' })) : null,
   who === 'opp' ? h('div', { class: 'portrait mini' }, h('img', { src: portraitUrl(c.rival, c.artSeed), alt: `Portrait de ${s.name}`, draggable: 'false' })) : null,
   body,
-  );
+  ), focus.includes(`${who}-hp`) || focus.includes(`${who}-insight`));
 }
 
 function hpEl(c: Controller, s: SideView, who: 'me' | 'opp'): HTMLElement {
   const hpShown = c.displayHp(who);
   const pct = Math.max(0, Math.min(100, (hpShown / s.maxHp) * 100));
   const floaters = c.ui.floaters.filter((f) => f.side === who).map((f) => h('span', { class: cls('floater', f.heal && 'heal'), 'data-floater': String(f.id), 'aria-hidden': 'true' }, f.text));
-  return h('div', { class: 'hp' },
+  return fresh(h('div', { class: 'hp' },
     h('div', { class: 'bar', role: 'meter', 'aria-valuemin': '0', 'aria-valuemax': String(s.maxHp), 'aria-valuenow': String(hpShown), 'aria-label': 'Points de vie' }, h('div', { class: 'fill', style: `width:${pct}%` })),
     h('div', { class: 'label' }, h('b', null, `${hpShown}`), ` / ${s.maxHp} PV`),
     ...floaters,
-  );
+  ));
 }
 
 function oppTechChips(c: Controller, s: SideView): HTMLElement {
@@ -271,7 +328,7 @@ function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
     // se vide dès que la mise en scène les a nettoyées (ou si la séquence est terminée).
     const shown = c.primaryOnBoard();
     if (shown === 'card') {
-      zone.append(cardEl(revealed.defId, { artSeed: c.artSeed, classes: [c.ui.flipPrimaries && 'flip-in', 'on-board'], tag: 'div', attrs: { tabindex: '0', 'data-key': `prim-${who}`, ...inspectHooks(c, revealed.defId, true) } }));
+      zone.append(fresh(cardEl(revealed.defId, { artSeed: c.artSeed, classes: [c.ui.flipPrimaries && 'flip-in', 'on-board'], tag: 'div', attrs: { tabindex: '0', 'data-key': `prim-${who}`, ...inspectHooks(c, revealed.defId, true) } }), c.ui.flipPrimaries));
       zone.append(stanceBanner(revealed.stance));
     } else if (shown === 'stage') {
       zone.classList.add('lifted');
@@ -303,8 +360,8 @@ function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
     zone.setAttribute('tabindex', '0');
     zone.dataset.key = 'zone-primary';
     zone.setAttribute('aria-label', dr.primaryId ? 'Primaire posée (cliquer pour la reprendre en main)' : 'Emplacement Primaire : poser une carte (obligatoire)');
-    zone.addEventListener('click', () => c.clickZone('primary'));
-    zone.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); c.clickZone('primary'); } });
+    listen(zone, 'click', () => c.clickZone('primary'));
+    listen(zone, 'keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); c.clickZone('primary'); } });
   }
   if (dr.primaryId && committing) {
     const defId = c.defIdOf(dr.primaryId);
@@ -425,8 +482,8 @@ function slotZone(c: Controller, who: 'me' | 'opp', slot: SlotIndex, s: SlotView
     zone.setAttribute('tabindex', '0');
     zone.dataset.key = `zone-${who}-${slot}`;
     zone.setAttribute('aria-label', zoneAria(c, who, slot, s));
-    zone.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('.menu')) return; c.clickZone(key); });
-    zone.addEventListener('keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && !(e.target as HTMLElement).closest('.menu')) { e.preventDefault(); c.clickZone(key); } });
+    listen(zone, 'click', (e) => { if ((e.target as HTMLElement).closest('.menu')) return; c.clickZone(key); });
+    listen(zone, 'keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && !(e.target as HTMLElement).closest('.menu')) { e.preventDefault(); c.clickZone(key); } });
   }
   return zone;
 }
@@ -450,13 +507,13 @@ function tacticsMenu(c: Controller, slot: SlotIndex): HTMLElement {
     return h('button', { type: 'button', 'data-key': `menu-${slot}-${mode}`, 'aria-pressed': String(cur === mode), disabled: !!blocked, title: blocked ?? '', onclick: (e: Event) => { e.stopPropagation(); c.choosePlan(slot, mode); } },
       h('span', null, label), h('small', null, blocked ?? hint));
   };
-  const menu = h('div', { class: cls('menu', slot === 0 ? 'left' : 'right'), role: 'menu', 'aria-label': `Action de la Secondaire ${slot + 1}` },
+  const menu = fresh(h('div', { class: cls('menu', slot === 0 ? 'left' : 'right'), role: 'menu', 'aria-label': `Action de la Secondaire ${slot + 1}` },
     h('div', { class: 'menu-title' }, 'Choix secret (révélé après verrouillage commun)'),
     item('keep', 'Conserver', 'reste active, non dépensée'),
     item('rank', 'Amplifier le Rang', c.supportLabel(slot, 'rank') + ' au score'),
     item('damage', 'Amplifier les dégâts', c.supportLabel(slot, 'damage') + ' au multiplicateur'),
     item('interfere', 'Interférer', 'puis choisir la cible adverse'),
-  );
+  ));
   queueMicrotask(() => (menu.querySelector('button:not(:disabled)') as HTMLElement | null)?.focus());
   return menu;
 }
@@ -466,7 +523,7 @@ function tacticsMenu(c: Controller, slot: SlotIndex): HTMLElement {
 
 function command(c: Controller): HTMLElement {
   const v = c.view;
-  const msg = h('div', { class: 'msg', role: 'status', 'aria-live': 'polite' });
+  const msg = fresh(h('div', { class: 'msg', role: 'status', 'aria-live': 'polite' }));
   const actions = h('div', { class: 'btn-row' });
   const title = (t: string) => h('span', { class: 'title' }, t);
   const sub = (t: string) => h('span', { class: 'sub' }, t);
@@ -560,10 +617,10 @@ function command(c: Controller): HTMLElement {
 
 function beatMsg(c: Controller): HTMLElement {
   const beat = c.currentBeat()!;
-  return h('div', { class: cls('msg', 'beat', `tone-${beat.tone}`), role: 'status', 'aria-live': 'polite' },
+  return fresh(h('div', { class: cls('msg', 'beat', `tone-${beat.tone}`), role: 'status', 'aria-live': 'polite' },
     h('span', { class: 'beat-title' }, beat.title),
     h('span', { class: 'beat-detail' }, beat.detail),
-  );
+  ));
 }
 
 /**

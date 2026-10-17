@@ -4,6 +4,10 @@
 // requestAnimationFrame (vue A / B / Clash, phase et temps de résolution courants) et les Long Animation
 // Frames (LoAF : scripts responsables, style et mise en page forcés) ; en option, une trace Chrome
 // complète par CDP (`Tracing`, échantillonneur V8 compris) analysée par `tools/trace-analyze.mjs`.
+// Passe 13 : coût de CHAQUE commande (apply() synchrone : moteur + rendu, mise en page forcée comprise,
+// puis style / mise en page restants forcés juste après), des rendus hors commande et des temps de
+// résolution, par famille (`commands` dans chaque duel, `commandSummary` par build) ; Event Timing
+// des clics (durée jusqu’à l’image suivante, ≥ 16 ms).
 //
 // Usage : LQV_GPU=1 CHROMIUM_PATH=<Chrome> [LQV_CHROME_ARGS=--force_high_performance_gpu] node tools/perf-trace.mjs
 //   LQV_TRACE=1            trace CDP complète (sinon : rAF + LoAF seulement, surcoût minimal)
@@ -18,14 +22,16 @@
 //                          réponse du rival et la révélation DANS la tâche du clic du joueur : deux rendus complets)
 //   LQV_TRACE_TURNS=80      nombre de tours joués au plus (trace ciblée sur le début du duel : 2)
 //   LQV_TRACE_CATS=         catégories de trace ajoutées (ex. « gpu,disabled-by-default-skia.gpu » : qui compile au GPU)
+//   LQV_TRACE_LIGHT=1       avec LQV_TRACE=1 : tâches de premier niveau et repères seulement (surcoût minimal) ; sert au
+//                          temps PROCESSEUR de la tâche de chaque commande (`commandPairsCpu`, insensible à la charge du poste)
 //   LQV_TRACE_VIEWPORT=1280x720 · LQV_TRACE_OUT=artifacts/qa/trace/perf-trace.json
 // Les traces brutes (lourdes) vont dans artifacts/qa/tmp/ (ignoré par git).
 import { execSync } from 'node:child_process';
-import { createWriteStream, mkdirSync, writeFileSync } from 'node:fs';
+import { createWriteStream, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import { EXTRA_ARGS, GPU, launch, launchPersistent, rendererLabel, startPreview, watchConsole, webglRenderer } from './browser.mjs';
 import { newStats, playTurn } from './duel-driver.mjs';
-import { analyzeRun, loadBundleMapper, summarizeRuns } from './trace-analyze.mjs';
+import { analyzeRun, commandFamily, loadBundleMapper, pairCommands, summarizeCommandRuns, summarizeCommands, summarizeRuns } from './trace-analyze.mjs';
 
 const commit = execSync('git rev-parse --short HEAD').toString().trim();
 const TRACE = process.env.LQV_TRACE === '1';
@@ -47,7 +53,7 @@ const machine = { cpu: os.cpus()[0]?.model, cores: os.cpus().length, memGB: Math
 // tous les fils (`toplevel` : fil principal du processus GPU) et compilation ANGLE. Écartées car trop
 // volumineuses pour un duel de 2 min (≈ 1 Go) : `gpu` (chaque flush du tampon de commandes),
 // `disabled-by-default-devtools.timeline.frame`, `loading`, `latencyInfo`.
-const CATEGORIES = [
+const CATEGORIES = process.env.LQV_TRACE_LIGHT === '1' ? ['toplevel', 'blink.user_timing'] : [
   'devtools.timeline', 'disabled-by-default-devtools.timeline', 'toplevel', 'blink.user_timing', 'blink.console',
   'v8.execute', 'v8', 'disabled-by-default-v8.gc', 'disabled-by-default-v8.cpu_profiler', 'gpu.angle',
   ...(process.env.LQV_TRACE_CATS ?? '').split(',').filter(Boolean),
@@ -65,7 +71,7 @@ function summarize(intervals) {
 function installRecorder() {
   const c = window.__lqv.controller;
   const stageHost = document.getElementById('stage');
-  const rec = { frames: [], ctx: [], loaf: [], sync: null, stop: false };
+  const rec = { frames: [], ctx: [], loaf: [], sync: null, stop: false, cmds: [], renders: [], beats: [], events: [] };
   window.__perfTrace = rec;
   let lastCtx = '';
   let last = performance.now();
@@ -79,6 +85,43 @@ function installRecorder() {
     if (!rec.stop) requestAnimationFrame(step);
   };
   requestAnimationFrame(step);
+  // Coût par commande (passe 13). La mise en page forcée après coup ne coûte que ce que le rendu n’a pas
+  // déjà forcé lui-même (défilement du journal, FLIP) : elle aurait eu lieu à l’image suivante.
+  const settle = () => { const t = performance.now(); void document.querySelector('#app .command')?.getBoundingClientRect(); return performance.now() - t; };
+  let depth = 0;
+  const apply = c.apply.bind(c);
+  c.apply = (cmd) => {
+    const phase = c.view.phase;
+    const view0 = c.viewMode;
+    const d = depth++;
+    const t0 = performance.now();
+    let ok;
+    try { ok = apply(cmd); } finally { depth--; }
+    const t1 = performance.now();
+    rec.cmds.push({ t: t0, sync: t1 - t0, flush: d === 0 ? settle() : 0, type: cmd.type, player: cmd.player ?? '', phase, viewChange: view0 !== c.viewMode, depth: d, ok });
+    return ok;
+  };
+  const wrap = (field, sink) => {
+    const orig = c[field];
+    if (typeof orig !== 'function') return;
+    c[field] = () => {
+      if (depth) return orig();
+      const t0 = performance.now();
+      orig();
+      const t1 = performance.now();
+      sink.push({ t: t0, sync: t1 - t0, flush: settle(), phase: c.view.phase, beat: c.currentBeat()?.kind ?? null });
+    };
+  };
+  wrap('renderFn', rec.renders);
+  wrap('beatFn', rec.beats);
+  try {
+    rec.evObs = new PerformanceObserver((list) => {
+      for (const e of list.getEntries()) {
+        if (e.name === 'click' || e.name === 'keydown' || e.name === 'pointerup') rec.events.push({ t: e.startTime, name: e.name, duration: e.duration, delay: e.processingStart - e.startTime, processing: e.processingEnd - e.processingStart, key: e.target?.dataset?.key ?? null });
+      }
+    });
+    rec.evObs.observe({ type: 'event', durationThreshold: 16, buffered: false });
+  } catch { rec.eventTimingUnsupported = true; }
   try {
     rec.obs = new PerformanceObserver((list) => {
       for (const e of list.getEntries()) {
@@ -158,16 +201,16 @@ try {
         console.error(`[${name}] échec : ${stats.error}`);
       }
       await page.waitForTimeout(500);
-      const rec = await page.evaluate(() => { const r = window.__perfTrace; r.mark(); r.stop = true; r.obs?.disconnect(); return { frames: r.frames, ctx: r.ctx, loaf: r.loaf, sync: r.sync, loafUnsupported: !!r.loafUnsupported }; });
+      const rec = await page.evaluate(() => { const r = window.__perfTrace; r.mark(); r.stop = true; r.obs?.disconnect(); r.evObs?.disconnect(); return { frames: r.frames, ctx: r.ctx, loaf: r.loaf, sync: r.sync, loafUnsupported: !!r.loafUnsupported, cmds: r.cmds, renders: r.renders, beats: r.beats, events: r.events }; });
       const end = await page.evaluate(() => ({ phase: window.__lqv.view().phase, turn: window.__lqv.view().turn, winner: window.__lqv.view().winner, hash: window.__lqv.hash() }));
       const traceFile = cdp ? `${RAW}/${TAG}-${name}.json.gz` : null;
       if (cdp) await stopTracing(cdp, traceFile);
       await ctx.close();
       const recFile = `${RAW}/${TAG}-${name}.page.json`;
       writeFileSync(recFile, JSON.stringify(rec));
-      const result = { name, round: round + 1, build: b.name, driver: d, outcome, turns: end.turn, winner: end.winner, hash: end.hash, durationS: Math.round((Date.now() - t0) / 1000), sequencesWatched: stats.sequencesWatched, stagesSeen: stats.stagesSeen, consoleIssues, all: summarize(rec.frames.map(([, dt]) => dt)), byView: Object.fromEntries(['A', 'B', 'clash'].map((tag) => [tag, summarize(rec.frames.filter(([, , t]) => t === tag).map(([, dt]) => dt))])), loafCount: rec.loaf.length, rawTrace: traceFile, pageRecord: recFile };
+      const result = { name, round: round + 1, build: b.name, driver: d, outcome, turns: end.turn, winner: end.winner, hash: end.hash, durationS: Math.round((Date.now() - t0) / 1000), sequencesWatched: stats.sequencesWatched, stagesSeen: stats.stagesSeen, consoleIssues, all: summarize(rec.frames.map(([, dt]) => dt)), byView: Object.fromEntries(['A', 'B', 'clash'].map((tag) => [tag, summarize(rec.frames.filter(([, , t]) => t === tag).map(([, dt]) => dt))])), loafCount: rec.loaf.length, commands: summarizeCommands(rec), rawTrace: traceFile, pageRecord: recFile };
       report.runs.push(result);
-      console.log(JSON.stringify({ name, outcome, turns: result.turns, hash: result.hash, all: result.all, loaf: result.loafCount, console: consoleIssues.length }));
+      console.log(JSON.stringify({ name, outcome, turns: result.turns, hash: result.hash, all: result.all, loaf: result.loafCount, console: consoleIssues.length, commandes: Object.fromEntries(Object.entries(result.commands).map(([k, v]) => [k, v && `n=${v.n} méd=${v.medianMs} p95=${v.p95Ms} max=${v.maxMs}`])) }));
     }
   }
 } finally {
@@ -181,9 +224,15 @@ for (const r of report.runs) {
   const mapper = loadBundleMapper(b.dir);
   // Trace réduite aux fenêtres des à-coups (fil principal + GPU), assez légère pour être versionnée.
   const trimOut = r.rawTrace ? OUT.replace(/\.json$/, `-${r.name}-pics.json.gz`) : null;
-  r.hitches = await analyzeRun({ pageRecord: r.pageRecord, rawTrace: r.rawTrace, mapper, trimOut });
+  r.hitches = await analyzeRun({ pageRecord: r.pageRecord, rawTrace: r.rawTrace, mapper, trimOut, commandFamily });
 }
 report.summary = summarizeRuns(report.runs);
+report.commandSummary = summarizeCommandRuns(report.runs);
+report.commandPairs = pairCommands(report.runs);
+if (TRACE) report.commandPairsCpu = pairCommands(report.runs, 'cpu');
 writeFileSync(OUT, JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report.summary));
+console.log(JSON.stringify(report.commandSummary, null, 1));
+console.log(JSON.stringify(report.commandPairs));
+if (TRACE) console.log(JSON.stringify(report.commandPairsCpu));
 console.log(`→ ${OUT}`);
