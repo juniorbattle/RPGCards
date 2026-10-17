@@ -345,5 +345,5 @@ approuvée.
 5. Mesure GPU sur un poste réel avant tout compromis de rendu (ADR 013 : aucune réduction de la présence du rival sans comparaison et approbation). **Faite sur le portable de l’opérateur (§5.4) : aucun compromis requis.**
 6. **Illustrations tramées par le processeur** (passe 12, §5.5), à confirmer :
    - écart de pixels moyen ≤ 1,8/255, indiscernable à l’œil (`screenshots/qa/passe12/`) ;
-   - génération 2× plus rapide, rendu identique d’une machine à l’autre ;
+   - génération 1,3× plus rapide sur poste calme, 1,9× sous charge ; rendu identique d’une machine à l’autre ;
    - réversible en une ligne (`willReadFrequently` dans `src/art/cardArt.ts`).
