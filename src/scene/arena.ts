@@ -48,6 +48,8 @@ export interface ArenaOptions {
 }
 
 export interface ArenaStats {
+  /** Nombre d’images rendues depuis la création (compteur three.js) : QA « aucune image hors duel ». */
+  frame: number;
   fps: number;
   frameMs: number;
   drawCalls: number;
@@ -1050,11 +1052,19 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     setPaused(v: boolean) {
       if (v === paused) return;
       paused = v;
+      // Effets transitoires en cours (anneaux, éclats) : achevés et libérés plutôt que figés dans la
+      // scène des menus (ils n’avancent qu’avec la boucle de rendu).
+      if (v) {
+        for (const tr of transients.splice(0)) { scene.remove(tr.obj); disposeObj(tr.obj); }
+        center.intensity = 0;
+        shake = 0;
+      }
       start();
     },
     stats(): ArenaStats {
       const info = renderer.info;
       return {
+        frame: info.render.frame,
         fps: Math.round(fps * 10) / 10, frameMs: Math.round(frameMs * 100) / 100, drawCalls: info.render.calls, triangles: info.render.triangles,
         textures: info.memory.textures, geometries: info.memory.geometries, view, blend: Math.round(blend * 100) / 100, portrait: false, rival: rival.current(),
       };

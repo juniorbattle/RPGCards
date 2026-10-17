@@ -318,6 +318,9 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
         if (mat?.map && mat.map !== backTexture) mat.map.dispose();
         mat?.dispose();
       });
+      // Formes de bouche non affichées à cet instant (déjà envoyées au GPU si elles ont été montrées) :
+      // sans cela, chaque duel laissait en mémoire les bouches de ses expressions passées (QA M06 J).
+      for (const t of Object.values(mouthTex)) t.dispose();
     },
   };
 }

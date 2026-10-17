@@ -4,6 +4,7 @@
 // page neuve, 5 s de mise en régime, moyenne de 6 relevés de `arenaStats` (ms CPU/image, FPS).
 // SwiftShader (CPU) : jamais une mesure de GPU.
 // Usage : LQV_BEFORE=<build avant> LQV_BEFORE_SHA=<sha> node tools/perf-compare.mjs [rondes=5]
+// (LQV_PERF_COMPARE_OUT=… pour un autre fichier de sortie)
 import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
@@ -55,5 +56,5 @@ for (const view of ['A', 'B']) {
 const machine = { cpu: os.cpus()[0]?.model, cores: os.cpus().length, memGB: Math.round(os.totalmem() / 2 ** 30), node: process.version };
 const report = { date: new Date().toISOString(), machine, renderer: 'Chromium headless + ANGLE/SwiftShader (CPU) — jamais une mesure de GPU', protocol: `${ROUNDS} rondes entrelacées par vue, 1280×720, scénario signature, 5 s de mise en régime, moyenne de 6 relevés`, builds: { avant: builds.avant.sha, apres: builds.apres.sha }, summary, runs };
 mkdirSync('artifacts/qa', { recursive: true });
-writeFileSync('artifacts/qa/perf-compare-m03-2.json', JSON.stringify(report, null, 2));
+writeFileSync(process.env.LQV_PERF_COMPARE_OUT ?? 'artifacts/qa/perf-compare-m03-2.json', JSON.stringify(report, null, 2));
 console.log(JSON.stringify(summary, null, 2));
