@@ -1,0 +1,155 @@
+{
+  "commit": "64863ac",
+  "date": "2026-10-17T10:43:17.482Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "cores": 16,
+    "memGB": 31,
+    "platform": "win32 10.0.26200",
+    "node": "v22.14.0"
+  },
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "gpu": true,
+  "chromeArgs": [],
+  "engine": {
+    "duels": 200,
+    "ms": 6324,
+    "msPerDuel": 31.62,
+    "commands": 12190,
+    "usPerCommand": 518.8,
+    "avgTurns": 9.84,
+    "duelsWithOvertime": 18,
+    "wins": {
+      "p1": 147,
+      "p2": 53
+    }
+  },
+  "scene": {
+    "viewA": {
+      "frame": 649,
+      "fps": 151.1,
+      "frameMs": 1.29,
+      "drawCalls": 73,
+      "triangles": 1560,
+      "textures": 21,
+      "geometries": 46,
+      "view": "A",
+      "blend": 0,
+      "portrait": false,
+      "rival": {
+        "mood": "neutral",
+        "gesture": "place-card",
+        "cause": "vous observe"
+      }
+    },
+    "gpuTimerQueryA": true,
+    "rendererA": "ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "viewB": {
+      "frame": 550,
+      "fps": 81.9,
+      "frameMs": 1.4,
+      "drawCalls": 75,
+      "triangles": 1608,
+      "textures": 21,
+      "geometries": 46,
+      "view": "B",
+      "blend": 1,
+      "portrait": false,
+      "rival": {
+        "mood": "neutral",
+        "gesture": "place-card",
+        "cause": "vous observe"
+      }
+    },
+    "gpuTimerQueryB": true,
+    "rendererB": "ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+    "ablationViewA": {
+      "complet": {
+        "drawCalls": 73,
+        "triangles": 1560,
+        "medianFrameMs": 1.92,
+        "medianFps": 93.18,
+        "frameMs": [
+          1.78,
+          2.39,
+          1.92
+        ]
+      },
+      "candles": {
+        "drawCalls": 70,
+        "triangles": 520,
+        "medianFrameMs": 1.88,
+        "medianFps": 97.65,
+        "frameMs": [
+          1.88,
+          1.85,
+          2.33
+        ]
+      },
+      "banners": {
+        "drawCalls": 61,
+        "triangles": 1448,
+        "medianFrameMs": 1.94,
+        "medianFps": 96.53,
+        "frameMs": [
+          1.94,
+          1.59,
+          2.07
+        ]
+      },
+      "dust": {
+        "drawCalls": 72,
+        "triangles": 1560,
+        "medianFrameMs": 2.22,
+        "medianFps": 163.5,
+        "frameMs": [
+          2.22,
+          1.84,
+          2.86
+        ]
+      },
+      "candles,banners,dust": {
+        "drawCalls": 57,
+        "triangles": 408,
+        "medianFrameMs": 1.99,
+        "medianFps": 148.25,
+        "frameMs": [
+          1.9,
+          1.99,
+          2.1
+        ]
+      }
+    },
+    "clashRealtime": {
+      "scenario": "clash-ag (absorption)",
+      "window": "2,5 s depuis l’apparition de la scène de Clash",
+      "frames": 257,
+      "medianMs": 6.1,
+      "p95Ms": 24.2,
+      "maxMs": 121.1,
+      "over50ms": 5,
+      "arena": {
+        "frame": 587,
+        "fps": 134.4,
+        "frameMs": 2.6,
+        "drawCalls": 74,
+        "triangles": 1748,
+        "textures": 22,
+        "geometries": 54,
+        "view": "A",
+        "blend": 0,
+        "portrait": false,
+        "rival": {
+          "mood": "relieved",
+          "gesture": null,
+          "cause": "perd au Rang mais absorbe tout"
+        }
+      }
+    },
+    "galleryLoad": {
+      "domContentLoadedMs": 642,
+      "loadMs": 682,
+      "artGeneration37CardsMs": 521.9
+    }
+  }
+}

@@ -1,0 +1,192 @@
+{
+  "commit": "64863ac",
+  "date": "2026-10-17T10:59:35.688Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "cores": 16,
+    "memGB": 31,
+    "platform": "win32 10.0.26200",
+    "node": "v22.14.0"
+  },
+  "chrome": "155.0.8059.80",
+  "gpu": true,
+  "chromeArgs": [
+    "--force_high_performance_gpu"
+  ],
+  "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "runs": [
+    {
+      "name": "jeu-1280-clic",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "seed": 202,
+      "outcome": "ended",
+      "winner": "me",
+      "turns": 14,
+      "durationS": 109,
+      "sequencesWatched": 13,
+      "stagesSeen": 10,
+      "leaks": [],
+      "viewErrors": [],
+      "consoleIssues": [],
+      "all": {
+        "frames": 11775,
+        "medianMs": 6.1,
+        "fps": 163.9,
+        "p95Ms": 18.2,
+        "p99Ms": 24.7,
+        "maxMs": 230.1,
+        "over16_7ms": 1151,
+        "over33_3ms": 59
+      },
+      "byView": {
+        "A": {
+          "frames": {
+            "frames": 4260,
+            "medianMs": 6.1,
+            "fps": 163.9,
+            "p95Ms": 18.1,
+            "p99Ms": 24.3,
+            "maxMs": 230.1,
+            "over16_7ms": 287,
+            "over33_3ms": 19
+          },
+          "arenaStats": {
+            "samples": 69,
+            "medianFrameMsCpu": 1.69,
+            "maxFrameMsCpu": 6.16,
+            "drawCalls": 84,
+            "triangles": 2518
+          }
+        },
+        "B": {
+          "frames": {
+            "frames": 745,
+            "medianMs": 6.1,
+            "fps": 163.9,
+            "p95Ms": 24.3,
+            "p99Ms": 48.3,
+            "maxMs": 90.9,
+            "over16_7ms": 92,
+            "over33_3ms": 23
+          },
+          "arenaStats": {
+            "samples": 16,
+            "medianFrameMsCpu": 1.74,
+            "maxFrameMsCpu": 2.9,
+            "drawCalls": 77,
+            "triangles": 1612
+          }
+        },
+        "clash": {
+          "frames": {
+            "frames": 6770,
+            "medianMs": 6.2,
+            "fps": 161.3,
+            "p95Ms": 18.2,
+            "p99Ms": 24.3,
+            "maxMs": 109.2,
+            "over16_7ms": 772,
+            "over33_3ms": 17
+          },
+          "arenaStats": {
+            "samples": 131,
+            "medianFrameMsCpu": 2.13,
+            "maxFrameMsCpu": 4.58,
+            "drawCalls": 78,
+            "triangles": 1944
+          }
+        }
+      }
+    },
+    {
+      "name": "jeu-1920-clic",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "seed": 202,
+      "outcome": "ended",
+      "winner": "me",
+      "turns": 14,
+      "durationS": 110,
+      "sequencesWatched": 13,
+      "stagesSeen": 10,
+      "leaks": [],
+      "viewErrors": [],
+      "consoleIssues": [],
+      "all": {
+        "frames": 12365,
+        "medianMs": 6.1,
+        "fps": 163.9,
+        "p95Ms": 18.2,
+        "p99Ms": 30.3,
+        "maxMs": 96.9,
+        "over16_7ms": 1402,
+        "over33_3ms": 78
+      },
+      "byView": {
+        "A": {
+          "frames": {
+            "frames": 3519,
+            "medianMs": 6.2,
+            "fps": 161.3,
+            "p95Ms": 18.3,
+            "p99Ms": 30.5,
+            "maxMs": 96.9,
+            "over16_7ms": 563,
+            "over33_3ms": 32
+          },
+          "arenaStats": {
+            "samples": 76,
+            "medianFrameMsCpu": 2.34,
+            "maxFrameMsCpu": 3,
+            "drawCalls": 83,
+            "triangles": 2520
+          }
+        },
+        "B": {
+          "frames": {
+            "frames": 678,
+            "medianMs": 6.2,
+            "fps": 161.3,
+            "p95Ms": 30.4,
+            "p99Ms": 42.6,
+            "maxMs": 60.3,
+            "over16_7ms": 193,
+            "over33_3ms": 30
+          },
+          "arenaStats": {
+            "samples": 16,
+            "medianFrameMsCpu": 2.37,
+            "maxFrameMsCpu": 2.91,
+            "drawCalls": 75,
+            "triangles": 1608
+          }
+        },
+        "clash": {
+          "frames": {
+            "frames": 8168,
+            "medianMs": 6.1,
+            "fps": 163.9,
+            "p95Ms": 18.2,
+            "p99Ms": 24.1,
+            "maxMs": 60.6,
+            "over16_7ms": 646,
+            "over33_3ms": 16
+          },
+          "arenaStats": {
+            "samples": 127,
+            "medianFrameMsCpu": 2.07,
+            "maxFrameMsCpu": 4.6,
+            "drawCalls": 78,
+            "triangles": 1944
+          }
+        }
+      }
+    }
+  ],
+  "rendererLabel": "Chrome headless, GPU réel : ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11) — arguments : --force_high_performance_gpu"
+}

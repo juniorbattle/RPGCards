@@ -1,0 +1,190 @@
+{
+  "commit": "64863ac",
+  "date": "2026-10-17T10:55:42.782Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "cores": 16,
+    "memGB": 31,
+    "platform": "win32 10.0.26200",
+    "node": "v22.14.0"
+  },
+  "chrome": "155.0.8059.80",
+  "gpu": true,
+  "chromeArgs": [],
+  "renderer": "ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "runs": [
+    {
+      "name": "jeu-1280-clic",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "seed": 202,
+      "outcome": "ended",
+      "winner": "me",
+      "turns": 14,
+      "durationS": 110,
+      "sequencesWatched": 13,
+      "stagesSeen": 10,
+      "leaks": [],
+      "viewErrors": [],
+      "consoleIssues": [],
+      "all": {
+        "frames": 15074,
+        "medianMs": 6.1,
+        "fps": 163.9,
+        "p95Ms": 12.2,
+        "p99Ms": 24.2,
+        "maxMs": 230.2,
+        "over16_7ms": 677,
+        "over33_3ms": 70
+      },
+      "byView": {
+        "A": {
+          "frames": {
+            "frames": 4975,
+            "medianMs": 6.1,
+            "fps": 163.9,
+            "p95Ms": 12.2,
+            "p99Ms": 24.1,
+            "maxMs": 230.2,
+            "over16_7ms": 176,
+            "over33_3ms": 13
+          },
+          "arenaStats": {
+            "samples": 70,
+            "medianFrameMsCpu": 1.63,
+            "maxFrameMsCpu": 5.99,
+            "drawCalls": 81,
+            "triangles": 2516
+          }
+        },
+        "B": {
+          "frames": {
+            "frames": 750,
+            "medianMs": 6.1,
+            "fps": 163.9,
+            "p95Ms": 30.2,
+            "p99Ms": 60.6,
+            "maxMs": 121.2,
+            "over16_7ms": 138,
+            "over33_3ms": 29
+          },
+          "arenaStats": {
+            "samples": 14,
+            "medianFrameMsCpu": 1.8,
+            "maxFrameMsCpu": 3.53,
+            "drawCalls": 77,
+            "triangles": 1612
+          }
+        },
+        "clash": {
+          "frames": {
+            "frames": 9349,
+            "medianMs": 6.1,
+            "fps": 163.9,
+            "p95Ms": 12.2,
+            "p99Ms": 18.3,
+            "maxMs": 115,
+            "over16_7ms": 363,
+            "over33_3ms": 28
+          },
+          "arenaStats": {
+            "samples": 134,
+            "medianFrameMsCpu": 1.66,
+            "maxFrameMsCpu": 6,
+            "drawCalls": 78,
+            "triangles": 1944
+          }
+        }
+      }
+    },
+    {
+      "name": "jeu-1920-clic",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "seed": 202,
+      "outcome": "ended",
+      "winner": "me",
+      "turns": 14,
+      "durationS": 111,
+      "sequencesWatched": 13,
+      "stagesSeen": 10,
+      "leaks": [],
+      "viewErrors": [],
+      "consoleIssues": [],
+      "all": {
+        "frames": 15218,
+        "medianMs": 6.1,
+        "fps": 163.9,
+        "p95Ms": 12.2,
+        "p99Ms": 30.3,
+        "maxMs": 91,
+        "over16_7ms": 702,
+        "over33_3ms": 108
+      },
+      "byView": {
+        "A": {
+          "frames": {
+            "frames": 4733,
+            "medianMs": 6.1,
+            "fps": 163.9,
+            "p95Ms": 18.2,
+            "p99Ms": 30.3,
+            "maxMs": 90.9,
+            "over16_7ms": 292,
+            "over33_3ms": 43
+          },
+          "arenaStats": {
+            "samples": 70,
+            "medianFrameMsCpu": 1.96,
+            "maxFrameMsCpu": 5.25,
+            "drawCalls": 83,
+            "triangles": 2584
+          }
+        },
+        "B": {
+          "frames": {
+            "frames": 700,
+            "medianMs": 6.1,
+            "fps": 163.9,
+            "p95Ms": 36.4,
+            "p99Ms": 54.6,
+            "maxMs": 91,
+            "over16_7ms": 177,
+            "over33_3ms": 47
+          },
+          "arenaStats": {
+            "samples": 18,
+            "medianFrameMsCpu": 2.2,
+            "maxFrameMsCpu": 2.56,
+            "drawCalls": 78,
+            "triangles": 1624
+          }
+        },
+        "clash": {
+          "frames": {
+            "frames": 9785,
+            "medianMs": 6.1,
+            "fps": 163.9,
+            "p95Ms": 12.1,
+            "p99Ms": 18.2,
+            "maxMs": 84.8,
+            "over16_7ms": 233,
+            "over33_3ms": 18
+          },
+          "arenaStats": {
+            "samples": 132,
+            "medianFrameMsCpu": 2,
+            "maxFrameMsCpu": 5.09,
+            "drawCalls": 78,
+            "triangles": 1944
+          }
+        }
+      }
+    }
+  ],
+  "rendererLabel": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+}

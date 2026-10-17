@@ -1,9 +1,9 @@
-// Mesures indicatives, consignées avec la machine et le commit. AUCUNE extrapolation GPU :
-// le conteneur n’a pas de GPU (WebGL logiciel SwiftShader).
+// Mesures indicatives, consignées avec la machine et le commit. Par défaut WebGL logiciel (SwiftShader) :
+// aucune extrapolation GPU. `LQV_GPU=1` : GPU réel du poste, moteur de rendu relevé dans le rapport.
 import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
-import { launch, startPreview, waitDecision } from './browser.mjs';
+import { EXTRA_ARGS, GPU, launch, rendererLabel, startPreview, waitDecision, webglRenderer } from './browser.mjs';
 
 mkdirSync('artifacts/qa', { recursive: true });
 // Build mesuré : dist/ du commit courant, ou un autre build (LQV_DIST + LQV_BUILD_SHA, ex. l’« avant »
@@ -41,11 +41,7 @@ try {
       const gl = c.getContext('webgl2');
       return !!gl && !!gl.getExtension('EXT_disjoint_timer_query_webgl2');
     });
-    scene[`renderer${v}`] = await page.evaluate(() => {
-      const gl = document.createElement('canvas').getContext('webgl2');
-      const ext = gl?.getExtension('WEBGL_debug_renderer_info');
-      return ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : null;
-    });
+    scene[`renderer${v}`] = await webglRenderer(page);
     await page.close();
   }
   // M03.2 — coût des éléments du décor (vue A) : chaque mesure retire un élément (paramètre QA
@@ -110,6 +106,6 @@ try {
   await browser.close();
   server.stop();
 }
-const report = { commit, date: new Date().toISOString(), machine, renderer: 'Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU', engine, scene };
+const report = { commit, date: new Date().toISOString(), machine, renderer: rendererLabel(scene.rendererA), gpu: GPU, chromeArgs: EXTRA_ARGS, engine, scene };
 writeFileSync(OUT, JSON.stringify(report, null, 2));
 console.log(JSON.stringify(report, null, 2));

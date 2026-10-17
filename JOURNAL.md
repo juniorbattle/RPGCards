@@ -2,7 +2,7 @@
 
 **Nature :** journal de production du **nouveau projet**, et non journal copié de RPG-ArtByCode.  
 **Convention :** passes chronologiques, plus récente en bas ; statut `[OK]`, `[KO]`, `[?]` ; preuves vérifiables.  
-**Dernière passe :** 10 — M06 sur `main` : **release candidate locale desktop 0.6.0-rc.1** (build `d19667e`) — campagne complète, fuite de textures corrigée, `docs/RAPPORT_M06_RC.md`. Ce n’est pas la ville RPG finale.
+**Dernière passe :** 11 — **mesures sur GPU réel** de la RC 0.6.0-rc.1 sur le portable de l’opérateur (Radeon 780M et RTX 4060) : aucun compromis de rendu requis, `docs/RAPPORT_M06_RC.md` §5.4. Aucun changement du code du jeu. (Passe 10 : RC locale desktop, build `d19667e`.) Ce n’est pas la ville RPG finale.
 
 ## État initial connu
 
@@ -15,10 +15,10 @@
 
 ## À reprendre (prioritaire)
 
-1. **PRIORITÉ OPÉRATEUR M04–M06 (16 octobre) :** vue frontale et proportions du rival **approuvées et figées comme baseline desktop (ADR 013)**. Construire une boucle opérationnelle menu → deck → rencontres → duels → résultat/progression → sauvegarde/reprise (docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md), puis stabiliser une release candidate locale. Mobile paysage et polish artistiques secondaires reportés. **M04 (passe 8), M05 (passe 9) et M06 (passe 10, RC 0.6.0-rc.1) livrés** ; à faire : revue opérateur de la RC et des arbitrages (`docs/RAPPORT_M06_RC.md` §9, ADR 014), mesure sur GPU réel, contenu canonique de progression.
+1. **PRIORITÉ OPÉRATEUR M04–M06 (16 octobre) :** vue frontale et proportions du rival **approuvées et figées comme baseline desktop (ADR 013)**. Construire une boucle opérationnelle menu → deck → rencontres → duels → résultat/progression → sauvegarde/reprise (docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md), puis stabiliser une release candidate locale. Mobile paysage et polish artistiques secondaires reportés. **M04 (passe 8), M05 (passe 9) et M06 (passe 10, RC 0.6.0-rc.1) livrés**, RC mesurée sur GPU réel (passe 11) ; à faire : revue opérateur de la RC et des arbitrages (`docs/RAPPORT_M06_RC.md` §9, ADR 014), contenu canonique de progression.
 2. **Écarts de fidélité restants** (`docs/RAPPORT_M03_2.md` §8) : personnages en plans 2,5D (pas de volume ni de chevelure détaillée), décor moins dense, ni bloom ni profondeur de champ, table encore plus sombre que la preview, typographie système ; paysage = gabarit compact du bureau (textes ≈ 9,5 px à 844×390), pas l’interface simplifiée du panneau 6.
 3. **Arbitrages encore proposés** (ADR 004) : ARB-002 (profil du rival public), ARB-001, ARB-005 (+ ARB-005b : carte camouflée remplacée pendant l’engagement, nommée en fin de tour depuis la passe 5), ARB-011 ; ratification éventuelle du delta D-01 (V3.3). Inférences restantes documentées (`docs/RAPPORT_M03_1B.md` §6).
-4. **Mesure sur GPU réel** (hors conteneur) : vues A/B, bougies (shader de points), scène du Clash (WAAPI) ; budget mobile.
+4. **Mesure sur GPU réel** : **faite** sur le portable de l’opérateur (passe 11, Radeon 780M + RTX 4060 : plafond de l’écran 165 Hz en jeu, aucun compromis requis). Restent : à-coups ponctuels du fil principal (≤ 0,7 % d’images > 33 ms, pointes isolées 85–230 ms, identiques sur les deux GPU) à tracer sans le pilote de QA ; temps GPU par image (`EXT_disjoint_timer_query_webgl2` disponible) ; poste de bureau ; budget mobile.
 5. **M03.1B livré** (passe 5) ; **M03.2 livré** (passe 6, `e112765` → `dcebd2a`, preuves sur `99e03e1`).
 6. IA : modèle du joueur, niveaux de difficulté ; découpage du bundle Three.js.
 
@@ -40,6 +40,7 @@
 - Reprendre un duel = rejouer ses commandes sur le moteur pur et retrouver le hash sauvegardé ; sinon refuser avec la raison, jamais d’état inventé (M05, ADR 014).
 - Ce qu’une session installe (écouteurs, minuteries, textures GPU) doit être retiré à sa sortie et MESURÉ sur des cycles complets (M06 : bouches du rival).
 - Instrumenter avant optimiser ; captures et chiffres doivent venir du même build, seed et machine précisés.
+- Sur un portable hybride, Chrome prend le GPU intégré par défaut : relever le moteur de rendu RÉELLEMENT utilisé et mesurer chaque adaptateur. Une cadence calée sur l’écran (165 Hz) plafonne la médiane : lire les percentiles et le temps du fil principal (passe 11).
 - Conserver les échecs et leurs causes ; n'inventer ni approbation ni résultat.
 - Les choix visuels du projet RPG-ArtByCode sont une référence de **méthode**, jamais un cahier des charges visuel importé.
 - Le joueur interagit par des cartes, pas par des sélecteurs HTML comme mécanisme central.
@@ -308,3 +309,31 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **[KO → corrigé] Outil de captures M04** périmé par M05 (duel libre contre Maëlle verrouillé au départ) : adapté à la manche 1 contre Kaï.
 - **Pensée :** la longévité se mesure sur des cycles complets et à un instant déterministe ; chaque écart doit être expliqué par une expérience dédiée avant d’ajuster un critère (vue B), et un outil de mesure faux (format de couleur) produit des échecs aussi convaincants qu’un vrai défaut.
 - **À reprendre :** revue opérateur de la RC (arbitrages `docs/RAPPORT_M06_RC.md` §9, ADR 014) ; mesure sur GPU réel (`LQV_GPU=1`) ; contenu canonique (progression, rivaux) ; ville / hub ; mobile paysage.
+
+## Passe 11 — Mesures de la RC sur GPU réel (poste de l’opérateur) — 2026-10-17, worktree local de l’app avancé en fast-forward sur `main`, départ `64863ac`
+
+- **Mission / contraintes :** demande du responsable : appliquer le protocole GPU du rapport RC §5.3 sur le poste local (premier passage du projet hors conteneur), consigner, committer sur `main`. Aucun changement du code du jeu ; mesure du build de la RC (code applicatif de `d19667e`).
+- **Lecture initiale :** AGENTS, JOURNAL (passe 10), README_START_HERE, gouvernance 00, `docs/RAPPORT_M06_RC.md` (§5, §7, §9), outils `browser.mjs`, `perf.mjs`, `perf-compare.mjs`, `duel-driver.mjs`, boucle de rendu de `arena.ts` (`frameMs` = fil principal, mise à jour + soumission du rendu ; FPS = cadence `requestAnimationFrame`).
+- **Porte de démarrage locale :** `npm ci` (0 vulnérabilité), `npm run typecheck` 0 erreur, `npm test` **146/146**, `npm run build` OK (JS 768,37 Ko / 214,97 Ko gzip, identique à la RC).
+- **Poste :** portable, AMD Ryzen 7 8845HS (8 cœurs / 16 fils), 31 Go, Windows 11 (10.0.26200), sur secteur, mode « Utilisation normale », écran interne 2560×1600 à 165 Hz ; Node 22.14.0 ; Chrome 155.0.8059.80 headless, ANGLE Direct3D 11. Deux adaptateurs : **Radeon 780M** (intégré, choisi par défaut par Chrome) et **RTX 4060 Laptop** (`--force_high_performance_gpu`). Poste NON dédié : autres sessions et navigateurs actifs, charge processeur totale relevée de 26 à 68 %.
+- **Modifications (outils seulement) :**
+  - `tools/browser.mjs` : `LQV_CHROME_ARGS` (arguments ajoutés : choix de l’adaptateur), `webglRenderer()`, `rendererLabel()`.
+  - `tools/perf.mjs`, `tools/perf-compare.mjs` : le rapport écrivait « SwiftShader (CPU) » **en dur, même en mode GPU** → libellé du moteur réellement relevé, champs `gpu` et `chromeArgs`.
+  - `tools/perf-play.mjs` (`npm run perf:play`) : étape 3 du protocole automatisée. Un duel complet est joué au clic (pilote de QA partagé, audits compris), avec séquences et chorégraphies en mouvement réel au rythme normal ; chaque intervalle rAF est enregistré par vue A / B / Clash, et `arenaStats()` toutes les 500 ms.
+  - README, rapport RC §5.3–§5.4, §7, §9.
+- **[OK] Résultats** (détail : rapport RC §5.4 ; fichiers `artifacts/qa/perf-gpu-{780m,rtx4060}.json`, `perf-compare-gpu-*.json`, `perf-play-gpu-*.json`) :
+  - **Duel à l’arrêt, 1280×720, 7 rondes entrelacées M03.2 `110525d` ↔ RC :** sur la RTX 4060, A = 161 → 156 img/s et B = 156 → 157 img/s, pour ≈ 2,5 ms de fil principal par image, donc **au plafond de l’écran**. Sur la 780M, médianes A = 95 → 128 img/s et B = 143 → 142 img/s, avec une dispersion de 73 à 163 img/s pour un même build ; **aucune ronde sous 72 img/s**. Draw calls 73 / 75 identiques. **Aucun écart attribuable à la RC** : SwiftShader mesurait 40–53 ms par image.
+  - **Duels joués** (seed 202, 14 tours jusqu’au K.-O., 13 séquences, 10 Clashes, ≈ 110 s chacun ; 1280×720 et 1920×1080 sur chaque GPU) : 4/4 terminés, **0 erreur console, 0 fuite, 0 écart de vue**. Médiane de **6,1 ms (164 img/s) partout**, p95 12–18 ms, p99 24–30 ms. Images > 16,7 ms : 4,5–4,6 % (780M) et 9,8–11,3 % (RTX). Images > 33,3 ms : 0,5–0,7 %. Fil principal de l’arène : médiane 1,6–2,4 ms, **jamais plus de 6,2 ms**.
+  - **Conclusion ADR 013 :** aucun compromis de rendu n’est nécessaire sur ce poste. Le coût des bougies (la moitié de l’image sous SwiftShader) était un artefact du rendu logiciel : sur GPU, l’ablation reste dans le bruit (1,8–2,4 ms).
+- **[KO] Échecs / tentatives abandonnées :**
+  - Premier relevé sur la RTX : 1 rAF/s pendant la première seconde, le temps que le GPU discret se réveille. Correctif : mise en régime de 3 s ou plus avant tout relevé.
+  - Image non plafonnée (`--disable-gpu-vsync --disable-frame-rate-limit`) : Chrome 155 headless retombe à ≈ 57 rAF/s, même sur une page vide. Mode abandonné : la mesure reste plafonnée à 165 Hz.
+  - Ablation du décor non concluante sur GPU (bruit supérieur à l’écart sur 3 rondes).
+  - Le banc moteur, sur 200 duels identiques (mêmes vainqueurs, 9,84 tours), a mesuré 31,6 puis 71,6 ms par duel à 3 minutes d’intervalle : poste chargé. Aucun chiffre processeur isolé n’est comparable.
+- **[?] Incertitudes :**
+  - Les **à-coups** (85 à 230 ms, une poignée par duel) sont identiques sur les deux GPU alors que l’arène ne dépasse jamais 6,2 ms. Ils viennent donc du fil principal hors arène : DOM, mise en page, ramasse-miettes, génération d’illustrations, ou le pilote de QA lui-même, qui interroge la page toutes les 60 ms et audite le DOM à chaque décision. Les percentiles sont donc pessimistes par rapport à un joueur humain. Source non identifiée.
+  - Plus d’images lentes sur la RTX que sur la 780M. Hypothèse non vérifiée : copie des images du GPU discret vers l’intégré, qui pilote l’écran.
+  - Non mesurés : poste de bureau, campagne complète en fenêtre visible (seule la sonde l’a été : 165 rAF/s), temps GPU par image, mode batterie.
+- **Tests :** `npm run typecheck` 0 erreur, `npm test` 146/146, `npm run build` OK au départ et avant commit. Commandes de mesure : `LQV_GPU=1 CHROMIUM_PATH=<Chrome> [LQV_CHROME_ARGS=--force_high_performance_gpu] LQV_PERF_OUT=… node tools/perf.mjs`, puis `… LQV_BEFORE=<dist de 110525d> LQV_BEFORE_SHA=110525d LQV_PERF_COMPARE_OUT=… node tools/perf-compare.mjs 7`, puis `… LQV_PERF_PLAY_OUT=… node tools/perf-play.mjs`. Le build « avant » a été construit depuis `git archive 110525d` hors du dépôt. `artifacts/qa/perf.json` (SwiftShader, RC) n’a pas été écrasé.
+- **Pensée :** sur GPU, le rendu 3D approuvé n’est plus le goulot ; la fluidité dépend désormais du fil principal hors arène. La mesure doit nommer l’adaptateur réellement utilisé : un portable hybride en a deux, et un rapport qui écrit « SwiftShader » en dur ment même quand le GPU tourne.
+- **À reprendre :** trace de performance Chrome d’un duel joué sans pilote de QA (source des à-coups) ; temps GPU par image via la requête temporelle ; mesure sur un poste de bureau ; revue opérateur de la RC (rapport §9).

@@ -29,6 +29,7 @@ npm run shots:clash  # chaque type de Clash : poses, mouvement réduit, pellicul
 npm run shots:m03-2  # avant / après / preview M03.2 + mesures (LQV_BEFORE=<build M03> LQV_BEFORE_SHA=<sha>) → screenshots/qa/m03-2/
 node tools/perf-compare.mjs 5  # rendu avant / après en rondes entrelacées (LQV_BEFORE=<build> LQV_BEFORE_SHA=<sha>) → artifacts/qa/perf-compare-m03-2.json
 npm run perf         # mesures moteur + scène (machine courante) → artifacts/qa/perf.json
+npm run perf:play    # duel complet joué au clic, intervalles d’image par vue A / B / Clash → artifacts/qa/perf-play.json
 npm run sim          # (optionnel) 200 duels IA/IA headless
 npm run qa:product   # JEU (M04–M05) : 8 parcours de joueur depuis l’accueil (série complète, reprise, migration…) → artifacts/qa/qa-product.json (QA_SHOTS=dossier pour des captures)
 npm run qa:rc        # porte RC (M06) : sans WebGL, longévité, moteur indépendant des animations, mode démo, stockage refusé, réinitialisations, contraste, coût par écran → artifacts/qa/qa-rc.json
@@ -37,7 +38,7 @@ npm run video        # vidéo du parcours complet (Playwright) → screenshots/q
 npm run preview      # sert le build (dist/) sur http://localhost:4173
 ```
 
-Mesures sur **GPU réel** (poste de l’opérateur, le conteneur n’en a pas) : `LQV_GPU=1 CHROMIUM_PATH=<Chrome> npm run perf` (sans forçage SwiftShader ; `LQV_HEADED=1` pour une fenêtre visible) — le rapport indique le moteur de rendu réellement utilisé.
+Mesures sur **GPU réel** (poste de l’opérateur, le conteneur n’en a pas) : `LQV_GPU=1 CHROMIUM_PATH=<Chrome> npm run perf` (sans forçage SwiftShader ; `LQV_HEADED=1` pour une fenêtre visible ; `LQV_CHROME_ARGS=--force_high_performance_gpu` pour le GPU discret d’un portable hybride, Chrome prenant l’intégré par défaut), de même `perf:play` et `tools/perf-compare.mjs` — chaque rapport indique le moteur de rendu réellement utilisé. Résultats sur le portable de l’opérateur : `docs/RAPPORT_M06_RC.md` §5.4.
 
 `qa:browser`, `qa:techniques`, `shots`, `shots:clash`, `shots:m03-2` et `perf` exigent un build (`npm run build`) et un Chromium local (`/opt/pw-browsers/chromium` par défaut, sinon `CHROMIUM_PATH=…`). Aucun navigateur n’est téléchargé.
 

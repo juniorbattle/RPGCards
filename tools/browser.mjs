@@ -9,11 +9,30 @@ export const CHROMIUM = process.env.CHROMIUM_PATH || ['/opt/pw-browsers/chromium
  * Navigateur de QA. Par défaut : WebGL LOGICIEL (SwiftShader) — reproductible dans le conteneur, jamais
  * une mesure de GPU. `LQV_GPU=1` (poste de l’opérateur, Chrome avec GPU via CHROMIUM_PATH, `LQV_HEADED=1`
  * pour une fenêtre visible) : aucun forçage logiciel, le navigateur utilise le GPU réel.
+ * `LQV_CHROME_ARGS` (séparés par des espaces) s’ajoutent aux arguments : choix de l’adaptateur d’un
+ * portable hybride (`--force_high_performance_gpu`), image non plafonnée par la synchro verticale
+ * (`--disable-gpu-vsync --disable-frame-rate-limit`) pour mesurer la marge.
  */
+export const GPU = process.env.LQV_GPU === '1';
+export const EXTRA_ARGS = (process.env.LQV_CHROME_ARGS ?? '').split(/\s+/).filter(Boolean);
 export async function launch() {
   if (!CHROMIUM) throw new Error('Chromium introuvable : définir CHROMIUM_PATH');
-  const gpu = process.env.LQV_GPU === '1';
-  return chromium.launch({ executablePath: CHROMIUM, headless: process.env.LQV_HEADED !== '1', args: gpu ? ['--ignore-gpu-blocklist'] : ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+  const base = GPU ? ['--ignore-gpu-blocklist'] : ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
+  return chromium.launch({ executablePath: CHROMIUM, headless: process.env.LQV_HEADED !== '1', args: [...base, ...EXTRA_ARGS] });
+}
+
+/** Moteur de rendu WebGL réellement utilisé par la page (chaîne ANGLE / pilote), ou null. */
+export const webglRenderer = (page) => page.evaluate(() => {
+  const gl = document.createElement('canvas').getContext('webgl2');
+  const ext = gl?.getExtension('WEBGL_debug_renderer_info');
+  return ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : null;
+});
+
+/** Libellé honnête du mode de rendu pour les rapports. */
+export function rendererLabel(renderer) {
+  if (!GPU) return 'Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU';
+  const mode = process.env.LQV_HEADED === '1' ? 'fenêtre visible' : 'headless';
+  return `Chrome ${mode}, GPU réel : ${renderer ?? 'moteur de rendu inconnu'}${EXTRA_ARGS.length ? ` — arguments : ${EXTRA_ARGS.join(' ')}` : ''}`;
 }
 
 /** Démarre `vite preview` sur le build courant (dist/, ou `LQV_DIST`, ou `outDir` : build d’itération / « avant »). */
