@@ -30,6 +30,33 @@ export interface CardOpts {
   attrs?: Record<string, unknown>;
 }
 
+/**
+ * Face d’une carte (illustration, cadre, rang, emblème, plaque) : ne dépend que de la carte et de la
+ * graine d’art. Construite une fois, puis clonée (passe 13 : chaque rendu du plateau reconstruit ses
+ * cartes ; un clone natif coûte moins que dix éléments et un SVG à analyser).
+ */
+const FACES = new Map<string, DocumentFragment>();
+function cardFace(def: CardDef, artSeed: number): Node {
+  const key = `${artSeed}|${def.defId}`;
+  let face = FACES.get(key);
+  if (!face) {
+    face = document.createDocumentFragment();
+    face.append(
+      h('img', { class: 'art', src: cardArtUrl(def.defId, artSeed), alt: '', draggable: 'false' }),
+      h('span', { class: 'frame' }),
+      h('span', { class: 'rank', 'aria-hidden': 'true' }, rankLabel(def)),
+      h('span', { class: 'fam', html: emblemSvg(def.family, 24) }),
+      h('span', { class: 'plate' },
+        h('span', { class: 'name' }, def.signature ? def.name : def.name),
+        h('span', { class: 'variant' }, def.signature ? `Signature · ${def.effect ? EFFECTS[def.effect].name : ''}` : def.effect ? EFFECTS[def.effect].name : 'Basic'),
+        h('span', { class: 'stats' }, h('span', { class: 'r', title: 'Rang : priorité du Clash' }, `R ${def.rank ?? '∞'}`), h('span', { class: 'p', title: 'Puissance : dégâts / absorption' }, `P ${def.power}`)),
+      ),
+    );
+    FACES.set(key, face);
+  }
+  return face.cloneNode(true);
+}
+
 export function cardEl(defId: string, o: CardOpts): HTMLElement {
   const def = cardDef(defId);
   const state = o.state ?? null;
@@ -41,15 +68,7 @@ export function cardEl(defId: string, o: CardOpts): HTMLElement {
     'data-def': defId,
     ...(o.attrs ?? {}),
   },
-  h('img', { class: 'art', src: cardArtUrl(defId, o.artSeed), alt: '', draggable: 'false' }),
-  h('span', { class: 'frame' }),
-  h('span', { class: 'rank', 'aria-hidden': 'true' }, rankLabel(def)),
-  h('span', { class: 'fam', html: emblemSvg(def.family, 24) }),
-  h('span', { class: 'plate' },
-    h('span', { class: 'name' }, def.signature ? def.name : def.name),
-    h('span', { class: 'variant' }, def.signature ? `Signature · ${def.effect ? EFFECTS[def.effect].name : ''}` : def.effect ? EFFECTS[def.effect].name : 'Basic'),
-    h('span', { class: 'stats' }, h('span', { class: 'r', title: 'Rang : priorité du Clash' }, `R ${def.rank ?? '∞'}`), h('span', { class: 'p', title: 'Puissance : dégâts / absorption' }, `P ${def.power}`)),
-  ),
+  cardFace(def, o.artSeed),
   state || o.banner ? h('span', { class: 'state-banner' }, o.banner ?? (state ? BANNER[state] : '')) : null,
   );
   return el;

@@ -2,7 +2,7 @@
 
 **Nature :** journal de production du **nouveau projet**, et non journal copié de RPG-ArtByCode.  
 **Convention :** passes chronologiques, plus récente en bas ; statut `[OK]`, `[KO]`, `[?]` ; preuves vérifiables.  
-**Dernière passe :** 12 — **à-coups du fil principal tracés et attribués** sur GPU réel (`docs/RAPPORT_M06_RC.md` §5.5). Deux causes du jeu corrigées : liaison WebGL des anneaux FX à chaque Clash, illustrations générées au clic. Restent les shaders Skia du premier duel d’un profil Chrome et le re-rendu complet du plateau. Règles, composition et secrets inchangés. (Passe 11 : mesures GPU de la RC ; passe 10 : RC locale desktop, build `d19667e`.) Ce n’est pas la ville RPG finale.
+**Dernière passe :** 13 — **re-rendu ciblé du plateau** : `renderApp` ne touche plus que les nœuds qui changent, même DOM et même comportement vérifiés rendu par rendu (`renderCheck`, ADR 015). Temps processeur par commande 9,6 → 7,4 ms (Radeon 780M) et 8,2 → 6,4 ms (RTX 4060) en médiane (`docs/RAPPORT_M06_RC.md` §5.6). Règles, composition et secrets inchangés. (Passe 12 : à-coups tracés, deux causes corrigées ; passe 11 : mesures GPU de la RC ; passe 10 : RC locale desktop.) Ce n’est pas la ville RPG finale.
 
 ## État initial connu
 
@@ -19,7 +19,8 @@
 2. **Écarts de fidélité restants** (`docs/RAPPORT_M03_2.md` §8) : personnages en plans 2,5D (pas de volume ni de chevelure détaillée), décor moins dense, ni bloom ni profondeur de champ, table encore plus sombre que la preview, typographie système ; paysage = gabarit compact du bureau (textes ≈ 9,5 px à 844×390), pas l’interface simplifiée du panneau 6.
 3. **Arbitrages encore proposés** (ADR 004) : ARB-002 (profil du rival public), ARB-001, ARB-005 (+ ARB-005b : carte camouflée remplacée pendant l’engagement, nommée en fin de tour depuis la passe 5), ARB-011 ; ratification éventuelle du delta D-01 (V3.3). Inférences restantes documentées (`docs/RAPPORT_M03_1B.md` §6).
 4. **Mesure sur GPU réel** : **faite** sur le portable de l’opérateur (passe 11, Radeon 780M + RTX 4060 : plafond de l’écran 165 Hz en jeu, aucun compromis requis). **À-coups tracés en passe 12** (rapport §5.5) : liaison WebGL des anneaux FX et illustrations au clic corrigées. Restent :
-   - re-rendu complet du plateau à chaque commande (35–60 ms) → patchs ciblés, composition inchangée ;
+   - ~~re-rendu complet du plateau à chaque commande~~ : **fait en passe 13** (re-rendu ciblé, §5.6, ADR 015) ;
+   - génération des illustrations à leur première apparition (≈ 2 ms par commande en moyenne aux premiers tours) → pré-génération hors commande ;
    - shaders Skia de Chrome au premier duel d’un profil, non corrigeable dans le jeu ;
    - temps GPU par image (`EXT_disjoint_timer_query_webgl2` disponible) ;
    - poste de bureau ;
@@ -53,6 +54,9 @@
 - Une moyenne glissante relevée par intervalles ne voit pas une pointe. Mesurer les à-coups image par image (rAF, Long Animation Frames), puis les attribuer par une trace, sans le pilote de QA (passe 12).
 - Un coût « de première fois » dépend des caches (profil Chrome, pilote GPU) et de la charge : mesurer froid et chaud, en rondes entrelacées, et dire lequel (passe 12).
 - Un programme GPU utilisé par intermittence se garde vivant par un témoin et se prépare à la création. Sinon, la libération en fin d’effet le fait recompiler à l’effet suivant (passe 12).
+- Un re-rendu ciblé doit reproduire les effets de bord de la recréation : remplacer tout élément dont un attribut change ou qui est animé, `blur` au retrait de l’élément focalisé, entrée du pointeur sur l’élément neuf. On le vérifie contre un rendu complet à chaque rendu (`renderCheck`), y compris « aucune transition CSS sur un élément gardé » (passe 13).
+- Un sélecteur qui finit par `*` sous une classe basculée invalide tout le sous-arbre : cibler les éléments concernés (passe 13).
+- Sur un poste partagé, comparer deux builds en temps PROCESSEUR des tâches (`tdur`) et commande par commande, pas en temps mural par duel (passe 13).
 - Conserver les échecs et leurs causes ; n'inventer ni approbation ni résultat.
 - Les choix visuels du projet RPG-ArtByCode sont une référence de **méthode**, jamais un cahier des charges visuel importé.
 - Le joueur interagit par des cartes, pas par des sélecteurs HTML comme mécanisme central.
@@ -405,6 +409,91 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **À reprendre :**
   - re-rendu ciblé du plateau (patchs au lieu de `renderApp` complet) ;
   - arbitrage du fondu de la scène du Clash au tour suivant (4b) et du canvas processeur (4c) ;
+  - temps GPU par image ;
+  - poste de bureau ;
+  - revue opérateur de la RC.
+
+## Passe 13 — Re-rendu ciblé du plateau (coût de chaque commande) — 2026-10-17, worktree local avancé sur `main`, départ `4ccce89`, commit sur `main`
+
+- **Mission / contraintes :** demande de la session de coordination. Réduire le coût du fil principal de chaque commande de duel : `renderApp` recréait tout `#app` à chaque commande et chaque réponse du rival (35–60 ms sous charge et trace, passe 12). Ne toucher que ce qui change, avec exactement le même DOM, la même composition (ADR 013) et le même comportement. Garder le principe « jamais d’élément interactif recréé pendant une interaction pointeur ». Règles V3.0/V3.2 (`git diff 4ccce89 -- src/game` vide) et secrets inchangés. Mesure avant / après par `perf:trace` sur le GPU réel, rondes entrelacées, rival à 650 ms.
+- **Lecture initiale :**
+  - AGENTS, JOURNAL (passe 12), gouvernance 00, ADR 013, rapport RC §5.5 ;
+  - note de la passe 12 (dossier partagé) ;
+  - `board.ts`, `dom.ts`, `cardView.ts`, `duelSession.ts`, `controller.ts` (déclencheurs de rendu), `drag.ts`, `clashStage.ts` ;
+  - outils `perf-trace`, `trace-analyze`, `duel-driver`, `qa-browser`, `qa-product`.
+- **Diagnostic** (profil V8 des commandes, 780M, poste calme) :
+  - `renderApp` ≈ 92 % du temps d’une commande : construction, `replaceChildren`, style et mise en page forcés par la relecture du défilement du journal et le FLIP ;
+  - un rendu sans aucun changement d’état coûtait 4,5–6,5 ms : 233 éléments restylés, 339 objets sur 344 remis en page.
+- **Modifications :**
+  - `src/presentation/dom.ts` :
+    - `patchChildren` : appariement par `data-key`, sinon premier nœud compatible vers l’avant ; sous-arbres identiques gardés d’un bloc par `isEqualNode` (`tracked` relève écouteurs et éléments `fresh`) ;
+    - écouteurs transférables : répartiteur partagé et table par élément (`listen`) ;
+    - `fresh()`, `animatedIn()` ;
+    - `domDifference` (QA).
+  - `src/presentation/board.ts`, `renderApp` :
+    - arbre complet construit puis patché ;
+    - `blur` de l’élément focalisé au même moment qu’avant ;
+    - `view-switch` pendant un passage A ↔ B ;
+    - vérification `renderCheck` (DOM, écouteurs, aucune transition CSS sur un élément gardé).
+    - Marqués `fresh` : PV, bulle du rival, consigne, toast, menu tactique, HUD en impulsion, pastille « Réfléchit », Primaire qui se retourne. Écouteurs des cases par `listen`.
+    - `patchBeat` inchangé.
+  - `src/presentation/cardView.ts` : face de carte construite une fois, puis clonée.
+  - `src/styles.css` : règle `#app.view-switch .side .card, .zone, .zone-floor { transition: none }`.
+  - `src/app/params.ts` (`renderCheck=1`, QA seulement) ; `duelSession.ts` (crochet QA `renderCheck`).
+  - Outils :
+    - `perf-trace` : coût par commande (`commands`, `commandSummary`), comparaison appariée (`commandPairs`), temps processeur par tâche (`commandPairsCpu`), mode `LQV_TRACE_LIGHT=1`, Event Timing des clics ;
+    - `trace-analyze` : `commandTasks` (`tdur`), catégories par commande, `--resume` étendu ;
+    - `duel-driver` `waitLean` : observe le sous-arbre de `#app` ;
+    - `qa-browser` / `qa-product` : `LQV_RENDER_CHECK=1`, `LQV_QA_OUT`.
+  - Docs : ADR 015 (nouveau), rapport RC §5.6 et §7, README (paramètre `renderCheck`, options d’outils), `artifacts/qa/trace/LISEZMOI.md`.
+- **[OK] Équivalence vérifiée :**
+  - 659 rendus comparés à un rendu complet en clic, clavier et glisser : 0 écart DOM, 0 transition CSS démarrée sur un élément gardé ;
+  - la vérification détecte une régression : sans la garde `view-switch`, elle signale `transform` et `box-shadow` sur les cartes posées ;
+  - focus, `blur` et inspection : même séquence d’événements et même état (`inspect`, `selected`, inspecteur, élément focalisé) que la RC, étape par étape (clics, re-clic, clavier, Échap) ;
+  - seule différence relevée : un `pointerenter` sur le conteneur `.hand` gardé, sans écouteur ;
+  - QA : voir Tests.
+- **[OK] Mesures** (rapport §5.6 ; `artifacts/qa/trace/passe13-*.json`) :
+  - **Rendu sans changement d’état** (780M) : 4,5–6,5 → 2,4–3,2 ms ; éléments restylés 233 → 27 ; objets remis en page 339 → 50.
+  - **Temps processeur par commande**, 3 rondes ABBA, 90 commandes par duel :
+    - 780M : médiane 9,6 → 7,4 ms, moyenne 11,2 → 9,1 ms ; apparié −2,0 ms, plus rapide dans 214 commandes sur 264, les trois rondes négatives ;
+    - RTX 4060 : 8,2 → 6,4 ms et 9,3 → 8,3 ms ; apparié −1,5 ms, 158 sur 265.
+  - **Mesure dans la page** (médianes, 780M puis RTX) :
+    - clic de commande 7,3 → 5,2 et 6,3 → 4,6 ms ;
+    - changement de vue 8,3 → 6,2 et 6,9 → 5,2 ms ;
+    - rendus hors commande 6,7 → 4,4 et 5,5 → 3,7 ms ;
+    - clic jusqu’à l’image (Event Timing) : médiane 40 → 32 ms, moyenne 46,6 → 33,2 et 39,1 → 31,0 ms.
+  - À-coups > 50 ms : 7 → 6 (780M) et 11 → 5 (RTX). Causes : shaders Skia du premier duel (§5.5).
+- **[KO] Échecs / tentatives abandonnées :**
+  - **Première version, `blur` non reproduit.** Chrome 155 envoie `blur` à l’élément focalisé qu’on retire, encore attaché. Son écouteur remplaçait `.inspector` en plein patch : deux inspecteurs, exception, focus perdu. `renderCheck` l’a révélé (28 écarts sur 230 rendus).
+  - **Premier appariement en cascade.** Un frère changé faisait remplacer tout le tiroir du journal.
+  - **FLIP poursuivi sur des rangées gardées.** Le pilote de QA visait une case encore en mouvement : glisser-déposer raté dans 6 des 9 duels pilotés en glisser. Corrigé en remplaçant tout élément animé, comme le faisait la recréation.
+  - **`#app.view-switch .side *`** : le sélecteur universel restylait tout `#app` deux fois par passage de vue. Les commandes avec changement de vue étaient plus lentes qu’avant (7,0 → 7,6 ms). Corrigé par des sélecteurs ciblés.
+  - **Comparaison en temps mural seul** (`passe13-commandes-780m.json`, 4 rondes) : non concluante par ronde (+0,7 à −1,8 ms). La charge du poste variait d’un duel à l’autre (25 à 409 images > 16,7 ms). D’où le temps processeur des tâches, qui exclut le temps où le fil attend le processeur.
+  - **Mise à jour sur place des attributs** (transitions coupées par une classe temporaire) : envisagée, non faite. Gain attendu faible, car les remplacements restants sont petits, pour un risque de comportement plus élevé.
+- **[?] Incertitudes / arbitrages :**
+  - **Inversions d’engagement.** Le build plus rapide laisse parfois le pilote verrouiller l’engagement avant la réponse du rival à 650 ms. L’ordre des engagements secrets s’inverse et le hash final change ; vainqueur et nombre de tours restent identiques. Fréquence : 1 duel « après » sur 4 dans la série murale 780M, aucun dans la série processeur 780M, 2 sur 3 en RTX. Ce n’est pas un écart de règle : l’appariement se fait par type et phase.
+  - **Écarts de comportement assumés, non observables par le jeu** : le conteneur `.hand` gardé ne reçoit plus `pointerenter` après un rendu ; les régions `aria-live` sont recréées comme avant (aucune amélioration d’accessibilité tentée).
+  - **Poste partagé** : charge variable ; les tableaux nomment la mesure (processeur ou murale) et le GPU.
+  - **Les résultats « après » viennent du build de l’arbre de travail sur `4ccce89`** (champ `commit` des JSON) ; le commit de la passe contient exactement ce code.
+- **Tests :**
+  - `npm run typecheck` 0 erreur ; `npm test` 146/146 ; `npm run build` OK (JS 773,7 Ko / 217,0 Ko gzip, contre 768,6 / 215,1).
+  - `npm run qa:browser` (SwiftShader, poste local, `artifacts/qa/trace/qa-browser-passe13-*.json`) : **4/5 avant comme après**, résultats identiques duel par duel (issue, tours, vainqueur, vues, postures, composition, secrets, clics perdus). Seul échec : le connu `mobile-rotation-touch`, scène du Clash en fondu aux tours 2 et 3 (4b).
+  - `LQV_RENDER_CHECK=1 npm run qa:browser` : 4/5, même échec connu ; **1106 rendus comparés à un rendu complet, 0 écart**, 0 erreur console.
+  - `npm run qa:product` (`qa-product-passe13-*.json`) : **8/8 parcours avant comme après**, 0 erreur console. Le duel du parcours B (profil sans `profileSeed`) change d’un lancement à l’autre : 14 tours pour la RC, 8 et 13 aujourd’hui.
+  - `LQV_RENDER_CHECK=1 npm run qa:product` : 8/8, 0 erreur console, donc aucun écart. Le bilan chiffré ne couvre que la dernière page de chaque parcours (A et E rechargent) : 172 + 1 + 1 rendus.
+  - `npm run qa:rc` non relancé : ni règles, ni enveloppe, ni contraste touchés. Passe 12 : 8/9 sur ce poste, contraste du rang « II ».
+  - `artifacts/qa/qa-browser.json` et `qa-product.json` restent les preuves de la RC (conteneur).
+- **Perf / visuels :**
+  - Ryzen 7 8845HS, Radeon 780M et RTX 4060 Laptop (`--force_high_performance_gpu`), Chrome 155.0.8059.80 headless, ANGLE D3D11, 1280×720.
+  - Aucun changement visuel : même DOM, vérifié rendu par rendu.
+- **Pensée :**
+  - Un re-rendu ciblé n’est équivalent que s’il reproduit aussi les effets de bord de la recréation : transitions qui ne partent pas, animations coupées ou relancées, `blur` au retrait, entrée du pointeur. Le plus sûr est de remplacer tout élément dont l’état visible change, et de le vérifier contre un rendu complet à chaque rendu.
+  - Un sélecteur qui finit par `*` sous une classe basculée invalide tout le sous-arbre.
+  - Sur un poste partagé, comparer des builds en temps processeur des tâches, pas en temps mural.
+- **À reprendre :**
+  - pré-générer les illustrations hors commande (≈ 2 ms par commande en moyenne aux premiers tours) ;
+  - `patchBeat` : journal recréé à chaque temps de résolution (resté tel quel, hors périmètre) ;
+  - arbitrages ouverts 4b / 4c ;
   - temps GPU par image ;
   - poste de bureau ;
   - revue opérateur de la RC.

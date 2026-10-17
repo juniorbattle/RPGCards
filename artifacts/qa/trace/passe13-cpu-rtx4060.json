@@ -1,0 +1,6944 @@
+{
+  "commit": "4ccce89",
+  "date": "2026-10-17T21:04:06.320Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "cores": 16,
+    "memGB": 31,
+    "platform": "win32 10.0.26200",
+    "node": "v22.14.0"
+  },
+  "chrome": "155.0.8059.80",
+  "gpu": true,
+  "chromeArgs": [
+    "--force_high_performance_gpu"
+  ],
+  "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "trace": true,
+  "traceCategories": [
+    "toplevel",
+    "blink.user_timing"
+  ],
+  "maxTurns": 80,
+  "freshBrowserPerDuel": false,
+  "persistentProfile": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-competent-euler-d2ddee/528f01d5-a38a-4169-8ab2-043ce1713e7d/scratchpad/profils-rtx-cpu",
+  "aiDelay": 650,
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "builds": [
+    {
+      "name": "avant",
+      "dir": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-competent-euler-d2ddee/528f01d5-a38a-4169-8ab2-043ce1713e7d/scratchpad/dist-avant"
+    },
+    {
+      "name": "apres",
+      "dir": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-competent-euler-d2ddee/528f01d5-a38a-4169-8ab2-043ce1713e7d/scratchpad/dist-apres"
+    }
+  ],
+  "drivers": [
+    "lean"
+  ],
+  "rounds": 3,
+  "runs": [
+    {
+      "name": "r1-avant-lean",
+      "round": 1,
+      "build": "avant",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 142,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 18985,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 18,
+        "maxMs": 218.2,
+        "over16_7ms": 192,
+        "over33_3ms": 25,
+        "over50ms": 10,
+        "over100ms": 3
+      },
+      "byView": {
+        "A": {
+          "frames": 7685,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 12.2,
+          "maxMs": 218.2,
+          "over16_7ms": 67,
+          "over33_3ms": 8,
+          "over50ms": 2,
+          "over100ms": 1
+        },
+        "B": {
+          "frames": 794,
+          "medianMs": 6.1,
+          "p95Ms": 18.6,
+          "p99Ms": 30.5,
+          "maxMs": 54.5,
+          "over16_7ms": 72,
+          "over33_3ms": 6,
+          "over50ms": 2,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10506,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 12.1,
+          "maxMs": 157.6,
+          "over16_7ms": 53,
+          "over33_3ms": 11,
+          "over50ms": 6,
+          "over100ms": 2
+        }
+      },
+      "loafCount": 12,
+      "commands": {
+        "toutes commandes": {
+          "n": 90,
+          "medianMs": 6.5,
+          "p75Ms": 9.9,
+          "p95Ms": 17.5,
+          "maxMs": 41,
+          "meanMs": 8,
+          "sumMs": 724.3
+        },
+        "clic de commande": {
+          "n": 44,
+          "medianMs": 5.6,
+          "p75Ms": 8.9,
+          "p95Ms": 12.9,
+          "maxMs": 32.1,
+          "meanMs": 7.1,
+          "sumMs": 313.7
+        },
+        "clic « Tour suivant »": {
+          "n": 13,
+          "medianMs": 7.1,
+          "p75Ms": 12.3,
+          "p95Ms": 22.6,
+          "maxMs": 22.6,
+          "meanMs": 9.6,
+          "sumMs": 124.8
+        },
+        "réponse du rival": {
+          "n": 33,
+          "medianMs": 6.6,
+          "p75Ms": 10.2,
+          "p95Ms": 18.5,
+          "maxMs": 41,
+          "meanMs": 8.7,
+          "sumMs": 285.8
+        },
+        "commandes avec changement de vue": {
+          "n": 22,
+          "medianMs": 6.4,
+          "p75Ms": 8.7,
+          "p95Ms": 14.6,
+          "maxMs": 32.1,
+          "meanMs": 7.8,
+          "sumMs": 171.9
+        },
+        "rendus hors commande": {
+          "n": 134,
+          "medianMs": 5.5,
+          "p75Ms": 7.5,
+          "p95Ms": 10.7,
+          "maxMs": 13.8,
+          "meanMs": 5.8,
+          "sumMs": 776.5
+        },
+        "temps de résolution": {
+          "n": 45,
+          "medianMs": 2.8,
+          "p75Ms": 3.8,
+          "p95Ms": 5.7,
+          "maxMs": 6.7,
+          "meanMs": 3.3,
+          "sumMs": 146.3
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 138,
+          "medianMs": 40,
+          "p75Ms": 56,
+          "p95Ms": 64,
+          "maxMs": 112,
+          "meanMs": 40.4,
+          "sumMs": 5576
+        }
+      },
+      "rawTrace": "artifacts/qa/tmp/traces/passe13-cpu-rtx4060-r1-avant-lean.json.gz",
+      "pageRecord": "artifacts/qa/tmp/traces/passe13-cpu-rtx4060-r1-avant-lean.page.json",
+      "hitches": {
+        "count": 10,
+        "over100": 3,
+        "byCause": {
+          "fil principal libre (attente GPU / compositeur / horloge)": 9,
+          "other": 1
+        },
+        "trace": {
+          "mainThread": "CrRendererMain",
+          "gpuThread": "CrGpuMain",
+          "syncMark": "lqv-sync-1792271054948-0",
+          "profileSamples": 0,
+          "events": 567959,
+          "commandTasks": [
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 19.6,
+              "cpuMs": 19.5
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 15.8,
+              "cpuMs": 15.7
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 45.6,
+              "cpuMs": 43.6
+            },
+            {
+              "type": "repel",
+              "player": "p2",
+              "phase": "REPEL",
+              "family": "réponse du rival",
+              "wallMs": 11.5,
+              "cpuMs": 11.4
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 20.4,
+              "cpuMs": 20.1
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 18.6,
+              "cpuMs": 18.5
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 16.7,
+              "cpuMs": 16.1
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 37.3,
+              "cpuMs": 35.1
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 12.8,
+              "cpuMs": 12.7
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 19.6,
+              "cpuMs": 18.1
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 10,
+              "cpuMs": 9.9
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 16.4,
+              "cpuMs": 14.9
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 9.8,
+              "cpuMs": 9.4
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 20.9,
+              "cpuMs": 19.7
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 13.5,
+              "cpuMs": 12.8
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 8.9,
+              "cpuMs": 8.6
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 24.6,
+              "cpuMs": 24.5
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 5.7,
+              "cpuMs": 5.6
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 6.1,
+              "cpuMs": 7.3
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 8,
+              "cpuMs": 8
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 30.7,
+              "cpuMs": 30.5
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 5.9,
+              "cpuMs": 5.9
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 8,
+              "cpuMs": 7.9
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 8,
+              "cpuMs": 8
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.2,
+              "cpuMs": 4.2
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 4.5,
+              "cpuMs": 4.5
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 7.9,
+              "cpuMs": 7.8
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.9,
+              "cpuMs": 4.9
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 5.2,
+              "cpuMs": 5.2
+            },
+            {
+              "type": "repel",
+              "player": "p2",
+              "phase": "REPEL",
+              "family": "réponse du rival",
+              "wallMs": 4,
+              "cpuMs": 4
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 7.4,
+              "cpuMs": 7.3
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 3.7,
+              "cpuMs": 3.7
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 4.4,
+              "cpuMs": 4.4
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 5.8,
+              "cpuMs": 5.8
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 4.3,
+              "cpuMs": 4.3
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 5.8,
+              "cpuMs": 5.7
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 4.8,
+              "cpuMs": 4.8
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.1,
+              "cpuMs": 4.1
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 4.9,
+              "cpuMs": 4.8
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 6.4,
+              "cpuMs": 6.4
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.7,
+              "cpuMs": 4.6
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 4.9,
+              "cpuMs": 4.9
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 14.3,
+              "cpuMs": 14.3
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 5.2,
+              "cpuMs": 5.1
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 4.3,
+              "cpuMs": 4.3
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 4.9,
+              "cpuMs": 4.8
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 7.5,
+              "cpuMs": 7.5
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.4,
+              "cpuMs": 4.4
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 5.5,
+              "cpuMs": 5.5
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.8,
+              "cpuMs": 4.7
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 4.7,
+              "cpuMs": 4.7
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 5.6,
+              "cpuMs": 5.6
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 6.9,
+              "cpuMs": 6.9
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.9,
+              "cpuMs": 4.9
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 5.7,
+              "cpuMs": 5.7
+            },
+            {
+              "type": "repel",
+              "player": "p1",
+              "phase": "REPEL",
+              "family": "clic de commande",
+              "wallMs": 7.6,
+              "cpuMs": 7.6
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 6.8,
+              "cpuMs": 6.8
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 7.8,
+              "cpuMs": 7.5
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.2,
+              "cpuMs": 4.2
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.3,
+              "cpuMs": 6.2
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 13.6,
+              "cpuMs": 13.6
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.8,
+              "cpuMs": 4.8
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 4.7,
+              "cpuMs": 4.7
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 10.4,
+              "cpuMs": 10.4
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.2,
+              "cpuMs": 4.2
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.8,
+              "cpuMs": 6.8
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 9.2,
+              "cpuMs": 9.2
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 5.5,
+              "cpuMs": 5.5
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 11.1,
+              "cpuMs": 11
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 8.4,
+              "cpuMs": 8.4
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 10.8,
+              "cpuMs": 10.3
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 9.6,
+              "cpuMs": 9.5
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 13.5,
+              "cpuMs": 13.5
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 13.6,
+              "cpuMs": 12.8
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 10.7,
+              "cpuMs": 10.7
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 10,
+              "cpuMs": 9.9
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 12,
+              "cpuMs": 11.9
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 10.8,
+              "cpuMs": 10.7
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 10.1,
+              "cpuMs": 10
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 12.1,
+              "cpuMs": 12
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 14,
+              "cpuMs": 13.9
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 12.7,
+              "cpuMs": 12.5
+            },
+            {
+              "type": "repel",
+              "player": "p1",
+              "phase": "REPEL",
+              "family": "clic de commande",
+              "wallMs": 15.7,
+              "cpuMs": 15.7
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 11.9,
+              "cpuMs": 11.7
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 8.9,
+              "cpuMs": 8.9
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 10,
+              "cpuMs": 9.9
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 9.7,
+              "cpuMs": 9.6
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 14.2,
+              "cpuMs": 13.9
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 12.2,
+              "cpuMs": 12.1
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 9.1,
+              "cpuMs": 9
+            }
+          ],
+          "commands": {
+            "clic de commande": {
+              "n": 44,
+              "meanMsByCategory": {},
+              "taskCpuMs": {
+                "n": 44,
+                "medianMs": 7.3,
+                "p75Ms": 10,
+                "p95Ms": 15.7,
+                "maxMs": 35.1,
+                "meanMs": 8.6,
+                "sumMs": 376.4
+              }
+            },
+            "toutes commandes": {
+              "n": 90,
+              "meanMsByCategory": {
+                "other": 0
+              },
+              "taskCpuMs": {
+                "n": 90,
+                "medianMs": 8,
+                "p75Ms": 12.1,
+                "p95Ms": 20.1,
+                "maxMs": 43.6,
+                "meanMs": 9.9,
+                "sumMs": 892.8
+              }
+            },
+            "réponse du rival": {
+              "n": 33,
+              "meanMsByCategory": {
+                "other": 0
+              },
+              "taskCpuMs": {
+                "n": 33,
+                "medianMs": 9,
+                "p75Ms": 13.5,
+                "p95Ms": 30.5,
+                "maxMs": 43.6,
+                "meanMs": 11,
+                "sumMs": 363.1
+              }
+            },
+            "clic « Tour suivant »": {
+              "n": 13,
+              "meanMsByCategory": {},
+              "taskCpuMs": {
+                "n": 13,
+                "medianMs": 10.4,
+                "p75Ms": 14.3,
+                "p95Ms": 24.5,
+                "maxMs": 24.5,
+                "meanMs": 11.8,
+                "sumMs": 153.4
+              }
+            }
+          },
+          "trimmed": {
+            "file": "artifacts/qa/trace/passe13-cpu-rtx4060-r1-avant-lean-pics.json.gz",
+            "events": 13349
+          }
+        },
+        "hitches": [
+          {
+            "atS": 0.2,
+            "dtMs": 54.4,
+            "tag": "B",
+            "ctxStart": "1|START|",
+            "ctxEnd": "1|START|",
+            "loaf": [],
+            "trace": {
+              "busyMs": 18,
+              "busyPct": 33,
+              "categories": [
+                {
+                  "k": "other",
+                  "ms": 2.6
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "Receive mojo message",
+                  "ms": 2.6
+                },
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0.1
+                }
+              ],
+              "longTasks": [
+                {
+                  "startMs": -4.2,
+                  "durMs": 11.1,
+                  "top": []
+                }
+              ],
+              "jsSelf": [],
+              "jsInclusive": [],
+              "gpuMain": [
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 54.1
+                },
+                {
+                  "k": "Receive mojo message",
+                  "ms": 0.1
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 0.3
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 0.2,
+            "dtMs": 54.5,
+            "tag": "B",
+            "ctxStart": "1|START|",
+            "ctxEnd": "1|COMMIT|",
+            "loaf": [
+              {
+                "durationMs": 56,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": [
+                  {
+                    "ms": 18,
+                    "invoker": "BUTTON.onclick",
+                    "type": "event-listener",
+                    "fn": "src/presentation/board.ts:493 ",
+                    "forcedStyleLayoutMs": 12
+                  }
+                ]
+              }
+            ],
+            "trace": {
+              "busyMs": 28.5,
+              "busyPct": 52,
+              "categories": [
+                {
+                  "k": "other",
+                  "ms": 5
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "Receive mojo message",
+                  "ms": 4.9
+                },
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [
+                {
+                  "startMs": 9.6,
+                  "durMs": 19.6,
+                  "top": []
+                }
+              ],
+              "jsSelf": [],
+              "jsInclusive": [],
+              "gpuMain": [
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 54.3
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 0.4
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0
+                  }
+                ]
+              }
+            },
+            "cause": "other"
+          },
+          {
+            "atS": 1.1,
+            "dtMs": 218.2,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 223,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 5,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 4.7,
+              "busyPct": 2,
+              "categories": [
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [],
+              "jsInclusive": [],
+              "gpuMain": [
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 218.1
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 1.8
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0.1
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 2.2,
+            "dtMs": 103,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|rank",
+            "ctxEnd": "1|REPEL|rank",
+            "loaf": [
+              {
+                "durationMs": 103,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 3,
+              "busyPct": 3,
+              "categories": [
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [],
+              "jsInclusive": [],
+              "gpuMain": [
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 102.8
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 4,
+            "dtMs": 157.6,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 158,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 6,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 5.7,
+              "busyPct": 4,
+              "categories": [
+                {
+                  "k": "other",
+                  "ms": 0.1
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0.1
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [],
+              "jsInclusive": [],
+              "gpuMain": [
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 157.4
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 2.6
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.4
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0.1
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 4.6,
+            "dtMs": 97,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 102,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 6,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 5.2,
+              "busyPct": 5,
+              "categories": [
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [],
+              "jsInclusive": [],
+              "gpuMain": [
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 96.9
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 3.3
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0.1
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 6.8,
+            "dtMs": 78.7,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|",
+            "ctxEnd": "1|REPEL|",
+            "loaf": [
+              {
+                "durationMs": 78,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 4.9,
+              "busyPct": 6,
+              "categories": [
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [],
+              "jsInclusive": [],
+              "gpuMain": [
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 78.4
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 2.2
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.4
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0.1
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 8.7,
+            "dtMs": 66.6,
+            "tag": "A",
+            "ctxStart": "2|PREPARE|",
+            "ctxEnd": "2|PREPARE|",
+            "loaf": [
+              {
+                "durationMs": 66,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 5.2,
+              "busyPct": 8,
+              "categories": [
+                {
+                  "k": "other",
+                  "ms": 0.7
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "Receive mojo message",
+                  "ms": 0.7
+                },
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [],
+              "jsInclusive": [],
+              "gpuMain": [
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 66.4
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 12.6,
+            "dtMs": 54.6,
+            "tag": "clash",
+            "ctxStart": "2|RESOLVED|rank",
+            "ctxEnd": "2|RESOLVED|rank",
+            "loaf": [
+              {
+                "durationMs": 57,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 5,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 4.4,
+              "busyPct": 8,
+              "categories": [
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [],
+              "jsInclusive": [],
+              "gpuMain": [
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 54.2
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.3
+                  },
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0.1
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 17.5,
+            "dtMs": 72.7,
+            "tag": "clash",
+            "ctxStart": "2|RESOLVED|",
+            "ctxEnd": "2|RESOLVED|",
+            "loaf": [
+              {
+                "durationMs": 72,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 4,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 4,
+              "busyPct": 5,
+              "categories": [
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [],
+              "jsInclusive": [],
+              "gpuMain": [
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 72.3
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 3
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0.1
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          }
+        ]
+      }
+    },
+    {
+      "name": "r1-apres-lean",
+      "round": 1,
+      "build": "apres",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2dbc48ff9",
+      "durationS": 138,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19049,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 12.2,
+        "maxMs": 157.5,
+        "over16_7ms": 146,
+        "over33_3ms": 22,
+        "over50ms": 5,
+        "over100ms": 2
+      },
+      "byView": {
+        "A": {
+          "frames": 7824,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 12.1,
+          "maxMs": 157.5,
+          "over16_7ms": 50,
+          "over33_3ms": 6,
+          "over50ms": 1,
+          "over100ms": 1
+        },
+        "B": {
+          "frames": 673,
+          "medianMs": 6.1,
+          "p95Ms": 18.1,
+          "p99Ms": 30.1,
+          "maxMs": 60.6,
+          "over16_7ms": 44,
+          "over33_3ms": 4,
+          "over50ms": 1,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10552,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 7.1,
+          "maxMs": 109.1,
+          "over16_7ms": 52,
+          "over33_3ms": 12,
+          "over50ms": 3,
+          "over100ms": 1
+        }
+      },
+      "loafCount": 5,
+      "commands": {
+        "toutes commandes": {
+          "n": 90,
+          "medianMs": 5.6,
+          "p75Ms": 7.6,
+          "p95Ms": 18.7,
+          "maxMs": 33.1,
+          "meanMs": 7.3,
+          "sumMs": 653.8
+        },
+        "clic de commande": {
+          "n": 44,
+          "medianMs": 4.8,
+          "p75Ms": 5.8,
+          "p95Ms": 9.2,
+          "maxMs": 12.5,
+          "meanMs": 5.4,
+          "sumMs": 237.6
+        },
+        "clic « Tour suivant »": {
+          "n": 13,
+          "medianMs": 7.4,
+          "p75Ms": 12.4,
+          "p95Ms": 21,
+          "maxMs": 21,
+          "meanMs": 10.1,
+          "sumMs": 130.7
+        },
+        "réponse du rival": {
+          "n": 33,
+          "medianMs": 6.3,
+          "p75Ms": 8.4,
+          "p95Ms": 20.6,
+          "maxMs": 33.1,
+          "meanMs": 8.7,
+          "sumMs": 285.5
+        },
+        "commandes avec changement de vue": {
+          "n": 22,
+          "medianMs": 5.6,
+          "p75Ms": 7.6,
+          "p95Ms": 10.4,
+          "maxMs": 13.4,
+          "meanMs": 6.3,
+          "sumMs": 138.7
+        },
+        "rendus hors commande": {
+          "n": 134,
+          "medianMs": 4,
+          "p75Ms": 5,
+          "p95Ms": 6.7,
+          "maxMs": 9.6,
+          "meanMs": 4.4,
+          "sumMs": 590
+        },
+        "temps de résolution": {
+          "n": 45,
+          "medianMs": 3.5,
+          "p75Ms": 4.2,
+          "p95Ms": 4.7,
+          "maxMs": 6.3,
+          "meanMs": 3.5,
+          "sumMs": 159
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 138,
+          "medianMs": 32,
+          "p75Ms": 40,
+          "p95Ms": 64,
+          "maxMs": 72,
+          "meanMs": 33.4,
+          "sumMs": 4608
+        }
+      },
+      "rawTrace": "artifacts/qa/tmp/traces/passe13-cpu-rtx4060-r1-apres-lean.json.gz",
+      "pageRecord": "artifacts/qa/tmp/traces/passe13-cpu-rtx4060-r1-apres-lean.page.json",
+      "hitches": {
+        "count": 5,
+        "over100": 2,
+        "byCause": {
+          "fil principal libre (attente GPU / compositeur / horloge)": 5
+        },
+        "trace": {
+          "mainThread": "CrRendererMain",
+          "gpuThread": "CrGpuMain",
+          "syncMark": "lqv-sync-1792271202134-0",
+          "profileSamples": 0,
+          "events": 560753,
+          "commandTasks": [
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 14.5,
+              "cpuMs": 14.4
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 9.1,
+              "cpuMs": 9.1
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 36.9,
+              "cpuMs": 33.5
+            },
+            {
+              "type": "repel",
+              "player": "p2",
+              "phase": "REPEL",
+              "family": "réponse du rival",
+              "wallMs": 7.4,
+              "cpuMs": 8.2
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 12.7,
+              "cpuMs": 12.6
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 13.7,
+              "cpuMs": 13.7
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 5.5,
+              "cpuMs": 5.5
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 20.8,
+              "cpuMs": 19.4
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 6.5,
+              "cpuMs": 6.4
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 18.7,
+              "cpuMs": 18.6
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 9.5,
+              "cpuMs": 9.5
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 15.3,
+              "cpuMs": 15.2
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 9.6,
+              "cpuMs": 9.4
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 21.1,
+              "cpuMs": 21
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 6.3,
+              "cpuMs": 6.3
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 8.6,
+              "cpuMs": 8.6
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 22.2,
+              "cpuMs": 22.1
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 7.7,
+              "cpuMs": 7.1
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.1,
+              "cpuMs": 4.1
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 10.1,
+              "cpuMs": 9.8
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 39.6,
+              "cpuMs": 39.3
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 5.4,
+              "cpuMs": 5.4
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 9.9,
+              "cpuMs": 9.8
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 14.7,
+              "cpuMs": 14.6
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 7.1,
+              "cpuMs": 7
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.9,
+              "cpuMs": 6.9
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 12.9,
+              "cpuMs": 12.9
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 6.3,
+              "cpuMs": 6.3
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 8.7,
+              "cpuMs": 8.7
+            },
+            {
+              "type": "repel",
+              "player": "p2",
+              "phase": "REPEL",
+              "family": "réponse du rival",
+              "wallMs": 5.5,
+              "cpuMs": 5.5
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 13.2,
+              "cpuMs": 13
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 6.3,
+              "cpuMs": 6.2
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 7.7,
+              "cpuMs": 8.5
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 12.5,
+              "cpuMs": 12.4
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 7.9,
+              "cpuMs": 7.8
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 9,
+              "cpuMs": 9
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 7.9,
+              "cpuMs": 7.9
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 7,
+              "cpuMs": 7
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.5,
+              "cpuMs": 6.5
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 8.6,
+              "cpuMs": 8.5
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.6,
+              "cpuMs": 4.6
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 7.4,
+              "cpuMs": 7.2
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 23.9,
+              "cpuMs": 23.8
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 6.4,
+              "cpuMs": 6.3
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 5.8,
+              "cpuMs": 5.7
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 5.7,
+              "cpuMs": 5.7
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 7.8,
+              "cpuMs": 7.8
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 5.9,
+              "cpuMs": 5.8
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 6.1,
+              "cpuMs": 6.1
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 6.1,
+              "cpuMs": 6.1
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 9.1,
+              "cpuMs": 8.6
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 5.9,
+              "cpuMs": 5.8
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 8.8,
+              "cpuMs": 8.8
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.3,
+              "cpuMs": 4.3
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 6.7,
+              "cpuMs": 6.7
+            },
+            {
+              "type": "repel",
+              "player": "p1",
+              "phase": "REPEL",
+              "family": "clic de commande",
+              "wallMs": 8.8,
+              "cpuMs": 8.8
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 6.2,
+              "cpuMs": 6.1
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 5.5,
+              "cpuMs": 5.4
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 5.2,
+              "cpuMs": 5.2
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.6,
+              "cpuMs": 6.6
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 22.6,
+              "cpuMs": 22.5
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.9,
+              "cpuMs": 4.8
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 6.3,
+              "cpuMs": 6.2
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 5.7,
+              "cpuMs": 5.7
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 5.9,
+              "cpuMs": 5.9
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.7,
+              "cpuMs": 6.7
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 8.2,
+              "cpuMs": 8.1
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 5.4,
+              "cpuMs": 5.4
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 6.4,
+              "cpuMs": 6.4
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 6.5,
+              "cpuMs": 6.5
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 6.4,
+              "cpuMs": 6.4
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 7.6,
+              "cpuMs": 7.6
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 11.4,
+              "cpuMs": 11.3
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.6,
+              "cpuMs": 4.5
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 6,
+              "cpuMs": 6
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 8,
+              "cpuMs": 8
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 7.1,
+              "cpuMs": 6.9
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 5.7,
+              "cpuMs": 5.6
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.8,
+              "cpuMs": 6.8
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 11.4,
+              "cpuMs": 11.3
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 5.6,
+              "cpuMs": 5.5
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 7.1,
+              "cpuMs": 7.1
+            },
+            {
+              "type": "repel",
+              "player": "p1",
+              "phase": "REPEL",
+              "family": "clic de commande",
+              "wallMs": 10.9,
+              "cpuMs": 10.8
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 5.8,
+              "cpuMs": 5.8
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 6,
+              "cpuMs": 6
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.8,
+              "cpuMs": 4.8
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.2,
+              "cpuMs": 6.2
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 8.4,
+              "cpuMs": 8.4
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 5.2,
+              "cpuMs": 5.2
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 6,
+              "cpuMs": 6
+            }
+          ],
+          "commands": {
+            "clic de commande": {
+              "n": 44,
+              "meanMsByCategory": {},
+              "taskCpuMs": {
+                "n": 44,
+                "medianMs": 6.3,
+                "p75Ms": 7.1,
+                "p95Ms": 10.8,
+                "maxMs": 14.4,
+                "meanMs": 6.8,
+                "sumMs": 298.5
+              }
+            },
+            "toutes commandes": {
+              "n": 90,
+              "meanMsByCategory": {
+                "other": 0
+              },
+              "taskCpuMs": {
+                "n": 90,
+                "medianMs": 7,
+                "p75Ms": 9.4,
+                "p95Ms": 22.1,
+                "maxMs": 39.3,
+                "meanMs": 9.1,
+                "sumMs": 821.3
+              }
+            },
+            "réponse du rival": {
+              "n": 33,
+              "meanMsByCategory": {
+                "other": 0
+              },
+              "taskCpuMs": {
+                "n": 33,
+                "medianMs": 8.5,
+                "p75Ms": 11.3,
+                "p95Ms": 33.5,
+                "maxMs": 39.3,
+                "meanMs": 11.2,
+                "sumMs": 371.1
+              }
+            },
+            "clic « Tour suivant »": {
+              "n": 13,
+              "meanMsByCategory": {},
+              "taskCpuMs": {
+                "n": 13,
+                "medianMs": 9,
+                "p75Ms": 14.6,
+                "p95Ms": 23.8,
+                "maxMs": 23.8,
+                "meanMs": 11.7,
+                "sumMs": 151.7
+              }
+            }
+          },
+          "trimmed": {
+            "file": "artifacts/qa/trace/passe13-cpu-rtx4060-r1-apres-lean-pics.json.gz",
+            "events": 7294
+          }
+        },
+        "hitches": [
+          {
+            "atS": 0.1,
+            "dtMs": 60.6,
+            "tag": "B",
+            "ctxStart": "1|START|",
+            "ctxEnd": "1|START|",
+            "loaf": [
+              {
+                "durationMs": 59,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 5.6,
+              "busyPct": 9,
+              "categories": [
+                {
+                  "k": "other",
+                  "ms": 1.2
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "Receive mojo message",
+                  "ms": 1.2
+                },
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [],
+              "jsInclusive": [],
+              "gpuMain": [
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 60.3
+                },
+                {
+                  "k": "Receive mojo message",
+                  "ms": 0
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 2
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 1,
+            "dtMs": 157.5,
+            "tag": "A",
+            "ctxStart": "1|REPEL|tactics",
+            "ctxEnd": "1|REPEL|tactics",
+            "loaf": [
+              {
+                "durationMs": 158,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 3.2,
+              "busyPct": 2,
+              "categories": [
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [],
+              "jsInclusive": [],
+              "gpuMain": [
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 157.4
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 1.5
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 2.2,
+            "dtMs": 109.1,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|rank",
+            "ctxEnd": "1|REPEL|rank",
+            "loaf": [
+              {
+                "durationMs": 111,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 7,
+              "busyPct": 6,
+              "categories": [
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [],
+              "jsInclusive": [],
+              "gpuMain": [
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 108.8
+                },
+                {
+                  "k": "Receive mojo message",
+                  "ms": 0
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 3.9,
+            "dtMs": 91,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 91,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 3.3,
+              "busyPct": 4,
+              "categories": [
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [],
+              "jsInclusive": [],
+              "gpuMain": [
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 90.9
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 1.3
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          },
+          {
+            "atS": 4.5,
+            "dtMs": 60.6,
+            "tag": "clash",
+            "ctxStart": "1|REPEL|outcome",
+            "ctxEnd": "1|REPEL|outcome",
+            "loaf": [
+              {
+                "durationMs": 63,
+                "blockingMs": 0,
+                "styleLayoutMs": 1,
+                "renderMs": 3,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 3.8,
+              "busyPct": 6,
+              "categories": [
+                {
+                  "k": "other",
+                  "ms": 0
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [],
+              "jsInclusive": [],
+              "gpuMain": [
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 60.5
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 2.2
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.2
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0.1
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          }
+        ]
+      }
+    },
+    {
+      "name": "r2-apres-lean",
+      "round": 2,
+      "build": "apres",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf26cfd88bf",
+      "durationS": 138,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19368,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 12,
+        "maxMs": 36.4,
+        "over16_7ms": 89,
+        "over33_3ms": 1,
+        "over50ms": 0,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 7999,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.7,
+          "maxMs": 30.4,
+          "over16_7ms": 33,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 653,
+          "medianMs": 6.1,
+          "p95Ms": 12.2,
+          "p99Ms": 18.4,
+          "maxMs": 36.4,
+          "over16_7ms": 27,
+          "over33_3ms": 1,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10716,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.3,
+          "maxMs": 30.3,
+          "over16_7ms": 29,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 0,
+      "commands": {
+        "toutes commandes": {
+          "n": 90,
+          "medianMs": 5.2,
+          "p75Ms": 6.7,
+          "p95Ms": 17.2,
+          "maxMs": 28.7,
+          "meanMs": 6.7,
+          "sumMs": 603.8
+        },
+        "clic de commande": {
+          "n": 44,
+          "medianMs": 4.8,
+          "p75Ms": 5.4,
+          "p95Ms": 9.2,
+          "maxMs": 15.8,
+          "meanMs": 5.2,
+          "sumMs": 229.7
+        },
+        "clic « Tour suivant »": {
+          "n": 13,
+          "medianMs": 6,
+          "p75Ms": 11.4,
+          "p95Ms": 21.2,
+          "maxMs": 21.2,
+          "meanMs": 9.4,
+          "sumMs": 121.9
+        },
+        "réponse du rival": {
+          "n": 33,
+          "medianMs": 6.1,
+          "p75Ms": 7.5,
+          "p95Ms": 17.7,
+          "maxMs": 28.7,
+          "meanMs": 7.6,
+          "sumMs": 252.2
+        },
+        "commandes avec changement de vue": {
+          "n": 22,
+          "medianMs": 5.2,
+          "p75Ms": 5.6,
+          "p95Ms": 11.3,
+          "maxMs": 15.8,
+          "meanMs": 5.9,
+          "sumMs": 130.4
+        },
+        "rendus hors commande": {
+          "n": 134,
+          "medianMs": 3.8,
+          "p75Ms": 4.4,
+          "p95Ms": 6.1,
+          "maxMs": 9.8,
+          "meanMs": 4,
+          "sumMs": 540.6
+        },
+        "temps de résolution": {
+          "n": 45,
+          "medianMs": 3,
+          "p75Ms": 3.4,
+          "p95Ms": 4.5,
+          "maxMs": 6.8,
+          "meanMs": 3.2,
+          "sumMs": 143.5
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 138,
+          "medianMs": 32,
+          "p75Ms": 32,
+          "p95Ms": 48,
+          "maxMs": 72,
+          "meanMs": 30.8,
+          "sumMs": 4256
+        }
+      },
+      "rawTrace": "artifacts/qa/tmp/traces/passe13-cpu-rtx4060-r2-apres-lean.json.gz",
+      "pageRecord": "artifacts/qa/tmp/traces/passe13-cpu-rtx4060-r2-apres-lean.page.json",
+      "hitches": {
+        "count": 0,
+        "over100": 0,
+        "byCause": {},
+        "trace": {
+          "mainThread": "CrRendererMain",
+          "gpuThread": "CrGpuMain",
+          "syncMark": "lqv-sync-1792271345539-0",
+          "profileSamples": 0,
+          "events": 565227,
+          "commandTasks": [
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 13.6,
+              "cpuMs": 13.6
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.6,
+              "cpuMs": 6.6
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 31.8,
+              "cpuMs": 30.3
+            },
+            {
+              "type": "repel",
+              "player": "p2",
+              "phase": "REPEL",
+              "family": "réponse du rival",
+              "wallMs": 7.2,
+              "cpuMs": 7.1
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 12.8,
+              "cpuMs": 12.7
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 13.9,
+              "cpuMs": 13.8
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": null,
+              "cpuMs": null
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 18.2,
+              "cpuMs": 18.1
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 6.2,
+              "cpuMs": 6.2
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 12.7,
+              "cpuMs": 12.6
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 7.2,
+              "cpuMs": 7.2
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 13.3,
+              "cpuMs": 13
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.6,
+              "cpuMs": 6.5
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 17.1,
+              "cpuMs": 16.8
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.7,
+              "cpuMs": 4.7
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 6.5,
+              "cpuMs": 6.5
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 22.3,
+              "cpuMs": 22.2
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 6,
+              "cpuMs": 5.9
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.6,
+              "cpuMs": 4.5
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 5.9,
+              "cpuMs": 5.8
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 27.4,
+              "cpuMs": 27.1
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.4,
+              "cpuMs": 4.4
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 7,
+              "cpuMs": 6.9
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 12.2,
+              "cpuMs": 12.1
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.8,
+              "cpuMs": 4.8
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6,
+              "cpuMs": 5.9
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 9.4,
+              "cpuMs": 9.3
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.8,
+              "cpuMs": 4.7
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 5.3,
+              "cpuMs": 5.3
+            },
+            {
+              "type": "repel",
+              "player": "p2",
+              "phase": "REPEL",
+              "family": "réponse du rival",
+              "wallMs": 5.2,
+              "cpuMs": 5.1
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 11.1,
+              "cpuMs": 11
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 4.8,
+              "cpuMs": 4.8
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.1,
+              "cpuMs": 6
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 9.1,
+              "cpuMs": 9
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 5,
+              "cpuMs": 5
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 5.9,
+              "cpuMs": 5.8
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 6.1,
+              "cpuMs": 6.1
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.8,
+              "cpuMs": 4.8
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 5.9,
+              "cpuMs": 5.9
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 9.4,
+              "cpuMs": 9.3
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.5,
+              "cpuMs": 4.5
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 5.8,
+              "cpuMs": 5.7
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 23.1,
+              "cpuMs": 23
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 6.1,
+              "cpuMs": 6.1
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 5.7,
+              "cpuMs": 5.6
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.9,
+              "cpuMs": 6.8
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 9.2,
+              "cpuMs": 9.1
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 5.9,
+              "cpuMs": 5.9
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 6.8,
+              "cpuMs": 6.7
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 6.5,
+              "cpuMs": 6.5
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 6.1,
+              "cpuMs": 6.1
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.9,
+              "cpuMs": 6.8
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 13.5,
+              "cpuMs": 13.5
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 5.5,
+              "cpuMs": 5.3
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 7.2,
+              "cpuMs": 7.2
+            },
+            {
+              "type": "repel",
+              "player": "p1",
+              "phase": "REPEL",
+              "family": "clic de commande",
+              "wallMs": 9.9,
+              "cpuMs": 9.9
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 5.8,
+              "cpuMs": 5.7
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 6.1,
+              "cpuMs": 6.1
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.6,
+              "cpuMs": 4.5
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.4,
+              "cpuMs": 6.4
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 21.3,
+              "cpuMs": 21.2
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 5.5,
+              "cpuMs": 4.7
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 5.5,
+              "cpuMs": 5.5
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 5.5,
+              "cpuMs": 5.4
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 5.8,
+              "cpuMs": 5.8
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 7,
+              "cpuMs": 6.9
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 9.2,
+              "cpuMs": 9.1
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 6.7,
+              "cpuMs": 6.7
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 6.4,
+              "cpuMs": 6.4
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 7.9,
+              "cpuMs": 7.8
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 6.4,
+              "cpuMs": 6.4
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.3,
+              "cpuMs": 6
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 11.3,
+              "cpuMs": 11.3
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 5.2,
+              "cpuMs": 5.2
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 6.4,
+              "cpuMs": 6.3
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 5.8,
+              "cpuMs": 5.8
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 7.1,
+              "cpuMs": 6.8
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.9,
+              "cpuMs": 4.9
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 5.6,
+              "cpuMs": 5.6
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 16.3,
+              "cpuMs": 14.9
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 6.1,
+              "cpuMs": 5.6
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 6.6,
+              "cpuMs": 6.5
+            },
+            {
+              "type": "repel",
+              "player": "p1",
+              "phase": "REPEL",
+              "family": "clic de commande",
+              "wallMs": 10.9,
+              "cpuMs": 10.8
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 7.3,
+              "cpuMs": 7.3
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 5.8,
+              "cpuMs": 5.8
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 5.6,
+              "cpuMs": 5.6
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.5,
+              "cpuMs": 6.5
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 11.4,
+              "cpuMs": 11.3
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.6,
+              "cpuMs": 4.5
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 6,
+              "cpuMs": 5.9
+            }
+          ],
+          "commands": {
+            "clic de commande": {
+              "n": 44,
+              "meanMsByCategory": {},
+              "taskCpuMs": {
+                "n": 44,
+                "medianMs": 5.9,
+                "p75Ms": 6.7,
+                "p95Ms": 10.8,
+                "maxMs": 18.1,
+                "meanMs": 6.4,
+                "sumMs": 283.6
+              }
+            },
+            "toutes commandes": {
+              "n": 90,
+              "meanMsByCategory": {
+                "other": 0
+              },
+              "taskCpuMs": {
+                "n": 89,
+                "medianMs": 6.4,
+                "p75Ms": 9.1,
+                "p95Ms": 21.2,
+                "maxMs": 30.3,
+                "meanMs": 8.3,
+                "sumMs": 741.5
+              }
+            },
+            "réponse du rival": {
+              "n": 33,
+              "meanMsByCategory": {
+                "other": 0
+              },
+              "taskCpuMs": {
+                "n": 32,
+                "medianMs": 7.2,
+                "p75Ms": 13,
+                "p95Ms": 27.1,
+                "maxMs": 30.3,
+                "meanMs": 10,
+                "sumMs": 321.3
+              }
+            },
+            "clic « Tour suivant »": {
+              "n": 13,
+              "meanMsByCategory": {},
+              "taskCpuMs": {
+                "n": 13,
+                "medianMs": 7.3,
+                "p75Ms": 12.6,
+                "p95Ms": 23,
+                "maxMs": 23,
+                "meanMs": 10.5,
+                "sumMs": 136.7
+              }
+            }
+          },
+          "trimmed": {
+            "file": "artifacts/qa/trace/passe13-cpu-rtx4060-r2-apres-lean-pics.json.gz",
+            "events": 31
+          }
+        },
+        "hitches": []
+      }
+    },
+    {
+      "name": "r2-avant-lean",
+      "round": 2,
+      "build": "avant",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 133,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19211,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 12.2,
+        "maxMs": 54.5,
+        "over16_7ms": 158,
+        "over33_3ms": 7,
+        "over50ms": 1,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 7721,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 12.2,
+          "maxMs": 54.5,
+          "over16_7ms": 64,
+          "over33_3ms": 3,
+          "over50ms": 1,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 807,
+          "medianMs": 6.1,
+          "p95Ms": 18.2,
+          "p99Ms": 30.2,
+          "maxMs": 48.5,
+          "over16_7ms": 68,
+          "over33_3ms": 2,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10683,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.5,
+          "maxMs": 36.3,
+          "over16_7ms": 26,
+          "over33_3ms": 2,
+          "over50ms": 0,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 1,
+      "commands": {
+        "toutes commandes": {
+          "n": 90,
+          "medianMs": 7.1,
+          "p75Ms": 8.5,
+          "p95Ms": 14.1,
+          "maxMs": 26.9,
+          "meanMs": 7.6,
+          "sumMs": 683.9
+        },
+        "clic de commande": {
+          "n": 44,
+          "medianMs": 6.5,
+          "p75Ms": 8.8,
+          "p95Ms": 12.7,
+          "maxMs": 15.9,
+          "meanMs": 6.9,
+          "sumMs": 303.7
+        },
+        "clic « Tour suivant »": {
+          "n": 13,
+          "medianMs": 7.2,
+          "p75Ms": 11.2,
+          "p95Ms": 20.1,
+          "maxMs": 20.1,
+          "meanMs": 8.8,
+          "sumMs": 113.8
+        },
+        "réponse du rival": {
+          "n": 33,
+          "medianMs": 7.4,
+          "p75Ms": 8.4,
+          "p95Ms": 16,
+          "maxMs": 26.9,
+          "meanMs": 8.1,
+          "sumMs": 266.4
+        },
+        "commandes avec changement de vue": {
+          "n": 22,
+          "medianMs": 7.3,
+          "p75Ms": 8.9,
+          "p95Ms": 10.6,
+          "maxMs": 15.9,
+          "meanMs": 7.5,
+          "sumMs": 164.2
+        },
+        "rendus hors commande": {
+          "n": 134,
+          "medianMs": 5.6,
+          "p75Ms": 7.1,
+          "p95Ms": 10,
+          "maxMs": 12.2,
+          "meanMs": 5.8,
+          "sumMs": 782.3
+        },
+        "temps de résolution": {
+          "n": 45,
+          "medianMs": 2.7,
+          "p75Ms": 3.7,
+          "p95Ms": 5,
+          "maxMs": 5.3,
+          "meanMs": 3,
+          "sumMs": 134.8
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 138,
+          "medianMs": 40,
+          "p75Ms": 40,
+          "p95Ms": 64,
+          "maxMs": 88,
+          "meanMs": 39.6,
+          "sumMs": 5464
+        }
+      },
+      "rawTrace": "artifacts/qa/tmp/traces/passe13-cpu-rtx4060-r2-avant-lean.json.gz",
+      "pageRecord": "artifacts/qa/tmp/traces/passe13-cpu-rtx4060-r2-avant-lean.page.json",
+      "hitches": {
+        "count": 1,
+        "over100": 0,
+        "byCause": {
+          "fil principal libre (attente GPU / compositeur / horloge)": 1
+        },
+        "trace": {
+          "mainThread": "CrRendererMain",
+          "gpuThread": "CrGpuMain",
+          "syncMark": "lqv-sync-1792271488805-0",
+          "profileSamples": 0,
+          "events": 568295,
+          "commandTasks": [
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 15.7,
+              "cpuMs": 15.6
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 7.7,
+              "cpuMs": 7.7
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 30,
+              "cpuMs": 28.7
+            },
+            {
+              "type": "repel",
+              "player": "p2",
+              "phase": "REPEL",
+              "family": "réponse du rival",
+              "wallMs": 7.8,
+              "cpuMs": 7.8
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 12.6,
+              "cpuMs": 12.6
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 13.3,
+              "cpuMs": 14.2
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": null,
+              "cpuMs": null
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 18,
+              "cpuMs": 17.9
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 8.4,
+              "cpuMs": 8.4
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 8.8,
+              "cpuMs": 8.7
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.9,
+              "cpuMs": 4.8
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 8.6,
+              "cpuMs": 8.5
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 5.2,
+              "cpuMs": 5.1
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 9.7,
+              "cpuMs": 9.3
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4,
+              "cpuMs": 4
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 4.9,
+              "cpuMs": 4.9
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 12.7,
+              "cpuMs": 12.7
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 4,
+              "cpuMs": 4
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.3,
+              "cpuMs": 4.2
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 4.6,
+              "cpuMs": 4.6
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 16.8,
+              "cpuMs": 16.7
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.3,
+              "cpuMs": 4.3
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 4.6,
+              "cpuMs": 4.6
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 8.4,
+              "cpuMs": 8.4
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.5,
+              "cpuMs": 4.5
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 4.9,
+              "cpuMs": 4.9
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 7.3,
+              "cpuMs": 7.3
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.4,
+              "cpuMs": 4.4
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": null,
+              "cpuMs": null
+            },
+            {
+              "type": "repel",
+              "player": "p2",
+              "phase": "REPEL",
+              "family": "réponse du rival",
+              "wallMs": 9,
+              "cpuMs": 8.9
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 13.1,
+              "cpuMs": 13
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 6.6,
+              "cpuMs": 6.6
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": null,
+              "cpuMs": null
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 10.9,
+              "cpuMs": 10.6
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 10.2,
+              "cpuMs": 9.8
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 8.3,
+              "cpuMs": 8.3
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 7,
+              "cpuMs": 6.9
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 7,
+              "cpuMs": 7
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 8.9,
+              "cpuMs": 8.9
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 13,
+              "cpuMs": 12.9
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 8.1,
+              "cpuMs": 8.1
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 8.9,
+              "cpuMs": 8.9
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 22.7,
+              "cpuMs": 22.6
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 7.3,
+              "cpuMs": 7.3
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 7.5,
+              "cpuMs": 7.5
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 8.2,
+              "cpuMs": 7.8
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 10.9,
+              "cpuMs": 10.9
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 8.3,
+              "cpuMs": 8.2
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 9,
+              "cpuMs": 8.9
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 10.5,
+              "cpuMs": 10.3
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 7.9,
+              "cpuMs": 7.8
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 9.4,
+              "cpuMs": 9.3
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 11.1,
+              "cpuMs": 11
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 6.8,
+              "cpuMs": 6.7
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 9.9,
+              "cpuMs": 8.8
+            },
+            {
+              "type": "repel",
+              "player": "p1",
+              "phase": "REPEL",
+              "family": "clic de commande",
+              "wallMs": 11.6,
+              "cpuMs": 11.6
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 7.7,
+              "cpuMs": 7.1
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 6.8,
+              "cpuMs": 6.7
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 6.5,
+              "cpuMs": 6.5
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 10.5,
+              "cpuMs": 9.3
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 20.2,
+              "cpuMs": 20.1
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 7.5,
+              "cpuMs": 7.4
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 7.4,
+              "cpuMs": 7.3
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 8,
+              "cpuMs": 8
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 8.4,
+              "cpuMs": 8.4
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 8.2,
+              "cpuMs": 8.1
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 9.5,
+              "cpuMs": 9.3
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 12.5,
+              "cpuMs": 12.4
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 7.7,
+              "cpuMs": 7.7
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 10.6,
+              "cpuMs": 10.5
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 8.3,
+              "cpuMs": 8.2
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 8.8,
+              "cpuMs": 8.8
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 11.5,
+              "cpuMs": 11.5
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 10.5,
+              "cpuMs": 8.7
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 7.5,
+              "cpuMs": 7.5
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 12.4,
+              "cpuMs": 11.8
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 9.5,
+              "cpuMs": 8.7
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 10.4,
+              "cpuMs": 9.7
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 12.6,
+              "cpuMs": 12.1
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 17.6,
+              "cpuMs": 16
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 7.4,
+              "cpuMs": 7.3
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 9.8,
+              "cpuMs": 9.7
+            },
+            {
+              "type": "repel",
+              "player": "p1",
+              "phase": "REPEL",
+              "family": "clic de commande",
+              "wallMs": 15.2,
+              "cpuMs": 15.1
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 7.3,
+              "cpuMs": 7.3
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 7.3,
+              "cpuMs": 7.3
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 9.3,
+              "cpuMs": 9.3
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 11.7,
+              "cpuMs": 11.6
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 13.8,
+              "cpuMs": 13.4
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 9.2,
+              "cpuMs": 9.2
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 10.1,
+              "cpuMs": 10
+            }
+          ],
+          "commands": {
+            "clic de commande": {
+              "n": 44,
+              "meanMsByCategory": {},
+              "taskCpuMs": {
+                "n": 44,
+                "medianMs": 8.1,
+                "p75Ms": 9.7,
+                "p95Ms": 15.1,
+                "maxMs": 17.9,
+                "meanMs": 8.3,
+                "sumMs": 365.8
+              }
+            },
+            "toutes commandes": {
+              "n": 90,
+              "meanMsByCategory": {
+                "other": 0
+              },
+              "taskCpuMs": {
+                "n": 87,
+                "medianMs": 8.7,
+                "p75Ms": 10.9,
+                "p95Ms": 16.7,
+                "maxMs": 28.7,
+                "meanMs": 9.4,
+                "sumMs": 819.6
+              }
+            },
+            "réponse du rival": {
+              "n": 33,
+              "meanMsByCategory": {
+                "other": 0
+              },
+              "taskCpuMs": {
+                "n": 30,
+                "medianMs": 9.3,
+                "p75Ms": 11.5,
+                "p95Ms": 20.1,
+                "maxMs": 28.7,
+                "meanMs": 10.6,
+                "sumMs": 316.7
+              }
+            },
+            "clic « Tour suivant »": {
+              "n": 13,
+              "meanMsByCategory": {},
+              "taskCpuMs": {
+                "n": 13,
+                "medianMs": 8.7,
+                "p75Ms": 12.6,
+                "p95Ms": 22.6,
+                "maxMs": 22.6,
+                "meanMs": 10.5,
+                "sumMs": 137
+              }
+            }
+          },
+          "trimmed": {
+            "file": "artifacts/qa/trace/passe13-cpu-rtx4060-r2-avant-lean-pics.json.gz",
+            "events": 1636
+          }
+        },
+        "hitches": [
+          {
+            "atS": 115.5,
+            "dtMs": 54.5,
+            "tag": "A",
+            "ctxStart": "13|START|",
+            "ctxEnd": "13|START|",
+            "loaf": [
+              {
+                "durationMs": 57,
+                "blockingMs": 0,
+                "styleLayoutMs": 0,
+                "renderMs": 2,
+                "scripts": []
+              }
+            ],
+            "trace": {
+              "busyMs": 3.7,
+              "busyPct": 7,
+              "categories": [
+                {
+                  "k": "other",
+                  "ms": 1.9
+                }
+              ],
+              "selfTop": [
+                {
+                  "k": "Receive mojo message",
+                  "ms": 1.9
+                },
+                {
+                  "k": "BlinkScheduler_PerformMicrotaskCheckpoint",
+                  "ms": 0
+                }
+              ],
+              "longTasks": [],
+              "jsSelf": [],
+              "jsInclusive": [],
+              "gpuMain": [
+                {
+                  "k": "ThreadControllerImpl::RunTask",
+                  "ms": 54.3
+                }
+              ],
+              "gpuOther": {
+                "VizCompositorThread": [
+                  {
+                    "k": "ThreadControllerImpl::RunTask",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "Receive mojo message",
+                    "ms": 0.1
+                  },
+                  {
+                    "k": "SimpleWatcher::OnHandleReady",
+                    "ms": 0
+                  }
+                ]
+              }
+            },
+            "cause": "fil principal libre (attente GPU / compositeur / horloge)"
+          }
+        ]
+      }
+    },
+    {
+      "name": "r3-avant-lean",
+      "round": 3,
+      "build": "avant",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 139,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19311,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 12.1,
+        "maxMs": 42.5,
+        "over16_7ms": 126,
+        "over33_3ms": 4,
+        "over50ms": 0,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 7803,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 12.1,
+          "maxMs": 36.4,
+          "over16_7ms": 55,
+          "over33_3ms": 1,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 797,
+          "medianMs": 6.1,
+          "p95Ms": 18.1,
+          "p99Ms": 24.2,
+          "maxMs": 30.2,
+          "over16_7ms": 47,
+          "over33_3ms": 0,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10711,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.5,
+          "maxMs": 42.5,
+          "over16_7ms": 24,
+          "over33_3ms": 3,
+          "over50ms": 0,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 0,
+      "commands": {
+        "toutes commandes": {
+          "n": 90,
+          "medianMs": 6.5,
+          "p75Ms": 7.7,
+          "p95Ms": 12.7,
+          "maxMs": 24.4,
+          "meanMs": 7,
+          "sumMs": 625.7
+        },
+        "clic de commande": {
+          "n": 44,
+          "medianMs": 6.5,
+          "p75Ms": 7.6,
+          "p95Ms": 10.3,
+          "maxMs": 12.7,
+          "meanMs": 6.4,
+          "sumMs": 282.7
+        },
+        "clic « Tour suivant »": {
+          "n": 13,
+          "medianMs": 6.3,
+          "p75Ms": 7.5,
+          "p95Ms": 24.4,
+          "maxMs": 24.4,
+          "meanMs": 8.4,
+          "sumMs": 109
+        },
+        "réponse du rival": {
+          "n": 33,
+          "medianMs": 6.9,
+          "p75Ms": 8.5,
+          "p95Ms": 17.2,
+          "maxMs": 19.4,
+          "meanMs": 7.1,
+          "sumMs": 234
+        },
+        "commandes avec changement de vue": {
+          "n": 22,
+          "medianMs": 6.9,
+          "p75Ms": 7.7,
+          "p95Ms": 9.8,
+          "maxMs": 12.7,
+          "meanMs": 6.9,
+          "sumMs": 151.6
+        },
+        "rendus hors commande": {
+          "n": 134,
+          "medianMs": 5.3,
+          "p75Ms": 6.2,
+          "p95Ms": 7.7,
+          "maxMs": 10.1,
+          "meanMs": 5.2,
+          "sumMs": 702
+        },
+        "temps de résolution": {
+          "n": 45,
+          "medianMs": 2.5,
+          "p75Ms": 3.2,
+          "p95Ms": 4.6,
+          "maxMs": 5.1,
+          "meanMs": 2.7,
+          "sumMs": 123.5
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 138,
+          "medianMs": 40,
+          "p75Ms": 40,
+          "p95Ms": 56,
+          "maxMs": 64,
+          "meanMs": 37.3,
+          "sumMs": 5144
+        }
+      },
+      "rawTrace": "artifacts/qa/tmp/traces/passe13-cpu-rtx4060-r3-avant-lean.json.gz",
+      "pageRecord": "artifacts/qa/tmp/traces/passe13-cpu-rtx4060-r3-avant-lean.page.json",
+      "hitches": {
+        "count": 0,
+        "over100": 0,
+        "byCause": {},
+        "trace": {
+          "mainThread": "CrRendererMain",
+          "gpuThread": "CrGpuMain",
+          "syncMark": "lqv-sync-1792271626771-0",
+          "profileSamples": 0,
+          "events": 568867,
+          "commandTasks": [
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 9.4,
+              "cpuMs": 9.4
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.1,
+              "cpuMs": 6.1
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 22,
+              "cpuMs": 20.9
+            },
+            {
+              "type": "repel",
+              "player": "p2",
+              "phase": "REPEL",
+              "family": "réponse du rival",
+              "wallMs": 5.2,
+              "cpuMs": 5.2
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 8.6,
+              "cpuMs": 8.5
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 9.7,
+              "cpuMs": 9.6
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 5.7,
+              "cpuMs": 5.3
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 15.1,
+              "cpuMs": 15
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 6.1,
+              "cpuMs": 6.1
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 12.6,
+              "cpuMs": 12.6
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.9,
+              "cpuMs": 4.9
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 10.1,
+              "cpuMs": 10.1
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 5.7,
+              "cpuMs": 5.7
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 11.3,
+              "cpuMs": 11.2
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.9,
+              "cpuMs": 4.8
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 5,
+              "cpuMs": 5
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 14.4,
+              "cpuMs": 14.3
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 4.9,
+              "cpuMs": 4.6
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.8,
+              "cpuMs": 4.8
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 4.9,
+              "cpuMs": 4.9
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 15.1,
+              "cpuMs": 15.1
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.3,
+              "cpuMs": 4.3
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 4.7,
+              "cpuMs": 4.7
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 7.7,
+              "cpuMs": 7.7
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.2,
+              "cpuMs": 4.2
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 4.8,
+              "cpuMs": 4.8
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 7.4,
+              "cpuMs": 7.3
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 5.3,
+              "cpuMs": 5.2
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 4,
+              "cpuMs": 4
+            },
+            {
+              "type": "repel",
+              "player": "p2",
+              "phase": "REPEL",
+              "family": "réponse du rival",
+              "wallMs": 4.4,
+              "cpuMs": 4.3
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 7.2,
+              "cpuMs": 7.2
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 3.5,
+              "cpuMs": 3.5
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 3.9,
+              "cpuMs": 3.9
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 5.3,
+              "cpuMs": 5.3
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 6.4,
+              "cpuMs": 6.3
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 9.4,
+              "cpuMs": 9.2
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 7.6,
+              "cpuMs": 7.3
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 8.8,
+              "cpuMs": 8.6
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 11.1,
+              "cpuMs": 10.5
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 14.2,
+              "cpuMs": 14.1
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 7.4,
+              "cpuMs": 7.1
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 7.3,
+              "cpuMs": 7.2
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 28.1,
+              "cpuMs": 28
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 9.2,
+              "cpuMs": 8.8
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 7.6,
+              "cpuMs": 7.5
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 8.4,
+              "cpuMs": 8.3
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 10.4,
+              "cpuMs": 10.4
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 9,
+              "cpuMs": 8.8
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 8.2,
+              "cpuMs": 8.1
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 9.3,
+              "cpuMs": 9.2
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 7,
+              "cpuMs": 7
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 7.7,
+              "cpuMs": 7.7
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 12.9,
+              "cpuMs": 12.8
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 6.8,
+              "cpuMs": 6.7
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 7.6,
+              "cpuMs": 7.6
+            },
+            {
+              "type": "repel",
+              "player": "p1",
+              "phase": "REPEL",
+              "family": "clic de commande",
+              "wallMs": 12,
+              "cpuMs": 11.9
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 6,
+              "cpuMs": 5.9
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 7.4,
+              "cpuMs": 7.4
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 7.6,
+              "cpuMs": 7.5
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 8.2,
+              "cpuMs": 8.2
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 20.6,
+              "cpuMs": 20.5
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 8.5,
+              "cpuMs": 8.2
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 7.7,
+              "cpuMs": 7.6
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 7.6,
+              "cpuMs": 7.6
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 6.2,
+              "cpuMs": 6.2
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 7.7,
+              "cpuMs": 7.6
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 10,
+              "cpuMs": 9.9
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 7.2,
+              "cpuMs": 7
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 7.9,
+              "cpuMs": 7.9
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 11.6,
+              "cpuMs": 11.6
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 7.4,
+              "cpuMs": 7.4
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 9.2,
+              "cpuMs": 9.1
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 12.9,
+              "cpuMs": 12.8
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 7.7,
+              "cpuMs": 7.7
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 7.7,
+              "cpuMs": 7.6
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 8.4,
+              "cpuMs": 8.4
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 9,
+              "cpuMs": 8.9
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 8.6,
+              "cpuMs": 8.5
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 9.7,
+              "cpuMs": 9.7
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 13.5,
+              "cpuMs": 13.4
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 8.9,
+              "cpuMs": 8.6
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 8.7,
+              "cpuMs": 8.5
+            },
+            {
+              "type": "repel",
+              "player": "p1",
+              "phase": "REPEL",
+              "family": "clic de commande",
+              "wallMs": 14,
+              "cpuMs": 14.1
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 8,
+              "cpuMs": 7.9
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 8.3,
+              "cpuMs": 8.2
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 9.8,
+              "cpuMs": 8.8
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 9.9,
+              "cpuMs": 9.8
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 14.2,
+              "cpuMs": 14.2
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 9,
+              "cpuMs": 9
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 10.3,
+              "cpuMs": 10.2
+            }
+          ],
+          "commands": {
+            "clic de commande": {
+              "n": 44,
+              "meanMsByCategory": {},
+              "taskCpuMs": {
+                "n": 44,
+                "medianMs": 8.2,
+                "p75Ms": 9,
+                "p95Ms": 11.9,
+                "maxMs": 15,
+                "meanMs": 7.8,
+                "sumMs": 344.7
+              }
+            },
+            "toutes commandes": {
+              "n": 90,
+              "meanMsByCategory": {
+                "other": 0
+              },
+              "taskCpuMs": {
+                "n": 90,
+                "medianMs": 7.9,
+                "p75Ms": 9.7,
+                "p95Ms": 15,
+                "maxMs": 28,
+                "meanMs": 8.7,
+                "sumMs": 779.3
+              }
+            },
+            "réponse du rival": {
+              "n": 33,
+              "meanMsByCategory": {
+                "other": 0
+              },
+              "taskCpuMs": {
+                "n": 33,
+                "medianMs": 7.6,
+                "p75Ms": 11.2,
+                "p95Ms": 20.5,
+                "maxMs": 20.9,
+                "meanMs": 9.1,
+                "sumMs": 301.3
+              }
+            },
+            "clic « Tour suivant »": {
+              "n": 13,
+              "meanMsByCategory": {},
+              "taskCpuMs": {
+                "n": 13,
+                "medianMs": 8.1,
+                "p75Ms": 9.2,
+                "p95Ms": 28,
+                "maxMs": 28,
+                "meanMs": 10.2,
+                "sumMs": 133.2
+              }
+            }
+          },
+          "trimmed": {
+            "file": "artifacts/qa/trace/passe13-cpu-rtx4060-r3-avant-lean-pics.json.gz",
+            "events": 31
+          }
+        },
+        "hitches": []
+      }
+    },
+    {
+      "name": "r3-apres-lean",
+      "round": 3,
+      "build": "apres",
+      "driver": "lean",
+      "outcome": "ended",
+      "turns": 14,
+      "winner": "me",
+      "hash": "548f8bf2e7848675",
+      "durationS": 129,
+      "sequencesWatched": 13,
+      "stagesSeen": 13,
+      "consoleIssues": [],
+      "all": {
+        "frames": 19453,
+        "medianMs": 6.1,
+        "p95Ms": 6.2,
+        "p99Ms": 6.6,
+        "maxMs": 42.4,
+        "over16_7ms": 63,
+        "over33_3ms": 5,
+        "over50ms": 0,
+        "over100ms": 0
+      },
+      "byView": {
+        "A": {
+          "frames": 7979,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.6,
+          "maxMs": 36.4,
+          "over16_7ms": 28,
+          "over33_3ms": 2,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "B": {
+          "frames": 748,
+          "medianMs": 6.1,
+          "p95Ms": 12.1,
+          "p99Ms": 18.3,
+          "maxMs": 42.4,
+          "over16_7ms": 17,
+          "over33_3ms": 2,
+          "over50ms": 0,
+          "over100ms": 0
+        },
+        "clash": {
+          "frames": 10726,
+          "medianMs": 6.1,
+          "p95Ms": 6.2,
+          "p99Ms": 6.4,
+          "maxMs": 42.4,
+          "over16_7ms": 18,
+          "over33_3ms": 1,
+          "over50ms": 0,
+          "over100ms": 0
+        }
+      },
+      "loafCount": 0,
+      "commands": {
+        "toutes commandes": {
+          "n": 90,
+          "medianMs": 4.3,
+          "p75Ms": 6,
+          "p95Ms": 15.3,
+          "maxMs": 33.4,
+          "meanMs": 5.8,
+          "sumMs": 524
+        },
+        "clic de commande": {
+          "n": 44,
+          "medianMs": 3.8,
+          "p75Ms": 5.2,
+          "p95Ms": 7.2,
+          "maxMs": 16,
+          "meanMs": 4.5,
+          "sumMs": 199.5
+        },
+        "clic « Tour suivant »": {
+          "n": 13,
+          "medianMs": 5.2,
+          "p75Ms": 11.8,
+          "p95Ms": 17.8,
+          "maxMs": 17.8,
+          "meanMs": 8,
+          "sumMs": 104.6
+        },
+        "réponse du rival": {
+          "n": 33,
+          "medianMs": 4.8,
+          "p75Ms": 6.4,
+          "p95Ms": 15.6,
+          "maxMs": 33.4,
+          "meanMs": 6.7,
+          "sumMs": 219.9
+        },
+        "commandes avec changement de vue": {
+          "n": 22,
+          "medianMs": 4.5,
+          "p75Ms": 5.3,
+          "p95Ms": 12.4,
+          "maxMs": 16,
+          "meanMs": 5.2,
+          "sumMs": 114
+        },
+        "rendus hors commande": {
+          "n": 134,
+          "medianMs": 3.2,
+          "p75Ms": 4.1,
+          "p95Ms": 6.2,
+          "maxMs": 9,
+          "meanMs": 3.5,
+          "sumMs": 466.4
+        },
+        "temps de résolution": {
+          "n": 45,
+          "medianMs": 2.5,
+          "p75Ms": 3.2,
+          "p95Ms": 4.5,
+          "maxMs": 5.1,
+          "meanMs": 2.8,
+          "sumMs": 125.5
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 138,
+          "medianMs": 24,
+          "p75Ms": 32,
+          "p95Ms": 48,
+          "maxMs": 80,
+          "meanMs": 28.6,
+          "sumMs": 3952
+        }
+      },
+      "rawTrace": "artifacts/qa/tmp/traces/passe13-cpu-rtx4060-r3-apres-lean.json.gz",
+      "pageRecord": "artifacts/qa/tmp/traces/passe13-cpu-rtx4060-r3-apres-lean.page.json",
+      "hitches": {
+        "count": 0,
+        "over100": 0,
+        "byCause": {},
+        "trace": {
+          "mainThread": "CrRendererMain",
+          "gpuThread": "CrGpuMain",
+          "syncMark": "lqv-sync-1792271771053-0",
+          "profileSamples": 0,
+          "events": 564722,
+          "commandTasks": [
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 16.2,
+              "cpuMs": 16.2
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 8.5,
+              "cpuMs": 8.2
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 37.3,
+              "cpuMs": 35.7
+            },
+            {
+              "type": "repel",
+              "player": "p2",
+              "phase": "REPEL",
+              "family": "réponse du rival",
+              "wallMs": 8.5,
+              "cpuMs": 8.4
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 12.2,
+              "cpuMs": 12.2
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 13.6,
+              "cpuMs": 13.5
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 8.2,
+              "cpuMs": 8.2
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 18.5,
+              "cpuMs": 18.4
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 6.2,
+              "cpuMs": 6.2
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 14.5,
+              "cpuMs": 14.5
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 7.6,
+              "cpuMs": 7.4
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 14.2,
+              "cpuMs": 14.1
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.5,
+              "cpuMs": 6.4
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 18.6,
+              "cpuMs": 18.5
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 5,
+              "cpuMs": 4.9
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 9.5,
+              "cpuMs": 9.4
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 19.8,
+              "cpuMs": 19.7
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 7.7,
+              "cpuMs": 7.7
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 5.4,
+              "cpuMs": 5.4
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.7,
+              "cpuMs": 6.7
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 28.1,
+              "cpuMs": 27.8
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 4.8,
+              "cpuMs": 4.7
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 7.3,
+              "cpuMs": 8.3
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 13.1,
+              "cpuMs": 13
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 10.2,
+              "cpuMs": 9.9
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.4,
+              "cpuMs": 6.4
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 9.7,
+              "cpuMs": 9.7
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 5,
+              "cpuMs": 4.9
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 5.2,
+              "cpuMs": 5.1
+            },
+            {
+              "type": "repel",
+              "player": "p2",
+              "phase": "REPEL",
+              "family": "réponse du rival",
+              "wallMs": 5,
+              "cpuMs": 5
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 12.7,
+              "cpuMs": 12.6
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 4.9,
+              "cpuMs": 4.9
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 9.2,
+              "cpuMs": 8.2
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 7.5,
+              "cpuMs": 7.4
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 6.3,
+              "cpuMs": 6.3
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 6.3,
+              "cpuMs": 6.2
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 6.1,
+              "cpuMs": 6
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.8,
+              "cpuMs": 4.7
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 6.2,
+              "cpuMs": 6.2
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 9.9,
+              "cpuMs": 9.9
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 5.3,
+              "cpuMs": 5.3
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 5.7,
+              "cpuMs": 5.7
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 14.3,
+              "cpuMs": 14.3
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.3,
+              "cpuMs": 4.3
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 4.7,
+              "cpuMs": 4.6
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 4,
+              "cpuMs": 4
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 5.8,
+              "cpuMs": 5.8
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 3.8,
+              "cpuMs": 3.7
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 5.1,
+              "cpuMs": 5.1
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 5.5,
+              "cpuMs": 5.5
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 4.3,
+              "cpuMs": 4.3
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 4.5,
+              "cpuMs": 4.5
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 7.4,
+              "cpuMs": 7.4
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 3.8,
+              "cpuMs": 3.8
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 5.6,
+              "cpuMs": 5.6
+            },
+            {
+              "type": "repel",
+              "player": "p1",
+              "phase": "REPEL",
+              "family": "clic de commande",
+              "wallMs": 6.8,
+              "cpuMs": 6.8
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 4.1,
+              "cpuMs": 4.1
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 3.9,
+              "cpuMs": 3.9
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 3.1,
+              "cpuMs": 3.1
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 4.3,
+              "cpuMs": 4.2
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 12.4,
+              "cpuMs": 12.3
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 2.8,
+              "cpuMs": 2.8
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 4.6,
+              "cpuMs": 4.6
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 4.7,
+              "cpuMs": 4.7
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4,
+              "cpuMs": 4
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 4.7,
+              "cpuMs": 4.6
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 6.8,
+              "cpuMs": 6.8
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 5.1,
+              "cpuMs": 5.1
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 4.3,
+              "cpuMs": 4.2
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 4.2,
+              "cpuMs": 4.2
+            },
+            {
+              "type": "prepare",
+              "player": "p2",
+              "phase": "PREPARE",
+              "family": "réponse du rival",
+              "wallMs": 5.1,
+              "cpuMs": 5.1
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 4.5,
+              "cpuMs": 4.5
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 5.3,
+              "cpuMs": 5.3
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 3.5,
+              "cpuMs": 3.5
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 4.4,
+              "cpuMs": 4.4
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 4,
+              "cpuMs": 4
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": null,
+              "cpuMs": null
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": 3.8,
+              "cpuMs": 3.8
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 4.4,
+              "cpuMs": 4.4
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 7.9,
+              "cpuMs": 7.7
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 2.9,
+              "cpuMs": 2.9
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 4,
+              "cpuMs": 4
+            },
+            {
+              "type": "repel",
+              "player": "p1",
+              "phase": "REPEL",
+              "family": "clic de commande",
+              "wallMs": 7.4,
+              "cpuMs": 7.4
+            },
+            {
+              "type": "nextTurn",
+              "player": "",
+              "phase": "RESOLVED",
+              "family": "clic « Tour suivant »",
+              "wallMs": 5.2,
+              "cpuMs": 5.2
+            },
+            {
+              "type": "start",
+              "player": "p1",
+              "phase": "START",
+              "family": "clic de commande",
+              "wallMs": 4.8,
+              "cpuMs": 4.8
+            },
+            {
+              "type": "prepare",
+              "player": "p1",
+              "phase": "PREPARE",
+              "family": "clic de commande",
+              "wallMs": null,
+              "cpuMs": null
+            },
+            {
+              "type": "commit",
+              "player": "p1",
+              "phase": "COMMIT",
+              "family": "clic de commande",
+              "wallMs": 4.8,
+              "cpuMs": 4.8
+            },
+            {
+              "type": "commit",
+              "player": "p2",
+              "phase": "COMMIT",
+              "family": "réponse du rival",
+              "wallMs": 6,
+              "cpuMs": 6
+            },
+            {
+              "type": "tactics",
+              "player": "p1",
+              "phase": "TACTICS",
+              "family": "clic de commande",
+              "wallMs": 3.9,
+              "cpuMs": 3.9
+            },
+            {
+              "type": "tactics",
+              "player": "p2",
+              "phase": "TACTICS",
+              "family": "réponse du rival",
+              "wallMs": 4.2,
+              "cpuMs": 4.2
+            }
+          ],
+          "commands": {
+            "clic de commande": {
+              "n": 44,
+              "meanMsByCategory": {
+                "other": 0
+              },
+              "taskCpuMs": {
+                "n": 42,
+                "medianMs": 4.8,
+                "p75Ms": 6.4,
+                "p95Ms": 9.9,
+                "maxMs": 18.4,
+                "meanMs": 5.7,
+                "sumMs": 241
+              }
+            },
+            "toutes commandes": {
+              "n": 90,
+              "meanMsByCategory": {
+                "other": 0
+              },
+              "taskCpuMs": {
+                "n": 88,
+                "medianMs": 5.5,
+                "p75Ms": 8.2,
+                "p95Ms": 18.4,
+                "maxMs": 35.7,
+                "meanMs": 7.4,
+                "sumMs": 653.4
+              }
+            },
+            "réponse du rival": {
+              "n": 33,
+              "meanMsByCategory": {
+                "other": 0
+              },
+              "taskCpuMs": {
+                "n": 33,
+                "medianMs": 6.3,
+                "p75Ms": 9.4,
+                "p95Ms": 27.8,
+                "maxMs": 35.7,
+                "meanMs": 8.9,
+                "sumMs": 292.6
+              }
+            },
+            "clic « Tour suivant »": {
+              "n": 13,
+              "meanMsByCategory": {},
+              "taskCpuMs": {
+                "n": 13,
+                "medianMs": 6.2,
+                "p75Ms": 13,
+                "p95Ms": 19.7,
+                "maxMs": 19.7,
+                "meanMs": 9.2,
+                "sumMs": 119.8
+              }
+            }
+          },
+          "trimmed": {
+            "file": "artifacts/qa/trace/passe13-cpu-rtx4060-r3-apres-lean-pics.json.gz",
+            "events": 33
+          }
+        },
+        "hitches": []
+      }
+    }
+  ],
+  "rendererLabel": "Chrome headless, GPU réel : ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11) — arguments : --force_high_performance_gpu",
+  "summary": {
+    "avant": {
+      "duels": 3,
+      "over50": [
+        10,
+        1,
+        0
+      ],
+      "over100": [
+        3,
+        0,
+        0
+      ],
+      "maxMs": [
+        218.2,
+        54.5,
+        42.5
+      ],
+      "p99Ms": [
+        18,
+        12.2,
+        12.1
+      ],
+      "causes": {
+        "fil principal libre (GPU : Skia / compositeur)": 10,
+        "other": 1
+      },
+      "over50Total": 11
+    },
+    "apres": {
+      "duels": 3,
+      "over50": [
+        5,
+        0,
+        0
+      ],
+      "over100": [
+        2,
+        0,
+        0
+      ],
+      "maxMs": [
+        157.5,
+        36.4,
+        42.4
+      ],
+      "p99Ms": [
+        12.2,
+        12,
+        6.6
+      ],
+      "causes": {
+        "fil principal libre (GPU : Skia / compositeur)": 5
+      },
+      "over50Total": 5
+    }
+  },
+  "commandSummary": {
+    "avant": {
+      "duels": 3,
+      "families": {
+        "toutes commandes": {
+          "n": 270,
+          "medianMs": 6.7,
+          "p75Ms": 8.5,
+          "p95Ms": 15.9,
+          "maxMs": 41,
+          "meanMs": 7.5,
+          "sumMs": 2033.9
+        },
+        "clic de commande": {
+          "n": 132,
+          "medianMs": 6.3,
+          "p75Ms": 8.1,
+          "p95Ms": 12.7,
+          "maxMs": 32.1,
+          "meanMs": 6.8,
+          "sumMs": 900.1
+        },
+        "clic « Tour suivant »": {
+          "n": 39,
+          "medianMs": 6.8,
+          "p75Ms": 11.2,
+          "p95Ms": 22.6,
+          "maxMs": 24.4,
+          "meanMs": 8.9,
+          "sumMs": 347.6
+        },
+        "réponse du rival": {
+          "n": 99,
+          "medianMs": 7,
+          "p75Ms": 9,
+          "p95Ms": 17.2,
+          "maxMs": 41,
+          "meanMs": 7.9,
+          "sumMs": 786.2
+        },
+        "commandes avec changement de vue": {
+          "n": 66,
+          "medianMs": 6.9,
+          "p75Ms": 8.7,
+          "p95Ms": 12.7,
+          "maxMs": 32.1,
+          "meanMs": 7.4,
+          "sumMs": 487.7
+        },
+        "rendus hors commande": {
+          "n": 402,
+          "medianMs": 5.5,
+          "p75Ms": 6.8,
+          "p95Ms": 9.7,
+          "maxMs": 13.8,
+          "meanMs": 5.6,
+          "sumMs": 2260.8
+        },
+        "temps de résolution": {
+          "n": 135,
+          "medianMs": 2.7,
+          "p75Ms": 3.6,
+          "p95Ms": 5.1,
+          "maxMs": 6.7,
+          "meanMs": 3,
+          "sumMs": 404.6
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 414,
+          "medianMs": 40,
+          "p75Ms": 40,
+          "p95Ms": 64,
+          "maxMs": 112,
+          "meanMs": 39.1,
+          "sumMs": 16184
+        }
+      }
+    },
+    "apres": {
+      "duels": 3,
+      "families": {
+        "toutes commandes": {
+          "n": 270,
+          "medianMs": 5.1,
+          "p75Ms": 6.7,
+          "p95Ms": 16,
+          "maxMs": 33.4,
+          "meanMs": 6.6,
+          "sumMs": 1781.6
+        },
+        "clic de commande": {
+          "n": 132,
+          "medianMs": 4.6,
+          "p75Ms": 5.4,
+          "p95Ms": 9.2,
+          "maxMs": 16,
+          "meanMs": 5.1,
+          "sumMs": 666.8
+        },
+        "clic « Tour suivant »": {
+          "n": 39,
+          "medianMs": 6.6,
+          "p75Ms": 11.8,
+          "p95Ms": 21,
+          "maxMs": 21.2,
+          "meanMs": 9.2,
+          "sumMs": 357.2
+        },
+        "réponse du rival": {
+          "n": 99,
+          "medianMs": 5.9,
+          "p75Ms": 7.7,
+          "p95Ms": 18.7,
+          "maxMs": 33.4,
+          "meanMs": 7.7,
+          "sumMs": 757.6
+        },
+        "commandes avec changement de vue": {
+          "n": 66,
+          "medianMs": 5.2,
+          "p75Ms": 5.7,
+          "p95Ms": 12.4,
+          "maxMs": 16,
+          "meanMs": 5.8,
+          "sumMs": 383.1
+        },
+        "rendus hors commande": {
+          "n": 402,
+          "medianMs": 3.7,
+          "p75Ms": 4.6,
+          "p95Ms": 6.3,
+          "maxMs": 9.8,
+          "meanMs": 4,
+          "sumMs": 1597
+        },
+        "temps de résolution": {
+          "n": 135,
+          "medianMs": 3,
+          "p75Ms": 3.6,
+          "p95Ms": 4.7,
+          "maxMs": 6.8,
+          "meanMs": 3.2,
+          "sumMs": 428
+        },
+        "clics (Event Timing ≥ 16 ms, jusqu’à l’image)": {
+          "n": 414,
+          "medianMs": 32,
+          "p75Ms": 40,
+          "p95Ms": 56,
+          "maxMs": 80,
+          "meanMs": 31,
+          "sumMs": 12816
+        }
+      }
+    }
+  },
+  "commandPairs": {
+    "metric": "page",
+    "diff": "apres − avant",
+    "rounds": [
+      {
+        "round": 1,
+        "comparable": true,
+        "sameHash": false,
+        "playerSwaps": 2,
+        "n": 90,
+        "medianDiffMs": -0.2,
+        "meanDiffMs": -0.8,
+        "fasterIn": 47,
+        "sumA": 724.3,
+        "sumB": 653.8
+      },
+      {
+        "round": 2,
+        "comparable": true,
+        "sameHash": false,
+        "playerSwaps": 2,
+        "n": 90,
+        "medianDiffMs": -1.2,
+        "meanDiffMs": -0.9,
+        "fasterIn": 62,
+        "sumA": 683.9,
+        "sumB": 603.8
+      },
+      {
+        "round": 3,
+        "comparable": true,
+        "sameHash": true,
+        "playerSwaps": 0,
+        "n": 90,
+        "medianDiffMs": -1.8,
+        "meanDiffMs": -1.1,
+        "fasterIn": 58,
+        "sumA": 625.7,
+        "sumB": 524
+      }
+    ],
+    "all": {
+      "n": 270,
+      "medianDiffMs": -1.2,
+      "meanDiffMs": -0.9,
+      "fasterIn": 167
+    }
+  },
+  "commandPairsCpu": {
+    "metric": "cpu",
+    "diff": "apres − avant",
+    "rounds": [
+      {
+        "round": 1,
+        "comparable": true,
+        "sameHash": false,
+        "playerSwaps": 2,
+        "n": 90,
+        "medianDiffMs": 0,
+        "meanDiffMs": -0.8,
+        "fasterIn": 43,
+        "sumA": 893,
+        "sumB": 821.5
+      },
+      {
+        "round": 2,
+        "comparable": true,
+        "sameHash": false,
+        "playerSwaps": 2,
+        "n": 87,
+        "medianDiffMs": -1.6,
+        "meanDiffMs": -1,
+        "fasterIn": 61,
+        "sumA": 819.4,
+        "sumB": 741.3
+      },
+      {
+        "round": 3,
+        "comparable": true,
+        "sameHash": true,
+        "playerSwaps": 0,
+        "n": 88,
+        "medianDiffMs": -2.7,
+        "meanDiffMs": -1.2,
+        "fasterIn": 54,
+        "sumA": 779.5,
+        "sumB": 654.1
+      }
+    ],
+    "all": {
+      "n": 265,
+      "medianDiffMs": -1.5,
+      "meanDiffMs": -1,
+      "fasterIn": 158
+    }
+  }
+}

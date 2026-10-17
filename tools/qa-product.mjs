@@ -2,7 +2,8 @@
 // scénario — création de profil, deck, rencontre, duel complet joué par l’interface (souris, clic,
 // clavier, glisser), résultat, retour, rechargement, abandon, deck illégal refusé, sauvegarde
 // illisible. Chaque duel est audité comme en M03 (vues, composition, postures, secrets).
-// Sortie : artifacts/qa/qa-product.json. `?qa=1` n’expose que des crochets de lecture.
+// Sortie : artifacts/qa/qa-product.json (ou `LQV_QA_OUT`). `?qa=1` n’expose que des crochets de lecture.
+// `LQV_RENDER_CHECK=1` (passe 13) : rendus ciblés du plateau comparés à un rendu complet (écart = erreur console).
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { launch, startPreview, view, watchConsole } from './browser.mjs';
@@ -11,7 +12,8 @@ import { newStats, playTurn, pres, sample } from './duel-driver.mjs';
 const OUT = 'artifacts/qa';
 mkdirSync(`${OUT}/tmp`, { recursive: true });
 const commit = execSync('git rev-parse --short HEAD').toString().trim();
-const Q = 'qa=1&aiDelay=0';
+const RENDER_CHECK = process.env.LQV_RENDER_CHECK === '1';
+const Q = `qa=1&aiDelay=0${RENDER_CHECK ? '&renderCheck=1' : ''}`;
 
 const shellState = (page) => page.evaluate(() => {
   const s = window.__lqvShell;
@@ -67,6 +69,7 @@ async function withPage(browser, base, vp, fn, init) {
     res.fails.push(`exception : ${String(err.message).split('\n')[0]}`);
     await page.screenshot({ path: `${OUT}/tmp/product-fail-${Date.now()}.png` }).catch(() => {});
   }
+  if (RENDER_CHECK) res.renderCheck = await page.evaluate(() => window.__lqvRenderCheck?.() ?? null).catch(() => null);
   await ctx.close();
   return res;
 }
@@ -375,14 +378,15 @@ try {
     r.ms = Date.now() - t0;
     report.runs[name] = r;
     const d = r.duel ? ` · duel : ${r.duel.outcome} tour ${r.duel.turn}, gagnant ${r.duel.winner}, rival ${r.duel.personality}, vues ${r.duel.viewChecks}/${r.duel.viewErrors.length} écarts, composition ${r.duel.layoutIssues.length}, postures ${r.duel.stanceIssues.length}, fuites ${r.duel.leaks.length}, clics perdus ${r.duel.lostClicks.length}` : '';
-    console.log(`${name}: ${r.checks.length - r.fails.length}/${r.checks.length} contrôles${d} · console ${r.consoleIssues.length} · ${r.ms} ms`);
+    console.log(`${name}: ${r.checks.length - r.fails.length}/${r.checks.length} contrôles${d} · console ${r.consoleIssues.length}${r.renderCheck ? ` · rendus comparés ${r.renderCheck.renders}, écarts ${r.renderCheck.mismatches.length}` : ''} · ${r.ms} ms`);
     for (const f of r.fails) console.log(`   ÉCHEC ${f}`);
   }
 } finally {
   await browser.close();
   server.stop();
 }
-writeFileSync(`${OUT}/qa-product${only ? `-${only}` : ''}.json`, JSON.stringify(report, null, 2));
-const bad = Object.entries(report.runs).filter(([, r]) => r.fails.length || r.consoleIssues.length || (r.duel && (r.duel.outcome !== 'ended' || r.duel.leaks.length || r.duel.viewErrors.length || r.duel.layoutIssues.length || r.duel.stanceIssues.length || r.duel.lostClicks.length || r.duel.stageGhosts.length)));
+const REPORT = process.env.LQV_QA_OUT ?? `${OUT}/qa-product${only ? `-${only}` : ''}.json`;
+writeFileSync(REPORT, JSON.stringify(report, null, 2));
+const bad = Object.entries(report.runs).filter(([, r]) => r.fails.length || r.consoleIssues.length || r.renderCheck?.mismatches.length || (r.duel && (r.duel.outcome !== 'ended' || r.duel.leaks.length || r.duel.viewErrors.length || r.duel.layoutIssues.length || r.duel.stanceIssues.length || r.duel.lostClicks.length || r.duel.stageGhosts.length)));
 if (bad.length) { console.error(`ÉCHEC QA produit : ${bad.map(([n]) => n).join(', ')}`); process.exit(1); }
-console.log(`QA produit OK (${Object.keys(report.runs).length} parcours) — ${OUT}/qa-product${only ? `-${only}` : ""}.json`);
+console.log(`QA produit OK (${Object.keys(report.runs).length} parcours) — ${REPORT}`);

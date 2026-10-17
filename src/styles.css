@@ -359,6 +359,9 @@ button { font: inherit; color: inherit; }
 
 /* Mouvement réduit / gel pour captures */
 .reduced *, .reduced *::before, .reduced *::after, .freeze *, .freeze *::before, .freeze *::after { animation: none !important; transition: none !important; }
+/* Rendu d’un passage de vue A ↔ B (board.ts) : cartes et cases gardées changent de taille sans transition.
+   Sélecteurs ciblés (pas de `*`) : basculer la classe ne restyle que ces éléments. */
+#app.view-switch .side .card, #app.view-switch .side .zone, #app.view-switch .side .zone-floor { transition: none !important; }
 @media (prefers-reduced-motion: reduce) { .card, .hp .fill, .side, .drawer { transition: none; } }
 
 /* --- Grand écran -------------------------------------------------------------- */

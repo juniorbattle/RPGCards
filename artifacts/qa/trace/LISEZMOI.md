@@ -28,3 +28,27 @@ DevTools › Performance.
 | `art-canvas.json` | `LQV_BEFORE=<dist avant> node tools/art-canvas-compare.mjs 6` | galerie (37 illustrations) : temps de génération entrelacé, écarts de pixels avant / après, GPU / SwiftShader |
 | `qa-browser-passe12-avant.json`, `-apres.json` | `CHROMIUM_PATH=<Chrome> [LQV_DIST=<dist avant>] npm run qa:browser` (SwiftShader, sans `LQV_GPU`) | non-régression sur ce poste : résultats identiques ; `mobile-rotation-touch` échoue dans les deux builds (scène du Clash en fondu au tour suivant), alors que le conteneur passait |
 | `qa-rc-passe12-avant.json`, `-apres.json` | `CHROMIUM_PATH=<Chrome> [LQV_DIST=<dist avant>] npm run qa:rc` | 8/9 dans les deux builds : contraste du rang « II » de l’éditeur de deck à 3,5–3,6:1 sur ce poste ; longévité, moteur et coût par écran OK |
+
+## Passe 13 — re-rendu ciblé du plateau (2026-10-17)
+
+« avant » = `main` `4ccce89` (bundle identique à la passe 12), « après » = passe 13 (arbre de travail sur `4ccce89`,
+code identique au commit de la passe). Les deux builds ont été construits par `npm run build` et servis depuis un
+dossier hors du dépôt. Synthèse : `docs/RAPPORT_M06_RC.md` §5.6, ADR 015.
+
+Nouveaux champs de `perf:trace` :
+- `commands` (par duel) et `commandSummary` (par build) : coût de chaque commande par famille, mesuré dans la page.
+- `commandPairs` : écart apparié, même commande, même ronde.
+- `commandPairsCpu` (avec `LQV_TRACE=1`) : idem en temps processeur de la tâche.
+- `hitches.trace.commandTasks` et `hitches.trace.commands` : temps processeur par commande et catégories.
+- `node tools/trace-analyze.mjs --resume <rapport>` recalcule ces résumés depuis les relevés de page.
+
+| Fichier | Commande (préfixe commun `LQV_GPU=1 CHROMIUM_PATH=<Chrome> LQV_TRACE_AIDELAY=650 LQV_TRACE_BUILDS=avant=<dist 4ccce89>,apres=<dist passe 13>`) | Ce qu’il montre |
+|---|---|---|
+| `passe13-cpu-780m.json` | `LQV_TRACE=1 LQV_TRACE_LIGHT=1 LQV_TRACE_ROUNDS=3 LQV_TRACE_USERDATA=<dossier neuf>` | temps processeur par commande 9,6 → 7,4 ms (médiane) ; apparié −2,0 ms, 214 / 264 plus rapides |
+| `passe13-cpu-rtx4060.json` | idem + `LQV_CHROME_ARGS=--force_high_performance_gpu` | 8,2 → 6,4 ms ; apparié −1,5 ms, 158 / 265 ; deux inversions d’engagement (rondes 1 et 2) |
+| `passe13-commandes-780m.json` | `LQV_TRACE_ROUNDS=4 LQV_TRACE_USERDATA=<dossier neuf>` (sans trace) | temps mural seul : médiane 6,8 → 6,0 ms, mais écarts par ronde incohérents (+0,7 à −1,8 ms) selon la charge du poste (images > 16,7 ms par duel : 25 à 409). D’où la mesure en temps processeur |
+| `qa-browser-passe13-{avant,apres,apres-rendercheck}.json` | `CHROMIUM_PATH=<Chrome> LQV_DIST=<dist> LQV_QA_OUT=… [LQV_RENDER_CHECK=1] npm run qa:browser` (SwiftShader) | non-régression sur ce poste ; rendus comparés à un rendu complet |
+| `qa-product-passe13-{avant,apres,apres-rendercheck}.json` | idem avec `npm run qa:product` | non-régression des parcours du jeu ; rendus comparés |
+
+Les traces légères (`LQV_TRACE_LIGHT=1` : tâches de premier niveau et repères) restent dans `artifacts/qa/tmp/` ;
+leurs extraits « pics » n’ont pas été versionnés (sans intérêt dans DevTools).

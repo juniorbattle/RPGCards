@@ -167,7 +167,7 @@ function threadIntervals(events) {
   const out = [];
   const open = new Map();
   for (const e of events) {
-    if (e.ph === 'X' && typeof e.dur === 'number') out.push({ name: e.name, cat: e.cat, ts: e.ts, dur: e.dur, args: e.args });
+    if (e.ph === 'X' && typeof e.dur === 'number') out.push({ name: e.name, cat: e.cat, ts: e.ts, dur: e.dur, tdur: e.tdur, args: e.args });
     else if (e.ph === 'B') { if (!open.has(e.name)) open.set(e.name, []); open.get(e.name).push(e); }
     else if (e.ph === 'E') { const b = open.get(e.name)?.pop(); if (b) out.push({ name: b.name, cat: b.cat, ts: b.ts, dur: e.ts - b.ts, args: { ...b.args, ...e.args } }); }
   }
@@ -223,7 +223,7 @@ function top(obj, n = 10) {
 }
 
 /** Analyse d’un duel : relevé de la page (+ trace). Renvoie la liste des à-coups attribués et un résumé. */
-export async function analyzeRun({ pageRecord, rawTrace, mapper, trimOut = null }) {
+export async function analyzeRun({ pageRecord, rawTrace, mapper, trimOut = null, commandFamily = null }) {
   const rec = JSON.parse(readFileSync(pageRecord, 'utf8'));
   const t0 = rec.frames[0]?.[0] ?? 0;
   const ctxAt = (t) => { let c = null; for (const [ct, s] of rec.ctx) { if (ct <= t) c = s; else break; } return c; };
@@ -299,6 +299,30 @@ export async function analyzeRun({ pageRecord, rawTrace, mapper, trimOut = null 
         }
         h.trace = { busyMs: ms(busy), busyPct: Math.round((busy / (b - a)) * 100), categories: top(cats, 8), selfTop: top(Object.fromEntries(Object.entries(selfBy).filter(([n]) => !TOP_TASK.test(n))), 8), longTasks, jsSelf: top(js.self, 8), jsInclusive: top(js.incl, 10), gpuMain: top(clipSelf(gpu, a, b), 6), gpuOther: Object.fromEntries(others.map((o) => [o.name, top(clipSelf(o.list, a, b), 4)]).filter(([, v]) => v.length)) };
       }
+      // Passe 13 : temps propre par catégorie dans chaque commande mesurée par la page (`rec.cmds`,
+      // partie synchrone + style / mise en page forcés juste après), moyenne par famille ; et temps
+      // PROCESSEUR du fil principal (`tdur`) de la tâche qui exécute la commande : il exclut le temps où le
+      // fil attendait le processeur, donc la charge des autres programmes d’un poste partagé.
+      if (commandFamily && Array.isArray(rec.cmds)) {
+        const fams = {};
+        const tasks = main.filter((ev) => ev.depth === 0 && TOP_TASK.test(ev.name));
+        traceInfo.commandTasks = [];
+        for (const x of rec.cmds.filter((y) => y.depth === 0 && y.ok)) {
+          const a = x.t * 1000 + off;
+          const b = (x.t + x.sync + x.flush) * 1000 + off;
+          const cats = {};
+          for (const [n, v] of Object.entries(clipSelf(main, a, b))) if (!TOP_TASK.test(n)) cats[categoryOf(n)] = (cats[categoryOf(n)] ?? 0) + v;
+          const task = tasks.find((ev) => ev.ts <= a && ev.ts + ev.dur >= b);
+          traceInfo.commandTasks.push({ type: x.type, player: x.player, phase: x.phase, family: commandFamily(x), wallMs: task ? ms(task.dur) : null, cpuMs: task && typeof task.tdur === 'number' ? ms(task.tdur) : null });
+          for (const fam of [commandFamily(x), 'toutes commandes']) {
+            const f = (fams[fam] ??= { n: 0, sum: {}, cpu: [] });
+            f.n++;
+            for (const [k, v] of Object.entries(cats)) f.sum[k] = (f.sum[k] ?? 0) + v;
+            if (task && typeof task.tdur === 'number') f.cpu.push(task.tdur / 1000);
+          }
+        }
+        traceInfo.commands = Object.fromEntries(Object.entries(fams).map(([k, f]) => [k, { n: f.n, meanMsByCategory: Object.fromEntries(Object.entries(f.sum).sort((p, q) => q[1] - p[1]).map(([c, v]) => [c, Math.round(v / f.n / 10) / 100])), taskCpuMs: distribution(f.cpu) }]));
+      }
       if (trimOut) {
         // Trace réduite (DevTools › Performance › Charger) : métadonnées + fil principal et GPU autour des à-coups.
         const wins = hitches.map((h) => [h.win[0] * 1000 + off - 150000, h.win[1] * 1000 + off + 150000]);
@@ -363,13 +387,91 @@ export function summarizeRuns(runs) {
   return out;
 }
 
-// Ligne de commande : `--resume <perf-trace.json>` (résumé par build), sinon analyse d’un relevé.
+// --- Coût par commande (passe 13) : relevés `cmds` / `renders` / `beats` / `events` de perf-trace -----
+const r1 = (x) => Math.round(x * 10) / 10;
+/** Familles de tâches mesurées par commande (passe 13), noms alignés sur les causes de `trace-analyze`. */
+export function commandFamily(x) {
+  if (x.type === 'nextTurn') return 'clic « Tour suivant »';
+  return x.player === 'p2' ? 'réponse du rival' : 'clic de commande';
+}
+function distribution(values) {
+  const s = [...values].sort((a, b) => a - b);
+  if (!s.length) return null;
+  const q = (k) => r1(s[Math.min(s.length - 1, Math.floor(k * s.length))]);
+  const sum = s.reduce((a, b) => a + b, 0);
+  return { n: s.length, medianMs: q(0.5), p75Ms: q(0.75), p95Ms: q(0.95), maxMs: r1(s[s.length - 1]), meanMs: r1(sum / s.length), sumMs: r1(sum) };
+}
+const total = (x) => x.sync + x.flush;
+/** Valeurs par famille pour un relevé de page : tâche = partie synchrone + style / mise en page restants. */
+function commandValues(rec) {
+  const top = rec.cmds.filter((x) => x.depth === 0 && x.ok);
+  const out = { 'toutes commandes': top.map(total) };
+  for (const fam of ['clic de commande', 'clic « Tour suivant »', 'réponse du rival']) out[fam] = top.filter((x) => commandFamily(x) === fam).map(total);
+  out['commandes avec changement de vue'] = top.filter((x) => x.viewChange).map(total);
+  out['rendus hors commande'] = rec.renders.map(total);
+  out['temps de résolution'] = rec.beats.map(total);
+  out['clics (Event Timing ≥ 16 ms, jusqu’à l’image)'] = rec.events.filter((e) => e.name === 'click').map((e) => e.duration);
+  return out;
+}
+export function summarizeCommands(rec) {
+  return Object.fromEntries(Object.entries(commandValues(rec)).map(([k, v]) => [k, distribution(v)]));
+}
+/** Par build : toutes les commandes de tous les duels réunies (rondes entrelacées). */
+export function summarizeCommandRuns(runs) {
+  const raw = {};
+  const duels = {};
+  for (const r of runs) {
+    const values = commandValues(JSON.parse(readFileSync(r.pageRecord, 'utf8')));
+    duels[r.build] = (duels[r.build] ?? 0) + 1;
+    raw[r.build] ??= {};
+    for (const [k, v] of Object.entries(values)) (raw[r.build][k] ??= []).push(...v);
+  }
+  return Object.fromEntries(Object.entries(raw).map(([b, fams]) => [b, { duels: duels[b], families: Object.fromEntries(Object.entries(fams).map(([k, v]) => [k, distribution(v)])) }]));
+}
+
+/**
+ * Deux builds, même seed : chaque ronde joue la même suite de commandes dans les deux builds. On compare
+ * donc commande par commande, dans la même ronde (écart après − avant), ce qui retire la variance due au
+ * type de commande ; la dérive du poste reste limitée par l’ordre ABBA. Les deux engagements d’un tour
+ * sont secrets et simultanés : si le joueur verrouille avant la réponse du rival (650 ms), leur ordre
+ * s’inverse et le hash final change (journal d’événements) sans changer la partie. L’appariement se fait
+ * donc par type et phase de commande, et ces inversions sont comptées (`playerSwaps`).
+ */
+export function pairCommands(runs, metric = 'page') {
+  const names = [...new Set(runs.map((r) => r.build))];
+  if (names.length !== 2) return null;
+  const [a, b] = names;
+  // `page` : durée mesurée dans la page (synchrone + style / mise en page) ; `cpu` : temps processeur de la
+  // tâche dans la trace (`commandTasks`, LQV_TRACE=1).
+  const top = (r) => (metric === 'cpu'
+    ? (r.hitches?.trace?.commandTasks ?? []).map((x) => ({ ...x, sync: x.cpuMs ?? NaN, flush: 0 }))
+    : JSON.parse(readFileSync(r.pageRecord, 'utf8')).cmds.filter((x) => x.depth === 0 && x.ok));
+  const rounds = [];
+  const all = [];
+  for (const round of [...new Set(runs.map((r) => r.round))]) {
+    const ra = runs.find((r) => r.round === round && r.build === a && r.outcome === 'ended');
+    const rb = runs.find((r) => r.round === round && r.build === b && r.outcome === 'ended');
+    if (!ra || !rb || ra.turns !== rb.turns || ra.winner !== rb.winner) { rounds.push({ round, comparable: false }); continue; }
+    const ca = top(ra);
+    const cb = top(rb);
+    const same = ca.length === cb.length && ca.every((x, i) => x.type === cb[i].type && x.phase === cb[i].phase);
+    if (!same) { rounds.push({ round, comparable: false }); continue; }
+    const d = ca.map((x, i) => total(cb[i]) - total(x)).filter(Number.isFinite);
+    all.push(...d);
+    rounds.push({ round, comparable: true, sameHash: ra.hash === rb.hash, playerSwaps: ca.filter((x, i) => x.player !== cb[i].player).length, n: d.length, medianDiffMs: distribution(d).medianMs, meanDiffMs: distribution(d).meanMs, fasterIn: d.filter((x) => x < 0).length, sumA: distribution(ca.map(total).filter(Number.isFinite)).sumMs, sumB: distribution(cb.map(total).filter(Number.isFinite)).sumMs });
+  }
+  return { metric, diff: `${b} − ${a}`, rounds, all: all.length ? { n: all.length, medianDiffMs: distribution(all).medianMs, meanDiffMs: distribution(all).meanMs, fasterIn: all.filter((x) => x < 0).length } : null };
+}
+
+// Ligne de commande : `--resume <perf-trace.json>` (résumé par build, coût par commande et comparaison
+// appariée recalculés depuis les relevés de page), sinon analyse d’un relevé.
 if (process.argv[1] && basename(process.argv[1]) === 'trace-analyze.mjs' && process.argv[2] === '--resume') {
-  console.log(JSON.stringify(summarizeRuns(JSON.parse(readFileSync(process.argv[3], 'utf8')).runs), null, 1));
+  const runs = JSON.parse(readFileSync(process.argv[3], 'utf8')).runs;
+  console.log(JSON.stringify({ summary: summarizeRuns(runs), commandSummary: summarizeCommandRuns(runs), commandPairs: pairCommands(runs), commandPairsCpu: runs.some((r) => r.hitches?.trace?.commandTasks) ? pairCommands(runs, 'cpu') : null }, null, 1));
 } else if (process.argv[1] && basename(process.argv[1]) === 'trace-analyze.mjs') {
   const [pageRecord, rawTrace, dist = 'dist', out] = process.argv.slice(2);
   if (!pageRecord) { console.error('usage : node tools/trace-analyze.mjs <relevé.page.json> [<trace.json.gz>] [dist] [sortie.json]'); process.exit(2); }
-  const res = await analyzeRun({ pageRecord, rawTrace: rawTrace && rawTrace !== '-' ? rawTrace : null, mapper: loadBundleMapper(dist), trimOut: process.env.LQV_TRIM_OUT ?? null });
+  const res = await analyzeRun({ pageRecord, rawTrace: rawTrace && rawTrace !== '-' ? rawTrace : null, mapper: loadBundleMapper(dist), trimOut: process.env.LQV_TRIM_OUT ?? null, commandFamily });
   const text = JSON.stringify(res, null, 2);
   if (out) writeFileSync(out, text); else console.log(text);
 }
