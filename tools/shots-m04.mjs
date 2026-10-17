@@ -1,4 +1,4 @@
-// Captures M04 du JEU réel (build courant, Chromium + SwiftShader) à 1280×720 et 1920×1080 : accueil,
+// Captures du JEU réel (M04, adaptées M05 : seule la manche 1 et le duel libre contre Kaï sont ouverts au départ) (build courant, Chromium + SwiftShader) à 1280×720 et 1920×1080 : accueil,
 // création, rencontres, deck, collection, préparation, duel (vue A, vue B), menu, Clash, résultat
 // après un duel complet joué par l’interface, aide, options ; + smoke portrait 390×844.
 // Preuve de non-régression du duel approuvé (ADR 013) : la scène 3D d’un duel lancé DEPUIS LE JEU
@@ -115,7 +115,7 @@ try {
       await page.click('[data-key="coll-Voile-3-dissimulation"]');
       await shot(page, `05-collection-${tag}`, 'Collection filtrée (Voile) : possédées / non possédées / dans le deck');
       await page.click('[data-key="coll-back"]');
-      await page.click('[data-key="enc-libre-ronce"]');
+      await page.click('[data-key="enc-quai-1"]');
       await shot(page, `06-preparation-${tag}`, 'Préparation : dossier public du rival, votre deck, conditions du duel');
       await page.click('[data-key="board-home"]').catch(() => {});
       await page.goto(`${server.base}/?${Q}&freeze=1`);
@@ -129,12 +129,12 @@ try {
       manifest.issues.push(...issues.map((x) => `${tag} écrans : ${x}`));
       await ctx.close();
     }
-    // Duel lancé depuis le jeu, comparé à l’entrée QA historique (même seed 202, Maëlle, vue A figée).
+    // Duel lancé depuis le jeu, comparé à l’entrée QA historique (même seed 202, Kaï — manche 1 —, vue A figée).
     {
       const { ctx, page, issues } = await ctxFor(browser, vp);
       await page.goto(`${server.base}/?${Q}&freeze=1&intro=1&seed=202`);
       await newProfile(page);
-      await page.click('[data-key="enc-libre-ronce"]');
+      await page.click('[data-key="enc-quai-1"]');
       await page.click('[data-key="prep-start"]');
       await page.waitForFunction(() => !!window.__lqv);
       await shot(page, `07-duel-vue-A-${tag}`, 'Duel lancé depuis le jeu : vue A (observation du rival), conseil contextuel');
@@ -142,7 +142,7 @@ try {
       const anchors = await anchorsOf(page);
       const legacy = await (async () => {
         const l = await ctxFor(browser, vp);
-        await l.page.goto(`${server.base}/?seed=202&autostart=1&rival=ronce&${Q}&freeze=1&intro=1`);
+        await l.page.goto(`${server.base}/?seed=202&autostart=1&rival=braise&${Q}&freeze=1&intro=1`);
         await l.page.waitForFunction(() => !!window.__lqv);
         await l.page.waitForTimeout(350);
         const png = await canvasPng(l.page);
@@ -202,7 +202,7 @@ try {
     await shot(page, '16-mobile-accueil-390', 'Smoke portrait : accueil');
     await newProfile(page);
     await shot(page, '17-mobile-rencontres-390', 'Smoke portrait : rencontres');
-    await page.tap('[data-key="enc-libre-voile"]');
+    await page.tap('[data-key="enc-quai-1"]');
     await page.tap('[data-key="prep-start"]');
     await page.waitForFunction(() => !!window.__lqv);
     await shot(page, '18-mobile-duel-390', 'Smoke portrait : duel lancé depuis le jeu (gabarit M03.2)');

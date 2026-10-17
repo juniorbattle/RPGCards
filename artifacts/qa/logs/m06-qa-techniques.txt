@@ -1,0 +1,11 @@
+=== qa-techniques début 05:02:11
+✓ rupture · souris-1280 · 29591 ms
+✓ rupture · tactile-390 · 15318 ms
+✓ rupture-cachee · souris-1280 · 21787 ms
+✓ rupture-cachee · tactile-390 · 15534 ms
+✓ dissipation · souris-1280 · 29758 ms
+✓ dissipation · tactile-390 · 18164 ms
+✓ masque · souris-1280 · 17918 ms
+✓ masque · tactile-390 · 12888 ms
+8/8 parcours sans problème
+=== fin code 0 05:04:56

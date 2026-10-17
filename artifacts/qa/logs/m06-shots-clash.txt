@@ -1,0 +1,13 @@
+=== shots-clash début 05:04:56
+✓ aa-gagne : aa-win — VOUS DOMINEZ AU RANG [tactics, rank, outcome, damage]
+✓ aa-perd : aa-win — LE RIVAL DOMINE AU RANG [tactics, rank, outcome, damage]
+✓ aa-egalite : aa-tie — ÉGALITÉ — IMPACTS SIMULTANÉS [tactics, rank, outcome, damage]
+✓ ag-garde-tient : guard-holds — GARDE VICTORIEUSE [tactics, rank, outcome, insight]
+✓ ag-absorption : guard-absorbs — VICTOIRE AU RANG · 0 BLESSURE · ABSORPTION [tactics, rank, outcome, destination]
+✓ ag-garde-cede : guard-breaks — LA GARDE CÈDE [tactics, rank, outcome, damage, effect]
+✓ gg-neutre : gg-neutral — DEUX GARDES — AUCUN CLASH [tactics, rank, outcome]
+✓ ga-votre-garde : guard-holds — GARDE VICTORIEUSE [tactics, rank, outcome, insight]
+✓ double-ko : aa-win — LE RIVAL DOMINE AU RANG [tactics, rank, outcome, damage, effect, overtime]
+✓ interferences : guard-breaks — LA GARDE CÈDE [tactics, interference, interference, rank, outcome, damage, insight, destination]
+10 cas · problèmes : 0
+=== fin code 0 05:12:51

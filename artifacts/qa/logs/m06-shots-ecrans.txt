@@ -1,0 +1,38 @@
+=== shots-ecrans début 05:22:32
+✓ 01-accueil-vide-1280 — Accueil, aucune sauvegarde
+✓ 02-nouveau-duelliste-1280 — Création du profil : Signature (voie) et deux Techniques
+✓ 03-rencontres-1280 — Tableau des rencontres (données de prototype signalées)
+✓ 04-deck-1280 — Éditeur de deck : modification non enregistrée, inspection, état légal
+✓ 05-collection-1280 — Collection filtrée (Voile) : possédées / non possédées / dans le deck
+✓ 06-preparation-1280 — Préparation : dossier public du rival, votre deck, conditions du duel
+✓ 11-aide-1280 — Aide intégrée
+✓ 12-options-1280 — Options (présentation, sauvegarde)
+✓ 13-accueil-sauvegarde-1280 — Accueil avec sauvegarde : Continuer
+✓ 07-duel-vue-A-1280 — Duel lancé depuis le jeu : vue A (observation du rival), conseil contextuel
+  cadrage 1280 : ancres jeu 0.205/0.455 = QA 0.205/0.455 · visage 83 px · écart scène 3D moyen 0/255 (0 % de pixels > 24)
+✓ 08-duel-vue-B-1280 — Vue B : Primaire posée, choix ASSAUT / GARDE
+✓ 09-menu-pause-1280 — Menu du duel (pause) : reprendre, options, aide, abandon
+✓ 10-clash-1280
+✓ 14-resultat-1280 — Résultat après un duel complet joué par l’interface (7 tours)
+✓ 15-retour-rencontres-1280 — Retour au tableau : bilan et historique mis à jour
+✓ 01-accueil-vide-1920 — Accueil, aucune sauvegarde
+✓ 02-nouveau-duelliste-1920 — Création du profil : Signature (voie) et deux Techniques
+✓ 03-rencontres-1920 — Tableau des rencontres (données de prototype signalées)
+✓ 04-deck-1920 — Éditeur de deck : modification non enregistrée, inspection, état légal
+✓ 05-collection-1920 — Collection filtrée (Voile) : possédées / non possédées / dans le deck
+✓ 06-preparation-1920 — Préparation : dossier public du rival, votre deck, conditions du duel
+✓ 11-aide-1920 — Aide intégrée
+✓ 12-options-1920 — Options (présentation, sauvegarde)
+✓ 13-accueil-sauvegarde-1920 — Accueil avec sauvegarde : Continuer
+✓ 07-duel-vue-A-1920 — Duel lancé depuis le jeu : vue A (observation du rival), conseil contextuel
+  cadrage 1920 : ancres jeu 0.205/0.455 = QA 0.205/0.455 · visage 125 px · écart scène 3D moyen 0/255 (0 % de pixels > 24)
+✓ 08-duel-vue-B-1920 — Vue B : Primaire posée, choix ASSAUT / GARDE
+✓ 09-menu-pause-1920 — Menu du duel (pause) : reprendre, options, aide, abandon
+✓ 10-clash-1920
+✓ 14-resultat-1920 — Résultat après un duel complet joué par l’interface (7 tours)
+✓ 15-retour-rencontres-1920 — Retour au tableau : bilan et historique mis à jour
+✓ 16-mobile-accueil-390 — Smoke portrait : accueil
+✓ 17-mobile-rencontres-390 — Smoke portrait : rencontres
+✓ 18-mobile-duel-390 — Smoke portrait : duel lancé depuis le jeu (gabarit M03.2)
+33 captures · problèmes : 0
+=== fin code 0 05:31:58

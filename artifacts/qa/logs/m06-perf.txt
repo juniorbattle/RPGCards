@@ -1,0 +1,165 @@
+=== perf début 05:17:42
+moteur {
+  duels: 200,
+  ms: 7104,
+  msPerDuel: 35.52,
+  commands: 12190,
+  usPerCommand: 582.8,
+  avgTurns: 9.84,
+  duelsWithOvertime: 18,
+  wins: { p1: 147, p2: 53 }
+}
+{
+  "commit": "d19667e",
+  "date": "2026-10-17T05:21:23.235Z",
+  "machine": {
+    "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+    "cores": 4,
+    "memGB": 16,
+    "platform": "linux 6.18.44-fc-v139",
+    "node": "v22.22.0"
+  },
+  "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU",
+  "engine": {
+    "duels": 200,
+    "ms": 7104,
+    "msPerDuel": 35.52,
+    "commands": 12190,
+    "usPerCommand": 582.8,
+    "avgTurns": 9.84,
+    "duelsWithOvertime": 18,
+    "wins": {
+      "p1": 147,
+      "p2": 53
+    }
+  },
+  "scene": {
+    "viewA": {
+      "frame": 16,
+      "fps": 3.4,
+      "frameMs": 78.14,
+      "drawCalls": 71,
+      "triangles": 1556,
+      "textures": 20,
+      "geometries": 44,
+      "view": "A",
+      "blend": 0,
+      "portrait": false,
+      "rival": {
+        "mood": "neutral",
+        "gesture": "place-card",
+        "cause": "vous observe"
+      }
+    },
+    "gpuTimerQueryA": true,
+    "rendererA": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "viewB": {
+      "frame": 20,
+      "fps": 3,
+      "frameMs": 44.66,
+      "drawCalls": 75,
+      "triangles": 1608,
+      "textures": 21,
+      "geometries": 46,
+      "view": "B",
+      "blend": 1,
+      "portrait": false,
+      "rival": {
+        "mood": "neutral",
+        "gesture": "place-card",
+        "cause": "vous observe"
+      }
+    },
+    "gpuTimerQueryB": true,
+    "rendererB": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "ablationViewA": {
+      "complet": {
+        "drawCalls": 73,
+        "triangles": 1560,
+        "medianFrameMs": 53.46,
+        "medianFps": 3.1,
+        "frameMs": [
+          53.46,
+          53.46,
+          52.22
+        ]
+      },
+      "candles": {
+        "drawCalls": 70,
+        "triangles": 520,
+        "medianFrameMs": 26.73,
+        "medianFps": 3.55,
+        "frameMs": [
+          26.22,
+          28.26,
+          26.73
+        ]
+      },
+      "banners": {
+        "drawCalls": 61,
+        "triangles": 1448,
+        "medianFrameMs": 47.59,
+        "medianFps": 2.8,
+        "frameMs": [
+          47.59,
+          47.63,
+          47.47
+        ]
+      },
+      "dust": {
+        "drawCalls": 72,
+        "triangles": 1560,
+        "medianFrameMs": 49.34,
+        "medianFps": 2.7,
+        "frameMs": [
+          51.33,
+          49.34,
+          45.94
+        ]
+      },
+      "candles,banners,dust": {
+        "drawCalls": 57,
+        "triangles": 408,
+        "medianFrameMs": 24.23,
+        "medianFps": 3.5,
+        "frameMs": [
+          24.23,
+          24.15,
+          26.88
+        ]
+      }
+    },
+    "clashRealtime": {
+      "scenario": "clash-ag (absorption)",
+      "window": "2,5 s depuis l’apparition de la scène de Clash",
+      "frames": 4,
+      "medianMs": 416.7,
+      "p95Ms": 800,
+      "maxMs": 800,
+      "over50ms": 4,
+      "arena": {
+        "frame": 33,
+        "fps": 1.7,
+        "frameMs": 25.28,
+        "drawCalls": 74,
+        "triangles": 1748,
+        "textures": 22,
+        "geometries": 52,
+        "view": "A",
+        "blend": 0.02,
+        "portrait": false,
+        "rival": {
+          "mood": "relieved",
+          "gesture": "tilt",
+          "cause": "perd au Rang mais absorbe tout"
+        }
+      }
+    },
+    "galleryLoad": {
+      "domContentLoadedMs": 1585,
+      "loadMs": 1605,
+      "artGeneration37CardsMs": 1437.6
+    }
+  }
+}
+=== fin code 0 05:21:23

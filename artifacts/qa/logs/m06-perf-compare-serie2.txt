@@ -1,0 +1,68 @@
+=== perf-compare-2 début 05:35:51
+vue A · ronde 1 · avant : 71.81 ms CPU/image, 2.77 FPS, 71 draw calls
+vue A · ronde 1 · apres : 41.47 ms CPU/image, 3.23 FPS, 73 draw calls
+vue A · ronde 2 · apres : 44.31 ms CPU/image, 2.73 FPS, 73 draw calls
+vue A · ronde 2 · avant : 47.1 ms CPU/image, 2.45 FPS, 73 draw calls
+vue A · ronde 3 · avant : 47.43 ms CPU/image, 2.27 FPS, 73 draw calls
+vue A · ronde 3 · apres : 44.69 ms CPU/image, 2.47 FPS, 73 draw calls
+vue A · ronde 4 · apres : 47.91 ms CPU/image, 3.03 FPS, 73 draw calls
+vue A · ronde 4 · avant : 43.84 ms CPU/image, 2.67 FPS, 73 draw calls
+vue A · ronde 5 · avant : 52.04 ms CPU/image, 2.67 FPS, 73 draw calls
+vue A · ronde 5 · apres : 46.79 ms CPU/image, 2.6 FPS, 73 draw calls
+vue A · ronde 6 · apres : 55.05 ms CPU/image, 2.35 FPS, 73 draw calls
+vue A · ronde 6 · avant : 42.51 ms CPU/image, 2.8 FPS, 73 draw calls
+vue A · ronde 7 · avant : 51.79 ms CPU/image, 2.37 FPS, 73 draw calls
+vue A · ronde 7 · apres : 52.07 ms CPU/image, 2.13 FPS, 73 draw calls
+vue B · ronde 1 · avant : 39.63 ms CPU/image, 3.03 FPS, 75 draw calls
+vue B · ronde 1 · apres : 38.19 ms CPU/image, 3.02 FPS, 75 draw calls
+vue B · ronde 2 · apres : 36.2 ms CPU/image, 2.8 FPS, 75 draw calls
+vue B · ronde 2 · avant : 42.03 ms CPU/image, 3.02 FPS, 75 draw calls
+vue B · ronde 3 · avant : 39.61 ms CPU/image, 3.03 FPS, 75 draw calls
+vue B · ronde 3 · apres : 44.6 ms CPU/image, 2.65 FPS, 75 draw calls
+vue B · ronde 4 · apres : 39.98 ms CPU/image, 3.1 FPS, 75 draw calls
+vue B · ronde 4 · avant : 44.67 ms CPU/image, 3.03 FPS, 75 draw calls
+vue B · ronde 5 · avant : 37.84 ms CPU/image, 3.03 FPS, 75 draw calls
+vue B · ronde 5 · apres : 41.12 ms CPU/image, 3.25 FPS, 75 draw calls
+vue B · ronde 6 · apres : 39.18 ms CPU/image, 2.83 FPS, 75 draw calls
+vue B · ronde 6 · avant : 42.32 ms CPU/image, 3.07 FPS, 75 draw calls
+vue B · ronde 7 · avant : 40.37 ms CPU/image, 3.1 FPS, 75 draw calls
+vue B · ronde 7 · apres : 44.72 ms CPU/image, 2.65 FPS, 75 draw calls
+{
+  "A": {
+    "avant": {
+      "medianFrameMs": 47.43,
+      "minFrameMs": 42.51,
+      "maxFrameMs": 71.81,
+      "medianFps": 2.67,
+      "drawCalls": 73,
+      "triangles": 1560
+    },
+    "apres": {
+      "medianFrameMs": 46.79,
+      "minFrameMs": 41.47,
+      "maxFrameMs": 55.05,
+      "medianFps": 2.6,
+      "drawCalls": 73,
+      "triangles": 1560
+    }
+  },
+  "B": {
+    "avant": {
+      "medianFrameMs": 40.37,
+      "minFrameMs": 37.84,
+      "maxFrameMs": 44.67,
+      "medianFps": 3.03,
+      "drawCalls": 75,
+      "triangles": 1608
+    },
+    "apres": {
+      "medianFrameMs": 39.98,
+      "minFrameMs": 36.2,
+      "maxFrameMs": 44.72,
+      "medianFps": 2.83,
+      "drawCalls": 75,
+      "triangles": 1608
+    }
+  }
+}
+=== fin code 0 05:41:40
