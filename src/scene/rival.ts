@@ -59,10 +59,15 @@ export const HEAD_WORLD = new THREE.Vector3(0, NECK_Y + 0.6 * HEAD_SCALE, RIVAL_
 /** Poitrine du rival (origine des effets qui le visent). */
 export const CHEST_WORLD = new THREE.Vector3(0, NECK_Y - 0.35, RIVAL_Z + 0.4);
 
+/** Lumière « peinte » des couches du rival (M03.2) : une part de la texture est auto-éclairée, au lieu
+ *  d’une lumière d’appoint qui coûtait à chaque fragment de la scène. */
+const SELF_LIGHT = 0.26;
+
 function plane(w: number, h: number, map: THREE.Texture, order: number, opts: { lit?: boolean } = {}): THREE.Mesh {
+  // alphaTest : les texels transparents des grands plans (buste, capuche) sont rejetés avant l’éclairage.
   const mat = opts.lit === false
-    ? new THREE.MeshBasicMaterial({ map, transparent: true, depthWrite: false, side: THREE.DoubleSide })
-    : new THREE.MeshLambertMaterial({ map, transparent: true, depthWrite: false, side: THREE.DoubleSide });
+    ? new THREE.MeshBasicMaterial({ map, transparent: true, depthWrite: false, side: THREE.DoubleSide, alphaTest: 0.01 })
+    : new THREE.MeshLambertMaterial({ map, transparent: true, depthWrite: false, side: THREE.DoubleSide, alphaTest: 0.01, emissive: 0xffffff, emissiveMap: map, emissiveIntensity: SELF_LIGHT });
   const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat);
   m.renderOrder = order;
   return m;
@@ -266,6 +271,7 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
         e.brow.rotation.z = e.side * -cur.browAngle * 0.35;
       }
       flushMat.opacity = cur.flush * 0.35;
+      flush.visible = flushMat.opacity > 0.002; // invisible = aucun fragment à mélanger
 
       // Corps : respiration, tilt, gestes
       const breath = reduced ? 0 : Math.sin(t * 1.6) * 0.012;

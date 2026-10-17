@@ -43,8 +43,7 @@ export interface ArenaOptions {
   freeze: boolean;
   personality: RivalPersonality;
   /** Mesure de coût (QA, `?qa=1&ablate=…` uniquement) : éléments retirés du rendu — `candles`
-   *  (corps, flammes, halos, lumières), `banners` (bannières, tringles), `dust` (poussières), `fill`
-   *  (fill frontal et lampe de table ajoutés en M03.2). Vide en jeu. */
+   *  (corps, flammes, halos, lumières), `banners` (bannières, tringles), `dust` (poussières). Vide en jeu. */
   ablate?: readonly string[];
 }
 
@@ -315,6 +314,23 @@ function tableTexture(seed: number): THREE.CanvasTexture {
     ctx.fillStyle = sh;
     ctx.fillRect(0, 0, W, H);
   }
+  // M03.2 : flaque de lumière chaude peinte au centre du plateau (x 0, z 0,6), à la place d’une lampe.
+  {
+    const px = W / 2;
+    const py = H * ((0.6 - TABLE_FAR_Z) / (TABLE_NEAR_Z - TABLE_FAR_Z));
+    const rx = (W / TABLE_W) * 5.2;
+    const ry = (H / (TABLE_NEAR_Z - TABLE_FAR_Z)) * 3.6;
+    ctx.save();
+    ctx.translate(px, py);
+    ctx.scale(rx / ry, 1);
+    const pool = ctx.createRadialGradient(0, 0, 0, 0, 0, ry);
+    pool.addColorStop(0, 'rgba(255,196,128,0.3)');
+    pool.addColorStop(0.55, 'rgba(255,180,110,0.14)');
+    pool.addColorStop(1, 'rgba(255,170,100,0)');
+    ctx.fillStyle = pool;
+    ctx.fillRect(-ry, -ry, 2 * ry, 2 * ry);
+    ctx.restore();
+  }
   const gold = 'rgba(222,182,108,0.85)';
   const goldDim = 'rgba(222,182,108,0.45)';
   // liseré du bord lointain + bord proche
@@ -526,19 +542,14 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   let layout: ArenaLayout = DEFAULT_LAYOUT;
 
   // --- Lumières : ambiance chaude de bougies, clé sur le visage du rival, contre-jour de famille.
-  // M03.2 : visage et table plus éclairés (fill frontal doux, lampe chaude au-dessus du plateau).
+  // M03.2 : visage et table plus éclairés SANS lumière supplémentaire (chaque lumière coûte à chaque
+  // fragment) : clé visant la tête, auto-éclairage peint du rival (rival.ts), flaque chaude peinte
+  // dans la texture de la table.
   scene.add(new THREE.HemisphereLight(0xffd4a4, 0x2a1a14, 1.0));
   const key = new THREE.DirectionalLight(0xffe2bc, 1.35);
   key.position.set(-2.5, 6, 9);
   key.target.position.copy(HEAD_WORLD);
   scene.add(key, key.target);
-  const fill = new THREE.DirectionalLight(0xffd2a8, 0.5);
-  fill.position.set(1.5, 2.2, 7);
-  fill.target.position.copy(HEAD_WORLD);
-  scene.add(fill, fill.target);
-  const tableLamp = new THREE.PointLight(0xffd6a0, 2.4, 11, 1.5);
-  tableLamp.position.set(0, 3.6, 0.6);
-  scene.add(tableLamp);
   const rim = new THREE.PointLight(0xffffff, 7, 7, 1.6);
   rim.position.set(0, 3.8, RIVAL_Z - 1.3);
   scene.add(rim);
@@ -711,7 +722,6 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   if (ablate.has('candles')) hide([bodies, ...candleFx, ...candleLights]);
   if (ablate.has('banners')) hide([...banners, ...rods]);
   if (ablate.has('dust')) hide([motes]);
-  if (ablate.has('fill')) hide([fill, tableLamp]);
 
   // --- Rival
   const backTex = new THREE.CanvasTexture(cardBackCanvas(opts.artSeed));
