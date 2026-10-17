@@ -4,7 +4,7 @@
  */
 import type { Family } from '../game/catalog/cards';
 
-type Ctx = CanvasRenderingContext2D;
+type Ctx = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
 
 /** Trace l’emblème centré en (x, y), rayon r. Remplit avec le style courant. */
 export function drawEmblem(ctx: Ctx, family: Family, x: number, y: number, r: number): void {

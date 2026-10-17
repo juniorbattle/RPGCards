@@ -11,6 +11,7 @@
 import './shell.css';
 import type { AppParams } from '../app/params';
 import { DuelSession } from '../app/duelSession';
+import { warmCardArt } from '../art/artWarmup';
 import type { Controller } from '../app/controller';
 import { cardTitle, cardDef } from '../game/catalog/cards';
 import { viewFor } from '../game/visibility/view';
@@ -155,12 +156,14 @@ export class Shell {
     this.applyParams();
   }
 
-  /** Paramètres d’exécution → document et arène (taille du texte, mouvement réduit). */
+  /** Paramètres d’exécution → document et arène (taille du texte, mouvement réduit, illustrations). */
   applyParams(): void {
     const p = this.params;
     document.documentElement.style.setProperty('--ui-scale', p.scale.toFixed(2));
     document.documentElement.classList.toggle('reduced', p.reducedMotion);
     this.d.arena()?.setReducedMotion(p.reducedMotion);
+    // Graine d’art éventuellement changée par les options : illustrations pré-générées hors fil principal.
+    warmCardArt(p.artSeed, p.artCheck);
   }
 
   /** Reporte dans les options sauvegardées un réglage changé depuis la barre d’outils du duel. */

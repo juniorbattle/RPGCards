@@ -7,6 +7,7 @@
 import { cardDef, cardTitle, EFFECTS } from '../game/catalog/cards';
 import type { Command, GameConfig } from '../game/model/types';
 import { artCacheSize } from '../art/cardArt';
+import { artWarmStats, warmCardArt } from '../art/artWarmup';
 import { buildMemory } from '../game/ai/memory';
 import { viewFor, visibleEvents } from '../game/visibility/view';
 import { patchBeat, patchInspector, patchRivalBubble, renderApp, renderCheckStats, type BoardHooks } from '../presentation/board';
@@ -51,6 +52,8 @@ export class DuelSession {
   constructor(private readonly o: DuelSessionOptions) {
     const { app, params } = o;
     const signal = this.abort.signal;
+    // Illustrations du catalogue produites hors du fil principal (déjà lancé par l’accueil, sinon ici).
+    warmCardArt(params.artSeed, params.artCheck);
     const c = new Controller(o.config, params, o.arena, o.scenario, o.personality, o.resume ?? []);
     this.controller = c;
     let pointerHeld = false;
@@ -196,6 +199,8 @@ export class DuelSession {
       arenaStats: () => arena?.stats() ?? null,
       presentation: () => ({ view: c.viewMode, switches: c.director.switches, manual: c.director.manual, holding: c.director.holding, sequencing: c.sequencing, rival: c.rivalExpression, personality: c.rival.id, stage: stage.active, clash: c.seq?.script ? { outcome: c.seq.script.outcome, winner: c.seq.script.winner, verdict: c.seq.script.verdict } : null, beat: c.currentBeat()?.kind ?? null }),
       artCache: () => artCacheSize(),
+      // QA passe 14 : pré-génération des illustrations par le worker (`artCheck=1` : comparaison).
+      artWarm: () => artWarmStats(),
       pauseSequence: () => c.pauseSequence(),
       stageSeek: (ms: number) => stage.seek(ms),
       // QA M03.1B : ce que le SIÈGE du rival peut voir (vue, mémoire) — jamais affiché, sert aux assertions.

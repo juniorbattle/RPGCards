@@ -22,7 +22,7 @@ npm run dev          # http://localhost:5173
 npm run typecheck    # tsc --noEmit, TypeScript strict
 npm test             # Vitest : moteur, Clash, visibilité, IA
 npm run build        # typecheck + build Vite → dist/
-npm run qa:browser   # duels complets pilotés par l’UI (Chromium headless) → artifacts/qa/ (LQV_RENDER_CHECK=1 : chaque rendu ciblé comparé à un rendu complet ; LQV_QA_OUT=fichier)
+npm run qa:browser   # duels complets pilotés par l’UI (Chromium headless) → artifacts/qa/ (LQV_RENDER_CHECK=1 : chaque rendu ciblé comparé à un rendu complet, et chaque illustration du worker à la génération synchrone ; LQV_QA_OUT=fichier)
 npm run qa:techniques # Rupture / Dissipation / effet camouflé par l’UI (souris + tactile) → screenshots/qa/m03-1b/
 npm run shots        # captures M03 + planches preview ↔ runtime → screenshots/qa/m03/
 npm run shots:clash  # chaque type de Clash : poses, mouvement réduit, pellicules → screenshots/qa/m03-2/clash/ (CLASH_OUT=…)
@@ -30,7 +30,7 @@ npm run shots:m03-2  # avant / après / preview M03.2 + mesures (LQV_BEFORE=<bui
 node tools/perf-compare.mjs 5  # rendu avant / après en rondes entrelacées (LQV_BEFORE=<build> LQV_BEFORE_SHA=<sha>) → artifacts/qa/perf-compare-m03-2.json
 npm run perf         # mesures moteur + scène (machine courante) → artifacts/qa/perf.json
 npm run perf:play    # duel complet joué au clic, intervalles d’image par vue A / B / Clash → artifacts/qa/perf-play.json
-npm run perf:trace   # même duel SANS sondage ni audit (pilote `lean`) : à-coups > 50 ms attribués (LoAF ; trace Chrome si LQV_TRACE=1 ; caches froids si LQV_TRACE_FRESH=1 ; builds entrelacés LQV_TRACE_BUILDS=avant=…,apres=…) + coût de chaque commande par famille (passe 13) → artifacts/qa/trace/
+npm run perf:trace   # même duel SANS sondage ni audit (pilote `lean`) : à-coups > 50 ms attribués (LoAF ; trace Chrome si LQV_TRACE=1 ; caches froids si LQV_TRACE_FRESH=1 ; builds entrelacés LQV_TRACE_BUILDS=avant=…,apres=…) + coût de chaque commande par famille (passe 13), écart apparié séparé pour les commandes qui génèrent une illustration (passe 14) → artifacts/qa/trace/
 npm run sim          # (optionnel) 200 duels IA/IA headless
 npm run qa:product   # JEU (M04–M05) : 8 parcours de joueur depuis l’accueil (série complète, reprise, migration…) → artifacts/qa/qa-product.json (QA_SHOTS=dossier pour des captures ; LQV_RENDER_CHECK=1, LQV_QA_OUT comme qa:browser)
 npm run qa:rc        # porte RC (M06) : sans WebGL, longévité, moteur indépendant des animations, mode démo, stockage refusé, réinitialisations, contraste, coût par écran → artifacts/qa/qa-rc.json
@@ -89,6 +89,7 @@ Clavier : `Tab`, `Entrée/Espace`, `1–4` (main), `A`/`G` (mode), `Échap` (ann
 | `profileSeed=N` | avec `qa=1` : seed du profil créé (parcours de QA reproductibles) |
 | `ablate=candles,banners,dust` | mesure de coût (avec `qa=1` uniquement) : retire du rendu les bougies, les bannières ou les poussières |
 | `renderCheck=1` | avec `qa=1` uniquement : chaque rendu ciblé du plateau est comparé à un rendu complet du même état (DOM, attributs, écouteurs) et aucune transition CSS ne doit démarrer sur un élément gardé ; écart = erreur console, bilan `window.__lqvRenderCheck()` (passe 13) |
+| `artCheck=1` | avec `qa=1` uniquement : chaque illustration pré-générée par le worker est comparée à une génération synchrone dans la page (même data URL attendue) ; bilan `window.__lqv.artWarm()` (passe 14) |
 
 ## Architecture
 

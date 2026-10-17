@@ -72,7 +72,10 @@ function fnNameOnLine(text) {
 /** Correspondance positions du bundle → source pour le build servi (`<dist>/assets/*.js(.map)`). */
 export function loadBundleMapper(distDir) {
   const dir = join(distDir, 'assets');
-  const js = existsSync(dir) ? readdirSync(dir).find((f) => f.endsWith('.js')) : null;
+  // Paquet principal de la page (`index-*.js`) : depuis la passe 14, `assets/` contient aussi le worker
+  // des illustrations, qui tourne sur un autre fil.
+  const scripts = existsSync(dir) ? readdirSync(dir).filter((f) => f.endsWith('.js')) : [];
+  const js = scripts.find((f) => f.startsWith('index-')) ?? scripts[0] ?? null;
   if (!js || !existsSync(join(dir, `${js}.map`))) return null;
   const map = JSON.parse(readFileSync(join(dir, `${js}.map`), 'utf8'));
   const lines = decodeMappings(map.mappings);
@@ -313,7 +316,7 @@ export async function analyzeRun({ pageRecord, rawTrace, mapper, trimOut = null,
           const cats = {};
           for (const [n, v] of Object.entries(clipSelf(main, a, b))) if (!TOP_TASK.test(n)) cats[categoryOf(n)] = (cats[categoryOf(n)] ?? 0) + v;
           const task = tasks.find((ev) => ev.ts <= a && ev.ts + ev.dur >= b);
-          traceInfo.commandTasks.push({ type: x.type, player: x.player, phase: x.phase, family: commandFamily(x), wallMs: task ? ms(task.dur) : null, cpuMs: task && typeof task.tdur === 'number' ? ms(task.tdur) : null });
+          traceInfo.commandTasks.push({ type: x.type, player: x.player, phase: x.phase, family: commandFamily(x), art: x.art ?? 0, wallMs: task ? ms(task.dur) : null, cpuMs: task && typeof task.tdur === 'number' ? ms(task.tdur) : null });
           for (const fam of [commandFamily(x), 'toutes commandes']) {
             const f = (fams[fam] ??= { n: 0, sum: {}, cpu: [] });
             f.n++;
@@ -448,6 +451,9 @@ export function pairCommands(runs, metric = 'page') {
     : JSON.parse(readFileSync(r.pageRecord, 'utf8')).cmds.filter((x) => x.depth === 0 && x.ok));
   const rounds = [];
   const all = [];
+  // Passe 14 : commandes où l’un des deux builds a généré une illustration sur place (`art`), et les autres.
+  const art = [];
+  const rest = [];
   for (const round of [...new Set(runs.map((r) => r.round))]) {
     const ra = runs.find((r) => r.round === round && r.build === a && r.outcome === 'ended');
     const rb = runs.find((r) => r.round === round && r.build === b && r.outcome === 'ended');
@@ -458,9 +464,11 @@ export function pairCommands(runs, metric = 'page') {
     if (!same) { rounds.push({ round, comparable: false }); continue; }
     const d = ca.map((x, i) => total(cb[i]) - total(x)).filter(Number.isFinite);
     all.push(...d);
+    ca.forEach((x, i) => { const v = total(cb[i]) - total(x); if (Number.isFinite(v)) ((x.art ?? 0) > 0 || (cb[i].art ?? 0) > 0 ? art : rest).push(v); });
     rounds.push({ round, comparable: true, sameHash: ra.hash === rb.hash, playerSwaps: ca.filter((x, i) => x.player !== cb[i].player).length, n: d.length, medianDiffMs: distribution(d).medianMs, meanDiffMs: distribution(d).meanMs, fasterIn: d.filter((x) => x < 0).length, sumA: distribution(ca.map(total).filter(Number.isFinite)).sumMs, sumB: distribution(cb.map(total).filter(Number.isFinite)).sumMs });
   }
-  return { metric, diff: `${b} − ${a}`, rounds, all: all.length ? { n: all.length, medianDiffMs: distribution(all).medianMs, meanDiffMs: distribution(all).meanMs, fasterIn: all.filter((x) => x < 0).length } : null };
+  const sum = (v) => (v.length ? { n: v.length, medianDiffMs: distribution(v).medianMs, meanDiffMs: distribution(v).meanMs, fasterIn: v.filter((x) => x < 0).length } : null);
+  return { metric, diff: `${b} − ${a}`, rounds, all: sum(all), withArt: sum(art), withoutArt: sum(rest) };
 }
 
 // Ligne de commande : `--resume <perf-trace.json>` (résumé par build, coût par commande et comparaison

@@ -2,7 +2,7 @@
 
 **Nature :** journal de production du **nouveau projet**, et non journal copié de RPG-ArtByCode.  
 **Convention :** passes chronologiques, plus récente en bas ; statut `[OK]`, `[KO]`, `[?]` ; preuves vérifiables.  
-**Dernière passe :** 14 — **vue frontale pendant la pose, cases au format des cartes** (demande du responsable, ADR 016) : plus de bascule automatique vers la vue inclinée, qui reste à la demande (V) ; six cadres identiques au contour des cartes, alignés en colonnes, masqués sous une carte posée. QA identique à `main` sur ce poste. (Passe 13 : re-rendu ciblé du plateau ; passe 12 : à-coups tracés ; passe 11 : mesures GPU de la RC ; passe 10 : RC locale desktop.) Ce n’est pas la ville RPG finale.
+**Dernière passe :** 15 — **illustrations pré-générées hors du fil principal** : un worker produit les 36 illustrations du catalogue dès l’accueil ; plus aucune n’est générée pendant une commande, images identiques vérifiées (`artCheck`). Commandes qui montraient une carte pour la première fois : −4,6 ms en médiane appariée sur la RTX 4060 (11,9 → 6,2 ms), −3,8 ms sur la 780M (`docs/RAPPORT_M06_RC.md` §5.7). (Passe 14 : vue frontale pendant la pose, cases au format des cartes ; passe 13 : re-rendu ciblé du plateau ; passe 12 : à-coups tracés ; passe 11 : mesures GPU de la RC ; passe 10 : RC locale desktop.) Ce n’est pas la ville RPG finale.
 
 ## État initial connu
 
@@ -20,7 +20,7 @@
 3. **Arbitrages encore proposés** (ADR 004) : ARB-002 (profil du rival public), ARB-001, ARB-005 (+ ARB-005b : carte camouflée remplacée pendant l’engagement, nommée en fin de tour depuis la passe 5), ARB-011 ; ratification éventuelle du delta D-01 (V3.3). Inférences restantes documentées (`docs/RAPPORT_M03_1B.md` §6).
 4. **Mesure sur GPU réel** : **faite** sur le portable de l’opérateur (passe 11, Radeon 780M + RTX 4060 : plafond de l’écran 165 Hz en jeu, aucun compromis requis). **À-coups tracés en passe 12** (rapport §5.5) : liaison WebGL des anneaux FX et illustrations au clic corrigées. Restent :
    - ~~re-rendu complet du plateau à chaque commande~~ : **fait en passe 13** (re-rendu ciblé, §5.6, ADR 015) ;
-   - génération des illustrations à leur première apparition (≈ 2 ms par commande en moyenne aux premiers tours) → pré-génération hors commande ;
+   - ~~génération des illustrations à leur première apparition~~ : **fait en passe 15** (worker, §5.7) ; reste le coût des commandes qui montrent une carte pour la première fois (≈ 2 à 3 ms : face DOM, chargement de l’image, non profilé) ;
    - shaders Skia de Chrome au premier duel d’un profil, non corrigeable dans le jeu ;
    - temps GPU par image (`EXT_disjoint_timer_query_webgl2` disponible) ;
    - poste de bureau ;
@@ -59,6 +59,8 @@
 - Sur un poste partagé, comparer deux builds en temps PROCESSEUR des tâches (`tdur`) et commande par commande, pas en temps mural par duel (passe 13).
 - Un cadre de pose a la forme et la transformation de ce qu’il reçoit : la carte le recouvre exactement, et il suffit de le masquer sous une carte posée (passe 14).
 - Deux sessions qui lancent leurs QA en même temps se disputent les ports : un serveur de test doit prouver qu’il est le sien avant qu’on lui fasse confiance (`startPreview`, `LQV_PREVIEW_PORT`, passe 14).
+- Un calcul coûteux mais déterministe se sort du fil principal (worker) en gardant le repli sur place et en laissant gagner la première réponse ; on vérifie que les sorties sont identiques (`artCheck`, passe 15).
+- Un gain qui ne touche qu’une partie des commandes se lit dans l’appariement et la queue de distribution, avec un témoin (`withArt` / `withoutArt`), pas dans la médiane globale (passe 15).
 - Conserver les échecs et leurs causes ; n'inventer ni approbation ni résultat.
 - Les choix visuels du projet RPG-ArtByCode sont une référence de **méthode**, jamais un cahier des charges visuel importé.
 - Le joueur interagit par des cartes, pas par des sélecteurs HTML comme mécanisme central.
@@ -591,3 +593,107 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **Raison :** dans le projet voisin HD-2D, des sessions demandaient sans cesse l'autorisation pour des balayages de processus et des `taskkill` sur des serveurs de test restés ouverts. Ici, les passes 11 à 14 ont aussi lancé des processus de fond en parallèle : en passe 14, deux sessions partageaient le port 4179 et l'une a testé le build de l'autre. Passer par les outils de session évite les demandes d'autorisation et le risque de toucher des programmes sans rapport.
 - **[?] Limite :** la règle n'attribue pas les ports des outils de QA (`startPreview`, 4179 et suivants). Deux campagnes lancées en même temps peuvent encore se gêner : la leçon de la passe 14 (un serveur de test doit prouver qu'il est le sien) reste à outiller.
 - Aucun changement de code ni de règle de jeu.
+
+## Passe 15 — Illustrations pré-générées hors du fil principal — 2026-10-17, worktree local sur `main`, mesures sur `68ebe4b`, intégré sur `56efb70`, commit sur `main`
+
+- **Mission / contraintes :**
+  - suite de la passe 13 (« À reprendre » n° 4), confiée à une session dédiée ;
+  - une illustration générée à sa première apparition coûtait ≈ 5 ms à la commande qui la montrait : la sortir des commandes ;
+  - ne changer ni l’image, ni le DOM, ni les règles (`git diff 68ebe4b -- src/game` vide), ni la composition (ADR 013 et 016), ni les secrets ;
+  - mesure avant / après par `perf:trace` sur GPU réel, rondes entrelacées, rival à 650 ms, temps processeur des tâches.
+- **Lecture initiale :**
+  - JOURNAL (passe 13), rapport RC §5.5–5.6, note de la passe 13 (dossier partagé) ;
+  - `src/art/cardArt.ts`, `emblems.ts`, `portrait.ts`, `src/presentation/cardView.ts`, `src/app/duelSession.ts`, `src/shell/shell.ts`, `src/shell/options.ts`, `src/main.ts` ;
+  - outils `perf-trace`, `trace-analyze`, `qa-browser` ;
+  - en cours de passe : `AGENTS.md`, règle des processus de fond (`56efb70`).
+- **Diagnostic** (profil V8 d’un duel complet, 780M, seed 202, rival 650 ms, 90 commandes, build `68ebe4b`) :
+  - 14 illustrations générées dans 12 commandes, toutes pendant `apply` : 68 à 70 ms par duel, dont 59 à 60 ms d’encodage PNG (`toDataURL`), soit ≈ 4,9 ms par illustration ;
+  - temps synchrone médian des commandes qui génèrent : 12,7 à 12,8 ms, contre 4,5 à 4,8 ms pour les autres ;
+  - cache : 4 illustrations au premier rendu (main de départ), 18 en fin de duel ; aucun portrait généré dans une commande.
+- **Choix :** un worker plutôt qu’un rappel d’inactivité. À 165 Hz, une image dure 6,1 ms, arène comprise : une illustration de ≈ 5 ms sur le fil principal n’y tient pas sans risquer de décaler l’image suivante.
+- **Modifications :**
+  - `src/art/cardArt.ts` :
+    - dessin pur `drawCardArt(ctx, defId, artSeed)`, partagé par la page et le worker ;
+    - `artKey` ; `paintCardArtUrl` (génération synchrone sans cache) ;
+    - `adoptCardArt` : la première illustration arrivée gagne, l’`src` d’une carte affichée ne change jamais ;
+    - contexte `CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D`, aussi dans `emblems.ts` ;
+    - repli synchrone inchangé.
+  - `src/art/cardArtWorker.ts` (nouveau) :
+    - OffscreenCanvas tramé par le processeur (`willReadFrequently`, comme la page), tout le CATALOGUE (36 définitions) ;
+    - `convertToBlob` puis `FileReaderSync.readAsDataURL`, un message par illustration, puis fermeture ;
+    - le worker ne reçoit que la graine d’art, rien sur les decks.
+  - `src/art/artWarmup.ts` (nouveau) :
+    - `warmCardArt(artSeed)` : idempotent par graine, ancien worker arrêté si la graine change ;
+    - repli silencieux sans Worker ni OffscreenCanvas ;
+    - contrôle QA `artCheck`.
+  - Appels : `Shell.applyParams()` (démarrage, et changement de seed esthétique dans les options) et constructeur de `DuelSession` (couvre `autostart`).
+  - `src/app/params.ts` : `artCheck=1` (avec `qa=1`) ; `duelSession.ts` : crochet QA `artWarm`.
+  - Outils :
+    - `trace-analyze` : `loadBundleMapper` lit `index-*.js` et non plus le premier `.js` d’`assets/`, qui est désormais le worker (sinon profils vides) ;
+    - `trace-analyze` : `pairCommands` sépare les commandes qui génèrent une illustration dans l’un des builds (`withArt`) des autres (`withoutArt`) ;
+    - `perf-trace` : champ `art` par commande ;
+    - `qa-browser` : `LQV_RENDER_CHECK=1` ajoute `artCheck=1` et échoue sur un écart.
+  - Docs : rapport RC §5.7 et §7, README (paramètre `artCheck`, options d’outils), `artifacts/qa/trace/LISEZMOI.md`.
+- **[OK] Même image vérifiée :**
+  - `?qa=1&artCheck=1` compare chaque illustration du worker à `toDataURL` dans la page ;
+  - 36/36 data URL identiques sur la 780M (graine 7) et sous SwiftShader (graine 31337) ;
+  - puis 36/36 dans chacun des 5 duels de `qa:browser` : 180 comparaisons, 0 écart.
+- **[OK] Plus aucune génération dans une commande :**
+  - même duel, build de la passe : 0 illustration générée pendant `apply`, 36 en cache dès l’apparition du crochet QA ;
+  - ni `cardArtUrl` ni `toDataURL` dans le profil des commandes ;
+  - reste `cardFace` (faces DOM construites puis clonées) : ≤ 32,5 ms par duel, clones compris.
+- **[OK] Mesures** (rapport §5.7 ; `artifacts/qa/trace/passe15-*.json` ; 3 rondes ABBA par série, 18 duels complets, tous de 14 tours avec le même vainqueur) :
+  - **RTX 4060, poste calme** :
+    - commandes qui généraient : médiane 11,9 → 6,2 ms ; apparié −4,6 ms, plus rapides dans 31 sur 32 ;
+    - autres commandes (témoin) : −0,2 ms ; toutes : −0,3 ms (moyenne −1,2) ;
+    - dans la page : p95 des commandes 10,7 → 5,3 ms, maximum 39,9 → 15,6 ms ; « Tour suivant » 5,9 → 3,8 ms ; clic jusqu’à l’image : p95 48 → 32 ms, médiane 24 ms inchangée ;
+    - à-coups > 50 ms : 7 → 3 ; même hash final dans les 3 rondes.
+  - **Radeon 780M, charge modérée** (13 à 1 454 images > 16,7 ms par duel) :
+    - commandes qui généraient : 12,4 → 8,8 ms ; apparié −3,8 ms (moyenne −2,3), 27 sur 36 ;
+    - témoin −0,1 ms ; toutes −0,4 ms ;
+    - à-coups 6 → 10, dont 8 dans les 2,2 premières secondes d’un duel à profil froid, fil principal presque inoccupé ;
+    - sur les 9 paires de duels, 30 à-coups avant contre 14 après dans les 3 premières secondes : aucun lien avec le worker.
+  - **Radeon 780M, sous forte charge** (QA SwiftShader d’une autre session pendant toute la série) :
+    - 24,1 → 14,6 ms ; apparié −10,6 ms, 35 sur 36 ;
+    - témoin +1,0 ms ; à-coups 127 → 147, dominés par la charge.
+- **[KO] Échecs / tentatives abandonnées :**
+  - **Profil vide au premier essai.** `trace-analyze` lisait la carte des sources du premier `.js` d’`assets/`, désormais celle du worker : aucune commande n’était reconnue. Corrigé.
+  - **Rappel d’inactivité sur le fil principal** : écarté sans essai, pour la raison donnée dans « Choix ».
+  - **Séries perturbées par les QA de l’autre session.** Mon message annonçant les mesures est arrivé à l’autre session après le lancement de sa QA. La série 780M a donc tourné sous forte charge : gardée, étiquetée. La première série RTX a été interrompue puis refaite au calme.
+  - **`TaskStop` n’arrête que l’enveloppe.** En arrêtant la première série RTX, `TaskStop` a fermé la commande Bash de fond, mais `npm`, `perf-trace.mjs`, ses deux serveurs `vite` (ports 4191 et 4192) et le Chrome de mesure tournaient encore. Je les ai retrouvés par une liste des processus et arrêtés par `taskkill`, avant la règle du responsable de `56efb70` qui l’interdit désormais. À traiter selon cette règle : relever le port et le PID, et laisser le responsable décider.
+- **[?] Incertitudes / arbitrages :**
+  - **Collision de port QA entre sessions** (constatée par la session de la passe 14). Les trois passages de cette passe sur `68ebe4b` ont tourné sur leur propre serveur :
+    - celui de `qa:browser` a démarré le premier ;
+    - le contrôle lit `__lqv.artWarm`, qui n’existe que dans ce build ;
+    - le serveur de `qa:product` est un processus enfant de son outil.
+    `tools/browser.mjs` refuse désormais un port pris (passe 14).
+  - **Mesures faites sur `68ebe4b`, pas sur le résultat fusionné** : la passe 14 a retiré la bascule automatique vers la vue B, ce qui change le mélange des commandes. Le résultat fusionné est validé par la QA (voir Tests), pas mesuré.
+  - **Les commandes qui montrent une carte pour la première fois restent plus chères** (6,2 contre 4,1 ms sur la RTX, 8,8 contre 5,8 ms sur la 780M). Causes probables : face DOM, chargement de l’image depuis sa data URL, changements réels du plateau. Non profilé.
+  - **Le catalogue compte 36 définitions**, pas 34 comme l’écrivait l’ancien commentaire de `cardArt.ts` (16 identités × 2 variantes + 4 Signatures).
+  - **Mémoire** : les 36 data URL restent en mémoire (quelques Mo), contre 18 à la fin d’un duel avant.
+- **Tests :**
+  - Sur `68ebe4b` + passe : `npm run typecheck` 0 erreur ; `npm test` 146/146 ; `npm run build` OK (JS 774,8 Ko / 217,4 Ko gzip, contre 773,7 / 217,0, plus le worker 8,3 Ko).
+  - Sur `68ebe4b` + passe (SwiftShader, poste local, `artifacts/qa/trace/qa-{browser,product}-passe15-apres*.json`) :
+    - `npm run qa:browser` : **4/5**, résultats identiques à la passe 13 duel par duel (issue, tours, vainqueur, rival, vues, bascules, composition, fuites, clics perdus, postures, techniques). Seul échec : le connu `mobile-rotation-touch`, scène du Clash en fondu au tour 3 (4b).
+    - `LQV_RENDER_CHECK=1 npm run qa:browser` : 5/5 cette fois (`mobile-rotation-touch` dépend du timing) ; 1106 rendus comparés à un rendu complet, 0 écart ; 180 illustrations du worker comparées, 0 écart.
+    - `npm run qa:product` : **8/8 parcours**, 0 erreur console. Les duels des parcours A et B varient d’un lancement à l’autre, comme déjà en passe 13 (A : 10 ou 11 tours ; B : 7 à 13 tours).
+  - Sur le résultat fusionné avec `main` `56efb70` (`qa-{browser,product}-passe15-fusion*.json`) :
+    - `npm run typecheck` 0 erreur ; `npm test` 146/146 ; `npm run build` OK (JS 774,5 Ko / 217,4 Ko gzip, plus le worker 8,3 Ko) ; `git diff 68ebe4b -- src/game` vide ;
+    - `LQV_RENDER_CHECK=1 npm run qa:browser` : 4/5, mêmes résultats duel par duel que la QA de la passe 14 (`artifacts/qa/adr016/qa-browser.json`), dont les 2 bascules de la vue frontale permanente ; seul échec, le connu `mobile-rotation-touch` (tours 2 et 3) ; 1034 rendus comparés, 0 écart ; 180 illustrations comparées, 0 écart ;
+    - `npm run qa:product` : **8/8 parcours**, 0 erreur console.
+  - `npm run qa:rc` non relancé : ni règles, ni enveloppe, ni contraste touchés.
+- **Perf / visuels :**
+  - Ryzen 7 8845HS, Radeon 780M et RTX 4060 Laptop (`--force_high_performance_gpu`), Chrome 155.0.8059.80 headless, ANGLE D3D11, 1280×720.
+  - Aucun changement visuel : mêmes data URL, vérifiées une à une.
+- **Pensée :**
+  - Un travail coûteux mais déterministe (même graine, même image) se sort du fil principal sans risque si le repli sur place reste là et si la première réponse gagne : l’ordre d’arrivée ne change plus rien.
+  - Un worker est un nouveau fichier dans `assets/` : les outils qui supposent un seul paquet doivent nommer celui qu’ils lisent.
+  - Un gain qui ne touche qu’une commande sur huit se lit dans la queue de distribution et dans l’appariement, pas dans la médiane globale.
+- **À reprendre :**
+  - coût restant des commandes qui montrent une carte pour la première fois (profiler face DOM et chargement de l’image) ;
+  - `patchBeat` : journal recréé à chaque temps de résolution ;
+  - `TaskStop` et les processus enfants des scripts longs (voir [KO]) ;
+  - arbitrages ouverts 4b / 4c ;
+  - temps GPU par image ;
+  - poste de bureau ;
+  - revue opérateur de la RC.

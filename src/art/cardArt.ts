@@ -2,8 +2,10 @@
  * Générateur d’illustrations de cartes — Canvas 2D, 100 % code, seedé.
  *
  * Entrées : defId (famille, rang, rareté, effet), artSeed. Sortie : dataURL PNG 240×336.
- * Coût : ~1 canvas 240×336 par définition (34 au maximum), généré à la demande, mis en cache
- * par (artSeed, defId). Invalidation : changement d’artSeed. N’utilise jamais la RNG gameplay.
+ * Coût : ~1 canvas 240×336 par définition (36 au catalogue), mis en cache par (artSeed, defId).
+ * Invalidation : changement d’artSeed. N’utilise jamais la RNG gameplay.
+ * Le catalogue est pré-généré hors du fil principal (`artWarmup.ts`, passe 14) ; la génération
+ * synchrone ci-dessous reste le repli d’une carte demandée avant l’arrivée de son illustration.
  */
 import { cardDef, type CardDef, type Family } from '../game/catalog/cards';
 import { hashString, makeRng } from '../game/engine/rng';
@@ -13,7 +15,7 @@ import { FAMILY_PALETTE } from './palette';
 export const ART_W = 240;
 export const ART_H = 336;
 
-type Ctx = CanvasRenderingContext2D;
+type Ctx = CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
 type Rng = () => number;
 
 const cache = new Map<string, string>();
@@ -21,6 +23,21 @@ let backCache: { seed: number; url: string; canvas: HTMLCanvasElement } | null =
 
 export function artCacheSize(): number {
   return cache.size;
+}
+
+/** Clé de cache d’une illustration ; c’est aussi la graine de son tirage (même image partout). */
+export function artKey(defId: string, artSeed: number): string {
+  return `${artSeed}|${defId}`;
+}
+
+/**
+ * Range une illustration produite ailleurs (worker). La première arrivée gagne : l’`src` d’une
+ * carte déjà affichée ne change jamais. Renvoie vrai si l’illustration a été retenue.
+ */
+export function adoptCardArt(key: string, url: string): boolean {
+  if (cache.has(key)) return false;
+  cache.set(key, url);
+  return true;
 }
 
 function canvas(w: number, h: number): { c: HTMLCanvasElement; ctx: Ctx } {
@@ -256,19 +273,29 @@ function vignette(ctx: Ctx): void {
   ctx.fillRect(0, 0, ART_W, ART_H);
 }
 
-export function cardArtUrl(defId: string, artSeed: number): string {
-  const key = `${artSeed}|${defId}`;
-  const hit = cache.get(key);
-  if (hit) return hit;
+/** Dessine l’illustration sur un contexte NEUF de ART_W × ART_H (page ou worker, même tracé). */
+export function drawCardArt(ctx: Ctx, defId: string, artSeed: number): void {
   const def = cardDef(defId);
-  const rng = makeRng(hashString(key));
-  const { c, ctx } = canvas(ART_W, ART_H);
+  const rng = makeRng(hashString(artKey(defId, artSeed)));
   bg(ctx, def, rng);
   const intensity = def.signature ? 1 : 0.35 + ((def.rank ?? 1) - 1) * 0.2 + (def.effect ? 0.05 : 0);
   MOTIFS[def.family](ctx, def, rng, intensity);
   centralEmblem(ctx, def, rng);
   vignette(ctx);
-  const url = c.toDataURL('image/png');
+}
+
+/** Génération synchrone sur le fil principal, sans cache (repli, et contrôle QA `artCheck`). */
+export function paintCardArtUrl(defId: string, artSeed: number): string {
+  const { c, ctx } = canvas(ART_W, ART_H);
+  drawCardArt(ctx, defId, artSeed);
+  return c.toDataURL('image/png');
+}
+
+export function cardArtUrl(defId: string, artSeed: number): string {
+  const key = artKey(defId, artSeed);
+  const hit = cache.get(key);
+  if (hit) return hit;
+  const url = paintCardArtUrl(defId, artSeed);
   cache.set(key, url);
   return url;
 }
