@@ -324,8 +324,8 @@ function tableTexture(seed: number): THREE.CanvasTexture {
     ctx.translate(px, py);
     ctx.scale(rx / ry, 1);
     const pool = ctx.createRadialGradient(0, 0, 0, 0, 0, ry);
-    pool.addColorStop(0, 'rgba(255,196,128,0.3)');
-    pool.addColorStop(0.55, 'rgba(255,180,110,0.14)');
+    pool.addColorStop(0, 'rgba(255,196,128,0.22)');
+    pool.addColorStop(0.55, 'rgba(255,180,110,0.1)');
     pool.addColorStop(1, 'rgba(255,170,100,0)');
     ctx.fillStyle = pool;
     ctx.fillRect(-ry, -ry, 2 * ry, 2 * ry);
