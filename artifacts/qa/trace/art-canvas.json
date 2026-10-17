@@ -1,0 +1,58 @@
+{
+  "commit": "b6f0c98",
+  "date": "2026-10-17T13:32:19.849Z",
+  "chrome": "155.0.8059.80",
+  "gpu": true,
+  "renderer": "ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "before": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/be9911ea-dda9-4c96-861e-c0cef3c1d91a/scratchpad/dist-base",
+  "galleryMs": {
+    "avant": [
+      418.3,
+      178,
+      183.7,
+      175.8,
+      174.1,
+      188.5
+    ],
+    "apres": [
+      134.8,
+      140.9,
+      139.3,
+      137.7,
+      139.5,
+      140.3
+    ],
+    "medianAvant": 183.7,
+    "medianApres": 139.5
+  },
+  "pixels": {
+    "apresVsAvant_memeNavigateur": {
+      "images": 37,
+      "identical": 0,
+      "maxChannelDiff": 80,
+      "worstMeanDiff": 1.613,
+      "worstChangedPct": 42.3
+    },
+    "avant_gpuVsSwiftShader": {
+      "images": 37,
+      "identical": 0,
+      "maxChannelDiff": 107,
+      "worstMeanDiff": 0.651,
+      "worstChangedPct": 12.5
+    },
+    "apres_gpuVsSwiftShader": {
+      "images": 37,
+      "identical": 37,
+      "maxChannelDiff": 0,
+      "worstMeanDiff": 0,
+      "worstChangedPct": 0
+    },
+    "apresVsAvant_swiftShader": {
+      "images": 37,
+      "identical": 0,
+      "maxChannelDiff": 121,
+      "worstMeanDiff": 1.765,
+      "worstChangedPct": 42.4
+    }
+  }
+}

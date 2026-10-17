@@ -755,8 +755,28 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     }
   }
 
+  // Matériaux des FX transitoires : une seule définition, partagée avec le témoin `fxKeep` ci-dessous.
+  const ringMaterial = (color: number) => new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.9, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false });
+  const burstMaterial = (color: number) => new THREE.PointsMaterial({ color, size: 0.09, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false });
+  // Programmes des FX préparés dès la création de l’arène (menus) et CONSERVÉS par un témoin : sans lui,
+  // le premier anneau compile son shader en plein duel, et la fin de chaque effet libère le programme,
+  // relié de nouveau par le processus GPU à l’effet suivant (à-coups de 50 à 115 ms à la révélation et
+  // au Clash, trace de la passe 12). Le témoin n’est dessiné qu’à la PREMIÈRE image, à opacité nulle
+  // (mélange additif : aucun pixel changé) : le premier usage de ses programmes (lecture synchrone des
+  // uniformes auprès du GPU) a lieu à la création, pas à la première révélation. Masqué ensuite.
+  const fxKeep = new THREE.Group();
+  const keepPts = new THREE.BufferGeometry();
+  keepPts.setAttribute('position', new THREE.BufferAttribute(new Float32Array(3), 3));
+  fxKeep.add(new THREE.Mesh(new THREE.RingGeometry(0.4, 0.55, 8), ringMaterial(0xffffff)), new THREE.Points(keepPts, burstMaterial(0xffffff)));
+  fxKeep.traverse((o) => {
+    o.frustumCulled = false;
+    const m = (o as THREE.Mesh).material as THREE.Material | undefined;
+    if (m) m.opacity = 0;
+  });
+  scene.add(fxKeep);
+
   function ring(color: number, z: number, maxScale: number, dur: number, y = TABLE_TOP + 0.03): void {
-    const m = new THREE.Mesh(new THREE.RingGeometry(0.4, 0.55, 48), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.9, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, depthWrite: false }));
+    const m = new THREE.Mesh(new THREE.RingGeometry(0.4, 0.55, 48), ringMaterial(color));
     m.rotation.x = -Math.PI / 2;
     m.position.set(0, y, z);
     addTransient(m, dur, (k) => {
@@ -777,7 +797,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
       v.push(Math.cos(a) * s, 0.5 + r() * 3, Math.sin(a) * s * 0.4 + 0.6);
     }
     g.setAttribute('position', new THREE.BufferAttribute(p, 3));
-    const pts = new THREE.Points(g, new THREE.PointsMaterial({ color, size: 0.09, transparent: true, opacity: 1, blending: THREE.AdditiveBlending, depthWrite: false }));
+    const pts = new THREE.Points(g, burstMaterial(color));
     addTransient(pts, 1.0, (k) => {
       const arr = g.attributes.position!.array as Float32Array;
       for (let i = 0; i < count; i++) {
@@ -901,6 +921,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     flameMat.uniforms.uScale!.value = scale;
     haloMat.uniforms.uScale!.value = scale;
     renderer.render(scene, camera);
+    fxKeep.visible = false; // témoin des FX : dessiné à la première image seulement (voir sa création)
   }
 
   /**
@@ -952,6 +973,9 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   window.addEventListener('resize', onResize);
   document.addEventListener('visibilitychange', onVis);
   resize();
+  // Tous les programmes de la scène (objets hors champ de la vue A et témoin des FX compris) lancés
+  // maintenant : la compilation est asynchrone côté GPU, les erreurs ne sont lues qu’au premier usage.
+  renderer.compile(scene, camera);
   start();
 
   function disposeObj(o: THREE.Object3D): void {

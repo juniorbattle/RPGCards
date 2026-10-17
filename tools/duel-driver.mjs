@@ -6,6 +6,33 @@ import { dragTo, secretAudit, touchDrag, view, waitDecision } from './browser.mj
 export const pres = (page) => page.evaluate(() => window.__lqv.presentation());
 const rankOf = (defId) => (defId.startsWith('sig-') ? 5 : Number(defId.split('-')[1]));
 
+/**
+ * Attente SANS sondage (mode `run.lean`, mesures de fluidité, passe 12) : une seule évaluation par
+ * attente, résolue dans la page quand le plateau est re-rendu (`renderApp` remplace les enfants de
+ * #app, la classe `sequencing` change) et que la condition est vraie ; filet de sécurité à 1 s.
+ * `until` : 'decision' (même condition que waitDecision) ou 'sequenceDone'. Renvoie la vue p1.
+ */
+export async function waitLean(page, until, timeout = 30000) {
+  return page.evaluate(({ until, timeout }) => new Promise((resolve) => {
+    const c = window.__lqv.controller;
+    const test = () => {
+      const v = c.view;
+      if (until === 'sequenceDone') return !c.sequencing;
+      return v.phase === 'ENDED' || v.phase === 'RESOLVED' || v.awaitingMe || (v.phase === 'REPEL' && !!v.repel?.mine);
+    };
+    const app = document.getElementById('app');
+    let mo = null;
+    let iv = 0;
+    let to = 0;
+    const done = () => { mo?.disconnect(); clearInterval(iv); clearTimeout(to); resolve({ ...c.view, clashScripted: !!c.seq?.script }); };
+    if (test()) { done(); return; }
+    mo = new MutationObserver(() => { if (test()) done(); });
+    mo.observe(app, { childList: true, attributes: true, attributeFilter: ['class'] });
+    iv = setInterval(() => { if (test()) done(); }, 1000);
+    to = setTimeout(done, timeout);
+  }), { until, timeout });
+}
+
 export async function sample(page, stats) {
   const p = await pres(page);
   if (p.rival?.mood) stats.moods.add(p.rival.mood);
@@ -90,25 +117,43 @@ export async function stanceAudit(page) {
   });
 }
 
+/**
+ * `run.lean` (mesures de fluidité, passe 12) : mêmes décisions et mêmes clics, mais ni sondage de la
+ * vue (attente `waitLean`), ni audits (vue, composition, posture, secrets, bascule V, clic perdu) :
+ * le fil principal de la page ne porte que le jeu et les entrées. Absent : comportement QA historique.
+ */
 export async function playTurn(page, run, stats) {
   const { mode } = run;
+  const lean = !!run.lean;
   for (let guard = 0; guard < (run.maxDecisions ?? 24); guard++) {
-    const v = await waitDecision(page);
+    const v = lean ? await waitLean(page, 'decision', 8000) : await waitDecision(page);
     if (process.env.QA_TRACE) console.log(`  [${run.name}] tour ${v.turn} ${v.phase} awaiting=${v.awaitingMe}`);
     if (v.phase === 'ENDED') return 'ended';
-    await checkView(page, v, stats);
-    if (v.phase !== 'RESOLVED' && v.phase !== 'REPEL') {
+    if (!lean) await checkView(page, v, stats);
+    if (!lean && v.phase !== 'RESOLVED' && v.phase !== 'REPEL') {
       // Aucune scène de Clash fantôme hors résolution (nettoyage après passage/saut/nouveau tour).
       const ghosts = await page.evaluate(() => document.querySelectorAll('#stage .clash-stage').length);
       if (ghosts) stats.stageGhosts.push(`tour ${v.turn} ${v.phase} : ${ghosts} scène(s) de Clash résiduelle(s)`);
     }
-    if ((v.phase === 'COMMIT' || v.phase === 'TACTICS') && v.awaitingMe && !stats.layoutChecked.includes(v.phase)) {
+    if (!lean && (v.phase === 'COMMIT' || v.phase === 'TACTICS') && v.awaitingMe && !stats.layoutChecked.includes(v.phase)) {
       stats.layoutChecked.push(v.phase);
       stats.layoutIssues.push(...(await layoutAudit(page)).map((x) => `${v.phase} : ${x}`));
     }
-    if (v.phase === 'TACTICS' || v.phase === 'COMMIT' || v.phase === 'LECTURE') {
+    if (!lean && (v.phase === 'TACTICS' || v.phase === 'COMMIT' || v.phase === 'LECTURE')) {
       stats.stanceChecks++;
       stats.stanceIssues.push(...(await stanceAudit(page)).map((x) => `tour ${v.turn} ${v.phase} : ${x}`));
+    }
+    if (v.phase === 'RESOLVED' && lean) {
+      // Même rythme que le mode historique (séquence entière, 1,2 s de lecture), sans sondage.
+      if (run.watchSequence) {
+        if (v.clashScripted) stats.stagesSeen++;
+        await waitLean(page, 'sequenceDone', 30000);
+        stats.sequencesWatched++;
+        await page.waitForTimeout(1200);
+      }
+      await page.click('[data-key="act-next"]');
+      stats.turns++;
+      return 'next';
     }
     if (v.phase === 'RESOLVED') {
       if (run.watchSequence) {
@@ -190,8 +235,8 @@ export async function playTurn(page, run, stats) {
       if (mode === 'keyboard') await page.keyboard.press('n');
       else await page.click('[data-key="act-commit"]');
       // Aucun clic perdu : le verrouillage doit avoir été pris en compte malgré la transition B → A.
-      const after = await view(page);
-      if (after.phase === 'COMMIT' && after.turn === turnBefore && after.awaitingMe) stats.lostClicks.push(`tour ${v.turn} : verrouillage d’engagement non pris en compte`);
+      const after = lean ? null : await view(page);
+      if (after && after.phase === 'COMMIT' && after.turn === turnBefore && after.awaitingMe) stats.lostClicks.push(`tour ${v.turn} : verrouillage d’engagement non pris en compte`);
     } else if (v.phase === 'LECTURE') {
       if (run.useLecture) { await page.click('[data-key="act-lecture"]'); stats.tech.Lecture = (stats.tech.Lecture ?? 0) + 1; }
       else await page.click('[data-key="act-lecture-pass"]');
@@ -200,9 +245,9 @@ export async function playTurn(page, run, stats) {
       if (seen === 'guard') await page.click('[data-key="stance-assault"]');
       await page.click('[data-key="act-lecture-stance"]');
     } else if (v.phase === 'TACTICS') {
-      stats.leaks.push(...(await secretAudit(page)));
+      if (!lean) stats.leaks.push(...(await secretAudit(page)));
       // Bascule manuelle vers B puis retour A (touche V) sans perdre la décision en cours.
-      if (!stats.manualToggleChecked) {
+      if (!lean && !stats.manualToggleChecked) {
         await page.keyboard.press('v');
         const pB = await pres(page);
         await page.keyboard.press('v');
@@ -235,7 +280,7 @@ export async function playTurn(page, run, stats) {
       await page.click(`[data-key="zone-opp-${v.repel.choices[0]}"]`);
       stats.repels++;
     }
-    stats.leaks.push(...(await secretAudit(page)));
+    if (!lean) stats.leaks.push(...(await secretAudit(page)));
   }
   return 'stuck';
 }

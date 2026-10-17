@@ -3,7 +3,7 @@
 Mission : `docs/missions/M06_FIABILISATION_ET_ACCEPTANCE_DESKTOP.md` (programme M04–M06, ADR 013, ADR 014).
 Développement **directement sur `main`**. Build de la RC : **`d19667e`** (version `0.6.0-rc.1`) ; toutes les
 preuves du §3 ont été produites sur ce build, dans ce conteneur (Chromium headless, **WebGL logiciel
-SwiftShader — jamais une mesure de GPU**). Mesures sur **GPU réel** (poste de l’opérateur, passe 11) : §5.4.
+SwiftShader — jamais une mesure de GPU**). Mesures sur **GPU réel** (poste de l’opérateur, passe 11) : §5.4 ; à-coups du fil principal tracés et en partie corrigés (passe 12) : §5.5.
 Règles : **V3.0 + delta V3.2 inchangées** — `git diff 4bfb585..d19667e -- src/game` est **vide**.
 
 > **Ce n’est pas la ville RPG finale.** C’est un jeu solo local jouable de bout en bout autour du duel
@@ -71,7 +71,7 @@ Porte de démarrage, sur un **clone propre du commit final `382ad1f`** (code app
 - Équité des sièges : la logique d’IA n’a pas évolué en M04–M06 (aucune nouvelle mesure de sièges nécessaire) ;
   la difficulté des rivaux vient de leurs données (PV, deck, Techniques, profil), jamais d’une IA qui tricherait.
 
-## 5. Performance (SwiftShader §5.1–5.2 · protocole GPU §5.3 · mesures sur GPU réel §5.4)
+## 5. Performance (SwiftShader §5.1–5.2 · protocole GPU §5.3 · mesures sur GPU réel §5.4 · à-coups §5.5)
 
 ### 5.1 Le duel : même scène, même coût
 
@@ -164,9 +164,9 @@ rythme normal, mouvement réel, ≈ 110 s par duel). Les 4 duels se terminent av
 
 Lecture :
 - **La vue B** a un p95 plus élevé (24–36 ms). Elle ne compte qu’environ 700 images par duel, prises surtout pendant les bascules A ↔ B.
-- **L’arène** ne dépasse jamais 6,2 ms de fil principal par image.
-- **Les à-coups** (85–230 ms, une poignée par duel, identiques sur les deux GPU) viennent donc du fil principal hors arène : DOM, mise en page, ramasse-miettes, génération d’illustrations, ou le pilote de QA lui-même, qui interroge la page toutes les 60 ms et audite le DOM à chaque décision.
-- **Les percentiles sont pessimistes** par rapport à un joueur humain. La source des à-coups n’est pas identifiée.
+- **L’arène** ne dépasse jamais 6,2 ms de fil principal par image. **Faux, corrigé en passe 12 (§5.5)** : `frameMs` est une moyenne glissante (α = 0,1) relevée toutes les 500 ms, qui ne voit pas une pointe isolée ; la boucle de l’arène a atteint 22 à 89 ms sur certaines images.
+- **Les à-coups** (85–230 ms, une poignée par duel, identiques sur les deux GPU) viennent donc du fil principal hors arène : DOM, mise en page, ramasse-miettes, génération d’illustrations, ou le pilote de QA lui-même, qui interroge la page toutes les 60 ms et audite le DOM à chaque décision. *(Déduction invalidée par la ligne précédente ; causes réelles : §5.5.)*
+- **Les percentiles sont pessimistes** par rapport à un joueur humain. La source des à-coups n’est pas identifiée. *(Identifiée et en partie corrigée en passe 12 : §5.5.)*
 - La RTX produit plus d’images lentes que la 780M. Hypothèse non vérifiée : copie des images du GPU discret vers l’intégré, qui pilote l’écran.
 
 **Autres relevés** (`perf`, un passage par GPU) :
@@ -178,6 +178,116 @@ l’écran en jeu, sur le GPU intégré comme sur le GPU discret, en 1280×720 c
 n’est pas la 3D : ce sont les à-coups ponctuels du fil principal, à étudier avec une trace Chrome d’un duel joué sans pilote
 de QA. Non mesurés : poste de bureau, campagne en fenêtre visible (seule une sonde l’a été : 165 rAF/s), temps GPU par image,
 mode batterie.
+
+### 5.5 À-coups du fil principal : trace, attribution et correctifs (passe 12, 2026-10-17)
+
+**Poste et build :** même portable que §5.4 (Chrome 155.0.8059.80 headless, ANGLE Direct3D 11, Radeon 780M sauf mention).
+« Avant » = RC (`b6f0c98`, bundle identique à `d19667e`, construit depuis `git archive` hors du dépôt) ; « après » = passe 12.
+Fichiers : `artifacts/qa/trace/` (index : `LISEZMOI.md`). Les traces brutes (60 à 90 Mo chacune) restent dans
+`artifacts/qa/tmp/` (ignoré par git). Seules des traces réduites aux fenêtres des à-coups sont versionnées
+(`*-pics.json.gz`, à charger dans DevTools › Performance).
+
+**Méthode** (`npm run perf:trace`, `tools/perf-trace.mjs` + `tools/trace-analyze.mjs`) :
+- Même duel que `perf:play` : seed 202, 14 tours, clics, séquences regardées au rythme normal.
+- Pilote `lean` : mêmes décisions, mais ni sondage de la vue toutes les 60 ms, ni audit du DOM. Une seule évaluation par
+  attente, résolue dans la page au re-rendu du plateau.
+- Relevé dans la page : chaque intervalle `requestAnimationFrame` avec la vue, le tour, la phase et le temps de résolution
+  en cours, plus les Long Animation Frames (LoAF). Les scripts responsables sont ramenés au code source par la source map
+  du build.
+- En option, trace Chrome par CDP (`LQV_TRACE=1`, échantillonneur V8 compris). Pour chaque intervalle > 50 ms, on obtient :
+  - l’occupation du fil principal ;
+  - le temps propre par catégorie (script, style, mise en page, peinture, ramasse-miettes, attentes GPU) ;
+  - les fonctions échantillonnées, en `src/…:ligne fonction` ;
+  - le travail du fil principal du processus GPU.
+- Caches de shaders : un navigateur neuf par duel (`LQV_TRACE_FRESH=1`, profil vierge, comme le premier duel), ou un profil
+  persistant (`LQV_TRACE_USERDATA`, comme le navigateur d’un joueur : premier duel froid, suivants chauds).
+- Rival : 650 ms, la valeur du jeu (`LQV_TRACE_AIDELAY`). La QA historique met 0, ce qui joue la réponse du rival et la
+  révélation dans la tâche du clic du joueur, soit deux rendus complets.
+
+**Constats.**
+1. **Le pilote de QA gonflait les percentiles, pas les pointes.** Sans lui, p95 = 6,3 ms au lieu de 12,2 ms
+   (`premier-duel-lean-780m.json`), mais 18 images restaient > 50 ms.
+2. **La mesure de l’arène de §5.4 ne pouvait pas voir les pointes** (moyenne glissante relevée toutes les 500 ms). Les LoAF
+   montrent la boucle de l’arène à 22–89 ms sur certaines images.
+3. **Les pointes dépendent fortement de l’état des caches et de la charge du poste.** Mêmes builds, même duel :
+   - premiers duels du matin, caches froids : 12 à 21 pointes ;
+   - fin de passe, poste calme et cache de shaders du pilote AMD chaud : 0 à 2 pointes.
+   Le poste n’était pas dédié (Chrome Remote Desktop actif, autres sessions, charge processeur de 33 à 74 %). Les comparaisons
+   sont donc entrelacées et répétées.
+
+**Attribution** (traces `trace-initiale-780m`, `gpu-2tours-780m`, `trace-froide-780m` ; décomptes `froid-3builds-780m`) :
+
+| Cause | Où | Ce que montre la trace | Statut |
+|---|---|---|---|
+| Programme WebGL des anneaux FX : compilé à la première révélation, puis libéré quand le dernier anneau disparaît et relié de nouveau à l’effet suivant | `arena.ts`, `ring()` + `disposeObj` | boucle de l’arène 22–89 ms (`getProgramInfoLog` synchrone, `Program::MainLinkLoadEvent::wait` au processus GPU), aux temps du Clash, **tout au long du duel** | **corrigé** |
+| Illustration générée à sa première apparition dans un canvas accéléré : `toDataURL` relit le GPU, bloqué si le processus GPU est occupé | `cardArt.ts` | `toDataURL` 25–53 ms dans le clic « Tour suivant » (cartes piochées) ou à la révélation | **corrigé** |
+| Shaders Skia de Chrome (peinture du DOM : `FillRectOp`, `FillRRectOp`, `TextureOp`, texte…) compilés à la première révélation et au premier Clash | processus GPU (`RasterDecoderImpl` → Ganesh) | 90–224 ms, **fil principal libre** ; 53 liaisons de programmes Skia, 0 WebGL après correctif | non corrigeable dans le jeu : **une fois par profil Chrome** (cache disque `GrShaderCache`), absent dès le duel suivant |
+| Re-rendu complet du plateau à chaque commande ou réponse du rival | `board.ts` `renderApp` + mise en page forcée (FLIP, scène du Clash) | 13–20 ms de script + 9–18 ms de mise en page + 4–6 ms de style, soit 35–60 ms ; double avec un rival à 0 ms | **non corrigé** : prochain chantier (patchs ciblés) |
+| Ramasse-miettes | V8 | ≤ 8 ms dans une fenêtre d’à-coup | pas une cause |
+| Outil de mesure | `perf:play` (sondage + audits), trace CDP | p95 ×2 ; la trace complète ajoute elle-même du coût (p95 6,3 → 18 ms) | écarté : pilote `lean`, et décomptes pris SANS trace |
+
+**Correctifs** (aucun changement de règles, de composition, de secret ; `git diff b6f0c98 -- src/game` vide) :
+- `src/scene/arena.ts` :
+  - un **témoin** garde vivant un matériau par programme de FX transitoire (anneau, gerbe), avec une définition partagée par
+    les FX eux-mêmes ;
+  - `renderer.compile(scene, camera)` à la création de l’arène (dans les menus) lance tous les programmes, y compris ceux
+    des objets hors champ de la vue A ;
+  - le témoin est dessiné à la **première image seulement**, à opacité nulle en mélange additif (aucun pixel changé), pour
+    que les lectures synchrones du premier usage aient lieu à la création.
+- `src/art/cardArt.ts` : canvas des illustrations **tramé par le processeur** (`willReadFrequently`). La galerie de
+  37 illustrations passe de 183,7 à 139,5 ms en médiane, sur 6 rondes entrelacées, poste calme (`art-canvas.json`) ; un
+  premier essai sous charge donnait 299 → 161 ms.
+  - Pixels **non identiques** : écart moyen ≤ 1,6/255 par canal sur le même navigateur (≤ 1,8/255 sous SwiftShader) ;
+    écart maximal de 80 à 121 sur des bords antialiasés.
+  - Indiscernable à l’œil (`screenshots/qa/passe12/galerie-{avant,apres}.png`).
+  - Le rendu devient identique sur GPU réel et sous SwiftShader (37/37 illustrations). Avant, il dépendait de la machine :
+    0/37 identiques, écart moyen 0,65/255.
+  - Arbitrage : §9.
+
+**Effet séparé des deux correctifs** (`froid-3builds-780m.json`, navigateur neuf par duel, rival à 0 ms, 3 rondes
+entrelacées, poste chargé) :
+
+| Build | Images > 50 ms (3 duels) | Boucle de l’arène (WebGL) | Clic « Tour suivant » | Autres commandes | Fil principal libre (Skia) |
+|---|---|---|---|---|---|
+| Avant (RC) | 3 / 20 / 21 = **44** | 10 | 6 | 10 | 18 |
+| + programmes FX gardés | 1 / 9 / 12 = **22** | **0** | 6 | 5 | 11 |
+| + canvas processeur | 3 / 8 / 8 = **19** | 0 | **0** | 2 | 15 |
+
+**Avant / après final** (`final-780m.json`, `final-rtx4060.json` : profil persistant par build, premier duel froid puis
+deux duels chauds, rival à 650 ms, 3 rondes entrelacées ABBA, duels complets) :
+
+| GPU | Build | Images > 50 ms (froid / chaud / chaud) | > 100 ms | Max (ms) | p99 (ms) | Causes des images > 50 ms |
+|---|---|---|---|---|---|---|
+| Radeon 780M | avant | 2 / 0 / 0 | 0 | 97 / 30 / 24 | 6,4 / 6,3 / 6,3 | fil principal libre ×2 (1re révélation, 1er Clash) |
+| Radeon 780M | après | 1 / 2 / 1 | 0 | 91 / 67 / 55 | 6,3 / 6,3 / 6,3 | fil principal libre ×3, réponse du rival ×1 (55 ms) |
+| RTX 4060 | avant | 3 / 0 / 0 | 1 / 0 / 0 | 115 / 30 / 30 | 6,4 / 6,3 / 6,3 | fil principal libre ×3 |
+| RTX 4060 | après | 3 / 1 / 0 | 1 / 0 / 0 | 115 / 55 / 48 | 6,4 / 6,4 / 6,3 | fil principal libre ×4 |
+
+Lecture :
+- Ces séries finales ont tourné sur un poste **calme** : environ 19 500 images par duel, p95 = 6,2 ms, soit le plafond de
+  l’écran. Le cache de shaders du pilote était aussi chaud après une journée de mesures.
+- Dans ces conditions, les deux builds sont équivalents, à 3 images > 50 ms par duel au plus. Les écarts restent dans le
+  bruit : il n’y a plus rien à corriger dans le jeu.
+- Les pointes restantes sont celles des shaders Skia d’un profil vierge, plus une image isolée. Les correctifs agissent là
+  où leurs causes apparaissent, poste chargé ou caches froids (44 → 19 ci-dessus).
+- Aucune régression : 0 erreur console, même hash final pour les deux builds.
+- Duel tracé caches froids (`trace-froide-780m`) : avant 4 images > 50 ms (97 ms au plus), après 3 (97 ms).
+  - La première révélation et le premier Clash donnent 25–68 ms de `Program::MainLinkLoadEvent::wait` au processus GPU,
+    avec un fil principal occupé à 2–4 %.
+  - Une image isolée en fin de duel (55–61 ms) n’occupe ni le fil principal ni celui du GPU : non attribuable au jeu.
+
+**Profil persistant, 2 premiers tours** (`profil-2tours-780m.json`) : premier duel d’un profil vierge, avant 175,6 ms /
+après 115,1 ms au maximum ; duels suivants avant 78,8 / 66,6 ms, après 54,5 / 48,5 ms. Les pointes > 100 ms de la
+première révélation ne reviennent pas une fois le cache de shaders de Chrome rempli.
+
+**Conclusion.** Les pointes > 100 ms qu’un joueur peut voir viennent de la compilation des shaders de peinture de Chrome, au
+premier duel d’un profil, et elles disparaissent ensuite. Les deux causes récurrentes du jeu sont corrigées :
+- la liaison WebGL des anneaux à chaque Clash ;
+- la génération des illustrations au clic.
+
+Reste le coût du re-rendu complet du plateau à chaque commande (35–60 ms). Il ne franchit 50 ms qu’une fois sur les
+12 duels finals, et plus souvent sur un poste chargé. C’est le prochain chantier de fluidité, sans toucher à la composition
+approuvée.
 
 ## 6. Défauts trouvés et corrigés pendant M04–M06
 
@@ -200,7 +310,10 @@ mode batterie.
 | Ville HD-2D, exploration, économie, quêtes, clubs, tournois | hors périmètre | contrat de contenu à venir |
 | Progression (récompenses, collection de départ), PV et decks des rivaux, Orin | **prototypes non canoniques**, réglables par donnée | arbitrage de contenu |
 | PV du joueur fixes (90) | aucune progression de PV ratifiée | à décider avec la progression |
-| Mesure sur GPU réel | **faite sur un portable** (passe 11, §5.4 : Radeon 780M et RTX 4060, plafond de l’écran en jeu) ; poste de bureau non mesuré | trace des à-coups du fil principal ; temps GPU par image |
+| Mesure sur GPU réel | **faite sur un portable** (passe 11, §5.4 : Radeon 780M et RTX 4060, plafond de l’écran en jeu) ; poste de bureau non mesuré | temps GPU par image |
+| À-coups du fil principal | **tracés et attribués** (passe 12, §5.5) ; deux causes du jeu corrigées (liaison WebGL des anneaux, illustrations au clic) ; restent les shaders Skia au premier duel d’un profil Chrome et le re-rendu complet du plateau (35–60 ms par commande) | re-rendu ciblé du plateau (patchs), sans toucher la composition |
+| Scène du Clash encore en fondu au début du tour suivant quand la séquence s’est terminée seule (≤ 300 ms en mouvement réduit, ≤ 760 ms sinon) | `qa:browser` échoue sur `mobile-rotation-touch` sur le poste de l’opérateur (2 « fantômes », tours 2 et 3), **aussi sur la RC intacte** avec ses propres outils ; passe dans le conteneur (plus lent) | arrêter la scène au tour suivant (coupe la fin du fondu de défausse : à arbitrer, ADR 013) |
+| Contraste du rang « II » sur les vignettes de l’éditeur de deck | `qa:rc` mesure 3,5–3,6:1 sur le poste de l’opérateur (seuil 4,5:1), **aussi sur la RC intacte** ; ≥ 4,5:1 dans le conteneur | vérifier le rendu des textes sous Windows ; renforcer le contour du chiffre si confirmé |
 | Mobile paysage | pas de nouveau travail (mandat) ; portrait vérifié en smoke-test | chantier dédié |
 | Écran Résultat : scène 3D animée (réaction finale du rival) | coût de rendu identique au duel pendant cet écran | figer après quelques secondes si le budget GPU l’exige |
 | Brouillon non verrouillé perdu à la reprise ; animation d’une résolution interrompue non rejouée | assumé et annoncé (menu) | — |
@@ -230,3 +343,7 @@ mode batterie.
 3. **Rivaux** : PV (Kaï 80, Maëlle 95, Sélène 100, Orin 110), decks, ordre de la série, déblocage d’Orin ; **Orin** comme quatrième personnage.
 4. **ARB-002** (Signature et Techniques du rival publiques avant le duel) : appliqué, toujours non ratifié ; ARB-001, ARB-005 / 005b, ARB-011 : inchangés, non tranchés.
 5. Mesure GPU sur un poste réel avant tout compromis de rendu (ADR 013 : aucune réduction de la présence du rival sans comparaison et approbation). **Faite sur le portable de l’opérateur (§5.4) : aucun compromis requis.**
+6. **Illustrations tramées par le processeur** (passe 12, §5.5), à confirmer :
+   - écart de pixels moyen ≤ 1,8/255, indiscernable à l’œil (`screenshots/qa/passe12/`) ;
+   - génération 2× plus rapide, rendu identique d’une machine à l’autre ;
+   - réversible en une ligne (`willReadFrequently` dans `src/art/cardArt.ts`).

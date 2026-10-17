@@ -15,10 +15,18 @@ export const CHROMIUM = process.env.CHROMIUM_PATH || ['/opt/pw-browsers/chromium
  */
 export const GPU = process.env.LQV_GPU === '1';
 export const EXTRA_ARGS = (process.env.LQV_CHROME_ARGS ?? '').split(/\s+/).filter(Boolean);
-export async function launch() {
+export function launchOptions() {
   if (!CHROMIUM) throw new Error('Chromium introuvable : définir CHROMIUM_PATH');
   const base = GPU ? ['--ignore-gpu-blocklist'] : ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'];
-  return chromium.launch({ executablePath: CHROMIUM, headless: process.env.LQV_HEADED !== '1', args: [...base, ...EXTRA_ARGS] });
+  return { executablePath: CHROMIUM, headless: process.env.LQV_HEADED !== '1', args: [...base, ...EXTRA_ARGS] };
+}
+export async function launch() {
+  return chromium.launch(launchOptions());
+}
+
+/** Profil PERSISTANT (dossier `userDataDir`) : caches disque de Chrome (shaders compris) conservés d’un lancement à l’autre. */
+export async function launchPersistent(userDataDir, contextOptions = {}) {
+  return chromium.launchPersistentContext(userDataDir, { ...launchOptions(), ...contextOptions });
 }
 
 /** Moteur de rendu WebGL réellement utilisé par la page (chaîne ANGLE / pilote), ou null. */

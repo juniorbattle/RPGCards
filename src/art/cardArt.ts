@@ -27,7 +27,10 @@ function canvas(w: number, h: number): { c: HTMLCanvasElement; ctx: Ctx } {
   const c = document.createElement('canvas');
   c.width = w;
   c.height = h;
-  const ctx = c.getContext('2d');
+  // Tramé par le PROCESSEUR (`willReadFrequently`) : l’illustration est aussitôt encodée en PNG ; un
+  // canvas accéléré imposerait une relecture depuis le GPU, ≈ 3× plus lente que l’encodage et bloquée
+  // quand le processus GPU est occupé (46 ms à la première révélation, trace de la passe 12).
+  const ctx = c.getContext('2d', { willReadFrequently: true });
   if (!ctx) throw new Error('Canvas 2D indisponible');
   return { c, ctx };
 }
