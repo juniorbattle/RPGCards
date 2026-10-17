@@ -30,13 +30,31 @@ npm run shots:m03-2  # avant / après / preview M03.2 + mesures (LQV_BEFORE=<bui
 node tools/perf-compare.mjs 5  # rendu avant / après en rondes entrelacées (LQV_BEFORE=<build> LQV_BEFORE_SHA=<sha>) → artifacts/qa/perf-compare-m03-2.json
 npm run perf         # mesures moteur + scène (machine courante) → artifacts/qa/perf.json
 npm run sim          # (optionnel) 200 duels IA/IA headless
+npm run qa:product   # JEU (M04–M05) : 8 parcours de joueur depuis l’accueil (série complète, reprise, migration…) → artifacts/qa/qa-product.json (QA_SHOTS=dossier pour des captures)
+npm run qa:rc        # porte RC (M06) : sans WebGL, longévité, moteur indépendant des animations, mode démo, stockage refusé, réinitialisations, contraste, coût par écran → artifacts/qa/qa-rc.json
+npm run shots:m04    # captures des écrans du jeu 1280×720 / 1920×1080 + preuve de cadrage du duel (SHOTS_OUT=…)
+npm run video        # vidéo du parcours complet (Playwright) → screenshots/qa/m06/parcours-1280.mp4
+npm run preview      # sert le build (dist/) sur http://localhost:4173
 ```
+
+Mesures sur **GPU réel** (poste de l’opérateur, le conteneur n’en a pas) : `LQV_GPU=1 CHROMIUM_PATH=<Chrome> npm run perf` (sans forçage SwiftShader ; `LQV_HEADED=1` pour une fenêtre visible) — le rapport indique le moteur de rendu réellement utilisé.
 
 `qa:browser`, `qa:techniques`, `shots`, `shots:clash`, `shots:m03-2` et `perf` exigent un build (`npm run build`) et un Chromium local (`/opt/pw-browsers/chromium` par défaut, sinon `CHROMIUM_PATH=…`). Aucun navigateur n’est téléchargé.
 
 ## Jouer
 
-1. Écran de préparation : choisir sa **Signature** (4 tuiles) et **deux Techniques** (6 tuiles), puis *Commencer le duel*. Le rival (Signature/Techniques dérivées de la seed) est affiché.
+`npm run dev` (ou `npm run build && npm run preview`) ouvre le **jeu** :
+
+- **Accueil** : Nouvelle partie (nom, Signature = voie de départ, deux Techniques), Continuer (reprend le duel en cours s’il y en a un, sinon le tableau), Deck, Collection, Options, Aide, Recommencer (confirmé).
+- **Rencontres** : la série *Tournoi du Quai* (Kaï, Maëlle, Sélène, dans l’ordre) et des duels libres (Orin après la série) ; PV, decks et déblocages sont des **données de prototype** signalées comme telles.
+- **Deck** : une version par identité (Basic ou variante possédée), une Signature, deux Techniques ; un deck illégal ne lance jamais de duel.
+- **Duel** : la présentation M03.2 approuvée ; bouton **Menu** (pause, options, aide, Sauvegarder et quitter, abandon confirmé) ; conseils de jeu discrets, désactivables.
+- **Résultat** : issue, PV, dégâts, tours, déblocages, manche suivante / revanche.
+- **Sauvegarde** automatique et locale (aucun compte, aucun réseau), copie de secours, export / import ; un duel interrompu reprend **exactement** où il en était.
+
+Déroulé d’un tour de duel :
+
+1. (Entrée QA historique `?setup=1` : ancien écran de préparation ; `?autostart=1` / `?scenario=…` : duel direct.)
 2. **Début de tour** : main complétée à 4 ; Sondage/Recentrage si équipés.
 3. **Préparation** : cliquer ses Secondaires en *RÉSERVE CACHÉE* pour les révéler (→ *ACTIVE · PRÊTE*) ou les garder cachées.
 4. **Engagement** : glisser une carte sur **Primaire** (ou cliquer la carte puis la case), choisir **ASSAUT / GARDE** ; nouvelle Secondaire facultative posée face cachée (*CHARGEMENT · INUTILISABLE*). Annulable jusqu’au verrouillage.
@@ -56,13 +74,15 @@ Clavier : `Tab`, `Entrée/Espace`, `1–4` (main), `A`/`G` (mode), `Échap` (ann
 | `scenario=t2\|interference\|signature\|doubleko\|clash-aa\|clash-ag` | **démonstrations** avec rival **scripté** (identifié comme tel) ; `clash-aa` : le rival attaque (votre carte décide : vous dominez, égalité, il domine, ou votre Garde) ; `clash-ag` : le rival se met en Garde (absorption, Garde qui tient, Garde qui cède ∞, Garde contre Garde) |
 | `scenario=rupture\|rupture-cachee\|dissipation\|masque` | **QA des Techniques** (rival scripté) : `rupture` — Garde Ronce IV gagnante, Rupture (2 Insight) renvoie la Secondaire active visée ; `rupture-cachee` — une cible cachée existe : Repoussement Basic, Rupture échoue sans remboursement ; `dissipation` — levez le camouflage de Dissimulation (1 Insight) ; `masque` — l’effet d’une Secondaire camouflée du rival reste anonyme |
 | `view=A\|B` | vue figée (QA) : A confrontation, B manipulation ; défaut `auto` piloté par les phases (ADR 006). `cam=frontal\|tilted` = alias M01 |
-| `rival=braise\|ronce\|voile` | personnalité du rival (sinon dérivée de la seed) |
+| `rival=braise\|ronce\|voile\|astre` | personnalité du rival (sinon dérivée de la seed) |
 | `pace=normal\|fast\|instant` | rythme de présentation de la résolution (n’affecte jamais les règles) |
 | `beat=N`, `intro=1`, `pose=<humeur>` | captures : temps de résolution figé, temps d’observation conservé, humeur imposée (revue QA, avec `qa=1` uniquement) |
 | `reducedMotion=1`, `freeze=1` | mouvement réduit ; arène et animations figées (captures) |
 | `scale=1.2`, `hp=90`, `aiDelay=650` | taille du texte, PV de départ, délai de l’IA (ms) |
 | `gallery=1` | galerie de revue art (toutes les définitions + verso) |
-| `qa=1` | crochet `window.__lqv` pour la QA automatisée (jamais actif par défaut) |
+| `qa=1` | crochets `window.__lqv` (duel) et `window.__lqvShell` (jeu) pour la QA automatisée (jamais actifs par défaut) |
+| `setup=1` | ancien écran de configuration du duel (avant M04) |
+| `profileSeed=N` | avec `qa=1` : seed du profil créé (parcours de QA reproductibles) |
 | `ablate=candles,banners,dust` | mesure de coût (avec `qa=1` uniquement) : retire du rendu les bougies, les bannières ou les poussières |
 
 ## Architecture
@@ -75,7 +95,10 @@ src/scene/     arène Three.js (table, décor en couches), rival 2.5D procédura
                caméras A/B interpolées, portrait vivant, FX déclenchés par événements
 src/presentation/  DOM : plateau, cartes, glisser-déposer, scène du Clash (clashStage) ; modules purs director (vues),
                expression (rival), beats (séquence), clashMotion (chorégraphies), rivalLines, personalities
-src/app/       contrôleur (humain + IA sur sa vue), paramètres, scénarios de démonstration
+src/app/       contrôleur (humain + IA sur sa vue), session de duel démontable, paramètres, scénarios de démonstration
+src/product/   enveloppe PURE (M04–M05) : flux d’écrans, deck légal, sauvegarde versionnée, rivaux et rencontres,
+               progression de prototype, reprise par rejeu, résumé public
+src/shell/     écrans DOM du jeu : accueil, deck, collection, rencontres, préparation, résultat, options, aide, conseils
 test/          Vitest ; tools/ QA navigateur, captures, perf
 docs/adr/      décisions (001 stack, 002 UI, 003 caméra M01 remplacée, 004 arbitrages, 005 outillage,
                006 vues A/B, 007 rival & expressions, 008 séquence de résolution,
@@ -88,9 +111,10 @@ Voir `JOURNAL.md` pour l’état exact, les preuves et les limites ; `docs/adr/0
 
 - **MVP de duel jouable** contre IA : oui (boucle complète jusqu’à K.-O., prolongation incluse).
 - **Conformité gameplay** : 16 variantes, 4 Signatures, 6 Techniques, Insight 0–2, Interférences simultanées, Repoussement, double K.-O. implémentés et testés (matrice G01–G27) ; interprétations de raccordement listées dans l’ADR 004 en attente d’arbitrage.
-- **RPG complet** : non (ville, collection, progression hors périmètre M01).
+- **Jeu solo local opérationnel (release candidate 0.6.0-rc.1, M06)** : oui — accueil, deck, 4 rivaux, série de trois manches, résultats, progression de prototype, sauvegarde et reprise (`docs/RAPPORT_M06_RC.md`).
+- **RPG complet** : non — ni ville explorable, ni économie, ni quêtes, ni tells / Sang-froid ; progression et données des rivaux = prototypes non canoniques.
 - **Composition desktop du duel : approuvée comme référence (ADR 013, M03.2)**. Ville HD-2D, personnages définitifs hors du duel, progression économique et décors finaux : encore ouverts.
-- **Parcours RPG opérationnel M04–M06 : à développer** ; ne pas confondre l'actuel MVP de duel et une version complète.
+- **Parcours RPG M04–M06 : livré en release candidate locale** ; ce n’est pas la ville RPG finale.
 
 `simulator_ref/` reste l’oracle de référence (non importé au runtime) :
 

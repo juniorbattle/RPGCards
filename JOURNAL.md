@@ -2,7 +2,7 @@
 
 **Nature :** journal de production du **nouveau projet**, et non journal copié de RPG-ArtByCode.  
 **Convention :** passes chronologiques, plus récente en bas ; statut `[OK]`, `[KO]`, `[?]` ; preuves vérifiables.  
-**Dernière passe :** 9 — M05 sur `main` : série du Quai (3 manches), duels libres, Orin (Astre), déblocages de prototype, sauvegarde v2 migrée depuis v1, reprise EXACTE en plein duel — `docs/RAPPORT_M05.md`, ADR 014 (proposé).
+**Dernière passe :** 10 — M06 sur `main` : **release candidate locale desktop 0.6.0-rc.1** (build `d19667e`) — campagne complète, fuite de textures corrigée, `docs/RAPPORT_M06_RC.md`. Ce n’est pas la ville RPG finale.
 
 ## État initial connu
 
@@ -15,7 +15,7 @@
 
 ## À reprendre (prioritaire)
 
-1. **PRIORITÉ OPÉRATEUR M04–M06 (16 octobre) :** vue frontale et proportions du rival **approuvées et figées comme baseline desktop (ADR 013)**. Construire une boucle opérationnelle menu → deck → rencontres → duels → résultat/progression → sauvegarde/reprise (docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md), puis stabiliser une release candidate locale. Mobile paysage et polish artistiques secondaires reportés. **M04 livré (passe 8), M05 livré (passe 9)** ; en cours : M06 (release candidate : campagne QA, performance, rapport RC).
+1. **PRIORITÉ OPÉRATEUR M04–M06 (16 octobre) :** vue frontale et proportions du rival **approuvées et figées comme baseline desktop (ADR 013)**. Construire une boucle opérationnelle menu → deck → rencontres → duels → résultat/progression → sauvegarde/reprise (docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md), puis stabiliser une release candidate locale. Mobile paysage et polish artistiques secondaires reportés. **M04 (passe 8), M05 (passe 9) et M06 (passe 10, RC 0.6.0-rc.1) livrés** ; à faire : revue opérateur de la RC et des arbitrages (`docs/RAPPORT_M06_RC.md` §9, ADR 014), mesure sur GPU réel, contenu canonique de progression.
 2. **Écarts de fidélité restants** (`docs/RAPPORT_M03_2.md` §8) : personnages en plans 2,5D (pas de volume ni de chevelure détaillée), décor moins dense, ni bloom ni profondeur de champ, table encore plus sombre que la preview, typographie système ; paysage = gabarit compact du bureau (textes ≈ 9,5 px à 844×390), pas l’interface simplifiée du panneau 6.
 3. **Arbitrages encore proposés** (ADR 004) : ARB-002 (profil du rival public), ARB-001, ARB-005 (+ ARB-005b : carte camouflée remplacée pendant l’engagement, nommée en fin de tour depuis la passe 5), ARB-011 ; ratification éventuelle du delta D-01 (V3.3). Inférences restantes documentées (`docs/RAPPORT_M03_1B.md` §6).
 4. **Mesure sur GPU réel** (hors conteneur) : vues A/B, bougies (shader de points), scène du Clash (WAAPI) ; budget mobile.
@@ -36,6 +36,9 @@
 - Aucun re-rendu global pendant une interaction pointeur (cause d’un clic perdu observé en QA, passe 1).
 - Un effet différé d’une interaction (`setTimeout` après `pointerup`) ne s’applique qu’à l’état où elle a commencé (jeton) : sinon il frappe l’état que cette interaction vient de créer (passe 2, regard de début de tour).
 - Séparer Règles / Présentation / Génération artistique / IA.
+- Une enveloppe produit ne touche pas une scène approuvée : le prouver en comparant la scène SEULE (calques DOM masqués) à l’entrée historique, au pixel près (M04).
+- Reprendre un duel = rejouer ses commandes sur le moteur pur et retrouver le hash sauvegardé ; sinon refuser avec la raison, jamais d’état inventé (M05, ADR 014).
+- Ce qu’une session installe (écouteurs, minuteries, textures GPU) doit être retiré à sa sortie et MESURÉ sur des cycles complets (M06 : bouches du rival).
 - Instrumenter avant optimiser ; captures et chiffres doivent venir du même build, seed et machine précisés.
 - Conserver les échecs et leurs causes ; n'inventer ni approbation ni résultat.
 - Les choix visuels du projet RPG-ArtByCode sont une référence de **méthode**, jamais un cahier des charges visuel importé.
@@ -290,3 +293,18 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **[KO → corrigé] Test H :** l’altération faisait échouer le rejeu (commande devenue illégale) au lieu de produire un autre hash ; le jeu refusait correctement, l’assertion ne connaissait qu’un motif. Assertion élargie, H relancé 3/3.
 - **Pensée :** une reprise « exacte » se prouve par le hash ET par la vue du joueur, aux instants délicats (brouillon non verrouillé, résolution en cours), pas seulement en début de tour ; et un test de refus doit accepter tous les refus légitimes sans en accepter d’illégitime.
 - **À reprendre :** M06 (porte RC) — sans WebGL, longévité, moteur indépendant des animations, stockage refusé, réinitialisations, contraste des nouveaux écrans, coût CPU des écrans, vidéo du parcours, rapport RC.
+
+## Passe 10 — M06 : release candidate locale desktop 0.6.0-rc.1 (2026-10-17)
+
+- **Départ :** `347af3c` (M05 livré). Correctifs et outils `d19667e` ; toutes les preuves sur ce build.
+- **[OK] Porte de démarrage :** clone propre → `npm ci`, typecheck, 146/146, build, `preview` et `dev` servent le jeu.
+- **[OK] Parcours de joueur (qa:product, 8/8, 64/64)** dont la série entière jouée par l’interface, la reprise exacte, la migration réelle et la reprise altérée refusée.
+- **[OK] Porte RC (qa:rc, 9/9, 45/45) :** sans WebGL ; longévité (12 duels, 4 rivaux, textures et géométries stables, tas plat) ; même hash hors navigateur malgré les animations ; mode démo réversible ; stockage refusé ; réinitialisations confirmées ; contraste ≥ 4,5:1 sur 11 écrans ; clavier seul ; aucune image 3D hors duel.
+- **[KO → corrigé] Fuite de textures du rival** (formes de bouche des expressions passées laissées au GPU à chaque duel), trouvée par la QA de longévité ; **effets transitoires figés** dans la scène des menus ; **avalanche de messages** quand le stockage est refusé ; **focus** renvoyé sur « Enregistrer » à chaque bascule dans l’éditeur.
+- **[KO → corrigé] Mesures :** couleurs `color(srgb …)` lues en 0–255 (faux échecs de contraste) ; textures mesurées en plein duel (bruit) ; 6 géométries fixes de la vue B prises pour une fuite (vérifié : 45 → 51 dès la première image en vue B, puis constant).
+- **[OK] Non-régression du duel approuvé :** `qa:browser` 5/5 (267 vues / 0 écart, 0 fuite, rotations conservées), `qa:techniques` 8/8, `shots:clash` 10/10 ; scène 3D d’un duel lancé depuis le jeu identique au pixel près (0/255), visage 83 / 125 px.
+- **[OK] Performance (SwiftShader, CPU) :** deux séries entrelacées M03.2 ↔ RC : aucun écart attribuable (série 1 : +5 % A / +12 % B ; série 2, plus longue : −1 % / −1 %) ; 0 image 3D calculée dans les menus ; moteur 35,5 ms / duel ; bundle 768 Ko (214 Ko gzip). Protocole GPU réel documenté (`LQV_GPU=1`).
+- **[OK] Vidéo** du parcours complet en temps réel (`screenshots/qa/m06/parcours-1280.mp4`, 3 min 30 s) par screencast Chromium + ffmpeg système (l’enregistreur Playwright exige un binaire absent ; rien installé).
+- **[KO → corrigé] Outil de captures M04** périmé par M05 (duel libre contre Maëlle verrouillé au départ) : adapté à la manche 1 contre Kaï.
+- **Pensée :** la longévité se mesure sur des cycles complets et à un instant déterministe ; chaque écart doit être expliqué par une expérience dédiée avant d’ajuster un critère (vue B), et un outil de mesure faux (format de couleur) produit des échecs aussi convaincants qu’un vrai défaut.
+- **À reprendre :** revue opérateur de la RC (arbitrages `docs/RAPPORT_M06_RC.md` §9, ADR 014) ; mesure sur GPU réel (`LQV_GPU=1`) ; contenu canonique (progression, rivaux) ; ville / hub ; mobile paysage.

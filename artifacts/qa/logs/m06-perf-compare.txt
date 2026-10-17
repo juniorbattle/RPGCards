@@ -1,0 +1,60 @@
+=== perf-compare début 05:13:27
+vue A · ronde 1 · avant : 77 ms CPU/image, 2.65 FPS, 71 draw calls
+vue A · ronde 1 · apres : 52.53 ms CPU/image, 2.47 FPS, 73 draw calls
+vue A · ronde 2 · apres : 46.72 ms CPU/image, 2.7 FPS, 73 draw calls
+vue A · ronde 2 · avant : 51.59 ms CPU/image, 1.87 FPS, 73 draw calls
+vue A · ronde 3 · avant : 50.03 ms CPU/image, 2.77 FPS, 73 draw calls
+vue A · ronde 3 · apres : 52.5 ms CPU/image, 2.87 FPS, 73 draw calls
+vue A · ronde 4 · apres : 49.53 ms CPU/image, 2.27 FPS, 73 draw calls
+vue A · ronde 4 · avant : 44.08 ms CPU/image, 2.55 FPS, 73 draw calls
+vue A · ronde 5 · avant : 49.75 ms CPU/image, 2.7 FPS, 73 draw calls
+vue A · ronde 5 · apres : 52.35 ms CPU/image, 2.62 FPS, 73 draw calls
+vue B · ronde 1 · avant : 42.58 ms CPU/image, 3.32 FPS, 75 draw calls
+vue B · ronde 1 · apres : 46.66 ms CPU/image, 2.67 FPS, 75 draw calls
+vue B · ronde 2 · apres : 48.73 ms CPU/image, 2.93 FPS, 75 draw calls
+vue B · ronde 2 · avant : 44.94 ms CPU/image, 3.13 FPS, 75 draw calls
+vue B · ronde 3 · avant : 37.15 ms CPU/image, 3.03 FPS, 75 draw calls
+vue B · ronde 3 · apres : 41.41 ms CPU/image, 3 FPS, 75 draw calls
+vue B · ronde 4 · apres : 45.15 ms CPU/image, 3.57 FPS, 75 draw calls
+vue B · ronde 4 · avant : 40.96 ms CPU/image, 3 FPS, 75 draw calls
+vue B · ronde 5 · avant : 39.44 ms CPU/image, 2.8 FPS, 75 draw calls
+vue B · ronde 5 · apres : 46.02 ms CPU/image, 2.6 FPS, 75 draw calls
+{
+  "A": {
+    "avant": {
+      "medianFrameMs": 50.03,
+      "minFrameMs": 44.08,
+      "maxFrameMs": 77,
+      "medianFps": 2.65,
+      "drawCalls": 73,
+      "triangles": 1560
+    },
+    "apres": {
+      "medianFrameMs": 52.35,
+      "minFrameMs": 46.72,
+      "maxFrameMs": 52.53,
+      "medianFps": 2.62,
+      "drawCalls": 73,
+      "triangles": 1560
+    }
+  },
+  "B": {
+    "avant": {
+      "medianFrameMs": 40.96,
+      "minFrameMs": 37.15,
+      "maxFrameMs": 44.94,
+      "medianFps": 3.03,
+      "drawCalls": 75,
+      "triangles": 1608
+    },
+    "apres": {
+      "medianFrameMs": 46.02,
+      "minFrameMs": 41.41,
+      "maxFrameMs": 48.73,
+      "medianFps": 2.93,
+      "drawCalls": 75,
+      "triangles": 1608
+    }
+  }
+}
+=== fin code 0 05:17:42

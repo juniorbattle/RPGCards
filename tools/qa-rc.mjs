@@ -354,6 +354,31 @@ try {
     await helper.context().close();
   });
 
+  // --- T : clavier seul, de l’accueil au duel (Tab / Entrée / Échap, aucune souris) -------------------
+  await run('T-clavier-seul', browser, { width: 1280, height: 720 }, async (page, check) => {
+    await page.goto(`${server.base}/?${Q}&reducedMotion=1`);
+    await screenIs(page, 'home');
+    const focused = () => page.evaluate(() => document.activeElement?.dataset?.key ?? document.activeElement?.tagName);
+    check(await focused() === 'home-new', `focus initial sur l’action principale (${await focused()})`);
+    await page.keyboard.press('Enter');
+    check(await focused() === 'new-create', 'création : focus sur « Créer le duelliste »');
+    await page.keyboard.press('Enter');
+    await screenIs(page, 'board');
+    let k = null;
+    for (let i = 0; i < 12 && k !== 'enc-quai-1'; i++) { await page.keyboard.press('Tab'); k = await focused(); }
+    check(k === 'enc-quai-1', 'rencontres : « Jouer la manche » atteint au Tab');
+    await page.keyboard.press('Enter');
+    await screenIs(page, 'prep');
+    check(await focused() === 'prep-start', 'préparation : focus sur « Commencer le duel »');
+    await page.keyboard.press('Escape');
+    check((await shell(page)).screen === 'prep', 'Échap sur un écran de jeu ne fait rien perdre');
+    await page.keyboard.press('Enter');
+    await page.waitForFunction(() => !!window.__lqv);
+    const st = newStats();
+    for (let i = 0; i < 2; i++) await playTurn(page, { name: 'T', useLecture: false, mode: 'keyboard' }, st);
+    check(st.keyboard >= 1 && !st.lostClicks.length, `duel joué au clavier (${st.keyboard} engagement(s), ${st.turns} tour(s))`);
+  });
+
   // --- P : coût CPU des écrans (CDP) -----------------------------------------------------------------
   await run('P-cout-cpu-ecrans', browser, { width: 1280, height: 720 }, async (page, check, res) => {
     const cdp = await page.context().newCDPSession(page);

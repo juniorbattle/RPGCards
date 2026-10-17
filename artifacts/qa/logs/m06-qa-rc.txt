@@ -1,0 +1,13 @@
+=== qa-rc début 04:42:28
+I-sans-webgl: 5/5 contrôles · console 0 · 12570 ms
+J-longevite-12-duels: 5/5 contrôles · console 0 · 129650 ms
+K-moteur-independant-des-animations: 3/3 contrôles · console 0 · 140215 ms
+L-mode-demo-reversible: 5/5 contrôles · console 0 · 12971 ms
+M-stockage-refuse: 3/3 contrôles · console 0 · 15520 ms
+N-recommencer-effacer-confirmes: 5/5 contrôles · console 0 · 6591 ms
+S-contraste-ecrans: 11/11 contrôles · console 0 · 17576 ms
+T-clavier-seul: 6/6 contrôles · console 0 · 14078 ms
+   fil principal (ms de tâches par seconde) : {"accueil":0,"rencontres":0,"preparation":0,"duel":8} · images 3D : accueil 0 / duel 9 en 4 s (1.3 FPS SwiftShader) · accueil prêt en 3395 ms · 73 draw calls
+P-cout-cpu-ecrans: 2/2 contrôles · console 0 · 26103 ms
+QA RC OK (9 campagnes) — artifacts/qa/qa-rc.json
+=== fin code 0 04:48:47
