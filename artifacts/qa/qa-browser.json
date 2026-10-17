@@ -1,6 +1,6 @@
 {
-  "commit": "c9e32fe",
-  "date": "2026-10-16T22:45:02.932Z",
+  "commit": "99e03e1",
+  "date": "2026-10-17T01:07:56.184Z",
   "chromium": "141.0.7390.37",
   "runs": [
     {
@@ -25,7 +25,7 @@
         13
       ],
       "overtime": 0,
-      "ms": 123097,
+      "ms": 111850,
       "consoleIssues": [],
       "turns": 12,
       "drags": 26,
@@ -41,7 +41,6 @@
         "focused",
         "smug",
         "surprised",
-        "annoyed",
         "triumphant"
       ],
       "sequencesWatched": 0,
@@ -57,6 +56,7 @@
       "stanceIssues": [],
       "stageGhosts": [],
       "stagesSeen": 0,
+      "rotations": [],
       "viewSwitches": 28,
       "personality": "voile"
     },
@@ -81,7 +81,7 @@
         0
       ],
       "overtime": 0,
-      "ms": 511645,
+      "ms": 441184,
       "consoleIssues": [],
       "turns": 13,
       "drags": 0,
@@ -113,6 +113,7 @@
       "stanceIssues": [],
       "stageGhosts": [],
       "stagesSeen": 10,
+      "rotations": [],
       "viewSwitches": 30,
       "personality": "ronce"
     },
@@ -136,7 +137,7 @@
         1
       ],
       "overtime": 2,
-      "ms": 77081,
+      "ms": 68002,
       "consoleIssues": [],
       "turns": 9,
       "drags": 0,
@@ -150,8 +151,8 @@
       "lostClicks": [],
       "moods": [
         "confident",
-        "pained",
         "focused",
+        "pained",
         "triumphant",
         "smug",
         "surprised"
@@ -169,6 +170,7 @@
       "stanceIssues": [],
       "stageGhosts": [],
       "stagesSeen": 0,
+      "rotations": [],
       "viewSwitches": 22,
       "personality": "braise"
     },
@@ -193,7 +195,7 @@
         0
       ],
       "overtime": 0,
-      "ms": 109402,
+      "ms": 86025,
       "consoleIssues": [],
       "turns": 18,
       "drags": 19,
@@ -208,9 +210,9 @@
       "moods": [
         "focused",
         "smug",
-        "pained",
-        "annoyed",
+        "confident",
         "surprised",
+        "pleased",
         "defeated"
       ],
       "sequencesWatched": 0,
@@ -226,19 +228,119 @@
       "stanceIssues": [],
       "stageGhosts": [],
       "stagesSeen": 0,
+      "rotations": [],
       "viewSwitches": 42,
       "personality": "voile"
+    },
+    {
+      "name": "mobile-rotation-touch",
+      "seed": 505,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "mode": "touch",
+      "tech": {
+        "Sondage": 2
+      },
+      "isMobile": true,
+      "rotate": [
+        {
+          "afterTurns": 1,
+          "viewport": {
+            "width": 844,
+            "height": 390
+          }
+        },
+        {
+          "afterTurns": 4,
+          "viewport": {
+            "width": 390,
+            "height": 844
+          }
+        },
+        {
+          "afterTurns": 6,
+          "viewport": {
+            "width": 844,
+            "height": 390
+          }
+        },
+        {
+          "afterTurns": 9,
+          "viewport": {
+            "width": 960,
+            "height": 540
+          }
+        }
+      ],
+      "outcome": "ended",
+      "phase": "ENDED",
+      "winner": "opp",
+      "turn": 16,
+      "hp": [
+        0,
+        51
+      ],
+      "overtime": 0,
+      "ms": 92679,
+      "consoleIssues": [],
+      "turns": 15,
+      "drags": 16,
+      "clicks": 16,
+      "keyboard": 0,
+      "tactics": 11,
+      "repels": 1,
+      "leaks": [],
+      "viewChecks": 56,
+      "viewErrors": [],
+      "lostClicks": [],
+      "moods": [
+        "neutral",
+        "focused",
+        "smug",
+        "confident",
+        "surprised",
+        "annoyed",
+        "pleased",
+        "thinking",
+        "shocked"
+      ],
+      "sequencesWatched": 0,
+      "sequencesSkipped": 10,
+      "manualToggleChecked": "ok",
+      "holds": 16,
+      "layoutChecked": [
+        "TACTICS",
+        "COMMIT"
+      ],
+      "layoutIssues": [],
+      "stanceChecks": 27,
+      "stanceIssues": [],
+      "stageGhosts": [],
+      "stagesSeen": 0,
+      "rotations": [
+        "844×390 tour 2 : état conservé",
+        "390×844 tour 5 : état conservé",
+        "844×390 tour 7 : état conservé",
+        "960×540 tour 10 : état conservé"
+      ],
+      "viewSwitches": 34,
+      "personality": "ronce"
     }
   ],
   "distinctMoods": [
     "focused",
     "smug",
     "surprised",
-    "annoyed",
     "triumphant",
     "neutral",
     "confident",
     "defeated",
-    "pained"
+    "pained",
+    "pleased",
+    "annoyed",
+    "thinking",
+    "shocked"
   ]
 }

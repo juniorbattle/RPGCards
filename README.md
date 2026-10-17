@@ -8,6 +8,8 @@ Duel de cartes tactique (noyau du futur RPG urbain) : **moteur de règles TypeSc
 
 **M03.1B — confidentialité des effets camouflés et QA des Techniques** (sur `main`) : l’effet d’une Secondaire camouflée par Dissimulation ne publie plus son nom, son motif d’Insight ni son détail ; seules ses conséquences publiques (dégâts fixes, soin, gain d’Insight, destination, neutralisation) sont annoncées avec une origine générique, le propriétaire recevant tout en privé (ADR 011, `docs/RAPPORT_M03_1B.md`) ; Rupture et Dissipation sont jouables et vérifiées par l’interface (scénarios ci-dessous).
 
+**M03.2 — fidélité visuelle du runtime** (sur `main`) : rival en buste rapproché, tête agrandie et visage modelé par code, visible dans les deux vues ; visage, table et cases mieux éclairés ; Clash allégé (verdict + trois conséquences au plus, départ en défausse montré sur les cartes) ; **gabarit mobile paysage** (844×390, 960×540) en plus du portrait, rotation en plein tour sans perte d’état (ADR 012, `docs/RAPPORT_M03_2.md`, comparaisons avant / après / preview dans `screenshots/qa/m03-2/`).
+
 > Règlement appliqué : **V3.0 (`source/CONTRAT_REGLES_V3_0_HISTORIQUE.md`) + avenant mandaté V3.2 (`contracts/02_…`)**. Delta à connaître : en *Amplifier le Rang*, un soutien de **même famille** que la Primaire vaut **Rang imprimé + 1** (D-01). Le texte historique V3.0 n’est pas modifié ; la ratification éventuelle en V3.3 appartient au responsable.
 
 ## Démarrage
@@ -21,12 +23,14 @@ npm run build        # typecheck + build Vite → dist/
 npm run qa:browser   # duels complets pilotés par l’UI (Chromium headless) → artifacts/qa/
 npm run qa:techniques # Rupture / Dissipation / effet camouflé par l’UI (souris + tactile) → screenshots/qa/m03-1b/
 npm run shots        # captures M03 + planches preview ↔ runtime → screenshots/qa/m03/
-npm run shots:clash  # chaque type de Clash : poses, mouvement réduit, pellicules → screenshots/qa/m03/clash/
+npm run shots:clash  # chaque type de Clash : poses, mouvement réduit, pellicules → screenshots/qa/m03-2/clash/ (CLASH_OUT=…)
+npm run shots:m03-2  # avant / après / preview M03.2 + mesures (LQV_BEFORE=<build M03> LQV_BEFORE_SHA=<sha>) → screenshots/qa/m03-2/
+node tools/perf-compare.mjs 5  # rendu avant / après en rondes entrelacées (LQV_BEFORE=<build> LQV_BEFORE_SHA=<sha>) → artifacts/qa/perf-compare-m03-2.json
 npm run perf         # mesures moteur + scène (machine courante) → artifacts/qa/perf.json
 npm run sim          # (optionnel) 200 duels IA/IA headless
 ```
 
-`qa:browser`, `qa:techniques`, `shots` et `perf` exigent un build (`npm run build`) et un Chromium local (`/opt/pw-browsers/chromium` par défaut, sinon `CHROMIUM_PATH=…`). Aucun navigateur n’est téléchargé.
+`qa:browser`, `qa:techniques`, `shots`, `shots:clash`, `shots:m03-2` et `perf` exigent un build (`npm run build`) et un Chromium local (`/opt/pw-browsers/chromium` par défaut, sinon `CHROMIUM_PATH=…`). Aucun navigateur n’est téléchargé.
 
 ## Jouer
 
@@ -57,6 +61,7 @@ Clavier : `Tab`, `Entrée/Espace`, `1–4` (main), `A`/`G` (mode), `Échap` (ann
 | `scale=1.2`, `hp=90`, `aiDelay=650` | taille du texte, PV de départ, délai de l’IA (ms) |
 | `gallery=1` | galerie de revue art (toutes les définitions + verso) |
 | `qa=1` | crochet `window.__lqv` pour la QA automatisée (jamais actif par défaut) |
+| `ablate=candles,banners,dust` | mesure de coût (avec `qa=1` uniquement) : retire du rendu les bougies, les bannières ou les poussières |
 
 ## Architecture
 

@@ -2,7 +2,7 @@
 
 **Nature :** journal de production du **nouveau projet**, et non journal copié de RPG-ArtByCode.  
 **Convention :** passes chronologiques, plus récente en bas ; statut `[OK]`, `[KO]`, `[?]` ; preuves vérifiables.  
-**Dernière passe :** 5 — M03.1B sur `main` : l’origine des effets d’une Secondaire camouflée n’est plus publiée (ADR 011) ; Rupture et Dissipation vérifiées par l’interface. (M03.2 en cours.)
+**Dernière passe :** 6 — M03.2 sur `main` : rival rapproché et expressif dans les deux vues, plateau éclairé avec contraste mesuré, Clash allégé, gabarit mobile paysage (ADR 012, `docs/RAPPORT_M03_2.md`).
 
 ## État initial connu
 
@@ -15,11 +15,11 @@
 
 ## À reprendre (prioritaire)
 
-1. **Revue opérateur M03** : composition et proportions (ADR 009), six chorégraphies du Clash et leur durée (ADR 010), écarts visuels restants (`docs/RAPPORT_M03.md` §8) ; planches `screenshots/qa/m03/comparaison-*.png`, démonstrations `screenshots/qa/m03/clash/`.
-2. **Écarts de fidélité restants** : visages et personnages moins « peints » que la preview (couches 2D plates), décor moins dense, pas de bloom ni de profondeur de champ, typographie système ; mobile pensé en portrait 390×844 (la preview montre un mobile paysage).
+1. **Revue opérateur M03.2** : proportions du rival, lumière, pilule de conséquences du Clash, gabarit paysage (ADR 012) ; planches `screenshots/qa/m03-2/comparaison-*.png`, `13-expressions.png`, démonstrations `screenshots/qa/m03-2/clash/` ; ADR 009 / 010 toujours à valider.
+2. **Écarts de fidélité restants** (`docs/RAPPORT_M03_2.md` §8) : personnages en plans 2,5D (pas de volume ni de chevelure détaillée), décor moins dense, ni bloom ni profondeur de champ, table encore plus sombre que la preview, typographie système ; paysage = gabarit compact du bureau (textes ≈ 9,5 px à 844×390), pas l’interface simplifiée du panneau 6.
 3. **Arbitrages encore proposés** (ADR 004) : ARB-002 (profil du rival public), ARB-001, ARB-005 (+ ARB-005b : carte camouflée remplacée pendant l’engagement, nommée en fin de tour depuis la passe 5), ARB-011 ; ratification éventuelle du delta D-01 (V3.3). Inférences restantes documentées (`docs/RAPPORT_M03_1B.md` §6).
 4. **Mesure sur GPU réel** (hors conteneur) : vues A/B, bougies (shader de points), scène du Clash (WAAPI) ; budget mobile.
-5. **M03.1B livré** (passe 5, `987ff27` + `c9e32fe`). **M03.2 en cours** : rival plus présent en A/B, éclairage, lisibilité du Clash, mobile paysage, comparaisons réelles avant / après / preview, `docs/RAPPORT_M03_2.md`.
+5. **M03.1B livré** (passe 5) ; **M03.2 livré** (passe 6, `e112765` → `dcebd2a`, preuves sur `99e03e1`).
 6. IA : modèle du joueur, niveaux de difficulté ; découpage du bundle Three.js.
 
 ## Principes à garder
@@ -32,6 +32,7 @@
 - Les fenêtres optionnelles s’ouvrent sur information **publique** uniquement ; une vue (`viewFor`) est une copie filtrée, jamais l’état brut.
 - Un rapport public l’est par construction, à la source : une valeur camouflée y vaut `null` (affichage `?`) dans l’état, l’événement et la vue ; sa valeur réelle ne voyage que dans l’événement privé de son propriétaire (passe 4).
 - Publier par liste blanche à partir d’une origine TYPÉE (Primaire / Secondaire + case), jamais par rapprochement de noms ; une source camouflée ne publie que la conséquence observable d’un succès, et rien pour un échec (passe 5). Un test de non-fuite inspecte récursivement TOUTES les surfaces adverses (événements, vue, journal, séquence, scène, IA, réactions).
+- Après tout changement de lumière ou de fond, mesurer la lisibilité sur la capture (contraste texte / fond réel) : éclairer peut faire baisser le contraste des textes clairs (passe 6). Une lumière animée module autour d’une base réglable, jamais une constante écrite à chaque image.
 - Aucun re-rendu global pendant une interaction pointeur (cause d’un clic perdu observé en QA, passe 1).
 - Un effet différé d’une interaction (`setTimeout` après `pointerup`) ne s’applique qu’à l’état où elle a commencé (jeton) : sinon il frappe l’état que cette interaction vient de créer (passe 2, regard de début de tour).
 - Séparer Règles / Présentation / Génération artistique / IA.
@@ -232,3 +233,29 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **Perf / visuels :** sans changement de rendu hors textes du journal / de la séquence et infobulle de défausse.
 - **Pensée :** une fuite d’information se corrige là où la donnée naît ; tant que l’origine d’un effet n’était qu’un nom, impossible de savoir s’il venait de la carte camouflée — l’origine typée rend la décision de publication triviale et testable.
 - **À reprendre :** M03.2 (fidélité visuelle) ; arbitrages ARB-005/005b.
+
+## Passe 6 — M03.2 : fidélité visuelle du runtime (rival, lumière, Clash, paysage) — 2026-10-16/17, sur `main`, départ `0ab0584`, code `e112765` → `dcebd2a`, preuves sur le build de `99e03e1`
+
+- **Mission / contraintes :** `docs/missions/M03_2_FIDELITE_VISUELLE_RUNTIME.md` après la porte M03.1B ; rival plus proche et expressif dans les deux vues, arène mieux éclairée, cartes et commandes lisibles, Clash plus clair sans surcharge, HUD conservés (rival haut-gauche, joueur bas-gauche), mobile paysage en plus du portrait, six chorégraphies conservées ; Three.js + TypeScript, Art by Code, aucune image externe ; preview = document de revue ; règles intactes ; développement direct sur `main`.
+- **Lecture initiale :** AGENTS, CLAUDE, JOURNAL (passe 5), missions M03_CONTINUATION / M03_2, ADR 009 / 010 / 011, rapports M03 et M03.1B (écarts §8), `rival.ts`, `rivalTextures.ts`, `arena.ts`, `styles.css`, `clashMotion.ts`, `clashStage.ts`, `board.ts`, outils QA (`browser`, `qa-browser`, `shots-m03`, `clash-shots`, `perf`).
+- **Diagnostic (captures du runtime M03, build `0ab0584`) :** visage du rival 45 px à 1280×720, luminance relative du visage ≈ 0,04 ; table et cases sombres ; scène du Clash sur le visage ; à 844×390 la main recouvrait les cases et le HUD joueur et le menu tactique était inaccessible au doigt ; 3 cas avec un texte sous 4,5:1 (mesure ajoutée en cours de passe).
+- **Modifications :** voir `docs/RAPPORT_M03_2.md` §3 — rival agrandi par ses proportions (le cadrage ancré re-normalise toute avance de caméra), visage / paupières / mains peints en 2× ; lumière (clé sur la tête, bougies réglées ; fill et lampe de table remplacés après mesure par de la lumière peinte : auto-éclairage du rival, flaque chaude dans la texture de la table), bois et mur plus clairs, bannières 1:2 ; Clash : face-à-face plus bas, 1 à 3 conséquences, « → DÉFAUSSE » sur les cartes ; gabarit paysage ; libellés courts « S1 · PRIMAIRE · S2 » ; pastilles / voiles sombres sous les textes de case ; bandeau de posture remonté, rangées du portrait abaissées ; `?qa=1&ablate=` ; outils `shots-m03-2` (contraste réel, sous-ensembles), pellicules explicites, `perf-compare` (rondes entrelacées), perf d’un build « avant ». ADR 012.
+- **[OK] Succès :**
+  - Rival : visage (yeux → menton) 45 → 83 px à 1280×720 (11,5 % de la hauteur, la proportion de la preview), 67 → 125 px à 1920, 27 → 50 px en portrait ; tête entière en vue B ; planche `13-expressions.png` (3 rivaux × 6 humeurs, avant / après).
+  - Lumière : luminance du visage ×4,6 en vue A (0,037 → 0,172), table +55 % (A), +92 % (B), ×2,7 (portrait), sans aucune lumière ajoutée au total.
+  - Lisibilité : contraste réel de chaque texte mesuré ≥ 4,5:1 dans les 13 cas capturés (3 cas sous le seuil dans le runtime M03) ; 0 chevauchement (2 à 844×390 en M03) ; menu tactique atteignable au doigt en paysage (impossible en M03).
+  - Clash : verdict + 1 à 3 conséquences, « → DÉFAUSSE » sur les cartes ; 10/10 démonstrations conformes aux six chorégraphies.
+  - QA finale sur le build de `99e03e1` : `qa:browser` 5/5 (dont la rotation en plein tour), `qa:techniques` 8/8, `shots:clash` 10/10, `shots:m03-2` 13 cas / 14 planches, 0 erreur console, 0 fuite.
+- **[KO] Échecs / tentatives abandonnées :**
+  - Le vacillement des bougies réécrivait toutes les lumières à 3,6 à chaque image : l’atténuation annoncée par `e112765` n’avait aucun effet (vu en relisant la boucle d’animation) → base par lumière (`7576d31`).
+  - Éclaircir la table a FAIT BAISSER le contraste des textes clairs posés dessus (aide de case 4,4:1 à 1920, libellé 3,6:1 en portrait) : visible seulement grâce à la mesure sur capture → pastille et voile sombres (`1b38b4b`, `84f0e28`). La première mesure ignorait l’opacité du texte (surestimation) → composition sur le fond (`4faa470`).
+  - Planche d’expressions : constantes déclarées après leur usage (zone morte) → campagne arrêtée avant les planches (`89e599d`).
+  - `pkill -f <motif>` lancé depuis une commande qui contient ce motif tue son propre shell (code 144) → motif à crochets (`qa-browse[r]`).
+  - Régression de performance trouvée par la comparaison entrelacée (et non par un relevé isolé, trop bruité : moteur identique mesuré à 22 puis 37 ms/duel le même jour) : vue A 36,9 → 55,9 ms CPU par image sous SwiftShader. Le fill et la lampe de table ajoutés coûtaient ≈ 6–7 ms → remplacés par de la lumière peinte (`b2fe6f1`).
+  - La flaque de lumière peinte a fait retomber un libellé « PRIMAIRE » sous 4,5:1 ; la mesure par libellé a montré deux chevauchements (bandeau de posture du rival sur le libellé de la rangée suivante — défaut déjà présent en M03 — et libellé du rival sur ses mains en portrait) → `dcebd2a`.
+  - `pkill -f` sur un motif présent dans la ligne de commande de la campagne a arrêté toute la campagne ; plusieurs campagnes relancées après correctifs : chaque modification du rendu invalide les preuves ; code gelé à `dcebd2a` avant la campagne finale.
+- **[?] Incertitudes / arbitrages :** proportions et lumière (ADR 012, à valider) ; gabarit paysage « compact du bureau » vs interface paysage simplifiée du panneau 6 ; pilule de conséquences sous la scène vs panneau latéral ; mesures SwiftShader seulement (pas de GPU).
+- **Tests :** `npm run typecheck` 0 erreur ; `npm test` 117/117 à chaque commit de code (intermédiaires revérifiés dans un arbre détaché) ; `npm run build` OK ; `qa:browser` 5/5 (267 contrôles de vue / 0 écart, 128 de posture / 0, 0 fuite, 0 clic perdu, 4 rotations avec état conservé) ; `qa:techniques` 8/8 ; `shots:clash` 10/10, 0 problème ; `shots:m03-2` 0 problème console. Détail : `docs/RAPPORT_M03_2.md` §6.
+- **Perf / visuels :** SwiftShader (CPU, sans GPU), 1280×720, rondes entrelacées avant / après (`tools/perf-compare.mjs`) : vue A 36,4 → 44,6 ms CPU par image (+23 %, médianes ; +52 % avant le passage à la lumière peinte), vue B 38,4 → 38,1 ms ; draw calls 80 → 73 (A). Ablation (vue A) : bougies ≈ la moitié du temps (49,6 → 25,4 ms sans elles), bannières ≈ 2 ms, poussières ≈ 0. Charge du conteneur très variable (moteur identique : 22,4 ms/duel le matin, 34–37 la nuit) : aucun relevé isolé n’est comparable. Captures : `screenshots/qa/m03-2/` (planches preview | avant `0ab0584` | après `99e03e1`).
+- **Pensée :** une amélioration visuelle se vérifie sur la capture, pas dans le code : la lumière ajoutée a dégradé la lisibilité qu’elle devait servir, et une lumière animée a annulé silencieusement un réglage — deux défauts qu’aucun test unitaire ne voyait, révélés par des mesures prises sur le rendu réel.
+- **À reprendre :** revue opérateur M03.2 (ADR 012, planches `screenshots/qa/m03-2/`) ; mesure sur GPU réel ; éventuelle interface paysage simplifiée ; densité du décor et post-traitement si le budget GPU le permet.
