@@ -166,7 +166,7 @@ button { font: inherit; color: inherit; }
 .zone-floor { position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--zh) / cos(var(--ft))); transform-origin: 50% 100%; transform: perspective(calc(var(--zw) * 3.2)) rotateX(var(--ft)); border: 2px dashed rgba(232, 196, 128, 0.82); border-radius: 12px; background: radial-gradient(ellipse at 50% 60%, rgba(60, 40, 22, 0.14), rgba(0, 0, 0, 0.3)); pointer-events: none; transition: border-color 0.15s, box-shadow 0.15s, background 0.15s; }
 .zone.primary .zone-floor { border-color: rgba(255, 214, 140, 0.9); box-shadow: 0 0 18px rgba(255, 200, 120, 0.25), inset 0 0 18px rgba(255, 200, 120, 0.12); }
 /* Étiquette de case : boîte ajustée au texte sur un voile sombre diffus (lisible sur le bois éclairé M03.2). */
-.zone > .zone-label { position: absolute; bottom: calc(100% + 3px); left: 50%; transform: translateX(-50%); padding: 0.06rem 0.65rem; border-radius: 999px; background: radial-gradient(closest-side, rgba(10, 7, 6, 0.66), rgba(10, 7, 6, 0.42) 72%, rgba(10, 7, 6, 0)); text-align: center; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em; color: #faf4e8; text-transform: uppercase; white-space: nowrap; text-shadow: 0 1px 3px #000, 0 0 6px rgba(0, 0, 0, 0.8); pointer-events: none; }
+.zone > .zone-label { position: absolute; bottom: calc(100% + 3px); left: 50%; transform: translateX(-50%); padding: 0.06rem 0.65rem; border-radius: 999px; background: radial-gradient(closest-side, rgba(10, 7, 6, 0.86), rgba(10, 7, 6, 0.74) 74%, rgba(10, 7, 6, 0)); text-align: center; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em; color: #faf4e8; text-transform: uppercase; white-space: nowrap; text-shadow: 0 1px 3px #000, 0 0 6px rgba(0, 0, 0, 0.8); pointer-events: none; }
 .zone.primary > .zone-label { color: var(--gold-hi); }
 /* Aide de case sur une pastille sombre translucide : lisible (≥ 4,5:1) sur la table éclairée M03.2. */
 .empty-hint { position: relative; max-width: 92%; font-size: 0.72rem; color: #f1e9dc; text-align: center; padding: 0.12rem 0.5rem; border-radius: 999px; background: rgba(12, 8, 6, 0.5); text-shadow: 0 1px 2px #000; pointer-events: none; }
@@ -251,7 +251,7 @@ button { font: inherit; color: inherit; }
 .stance-banner .sb-icon { display: inline-flex; width: 1.05em; height: 1.05em; }
 .stance-banner .sb-icon svg { width: 100%; height: 100%; }
 .stance-banner .sb-extra { font-weight: 700; font-size: 0.85em; opacity: 0.9; }
-.zone > .stance-banner { position: absolute; left: 50%; bottom: -0.7rem; transform: translateX(-50%); z-index: 4; filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.7)); }
+.zone > .stance-banner { position: absolute; left: 50%; bottom: -0.45rem; transform: translateX(-50%); z-index: 4; filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.7)); }
 .secret-stance { position: absolute; left: 50%; bottom: -0.6rem; transform: translateX(-50%); z-index: 4; display: inline-flex; align-items: center; gap: 0.25rem; font-size: 0.66rem; font-weight: 700; padding: 0.1rem 0.45rem; border-radius: 6px; border: 1px dashed rgba(255, 255, 255, 0.5); background: rgba(10, 8, 14, 0.85); color: var(--ink-dim); white-space: nowrap; }
 .secret-stance .sb-icon { display: inline-flex; width: 0.9rem; height: 0.9rem; }
 .secret-stance.assault .sb-icon { color: var(--assault-hi); }
@@ -389,8 +389,8 @@ button { font: inherit; color: inherit; }
   .rb-title { display: none; }
   .rb-line { font-size: 0.86rem; }
   .side { --zw: min(calc(var(--zh) * 1.35), 29vw); --card-w: min(calc(var(--zh) * 0.94 / cos(var(--ct)) / 1.4), calc(var(--zw) * 0.74)); }
-  .view-a .side.opp { top: 29.5%; --zh: 9.2vh; --ft: 56deg; --ct: 30deg; --zw: min(calc(var(--zh) * 1.35), 29vw); }
-  .view-a .side.me { top: 43%; --zh: 11.4vh; --ft: 48deg; --ct: 22deg; --zw: min(calc(var(--zh) * 1.3), 29vw); }
+  .view-a .side.opp { top: 30.7%; --zh: 9.2vh; --ft: 56deg; --ct: 30deg; --zw: min(calc(var(--zh) * 1.35), 29vw); }
+  .view-a .side.me { top: 43.6%; --zh: 11.4vh; --ft: 48deg; --ct: 22deg; --zw: min(calc(var(--zh) * 1.3), 29vw); }
   .view-b .side.opp { top: 22.6%; --zh: 7.2vh; --ft: 58deg; --ct: 30deg; --zw: min(calc(var(--zh) * 1.4), 29vw); }
   .view-b .side.me { top: 33%; --zh: 15.5vh; --ft: 34deg; --ct: 12deg; --zw: min(calc(var(--zh) * 1.2), 29vw); }
   .row { gap: 3vw; }
