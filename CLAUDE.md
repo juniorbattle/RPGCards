@@ -4,6 +4,11 @@
 
 Le développement se fait **directement sur `main`** : commit puis push sur `main` après validation (typecheck, tests, build ; QA navigateur quand le rendu change). **Pas de branche provisoire ni de PR**, sauf demande explicite du responsable. Ne jamais réécrire l’historique de `main` (pas de force-push, pas de rebase de commits publiés). Les branches `claude/*` M01–M03 sont de l’historique, déjà intégré.
 
+## MANDAT ACTIF — M04 à M06 (duel visuel validé, jeu opérationnel)
+
+Le responsable **valide la vue frontale actuelle du rival et la configuration visuelle M03.2**. La composition desktop doit désormais rester stable. **Mission principale :** lire `docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md`, ses trois contrats M04/M05/M06, et `docs/adr/013-baseline-visuelle-desktop-approuvee.md`. Après un bref audit, implémenter une boucle complète de RPG de cartes SOLO desktop (accueil, deck, rencontres, multiples duels, résultats, progression, sauvegarde/reprise) et la stabiliser en release candidate locale. Enchaîner de façon autonome sans demandes intermédiaires tant que les règles V3.0/V3.2 sont intactes. Mobile paysage et détails artistiques secondaires **différés**. Ce mandat **remplace les priorités M03.1B/M03.2**, déjà livrées. Respecter la règle de développement sur `main`.
+
+
 ## Mission active — M03.1B + M03.2 depuis main (2026-10-16)
 
 Lire `docs/missions/M03_CONTINUATION_DEPUIS_MAIN.md` et ses deux contrats associés, puis l'ADR 011. **Démarrer sur le dernier main**, où la passe 4 a déjà corrigé les scores bruts. Corriger maintenant les **noms d'effets / raisons Insight / détails de rapport** qui révèlent une Secondaire camouflée, puis tester Rupture et Dissipation dans l'UI, puis rapprocher réellement le runtime de la preview approuvée (rival en A/B, éclairage, lisibilité Clash, mobile paysage). Respecter la règle actuelle « directement sur main » ci-dessus, et ne pas modifier les règles du duel. Le travail n'est pas considéré livré par la seule présence des documents : coder, tester, capturer, mesurer, documenter.

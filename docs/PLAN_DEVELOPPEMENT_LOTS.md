@@ -1,5 +1,10 @@
 # Plan de développement — Tranches verticales et portes de validation
 
+## Extension de production approuvée — M04 à M06 (16 octobre 2026)
+
+Le MVP de duel M03.2 est réceptionné comme baseline visuelle desktop (ADR 013). **Ne pas le reconstruire**. La suite autorisée en autonomie est : M04 accueil/deck et navigation complète, M05 rivaux/rencontres/collection/progression/sauvegarde locale, M06 fiabilisation et release candidate solo desktop. Détails dans `docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md`. Mobile paysage et art décoratif secondaire reportés. Ces nouveaux lots étendent le périmètre du kit initial et ne modifient pas les règles V3.0/V3.2 ni l'économie non encore ratifiée.
+
+
 ## Mode d'exécution autonome — mandat mis à jour
 
 La mission M01 peut **enchaîner Lot 0, Lot 1, Lot 2, Lot 3 et QA initiale sans arrêt d'approbation** si chaque lot conserve les contrats et satisfait ses tests. Claude Code doit viser le **premier MVP jouable rapidement**, puis renforcer la couverture : pas d'arrêt artificiel après l'architecture ou un simulateur non interactif. `Three.js` est requis dans le runtime visuel ; l'interface des cartes peut exploiter des éléments DOM/SVG superposés. Le tout reste un jeu **HD-2D par code**, mais sans investissement initial dans des décors urbains complets.

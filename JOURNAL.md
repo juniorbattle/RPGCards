@@ -2,7 +2,7 @@
 
 **Nature :** journal de production du **nouveau projet**, et non journal copié de RPG-ArtByCode.  
 **Convention :** passes chronologiques, plus récente en bas ; statut `[OK]`, `[KO]`, `[?]` ; preuves vérifiables.  
-**Dernière passe :** 6 — M03.2 sur `main` : rival rapproché et expressif dans les deux vues, plateau éclairé avec contraste mesuré, Clash allégé, gabarit mobile paysage (ADR 012, `docs/RAPPORT_M03_2.md`).
+**Dernière passe :** 6 + mandat 7 — M03.2 sur `main` : rival rapproché et expressif dans les deux vues, plateau éclairé avec contraste mesuré, Clash allégé, gabarit mobile paysage (ADR 012, `docs/RAPPORT_M03_2.md`).
 
 ## État initial connu
 
@@ -15,7 +15,7 @@
 
 ## À reprendre (prioritaire)
 
-1. **Revue opérateur M03.2** : proportions du rival, lumière, pilule de conséquences du Clash, gabarit paysage (ADR 012) ; planches `screenshots/qa/m03-2/comparaison-*.png`, `13-expressions.png`, démonstrations `screenshots/qa/m03-2/clash/` ; ADR 009 / 010 toujours à valider.
+1. **PRIORITÉ OPÉRATEUR M04–M06 (16 octobre) :** vue frontale et proportions du rival **approuvées et figées comme baseline desktop (ADR 013)**. Construire une boucle opérationnelle menu → deck → rencontres → duels → résultat/progression → sauvegarde/reprise (docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md), puis stabiliser une release candidate locale. Mobile paysage et polish artistiques secondaires reportés.
 2. **Écarts de fidélité restants** (`docs/RAPPORT_M03_2.md` §8) : personnages en plans 2,5D (pas de volume ni de chevelure détaillée), décor moins dense, ni bloom ni profondeur de champ, table encore plus sombre que la preview, typographie système ; paysage = gabarit compact du bureau (textes ≈ 9,5 px à 844×390), pas l’interface simplifiée du panneau 6.
 3. **Arbitrages encore proposés** (ADR 004) : ARB-002 (profil du rival public), ARB-001, ARB-005 (+ ARB-005b : carte camouflée remplacée pendant l’engagement, nommée en fin de tour depuis la passe 5), ARB-011 ; ratification éventuelle du delta D-01 (V3.3). Inférences restantes documentées (`docs/RAPPORT_M03_1B.md` §6).
 4. **Mesure sur GPU réel** (hors conteneur) : vues A/B, bougies (shader de points), scène du Clash (WAAPI) ; budget mobile.
@@ -259,3 +259,11 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **Perf / visuels :** SwiftShader (CPU, sans GPU), 1280×720, rondes entrelacées avant / après (`tools/perf-compare.mjs`) : vue A 36,4 → 44,6 ms CPU par image (+23 %, médianes ; +52 % avant le passage à la lumière peinte), vue B 38,4 → 38,1 ms ; draw calls 80 → 73 (A). Ablation (vue A) : bougies ≈ la moitié du temps (49,6 → 25,4 ms sans elles), bannières ≈ 2 ms, poussières ≈ 0. Charge du conteneur très variable (moteur identique : 22,4 ms/duel le matin, 34–37 la nuit) : aucun relevé isolé n’est comparable. Captures : `screenshots/qa/m03-2/` (planches preview | avant `0ab0584` | après `99e03e1`).
 - **Pensée :** une amélioration visuelle se vérifie sur la capture, pas dans le code : la lumière ajoutée a dégradé la lisibilité qu’elle devait servir, et une lumière animée a annulé silencieusement un réglage — deux défauts qu’aucun test unitaire ne voyait, révélés par des mesures prises sur le rendu réel.
 - **À reprendre :** revue opérateur M03.2 (ADR 012, planches `screenshots/qa/m03-2/`) ; mesure sur GPU réel ; éventuelle interface paysage simplifiée ; densité du décor et post-traitement si le budget GPU le permet.
+
+## Mandat documentaire 7 — Validation du duel M03.2 et programme M04–M06 (2026-10-16)
+
+- **[OK] Validation opérateur :** proportions actuelles du rival en vue A/B, lecture du visage/haut du corps, position des HUD, éclairage utile et six chorégraphies ; la composition desktop M03.2 devient la **baseline de production** (ADR 013). Optimiser la performance en la conservant.
+- **[OK] Nouvelle priorité :** construire une **version opérationnelle solo locale** du RPG de cartes : menu, config de deck légale, galerie/collection réelle, sélection de rivaux, plusieurs duels, résultats, progression démo non monétaire, persistance/reprise, QA et release candidate (contrats M04–M06).
+- **[OK] Report :** mobile paysage et détails visuels secondaires ne sont plus prioritaires ; maintenir les fonctionnalités existantes sans refonte. Ne pas engager de ville complète ni d'économie canonique à ce stade.
+- **[?] Exécution :** ce commit **n'implémente pas** ces chantiers : mandat documentaire seulement. La base précédente est le runtime M03.2 ; Claude Code doit coder et tester les lots successifs sur main selon la règle de branche actuelle.
+- **À reprendre :** baseline tests/boot ; M04 produit ; M05 progression/persistance ; M06 QA de parcours complet, performance honnête, captures et rapport. Aucun changement silencieux aux règles ou secrets.
