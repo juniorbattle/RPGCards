@@ -44,7 +44,7 @@ Règles : **V3.0 + delta V3.2 inchangées** — `git diff 4bfb585..d19667e -- sr
 
 ## 3. Campagne de validation (build `d19667e`)
 
-Porte de démarrage (clone propre de `347af3c`, même code applicatif que la RC hors correctifs `d19667e`, puis revérifiée sur `d19667e`) : `npm ci` (57 paquets, 4 s) · `npm run typecheck` 0 erreur · `npm test` **146/146** · `npm run build` OK · `npm run preview` sert le jeu (titre, bundle 200) · `npm run dev` sert `main.ts` et `shell.ts` (200).
+Porte de démarrage, sur un **clone propre du commit final `382ad1f`** (code applicatif identique à `d19667e`) : `npm ci` (57 paquets, 2 s) · `npm run typecheck` 0 erreur · `npm test` **146/146** · `npm run build` OK · `npm run preview` sert le jeu (titre, bundle 200) · `npm run dev` sert `main.ts` et `shell.ts` (200). (Même résultat plus tôt sur un clone de `347af3c`.)
 
 | Campagne (build `d19667e`) | Résultat |
 |---|---|
