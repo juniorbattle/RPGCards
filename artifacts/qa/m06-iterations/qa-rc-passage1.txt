@@ -1,0 +1,16 @@
+I-sans-webgl: 5/5 contrôles · console 0 · 26396 ms
+J-longevite-12-duels: 4/5 contrôles · console 0 · 131884 ms
+   ÉCHEC textures GPU stables par rival sur 3 tours (21/23/25/26)
+K-moteur-independant-des-animations: 3/3 contrôles · console 0 · 140433 ms
+L-mode-demo-reversible: 5/5 contrôles · console 0 · 13389 ms
+M-stockage-refuse: 3/3 contrôles · console 0 · 15391 ms
+N-recommencer-effacer-confirmes: 5/5 contrôles · console 0 · 7035 ms
+S-contraste-ecrans: 7/11 contrôles · console 0 · 17042 ms
+   ÉCHEC nouveau duelliste : 51 textes, min 1.1:1 — sous le seuil : variant « Signature · Flamme conquérante » 1.3:1 ; variant « Signature · Clairvoyance voilée » 1.1:1 ; variant « Signature · Emprise » 1.1:1
+   ÉCHEC deck : 106 textes, min 1.1:1 — sous le seuil : variant « Signature · Flamme conquérante » 1.3:1 ; variant « Signature · Clairvoyance voilée » 1.1:1 ; variant « Signature · Emprise » 1.1:1
+   ÉCHEC collection : 188 textes, min 1:1 — sous le seuil : variant « Basic » 1.2:1 ; variant « Étincelle » 1.2:1 ; variant « Basic » 1.2:1
+   ÉCHEC préparation : 34 textes, min 1.3:1 — sous le seuil : variant « Signature · Flamme conquérante » 1.3:1 ; variant « Signature · Flamme conquérante » 1.3:1
+   CPU (ms de tâches par seconde) : {"accueil":0,"rencontres":0,"preparation":0,"duel":10} · accueil prêt en 3405 ms · duel 2.59 ms/image, 73 draw calls
+P-cout-cpu-ecrans: 1/1 contrôles · console 0 · 26130 ms
+ÉCHEC QA RC : J-longevite-12-duels, S-contraste-ecrans
+EXIT 1

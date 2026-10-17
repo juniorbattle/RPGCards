@@ -5,9 +5,15 @@ import { existsSync } from 'node:fs';
 
 export const CHROMIUM = process.env.CHROMIUM_PATH || ['/opt/pw-browsers/chromium', '/usr/bin/chromium', '/usr/bin/google-chrome'].find((p) => existsSync(p));
 
+/**
+ * Navigateur de QA. Par défaut : WebGL LOGICIEL (SwiftShader) — reproductible dans le conteneur, jamais
+ * une mesure de GPU. `LQV_GPU=1` (poste de l’opérateur, Chrome avec GPU via CHROMIUM_PATH, `LQV_HEADED=1`
+ * pour une fenêtre visible) : aucun forçage logiciel, le navigateur utilise le GPU réel.
+ */
 export async function launch() {
   if (!CHROMIUM) throw new Error('Chromium introuvable : définir CHROMIUM_PATH');
-  return chromium.launch({ executablePath: CHROMIUM, args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+  const gpu = process.env.LQV_GPU === '1';
+  return chromium.launch({ executablePath: CHROMIUM, headless: process.env.LQV_HEADED !== '1', args: gpu ? ['--ignore-gpu-blocklist'] : ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 }
 
 /** Démarre `vite preview` sur le build courant (dist/, ou `LQV_DIST`, ou `outDir` : build d’itération / « avant »). */

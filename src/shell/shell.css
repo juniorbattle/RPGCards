@@ -75,7 +75,9 @@
 .sh-tech small { color: var(--ink-dim); font-size: 0.74rem; line-height: 1.35; }
 .sh-tech small.timing { color: #d8c9a8; font-style: italic; }
 .sh-tech.on, .sh-tech[aria-pressed='true'] { border-color: var(--gold-hi); background: rgba(217, 178, 106, 0.14); box-shadow: inset 0 0 0 1px var(--gold-hi); }
-.sh-tech.locked { cursor: not-allowed; opacity: 0.55; border-style: dashed; }
+.sh-tech.locked { cursor: not-allowed; border-style: dashed; background: rgba(255, 255, 255, 0.02); }
+.sh-tech.locked b, .sh-tech.locked .cost { color: #a89a86; }
+.sh-tech.locked small { color: #c9bfae; }
 
 /* --- Rencontres ------------------------------------------------------------------------------ */
 .sh-enc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr)); gap: 0.9rem; }
@@ -131,7 +133,8 @@
 .sh-sig-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
 .sh-sig { cursor: pointer; display: grid; justify-items: center; gap: 0.2rem; padding: 0.4rem; border-radius: 10px; border: 2px solid transparent; background: rgba(255, 255, 255, 0.04); color: var(--ink-dim); font-size: 0.72rem; }
 .sh-sig.on { border-color: var(--gold-hi); background: rgba(217, 178, 106, 0.13); color: var(--ink); }
-.sh-sig.locked { opacity: 0.45; cursor: not-allowed; }
+.sh-sig.locked { cursor: not-allowed; }
+.sh-sig.locked .card { filter: grayscale(0.85) brightness(0.55); }
 .sh-deck-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.6rem; }
 .sh-fam-col { display: grid; gap: 0.45rem; align-content: start; padding: 0.5rem; border-radius: 12px; border: 1px solid var(--line-dim); background: rgba(255, 255, 255, 0.02); }
 .sh-fam-head { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0 0.35rem; align-items: center; font-family: Georgia, serif; color: var(--ink); font-size: 0.95rem; }
@@ -147,7 +150,7 @@
 .sh-ident-opts { display: grid; gap: 0.25rem; }
 .sh-ver { cursor: pointer; font: inherit; font-size: 0.74rem; padding: 0.22rem 0.4rem; border-radius: 6px; border: 1px solid var(--line-dim); background: rgba(14, 10, 12, 0.8); color: var(--ink-dim); text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sh-ver.on { border-color: var(--gold-hi); color: var(--ink); background: rgba(217, 178, 106, 0.18); font-weight: 700; }
-.sh-ver.locked { cursor: not-allowed; opacity: 0.5; border-style: dashed; }
+.sh-ver.locked { cursor: not-allowed; border-style: dashed; color: #b3a792; background: rgba(14, 10, 12, 0.6); }
 .sh-inspect { display: grid; justify-items: center; gap: 0.5rem; padding: 0.8rem; border: 1px solid var(--line); border-radius: 12px; background: rgba(14, 10, 12, 0.9); text-align: left; }
 .sh-inspect h3 { margin: 0; font-family: Georgia, serif; color: var(--gold-hi); font-size: 1rem; }
 .sh-inspect p { margin: 0.2rem 0 0; font-size: 0.78rem; line-height: 1.4; color: #e3dacb; }
@@ -217,7 +220,9 @@
 .sh-series-head { display: flex; gap: 0.8rem; align-items: baseline; flex-wrap: wrap; }
 .sh-series-head h2 { margin: 0; }
 .sh-series-head .btn { margin-left: auto; }
-.sh-enc.st-locked { opacity: 0.62; filter: saturate(0.6); }
+.sh-enc.st-locked { border-style: dashed; }
+.sh-enc.st-locked .sh-face { filter: grayscale(0.7) brightness(0.7); }
+.sh-enc.st-locked h2 { color: #d8cbb2; }
 .sh-enc.st-done { border-style: double; border-width: 3px; }
 .sh-lock { margin: 0; font-size: 0.78rem; color: var(--ink-dim); }
 .sh-enc-reward { margin: 0; font-size: 0.74rem; color: #e0d2ff; }

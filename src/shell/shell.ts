@@ -69,6 +69,10 @@ export class Shell {
   newDraft: { name: string; deck: DeckChoice } | null = null;
   private explicit: Set<string>;
   private keyHandler = (e: KeyboardEvent) => this.onKey(e);
+  /** Dernier échec d’écriture signalé (un message par minute au plus : jamais d’avalanche). */
+  private lastPersistError = 0;
+  /** Écran du dernier rendu (le focus et le défilement ne sont conservés que sur le même écran). */
+  private renderedScreen = '';
 
   constructor(readonly d: ShellDeps) {
     this.store = new SaveStore(SaveStore.browser());
@@ -129,7 +133,11 @@ export class Shell {
   persist(): boolean {
     if (!this.save) return false;
     const w = this.store.write(this.save);
-    if (!w.ok) this.toast(`Sauvegarde non enregistrée : ${w.reason}`, 'error');
+    if (!w.ok) {
+      const now = Date.now();
+      if (now - this.lastPersistError > 60_000) this.toast(`Sauvegarde non enregistrée : ${w.reason} La partie continue en mémoire.`, 'error');
+      this.lastPersistError = now;
+    }
     return w.ok;
   }
 
@@ -390,12 +398,21 @@ export class Shell {
       this.d.app.hidden = true;
     }
     const scr = s.screen === 'home' && this.homeMode === 'new' ? 'new' : s.screen;
+    const screenKey = `${scr}:${s.overlay ?? ''}`;
+    const same = screenKey === this.renderedScreen;
+    // Même écran (ex. bascule d’une carte du deck) : focus et défilement conservés ; sinon, action principale.
+    const active = document.activeElement as HTMLElement | null;
+    const focusKey = same && active && host.contains(active) ? active.dataset.key ?? null : null;
+    const scroll = same ? host.scrollTop : 0;
     host.className = `shell scr-${scr}${inDuel && !s.overlay ? ' passive' : ''}`;
     host.hidden = inDuel && !s.overlay;
     const content = this.screenEl();
     host.replaceChildren(...(content ? [content] : []));
-    // Focus : action principale de l’écran (navigation clavier sans souris).
-    const primary = host.querySelector<HTMLElement>('[data-shell-primary]:not(:disabled)') ?? host.querySelector<HTMLElement>('.sh-title');
+    host.scrollTop = scroll;
+    this.renderedScreen = screenKey;
+    document.title = `Les Quatre Voies${TITLES[scr] ? ` — ${TITLES[scr]}` : ''}`;
+    const keep = focusKey ? host.querySelector<HTMLElement>(`[data-key="${CSS.escape(focusKey)}"]`) : null;
+    const primary = keep ?? host.querySelector<HTMLElement>('[data-shell-primary]:not(:disabled)') ?? host.querySelector<HTMLElement>('.sh-title');
     if (primary && !host.hidden) primary.focus({ preventScroll: true });
   }
 
@@ -461,6 +478,8 @@ export class Shell {
 }
 
 export const verifyActive = verifyActiveCore;
+
+const TITLES: Record<string, string> = { home: 'Accueil', new: 'Nouveau duelliste', deck: 'Deck', collection: 'Collection', board: 'Rencontres', prep: 'Préparation', duel: 'Duel', result: 'Résultat', options: 'Options', help: 'Aide' };
 
 function menuBtn(label: string, onclick: () => void, key: string, primary = false, danger = false): HTMLElement {
   return h('button', { class: `sh-menu-item${danger ? ' danger' : ''}`, type: 'button', 'data-key': key, 'data-shell-primary': primary ? 'true' : null, onclick }, label);
