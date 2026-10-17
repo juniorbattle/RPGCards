@@ -1,5 +1,7 @@
 # RPGCards — Les Quatre Voies
 
+> **Mandat de production actif M04–M06 (16 octobre 2026)** : la **composition actuelle du duel desktop M03.2 est APPROUVÉE** (rival de face en buste expressif, deux vues, HUD et six chorégraphies). La priorité est désormais un **jeu solo opérationnel** avec accueil, deck, rivaux, parcours, résultats et sauvegarde ; mobile paysage et détails d'art secondaires sont différés. Voir `docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md` et l'ADR 013. **Le programme est prescrit, non encore implémenté.**
+
 Duel de cartes tactique (noyau du futur RPG urbain) : **moteur de règles TypeScript pur**, plateau à **manipulation directe** (glisser-déposer, clic-pour-poser, tactile, clavier), **adversaire IA non omniscient**, **art procédural par code** et **arène Three.js** provisoire.
 
 **M02 — confrontation face à face** (branche `claude/m02-confrontation-face-a-face`) : un **rival procédural expressif** se tient de l’autre côté d’une table de duel ; **vue A « confrontation »** frontale par défaut, **vue B « manipulation »** inclinée pour composer (avec portrait vivant du rival), transitions pilotées par les phases ; **résolution séquencée** (Interférences → Rang → absorption/dégâts → conséquences) ; IA à **mémoire autorisée** et 3 profils. Les expressions ne lisent que des faits publics : **aucun tell** ni mécanique psychologique n’est introduit.
@@ -87,7 +89,8 @@ Voir `JOURNAL.md` pour l’état exact, les preuves et les limites ; `docs/adr/0
 - **MVP de duel jouable** contre IA : oui (boucle complète jusqu’à K.-O., prolongation incluse).
 - **Conformité gameplay** : 16 variantes, 4 Signatures, 6 Techniques, Insight 0–2, Interférences simultanées, Repoussement, double K.-O. implémentés et testés (matrice G01–G27) ; interprétations de raccordement listées dans l’ADR 004 en attente d’arbitrage.
 - **RPG complet** : non (ville, collection, progression hors périmètre M01).
-- Direction artistique, palette, caméra HD-2D : **provisoires, non validées**.
+- **Composition desktop du duel : approuvée comme référence (ADR 013, M03.2)**. Ville HD-2D, personnages définitifs hors du duel, progression économique et décors finaux : encore ouverts.
+- **Parcours RPG opérationnel M04–M06 : à développer** ; ne pas confondre l'actuel MVP de duel et une version complète.
 
 `simulator_ref/` reste l’oracle de référence (non importé au runtime) :
 
