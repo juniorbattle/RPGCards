@@ -3,9 +3,12 @@
 // États (SHOTS=…, défaut « debut,select,commit,tactics ») : début de tour, carte choisie (boutons de pose),
 // Primaire + Secondaire posées, puis verrouillage jusqu’aux choix tactiques (au tour 1 de la graine 202, les Secondaires
 // sont en chargement : pas de choix tactique, la capture montre le tour résolu). Tailles : SIZES=… (défaut « 1280x720,1920x1080 ») ;
-// vue inclinée : VIEW=B (suffixe « -b » au fichier). GPU réel : LQV_GPU=1 CHROMIUM_PATH=…
+// vue inclinée : VIEW=B (suffixe « -b » au fichier) ; autre duel : SEED=… (défaut 202, suffixe « -s<graine> »).
+// GPU réel : LQV_GPU=1 CHROMIUM_PATH=…
 // CONTRAST=<fichier.json> : contraste de chaque texte visible du duel, mesuré sur la capture (méthode de qa:rc :
 // fond = médiane de luminance sous la boîte du texte, texte = couleur calculée) ; seuils 4,5:1, 3:1 en grand texte.
+// LUM=<fichier.json> : luminance relative moyenne (0–1) de zones de la SCÈNE 3D seule (canvas, sans le DOM) :
+// visage du rival, centre de la table, bouts de la table, fond, coin bas (repères M07 L3, en fractions d’écran).
 import { join } from 'node:path';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dragTo, launch, startPreview, waitDecision } from './browser.mjs';
@@ -17,10 +20,35 @@ const server = await startPreview(4195, dist);
 const browser = await launch();
 const errors = [];
 const view = process.env.VIEW === 'B' ? 'B' : null;
+const seed = process.env.SEED ?? '202';
 const sizes = (process.env.SIZES ?? '1280x720,1920x1080').split(',').map((x) => x.split('x').map(Number));
 const contrastOut = process.env.CONTRAST ?? null;
+const lumOut = process.env.LUM ?? null;
+const lum = {};
+const ZONES = { visage: [0.45, 0.14, 0.55, 0.3], table: [0.35, 0.52, 0.65, 0.66], boutsTable: [0.02, 0.55, 0.14, 0.7], fond: [0.25, 0.02, 0.35, 0.12], coinBas: [0, 0.9, 0.06, 1] };
 const contrast = {};
-const helper = contrastOut ? await (await browser.newContext()).newPage() : null;
+const helper = contrastOut || lumOut ? await (await browser.newContext()).newPage() : null;
+
+/** Luminance moyenne des zones de la scène 3D, lue sur le canvas de l’arène (preserveDrawingBuffer). */
+async function sceneLum(page) {
+  const src = await page.evaluate(() => document.querySelector('.arena-canvas')?.toDataURL('image/png') ?? null);
+  if (!src) return null;
+  return helper.evaluate(async ({ src, zones }) => {
+    const img = new Image(); img.src = src; await img.decode();
+    const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+    const g = c.getContext('2d'); g.drawImage(img, 0, 0);
+    const lin = (v) => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+    const out = {};
+    for (const [k, [x0, y0, x1, y1]] of Object.entries(zones)) {
+      const X = Math.round(x0 * c.width), Y = Math.round(y0 * c.height);
+      const d = g.getImageData(X, Y, Math.max(1, Math.round(x1 * c.width) - X), Math.max(1, Math.round(y1 * c.height) - Y)).data;
+      let s = 0;
+      for (let i = 0; i < d.length; i += 4) s += 0.2126 * lin(d[i]) + 0.7152 * lin(d[i + 1]) + 0.0722 * lin(d[i + 2]);
+      out[k] = Math.round((s / (d.length / 4)) * 1000) / 1000;
+    }
+    return out;
+  }, { src, zones: ZONES });
+}
 
 /** Textes lisibles à l’écran : boîte visible, non recouverte, hors filigrane décoratif de phase. */
 function textSamples() {
@@ -84,7 +112,7 @@ async function shot(w, h, action) {
   const page = await ctx.newPage();
   page.on('console', (m) => { if (m.type() === 'error') errors.push(`${action}: ${m.text()}`); });
   page.on('pageerror', (e) => errors.push(`${action}: ${e.message}`));
-  await page.goto(`${server.base}/?seed=202&autostart=1&qa=1&aiDelay=0&freeze=1${view ? `&view=${view}` : ''}`);
+  await page.goto(`${server.base}/?seed=${seed}&autostart=1&qa=1&aiDelay=0&freeze=1${view ? `&view=${view}` : ''}`);
   await page.waitForFunction(() => !!window.__lqv);
   if (action === 'select') {
     const v = await waitDecision(page);
@@ -106,11 +134,12 @@ async function shot(w, h, action) {
     }
   }
   await page.waitForTimeout(1500);
-  const name = `${action}-${w}${view ? '-b' : ''}`;
+  const name = `${action}-${w}${view ? '-b' : ''}${seed !== '202' ? `-s${seed}` : ''}`;
   const file = join(outDir, `${prefix}-${name}.png`);
   const png = await page.screenshot({ path: file });
   if (contrastOut) contrast[name] = await measure(page, png);
-  console.log(`ok ${file}${contrastOut ? ` · contraste min ${contrast[name].min}:1, ${contrast[name].sousSeuil.length} sous le seuil` : ''}`);
+  if (lumOut) lum[name] = await sceneLum(page);
+  console.log(`ok ${file}${contrastOut ? ` · contraste min ${contrast[name].min}:1, ${contrast[name].sousSeuil.length} sous le seuil` : ''}${lumOut ? ` · luminance ${JSON.stringify(lum[name])}` : ''}`);
   await ctx.close();
 }
 try {
@@ -121,5 +150,7 @@ try {
   await browser.close();
   server.stop();
 }
+if (lumOut) writeFileSync(lumOut, `${JSON.stringify({ dist, view: view ?? 'A', zones: ZONES, luminance: lum }, null, 2)}
+`);
 if (contrastOut) writeFileSync(contrastOut, `${JSON.stringify({ dist, view: view ?? 'A', mesures: contrast }, null, 2)}\n`);
 console.log(errors.length ? `console : ${errors.slice(0, 5).join(' | ')}` : 'console : 0 erreur');
