@@ -1,10 +1,12 @@
 # ADR 021 — Personnages « vectoriel V2 » : porte de validation sur Maëlle (M07, lot 5)
 
 Date : 2026-10-18
-Statut : **direction APPROUVÉE par le responsable** le 2026-10-18 sur la planche de Maëlle (« Je valide la direction V2
-de Maëlle : généralise-la à Kaï, Sélène et Orin sur le même modèle ») ; **étendue aux quatre rivaux** (amendement en fin
-de document), toujours derrière l’interrupteur opt-in : la bascule par défaut et le retrait du V1 attendent la revue de
-la galerie des quatre rivaux. Porte de validation d’origine : sections suivantes. Complète l’ADR 007 (rival procédural), l’ADR 012 (proportions) et l’ADR 017 (buste sans mains) ;
+Statut : **APPROUVÉ — rendu par défaut des rivaux** (passe 25). Direction validée par le responsable le 2026-10-18 sur la
+planche de Maëlle ; arbitrage relayé par la session principale : « Je valide la direction V2. Fais d’abord une passe de
+finition sur Maëlle (plan d’ombre du visage moins tranché, cheveux avec mèches et reflets, yeux lisibles en prudence à
+83 px), puis généralise à Kaï, Sélène et Orin », la V2 devenant le rendu par défaut une fois les quatre rivaux faits.
+Généralisation (amendement 1), finition et bascule (amendement 2) en fin de document ; l’ancien rendu V1 reste disponible
+pour la comparaison QA (`?qa=1&figure=v1`). Porte de validation d’origine : sections suivantes. Complète l’ADR 007 (rival procédural), l’ADR 012 (proportions) et l’ADR 017 (buste sans mains) ;
 ne change ni le cadrage (ADR 013), ni la scène (ADR 019), ni les règles.
 
 ## Contexte
@@ -133,5 +135,37 @@ Kaï et col châle d’Orin retirés.
 - Rendu par défaut toujours identique au pixel près à `6fdd27b` (12 cas) ; contraste des textes du duel inchangé
   (min 5,3:1, 0 texte sous le seuil, 24 captures des trois nouveaux rivaux) ; bundle +32 ko (873 ko).
 
-**Reste à décider par le responsable** : basculer le V2 par défaut (puis retirer le V1, l’interrupteur et ses deux
-défauts relevés) ; pré-générer les couches aux temps morts pour réduire l’à-coup d’apparition.
+Suite : amendement 2.
+
+## Amendement 2 du 2026-10-18 — passe de finition, puis V2 par défaut
+
+Statut : **décision du responsable** (arbitrage relayé, voir le statut). Constat de la relecture des planches : le plan
+d’ombre du côté droit du visage formait une coupure verticale nette (effet de masque, surtout à 1920), les cheveux de
+Maëlle un casque sombre uni, et en prudence à 1280×720 les yeux devenaient deux traits fins.
+
+### Décision
+
+- **Ombre propre adoucie** (`softShade`, socle) : le terminateur suit la pommette (plan d’ombre resserré sur le côté du
+  visage, creux sous la pommette), bordé d’une demi-teinte décalée vers la lumière ; bords légèrement fondus (flou de
+  canvas, 1,4 et 2,6 px de texture), contour du visage net. Appliqué aux quatre rivaux.
+- **Cheveux de Maëlle** : mèches marquées (demi-teinte au cœur de chaque mèche, séparations plus nettes), reflets en
+  tirets sur deux bandes lustrées, chevelure arrière éclaircie (occlusion réduite, mèches et reflet en couronne), quelques
+  cheveux libres sur le bord des pans ; reflets plus clairs.
+- **Yeux en prudence** : humeurs communes moins fermées (`focused` paupière 0,34 → 0,28, plissement 0,3 → 0,16 ;
+  `thinking` 0,3 → 0,27 / 0,15 → 0,1 ; `annoyed`, `pained`, `smug` desserrés), retouches de tempérament ajustées
+  (Kaï, Sélène, Orin) : l’ouverture de l’œil reste ≥ 16 unités H en prudence (≈ 11 px à 1280×720), iris visible.
+- **V2 par défaut** pour les quatre rivaux (duel, affiches, HUD) ; `?qa=1&figure=v1` rend l’ancien V1 (comparaison et
+  preuve que son chemin reste intact) ; le duelliste joueur reste dessiné en V1 (hors périmètre).
+
+### Conséquences
+
+- Planche avant / après : `screenshots/qa/m07/l5-finition/planche-finition-ronce.png` ; galerie finale : `screenshots/qa/m07/l5-rivaux/`.
+- Chemin V1 (`?qa=1&figure=v1`) identique au pixel près au rendu par défaut de `6fdd27b` (12 cas). Temps GPU par image,
+  V1 contre V2 par défaut (Maëlle, vue A, 1280×720) : Radeon 780M 2,52 → 2,52 ms, RTX 4060 1,08 → 1,08 ms ; 165 FPS ;
+  85 → 93 appels de dessin. Génération des couches 10–18 → 27–39 ms selon le rival et le GPU ; première image après
+  l’apparition d’un rival 41–54 → 76–112 ms (une fois par changement de rival) ; aucun nouveau programme GPU.
+- QA avec la V2 par défaut : `qa:browser` 5/5, `qa:product` 8/8 (64/64), `qa:rc` 9/9 (46/46 ; contraste des écrans min
+  5,4:1, longévité 37 textures par rival) ; contraste du duel 32 captures, 0 texte sous le seuil ; 0 fuite de secret.
+
+Restent proposés : retrait du V1 (et de ses deux défauts relevés) quand la comparaison n’est plus utile ; pré-génération
+des couches aux temps morts (à-coup d’apparition) ; portrait du joueur.

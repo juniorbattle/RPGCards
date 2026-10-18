@@ -1,13 +1,13 @@
 /**
- * M07 L5 — interrupteur du modèle artistique des personnages.
- * `v1` : rendu approuvé, inchangé (défaut). `v2` : « vectoriel V2 » (tracés écrits à la main, aplats d’illustration),
- * direction validée par le responsable sur Maëlle (2026-10-18), étendue aux rivaux dont l’identité V2 existe
- * (`src/scene/v2/`) ; activé par `?qa=1&figure=v2`. Le style est fixé une fois au chargement (main.ts).
+ * M07 L5 — modèle artistique des personnages.
+ * `v2` (défaut depuis la passe 25, décision du responsable) : « vectoriel V2 » (tracés écrits à la main, aplats
+ * d’illustration), une identité par rival dans `src/scene/v2/`. `v1` : ancien rendu, gardé pour la comparaison QA
+ * (`?qa=1&figure=v1`). Le style est fixé une fois au chargement (main.ts).
  */
 import { V2_IDS } from './v2';
 export type FigureStyle = 'v1' | 'v2';
 
-let style: FigureStyle = 'v1';
+let style: FigureStyle = 'v2';
 
 export function setFigureStyle(s: FigureStyle): void {
   style = s;

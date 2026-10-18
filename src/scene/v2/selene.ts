@@ -6,7 +6,7 @@
  */
 import { drawEmblem } from '../../art/emblems';
 import {
-  along, backCanvasH, canvas, chain, chainPath, clipped, edgeBand, EYE_CX, fill, HOOD_BOX, mirrored, P, stroke, taper, torsoCanvasH,
+  along, backCanvasH, canvas, chain, chainPath, clipped, edgeBand, EYE_CX, fill, HOOD_BOX, mirrored, P, softShade, stroke, taper, torsoCanvasH,
   translatedPath, type BrowShape, type Cubic, type FigureV2Kit,
 } from '../figureV2';
 
@@ -50,7 +50,7 @@ function drawHead(): HTMLCanvasElement {
   const face = P(FACE);
   fill(ctx, face, C.skin);
   clipped(ctx, face, () => {
-    fill(ctx, 'M196,64 C204,100 200,128 204,150 C206,164 198,178 186,190 C178,198 172,210 170,224 C168,240 158,256 142,268 L250,300 L250,40 Z', C.skinShade);
+    softShade(ctx, 'M203,70 C207,104 205,132 206,156 C204,170 196,182 186,192 C178,200 172,212 170,226 C168,242 158,258 142,268 L250,300 L250,40 Z', C.skinShade);
     fill(ctx, translatedPath(FRINGE, 2, 6), C.skinShade, 0.8);
     fill(ctx, translatedPath(SIDE, 4, 3), C.skinShade, 0.7);
     mirrored(ctx, 128, () => fill(ctx, translatedPath(SIDE, -2, 3), C.skinDeep, 0.5));
@@ -235,7 +235,7 @@ export const SELENE_V2: FigureV2Kit = {
   brows: BROWS_SELENE,
   // Tempérament : narquoise, observatrice ; paupières mi-closes, sourire en coin.
   moods: {
-    smug: { browL: 0.4, browR: -0.12, browAngle: 0.05, lid: 0.44, squint: 0.2, tilt: 0.07, mouth: 'smirk' },
+    smug: { browL: 0.4, browR: -0.12, browAngle: 0.05, lid: 0.38, squint: 0.12, tilt: 0.07, mouth: 'smirk' },
     confident: { browL: 0.2, browR: 0, lid: 0.34, squint: 0.15, tilt: 0.04, mouth: 'smirk' },
   },
   head: drawHead,

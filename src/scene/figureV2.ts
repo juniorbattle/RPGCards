@@ -56,18 +56,18 @@ const f = (browL: number, browR: number, browAngle: number, lid: number, squint:
  */
 export const MOODS_V2: Record<Mood, FaceV2> = {
   neutral: f(0, 0, 0, 0.2, 0, 0, 0, 'neutral'),
-  focused: f(-0.35, -0.25, 0.4, 0.34, 0.3, 0.02, 0, 'tight', 'knit'),
+  focused: f(-0.35, -0.25, 0.4, 0.28, 0.16, 0.02, 0, 'tight', 'knit'),
   confident: f(0.1, 0, 0.05, 0.28, 0.12, 0.03, 0, 'smirk'),
-  smug: f(0.4, -0.1, 0.05, 0.4, 0.2, 0.06, 0, 'smirk'),
+  smug: f(0.4, -0.1, 0.05, 0.36, 0.12, 0.06, 0, 'smirk'),
   pleased: f(0.2, 0.2, -0.1, 0.26, 0.35, 0.03, 0.15, 'smile'),
   triumphant: f(0.35, 0.35, -0.1, 0.2, 0.4, -0.03, 0.25, 'grin'),
   surprised: f(0.9, 0.85, -0.15, -0.3, 0, 0, 0, 'open', 'arch'),
-  pained: f(-0.05, -0.1, -0.6, 0.42, 0.3, -0.06, 0.55, 'grimace'),
-  annoyed: f(-0.3, -0.35, 0.5, 0.36, 0.2, 0, 0.1, 'frown', 'knit'),
+  pained: f(-0.05, -0.1, -0.6, 0.38, 0.24, -0.06, 0.55, 'grimace'),
+  annoyed: f(-0.3, -0.35, 0.5, 0.3, 0.14, 0, 0.1, 'frown', 'knit'),
   angry: f(-0.5, -0.5, 0.9, 0.3, 0.3, 0, 0.4, 'grimace', 'knit'),
   relieved: f(0.25, 0.25, -0.4, 0.45, 0.1, 0.03, 0, 'smile'),
   defeated: f(-0.2, -0.2, -0.75, 0.6, 0.1, -0.08, 0.2, 'frown'),
-  thinking: f(0.3, -0.25, 0.1, 0.3, 0.15, 0.06, 0, 'tight'),
+  thinking: f(0.3, -0.25, 0.1, 0.27, 0.1, 0.06, 0, 'tight'),
   shocked: f(1, 1, -0.25, -0.35, 0, 0, 0.1, 'open', 'arch'),
 };
 export const LID_REST = MOODS_V2.neutral.lid;
@@ -248,6 +248,20 @@ export function mirrored(ctx: Ctx, cx: number, draw: () => void): void {
   ctx.translate(2 * cx, 0);
   ctx.scale(-1, 1);
   draw();
+  ctx.restore();
+}
+
+/**
+ * Ombre propre du visage, adoucie (finition L5, demande du responsable : « plan d’ombre du visage moins tranché ») :
+ * une demi-teinte décalée vers la lumière borde l’ombre, et les deux aplats ont le bord légèrement fondu. À dessiner
+ * dans la découpe du visage : le contour reste net.
+ */
+export function softShade(ctx: Ctx, d: string, color: string, alpha = 1, dx = -7): void {
+  ctx.save();
+  ctx.filter = 'blur(2.6px)';
+  fill(ctx, translatedPath(d, dx, 0), color, 0.42 * alpha);
+  ctx.filter = 'blur(1.4px)';
+  fill(ctx, d, color, alpha);
   ctx.restore();
 }
 

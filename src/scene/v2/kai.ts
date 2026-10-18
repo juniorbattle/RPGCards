@@ -6,7 +6,7 @@
  */
 import { drawEmblem } from '../../art/emblems';
 import {
-  backCanvasH, canvas, clipped, edgeBand, EYE_CX, fill, mirrored, P, stroke, taper, torsoCanvasH, translatedPath,
+  backCanvasH, canvas, clipped, edgeBand, EYE_CX, fill, mirrored, P, softShade, stroke, taper, torsoCanvasH, translatedPath,
   type BrowShape, type Ctx, type Cubic, type FigureV2Kit,
 } from '../figureV2';
 
@@ -72,7 +72,7 @@ function drawHead(): HTMLCanvasElement {
   const face = P(FACE);
   fill(ctx, face, C.skin);
   clipped(ctx, face, () => {
-    fill(ctx, 'M198,60 C206,96 204,128 206,150 C206,166 198,180 188,192 C180,202 176,214 176,228 C176,244 168,258 152,268 L250,300 L250,40 Z', C.skinShade);
+    softShade(ctx, 'M206,66 C210,100 208,130 209,154 C207,170 198,184 188,194 C180,204 176,216 176,230 C176,246 168,258 152,268 L250,300 L250,40 Z', C.skinShade);
     // Ombres portées du bandeau et des mèches.
     fill(ctx, translatedPath(BAND, 2, 6), C.skinShade, 0.85);
     for (const l of FORELOCKS) { const sh = new Path2D(); sh.addPath(lockPath(l), new DOMMatrix([1, 0, 0, 1, 3, 6])); fill(ctx, sh, C.skinShade, 0.75); }
@@ -277,7 +277,7 @@ export const KAI_V2: FigureV2Kit = {
   // Tempérament : sûr de lui, explosif ; sourire en coin un sourcil haussé, triomphe à pleines dents.
   moods: {
     confident: { browL: 0.35, browR: -0.05, browAngle: 0.1, lid: 0.3, squint: 0.15, tilt: 0.04, mouth: 'smirk' },
-    smug: { browL: 0.5, browR: -0.15, lid: 0.38, squint: 0.2, tilt: 0.07, mouth: 'smirk' },
+    smug: { browL: 0.5, browR: -0.15, lid: 0.34, squint: 0.12, tilt: 0.07, mouth: 'smirk' },
     triumphant: { browL: 0.4, browR: 0.4, lid: 0.18, squint: 0.45, tilt: -0.04, flush: 0.2, mouth: 'grin' },
   },
   head: drawHead,
