@@ -1,0 +1,158 @@
+{
+  "date": "2026-10-18T19:53:47.026Z",
+  "commit": "6fdd27b+arbre de travail",
+  "chromeArgs": [],
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "generation": {
+    "v1": {
+      "medianMs": 15.4,
+      "minMs": 14.1,
+      "maxMs": 100.5,
+      "runs": 25,
+      "textures": 15,
+      "texels": 570880
+    },
+    "v2": {
+      "medianMs": 47.1,
+      "minMs": 36.5,
+      "maxMs": 141.6,
+      "runs": 25,
+      "textures": 24,
+      "texels": 1853223
+    }
+  },
+  "swap": {
+    "v1": [
+      {
+        "setRivalMs": 4.1,
+        "firstFrameMs": 63.4,
+        "nextFrameMs": 2.9,
+        "textures": 33,
+        "programs": 40,
+        "drawCalls": 85
+      },
+      {
+        "setRivalMs": 3.8,
+        "firstFrameMs": 61.8,
+        "nextFrameMs": 2.7,
+        "textures": 33,
+        "programs": 40,
+        "drawCalls": 85
+      },
+      {
+        "setRivalMs": 3.4,
+        "firstFrameMs": 69.5,
+        "nextFrameMs": 2.7,
+        "textures": 33,
+        "programs": 40,
+        "drawCalls": 85
+      },
+      {
+        "setRivalMs": 3.8,
+        "firstFrameMs": 62.4,
+        "nextFrameMs": 2.6,
+        "textures": 33,
+        "programs": 40,
+        "drawCalls": 85
+      },
+      {
+        "setRivalMs": 4.1,
+        "firstFrameMs": 63,
+        "nextFrameMs": 3.6,
+        "textures": 33,
+        "programs": 40,
+        "drawCalls": 85
+      },
+      {
+        "setRivalMs": 4.4,
+        "firstFrameMs": 70.8,
+        "nextFrameMs": 3,
+        "textures": 33,
+        "programs": 40,
+        "drawCalls": 85
+      },
+      {
+        "setRivalMs": 3.4,
+        "firstFrameMs": 58.1,
+        "nextFrameMs": 2.6,
+        "textures": 33,
+        "programs": 40,
+        "drawCalls": 85
+      }
+    ],
+    "v2": [
+      {
+        "setRivalMs": 13.3,
+        "firstFrameMs": 94.9,
+        "nextFrameMs": 3.7,
+        "textures": 37,
+        "programs": 40,
+        "drawCalls": 93
+      },
+      {
+        "setRivalMs": 12.1,
+        "firstFrameMs": 101.2,
+        "nextFrameMs": 3.6,
+        "textures": 37,
+        "programs": 40,
+        "drawCalls": 93
+      },
+      {
+        "setRivalMs": 16.3,
+        "firstFrameMs": 102.9,
+        "nextFrameMs": 3.5,
+        "textures": 37,
+        "programs": 40,
+        "drawCalls": 93
+      },
+      {
+        "setRivalMs": 12.8,
+        "firstFrameMs": 102.9,
+        "nextFrameMs": 3.7,
+        "textures": 37,
+        "programs": 40,
+        "drawCalls": 93
+      },
+      {
+        "setRivalMs": 15.2,
+        "firstFrameMs": 96,
+        "nextFrameMs": 4,
+        "textures": 37,
+        "programs": 40,
+        "drawCalls": 93
+      },
+      {
+        "setRivalMs": 13.5,
+        "firstFrameMs": 97,
+        "nextFrameMs": 3.7,
+        "textures": 37,
+        "programs": 40,
+        "drawCalls": 93
+      },
+      {
+        "setRivalMs": 14.2,
+        "firstFrameMs": 109.7,
+        "nextFrameMs": 7.6,
+        "textures": 37,
+        "programs": 40,
+        "drawCalls": 93
+      }
+    ]
+  },
+  "swapSummary": {
+    "v1": {
+      "setRivalMs": 3.8,
+      "firstFrameMs": 63,
+      "textures": 33,
+      "programs": 40,
+      "drawCalls": 85
+    },
+    "v2": {
+      "setRivalMs": 13.5,
+      "firstFrameMs": 101.2,
+      "textures": 37,
+      "programs": 40,
+      "drawCalls": 93
+    }
+  }
+}

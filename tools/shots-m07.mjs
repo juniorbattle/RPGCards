@@ -21,6 +21,8 @@ const browser = await launch();
 const errors = [];
 const view = process.env.VIEW === 'B' ? 'B' : null;
 const seed = process.env.SEED ?? '202';
+// QUERY=… : paramètres d’URL en plus (M07 L5 : `figure=v2`, modèle V2 de Maëlle — graine 202 = Maëlle).
+const query = process.env.QUERY ? `&${process.env.QUERY}` : '';
 const sizes = (process.env.SIZES ?? '1280x720,1920x1080').split(',').map((x) => x.split('x').map(Number));
 const contrastOut = process.env.CONTRAST ?? null;
 const lumOut = process.env.LUM ?? null;
@@ -112,7 +114,7 @@ async function shot(w, h, action) {
   const page = await ctx.newPage();
   page.on('console', (m) => { if (m.type() === 'error') errors.push(`${action}: ${m.text()}`); });
   page.on('pageerror', (e) => errors.push(`${action}: ${e.message}`));
-  await page.goto(`${server.base}/?seed=${seed}&autostart=1&qa=1&aiDelay=0&freeze=1${view ? `&view=${view}` : ''}`);
+  await page.goto(`${server.base}/?seed=${seed}&autostart=1&qa=1&aiDelay=0&freeze=1${view ? `&view=${view}` : ''}${query}`);
   await page.waitForFunction(() => !!window.__lqv);
   if (action === 'select') {
     const v = await waitDecision(page);
