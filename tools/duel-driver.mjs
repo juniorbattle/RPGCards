@@ -119,6 +119,36 @@ export async function stanceAudit(page) {
 }
 
 /**
+ * Retard de minuterie toléré au-delà du délai de retrait programmé par la scène (page chargée, rendu
+ * SwiftShader). Une scène bloquée ne part jamais : elle est détectée quelle que soit cette marge.
+ */
+export const STAGE_SLACK_MS = 400;
+
+/**
+ * Scène du Clash hors résolution (4b, arbitrage du responsable du 2026-10-18 : vérification tolérante, la
+ * chorégraphie ne change pas). Seul le fondu de défausse est toléré : nettoyage commencé (`stageLeaving`,
+ * délai de retrait réel lu dans la page) et retrait effectif avant ce délai + `STAGE_SLACK_MS` ; la QA attend
+ * la fin de CE fondu. Tout le reste est un fantôme : plusieurs scènes, scène hors fondu (`residual` : pleine,
+ * nettoyage jamais commencé) ou encore présente après son délai (`stuck` : bloquée).
+ */
+export async function stageAudit(page) {
+  return page.evaluate(async (slack) => {
+    const count = () => document.querySelectorAll('#stage .clash-stage').length;
+    const n = count();
+    if (!n) return { verdict: 'none' };
+    const lv = window.__lqv.presentation().stageLeaving ?? null;
+    if (n !== 1 || !lv) return { verdict: 'residual', n };
+    const t0 = performance.now();
+    const deadline = t0 + lv.ms + slack - lv.elapsed;
+    while (count() && performance.now() < deadline) await new Promise((r) => setTimeout(r, 16));
+    const waited = Math.round(performance.now() - t0);
+    const elapsed = Math.round(lv.elapsed);
+    if (count()) return { verdict: 'stuck', ms: lv.ms, elapsed: elapsed + waited };
+    return { verdict: 'faded', ms: lv.ms, elapsed, waited };
+  }, STAGE_SLACK_MS);
+}
+
+/**
  * `run.lean` (mesures de fluidité, passe 12) : mêmes décisions et mêmes clics, mais ni sondage de la
  * vue (attente `waitLean`), ni audits (vue, composition, posture, secrets, bascule V, clic perdu) :
  * le fil principal de la page ne porte que le jeu et les entrées. Absent : comportement QA historique.
@@ -132,9 +162,12 @@ export async function playTurn(page, run, stats) {
     if (v.phase === 'ENDED') return 'ended';
     if (!lean) await checkView(page, v, stats);
     if (!lean && v.phase !== 'RESOLVED' && v.phase !== 'REPEL') {
-      // Aucune scène de Clash fantôme hors résolution (nettoyage après passage/saut/nouveau tour).
-      const ghosts = await page.evaluate(() => document.querySelectorAll('#stage .clash-stage').length);
-      if (ghosts) stats.stageGhosts.push(`tour ${v.turn} ${v.phase} : ${ghosts} scène(s) de Clash résiduelle(s)`);
+      // Aucune scène de Clash fantôme hors résolution (nettoyage après passage/saut/nouveau tour) ; seul le
+      // fondu de défausse en cours est toléré, borné par sa durée réelle (`stageAudit`, 4b).
+      const st = await stageAudit(page);
+      if (st.verdict === 'faded') stats.stageFades.push(`tour ${v.turn} ${v.phase} : fondu de défausse à ${st.elapsed}/${st.ms} ms, scène retirée ${st.waited} ms plus tard`);
+      else if (st.verdict === 'stuck') stats.stageGhosts.push(`tour ${v.turn} ${v.phase} : scène de Clash bloquée, encore là ${st.elapsed} ms après le début de son fondu (retrait prévu à ${st.ms} ms)`);
+      else if (st.verdict === 'residual') stats.stageGhosts.push(`tour ${v.turn} ${v.phase} : ${st.n} scène(s) de Clash résiduelle(s) hors fondu de défausse`);
     }
     if (!lean && (v.phase === 'COMMIT' || v.phase === 'TACTICS') && v.awaitingMe && !stats.layoutChecked.includes(v.phase)) {
       stats.layoutChecked.push(v.phase);
@@ -289,5 +322,5 @@ export async function playTurn(page, run, stats) {
 
 /** Statistiques vierges d’un duel piloté (même forme que qa-browser). */
 export function newStats() {
-  return { turns: 0, drags: 0, clicks: 0, keyboard: 0, tactics: 0, repels: 0, leaks: [], viewChecks: 0, viewErrors: [], lostClicks: [], tech: {}, moods: new Set(), sequencesWatched: 0, sequencesSkipped: 0, manualToggleChecked: null, holds: 0, layoutChecked: [], layoutIssues: [], stanceChecks: 0, stanceIssues: [], stageGhosts: [], stagesSeen: 0, rotations: [] };
+  return { turns: 0, drags: 0, clicks: 0, keyboard: 0, tactics: 0, repels: 0, leaks: [], viewChecks: 0, viewErrors: [], lostClicks: [], tech: {}, moods: new Set(), sequencesWatched: 0, sequencesSkipped: 0, manualToggleChecked: null, holds: 0, layoutChecked: [], layoutIssues: [], stanceChecks: 0, stanceIssues: [], stageGhosts: [], stageFades: [], stagesSeen: 0, rotations: [] };
 }
