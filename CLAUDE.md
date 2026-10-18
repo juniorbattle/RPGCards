@@ -4,7 +4,11 @@
 
 Le développement se fait **directement sur `main`** : commit puis push sur `main` après validation (typecheck, tests, build ; QA navigateur quand le rendu change). **Pas de branche provisoire ni de PR**, sauf demande explicite du responsable. Ne jamais réécrire l’historique de `main` (pas de force-push, pas de rebase de commits publiés). Les branches `claude/*` M01–M03 sont de l’historique, déjà intégré.
 
-## MANDAT ACTIF — M04 à M06 (duel visuel validé, jeu opérationnel)
+## MANDAT ACTIF — M07 : mise en scène du duel et lisibilité (2026-10-17)
+
+Lire `docs/missions/M07_MISE_EN_SCENE_ET_LISIBILITE.md` et la section M07 d’`AGENTS.md`. Rival en buste sans mains (ADR 017), plateau symétrique et lisible avec un tour guidé, puis mise en scène HD-2D de la scène entière ; règles et secrets inchangés. M04–M06 sont livrés (RC 0.6.0-rc.1).
+
+## Mandat M04 à M06 (livré : duel visuel validé, jeu opérationnel)
 
 Le responsable **valide la vue frontale actuelle du rival et la configuration visuelle M03.2**. La composition desktop doit désormais rester stable. **Mission principale :** lire `docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md`, ses trois contrats M04/M05/M06, et `docs/adr/013-baseline-visuelle-desktop-approuvee.md`. Après un bref audit, implémenter une boucle complète de RPG de cartes SOLO desktop (accueil, deck, rencontres, multiples duels, résultats, progression, sauvegarde/reprise) et la stabiliser en release candidate locale. Enchaîner de façon autonome sans demandes intermédiaires tant que les règles V3.0/V3.2 sont intactes. Mobile paysage et détails artistiques secondaires **différés**. Ce mandat **remplace les priorités M03.1B/M03.2**, déjà livrées. Respecter la règle de développement sur `main`.
 

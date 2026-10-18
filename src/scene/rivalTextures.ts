@@ -284,7 +284,7 @@ export function torsoCanvas(p: Figure, seed: number): HTMLCanvasElement {
     ctx.fillRect(W / 2 - 6, 30, 12, H - 30);
     for (let i = 0; i < 5; i++) { ctx.beginPath(); ctx.arc(W / 2 + 20, 70 + i * 44, 5, 0, Math.PI * 2); ctx.fill(); }
   }
-  // emblème de famille, haut de poitrine (M03.2 : au-dessus des mains qui tiennent l’éventail) ; la
+  // emblème de famille, haut de poitrine (M03.2 : au-dessus de l’éventail de cartes) ; la
   // cape le remplace par son fermoir, la capuche portant déjà la couleur de la famille
   if (p.look.outfit !== 'cloak') {
     ctx.fillStyle = L.trim;
@@ -299,54 +299,6 @@ export function torsoCanvas(p: Figure, seed: number): HTMLCanvasElement {
 
 export function torsoTexture(p: Figure, seed: number): THREE.CanvasTexture {
   return tex(torsoCanvas(p, seed));
-}
-
-/** Main gauche vue de face tenant l’éventail (M03.2) : manche, dos de la main, doigts repliés sur les
- *  cartes, pouce devant ; la main droite est la même texture en miroir. */
-export function handTexture(p: Figure): THREE.CanvasTexture {
-  const { c, ctx } = cv(256, 256);
-  ctx.scale(2, 2);
-  const L = p.look;
-  // manche et revers
-  const sl = ctx.createLinearGradient(0, 0, 0, 46);
-  sl.addColorStop(0, L.cloth);
-  sl.addColorStop(1, L.clothHi);
-  ctx.fillStyle = sl;
-  ctx.beginPath(); ctx.moveTo(22, 0); ctx.lineTo(106, 0); ctx.lineTo(100, 44); ctx.lineTo(28, 44); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = L.trim;
-  ctx.fillRect(26, 38, 76, 8);
-  // dos de la main (dégradé chaud, contour sombre)
-  const back = ctx.createLinearGradient(30, 46, 98, 110);
-  back.addColorStop(0, L.skin);
-  back.addColorStop(1, L.skinShade);
-  ctx.fillStyle = back;
-  ctx.beginPath();
-  ctx.moveTo(32, 46);
-  ctx.quadraticCurveTo(28, 86, 44, 104);
-  ctx.lineTo(92, 104);
-  ctx.quadraticCurveTo(102, 80, 96, 46);
-  ctx.closePath();
-  ctx.fill();
-  ctx.strokeStyle = 'rgba(60,26,16,0.55)';
-  ctx.lineWidth = 2;
-  ctx.stroke();
-  // quatre doigts repliés (phalanges arrondies), ombre entre les doigts
-  for (let i = 0; i < 4; i++) {
-    const x = 44 + i * 13.5;
-    const fg = ctx.createLinearGradient(0, 96, 0, 122);
-    fg.addColorStop(0, L.skin);
-    fg.addColorStop(1, L.skinShade);
-    ctx.fillStyle = fg;
-    ctx.beginPath(); ctx.ellipse(x, 110, 7, 12, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.stroke();
-  }
-  // pouce devant, sur la gauche, et reflet de bougie sur le dos de la main
-  ctx.fillStyle = L.skin;
-  ctx.beginPath(); ctx.ellipse(28, 84, 9, 17, -0.5, 0, Math.PI * 2); ctx.fill();
-  ctx.stroke();
-  ctx.fillStyle = 'rgba(255,220,180,0.28)';
-  ctx.beginPath(); ctx.ellipse(56, 66, 16, 8, -0.3, 0, Math.PI * 2); ctx.fill();
-  return tex(c);
 }
 
 /** Œil : sclère + liseré (fixe), iris mobile séparé, paupière séparée. */

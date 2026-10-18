@@ -1,6 +1,6 @@
 # ADR 007 — Rival procédural 2.5D et expressions fondées sur les seuls faits publics
 Date : 2026-10-16
-Statut : proposé (fondation psychologique ; **aucun tell, bluff ni Sang-froid**)
+Statut : proposé (fondation psychologique ; **aucun tell, bluff ni Sang-froid**). **Amendé par l’ADR 017** (2026-10-17) : plus de mains, le rival est en buste derrière son éventail de cartes.
 
 **Contexte.** M02 §3 : un adversaire visible et expressif, généré par code, qui prépare la dimension psychologique sans créer de mécanique ni fuite d’information.
 
