@@ -126,11 +126,18 @@ try {
       res.samples = [];
       for (let i = 0; i < 12; i++) {
         const rival = order[i % 4];
+        const frameBefore = await page.evaluate(() => window.__lqvShell.d.arena().stats().frame);
         await page.click(`[data-key="enc-libre-${rival}"]`);
         // Mesure à l’écran de préparation : rival tout juste installé, scène figée, expression de repos
         // (en plein duel, le nombre de formes de bouche déjà montrées varie d’un duel à l’autre).
-        // Attendre le premier rendu du nouveau rival (scène sans rival : 11 textures).
-        await page.waitForFunction(() => window.__lqvShell.d.arena().stats().textures >= 15, null, { timeout: 5000 }).catch(() => {});
+        // Le clic remplace le rival (`setRival` libère l’ancien) et demande UNE image au rAF suivant : les
+        // textures et géométries du nouveau rival n’existent au GPU qu’après cette image. Attendre deux rAF
+        // (enregistrés après celui de `requestRender`, donc exécutés après lui) — et non un seuil de
+        // textures : l’ancien seuil (≥ 15, « scène sans rival : 11 ») ne valait plus rien depuis le
+        // post-traitement de L3 (scène sans rival : 25 textures), d’où des relevés tantôt avant, tantôt
+        // après l’image (25/32 contre 33/47, passe 21).
+        const atClick = await page.evaluate(() => window.__lqvShell.d.arena().stats().textures);
+        await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
         const inDuel = await page.evaluate(() => window.__lqvShell.d.arena().stats());
         await page.click('[data-key="prep-start"]');
         await page.waitForFunction(() => !!window.__lqv);
@@ -139,13 +146,14 @@ try {
         await page.click('[data-key="result-board"]');
         await screenIs(page, 'board');
         const m = await page.evaluate(() => { window.gc?.(); return { heapMB: Math.round((performance.memory?.usedJSHeapSize ?? 0) / 1048576 * 10) / 10, dom: document.querySelectorAll('*').length, stage: document.querySelectorAll('#stage *').length, app: document.getElementById('app').childElementCount, hooks: !!window.__lqv }; });
-        res.samples.push({ i: i + 1, rival, textures: inDuel.textures, geometries: inDuel.geometries, ...m });
+        res.samples.push({ i: i + 1, rival, textures: inDuel.textures, geometries: inDuel.geometries, texturesAtClick: atClick, rendered: inDuel.frame > frameBefore, ...m });
       }
       const s = res.samples;
       // Par rival, d’un tour à l’autre. La toute première mesure précède toute image en vue B : 6 géométries
       // fixes du décor, visibles seulement en vue B, ne sont envoyées au GPU qu’à leur première image
       // (vérifié : 45 → 51 dès une image en vue B, puis constant) — elle est exclue pour les géométries.
       const byRival = (k, from = 0) => order.every((r) => { const xs = s.slice(from).filter((x) => x.rival === r).map((x) => x[k]); return Math.max(...xs) === Math.min(...xs); });
+      check(s.every((x) => x.rendered), 'une image de la scène rendue après chaque changement de rival, avant le relevé');
       check(byRival('textures'), `textures GPU stables par rival sur 3 tours (${order.map((r) => s.find((x) => x.rival === r).textures).join('/')})`);
       check(byRival('geometries', 1), `géométries stables par rival après la première image en vue B (${order.map((r) => s.slice(1).find((x) => x.rival === r).geometries).join('/')} ; 1re mesure ${s[0].geometries})`);
       check(s.every((x) => x.stage === 0 && x.app === 0 && !x.hooks), 'aucune scène de Clash, plateau ni crochet résiduel hors duel');
