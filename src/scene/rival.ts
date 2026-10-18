@@ -8,7 +8,7 @@ import { hashString, makeRng } from '../game/engine/rng';
 import type { Expression, Gaze, Gesture } from '../presentation/expression';
 import type { Mood, RivalPersonality } from '../presentation/personalities';
 import {
-  browTexture, handTexture, headTexture, hoodTexture, irisTexture, lidTexture, MOUTHS, mouthTexture, scleraTexture, torsoTexture,
+  browTexture, headTexture, hoodTexture, irisTexture, lidTexture, MOUTHS, mouthTexture, scleraTexture, torsoTexture,
   type MouthShape,
 } from './rivalTextures';
 
@@ -149,18 +149,11 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
   flush.position.set(0, -0.12, 0.003);
   face.add(flush);
 
-  // Mains jointes tenant l’éventail de cartes au bord de la table (preview M03) ; taille publique de la main.
-  const handT = handTexture(p);
-  const handL = plane(0.46, 0.46, handT, 7);
-  const handR = plane(0.46, 0.46, handT, 7);
-  handR.scale.x = -1;
-  const handLRest = new THREE.Vector3(-0.34, 1.24, 0.72);
-  const handRRest = new THREE.Vector3(0.34, 1.22, 0.72);
-  handL.position.copy(handLRest);
-  handR.position.copy(handRRest);
-  group.add(handL, handR);
+  // Éventail de cartes tenu derrière le bord de la table : taille publique de la main. M07 : plus de mains
+  // peintes (décision du responsable, ADR 017) ; le pied de l’éventail passe sous le plateau, que la table cache.
+  const FAN_REST = new THREE.Vector3(0, 0.98, 0.7);
   const fan = new THREE.Group();
-  fan.position.set(0, 1.08, 0.7);
+  fan.position.copy(FAN_REST);
   group.add(fan);
   const fanCards: THREE.Mesh[] = [];
   for (let i = 0; i < 6; i++) {
@@ -281,9 +274,9 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
       neckPivot.position.y = NECK_Y;
       group.position.z = RIVAL_Z;
       body.position.y = 0;
-      handL.position.copy(handLRest);
-      handR.position.copy(handRRest);
-      handL.position.y += reduced ? 0 : Math.sin(t * 1.3) * 0.01;
+      fan.position.copy(FAN_REST);
+      fan.rotation.x = 0;
+      fan.position.y += reduced ? 0 : Math.sin(t * 1.3) * 0.01;
       if (gesture && gestureT >= 0) {
         gestureT += dt;
         const g = gesture;
@@ -300,7 +293,8 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
         }
         if (g === 'slump') { body.position.y = -0.12 * (reduced ? 1 : Math.min(1, u * 2)); neckPivot.rotation.x += 0.12; }
         if (g === 'place-card' || g === 'flip-card') {
-          handR.position.lerp(new THREE.Vector3(0.35, 1.1, 1.25), reduced ? 0 : env);
+          // L’éventail s’incline vers la table pendant que la carte se pose.
+          if (!reduced) { fan.rotation.x = env * 0.32; fan.position.z += env * 0.12; }
           if (g === 'place-card' && u > 0.45) placedAlpha = 1;
         }
         if (u >= 1 && g !== 'slump') { gesture = null; gestureT = -1; }

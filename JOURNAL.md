@@ -2,7 +2,7 @@
 
 **Nature :** journal de production du **nouveau projet**, et non journal copié de RPG-ArtByCode.  
 **Convention :** passes chronologiques, plus récente en bas ; statut `[OK]`, `[KO]`, `[?]` ; preuves vérifiables.  
-**Dernière passe :** 15 — **illustrations pré-générées hors du fil principal** : un worker produit les 36 illustrations du catalogue dès l’accueil ; plus aucune n’est générée pendant une commande, images identiques vérifiées (`artCheck`). Commandes qui montraient une carte pour la première fois : −4,6 ms en médiane appariée sur la RTX 4060 (11,9 → 6,2 ms), −3,8 ms sur la 780M (`docs/RAPPORT_M06_RC.md` §5.7). (Passe 14 : vue frontale pendant la pose, cases au format des cartes ; passe 13 : re-rendu ciblé du plateau ; passe 12 : à-coups tracés ; passe 11 : mesures GPU de la RC ; passe 10 : RC locale desktop.) Ce n’est pas la ville RPG finale.
+**Dernière passe :** 16 — **M07, lot 1 : rival en buste sans mains** (ADR 017), sur demande du responsable ; mandat M07 « mise en scène du duel et lisibilité » ouvert (`docs/missions/M07_MISE_EN_SCENE_ET_LISIBILITE.md`). (Passe 15 : illustrations pré-générées dans un worker ; passe 14 : vue frontale pendant la pose ; passe 13 : re-rendu ciblé du plateau ; passe 12 : à-coups tracés ; passe 11 : mesures GPU de la RC ; passe 10 : RC locale desktop.) Ce n’est pas la ville RPG finale.
 
 ## État initial connu
 
@@ -15,6 +15,7 @@
 
 ## À reprendre (prioritaire)
 
+0. **MANDAT M07 (17 octobre, prioritaire)** — `docs/missions/M07_MISE_EN_SCENE_ET_LISIBILITE.md` : L1 rival sans mains **fait** (passe 16) ; **L2** plateau symétrique entre les deux camps, lisible d’un coup d’œil, tour guidé ; **L3** mise en scène HD-2D de la scène entière (table, cartes, personnages, décor, lumière) ; L4 écrans hors duel qualitatifs et dynamiques. 12 arbitrages présentés au responsable le 17 octobre (rapport RC §9, ADR 004, échecs QA 4b, `TaskStop`) : **en attente de sa réponse**.
 1. **PRIORITÉ OPÉRATEUR M04–M06 (16 octobre) :** vue frontale et proportions du rival **approuvées et figées comme baseline desktop (ADR 013)**, amendée par l’**ADR 016** (passe 14 : vue A pendant la pose, vue B à la demande, cases au format des cartes ; captures à revoir : `screenshots/qa/adr016/`). Construire une boucle opérationnelle menu → deck → rencontres → duels → résultat/progression → sauvegarde/reprise (docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md), puis stabiliser une release candidate locale. Mobile paysage et polish artistiques secondaires reportés. **M04 (passe 8), M05 (passe 9) et M06 (passe 10, RC 0.6.0-rc.1) livrés**, RC mesurée sur GPU réel (passe 11) ; à faire : revue opérateur de la RC et des arbitrages (`docs/RAPPORT_M06_RC.md` §9, ADR 014), contenu canonique de progression.
 2. **Écarts de fidélité restants** (`docs/RAPPORT_M03_2.md` §8) : personnages en plans 2,5D (pas de volume ni de chevelure détaillée), décor moins dense, ni bloom ni profondeur de champ, table encore plus sombre que la preview, typographie système ; paysage = gabarit compact du bureau (textes ≈ 9,5 px à 844×390), pas l’interface simplifiée du panneau 6.
 3. **Arbitrages encore proposés** (ADR 004) : ARB-002 (profil du rival public), ARB-001, ARB-005 (+ ARB-005b : carte camouflée remplacée pendant l’engagement, nommée en fin de tour depuis la passe 5), ARB-011 ; ratification éventuelle du delta D-01 (V3.3). Inférences restantes documentées (`docs/RAPPORT_M03_1B.md` §6).
@@ -697,3 +698,20 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
   - temps GPU par image ;
   - poste de bureau ;
   - revue opérateur de la RC.
+
+## Passe 16 — M07, lot 1 : rival en buste sans mains — 2026-10-17, worktree local avancé sur `main`, départ `56efb70` → `2c2e014`
+
+- **Mission / contraintes :** retours du responsable en séance sur le bilan visuel (`docs/missions/M07_MISE_EN_SCENE_ET_LISIBILITE.md`, rédigé dans cette passe) : retirer les mains du rival, mal intégrées ; garder le haut du corps et le visage ; « voir les cartes suffit ». Règles, secrets, cadrage et HUD inchangés.
+- **Lecture initiale :** `src/scene/rival.ts`, `src/scene/rivalTextures.ts`, ADR 007, 013, 016 ; captures « avant » du build de `2c2e014` (Chrome 155, RTX 4060, seed 202, `freeze=1`).
+- **Modifications :**
+  - `src/scene/rival.ts` : plus de plans de mains ; pied de l’éventail abaissé de 0,10, caché par le bord de la table ; geste « pose une carte » = l’éventail s’incline vers la table ; mouvement de repos porté par l’éventail.
+  - `src/scene/rivalTextures.ts` : `handTexture` supprimée (plus utilisée).
+  - Docs : mandat M07, ADR 017, amendements des ADR 007 et 013, sections M07 d’`AGENTS.md` et `CLAUDE.md`.
+- **[OK] Succès :**
+  - Captures avant / après 1280×720 et 1920×1080 (`screenshots/qa/m07/lot1-*`) : mains absentes, l’éventail sort de derrière le bord de la table, visage et buste inchangés.
+  - `npm run typecheck` 0 erreur ; `npm test` **146/146** ; `npm run build` OK.
+  - `npm run qa:browser` (Chrome 155, GPU réel) : **4/5**, 0 fuite, 0 erreur console, 0 clic perdu, vues / postures / composition 0 écart. Seul échec : le connu `mobile-rotation-touch` (scène du Clash en fondu aux tours 2 et 3, « À reprendre » 4b), identique à `main`. Rapport : `artifacts/qa/m07/qa-browser-lot1.json` ; `artifacts/qa/qa-browser.json` (preuve de la RC) restauré.
+- **[KO] Échecs / tentatives abandonnées :** l’ajout par l’agent de règles d’autorisation locales (`.claude/settings.local.json`) a été refusé par le garde-fou du mode auto (auto-modification des permissions) : à faire par le responsable s’il le souhaite.
+- **[?] Incertitudes :** `qa:rc` non relancé (la longévité compare les textures par rival : une texture de moins par rival ne change pas ce critère).
+- **Pensée :** retirer un élément mal intégré améliore plus la lecture du personnage que de le peaufiner ; l’éventail suffit à porter l’information publique (taille de la main).
+- **À reprendre :** M07 L2 (plateau symétrique, lisible, tour guidé), puis L3 (mise en scène).

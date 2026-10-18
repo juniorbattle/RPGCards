@@ -4,7 +4,11 @@
 
 Le développement se fait **directement sur `main`** : commit puis push sur `main` après validation (typecheck, tests, build ; QA navigateur quand le rendu change). **Pas de branche provisoire ni de PR**, sauf demande explicite du responsable. Ne jamais réécrire l’historique de `main` (pas de force-push, pas de rebase de commits publiés). Les branches `claude/*` M01–M03 sont de l’historique, déjà intégré.
 
-## Mandat ACTIF — M04 → M06 : jeu solo desktop opérationnel (prioritaire)
+## Mandat ACTIF — M07 : mise en scène du duel et lisibilité (prioritaire, 2026-10-17)
+
+**LIRE EN PREMIER** `docs/missions/M07_MISE_EN_SCENE_ET_LISIBILITE.md`. Le responsable veut : le rival en buste **sans mains** (fait, ADR 017), un **plateau symétrique** entre les deux camps, lisible d’un coup d’œil, avec un tour **guidé** où l’on ne se perd pas dans les actions ; puis une **mise en scène HD-2D** de la scène entière (table, cartes, personnages, décor, lumière), « comme une pièce de théâtre », sans s’attarder sur les petits éléments. Les écrans hors duel viendront ensuite, qualitatifs et dynamiques. Règles V3.0/V3.2 et secrets inchangés ; composition des HUD et présence du visage du rival conservées (ADR 013, 016). Captures avant / après sur GPU réel à chaque lot, montrées au responsable.
+
+## Mandat M04 → M06 : jeu solo desktop opérationnel (livré, RC 0.6.0-rc.1)
 
 **LIRE EN PREMIER** `docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md`, puis les trois contrats M04/M05/M06, l'ADR 013 et l'ADR 016 qui l'amende. Le responsable a **approuvé** le cadrage M03.2 du rival et la composition HUD du duel : vue frontale, visage/buste grand et expressif, vue B inclinée **seulement à la demande** (ADR 016 : la vue frontale reste pendant la pose, cases au format des cartes), centre libre, lumière utile et animations de Clash. **Ne plus refaire cette composition**, optimiser sans sacrifier la présence du rival. **Mobile paysage repoussé, pas prioritaire**. Nouvelle priorité : menu → deck légal → rival → duel → résultats → collection/progression → sauvegarde/reprise → nouvelle rencontre ; puis release candidate desktop testée. Enchaîner autonomement les lots si les tests passent ; aucun nouveau système canonique de monnaie, effets, Sang-froid, Pv normalisés ou ville complète. Développer directement sur `main` suivant la règle ci-dessus, tenir le journal, ne pas masquer les lacunes produit par des effets graphiques.
 
