@@ -213,3 +213,14 @@ dégradés radiaux, frange d’un bloc, bandeau rectangulaire) à côté de riva
 
 Restent proposés : retrait du V1 (et de ses deux défauts relevés) ; pré-génération des couches des rivaux aux temps morts
 (à-coup d’apparition).
+
+## Arbitrage du responsable du 2026-10-18 — suite de L5 (mandat M08)
+
+Relayé par la session principale après la passe 26 ; consigné dans `docs/missions/M08_CONSOLIDATION_DU_COMBAT.md` :
+
+- « vectoriel V2 » **conservé comme nouvelle base graphique** des personnages, PNJ de la ville compris (M08, lot C3) ;
+- Aseprite **n’est plus considéré comme indispensable** pour ce chantier ;
+- les quatre rivaux gardent leurs silhouettes et caractéristiques distinctives ;
+- portrait du joueur V2 **conservé**, détails à revoir lors d’une future passe artistique ;
+- pré-génération des couches des personnages : **priorité technique suivante** (M08, lot C1) ;
+- retrait du V1 (`?qa=1&figure=v1`) : **après** la fin des comparaisons et la réception du lot (M08, lot C4).
