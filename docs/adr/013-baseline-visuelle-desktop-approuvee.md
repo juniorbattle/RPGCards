@@ -4,7 +4,7 @@ Date : 2026-10-16
 Statut : **APPROUVÉ — référence de production visuelle du duel**. **Amendé par l'ADR 016** (2026-10-17) : vue A
 pendant toute la partie, pose comprise, vue B seulement à la demande ; cases au format des cartes. **Amendé par le
 mandat M07** (2026-10-17, `docs/missions/M07_MISE_EN_SCENE_ET_LISIBILITE.md`) : rival sans mains (ADR 017), plateau
-symétrique et lisible avec tour guidé (ADR 018), mise en scène HD-2D du décor et de la lumière ; composition des HUD et
+symétrique et lisible avec tour guidé (ADR 018), mise en scène HD-2D du décor et de la lumière (ADR 019) ; composition des HUD et
 présence du visage conservées, **rival de face confirmé par le responsable** (pas de portraits dans les coins, ADR 018).
 
 ## Décision

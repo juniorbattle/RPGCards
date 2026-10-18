@@ -13,6 +13,10 @@
  * Aucun asset externe ; ni le moteur ni l’IA ne dépendent de ce module.
  */
 import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { FAMILIES, type Family } from '../game/catalog/cards';
 import { hashString, makeRng } from '../game/engine/rng';
 import { drawEmblem } from '../art/emblems';
@@ -43,7 +47,8 @@ export interface ArenaOptions {
   freeze: boolean;
   personality: RivalPersonality;
   /** Mesure de coût (QA, `?qa=1&ablate=…` uniquement) : éléments retirés du rendu — `candles`
-   *  (corps, flammes, halos, lumières), `banners` (bannières, tringles), `dust` (poussières). Vide en jeu. */
+   *  (corps, flammes, halos, lumières), `banners` (bannières, tringles), `dust` (poussières), `bloom`
+   *  (halo lumineux du post-traitement), `post` (tout le post-traitement : rendu direct). Vide en jeu. */
   ablate?: readonly string[];
 }
 
@@ -86,6 +91,8 @@ export interface ArenaHandle {
 }
 
 const TABLE_TOP = 1.05;
+/** Densité de rendu maximale de la scène 3D quand le post-traitement est actif (voir createArena). */
+const RENDER_SCALE_POST = 1;
 const TABLE_FAR_Z = -2.35;
 const TABLE_NEAR_Z = 6.2;
 const TABLE_W = 22;
@@ -224,7 +231,41 @@ function backdropTexture(seed: number): THREE.CanvasTexture {
   foot.addColorStop(1, 'rgba(14,9,8,1)');
   ctx.fillStyle = foot;
   ctx.fillRect(0, H * 0.8, W, H * 0.2);
+  // M07 L3 : plan du fond repoussé (perspective atmosphérique), peint une fois dans la texture, sans coût
+  // par image : léger flou de profondeur, voile froid plus dense en haut, côtés plongés dans l’ombre.
+  const sharp = canvas(W, H);
+  sharp.ctx.drawImage(c, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+  ctx.filter = 'blur(3px)';
+  ctx.drawImage(sharp.c, 0, 0);
+  ctx.filter = 'none';
+  const haze = ctx.createLinearGradient(0, 0, 0, H);
+  haze.addColorStop(0, 'rgba(18,22,52,0.38)');
+  haze.addColorStop(0.7, 'rgba(18,20,44,0.16)');
+  haze.addColorStop(1, 'rgba(10,8,14,0.1)');
+  ctx.fillStyle = haze;
+  ctx.fillRect(0, 0, W, H);
+  const sides = ctx.createLinearGradient(0, 0, W, 0);
+  sides.addColorStop(0, 'rgba(6,5,10,0.6)');
+  sides.addColorStop(0.3, 'rgba(6,5,10,0)');
+  sides.addColorStop(0.7, 'rgba(6,5,10,0)');
+  sides.addColorStop(1, 'rgba(6,5,10,0.6)');
+  ctx.fillStyle = sides;
+  ctx.fillRect(0, 0, W, H);
   return texture(c, 2);
+}
+
+/** Contre-jour du rival (M07 L3) : ovale de lumière diffuse, blanc (teinté par le matériau). */
+function backlightTexture(): THREE.CanvasTexture {
+  const { c, ctx } = canvas(256, 256);
+  const g = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
+  g.addColorStop(0, 'rgba(255,255,255,0.9)');
+  g.addColorStop(0.3, 'rgba(255,255,255,0.5)');
+  g.addColorStop(0.55, 'rgba(255,255,255,0.16)');
+  g.addColorStop(0.75, 'rgba(255,255,255,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, 256, 256);
+  return texture(c, 1);
 }
 
 /** Bannière d’une famille : étoffe, liseré doré, grand emblème lumineux, pointe (M03.2 : plus courte,
@@ -395,6 +436,18 @@ function tableTexture(seed: number): THREE.CanvasTexture {
     ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(cx - 520, y); ctx.lineTo(cx - 40, y); ctx.moveTo(cx + 40, y); ctx.lineTo(cx + 520, y); ctx.stroke();
   }
+  // M07 L3 : la table comme une scène — la lumière tombe sur le cercle de Clash et les deux rangées ; les
+  // bouts de la table et le bord proche s’enfoncent dans l’ombre (peint : aucun coût par image).
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(sx * 8.5, sy * 5.2);
+  const falloff = ctx.createRadialGradient(0, 0, 0.45, 0, 0, 1);
+  falloff.addColorStop(0, 'rgba(8,5,4,0)');
+  falloff.addColorStop(0.6, 'rgba(8,5,4,0.28)');
+  falloff.addColorStop(1, 'rgba(8,5,4,0.62)');
+  ctx.fillStyle = falloff;
+  ctx.fillRect(-3, -3, 6, 6);
+  ctx.restore();
   return texture(c, 8);
 }
 
@@ -517,6 +570,94 @@ void main() {
   gl_FragColor = vec4(t.rgb * vTint, t.a * vAlpha);
 }`;
 
+/**
+ * Passe de finition (M07 L3), une seule passe plein écran sur l’image HDR linéaire : étalonnage (ombres
+ * tirées vers le bleu froid, hautes lumières vers l’ambre, saturation légèrement relevée), vignettage ovale
+ * centré un peu au-dessus du milieu (visage du rival, cercle de Clash : le centre reste intact), puis
+ * tonemapping ACES et transfert sRGB (ce que ferait l’OutputPass de three.js, fusionné ici pour économiser
+ * une passe). Réglages fixes : ACES et sortie sRGB, comme le renderer.
+ */
+function finishMaterial(exposure: number): THREE.RawShaderMaterial {
+  return new THREE.RawShaderMaterial({
+    name: 'LqvFinish',
+    uniforms: { tDiffuse: { value: null }, uAspect: { value: 16 / 9 }, toneMappingExposure: { value: exposure } },
+    defines: { ACES_FILMIC_TONE_MAPPING: '', SRGB_TRANSFER: '' },
+    vertexShader: `
+precision highp float;
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+attribute vec3 position;
+attribute vec2 uv;
+varying vec2 vUv;
+void main() {
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}`,
+    fragmentShader: `
+precision highp float;
+uniform sampler2D tDiffuse;
+uniform float uAspect;
+#include <tonemapping_pars_fragment>
+#include <colorspace_pars_fragment>
+varying vec2 vUv;
+void main() {
+  vec4 t = texture2D(tDiffuse, vUv);
+  vec3 c = t.rgb;
+  float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
+  c = mix(c, c * vec3(0.9, 0.95, 1.16), (1.0 - smoothstep(0.0, 0.22, l)) * 0.55);
+  c *= mix(vec3(1.0), vec3(1.06, 1.0, 0.92), smoothstep(0.25, 1.2, l));
+  c = max(mix(vec3(l), c, 1.1), 0.0);
+  vec2 p = (vUv - vec2(0.5, 0.56)) * vec2(uAspect, 1.0);
+  float r = length(p) / length(vec2(uAspect * 0.5, 0.56));
+  c *= 1.0 - smoothstep(0.42, 1.0, r) * 0.5;
+  gl_FragColor = vec4(ACESFilmicToneMapping(c), t.a);
+  gl_FragColor = sRGBTransferOETF(gl_FragColor);
+}`,
+  });
+}
+
+/**
+ * FXAA compact, sans boucle (M07 L3) : luminance du pixel et de ses quatre diagonales, direction de l’arête,
+ * puis deux ou quatre lectures le long de cette direction. Le FXAA de three.js (boucle de recherche avec
+ * lectures de texture à gradient) fait émettre au compilateur Direct3D d’ANGLE des avertissements que la
+ * console relaie ; celui-ci n’en produit pas. Sur l’image finale (sRGB).
+ */
+function fxaaMaterial(): THREE.ShaderMaterial {
+  return new THREE.ShaderMaterial({
+    name: 'LqvFxaa',
+    uniforms: { tDiffuse: { value: null }, uTexel: { value: new THREE.Vector2(1, 1) } },
+    vertexShader: `
+varying vec2 vUv;
+void main() {
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+}`,
+    fragmentShader: `
+uniform sampler2D tDiffuse;
+uniform vec2 uTexel;
+varying vec2 vUv;
+const vec3 LUMA = vec3(0.299, 0.587, 0.114);
+void main() {
+  vec4 m = texture2D(tDiffuse, vUv);
+  float lM = dot(m.rgb, LUMA);
+  float lNW = dot(texture2D(tDiffuse, vUv + vec2(-1.0, -1.0) * uTexel).rgb, LUMA);
+  float lNE = dot(texture2D(tDiffuse, vUv + vec2(1.0, -1.0) * uTexel).rgb, LUMA);
+  float lSW = dot(texture2D(tDiffuse, vUv + vec2(-1.0, 1.0) * uTexel).rgb, LUMA);
+  float lSE = dot(texture2D(tDiffuse, vUv + vec2(1.0, 1.0) * uTexel).rgb, LUMA);
+  float lMin = min(lM, min(min(lNW, lNE), min(lSW, lSE)));
+  float lMax = max(lM, max(max(lNW, lNE), max(lSW, lSE)));
+  vec2 dir = vec2(-((lNW + lNE) - (lSW + lSE)), (lNW + lSW) - (lNE + lSE));
+  float reduce = max((lNW + lNE + lSW + lSE) * (0.25 * 0.125), 1.0 / 128.0);
+  float rcpMin = 1.0 / (min(abs(dir.x), abs(dir.y)) + reduce);
+  dir = clamp(dir * rcpMin, vec2(-8.0), vec2(8.0)) * uTexel;
+  vec3 a = 0.5 * (texture2D(tDiffuse, vUv + dir * (1.0 / 3.0 - 0.5)).rgb + texture2D(tDiffuse, vUv + dir * (2.0 / 3.0 - 0.5)).rgb);
+  vec3 b = a * 0.5 + 0.25 * (texture2D(tDiffuse, vUv - dir * 0.5).rgb + texture2D(tDiffuse, vUv + dir * 0.5).rgb);
+  float lB = dot(b, LUMA);
+  gl_FragColor = vec4((lB < lMin || lB > lMax) ? a : b, m.a);
+}`,
+  });
+}
+
 export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHandle | null {
   if (!webglAvailable()) return null;
   let renderer: THREE.WebGLRenderer;
@@ -525,18 +666,28 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   } catch {
     return null;
   }
-  const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+  // M07 L3 : avec le post-traitement, la scène 3D est rendue à 1 pixel par pixel CSS (1,5 au plus sans) : sur
+  // un écran 2560×1600 à 150 %, le coût GPU suit le nombre de pixels (Radeon 780M, temps GPU par image : 6,4 ms
+  // à 1,5 ; 4,4 ms à 1,25 ; 2,9 ms à 1, contre 2,6 ms avant le lot ; journal passe 18). L’interface DOM reste à
+  // la pleine définition de l’écran ; sur un écran à 100 %, rien ne change.
+  const usePost = !(opts.ablate ?? []).includes('post');
+  const pixelRatio = Math.min(window.devicePixelRatio || 1, usePost ? RENDER_SCALE_POST : 1.5);
   renderer.setPixelRatio(pixelRatio);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.3;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
+  // Le post-traitement rend plusieurs passes par image : compteurs remis à zéro une fois par image (renderOnce).
+  renderer.info.autoReset = false;
   renderer.domElement.className = 'arena-canvas';
   renderer.domElement.setAttribute('aria-hidden', 'true');
   container.appendChild(renderer.domElement);
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x0a0708);
-  scene.fog = new THREE.Fog(0x0b0807, 18, 40);
+  // M07 L3 : perspective atmosphérique — les plans lointains (piliers, balustrade, plantes, bannières) tirent
+  // vers un bleu ardoise (pas vers le noir : ils restent lisibles en silhouettes) ; le voile commence derrière
+  // le rival et le bord de la table (≈ 11,4 depuis la caméra), qui restent nets et chauds.
+  scene.fog = new THREE.Fog(0x232a44, 12.5, 30);
 
   const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
 
@@ -551,11 +702,21 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   // M03.2 : visage et table plus éclairés SANS lumière supplémentaire (chaque lumière coûte à chaque
   // fragment) : clé visant la tête, auto-éclairage peint du rival (rival.ts), flaque chaude peinte
   // dans la texture de la table.
-  scene.add(new THREE.HemisphereLight(0xffd4a4, 0x2a1a14, 1.0));
-  const key = new THREE.DirectionalLight(0xffe2bc, 1.35);
+  // M07 L3 — plan de feux de théâtre : la salle baisse (ambiance), deux projecteurs sans atténuation
+  // (decay 0, comme l’ancienne lumière directionnelle) découpent le visage du rival et la table ; le reste
+  // de la salle ne garde que les bougies et le contre-jour. Même nombre de lumières qu’avant, plus une.
+  const HOUSE = 0.62;
+  const house = new THREE.HemisphereLight(0xffd4a4, 0x2a1a14, HOUSE);
+  scene.add(house);
+  const key = new THREE.SpotLight(0xffe2bc, 1.75, 0, 0.27, 0.65, 0);
   key.position.set(-2.5, 6, 9);
   key.target.position.copy(HEAD_WORLD);
   scene.add(key, key.target);
+  const STAGE = 1.5;
+  const stage = new THREE.SpotLight(0xffd6a6, STAGE, 0, 0.5, 0.75, 0);
+  stage.position.set(0, 9.5, 4.2);
+  stage.target.position.set(0, TABLE_TOP, 0.4);
+  scene.add(stage, stage.target);
   const rim = new THREE.PointLight(0xffffff, 7, 7, 1.6);
   rim.position.set(0, 3.8, RIVAL_Z - 1.3);
   scene.add(rim);
@@ -564,7 +725,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   const candleLights: THREE.PointLight[] = [];
   const candleBase: number[] = [];
   for (const [x, y, z] of [[-3.6, TABLE_TOP + 0.7, -1.9], [3.6, TABLE_TOP + 0.7, -1.9], [-5.6, 2.4, -6.4], [5.6, 2.4, -6.4]] as const) {
-    const base = z > -3 ? 2.8 : 3.4;
+    const base = z > -3 ? 2.2 : 3.4; // M07 L3 : bougies de table plus discrètes, la table a son projecteur
     const l = new THREE.PointLight(0xffa458, base, 8, 1.8);
     l.position.set(x, y, z);
     scene.add(l);
@@ -667,7 +828,8 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     for (const x of [2.6, 4.6, 6.4]) cluster(s * x, 2.14, -8.85, 1, 0.3 + crng() * 0.15);
   }
   const bodyGeo = new THREE.CylinderGeometry(1, 1, 1, 10);
-  const bodies = new THREE.InstancedMesh(bodyGeo, new THREE.MeshStandardMaterial({ color: 0xeee0c4, roughness: 0.6, emissive: 0xffb070, emissiveIntensity: 0.22 }), candles.length);
+  // M07 L3 : cire moins blanche et moins lumineuse — les bougies accompagnent la scène sans attirer l’œil.
+  const bodies = new THREE.InstancedMesh(bodyGeo, new THREE.MeshStandardMaterial({ color: 0xd8c39e, roughness: 0.6, emissive: 0xffa860, emissiveIntensity: 0.14 }), candles.length);
   const m4 = new THREE.Matrix4();
   candles.forEach((cd, i) => {
     m4.compose(new THREE.Vector3(cd.x, cd.y + cd.h / 2, cd.z), new THREE.Quaternion(), new THREE.Vector3(cd.r, cd.h, cd.r));
@@ -703,7 +865,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     candleFx.push(pts);
     return mat;
   };
-  const haloMat = pointsOf(0.62, 0.06, haloTexture(), 0.18, [1, 0.85, 0.7]);
+  const haloMat = pointsOf(0.5, 0.06, haloTexture(), 0.18, [0.8, 0.66, 0.52]); // M07 L3 : halos plus discrets (le bloom s’y ajoute)
   const flameMat = pointsOf(0.2, 0.06, flameTexture(), 0.35, [1, 1, 1]);
 
   // --- Poussières dorées
@@ -736,11 +898,43 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   let rivalId = opts.personality.id;
   scene.add(rival.group);
   rim.color.setHex(FAMILY_PALETTE[opts.personality.family].hex);
+  // M07 L3 — contre-jour : lumière diffuse derrière la silhouette du rival (couleur de sa famille mêlée de
+  // blanc chaud), qui le détache du décor. Les plans 2,5D ne reçoivent pas de lumière par l’arrière : un
+  // plan additif derrière le buste, caché en bas par la table, fait ce travail en un seul appel de dessin.
+  const backlight = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 4.4), new THREE.MeshBasicMaterial({ map: backlightTexture(), transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
+  backlight.position.set(0, 2.5, RIVAL_Z - 0.5);
+  scene.add(backlight);
+  const tintBacklight = (f: Family) => { (backlight.material as THREE.MeshBasicMaterial).color.setHex(FAMILY_PALETTE[f].hex).lerp(new THREE.Color(0xffe6c4), 0.45); };
+  tintBacklight(opts.personality.family);
+
+  // --- Post-traitement (M07 L3) : scène rendue dans une cible HDR, halo lumineux des sources (flammes,
+  // emblèmes, contre-jour, effets), passe de finition (étalonnage, vignettage, ACES, sRGB), puis FXAA.
+  // Coût GPU mesuré (Radeon 780M, 1280×720) : l’anticrénelage multi-échantillonné ×4 de la cible HDR coûtait
+  // à lui seul ≈ 3,5 ms par image ; FXAA, en une passe, le remplace pour ≈ 0,2 ms (journal, passe 18).
+  const post = !usePost ? null : (() => {
+    const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType }));
+    composer.addPass(new RenderPass(scene, camera));
+    const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.3, 0.4, 1.0);
+    bloom.enabled = !ablate.has('bloom');
+    // Halo calculé à demi-définition (sa première réduction tombe au quart) : flou par nature, il n’y perd rien
+    // de visible et coûte environ quatre fois moins.
+    const bloomSize = bloom.setSize.bind(bloom);
+    bloom.setSize = (w: number, h: number) => bloomSize(Math.max(1, Math.round(w / 2)), Math.max(1, Math.round(h / 2)));
+    composer.addPass(bloom);
+    const grade = new ShaderPass(finishMaterial(renderer.toneMappingExposure));
+    composer.addPass(grade);
+    const fxaa = new ShaderPass(fxaaMaterial());
+    fxaa.setSize = (w: number, h: number) => { (fxaa.uniforms.uTexel!.value as THREE.Vector2).set(1 / Math.max(1, w), 1 / Math.max(1, h)); };
+    composer.addPass(fxaa);
+    return { composer, grade };
+  })();
+  let frames3d = 0;
 
   // --- FX transitoires ----------------------------------------------------
   const transients: Transient[] = [];
   let clock = 0;
   let shake = 0;
+  let focus = 0; // 1 au début d’une révélation ou d’un Clash, décroît en 2,6 s (lumières de salle)
   let paused = false;
   const still = () => reduced || opts.freeze || paused;
 
@@ -871,6 +1065,10 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     W = container.clientWidth || window.innerWidth;
     H = container.clientHeight || window.innerHeight;
     renderer.setSize(W, H, false);
+    if (post) {
+      post.composer.setSize(W, H);
+      post.grade.uniforms.uAspect!.value = W / Math.max(1, H);
+    }
   }
 
   // --- Boucle -------------------------------------------------------------
@@ -899,7 +1097,13 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
       m.uniforms.uTime!.value = clock;
       m.uniforms.uStill!.value = still() ? 1 : 0;
     }
-    candleLights.forEach((l, i) => { const b = candleBase[i]!; l.intensity = still() ? b : b * (0.944 + Math.sin(clock * 7.3 + i * 2.1) * 0.07 + Math.sin(clock * 13.1 + i) * 0.04); });
+    // M07 L3 : pendant la révélation et le Clash, la salle baisse et le projecteur de table monte (« noir
+    // salle »), puis tout revient en douceur. Jamais en mouvement réduit ni en rendu figé.
+    focus = still() ? 0 : Math.max(0, focus - dt / 2.6);
+    const dim = ease(Math.min(1, focus * 1.6));
+    house.intensity = HOUSE * (1 - 0.4 * dim);
+    stage.intensity = STAGE * (1 + 0.3 * dim);
+    candleLights.forEach((l, i) => { const b = candleBase[i]! * (1 - 0.35 * dim); l.intensity = still() ? b : b * (0.944 + Math.sin(clock * 7.3 + i * 2.1) * 0.07 + Math.sin(clock * 13.1 + i) * 0.04); });
     banners.forEach((b, i) => { b.rotation.y = still() ? 0 : Math.sin(clock * 0.6 + i * 1.3) * 0.035; });
     center.intensity = Math.max(0, center.intensity - dt * 6);
     rival.update(dt, clock, still());
@@ -920,7 +1124,10 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     const scale = camera.projectionMatrix.elements[5]! * H * pixelRatio * 0.5;
     flameMat.uniforms.uScale!.value = scale;
     haloMat.uniforms.uScale!.value = scale;
-    renderer.render(scene, camera);
+    renderer.info.reset();
+    if (post) post.composer.render();
+    else renderer.render(scene, camera);
+    frames3d++;
     fxKeep.visible = false; // témoin des FX : dessiné à la première image seulement (voir sa création)
   }
 
@@ -994,10 +1201,12 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     fx(fx: ArenaFx) {
       switch (fx.type) {
         case 'reveal':
+          focus = 1;
           center.intensity = 5;
           ring(0xffe0a8, CLASH_Z, 3, 0.8);
           break;
         case 'clash': {
+          focus = 1;
           const color = fx.family ? FAMILY_PALETTE[fx.family].hex : 0xffe0a8;
           center.color.setHex(color);
           center.intensity = 9;
@@ -1069,6 +1278,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
       rivalId = p.id;
       scene.add(rival.group);
       rim.color.setHex(FAMILY_PALETTE[p.family].hex);
+      tintBacklight(p.family);
       oppHex = FAMILY_PALETTE[p.family].hex;
       rival.update(0, clock, true);
       if (still()) requestRender();
@@ -1081,6 +1291,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
       if (v) {
         for (const tr of transients.splice(0)) { scene.remove(tr.obj); disposeObj(tr.obj); }
         center.intensity = 0;
+        focus = 0;
         shake = 0;
       }
       start();
@@ -1088,7 +1299,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     stats(): ArenaStats {
       const info = renderer.info;
       return {
-        frame: info.render.frame,
+        frame: frames3d,
         fps: Math.round(fps * 10) / 10, frameMs: Math.round(frameMs * 100) / 100, drawCalls: info.render.calls, triangles: info.render.triangles,
         textures: info.memory.textures, geometries: info.memory.geometries, view, blend: Math.round(blend * 100) / 100, portrait: false, rival: rival.current(),
       };
@@ -1103,6 +1314,10 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
         for (const m of Array.isArray(mat) ? mat : mat ? [mat] : []) m.map?.dispose();
       });
       scene.traverse((o) => disposeObj(o));
+      if (post) {
+        for (const pass of post.composer.passes) pass.dispose();
+        post.composer.dispose();
+      }
       backTex.dispose();
       renderer.dispose();
       renderer.domElement.remove();

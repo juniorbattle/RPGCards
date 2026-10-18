@@ -1,6 +1,8 @@
 # ADR 012 — Rival rapproché, plateau éclairé, Clash allégé et gabarit paysage (M03.2)
 Date : 2026-10-16
-Statut : proposé (mandat `docs/missions/M03_2_FIDELITE_VISUELLE_RUNTIME.md` ; complète ADR 009 et 010 sans les remplacer)
+Statut : proposé (mandat `docs/missions/M03_2_FIDELITE_VISUELLE_RUNTIME.md` ; complète ADR 009 et 010 sans les remplacer).
+**Éclairage amendé par l’ADR 019** (M07 lot 3, 2026-10-17) : plan de feux de théâtre (salle baissée, projecteurs sur le
+visage et la table, contre-jour), brume atmosphérique et post-traitement ; cadrage et ancrage caméra inchangés.
 
 **Contexte.** Les captures M03 (`screenshots/qa/m03/comparaison-*`) montraient, face à la preview
 validée, un rival petit et sombre (visage ≈ 45 px de haut à 1280×720, luminance relative du visage

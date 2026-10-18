@@ -1,0 +1,80 @@
+{
+  "dist": "dist (lot 3)",
+  "view": "A",
+  "zones": {
+    "visage": [
+      0.45,
+      0.14,
+      0.55,
+      0.3
+    ],
+    "table": [
+      0.35,
+      0.52,
+      0.65,
+      0.66
+    ],
+    "boutsTable": [
+      0.02,
+      0.55,
+      0.14,
+      0.7
+    ],
+    "fond": [
+      0.25,
+      0.02,
+      0.35,
+      0.12
+    ],
+    "coinBas": [
+      0,
+      0.9,
+      0.06,
+      1
+    ]
+  },
+  "luminance": {
+    "debut-1280": {
+      "visage": 0.233,
+      "table": 0.085,
+      "boutsTable": 0.018,
+      "fond": 0.025,
+      "coinBas": 0
+    },
+    "commit-1280": {
+      "visage": 0.233,
+      "table": 0.085,
+      "boutsTable": 0.018,
+      "fond": 0.025,
+      "coinBas": 0
+    },
+    "tactics-1280": {
+      "visage": 0.27,
+      "table": 0.168,
+      "boutsTable": 0.019,
+      "fond": 0.025,
+      "coinBas": 0
+    },
+    "debut-1920": {
+      "visage": 0.233,
+      "table": 0.085,
+      "boutsTable": 0.018,
+      "fond": 0.026,
+      "coinBas": 0
+    },
+    "commit-1920": {
+      "visage": 0.233,
+      "table": 0.085,
+      "boutsTable": 0.018,
+      "fond": 0.026,
+      "coinBas": 0
+    },
+    "tactics-1920": {
+      "visage": 0.27,
+      "table": 0.168,
+      "boutsTable": 0.019,
+      "fond": 0.026,
+      "coinBas": 0
+    }
+  }
+}
