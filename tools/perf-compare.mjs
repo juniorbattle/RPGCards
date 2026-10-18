@@ -6,7 +6,10 @@
 // Usage : LQV_BEFORE=<build avant> LQV_BEFORE_SHA=<sha> node tools/perf-compare.mjs [rondes=5]
 // (LQV_PERF_COMPARE_OUT=… pour un autre fichier de sortie ; LQV_PERF_VIEWPORT=1707x1067 et LQV_PERF_DPR=1.5 pour une
 // autre définition, défaut 1280×720 à 1 ; LQV_GPU_TIMER=1 : temps GPU de chaque image de l’arène, mesuré par
-// EXT_disjoint_timer_query_webgl2 autour des rappels requestAnimationFrame, injecté par l’outil seulement)
+// EXT_disjoint_timer_query_webgl2 autour des rappels requestAnimationFrame, injecté par l’outil seulement ;
+// LQV_PERF_QUERY=… : paramètres d’URL en plus pour les deux builds, LQV_PERF_QUERY_AVANT / LQV_PERF_QUERY_APRES pour
+// un seul côté — par exemple le même build des deux côtés, `fallback=off` contre `fallback=direct`, pour le coût
+// de chaque niveau du repli automatique ; le niveau du post-traitement en fin de mesure est relevé)
 import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
@@ -23,6 +26,8 @@ const r2 = (x) => Math.round(x * 100) / 100;
 const [VW, VH] = (process.env.LQV_PERF_VIEWPORT ?? '1280x720').split('x').map(Number);
 const DPR = Number(process.env.LQV_PERF_DPR ?? 1);
 const GPU_TIMER = process.env.LQV_GPU_TIMER === '1';
+const extra = (k) => [process.env.LQV_PERF_QUERY, process.env[k]].filter(Boolean).map((q) => `&${q}`).join('');
+const QUERY = { avant: extra('LQV_PERF_QUERY_AVANT'), apres: extra('LQV_PERF_QUERY_APRES') };
 
 /** Chronométrage GPU injecté dans la page (aucun code du jeu) : une requête TIME_ELAPSED par rappel rAF ; on
  *  garde les rappels qui dessinent (> 0,02 ms GPU), c’est-à-dire l’image de l’arène. */
@@ -60,10 +65,10 @@ function gpuTimer() {
 }
 
 let renderer = null;
-async function measure(base, view) {
+async function measure(base, view, query = '') {
   const page = await browser.newPage({ viewport: { width: VW, height: VH }, deviceScaleFactor: DPR });
   if (GPU_TIMER) await page.addInitScript(gpuTimer);
-  await page.goto(`${base}/?scenario=signature&qa=1&aiDelay=0&view=${view}&reducedMotion=0`);
+  await page.goto(`${base}/?scenario=signature&qa=1&aiDelay=0&view=${view}&reducedMotion=0${query}`);
   renderer ??= await webglRenderer(page);
   await page.waitForTimeout(5000);
   if (GPU_TIMER) await page.evaluate(() => { window.__gpuMs.length = 0; window.__gpuDisjoint = 0; });
@@ -72,7 +77,7 @@ async function measure(base, view) {
   const gpu = GPU_TIMER ? await page.evaluate(() => ({ ok: window.__gpuTimerOk(), ms: window.__gpuMs.slice(), disjoint: window.__gpuDisjoint })) : null;
   await page.close();
   const g = gpu?.ok && gpu.ms.length ? { gpuMs: r2(median(gpu.ms)), gpuP95Ms: r2([...gpu.ms].sort((a, b) => a - b)[Math.floor(gpu.ms.length * 0.95)]), gpuFrames: gpu.ms.length, gpuDisjoint: gpu.disjoint } : { gpuTimer: gpu ? (gpu.ok ? 'aucun échantillon' : 'extension absente') : undefined };
-  return { frameMs: r2(xs.reduce((a, x) => a + x.frameMs, 0) / xs.length), fps: r2(xs.reduce((a, x) => a + x.fps, 0) / xs.length), drawCalls: xs.at(-1).drawCalls, triangles: xs.at(-1).triangles, ...g };
+  return { frameMs: r2(xs.reduce((a, x) => a + x.frameMs, 0) / xs.length), fps: r2(xs.reduce((a, x) => a + x.fps, 0) / xs.length), drawCalls: xs.at(-1).drawCalls, triangles: xs.at(-1).triangles, ...g, ...(xs.at(-1).post ? { level: xs.at(-1).post.level, steps: xs.at(-1).post.steps.length } : {}) };
 }
 
 const runs = { A: { avant: [], apres: [] }, B: { avant: [], apres: [] } };
@@ -80,9 +85,9 @@ try {
   for (const view of ['A', 'B']) {
     for (let r = 0; r < ROUNDS; r++) {
       for (const which of r % 2 ? ['apres', 'avant'] : ['avant', 'apres']) {
-        const m = await measure(builds[which].server.base, view);
+        const m = await measure(builds[which].server.base, view, QUERY[which]);
         runs[view][which].push(m);
-        console.log(`vue ${view} · ronde ${r + 1} · ${which} : ${m.frameMs} ms CPU/image, ${m.fps} FPS, ${m.drawCalls} draw calls${m.gpuMs != null ? `, ${m.gpuMs} ms GPU/image (p95 ${m.gpuP95Ms})` : ''}`);
+        console.log(`vue ${view} · ronde ${r + 1} · ${which} : ${m.frameMs} ms CPU/image, ${m.fps} FPS, ${m.drawCalls} draw calls${m.gpuMs != null ? `, ${m.gpuMs} ms GPU/image (p95 ${m.gpuP95Ms})` : ''}${m.level ? `, niveau ${m.level}` : ''}`);
       }
     }
   }
@@ -97,11 +102,11 @@ for (const view of ['A', 'B']) {
   for (const which of ['avant', 'apres']) {
     const xs = runs[view][which];
     const gx = xs.filter((x) => x.gpuMs != null);
-    summary[view][which] = { medianFrameMs: r2(median(xs.map((x) => x.frameMs))), minFrameMs: Math.min(...xs.map((x) => x.frameMs)), maxFrameMs: Math.max(...xs.map((x) => x.frameMs)), medianFps: r2(median(xs.map((x) => x.fps))), drawCalls: xs.at(-1).drawCalls, triangles: xs.at(-1).triangles, ...(gx.length ? { medianGpuMs: r2(median(gx.map((x) => x.gpuMs))), medianGpuP95Ms: r2(median(gx.map((x) => x.gpuP95Ms))) } : {}) };
+    summary[view][which] = { levels: [...new Set(xs.map((x) => x.level ?? '—'))].join(','), medianFrameMs: r2(median(xs.map((x) => x.frameMs))), minFrameMs: Math.min(...xs.map((x) => x.frameMs)), maxFrameMs: Math.max(...xs.map((x) => x.frameMs)), medianFps: r2(median(xs.map((x) => x.fps))), drawCalls: xs.at(-1).drawCalls, triangles: xs.at(-1).triangles, ...(gx.length ? { medianGpuMs: r2(median(gx.map((x) => x.gpuMs))), medianGpuP95Ms: r2(median(gx.map((x) => x.gpuP95Ms))) } : {}) };
   }
 }
 const machine = { cpu: os.cpus()[0]?.model, cores: os.cpus().length, memGB: Math.round(os.totalmem() / 2 ** 30), node: process.version };
-const report = { date: new Date().toISOString(), machine, renderer: rendererLabel(renderer), gpu: GPU, chromeArgs: EXTRA_ARGS,protocol: `${ROUNDS} rondes entrelacées par vue, ${VW}×${VH} à ${DPR}, scénario signature, 5 s de mise en régime, moyenne de 6 relevés${GPU_TIMER ? ', temps GPU par image (médiane sur 3 s)' : ''}`, builds: { avant: builds.avant.sha, apres: builds.apres.sha }, summary, runs };
+const report = { date: new Date().toISOString(), machine, renderer: rendererLabel(renderer), gpu: GPU, chromeArgs: EXTRA_ARGS,protocol: `${ROUNDS} rondes entrelacées par vue, ${VW}×${VH} à ${DPR}, scénario signature, 5 s de mise en régime, moyenne de 6 relevés${GPU_TIMER ? ', temps GPU par image (médiane sur 3 s)' : ''}`, builds: { avant: builds.avant.sha, apres: builds.apres.sha }, query: { avant: QUERY.avant.slice(1) || null, apres: QUERY.apres.slice(1) || null }, summary, runs };
 mkdirSync('artifacts/qa', { recursive: true });
 writeFileSync(process.env.LQV_PERF_COMPARE_OUT ?? 'artifacts/qa/perf-compare-m03-2.json', JSON.stringify(report, null, 2));
 console.log(JSON.stringify(summary, null, 2));

@@ -25,6 +25,7 @@ import { cardBackCanvas } from '../art/cardArt';
 import type { ViewMode } from '../presentation/director';
 import type { Expression, Gesture } from '../presentation/expression';
 import type { Mood, RivalPersonality } from '../presentation/personalities';
+import { PostFallback, type FallbackState, type PostLevel } from './postFallback';
 import { CHEST_WORLD, createRival, HEAD_WORLD, RIVAL_Z, type RivalRig } from './rival';
 
 /** Conservé pour compatibilité des paramètres d’URL M01 (`cam=`) : tilted ≙ B, frontal ≙ A. */
@@ -50,6 +51,9 @@ export interface ArenaOptions {
    *  (corps, flammes, halos, lumières), `banners` (bannières, tringles), `dust` (poussières), `bloom`
    *  (halo lumineux du post-traitement), `post` (tout le post-traitement : rendu direct). Vide en jeu. */
   ablate?: readonly string[];
+  /** Repli automatique du post-traitement (QA, `?qa=1&fallback=…` uniquement) : `off` le désactive (mesure du
+   *  rendu complet) ; `nobloom` / `direct` imposent ce niveau pour toute la session. Absent en jeu : repli actif. */
+  fallback?: 'off' | 'nobloom' | 'direct';
 }
 
 export interface ArenaStats {
@@ -61,10 +65,14 @@ export interface ArenaStats {
   triangles: number;
   textures: number;
   geometries: number;
+  /** Programmes GPU vivants (QA : un changement de niveau du post-traitement n’en compile aucun). */
+  programs: number;
   view: ViewMode;
   blend: number;
   portrait: boolean;
   rival: { mood: Mood; gesture: Gesture | null; cause: string };
+  /** Niveau du post-traitement et état du repli automatique (QA : crans franchis pendant le duel). */
+  post: FallbackState;
 }
 
 export interface Rect { x: number; y: number; w: number; h: number }
@@ -915,7 +923,6 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType }));
     composer.addPass(new RenderPass(scene, camera));
     const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.3, 0.4, 1.0);
-    bloom.enabled = !ablate.has('bloom');
     // Halo calculé à demi-définition (sa première réduction tombe au quart) : flou par nature, il n’y perd rien
     // de visible et coûte environ quatre fois moins.
     const bloomSize = bloom.setSize.bind(bloom);
@@ -926,9 +933,26 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     const fxaa = new ShaderPass(fxaaMaterial());
     fxaa.setSize = (w: number, h: number) => { (fxaa.uniforms.uTexel!.value as THREE.Vector2).set(1 / Math.max(1, w), 1 / Math.max(1, h)); };
     composer.addPass(fxaa);
-    return { composer, grade };
+    return { composer, grade, bloom };
   })();
   let frames3d = 0;
+
+  // --- Repli automatique du post-traitement (amendement de l’ADR 019) : quand les images décrochent durablement
+  // (règles dans postFallback.ts), le halo est coupé, puis tout le post-traitement (rendu direct, tonemapping du
+  // renderer) ; jamais de remontée pendant un duel. La densité de rendu ne change pas : à 1,5 (celle du rendu
+  // direct de l’ablation `post`), le rendu direct coûte autant que le post-traitement complet à 1 sur l’écran du
+  // poste (2,6 contre 2,9 ms GPU, passe 18) et le repli n’y gagnerait rien. Les programmes du rendu direct sont
+  // compilés à la création (`renderer.compile` vise l’écran) et gardés par chaque matériau : changer de niveau ne
+  // compile rien.
+  const forced = opts.fallback === 'nobloom' || opts.fallback === 'direct' ? opts.fallback : null;
+  const startLevel: PostLevel = !post ? 'direct' : forced ?? (ablate.has('bloom') ? 'nobloom' : 'full');
+  const fallback = new PostFallback(startLevel, !!post && !forced && opts.fallback !== 'off');
+  let level: PostLevel = startLevel;
+  const applyLevel = (l: PostLevel) => {
+    level = l;
+    if (post) post.bloom.enabled = l === 'full';
+  };
+  applyLevel(startLevel);
 
   // --- FX transitoires ----------------------------------------------------
   const transients: Transient[] = [];
@@ -1074,6 +1098,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   // --- Boucle -------------------------------------------------------------
   let raf = 0;
   let last = performance.now();
+  let prevRaf = -1; // horodatage rAF de l’image précédente de la boucle (−1 : boucle (re)partie)
   let fps = 0;
   let frameMs = 0;
   let frames = 0;
@@ -1125,7 +1150,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     flameMat.uniforms.uScale!.value = scale;
     haloMat.uniforms.uScale!.value = scale;
     renderer.info.reset();
-    if (post) post.composer.render();
+    if (post && level !== 'direct') post.composer.render();
     else renderer.render(scene, camera);
     frames3d++;
     fxKeep.visible = false; // témoin des FX : dessiné à la première image seulement (voir sa création)
@@ -1150,6 +1175,12 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     const realDt = (now - last) / 1000;
     const dt = Math.min(0.05, realDt);
     last = now;
+    // Seuls les intervalles entre deux images de la boucle comptent (pas celui qui suit une reprise).
+    if (prevRaf >= 0) {
+      const next = fallback.frame(now - prevRaf);
+      if (next) applyLevel(next);
+    }
+    prevRaf = now;
     const t0 = performance.now();
     update(dt);
     renderOnce();
@@ -1172,6 +1203,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
       return;
     }
     last = performance.now();
+    prevRaf = -1;
     raf = requestAnimationFrame(loop);
   }
 
@@ -1293,6 +1325,9 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
         center.intensity = 0;
         focus = 0;
         shake = 0;
+        // Menus : le duel suivant repart au niveau de départ, nominal remesuré (seul moment où le rendu remonte).
+        fallback.reset();
+        applyLevel(fallback.current);
       }
       start();
     },
@@ -1301,7 +1336,8 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
       return {
         frame: frames3d,
         fps: Math.round(fps * 10) / 10, frameMs: Math.round(frameMs * 100) / 100, drawCalls: info.render.calls, triangles: info.render.triangles,
-        textures: info.memory.textures, geometries: info.memory.geometries, view, blend: Math.round(blend * 100) / 100, portrait: false, rival: rival.current(),
+        textures: info.memory.textures, geometries: info.memory.geometries, programs: info.programs?.length ?? 0, view, blend: Math.round(blend * 100) / 100, portrait: false, rival: rival.current(),
+        post: fallback.state(),
       };
     },
     dispose() {

@@ -28,7 +28,7 @@ function ensureArena(p: RivalPersonality): ArenaHandle | null {
   if (arena) { arena.setRival(p); arenaFor = p.id; return arena; }
   if (arenaFor !== null) return null; // WebGL déjà refusé : repli CSS conservé
   try {
-    arena = createArena(arenaHost, { artSeed: params.artSeed, view: params.view === 'B' ? 'B' : 'A', reducedMotion: params.reducedMotion, freeze: params.freeze, personality: p, ablate: params.ablate });
+    arena = createArena(arenaHost, { artSeed: params.artSeed, view: params.view === 'B' ? 'B' : 'A', reducedMotion: params.reducedMotion, freeze: params.freeze, personality: p, ablate: params.ablate, fallback: params.fallback ?? undefined });
   } catch (err) {
     console.warn('Three.js indisponible, repli CSS', err);
     arena = null;

@@ -181,3 +181,57 @@ export async function touchDrag(page, fromSel, toSel) {
   await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
   await cdp.detach();
 }
+
+/** Charge GPU injectée (aucun code du jeu) : canvas WebGL2 hors document, un triangle plein écran par image dont le
+ *  shader boucle `iter` fois ; `iter` suit la cible de temps GPU (médiane de 30 images, requêtes TIME_ELAPSED).
+ *  Pour `page.addInitScript(gpuStress, ms)` ; la cible se change en cours de route (`window.__gpuStress.targetMs`,
+ *  0 : charge retirée). Sert à placer le poste dans l’état « GPU ralenti » à la demande (perf-play, qa-fallback). */
+export function gpuStress(targetMs) {
+  const start = () => {
+    const c = document.createElement('canvas');
+    c.width = 512;
+    c.height = 512;
+    const gl = c.getContext('webgl2', { antialias: false });
+    if (!gl) return;
+    const ext = gl.getExtension('EXT_disjoint_timer_query_webgl2');
+    const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
+    const prog = gl.createProgram();
+    gl.attachShader(prog, sh(gl.VERTEX_SHADER, '#version 300 es\nvoid main(){vec2 p=vec2(float((gl_VertexID<<1)&2),float(gl_VertexID&2));gl_Position=vec4(p*2.0-1.0,0.0,1.0);}'));
+    gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, '#version 300 es\nprecision highp float;uniform int uIter;uniform float uT;out vec4 o;void main(){vec2 p=gl_FragCoord.xy*0.002;float a=uT;for(int i=0;i<uIter;i++){a=sin(a*1.31+p.x)*cos(a*0.77+p.y)+a*0.5;}o=vec4(a,a*0.5,0.0,1.0);}'));
+    gl.linkProgram(prog);
+    gl.useProgram(prog);
+    const uIter = gl.getUniformLocation(prog, 'uIter');
+    const uT = gl.getUniformLocation(prog, 'uT');
+    const st = { iter: 64, samples: [], ms: [], targetMs, timer: !!ext };
+    window.__gpuStress = st;
+    const pending = [];
+    const frame = (t) => {
+      requestAnimationFrame(frame);
+      while (ext && pending.length && gl.getQueryParameter(pending[0], gl.QUERY_RESULT_AVAILABLE)) {
+        const q = pending.shift();
+        const ms = gl.getQueryParameter(q, gl.QUERY_RESULT) / 1e6;
+        gl.deleteQuery(q);
+        if (!gl.getParameter(ext.GPU_DISJOINT_EXT) && ms > 0 && ms < 100) st.samples.push(ms);
+      }
+      if (st.samples.length >= 30) {
+        const s = st.samples.sort((a, b) => a - b);
+        const med = s[15];
+        st.ms.push(Math.round(med * 100) / 100);
+        if (st.ms.length > 400) st.ms.shift();
+        st.iter = st.targetMs > 0 ? Math.max(1, Math.min(20000, Math.round(st.iter * Math.min(2, Math.max(0.5, st.targetMs / Math.max(0.01, med)))))) : 0;
+        st.samples = [];
+      }
+      if (st.iter === 0) { if (!(st.targetMs > 0)) return; st.iter = 64; }
+      const q = ext ? gl.createQuery() : null;
+      if (q) gl.beginQuery(ext.TIME_ELAPSED_EXT, q);
+      gl.uniform1i(uIter, st.iter);
+      gl.uniform1f(uT, t * 0.001);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      if (q) { gl.endQuery(ext.TIME_ELAPSED_EXT); pending.push(q); }
+      gl.flush();
+    };
+    requestAnimationFrame(frame);
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+}
