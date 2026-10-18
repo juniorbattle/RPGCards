@@ -6,7 +6,7 @@
 import { hashString, makeRng } from '../../game/engine/rng';
 import { drawEmblem } from '../../art/emblems';
 import {
-  along, at, canvas, chain, chainPath, clipped, edgeBand, EYE_CX, fill, HOOD_BOX, HOOD_SCALE, mirrored, P, stroke, taper,
+  along, at, canvas, chain, chainPath, clipped, edgeBand, EYE_CX, fill, HOOD_BOX, HOOD_SCALE, mirrored, P, softShade, stroke, taper,
   TORSO_A, TORSO_TY, translatedPath, type Ctx, type Cubic, type FigureV2Kit,
 } from '../figureV2';
 
@@ -16,7 +16,7 @@ import {
 const C = {
   skinHi: '#e6b48e', skin: '#cb906b', skinShade: '#a8694d', skinDeep: '#83493a', blush: '#d4705e',
   line: '#3e1c13', lineSoft: '#6e3527', freckle: '#8a4630',
-  hair: '#3b2a1a', hairShade: '#25180f', hairDeep: '#150c07', hairHi: '#6c4b2d', hairSheen: '#a07848', hairRim: '#c89c66',
+  hair: '#3b2a1a', hairShade: '#25180f', hairDeep: '#150c07', hairHi: '#7c5838', hairSheen: '#c89a64', hairRim: '#c89c66',
   hood: '#1f5230', hoodLight: '#2e7140', hoodHi: '#56a35a', hoodShade: '#133821', hoodDeep: '#0a2013',
   lining: '#0b1610', liningHi: '#1c3324', trim: '#d4ec7a', trimDeep: '#86a845',
   cloak: '#163522', cloakShade: '#0c2215', cloakHi: '#2b5a37',
@@ -54,10 +54,13 @@ function drawHead(seed: number): HTMLCanvasElement {
     fill(ctx, back, C.hair);
     clipped(ctx, back, () => {
       fill(ctx, 'M128,0 L300,0 L300,320 L128,320 Z', C.hairShade, 0.55);
-      stroke(ctx, rimIn, C.hairDeep, 26, 0.75);
+      stroke(ctx, rimIn, C.hairDeep, 22, 0.5);
       fill(ctx, 'M60,250 C80,276 100,290 128,296 C156,290 176,276 196,250 L200,320 L56,320 Z', C.hairDeep, 0.6);
       for (const s of [[96, 22, 60, 40, 40, 90, 38, 150], [160, 22, 196, 40, 216, 90, 218, 150], [72, 40, 44, 80, 34, 140, 40, 210], [184, 40, 212, 80, 222, 140, 216, 210]] as Cubic[]) taper(ctx, s, 0.2, 1.1, 0.2, C.hairDeep, 0.7);
       taper(ctx, [116, 20, 96, 22, 78, 30, 64, 42], 0, 2.4, 0, C.hairHi, 0.7);
+      // Mèches du dessus et des côtés, reflet en couronne : la chevelure arrière n’est plus un aplat sombre.
+      for (const s of [[118, 18, 92, 22, 66, 40, 50, 70], [138, 18, 164, 22, 190, 40, 206, 70], [56, 60, 40, 100, 34, 150, 40, 200], [200, 60, 216, 100, 222, 150, 216, 200], [44, 120, 34, 160, 36, 200, 50, 240], [212, 120, 222, 160, 220, 200, 206, 240]] as Cubic[]) taper(ctx, s, 0, 3.4, 0, C.hairHi, 0.6);
+      taper(ctx, [92, 20, 110, 15, 146, 15, 164, 20], 0, 2.6, 0, C.hairSheen, 0.55);
     });
     // Cou, dans l’ombre de la tête ; flanc gauche éclairé ; base dans l’ombre du col.
     const neck = P('M100,212 C102,246 100,276 92,308 L164,308 C156,276 154,246 156,212 Z');
@@ -78,7 +81,7 @@ function drawHead(seed: number): HTMLCanvasElement {
   fill(ctx, face, C.skin);
   clipped(ctx, face, () => {
     // Plan d’ombre du côté droit : tempe, pommette, creux sous la pommette, mâchoire.
-    fill(ctx, 'M196,64 C204,100 200,128 204,150 C206,164 198,178 186,190 C178,198 172,210 170,224 C168,240 160,256 146,268 L250,300 L250,40 Z', C.skinShade);
+    softShade(ctx, 'M204,70 C208,104 206,132 208,156 C206,170 198,182 188,192 C180,200 174,212 172,226 C170,242 160,258 144,268 L250,300 L250,40 Z', C.skinShade);
     // Ombres portées des mèches et de la frange (lumière en haut à gauche → décalage vers le bas et la droite).
     fill(ctx, translatedPath(LEFT_FRONT, 3, 5), C.skinShade, 0.8);
     fill(ctx, translatedPath(RIGHT_FRONT, 2, 5), C.skinDeep, 0.55);
@@ -165,13 +168,26 @@ function drawFront(): HTMLCanvasElement {
   clipped(ctx, left, () => {
     edgeBand(ctx, left, -5, -3, C.hairShade, 0.9, box);
     edgeBand(ctx, left, 3, 2, C.hairHi, 0.75, box);
-    const sheen: Array<[Cubic, number]> = [
-      [[118, 30, 104, 34, 92, 42, 82, 52], 2.8], [[110, 40, 98, 46, 88, 56, 80, 68], 2.2], [[100, 52, 90, 60, 82, 70, 76, 82], 1.6],
-      [[40, 120, 36, 150, 37, 182, 42, 214], 2.2], [[46, 226, 48, 240, 51, 254, 54, 268], 1.4],
+    // Mèches (demi-teinte au cœur de chaque mèche), séparations, puis reflets en tirets sur deux bandes lustrées.
+    const clumps: Array<[Cubic, number]> = [
+      [[120, 28, 100, 34, 84, 50, 72, 70], 6], [[112, 44, 98, 54, 88, 68, 82, 86], 4.6], [[100, 34, 84, 42, 70, 56, 60, 80], 4],
+      [[58, 96, 44, 128, 40, 168, 44, 210], 6.4], [[50, 150, 48, 188, 50, 226, 54, 264], 4.4], [[44, 110, 38, 140, 36, 170, 38, 200], 3.6],
     ];
-    for (const [s, w] of sheen) taper(ctx, s, 0, w, 0, C.hairSheen, 0.85);
-    const strands: Cubic[] = [[122, 28, 98, 34, 76, 54, 62, 84], [114, 44, 96, 54, 82, 72, 74, 96], [64, 52, 46, 80, 38, 120, 38, 160], [58, 92, 46, 130, 44, 180, 50, 230], [50, 160, 50, 200, 52, 240, 56, 280]];
-    for (const s of strands) taper(ctx, s, 0.2, 0.9, 0.2, C.hairDeep, 0.7);
+    for (const [s, w] of clumps) taper(ctx, s, 0.5, w, 0.5, C.hairHi, 0.7);
+    const strands: Cubic[] = [
+      [122, 28, 98, 34, 76, 54, 62, 84], [114, 44, 96, 54, 82, 72, 74, 96], [106, 36, 90, 44, 76, 60, 66, 82], [64, 52, 46, 80, 38, 120, 38, 160],
+      [58, 92, 46, 130, 44, 180, 50, 230], [50, 160, 50, 200, 52, 240, 56, 280], [52, 104, 42, 140, 40, 176, 44, 214],
+    ];
+    for (const s of strands) taper(ctx, s, 0.2, 1.15, 0.2, C.hairDeep, 0.85);
+    const dashes: Array<[number, number, number, number]> = [
+      [108, 37, -2.6, 13], [96, 45, -2.2, 12], [86, 54, -2, 11], [78, 64, -1.9, 10],
+      [41, 140, -1.62, 14], [47, 150, -1.6, 12], [38, 168, -1.56, 12],
+    ];
+    for (const [x, y, a, l] of dashes) {
+      const ux = Math.cos(a) * l / 2;
+      const uy = -Math.sin(a) * l / 2;
+      taper(ctx, [x - ux, y - uy, x - ux / 3, y - uy / 3, x + ux / 3, y + uy / 3, x + ux, y + uy], 0, 3.2, 0, C.hairSheen, 0.9);
+    }
   });
   // Masse droite (côté de l’ombre) : plus sombre, liseré de contre-jour sur le bord extérieur.
   fill(ctx, right, C.hair);
@@ -179,11 +195,22 @@ function drawFront(): HTMLCanvasElement {
     fill(ctx, 'M150,0 L260,0 L260,320 L150,320 Z', C.hairShade, 0.45);
     edgeBand(ctx, right, 5, -3, C.hairShade, 0.9, box);
     edgeBand(ctx, right, -3, 0, C.hairRim, 0.55, box);
+    const clumps: Array<[Cubic, number]> = [
+      [[136, 28, 156, 34, 172, 50, 184, 70], 5.6], [[144, 44, 158, 54, 168, 68, 174, 86], 4.2], [[198, 96, 212, 128, 216, 168, 212, 210], 5.6], [[206, 150, 208, 188, 206, 222, 204, 256], 3.8],
+    ];
+    for (const [s, w] of clumps) taper(ctx, s, 0.5, w, 0.5, C.hairHi, 0.42);
     taper(ctx, [138, 30, 150, 34, 160, 42, 168, 52], 0, 2.2, 0, C.hairHi, 0.7);
     taper(ctx, [146, 42, 156, 48, 164, 56, 170, 66], 0, 1.6, 0, C.hairHi, 0.55);
-    const strands: Cubic[] = [[134, 28, 158, 34, 180, 54, 194, 84], [142, 44, 160, 54, 174, 72, 182, 96], [192, 52, 210, 80, 218, 120, 218, 160], [198, 92, 210, 130, 212, 180, 208, 226]];
-    for (const s of strands) taper(ctx, s, 0.2, 0.9, 0.2, C.hairDeep, 0.75);
+    const strands: Cubic[] = [[134, 28, 158, 34, 180, 54, 194, 84], [142, 44, 160, 54, 174, 72, 182, 96], [150, 36, 166, 44, 180, 60, 190, 82], [192, 52, 210, 80, 218, 120, 218, 160], [198, 92, 210, 130, 212, 180, 208, 226], [204, 104, 214, 140, 216, 176, 212, 214]];
+    for (const s of strands) taper(ctx, s, 0.2, 1.15, 0.2, C.hairDeep, 0.85);
+    for (const [x, y, a, l] of [[150, 38, -0.6, 12], [162, 48, -0.8, 11], [214, 140, -1.5, 12], [212, 160, -1.56, 10]] as Array<[number, number, number, number]>) {
+      const ux = Math.cos(a) * l / 2;
+      const uy = Math.sin(a) * l / 2;
+      taper(ctx, [x - ux, y + uy, x - ux / 3, y + uy / 3, x + ux / 3, y - uy / 3, x + ux, y - uy], 0, 2, 0, C.hairSheen, 0.45);
+    }
   });
+  // Quelques cheveux libres sur le bord extérieur des pans (la silhouette n’est plus un bloc).
+  for (const s of [[38, 120, 30, 150, 29, 182, 34, 214], [40, 200, 37, 226, 40, 250, 46, 270], [222, 120, 228, 150, 228, 182, 222, 210]] as Cubic[]) taper(ctx, s, 0, 0.8, 0, C.hairHi, 0.6);
   // Raie : la peau du crâne en fine encoche.
   fill(ctx, 'M127.2,23 L128.8,23 L128.5,38 L127.5,38 Z', C.skinShade, 0.85);
   // Encre sur les bords qui passent devant le visage.

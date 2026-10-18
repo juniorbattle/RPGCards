@@ -17,7 +17,7 @@ const commit = execSync('git rev-parse --short HEAD').toString().trim();
 const dirty = execSync('git status --porcelain src').toString().trim() !== '';
 const server = await startPreview(Number(process.env.LQV_PREVIEW_PORT) || 4196);
 const browser = await launch();
-const FIG = { v1: '', v2: '&figure=v2' };
+const FIG = { v1: '&figure=v1', v2: '&figure=v2' };
 const LABEL = { v1: 'Actuelle (V1)', v2: 'Vectoriel V2' };
 const MOODS = [['neutral', 'repos'], ['focused', 'prudence'], ['surprised', 'surprise'], ['pained', 'touchée'], ['angry', 'colère'], ['triumphant', 'triomphe']];
 const SIZES = [[1280, 720], [1920, 1080]];

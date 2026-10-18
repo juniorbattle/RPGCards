@@ -17,7 +17,7 @@ const head = execSync('git rev-parse --short HEAD').toString().trim();
 const commit = execSync('git status --porcelain src').toString().trim() ? `${head}+arbre de travail` : head;
 const server = await startPreview(Number(process.env.LQV_PREVIEW_PORT) || 4196);
 const browser = await launch();
-const FIG = { v1: '', v2: '&figure=v2' };
+const FIG = { v1: '&figure=v1', v2: '&figure=v2' };
 const LABEL = { v1: 'Actuelle (V1)', v2: 'Vectoriel V2' };
 const RIVALS = [
   { id: 'braise', name: 'Kaï, la Braise du quai', rest: ['confident', 'sûr de lui'] },

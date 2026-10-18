@@ -35,7 +35,7 @@ try {
     for (let r = 0; r < ROUNDS; r++) {
       for (const fig of r % 2 ? ['v2', 'v1'] : ['v1', 'v2']) {
         const p = await browser.newPage({ viewport: { width: 1280, height: 720 } });
-        await p.goto(`${server.base}/?seed=202&autostart=1&rival=${from}&qa=1&aiDelay=0&reducedMotion=0&view=A${fig === 'v2' ? '&figure=v2' : ''}`);
+        await p.goto(`${server.base}/?seed=202&autostart=1&rival=${from}&qa=1&aiDelay=0&reducedMotion=0&view=A&figure=${fig}`);
         await p.waitForFunction(() => !!window.__lqv);
         await p.waitForTimeout(2500);
         const res = await p.evaluate(async (pers) => {

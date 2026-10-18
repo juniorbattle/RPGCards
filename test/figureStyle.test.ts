@@ -5,23 +5,23 @@ import { moodsFor, MOODS_V2, RIG_V2 } from '../src/scene/figureV2';
 import { kitV2, V2_IDS } from '../src/scene/v2';
 import { PERSONALITIES } from '../src/presentation/personalities';
 
-// M07 L5 : le modèle « vectoriel V2 » reste derrière un interrupteur opt-in ; validé sur Maëlle, étendu aux quatre rivaux.
+// M07 L5 : le modèle « vectoriel V2 » est le rendu par défaut des quatre rivaux ; l’ancien rendu reste en `?qa=1&figure=v1`.
 describe('interrupteur du modèle des personnages (L5)', () => {
-  afterEach(() => setFigureStyle('v1'));
+  afterEach(() => setFigureStyle('v2'));
 
-  it('V1 par défaut ; V2 seulement avec ?qa=1&figure=v2', () => {
-    expect(readParams('').figure).toBe('v1');
-    expect(readParams('?figure=v2').figure).toBe('v1');
-    expect(readParams('?qa=1').figure).toBe('v1');
-    expect(readParams('?qa=1&figure=v2').figure).toBe('v2');
-    expect(figureStyle()).toBe('v1');
+  it('V2 par défaut ; V1 seulement avec ?qa=1&figure=v1', () => {
+    expect(readParams('').figure).toBe('v2');
+    expect(readParams('?figure=v1').figure).toBe('v2');
+    expect(readParams('?qa=1').figure).toBe('v2');
+    expect(readParams('?qa=1&figure=v1').figure).toBe('v1');
+    expect(figureStyle()).toBe('v2');
   });
 
   it('les quatre rivaux sont dessinés en V2 (le duelliste joueur reste en V1)', () => {
-    for (const p of PERSONALITIES) expect(usesV2(p.id)).toBe(false);
-    setFigureStyle('v2');
     for (const p of PERSONALITIES) expect(usesV2(p.id)).toBe(true);
     expect(usesV2('player-Ronce')).toBe(false);
+    setFigureStyle('v1');
+    for (const p of PERSONALITIES) expect(usesV2(p.id)).toBe(false);
   });
 
   it('une identité V2 par rival, chacune avec ses humeurs (repos des paupières commun)', () => {

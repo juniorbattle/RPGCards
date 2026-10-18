@@ -1,5 +1,5 @@
-// M07 L5 — preuve que le rendu PAR DÉFAUT est inchangé au pixel près entre deux builds (avant : LQV_BEFORE, après :
-// dist/) : scène 3D seule du duel (vue A, rendu figé, seed 202) pour les quatre rivaux, capture complète (HUD compris)
+// M07 L5 — preuve que le rendu V1 est inchangé au pixel près entre deux builds (avant : LQV_BEFORE, rendu par défaut ;
+// après : dist/, rendu `LQV_APRES_QUERY`, défaut `&figure=v1` depuis que le V2 est le rendu par défaut) : scène 3D seule du duel (vue A, rendu figé, seed 202) pour les quatre rivaux, capture complète (HUD compris)
 // du duel contre Maëlle, et écran Rencontres (affiches et portraits des quatre rivaux), à 1280×720 et 1920×1080.
 // Usage : LQV_BEFORE=<dist avant> LQV_BEFORE_SHA=<sha> [LQV_GPU=1 CHROMIUM_PATH=…] node tools/l5-identique.mjs [sortie.json]
 import { execSync } from 'node:child_process';
@@ -41,7 +41,7 @@ async function capture(which, vp, kind, rival, extra = '') {
   const base = servers[which].base;
   let buf;
   if (kind === 'rencontres') {
-    await p.goto(`${base}/?qa=1&aiDelay=0&reducedMotion=1&freeze=1&profileSeed=5`);
+    await p.goto(`${base}/?qa=1&aiDelay=0&reducedMotion=1&freeze=1&profileSeed=5${extra}`);
     await p.click('[data-key="home-new"]');
     await p.fill('[data-key="new-name"]', 'Capture');
     await p.click('[data-key="new-sig-Ronce"]');
@@ -64,6 +64,7 @@ async function capture(which, vp, kind, rival, extra = '') {
   return buf;
 }
 
+const APRES = process.env.LQV_APRES_QUERY ?? '&figure=v1';
 const results = [];
 const control = [];
 try {
@@ -71,7 +72,7 @@ try {
     const cases = [...['braise', 'ronce', 'voile', 'astre'].map((r) => ['scene', r]), ['complet', 'ronce'], ['rencontres', null]];
     for (const [kind, rival] of cases) {
       const a = await capture('avant', vp, kind, rival);
-      const b = await capture('apres', vp, kind, rival);
+      const b = await capture('apres', vp, kind, rival, APRES);
       const d = await diff(a, b);
       results.push({ viewport: `${vp[0]}x${vp[1]}`, kind, rival, ...d });
       console.log(`${vp[0]}×${vp[1]} ${kind}${rival ? ` ${rival}` : ''} : écart moyen ${d.meanAbs}/255, max ${d.max}, ${d.pixels} pixels différents`);
