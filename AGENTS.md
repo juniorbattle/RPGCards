@@ -76,6 +76,12 @@ Tu es l'agent de développement principal du **RPG de cartes Les Quatre Voies**.
 
 Au démarrage, seules les commandes **du simulateur existant** sont avérées, dans `simulator_ref/simulator/` : `npm test`, `npm run dev`, `npm run build`. Les commandes production ci-dessus sont un contrat de livraison pour Claude Code, pas un rapport d'outils déjà opérationnels.
 
+## Serveurs de dev et processus de fond (règle du responsable, 2026-10-17)
+- Lancer les serveurs de dev avec l'outil de session `preview_start` et une entrée de `.claude/launch.json` (`dev` sur 5173, `preview` sur 4173) ; pour un nouveau port, ajouter une entrée plutôt que de le lancer à la main. Les arrêter avec `preview_stop`.
+- Lancer les scripts longs (`npm run qa:rc`, `qa:browser`, `qa:product`, `perf`, `perf:trace`, `shots*`, `video`…) avec `run_in_background` de l'outil Bash, et les arrêter avec `TaskStop` sur leur identifiant de tâche.
+- Ne jamais utiliser `taskkill`, `Stop-Process` ni un balayage des processus du système (`Get-CimInstance Win32_Process`, listes de processus filtrées par ligne de commande) pour retrouver ou arrêter des restes : chaque usage exige l'accord du responsable et peut toucher des programmes sans rapport. Si un processus échappe aux outils (un orphelin qui occupe un port), signaler le port et le PID propriétaire (`Get-NetTCPConnection -LocalPort <port>`) et laisser le responsable décider.
+- Avant de terminer une session, arrêter tous les serveurs et tâches de fond qu'elle a lancés.
+
 ## Priorité de la première mission
 
 **M0** cadrage+reconnaissance > **M1** moteur TS normatif > **M2** duel humain/IA ergonomique par cartes > **M3** art procédural pour cartes/effets/arène minimale > **M4** captures+profiling+handoff. Une scène HD-2D à grande échelle n'est pas un livrable de M1.
