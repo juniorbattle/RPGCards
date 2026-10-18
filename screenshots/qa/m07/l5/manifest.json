@@ -1,0 +1,222 @@
+{
+  "commit": "6fdd27b+arbre de travail",
+  "date": "2026-10-18T19:42:33.174Z",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "files": [
+    {
+      "file": "screenshots/qa/m07/l5/v1-humeur-neutral-1280.png",
+      "desc": "Actuelle (V1) — humeur neutral, 1280×720, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-humeur-focused-1280.png",
+      "desc": "Actuelle (V1) — humeur focused, 1280×720, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-humeur-surprised-1280.png",
+      "desc": "Actuelle (V1) — humeur surprised, 1280×720, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-humeur-pained-1280.png",
+      "desc": "Actuelle (V1) — humeur pained, 1280×720, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-humeur-angry-1280.png",
+      "desc": "Actuelle (V1) — humeur angry, 1280×720, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-humeur-triumphant-1280.png",
+      "desc": "Actuelle (V1) — humeur triumphant, 1280×720, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-vueA-1280.png",
+      "desc": "Actuelle (V1) — vue A du duel, 1280×720, HUD compris"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-affiche-1280.png",
+      "desc": "Actuelle (V1) — affiche de rencontre (manche 2), 1280×720"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-rencontres-1280.png",
+      "desc": "Actuelle (V1) — écran Rencontres, 1280×720"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-humeur-neutral-1920.png",
+      "desc": "Actuelle (V1) — humeur neutral, 1920×1080, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-humeur-focused-1920.png",
+      "desc": "Actuelle (V1) — humeur focused, 1920×1080, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-humeur-surprised-1920.png",
+      "desc": "Actuelle (V1) — humeur surprised, 1920×1080, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-humeur-pained-1920.png",
+      "desc": "Actuelle (V1) — humeur pained, 1920×1080, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-humeur-angry-1920.png",
+      "desc": "Actuelle (V1) — humeur angry, 1920×1080, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-humeur-triumphant-1920.png",
+      "desc": "Actuelle (V1) — humeur triumphant, 1920×1080, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-vueA-1920.png",
+      "desc": "Actuelle (V1) — vue A du duel, 1920×1080, HUD compris"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-affiche-1920.png",
+      "desc": "Actuelle (V1) — affiche de rencontre (manche 2), 1920×1080"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/reaction-v1.webm",
+      "desc": "Actuelle (V1) — réaction animée (repos → surprise avec recul → prudence → repos), 340×340, 1:1, 60 i/s demandées"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-reaction-1.png",
+      "desc": "Actuelle (V1) — réaction, 0,5 s — repos (mesuré : 504 ms)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-reaction-2.png",
+      "desc": "Actuelle (V1) — réaction, 0,66 s — surprise (début) (mesuré : 690 ms)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-reaction-3.png",
+      "desc": "Actuelle (V1) — réaction, 1,0 s — surprise (mesuré : 1048 ms)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-reaction-4.png",
+      "desc": "Actuelle (V1) — réaction, 2,6 s — prudence (mesuré : 2663 ms)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v1-reaction-5.png",
+      "desc": "Actuelle (V1) — réaction, 4,2 s — retour au repos (mesuré : 4290 ms)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-humeur-neutral-1280.png",
+      "desc": "Vectoriel V2 — humeur neutral, 1280×720, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-humeur-focused-1280.png",
+      "desc": "Vectoriel V2 — humeur focused, 1280×720, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-humeur-surprised-1280.png",
+      "desc": "Vectoriel V2 — humeur surprised, 1280×720, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-humeur-pained-1280.png",
+      "desc": "Vectoriel V2 — humeur pained, 1280×720, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-humeur-angry-1280.png",
+      "desc": "Vectoriel V2 — humeur angry, 1280×720, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-humeur-triumphant-1280.png",
+      "desc": "Vectoriel V2 — humeur triumphant, 1280×720, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-vueA-1280.png",
+      "desc": "Vectoriel V2 — vue A du duel, 1280×720, HUD compris"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-affiche-1280.png",
+      "desc": "Vectoriel V2 — affiche de rencontre (manche 2), 1280×720"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-rencontres-1280.png",
+      "desc": "Vectoriel V2 — écran Rencontres, 1280×720"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-humeur-neutral-1920.png",
+      "desc": "Vectoriel V2 — humeur neutral, 1920×1080, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-humeur-focused-1920.png",
+      "desc": "Vectoriel V2 — humeur focused, 1920×1080, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-humeur-surprised-1920.png",
+      "desc": "Vectoriel V2 — humeur surprised, 1920×1080, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-humeur-pained-1920.png",
+      "desc": "Vectoriel V2 — humeur pained, 1920×1080, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-humeur-angry-1920.png",
+      "desc": "Vectoriel V2 — humeur angry, 1920×1080, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-humeur-triumphant-1920.png",
+      "desc": "Vectoriel V2 — humeur triumphant, 1920×1080, visage 1:1 (scène seule)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-vueA-1920.png",
+      "desc": "Vectoriel V2 — vue A du duel, 1920×1080, HUD compris"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-affiche-1920.png",
+      "desc": "Vectoriel V2 — affiche de rencontre (manche 2), 1920×1080"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/reaction-v2.webm",
+      "desc": "Vectoriel V2 — réaction animée (repos → surprise avec recul → prudence → repos), 340×340, 1:1, 60 i/s demandées"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-reaction-1.png",
+      "desc": "Vectoriel V2 — réaction, 0,5 s — repos (mesuré : 503 ms)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-reaction-2.png",
+      "desc": "Vectoriel V2 — réaction, 0,66 s — surprise (début) (mesuré : 675 ms)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-reaction-3.png",
+      "desc": "Vectoriel V2 — réaction, 1,0 s — surprise (mesuré : 1025 ms)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-reaction-4.png",
+      "desc": "Vectoriel V2 — réaction, 2,6 s — prudence (mesuré : 2642 ms)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/v2-reaction-5.png",
+      "desc": "Vectoriel V2 — réaction, 4,2 s — retour au repos (mesuré : 4261 ms)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/reaction-comparaison.webm",
+      "desc": "Réaction animée, V1 et V2 côte à côte (même script, même durée)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/planche-l5-humeurs.png",
+      "desc": "Planche : six humeurs (1280 et 1920) et images clés de la réaction, V1 contre V2"
+    },
+    {
+      "file": "screenshots/qa/m07/l5/planche-l5-scene.png",
+      "desc": "Planche : affiche de rencontre et vue A du duel, V1 contre V2"
+    }
+  ],
+  "cost": {
+    "v1": {
+      "medianMs": 19.8,
+      "minMs": 18.4,
+      "maxMs": 44.7,
+      "runs": 15,
+      "textures": 15,
+      "texels": 570880
+    },
+    "v2": {
+      "medianMs": 49.8,
+      "minMs": 45.7,
+      "maxMs": 70.3,
+      "runs": 15,
+      "textures": 24,
+      "texels": 1853223
+    }
+  },
+  "issues": []
+}

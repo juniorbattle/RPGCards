@@ -89,6 +89,7 @@ Clavier : `Tab`, `Entrée/Espace`, `1–4` (main), `A`/`G` (mode), `Échap` (ann
 | `profileSeed=N` | avec `qa=1` : seed du profil créé (parcours de QA reproductibles) |
 | `ablate=candles,banners,dust,bloom,post` | mesure de coût (avec `qa=1` uniquement) : retire du rendu les bougies, les bannières, les poussières, le halo lumineux ou tout le post-traitement (rendu direct à la densité 1,5 d’avant le lot 3) |
 | `fallback=off\|nobloom\|direct` | avec `qa=1` uniquement : `off` désactive le repli automatique du post-traitement (mesure du rendu complet) ; `nobloom` / `direct` imposent ce niveau (même densité que le post-traitement). État du repli : `window.__lqv.arenaStats().post` (amendement ADR 019) |
+| `figure=v2` | avec `qa=1` uniquement (porte de validation M07 L5) : Maëlle dessinée par le modèle « vectoriel V2 » (duel, affiches, HUD) ; les autres rivaux et le rendu par défaut sont inchangés. Coût de génération des couches V1 / V2 : `window.__lqvFigureCost()` (ADR 021) |
 | `renderCheck=1` | avec `qa=1` uniquement : chaque rendu ciblé du plateau est comparé à un rendu complet du même état (DOM, attributs, écouteurs) et aucune transition CSS ne doit démarrer sur un élément gardé ; écart = erreur console, bilan `window.__lqvRenderCheck()` (passe 13) |
 | `artCheck=1` | avec `qa=1` uniquement : chaque illustration pré-générée par le worker est comparée à une génération synchrone dans la page (même data URL attendue) ; bilan `window.__lqv.artWarm()` (passe 14) |
 

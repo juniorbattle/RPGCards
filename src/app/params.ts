@@ -37,6 +37,8 @@ export interface AppParams {
   renderCheck: boolean;
   /** QA (`qa=1&artCheck=1`) : chaque illustration pré-générée par le worker est comparée à une génération synchrone (passe 14). */
   artCheck: boolean;
+  /** Porte de validation M07 L5 (`qa=1&figure=v2`) : modèle « vectoriel V2 » des personnages (Maëlle seulement) ; `v1` sinon. */
+  figure: 'v1' | 'v2';
 }
 
 export function readParams(search = window.location.search): AppParams {
@@ -72,5 +74,6 @@ export function readParams(search = window.location.search): AppParams {
     beat: q.has('beat') ? Math.max(0, Math.floor(Number(q.get('beat')) || 0)) : null,
     renderCheck: q.get('qa') === '1' && q.get('renderCheck') === '1',
     artCheck: q.get('qa') === '1' && q.get('artCheck') === '1',
+    figure: q.get('qa') === '1' && q.get('figure') === 'v2' ? 'v2' : 'v1',
   };
 }
