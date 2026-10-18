@@ -30,6 +30,9 @@ export interface AppParams {
   pose: string | null;
   /** QA (`qa=1`) : éléments de la scène retirés pour mesurer leur coût (voir ArenaOptions.ablate). */
   ablate: string[];
+  /** QA (`qa=1&fallback=off|nobloom|direct`) : repli automatique du post-traitement désactivé, ou niveau imposé
+   *  (voir ArenaOptions.fallback). Null en jeu : repli actif. */
+  fallback: 'off' | 'nobloom' | 'direct' | null;
   /** QA (`qa=1&renderCheck=1`) : chaque rendu ciblé du plateau est comparé à un rendu complet (passe 13). */
   renderCheck: boolean;
   /** QA (`qa=1&artCheck=1`) : chaque illustration pré-générée par le worker est comparée à une génération synchrone (passe 14). */
@@ -65,6 +68,7 @@ export function readParams(search = window.location.search): AppParams {
     intro: q.get('intro') === '1',
     pose: q.get('qa') === '1' ? q.get('pose') : null,
     ablate: q.get('qa') === '1' ? (q.get('ablate') ?? '').split(',').filter(Boolean) : [],
+    fallback: q.get('qa') === '1' && ['off', 'nobloom', 'direct'].includes(q.get('fallback') ?? '') ? (q.get('fallback') as 'off' | 'nobloom' | 'direct') : null,
     beat: q.has('beat') ? Math.max(0, Math.floor(Number(q.get('beat')) || 0)) : null,
     renderCheck: q.get('qa') === '1' && q.get('renderCheck') === '1',
     artCheck: q.get('qa') === '1' && q.get('artCheck') === '1',
