@@ -1,0 +1,308 @@
+{
+  "dist": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-local-cloud-project-2e4bcf/c86871b3-b7ce-4034-a60b-4dbb54ba3c6f/scratchpad/dist-avant",
+  "date": "2026-10-18T08:49:08.940Z",
+  "words": {
+    "accueil-vide-1280": 42,
+    "rencontres-1280": 218,
+    "preparation-1280": 148,
+    "resultat-1280": 63,
+    "accueil-profil-1280": 65,
+    "accueil-vide-1920": 42,
+    "rencontres-1920": 263,
+    "preparation-1920": 148
+  },
+  "transitions": [
+    {
+      "viewport": "1280",
+      "name": "accueil → création",
+      "idleMedianMs": 6.1,
+      "frames": 145,
+      "late": 1,
+      "latePct": 0.7,
+      "worstMs": 28.9,
+      "firstFrameMs": 28.9,
+      "lateAt": [
+        [
+          29,
+          29
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1280",
+      "name": "création → rencontres",
+      "idleMedianMs": 6.1,
+      "frames": 140,
+      "late": 1,
+      "latePct": 0.7,
+      "worstMs": 60.3,
+      "firstFrameMs": 60.3,
+      "lateAt": [
+        [
+          60,
+          60
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1280",
+      "name": "rencontres → deck",
+      "idleMedianMs": 6,
+      "frames": 141,
+      "late": 3,
+      "latePct": 2.1,
+      "worstMs": 36.3,
+      "firstFrameMs": 36.3,
+      "lateAt": [
+        [
+          36,
+          36
+        ],
+        [
+          54,
+          18
+        ],
+        [
+          67,
+          12
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1280",
+      "name": "deck → rencontres",
+      "idleMedianMs": 6,
+      "frames": 149,
+      "late": 0,
+      "latePct": 0,
+      "worstMs": 7,
+      "firstFrameMs": 6,
+      "lateAt": [],
+      "ok": true
+    },
+    {
+      "viewport": "1280",
+      "name": "rencontres → collection",
+      "idleMedianMs": 6.1,
+      "frames": 143,
+      "late": 3,
+      "latePct": 2.1,
+      "worstMs": 23.9,
+      "firstFrameMs": 23.9,
+      "lateAt": [
+        [
+          24,
+          24
+        ],
+        [
+          42,
+          18
+        ],
+        [
+          54,
+          12
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1280",
+      "name": "collection → rencontres",
+      "idleMedianMs": 6.1,
+      "frames": 149,
+      "late": 0,
+      "latePct": 0,
+      "worstMs": 6.3,
+      "firstFrameMs": 5.9,
+      "lateAt": [],
+      "ok": true
+    },
+    {
+      "viewport": "1280",
+      "name": "rencontres → préparation",
+      "idleMedianMs": 6.1,
+      "frames": 149,
+      "late": 0,
+      "latePct": 0,
+      "worstMs": 7.3,
+      "firstFrameMs": 6,
+      "lateAt": [],
+      "ok": true
+    },
+    {
+      "viewport": "1280",
+      "name": "résultat → rencontres",
+      "idleMedianMs": 6.1,
+      "frames": 147,
+      "late": 2,
+      "latePct": 1.4,
+      "worstMs": 12,
+      "firstFrameMs": 11,
+      "lateAt": [
+        [
+          11,
+          11
+        ],
+        [
+          35,
+          12
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1280",
+      "name": "rencontres → accueil",
+      "idleMedianMs": 6,
+      "frames": 149,
+      "late": 0,
+      "latePct": 0,
+      "worstMs": 6.9,
+      "firstFrameMs": 5.5,
+      "lateAt": [],
+      "ok": true
+    },
+    {
+      "viewport": "1920",
+      "name": "accueil → création",
+      "idleMedianMs": 6,
+      "frames": 145,
+      "late": 1,
+      "latePct": 0.7,
+      "worstMs": 30.1,
+      "firstFrameMs": 30.1,
+      "lateAt": [
+        [
+          30,
+          30
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1920",
+      "name": "création → rencontres",
+      "idleMedianMs": 6,
+      "frames": 139,
+      "late": 2,
+      "latePct": 1.4,
+      "worstMs": 60.5,
+      "firstFrameMs": 60.5,
+      "lateAt": [
+        [
+          60,
+          60
+        ],
+        [
+          85,
+          12
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1920",
+      "name": "rencontres → deck",
+      "idleMedianMs": 6.1,
+      "frames": 140,
+      "late": 3,
+      "latePct": 2.1,
+      "worstMs": 36.3,
+      "firstFrameMs": 36.3,
+      "lateAt": [
+        [
+          36,
+          36
+        ],
+        [
+          48,
+          12
+        ],
+        [
+          79,
+          25
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1920",
+      "name": "deck → rencontres",
+      "idleMedianMs": 6,
+      "frames": 148,
+      "late": 1,
+      "latePct": 0.7,
+      "worstMs": 12,
+      "firstFrameMs": 6,
+      "lateAt": [
+        [
+          24,
+          12
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1920",
+      "name": "rencontres → collection",
+      "idleMedianMs": 6.1,
+      "frames": 144,
+      "late": 3,
+      "latePct": 2.1,
+      "worstMs": 24,
+      "firstFrameMs": 24,
+      "lateAt": [
+        [
+          24,
+          24
+        ],
+        [
+          36,
+          12
+        ],
+        [
+          54,
+          12
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1920",
+      "name": "collection → rencontres",
+      "idleMedianMs": 6.1,
+      "frames": 148,
+      "late": 1,
+      "latePct": 0.7,
+      "worstMs": 12.5,
+      "firstFrameMs": 5.2,
+      "lateAt": [
+        [
+          24,
+          13
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1920",
+      "name": "rencontres → préparation",
+      "idleMedianMs": 6,
+      "frames": 149,
+      "late": 0,
+      "latePct": 0,
+      "worstMs": 7.2,
+      "firstFrameMs": 5.1,
+      "lateAt": [],
+      "ok": true
+    }
+  ],
+  "issues": [],
+  "mode": "chaud",
+  "renderer": "ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "framesAccueil4s_1280": 0,
+  "framesAccueil4s_1920": 0
+}

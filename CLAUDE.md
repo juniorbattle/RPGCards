@@ -6,7 +6,7 @@ Le développement se fait **directement sur `main`** : commit puis push sur `mai
 
 ## MANDAT ACTIF — M07 : mise en scène du duel et lisibilité (2026-10-17)
 
-Lire `docs/missions/M07_MISE_EN_SCENE_ET_LISIBILITE.md` et la section M07 d’`AGENTS.md`. Rival en buste sans mains (ADR 017), plateau symétrique et lisible avec un tour guidé (ADR 018 ; rival gardé de face, pas de portraits dans les coins), puis mise en scène HD-2D de la scène entière (ADR 019) ; règles et secrets inchangés. M04–M06 sont livrés (RC 0.6.0-rc.1).
+Lire `docs/missions/M07_MISE_EN_SCENE_ET_LISIBILITE.md` et la section M07 d’`AGENTS.md`. Rival en buste sans mains (ADR 017), plateau symétrique et lisible avec un tour guidé (ADR 018 ; rival gardé de face, pas de portraits dans les coins), puis mise en scène HD-2D de la scène entière (ADR 019), puis écrans hors duel qualitatifs et dynamiques (lot 4, ADR 020) ; règles et secrets inchangés. M04–M06 sont livrés (RC 0.6.0-rc.1).
 
 ## Mandat M04 à M06 (livré : duel visuel validé, jeu opérationnel)
 

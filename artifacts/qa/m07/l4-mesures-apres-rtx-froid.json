@@ -1,0 +1,331 @@
+{
+  "dist": "dist",
+  "date": "2026-10-18T08:52:49.366Z",
+  "words": {
+    "accueil-vide-1280": 24,
+    "rencontres-1280": 75,
+    "preparation-1280": 61,
+    "resultat-1280": 51,
+    "accueil-profil-1280": 32,
+    "accueil-vide-1920": 24,
+    "rencontres-1920": 129,
+    "preparation-1920": 61
+  },
+  "transitions": [
+    {
+      "viewport": "1280",
+      "name": "accueil → création",
+      "idleMedianMs": 6.1,
+      "frames": 129,
+      "late": 2,
+      "latePct": 1.6,
+      "worstMs": 103.1,
+      "firstFrameMs": 30.2,
+      "lateAt": [
+        [
+          30,
+          30
+        ],
+        [
+          139,
+          103
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1280",
+      "name": "création → rencontres",
+      "idleMedianMs": 6.1,
+      "frames": 134,
+      "late": 5,
+      "latePct": 3.7,
+      "worstMs": 42.4,
+      "firstFrameMs": 16.2,
+      "lateAt": [
+        [
+          16,
+          16
+        ],
+        [
+          65,
+          42
+        ],
+        [
+          95,
+          30
+        ],
+        [
+          592,
+          18
+        ],
+        [
+          640,
+          12
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1280",
+      "name": "rencontres → deck",
+      "idleMedianMs": 6.1,
+      "frames": 123,
+      "late": 4,
+      "latePct": 3.3,
+      "worstMs": 102.9,
+      "firstFrameMs": 24.2,
+      "lateAt": [
+        [
+          24,
+          24
+        ],
+        [
+          139,
+          103
+        ],
+        [
+          170,
+          24
+        ],
+        [
+          551,
+          30
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1280",
+      "name": "deck → rencontres",
+      "idleMedianMs": 6,
+      "frames": 149,
+      "late": 0,
+      "latePct": 0,
+      "worstMs": 6.4,
+      "firstFrameMs": 5.9,
+      "lateAt": [],
+      "ok": true
+    },
+    {
+      "viewport": "1280",
+      "name": "rencontres → collection",
+      "idleMedianMs": 6.1,
+      "frames": 146,
+      "late": 2,
+      "latePct": 1.4,
+      "worstMs": 17.8,
+      "firstFrameMs": 17.8,
+      "lateAt": [
+        [
+          18,
+          18
+        ],
+        [
+          36,
+          12
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1280",
+      "name": "collection → rencontres",
+      "idleMedianMs": 6.1,
+      "frames": 149,
+      "late": 0,
+      "latePct": 0,
+      "worstMs": 6.3,
+      "firstFrameMs": 5.9,
+      "lateAt": [],
+      "ok": true
+    },
+    {
+      "viewport": "1280",
+      "name": "rencontres → préparation",
+      "idleMedianMs": 6,
+      "frames": 144,
+      "late": 1,
+      "latePct": 0.7,
+      "worstMs": 36.3,
+      "firstFrameMs": 5.9,
+      "lateAt": [
+        [
+          48,
+          36
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1280",
+      "name": "résultat → rencontres",
+      "idleMedianMs": 6,
+      "frames": 148,
+      "late": 1,
+      "latePct": 0.7,
+      "worstMs": 10.8,
+      "firstFrameMs": 10.8,
+      "lateAt": [
+        [
+          11,
+          11
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1280",
+      "name": "rencontres → accueil",
+      "idleMedianMs": 6.1,
+      "frames": 149,
+      "late": 0,
+      "latePct": 0,
+      "worstMs": 6.4,
+      "firstFrameMs": 5.9,
+      "lateAt": [],
+      "ok": true
+    },
+    {
+      "viewport": "1920",
+      "name": "accueil → création",
+      "idleMedianMs": 6,
+      "frames": 141,
+      "late": 3,
+      "latePct": 2.1,
+      "worstMs": 36.3,
+      "firstFrameMs": 36.3,
+      "lateAt": [
+        [
+          36,
+          36
+        ],
+        [
+          73,
+          12
+        ],
+        [
+          91,
+          18
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1920",
+      "name": "création → rencontres",
+      "idleMedianMs": 6.1,
+      "frames": 146,
+      "late": 3,
+      "latePct": 2.1,
+      "worstMs": 12.1,
+      "firstFrameMs": 10.3,
+      "lateAt": [
+        [
+          10,
+          10
+        ],
+        [
+          22,
+          12
+        ],
+        [
+          35,
+          12
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1920",
+      "name": "rencontres → deck",
+      "idleMedianMs": 6.1,
+      "frames": 133,
+      "late": 4,
+      "latePct": 3,
+      "worstMs": 54.6,
+      "firstFrameMs": 22.8,
+      "lateAt": [
+        [
+          23,
+          23
+        ],
+        [
+          90,
+          55
+        ],
+        [
+          120,
+          18
+        ],
+        [
+          538,
+          24
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1920",
+      "name": "deck → rencontres",
+      "idleMedianMs": 6.1,
+      "frames": 149,
+      "late": 0,
+      "latePct": 0,
+      "worstMs": 6.5,
+      "firstFrameMs": 5.9,
+      "lateAt": [],
+      "ok": true
+    },
+    {
+      "viewport": "1920",
+      "name": "rencontres → collection",
+      "idleMedianMs": 6.1,
+      "frames": 146,
+      "late": 2,
+      "latePct": 1.4,
+      "worstMs": 17.9,
+      "firstFrameMs": 17.9,
+      "lateAt": [
+        [
+          18,
+          18
+        ],
+        [
+          36,
+          12
+        ]
+      ],
+      "ok": true
+    },
+    {
+      "viewport": "1920",
+      "name": "collection → rencontres",
+      "idleMedianMs": 6.1,
+      "frames": 149,
+      "late": 0,
+      "latePct": 0,
+      "worstMs": 6.3,
+      "firstFrameMs": 5.9,
+      "lateAt": [],
+      "ok": true
+    },
+    {
+      "viewport": "1920",
+      "name": "rencontres → préparation",
+      "idleMedianMs": 6.1,
+      "frames": 149,
+      "late": 0,
+      "latePct": 0,
+      "worstMs": 6.2,
+      "firstFrameMs": 5.8,
+      "lateAt": [],
+      "ok": true
+    }
+  ],
+  "issues": [],
+  "mode": "froid",
+  "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "framesAccueil4s_1280": 0,
+  "framesAccueil4s_1920": 0
+}

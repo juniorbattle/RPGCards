@@ -1,0 +1,160 @@
+{
+  "commit": "5743df9",
+  "date": "2026-10-18T09:07:32.282Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "cores": 16
+  },
+  "renderer": "Chromium headless + SwiftShader (CPU) — jamais une mesure de GPU",
+  "runs": {
+    "J-longevite-12-duels": {
+      "checks": [
+        "ÉCHEC textures GPU stables par rival sur 3 tours (33/25/25/25)",
+        "ÉCHEC géométries stables par rival après la première image en vue B (32/32/32/32 ; 1re mesure 47)",
+        "OK aucune scène de Clash, plateau ni crochet résiduel hors duel",
+        "OK nœuds DOM stables au tableau (290–305)",
+        "OK tas JS après GC : 15.7 Mo (4e duel) → 16.6 Mo (12e)"
+      ],
+      "fails": [
+        "textures GPU stables par rival sur 3 tours (33/25/25/25)",
+        "géométries stables par rival après la première image en vue B (32/32/32/32 ; 1re mesure 47)"
+      ],
+      "consoleIssues": [],
+      "samples": [
+        {
+          "i": 1,
+          "rival": "braise",
+          "textures": 33,
+          "geometries": 47,
+          "heapMB": 15,
+          "dom": 290,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 2,
+          "rival": "ronce",
+          "textures": 25,
+          "geometries": 32,
+          "heapMB": 15.3,
+          "dom": 293,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 3,
+          "rival": "voile",
+          "textures": 25,
+          "geometries": 32,
+          "heapMB": 15.6,
+          "dom": 296,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 4,
+          "rival": "astre",
+          "textures": 25,
+          "geometries": 32,
+          "heapMB": 15.7,
+          "dom": 299,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 5,
+          "rival": "braise",
+          "textures": 25,
+          "geometries": 32,
+          "heapMB": 15.9,
+          "dom": 302,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 6,
+          "rival": "ronce",
+          "textures": 33,
+          "geometries": 48,
+          "heapMB": 15.9,
+          "dom": 305,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 7,
+          "rival": "voile",
+          "textures": 25,
+          "geometries": 32,
+          "heapMB": 16,
+          "dom": 305,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 8,
+          "rival": "astre",
+          "textures": 25,
+          "geometries": 32,
+          "heapMB": 16.1,
+          "dom": 305,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 9,
+          "rival": "braise",
+          "textures": 33,
+          "geometries": 47,
+          "heapMB": 16.2,
+          "dom": 305,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 10,
+          "rival": "ronce",
+          "textures": 25,
+          "geometries": 32,
+          "heapMB": 16.3,
+          "dom": 305,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 11,
+          "rival": "voile",
+          "textures": 25,
+          "geometries": 33,
+          "heapMB": 16.5,
+          "dom": 305,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        },
+        {
+          "i": 12,
+          "rival": "astre",
+          "textures": 25,
+          "geometries": 32,
+          "heapMB": 16.6,
+          "dom": 305,
+          "stage": 0,
+          "app": 0,
+          "hooks": false
+        }
+      ],
+      "ms": 50898
+    }
+  }
+}

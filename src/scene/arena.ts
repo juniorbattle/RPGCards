@@ -41,6 +41,23 @@ export type ArenaFx =
   | { type: 'overtime' }
   | { type: 'victory'; side: 'me' | 'opp' };
 
+/**
+ * M07 L4 (ADR 020) — plan de feux de chaque écran hors duel : multiplicateurs des lumières du duel (salle,
+ * projecteur du visage, projecteur de table, bougies, contre-jour). `duel` vaut 1 partout : le duel est inchangé.
+ */
+export type Staging = 'duel' | 'title' | 'board' | 'gallery' | 'portrait';
+export const STAGING: Record<Staging, { house: number; key: number; stage: number; candle: number; back: number }> = {
+  duel: { house: 1, key: 1, stage: 1, candle: 1, back: 1 },
+  /** Accueil : salle noire, le rival seul dans son projecteur. */
+  title: { house: 0.5, key: 1.12, stage: 0.5, candle: 0.7, back: 1.3 },
+  /** Rencontres : salle baissée, la scène attend. */
+  board: { house: 0.7, key: 1, stage: 0.75, candle: 0.85, back: 1.1 },
+  /** Deck, collection, création, options, aide : la scène s’efface derrière les cartes. */
+  gallery: { house: 0.42, key: 0.6, stage: 0.5, candle: 0.6, back: 0.8 },
+  /** Préparation, résultat : le rival éclairé comme en duel, la table un peu en retrait. */
+  portrait: { house: 0.85, key: 1.08, stage: 0.85, candle: 1, back: 1.15 },
+};
+
 export interface ArenaOptions {
   artSeed: number;
   view: ViewMode;
@@ -94,6 +111,8 @@ export interface ArenaHandle {
   setRival(p: RivalPersonality): void;
   /** M04 : fige la scène (une image, aucune boucle) pendant les écrans de menu ; reprend ensuite. */
   setPaused(v: boolean): void;
+  /** M07 L4 : plan de feux de l’écran courant (`duel` pendant un duel). Scène figée : une seule image. */
+  setStaging(s: Staging): void;
   stats(): ArenaStats;
   dispose(): void;
 }
@@ -716,7 +735,8 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   const HOUSE = 0.62;
   const house = new THREE.HemisphereLight(0xffd4a4, 0x2a1a14, HOUSE);
   scene.add(house);
-  const key = new THREE.SpotLight(0xffe2bc, 1.75, 0, 0.27, 0.65, 0);
+  const KEY = 1.75;
+  const key = new THREE.SpotLight(0xffe2bc, KEY, 0, 0.27, 0.65, 0);
   key.position.set(-2.5, 6, 9);
   key.target.position.copy(HEAD_WORLD);
   scene.add(key, key.target);
@@ -909,7 +929,8 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   // M07 L3 — contre-jour : lumière diffuse derrière la silhouette du rival (couleur de sa famille mêlée de
   // blanc chaud), qui le détache du décor. Les plans 2,5D ne reçoivent pas de lumière par l’arrière : un
   // plan additif derrière le buste, caché en bas par la table, fait ce travail en un seul appel de dessin.
-  const backlight = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 4.4), new THREE.MeshBasicMaterial({ map: backlightTexture(), transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
+  const BACKLIGHT = 0.4;
+  const backlight = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 4.4), new THREE.MeshBasicMaterial({ map: backlightTexture(), transparent: true, opacity: BACKLIGHT, blending: THREE.AdditiveBlending, depthWrite: false, fog: false }));
   backlight.position.set(0, 2.5, RIVAL_Z - 0.5);
   scene.add(backlight);
   const tintBacklight = (f: Family) => { (backlight.material as THREE.MeshBasicMaterial).color.setHex(FAMILY_PALETTE[f].hex).lerp(new THREE.Color(0xffe6c4), 0.45); };
@@ -960,7 +981,8 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   let shake = 0;
   let focus = 0; // 1 au début d’une révélation ou d’un Clash, décroît en 2,6 s (lumières de salle)
   let paused = false;
-  const still = () => reduced || opts.freeze || paused;
+  let staging: Staging = 'duel';
+  const still =() => reduced || opts.freeze || paused;
 
   function addTransient(obj: THREE.Object3D, dur: number, update: (k: number) => void): void {
     scene.add(obj);
@@ -1126,9 +1148,12 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
     // salle »), puis tout revient en douceur. Jamais en mouvement réduit ni en rendu figé.
     focus = still() ? 0 : Math.max(0, focus - dt / 2.6);
     const dim = ease(Math.min(1, focus * 1.6));
-    house.intensity = HOUSE * (1 - 0.4 * dim);
-    stage.intensity = STAGE * (1 + 0.3 * dim);
-    candleLights.forEach((l, i) => { const b = candleBase[i]! * (1 - 0.35 * dim); l.intensity = still() ? b : b * (0.944 + Math.sin(clock * 7.3 + i * 2.1) * 0.07 + Math.sin(clock * 13.1 + i) * 0.04); });
+    const st = STAGING[staging];
+    house.intensity = HOUSE * st.house * (1 - 0.4 * dim);
+    stage.intensity = STAGE * st.stage * (1 + 0.3 * dim);
+    key.intensity = KEY * st.key;
+    (backlight.material as THREE.MeshBasicMaterial).opacity = BACKLIGHT * st.back;
+    candleLights.forEach((l, i) => { const b = candleBase[i]! * st.candle * (1 - 0.35 * dim); l.intensity = still() ? b : b * (0.944 + Math.sin(clock * 7.3 + i * 2.1) * 0.07 + Math.sin(clock * 13.1 + i) * 0.04); });
     banners.forEach((b, i) => { b.rotation.y = still() ? 0 : Math.sin(clock * 0.6 + i * 1.3) * 0.035; });
     center.intensity = Math.max(0, center.intensity - dt * 6);
     rival.update(dt, clock, still());
@@ -1330,6 +1355,12 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
         applyLevel(fallback.current);
       }
       start();
+    },
+    setStaging(s: Staging) {
+      if (s === staging) return;
+      staging = s;
+      // Scène figée : lumières posées par `update` (pas de temps), puis une seule image.
+      if (still()) { update(0); requestRender(); }
     },
     stats(): ArenaStats {
       const info = renderer.info;
