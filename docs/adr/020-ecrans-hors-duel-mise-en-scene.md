@@ -66,5 +66,6 @@ résultat sans mise en scène), deck en vignettes de 58 px commandées par des b
   ni police externe.
 - Les clés `data-key` des parcours de QA sont conservées.
 - Mesures, captures et contraste : journal, passe 20.
+- **Arbitrage du responsable (2026-10-18)** sur l’écran Résultat, qui n’atteint que −19 % de mots visibles (les plaques des cartes débloquées comptent) : « Garde les cartes débloquées en images sur l’écran de résultat ; le critère de mots est accepté tel quel pour cet écran. »
 
 **Cette décision n’introduit aucune règle métier nouvelle.**
