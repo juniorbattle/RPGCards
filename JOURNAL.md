@@ -583,3 +583,11 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
   - revue opérateur des captures `screenshots/qa/adr016/` (taille des cartes posées, inclinaison 36°, étiquettes du rival masquées) ;
   - arbitrages ouverts 4b / 4c ;
   - pré-génération des illustrations (session dédiée, en cours).
+
+## Règle du responsable — serveurs de dev et processus de fond (2026-10-17)
+
+- **[OK] Décision :** demande du responsable, transmise par sa session de vérification des accès et confirmée par lui dans cette session. Nouvelle section « Serveurs de dev et processus de fond » dans `AGENTS.md`, après « Commandes ». Les serveurs de dev se lancent avec `preview_start` et une entrée de `.claude/launch.json`. Les scripts longs se lancent avec `run_in_background` et s'arrêtent avec `TaskStop`. Plus de `taskkill`, de `Stop-Process` ni de balayage des processus du système : en cas d'orphelin, signaler le port et le PID et laisser le responsable décider. Chaque session arrête ce qu'elle a lancé avant de finir.
+- **[OK] `.claude/launch.json` commun versionné :** `dev` (`npm run dev`, port 5173, `server.port` de `vite.config.ts`) et `preview` (`npm run preview`, port 4173, `--strictPort`). Ports vérifiés sur `main` (`62f0232`). `.claude/` n'est pas ignoré par `.gitignore` : seul `.claude/worktrees/` est exclu, localement, par `.git/info/exclude`.
+- **Raison :** dans le projet voisin HD-2D, des sessions demandaient sans cesse l'autorisation pour des balayages de processus et des `taskkill` sur des serveurs de test restés ouverts. Ici, les passes 11 à 14 ont aussi lancé des processus de fond en parallèle : en passe 14, deux sessions partageaient le port 4179 et l'une a testé le build de l'autre. Passer par les outils de session évite les demandes d'autorisation et le risque de toucher des programmes sans rapport.
+- **[?] Limite :** la règle n'attribue pas les ports des outils de QA (`startPreview`, 4179 et suivants). Deux campagnes lancées en même temps peuvent encore se gêner : la leçon de la passe 14 (un serveur de test doit prouver qu'il est le sien) reste à outiller.
+- Aucun changement de code ni de règle de jeu.
