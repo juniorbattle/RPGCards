@@ -319,7 +319,8 @@ button { font: inherit; color: inherit; }
 .hand-empty { color: var(--ink-dim); font-size: 0.8rem; padding: 1rem; background: rgba(10, 7, 10, 0.6); border-radius: 8px; border: 1px dashed var(--line-dim); }
 
 /* --- Inspection flottante (gauche) ------------------------------------------ */
-.inspector { position: absolute; z-index: 6; left: var(--g); top: calc(var(--g) + 19vh); width: var(--hud-w); display: none; pointer-events: none; }
+/* M07 : à gauche, à mi-hauteur entre le HUD du rival (haut) et le vôtre (bas), au plus près du plateau. */
+.inspector { position: absolute; z-index: 6; left: var(--g); top: 50%; translate: 0 -50%; width: var(--hud-w); display: none; pointer-events: none; }
 .inspector.show { display: grid; grid-template-columns: auto 1fr; gap: 0.6rem; padding: 0.6rem; }
 .inspector .card { --card-w: clamp(72px, 6.4vw, 110px); --card-h: calc(var(--card-w) * 1.4); --radius: calc(var(--card-w) * 0.07); cursor: default; }
 .inspector h3 { margin: 0 0 0.2rem; font-family: Georgia, serif; font-size: 0.98rem; color: var(--gold-hi); }
@@ -432,7 +433,7 @@ button { font: inherit; color: inherit; }
   .command .techs { position: absolute; right: var(--g); bottom: calc(100% + 4px); border: 0; }
   .btn { padding: 0.42rem 0.7rem; font-size: 0.85rem; }
   .hand { bottom: calc(var(--g) + 4.4rem); --avail: calc(100vw - 2 * var(--g)); }
-  .inspector { top: 22vh; width: calc(100vw - 12px); }
+  .inspector { top: 22vh; translate: none; width: calc(100vw - 12px); }
   .menu { min-width: 11rem; bottom: calc(100% + 4px); }
   .menu.left { right: auto; left: 0; }
   .menu.right { left: auto; right: 0; }
@@ -475,7 +476,7 @@ button { font: inherit; color: inherit; }
   .command .msg { -webkit-line-clamp: 3; font-size: 0.78rem; }
   .command .msg .title, .beat-title { font-size: 0.88rem; }
   .btn { padding: 0.36rem 0.65rem; font-size: 0.82rem; }
-  .inspector { top: calc(var(--g) + 6.4rem); }
+  .inspector { top: calc(var(--g) + 6.4rem); translate: none; }
   .drawer { width: min(360px, 60vw); }
   .toast { bottom: calc(var(--hand-h) + 1rem); }
 }
