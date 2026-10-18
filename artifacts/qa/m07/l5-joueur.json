@@ -1,0 +1,401 @@
+{
+  "date": "2026-10-18T22:52:08.694Z",
+  "commit": "89b17a2+arbre de travail",
+  "avant": "89b17a2",
+  "chromeArgs": [],
+  "renderer": "ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "controles": {
+    "cheminV1Joueur": [
+      {
+        "famille": "Cendre",
+        "identique": true,
+        "moyenne": 0,
+        "max": 0,
+        "pixels": 0
+      },
+      {
+        "famille": "Voile",
+        "identique": true,
+        "moyenne": 0,
+        "max": 0,
+        "pixels": 0
+      },
+      {
+        "famille": "Ronce",
+        "identique": true,
+        "moyenne": 0,
+        "max": 0,
+        "pixels": 0
+      },
+      {
+        "famille": "Astre",
+        "identique": true,
+        "moyenne": 0,
+        "max": 0,
+        "pixels": 0
+      }
+    ],
+    "portraitsRivaux": [
+      {
+        "rival": "braise",
+        "identique": true,
+        "moyenne": 0,
+        "max": 0,
+        "pixels": 0
+      },
+      {
+        "rival": "ronce",
+        "identique": true,
+        "moyenne": 0,
+        "max": 0,
+        "pixels": 0
+      },
+      {
+        "rival": "voile",
+        "identique": true,
+        "moyenne": 0,
+        "max": 0,
+        "pixels": 0
+      },
+      {
+        "rival": "astre",
+        "identique": true,
+        "moyenne": 0,
+        "max": 0,
+        "pixels": 0
+      }
+    ],
+    "duelHorsPortrait": [
+      {
+        "taille": "1280x720",
+        "moyenne": 0,
+        "max": 0,
+        "pixels": 0
+      },
+      {
+        "taille": "1920x1080",
+        "moyenne": 0,
+        "max": 0,
+        "pixels": 0
+      }
+    ],
+    "temoin": [
+      {
+        "taille": "1280x720",
+        "moyenne": 0.237,
+        "max": 219,
+        "pixels": 7901,
+        "zone": [
+          27,
+          598,
+          124,
+          694
+        ]
+      },
+      {
+        "taille": "1920x1080",
+        "moyenne": 0.198,
+        "max": 222,
+        "pixels": 14893,
+        "zone": [
+          34,
+          918,
+          164,
+          1048
+        ]
+      }
+    ]
+  },
+  "cout": {
+    "player-Cendre": {
+      "v1": {
+        "medianMs": 7.4,
+        "minMs": 6.7,
+        "maxMs": 23.7,
+        "runs": 25,
+        "textures": 1,
+        "texels": 36864
+      },
+      "v2": {
+        "medianMs": 21.8,
+        "minMs": 20,
+        "maxMs": 59.1,
+        "runs": 25,
+        "textures": 1,
+        "texels": 147456
+      },
+      "couches": {
+        "toutes": {
+          "medianMs": 41.5,
+          "minMs": 39,
+          "maxMs": 62.8,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        },
+        "portrait": {
+          "medianMs": 30.4,
+          "minMs": 28.6,
+          "maxMs": 45.1,
+          "runs": 25,
+          "textures": 12,
+          "texels": 1683023
+        }
+      }
+    },
+    "player-Voile": {
+      "v1": {
+        "medianMs": 8,
+        "minMs": 7,
+        "maxMs": 22.4,
+        "runs": 25,
+        "textures": 1,
+        "texels": 36864
+      },
+      "v2": {
+        "medianMs": 24,
+        "minMs": 22.6,
+        "maxMs": 45,
+        "runs": 25,
+        "textures": 1,
+        "texels": 147456
+      },
+      "couches": {
+        "toutes": {
+          "medianMs": 41.8,
+          "minMs": 40.4,
+          "maxMs": 66.2,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        },
+        "portrait": {
+          "medianMs": 30.6,
+          "minMs": 28.4,
+          "maxMs": 46.4,
+          "runs": 25,
+          "textures": 12,
+          "texels": 1683023
+        }
+      }
+    },
+    "player-Ronce": {
+      "v1": {
+        "medianMs": 7.5,
+        "minMs": 7,
+        "maxMs": 22.2,
+        "runs": 25,
+        "textures": 1,
+        "texels": 36864
+      },
+      "v2": {
+        "medianMs": 24.1,
+        "minMs": 22.4,
+        "maxMs": 54.9,
+        "runs": 25,
+        "textures": 1,
+        "texels": 147456
+      },
+      "couches": {
+        "toutes": {
+          "medianMs": 45.3,
+          "minMs": 40.1,
+          "maxMs": 70.1,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        },
+        "portrait": {
+          "medianMs": 35.8,
+          "minMs": 28.7,
+          "maxMs": 50.4,
+          "runs": 25,
+          "textures": 12,
+          "texels": 1683023
+        }
+      }
+    },
+    "player-Astre": {
+      "v1": {
+        "medianMs": 8.3,
+        "minMs": 7.5,
+        "maxMs": 22.4,
+        "runs": 25,
+        "textures": 1,
+        "texels": 36864
+      },
+      "v2": {
+        "medianMs": 24.7,
+        "minMs": 22.7,
+        "maxMs": 61.3,
+        "runs": 25,
+        "textures": 1,
+        "texels": 147456
+      },
+      "couches": {
+        "toutes": {
+          "medianMs": 42.9,
+          "minMs": 40.8,
+          "maxMs": 61.6,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        },
+        "portrait": {
+          "medianMs": 31.1,
+          "minMs": 29.1,
+          "maxMs": 46.7,
+          "runs": 25,
+          "textures": 12,
+          "texels": 1683023
+        }
+      }
+    },
+    "braise": {
+      "v1": {
+        "medianMs": 7.9,
+        "minMs": 7.1,
+        "maxMs": 31.6,
+        "runs": 25,
+        "textures": 1,
+        "texels": 36864
+      },
+      "v2": {
+        "medianMs": 32.8,
+        "minMs": 26,
+        "maxMs": 61.7,
+        "runs": 25,
+        "textures": 1,
+        "texels": 147456
+      },
+      "couches": {
+        "toutes": {
+          "medianMs": 50.8,
+          "minMs": 41.5,
+          "maxMs": 78.8,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        },
+        "portrait": {
+          "medianMs": 31.8,
+          "minMs": 28.3,
+          "maxMs": 48.9,
+          "runs": 25,
+          "textures": 12,
+          "texels": 1683023
+        }
+      }
+    },
+    "ronce": {
+      "v1": {
+        "medianMs": 11,
+        "minMs": 9.9,
+        "maxMs": 23.4,
+        "runs": 25,
+        "textures": 1,
+        "texels": 36864
+      },
+      "v2": {
+        "medianMs": 33,
+        "minMs": 27.7,
+        "maxMs": 60.9,
+        "runs": 25,
+        "textures": 1,
+        "texels": 147456
+      },
+      "couches": {
+        "toutes": {
+          "medianMs": 55.4,
+          "minMs": 46.2,
+          "maxMs": 72.5,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        },
+        "portrait": {
+          "medianMs": 36,
+          "minMs": 33.3,
+          "maxMs": 50.8,
+          "runs": 25,
+          "textures": 12,
+          "texels": 1683023
+        }
+      }
+    },
+    "voile": {
+      "v1": {
+        "medianMs": 8,
+        "minMs": 7.2,
+        "maxMs": 17.6,
+        "runs": 25,
+        "textures": 1,
+        "texels": 36864
+      },
+      "v2": {
+        "medianMs": 24.8,
+        "minMs": 20.7,
+        "maxMs": 87.6,
+        "runs": 25,
+        "textures": 1,
+        "texels": 147456
+      },
+      "couches": {
+        "toutes": {
+          "medianMs": 41,
+          "minMs": 38.6,
+          "maxMs": 59.4,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        },
+        "portrait": {
+          "medianMs": 28,
+          "minMs": 27.2,
+          "maxMs": 36.4,
+          "runs": 25,
+          "textures": 12,
+          "texels": 1683023
+        }
+      }
+    },
+    "astre": {
+      "v1": {
+        "medianMs": 7.5,
+        "minMs": 7.1,
+        "maxMs": 34.8,
+        "runs": 25,
+        "textures": 1,
+        "texels": 36864
+      },
+      "v2": {
+        "medianMs": 30.9,
+        "minMs": 29.1,
+        "maxMs": 61.3,
+        "runs": 25,
+        "textures": 1,
+        "texels": 147456
+      },
+      "couches": {
+        "toutes": {
+          "medianMs": 47.8,
+          "minMs": 46.5,
+          "maxMs": 55.9,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        },
+        "portrait": {
+          "medianMs": 38.4,
+          "minMs": 34.8,
+          "maxMs": 54.8,
+          "runs": 25,
+          "textures": 12,
+          "texels": 1683023
+        }
+      }
+    }
+  },
+  "mode": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "console": []
+}

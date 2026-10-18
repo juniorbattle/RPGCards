@@ -689,11 +689,39 @@ export function figureV2Art(kit: FigureV2Kit, seed: number): FigureV2Art {
   };
 }
 
+/** Couches dont le portrait a besoin (expression de repos, une bouche) : sous-ensemble de `FigureV2Art`. */
+export type FigureV2PortraitArt = Pick<FigureV2Art, 'head' | 'front' | 'hood' | 'torso' | 'sclera' | 'iris' | 'lidUp' | 'lidLow' | 'moods'>
+  & { brows: Partial<Record<BrowShape, HTMLCanvasElement>>; mouths: Partial<Record<MouthShape, HTMLCanvasElement>> };
+
+/**
+ * Couches du portrait seulement (passe 26) : mêmes fonctions de dessin que `figureV2Art`, donc mêmes pixels, sans les
+ * paupières closes, les autres formes de sourcils et de bouche ni la rougeur, que le portrait n’affiche pas.
+ */
+export function figureV2PortraitArt(kit: FigureV2Kit, seed: number, mouth: MouthShape = 'neutral'): FigureV2PortraitArt {
+  const k = kit.colors;
+  const head = kit.head(seed);
+  const moods = moodsFor(kit);
+  const brow = moods.neutral.brow;
+  return {
+    head,
+    front: kit.front(),
+    hood: kit.back(),
+    torso: kit.torso(),
+    sclera: drawSclera(),
+    iris: drawIris(k),
+    lidUp: [drawUpperLid(k, head, 0), drawUpperLid(k, head, 1)],
+    lidLow: [drawLowerLid(k, head, 0), drawLowerLid(k, head, 1)],
+    brows: { [brow]: drawBrow(k, kit.brows ?? BROWS, brow) },
+    mouths: { [mouth]: drawMouth(k, mouth) },
+    moods,
+  };
+}
+
 /**
  * Portrait des affiches et des HUD composé à partir des MÊMES couches, à leur place dans le rig (expression de repos,
  * regard vers le joueur) : fenêtre carrée de l’espace H.
  */
-export function drawFigureV2Portrait(ctx: Ctx, size: number, art: FigureV2Art, mouth: MouthShape = 'neutral'): void {
+export function drawFigureV2Portrait(ctx: Ctx, size: number, art: FigureV2PortraitArt, mouth: MouthShape = 'neutral'): void {
   const W = { u0: -70, v0: -34, s: 396 };
   const k = size / W.s;
   ctx.save();
@@ -712,9 +740,9 @@ export function drawFigureV2Portrait(ctx: Ctx, size: number, art: FigureV2Art, m
     put(art.iris, cx - IRIS_D / 2, EYE_Y - IRIS_D / 2 - 0.05 * RIG_V2.gaze.y * HY, IRIS_D, IRIS_D);
     put(art.lidLow[side], cx - LID_W / 2, EYE_Y + LOW_Y0 - n.squint * SQUINT, LID_W, LOW_H);
     put(art.lidUp[side], cx - LID_W / 2, EYE_Y + UP_Y0, LID_W, UP_H);
-    put(art.brows[n.brow], cx - BROW_W / 2, 156 - BROW_Y * HY - BROW_H / 2, BROW_W, BROW_H, side === 1);
+    put(art.brows[n.brow]!, cx - BROW_W / 2, 156 - BROW_Y * HY - BROW_H / 2, BROW_W, BROW_H, side === 1);
   });
-  put(art.mouths[mouth], 128 - MOUTH_W / 2, 156 + 0.3 * HY - MOUTH_H / 2, MOUTH_W, MOUTH_H);
+  put(art.mouths[mouth]!, 128 - MOUTH_W / 2, 156 + 0.3 * HY - MOUTH_H / 2, MOUTH_W, MOUTH_H);
   put(art.front, 0, 0, 256, 312);
   ctx.restore();
 }

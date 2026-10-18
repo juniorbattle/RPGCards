@@ -5,10 +5,12 @@
  */
 import {
   browCanvas, headCanvas, hoodCanvas, irisCanvas, lidCanvas, MOUTHS, mouthCanvas, scleraCanvas, torsoCanvas,
+  type Figure,
 } from './rivalTextures';
-import { figureV2Art } from './figureV2';
+import { figureV2Art, figureV2PortraitArt } from './figureV2';
 import { kitV2 } from './v2';
 import type { RivalPersonality } from '../presentation/personalities';
+import { portraitCanvas } from '../art/portrait';
 
 export interface FigureCost { medianMs: number; minMs: number; maxMs: number; runs: number; textures: number; texels: number }
 
@@ -44,4 +46,20 @@ export function figureCost(p: RivalPersonality, seed: number, runs = 9): { v1: F
   v1();
   if (kit) v2();
   return { v1: bench(v1, runs), v2: kit ? bench(v2, runs) : null };
+}
+
+/**
+ * Passe 26 : coût d’un portrait (HUD du joueur, affiches des rivaux), V1 contre V2 : dessin complet et encodage PNG,
+ * comme `portraitUrl` hors cache (V1 à 192 px, V2 à 384 px). `couches` : génération des couches V2 seules, toutes
+ * (`figureV2Art`, ce que faisait le portrait jusqu’à la passe 25) contre celles du portrait (`figureV2PortraitArt`).
+ */
+export function portraitCost(f: Figure, seed: number, runs = 9): { v1: FigureCost; v2: FigureCost | null; couches: { toutes: FigureCost; portrait: FigureCost } | null } {
+  const v1 = () => { const c = portraitCanvas(f, seed, 'neutral', 192, false)!; c.toDataURL('image/png'); return [c]; };
+  const kit = kitV2(f.id);
+  const v2 = () => { const c = portraitCanvas(f, seed, 'neutral', 384, true)!; c.toDataURL('image/png'); return [c]; };
+  const all = () => { const a = figureV2Art(kit!, seed); return [a.head, a.front, a.hood, a.torso, a.sclera, a.iris, ...a.lidUp, ...a.lidLow, ...a.lidShut, ...Object.values(a.brows), ...Object.values(a.mouths), a.flush]; };
+  const lean = () => { const a = figureV2PortraitArt(kit!, seed); return [a.head, a.front, a.hood, a.torso, a.sclera, a.iris, ...a.lidUp, ...a.lidLow, ...Object.values(a.brows), ...Object.values(a.mouths)] as HTMLCanvasElement[]; };
+  v1();
+  if (kit) { v2(); all(); lean(); }
+  return { v1: bench(v1, runs), v2: kit ? bench(v2, runs) : null, couches: kit ? { toutes: bench(all, runs), portrait: bench(lean, runs) } : null };
 }
