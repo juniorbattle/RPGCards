@@ -1,0 +1,52 @@
+{
+  "dist": "build de 4a72a76 (avant le lot 2)",
+  "view": "B",
+  "mesures": {
+    "debut-1280-b": {
+      "textes": 72,
+      "min": 8.5,
+      "plusPetitPx": 9.3,
+      "sousSeuil": [],
+      "desactives": 3
+    },
+    "select-1280-b": {
+      "textes": 84,
+      "min": 8.5,
+      "plusPetitPx": 7.2,
+      "sousSeuil": [],
+      "desactives": 3
+    },
+    "commit-1280-b": {
+      "textes": 87,
+      "min": 3.2,
+      "plusPetitPx": 7.2,
+      "sousSeuil": [
+        "chip assault « ASSAUT » 3.2:1"
+      ],
+      "desactives": 2
+    },
+    "debut-1920-b": {
+      "textes": 72,
+      "min": 8.1,
+      "plusPetitPx": 10.5,
+      "sousSeuil": [],
+      "desactives": 3
+    },
+    "select-1920-b": {
+      "textes": 84,
+      "min": 8.1,
+      "plusPetitPx": 9.7,
+      "sousSeuil": [],
+      "desactives": 3
+    },
+    "commit-1920-b": {
+      "textes": 87,
+      "min": 3.2,
+      "plusPetitPx": 9.7,
+      "sousSeuil": [
+        "chip assault « ASSAUT » 3.2:1"
+      ],
+      "desactives": 2
+    }
+  }
+}

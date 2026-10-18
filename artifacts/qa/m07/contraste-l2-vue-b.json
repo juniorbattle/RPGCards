@@ -1,0 +1,48 @@
+{
+  "dist": "dist (lot 2)",
+  "view": "B",
+  "mesures": {
+    "debut-1280-b": {
+      "textes": 67,
+      "min": 7.5,
+      "plusPetitPx": 8.6,
+      "sousSeuil": [],
+      "desactives": 3
+    },
+    "select-1280-b": {
+      "textes": 81,
+      "min": 5.3,
+      "plusPetitPx": 7.2,
+      "sousSeuil": [],
+      "desactives": 3
+    },
+    "commit-1280-b": {
+      "textes": 75,
+      "min": 5.4,
+      "plusPetitPx": 7.2,
+      "sousSeuil": [],
+      "desactives": 2
+    },
+    "debut-1920-b": {
+      "textes": 68,
+      "min": 8.1,
+      "plusPetitPx": 10.5,
+      "sousSeuil": [],
+      "desactives": 3
+    },
+    "select-1920-b": {
+      "textes": 82,
+      "min": 5.4,
+      "plusPetitPx": 9.7,
+      "sousSeuil": [],
+      "desactives": 3
+    },
+    "commit-1920-b": {
+      "textes": 76,
+      "min": 5.3,
+      "plusPetitPx": 9.7,
+      "sousSeuil": [],
+      "desactives": 2
+    }
+  }
+}

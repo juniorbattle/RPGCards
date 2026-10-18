@@ -3,6 +3,8 @@
 Date : 2026-10-17
 Statut : **APPROUVÉ par le responsable** (retours en séance du 2026-10-17 ; choix explicite « Toujours la vue de
 face » parmi trois options proposées). **Amende l'ADR 013** sur la caméra pendant la pose et sur le dessin des cases.
+**Amendé par l’ADR 018** (M07 lot 2, 2026-10-17) : rangées en miroir de 16 vh à 30° en vue A bureau, main à 19 vh,
+cases en contour plein avec libellé gravé dedans ; le principe « cases au format des cartes » est conservé.
 
 ## Contexte
 
