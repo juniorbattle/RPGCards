@@ -1,0 +1,301 @@
+{
+  "date": "2026-10-18T22:53:28.726Z",
+  "commit": "89b17a2+arbre de travail",
+  "avant": null,
+  "chromeArgs": [
+    "--force_high_performance_gpu"
+  ],
+  "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "cout": {
+    "player-Cendre": {
+      "v1": {
+        "medianMs": 9.9,
+        "minMs": 8.6,
+        "maxMs": 25,
+        "runs": 25,
+        "textures": 1,
+        "texels": 36864
+      },
+      "v2": {
+        "medianMs": 22.5,
+        "minMs": 18.5,
+        "maxMs": 37.9,
+        "runs": 25,
+        "textures": 1,
+        "texels": 147456
+      },
+      "couches": {
+        "toutes": {
+          "medianMs": 32.2,
+          "minMs": 27.8,
+          "maxMs": 48.6,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        },
+        "portrait": {
+          "medianMs": 19.7,
+          "minMs": 17.5,
+          "maxMs": 35.7,
+          "runs": 25,
+          "textures": 12,
+          "texels": 1683023
+        }
+      }
+    },
+    "player-Voile": {
+      "v1": {
+        "medianMs": 7,
+        "minMs": 5.9,
+        "maxMs": 19.9,
+        "runs": 25,
+        "textures": 1,
+        "texels": 36864
+      },
+      "v2": {
+        "medianMs": 21.9,
+        "minMs": 18.8,
+        "maxMs": 36.7,
+        "runs": 25,
+        "textures": 1,
+        "texels": 147456
+      },
+      "couches": {
+        "toutes": {
+          "medianMs": 30.9,
+          "minMs": 27.9,
+          "maxMs": 43.6,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        },
+        "portrait": {
+          "medianMs": 21.2,
+          "minMs": 17.5,
+          "maxMs": 31.9,
+          "runs": 25,
+          "textures": 12,
+          "texels": 1683023
+        }
+      }
+    },
+    "player-Ronce": {
+      "v1": {
+        "medianMs": 9.9,
+        "minMs": 7.9,
+        "maxMs": 16.6,
+        "runs": 25,
+        "textures": 1,
+        "texels": 36864
+      },
+      "v2": {
+        "medianMs": 23.1,
+        "minMs": 19,
+        "maxMs": 35.3,
+        "runs": 25,
+        "textures": 1,
+        "texels": 147456
+      },
+      "couches": {
+        "toutes": {
+          "medianMs": 31.6,
+          "minMs": 25.3,
+          "maxMs": 44.5,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        },
+        "portrait": {
+          "medianMs": 19.9,
+          "minMs": 17.5,
+          "maxMs": 33.8,
+          "runs": 25,
+          "textures": 12,
+          "texels": 1683023
+        }
+      }
+    },
+    "player-Astre": {
+      "v1": {
+        "medianMs": 8.7,
+        "minMs": 6.3,
+        "maxMs": 19.8,
+        "runs": 25,
+        "textures": 1,
+        "texels": 36864
+      },
+      "v2": {
+        "medianMs": 20.5,
+        "minMs": 18.2,
+        "maxMs": 29.9,
+        "runs": 25,
+        "textures": 1,
+        "texels": 147456
+      },
+      "couches": {
+        "toutes": {
+          "medianMs": 35.7,
+          "minMs": 27.7,
+          "maxMs": 43.2,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        },
+        "portrait": {
+          "medianMs": 24.6,
+          "minMs": 22,
+          "maxMs": 33.8,
+          "runs": 25,
+          "textures": 12,
+          "texels": 1683023
+        }
+      }
+    },
+    "braise": {
+      "v1": {
+        "medianMs": 9.6,
+        "minMs": 6.5,
+        "maxMs": 35.7,
+        "runs": 25,
+        "textures": 1,
+        "texels": 36864
+      },
+      "v2": {
+        "medianMs": 32.6,
+        "minMs": 26,
+        "maxMs": 47.7,
+        "runs": 25,
+        "textures": 1,
+        "texels": 147456
+      },
+      "couches": {
+        "toutes": {
+          "medianMs": 45.2,
+          "minMs": 39.8,
+          "maxMs": 70.2,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        },
+        "portrait": {
+          "medianMs": 35.4,
+          "minMs": 29.6,
+          "maxMs": 54.6,
+          "runs": 25,
+          "textures": 12,
+          "texels": 1683023
+        }
+      }
+    },
+    "ronce": {
+      "v1": {
+        "medianMs": 14.8,
+        "minMs": 12.6,
+        "maxMs": 25.5,
+        "runs": 25,
+        "textures": 1,
+        "texels": 36864
+      },
+      "v2": {
+        "medianMs": 36.7,
+        "minMs": 32,
+        "maxMs": 51.4,
+        "runs": 25,
+        "textures": 1,
+        "texels": 147456
+      },
+      "couches": {
+        "toutes": {
+          "medianMs": 56.1,
+          "minMs": 45.7,
+          "maxMs": 86.4,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        },
+        "portrait": {
+          "medianMs": 38.5,
+          "minMs": 35.2,
+          "maxMs": 46,
+          "runs": 25,
+          "textures": 12,
+          "texels": 1683023
+        }
+      }
+    },
+    "voile": {
+      "v1": {
+        "medianMs": 12.1,
+        "minMs": 10.1,
+        "maxMs": 28.5,
+        "runs": 25,
+        "textures": 1,
+        "texels": 36864
+      },
+      "v2": {
+        "medianMs": 35,
+        "minMs": 29.8,
+        "maxMs": 44.3,
+        "runs": 25,
+        "textures": 1,
+        "texels": 147456
+      },
+      "couches": {
+        "toutes": {
+          "medianMs": 50.4,
+          "minMs": 40.3,
+          "maxMs": 72,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        },
+        "portrait": {
+          "medianMs": 33.9,
+          "minMs": 29.9,
+          "maxMs": 41,
+          "runs": 25,
+          "textures": 12,
+          "texels": 1683023
+        }
+      }
+    },
+    "astre": {
+      "v1": {
+        "medianMs": 11.6,
+        "minMs": 10.2,
+        "maxMs": 88.6,
+        "runs": 25,
+        "textures": 1,
+        "texels": 36864
+      },
+      "v2": {
+        "medianMs": 48.7,
+        "minMs": 24.3,
+        "maxMs": 58.1,
+        "runs": 25,
+        "textures": 1,
+        "texels": 147456
+      },
+      "couches": {
+        "toutes": {
+          "medianMs": 37.8,
+          "minMs": 33.3,
+          "maxMs": 52.3,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        },
+        "portrait": {
+          "medianMs": 30.9,
+          "minMs": 25.3,
+          "maxMs": 42.2,
+          "runs": 25,
+          "textures": 12,
+          "texels": 1683023
+        }
+      }
+    }
+  },
+  "mode": "Chrome headless, GPU réel : ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11) — arguments : --force_high_performance_gpu",
+  "console": []
+}

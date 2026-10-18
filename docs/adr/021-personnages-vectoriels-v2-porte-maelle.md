@@ -1,11 +1,11 @@
 # ADR 021 — Personnages « vectoriel V2 » : porte de validation sur Maëlle (M07, lot 5)
 
 Date : 2026-10-18
-Statut : **APPROUVÉ — rendu par défaut des rivaux** (passe 25). Direction validée par le responsable le 2026-10-18 sur la
+Statut : **APPROUVÉ — rendu par défaut des rivaux** (passe 25) **et du portrait du joueur** (passe 26, amendement 3). Direction validée par le responsable le 2026-10-18 sur la
 planche de Maëlle ; arbitrage relayé par la session principale : « Je valide la direction V2. Fais d’abord une passe de
 finition sur Maëlle (plan d’ombre du visage moins tranché, cheveux avec mèches et reflets, yeux lisibles en prudence à
 83 px), puis généralise à Kaï, Sélène et Orin », la V2 devenant le rendu par défaut une fois les quatre rivaux faits.
-Généralisation (amendement 1), finition et bascule (amendement 2) en fin de document ; l’ancien rendu V1 reste disponible
+Généralisation (amendement 1), finition et bascule (amendement 2), portrait du joueur (amendement 3) en fin de document ; l’ancien rendu V1 reste disponible
 pour la comparaison QA (`?qa=1&figure=v1`). Porte de validation d’origine : sections suivantes. Complète l’ADR 007 (rival procédural), l’ADR 012 (proportions) et l’ADR 017 (buste sans mains) ;
 ne change ni le cadrage (ADR 013), ni la scène (ADR 019), ni les règles.
 
@@ -169,3 +169,47 @@ Maëlle un casque sombre uni, et en prudence à 1280×720 les yeux devenaient de
 
 Restent proposés : retrait du V1 (et de ses deux défauts relevés) quand la comparaison n’est plus utile ; pré-génération
 des couches aux temps morts (à-coup d’apparition) ; portrait du joueur.
+
+## Amendement 3 du 2026-10-18 — portrait du duelliste joueur en V2 (passe 26)
+
+Statut : suite proposée en fin de passe 25 (« Restent proposés »), confiée par la session principale ; même direction que
+les rivaux, validée par le responsable. Constat : le portrait du HUD bas-gauche gardait le rendu V1 (visage rond en
+dégradés radiaux, frange d’un bloc, bandeau rectangulaire) à côté de rivaux en V2.
+
+### Décision
+
+- **Identité du joueur** `src/scene/v2/joueur.ts`, sur le socle commun : **même apparence qu’en V1** (`playerFigure`) —
+  carré argent, bandeau aux couleurs de la Signature frappé de l’emblème, manteau de la famille à patte de boutonnage et
+  boutons, emblème brodé sur la poitrine, peau claire, yeux bleus (`#4a6fd6`), mâchoire moyenne — redessinée en V2 :
+  frange balayée en mèches effilées (une longue entre les sourcils, les autres au-dessus : sourcils toujours visibles),
+  raie à droite, reflet en couronne, pans du carré à pointes qui se recourbent sous la mâchoire, bandeau d’étoffe à
+  médaillon et pans fourchus qui flottent à gauche (Kaï porte un bandeau large à plaque, pans à droite), encolure ronde
+  sans col montant (retour du responsable sur les cols, amendement 1), cils sobres. La tenue (manteau, patte, bandeau)
+  dérive de la palette de la famille jouée : une identité par famille, `player-<Famille>` comme l’id de `playerFigure`.
+- **Registre** : `kitV2('player-<Famille>')` ; `usesV2` est vrai pour toute figure qui a une identité V2 ;
+  `?qa=1&figure=v1` rend aussi le joueur en V1 (comparaison).
+- Le joueur n’a pas de rig 3D : seul son portrait est dessiné. **`figureV2PortraitArt`** ne génère que les couches du
+  portrait (tête, mèches, plan arrière, buste, sclère, iris, paupières supérieure et inférieure, sourcil et bouche de
+  repos), avec les mêmes fonctions de dessin que `figureV2Art` ; il sert à tous les portraits V2, rivaux compris (images
+  identiques à la passe 25).
+- **Pré-génération** : le portrait du joueur (Signature du deck sauvegardé) rejoint les affiches générées aux temps morts
+  du shell (L4), au lieu d’être dessiné au premier affichage du duel.
+- Mesure et preuves : `window.__lqvPortraitCost(essais, id)` (`?qa=1`), `tools/l5-joueur.mjs`.
+
+### Conséquences
+
+- Planche avant / après (HUD à l’échelle 1:1 des quatre familles à 1280×720 et 1920×1080, portrait source agrandi, duel
+  complet) : `screenshots/qa/m07/l5-joueur/planche-joueur.png` ; captures dans le même dossier.
+- **Rien d’autre ne change** (`artifacts/qa/m07/l5-joueur.json`, Radeon 780M, build de départ `89b17a2`) : chemin V1 du
+  joueur (`figure=v1`) identique au portrait par défaut d’avant pour les quatre familles ; portraits des quatre rivaux
+  identiques ; duel complet, portrait du joueur masqué, **0 pixel différent** à 1280×720 et 1920×1080 (témoin, portrait
+  visible : 7 901 et 14 893 pixels).
+- Contraste des textes du duel, quatre familles, quatre états, deux tailles : **identique avant / après, min 5,1:1, 0 texte
+  sous le seuil** (64 captures ; `artifacts/qa/m07/contraste-l5-joueur-*.json`).
+- Coût du portrait du joueur (dessin et PNG, médiane de 25 essais, plusieurs séries) : V1 5 à 8 ms → V2 19 à 25 ms
+  (Radeon 780M), 5 à 10 → 13 à 23 ms (RTX 4060), une fois par famille et graine d’art (cache), désormais aux temps morts ;
+  couches d’un portrait V2 : 24 → 12 canvas, −18 à −39 % du temps de génération (apparié dans chaque série), rivaux
+  compris. Aucune texture GPU de plus (le portrait est une image du DOM) ; bundle +12 ko (885,9 ko).
+
+Restent proposés : retrait du V1 (et de ses deux défauts relevés) ; pré-génération des couches des rivaux aux temps morts
+(à-coup d’apparition).

@@ -10,12 +10,15 @@ import {
   type Figure, type Look, type MouthShape,
 } from '../scene/rivalTextures';
 import { usesV2 } from '../scene/figureStyle';
-import { drawFigureV2Portrait, figureV2Art } from '../scene/figureV2';
+import { drawFigureV2Portrait, figureV2PortraitArt } from '../scene/figureV2';
 import { kitV2 } from '../scene/v2';
 
 const cache = new Map<string, string>();
 
-/** Apparence provisoire du duelliste joueur (cheveux argent, bandeau ; tenue aux couleurs de sa Signature). */
+/**
+ * Apparence du duelliste joueur (cheveux argent, bandeau ; tenue aux couleurs de sa Signature). En V2 (défaut), son
+ * portrait est dessiné par `scene/v2/joueur.ts` avec la même apparence ; cet aspect V1 reste celui de `?qa=1&figure=v1`.
+ */
 export function playerFigure(family: Family): Figure {
   const p = FAMILY_PALETTE[family];
   const look: Look = {
@@ -30,17 +33,27 @@ export function playerFigure(family: Family): Figure {
  * dans le repère du rig 3D (tête centrée en y = 3.1, buste centré en y = 1.75).
  */
 export function portraitUrl(f: Figure, artSeed: number, mouth: MouthShape = 'neutral', requested = 192): string {
-  // M07 L5 : le portrait V2 est composé des couches du rig V2, à double définition (affiches ≈ 280 px CSS).
+  // M07 L5 : le portrait V2 (rivaux et, depuis la passe 26, duelliste joueur) est composé des couches du modèle V2,
+  // à double définition (affiches ≈ 280 px CSS).
   const v2 = usesV2(f.id);
   const size = v2 ? Math.max(requested, 384) : requested;
   const key = `${f.id}|${artSeed}|${mouth}|${size}|${v2 ? 'v2' : 'v1'}`;
   const hit = cache.get(key);
   if (hit) return hit;
+  const c = portraitCanvas(f, artSeed, mouth, size, v2);
+  if (!c) return '';
+  const url = c.toDataURL('image/png');
+  cache.set(key, url);
+  return url;
+}
+
+/** Dessine un portrait sans cache (`v2` : modèle V2 si la figure en a une identité, sinon V1) ; mesure QA comprise. */
+export function portraitCanvas(f: Figure, artSeed: number, mouth: MouthShape, size: number, v2: boolean): HTMLCanvasElement | null {
   const c = document.createElement('canvas');
   c.width = size;
   c.height = size;
   const ctx = c.getContext('2d');
-  if (!ctx) return '';
+  if (!ctx) return null;
   const pal = FAMILY_PALETTE[f.family];
   const x0 = -0.85;
   const y1 = 3.85;
@@ -69,7 +82,7 @@ export function portraitUrl(f: Figure, artSeed: number, mouth: MouthShape = 'neu
   ctx.fill();
 
   const kit = v2 ? kitV2(f.id) : null;
-  if (kit) drawFigureV2Portrait(ctx, size, figureV2Art(kit, artSeed), mouth);
+  if (kit) drawFigureV2Portrait(ctx, size, figureV2PortraitArt(kit, artSeed, mouth), mouth);
   else {
     put(torsoCanvas(f, artSeed), 0, 1.75, 2.4, 2.0);
     if (f.look.outfit === 'cloak') put(hoodCanvas(f), 0, 3.0, 1.62, 1.82);
@@ -101,7 +114,5 @@ export function portraitUrl(f: Figure, artSeed: number, mouth: MouthShape = 'neu
   shade.addColorStop(1, 'rgba(0,0,0,0.45)');
   ctx.fillStyle = shade;
   ctx.fillRect(0, 0, size, size);
-  const url = c.toDataURL('image/png');
-  cache.set(key, url);
-  return url;
+  return c;
 }

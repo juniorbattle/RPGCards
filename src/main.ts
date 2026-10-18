@@ -11,12 +11,16 @@ import { DuelSession } from './app/duelSession';
 import { Shell } from './shell/shell';
 import { PERSONALITIES, personalityFor, type RivalPersonality } from './presentation/personalities';
 import { setFigureStyle } from './scene/figureStyle';
-import { figureCost } from './scene/figureBench';
+import { figureCost, portraitCost } from './scene/figureBench';
+import { playerFigure } from './art/portrait';
 
 const params = readParams();
 // M07 L5 : modèle artistique des personnages fixé avant toute scène ou portrait (`?qa=1&figure=v2`).
 setFigureStyle(params.figure);
 if (params.qa) (window as unknown as Record<string, unknown>).__lqvFigureCost = (runs?: number, id = 'ronce') => figureCost(PERSONALITIES.find((x) => x.id === id)!, params.artSeed, runs);
+// Passe 26 : coût d’un portrait (id de rival, ou `player-<Famille>` pour le duelliste joueur).
+if (params.qa) (window as unknown as Record<string, unknown>).__lqvPortraitCost = (runs?: number, id = 'player-Cendre') =>
+  portraitCost(id.startsWith('player-') ? playerFigure(id.slice(7) as Family) : PERSONALITIES.find((x) => x.id === id)!, params.artSeed, runs);
 const app = document.getElementById('app')!;
 const arenaHost = document.getElementById('arena')!;
 document.documentElement.style.setProperty('--ui-scale', String(params.scale));

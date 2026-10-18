@@ -12,7 +12,7 @@ import './shell.css';
 import type { AppParams } from '../app/params';
 import { DuelSession } from '../app/duelSession';
 import { predecode, warmCardArt } from '../art/artWarmup';
-import { portraitUrl } from '../art/portrait';
+import { playerFigure, portraitUrl } from '../art/portrait';
 import type { Controller } from '../app/controller';
 import { cardTitle, cardDef } from '../game/catalog/cards';
 import { viewFor } from '../game/visibility/view';
@@ -167,7 +167,11 @@ export class Shell {
     warmCardArt(p.artSeed, p.artCheck);
     // M07 L4 : portraits des affiches de rivaux générés et décodés aux temps morts, pas au premier clic.
     const seed = p.artSeed;
-    const warm = () => predecode((Object.keys(RIVALS) as RivalPersonality['id'][]).map((id) => portraitUrl(personalityOf(id), seed)));
+    // Passe 26 : aussi le portrait V2 du joueur (≈ 20 ms une fois) pour la Signature du deck sauvegardé.
+    const warm = () => predecode([
+      ...(Object.keys(RIVALS) as RivalPersonality['id'][]).map((id) => portraitUrl(personalityOf(id), seed)),
+      ...(this.save ? [portraitUrl(playerFigure(this.save.deck.signature), seed)] : []),
+    ]);
     if ('requestIdleCallback' in window) window.requestIdleCallback(warm, { timeout: 2000 }); else setTimeout(warm, 300);
   }
 
