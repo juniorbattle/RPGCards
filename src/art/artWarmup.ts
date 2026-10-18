@@ -32,6 +32,29 @@ export function artWarmStats(): ArtWarmStats {
   return { ...stats, mismatches: [...stats.mismatches] };
 }
 
+/**
+ * M07 L4 : images déjà DÉCODÉES avant leur première apparition. Le premier écran qui montre beaucoup de
+ * cartes (deck, collection) décodait ses illustrations en plein changement d’écran (à-coups mesurés sur le
+ * GPU intégré). `decode()` travaille hors du fil principal ; les images sont gardées pour que le navigateur
+ * réutilise leur décodage. Par petits lots, aux temps morts.
+ */
+const decoded: HTMLImageElement[] = [];
+export function predecode(urls: readonly string[]): void {
+  if (typeof Image === 'undefined') return;
+  const queue = urls.filter((u) => !decoded.some((i) => i.src === u));
+  const idle = (cb: () => void) => ('requestIdleCallback' in window ? window.requestIdleCallback(cb, { timeout: 1500 }) : setTimeout(cb, 50));
+  const step = () => {
+    for (const u of queue.splice(0, 6)) {
+      const img = new Image();
+      img.src = u;
+      img.decode().catch(() => {});
+      decoded.push(img);
+    }
+    if (queue.length) idle(step);
+  };
+  idle(step);
+}
+
 /** Lance la pré-génération pour cette graine d’art (sans effet si elle est déjà lancée). */
 export function warmCardArt(artSeed: number, check = false): void {
   if (stats.seed === artSeed) return;
@@ -48,11 +71,13 @@ export function warmCardArt(artSeed: number, check = false): void {
     return;
   }
   worker = w;
-  const stop = () => { w.terminate(); if (worker === w) worker = null; };
+  const urls: string[] = [];
+  const stop =() => { w.terminate(); if (worker === w) worker = null; };
   w.onmessage = (e: MessageEvent<{ key: string; defId: string; url: string } | { done: true }>) => {
     const m = e.data;
-    if ('done' in m) { own.done = true; stop(); return; }
+    if ('done' in m) { own.done = true; stop(); predecode(urls); return; }
     own.received++;
+    urls.push(m.url);
     if (adoptCardArt(m.key, m.url)) own.adopted++;
     if (check) {
       own.checked++;

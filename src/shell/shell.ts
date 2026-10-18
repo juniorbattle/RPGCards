@@ -11,15 +11,16 @@
 import './shell.css';
 import type { AppParams } from '../app/params';
 import { DuelSession } from '../app/duelSession';
-import { warmCardArt } from '../art/artWarmup';
+import { predecode, warmCardArt } from '../art/artWarmup';
+import { portraitUrl } from '../art/portrait';
 import type { Controller } from '../app/controller';
 import { cardTitle, cardDef } from '../game/catalog/cards';
 import { viewFor } from '../game/visibility/view';
-import type { ArenaHandle } from '../scene/arena';
+import type { ArenaHandle, Staging } from '../scene/arena';
 import type { RivalPersonality } from '../presentation/personalities';
 import { FULL_COLLECTION, STARTER_COLLECTION } from '../product/collection';
 import { validateDeck, type Collection, type DeckChoice } from '../product/deck';
-import { encounterById, encounterConfig, personalityOf, type Encounter } from '../product/encounters';
+import { RIVALS, encounterById, encounterConfig, personalityOf, type Encounter } from '../product/encounters';
 import { INITIAL_FLOW, transition, type DuelOverlay, type FlowContext, type FlowEvent, type FlowState } from '../product/flow';
 import { applyOutcome, playableEncounters, type OutcomeEffect } from '../product/progression';
 import { DEFAULT_OPTIONS, HISTORY_MAX, SaveStore, duelSeed, newSave, type ActiveDuel, type DuelSummary, type LoadResult, type SaveData } from '../product/save';
@@ -164,6 +165,10 @@ export class Shell {
     this.d.arena()?.setReducedMotion(p.reducedMotion);
     // Graine d’art éventuellement changée par les options : illustrations pré-générées hors fil principal.
     warmCardArt(p.artSeed, p.artCheck);
+    // M07 L4 : portraits des affiches de rivaux générés et décodés aux temps morts, pas au premier clic.
+    const seed = p.artSeed;
+    const warm = () => predecode((Object.keys(RIVALS) as RivalPersonality['id'][]).map((id) => portraitUrl(personalityOf(id), seed)));
+    if ('requestIdleCallback' in window) window.requestIdleCallback(warm, { timeout: 2000 }); else setTimeout(warm, 300);
   }
 
   /** Reporte dans les options sauvegardées un réglage changé depuis la barre d’outils du duel. */
@@ -289,6 +294,7 @@ export class Shell {
   private launch(meta: Omit<LiveDuel, 'session'>, config: GameConfig, resume: readonly Command[] = []): void {
     const personality = personalityOf(meta.encounter.rival);
     const arena = this.d.ensureArena(personality);
+    arena?.setStaging('duel');
     arena?.setPaused(false);
     this.d.app.hidden = false;
     const session = new DuelSession({
@@ -393,14 +399,16 @@ export class Shell {
     const host = this.d.shellHost;
     const s = this.flow;
     const inDuel = s.screen === 'duel';
+    const scr = s.screen === 'home' && this.homeMode === 'new' ? 'new' : s.screen;
     if (!inDuel) {
       const arena = this.d.ensureArena(this.backdropRival());
+      // M07 L4 : plan de feux de l’écran, posé avant de figer (une seule image par changement d’écran).
+      arena?.setStaging(STAGING_OF[scr] ?? 'gallery');
       // L’écran Résultat garde le rival vivant (sa réaction finale) ; les menus figent la scène.
       arena?.setPaused(s.screen !== 'result');
       arena?.setView('A');
       this.d.app.hidden = true;
     }
-    const scr = s.screen === 'home' && this.homeMode === 'new' ? 'new' : s.screen;
     const screenKey = `${scr}:${s.overlay ?? ''}`;
     const same = screenKey === this.renderedScreen;
     // Même écran (ex. bascule d’une carte du deck) : focus et défilement conservés ; sinon, action principale.
@@ -410,7 +418,11 @@ export class Shell {
     host.className = `shell scr-${scr}${inDuel && !s.overlay ? ' passive' : ''}`;
     host.hidden = inDuel && !s.overlay;
     const content = this.screenEl();
-    host.replaceChildren(...(content ? [content] : []));
+    // M07 L4 : nouvel écran = entrée animée (cascade CSS) sous un voile qui se lève et masque le changement
+    // de lumière de la scène. Même écran (bascule d’une carte) : aucun effet. Coupé en mouvement réduit.
+    if (content && !same) content.classList.add('sh-enter');
+    const veil = !same && content && !inDuel ? h('div', { class: 'sh-veil', 'aria-hidden': 'true' }) : null;
+    host.replaceChildren(...(veil ? [veil] : []), ...(content ? [content] : []));
     host.scrollTop = scroll;
     this.renderedScreen = screenKey;
     document.title = `Les Quatre Voies${TITLES[scr] ? ` — ${TITLES[scr]}` : ''}`;
@@ -482,7 +494,10 @@ export class Shell {
 
 export const verifyActive = verifyActiveCore;
 
-const TITLES: Record<string, string> = { home: 'Accueil', new: 'Nouveau duelliste', deck: 'Deck', collection: 'Collection', board: 'Rencontres', prep: 'Préparation', duel: 'Duel', result: 'Résultat', options: 'Options', help: 'Aide' };
+/** M07 L4 (ADR 020) : plan de feux de la scène derrière chaque écran (galerie par défaut). */
+const STAGING_OF: Record<string, Staging> = { home: 'title', board: 'board', prep: 'portrait', result: 'portrait' };
+
+const TITLES: Record<string, string> ={ home: 'Accueil', new: 'Nouveau duelliste', deck: 'Deck', collection: 'Collection', board: 'Rencontres', prep: 'Préparation', duel: 'Duel', result: 'Résultat', options: 'Options', help: 'Aide' };
 
 function menuBtn(label: string, onclick: () => void, key: string, primary = false, danger = false): HTMLElement {
   return h('button', { class: `sh-menu-item${danger ? ' danger' : ''}`, type: 'button', 'data-key': key, 'data-shell-primary': primary ? 'true' : null, onclick }, label);
