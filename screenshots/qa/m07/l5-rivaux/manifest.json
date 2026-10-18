@@ -1,0 +1,36 @@
+{
+  "commit": "5ae6b88+arbre de travail",
+  "date": "2026-10-18T21:22:10.699Z",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "files": [
+    {
+      "file": "screenshots/qa/m07/l5-rivaux/rencontres-v1-1280.png",
+      "desc": "Actuelle (V1) — écran Rencontres, 1280×720 (page entière), rencontres ouvertes par l’outil"
+    },
+    {
+      "file": "screenshots/qa/m07/l5-rivaux/rencontres-v2-1280.png",
+      "desc": "Vectoriel V2 — écran Rencontres, 1280×720 (page entière), rencontres ouvertes par l’outil"
+    },
+    {
+      "file": "screenshots/qa/m07/l5-rivaux/reaction-quatre-rivaux.webm",
+      "desc": "Réactions des quatre rivaux, V1 en haut, V2 en bas (même script)"
+    },
+    {
+      "file": "screenshots/qa/m07/l5-rivaux/planche-braise.png",
+      "desc": "Planche Kaï, la Braise du quai : six humeurs, affiche et vue A, V1 contre V2"
+    },
+    {
+      "file": "screenshots/qa/m07/l5-rivaux/planche-ronce.png",
+      "desc": "Planche Maëlle, gardienne des Ronces : six humeurs, affiche et vue A, V1 contre V2"
+    },
+    {
+      "file": "screenshots/qa/m07/l5-rivaux/planche-voile.png",
+      "desc": "Planche Sélène, liseuse du Voile : six humeurs, affiche et vue A, V1 contre V2"
+    },
+    {
+      "file": "screenshots/qa/m07/l5-rivaux/planche-astre.png",
+      "desc": "Planche Orin, l’arpenteur des Astres : six humeurs, affiche et vue A, V1 contre V2"
+    }
+  ],
+  "issues": []
+}

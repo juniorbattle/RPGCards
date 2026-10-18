@@ -77,7 +77,8 @@ async function measure(base, view, query = '') {
   const page = await browser.newPage({ viewport: { width: VW, height: VH }, deviceScaleFactor: DPR });
   if (GPU_TIMER) await page.addInitScript(gpuTimer);
   if (STRESS_MS > 0) await page.addInitScript(gpuStress, STRESS_MS);
-  await page.goto(`${base}/?scenario=signature&qa=1&aiDelay=0&view=${view}&reducedMotion=0${query}`);
+  // LQV_PERF_ENTRY=… : autre entrée que le scénario signature (M07 L5 : `seed=202&autostart=1&rival=braise`).
+  await page.goto(`${base}/?${process.env.LQV_PERF_ENTRY ?? 'scenario=signature'}&qa=1&aiDelay=0&view=${view}&reducedMotion=0${query}`);
   renderer ??= await webglRenderer(page);
   await page.waitForTimeout(5000);
   if (GPU_TIMER) await page.evaluate(() => { window.__gpuMs.length = 0; window.__gpuDisjoint = 0; });

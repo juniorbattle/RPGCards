@@ -20,7 +20,8 @@ import { newStats, playTurn } from './duel-driver.mjs';
 const OUT = 'artifacts/qa';
 mkdirSync(`${OUT}/tmp`, { recursive: true });
 const commit = execSync('git rev-parse --short HEAD').toString().trim();
-const Q = 'qa=1&aiDelay=0';
+// LQV_QA_QUERY=… : paramètres d’URL en plus (M07 L5 : `figure=v2`, personnages vectoriels V2).
+const Q = `qa=1&aiDelay=0${process.env.LQV_QA_QUERY ? `&${process.env.LQV_QA_QUERY}` : ''}`;
 const report = { commit, date: new Date().toISOString(), machine: { cpu: os.cpus()[0]?.model, cores: os.cpus().length }, renderer: 'Chromium headless + SwiftShader (CPU) — jamais une mesure de GPU', runs: {} };
 const only = process.env.QA_ONLY?.split(',') ?? null;
 const wanted = (name) => !only || only.some((o) => name.includes(o));
@@ -167,7 +168,7 @@ try {
 
   // --- K : moteur identique avec animations réelles ------------------------------------------------
   await run('K-moteur-independant-des-animations', browser, { width: 1280, height: 720 }, async (page, check, res) => {
-    await page.goto(`${server.base}/?qa=1&aiDelay=0&reducedMotion=0&pace=normal&profileSeed=31337`);
+    await page.goto(`${server.base}/?${Q}&reducedMotion=0&pace=normal&profileSeed=31337`);
     await newProfile(page, 'Voile');
     await page.click('[data-key="enc-quai-1"]');
     await page.click('[data-key="prep-start"]');

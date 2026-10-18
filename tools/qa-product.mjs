@@ -13,7 +13,8 @@ const OUT = 'artifacts/qa';
 mkdirSync(`${OUT}/tmp`, { recursive: true });
 const commit = execSync('git rev-parse --short HEAD').toString().trim();
 const RENDER_CHECK = process.env.LQV_RENDER_CHECK === '1';
-const Q = `qa=1&aiDelay=0${RENDER_CHECK ? '&renderCheck=1' : ''}`;
+// LQV_QA_QUERY=… : paramètres d’URL en plus (M07 L5 : `figure=v2`, personnages vectoriels V2).
+const Q = `qa=1&aiDelay=0${RENDER_CHECK ? '&renderCheck=1' : ''}${process.env.LQV_QA_QUERY ? `&${process.env.LQV_QA_QUERY}` : ''}`;
 
 const shellState = (page) => page.evaluate(() => {
   const s = window.__lqvShell;

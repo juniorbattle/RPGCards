@@ -6,7 +6,8 @@
 import {
   browCanvas, headCanvas, hoodCanvas, irisCanvas, lidCanvas, MOUTHS, mouthCanvas, scleraCanvas, torsoCanvas,
 } from './rivalTextures';
-import { maelleV2Art } from './maelleV2';
+import { figureV2Art } from './figureV2';
+import { kitV2 } from './v2';
 import type { RivalPersonality } from '../presentation/personalities';
 
 export interface FigureCost { medianMs: number; minMs: number; maxMs: number; runs: number; textures: number; texels: number }
@@ -28,17 +29,19 @@ function bench(make: () => HTMLCanvasElement[], runs: number): FigureCost {
   return { medianMs: r(ms[Math.floor(ms.length / 2)]!), minMs: r(ms[0]!), maxMs: r(ms[ms.length - 1]!), runs, textures, texels };
 }
 
-/** Couches d’un rig V1 (celles que `createRival` génère) et du rig V2 de Maëlle, pour la même graine d’art. */
-export function figureCost(p: RivalPersonality, seed: number, runs = 9): { v1: FigureCost; v2: FigureCost } {
+/** Couches d’un rig V1 (celles que `createRival` génère) et du rig V2 du même rival, pour la même graine d’art. */
+export function figureCost(p: RivalPersonality, seed: number, runs = 9): { v1: FigureCost; v2: FigureCost | null } {
   const v1 = () => [
     headCanvas(p, seed), ...(p.look.outfit === 'cloak' ? [hoodCanvas(p)] : []), torsoCanvas(p, seed), scleraCanvas(), irisCanvas(p.look.eyes),
     lidCanvas(p), browCanvas(p), ...MOUTHS.map((m) => mouthCanvas(m)),
   ];
+  const kit = kitV2(p.id);
   const v2 = () => {
-    const a = maelleV2Art(seed);
+    const a = figureV2Art(kit!, seed);
     return [a.head, a.front, a.hood, a.torso, a.sclera, a.iris, ...a.lidUp, ...a.lidLow, ...a.lidShut, ...Object.values(a.brows), ...Object.values(a.mouths), a.flush];
   };
   // Entrelacé : une génération de chaque avant les mesures (chauffe des caches du navigateur).
-  v1(); v2();
-  return { v1: bench(v1, runs), v2: bench(v2, runs) };
+  v1();
+  if (kit) v2();
+  return { v1: bench(v1, runs), v2: kit ? bench(v2, runs) : null };
 }

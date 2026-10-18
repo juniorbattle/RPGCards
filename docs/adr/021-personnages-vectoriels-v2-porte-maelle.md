@@ -1,9 +1,10 @@
 # ADR 021 — Personnages « vectoriel V2 » : porte de validation sur Maëlle (M07, lot 5)
 
 Date : 2026-10-18
-Statut : **PROPOSÉ — porte de validation**. Lot L5 décidé par le responsable le 2026-10-18 (mandat M07) ; le modèle V2
-est livré derrière un interrupteur opt-in et **n’est pas généralisé** tant que le responsable ne l’a pas validé sur la
-planche comparative. Complète l’ADR 007 (rival procédural), l’ADR 012 (proportions) et l’ADR 017 (buste sans mains) ;
+Statut : **direction APPROUVÉE par le responsable** le 2026-10-18 sur la planche de Maëlle (« Je valide la direction V2
+de Maëlle : généralise-la à Kaï, Sélène et Orin sur le même modèle ») ; **étendue aux quatre rivaux** (amendement en fin
+de document), toujours derrière l’interrupteur opt-in : la bascule par défaut et le retrait du V1 attendent la revue de
+la galerie des quatre rivaux. Porte de validation d’origine : sections suivantes. Complète l’ADR 007 (rival procédural), l’ADR 012 (proportions) et l’ADR 017 (buste sans mains) ;
 ne change ni le cadrage (ADR 013), ni la scène (ADR 019), ni les règles.
 
 ## Contexte
@@ -85,3 +86,52 @@ Planche, vidéo, coût GPU et coût de génération : journal, passe 23 ; `scree
 
 **Cette décision n’introduit aucune règle métier nouvelle ; aucune information secrète n’est exposée (les humeurs ne
 suivent que des faits publics, comme en V1).**
+
+## Amendement du 2026-10-18 — généralisation aux quatre rivaux
+
+Statut : **décision du responsable** sur la planche de Maëlle : « Je valide la direction V2 de Maëlle : généralise-la à
+Kaï, Sélène et Orin sur le même modèle ». Puis, sur la première galerie : « c'est beaucoup mieux visuellement par contre
+les 2 cols au niveau du cou sont mal integre et je pense meme que ce details n'est pas necessaire » → cols montants de
+Kaï et col châle d’Orin retirés.
+
+### Décision
+
+- **Socle commun** `src/scene/figureV2.ts` : espace H, rig, humeurs communes (`MOODS_V2`), outils de tracé, sclère,
+  iris, paupières découpées dans la tête, sourcils, bouches, rougeur, assemblage (`figureV2Art`) et portrait
+  (`drawFigureV2Portrait`). Chaque rival apporte une **identité** (`FigureV2Kit`, `src/scene/v2/`) : tête, mèches avant,
+  plan arrière, buste, couleurs (peau, iris, lèvres, sourcils, cils), formes de sourcils et **tempérament** (retouches
+  d’humeurs ; le repos des paupières reste commun, les paupières étant découpées dans la tête au repos). Registre :
+  `src/scene/v2/index.ts` ; l’interrupteur vaut pour tout rival qui a une identité.
+- Extraction vérifiée : les 24 couches de Maëlle produites par le socle sont **identiques bit à bit** à celles de la
+  porte (empreintes FNV-1a des pixels, avant / après).
+- Trait des cils réglable par identité (épaisseur, départ externe, cils détachés) : plus sobre pour Kaï et Orin.
+- Identités :
+  - **Kaï, la Braise du quai** : mèches-flammes rejetées en arrière, dont les bouts virent à la braise (bandes de
+    couleur vers la pointe), bandeau noué à plaque de laiton frappée de la Cendre et queues flottantes, cicatrice
+    cousue sur la pommette, mâchoire carrée, oreilles dégagées et anneau d’or, veste de docker ouverte sur un maillot
+    sombre, baudrier, écusson ; tempérament : sourire en coin un sourcil haussé, triomphe à pleines dents.
+  - **Sélène, liseuse du Voile** : carré argent-lavande à frange nette et reflet lustré, diadème au croissant du Voile
+    et pendeloque de cristal, voile translucide semé d’étoiles sur les épaules, visage ovale, grain de beauté, longs
+    cils, manteau indigo à col officier, brandebourgs d’argent, constellation brodée ; tempérament : paupières
+    mi-closes, sourire en coin.
+  - **Orin, l’arpenteur des Astres** : locks rassemblés en chignon lié d’or (étoile de l’Astre), locks qui tombent
+    dans le dos et devant la tempe, côtés courts à texture crépue, barbe taillée, lunettes rondes cerclées de laiton
+    (couche des mèches, au-dessus des yeux), manteau ocre aux revers brodés d’une carte du ciel, gilet bleu nuit,
+    astrolabe en pendentif ; tempérament : pensif, un sourcil levé.
+- Outillage : `tools/l5-galerie.mjs` (planche par rival, écran Rencontres, vidéo des réactions des quatre rivaux),
+  `tools/l5-cout.mjs` (par rival), `LQV_QA_QUERY` (`qa:browser`, `qa:product`, `qa:rc`), `LQV_PERF_ENTRY`
+  (`perf-compare`), `window.__lqvFigureCost(essais, id)`.
+
+### Conséquences
+
+- Mesures (journal, passe 24 ; `artifacts/qa/m07/perf-compare-l5-{braise,voile,astre}-*.json`, `l5-cout-rivaux-*.json`) :
+  temps GPU médian par image, V1 → V2, vue A, 1280×720 : Radeon 780M 2,52 → 2,53 ms (Kaï), 2,48 → 2,56 ms (Sélène),
+  2,50 → 2,52 ms (Orin) ; RTX 4060 0,5 à 1,1 ms des deux côtés (horloge bimodale) ; 165 FPS ; 83 → 93 appels de dessin
+  (Kaï, Sélène et Orin n’avaient pas de capuche en V1) ; génération des couches 12–15 → 29–39 ms (780M), 11–15 →
+  23–32 ms (RTX) ; première image après l’apparition du rival 40–42 → 74–109 ms (780M), 45–49 → 83–89 ms (RTX), une fois
+  par changement de rival ; aucun nouveau programme GPU (40) ; 1,85 M texels par rival (0,50–0,57 M en V1).
+- Rendu par défaut toujours identique au pixel près à `6fdd27b` (12 cas) ; contraste des textes du duel inchangé
+  (min 5,3:1, 0 texte sous le seuil, 24 captures des trois nouveaux rivaux) ; bundle +32 ko (873 ko).
+
+**Reste à décider par le responsable** : basculer le V2 par défaut (puis retirer le V1, l’interrupteur et ses deux
+défauts relevés) ; pré-générer les couches aux temps morts pour réduire l’à-coup d’apparition.
