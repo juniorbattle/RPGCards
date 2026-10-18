@@ -197,7 +197,7 @@ export class DuelSession {
       hash: () => c.match.hash(),
       record: () => c.match.record(),
       arenaStats: () => arena?.stats() ?? null,
-      presentation: () => ({ view: c.viewMode, switches: c.director.switches, manual: c.director.manual, holding: c.director.holding, sequencing: c.sequencing, rival: c.rivalExpression, personality: c.rival.id, stage: stage.active, clash: c.seq?.script ? { outcome: c.seq.script.outcome, winner: c.seq.script.winner, verdict: c.seq.script.verdict } : null, beat: c.currentBeat()?.kind ?? null }),
+      presentation: () => ({ view: c.viewMode, switches: c.director.switches, manual: c.director.manual, holding: c.director.holding, sequencing: c.sequencing, rival: c.rivalExpression, personality: c.rival.id, stage: stage.active, stageLeaving: stage.leaving, clash: c.seq?.script ? { outcome: c.seq.script.outcome, winner: c.seq.script.winner, verdict: c.seq.script.verdict } : null, beat: c.currentBeat()?.kind ?? null }),
       artCache: () => artCacheSize(),
       // QA passe 14 : pré-génération des illustrations par le worker (`artCheck=1` : comparaison).
       artWarm: () => artWarmStats(),

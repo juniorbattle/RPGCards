@@ -47,11 +47,22 @@ export class ClashStage {
   private parts: Record<Side, Parts> | null = null;
   private fx: { vs: HTMLElement; flash: HTMLElement; ring: HTMLElement; ring2: HTMLElement; verdict: HTMLElement; backdrop: HTMLElement } | null = null;
   private removeTimer = 0;
+  private leaveAt = 0;
+  private leaveMs = 0;
 
   constructor(private host: HTMLElement, private deps: StageDeps) {}
 
   get active(): boolean {
     return !!this.root;
+  }
+
+  /**
+   * QA (lecture seule) : fondu de défausse en cours — délai de retrait programmé et temps écoulé depuis le
+   * début du nettoyage (ms) ; null hors de ce fondu. Permet à la QA de tolérer ce seul fondu, borné par sa
+   * durée réelle, sans recopier les durées de la chorégraphie (4b, arbitrage du 2026-10-18).
+   */
+  get leaving(): { ms: number; elapsed: number } | null {
+    return this.root && this.leaveMs ? { ms: this.leaveMs, elapsed: performance.now() - this.leaveAt } : null;
   }
 
   /** Nouvelle séquence : mémorise le script (rien n’est affiché avant l’étape « present »). */
@@ -91,6 +102,7 @@ export class ClashStage {
     this.fx = null;
     this.script = null;
     this.done.clear();
+    this.leaveMs = 0;
   }
 
   // ---------------------------------------------------------------------------
@@ -419,6 +431,8 @@ export class ClashStage {
     window.clearTimeout(this.removeTimer);
     const root = this.root;
     if (instant || this.deps.freeze()) { this.removeNow(root); return; }
+    this.leaveAt = performance.now();
+    this.leaveMs = ms;
     this.removeTimer = window.setTimeout(() => this.removeNow(root), ms);
   }
 
@@ -430,5 +444,6 @@ export class ClashStage {
     this.root = null;
     this.parts = null;
     this.fx = null;
+    this.leaveMs = 0;
   }
 }

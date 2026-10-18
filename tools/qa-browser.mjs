@@ -6,6 +6,10 @@
 // `LQV_RENDER_CHECK=1` (passe 13) : chaque rendu ciblé du plateau est comparé dans la page à un rendu
 // complet du même état ; toute différence est une erreur console, donc un échec. Passe 14 : chaque
 // illustration pré-générée par le worker est aussi comparée à la génération synchrone (`artCheck=1`).
+// 4b (arbitrage du 2026-10-18) : une scène du Clash hors résolution n’est tolérée que pendant son fondu de
+// défausse, borné par sa durée réelle (`stageAudit`, compté dans `stageFades`). Cas NÉGATIF :
+// `LQV_QA_STAGE_FAULT=opaque` (la fin de séquence ne nettoie plus la scène) ou `stuck` (nettoyage commencé,
+// retrait programmé perdu) injecte le défaut dans la page de test, jamais dans le jeu : la QA doit échouer.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { launch, startPreview, view, watchConsole } from './browser.mjs';
@@ -16,6 +20,8 @@ mkdirSync(OUT, { recursive: true });
 const commit = execSync('git rev-parse --short HEAD').toString().trim();
 const RENDER_CHECK = process.env.LQV_RENDER_CHECK === '1';
 const REPORT = process.env.LQV_QA_OUT ?? `${OUT}/qa-browser.json`;
+const STAGE_FAULT = process.env.LQV_QA_STAGE_FAULT || null;
+if (STAGE_FAULT && !['opaque', 'stuck'].includes(STAGE_FAULT)) throw new Error(`LQV_QA_STAGE_FAULT inconnu : ${STAGE_FAULT} (opaque | stuck)`);
 
 async function runDuel(browser, base, run) {
   const ctx = await browser.newContext({ viewport: run.viewport, isMobile: !!run.isMobile, hasTouch: !!run.isMobile, deviceScaleFactor: 1 });
@@ -25,6 +31,25 @@ async function runDuel(browser, base, run) {
   watchConsole(page, consoleIssues);
   await page.goto(`${base}/?seed=${run.seed}&autostart=1&qa=1&aiDelay=0&reducedMotion=${run.watchSequence ? 0 : 1}&pace=${run.watchSequence ? 'fast' : 'normal'}&tech=${run.tech}${RENDER_CHECK ? '&renderCheck=1&artCheck=1' : ''}`);
   await page.waitForFunction(() => !!window.__lqv);
+  if (STAGE_FAULT) {
+    // Défaut injecté par l’écouteur de mise en scène du contrôleur ; `fired` prouve qu’il a joué.
+    await page.evaluate((fault) => {
+      const c = window.__lqv.controller;
+      const fn = c.motionFn;
+      const rec = (window.__lqvStageFault = { fault, fired: 0 });
+      c.motionFn = (m) => {
+        if (fault === 'opaque' && (m.type === 'end' || m.type === 'stop')) { if (window.__lqv.presentation().stage) rec.fired++; return; }
+        if (fault === 'stuck' && m.type === 'end') {
+          const st = window.setTimeout;
+          window.setTimeout = () => 0;
+          try { fn(m); } finally { window.setTimeout = st; }
+          if (window.__lqv.presentation().stageLeaving) rec.fired++;
+          return;
+        }
+        fn(m);
+      };
+    }, STAGE_FAULT);
+  }
   if (process.env.QA_DEBUG) {
     // Trace des événements pointeur (diagnostic d’un glisser qui n’aboutit pas).
     await page.evaluate(() => {
@@ -39,7 +64,7 @@ async function runDuel(browser, base, run) {
       }
     });
   }
-  const stats = { turns: 0, drags: 0, clicks: 0, keyboard: 0, tactics: 0, repels: 0, leaks: [], viewChecks: 0, viewErrors: [], lostClicks: [], tech: {}, moods: new Set(), sequencesWatched: 0, sequencesSkipped: 0, manualToggleChecked: null, holds: 0, layoutChecked: [], layoutIssues: [], stanceChecks: 0, stanceIssues: [], stageGhosts: [], stagesSeen: 0, rotations: [] };
+  const stats = { turns: 0, drags: 0, clicks: 0, keyboard: 0, tactics: 0, repels: 0, leaks: [], viewChecks: 0, viewErrors: [], lostClicks: [], tech: {}, moods: new Set(), sequencesWatched: 0, sequencesSkipped: 0, manualToggleChecked: null, holds: 0, layoutChecked: [], layoutIssues: [], stanceChecks: 0, stanceIssues: [], stageGhosts: [], stageFades: [], stagesSeen: 0, rotations: [] };
   let outcome = 'running';
   const t0 = Date.now();
   try {
@@ -61,16 +86,17 @@ async function runDuel(browser, base, run) {
   const p = await pres(page);
   const renderCheck = RENDER_CHECK ? await page.evaluate(() => window.__lqvRenderCheck?.() ?? null) : null;
   const artCheck = RENDER_CHECK ? await page.evaluate(() => window.__lqv.artWarm?.() ?? null) : null;
+  const stageFault = STAGE_FAULT ? await page.evaluate(() => window.__lqvStageFault ?? null) : null;
   await ctx.close();
   return {
-    ...run, outcome, renderCheck, artCheck, phase: v.phase, winner: v.winner, turn: v.turn, hp: [v.me.hp, v.opp.hp], overtime: v.overtime, ms: Date.now() - t0, consoleIssues,
+    ...run, outcome, renderCheck, artCheck, stageFault, phase: v.phase, winner: v.winner, turn: v.turn, hp: [v.me.hp, v.opp.hp], overtime: v.overtime, ms: Date.now() - t0, consoleIssues,
     ...stats, moods: [...stats.moods], leaks: [...new Set(stats.leaks)], viewSwitches: p.switches, personality: p.personality,
   };
 }
 
 const server = await startPreview();
 const browser = await launch();
-const report = { commit, date: new Date().toISOString(), chromium: browser.version(), runs: [] };
+const report = { commit, date: new Date().toISOString(), chromium: browser.version(), stageFault: STAGE_FAULT, runs: [] };
 try {
   const only = process.env.QA_ONLY;
   const plans0 = [
@@ -86,7 +112,7 @@ try {
   for (const p of plans) {
     const r = await runDuel(browser, server.base, p);
     report.runs.push(r);
-    console.log(`${r.name}: ${r.outcome} au tour ${r.turn} · rival ${r.personality} · gagnant ${r.winner} · vues ${r.viewChecks} contrôles/${r.viewErrors.length} écarts, ${r.viewSwitches} bascules, V ${r.manualToggleChecked} · techniques ${JSON.stringify(r.tech)} · séquences vues ${r.sequencesWatched}/sautées ${r.sequencesSkipped} (scènes de Clash ${r.stagesSeen}, fantômes ${r.stageGhosts.length}) · postures ${r.stanceChecks} contrôles/${r.stanceIssues.length} écarts · composition ${r.layoutIssues.length} écart(s)${r.layoutIssues.length ? ` [${r.layoutIssues.slice(0, 3).join(' | ')}]` : ''} · humeurs ${r.moods.length} · console ${r.consoleIssues.length} · fuites ${r.leaks.length} · clics perdus ${r.lostClicks.length}${r.rotations.length ? ` · rotations ${r.rotations.join(' ; ')}` : ''}${r.renderCheck ? ` · rendus comparés ${r.renderCheck.renders}, écarts ${r.renderCheck.mismatches.length}` : ''}${r.artCheck ? ` · illustrations comparées ${r.artCheck.checked}, écarts ${r.artCheck.mismatches.length}` : ''} · ${r.ms} ms`);
+    console.log(`${r.name}: ${r.outcome} au tour ${r.turn} · rival ${r.personality} · gagnant ${r.winner} · vues ${r.viewChecks} contrôles/${r.viewErrors.length} écarts, ${r.viewSwitches} bascules, V ${r.manualToggleChecked} · techniques ${JSON.stringify(r.tech)} · séquences vues ${r.sequencesWatched}/sautées ${r.sequencesSkipped} (scènes de Clash ${r.stagesSeen}, fantômes ${r.stageGhosts.length}, fondus tolérés ${r.stageFades.length})${r.stageFault ? ` · DÉFAUT INJECTÉ ${r.stageFault.fault} ×${r.stageFault.fired}` : ''} · postures ${r.stanceChecks} contrôles/${r.stanceIssues.length} écarts · composition ${r.layoutIssues.length} écart(s)${r.layoutIssues.length ? ` [${r.layoutIssues.slice(0, 3).join(' | ')}]` : ''} · humeurs ${r.moods.length} · console ${r.consoleIssues.length} · fuites ${r.leaks.length} · clics perdus ${r.lostClicks.length}${r.rotations.length ? ` · rotations ${r.rotations.join(' ; ')}` : ''}${r.renderCheck ? ` · rendus comparés ${r.renderCheck.renders}, écarts ${r.renderCheck.mismatches.length}` : ''}${r.artCheck ? ` · illustrations comparées ${r.artCheck.checked}, écarts ${r.artCheck.mismatches.length}` : ''} · ${r.ms} ms`);
   }
 } finally {
   await browser.close();
