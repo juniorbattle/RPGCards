@@ -29,7 +29,7 @@ async function runDuel(browser, base, run) {
   page.setDefaultTimeout(10000);
   const consoleIssues = [];
   watchConsole(page, consoleIssues);
-  await page.goto(`${base}/?seed=${run.seed}&autostart=1&qa=1&aiDelay=0&reducedMotion=${run.watchSequence ? 0 : 1}&pace=${run.watchSequence ? 'fast' : 'normal'}&tech=${run.tech}${RENDER_CHECK ? '&renderCheck=1&artCheck=1' : ''}`);
+  await page.goto(`${base}/?seed=${run.seed}&autostart=1&qa=1&aiDelay=0&reducedMotion=${run.watchSequence ? 0 : 1}&pace=${run.watchSequence ? 'fast' : 'normal'}&tech=${run.tech}${RENDER_CHECK ? '&renderCheck=1&artCheck=1' : ''}${process.env.LQV_QA_QUERY ? `&${process.env.LQV_QA_QUERY}` : ''}`);
   await page.waitForFunction(() => !!window.__lqv);
   if (STAGE_FAULT) {
     // Défaut injecté par l’écouteur de mise en scène du contrôleur ; `fired` prouve qu’il a joué.

@@ -1,0 +1,496 @@
+{
+  "date": "2026-10-18T21:17:30.357Z",
+  "commit": "5ae6b88+arbre de travail",
+  "chromeArgs": [],
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "rivals": {
+    "braise": {
+      "generation": {
+        "v1": {
+          "medianMs": 12.2,
+          "minMs": 11,
+          "maxMs": 92.6,
+          "runs": 25,
+          "textures": 14,
+          "texels": 497152
+        },
+        "v2": {
+          "medianMs": 29.4,
+          "minMs": 27.7,
+          "maxMs": 133.7,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        }
+      },
+      "swap": {
+        "v1": [
+          {
+            "setRivalMs": 3,
+            "firstFrameMs": 41.9,
+            "nextFrameMs": 1.4,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 83
+          },
+          {
+            "setRivalMs": 2.8,
+            "firstFrameMs": 43.1,
+            "nextFrameMs": 2.2,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 83
+          },
+          {
+            "setRivalMs": 2.7,
+            "firstFrameMs": 40.8,
+            "nextFrameMs": 1.7,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 83
+          },
+          {
+            "setRivalMs": 3,
+            "firstFrameMs": 41.4,
+            "nextFrameMs": 2,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 83
+          },
+          {
+            "setRivalMs": 2.8,
+            "firstFrameMs": 46.8,
+            "nextFrameMs": 2,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 83
+          }
+        ],
+        "v2": [
+          {
+            "setRivalMs": 7.7,
+            "firstFrameMs": 79.1,
+            "nextFrameMs": 1.9,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          },
+          {
+            "setRivalMs": 5.6,
+            "firstFrameMs": 68.9,
+            "nextFrameMs": 1.9,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          },
+          {
+            "setRivalMs": 5.5,
+            "firstFrameMs": 74.4,
+            "nextFrameMs": 2.2,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          },
+          {
+            "setRivalMs": 5.5,
+            "firstFrameMs": 77.6,
+            "nextFrameMs": 1.9,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          },
+          {
+            "setRivalMs": 6.1,
+            "firstFrameMs": 68.8,
+            "nextFrameMs": 2.4,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          }
+        ]
+      },
+      "swapSummary": {
+        "v1": {
+          "setRivalMs": 2.8,
+          "firstFrameMs": 41.9,
+          "textures": 33,
+          "programs": 40,
+          "drawCalls": 83
+        },
+        "v2": {
+          "setRivalMs": 5.6,
+          "firstFrameMs": 74.4,
+          "textures": 37,
+          "programs": 40,
+          "drawCalls": 93
+        }
+      }
+    },
+    "ronce": {
+      "generation": {
+        "v1": {
+          "medianMs": 15.4,
+          "minMs": 13,
+          "maxMs": 19.3,
+          "runs": 25,
+          "textures": 15,
+          "texels": 570880
+        },
+        "v2": {
+          "medianMs": 34.4,
+          "minMs": 32,
+          "maxMs": 52.5,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        }
+      },
+      "swap": {
+        "v1": [
+          {
+            "setRivalMs": 2.5,
+            "firstFrameMs": 50.2,
+            "nextFrameMs": 1.7,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 85
+          },
+          {
+            "setRivalMs": 2.3,
+            "firstFrameMs": 45.8,
+            "nextFrameMs": 1.8,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 85
+          },
+          {
+            "setRivalMs": 2.3,
+            "firstFrameMs": 46.3,
+            "nextFrameMs": 2,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 85
+          },
+          {
+            "setRivalMs": 3.4,
+            "firstFrameMs": 52.6,
+            "nextFrameMs": 2.5,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 85
+          },
+          {
+            "setRivalMs": 3.3,
+            "firstFrameMs": 51.3,
+            "nextFrameMs": 2.5,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 85
+          }
+        ],
+        "v2": [
+          {
+            "setRivalMs": 6.7,
+            "firstFrameMs": 87.1,
+            "nextFrameMs": 2,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          },
+          {
+            "setRivalMs": 6.6,
+            "firstFrameMs": 92.6,
+            "nextFrameMs": 2,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          },
+          {
+            "setRivalMs": 7.9,
+            "firstFrameMs": 88.2,
+            "nextFrameMs": 2.7,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          },
+          {
+            "setRivalMs": 8,
+            "firstFrameMs": 84.6,
+            "nextFrameMs": 3.1,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          },
+          {
+            "setRivalMs": 7.3,
+            "firstFrameMs": 81.9,
+            "nextFrameMs": 2.8,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          }
+        ]
+      },
+      "swapSummary": {
+        "v1": {
+          "setRivalMs": 2.5,
+          "firstFrameMs": 50.2,
+          "textures": 33,
+          "programs": 40,
+          "drawCalls": 85
+        },
+        "v2": {
+          "setRivalMs": 7.3,
+          "firstFrameMs": 87.1,
+          "textures": 37,
+          "programs": 40,
+          "drawCalls": 93
+        }
+      }
+    },
+    "voile": {
+      "generation": {
+        "v1": {
+          "medianMs": 15.5,
+          "minMs": 12,
+          "maxMs": 27.4,
+          "runs": 25,
+          "textures": 14,
+          "texels": 497152
+        },
+        "v2": {
+          "medianMs": 36.3,
+          "minMs": 31.7,
+          "maxMs": 67.7,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        }
+      },
+      "swap": {
+        "v1": [
+          {
+            "setRivalMs": 2.1,
+            "firstFrameMs": 36.4,
+            "nextFrameMs": 1.8,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 83
+          },
+          {
+            "setRivalMs": 2.4,
+            "firstFrameMs": 44.3,
+            "nextFrameMs": 1.8,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 83
+          },
+          {
+            "setRivalMs": 2.5,
+            "firstFrameMs": 39.3,
+            "nextFrameMs": 1.8,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 83
+          },
+          {
+            "setRivalMs": 2,
+            "firstFrameMs": 40,
+            "nextFrameMs": 1.7,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 83
+          },
+          {
+            "setRivalMs": 2.7,
+            "firstFrameMs": 42.7,
+            "nextFrameMs": 1.6,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 83
+          }
+        ],
+        "v2": [
+          {
+            "setRivalMs": 5.8,
+            "firstFrameMs": 89.5,
+            "nextFrameMs": 2.2,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          },
+          {
+            "setRivalMs": 5.3,
+            "firstFrameMs": 83.6,
+            "nextFrameMs": 2.1,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          },
+          {
+            "setRivalMs": 6,
+            "firstFrameMs": 84,
+            "nextFrameMs": 2.2,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          },
+          {
+            "setRivalMs": 6.2,
+            "firstFrameMs": 77.2,
+            "nextFrameMs": 2,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          },
+          {
+            "setRivalMs": 5.1,
+            "firstFrameMs": 84.8,
+            "nextFrameMs": 1.8,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          }
+        ]
+      },
+      "swapSummary": {
+        "v1": {
+          "setRivalMs": 2.4,
+          "firstFrameMs": 40,
+          "textures": 33,
+          "programs": 40,
+          "drawCalls": 83
+        },
+        "v2": {
+          "setRivalMs": 5.8,
+          "firstFrameMs": 84,
+          "textures": 37,
+          "programs": 40,
+          "drawCalls": 93
+        }
+      }
+    },
+    "astre": {
+      "generation": {
+        "v1": {
+          "medianMs": 12,
+          "minMs": 10.8,
+          "maxMs": 72.3,
+          "runs": 25,
+          "textures": 14,
+          "texels": 497152
+        },
+        "v2": {
+          "medianMs": 39.1,
+          "minMs": 37.3,
+          "maxMs": 45.4,
+          "runs": 25,
+          "textures": 24,
+          "texels": 1853223
+        }
+      },
+      "swap": {
+        "v1": [
+          {
+            "setRivalMs": 2.1,
+            "firstFrameMs": 45.2,
+            "nextFrameMs": 1.7,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 83
+          },
+          {
+            "setRivalMs": 2.1,
+            "firstFrameMs": 38.9,
+            "nextFrameMs": 1.6,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 83
+          },
+          {
+            "setRivalMs": 3.6,
+            "firstFrameMs": 41.3,
+            "nextFrameMs": 1.6,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 83
+          },
+          {
+            "setRivalMs": 2.6,
+            "firstFrameMs": 41.3,
+            "nextFrameMs": 1.5,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 83
+          },
+          {
+            "setRivalMs": 2.6,
+            "firstFrameMs": 39.7,
+            "nextFrameMs": 1.6,
+            "textures": 33,
+            "programs": 40,
+            "drawCalls": 83
+          }
+        ],
+        "v2": [
+          {
+            "setRivalMs": 7,
+            "firstFrameMs": 108.9,
+            "nextFrameMs": 1.9,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          },
+          {
+            "setRivalMs": 5.6,
+            "firstFrameMs": 102.3,
+            "nextFrameMs": 2.4,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          },
+          {
+            "setRivalMs": 5.1,
+            "firstFrameMs": 112.2,
+            "nextFrameMs": 2.2,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          },
+          {
+            "setRivalMs": 5.2,
+            "firstFrameMs": 107.1,
+            "nextFrameMs": 2.3,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          },
+          {
+            "setRivalMs": 6.7,
+            "firstFrameMs": 108.6,
+            "nextFrameMs": 1.9,
+            "textures": 37,
+            "programs": 40,
+            "drawCalls": 93
+          }
+        ]
+      },
+      "swapSummary": {
+        "v1": {
+          "setRivalMs": 2.6,
+          "firstFrameMs": 41.3,
+          "textures": 33,
+          "programs": 40,
+          "drawCalls": 83
+        },
+        "v2": {
+          "setRivalMs": 5.6,
+          "firstFrameMs": 108.6,
+          "textures": 37,
+          "programs": 40,
+          "drawCalls": 93
+        }
+      }
+    }
+  }
+}

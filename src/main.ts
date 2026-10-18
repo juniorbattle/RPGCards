@@ -16,7 +16,7 @@ import { figureCost } from './scene/figureBench';
 const params = readParams();
 // M07 L5 : modèle artistique des personnages fixé avant toute scène ou portrait (`?qa=1&figure=v2`).
 setFigureStyle(params.figure);
-if (params.qa) (window as unknown as Record<string, unknown>).__lqvFigureCost = (runs?: number) => figureCost(PERSONALITIES.find((x) => x.id === 'ronce')!, params.artSeed, runs);
+if (params.qa) (window as unknown as Record<string, unknown>).__lqvFigureCost = (runs?: number, id = 'ronce') => figureCost(PERSONALITIES.find((x) => x.id === id)!, params.artSeed, runs);
 const app = document.getElementById('app')!;
 const arenaHost = document.getElementById('arena')!;
 document.documentElement.style.setProperty('--ui-scale', String(params.scale));

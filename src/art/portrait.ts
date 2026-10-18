@@ -10,7 +10,8 @@ import {
   type Figure, type Look, type MouthShape,
 } from '../scene/rivalTextures';
 import { usesV2 } from '../scene/figureStyle';
-import { drawMaelleV2Portrait, maelleV2Art } from '../scene/maelleV2';
+import { drawFigureV2Portrait, figureV2Art } from '../scene/figureV2';
+import { kitV2 } from '../scene/v2';
 
 const cache = new Map<string, string>();
 
@@ -67,7 +68,8 @@ export function portraitUrl(f: Figure, artSeed: number, mouth: MouthShape = 'neu
   ctx.arc(size * 0.78, size * 0.18, size * 0.32, 0, Math.PI * 2);
   ctx.fill();
 
-  if (v2) drawMaelleV2Portrait(ctx, size, maelleV2Art(artSeed), mouth);
+  const kit = v2 ? kitV2(f.id) : null;
+  if (kit) drawFigureV2Portrait(ctx, size, figureV2Art(kit, artSeed), mouth);
   else {
     put(torsoCanvas(f, artSeed), 0, 1.75, 2.4, 2.0);
     if (f.look.outfit === 'cloak') put(hoodCanvas(f), 0, 3.0, 1.62, 1.82);

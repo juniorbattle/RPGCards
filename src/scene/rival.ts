@@ -12,7 +12,8 @@ import {
   type MouthShape,
 } from './rivalTextures';
 import { usesV2 } from './figureStyle';
-import { maelleV2Art, MOODS_V2, RIG_V2, type BrowShape } from './maelleV2';
+import { figureV2Art, RIG_V2, type BrowShape } from './figureV2';
+import { kitV2 } from './v2';
 
 interface FaceParams {
   browL: number; // haussement −1..1
@@ -98,8 +99,9 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
   group.position.set(0, 0, RIVAL_Z);
   const rng = makeRng(hashString(`anim|${p.id}|${artSeed}`));
 
-  // M07 L5 : modèle « vectoriel V2 » (Maëlle, derrière `?qa=1&figure=v2`) ; null = rendu V1 approuvé, inchangé.
-  const v2 = usesV2(p.id) ? maelleV2Art(artSeed) : null;
+  // M07 L5 : modèle « vectoriel V2 » (derrière `?qa=1&figure=v2`) ; null = rendu V1 approuvé, inchangé.
+  const kit = usesV2(p.id) ? kitV2(p.id) : null;
+  const v2 = kit ? figureV2Art(kit, artSeed) : null;
 
   const body = new THREE.Group(); // respiration, inclinaison
   group.add(body);
@@ -239,7 +241,7 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
 
   // État d’animation
   let target: Expression = { mood: p.restMood, intensity: 0.4, gaze: 'player', gesture: null, hold: 0, cause: 'repos' };
-  const cur: FaceParams & { gx: number; gy: number; squint: number } = { ...(v2 ? MOODS_V2.neutral : MOODS.neutral), gx: 0, gy: 0, squint: 0 };
+  const cur: FaceParams & { gx: number; gy: number; squint: number } = { ...(v2 ? v2.moods.neutral : MOODS.neutral), gx: 0, gy: 0, squint: 0 };
   let browShape: BrowShape = 'rest';
   let gestureT = -1;
   let gesture: Gesture | null = null;
@@ -277,7 +279,7 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
       return { mood: target.mood, gesture, cause: target.cause };
     },
     update(dt: number, t: number, reduced: boolean) {
-      const moods: Record<Mood, FaceParams> = v2 ? MOODS_V2 : MOODS;
+      const moods: Record<Mood, FaceParams> = v2 ? v2.moods : MOODS;
       const base = moods[target.mood];
       const k = target.intensity;
       const want: FaceParams = {
@@ -304,8 +306,8 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
         (mouth.material as THREE.MeshLambertMaterial).needsUpdate = true;
       }
       if (v2 && browTex) {
-        cur.squint = lerp(cur.squint, MOODS_V2[target.mood].squint * k, s);
-        const shape: BrowShape = k > 0.2 ? MOODS_V2[target.mood].brow : 'rest';
+        cur.squint = lerp(cur.squint, v2.moods[target.mood].squint * k, s);
+        const shape: BrowShape = k > 0.2 ? v2.moods[target.mood].brow : 'rest';
         if (shape !== browShape) {
           browShape = shape;
           for (const e of eyes) {
