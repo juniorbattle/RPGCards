@@ -18,6 +18,9 @@ Ce mandat **amende l’ADR 013** (baseline desktop) sur la représentation du ri
    **scène générale** : les cartes, la table, les joueurs, le décor et les lumières qui les entourent. C’est essentiel.
 4. **Écrans hors duel** (rencontres, deck, collection…) : plus tard, mais leur visuel devra être qualitatif et dynamique ;
    on doit apprécier d’y naviguer.
+5. **Référence d’ergonomie : Yu-Gi-Oh! Duel Links** (captures fournies en séance) : peu de texte, tout se comprend à
+   l’image. **Le rival reste de face et visible** : « perso je veux garder notre adversaire visible comme c'est le cas
+   actuel car cela donne un aspect intéressant à notre jeu ». Pas de mise en page avec portraits dans les coins (ADR 018).
 
 ## Ce qui reste acquis
 

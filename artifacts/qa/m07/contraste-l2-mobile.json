@@ -1,0 +1,29 @@
+{
+  "dist": "dist (lot 2)",
+  "view": "A",
+  "mesures": {
+    "debut-390": {
+      "textes": 51,
+      "min": 8,
+      "plusPetitPx": 7.6,
+      "sousSeuil": [],
+      "desactives": 3
+    },
+    "select-390": {
+      "textes": 59,
+      "min": 2.9,
+      "plusPetitPx": 7.6,
+      "sousSeuil": [
+        "rank « III » 2.9:1"
+      ],
+      "desactives": 3
+    },
+    "commit-390": {
+      "textes": 56,
+      "min": 5,
+      "plusPetitPx": 7.6,
+      "sousSeuil": [],
+      "desactives": 2
+    }
+  }
+}

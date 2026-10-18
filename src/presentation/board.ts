@@ -296,7 +296,12 @@ export function boardKey(c: Controller): string {
 }
 
 function board(c: Controller): HTMLElement {
-  return h('main', { class: 'board', 'aria-label': 'Plateau de duel' }, sideRow(c, 'opp'), sideRow(c, 'me'));
+  // M07 : nom de la phase en filigrane sur la ligne médiane de la table (repère « où en est le tour », à la
+  // manière de Duel Links) ; décoratif, la frise de phase et les commandes portent l’information accessible.
+  const phase = PHASES.find((p) => p.match.includes(c.view.phase))?.label ?? '';
+  return h('main', { class: 'board', 'aria-label': 'Plateau de duel' },
+    h('div', { class: 'phase-mark', 'aria-hidden': 'true' }, phase),
+    sideRow(c, 'opp'), sideRow(c, 'me'));
 }
 
 function sideRow(c: Controller, who: 'me' | 'opp'): HTMLElement {
@@ -340,14 +345,14 @@ function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
     return zone;
   }
   if (who === 'opp') {
-    if (s.primary) zone.append(backEl(c.artSeed, { banner: 'ENGAGÉE · SECRÈTE', label: 'Primaire adverse engagée, face cachée', classes: ['on-board'] }));
-    else zone.append(h('span', { class: 'empty-hint' }, v.phase === 'COMMIT' ? 'Le rival engage…' : 'Vide'));
+    if (s.primary) zone.append(backEl(c.artSeed, { banner: 'SECRÈTE', label: 'Primaire adverse engagée, face cachée', classes: ['on-board'] }));
+    else if (v.phase === 'COMMIT') zone.append(h('span', { class: 'empty-hint' }, 'Le rival engage…'));
     return zone;
   }
   // Moi : brouillon (non verrouillé) ou engagement verrouillé (mon mode reste SECRET pour le rival).
   if (v.me.primary?.card) {
     const st = v.me.primary.stance!;
-    zone.append(cardEl(v.me.primary.card.defId, { artSeed: c.artSeed, tag: 'div', banner: 'VERROUILLÉE · SECRÈTE', classes: ['on-board'], attrs: { tabindex: '0', 'data-key': 'prim-me-locked' } }));
+    zone.append(cardEl(v.me.primary.card.defId, { artSeed: c.artSeed, tag: 'div', banner: 'VERROUILLÉE', classes: ['on-board'], attrs: { tabindex: '0', 'data-key': 'prim-me-locked' } }));
     zone.append(h('span', { class: cls('secret-stance', st), title: 'Votre mode, encore secret pour le rival' }, h('span', { class: 'sb-icon', html: STANCE_ICON[st] }), st === 'assault' ? 'Assaut (secret)' : 'Garde (secret)'));
     if (v.phase === 'LECTURE_CHANGE' && v.awaitingMe) zone.append(stanceChips(c, c.ui.lectureStance));
     return zone;
@@ -365,18 +370,22 @@ function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
   }
   if (dr.primaryId && committing) {
     const defId = c.defIdOf(dr.primaryId);
-    zone.append(cardEl(defId, { artSeed: c.artSeed, state: 'draft', tag: 'div', banner: dr.stance ? `${dr.stance === 'assault' ? 'ASSAUT' : 'GARDE'} · NON VERROUILLÉE` : 'CHOISIR ASSAUT / GARDE', classes: ['on-board'], attrs: { 'data-drag-card': dr.primaryId, ...inspectHooks(c, defId, false) } }));
-    zone.append(stanceChips(c, dr.stance));
-  } else if (committing) zone.append(h('span', { class: 'empty-hint' }, 'Glissez une carte ici'));
-  else zone.append(h('span', { class: 'empty-hint' }, 'Vide'));
+    zone.append(cardEl(defId, { artSeed: c.artSeed, state: 'draft', tag: 'div', banner: false, classes: ['on-board'], attrs: { 'data-drag-card': dr.primaryId, ...inspectHooks(c, defId, false) } }));
+    // M07 : le mode se lit sur les puces ASSAUT / GARDE ; elles pulsent tant qu’il reste à choisir.
+    zone.append(stanceChips(c, dr.stance, !dr.stance));
+  } else if (committing) {
+    // Pendant de « Facultative » sur les Secondaires ; une ligne, sous le libellé PRIMAIRE.
+    zone.classList.add('next');
+    zone.append(h('span', { class: 'empty-hint' }, 'Obligatoire'));
+  }
   return zone;
 }
 
-function stanceChips(c: Controller, current: Stance | null): HTMLElement {
+function stanceChips(c: Controller, current: Stance | null, next = false): HTMLElement {
   const chip = (st: Stance, key: string, title: string) =>
     h('button', { class: cls('chip', st), type: 'button', 'data-key': key, 'aria-pressed': String(current === st), title, onclick: (e: Event) => { e.stopPropagation(); c.setStance(st); } },
       h('span', { class: 'sb-icon', html: STANCE_ICON[st] }), st === 'assault' ? 'ASSAUT' : 'GARDE');
-  return h('div', { class: 'stance', role: 'group', 'aria-label': 'Mode de la Primaire' },
+  return h('div', { class: cls('stance', next && 'next'), role: 'group', 'aria-label': 'Mode de la Primaire' },
     chip('assault', 'stance-assault', 'Assaut (touche A) : inflige des dégâts si vous dominez'),
     chip('guard', 'stance-guard', 'Garde (touche G) : absorbe, gagne les égalités'),
   );
@@ -430,25 +439,30 @@ function slotZone(c: Controller, who: 'me' | 'opp', slot: SlotIndex, s: SlotView
 
   if (draftHere) {
     const defId = c.defIdOf(dr.secondaryId!);
-    zone.append(cardEl(defId, { artSeed: c.artSeed, state: 'draft', tag: 'div', banner: s ? 'REMPLACE · NON VERROUILLÉE' : 'POSE CACHÉE · NON VERROUILLÉE', classes: ['on-board'], attrs: { 'data-drag-card': dr.secondaryId, ...inspectHooks(c, defId, false) } }));
+    zone.append(cardEl(defId, { artSeed: c.artSeed, state: 'draft', tag: 'div', banner: s ? 'REMPLACE' : 'CACHÉE', classes: ['on-board'], attrs: { 'data-drag-card': dr.secondaryId, ...inspectHooks(c, defId, false) } }));
   } else if (s) {
     if (who === 'me' || s.card) {
       const defId = s.card!.defId;
       const state = s.masked && who === 'opp' ? 'masked' : s.state;
       const willReveal = who === 'me' && v.phase === 'PREPARE' && c.ui.reveal.includes(slot);
-      const banner = who === 'me' && s.masked ? 'ACTIVE · MASQUÉE (rival)' : willReveal ? 'SERA RÉVÉLÉE' : null;
+      const banner = who === 'me' && s.masked ? 'MASQUÉE' : willReveal ? 'À RÉVÉLER' : null;
       zone.append(cardEl(defId, { artSeed: c.artSeed, state, banner, tag: 'div', classes: ['on-board', willReveal && 'will-reveal', s.maskSource && 'mask-source'], attrs: { ...inspectHooks(c, defId, false) } }));
     } else {
       zone.append(backEl(c.artSeed, { state: s.masked ? 'masked' : s.state === 'active' ? 'masked' : s.state, classes: ['on-board'] }));
     }
-  } else zone.append(h('span', { class: 'empty-hint' }, committing ? 'Facultative' : 'Vide'));
+  } else if (committing) zone.append(h('span', { class: 'empty-hint' }, 'Facultative'));
 
   // Interactions selon la phase
   if (who === 'me') {
-    if (v.phase === 'PREPARE' && v.awaitingMe && s && s.state !== 'active') interactive = true;
+    if (v.phase === 'PREPARE' && v.awaitingMe && s && s.state !== 'active') {
+      interactive = true;
+      // M07 : choix possible signalé (révéler une réserve cachée), sans obligation.
+      if (s.state === 'hidden' && !c.ui.reveal.includes(slot)) zone.classList.add('option');
+    }
     if (v.phase === 'TACTICS' && v.awaitingMe && s) interactive = true;
     if (v.phase === 'TACTICS' && s?.state === 'active') {
       const plan = c.ui.plans[slot];
+      if (v.awaitingMe && !plan && c.ui.menuSlot !== slot) zone.classList.add('option');
       if (v.awaitingMe && plan) zone.append(planBadge(plan.mode, plan.mode === 'interfere' ? `→ case ${plan.target! + 1}` : plan.mode === 'keep' ? '' : c.supportLabel(slot, plan.mode as 'rank' | 'damage'), false));
       if (c.ui.tacticsTech?.id === 'Ancrage' && c.ui.tacticsTech.slot === slot) zone.append(h('span', { class: 'plan-badge anchor' }, 'ANCRAGE'));
       if (c.ui.menuSlot === slot) zone.append(tacticsMenu(c, slot));
@@ -527,8 +541,10 @@ function command(c: Controller): HTMLElement {
   const actions = h('div', { class: 'btn-row' });
   const title = (t: string) => h('span', { class: 'title' }, t);
   const sub = (t: string) => h('span', { class: 'sub' }, t);
-  const btn = (label: string, onclick: () => void, opts: { disabled?: boolean; ghost?: boolean; key: string } = { key: '' }) =>
-    h('button', { class: cls('btn', opts.ghost && 'ghost'), type: 'button', 'data-key': opts.key, 'data-primary-action': opts.ghost ? null : 'true', disabled: !!opts.disabled, onclick }, label);
+  // M07 : `next` = l’action attendue maintenant (pulsation douce, coupée en mouvement réduit).
+  const btn = (label: string, onclick: () => void, opts: { disabled?: boolean; ghost?: boolean; next?: boolean; key: string } = { key: '' }) =>
+    h('button', { class: cls('btn', opts.ghost && 'ghost', opts.next && !opts.disabled && 'next'), type: 'button', 'data-key': opts.key, 'data-primary-action': opts.ghost ? null : 'true', disabled: !!opts.disabled, onclick }, label);
+  let steps: HTMLElement | null = null;
   const nowIdx = PHASES.findIndex((p) => p.match.includes(v.phase));
   const head = (who: string) => h('div', { class: 'cmd-phase' }, h('span', { class: 'ph' }, PHASES[nowIdx]?.label ?? v.phase), h('span', { class: 'who' }, who));
   const waitOpp = () => { msg.append(title(c.aiThinking ? 'Le rival réfléchit…' : 'En attente du rival'), sub('Ses choix restent secrets jusqu’à la révélation simultanée.')); };
@@ -547,19 +563,19 @@ function command(c: Controller): HTMLElement {
         const excess = Math.max(0, v.me.handCount - 4);
         msg.append(title('Début du tour'), sub(excess ? `Main de ${v.me.handCount} cartes : cliquez ${excess} carte(s) à défausser pour revenir à 4.` : 'Techniques précoces (Sondage / Recentrage) facultatives, ci-dessous.'));
         if (c.ui.startTech) msg.append(sub(` · Technique armée : ${c.ui.startTech.id}`));
-        actions.append(btn('Valider', () => c.lockStart(), { key: 'act-start', disabled: c.ui.trim.length !== excess }));
+        actions.append(btn('Valider', () => c.lockStart(), { key: 'act-start', disabled: c.ui.trim.length !== excess, next: true }));
       } else waitOpp();
       break;
     case 'PREPARE':
       if (v.awaitingMe) {
         msg.append(title('Préparation'), sub('Cliquez vos réserves cachées à révéler (elles deviennent ACTIVES), ou gardez-les cachées.'));
-        actions.append(btn(c.ui.reveal.length ? `Révéler (${c.ui.reveal.length}) et valider` : 'Garder cachées et valider', () => c.lockPrepare(), { key: 'act-prepare' }));
+        actions.append(btn(c.ui.reveal.length ? `Révéler (${c.ui.reveal.length}) et valider` : 'Garder cachées et valider', () => c.lockPrepare(), { key: 'act-prepare', next: true }));
       } else waitOpp();
       break;
     case 'DISSIPATION':
       if (v.awaitingMe) {
         msg.append(title('Dissipation (1 Insight)'), sub('Cliquez la Dissimulation adverse pour neutraliser son camouflage, ou passez.'));
-        actions.append(btn('Dissiper', () => c.lockDissipation(true), { key: 'act-dissip', disabled: c.ui.dissipTarget === null }), btn('Passer', () => c.lockDissipation(false), { key: 'act-dissip-pass', ghost: true }));
+        actions.append(btn('Dissiper', () => c.lockDissipation(true), { key: 'act-dissip', disabled: c.ui.dissipTarget === null, next: true }), btn('Passer', () => c.lockDissipation(false), { key: 'act-dissip-pass', ghost: true }));
       } else waitOpp();
       break;
     case 'COMMIT':
@@ -567,9 +583,17 @@ function command(c: Controller): HTMLElement {
         const dr = c.ui.draft;
         const prim = dr.primaryId ? cardDef(c.defIdOf(dr.primaryId)) : null;
         msg.append(title('Engagement secret'));
-        if (prim) msg.append(sub(`${cardTitle(prim)} · Rang ${rankLabel(prim)} · Puissance ${prim.power}${dr.stance ? ` · ${dr.stance === 'assault' ? `ASSAUT : ${prim.power} dégâts de base si vous dominez` : `GARDE : absorbe jusqu’à ${prim.power}, gagne les égalités`}` : ' · choisissez ASSAUT ou GARDE'}`));
-        else msg.append(sub('Glissez une carte sur la Primaire (ou cliquez-la puis la case). Secondaire facultative.'));
-        actions.append(btn('Verrouiller l’engagement', () => c.lockCommit(), { key: 'act-commit', disabled: !dr.primaryId || !dr.stance }));
+        // M07 : une consigne, celle de l’étape en cours ; les étapes du tour sont listées dessous.
+        if (!prim) msg.append(sub('Glissez une carte de votre main sur la case PRIMAIRE (ou cliquez la carte, puis la case).'));
+        else if (!dr.stance) msg.append(sub(`${cardTitle(prim)} · choisissez ASSAUT (dégâts si vous dominez) ou GARDE (absorbe, gagne les égalités).`));
+        else msg.append(sub(`${cardTitle(prim)} en ${dr.stance === 'assault' ? `ASSAUT : ${prim.power} dégâts de base si vous dominez` : `GARDE : absorbe jusqu’à ${prim.power}, gagne les égalités`}. Secondaire facultative, puis verrouillez.`));
+        steps = stepList([
+          { label: 'Primaire', icon: STEP_ICON.primary, done: !!prim },
+          { label: 'Mode', icon: STEP_ICON.mode, done: !!dr.stance },
+          { label: 'Secondaire', icon: STEP_ICON.secondary, done: !!dr.secondaryId, optional: true },
+          { label: 'Verrouiller', icon: STEP_ICON.lock, done: false },
+        ]);
+        actions.append(btn('Verrouiller l’engagement', () => c.lockCommit(), { key: 'act-commit', disabled: !dr.primaryId || !dr.stance, next: true }));
       } else waitOpp();
       break;
     case 'LECTURE':
@@ -581,16 +605,17 @@ function command(c: Controller): HTMLElement {
     case 'LECTURE_CHANGE':
       if (v.awaitingMe) {
         msg.append(title(`Lecture : le rival a engagé en ${v.lectureSeen === 'assault' ? 'ASSAUT' : 'GARDE'}`), sub('Mode initial (information autorisée). Changez éventuellement le vôtre, puis validez.'));
-        actions.append(btn('Valider le mode', () => c.lockLectureStance(), { key: 'act-lecture-stance' }));
+        actions.append(btn('Valider le mode', () => c.lockLectureStance(), { key: 'act-lecture-stance', next: true }));
       } else waitOpp();
       break;
     case 'TACTICS':
       if (v.awaitingMe) {
         const p = c.preview();
         msg.append(title('Choix tactiques secrets'));
+        if (!p) msg.append(sub('Cliquez une Secondaire active pour choisir son action (Rang, Dégâts, Interférer). Sans choix : Conserver.'));
         if (p) msg.append(h('span', { class: 'result' }, `Provisoire : ${p.myScore} contre ${p.oppScore} · ×${p.myMult} · ${p.outcome}${p.dealt || p.taken ? ` · ${p.dealt} / ${p.taken}` : ''}`), sub(' (hypothèse : le rival conserve).'));
         if (c.ui.targetingFor !== null) msg.append(sub(' · Ciblage d’Interférence (Échap pour annuler).'));
-        actions.append(btn('Verrouiller les choix', () => c.lockTactics(), { key: 'act-tactics', disabled: c.ui.techTargeting !== null }));
+        actions.append(btn('Verrouiller les choix', () => c.lockTactics(), { key: 'act-tactics', disabled: c.ui.techTargeting !== null, next: c.ui.targetingFor === null && c.ui.menuSlot === null }));
       } else waitOpp();
       break;
     case 'REPEL':
@@ -608,12 +633,33 @@ function command(c: Controller): HTMLElement {
           sub(` PV perdus : vous ${r.damage.p1}, rival ${r.damage.p2}. Primaires défaussées.`));
       } else msg.append(title('Tour résolu'));
       if (v.overtime && v.phase === 'RESOLVED' && v.me.hp === 1 && v.opp.hp === 1) msg.append(sub(` · PROLONGATION ${v.overtime} : 1 PV chacun.`));
-      if (v.phase === 'RESOLVED') actions.append(btn('Tour suivant', () => c.nextTurn(), { key: 'act-next' }));
+      if (v.phase === 'RESOLVED') actions.append(btn('Tour suivant', () => c.nextTurn(), { key: 'act-next', next: true }));
       break;
     }
   }
-  return h('section', { class: 'command', 'aria-label': 'Commandes du tour' }, head(who), msg, actions, techChips(c));
+  return h('section', { class: cls('command', steps && 'has-steps'), 'aria-label': 'Commandes du tour' }, head(who), msg, steps, actions, techChips(c));
 }
+
+/**
+ * M07 — étapes du tour en pastilles : faite (✓), en cours (dorée), facultative (atténuée). L’étape en cours
+ * est la première étape obligatoire non faite ; une fois les obligatoires faites, c’est la dernière (valider).
+ */
+function stepList(steps: Array<{ label: string; icon: string; done: boolean; optional?: boolean }>): HTMLElement {
+  const required = steps.filter((s) => !s.optional);
+  const current = required.find((s) => !s.done) ?? required[required.length - 1];
+  return h('ol', { class: 'steps', 'aria-label': 'Étapes de l’engagement' }, steps.map((s) =>
+    h('li', { class: cls('step', s.done && 'done', s === current && 'current', s.optional && 'optional'), 'aria-current': s === current ? 'step' : null, title: s.optional ? `${s.label} (facultatif)` : s.label },
+      h('span', { class: 'step-icon', 'aria-hidden': 'true', html: s.done ? STEP_ICON.done : s.icon }), h('span', { class: 'step-label' }, s.label))));
+}
+
+/** Pictogrammes des étapes (SVG par code, `currentColor`). */
+const STEP_ICON = {
+  primary: '<svg viewBox="0 0 24 24"><rect x="5" y="2.5" width="14" height="19" rx="2.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7l3 5-3 5-3-5z" fill="currentColor"/></svg>',
+  mode: '<svg viewBox="0 0 24 24"><path d="M3 4.5l7.5 7.5-2 2L1 6.5zM10.5 12l2 2" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M15.5 9l6 2.2v4.2c0 3.6-2.5 6.3-6 7.6-3.5-1.3-6-4-6-7.6v-4.2z" fill="currentColor"/></svg>',
+  secondary: '<svg viewBox="0 0 24 24"><rect x="5" y="2.5" width="14" height="19" rx="2.2" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="3 2"/><circle cx="12" cy="12" r="2.4" fill="currentColor"/></svg>',
+  lock: '<svg viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="11" rx="2" fill="currentColor"/><path d="M8 10.5V7.5a4 4 0 018 0v3" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>',
+  done: '<svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+};
 
 function beatMsg(c: Controller): HTMLElement {
   const beat = c.currentBeat()!;
@@ -682,7 +728,26 @@ function hand(c: Controller): HTMLElement {
     if (c.ui.startTech?.id === 'Recentrage' && c.ui.startTech.cardId === x.cardId) el.append(h('span', { class: 'state-banner' }, 'RECENTRAGE'));
     wrap.append(el);
   });
+  if (v.phase === 'COMMIT' && v.awaitingMe && c.ui.selected && cards.some((x) => x.cardId === c.ui.selected)) wrap.append(placeBar(c, c.ui.selected));
   return wrap;
+}
+
+/**
+ * M07 — actions de la carte choisie, posées SUR elle (comme « Invoquer / Poser » de Duel Links) : Primaire en
+ * ASSAUT ou en GARDE, ou Secondaire (face cachée). Une colonne sur le haut de la carte, qui laisse voir son Rang
+ * et sa Puissance et ne recouvre jamais les cases du plateau ; un pictogramme et un mot par bouton, le détail
+ * dans l’infobulle et le nom accessible.
+ */
+function placeBar(c: Controller, cardId: string): HTMLElement {
+  const sig = cardDef(c.defIdOf(cardId)).signature;
+  const b = (key: string, cl: string, icon: string, label: string, title: string, onclick: () => void, disabled = false) =>
+    h('button', { class: cls('place', cl), type: 'button', 'data-key': key, title, 'aria-label': title, disabled, onclick: (e: Event) => { e.stopPropagation(); onclick(); } },
+      h('span', { class: 'place-icon', 'aria-hidden': 'true', html: icon }), h('span', { class: 'place-label', 'aria-hidden': 'true' }, label));
+  return h('div', { class: 'place-bar', role: 'group', 'aria-label': 'Poser la carte choisie' },
+    b('place-assault', 'assault', STANCE_ICON.assault, 'ASSAUT', 'Primaire en ASSAUT : inflige sa Puissance si vous dominez au Rang', () => c.placeSelected('assault')),
+    b('place-guard', 'guard', STANCE_ICON.guard, 'GARDE', 'Primaire en GARDE : absorbe jusqu’à sa Puissance, gagne les égalités', () => c.placeSelected('guard')),
+    b('place-secondary', 'hidden', STEP_ICON.secondary, 'SECONDAIRE', sig ? 'Une Signature ne peut être que Primaire' : 'Secondaire, posée face cachée (en chargement ce tour)', () => c.placeSelected('secondary'), sig),
+  );
 }
 
 // ---------------------------------------------------------------------------

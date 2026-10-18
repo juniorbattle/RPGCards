@@ -644,6 +644,23 @@ export class Controller {
     if (key === 'slot0' || key === 'slot1') this.clickMySlot(key === 'slot0' ? 0 : 1);
   }
 
+  /**
+   * M07 — pose en un geste depuis les boutons de la carte choisie (comme « Invoquer / Poser ») : Primaire en
+   * ASSAUT ou en GARDE, ou Secondaire cachée dans la première case libre (la case 1 si les deux sont pleines,
+   * ce qui la remplace). Mêmes contrôles que le glisser-déposer : `dropCard` reste l’unique chemin.
+   */
+  placeSelected(choice: 'assault' | 'guard' | 'secondary'): void {
+    const id = this.ui.selected;
+    if (!id) return;
+    if (choice === 'secondary') {
+      const free = this.view.me.slots.findIndex((s) => s === null);
+      this.dropCard(id, free === 1 ? 'slot1' : 'slot0');
+      return;
+    }
+    this.dropCard(id, 'primary');
+    if (this.ui.draft.primaryId === id) this.setStance(choice);
+  }
+
   setStance(st: Stance): void {
     if (this.view.phase === 'LECTURE_CHANGE') { this.ui.lectureStance = st; this.renderFn(); return; }
     if (this.view.phase !== 'COMMIT' || !this.ui.draft.primaryId) { this.toast('Posez d’abord une Primaire.'); return; }

@@ -6,18 +6,27 @@ import { cls, h } from './dom';
 
 export type CardVisualState = 'charging' | 'hidden' | 'active' | 'draft' | 'masked' | null;
 
-const BANNER: Record<Exclude<CardVisualState, null>, string> = {
+/** État décrit en entier (nom accessible, aide). */
+const STATE_TEXT: Record<Exclude<CardVisualState, null>, string> = {
   charging: 'CHARGEMENT · INUTILISABLE',
   hidden: 'RÉSERVE CACHÉE · INACTIVE',
   active: 'ACTIVE · PRÊTE',
   draft: 'NON VERROUILLÉE',
   masked: 'ACTIVE · MASQUÉE',
 };
+/** M07 : un seul mot sur la carte, lisible d’un coup d’œil ; le même pour les deux camps. */
+export const STATE_WORD: Record<Exclude<CardVisualState, null>, string> = {
+  charging: 'CHARGEMENT',
+  hidden: 'RÉSERVE',
+  active: 'ACTIVE',
+  draft: 'À VERROUILLER',
+  masked: 'MASQUÉE',
+};
 
 export function cardAria(def: CardDef, state: CardVisualState = null): string {
   const parts = [cardTitle(def), `famille ${def.family}`, def.signature ? 'Signature, priorité infinie' : `Rang ${def.rank}`, `Puissance ${def.power}`, `rareté ${def.rarity}`];
   if (def.effect) parts.push(`effet ${EFFECTS[def.effect].name} : ${EFFECTS[def.effect].text}`);
-  if (state) parts.push(`état ${BANNER[state]}`);
+  if (state) parts.push(`état ${STATE_TEXT[state]}`);
   return parts.join(', ');
 }
 
@@ -25,7 +34,8 @@ export interface CardOpts {
   artSeed: number;
   classes?: Array<string | false | null | undefined>;
   state?: CardVisualState;
-  banner?: string | null;
+  /** Mot affiché sur la carte : absent ou null = mot de l’état ; `false` = aucun bandeau. */
+  banner?: string | null | false;
   tag?: 'button' | 'div';
   attrs?: Record<string, unknown>;
 }
@@ -60,6 +70,7 @@ function cardFace(def: CardDef, artSeed: number): Node {
 export function cardEl(defId: string, o: CardOpts): HTMLElement {
   const def = cardDef(defId);
   const state = o.state ?? null;
+  const word = o.banner === false ? null : (o.banner ?? (state ? STATE_WORD[state] : null));
   const tag = o.tag ?? 'button';
   const el = h(tag as 'button', {
     class: cls('card', `fam-${def.family}`, `rar-${def.rarity}`, state && `st-${state}`, ...(o.classes ?? [])),
@@ -69,7 +80,7 @@ export function cardEl(defId: string, o: CardOpts): HTMLElement {
     ...(o.attrs ?? {}),
   },
   cardFace(def, o.artSeed),
-  state || o.banner ? h('span', { class: 'state-banner' }, o.banner ?? (state ? BANNER[state] : '')) : null,
+  word ? h('span', { class: 'state-banner' }, word) : null,
   );
   return el;
 }
@@ -77,7 +88,7 @@ export function cardEl(defId: string, o: CardOpts): HTMLElement {
 /** Verso commun : aucune information d’identité (ni defId, ni instance) dans le DOM. */
 export function backEl(artSeed: number, o: { state?: 'charging' | 'hidden' | 'masked' | null; banner?: string | null; classes?: string[]; label?: string } = {}): HTMLElement {
   const st = o.state ?? null;
-  const banner = o.banner ?? (st === 'charging' ? 'CHARGEMENT' : st === 'hidden' ? 'CACHÉE · INACTIVE' : st === 'masked' ? 'ACTIVE · MASQUÉE' : null);
+  const banner = o.banner ?? (st ? STATE_WORD[st] : null);
   return h('div', { class: cls('card', 'back', st && `st-${st}`, ...(o.classes ?? [])), 'aria-label': o.label ?? 'Carte face cachée' },
     h('img', { class: 'art', src: cardBackUrl(artSeed), alt: '', draggable: 'false' }),
     h('span', { class: 'frame' }),

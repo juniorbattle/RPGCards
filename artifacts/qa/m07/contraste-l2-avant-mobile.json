@@ -1,0 +1,30 @@
+{
+  "dist": "build de 4a72a76 (avant le lot 2)",
+  "view": "A",
+  "mesures": {
+    "debut-390": {
+      "textes": 52,
+      "min": 8,
+      "plusPetitPx": 7.6,
+      "sousSeuil": [],
+      "desactives": 3
+    },
+    "select-390": {
+      "textes": 59,
+      "min": 8,
+      "plusPetitPx": 7.6,
+      "sousSeuil": [],
+      "desactives": 3
+    },
+    "commit-390": {
+      "textes": 62,
+      "min": 3.2,
+      "plusPetitPx": 6.1,
+      "sousSeuil": [
+        "r « R 3 » 4.1:1",
+        "chip assault « ASSAUT » 3.2:1"
+      ],
+      "desactives": 2
+    }
+  }
+}
