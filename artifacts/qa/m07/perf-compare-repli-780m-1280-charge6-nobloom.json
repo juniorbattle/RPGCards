@@ -1,0 +1,285 @@
+{
+  "date": "2026-10-18T06:07:36.012Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "cores": 16,
+    "memGB": 31,
+    "node": "v22.14.0"
+  },
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "gpu": true,
+  "chromeArgs": [],
+  "protocol": "5 rondes entrelacées par vue, 1280×720 à 1, scénario signature, 5 s de mise en régime, moyenne de 6 relevés, charge GPU injectée de 6 ms par image",
+  "builds": {
+    "avant": "e5b75de",
+    "apres": "e5b75de"
+  },
+  "query": {
+    "avant": "fallback=off",
+    "apres": "fallback=nobloom"
+  },
+  "summary": {
+    "A": {
+      "avant": {
+        "levels": "full",
+        "medianIntervalMs": 24.2,
+        "medianOver16_7": 0.88,
+        "medianFrameMs": 3.01,
+        "minFrameMs": 2.6,
+        "maxFrameMs": 3.37,
+        "medianFps": 43.9,
+        "drawCalls": 85,
+        "triangles": 1569
+      },
+      "apres": {
+        "levels": "nobloom",
+        "medianIntervalMs": 24.1,
+        "medianOver16_7": 0.79,
+        "medianFrameMs": 2.87,
+        "minFrameMs": 1.92,
+        "maxFrameMs": 2.97,
+        "medianFps": 44.5,
+        "drawCalls": 72,
+        "triangles": 1556
+      }
+    },
+    "B": {
+      "avant": {
+        "levels": "full",
+        "medianIntervalMs": 12.2,
+        "medianOver16_7": 0.48,
+        "medianFrameMs": 2.68,
+        "minFrameMs": 1.26,
+        "maxFrameMs": 3.39,
+        "medianFps": 43.5,
+        "drawCalls": 87,
+        "triangles": 1617
+      },
+      "apres": {
+        "levels": "nobloom",
+        "medianIntervalMs": 12.1,
+        "medianOver16_7": 0.24,
+        "medianFrameMs": 2.41,
+        "minFrameMs": 1.12,
+        "maxFrameMs": 3.47,
+        "medianFps": 56.27,
+        "drawCalls": 74,
+        "triangles": 1604
+      }
+    }
+  },
+  "runs": {
+    "A": {
+      "avant": [
+        {
+          "intervalMs": 24.3,
+          "over16_7": 0.89,
+          "frameMs": 3.37,
+          "fps": 41.2,
+          "drawCalls": 85,
+          "triangles": 1569,
+          "level": "full",
+          "steps": 0
+        },
+        {
+          "intervalMs": 18.1,
+          "over16_7": 0.57,
+          "frameMs": 2.6,
+          "fps": 43.53,
+          "drawCalls": 85,
+          "triangles": 1569,
+          "level": "full",
+          "steps": 0
+        },
+        {
+          "intervalMs": 12.1,
+          "over16_7": 0.36,
+          "frameMs": 2.79,
+          "fps": 51.38,
+          "drawCalls": 85,
+          "triangles": 1569,
+          "level": "full",
+          "steps": 0
+        },
+        {
+          "intervalMs": 24.3,
+          "over16_7": 0.91,
+          "frameMs": 3.31,
+          "fps": 57,
+          "drawCalls": 85,
+          "triangles": 1569,
+          "level": "full",
+          "steps": 0
+        },
+        {
+          "intervalMs": 24.2,
+          "over16_7": 0.88,
+          "frameMs": 3.01,
+          "fps": 43.9,
+          "drawCalls": 85,
+          "triangles": 1569,
+          "level": "full",
+          "steps": 0
+        }
+      ],
+      "apres": [
+        {
+          "intervalMs": 30.2,
+          "over16_7": 0.95,
+          "frameMs": 2.9,
+          "fps": 35.9,
+          "drawCalls": 72,
+          "triangles": 1556,
+          "level": "nobloom",
+          "steps": 0
+        },
+        {
+          "intervalMs": 24.2,
+          "over16_7": 0.79,
+          "frameMs": 2.87,
+          "fps": 40.07,
+          "drawCalls": 72,
+          "triangles": 1556,
+          "level": "nobloom",
+          "steps": 0
+        },
+        {
+          "intervalMs": 12.1,
+          "over16_7": 0.38,
+          "frameMs": 1.92,
+          "fps": 54.83,
+          "drawCalls": 72,
+          "triangles": 1556,
+          "level": "nobloom",
+          "steps": 0
+        },
+        {
+          "intervalMs": 12.2,
+          "over16_7": 0.45,
+          "frameMs": 2.28,
+          "fps": 66.98,
+          "drawCalls": 72,
+          "triangles": 1556,
+          "level": "nobloom",
+          "steps": 0
+        },
+        {
+          "intervalMs": 24.1,
+          "over16_7": 0.91,
+          "frameMs": 2.97,
+          "fps": 44.5,
+          "drawCalls": 72,
+          "triangles": 1556,
+          "level": "nobloom",
+          "steps": 0
+        }
+      ]
+    },
+    "B": {
+      "avant": [
+        {
+          "intervalMs": 24.3,
+          "over16_7": 0.93,
+          "frameMs": 3.35,
+          "fps": 38.53,
+          "drawCalls": 87,
+          "triangles": 1617,
+          "level": "full",
+          "steps": 0
+        },
+        {
+          "intervalMs": 24.2,
+          "over16_7": 0.75,
+          "frameMs": 3.39,
+          "fps": 39.7,
+          "drawCalls": 87,
+          "triangles": 1617,
+          "level": "full",
+          "steps": 0
+        },
+        {
+          "intervalMs": 12.2,
+          "over16_7": 0.48,
+          "frameMs": 2.68,
+          "fps": 43.5,
+          "drawCalls": 87,
+          "triangles": 1617,
+          "level": "full",
+          "steps": 0
+        },
+        {
+          "intervalMs": 6.2,
+          "over16_7": 0.03,
+          "frameMs": 1.27,
+          "fps": 107.93,
+          "drawCalls": 87,
+          "triangles": 1617,
+          "level": "full",
+          "steps": 0
+        },
+        {
+          "intervalMs": 12,
+          "over16_7": 0.03,
+          "frameMs": 1.26,
+          "fps": 107.17,
+          "drawCalls": 87,
+          "triangles": 1617,
+          "level": "full",
+          "steps": 0
+        }
+      ],
+      "apres": [
+        {
+          "intervalMs": 24.2,
+          "over16_7": 0.85,
+          "frameMs": 3.08,
+          "fps": 41.47,
+          "drawCalls": 74,
+          "triangles": 1604,
+          "level": "nobloom",
+          "steps": 0
+        },
+        {
+          "intervalMs": 24.2,
+          "over16_7": 0.8,
+          "frameMs": 3.47,
+          "fps": 36.37,
+          "drawCalls": 74,
+          "triangles": 1604,
+          "level": "nobloom",
+          "steps": 0
+        },
+        {
+          "intervalMs": 12.1,
+          "over16_7": 0.24,
+          "frameMs": 2.41,
+          "fps": 56.27,
+          "drawCalls": 74,
+          "triangles": 1604,
+          "level": "nobloom",
+          "steps": 0
+        },
+        {
+          "intervalMs": 6.6,
+          "over16_7": 0.01,
+          "frameMs": 1.12,
+          "fps": 110.77,
+          "drawCalls": 74,
+          "triangles": 1604,
+          "level": "nobloom",
+          "steps": 0
+        },
+        {
+          "intervalMs": 12,
+          "over16_7": 0.02,
+          "frameMs": 1.26,
+          "fps": 108.1,
+          "drawCalls": 74,
+          "triangles": 1604,
+          "level": "nobloom",
+          "steps": 0
+        }
+      ]
+    }
+  }
+}
