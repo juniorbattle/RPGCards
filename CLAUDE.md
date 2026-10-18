@@ -4,7 +4,11 @@
 
 Le développement se fait **directement sur `main`** : commit puis push sur `main` après validation (typecheck, tests, build ; QA navigateur quand le rendu change). **Pas de branche provisoire ni de PR**, sauf demande explicite du responsable. Ne jamais réécrire l’historique de `main` (pas de force-push, pas de rebase de commits publiés). Les branches `claude/*` M01–M03 sont de l’historique, déjà intégré.
 
-## MANDAT ACTIF — M07 : mise en scène du duel et lisibilité (2026-10-17)
+## MANDAT ACTIF — M08 : consolidation du combat (2026-10-18)
+
+Lire `docs/missions/M08_CONSOLIDATION_DU_COMBAT.md` et la section M08 d’`AGENTS.md`. Pousser au maximum la structure et le visuel du combat avant l’extension RPG : C1 pré-génération des personnages, C2 environnements de combat variés (rue, salle de jeu de cartes, bar, arène), C3 duellistes PNJ génériques à variations subtiles sur le socle V2, C4 réception de M07. « Vectoriel V2 » = base graphique ; V1 retiré seulement après réception ; règles et secrets inchangés.
+
+## Mandat M07 : mise en scène du duel et lisibilité (livré L1 à L5, réception en cours ; 2026-10-17)
 
 Lire `docs/missions/M07_MISE_EN_SCENE_ET_LISIBILITE.md` et la section M07 d’`AGENTS.md`. Rival en buste sans mains (ADR 017), plateau symétrique et lisible avec un tour guidé (ADR 018 ; rival gardé de face, pas de portraits dans les coins), puis mise en scène HD-2D de la scène entière (ADR 019), puis écrans hors duel qualitatifs et dynamiques (lot 4, ADR 020), puis refonte des personnages (lot 5 : « vectoriel V2 » validé, une identité par rival, finition faite, **rendu par défaut** depuis la passe 25, portrait du joueur en V2 depuis la passe 26 ; `?qa=1&figure=v1` pour comparer ; ADR 021) ; règles et secrets inchangés. M04–M06 sont livrés (RC 0.6.0-rc.1).
 
