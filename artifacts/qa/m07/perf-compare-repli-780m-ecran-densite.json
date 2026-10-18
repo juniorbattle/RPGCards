@@ -1,0 +1,325 @@
+{
+  "date": "2026-10-18T05:29:16.509Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "cores": 16,
+    "memGB": 31,
+    "node": "v22.14.0"
+  },
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "gpu": true,
+  "chromeArgs": [],
+  "protocol": "5 rondes entrelacées par vue, 1707×1067 à 1.5, scénario signature, 5 s de mise en régime, moyenne de 6 relevés, temps GPU par image (médiane sur 3 s)",
+  "builds": {
+    "avant": "e5b75de",
+    "apres": "e5b75de"
+  },
+  "query": {
+    "avant": "ablate=post",
+    "apres": "fallback=direct"
+  },
+  "summary": {
+    "A": {
+      "avant": {
+        "levels": "direct",
+        "medianFrameMs": 1.92,
+        "minFrameMs": 1.84,
+        "maxFrameMs": 1.99,
+        "medianFps": 165,
+        "drawCalls": 70,
+        "triangles": 1554,
+        "medianGpuMs": 3.35,
+        "medianGpuP95Ms": 3.48
+      },
+      "apres": {
+        "levels": "direct",
+        "medianFrameMs": 1.44,
+        "minFrameMs": 1.32,
+        "maxFrameMs": 1.45,
+        "medianFps": 165,
+        "drawCalls": 70,
+        "triangles": 1554,
+        "medianGpuMs": 2.1,
+        "medianGpuP95Ms": 2.82
+      }
+    },
+    "B": {
+      "avant": {
+        "levels": "direct",
+        "medianFrameMs": 1.92,
+        "minFrameMs": 1.89,
+        "maxFrameMs": 1.94,
+        "medianFps": 165,
+        "drawCalls": 70,
+        "triangles": 1522,
+        "medianGpuMs": 2.78,
+        "medianGpuP95Ms": 2.91
+      },
+      "apres": {
+        "levels": "direct",
+        "medianFrameMs": 1.54,
+        "minFrameMs": 1.39,
+        "maxFrameMs": 1.56,
+        "medianFps": 165,
+        "drawCalls": 70,
+        "triangles": 1522,
+        "medianGpuMs": 2.12,
+        "medianGpuP95Ms": 2.63
+      }
+    }
+  },
+  "runs": {
+    "A": {
+      "avant": [
+        {
+          "frameMs": 1.84,
+          "fps": 161.2,
+          "drawCalls": 70,
+          "triangles": 1554,
+          "gpuMs": 3.37,
+          "gpuP95Ms": 4.25,
+          "gpuFrames": 502,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        },
+        {
+          "frameMs": 1.96,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1554,
+          "gpuMs": 3.35,
+          "gpuP95Ms": 3.48,
+          "gpuFrames": 507,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        },
+        {
+          "frameMs": 1.89,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1554,
+          "gpuMs": 2.95,
+          "gpuP95Ms": 3.57,
+          "gpuFrames": 508,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        },
+        {
+          "frameMs": 1.92,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1554,
+          "gpuMs": 3.36,
+          "gpuP95Ms": 3.48,
+          "gpuFrames": 508,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        },
+        {
+          "frameMs": 1.99,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1554,
+          "gpuMs": 2.95,
+          "gpuP95Ms": 3.06,
+          "gpuFrames": 507,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        }
+      ],
+      "apres": [
+        {
+          "frameMs": 1.36,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1554,
+          "gpuMs": 2.26,
+          "gpuP95Ms": 3.1,
+          "gpuFrames": 506,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        },
+        {
+          "frameMs": 1.45,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1554,
+          "gpuMs": 2.1,
+          "gpuP95Ms": 2.82,
+          "gpuFrames": 507,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        },
+        {
+          "frameMs": 1.32,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1554,
+          "gpuMs": 2.26,
+          "gpuP95Ms": 3.15,
+          "gpuFrames": 509,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        },
+        {
+          "frameMs": 1.45,
+          "fps": 165.03,
+          "drawCalls": 70,
+          "triangles": 1554,
+          "gpuMs": 2.1,
+          "gpuP95Ms": 2.73,
+          "gpuFrames": 507,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        },
+        {
+          "frameMs": 1.44,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1554,
+          "gpuMs": 2.1,
+          "gpuP95Ms": 2.63,
+          "gpuFrames": 507,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        }
+      ]
+    },
+    "B": {
+      "avant": [
+        {
+          "frameMs": 1.94,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1522,
+          "gpuMs": 2.77,
+          "gpuP95Ms": 2.86,
+          "gpuFrames": 505,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        },
+        {
+          "frameMs": 1.92,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1522,
+          "gpuMs": 2.78,
+          "gpuP95Ms": 2.91,
+          "gpuFrames": 506,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        },
+        {
+          "frameMs": 1.93,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1522,
+          "gpuMs": 2.76,
+          "gpuP95Ms": 2.81,
+          "gpuFrames": 506,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        },
+        {
+          "frameMs": 1.91,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1522,
+          "gpuMs": 3.17,
+          "gpuP95Ms": 3.36,
+          "gpuFrames": 508,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        },
+        {
+          "frameMs": 1.89,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1522,
+          "gpuMs": 3.13,
+          "gpuP95Ms": 3.21,
+          "gpuFrames": 508,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        }
+      ],
+      "apres": [
+        {
+          "frameMs": 1.54,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1522,
+          "gpuMs": 2.12,
+          "gpuP95Ms": 2.67,
+          "gpuFrames": 507,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        },
+        {
+          "frameMs": 1.39,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1522,
+          "gpuMs": 2.27,
+          "gpuP95Ms": 3.06,
+          "gpuFrames": 508,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        },
+        {
+          "frameMs": 1.56,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1522,
+          "gpuMs": 2.12,
+          "gpuP95Ms": 2.63,
+          "gpuFrames": 505,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        },
+        {
+          "frameMs": 1.54,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1522,
+          "gpuMs": 2.11,
+          "gpuP95Ms": 2.53,
+          "gpuFrames": 509,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        },
+        {
+          "frameMs": 1.5,
+          "fps": 165,
+          "drawCalls": 70,
+          "triangles": 1522,
+          "gpuMs": 2.11,
+          "gpuP95Ms": 2.53,
+          "gpuFrames": 506,
+          "gpuDisjoint": 0,
+          "level": "direct",
+          "steps": 0
+        }
+      ]
+    }
+  }
+}
