@@ -939,11 +939,11 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
 
   // --- Repli automatique du post-traitement (amendement de l’ADR 019) : quand les images décrochent durablement
   // (règles dans postFallback.ts), le halo est coupé, puis tout le post-traitement (rendu direct, tonemapping du
-  // renderer) ; jamais de remontée pendant un duel. La densité de rendu ne change pas : à 1,5 (celle du rendu
-  // direct de l’ablation `post`), le rendu direct coûte autant que le post-traitement complet à 1 sur l’écran du
-  // poste (2,6 contre 2,9 ms GPU, passe 18) et le repli n’y gagnerait rien. Les programmes du rendu direct sont
-  // compilés à la création (`renderer.compile` vise l’écran) et gardés par chaque matériau : changer de niveau ne
-  // compile rien.
+  // renderer) ; jamais de remontée pendant un duel. La densité de rendu ne change pas : sur l’écran du poste
+  // (Radeon 780M, 2560×1600 à 150 %, vue A), le rendu direct coûte 3,35 ms GPU par image à 1,5 (densité de
+  // l’ablation `post`), plus que le post-traitement complet à 1 (2,82 ms), et 2,10 ms à 1 (amendement de l’ADR 019).
+  // Les programmes du rendu direct sont compilés à la création (`renderer.compile` vise l’écran) et gardés par
+  // chaque matériau : changer de niveau ne compile rien (44 programmes avant comme après, qa-fallback).
   const forced = opts.fallback === 'nobloom' || opts.fallback === 'direct' ? opts.fallback : null;
   const startLevel: PostLevel = !post ? 'direct' : forced ?? (ablate.has('bloom') ? 'nobloom' : 'full');
   const fallback = new PostFallback(startLevel, !!post && !forced && opts.fallback !== 'off');
