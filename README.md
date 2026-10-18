@@ -22,7 +22,7 @@ npm run dev          # http://localhost:5173
 npm run typecheck    # tsc --noEmit, TypeScript strict
 npm test             # Vitest : moteur, Clash, visibilité, IA
 npm run build        # typecheck + build Vite → dist/
-npm run qa:browser   # duels complets pilotés par l’UI (Chromium headless) → artifacts/qa/ (LQV_RENDER_CHECK=1 : chaque rendu ciblé comparé à un rendu complet, et chaque illustration du worker à la génération synchrone ; LQV_QA_OUT=fichier)
+npm run qa:browser   # duels complets pilotés par l’UI (Chromium headless) → artifacts/qa/ (LQV_RENDER_CHECK=1 : chaque rendu ciblé comparé à un rendu complet, et chaque illustration du worker à la génération synchrone ; LQV_QA_OUT=fichier ; LQV_QA_STAGE_FAULT=opaque|stuck : cas négatif, une scène du Clash jamais nettoyée ou bloquée après son fondu, la QA doit échouer)
 npm run qa:techniques # Rupture / Dissipation / effet camouflé par l’UI (souris + tactile) → screenshots/qa/m03-1b/
 npm run shots        # captures M03 + planches preview ↔ runtime → screenshots/qa/m03/
 npm run shots:clash  # chaque type de Clash : poses, mouvement réduit, pellicules → screenshots/qa/m03-2/clash/ (CLASH_OUT=…)
