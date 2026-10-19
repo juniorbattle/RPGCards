@@ -1,7 +1,7 @@
 # ADR 021 — Personnages « vectoriel V2 » : porte de validation sur Maëlle (M07, lot 5)
 
 Date : 2026-10-18
-Statut : **APPROUVÉ — rendu par défaut des rivaux** (passe 25) **et du portrait du joueur** (passe 26, amendement 3). Direction validée par le responsable le 2026-10-18 sur la
+Statut : **APPROUVÉ — rendu par défaut des rivaux** (passe 25) **et du portrait du joueur** (passe 26, amendement 3) ; pré-génération aux temps morts (M08 C1, amendement 4). Direction validée par le responsable le 2026-10-18 sur la
 planche de Maëlle ; arbitrage relayé par la session principale : « Je valide la direction V2. Fais d’abord une passe de
 finition sur Maëlle (plan d’ombre du visage moins tranché, cheveux avec mèches et reflets, yeux lisibles en prudence à
 83 px), puis généralise à Kaï, Sélène et Orin », la V2 devenant le rendu par défaut une fois les quatre rivaux faits.
@@ -224,3 +224,51 @@ Relayé par la session principale après la passe 26 ; consigné dans `docs/miss
 - portrait du joueur V2 **conservé**, détails à revoir lors d’une future passe artistique ;
 - pré-génération des couches des personnages : **priorité technique suivante** (M08, lot C1) ;
 - retrait du V1 (`?qa=1&figure=v1`) : **après** la fin des comparaisons et la réception du lot (M08, lot C4).
+
+## Amendement 4 du 2026-10-18 — pré-génération des personnages aux temps morts (M08, lot C1)
+
+Statut : **mandat M08, lot C1** (« pré-génération des personnages = priorité technique suivante », arbitrage du
+responsable du 2026-10-18). Constat (passes 23 à 25) : à l’apparition d’un rival V2 (clic sur une affiche, reprise d’un
+duel), la première image coûtait ≈ 100 à 150 ms : couches tracées sur place, canvas tramés et envoyés au GPU à cette
+image, et — découvert pendant ce lot — programmes GPU du rig recompilés.
+
+### Décision
+
+- **Rivaux à venir** (`src/product/upcoming.ts`, pur et testé) : ceux qu’un seul clic peut asseoir à la table depuis
+  l’écran courant — tableau : toute rencontre jouable (ou seulement le duel à reprendre) ; accueil : le duel à reprendre ;
+  résultat : la manche suivante de la série ; ailleurs : aucun.
+- **Préparation aux temps morts** (`src/scene/rival.ts`, `src/scene/idleWork.ts`) : pour chacun, couches V2 tracées
+  étape par étape (`figureV2ArtSteps` : mêmes fonctions, même ordre, mêmes pixels), rig construit, puis chaque texture
+  envoyée au GPU (`renderer.initTexture`), une étape par tranche d’inactivité (`requestIdleCallback`, étape ≤ 2 ms
+  mesurée). `createRival` prend le rig tout prêt ; une préparation inachevée est terminée sur place (jamais plus lent
+  qu’avant) ; sans préparation, le rig est construit comme avant. Les textures pas encore montrées du rival assis
+  (bouches, sourcils, paupière close, rougeur) sont aussi envoyées avant le duel.
+- **Jamais pendant un duel** : la file est suspendue dès l’écran du duel (`holdPreparation`) ; contrôlé en QA
+  (`qa:product` A : compteurs de génération, d’envoi et d’étapes figés du début à la fin du duel).
+- **Programmes GPU gardés** : l’ancien rig n’est libéré qu’après la première image de son remplaçant. Libéré avant, il
+  emportait les programmes qu’ils partagent (45 → 36 à `setRival`), recompilés à la première image (≈ 40 ms) — même cause
+  que l’à-coup des anneaux FX de la passe 12.
+- **Libération étalée** : rigs retirés et préparations devenues inutiles sont libérés aux temps morts, une couche par
+  tranche d’inactivité (file jamais suspendue : libérer n’est pas générer) ; d’un bloc, la libération retardait d’une
+  image (≈ 12 ms à 165 Hz) la seconde suivante. Tout est libéré sur-le-champ avec l’arène.
+- **Mémoire bornée** : au plus `MAX_PREPARED` = 6 rivaux préparés (≈ 10 Mo de textures chacun) ; les préparations
+  devenues inutiles sont libérées à chaque changement d’écran.
+- **`arena.ts` inchangé** (chantier C2 en parallèle) : le moteur de rendu est capté par `onBeforeRender` de la tête du
+  rig affiché, le verso de cartes par `createRival`.
+- QA : `window.__lqvPrep()` (état, compteurs) ; `?qa=1&prep=art|off` (couches seules, ou aucune préparation : témoins de
+  mesure) ; outils `tools/c1-apparition.mjs` (parcours réel, avant / après) et `tools/c1-identique.mjs`.
+
+### Conséquences
+
+- **Première image après l’apparition d’un rival** (`tools/c1-apparition.mjs` : parcours réel, tableau → temps mort →
+  clic sur l’affiche ; build `bb0535b` contre `1e7ef20` ; 5 rondes entrelacées, 20 apparitions par build et par GPU ;
+  `artifacts/qa/m08/c1-apparition-{780m,rtx4060}.json`) : Radeon 780M **115,6 → 7,2 ms** (médiane ; pire cas
+  169 → 48 ms, une seule valeur au-dessus de 12 ms, pendant une charge concurrente), RTX 4060 **145,8 → 7,6 ms** (pire
+  cas 210 → 21 ms) ; témoin (même écran, rival inchangé) 4 à 6 ms. Témoins de mesure : `prep=art` (couches seules) laisse
+  la première image courte mais déplace l’à-coup à une image suivante (≈ 50 à 65 ms) : l’envoi anticipé des textures est
+  nécessaire ; `prep=off` = avant.
+- Coût aux temps morts : ≈ 165 à 185 ms d’étapes pour préparer trois rivaux (≈ 800 étapes, médiane < 1 ms ; une étape
+  au plus 12 à 13 ms sous charge concurrente, ≤ 2 ms sans).
+- Rendu **identique au pixel près** (`tools/c1-identique.mjs`, parcours réel ; rivaux pris tout prêts vérifiés).
+- Mémoire : textures du rival assis 37 → 49 (ses 24 textures sont toutes envoyées avant le duel), stables par rival ;
+  au tableau, au plus `MAX_PREPARED` rivaux préparés ; tas JS stable (`qa:rc` J).
