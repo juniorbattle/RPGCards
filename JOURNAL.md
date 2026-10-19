@@ -1261,3 +1261,9 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **Modifications :** `demandes-images/README.md` (protocole, modèle de demande, bible de style, plafonds : 4 images par demande, 24 pour le run) ; AGENTS (exception : images demandées commitées comme références de travail non approuvées) ; brief cloud (comment demander) ; deux références générées pour M09 V1 dans `reference/generated/2026-10-19-quai-nuit-cameras/` avec leur fiche ; ce journal.
 - **Fonctionnement :** la session principale surveille `origin/main` toutes les 2 minutes ; elle ne sert les demandes que tant que le poste du responsable reste allumé avec l'application ouverte.
 - **À reprendre :** demandes de la session cloud pendant le run.
+
+## Passe 39 — Décision : caméra d'exploration frontale 2.5D (documentaire) — 2026-10-19, session principale
+
+- **Décision du responsable, pendant le run cloud :** « Non, on ne veut pas d'inclinaison, mais frontale. » La caméra d'exploration de M09 est la **frontale 2.5D** ; la vue de dessus inclinée est abandonnée.
+- **Modifications :** décision inscrite en tête du brief cloud, de M09, de CLAUDE, d'AGENTS et de `demandes-images/README.md` pour que la session cloud la voie à son prochain `git pull`.
+- **À reprendre :** vérifier que la session cloud a suivi la décision (V1 et V2 en frontale, ADR 024).

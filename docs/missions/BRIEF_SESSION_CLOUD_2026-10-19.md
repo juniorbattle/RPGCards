@@ -7,6 +7,8 @@ ce qui les dépasse va dans la fiche d'arbitrages (phase 3) et tu continues le r
 **Objectif :** optimiser la structure actuelle et s'approcher d'une version démo (release candidate du combat), puis,
 si le combat est sain, ouvrir la conception de la ville d'exploration HD-2D (cadrage et laboratoire de caméra).
 
+**DÉCISION DU RESPONSABLE (2026-10-19, pendant le run) : caméra d'exploration = FRONTALE 2.5D.** « Non, on ne veut pas d'inclinaison, mais frontale. » La vue de dessus inclinée est abandonnée : ne la construis pas (ou retire-la du laboratoire), fais V1 et V2 directement en frontale 2.5D (≈ 10–20°, plans de profondeur), et demande les images de référence en frontale. ADR 024 : statut « approuvé, frontale 2.5D ».
+
 ## Mode autonome (prioritaire sur tout le reste du brief)
 
 Le responsable a précisé : « je ne validerai rien durant ces 6 prochaines heures, donc il faut que la session soit la
