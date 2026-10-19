@@ -140,7 +140,7 @@ Comment voir le travail :
    `LQV_DEMARRAGE_QUERY=compileAsync=1` (profil neuf à chaque ronde : c'est déjà le cas).
 2. Fluidité du duel (RC) : `LQV_GPU=1 … npm run perf:play` sur la Radeon 780M et la RTX 4060 (procédure de la passe 11).
 3. Contraste sous Windows : `npm run qa:rc` (campagne S) et `node tools/rc08-contraste-rang.mjs` (police Georgia réelle).
-4. Ville : `LQV_GPU=1 … node tools/m09-labo.mjs` (coût par image sur les deux GPU) ; jouer `/?demo=1` et juger à l'œil
+4. Ville : `LQV_GPU=1 … npm run qa:ville` (coût par image sur les deux GPU) et `npm run qa:demo` (parcours de la démo, 30 contrôles) ; jouer `/?demo=1` et juger à l'œil
    le cadrage frontal (B1), le flou de bascule et le halo.
 5. Écran Rencontres : vérifier l'absence de l'état transitoire relevé sous forte charge (C5) :
    `LQV_BEFORE=<build 4a30504> node tools/l5-identique.mjs`, et `LQV_BEFORE=<build 4a30504> LQV_GPU=1 … node

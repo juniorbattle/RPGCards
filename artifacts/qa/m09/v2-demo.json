@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-19T11:19:03.948Z",
-  "commit": "6b67271",
+  "date": "2026-10-19T11:58:01.110Z",
+  "commit": "ed6dfdf",
   "checks": [
     "OK après « Créer » : la ville remplace le tableau des rencontres",
     "OK tutoriel de déplacement affiché à l’arrivée",

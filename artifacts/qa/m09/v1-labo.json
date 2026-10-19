@@ -1,24 +1,24 @@
 {
-  "date": "2026-10-19T11:12:29.299Z",
-  "commit": "6b67271+arbre de travail",
+  "date": "2026-10-19T11:46:12.905Z",
+  "commit": "cc7de58",
   "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU",
   "shots": [
     {
       "cam": "frontale",
       "spot": "ruelles-fontaine",
-      "size": "1280x720",
-      "file": "screenshots/qa/m09/v1/frontale-ruelles-fontaine-1280x720.png"
+      "size": "1920x1080",
+      "file": "screenshots/qa/m09/v1/frontale-ruelles-fontaine-1920x1080.png"
     },
     {
       "cam": "frontale",
       "spot": "ruelles-selene",
-      "size": "1280x720",
-      "file": "screenshots/qa/m09/v1/frontale-ruelles-selene-1280x720.png"
+      "size": "1920x1080",
+      "file": "screenshots/qa/m09/v1/frontale-ruelles-selene-1920x1080.png"
     }
   ],
   "cost": {
     "frontale": {
-      "readyMs": 962,
+      "readyMs": 4652,
       "st": {
         "camera": "frontale",
         "calls": 45,
@@ -27,15 +27,15 @@
         "geometries": 32,
         "programs": 18,
         "lights": 11,
-        "cpuMs": 3.7,
-        "frames": 4,
-        "buildMs": 275
+        "cpuMs": 1.7,
+        "frames": 8,
+        "buildMs": 280
       },
-      "median": null,
-      "p95": null,
-      "n": 0,
+      "median": 883,
+      "p95": 1150,
+      "n": 3,
       "walked": {
-        "x": -17.244288399557128,
+        "x": -16.348707119978197,
         "z": 0.6
       }
     }

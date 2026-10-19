@@ -23,7 +23,9 @@
     "qa:product": "node tools/qa-product.mjs",
     "shots:m04": "node tools/shots-m04.mjs",
     "qa:rc": "node tools/qa-rc.mjs",
-    "video": "node tools/video-m06.mjs"
+    "video": "node tools/video-m06.mjs",
+    "qa:demo": "node tools/m09-demo.mjs",
+    "qa:ville": "node tools/m09-labo.mjs"
   },
   "engines": {
     "node": ">=20"

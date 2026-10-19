@@ -6,7 +6,7 @@ import { readParams, type AppParams } from './app/params';
 import { SCENARIOS } from './app/scenarios';
 import { backEl, cardEl } from './presentation/cardView';
 import { cls, h } from './presentation/dom';
-import { createArena, type ArenaHandle } from './scene/arena';
+import { createArena, webglAvailable, type ArenaHandle } from './scene/arena';
 import { DuelSession } from './app/duelSession';
 import { Shell } from './shell/shell';
 import { PERSONALITIES, personalityById, personalityFor, type RivalPersonality } from './presentation/personalities';
@@ -182,7 +182,8 @@ else if (query.get('ville') === '1') {
 else if (params.autostart) start(makeConfig(params, params.sig ?? 'Cendre', params.techs ?? ['Lecture', 'Ancrage']), params.scenario);
 else if (query.get('setup') === '1') setupScreen();
 else {
-  // M09 V2 (provisoire, `?demo=1`) : la ville, chargée à la demande, remplace le tableau des rencontres.
-  const shell = new Shell({ shellHost: document.getElementById('shell')!, app, params, ensureArena, resetArena, arena: () => arena, hub: params.demo ? lazyHub() : undefined });
+  // M09 V2 (provisoire, `?demo=1`) : la ville, chargée à la demande, remplace le tableau des rencontres ; sans WebGL, la
+  // démo reste le jeu habituel (tableau des rencontres, arène en repli CSS).
+  const shell = new Shell({ shellHost: document.getElementById('shell')!, app, params, ensureArena, resetArena, arena: () => arena, hub: params.demo && webglAvailable() ? lazyHub() : undefined });
   if (params.qa) (window as unknown as Record<string, unknown>).__lqvShell = shell;
 }
