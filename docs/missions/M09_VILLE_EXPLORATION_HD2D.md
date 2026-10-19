@@ -51,6 +51,12 @@ la ville devient une **illustration de carte encrée** (contours, aplats, hachur
 familles** (Cendre, Voile, Ronce, Astre : lumières, vitraux, glyphes, dorures). L'ambre n'y est plus le seul accent
 chaud ; la nuit bleu d'encre, la pierre froide et l'ivoire désaturé restent.
 
+**Amendement 1 (passe 47, ADR 026)** : sur la demande du responsable (« il nous manque le blur et les flaques d'eau
+réfléchissantes », décors du centre plus impressionnants, l'eau du port ne doit pas avoir l'air d'une vitre) : profondeur
+de champ (rue et façades nettes, premier plan et ville haute flous), reflet plan de la rue (flaques, port en reflet
+brisé), clair de lune peint sur les étages, décors du centre enrichis (fronton doré de la salle de jeu, frise des
+familles, pignon à oculus de l'armateur, lampadaires ouvragés, étal garni). Le Quai seulement.
+
 Cette DA est cohérente avec nos lieux de duel (la rue « le Quai, la nuit », le bar « le Fanal », ADR 022) : la ville
 doit prolonger ces lieux, pas les contredire.
 

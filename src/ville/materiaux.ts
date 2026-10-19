@@ -32,6 +32,16 @@ export const U = {
   uLightCol: { value: Array.from({ length: MAX_LIGHTS }, () => new THREE.Vector3()) },
   uLightCount: { value: 0 },
   uTime: { value: 0 },
+  // M09 V3 (passe 47) : reflet plan de la rue (`reflets.ts`), lu par les flaques (`MIRROR`) et l'eau du port (`refl`).
+  uReflMap: { value: null as THREE.Texture | null },
+  uReflVP: { value: new THREE.Matrix4() },
+  uReflReady: { value: 0 },
+  /** Plan de façade servant de relais au reflet de l'eau : z du plan, hauteur au-delà de laquelle on vise la ville lointaine. */
+  uReflProxy: { value: new THREE.Vector2(-3, 11) },
+  /** Direction D (passe 47) : clair de lune « peint » sur les étages et les toits (direction, force ; 0 = rien) et
+   *  hauteurs où il apparaît (le rez-de-chaussée reste aux lanternes). Lu par les matières `illu`. */
+  uFill: { value: new THREE.Vector4(0, 1, 0, 0) },
+  uFillY: { value: new THREE.Vector2(3, 7) },
 };
 
 /** Ambre des lanternes (linéaire), seul accent chaud. */
@@ -101,8 +111,17 @@ ${COMMON_GLSL}
 uniform sampler2D tAlbedo; uniform vec3 uTint; uniform float uWrap; uniform float uSpec; uniform float uShin;
 uniform float uContact; uniform float uEmissive; uniform float uBreakup; uniform float uWet;
 varying vec3 vWorld; varying vec3 vN; varying vec2 vUv;
+#ifdef ILLU
+uniform vec4 uFill; uniform vec2 uFillY;
+#endif
 #ifdef VAO
 varying float vAO;
+#endif
+#ifdef MIRROR
+uniform sampler2D uReflMap; uniform mat4 uReflVP; uniform float uReflReady;
+#endif
+#ifdef PUDDLES
+uniform sampler2D tPuddle; uniform vec4 uPuddleRect;
 #endif
 #ifdef MIRROR
 // M09 V3 : reflets des lanternes sur le pavé mouillé, sans cible de rendu (« lightMirror » de Cité du Tournoi,
@@ -133,6 +152,18 @@ void main(){
   albedo = mix(albedo, albedo * 0.55, gc * uContact * 0.6);
   // Sol mouillé : flaques en bruit basse fréquence, plus sombres et plus brillantes (reflets des lanternes).
   float puddle = uWet * smoothstep(0.55, 0.72, vn2(vWorld.xz * 0.23 + 3.7) * 0.75 + (1.0 - A.a) * 0.4);
+  float damp = puddle;
+#ifdef PUDDLES
+  // M09 V3 (passe 47) : flaques d'eau dormante peintes par code (masque de l'îlot) ; l'eau gagne d'abord les joints,
+  // puis noie les pavés (Cité du Tournoi, GroundShaders.ts L. 83-90) ; le bruit ne fait plus que le pavé humide.
+  {
+    vec2 pu = (vWorld.xz - uPuddleRect.xy) / uPuddleRect.zw;
+    float fill = texture2D(tPuddle, pu).r * 1.2 + (1.0 - A.a) * 0.3 - 0.16;
+    puddle = smoothstep(0.42, 0.52, fill) * step(0.0, pu.x) * step(pu.x, 1.0) * step(0.0, pu.y) * step(pu.y, 1.0);
+    damp = max(damp * 0.6, puddle);
+    albedo *= mix(1.0, 0.72, damp);
+  }
+#endif
   albedo *= mix(1.0, 0.55, puddle);
   vec3 hemi = mix(uGroundAmb, uSkyAmb, N.y * 0.5 + 0.5);
   float mw = clamp((dot(N, uMoonDir) + 0.14) / 1.14, 0.0, 1.0);
@@ -149,6 +180,11 @@ void main(){
 #endif
   vec3 col = albedo * (hemi * ao + uMoonCol * mw * 0.85 + diff * mix(1.0, ao, 0.65));
   col += spec * (uSpec + puddle * 1.6) * ao;
+#ifdef ILLU
+  // clair de lune peint : les étages et les toits tournés vers la rue lisent leur matière en bleu froid, au-dessus
+  // des lanternes (contraste chaud en bas, froid en haut, comme la référence approuvée)
+  col += albedo * uMoonCol * uFill.w * max(dot(N, uFill.xyz), 0.0) * smoothstep(uFillY.x, uFillY.y, vWorld.y) * ao;
+#endif
 #ifdef ILLU
   // Hachures de gravure dans les demi-teintes et les ombres, tracées dans le monde (elles ne glissent pas quand la caméra
   // suit le joueur) : un réseau diagonal, croisé dans les ombres profondes ; effacées quand elles deviennent trop serrées.
@@ -169,9 +205,18 @@ void main(){
 #ifdef MIRROR
   {
     float rough = mix(0.55, 0.06, puddle);
-    vec3 Nm = normalize(mix(N, vec3(0.0, 1.0, 0.0), puddle * 0.9) + vec3(vn2(vWorld.xz * 6.0) - 0.5, 0.0, vn2(vWorld.zx * 6.0 + 2.0) - 0.5) * 0.06);
+    vec2 rp6 = vWorld.xz * 6.0;
+    vec3 Nm = normalize(mix(N, vec3(0.0, 1.0, 0.0), puddle * 0.9) + vec3(vn2(rp6 + uTime * 0.4) - 0.5, 0.0, vn2(rp6.yx + 2.0 - uTime * 0.37) - 0.5) * mix(0.06, 0.035, puddle));
     float fr = 0.05 + 0.95 * pow(1.0 - max(dot(Nm, V), 0.0), 4.0);
     col += lightMirror(vWorld, reflect(-V, Nm), rough) * fr * mix(0.35, 1.0, puddle) * uWet * 0.55;
+    // reflet plan de la scène (flaques nettes, pavé humide flou ; Cité du Tournoi, GroundShaders.ts L. 126-133)
+    if (uReflReady > 0.5) {
+      vec4 rq = uReflVP * vec4(vWorld, 1.0);
+      vec2 ruv = rq.xy / rq.w * 0.5 + 0.5 + Nm.xz * mix(0.05, 0.012, puddle);
+      vec3 rc = texture2D(uReflMap, ruv, mix(3.5, 0.4, puddle)).rgb;
+      float rAmt = (puddle * 1.1 + damp * 0.3) * (0.5 + 0.7 * fr) * uWet;
+      col = col * (1.0 - puddle * 0.6) + rc * rAmt;
+    }
   }
 #endif
   col += A.rgb * uTint * uEmissive;
@@ -196,6 +241,8 @@ export interface SurfaceOpts {
   mirror?: boolean;
   /** M09 V3, direction D (ADR 026) : lumière en aplats et hachures de gravure. */
   illu?: boolean;
+  /** M09 V3 (passe 47) : masque des flaques d'eau dormante (canal rouge) sur le rectangle (x0, z0, largeur, profondeur). */
+  puddles?: { map: THREE.Texture; rect: readonly [number, number, number, number] };
 }
 
 /** Matériau de surface « nuit » : un programme partagé par toutes les matières (seuls les uniformes changent). */
@@ -214,25 +261,32 @@ export function surface(o: SurfaceOpts): THREE.ShaderMaterial {
       uEmissive: { value: o.emissive ?? 0 },
       uBreakup: { value: o.breakup ?? 0.35 },
       uWet: { value: o.wet ?? 0 },
+      ...(o.puddles ? { tPuddle: { value: o.puddles.map }, uPuddleRect: { value: new THREE.Vector4(...o.puddles.rect) } } : {}),
     },
     vertexShader: SURFACE_VERT,
     fragmentShader: SURFACE_FRAG,
     side: o.side ?? THREE.FrontSide,
-    defines: { ...(o.vertexAO ? { VAO: '' } : {}), ...(o.mirror ? { MIRROR: '' } : {}), ...(o.illu ? { ILLU: '' } : {}) },
+    defines: { ...(o.vertexAO ? { VAO: '' } : {}), ...(o.mirror ? { MIRROR: '' } : {}), ...(o.illu ? { ILLU: '' } : {}), ...(o.puddles ? { PUDDLES: '' } : {}) },
   });
 }
 
 /** Eau du port : profonde, rides anisotropes, ciel en Fresnel, reflets des lanternes en traînées verticales.
  *  M09 V3 (Quai) : `streak` règle la force des traînées (défaut d'origine 0,12), `spillZ` ajoute la lueur chaude du quai
- *  sur l'eau le long du mur (Cité du Tournoi, `GroundShaders.ts` L. 141-201) ; sans option, l'eau d'origine. */
-export function waterMaterial(o: { streak?: number; spillZ?: number } = {}): THREE.ShaderMaterial {
+ *  sur l'eau le long du mur (Cité du Tournoi, `GroundShaders.ts` L. 141-201) ; `refl` (passe 47) remplace le ciel en
+ *  Fresnel par le reflet plan de la rue, revisé comme s'il était pris au niveau de l'eau (relais : le plan des façades,
+ *  `GroundShaders.ts` L. 176-188) ; sans option, l'eau d'origine. */
+export function waterMaterial(o: { streak?: number; spillZ?: number; refl?: number } = {}): THREE.ShaderMaterial {
   return new THREE.ShaderMaterial({
     name: 'VilleEau',
-    uniforms: { ...U, uStreak: { value: o.streak ?? 0.12 }, uSpillZ: { value: o.spillZ ?? 1e4 }, uSpill: { value: o.spillZ === undefined ? 0 : 1 } },
+    uniforms: { ...U, uStreak: { value: o.streak ?? 0.12 }, uSpillZ: { value: o.spillZ ?? 1e4 }, uSpill: { value: o.spillZ === undefined ? 0 : 1 }, uReflK: { value: o.refl ?? 0 } },
+    defines: o.refl ? { REFL: '' } : {},
     vertexShader: /* glsl */ `varying vec3 vWorld; void main(){ vec4 w = modelMatrix * vec4(position, 1.0); vWorld = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
     fragmentShader: /* glsl */ `
 ${COMMON_GLSL}
 uniform float uStreak; uniform float uSpillZ; uniform float uSpill;
+#ifdef REFL
+uniform sampler2D uReflMap; uniform mat4 uReflVP; uniform float uReflReady; uniform vec2 uReflProxy; uniform float uReflK;
+#endif
 varying vec3 vWorld;
 void main(){
   vec3 P = vWorld; float t = uTime;
@@ -243,6 +297,35 @@ void main(){
   vec3 V = normalize(cameraPosition - P); vec3 R = reflect(-V, N);
   float fr = 0.02 + 0.98 * pow(1.0 - max(dot(N, V), 0.0), 5.0);
   vec3 col = vec3(0.003, 0.007, 0.015) + skyColor(normalize(vec3(R.x, abs(R.y), R.z))) * fr * 0.9;
+#ifdef REFL
+  if (uReflReady > 0.5) {
+    // caméra symétrique par rapport à l'eau ; profondeur du contenu reflété prise sur un relais : le plan des façades
+    // tant que le rayon le rencontre sous les toits, sinon la ville lointaine
+    vec3 Cw = vec3(cameraPosition.x, 2.0 * P.y - cameraPosition.y, cameraPosition.z);
+    vec3 dw = normalize(P - Cw);
+    float sw = 140.0;
+    if (dw.z < -0.02) { float sf = (uReflProxy.x - Cw.z) / dw.z; if (sf > 0.0 && Cw.y + dw.y * sf < uReflProxy.y) sw = sf; }
+    vec4 rq = uReflVP * vec4(Cw + dw * sw, 1.0);
+    vec2 ruv = rq.xy / rq.w * 0.5 + 0.5;
+    vec2 fw = normalize(-V.xz + 1e-5), rt = vec2(fw.y, -fw.x);
+    // les rides étirent l'image vers le spectateur et la font onduler de côté : lumières et façades se brisent en
+    // traînées verticales (retour du responsable : l'eau ne doit pas avoir l'air d'une vitre)
+    float wob = sin(P.z * 7.0 + vn2(vec2(P.x * 0.8, P.z * 3.0) + t * 0.3) * 6.0 + t * 1.3);
+    ruv += vec2(dot(N.xz, rt) * 0.03 + g.x * 0.01 + wob * 0.007, dot(N.xz, fw) * 0.22);
+    vec3 refl = texture2D(uReflMap, clamp(ruv, 0.001, 0.999), 1.6).rgb;
+    // le mur du quai cache ce qui est derrière lui : au pied du mur, l'eau reflète la pierre sombre
+    vec3 dv0 = normalize(P - cameraPosition);
+    float yHit = P.y - dv0.y * max((uSpillZ - P.z) / min(dv0.z, -1e-3), 0.0);
+    float wall = (1.0 - smoothstep(-0.15, 0.3, yHit)) * step(uSpillZ, P.z);
+    refl = mix(refl, vec3(0.01, 0.013, 0.024), wall * 0.75);
+    // crêtes et creux des rides : l'image tient sur les crêtes, l'eau profonde se montre dans les creux
+    float crest = smoothstep(0.3, 0.75, vn2(vec2(P.x * 0.9 + t * 0.15, P.z * 6.5 - t * 0.4)));
+    col = vec3(0.003, 0.007, 0.015) + refl * (0.3 + 0.7 * fr) * uReflK * mix(0.25, 1.2, crest);
+    // lisérés froids du ciel sur les crêtes : la surface se lit comme de l'eau qui bouge
+    float lip = smoothstep(0.62, 0.8, vn2(vec2(P.x * 1.6 - t * 0.2, P.z * 11.0 + t * 0.5)));
+    col += vec3(0.045, 0.065, 0.11) * lip * (0.5 + fr);
+  }
+#endif
   // Reflets des lumières : image miroir de chaque source, étirée verticalement à l'écran par les rides.
   vec3 vd = normalize(P - cameraPosition);
   vec3 right = normalize(vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]));

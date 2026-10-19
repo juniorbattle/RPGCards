@@ -181,6 +181,23 @@ describe('ville : caméra frontale (ADR 024)', () => {
     expect(ILOTS.parvis.style).toBeUndefined();
     expect(ILOTS.ruelles.style).toBeUndefined();
   });
+
+  it('M09 V3, passe 47 : flou de profondeur et reflets sur le Quai seulement ; la rue jouable reste nette', async () => {
+    const { ILOTS } = await import('../src/ville/ilots');
+    const { FACADE_Z, QUAY_Z, NPCS: Q_NPCS, LAMPS } = await import('../src/ville/quai');
+    const dof = ILOTS.quai.dof!;
+    // net du pied des façades au bord du quai : personnages, lampadaires et portes ne sont jamais flous
+    expect(dof.nearZ).toBeGreaterThan(QUAY_Z);
+    expect(dof.farZ).toBeLessThan(FACADE_Z);
+    for (const p of [...Q_NPCS.map((n) => n.at), ...LAMPS]) expect(p.z).toBeLessThan(dof.nearZ);
+    expect(dof.farAmt).toBeGreaterThan(0);
+    expect(dof.farAmt).toBeLessThanOrEqual(1);
+    expect(ILOTS.quai.reflets?.proxyZ).toBe(FACADE_Z);
+    for (const id of ['parvis', 'ruelles'] as const) {
+      expect(ILOTS[id].dof).toBeUndefined();
+      expect(ILOTS[id].reflets).toBeUndefined();
+    }
+  });
 });
 
 describe('ville : îlot et produit', () => {
