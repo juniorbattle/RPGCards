@@ -32,7 +32,9 @@ describe('lieux : registre', () => {
   it('isVenueId ne reconnaît que les lieux construits', () => {
     expect(isVenueId('rue')).toBe(true);
     expect(isVenueId('salle')).toBe(true);
-    expect(isVenueId('arene')).toBe(false);
+    expect(isVenueId('bar')).toBe(true);
+    expect(isVenueId('arene')).toBe(true);
+    expect(isVenueId('ville')).toBe(false);
     expect(isVenueId(null)).toBe(false);
   });
 });
@@ -92,10 +94,16 @@ describe('lieux : rencontres', () => {
     for (const e of ENCOUNTERS) expect(isVenueId(e.venue)).toBe(true);
   });
 
-  it('le Tournoi du Quai reste dans la salle ; « Duel libre — Kaï » se joue dans la rue (porte C2)', () => {
+  it('le Tournoi du Quai reste dans la salle ; un duel libre par nouveau lieu (rue, bar, arène)', () => {
     for (const e of ENCOUNTERS.filter((x) => x.kind === 'series')) expect(e.venue).toBe('salle');
     expect(encounterById('libre-braise')!.venue).toBe('rue');
-    for (const id of ['libre-ronce', 'libre-voile', 'libre-astre']) expect(encounterById(id)!.venue).toBe('salle');
+    expect(encounterById('libre-ronce')!.venue).toBe('bar');
+    expect(encounterById('libre-astre')!.venue).toBe('arene');
+    expect(encounterById('libre-voile')!.venue).toBe('salle');
+  });
+
+  it('chaque lieu construit est joué par au moins une rencontre', () => {
+    for (const v of VENUE_IDS) expect(ENCOUNTERS.some((e) => e.venue === v)).toBe(true);
   });
 });
 
@@ -103,7 +111,8 @@ describe('lieux : paramètre QA', () => {
   it('`venue` n’est lu qu’en QA, et seulement pour un lieu construit', () => {
     expect(readParams('?qa=1&venue=rue').venue).toBe('rue');
     expect(readParams('?venue=rue').venue).toBeNull();
-    expect(readParams('?qa=1&venue=arene').venue).toBeNull();
+    expect(readParams('?qa=1&venue=arene').venue).toBe('arene');
+    expect(readParams('?qa=1&venue=ville').venue).toBeNull();
     expect(readParams('?qa=1&venueCache=1').venueCache).toBe(1);
     expect(readParams('?venueCache=1').venueCache).toBeNull();
   });

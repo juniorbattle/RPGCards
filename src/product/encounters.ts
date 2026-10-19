@@ -87,10 +87,12 @@ export const SERIES = { id: 'quai', title: 'Tournoi du Quai', steps: ['braise', 
 export const TOWN_DUELS: readonly NpcId[] = ['pnj-docker-1', 'pnj-marchande-9', 'pnj-commis-5', 'pnj-joueuse-5'];
 
 /**
- * M08 C2 — lieu des duels libres (porte de validation de la rue, décision du responsable du 2026-10-18) : Kaï, le
- * docker du Quai, se défie dans la rue ; les autres rencontres restent dans la salle de jeu de cartes.
+ * M08 C2 — lieu des duels libres : Kaï, le docker du Quai, dans la rue (porte de validation, décision du responsable du
+ * 2026-10-18) ; Maëlle au Fanal, la taverne du port ; Orin, le plus redoutable, sur la grande scène de l’arène (bar et
+ * arène lancés par le responsable le 2026-10-18 ; placement proposé, modifiable ici) ; Sélène et le Tournoi du Quai dans
+ * la salle de jeu de cartes.
  */
-const FREE_VENUE: Partial<Record<RivalPersonality['id'], VenueId>> = { braise: 'rue' };
+const FREE_VENUE: Partial<Record<RivalPersonality['id'], VenueId>> = { braise: 'rue', ronce: 'bar', astre: 'arene' };
 
 export const ENCOUNTERS: Encounter[] = [
   ...SERIES.steps.map((rival, i) => ({ id: `quai-${i + 1}`, rival, kind: 'series' as const, step: i + 1, title: `${SERIES.title} — manche ${i + 1} sur ${SERIES.steps.length}`, venue: DEFAULT_VENUE })),

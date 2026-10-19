@@ -4,6 +4,10 @@
  * Aucun asset externe ; chaque peinture a sa propre graine (graine d’art + nom de l’élément).
  */
 import * as THREE from 'three';
+import type { Family } from '../../game/catalog/cards';
+import { hashString, makeRng } from '../../game/engine/rng';
+import { drawEmblem } from '../../art/emblems';
+import { FAMILY_PALETTE } from '../../art/palette';
 
 export type Ctx2 = CanvasRenderingContext2D;
 
@@ -19,6 +23,67 @@ export function texture(c: HTMLCanvasElement, aniso = 4): THREE.CanvasTexture {
   t.colorSpace = THREE.SRGBColorSpace;
   t.anisotropy = aniso;
   return t;
+}
+
+/** Bannière d’une famille : étoffe, liseré doré, grand emblème lumineux, pointe (M03.2 : plus courte,
+ *  1:2, pour rester entière au-dessus du rival agrandi). */
+export function bannerTexture(family: Family, seed: number): THREE.CanvasTexture {
+  const W = 256;
+  const H = 512;
+  const { c, ctx } = canvas(W, H);
+  const p = FAMILY_PALETTE[family];
+  const rng = makeRng(hashString(`banner|${family}|${seed}`));
+  const base: Record<Family, [string, string]> = { Cendre: ['#8a1e12', '#3a0906'], Ronce: ['#1f5a2a', '#0b2410'], Astre: ['#16224f', '#070b22'], Voile: ['#244bb0', '#0c1a4e'] };
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, base[family][0]);
+  g.addColorStop(1, base[family][1]);
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+  // plis verticaux
+  for (let i = 0; i < 7; i++) {
+    const x = 18 + i * 36 + rng() * 8;
+    const fold = ctx.createLinearGradient(x - 14, 0, x + 14, 0);
+    fold.addColorStop(0, 'rgba(0,0,0,0)');
+    fold.addColorStop(0.5, 'rgba(0,0,0,0.22)');
+    fold.addColorStop(1, 'rgba(255,255,255,0.03)');
+    ctx.fillStyle = fold;
+    ctx.fillRect(x - 14, 0, 28, H);
+  }
+  // liseré doré
+  ctx.strokeStyle = '#d9b26a';
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.moveTo(14, 0); ctx.lineTo(14, H - 100); ctx.lineTo(W / 2, H - 34); ctx.lineTo(W - 14, H - 100); ctx.lineTo(W - 14, 0);
+  ctx.stroke();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = 'rgba(255,220,150,0.6)';
+  ctx.beginPath();
+  ctx.moveTo(26, 0); ctx.lineTo(26, H - 112); ctx.lineTo(W / 2, H - 52); ctx.lineTo(W - 26, H - 112); ctx.lineTo(W - 26, 0);
+  ctx.stroke();
+  // losange décoratif + emblème lumineux
+  const ey = 170;
+  ctx.fillStyle = 'rgba(0,0,0,0.35)';
+  ctx.beginPath(); ctx.moveTo(W / 2, ey - 112); ctx.lineTo(W / 2 + 86, ey); ctx.lineTo(W / 2, ey + 112); ctx.lineTo(W / 2 - 86, ey); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = '#d9b26a';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+  ctx.shadowColor = p.glow;
+  ctx.shadowBlur = 28;
+  ctx.fillStyle = family === 'Astre' ? p.accent : family === 'Cendre' ? '#ffd9a0' : p.accent;
+  drawEmblem(ctx, family, W / 2, ey, 60);
+  ctx.shadowBlur = 0;
+  // petits motifs
+  for (let i = 0; i < 2; i++) {
+    ctx.fillStyle = `${p.accent}${i % 2 ? '55' : '88'}`;
+    drawEmblem(ctx, family, W / 2, 330 + i * 44, 10 + (i % 2) * 4);
+  }
+  // pointe
+  ctx.globalCompositeOperation = 'destination-out';
+  ctx.beginPath();
+  ctx.moveTo(0, H); ctx.lineTo(0, H - 98); ctx.lineTo(W / 2, H - 28); ctx.lineTo(W, H - 98); ctx.lineTo(W, H);
+  ctx.closePath();
+  ctx.fill();
+  return texture(c);
 }
 
 /** Flamme : goutte lumineuse (cœur blanc-jaune → orange → transparent), sur un sprite carré. */
