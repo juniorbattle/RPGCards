@@ -10,13 +10,14 @@
  */
 import { CATALOG, EFFECTS, FAMILIES } from '../game/catalog/cards';
 import type { TechniqueId } from '../game/catalog/techniques';
-import type { RivalPersonality } from '../presentation/personalities';
+import { isSignatureRival, type SignatureRivalId } from '../presentation/personalities';
 import { STARTER_COLLECTION } from './collection';
 import { variantsOf, type Collection } from './deck';
 import { ENCOUNTERS, SERIES, encounterById, personalityOf, type Encounter } from './encounters';
 import type { DuelSummary } from './save';
 
-type RivalId = RivalPersonality['id'];
+/** Seuls les rivaux signatures entrent dans la progression ; un duelliste PNJ de la ville n’y laisse rien (M08 C3). */
+type RivalId = SignatureRivalId;
 
 export interface Progress {
   series: { step: number; completed: number };
@@ -59,6 +60,8 @@ export interface EncounterStatus {
 
 /** Disponibilité d’une rencontre (règle de prototype, déclarative). */
 export function encounterStatus(enc: Encounter, p: Progress): EncounterStatus {
+  // M08 C3 : les duels de la ville sont ouverts d’emblée (entraînement, sans récompense).
+  if (enc.kind === 'town') return { open: true, state: 'open', reason: 'Duel de la ville' };
   if (enc.kind === 'series') {
     const step = enc.step!;
     if (p.series.step >= step) return { open: false, state: 'done', reason: 'Manche remportée' };
@@ -66,7 +69,7 @@ export function encounterStatus(enc: Encounter, p: Progress): EncounterStatus {
     const prev = personalityOf(SERIES.steps[step - 2]!);
     return { open: false, state: 'locked', reason: `Battez d’abord ${prev.name} dans la série` };
   }
-  if (enc.rival === 'braise' || p.met.includes(enc.rival)) return { open: true, state: 'open', reason: 'Rencontre libre' };
+  if (enc.rival === 'braise' || (isSignatureRival(enc.rival) && p.met.includes(enc.rival))) return { open: true, state: 'open', reason: 'Rencontre libre' };
   if (enc.rival === 'astre') return p.series.completed > 0 ? { open: true, state: 'open', reason: 'Défi débloqué' } : { open: false, state: 'locked', reason: `Remportez le ${SERIES.title} pour défier Orin` };
   return { open: false, state: 'locked', reason: `Rencontrez d’abord ${personalityOf(enc.rival).name} dans le ${SERIES.title}` };
 }
@@ -85,10 +88,12 @@ export interface OutcomeEffect {
 
 const uniq = <T>(xs: T[]) => [...new Set(xs)];
 
-/** Applique un duel terminé à la progression (pur ; abandon et défaite ne font rien gagner). */
+/** Applique un duel terminé à la progression (pur ; abandon et défaite ne font rien gagner ; un duel contre un PNJ de
+ *  la ville non plus : il reste dans l’historique seulement). */
 export function applyOutcome(collection: Collection, progress: Progress, sum: DuelSummary): OutcomeEffect {
   const enc = encounterById(sum.encounterId);
-  const rival = sum.rival as RivalId;
+  if (!isSignatureRival(sum.rival)) return { collection: structuredClone(collection), progress: structuredClone(progress), unlocked: [], series: null };
+  const rival: RivalId = sum.rival;
   const p: Progress = structuredClone(progress);
   const col: Collection = structuredClone(collection);
   p.met = uniq([...p.met, rival]);

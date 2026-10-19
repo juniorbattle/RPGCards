@@ -11,7 +11,7 @@ import { autoplay } from '../src/game/match';
 import { viewFor } from '../src/game/visibility/view';
 import { FULL_COLLECTION, STARTER_COLLECTION, STARTER_DECK } from '../src/product/collection';
 import { ALL_VARIANTS, IDENTITIES, deckDefs, equippedFor, setVersion, toggleTechnique, validateDeck, type DeckChoice } from '../src/product/deck';
-import { ENCOUNTERS, RIVALS, encounterConfig } from '../src/product/encounters';
+import { ENCOUNTERS, encounterConfig, sheetOf } from '../src/product/encounters';
 import { INITIAL_FLOW, transition, type FlowContext, type FlowState } from '../src/product/flow';
 import { BACKUP_KEY, CORRUPT_KEY, SAVE_KEY, SaveStore, duelSeed, newSave, parseSave, validateSave, type StorageLike } from '../src/product/save';
 import { record, summarize } from '../src/product/stats';
@@ -212,7 +212,7 @@ describe('M04 — rencontres et résumé public', () => {
   it('chaque rencontre produit une configuration jouable jusqu’au K.-O. (PV propres au rival)', () => {
     for (const enc of ENCOUNTERS) {
       const cfg = encounterConfig(enc, STARTER_DECK, duelSeed(77, ENCOUNTERS.indexOf(enc)));
-      expect(cfg.players.p2.hp).toBe(RIVALS[enc.rival].hp);
+      expect(cfg.players.p2.hp).toBe(sheetOf(enc.rival).hp);
       expect(cfg.players.p1.hp).toBe(90);
       const m = autoplay(cfg);
       expect(m.state.phase).toBe('ENDED');

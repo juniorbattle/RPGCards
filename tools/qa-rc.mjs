@@ -166,7 +166,10 @@ try {
       check(byRival('textures'), `textures GPU stables par rival sur 3 tours (${order.map((r) => s.find((x) => x.rival === r).textures).join('/')})`);
       check(byRival('geometries', 1), `géométries stables par rival après la première image en vue B (${order.map((r) => s.slice(1).find((x) => x.rival === r).geometries).join('/')} ; 1re mesure ${s[0].geometries})`);
       if (s[0].preparedOnBoard !== null) {
-        check(s.every((x) => x.preparedOnBoard === 3 && x.preparedAtPrep === 0), `rivaux préparés bornés : 3 au tableau (les autres que celui assis), 0 à la préparation (${[...new Set(s.map((x) => `${x.preparedOnBoard}/${x.preparedAtPrep}`))].join(', ')})`);
+        // Au plus 6 adversaires préparés au tableau (MAX_PREPARED ; avec les duels de la ville, le tableau en compte 7
+        // autres que celui assis), toujours le même nombre ; aucun à l’écran de préparation.
+        const n = s[0].preparedOnBoard;
+        check(n > 0 && n <= 6 && s.every((x) => x.preparedOnBoard === n && x.preparedAtPrep === 0), `adversaires préparés bornés : ${n} au tableau (≤ 6), 0 à la préparation (${[...new Set(s.map((x) => `${x.preparedOnBoard}/${x.preparedAtPrep}`))].join(', ')})`);
       }
       check(s.every((x) => x.stage === 0 && x.app === 0 && !x.hooks), 'aucune scène de Clash, plateau ni crochet résiduel hors duel');
       check(Math.max(...s.map((x) => x.dom)) - Math.min(...s.map((x) => x.dom)) < 60, `nœuds DOM stables au tableau (${Math.min(...s.map((x) => x.dom))}–${Math.max(...s.map((x) => x.dom))})`);

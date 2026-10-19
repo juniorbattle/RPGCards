@@ -6,7 +6,8 @@
  */
 import { hashString, makeRng } from '../game/engine/rng';
 import type { Expression } from './expression';
-import type { Mood, RivalPersonality } from './personalities';
+import { parseNpcId } from './npcs';
+import type { Mood, RivalPersonality, SignatureRivalId } from './personalities';
 
 const LABEL: Record<Mood, [string, string]> = {
   neutral: ['Calme', 'Calme'],
@@ -25,7 +26,7 @@ const LABEL: Record<Mood, [string, string]> = {
   shocked: ['Sidéré', 'Sidérée'],
 };
 
-type Voice = RivalPersonality['id'];
+type Voice = SignatureRivalId;
 
 const LINES: Record<Voice, Record<Mood, string[]>> = {
   braise: {
@@ -94,6 +95,51 @@ const LINES: Record<Voice, Record<Mood, string[]>> = {
   },
 };
 
+/**
+ * M08 C3 — répliques des duellistes PNJ de la ville : génériques, sans personnage, en deux registres (le docker et la
+ * joueuse tutoient, la marchande et le commis vouvoient). Comme celles des rivaux, de la couleur, jamais un indice.
+ */
+const NPC_LINES: Record<'tu' | 'vous', Record<Mood, string[]>> = {
+  tu: {
+    neutral: ['Allez, à toi.', 'On joue ?'],
+    focused: ['Attention…', 'Voyons ça.'],
+    confident: ['Je le sens bien.', 'Pas de souci.'],
+    smug: ['Pas mal, mais bon…', 'Hé hé.'],
+    pleased: ['Bien joué, moi.', 'Ça passe !'],
+    triumphant: ['Gagné !', 'Ha ! À moi la partie.'],
+    surprised: ['Hein ?!', 'Ah, d’accord…'],
+    pained: ['Aïe.', 'Ouille…'],
+    annoyed: ['Zut.', 'Raté…'],
+    angry: ['Tu m’agaces !', 'Ça suffit !'],
+    relieved: ['Ouf.', 'De justesse.'],
+    defeated: ['Bien joué, toi.', 'Une autre fois.'],
+    thinking: ['Hmm…', 'Laisse-moi voir…'],
+    shocked: ['Les deux ?!', 'Sérieux ?!'],
+  },
+  vous: {
+    neutral: ['Je vous en prie.', 'À vous.'],
+    focused: ['Attention…', 'Voyons cela.'],
+    confident: ['Je me sens bien.', 'Tout va bien.'],
+    smug: ['Pas mal…', 'Tiens donc.'],
+    pleased: ['Très bien.', 'Parfait.'],
+    triumphant: ['J’ai gagné !', 'Ça alors, gagné !'],
+    surprised: ['Oh !', 'Ah, je ne l’avais pas vu.'],
+    pained: ['Aïe.', 'Oh là…'],
+    annoyed: ['Dommage.', 'Zut…'],
+    angry: ['Ce n’est pas juste !', 'Assez !'],
+    relieved: ['Ouf.', 'Ça tient.'],
+    defeated: ['Bien joué.', 'Vous êtes trop fort pour moi.'],
+    thinking: ['Hmm…', 'Laissez-moi réfléchir…'],
+    shocked: ['Les deux ?!', 'Ça alors !'],
+  },
+};
+
+/** Registre d’un duelliste PNJ (null pour un rival signature). */
+function npcRegister(id: string): 'tu' | 'vous' | null {
+  const n = parseNpcId(id);
+  return n ? (n.template === 'docker' || n.template === 'joueuse' ? 'tu' : 'vous') : null;
+}
+
 /** Répliques dédiées à des faits publics précis (la cause vient de l’ExpressionDirector). */
 const CAUSES: Array<{ re: RegExp; line: Partial<Record<Voice, string>> & { all: string } }> = [
   { re: /perd au Rang mais absorbe/, line: { all: 'Ma Garde absorbe tout.', braise: 'Ha ! Ça n’a pas traversé !' } },
@@ -115,10 +161,12 @@ export function moodLabel(e: Pick<Expression, 'mood'>, p: Pick<RivalPersonality,
 
 /** Réplique déterministe (même expression publique + même graine → même réplique). */
 export function rivalLine(e: Expression, p: Pick<RivalPersonality, 'id'>, seed: number): string {
+  const reg = npcRegister(p.id);
   for (const c of CAUSES) {
-    if (c.re.test(e.cause)) return c.line[p.id] ?? c.line.all;
+    // Un PNJ qui tutoie reprend la réplique tutoyée de Kaï quand elle existe.
+    if (c.re.test(e.cause)) return (reg ? (reg === 'tu' ? c.line.braise : undefined) : c.line[p.id as Voice]) ?? c.line.all;
   }
-  const options = LINES[p.id]?.[e.mood] ?? ['…'];
+  const options = (reg ? NPC_LINES[reg][e.mood] : LINES[p.id as Voice]?.[e.mood]) ?? ['…'];
   const r = makeRng(hashString(`line|${seed}|${p.id}|${e.mood}|${e.cause}`));
   return options[Math.floor(r() * options.length) % options.length]!;
 }
