@@ -36,6 +36,21 @@ Mise en route : `npm ci` ; Chromium pour les outils de QA (`npx playwright-core 
 `CHROMIUM_PATH=<chemin>`). Si un outil de navigateur ne peut pas tourner dans le cloud, consigne-le en `[KO]` avec la
 raison exacte et continue avec typecheck, tests et build.
 
+## Contraintes de l'environnement cloud (documentation officielle, vérifiée le 2026-10-19)
+
+- **Garde ton tour actif jusqu'à la fin du run.** Une session cloud inactive se met en pause au bout de quelques
+  minutes et sa machine peut être récupérée : les commandes de fond et les sous-agents en cours sont alors perdus.
+  Ne termine pas ton tour pour « attendre » quelque chose.
+- **Commandes longues :** une commande au premier plan s'arrête au bout de 2 minutes par défaut (10 minutes au
+  maximum, paramètre `timeout`). Pour les campagnes de QA plus longues, lance-les en arrière-plan et surveille-les
+  activement jusqu'à leur fin, ou découpe-les.
+- **Pousse souvent** : tout ce qui n'est pas poussé peut être perdu si la machine est récupérée.
+- **Réseau :** npm est accessible ; le téléchargement de Chromium par Playwright et le clonage d'un autre dépôt
+  dépendent du niveau d'accès réseau de l'environnement. En cas de refus, consigne le message exact et applique les
+  replis prévus.
+- Ni les règles globales du responsable ni ses compétences personnelles ne sont disponibles ici : ce brief et les
+  documents du dépôt font foi.
+
 ## Phase 1 (≈ 3 h) — Release candidate 0.8 du combat (M08 C5) et optimisations vers la démo
 
 Dans cet ordre, avec un commit poussé par étape :
