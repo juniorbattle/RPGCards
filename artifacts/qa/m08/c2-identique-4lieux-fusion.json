@@ -1,0 +1,296 @@
+{
+  "date": "2026-10-19T04:31:47.220Z",
+  "mode": "identique",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "commit": "1aa9872",
+  "identical": true,
+  "builds": {
+    "avant": "be9ca98",
+    "apres": "1aa9872"
+  },
+  "results": [
+    {
+      "viewport": "1280x720",
+      "kind": "scene",
+      "rival": "braise",
+      "venue": "salle",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "scene",
+      "rival": "ronce",
+      "venue": "salle",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "scene",
+      "rival": "voile",
+      "venue": "salle",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "scene",
+      "rival": "astre",
+      "venue": "salle",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "complet",
+      "rival": "ronce",
+      "venue": "salle",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "scene",
+      "rival": "braise",
+      "venue": "rue",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "scene",
+      "rival": "ronce",
+      "venue": "rue",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "complet",
+      "rival": "ronce",
+      "venue": "rue",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "rencontres (scène seule)",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "rencontres",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "accueil (scène seule)",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "accueil",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "preparation (scène seule)",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "preparation",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "scene",
+      "rival": "braise",
+      "venue": "salle",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "scene",
+      "rival": "ronce",
+      "venue": "salle",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "scene",
+      "rival": "voile",
+      "venue": "salle",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "scene",
+      "rival": "astre",
+      "venue": "salle",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "complet",
+      "rival": "ronce",
+      "venue": "salle",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "scene",
+      "rival": "braise",
+      "venue": "rue",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "scene",
+      "rival": "ronce",
+      "venue": "rue",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "complet",
+      "rival": "ronce",
+      "venue": "rue",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "rencontres (scène seule)",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "rencontres",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "accueil (scène seule)",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "accueil",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "preparation (scène seule)",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "preparation",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    }
+  ],
+  "control": [
+    {
+      "viewport": "1280x720",
+      "meanAbs": 15.838,
+      "max": 255,
+      "pixels": 921295,
+      "box": [
+        0,
+        0,
+        1279,
+        719
+      ]
+    },
+    {
+      "viewport": "1920x1080",
+      "meanAbs": 15.889,
+      "max": 255,
+      "pixels": 2072870,
+      "box": [
+        0,
+        0,
+        1919,
+        1079
+      ]
+    }
+  ],
+  "issues": []
+}

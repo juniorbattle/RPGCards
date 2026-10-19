@@ -3,8 +3,9 @@
 Date : 2026-10-18
 Statut : **cadrage APPROUVÉ par le responsable** (« Cadrage C2 validé tel quel : salle actuelle = salle de jeu de cartes,
 porte = la rue (le Quai, la nuit), même table partout pour la porte, Duel libre — Kaï dans la rue. Lance la porte. »,
-séance du 2026-10-18). **Porte de validation livrée** (système de lieux, salle migrée, rue) ; rendu de la rue présenté au
-responsable en captures, **bar et arène après son retour**. Complète l’ADR 019 (mise en scène HD-2D) et l’ADR 020
+séance du 2026-10-18). **Porte de validation livrée** (système de lieux, salle migrée, rue) et **rue validée par le
+responsable** (« Je valide la rue (le Quai, la nuit) : lance le bar et l'arène sur le même système de lieux. »,
+2026-10-18) ; bar et arène : amendement en fin de document. Complète l’ADR 019 (mise en scène HD-2D) et l’ADR 020
 (écrans hors duel) ; ne modifie ni la composition du duel (ADR 013, 016, 018), ni les personnages (ADR 021), ni les
 règles.
 
@@ -22,10 +23,10 @@ les FX et le post-traitement : fond peint, piliers, balustrade, bannières, plan
 
 ### Un lieu = des données + un montage
 
-- `src/presentation/venues.ts` (pur) : identifiants des lieux construits (`salle`, `rue`), lieu par défaut (`salle`),
+- `src/presentation/venues.ts` (pur) : identifiants des lieux construits (`salle`, `rue` ; `bar`, `arene` depuis l’amendement), lieu par défaut (`salle`),
   nom et intention. Le produit le lit comme `personalities.ts`.
 - `src/scene/venues/` : `types.ts` (contrat), `common.ts` (peinture, flammes et halos en points animés, libération),
-  `salle.ts`, `rue.ts`, `index.ts` (registre). Un `VenueDef` déclare la couleur de fond, la brume (toujours linéaire),
+  `salle.ts`, `rue.ts` (`bar.ts`, `arene.ts` depuis l’amendement), `index.ts` (registre). Un `VenueDef` déclare la couleur de fond, la brume (toujours linéaire),
   le réglage du gréement de lumières, le halo, une éventuelle surcharge des plans de feux hors duel, et `mount` (géométrie,
   textures peintes en code à la graine d’art, animation, ablations QA, libération).
 - `arena.ts` garde les invariants : caméra ancrée, table (son bord lointain ancre le cadrage), rival, contre-jour, FX du
@@ -73,7 +74,7 @@ la rue ; papillons de nuit. Plan de feux : clair de lune froid, projecteurs chau
   Décision : **deux décors gardés montés** (le lieu courant et le précédent, ou le suivant préparé), et le décor des
   rencontres jouables **préparé aux temps morts** (peinture, textures envoyées au GPU, programmes compilés pour les deux
   sorties : la cible HDR du post-traitement et l’écran du rendu direct). `?qa=1&venueCache=1` rétablit un seul décor
-  résident pour la mesure.
+  résident pour la mesure. **Amendé** à quatre lieux : tous les décors gardés montés (voir l’amendement « bar et arène »).
 
 ## Conséquences
 
@@ -100,3 +101,99 @@ la rue ; papillons de nuit. Plan de feux : clair de lune froid, projecteurs chau
 - **Mémoire au long cours** (`qa:rc` J, 12 duels, Kaï dans la rue) : textures 47/47/47/47, géométries 68, tas 18 → 18,8 Mo.
 
 **Cette décision n’introduit aucune règle métier nouvelle.**
+
+## Amendement « bar et arène » (2026-10-18/19, passe 33)
+
+Statut : rue **validée** par le responsable (« Je valide la rue (le Quai, la nuit) : lance le bar et l'arène sur le même
+système de lieux. ») ; **bar et arène livrés** sur le même système, présentés au responsable sur la planche des quatre
+lieux (`screenshots/qa/m08/c2/planche-c2-quatre-lieux.png`, build fusionné avec les cadres de cartes de la passe 32).
+Aucun changement du contrat du duel : gréement fixe, projecteurs à ±15 % de la salle, caméra, table, rival, HUD et
+plateau DOM communs aux quatre lieux.
+
+### Le bar — le Fanal, taverne du port (`venues/bar.ts`)
+
+Même grammaire de théâtre que la rue. Toile de fond : le mur de la taverne, boiseries sombres, trois étagères de
+bouteilles rétroéclairées derrière le comptoir (tenues sourdes : le fond reste sombre derrière la tête), barre de navire,
+tableau de bateau, ardoise, filet et flotteurs, ombre haute. Décor : long comptoir à rampe de laiton derrière le rival,
+tabourets, trois habitués en silhouettes de dos, poteaux et poutres en coulisses, tonneaux ; deux lampes suspendues de
+part et d’autre de la tête du rival ; deux photophores de verre rouge aux coins lointains de la table ; plancher, nappes
+de fumée sous les lampes. Plan de feux : salle basse et chaude (ambiance 0,48 contre 0,62), ombres brun-rouge, brume
+brune.
+
+### L’Arène — le grand duel en public (`venues/arene.ts`)
+
+Le lieu-spectacle. Toile de fond : nuit bleu-violet, gradins pleins d’une foule en silhouettes et de torches, porte
+d’honneur dans l’ombre derrière le rival, bannières des quatre familles au sommet. Décor : parapet de pierre en arc
+derrière le rival (cylindres ouverts, sans faces de section) et tentures des quatre familles, deux braseros aux flammes
+hautes et aux étincelles qui montent, coupes de feu aux coins lointains de la table, faisceaux de lumière blanche dans la
+poussière, petites lumières qui scintillent dans les gradins, sable. Plan de feux : lumière blanche venue d’en haut sur
+le visage et la table (projecteurs +6 % et +7 %), feu orange des braseros, ambiance froide : la plus forte opposition
+chaud / froid des quatre lieux. La bannière peinte de la salle est partagée (`bannerTexture`, `common.ts`).
+
+### Rencontres
+
+« Duel libre — Maëlle » se joue au bar (le Fanal, la taverne du port) et « Duel libre — Orin » à l’arène (le défi
+final, 110 points de vie, ouvert après le Tournoi du Quai : la grande scène) ; Kaï reste dans la rue, Sélène et le
+Tournoi du Quai dans la salle (placement proposé, modifiable dans `FREE_VENUE`, `product/encounters.ts`). Les « Duels
+de la ville » (C3) restent à la session des personnages (sa carte les place dans la rue). Test : chaque lieu construit
+est joué par au moins une rencontre.
+
+### Cache des décors : tous les lieux gardés montés (amende « Changement de lieu »)
+
+Avec quatre lieux, deux décors montés ne suffisent plus : un lieu quitté depuis deux changements est repeint et ses
+programmes recompilés. Mesuré (`c2-lieux.mjs cycle`, quatre tours des quatre lieux appelés directement, préparation des
+personnages coupée, Radeon 780M ; `c2-cycle-4lieux-*.json`) :
+
+| Décors montés | Première image d’un changement (médiane / max) | Textures des décors |
+|---|---|---|
+| 4, préparés aux temps morts (défaut) | **3,2 / 5,1 ms** (RTX 4060 : 1,9 / 3,0 ms) | 65,8 Mo |
+| 2 (porte) | 92 / 123 ms | 32,2 Mo |
+| 1 (`venueCache=1`) | 108 / 146 ms | 15,9 Mo |
+
+Décision : **tous les lieux gardés montés** (`VENUE_CACHE = VENUE_IDS.length`), les décors des rencontres ouvertes
+préparés aux temps morts, jamais pendant un duel (peinture, envoi des textures, programmes compilés pour la cible HDR
+et l’écran ; 330 à 380 ms par lieu sur la 780M, 205 à 265 ms sur la RTX 4060) ; l’arène ne l’est qu’une fois Orin
+débloqué. Coût : ≈ 66 Mo de textures de décor au GPU (mipmaps comprises) et 68 textures, 108 géométries, 74 programmes
+stables d’un tour à l’autre (38 / 54 / 52 avec un seul décor) ; un montage coûte 16 à 32 ms quand il n’est pas préparé.
+`?qa=1&venueCache=n` borne le cache pour la mesure. Un cinquième lieu demandera de remesurer ce choix (éviction du lieu
+le plus ancien, déjà en place). Les géométries du décor préparé sont envoyées au GPU par un dessin hors écran (voir les
+mesures, correctif `1aa9872`).
+
+### Mesures (journal, passe 33 ; builds gelés `21a53a2` puis `1aa9872` après fusion ; `artifacts/qa/m08/`)
+
+- **Salle et rue identiques au pixel près** au build `d018915` (28 cas, 0 pixel ; témoin 921 011 et 2 072 134 pixels) :
+  ajouter le bar et l’arène ne change rien aux deux lieux déjà livrés.
+- **Invariance des quatre lieux** (salle contre chacun des trois autres) : calques DOM 0 pixel en vues A et B à 1280 et
+  1920, écran Préparation 0 pixel ; projection, vue de la caméra, transformation du rival et ancres `.205 / .455`
+  identiques.
+- **Contraste** : par lieu, 56 captures et 4 056 textes, 0 sous 4,5:1 ; minimum identique à la salle (5,1:1 vue A,
+  4,8:1 vue B et contre Kaï, 5,1:1 au niveau « direct »).
+- **Lumière** (scène seule, début de tour, 1280) : visage 0,311 (bar) et 0,350 (arène) contre 0,331 (salle) ; rapport
+  visage / fond **10,0** et **35** (≥ 6 au cadrage ; salle 13,2, rue 14,6).
+- **GPU par image** (`perf-compare`, temps GPU médian, rondes entrelacées salle / lieu sur le même build, vue A ;
+  `perf-compare-c2-salle-{bar,arene}-*.json`) : bar — Radeon 780M 2,27 → 2,23 ms (1280×720) et 2,77 → **3,08 ms**
+  (1920×1080, p95 4,12 → 4,48) ; RTX 4060 1,18 → 1,18 ms (1920), 0,6 à 1,0 ms à 1280 selon l’état d’horloge. Arène —
+  780M 2,23 → 2,09 ms (1280) et 3,40 → 3,45 ms (1920, poste ralenti des deux côtés : 140 et 154 FPS) ; RTX 4060
+  1,19 → 1,21 ms (1920 ; images à 125–155 FPS dans les rondes de l’arène, alors au même temps GPU : remesuré en cinq
+  rondes, 1,11 → 1,09 ms et 165 FPS partout, `…-rtx4060-1920-bis.json`). Budget du cadrage (salle + 0,3 ms à 1280,
+  + 0,4 ms à 1920) tenu partout. Appels de dessin (vue A) : salle 96, bar 90, arène 83.
+- **Parties complètes** (`perf-play`, 780M, 1920×1080, en alternance arène, salle, bar, salle, arène, bar ;
+  `perf-play-c2-alt-*.json`) : images au-delà de 16,7 ms sur ≈ 16 600 : salle 111 et 164, bar 165 et 167, arène 177
+  et 179 ; processeur par image identique (2,1 à 2,4 ms) ; 165 Hz en médiane, aucun cran du repli, 0 fuite. Jouées
+  l’une après l’autre, elles semblaient bien plus coûteuses (93, 239 et 315 images, un cran dans l’arène) : le poste
+  dérivait pendant la série.
+- **Repli du post-traitement** (`qa-fallback`, lieu imposé, charge GPU injectée) : **10/10** au bar et à l’arène sur la
+  780M, à l’arène sur la RTX 4060 ; halo coupé puis rendu direct, aucun programme compilé par les changements de niveau.
+- **Préparation des géométries** (correctif `1aa9872`) : le premier `qa:rc` de ce lot échouait sur le contrôle J
+  (géométries 71 → 94 → 108 au premier tour, à la première visite du bar puis de l’arène, puis stables) : three.js ne
+  crée les tampons de géométrie qu’au premier dessin, que `prepareVenue` ne faisait pas. Un dessin du décor préparé dans
+  une cible de 1 × 1 pixel (élagage par le champ coupé, programmes déjà compilés pour une cible) les envoie aux temps
+  morts : première visite de la rue, du bar et de l’arène **3,0 à 4,7 ms** au lieu de 10,3 à 12,7 (780M), géométries
+  108 dès le premier duel, programmes 74 inchangés (une texture de plus : la cible).
+- **Après fusion des cadres de cartes** (passe 32, `be9ca98`, table commune) et du correctif (build `1aa9872`) : salle et
+  rue identiques au pixel près au build `be9ca98` (28 cas, 0 pixel) ; invariance des quatre lieux ; contraste
+  **72 captures, 5 246 textes, 0 sous 4,5:1** (état « plein » compris) ; `qa:rc` **9/9, 47/47** par défaut, bar imposé et
+  arène imposée (J : géométries et textures stables, tas ≈ 21 → 22 Mo sur 12 duels) ; `qa:browser` **5/5** ;
+  `qa:product` **9/9, 71/71** ; `npm test` 213/213.
+
+**Cet amendement n’introduit aucune règle métier nouvelle.**

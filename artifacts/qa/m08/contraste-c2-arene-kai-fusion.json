@@ -1,0 +1,62 @@
+{
+  "dist": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/4ecc3973-ddc1-4191-8aa4-8151bf702bf2/scratchpad/dist-c2-5",
+  "view": "A",
+  "mesures": {
+    "debut-1280": {
+      "textes": 70,
+      "min": 7.5,
+      "plusPetitPx": 8.6,
+      "sousSeuil": [],
+      "desactives": 3
+    },
+    "select-1280": {
+      "textes": 84,
+      "min": 5.3,
+      "plusPetitPx": 7.2,
+      "sousSeuil": [],
+      "desactives": 3
+    },
+    "commit-1280": {
+      "textes": 78,
+      "min": 5.5,
+      "plusPetitPx": 7.2,
+      "sousSeuil": [],
+      "desactives": 2
+    },
+    "tactics-1280": {
+      "textes": 62,
+      "min": 4.8,
+      "plusPetitPx": 8.6,
+      "sousSeuil": [],
+      "desactives": 2
+    },
+    "debut-1920": {
+      "textes": 71,
+      "min": 7.4,
+      "plusPetitPx": 10.5,
+      "sousSeuil": [],
+      "desactives": 3
+    },
+    "select-1920": {
+      "textes": 85,
+      "min": 5.4,
+      "plusPetitPx": 9.7,
+      "sousSeuil": [],
+      "desactives": 3
+    },
+    "commit-1920": {
+      "textes": 79,
+      "min": 5.4,
+      "plusPetitPx": 9.7,
+      "sousSeuil": [],
+      "desactives": 2
+    },
+    "tactics-1920": {
+      "textes": 62,
+      "min": 5,
+      "plusPetitPx": 10.5,
+      "sousSeuil": [],
+      "desactives": 2
+    }
+  }
+}

@@ -51,10 +51,12 @@ lieux variés** et **contre des adversaires variés**, des quatre rivaux signatu
 | **C3** (**livré et validé** : passe 29, ADR 023 ; quatre gabarits validés par le responsable le 2026-10-18) | **Duellistes PNJ génériques** : quelques gabarits de base sur le socle V2 (silhouette, coiffure, tenue) et des variations subtiles déterministes par graine (peau, couleur et coupe de cheveux, couleurs des vêtements, accessoire) ; même modèle pour le duel et le portrait ; profils de jeu génériques ; rencontres PNJ de prototype rattachées à un lieu | planche de 8 à 12 PNJ distincts mais visiblement de la même famille, et nettement moins singuliers que les quatre rivaux ; déterminisme testé ; QA sans régression ; 0 fuite de secret ; coût de génération mesuré (et couvert par C1) |
 | **C4** | **Réception de M07** et arbitrages restants : revue des captures L3, L4 et L5 par le responsable, retrait du V1 sur sa décision, 12 arbitrages du 17 octobre | décisions consignées (journal, ADR) |
 
-**État de C2 (2026-10-18, passe 31, ADR 022)** : cadrage validé par le responsable (« salle actuelle = salle de jeu de
-cartes, porte = la rue (le Quai, la nuit), même table partout pour la porte, Duel libre — Kaï dans la rue ») ; porte de
-validation livrée et mesurée (système de lieux, salle migrée au pixel près, rue) ; **bar et arène après son retour** sur
-les captures `screenshots/qa/m08/c2/`.
+**État de C2 (2026-10-18, passes 31 et 33, ADR 022 et son amendement « bar et arène »)** : cadrage validé par le
+responsable (« salle actuelle = salle de jeu de cartes, porte = la rue (le Quai, la nuit), même table partout pour la
+porte, Duel libre — Kaï dans la rue ») ; porte de validation livrée et mesurée (système de lieux, salle migrée au pixel
+près, rue ; passe 31) ; rue **validée** par le responsable ; **bar (le Fanal, taverne du port) et arène livrés** sur le
+même système (passe 33 : « Duel libre — Maëlle » au bar, « Duel libre — Orin » à l’arène, tous les décors gardés montés) ;
+**retour du responsable attendu** sur la planche des quatre lieux `screenshots/qa/m08/c2/planche-c2-quatre-lieux.png`.
 
 **Plateau intégré à la table (2026-10-18, passe 32, amendement 1 de l’ADR 018)**, demande du responsable (« les cadres
 cartes de l’adversaire ne sont pas bien intégrés à la table et semblent flotter ») : option B validée sur maquettes

@@ -1,0 +1,125 @@
+{
+  "commit": "21a53a2",
+  "date": "2026-10-19T04:00:39.166Z",
+  "gpu": true,
+  "chromeArgs": [],
+  "stressMs": 6,
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "checks": [
+    "OK duel 1 : départ au rendu complet, repli actif",
+    "OK duel 1 sous charge GPU (6 → 9 ms) : rendu direct atteint (120 images > 16,7 ms sur 2795, médiane 6.2 ms)",
+    "OK duel 1 : crans après un décrochage mesuré par l’outil (6 secondes mauvaises de suite)",
+    "OK duel 1 : crans dans l’ordre (halo coupé, puis rendu direct)",
+    "OK duel 1 : aucun cran pendant la mise en place (2 premières secondes)",
+    "OK duel 1 : aucun programme GPU compilé par les changements de niveau (50 → 50)",
+    "OK duel suivant (après les menus) : rendu complet, historique remis à zéro",
+    "OK duel suivant sans charge, 20 s : reste au rendu complet (3 images > 16,7 ms sur 3275)",
+    "OK duel suivant : rythme nominal remesuré (6 ms)",
+    "OK console : 0 erreur(s) ou avertissement(s)"
+  ],
+  "fails": [],
+  "duel1": {
+    "start": {
+      "level": "full",
+      "auto": true,
+      "nominalMs": null,
+      "slice": null,
+      "badSlices": 0,
+      "steps": [],
+      "runs": 2,
+      "programs": 50
+    },
+    "end": {
+      "level": "direct",
+      "auto": true,
+      "nominalMs": 6,
+      "slice": {
+        "frames": 85,
+        "medianMs": 12.1,
+        "lateShare": 0.13,
+        "bad": "median"
+      },
+      "badSlices": 0,
+      "steps": [
+        {
+          "atS": 21.16,
+          "from": "full",
+          "to": "nobloom",
+          "reason": "median",
+          "medianMs": 12.1,
+          "lateShare": 0.14,
+          "nominalMs": 6
+        },
+        {
+          "atS": 25.18,
+          "from": "nobloom",
+          "to": "direct",
+          "reason": "median",
+          "medianMs": 12.1,
+          "lateShare": 0.13,
+          "nominalMs": 6
+        }
+      ],
+      "runs": 2,
+      "programs": 50
+    },
+    "frames": {
+      "frames": 2795,
+      "medianMs": 6.2,
+      "late": 120,
+      "lateShare": 0.043,
+      "badRun": 6
+    },
+    "stressTargetsMs": [
+      6,
+      9
+    ],
+    "stressMs": [
+      9.07,
+      9.1,
+      8.91,
+      8.3,
+      9.05,
+      9.15,
+      8.86,
+      8.91,
+      9.13,
+      8.96
+    ]
+  },
+  "duel2": {
+    "start": {
+      "level": "full",
+      "auto": true,
+      "nominalMs": null,
+      "slice": null,
+      "badSlices": 0,
+      "steps": [],
+      "runs": 3,
+      "programs": 50
+    },
+    "end": {
+      "level": "full",
+      "auto": true,
+      "nominalMs": 6,
+      "slice": {
+        "frames": 166,
+        "medianMs": 6.1,
+        "lateShare": 0,
+        "bad": null
+      },
+      "badSlices": 0,
+      "steps": [],
+      "runs": 3,
+      "programs": 50
+    },
+    "frames": {
+      "frames": 3275,
+      "medianMs": 6.1,
+      "late": 3,
+      "lateShare": 0.001,
+      "badRun": 0
+    }
+  },
+  "consoleIssues": []
+}

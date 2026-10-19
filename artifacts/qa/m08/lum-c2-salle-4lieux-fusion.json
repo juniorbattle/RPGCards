@@ -1,0 +1,66 @@
+{
+  "dist": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/4ecc3973-ddc1-4191-8aa4-8151bf702bf2/scratchpad/dist-c2-5",
+  "view": "A",
+  "zones": {
+    "visage": [
+      0.45,
+      0.14,
+      0.55,
+      0.3
+    ],
+    "table": [
+      0.35,
+      0.52,
+      0.65,
+      0.66
+    ],
+    "boutsTable": [
+      0.02,
+      0.55,
+      0.14,
+      0.7
+    ],
+    "fond": [
+      0.25,
+      0.02,
+      0.35,
+      0.12
+    ],
+    "coinBas": [
+      0,
+      0.9,
+      0.06,
+      1
+    ]
+  },
+  "luminance": {
+    "debut-1280": {
+      "visage": 0.331,
+      "table": 0.086,
+      "boutsTable": 0.017,
+      "fond": 0.025,
+      "coinBas": 0
+    },
+    "plein-1280": {
+      "visage": 0.365,
+      "table": 0.183,
+      "boutsTable": 0.021,
+      "fond": 0.025,
+      "coinBas": 0.001
+    },
+    "debut-1920": {
+      "visage": 0.331,
+      "table": 0.086,
+      "boutsTable": 0.017,
+      "fond": 0.026,
+      "coinBas": 0
+    },
+    "plein-1920": {
+      "visage": 0.365,
+      "table": 0.184,
+      "boutsTable": 0.021,
+      "fond": 0.026,
+      "coinBas": 0.001
+    }
+  }
+}
