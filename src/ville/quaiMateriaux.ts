@@ -11,6 +11,9 @@
  * Palette froide (ardoise, pierre grise), ambre réservé aux lumières (DA de M09).
  */
 import * as THREE from 'three';
+import { FAMILY_PALETTE } from '../art/palette';
+import { drawEmblem } from '../art/emblems';
+import { FAMILIES } from '../game/catalog/cards';
 import { hashString, makeRng } from '../game/engine/rng';
 
 type Ctx = CanvasRenderingContext2D;
@@ -592,7 +595,7 @@ export function tavernInterior(seed: number): THREE.CanvasTexture {
 }
 
 /** Façades de la ville haute (au loin) : ardoise très sombre, fenêtres chaudes rares sur une grille de 1,6 × 2,6 m. */
-export function farFacadeTexture(seed: number, litChance = 0.12, large = false): THREE.CanvasTexture {
+export function farFacadeTexture(seed: number, litChance = 0.12, large = false, cool = 0): THREE.CanvasTexture {
   const S = 256;
   const { c, ctx } = cnv(S, S);
   const rng = makeRng(hashString(`v3|loin|${seed}`));
@@ -604,7 +607,9 @@ export function farFacadeTexture(seed: number, litChance = 0.12, large = false):
       const r = rng();
       const lit = r < litChance;
       const dim = !lit && r < litChance * 2.2;
-      ctx.fillStyle = lit ? `rgb(${215 + rng() * 40},${130 + rng() * 40},${55 + rng() * 25})` : dim ? 'rgb(70,40,22)' : 'rgb(18,22,34)';
+      // `cool` : part des fenêtres éclairées d'argent bleuté (la ville haute baignée par la lueur du Voile, direction D)
+      const silver = lit && rng() < cool;
+      ctx.fillStyle = silver ? `rgb(${150 + rng() * 40},${185 + rng() * 40},${240 + rng() * 15})` : lit ? `rgb(${215 + rng() * 40},${130 + rng() * 40},${55 + rng() * 25})` : dim ? 'rgb(70,40,22)' : 'rgb(18,22,34)';
       // au loin, des fenêtres plus larges : à 60-90 m, une fenêtre de 0,5 m disparaîtrait dans les mipmaps
       if (large) ctx.fillRect(x * 32 + 8, y * 51 + 12, 16, 26);
       else ctx.fillRect(x * 32 + 11, y * 51 + 14, 10, 20);
@@ -633,4 +638,124 @@ export function mistTexture(seed: number): THREE.CanvasTexture {
   const t = new THREE.CanvasTexture(c);
   t.wrapS = t.wrapT = THREE.RepeatWrapping;
   return t;
+}
+
+// --- Direction D (ADR 026) : couleurs des quatre familles dans le décor ---------------------------------------------
+
+/**
+ * Vitraux des familles (5 cases de 128 × 192) : verre au plomb dans la couleur de chaque famille, emblème du jeu au
+ * centre (`drawEmblem`, pas les enseignes du jeu de cartes classique) ; 5e case : rose à quatre quartiers (tympan de la
+ * salle de jeu). Émissif : la lumière vient de l'intérieur.
+ */
+export function stainedGlassAtlas(seed: number): THREE.CanvasTexture {
+  const W = 128;
+  const H = 192;
+  const { c, ctx } = cnv(W * 5, H);
+  const rng = makeRng(hashString(`v3|vitraux|${seed}`));
+  // Petites pièces en losanges décalés (verre au plomb), teinte de la famille du plus sombre au plus clair,
+  // quelques pièces claires seulement ; plombs fins sur chaque pièce, bordure épaisse.
+  const pieces = (x0: number, w: number, h: number, pal: readonly string[]) => {
+    const cw = 13;
+    const ch = 17;
+    for (let j = -1; j * ch < h + ch; j++) {
+      for (let i = -1; i * cw < w + cw; i++) {
+        const cx = x0 + i * cw + (j % 2 ? cw / 2 : 0);
+        const cy = j * ch;
+        const r = rng();
+        ctx.fillStyle = pal[r < 0.08 ? pal.length - 1 : Math.floor(rng() * (pal.length - 1))]!;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - ch / 2); ctx.lineTo(cx + cw / 2, cy); ctx.lineTo(cx, cy + ch / 2); ctx.lineTo(cx - cw / 2, cy); ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(14,10,18,0.9)';
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+      }
+    }
+  };
+  const lead = (x0: number, w: number, h: number) => {
+    ctx.strokeStyle = 'rgba(14,10,18,0.95)';
+    ctx.lineWidth = 7;
+    ctx.strokeRect(x0 + 3.5, 3.5, w - 7, h - 7);
+  };
+  FAMILIES.forEach((fam, k) => {
+    const p = FAMILY_PALETTE[fam];
+    const x0 = k * W;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(x0, 0, W, H); ctx.clip();
+    pieces(x0, W, H, [p.deep, p.mid, p.mid, p.light, p.light, p.glow, p.accent]);
+    lead(x0, W, H);
+    // médaillon : disque sombre cerclé d'or, emblème dans l'accent de la famille
+    ctx.fillStyle = 'rgba(12,10,20,0.92)';
+    ctx.beginPath(); ctx.arc(x0 + W / 2, H * 0.5, 34, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#e2c27a'; ctx.lineWidth = 4; ctx.stroke();
+    ctx.fillStyle = p.accent;
+    drawEmblem(ctx, fam, x0 + W / 2, H * 0.5, 24);
+    ctx.restore();
+  });
+  // rose à quatre quartiers
+  {
+    const x0 = 4 * W;
+    ctx.save();
+    ctx.beginPath(); ctx.rect(x0, 0, W, H); ctx.clip();
+    FAMILIES.forEach((fam, k) => {
+      const p = FAMILY_PALETTE[fam];
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(x0 + W / 2, H / 2);
+      ctx.arc(x0 + W / 2, H / 2, H, Math.PI + (k * Math.PI) / 4, Math.PI + ((k + 1) * Math.PI) / 4);
+      ctx.closePath();
+      ctx.clip();
+      pieces(x0, W, H, [p.mid, p.light, p.light, p.glow, p.accent]);
+      ctx.restore();
+    });
+    // rayons de plomb entre les quartiers et cœur doré
+    ctx.strokeStyle = 'rgba(14,10,18,0.95)';
+    ctx.lineWidth = 5;
+    for (let k = 0; k <= 4; k++) { const a = Math.PI + (k * Math.PI) / 4; ctx.beginPath(); ctx.moveTo(x0 + W / 2, H / 2); ctx.lineTo(x0 + W / 2 + Math.cos(a) * H, H / 2 + Math.sin(a) * H); ctx.stroke(); }
+    ctx.fillStyle = '#e2c27a';
+    ctx.beginPath(); ctx.arc(x0 + W / 2, H / 2, 14, Math.PI, 0); ctx.fill(); ctx.stroke();
+    lead(x0, W, H);
+    ctx.restore();
+  }
+  const t = tex(c, false);
+  t.anisotropy = 4;
+  return t;
+}
+/** UV d'un plan (ou demi-disque) de vitrail sur une case de l'atlas (0 à 3 : familles ; 4 : rose). */
+export function glassUV(geo: THREE.BufferGeometry, k: number): THREE.BufferGeometry {
+  const uv = geo.attributes.uv as THREE.BufferAttribute;
+  for (let i = 0; i < uv.count; i++) uv.setX(i, (k + 0.03 + uv.getX(i) * 0.94) / 5);
+  return geo;
+}
+
+/**
+ * Glyphes des familles gravés dans le mur du quai et doucement lumineux (4 cases de 128 × 128) : emblème du jeu
+ * dans la lueur de la famille, anneau gravé, halo. Fusion additive.
+ */
+export function glyphAtlas(): THREE.CanvasTexture {
+  const S = 128;
+  const { c, ctx } = cnv(S * 4, S);
+  FAMILIES.forEach((fam, k) => {
+    const p = FAMILY_PALETTE[fam];
+    const cx = k * S + S / 2;
+    const cy = S / 2;
+    const g = ctx.createRadialGradient(cx, cy, 4, cx, cy, S / 2);
+    g.addColorStop(0, `${p.glow}55`);
+    g.addColorStop(1, `${p.glow}00`);
+    ctx.fillStyle = g;
+    ctx.fillRect(k * S, 0, S, S);
+    ctx.strokeStyle = p.glow;
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(cx, cy, 40, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = p.accent;
+    drawEmblem(ctx, fam, cx, cy, 26);
+  });
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+export function glyphUV(geo: THREE.BufferGeometry, k: number): THREE.BufferGeometry {
+  const uv = geo.attributes.uv as THREE.BufferAttribute;
+  for (let i = 0; i < uv.count; i++) uv.setX(i, (k + uv.getX(i)) / 4);
+  return geo;
 }

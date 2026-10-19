@@ -22,13 +22,26 @@ import { hashString, makeRng } from '../game/engine/rng';
 import { bannerTexture } from '../scene/venues/common';
 import { LAMP_WARM, U, canvasCloth, surface, waterMaterial } from './materiaux';
 import {
-  SIGN_CELLS, ashlarRelief, cobbleRelief, farFacadeTexture, mistTexture, planksRelief, plasterRelief, shopInterior, signAtlas, signUV,
-  slateRelief, tavernInterior, timberRelief, windowAtlas, windowUV, type WindowCell,
+  SIGN_CELLS, ashlarRelief, cobbleRelief, farFacadeTexture, glassUV, glyphAtlas, glyphUV, mistTexture, planksRelief, plasterRelief, shopInterior,
+  signAtlas, signUV, slateRelief, stainedGlassAtlas, tavernInterior, timberRelief, windowAtlas, windowUV, type WindowCell,
 } from './quaiMateriaux';
 import { BOLLARDS, FACADES, FACADE_Z, LAMPS, PROPS, QUAY_Z, STALL, WATER_Y, type Facade } from './quai';
 import { finish, gableRoof, type LightDef, type QuaiScene } from './scene';
 
 const FZ = FACADE_Z;
+
+/**
+ * Direction D (ADR 026, décision du responsable du 2026-10-19) : les quatre familles donnent leur couleur aux lumières du
+ * décor (valeurs linéaires) ; l'ambre n'est plus le seul accent chaud. Cendre : braises du Fanal et du chantier ;
+ * Voile : bleu argenté (l'armateur, le passage vers les Ruelles, la ville haute) ; Ronce : vert de l'étal ;
+ * Astre : or des lampadaires du quai et de la salle de jeu.
+ */
+const FAM = {
+  Cendre: new THREE.Color(1.0, 0.4, 0.12),
+  Voile: new THREE.Color(0.42, 0.6, 1.0),
+  Ronce: new THREE.Color(0.36, 0.95, 0.34),
+  Astre: new THREE.Color(1.0, 0.72, 0.3),
+} as const;
 const DEPTH = 7;
 /** Face du mur du quai (le pavé s'arrête à la margelle). */
 const WALL_Z = QUAY_Z + 0.5;
@@ -148,7 +161,7 @@ export function buildQuai(artSeed: number): QuaiScene {
   const textures: THREE.Texture[] = [];
   const T = <X extends THREE.Texture>(t: X) => { textures.push(t); return t; };
   const lights: LightDef[] = [];
-  const halos: { p: THREE.Vector3; size: number; k: number }[] = [];
+  const halos: { p: THREE.Vector3; size: number; k: number; color?: THREE.Color }[] = [];
   const batch = new Batch();
 
   // --- matières (un programme de surface partagé ; variantes VAO et MIRROR) ---
@@ -156,14 +169,14 @@ export function buildQuai(artSeed: number): QuaiScene {
   const winAtlas = T(windowAtlas(artSeed));
   const clothTex = T(canvasCloth(artSeed));
   const m = {
-    cobble: surface({ map: T(cobbleRelief(artSeed)), tile: [1, 1], wet: 0.9, spec: 0.22, shin: 36, contact: 0, breakup: 0.35, mirror: true, vertexAO: true }),
-    stone: surface({ map: stoneTex, tint: 0xa6aec2, spec: 0.16, shin: 18, contact: 1, breakup: 0.35, vertexAO: true }),
-    stoneLight: surface({ map: stoneTex, tint: 0xc4c8d4, spec: 0.16, shin: 18, contact: 0.6, breakup: 0.25, vertexAO: true }),
-    stoneDark: surface({ map: T(ashlarRelief(artSeed + 1, { rows: 4, pal: [[92, 98, 110], [80, 86, 98], [100, 102, 110], [86, 90, 100]], mortar: [36, 38, 46] })), spec: 0.32, shin: 30, contact: 0, breakup: 0.45, wet: 0.5, vertexAO: true }),
-    timber: surface({ map: T(timberRelief(artSeed)), tint: 0x9a908c, spec: 0.08, shin: 14, contact: 0.4, breakup: 0.25, vertexAO: true }),
-    planks: surface({ map: T(planksRelief(artSeed)), tint: 0xa49c96, spec: 0.1, shin: 16, contact: 0.5, breakup: 0.3, vertexAO: true }),
-    shutter: surface({ map: T(planksRelief(artSeed + 3, [70, 82, 98])), spec: 0.08, contact: 0.2, breakup: 0.25, vertexAO: true }),
-    slate: surface({ map: T(slateRelief(artSeed)), spec: 0.55, shin: 40, contact: 0, breakup: 0.3, wrap: 0.1, vertexAO: true }),
+    cobble: surface({ map: T(cobbleRelief(artSeed)), tile: [1, 1], wet: 0.9, spec: 0.22, shin: 36, contact: 0, breakup: 0.35, mirror: true, vertexAO: true, illu: true }),
+    stone: surface({ map: stoneTex, tint: 0xa6aec2, spec: 0.16, shin: 18, contact: 1, breakup: 0.35, vertexAO: true, illu: true }),
+    stoneLight: surface({ map: stoneTex, tint: 0xc4c8d4, spec: 0.16, shin: 18, contact: 0.6, breakup: 0.25, vertexAO: true, illu: true }),
+    stoneDark: surface({ map: T(ashlarRelief(artSeed + 1, { rows: 4, pal: [[92, 98, 110], [80, 86, 98], [100, 102, 110], [86, 90, 100]], mortar: [36, 38, 46] })), spec: 0.32, shin: 30, contact: 0, breakup: 0.45, wet: 0.5, vertexAO: true, illu: true }),
+    timber: surface({ map: T(timberRelief(artSeed)), tint: 0x9a908c, spec: 0.08, shin: 14, contact: 0.4, breakup: 0.25, vertexAO: true, illu: true }),
+    planks: surface({ map: T(planksRelief(artSeed)), tint: 0xa49c96, spec: 0.1, shin: 16, contact: 0.5, breakup: 0.3, vertexAO: true, illu: true }),
+    shutter: surface({ map: T(planksRelief(artSeed + 3, [70, 82, 98])), spec: 0.08, contact: 0.2, breakup: 0.25, vertexAO: true, illu: true }),
+    slate: surface({ map: T(slateRelief(artSeed)), spec: 0.55, shin: 40, contact: 0, breakup: 0.3, wrap: 0.1, vertexAO: true, illu: true }),
     iron: surface({ map: T(planksRelief(artSeed + 9, [40, 44, 54])), tint: 0x6a7080, spec: 0.9, shin: 60, contact: 0, breakup: 0.1 }),
     cloth: surface({ map: clothTex, tint: 0xeee8dc, spec: 0.02, contact: 0, wrap: 0.9, side: THREE.DoubleSide }),
     slateCloth: surface({ map: T(canvasCloth(artSeed + 5)), tint: 0x5a647e, spec: 0.02, contact: 0, wrap: 0.9, side: THREE.DoubleSide }),
@@ -175,13 +188,20 @@ export function buildQuai(artSeed: number): QuaiScene {
     lampGlass: new THREE.MeshBasicMaterial({ color: new THREE.Color(1.0, 0.56, 0.22).multiplyScalar(2.5) }),
     // mur du quai : face tournée vers l'eau, que ni la lune (dans le dos des façades) ni les lanternes n'éclairent ;
     // une faible émission froide le garde lisible (gros appareil, anneaux, barbacanes), comme la référence frontale
-    quayWall: surface({ map: T(ashlarRelief(artSeed + 2, { rows: 4, pal: [[104, 110, 124], [92, 98, 112], [112, 114, 122], [98, 102, 114]], mortar: [40, 42, 52] })), tint: 0xb4bccc, spec: 0.35, shin: 30, contact: 0, breakup: 0.45, wet: 0.4, emissive: 0.07, vertexAO: true }),
+    quayWall: surface({ map: T(ashlarRelief(artSeed + 2, { rows: 4, pal: [[104, 110, 124], [92, 98, 112], [112, 114, 122], [98, 102, 114]], mortar: [40, 42, 52] })), tint: 0xb4bccc, spec: 0.35, shin: 30, contact: 0, breakup: 0.45, wet: 0.4, emissive: 0.07, vertexAO: true, illu: true }),
     dark: new THREE.MeshBasicMaterial({ color: new THREE.Color(0.01, 0.012, 0.02) }),
     sign: surface({ map: T(signAtlas()), spec: 0.2, shin: 30, contact: 0, emissive: 0.1, wrap: 0.6, side: THREE.DoubleSide }),
+    // dorures (tringles, bagues et pommeaux, médaillons) : reflets francs sous les lanternes
+    gold: surface({ map: T(planksRelief(artSeed + 13, [150, 118, 52])), tint: 0xffe0a0, spec: 1.4, shin: 70, contact: 0, breakup: 0.1, emissive: 0.05 }),
+    glass: new THREE.MeshBasicMaterial({ map: T(stainedGlassAtlas(artSeed)), color: new THREE.Color(1, 1, 1).multiplyScalar(1.5) }),
+    glyph: new THREE.MeshBasicMaterial({ map: T(glyphAtlas()), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, color: new THREE.Color(1, 1, 1).multiplyScalar(1.3) }),
   };
+  const glassOf = new Map<number, THREE.MeshBasicMaterial>();
+  /** Verre de lanterne dans la couleur de sa lumière (une matière par couleur). */
+  const lampGlassOf = (c: THREE.Color) => glassOf.get(c.getHex()) ?? glassOf.set(c.getHex(), new THREE.MeshBasicMaterial({ color: c.clone().multiplyScalar(2.5) })).get(c.getHex())!;
   const plaster = new Map<number, THREE.ShaderMaterial>();
   const plasterTex = T(plasterRelief(artSeed));
-  const plasterOf = (tint: number) => plaster.get(tint) ?? plaster.set(tint, surface({ map: plasterTex, tint, spec: 0.05, contact: 0.6, breakup: 0.3, vertexAO: true, tile: [1 / 2.4, 1 / 2.4] })).get(tint)!;
+  const plasterOf = (tint: number) => plaster.get(tint) ?? plaster.set(tint, surface({ map: plasterTex, tint, spec: 0.05, contact: 0.6, breakup: 0.3, vertexAO: true, illu: true, tile: [1 / 2.4, 1 / 2.4] })).get(tint)!;
 
   // --- la rue : pavés mouillés ; dalles de rive (margelle) ; mur du quai ---
   {
@@ -278,7 +298,7 @@ export function buildQuai(artSeed: number): QuaiScene {
       const x = f.x0 + (w / groundBays) * (k + 0.5);
       if (f.door !== null && Math.abs(x - f.door) < doorW / 2 + 0.75) continue;
       if (s.shop && Math.abs(x - s.shop.x) < 1.5) continue;
-      if (f.id === 'salle') { archedWindow(x, 1.75, 0.95, 1.75, r() < 0.8); continue; }
+      if (f.id === 'salle') { archedWindow(x, 1.75, 0.95, 1.75, Math.min(3, Math.floor(((x - f.x0) / w) * 4))); continue; }
       const lit = r() < s.litChance * 0.6;
       windowUnit(x, 1.75, 0.85, 1.0, FZ, lit ? (r() < 0.5 ? 'leaded' : 'warm') : r() < 0.5 ? 'slit' : 'dark', 'stone', !lit && r() < 0.3);
     }
@@ -313,8 +333,8 @@ export function buildQuai(artSeed: number): QuaiScene {
     if (s.hoist) hoist(f.door!, s.eave, zU);
     if (s.pennant) pennant(s.pennant.x, s.eave - 0.6, zU, s.pennant.fam);
     // lanternes murales aux portes (points focaux)
-    if (f.id === 'chantier') wallLantern(f.door! + 1.75, 2.75, FZ, true);
-    if (f.id === 'armateur') wallLantern(f.door! + 1.05, 2.55, FZ, true);
+    if (f.id === 'chantier') wallLantern(f.door! + 1.75, 2.75, FZ, true, FAM.Cendre);
+    if (f.id === 'armateur') wallLantern(f.door! + 1.05, 2.55, FZ, true, FAM.Voile);
   }
 
   /** Encorbellement : solives en about sous l'étage, sous-face sombre, sablière (d'après `BuildingGenerator.ts` L. 265-285). */
@@ -402,12 +422,20 @@ export function buildQuai(artSeed: number): QuaiScene {
     }
   }
 
-  /** Fenêtre haute cintrée à petits carreaux (salle de jeu), encadrement de pierre et clé. */
-  function archedWindow(x: number, y: number, w: number, h: number, lit: boolean): void {
+  /** Fenêtre haute cintrée de la salle de jeu : vitrail de la famille dont la bannière est au-dessus (direction D),
+   *  encadrement de pierre et clé. */
+  function archedWindow(x: number, y: number, w: number, h: number, fam: number): void {
     const zs = FZ;
-    batch.add(windowUV(plane(w, h - w / 2), lit ? 'leaded' : 'darkLeaded'), lit ? m.winLit : m.winDark, M(x, y - w / 4, zs + 0.012));
+    // un seul vitrail : la partie droite et le cintre se partagent la case (UV en hauteur)
+    const rect = plane(w, h - w / 2);
+    const ru = rect.attributes.uv as THREE.BufferAttribute;
+    for (let i = 0; i < ru.count; i++) ru.setY(i, ru.getY(i) * ((h - w / 2) / h));
+    batch.add(glassUV(rect, fam), m.glass, M(x, y - w / 4, zs + 0.012));
     const half = new THREE.CircleGeometry(w / 2, 14, 0, Math.PI);
-    batch.add(windowUV(half, lit ? 'leaded' : 'darkLeaded'), lit ? m.winLit : m.winDark, M(x, y + h / 2 - w / 2, zs + 0.012));
+    const hu = half.attributes.uv as THREE.BufferAttribute;
+    for (let i = 0; i < hu.count; i++) hu.setY(i, (h - w / 2) / h + (hu.getY(i) - 0.5) * 2 * (w / 2 / h));
+    batch.add(glassUV(half, fam), m.glass, M(x, y + h / 2 - w / 2, zs + 0.012));
+    halos.push({ p: new THREE.Vector3(x, y, zs + 0.1), size: 1.6, k: 0.16, color: FAM[FAMILIES[fam]!] });
     archStones(x, y + h / 2 - w / 2, w / 2, 0.16, zs, 9);
     for (const sx of [-1, 1]) batch.add(box(0.16, h - w / 2, 0.14, 1), m.stoneLight, M(x + sx * (w / 2 + 0.08), y - w / 4, zs + 0.07), 0.85);
     batch.add(box(w + 0.42, 0.1, 0.22, 1), m.stoneLight, M(x, y - h / 2 - 0.05, zs + 0.1), 0.95);
@@ -429,12 +457,17 @@ export function buildQuai(artSeed: number): QuaiScene {
       // porte ouverte : lumière chaude de la salle commune ; vantail rabattu, encadrement de bois
       batch.add(plane(dw, dh), m.glow, M(x, dh / 2, zs + 0.01));
       batch.add(box(0.55, dh, 0.06, 0.9), m.planks, M(x - dw / 2 - 0.02, dh / 2, zs + 0.3, 0, -1.15), 0.9);
-      lights.push({ x, y: 1.5, z: zs + 0.9, intensity: 2.6, radius: 7, halo: 0, flicker: 'candle', color: new THREE.Color(1.0, 0.62, 0.3) });
+      lights.push({ x, y: 1.5, z: zs + 0.9, intensity: 2.6, radius: 7, halo: 0, flicker: 'candle', color: new THREE.Color(1.0, 0.5, 0.2) });
     } else if (s.arch) {
       // vantaux de planches sous un arc à claveaux ; pentures de fer
       const rect = dh - dw / 2;
       batch.add(box(dw, rect, 0.06, 0.9), m.planks, M(x, rect / 2, zs + 0.02), 0.75);
-      batch.add(new THREE.CircleGeometry(dw / 2, 18, 0, Math.PI), m.planks, M(x, rect, zs + 0.05), 0.7);
+      if (f.id === 'salle') {
+        // tympan en rose de vitrail à quatre quartiers : les quatre familles au-dessus de la porte du Tournoi
+        batch.add(glassUV(new THREE.CircleGeometry(dw / 2, 24, 0, Math.PI), 4), m.glass, M(x, rect, zs + 0.05));
+        batch.add(box(dw + 0.04, 0.07, 0.08, 1), m.gold, M(x, rect + 0.02, zs + 0.08));
+        halos.push({ p: new THREE.Vector3(x, rect + dw * 0.22, zs + 0.12), size: 2.0, k: 0.2, color: FAM.Astre });
+      } else batch.add(new THREE.CircleGeometry(dw / 2, 18, 0, Math.PI), m.planks, M(x, rect, zs + 0.05), 0.7);
       archStones(x, rect, dw / 2, f.id === 'salle' ? 0.26 : 0.22, zs, f.id === 'salle' ? 11 : 9);
       for (const sx of [-1, 1]) batch.add(box(0.22, rect, 0.2, 1), m.stoneLight, M(x + sx * (dw / 2 + 0.11), rect / 2, zs + 0.1), 0.85);
       for (const yy of [0.22, 0.7]) batch.add(box(dw * 0.9, 0.06, 0.03, 1), m.iron, M(x, rect * yy, zs + 0.07));
@@ -499,19 +532,21 @@ export function buildQuai(artSeed: number): QuaiScene {
       const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1.05, 2.15), surface({ map: T(bannerTexture(fam, artSeed)), contact: 0, spec: 0.05, emissive: 0.12, wrap: 0.8 }));
       mesh.position.set(bx, 5.05, FZ + 0.09);
       scene.add(mesh);
-      batch.add(box(1.3, 0.06, 0.06, 1), m.iron, M(bx, 6.16, FZ + 0.12));
-      for (const sx of [-1, 1]) batch.add(box(0.04, 0.04, 0.16, 1), m.iron, M(bx + sx * 0.6, 6.16, FZ + 0.06));
+      batch.add(box(1.3, 0.06, 0.06, 1), m.gold, M(bx, 6.16, FZ + 0.12));
+      for (const sx of [-1, 1]) batch.add(new THREE.SphereGeometry(0.05, 8, 6), m.gold, M(bx + sx * 0.68, 6.16, FZ + 0.12));
     });
     for (let k = 1; k < 4; k++) {
       const x = f.x0 + (w * k) / 4;
-      const oc = new THREE.CircleGeometry(0.24, 16);
-      batch.add(windowUV(oc, 'darkLeaded'), m.winDark, M(x, 5.9, FZ + 0.012));
-      batch.add(new THREE.TorusGeometry(0.31, 0.06, 6, 18), m.stoneLight, M(x, 5.9, FZ + 0.04), 0.9);
+      // médaillons dorés entre les bannières
+      batch.add(new THREE.CircleGeometry(0.24, 16), m.stoneDark, M(x, 5.9, FZ + 0.012), 0.6);
+      batch.add(new THREE.TorusGeometry(0.26, 0.05, 6, 18), m.gold, M(x, 5.9, FZ + 0.05));
+      batch.add(new THREE.OctahedronGeometry(0.11, 0), m.gold, M(x, 5.9, FZ + 0.06, 0, 0, Math.PI / 4, 1, 1, 0.4));
     }
     // corniche à deux ressauts sous l'égout
     batch.add(box(w + 0.3, 0.16, 0.34, 2), m.stoneLight, M(cx, s.eave - 0.08, FZ + 0.12), 0.75);
     batch.add(box(w + 0.18, 0.12, 0.22, 2), m.stoneLight, M(cx, s.eave - 0.26, FZ + 0.08), 0.65);
-    for (const sx of [-1, 1]) wallLantern(f.door! + sx * 1.6, 2.8, FZ, true);
+    for (const sx of [-1, 1]) wallLantern(f.door! + sx * 1.6, 2.8, FZ, true, FAM.Astre);
+    batch.add(box(w + 0.32, 0.05, 0.36, 2), m.gold, M(cx, s.eave - 0.02, FZ + 0.13));
   }
 
   function roof(f: Facade, s: Spec, cx: number, w: number, zU: number, r: () => number): void {
@@ -622,18 +657,18 @@ export function buildQuai(artSeed: number): QuaiScene {
   }
 
   /** Lanterne murale : potence, cage de fer à quatre montants, verre ambré, chapeau. */
-  function wallLantern(x: number, y: number, zs: number, lit: boolean): void {
+  function wallLantern(x: number, y: number, zs: number, lit: boolean, color: THREE.Color = FAM.Astre): void {
     batch.add(box(0.05, 0.05, 0.5, 1), m.iron, M(x, y + 0.36, zs + 0.25));
     batch.add(box(0.04, 0.04, 0.36, 1), m.iron, M(x, y + 0.2, zs + 0.12, -0.8, 0, 0));
-    lanternCage(x, y, zs + 0.5, 0.2, 0.3, lit);
-    if (lit) lights.push({ x, y, z: zs + 0.62, intensity: 2.3, radius: 8, halo: 1.4, flicker: 'lantern' });
+    lanternCage(x, y, zs + 0.5, 0.2, 0.3, lit, color);
+    if (lit) lights.push({ x, y, z: zs + 0.62, intensity: 2.3, radius: 8, halo: 1.4, flicker: 'lantern', color });
   }
-  function lanternCage(x: number, y: number, z: number, w: number, h: number, lit: boolean): void {
-    batch.add(box(w * 0.78, h * 0.85, w * 0.78, 1), lit ? m.lampGlass : m.dark, M(x, y, z));
+  function lanternCage(x: number, y: number, z: number, w: number, h: number, lit: boolean, color: THREE.Color = FAM.Astre): void {
+    batch.add(box(w * 0.78, h * 0.85, w * 0.78, 1), lit ? lampGlassOf(color) : m.dark, M(x, y, z));
     for (const [sx, sz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]] as const) batch.add(box(0.022, h, 0.022, 1), m.iron, M(x + (sx * w) / 2, y, z + (sz * w) / 2));
     batch.add(box(w + 0.04, 0.04, w + 0.04, 1), m.iron, M(x, y - h / 2, z));
     batch.add(new THREE.CylinderGeometry(0.02, w * 0.78, h * 0.4, 4), m.iron, M(x, y + h / 2 + h * 0.2, z, 0, Math.PI / 4));
-    batch.add(new THREE.SphereGeometry(0.03, 6, 4), m.iron, M(x, y + h * 0.78, z));
+    batch.add(new THREE.SphereGeometry(0.03, 6, 4), m.gold, M(x, y + h * 0.78, z));
   }
 
   /** Lampadaire du quai (≈ 4 m) : socle, fût, bague, lanterne en cage ; lumière de quai de Cité du Tournoi. */
@@ -641,10 +676,10 @@ export function buildQuai(artSeed: number): QuaiScene {
     batch.add(new THREE.CylinderGeometry(0.17, 0.22, 0.32, 10), m.iron, M(x, 0.16, z));
     batch.add(new THREE.CylinderGeometry(0.1, 0.13, 0.2, 10), m.iron, M(x, 0.42, z));
     batch.add(new THREE.CylinderGeometry(0.055, 0.08, 3.4, 8), m.iron, M(x, 2.1, z));
-    batch.add(new THREE.CylinderGeometry(0.09, 0.07, 0.12, 8), m.iron, M(x, 1.2, z));
-    batch.add(new THREE.CylinderGeometry(0.12, 0.06, 0.14, 8), m.iron, M(x, 3.78, z));
-    lanternCage(x, 4.05, z, 0.3, 0.44, true);
-    lights.push({ x, y: 4.0, z, intensity: 3.2, radius: 10, halo: 2.0, flicker: 'lantern' });
+    batch.add(new THREE.CylinderGeometry(0.09, 0.07, 0.12, 8), m.gold, M(x, 1.2, z));
+    batch.add(new THREE.CylinderGeometry(0.12, 0.06, 0.14, 8), m.gold, M(x, 3.78, z));
+    lanternCage(x, 4.05, z, 0.3, 0.44, true, FAM.Astre);
+    lights.push({ x, y: 4.0, z, intensity: 3.2, radius: 10, halo: 2.0, flicker: 'lantern', color: FAM.Astre });
   }
 
   /** Guirlande de lanternes entre deux lampadaires, au-dessus de l'étal et du Fanal (halos seuls, sans lumière). */
@@ -658,7 +693,7 @@ export function buildQuai(artSeed: number): QuaiScene {
     }
     pts.push(new THREE.Vector3(b.x, 3.8, b.z));
     const bulb = new THREE.SphereGeometry(0.075, 8, 6);
-    for (const p of pts.slice(1, -1)) { batch.add(bulb, m.lampGlass, M(p.x, p.y - 0.06, p.z)); halos.push({ p: new THREE.Vector3(p.x, p.y - 0.06, p.z), size: 0.55, k: 0.35 }); }
+    for (const p of pts.slice(1, -1)) { batch.add(bulb, lampGlassOf(FAM.Cendre), M(p.x, p.y - 0.06, p.z)); halos.push({ p: new THREE.Vector3(p.x, p.y - 0.06, p.z), size: 0.55, k: 0.4, color: FAM.Cendre }); }
     for (let k = 0; k + 1 < pts.length; k++) {
       const p0 = pts[k]!;
       const p1 = pts[k + 1]!;
@@ -668,8 +703,14 @@ export function buildQuai(artSeed: number): QuaiScene {
 
   // ===================================================================================================== quai, eau
 
-  /** Bord du quai : anneaux d'amarrage, échelle de fer, escalier d'eau, barbacanes, ducs-d'albe contre le mur. */
+  /** Bord du quai : anneaux d'amarrage, échelle de fer, escalier d'eau, barbacanes, ducs-d'albe contre le mur ;
+   *  glyphes des quatre familles gravés dans le mur, doucement lumineux (direction D). */
   function quayEdge(): void {
+    [-10.4, -4.6, 1.6, 6.9, 10.2, 18.2].forEach((x, i) => {
+      const k = i % 4;
+      batch.add(glyphUV(plane(0.62, 0.62), k), m.glyph, M(x, -0.48, WALL_Z + 0.02));
+      halos.push({ p: new THREE.Vector3(x, -0.48, WALL_Z + 0.06), size: 1.5, k: 0.28, color: FAM[FAMILIES[k]!] });
+    });
     for (const b of BOLLARDS) batch.add(new THREE.TorusGeometry(0.14, 0.028, 6, 14), m.iron, M(b.x + 0.9, -0.42, WALL_Z + 0.04));
     // échelle de fer
     const lx = -2.9;
@@ -753,8 +794,8 @@ export function buildQuai(artSeed: number): QuaiScene {
         // fanal de proue, loin de la voile ferlée (qu'il brûlait à l'image)
         const lx2 = x - len * 0.42;
         batch.add(box(0.05, 1.3, 0.05, 1), m.iron, M(lx2, top + 0.65, z));
-        lanternCage(lx2, top + 1.42, z, 0.18, 0.26, true);
-        lights.push({ x: lx2, y: top + 1.42, z, intensity: 2.4, radius: 7.5, halo: 1.3, flicker: 'lantern' });
+        lanternCage(lx2, top + 1.42, z, 0.18, 0.26, true, FAM.Cendre);
+        lights.push({ x: lx2, y: top + 1.42, z, intensity: 2.4, radius: 7.5, halo: 1.3, flicker: 'lantern', color: FAM.Cendre });
       }
       // amarre de la proue à la borne la plus proche (chaînette affaissée)
       const bol = BOLLARDS.reduce((a, b) => (Math.abs(b.x - x) < Math.abs(a.x - x) ? b : a));
@@ -831,10 +872,10 @@ export function buildQuai(artSeed: number): QuaiScene {
     for (const [dx, drop] of [[-0.95, 0.42], [0, 0.18], [0.95, 0.38]] as const) {
       const y = 2.45 - drop;
       batch.add(box(0.012, drop, 0.012, 1), m.iron, M(cx + dx, 2.45 - drop / 2 + 0.06, STALL.z1 - 0.08));
-      lanternCage(cx + dx, y - 0.1, STALL.z1 - 0.08, 0.16, 0.24, true);
-      if (dx !== 0) halos.push({ p: new THREE.Vector3(cx + dx, y - 0.1, STALL.z1 - 0.08), size: 0.9, k: 0.5 });
+      lanternCage(cx + dx, y - 0.1, STALL.z1 - 0.08, 0.16, 0.24, true, FAM.Ronce);
+      if (dx !== 0) halos.push({ p: new THREE.Vector3(cx + dx, y - 0.1, STALL.z1 - 0.08), size: 0.9, k: 0.5, color: FAM.Ronce });
     }
-    lights.push({ x: cx, y: 2.1, z: STALL.z1 + 0.15, intensity: 3.4, radius: 8.5, halo: 1.3, flicker: 'lantern' });
+    lights.push({ x: cx, y: 2.1, z: STALL.z1 + 0.15, intensity: 3.0, radius: 8.5, halo: 1.3, flicker: 'lantern', color: FAM.Ronce });
   }
 
   /** Groupes d'accessoires : tonneaux cerclés, caisses, filets et cordages lovés ; bancs du Fanal. */
@@ -893,7 +934,7 @@ export function buildQuai(artSeed: number): QuaiScene {
     batch.add(new THREE.CircleGeometry(1.2, 16, 0, Math.PI), m.dark, M(ax, 2.4, FZ + 0.01));
     archStones(ax, 2.4, 1.2, 0.26, FZ, 11);
     for (const sx of [-1, 1]) batch.add(box(0.26, 2.4, 0.2, 1), m.stoneLight, M(ax + sx * 1.33, 1.2, FZ + 0.1), 0.85);
-    wallLantern(ax + 1.9, 2.7, FZ, true);
+    wallLantern(ax + 1.9, 2.7, FZ, true, FAM.Voile);
     for (let k = 0; k < 4; k++) windowUnit(-28.6 + k * 1.9 + (k > 1 ? 2.2 : 0), 5.4, 0.8, 1.1, FZ, k === 1 ? 'warm' : 'dark', 'stone', k === 3);
     batch.add(box(wx1 - wx0, 0.18, 0.24, 2), m.stoneLight, M(cw, 3.2, FZ + 0.08), 0.9);
     // est : entrepôt d'armement bas, portes de planches, rampe qui monte vers le Parvis
@@ -938,7 +979,7 @@ export function buildQuai(artSeed: number): QuaiScene {
    * rose allumée, remparts ; la brume en hauteur sépare les rangs.
    */
   function hillCity(): void {
-    const far = surface({ map: T(farFacadeTexture(artSeed + 1, 0.16, true)), tint: 0x7c84a0, emissive: 1.6, contact: 0, spec: 0, breakup: 0.2, tile: [1 / 12.8, 1 / 13] });
+    const far = surface({ map: T(farFacadeTexture(artSeed + 1, 0.16, true, 0.6)), tint: 0x7c84a0, emissive: 1.6, contact: 0, spec: 0, breakup: 0.2, tile: [1 / 12.8, 1 / 13] });
     const rock = surface({ map: stoneTex, tint: 0x3a4052, spec: 0, contact: 0, breakup: 0.5, tile: [1 / 8, 1 / 8] });
     // colline : talus sombre sous les rangs
     {
@@ -987,7 +1028,7 @@ export function buildQuai(artSeed: number): QuaiScene {
     for (const row of rows) {
       for (let i = 0; i < 7; i++) {
         const x = -row.spread / 2.4 + rng() * (row.spread / 1.2);
-        halos.push({ p: new THREE.Vector3(x, row.base + 0.5 + rng() * 2.5, row.z + 3.2), size: 2.2 + rng() * 1.6, k: 0.18 + rng() * 0.12 });
+        halos.push({ p: new THREE.Vector3(x, row.base + 0.5 + rng() * 2.5, row.z + 3.2), size: 2.2 + rng() * 1.6, k: 0.18 + rng() * 0.12, color: rng() < 0.65 ? FAM.Voile : FAM.Astre });
       }
     }
   }

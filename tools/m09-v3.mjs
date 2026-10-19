@@ -172,16 +172,20 @@ if (MODE === 'shots') {
 } else if (MODE === 'planche') {
   const [avant, apres, out] = process.argv.slice(3);
   if (!avant || !apres || !out) throw new Error('usage : planche <dossier avant> <dossier après> <sortie.png>');
-  const REF = 'reference/generated/2026-10-19-quai-nuit-cameras/02.png';
+  // LQV_V3_REF : autre référence (direction D : reference/generated/2026-10-19-quai-direction-d/01.png) ;
+  // LQV_V3_COLS : libellés des deux colonnes (« avant|après » par défaut) ; LQV_V3_TITLE : titre de la planche.
+  const REF = process.env.LQV_V3_REF ?? 'reference/generated/2026-10-19-quai-nuit-cameras/02.png';
+  const [CA, CB] = (process.env.LQV_V3_COLS ?? 'avant|après').split('|');
+  const TITLE = process.env.LQV_V3_TITLE ?? 'M09 V3 — le Quai, la nuit : avant (gauche) | après (droite)';
   const data = (f) => (existsSync(f) ? `data:image/png;base64,${readFileSync(f).toString('base64')}` : null);
   const rows = [
-    { label: 'Référence de travail (frontale, image générée, non approuvée) | Après, centre du Quai 1920×1080', srcs: [data(REF), data(join(apres, 'etal-1920x1080.png'))] },
-    ...ONLY.map((k) => ({ label: `${SPOTS[k][3]} — 1280×720 : avant | après`, srcs: [data(join(avant, `${k}-1280x720.png`)), data(join(apres, `${k}-1280x720.png`))] })),
-    { label: 'Centre du Quai — 1920×1080 : avant | après', srcs: [data(join(avant, 'etal-1920x1080.png')), data(join(apres, 'etal-1920x1080.png'))] },
+    { label: `Référence (image générée, jamais dans le jeu) | ${CB}, centre du Quai 1920×1080`, srcs: [data(REF), data(join(apres, 'etal-1920x1080.png'))] },
+    ...ONLY.map((k) => ({ label: `${SPOTS[k][3]} — 1280×720 : ${CA} | ${CB}`, srcs: [data(join(avant, `${k}-1280x720.png`)), data(join(apres, `${k}-1280x720.png`))] })),
+    { label: `Centre du Quai — 1920×1080 : ${CA} | ${CB}`, srcs: [data(join(avant, 'etal-1920x1080.png')), data(join(apres, 'etal-1920x1080.png'))] },
   ].filter((r) => r.srcs.some(Boolean));
   const browser = await launch();
   const page = await (await browser.newContext()).newPage();
-  const png = await page.evaluate(async ({ rows }) => {
+  const png = await page.evaluate(async ({ rows, title }) => {
     const W = 880; const H = 495; const PAD = 20; const LABEL = 30; const HEAD = 70;
     const c = document.createElement('canvas');
     c.width = PAD + 2 * (W + PAD);
@@ -189,7 +193,7 @@ if (MODE === 'shots') {
     const x = c.getContext('2d');
     x.fillStyle = '#0b0c12'; x.fillRect(0, 0, c.width, c.height);
     x.fillStyle = '#f2e4c4'; x.font = '600 28px Georgia, serif';
-    x.fillText('M09 V3 — le Quai, la nuit : avant (gauche) | après (droite)', PAD, 46);
+    x.fillText(title, PAD, 46);
     for (const [r, row] of rows.entries()) {
       const y = HEAD + r * (LABEL + H + PAD);
       x.fillStyle = '#c9b48a'; x.font = '18px system-ui, sans-serif';
@@ -203,7 +207,7 @@ if (MODE === 'shots') {
       }
     }
     return c.toDataURL('image/png');
-  }, { rows });
+  }, { rows, title: TITLE });
   await browser.close();
   mkdirSync(dirname(out), { recursive: true });
   writeFileSync(out, Buffer.from(png.split(',')[1], 'base64'));

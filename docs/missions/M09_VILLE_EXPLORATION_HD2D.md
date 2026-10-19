@@ -45,6 +45,12 @@ même propriétaire) :
 - Post-traitement de référence : diffusion atmosphérique, profondeur de champ, halo, étalonnage de palette
   (`src/atmosphere/PostFX.ts` là-bas) ; brume et ciel partagés (`src/materials/ShaderChunks.ts`).
 
+**Amendement du responsable (2026-10-19, ADR 026) : direction D.** Après la première passe de qualité du Quai, jugée
+trop proche de Cité du Tournoi (« il faut qu'on se démarque dans la touche artistique de l'environnement »), le décor de
+la ville devient une **illustration de carte encrée** (contours, aplats, hachures, papier) **aux couleurs des quatre
+familles** (Cendre, Voile, Ronce, Astre : lumières, vitraux, glyphes, dorures). L'ambre n'y est plus le seul accent
+chaud ; la nuit bleu d'encre, la pierre froide et l'ivoire désaturé restent.
+
 Cette DA est cohérente avec nos lieux de duel (la rue « le Quai, la nuit », le bar « le Fanal », ADR 022) : la ville
 doit prolonger ces lieux, pas les contredire.
 

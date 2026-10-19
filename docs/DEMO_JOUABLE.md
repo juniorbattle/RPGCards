@@ -21,7 +21,9 @@ qa:demo` (sur GPU réel : `LQV_GPU=1 CHROMIUM_PATH=<Chrome> npm run qa:demo`) ; 
 **Cadrage réglable à l'œil (fiche B1, M09 V3)** : `&rig=inclinaison,distance,focale,hauteur visée` (degrés, mètres,
 degrés, mètres) remplace le cadrage de l'îlot, par exemple `/?demo=1&rig=7,18.5,39,3.05` (cadrage du Quai retravaillé)
 ou `/?ville=1&ilot=quai&rig=6.5,18.5,37,3.2` (plus serré, personnages un peu plus grands, moins d'eau). Les valeurs hors
-des bornes sont ignorées. Le Quai a été retravaillé (passe de qualité V3, JOURNAL passe 45) ; le Parvis et les Ruelles
+des bornes sont ignorées. Le Quai a été retravaillé (passe de qualité V3, JOURNAL passe 45), puis rendu dans la
+**direction D** retenue par le responsable (décor encré comme une illustration de carte, couleurs des quatre familles ;
+ADR 026, passe 46) ; le Parvis et les Ruelles
 gardent le décor et le cadrage d'origine jusqu'à la validation du responsable (seuls les personnages, communs aux îlots,
 ont le nouveau dessin).
 

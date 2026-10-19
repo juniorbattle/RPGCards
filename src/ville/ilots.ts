@@ -26,6 +26,9 @@ export interface IlotDef {
   rig?: RigTuning;
   /** Hauteur des personnages dans l'îlot (m ; défaut `WALKER_H`). M09 V3 : plus grands sur le Quai retravaillé. */
   walkerH?: number;
+  /** Direction artistique du rendu : `encre` = illustration de carte encrée (direction D retenue par le responsable le
+   *  2026-10-19, ADR 026) : contours à l'encre, grain de papier ; sinon le rendu d'origine. */
+  style?: 'encre';
   build(artSeed: number): QuaiScene;
   /** Liaisons : zone de sortie → îlot voisin et point d'apparition à l'arrivée. */
   exits: Readonly<Record<string, { to: IlotId; spawn: string }>>;
@@ -36,7 +39,7 @@ export const ILOTS: Record<IlotId, IlotDef> = {
     id: 'quai', ilot: QUAI, npcs: NPCS, camera: { minX: -11, maxX: 11 }, build: buildQuai,
     // M09 V3 (passe de qualité du Quai) : cadrage plus large et plus bas (eau au premier plan, toits, ville haute et ciel
     // au loin) avec des personnages plus grands ; le Parvis et les Ruelles gardent le cadrage d'origine jusqu'à validation.
-    rig: { pitch: 7, distance: 18.5, fov: 39, aimY: 3.05 }, walkerH: 2.2,
+    rig: { pitch: 7, distance: 18.5, fov: 39, aimY: 3.05 }, walkerH: 2.2, style: 'encre',
     ambient: [
       { id: 'pnj-joueuse-1', x0: -16.5, x1: -5.5, z: 2.35, speed: 0.95, phase: 0.3 },
       { id: 'pnj-docker-9', x0: 5.5, x1: 16.5, z: 2.5, speed: 1.1, phase: 0.7 },
