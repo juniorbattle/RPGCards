@@ -115,7 +115,8 @@ export interface ArenaHandle {
   /** M07 L4 : plan de feux de l’écran courant (`duel` pendant un duel). Scène figée : une seule image. */
   setStaging(s: Staging): void;
   /** M08 C2 : lieu du décor (hors duel seulement : écrans de menu, lancement d’un duel). Même scène, même contexte
-   *  WebGL ; l’ancien décor est libéré, le nouveau monté et ses programmes préparés. */
+   *  WebGL ; l’ancien décor reste monté hors de la scène (deux décors au plus, le plus ancien est libéré au-delà),
+   *  un décor neuf est monté et ses programmes préparés. */
   setVenue(v: VenueId): void;
   /** M08 C2 : prépare aux temps morts le décor d’un lieu (peinture, textures au GPU, programmes), hors de la scène,
    *  si la capacité du cache le permet ; le changement de lieu suivant n’a plus qu’à l’ajouter à la scène. */
@@ -583,17 +584,21 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
    * M08 C2 — programmes d’un objet préparés pour les DEUX sorties possibles : la cible HDR du post-traitement (sans
    * tonemapping, sortie linéaire : les variantes de chaque image en rendu complet) et l’écran (rendu direct du repli).
    * `renderer.compile` seul ne vise que l’écran : un décor préparé ainsi compilait encore ses variantes HDR à sa
-   * première image (234 ms, 54 programmes au lieu de 46 ; journal, passe C2).
+   * première image (234 ms, 54 programmes au lieu de 46 ; journal, passe 28). Sans compilation parallèle
+   * (`KHR_parallel_shader_compile` absent, par exemple en rendu logiciel), `compileAsync` avertit dans la console :
+   * compilation synchrone, hors duel seulement.
    */
+  const parallel = renderer.extensions.has('KHR_parallel_shader_compile');
   const compileFor = (obj: THREE.Object3D): Promise<unknown> => {
     const prev = renderer.getRenderTarget();
     const jobs: Promise<unknown>[] = [];
+    const run = () => { if (parallel) jobs.push(renderer.compileAsync(obj, camera, scene)); else renderer.compile(obj, camera, scene); };
     if (post) {
       renderer.setRenderTarget(post.composer.readBuffer);
-      jobs.push(renderer.compileAsync(obj, camera, scene));
+      run();
     }
     renderer.setRenderTarget(null);
-    jobs.push(renderer.compileAsync(obj, camera, scene));
+    run();
     renderer.setRenderTarget(prev);
     return Promise.all(jobs);
   };
