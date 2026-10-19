@@ -127,7 +127,20 @@ d'échantillons) :
 
 **Correctif** (`42f4562`) : préchauffage **un portrait par temps mort, à partir de la première image peinte**. Écart
 DOMContentLoaded → accueil peint : **≈ 6,2 s → ≈ 0,15 à 1,1 s** (trois rondes de chaque côté, SwiftShader). Les valeurs
-absolues (DOMContentLoaded 11 à 19 s) dépendent de la charge du conteneur. Sur GPU réel, l'effet attendu est la
+absolues (DOMContentLoaded 11 à 19 s) dépendent de la charge du conteneur.
+
+**Contrôle sur le build final**, rondes **alternées** sur machine calme (profil neuf à chaque ronde,
+`artifacts/qa/rc08/demarrage-final/`) :
+
+| Ronde | Build | DOMContentLoaded | Accueil interactif | Écart | Tâches longues jusqu'à l'accueil | Premier duel |
+|---|---|---|---|---|---|---|
+| 1 | `0f8c20a` (avant le préchauffage étalé) | 14,5 s | 22,6 s | 8,1 s | 2 (14,4 s + 7,7 s) | 6,3 s |
+| 1 | `e934f7a` (final) | 14,9 s | 16,3 s | 1,4 s | 1 (14,8 s) | 2,3 s |
+| 2 | `0f8c20a` | 13,6 s | 21,1 s | 7,5 s | 2 (13,5 s + 7,2 s) | 2,4 s |
+| 2 | `e934f7a` | 14,2 s | 15,7 s | 1,6 s | 1 (14,0 s) | 1,8 s |
+
+L'accueil devient interactif **≈ 5,5 à 6,3 s plus tôt** en rendu logiciel ; la tâche longue restante est la liaison des
+programmes WebGL (C3, `compileAsync`). Sur GPU réel, l'effet attendu est la
 disparition d'une tâche longue de l'ordre de 9 × 20 ms au démarrage : **à mesurer sur le poste du responsable**.
 
 ### 5.3 Découpage du bundle : non fait

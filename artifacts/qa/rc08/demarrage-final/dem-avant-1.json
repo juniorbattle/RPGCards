@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-19T11:47:20.780Z",
+  "commit": "cc7de58",
+  "dist": "/tmp/claude-0/-home-user-RPGCards/b037a208-e5e7-51d9-9247-95cb0f14867f/scratchpad/dist-0f8c20a",
+  "assets": [
+    {
+      "f": "cardArtWorker-C3PyS6SL.js",
+      "octets": 8322
+    },
+    {
+      "f": "index-Bco1EIiU.css",
+      "octets": 81051
+    },
+    {
+      "f": "index-CCJYJ6gx.js",
+      "octets": 993217
+    }
+  ],
+  "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU",
+  "rounds": [
+    {
+      "home": 22615,
+      "arene": 22626,
+      "dcl": 14537,
+      "load": 14537,
+      "longTasks": 2,
+      "longTasksMs": 22166,
+      "maxLongTask": 14419,
+      "duel": 6251,
+      "octets": 1082590
+    }
+  ],
+  "median": {
+    "home": 22615,
+    "arene": 22626,
+    "dcl": 14537,
+    "load": 14537,
+    "longTasks": 2,
+    "longTasksMs": 22166,
+    "maxLongTask": 14419,
+    "duel": 6251,
+    "octets": 1082590
+  },
+  "issues": []
+}
