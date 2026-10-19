@@ -63,12 +63,17 @@ export function walkerLook(id: string): WalkerLook {
       accessory: 'bandeau', long: true, detail: 'echarpe', iris: '#4a6fd6', hood: true,
     };
   }
-  // Rivaux signatures présents dans la ville (couleurs de leurs identités V2, ADR 021) : Kaï sur le Quai, Orin au Parvis.
+  // Rivaux signatures présents dans la ville (couleurs de leurs identités V2, ADR 021) : Kaï sur le Quai, Orin au Parvis, Sélène dans les Ruelles.
   const rivals: Record<string, WalkerLook> = {
     braise: {
       skin: tone('#e2a982', '#b9785a', '#8e5642', '#f2c4a2'), hair: tone('#2a1410', '#1a0c09', '#0c0605', '#c2411d'), cut: 'pics',
       cloth: tone('#7a2410', '#561808', '#3a0f05', '#d0541f'), shirt: tone('#2a2422', '#191514', '#0c0a09', '#4e4440'), legs: '#26201e',
       accessory: 'bandeau-braise', long: false, detail: 'aucun', iris: '#d98a1e',
+    },
+    voile: {
+      skin: tone('#f0c9b0', '#c99a82', '#a07a66', '#fde2d0'), hair: tone('#c9cbe8', '#9fa2c4', '#7a7ea2', '#ffffff'), cut: 'carre',
+      cloth: tone('#2f2d6e', '#211f50', '#151336', '#5d63c4'), shirt: tone('#a8e6ff', '#7cc0e0', '#5a98b8', '#e0f6ff'), legs: '#1c1c34',
+      accessory: 'bandeau', long: true, detail: 'chale', iris: '#8a5cd6',
     },
     astre: {
       skin: tone('#9a6444', '#6e432c', '#4e2e1e', '#b8825e'), hair: tone('#1c1f33', '#12141f', '#08090f', '#6f80c4'), cut: 'pics',

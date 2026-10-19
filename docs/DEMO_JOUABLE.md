@@ -23,6 +23,8 @@ npm run build && npm run preview   # http://localhost:4173/?demo=1
 | Parler, entrer, sortir | E, Entrée ou Espace | clic sur la bulle |
 | Menu (deck, collection, options, aide, accueil) | Échap | bouton « Menu » |
 
+L'aide (menu → Aide) commence, en démo seulement, par ces commandes de la ville.
+
 ## Parcours à valider (≈ 10 minutes)
 
 1. **Accueil** → « Nouvelle partie » → nom, voie, Techniques → « Créer ».
@@ -40,15 +42,17 @@ npm run build && npm run preview   # http://localhost:4173/?demo=1
 7. **Kaï** au bout est du quai : duel libre dans la rue.
 8. **Le Parvis de l'arène** (sortie est du Quai) : fondu, place dallée, grande porte embrasée, braseros ; une joueuse à
    défier ; **Orin** et la porte de l'arène, ouverts après le Tournoi. Sortie ouest : retour au Quai.
-9. **Fermer la page et revenir** : « Continuer » ramène au même îlot et au même endroit ; une nouvelle partie repart du
+9. **Les Ruelles** (sortie ouest du Quai) : quartier du Voile, linge tendu, fontaine (information), **Sélène**,
+   ouverte après l'avoir rencontrée au Tournoi. Sortie est : retour au Quai.
+10. **Fermer la page et revenir** : « Continuer » ramène au même îlot et au même endroit ; une nouvelle partie repart du
    tutoriel.
 
 ## Ce que la démo ne fait pas encore
 
 - Une seule caméra (frontale 2.5D, décidée) ; réglages fins à revoir à l'œil sur GPU réel.
-- Deux îlots seulement ; les Ruelles sont annoncées « bientôt ».
+- Trois îlots (le Quai, le Parvis, les Ruelles) ; pas encore de carte de la ville ni de Place du Fanal.
 - Personnages de la ville dessinés par code (provisoires, en attendant Aseprite pour les personnages clés).
 - Textes de prototype ; aucun son.
-- Le tableau des rencontres classique n'est pas accessible depuis la démo.
+- Le tableau des rencontres classique reste accessible par le menu de la ville (« Toutes les rencontres »).
 
 Décisions à prendre : `docs/FICHE_ARBITRAGES_M09.md`.

@@ -17,6 +17,7 @@ import {
 } from './materiaux';
 import { BOLLARDS, FACADES, FACADE_Z, LAMPS, PROPS, QUAY_Z, STALL, WATER_Y, type Facade } from './quai';
 import { BOOTH, BRAZIERS, GATE, P_FACADE_Z, P_FRONT_Z, P_LAMPS, P_PROPS, P_X_MAX, P_X_MIN } from './parvis';
+import { FOUNTAIN, NARROW, R_EDGE_Z, R_FACADE_Z, R_LAMPS, R_WATER_Y, SEER } from './ruelles';
 
 export interface LightDef { x: number; y: number; z: number; intensity: number; radius: number; halo: number; flicker: 'lantern' | 'candle' | 'window' | 'none'; color?: THREE.Color }
 
@@ -628,5 +629,153 @@ export function buildParvis(artSeed: number): QuaiScene {
     lights.push({ x: cx + 0.6, y: 1.1, z: cz + 0.3, intensity: 1.8, radius: 5, halo: 1.0, flicker: 'lantern' });
   }
   for (const pr of P_PROPS) for (let i = 0; i < 3; i++) batch.add(new THREE.CylinderGeometry(0.3, 0.33, 0.85, 12), wood, M4(pr.x0 + 0.3 + (i % 2) * 0.45, 0.43, pr.z0 + 0.3 + Math.floor(i / 2) * 0.4));
+  return finish(scene, batch, lights, [], textures);
+}
+
+/**
+ * M09 — les Ruelles (quartier du Voile) : maisons hautes et étroites à pignon sur rue et encorbellement, bannières du
+ * Voile, linge tendu entre les étages, fontaine (point focal), étal de la liseuse ; canal au premier plan.
+ */
+export function buildRuelles(artSeed: number): QuaiScene {
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x04060c);
+  const rng = makeRng(hashString(`ville|ruelles|${artSeed}`));
+  const k = kit(artSeed);
+  const { textures, T } = k;
+  const { cobble, stone, stoneDark, plasterTex, timberTex, slate, wood, cloth, iron, winLit, winDark, lampGlass } = k.m;
+  const lights: LightDef[] = [];
+  const batch = new Batcher();
+  const D = 6;
+  // sol, margelle du canal, mur, eau
+  {
+    const d = R_EDGE_Z - R_FACADE_Z + 0.4;
+    const g = new THREE.PlaneGeometry(44, d);
+    g.rotateX(-Math.PI / 2);
+    const uv = g.attributes.uv as THREE.BufferAttribute;
+    for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * 44 / 3.2, uv.getY(i) * d / 3.2);
+    batch.add(g, cobble, M4(0, 0, (R_EDGE_Z + R_FACADE_Z) / 2 - 0.2));
+  }
+  batch.add(boxM(44, 0.16, 0.4, 1.6), stone, M4(0, 0.05, R_EDGE_Z + 0.2));
+  batch.add(facePlane(44, -R_WATER_Y + 0.1), stoneDark, M4(0, R_WATER_Y / 2 - 0.02, R_EDGE_Z + 0.4));
+  const water = new THREE.Mesh(new THREE.PlaneGeometry(160, 60), waterMaterial());
+  water.rotation.x = -Math.PI / 2;
+  water.position.set(0, R_WATER_Y, R_EDGE_Z + 0.4 + 30);
+  scene.add(water);
+  // barque amarrée et pieux
+  {
+    const g = new THREE.BoxGeometry(3.6, 0.6, 1.2, 8, 1, 2);
+    const p = g.attributes.position as THREE.BufferAttribute;
+    for (let i = 0; i < p.count; i++) { const u = p.getX(i) / 1.8; p.setZ(i, p.getZ(i) * Math.max(0.08, 1 - Math.pow(Math.abs(u), 2.2))); p.setY(i, p.getY(i) + u * u * 0.2); }
+    g.computeVertexNormals();
+    batch.add(g, wood, M4(-6.5, R_WATER_Y + 0.25, R_EDGE_Z + 1.6));
+    for (const x of [-9, -4.2, 6]) batch.add(new THREE.CylinderGeometry(0.09, 0.11, 1.8, 6), wood, M4(x, R_WATER_Y + 0.7, R_EDGE_Z + 0.75));
+  }
+  // maisons étroites : rez-de-chaussée de pierre, étages à encorbellement, pignon sur rue
+  const tints = [0x8c96b0, 0x9aa2b6, 0x8892aa, 0xa4a6b0, 0x8e9ab4, 0x969cae, 0x8a94ac];
+  const banners: number[] = [];
+  NARROW.forEach((hse, i) => {
+    const w = hse.x1 - hse.x0;
+    const cx = (hse.x0 + hse.x1) / 2;
+    const r = makeRng(hashString(`ville|ruelle|${hse.seed}|${artSeed}`));
+    const upper = surface({ map: i % 2 ? timberTex : plasterTex, tint: tints[i % tints.length], spec: 0.05, contact: 0.6, breakup: 0.35 });
+    batch.add(boxM(w, 3.1, D, 3), stone, M4(cx, 1.55, R_FACADE_Z - D / 2));
+    // encorbellement : l'étage avance de 0,5 m sur la rue, soutenu par des corbeaux
+    batch.add(boxM(w, hse.h - 3.1, D, 4), upper, M4(cx, 3.1 + (hse.h - 3.1) / 2, R_FACADE_Z - D / 2 + 0.5));
+    for (let x = hse.x0 + 0.5; x < hse.x1; x += 1.3) batch.add(boxM(0.18, 0.35, 0.5, 1), wood, M4(x, 2.95, R_FACADE_Z + 0.2));
+    const roof = gableRoof(w, D, 3.6, 'z', 0.25);
+    batch.add(roof.slopes, slate, M4(cx, hse.h, R_FACADE_Z - D / 2 + 0.5));
+    batch.add(roof.gables, upper, M4(cx, hse.h, R_FACADE_Z - D / 2 + 0.5));
+    // fenêtres (étages) et vitrine (rez-de-chaussée)
+    const fz = R_FACADE_Z + 0.515;
+    for (const y of [4.3, 6.7, 9.0].filter((v) => v + 0.8 < hse.h)) {
+      // Une maison sur deux porte une bannière au centre : ses fenêtres vont de part et d'autre.
+      for (const dx of w > 4.4 || i % 2 === 1 ? [-1.1, 1.1] : [0]) {
+        const lit = r() < 0.45;
+        batch.add(facePlane(0.75, 1.15), (lit ? winLit[(i + y) % 3 | 0] : winDark)!, M4(cx + dx, y, fz));
+      }
+    }
+    batch.add(facePlane(1.1, 2.1), wood, M4(hse.door, 1.05, R_FACADE_Z + 0.012));
+    batch.add(boxM(1.4, 0.24, 0.2, 1), stone, M4(hse.door, 2.22, R_FACADE_Z + 0.06));
+    const shopX = hse.door + (hse.door > cx ? -1.5 : 1.5);
+    if (Math.abs(shopX - cx) < w / 2 - 0.6) batch.add(facePlane(1.1, 1.0), (r() < 0.6 ? winLit[i % 3] : winDark)!, M4(shopX, 1.6, R_FACADE_Z + 0.012));
+    if (i % 2 === 1) banners.push(cx);
+  });
+  // Passages entre deux maisons : fond de pierre sombre en retrait (le ciel ne passe pas par la fente) ; au-delà des
+  // maisons extrêmes, un bloc sombre ferme la rue jusqu'au bord du cadre (caméra en butée).
+  for (let i = 0; i + 1 < NARROW.length; i++) {
+    const a = NARROW[i]!;
+    const b = NARROW[i + 1]!;
+    const w = b.x0 - a.x1;
+    const h = Math.min(a.h, b.h) + 1.5;
+    batch.add(boxM(w + 0.2, h, 0.4, 3), stoneDark, M4((a.x1 + b.x0) / 2, h / 2, R_FACADE_Z - 2.4));
+    batch.add(boxM(w, 0.04, 2.4, 1), stoneDark, M4((a.x1 + b.x0) / 2, 0.01, R_FACADE_Z - 1.2));
+  }
+  for (const [x0, x1] of [[-30, NARROW[0]!.x0], [NARROW[NARROW.length - 1]!.x1, 30]] as const) {
+    const w = x1 - x0;
+    batch.add(boxM(w, 10, D, 4), stoneDark, M4((x0 + x1) / 2, 5, R_FACADE_Z - D / 2 - 0.3));
+    const roof = gableRoof(w, D, 2.6, 'x');
+    batch.add(roof.slopes, slate, M4((x0 + x1) / 2, 10, R_FACADE_Z - D / 2 - 0.3));
+    for (let x = x0 + 1.6; x < x1 - 1; x += 3.0) batch.add(facePlane(1.6, 2.4), winDark, M4(x, 1.4, R_FACADE_Z - 0.29));
+  }
+  // bannières du Voile aux façades (une maison sur deux)
+  banners.forEach((bx, i) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 1.9), surface({ map: T(bannerTexture('Voile', artSeed + 7 + i)), contact: 0, spec: 0.05, emissive: 0.12, wrap: 0.8 }));
+    m.position.set(bx, 5.4, R_FACADE_Z + 0.56);
+    scene.add(m);
+    batch.add(boxM(1.1, 0.06, 0.06, 1), iron, M4(bx, 6.4, R_FACADE_Z + 0.58));
+  });
+  // linge tendu entre les étages (toile ivoire et toile ardoise), au-dessus de la ruelle
+  const slateCloth = surface({ map: T(canvasCloth(artSeed + 5)), tint: 0x56607a, spec: 0.02, contact: 0, wrap: 0.9, side: THREE.DoubleSide });
+  for (const [x0, x1, y] of [[-10.5, -5.5, 7.4], [-1.0, 4.4, 8.1], [6.0, 11.5, 7.0]] as const) {
+    const n = 7;
+    for (let j = 0; j <= n; j++) {
+      const t = j / n;
+      const x = x0 + (x1 - x0) * t;
+      const yy = y - Math.sin(t * Math.PI) * 0.45;
+      if (j < n) {
+        const xn = x0 + (x1 - x0) * ((j + 1) / n);
+        const yn = y - Math.sin(((j + 1) / n) * Math.PI) * 0.45;
+        const len = Math.hypot(xn - x, yn - yy);
+        batch.add(boxM(len, 0.015, 0.015, 1), iron, new THREE.Matrix4().compose(new THREE.Vector3((x + xn) / 2, (yy + yn) / 2, R_FACADE_Z + 0.9), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0, Math.atan2(yn - yy, xn - x))), new THREE.Vector3(1, 1, 1)));
+      }
+      if (j > 0 && j < n && rng() < 0.8) {
+        const cw = 0.35 + rng() * 0.3;
+        const ch = 0.45 + rng() * 0.35;
+        batch.add(facePlane(cw, ch), rng() < 0.5 ? cloth : slateCloth, M4(x, yy - ch / 2, R_FACADE_Z + 0.9));
+      }
+    }
+  }
+  // fontaine du Voile (point focal) : bassin, eau, colonne, vasque
+  {
+    batch.add(new THREE.CylinderGeometry(FOUNTAIN.r, FOUNTAIN.r + 0.08, 0.55, 20), stone, M4(FOUNTAIN.x, 0.27, FOUNTAIN.z));
+    const pool = new THREE.Mesh(new THREE.CircleGeometry(FOUNTAIN.r - 0.1, 24), waterMaterial());
+    pool.rotation.x = -Math.PI / 2;
+    pool.position.set(FOUNTAIN.x, 0.48, FOUNTAIN.z);
+    scene.add(pool);
+    batch.add(new THREE.CylinderGeometry(0.14, 0.2, 1.5, 10), stone, M4(FOUNTAIN.x, 1.0, FOUNTAIN.z));
+    batch.add(new THREE.CylinderGeometry(0.5, 0.18, 0.2, 14), stone, M4(FOUNTAIN.x, 1.78, FOUNTAIN.z));
+    batch.add(new THREE.SphereGeometry(0.13, 10, 8), stone, M4(FOUNTAIN.x, 1.98, FOUNTAIN.z));
+  }
+  // étal de la liseuse : table, toile ardoise, boule de cristal (seul éclat froid), bougies
+  {
+    const cx = (SEER.x0 + SEER.x1) / 2;
+    const cz = (SEER.z0 + SEER.z1) / 2;
+    batch.add(boxM(SEER.x1 - SEER.x0, 0.08, SEER.z1 - SEER.z0 - 0.1, 1), wood, M4(cx, 0.85, cz));
+    batch.add(boxM(SEER.x1 - SEER.x0 - 0.1, 0.8, 0.05, 1), slateCloth, M4(cx, 0.43, SEER.z1 - 0.08));
+    for (const sx of [-1, 1]) batch.add(boxM(0.08, 2.3, 0.08, 1), wood, M4(cx + sx * ((SEER.x1 - SEER.x0) / 2 - 0.06), 1.15, SEER.z1 - 0.06));
+    batch.add(boxM(SEER.x1 - SEER.x0 + 0.4, 0.05, 1.3, 1), slateCloth, M4(cx, 2.3, cz));
+    const crystal = new THREE.MeshBasicMaterial({ color: new THREE.Color(0.62, 0.7, 0.85).multiplyScalar(1.4) });
+    batch.add(new THREE.SphereGeometry(0.16, 14, 10), crystal, M4(cx, 1.05, cz));
+    batch.add(boxM(0.06, 0.14, 0.06, 1), lampGlass, M4(cx + 0.7, 0.96, cz));
+    lights.push({ x: cx + 0.7, y: 1.05, z: cz + 0.4, intensity: 1.6, radius: 5, halo: 0.8, flicker: 'candle' });
+  }
+  // lanternes murales et lampadaires du canal
+  for (const x of [-13.6, -4.3, 5.9 - 1.4, 10.7 + 1.2]) {
+    batch.add(boxM(0.06, 0.06, 0.4, 1), iron, M4(x, 3.4, R_FACADE_Z + 0.75));
+    batch.add(boxM(0.2, 0.3, 0.2, 1), lampGlass, M4(x, 3.1, R_FACADE_Z + 0.92));
+    lights.push({ x, y: 3.1, z: R_FACADE_Z + 1.05, intensity: 2.2, radius: 7.5, halo: 1.3, flicker: 'lantern' });
+  }
+  for (const l of R_LAMPS) lampPost(batch, k.m, lights, l.x, l.z);
+  farCity(batch, k, rng, artSeed, -16);
   return finish(scene, batch, lights, [], textures);
 }

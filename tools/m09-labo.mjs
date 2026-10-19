@@ -13,7 +13,7 @@ import { launch, rendererLabel, startPreview, watchConsole, webglRenderer } from
 const DIR = process.argv[2] ?? 'screenshots/qa/m09/v1';
 const OUT = process.argv[3] ?? 'artifacts/qa/m09/v1-labo.json';
 const SIZES = (process.env.LQV_SIZES ?? '1280x720,1920x1080').split(',').map((s) => s.split('x').map(Number));
-const SPOTS = { arrivee: [-17.4, 0.6, 'droite'], etal: [-0.6, 0.2, 'face'], fanal: [7.2, -1.4, 'dos'], salle: [-6.75, -1.4, 'dos'], kai: [12.0, 1.0, 'droite'], 'parvis-porte': [0, -2.6, 'dos', 'parvis'], 'parvis-joueuse': [-4.8, 0.9, 'gauche', 'parvis'] };
+const SPOTS = { arrivee: [-17.4, 0.6, 'droite'], etal: [-0.6, 0.2, 'face'], fanal: [7.2, -1.4, 'dos'], salle: [-6.75, -1.4, 'dos'], kai: [12.0, 1.0, 'droite'], 'parvis-porte': [0, -2.6, 'dos', 'parvis'], 'parvis-joueuse': [-4.8, 0.9, 'gauche', 'parvis'], 'ruelles-fontaine': [-1.8, 1.0, 'gauche', 'ruelles'], 'ruelles-selene': [8.4, -0.3, 'droite', 'ruelles'] };
 const ONLY = process.env.LQV_SPOTS?.split(',') ?? Object.keys(SPOTS);
 const head = execSync('git rev-parse --short HEAD').toString().trim();
 const commit = execSync('git status --porcelain src').toString().trim() ? `${head}+arbre de travail` : head;

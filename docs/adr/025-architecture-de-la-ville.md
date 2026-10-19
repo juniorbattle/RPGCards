@@ -15,7 +15,7 @@ l'opérateur pendant le run : approcher une démo jouable de l'accueil à la vil
 
 1. **Module isolé `src/ville/`**, chargé à la demande (import dynamique) par `?ville=1` (laboratoire) et `?demo=1`
    (démo) : rien n'est exécuté ni téléchargé dans le jeu par défaut (fichiers `ville-*.js`, `demo-*.js`, `labo-*.js`).
-2. **Logique pure séparée du rendu**, comme le moteur du duel : plan des îlots (`quai.ts`, `parvis.ts`), déplacement et
+2. **Logique pure séparée du rendu**, comme le moteur du duel : plan des îlots (`quai.ts`, `parvis.ts`, `ruelles.ts`), déplacement et
    collisions (`monde.ts` : disque contre rectangles et disques, glissement axe par axe, sous-pas de 5 cm), cadrage
    (`cameras.ts`), objectifs et portes de la démo (`objectifs.ts`), registre des îlots et liaisons (`ilots.ts`) ;
    tests `test/ville.test.ts`. Le rendu (`scene.ts`, `sprites.ts`, `ville.ts`) ne fait qu'exécuter.

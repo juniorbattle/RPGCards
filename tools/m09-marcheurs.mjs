@@ -5,7 +5,7 @@ import { dirname } from 'node:path';
 import { launch, startPreview } from './browser.mjs';
 
 const OUT = process.argv[2] ?? 'screenshots/qa/m09/marcheurs.png';
-const IDS = ['player-Cendre', 'player-Voile', 'player-Ronce', 'player-Astre', 'pnj-marchande-9', 'pnj-docker-1', 'pnj-commis-5', 'braise', 'astre', 'pnj-joueuse-5', 'pnj-joueuse-1', 'pnj-docker-9', 'pnj-commis-2'];
+const IDS = ['player-Cendre', 'player-Voile', 'player-Ronce', 'player-Astre', 'pnj-marchande-9', 'pnj-docker-1', 'pnj-commis-5', 'braise', 'astre', 'voile', 'pnj-joueuse-5', 'pnj-joueuse-1', 'pnj-docker-9', 'pnj-commis-2'];
 const server = await startPreview(Number(process.env.LQV_PREVIEW_PORT) || 4285, process.env.LQV_DIST || 'dist');
 const browser = await launch();
 try {

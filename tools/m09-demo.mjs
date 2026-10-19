@@ -136,15 +136,56 @@ try {
   await p.waitForFunction(() => window.__lqvDemo.townHandle.ilotId() === 'quai', null, { timeout: 30000 });
   const arr = await p.evaluate(() => { const t = window.__lqvDemo.townHandle; return { w: t.walker().pos, s: t.ilot.spawns['sortie-arene'] }; });
   check(Math.hypot(arr.w.x - arr.s.x, arr.w.z - arr.s.z) < 0.05, 'retour au Quai, au bout est (point d’arrivée de la liaison)');
+  // Les Ruelles (sortie ouest du Quai) : Sélène verrouillée, fontaine, retour
+  await p.evaluate(() => { const t = window.__lqvDemo.townHandle; t.place({ x: -18.6, z: 0.4 }, 'gauche'); });
+  await p.waitForTimeout(800);
+  check((await town()).zone === 'sortie-ruelles', 'au bout ouest du Quai : sortie vers les Ruelles');
+  await p.keyboard.press('KeyE');
+  await p.waitForFunction(() => window.__lqvDemo.townHandle.ilotId() === 'ruelles', null, { timeout: 30000 });
+  await p.waitForTimeout(1500);
+  await shot('ruelles-arrivee');
+  await p.evaluate(() => { const t = window.__lqvDemo.townHandle; t.place(t.ilot.spawns['npc-voile'], 'droite'); });
+  await p.waitForTimeout(800);
+  await p.keyboard.press('KeyE');
+  await p.waitForSelector('.ville-dialog');
+  check(!(await p.$('[data-key="dlg-duel"]')) && /Rencontrez d’abord Sélène/.test(await p.textContent('.ville-dialog')), 'Ruelles : Sélène verrouillée tant qu’on ne l’a pas rencontrée au Tournoi, raison affichée');
+  await shot('ruelles-selene');
+  await p.keyboard.press('Escape');
+  await p.evaluate(() => { const t = window.__lqvDemo.townHandle; t.place({ x: -3.6, z: 1.9 }, 'dos'); });
+  await p.waitForTimeout(800);
+  await p.keyboard.press('KeyE');
+  await p.waitForSelector('.ville-dialog');
+  check(/fontaine/i.test(await p.textContent('.ville-dialog')), 'Ruelles : la fontaine (information)');
+  await p.keyboard.press('Escape');
+  await p.evaluate(() => { const t = window.__lqvDemo.townHandle; t.place({ x: 12.6, z: 0.4 }, 'droite'); });
+  await p.waitForTimeout(800);
+  await p.keyboard.press('KeyE');
+  await p.waitForFunction(() => window.__lqvDemo.townHandle.ilotId() === 'quai', null, { timeout: 30000 });
+  const rr = await p.evaluate(() => { const t = window.__lqvDemo.townHandle; return { w: t.walker().pos, s: t.ilot.spawns['sortie-ruelles'] }; });
+  check(Math.hypot(rr.w.x - rr.s.x, rr.w.z - rr.s.z) < 0.05, 'retour au Quai, au bout ouest');
   // Menu (Échap)
   await p.keyboard.press('Escape');
   await p.waitForSelector('[data-key="menu-deck"]');
   await shot('menu');
   await p.click('[data-key="menu-deck"]');
   await p.waitForSelector('[data-screen="deck"]');
+  // Échap sur l'écran du deck : la ville (en pause) ne doit pas ouvrir son menu par-dessus.
+  await p.keyboard.press('Escape');
+  await p.waitForTimeout(600);
+  check(!(await p.$('.ville-dialog')), 'Échap hors de la ville (deck) : aucun menu de la ville par-dessus');
+  if (!(await p.$('[data-screen="deck"]'))) await p.click('[data-key="ville-deck"]');
+  await p.waitForSelector('[data-screen="deck"]');
   await p.click('[data-key="deck-back"]');
   await p.waitForFunction(() => window.__lqvShell.flow.screen === 'board' && !document.querySelector('.ville-host').hidden);
   check(true, 'menu → deck → retour au Quai');
+  // Menu → Aide : les commandes de la ville en tête (démo seulement), puis retour au Quai.
+  await p.keyboard.press('Escape');
+  await p.waitForSelector('[data-key="menu-help"]');
+  await p.click('[data-key="menu-help"]');
+  await p.waitForSelector('[data-screen="help"]');
+  check(await p.evaluate(() => document.querySelector('[data-screen="help"] h2')?.textContent === 'La ville (démo)'), 'aide : commandes de la ville en tête');
+  await p.click('[data-key="help-back"]');
+  await p.waitForFunction(() => window.__lqvShell.flow.screen === 'board' && !document.querySelector('.ville-host').hidden);
   // Menu → « Toutes les rencontres » (tableau classique) → « Retour au Quai »
   await p.keyboard.press('Escape');
   await p.waitForSelector('[data-key="menu-board"]');

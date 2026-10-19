@@ -27,7 +27,7 @@ export function demoObjective(f: DemoFacts): string {
     const next = personalityOf(SERIES.steps[step]!).name;
     return `${SERIES.title}, manche ${step + 1} : ${next} vous attend dans la salle de jeu de cartes (porte aux quatre bannières).`;
   }
-  return 'Le Quai est à vous : Kaï au bout du quai, Maëlle au Fanal, Orin vers l’arène.';
+  return 'Le Quai est à vous : Kaï au bout du quai, Maëlle au Fanal, Sélène dans les Ruelles, Orin vers l’arène.';
 }
 
 /** Rencontre proposée par une porte ou une sortie de l'îlot (la disponibilité reste celle du produit). */

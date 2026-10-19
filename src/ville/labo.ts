@@ -30,7 +30,13 @@ export function startLab(p: LabParams, q: URLSearchParams): Town {
   panel.className = 'ville-panel';
   const title = document.createElement('div');
   title.className = 'ville-title';
-  title.innerHTML = '<b>Laboratoire de la ville</b> — le Quai, la nuit <small>M09 V1 · prototype · caméra frontale 2.5D (décision du responsable)</small>';
+  let titled = '';
+  const setTitle = () => {
+    if (titled === town.ilotId()) return;
+    titled = town.ilotId();
+    title.innerHTML = `<b>Laboratoire de la ville</b> — ${town.ilot.name}, la nuit <small>M09 V1 · prototype · caméra frontale 2.5D (décision du responsable)</small>`;
+  };
+  setTitle();
   const row = document.createElement('div');
   row.className = 'ville-cams';
   row.setAttribute('role', 'radiogroup');
@@ -69,6 +75,7 @@ export function startLab(p: LabParams, q: URLSearchParams): Town {
     lastT = now;
     if (intervals.length > 120) intervals = intervals.slice(-120);
     bubble.update();
+    setTitle();
     if (p.qa && town.stats().frames % 15 === 0) {
       const s = town.stats();
       const sorted = [...intervals].sort((a, b) => a - b);

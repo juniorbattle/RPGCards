@@ -258,3 +258,15 @@ describe('ville : premier plan de la frontale', () => {
     for (const f of FACADES) if (f.door !== null) for (const l of LAMPS) expect(Math.abs(l.x - f.door), `${f.id}`).toBeGreaterThan(1.5);
   });
 });
+
+describe('ville : les Ruelles', () => {
+  it('îlot cohérent, relié au Quai dans les deux sens ; Sélène y propose son duel libre', async () => {
+    const { RUELLES, R_NPCS } = await import('../src/ville/ruelles');
+    const { ILOTS } = await import('../src/ville/ilots');
+    const { encounterById } = await import('../src/product/encounters');
+    expect(validateIlot(RUELLES)).toEqual([]);
+    expect(ILOTS.quai.exits['sortie-ruelles']?.to).toBe('ruelles');
+    expect(ILOTS.ruelles.exits['sortie-quai']?.to).toBe('quai');
+    expect(encounterById(R_NPCS[0]!.encounter!)?.rival).toBe('voile');
+  });
+});
