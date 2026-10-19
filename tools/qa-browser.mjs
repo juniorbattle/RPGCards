@@ -26,7 +26,11 @@ if (STAGE_FAULT && !['opaque', 'stuck'].includes(STAGE_FAULT)) throw new Error(`
 async function runDuel(browser, base, run) {
   const ctx = await browser.newContext({ viewport: run.viewport, isMobile: !!run.isMobile, hasTouch: !!run.isMobile, deviceScaleFactor: 1 });
   const page = await ctx.newPage();
-  page.setDefaultTimeout(10000);
+  // LQV_QA_TIMEOUT (ms) : délai des actions (clics, attentes) sur un conteneur lent en rendu logiciel ; sans la variable : inchangé.
+  page.setDefaultTimeout(Number(process.env.LQV_QA_TIMEOUT) || 10000);
+  // LQV_QA_NAV_TIMEOUT (ms) : délai des navigations seules (chargement à froid d’un conteneur lent : la compilation des
+  // programmes WebGL en SwiftShader retarde l’événement load de 11 à 17 s ; RC 0.8). Sans la variable : inchangé.
+  if (process.env.LQV_QA_NAV_TIMEOUT) page.setDefaultNavigationTimeout(Number(process.env.LQV_QA_NAV_TIMEOUT));
   const consoleIssues = [];
   watchConsole(page, consoleIssues);
   await page.goto(`${base}/?seed=${run.seed}&autostart=1&qa=1&aiDelay=0&reducedMotion=${run.watchSequence ? 0 : 1}&pace=${run.watchSequence ? 'fast' : 'normal'}&tech=${run.tech}${RENDER_CHECK ? '&renderCheck=1&artCheck=1' : ''}${process.env.LQV_QA_QUERY ? `&${process.env.LQV_QA_QUERY}` : ''}`);

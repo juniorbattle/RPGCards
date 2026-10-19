@@ -59,7 +59,11 @@ async function run(name, browser, vp, fn, ctxOpts = {}) {
   const ctx = await browser.newContext({ viewport: vp, deviceScaleFactor: 1, ...ctxOpts.context });
   if (ctxOpts.init) await ctx.addInitScript(ctxOpts.init);
   const page = await ctx.newPage();
-  page.setDefaultTimeout(20000);
+  // LQV_QA_TIMEOUT (ms) : délai des actions (clics, attentes) sur un conteneur lent en rendu logiciel ; sans la variable : inchangé.
+  page.setDefaultTimeout(Number(process.env.LQV_QA_TIMEOUT) || 20000);
+  // LQV_QA_NAV_TIMEOUT (ms) : délai des navigations seules (chargement à froid d’un conteneur lent : la compilation des
+  // programmes WebGL en SwiftShader retarde l’événement load de 11 à 17 s ; RC 0.8). Sans la variable : inchangé.
+  if (process.env.LQV_QA_NAV_TIMEOUT) page.setDefaultNavigationTimeout(Number(process.env.LQV_QA_NAV_TIMEOUT));
   const consoleIssues = [];
   watchConsole(page, consoleIssues);
   const res = { checks: [], fails: [], consoleIssues };

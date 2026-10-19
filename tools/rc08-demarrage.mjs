@@ -5,7 +5,8 @@
 //   - `duel` : du clic sur « Duel ! » (manche 1, nouveau profil) jusqu’à la première décision jouable.
 // Relevés : DOMContentLoaded, load, tâches longues (> 50 ms) jusqu’à l’accueil, octets transférés.
 // SwiftShader (processeur) : ordres de grandeur relatifs entre deux builds, jamais une mesure de GPU.
-// Usage : npm run build && [LQV_DIST=<dist>] [LQV_RONDES=5] node tools/rc08-demarrage.mjs [rapport.json]
+// Usage : npm run build && [LQV_DIST=<dist>] [LQV_RONDES=5] [LQV_DEMARRAGE_QUERY=compileAsync=1] node tools/rc08-demarrage.mjs [rapport.json]
+// Sur GPU réel : LQV_GPU=1 CHROMIUM_PATH=<Chrome>, comparer sans puis avec LQV_DEMARRAGE_QUERY=compileAsync=1.
 import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -35,7 +36,7 @@ try {
     watchConsole(p, issues);
     let bytes = 0;
     p.on('response', async (r) => { try { bytes += (await r.body()).length; } catch { /* */ } });
-    await p.goto(`${server.base}/?qa=1&aiDelay=0`, { waitUntil: 'commit' });
+    await p.goto(`${server.base}/?qa=1&aiDelay=0${process.env.LQV_DEMARRAGE_QUERY ? `&${process.env.LQV_DEMARRAGE_QUERY}` : ''}`, { waitUntil: 'commit' });
     await p.waitForSelector('[data-key="home-new"]', { state: 'visible' });
     const homeT = await p.evaluate(() => new Promise((res) => requestAnimationFrame(() => res(performance.now()))));
     await p.waitForFunction(() => (window.__lqvShell?.d.arena()?.stats().frame ?? 0) > 0);
