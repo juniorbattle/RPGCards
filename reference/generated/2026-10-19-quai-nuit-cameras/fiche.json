@@ -1,0 +1,46 @@
+{
+  "demande": "2026-10-19-quai-nuit-cameras",
+  "date": "2026-10-19T06:26:54.068Z",
+  "statut": "référence de travail, non approuvée",
+  "usage": "référence de conception, jamais dans le jeu",
+  "format": "1536x1024",
+  "quality": "medium",
+  "images": [
+    {
+      "file": "01.png",
+      "model": "gpt-image-2",
+      "prompt": "Concept art for an exploration game, TILTED TOP-DOWN perspective camera at about 45 degrees (like Octopath Traveler HD-2D): a small night harbour block called the Quay. Cobblestone quay edge along dark water with moored boats, two or three stone-and-timber houses with lit windows, a merchant stall with a canvas awning, clusters of hanging lanterns, a few family banners, crates and ropes at focal points. A small hooded card-duellist character walking in the centre of the street, readable silhouette. Shallow tilt-shift depth of field at top and bottom edges.\n\nStyle bible: HD-2D theatrical look, polished illustrated rendering, staged like a theatre play; night scene, near-monochrome indigo and slate dominant, cool grey stone as secondary, warm amber lantern light as the ONLY warm accent, desaturated ivory for canvas and highlights; props concentrated at focal points (lantern clusters, quay edge, stalls, a few banners), never uniform clutter; world of \"Les Quatre Voies\": a harbour city where people challenge each other at card duels; four families: Ember (embers, orange), Veil (blue and silver), Bramble (green, thorns), Star (gold, stars). No readable text, no logos, no watermark, no modern objects.",
+      "usage": {
+        "input_tokens": 278,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 278
+        },
+        "output_tokens": 1372,
+        "output_tokens_details": {
+          "image_tokens": 1372,
+          "text_tokens": 0
+        },
+        "total_tokens": 1650
+      }
+    },
+    {
+      "file": "02.png",
+      "model": "gpt-image-2",
+      "prompt": "Concept art for an exploration game, FRONTAL 2.5D camera, almost eye-level at about 15 degrees, side-scrolling depth layers (foreground silhouettes, play street, background facades, far skyline): the same small night harbour block called the Quay. Cobblestone street running left to right, a quay edge with dark water and boat masts in front, stone-and-timber facades with lit windows behind, a merchant stall with canvas awning, hanging lantern clusters, a few family banners. A small hooded card-duellist character walking along the street, readable silhouette. Gentle atmospheric haze between layers.\n\nStyle bible: HD-2D theatrical look, polished illustrated rendering, staged like a theatre play; night scene, near-monochrome indigo and slate dominant, cool grey stone as secondary, warm amber lantern light as the ONLY warm accent, desaturated ivory for canvas and highlights; props concentrated at focal points (lantern clusters, quay edge, stalls, a few banners), never uniform clutter; world of \"Les Quatre Voies\": a harbour city where people challenge each other at card duels; four families: Ember (embers, orange), Veil (blue and silver), Bramble (green, thorns), Star (gold, stars). No readable text, no logos, no watermark, no modern objects.",
+      "usage": {
+        "input_tokens": 280,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 280
+        },
+        "output_tokens": 1372,
+        "output_tokens_details": {
+          "image_tokens": 1372,
+          "text_tokens": 0
+        },
+        "total_tokens": 1652
+      }
+    }
+  ]
+}

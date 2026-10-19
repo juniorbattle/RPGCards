@@ -23,8 +23,10 @@ plus autonome possible ». En conséquence :
   fin, prends la liste « Si le temps le permet » plus bas.
 - Les seules limites dures sont celles des « Règles du run » (règles du duel, secrets, branche, dépôt de référence en
   lecture seule, aucune image externe au runtime). Le reste se décide.
-- Pas de génération d'images dans le cloud (la clé OpenAI n'existe qu'en local) : les références visuelles se font par
-  code et par captures.
+- Pas de génération d'images dans le cloud (la clé OpenAI n'existe qu'en local). **Tu peux en demander à la session
+  principale par git**, selon `demandes-images/README.md` : 4 images au plus par demande, 24 pour le run, sans jamais
+  attendre la livraison. Deux premières références t'y attendent déjà : le Quai la nuit, vu de dessus incliné et en
+  frontale 2.5D (`reference/generated/2026-10-19-quai-nuit-cameras/`).
 
 ## Lecture obligatoire (phase 0, ≈ 15 min)
 
