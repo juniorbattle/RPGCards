@@ -16,8 +16,8 @@ import type { Facing } from './monde';
 
 export const CELL_W = 96;
 export const CELL_H = 160;
-const COLS = 5;
-const ROWS = 3;
+export const COLS = 5;
+export const ROWS = 3;
 /** Hauteur du personnage dans le monde (m) ; la cellule couvre un peu plus (marge du contour). */
 export const WALKER_H = 1.62;
 const PLANE_H = WALKER_H * (CELL_H / 148);
@@ -63,12 +63,17 @@ export function walkerLook(id: string): WalkerLook {
       accessory: 'bandeau', long: true, detail: 'echarpe', iris: '#4a6fd6', hood: true,
     };
   }
-  // Rivaux signatures (couleurs de leurs identités V2, ADR 021) ; Kaï est le seul présent sur le Quai.
+  // Rivaux signatures présents dans la ville (couleurs de leurs identités V2, ADR 021) : Kaï sur le Quai, Orin au Parvis.
   const rivals: Record<string, WalkerLook> = {
     braise: {
       skin: tone('#e2a982', '#b9785a', '#8e5642', '#f2c4a2'), hair: tone('#2a1410', '#1a0c09', '#0c0605', '#c2411d'), cut: 'pics',
       cloth: tone('#7a2410', '#561808', '#3a0f05', '#d0541f'), shirt: tone('#2a2422', '#191514', '#0c0a09', '#4e4440'), legs: '#26201e',
       accessory: 'bandeau-braise', long: false, detail: 'aucun', iris: '#d98a1e',
+    },
+    astre: {
+      skin: tone('#9a6444', '#6e432c', '#4e2e1e', '#b8825e'), hair: tone('#1c1f33', '#12141f', '#08090f', '#6f80c4'), cut: 'pics',
+      cloth: tone('#3b3214', '#2a230c', '#1a1606', '#b8962f'), shirt: tone('#ffe08a', '#d8b860', '#a88a3a', '#fff2c4'), legs: '#1e2030',
+      accessory: 'aucun', long: true, detail: 'revers', iris: '#e0b23a',
     },
   };
   return rivals[id] ?? {
@@ -364,6 +369,8 @@ export interface WalkerSprite {
   group: THREE.Group;
   set(pos: { x: number; z: number }, facing: Facing, phase: number, moving: boolean, time: number): void;
   setTilt(rad: number): void;
+  /** Remplace l'atlas dessiné par code (feuille externe vérifiée, `spritesExternes.ts`). */
+  setAtlas(tex: THREE.Texture): void;
   dispose(): void;
 }
 
@@ -374,7 +381,7 @@ export function createWalkerSprite(id: string): WalkerSprite {
   geo.translate(0, PLANE_H / 2 - (8 / CELL_H) * PLANE_H, 0);
   const uniforms = {
     ...U,
-    tAtlas: { value: atlas },
+    tAtlas: { value: atlas as THREE.Texture },
     uCell: { value: new THREE.Vector2(1 / COLS, 1 / ROWS) },
     uOff: { value: new THREE.Vector2(0, ROWS - 1) },
     uFlip: { value: 0 },
@@ -414,6 +421,7 @@ export function createWalkerSprite(id: string): WalkerSprite {
       pivot.scale.y = moving ? 1 : 1 + Math.sin(time * 2.2) * 0.008;
     },
     setTilt(rad) { pivot.rotation.x = rad; },
+    setAtlas(tex) { uniforms.tAtlas.value = tex; },
     dispose() { geo.dispose(); mat.dispose(); shadow.geometry.dispose(); (shadow.material as THREE.Material).dispose(); },
   };
 }

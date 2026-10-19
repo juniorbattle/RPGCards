@@ -86,6 +86,8 @@ Clavier : `Tab`, `Entrée/Espace`, `1–4` (main), `A`/`G` (mode), `Échap` (ann
 | `gallery=1` | galerie de revue art (toutes les définitions + verso) |
 | `qa=1` | crochets `window.__lqv` (duel) et `window.__lqvShell` (jeu) pour la QA automatisée (jamais actifs par défaut) |
 | `setup=1` | ancien écran de configuration du duel (avant M04) |
+| `demo=1` | **M09 V2, démo jouable (provisoire)** : le jeu complet, mais le tableau des rencontres est remplacé par la ville (« le Quai, la nuit », caméra frontale 2.5D, ADR 024) : tutoriel de déplacement, guide, défis des PNJ et de Kaï, porte du Tournoi du Quai, le Fanal, l’arène ; « Retour au Quai » après chaque duel. Clavier ZQSD / WASD / flèches, Maj, E ; clic au sol. Le jeu par défaut est inchangé |
+| `ville=1` | M09 V1 : laboratoire de la ville seul (îlot du Quai, marcheur, PNJ), à part du jeu ; avec `qa=1`, mesures et `window.__lqvVille` |
 | `profileSeed=N` | avec `qa=1` : seed du profil créé (parcours de QA reproductibles) |
 | `ablate=candles,banners,dust,bloom,post` | mesure de coût (avec `qa=1` uniquement) : retire du rendu les bougies, les bannières, les poussières, le halo lumineux ou tout le post-traitement (rendu direct à la densité 1,5 d’avant le lot 3) |
 | `fallback=off\|nobloom\|direct` | avec `qa=1` uniquement : `off` désactive le repli automatique du post-traitement (mesure du rendu complet) ; `nobloom` / `direct` imposent ce niveau (même densité que le post-traitement). État du repli : `window.__lqv.arenaStats().post` (amendement ADR 019) |

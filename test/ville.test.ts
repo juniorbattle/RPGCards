@@ -192,3 +192,69 @@ describe('ville : démo du Quai (logique pure)', () => {
     expect(doorEncounter('ruelles', p)).toBeNull();
   });
 });
+
+describe('ville : îlots et liaisons', () => {
+  it('le Parvis de l’arène est cohérent ; Orin et la joueuse sont des rencontres du produit', async () => {
+    const { PARVIS, P_NPCS } = await import('../src/ville/parvis');
+    const { encounterById } = await import('../src/product/encounters');
+    expect(validateIlot(PARVIS)).toEqual([]);
+    for (const n of P_NPCS) expect(encounterById(n.encounter!)?.rival).toBe(n.id);
+  });
+
+  it('chaque sortie mène à un îlot existant, sur un point d’apparition praticable, et réciproquement', async () => {
+    const { ILOTS } = await import('../src/ville/ilots');
+    for (const def of Object.values(ILOTS)) {
+      for (const [zone, exit] of Object.entries(def.exits)) {
+        const z = def.ilot.zones.find((x) => x.id === zone);
+        expect(z?.kind, `${def.id}/${zone}`).toBe('sortie');
+        const to = ILOTS[exit.to];
+        const sp = to.ilot.spawns[exit.spawn];
+        expect(sp, `${exit.to}/${exit.spawn}`).toBeTruthy();
+        expect(blocked(to.ilot, sp!)).toBe(false);
+        // retour possible
+        expect(Object.values(to.exits).some((e) => e.to === def.id)).toBe(true);
+      }
+      for (const a of def.ambient) {
+        expect(a.x0).toBeLessThan(a.x1);
+        expect(blocked(def.ilot, { x: (a.x0 + a.x1) / 2, z: a.z }, 0.05)).toBe(false);
+      }
+    }
+  });
+});
+
+describe('ville : points d’apparition devant les personnages', () => {
+  it('chaque « npc-<id> » est praticable et DANS la zone de dialogue du personnage (E y fonctionne)', async () => {
+    const { ILOTS } = await import('../src/ville/ilots');
+    for (const def of Object.values(ILOTS)) {
+      for (const n of def.npcs) {
+        const sp = def.ilot.spawns[`npc-${n.id}`];
+        expect(sp, `${def.id}/${n.id}`).toBeTruthy();
+        expect(blocked(def.ilot, sp!), `${def.id}/${n.id} bloqué`).toBe(false);
+        expect(activeZone(def.ilot, sp!)?.id, `${def.id}/${n.id}`).toBe(`npc-${n.id}`);
+      }
+    }
+  });
+});
+
+describe('ville : feuilles de sprites externes (préparation Aseprite, inactive par défaut)', () => {
+  it('le contrôle de manifeste exige fichier, empreinte, grille de l’atlas, provenance et statut', async () => {
+    const { checkManifestEntry } = await import('../src/ville/spritesExternes');
+    const exp = { cell: [96, 160] as [number, number], cols: 5, rows: 3 };
+    const ok = { file: 'player-Cendre.png', sha256: 'a'.repeat(64), cell: [96, 160], cols: 5, rows: 3, source: 'Aseprite 1.3, joueur.aseprite', approved: false };
+    expect(checkManifestEntry('player-Cendre', ok, exp)).toEqual([]);
+    expect(checkManifestEntry('x', null, exp)).toHaveLength(1);
+    expect(checkManifestEntry('x', { ...ok, file: '../hors.png' }, exp).join()).toMatch(/fichier/);
+    expect(checkManifestEntry('x', { ...ok, sha256: 'xyz' }, exp).join()).toMatch(/SHA-256/);
+    expect(checkManifestEntry('x', { ...ok, cell: [64, 64] }, exp).join()).toMatch(/cellule/);
+    expect(checkManifestEntry('x', { ...ok, cols: 4 }, exp).join()).toMatch(/grille/);
+    expect(checkManifestEntry('x', { ...ok, source: '' }, exp).join()).toMatch(/provenance/);
+    expect(checkManifestEntry('x', { ...ok, approved: undefined }, exp).join()).toMatch(/approbation/);
+  });
+});
+
+describe('ville : premier plan de la frontale', () => {
+  it('aucun lampadaire du quai devant une porte (à moins de 1,5 m en x)', async () => {
+    const { LAMPS, FACADES } = await import('../src/ville/quai');
+    for (const f of FACADES) if (f.door !== null) for (const l of LAMPS) expect(Math.abs(l.x - f.door), `${f.id}`).toBeGreaterThan(1.5);
+  });
+});

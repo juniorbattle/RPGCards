@@ -1,7 +1,8 @@
 // M09 V2 (provisoire) — parcours de la démo jouable (`?demo=1`) par l’interface, captures à chaque étape (1280×720) :
 // accueil → nouvelle partie → arrivée au Quai (tutoriel) → marche (clavier) → guide (dialogue) → défi du docker →
 // préparation → duel (tour guidé) → abandon → résultat → « Retour au Quai » (réapparition devant le docker) →
-// porte de la salle de jeu (Tournoi, manche 1) → préparation → retour. Erreurs console relevées.
+// porte de la salle de jeu (Tournoi, manche 1) → préparation → retour → Fanal verrouillé → Parvis de l’arène (Orin
+// verrouillé, défi de la joueuse) → retour au Quai → menu → deck. Erreurs console relevées.
 // Usage : npm run build && [LQV_DIST=<dist>] node tools/m09-demo.mjs [dossier] [rapport.json]
 import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -103,6 +104,38 @@ try {
   check(!(await p.$('[data-key="dlg-duel"]')) && /Rencontrez d’abord/.test(await p.textContent('.ville-dialog')), 'le Fanal : Maëlle verrouillée, raison affichée');
   await shot('fanal-verrouille');
   await p.keyboard.press('Escape');
+  // Passage au Parvis de l’arène (sortie est du Quai), Orin verrouillé, défi de la joueuse, retour au Quai
+  await p.evaluate(() => { const t = window.__lqvDemo.townHandle; t.place({ x: 18.6, z: 0.4 }, 'droite'); });
+  await p.waitForTimeout(800);
+  check((await town()).zone === 'sortie-arene', 'au bout du Quai : sortie vers le Parvis');
+  await p.keyboard.press('KeyE');
+  await p.waitForFunction(() => window.__lqvDemo.townHandle.ilotId() === 'parvis', null, { timeout: 30000 });
+  await p.waitForTimeout(1500);
+  check(true, 'passage au Parvis de l’arène (fondu, îlot remplacé)');
+  await shot('parvis-arrivee');
+  await p.evaluate(() => { const t = window.__lqvDemo.townHandle; t.place(t.ilot.spawns['npc-astre'], 'dos'); });
+  await p.waitForTimeout(800);
+  await p.keyboard.press('KeyE');
+  await p.waitForSelector('.ville-dialog');
+  check(!(await p.$('[data-key="dlg-duel"]')) && /Remportez le Tournoi/.test(await p.textContent('.ville-dialog')), 'Orin : verrouillé tant que le Tournoi n’est pas remporté, raison affichée');
+  await shot('parvis-orin');
+  await p.keyboard.press('Escape');
+  await p.evaluate(() => { const t = window.__lqvDemo.townHandle; t.place(t.ilot.spawns['npc-pnj-joueuse-5'], 'gauche'); });
+  await p.waitForTimeout(800);
+  await p.keyboard.press('KeyE');
+  await p.waitForSelector('[data-key="dlg-duel"]');
+  await p.click('[data-key="dlg-duel"]');
+  await p.waitForSelector('[data-screen="prep"]');
+  check(await p.evaluate(() => window.__lqvShell.flow.encounterId === 'ville-pnj-joueuse-5'), 'Parvis : défi de la joueuse → préparation');
+  await p.click('[data-key="prep-back"]');
+  await p.waitForFunction(() => window.__lqvShell.flow.screen === 'board' && !document.querySelector('.ville-host').hidden);
+  check(await p.evaluate(() => window.__lqvDemo.townHandle.ilotId() === 'parvis'), 'retour de la préparation : on reste sur le Parvis');
+  await p.evaluate(() => { const t = window.__lqvDemo.townHandle; t.place({ x: -13.6, z: 0.4 }, 'gauche'); });
+  await p.waitForTimeout(800);
+  await p.keyboard.press('KeyE');
+  await p.waitForFunction(() => window.__lqvDemo.townHandle.ilotId() === 'quai', null, { timeout: 30000 });
+  const arr = await p.evaluate(() => { const t = window.__lqvDemo.townHandle; return { w: t.walker().pos, s: t.ilot.spawns['sortie-arene'] }; });
+  check(Math.hypot(arr.w.x - arr.s.x, arr.w.z - arr.s.z) < 0.05, 'retour au Quai, au bout est (point d’arrivée de la liaison)');
   // Menu (Échap)
   await p.keyboard.press('Escape');
   await p.waitForSelector('[data-key="menu-deck"]');
@@ -112,6 +145,32 @@ try {
   await p.click('[data-key="deck-back"]');
   await p.waitForFunction(() => window.__lqvShell.flow.screen === 'board' && !document.querySelector('.ville-host').hidden);
   check(true, 'menu → deck → retour au Quai');
+  // Menu → « Toutes les rencontres » (tableau classique) → « Retour au Quai »
+  await p.keyboard.press('Escape');
+  await p.waitForSelector('[data-key="menu-board"]');
+  await p.click('[data-key="menu-board"]');
+  await p.waitForSelector('[data-screen="board"]');
+  check(await p.evaluate(() => document.querySelector('.ville-host').hidden && !!document.querySelector('[data-key="board-ville"]')), 'menu → tableau classique des rencontres, bouton « Retour au Quai »');
+  await shot('tableau-classique');
+  await p.click('[data-key="board-ville"]');
+  await p.waitForFunction(() => !document.querySelector('.ville-host').hidden);
+  check(true, 'tableau → retour au Quai');
+  // Reprise : au Parvis, rechargement de la page → « Continuer » → même îlot, même endroit ; puis nouvelle partie →
+  // tutoriel neuf, arrivée au Quai.
+  await p.evaluate(() => { const t = window.__lqvDemo.townHandle; t.place({ x: 18.6, z: 0.4 }, 'droite'); });
+  await p.waitForTimeout(800);
+  await p.keyboard.press('KeyE');
+  await p.waitForFunction(() => window.__lqvDemo.townHandle.ilotId() === 'parvis', null, { timeout: 30000 });
+  await p.evaluate(() => { const t = window.__lqvDemo.townHandle; t.place({ x: 5.5, z: 1.2 }, 'droite'); });
+  await p.waitForTimeout(500);
+  await p.reload();
+  await p.waitForSelector('[data-key="home-continue"]', { state: 'visible' });
+  await p.click('[data-key="home-continue"]');
+  await p.waitForFunction(() => !!window.__lqvDemo?.townHandle && window.__lqvDemo.townHandle.stats().frames > 1, null, { timeout: 120000 });
+  const back2 = await p.evaluate(() => { const t = window.__lqvDemo.townHandle; return { ilot: t.ilotId(), pos: t.walker().pos, tip: document.querySelector('[data-key="ville-tip"]')?.hidden }; });
+  check(back2.ilot === 'parvis' && Math.hypot(back2.pos.x - 5.5, back2.pos.z - 1.2) < 0.3, `rechargement → Continuer : retour au Parvis, au même endroit (${back2.ilot}, ${back2.pos.x.toFixed(2)}, ${back2.pos.z.toFixed(2)})`);
+  check(back2.tip === true, 'tutoriel déjà fait : pas de bulle de tutoriel à la reprise');
+  await shot('reprise-parvis');
 } catch (e) {
   checks.push(`ÉCHEC exception : ${String(e.message).split('\n')[0]}`);
   console.log('exception', e.message);

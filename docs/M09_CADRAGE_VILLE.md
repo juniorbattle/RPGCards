@@ -35,7 +35,13 @@ Proposition de démo (un seul quartier, **le Port**) :
 - **Îlot 1 — le Quai** (prototype V1/V2) : quai pavé le long de l'eau, bateaux amarrés, étal à toile ivoire, grappes de
   lanternes, façade du Fanal et entrée de la salle de jeu de cartes. Point d'arrivée de la démo.
 - **Îlot 2 — la Place du Fanal** (plus tard) : terrasse, enseigne, PNJ attablés ; entrée du bar.
-- **Îlot 3 — le Parvis de l'arène** (plus tard) : grande porte, gradins devinés, foule en silhouettes ; entrée de l'arène.
+- **Îlot 3 — le Parvis de l'arène** (**construit**, V2) : place dallée devant la façade monumentale (grande porte
+  embrasée, arcades, bannières des familles, deux braseros), balustrade sur la ville basse ; Orin (duel libre, ouvert
+  après le Tournoi) et une joueuse (duel de la ville). Relié au Quai par la sortie est du Quai et la sortie ouest du
+  Parvis (fondu court).
+
+État au 2026-10-19 (fin du run cloud) : **deux îlots construits** (le Quai, le Parvis), registre `src/ville/ilots.ts`
+(plan pur, personnages, passants, bornes de caméra, constructeur, liaisons) ; un seul îlot en mémoire à la fois.
 
 Liaisons : une **sortie** est une zone de bord d'îlot (passage, escalier, pont) qui charge l'îlot voisin par un fondu
 au noir court (≈ 300 ms), le personnage réapparaît au point d'entrée correspondant. Pas de monde continu : un îlot à la
@@ -93,10 +99,13 @@ Fanal, l'arène) ouvrent les duels libres. Données de prototype, non canoniques
 3. **Premier défi** : un PNJ docker propose un duel d'apprentissage → préparation → **duel avec son tour guidé**
    (existant, ADR 018) → résultat → **retour au Quai**.
 4. **Le Tournoi** : porte de la salle de jeu de cartes → manche 1 contre Kaï → retour.
+4 bis. **Le Parvis de l'arène** (sortie est du Quai) : la joueuse en duel de la ville, Orin après le Tournoi.
 5. Accès aux écrans existants depuis la ville (menu : deck, collection, options, aide, sauvegarder et quitter).
 
-Ce qui existe déjà : 1, la préparation, le duel, le résultat, la sauvegarde et la reprise. À construire : 2, 3 (bulles,
-défi, retour), 4 (porte), le menu de ville, et la reprise « dans la ville ».
+Avant M09 existaient 1, la préparation, le duel, le résultat, la sauvegarde et la reprise. **Construits pendant le run
+(`?demo=1`)** : 2 (carton d'arrivée, tutoriel en bulles), 3 (guide, défis, retour devant le personnage), 4 et 4 bis
+(portes et liaison vers le Parvis), le menu de ville, la reprise dans la ville (îlot et position mémorisés), les repères
+« ! » et « ? » au-dessus des personnages, des passants.
 
 ## 8. Intégration au produit (faite derrière `?demo=1`, réversible)
 
@@ -117,7 +126,7 @@ défi, retour), 4 (porte), le menu de ville, et la reprise « dans la ville ».
 **Décision du responsable (2026-10-19, passe 39) : frontale 2.5D**, « Non, on ne veut pas d'inclinaison, mais
 frontale. » La vue de dessus inclinée, essayée une fois dans le laboratoire (captures `screenshots/qa/m09/v1/essai-*`),
 est retirée du code. Caméra suiveuse unique derrière l'interface `CameraRig` (`src/ville/cameras.ts`), réglages
-provisoires (13°, 14 m, focale 30°) : ADR 024 (approuvé pour le principe frontal).
+provisoires (8°, 19 m, focale 33°) : ADR 024 (approuvé pour le principe frontal).
 
 ## 10. Budget de performance (cibles, à confirmer sur GPU réel)
 

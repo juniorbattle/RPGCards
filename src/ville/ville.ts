@@ -13,10 +13,12 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { createRig, RIGS, type CameraId, type CameraRig } from './cameras';
+import { ILOTS, type IlotDef, type IlotId, type Passer } from './ilots';
 import { activeZone, nearestFree, newWalker, stepWalker, type Facing, type Ilot, type Vec2, type Walker, type Zone } from './monde';
-import { NPCS, QUAI } from './quai';
-import { buildQuai, type QuaiScene } from './scene';
-import { createWalkerSprite, type WalkerSprite } from './sprites';
+import type { IlotNpc } from './quai';
+import type { QuaiScene } from './scene';
+import { CELL_H, CELL_W, COLS, ROWS, createWalkerSprite, type WalkerSprite } from './sprites';
+import { loadExternalAtlas } from './spritesExternes';
 
 export interface TownOptions {
   host: HTMLElement;
@@ -24,7 +26,8 @@ export interface TownOptions {
   camera: CameraId;
   /** Identifiant du personnage joueur (`player-<Famille>`). */
   player: string;
-  /** Point d'apparition (clé de `QUAI.spawns`). */
+  /** Îlot de départ (défaut : le Quai) et point d'apparition (clé de ses `spawns`). */
+  ilot?: IlotId;
   spawn?: string;
   /** Captures : temps figé, aucune animation. */
   freeze?: boolean;
@@ -33,6 +36,8 @@ export interface TownOptions {
   onInteract?: (zone: Zone) => void;
   /** Touche Échap (menu). */
   onMenu?: () => void;
+  /** PRÉPARATION (QA, `?qa=1&sprites=externes`) : feuilles de sprites externes vérifiées si un manifeste existe. */
+  externalSprites?: boolean;
 }
 
 export interface TownStats {
@@ -49,7 +54,11 @@ export interface TownStats {
 }
 
 export interface Town {
+  /** Îlot courant (plan pur). */
   readonly ilot: Ilot;
+  ilotId(): IlotId;
+  /** Change d'îlot (un seul en mémoire) et place le joueur à un point d'apparition. */
+  goTo(id: IlotId, spawn: string): void;
   setCamera(id: CameraId): void;
   camera(): CameraId;
   /** Place le joueur (téléportation, caméra sans amorti). */
@@ -61,8 +70,12 @@ export interface Town {
   /** Bloque les entrées du joueur (dialogue ouvert). */
   setInputLocked(l: boolean): void;
   stats(): TownStats;
+  /** Feuilles externes chargées et refus motivés (préparation Aseprite). */
+  externalReport(): { loaded: string[]; issues: string[] };
   /** Rend une image tout de suite (captures en temps figé). */
   renderNow(): void;
+  /** Repères au-dessus des personnages de l'îlot (« ! » : un défi à relever ; « ? » : quelqu'un à écouter). */
+  setMarkers(m: Readonly<Record<string, '!' | '?' | null>>): void;
   /** Position écran (px CSS) d'un point du monde, pour les bulles DOM. */
   project(p: { x: number; y: number; z: number }): { x: number; y: number; visible: boolean };
   dispose(): void;
@@ -117,26 +130,53 @@ export function createTown(o: TownOptions): Town {
   renderer.domElement.className = 'ville-canvas';
   o.host.appendChild(renderer.domElement);
 
-  const world: QuaiScene = buildQuai(o.artSeed);
-  const scene = world.scene;
+  let def: IlotDef = ILOTS[o.ilot ?? 'quai'];
+  let world: QuaiScene = def.build(o.artSeed);
+  let scene = world.scene;
   const camera = new THREE.PerspectiveCamera(30, 16 / 9, 0.5, 400);
-  let rig: CameraRig = createRig(o.camera);
+  let rig: CameraRig = createRig(o.camera, def.camera);
 
   // --- personnages ---
   const playerSprite: WalkerSprite = createWalkerSprite(o.player);
   scene.add(playerSprite.group);
-  const npcSprites = NPCS.map((n) => {
+  type NpcSprite = { n: IlotNpc; s: WalkerSprite; marker: THREE.Mesh; kind: '!' | '?' | null };
+  const makeNpcs = (): NpcSprite[] => def.npcs.map((n) => {
     const s = createWalkerSprite(n.id);
     scene.add(s.group);
     s.set(n.at, n.facing, 0, false, 0);
-    return { n, s };
+    applyExternal(n.id, s);
+    const marker = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.42), new THREE.MeshBasicMaterial({ map: markerTexture('!'), transparent: true, depthWrite: false, color: new THREE.Color(1.5, 1.5, 1.5) }));
+    marker.position.set(n.at.x, 2.15, n.at.z + 0.02);
+    marker.visible = false;
+    marker.renderOrder = 3;
+    scene.add(marker);
+    return { n, s, marker, kind: null };
   });
-  const spawn = QUAI.spawns[o.spawn ?? 'arrivee'] ?? QUAI.spawns.arrivee!;
+  // Passants : va-et-vient sur une ligne z, déterministe (figé avec `freeze`) ; ils s'arrêtent si le joueur est juste
+  // devant eux (pas d'obstacle dynamique dans la logique pure : on ne traverse pas, on attend).
+  type PasserSprite = { a: Passer; s: WalkerSprite; x: number; dir: 1 | -1; phase: number; blocked: boolean };
+  const makePassers = (): PasserSprite[] => def.ambient.map((a) => {
+    const s = createWalkerSprite(a.id);
+    scene.add(s.group);
+    applyExternal(a.id, s);
+    return { a, s, x: a.x0 + (a.phase ?? 0) * (a.x1 - a.x0), dir: 1, phase: 0, blocked: false };
+  });
+  // Feuilles externes (préparation, inactive par défaut) : appliquées dès qu'elles sont vérifiées, sinon atlas par code.
+  const ext = { loaded: [] as string[], issues: [] as string[] };
+  const applyExternal = (id: string, s: WalkerSprite) => {
+    if (!o.externalSprites) return;
+    void loadExternalAtlas(id, { cell: [CELL_W, CELL_H], cols: COLS, rows: ROWS }, ext.issues).then((a) => { if (a) { s.setAtlas(a.texture); if (!ext.loaded.includes(id)) ext.loaded.push(id); } });
+  };
+  applyExternal(o.player, playerSprite);
+  let npcSprites = makeNpcs();
+  let passers = makePassers();
+  const spawn = def.ilot.spawns[o.spawn ?? 'arrivee'] ?? def.ilot.spawns.arrivee!;
   let walker = newWalker(spawn, spawn.face ?? 'face');
 
   // --- post-traitement ---
   const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType }));
-  composer.addPass(new RenderPass(scene, camera));
+  const renderPass = new RenderPass(scene, camera);
+  composer.addPass(renderPass);
   const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.42, 0.55, 0.92);
   const bloomSize = bloom.setSize.bind(bloom);
   bloom.setSize = (w: number, h: number) => bloomSize(Math.max(1, Math.round(w / 2)), Math.max(1, Math.round(h / 2)));
@@ -155,7 +195,7 @@ export function createTown(o: TownOptions): Town {
 
   const applyRig = () => {
     const tl = TILT[rig.params.id];
-    finish.uniforms.uTilt!.value = o.reducedMotion && false ? 0 : tl.amount;
+    finish.uniforms.uTilt!.value = tl.amount;
     finish.uniforms.uFocusW!.value = tl.width;
     playerSprite.setTilt(rig.params.spriteTilt);
     for (const { s } of npcSprites) s.setTilt(rig.params.spriteTilt);
@@ -194,7 +234,7 @@ export function createTown(o: TownOptions): Town {
     }
     if (!down || locked) return;
     if (e.code === 'KeyE' || e.code === 'Enter' || e.code === 'Space') {
-      const z = activeZone(QUAI, walker.pos);
+      const z = activeZone(def.ilot, walker.pos);
       if (z) { e.preventDefault(); o.onInteract?.(z); }
     } else if (e.code === 'Escape') o.onMenu?.();
   };
@@ -215,9 +255,9 @@ export function createTown(o: TownOptions): Town {
     if (t < 0) return;
     const hit = a.clone().lerp(b, t);
     // Clic sur (ou tout près d') un PNJ : aller devant lui, puis l'interaction se propose.
-    const npc = NPCS.find((n) => Math.hypot(n.at.x - hit.x, n.at.z - hit.z) < 0.9);
+    const npc = def.npcs.find((n) => Math.hypot(n.at.x - hit.x, n.at.z - hit.z) < 0.9);
     const want = npc ? { x: npc.at.x + (walker.pos.x < npc.at.x ? -0.9 : 0.9), z: npc.at.z + 0.2 } : { x: hit.x, z: hit.z };
-    target = nearestFree(QUAI, want);
+    target = nearestFree(def.ilot, want);
   };
   renderer.domElement.addEventListener('pointerdown', onClick);
 
@@ -246,6 +286,8 @@ export function createTown(o: TownOptions): Town {
       const face: Facing = d < 2.5 ? (Math.abs(walker.pos.x - n.at.x) > Math.abs(walker.pos.z - n.at.z) ? (walker.pos.x > n.at.x ? 'droite' : 'gauche') : walker.pos.z > n.at.z ? 'face' : 'dos') : n.facing;
       s.set(n.at, face, 0, false, time + n.at.x);
     }
+    for (const { n, marker } of npcSprites) if (marker.visible) marker.position.y = 2.15 + (o.freeze ? 0 : Math.sin(time * 2.4 + n.at.x) * 0.05);
+    for (const p of passers) p.s.set({ x: p.x, z: p.a.z }, p.dir > 0 ? 'droite' : 'gauche', p.phase, !o.freeze && !p.blocked, time);
     focus.set(walker.pos.x, 0.9, walker.pos.z).project(camera);
     finish.uniforms.uFocusY!.value = THREE.MathUtils.clamp(focus.y * 0.5 + 0.5, 0.2, 0.8);
     const c0 = performance.now();
@@ -265,8 +307,17 @@ export function createTown(o: TownOptions): Town {
       let n = 0;
       while (acc >= STEP && n++ < 6) {
         const dir = locked ? { x: 0, z: 0 } : inputDir();
-        walker = stepWalker(QUAI, walker, { dir, slow: keys.has('ShiftLeft') || keys.has('ShiftRight'), target: locked ? null : target }, STEP);
+        walker = stepWalker(def.ilot, walker, { dir, slow: keys.has('ShiftLeft') || keys.has('ShiftRight'), target: locked ? null : target }, STEP);
         if (target && !walker.moving && Math.hypot(target.x - walker.pos.x, target.z - walker.pos.z) < 0.15) target = null;
+        for (const p of passers) {
+          const ahead = (walker.pos.x - p.x) * p.dir;
+          p.blocked = ahead > 0 && ahead < 1.1 && Math.abs(walker.pos.z - p.a.z) < 0.8;
+          if (p.blocked) continue;
+          p.x += p.dir * p.a.speed * STEP;
+          p.phase = (p.phase + (p.a.speed * STEP) / 1.5) % 1;
+          if (p.x > p.a.x1) { p.x = p.a.x1; p.dir = -1; }
+          if (p.x < p.a.x0) { p.x = p.a.x0; p.dir = 1; }
+        }
         acc -= STEP;
       }
       acc = Math.min(acc, STEP);
@@ -278,10 +329,35 @@ export function createTown(o: TownOptions): Town {
   raf = requestAnimationFrame(tick);
   const buildMs = Math.round(performance.now() - t0);
 
+  /** Démonte l'îlot courant (personnages, passants, scène) et monte le suivant ; le renderer et le post-traitement restent. */
+  const mount = (id: IlotId, spawnKey: string) => {
+    scene.remove(playerSprite.group);
+    for (const e of npcSprites) { e.s.dispose(); e.marker.geometry.dispose(); (e.marker.material as THREE.Material).dispose(); }
+    for (const p of passers) p.s.dispose();
+    world.dispose();
+    def = ILOTS[id];
+    world = def.build(o.artSeed);
+    scene = world.scene;
+    renderPass.scene = scene;
+    scene.add(playerSprite.group);
+    npcSprites = makeNpcs();
+    passers = makePassers();
+    const sp = def.ilot.spawns[spawnKey] ?? def.ilot.spawns.arrivee!;
+    walker = newWalker(sp, sp.face ?? walker.facing);
+    target = null;
+    keys.clear();
+    rig = createRig(rig.params.id, def.camera);
+    applyRig();
+    resize();
+    rig.update(camera, walker.pos, 0, true);
+  };
+
   return {
-    ilot: QUAI,
+    get ilot() { return def.ilot; },
+    ilotId: () => def.id,
+    goTo: mount,
     setCamera(id) {
-      rig = createRig(id);
+      rig = createRig(id, def.camera);
       applyRig();
       resize();
       rig.update(camera, walker.pos, 0, true);
@@ -293,7 +369,7 @@ export function createTown(o: TownOptions): Town {
       rig.update(camera, walker.pos, 0, true);
     },
     walker: () => walker,
-    zone: () => activeZone(QUAI, walker.pos),
+    zone: () => activeZone(def.ilot, walker.pos),
     setPaused(p) { paused = p; renderer.domElement.style.visibility = p ? 'hidden' : 'visible'; keys.clear(); },
     setInputLocked(l) { locked = l; if (l) { keys.clear(); target = null; } },
     stats() {
@@ -304,7 +380,18 @@ export function createTown(o: TownOptions): Town {
         cpuMs: Math.round(cpuMs * 10) / 10, frames, buildMs,
       };
     },
+    externalReport: () => ({ loaded: [...ext.loaded], issues: [...ext.issues] }),
     renderNow() { rig.update(camera, walker.pos, 0, true); render(); },
+    setMarkers(m) {
+      for (const e of npcSprites) {
+        const k = m[e.n.id] ?? null;
+        if (k !== e.kind) {
+          e.kind = k;
+          e.marker.visible = !!k;
+          if (k) (e.marker.material as THREE.MeshBasicMaterial).map = markerTexture(k);
+        }
+      }
+    },
     project(p) {
       const v = new THREE.Vector3(p.x, p.y, p.z).project(camera);
       const r = renderer.domElement.getBoundingClientRect();
@@ -317,13 +404,48 @@ export function createTown(o: TownOptions): Town {
       window.removeEventListener('keyup', onKey);
       window.removeEventListener('blur', blurAll);
       playerSprite.dispose();
-      for (const { s } of npcSprites) s.dispose();
+      for (const { s, marker } of npcSprites) { s.dispose(); marker.geometry.dispose(); (marker.material as THREE.Material).dispose(); }
+      for (const p of passers) p.s.dispose();
+      for (const t of MARKERS.values()) t.dispose();
+      MARKERS.clear();
       world.dispose();
       composer.dispose();
       renderer.dispose();
       renderer.domElement.remove();
     },
   };
+}
+
+const MARKERS = new Map<string, THREE.CanvasTexture>();
+/** Repère peint : losange ambré (accent chaud des lanternes), signe sombre au centre. */
+function markerTexture(kind: '!' | '?'): THREE.CanvasTexture {
+  const hit = MARKERS.get(kind);
+  if (hit) return hit;
+  const c = document.createElement('canvas');
+  c.width = 64;
+  c.height = 80;
+  const g = c.getContext('2d')!;
+  g.translate(32, 36);
+  g.beginPath();
+  g.moveTo(0, -30); g.lineTo(26, 0); g.lineTo(0, 30); g.lineTo(-26, 0); g.closePath();
+  g.fillStyle = '#e8b45a';
+  g.fill();
+  g.lineWidth = 4;
+  g.strokeStyle = '#2a1a0c';
+  g.stroke();
+  g.fillStyle = '#2a1a0c';
+  g.font = 'bold 34px Georgia, serif';
+  g.textAlign = 'center';
+  g.textBaseline = 'middle';
+  g.fillText(kind, 0, 2);
+  g.beginPath();
+  g.moveTo(-6, 34); g.lineTo(6, 34); g.lineTo(0, 42); g.closePath();
+  g.fillStyle = '#e8b45a';
+  g.fill();
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  MARKERS.set(kind, t);
+  return t;
 }
 
 export { RIGS };

@@ -36,7 +36,7 @@ export interface RigParams {
 
 export const RIGS: Record<CameraId, RigParams> = {
   frontale: {
-    id: 'frontale', label: 'Frontale 2.5D (13°)', pitch: 13, distance: 14, fov: 30, aimY: 1.9, followZ: 0.15, aimZ: 0,
+    id: 'frontale', label: 'Frontale 2.5D (8°)', pitch: 8, distance: 19, fov: 33, aimY: 3.6, followZ: 0.15, aimZ: 0,
     minX: -12.5, maxX: 12.5, tau: 0.32, spriteTilt: 0,
   },
 };
@@ -60,8 +60,9 @@ export interface CameraRig {
   resize(camera: THREE.PerspectiveCamera, aspect: number): void;
 }
 
-export function createRig(id: CameraId): CameraRig {
-  const params = RIGS[id];
+/** Caméra suiveuse ; `bounds` remplace les bornes du point visé (propres à chaque îlot). */
+export function createRig(id: CameraId, bounds?: { minX: number; maxX: number }): CameraRig {
+  const params: RigParams = { ...RIGS[id], ...(bounds ?? {}) };
   const aim = new THREE.Vector3();
   const pos = new THREE.Vector3();
   let primed = false;

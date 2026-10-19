@@ -20,11 +20,16 @@ retirée du code, comme demandé.
 
 ## Décision
 
-- **Caméra suiveuse frontale unique** (`src/ville/cameras.ts`, `RIGS.frontale`) : depuis l'eau vers les façades,
-  inclinaison **13°** sous l'horizontale, distance **14 m** au point visé, focale verticale **30°**, point visé à
-  **1,9 m** du sol (le bord du quai et l'eau restent en premier plan), suivi du personnage en x (amorti, constante 0,32 s), presque fixe en profondeur (15 % du
-  déplacement en z), bornée aux limites de l'îlot (x ∈ [−12,5, 12,5]). Les personnages restent verticaux (aucune
-  inclinaison des panneaux).
+- **Caméra suiveuse frontale unique** (`src/ville/cameras.ts`, `RIGS.frontale`) : depuis l'eau (ou le contrebas de la
+  balustrade) vers les façades, inclinaison **8°** sous l'horizontale, distance **19 m** au point visé, focale verticale
+  **33°**, point visé à **3,6 m** du sol, suivi du personnage en x (amorti, constante 0,32 s), presque fixe en profondeur
+  (15 % du déplacement en z), bornée aux limites de chaque îlot (Quai : x ∈ [−11, 11] ; Parvis : [−8, 8]). Les
+  personnages restent verticaux (aucune inclinaison des panneaux) et mesurent ≈ 85 px de haut en 1280×720.
+- **Historique des réglages pendant le run** (captures `screenshots/qa/m09/`) : 14° à 16 m puis 13° à 14 m (personnages
+  plus grands, façades coupées au premier étage, pas d'eau visible) ; retenu **8° à 19 m**, plus proche de la référence
+  frontale de travail (`reference/generated/2026-10-19-quai-nuit-cameras/02.png`) : bannières et deux niveaux de
+  façades dans le cadre, bord du quai en premier plan, éclairage plus local (lanternes 3,0, rayon 9,5 m ; façades plus
+  sombres).
 - **Interface `CameraRig`** (`params`, `update(caméra, cible, dt, immédiat)`, `resize`) : la scène, le personnage, les
   bulles et la démo ne dépendent que d'elle ; une variante de cadrage (autre angle, cadrage par zone d'îlot) se branche
   sans réécriture. Fonction de cadrage `framingFor` pure (testée).

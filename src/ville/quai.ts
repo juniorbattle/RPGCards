@@ -34,8 +34,9 @@ export const FACADES: readonly Facade[] = [
   { id: 'armateur', x0: 11.7, x1: 19.5, h: 10.2, kind: 'maison', door: 15.6, seed: 53 },
 ];
 
-/** Lampadaires du bord du quai, tous les 9 m (rythme de Cité du Tournoi). */
-export const LAMPS: readonly Vec2[] = [-16, -7, 2, 11].map((x) => ({ x, z: 2.95 }));
+/** Lampadaires du bord du quai, tous les 9 m (rythme de Cité du Tournoi), décalés des portes : en frontale, un
+ *  lampadaire devant une porte masquait le joueur qui s'y présentait. */
+export const LAMPS: readonly Vec2[] = [-13, -4, 5, 14].map((x) => ({ x, z: 2.95 }));
 /** Bornes d'amarrage. */
 export const BOLLARDS: readonly Vec2[] = [-12, -2.6, 6.4, 15.5].map((x) => ({ x, z: 3.05 }));
 

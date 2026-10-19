@@ -80,6 +80,8 @@ export class Shell {
   private lastPersistError = 0;
   /** Écran du dernier rendu (le focus et le défilement ne sont conservés que sur le même écran). */
   private renderedScreen = '';
+  /** M09 V2 (`?demo=1`) : vrai quand le tableau classique est demandé depuis le menu de la ville (sinon la ville). */
+  hubBoard = false;
   /** Adversaire dont l’affiche a été survolée ou focalisée en dernier (préparé en priorité, M08 C3). */
   private preferred: string | null = null;
 
@@ -457,7 +459,8 @@ export class Shell {
       if (arena) this.prepareUpcoming();
     }
     // M09 V2 (`?demo=1`) : au tableau des rencontres, la ville prend l'écran (HUD dans l'enveloppe, transparente aux clics).
-    if (this.d.hub && s.screen === 'board') {
+    if (this.d.hub && (s.screen === 'duel' || s.screen === 'home')) this.hubBoard = false;
+    if (this.d.hub && s.screen === 'board' && !this.hubBoard) {
       host.className = 'shell scr-ville';
       host.hidden = false;
       host.replaceChildren(this.d.hub.show(this));
