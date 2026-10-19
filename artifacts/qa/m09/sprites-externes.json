@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-19T09:08:41.730Z",
+  "dist": "dist",
+  "checks": [
+    "OK feuille du joueur chargée (empreinte conforme)",
+    "OK feuille de Kaï refusée pour son empreinte (braise : empreinte 8de9c24aed5e… ≠ manifeste 000000000000…)",
+    "OK sans « sprites=externes » : aucune feuille lue (marcheurs par code)"
+  ],
+  "external": {
+    "loaded": [
+      "player-Cendre"
+    ],
+    "issues": [
+      "braise : empreinte 8de9c24aed5e… ≠ manifeste 000000000000…"
+    ]
+  }
+}

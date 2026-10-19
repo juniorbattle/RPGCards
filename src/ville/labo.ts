@@ -8,6 +8,7 @@ import { CAMERA_IDS, RIGS, type CameraId } from './cameras';
 import type { Zone } from './monde';
 import { installVilleStyles, promptBubble, toast } from './ui';
 import { createTown, type Town } from './ville';
+import { isIlotId, type IlotId } from './ilots';
 import { walkerAtlasCanvas } from './sprites';
 
 export interface LabParams { artSeed: number; qa: boolean; freeze: boolean; reducedMotion: boolean; sig: Family | null }
@@ -21,7 +22,8 @@ export function startLab(p: LabParams, q: URLSearchParams): Town {
   const cam: CameraId = 'frontale';
   const town = createTown({
     host, artSeed: p.artSeed, camera: cam, player: `player-${p.sig ?? 'Cendre'}`, spawn: q.get('spawn') ?? undefined,
-    freeze: p.freeze, reducedMotion: p.reducedMotion,
+    ilot: isIlotId(q.get('ilot')) ? (q.get('ilot') as IlotId) : 'quai',
+    freeze: p.freeze, reducedMotion: p.reducedMotion, externalSprites: p.qa && q.get('sprites') === 'externes',
     onInteract: (z: Zone) => toast(`Laboratoire : « ${z.label} » sera branché dans la démo (M09 V2).`),
   });
   const panel = document.createElement('div');

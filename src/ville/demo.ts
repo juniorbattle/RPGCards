@@ -13,18 +13,22 @@ import { encounterById, ENCOUNTERS, personalityOf, SERIES } from '../product/enc
 import { encounterStatus } from '../product/progression';
 import { NPC_TEMPLATES } from '../presentation/npcs';
 import type { Shell } from '../shell/shell';
-import type { Zone } from './monde';
-import { NPCS, QUAI } from './quai';
+import { blocked, type Zone } from './monde';
+import { ILOTS, isIlotId, type IlotId } from './ilots';
 import { demoObjective, doorEncounter } from './objectifs';
 import { installVilleStyles, promptBubble } from './ui';
 import { createTown, type Town } from './ville';
 
 const STORE = 'lqv.demo';
-interface DemoState { tuto: 'move' | 'talk' | 'done'; guide: boolean }
+/** État propre à la démo, lié au profil (date de création de la sauvegarde) : une nouvelle partie repart du début. */
+interface DemoState { tuto: 'move' | 'talk' | 'done'; guide: boolean; pos?: { x: number; z: number }; ilot?: IlotId; profile?: string }
 function loadState(): DemoState {
   try {
     const s = JSON.parse(localStorage.getItem(STORE) ?? 'null') as DemoState | null;
-    if (s && (s.tuto === 'move' || s.tuto === 'talk' || s.tuto === 'done')) return { tuto: s.tuto, guide: !!s.guide };
+    if (s && (s.tuto === 'move' || s.tuto === 'talk' || s.tuto === 'done')) {
+      const pos = s.pos && Number.isFinite(s.pos.x) && Number.isFinite(s.pos.z) ? { x: s.pos.x, z: s.pos.z } : undefined;
+      return { tuto: s.tuto, guide: !!s.guide, pos, ilot: isIlotId(s.ilot) ? s.ilot : undefined, profile: typeof s.profile === 'string' ? s.profile : undefined };
+    }
   } catch { /* stockage indisponible : la démo repart du début */ }
   return { tuto: 'move', guide: false };
 }
@@ -43,13 +47,20 @@ export class DemoHub {
   private raf = 0;
   private sh: Shell | null = null;
   private state = loadState();
-  private returnTo: string | null = null;
+  private returnTo: { ilot: IlotId; spawn: string } | null = null;
   private startX = 0;
 
   /** L'enveloppe est au hub : la ville apparaît (créée au premier passage), le HUD prend place dans l'enveloppe. */
   show(sh: Shell): HTMLElement {
     this.sh = sh;
     installVilleStyles();
+    const profile = sh.save?.createdAt;
+    if (this.state.profile !== profile) {
+      this.state = { tuto: 'move', guide: false, profile };
+      saveState(this.state);
+      // Nouveau profil (autre Signature, donc autre manteau) : la ville est reconstruite.
+      if (this.town) { cancelAnimationFrame(this.raf); this.town.dispose(); this.host?.remove(); this.bubble?.el.remove(); this.town = null; }
+    }
     if (!this.town) {
       this.host = document.createElement('div');
       this.host.className = 'ville-host demo';
@@ -58,10 +69,17 @@ export class DemoHub {
       this.town = createTown({
         host: this.host, artSeed: sh.params.artSeed, camera: 'frontale', player: `player-${sig}`, spawn: 'arrivee',
         freeze: sh.params.freeze, reducedMotion: sh.params.reducedMotion,
+        externalSprites: sh.params.qa && new URLSearchParams(location.search).get('sprites') === 'externes',
         onInteract: (z) => this.interact(z),
         onMenu: () => this.menu(),
       });
+      // Position mémorisée (« Continuer » ramène là où l'on était, îlot compris), si elle reste praticable.
+      const at = this.state.pos;
+      if (at && isIlotId(this.state.ilot) && this.state.ilot !== 'quai') this.town.goTo(this.state.ilot, 'arrivee');
+      if (at && !blocked(this.town.ilot, at)) this.town.place(at);
       this.startX = this.town.walker().pos.x;
+      window.addEventListener('pagehide', () => { if (this.town && !this.host?.hidden) this.remember(); });
+
       this.bubble = promptBubble(this.town, () => { const z = this.town?.zone(); if (z) this.interact(z); }, (z) => (z.kind === 'parler' && z.target ? `Parler à ${personalityOf(z.target).name}` : z.label));
       if (sh.params.qa) (window as unknown as Record<string, unknown>).__lqvDemo = this;
       this.titleCard(sh.params.reducedMotion || sh.params.freeze);
@@ -69,7 +87,8 @@ export class DemoHub {
       this.town.setPaused(false);
       this.host!.hidden = false;
       if (this.returnTo) {
-        const sp = QUAI.spawns[this.returnTo];
+        if (this.town.ilotId() !== this.returnTo.ilot) this.town.goTo(this.returnTo.ilot, this.returnTo.spawn);
+        const sp = this.town.ilot.spawns[this.returnTo.spawn];
         if (sp) this.town.place(sp, sp.face);
       }
     }
@@ -86,9 +105,18 @@ export class DemoHub {
     return this.hud;
   }
 
+  /** Mémorise l'îlot et la position du joueur (reprise de la démo). */
+  private remember(): void {
+    if (!this.town) return;
+    this.state.pos = { ...this.town.walker().pos };
+    this.state.ilot = this.town.ilotId();
+    saveState(this.state);
+  }
+
   /** L'enveloppe quitte le hub (préparation, duel, deck…) : la ville se fige et disparaît, sans être détruite. */
   hide(): void {
-    if (!this.town) return;
+    if (!this.town || this.host?.hidden) return;
+    this.remember();
     cancelAnimationFrame(this.raf);
     this.town.setPaused(true);
     this.host!.hidden = true;
@@ -103,7 +131,11 @@ export class DemoHub {
     const card = document.createElement('div');
     card.className = 'ville-card';
     card.setAttribute('aria-hidden', 'true');
-    card.innerHTML = '<b>Le Quai</b><span>soir de tournoi</span>';
+    const b = document.createElement('b');
+    b.textContent = placeName(this.town!.ilot.name);
+    const sub = document.createElement('span');
+    sub.textContent = 'soir de tournoi';
+    card.append(b, sub);
     document.body.append(card);
     if (still) { setTimeout(() => card.remove(), 1200); return; }
     requestAnimationFrame(() => card.classList.add('out'));
@@ -123,7 +155,12 @@ export class DemoHub {
     el.className = 'ville-hud';
     const place = document.createElement('div');
     place.className = 'ville-place';
-    place.innerHTML = '<b>Le Quai</b><small>la nuit · démo jouable (prototype M09)</small>';
+    const pb = document.createElement('b');
+    pb.dataset.key = 'ville-place';
+    pb.textContent = placeName(this.town!.ilot.name);
+    const ps = document.createElement('small');
+    ps.textContent = 'la nuit · démo jouable (prototype M09)';
+    place.append(pb, ps);
     const obj = document.createElement('div');
     obj.className = 'ville-objective';
     obj.dataset.key = 'ville-objective';
@@ -160,9 +197,24 @@ export class DemoHub {
       : st.tuto === 'talk' ? 'Approchez quelqu’un : une bulle apparaît. Appuyez sur E (ou cliquez la bulle) pour lui parler.' : '';
     if (tip.textContent !== text) tip.textContent = text;
     tip.hidden = !text;
+    const pn = this.hud?.querySelector<HTMLElement>('[data-key="ville-place"]');
+    const name = placeName(this.town.ilot.name);
+    if (pn && pn.textContent !== name) pn.textContent = name;
     const obj = this.hud?.querySelector<HTMLElement>('.ville-objective');
     const o = this.objective();
     if (obj && obj.textContent !== o) obj.textContent = o;
+    // Repères : « ? » sur la guide tant qu'elle n'a pas été écoutée, « ! » sur les défis jamais gagnés (et ouverts).
+    const save = this.sh?.save;
+    const marks: Record<string, '!' | '?' | null> = {};
+    for (const n of ILOTS[this.town.ilotId()].npcs) {
+      if (n.role === 'guide') marks[n.id] = this.state.guide ? null : '?';
+      else if (n.encounter && save) {
+        const enc = encounterById(n.encounter);
+        const won = save.history.some((h) => h.encounterId === n.encounter && h.outcome === 'victory');
+        marks[n.id] = enc && !won && encounterStatus(enc, save.progress).open ? '!' : null;
+      }
+    }
+    this.town.setMarkers(marks);
   }
 
   // --- interactions ---
@@ -179,12 +231,16 @@ export class DemoHub {
       return this.offer(enc, 'Salle de jeu de cartes', 'Le Tournoi est à vous. Sélène, liseuse du Voile, accepte un duel libre.', 'porte-salle');
     }
     if (enc && z.target === 'fanal') return this.offer(enc, 'Le Fanal', 'La taverne du port est pleine. Maëlle joue à la table du fond.', 'porte-fanal');
-    if (enc && z.target === 'arene') return this.offer(enc, 'Vers le Parvis de l’arène', 'La grande scène de l’arène s’illumine pour les duels d’Orin.', 'sortie-arene');
+    if (z.kind === 'sortie') {
+      const exit = ILOTS[this.town!.ilotId()].exits[z.id];
+      if (exit) return this.travel(exit.to, exit.spawn);
+    }
+    if (enc && z.target === 'arene') return this.offer(enc, 'L’arène', 'La grande scène s’illumine : Orin, l’arpenteur des Astres, y attend les duellistes qui ont remporté le Tournoi.', 'porte-arene');
     this.say(z.label, 'Ce passage mène aux Ruelles. Il ouvrira plus tard (prototype).', [{ label: 'Fermer', key: 'dlg-close', primary: true, run: () => this.closeDialog() }]);
   }
 
   private talk(id: string): void {
-    const n = NPCS.find((x) => x.id === id)!;
+    const n = ALL_NPCS.find((x) => x.id === id)!;
     const p = personalityOf(id);
     const who = p.npc ? `${p.name}, ${NPC_TEMPLATES[p.npc].label.toLowerCase()}` : `${p.name}, ${p.title}`;
     if (n.role === 'guide') {
@@ -209,6 +265,8 @@ export class DemoHub {
       'pnj-docker-1': ['Hé, toi ! Une partie avant la marée ? Je te préviens, j’attaque fort.', 'Joli coup, l’ami. Une revanche quand tu veux.'],
       'pnj-commis-5': ['Pardon… vous jouez ? Mon deck est tout neuf, je ne l’ai encore jamais essayé.', 'Vous m’avez beaucoup appris. On remet ça ?'],
       braise: ['Alors c’est toi, le nouveau ? Le Quai, c’est mon terrain. Montre-moi ce que tu vaux.', 'Pas mal… Mais la prochaine fois, je ne te laisserai rien.'],
+      'pnj-joueuse-5': ['Tu viens voir l’arène ? En attendant les grands duels, une partie pour se chauffer ?', 'Bien joué. Tu iras loin, peut-être jusqu’à Orin.'],
+      astre: ['Les étoiles tournent, les duellistes passent. Seuls ceux qui ont remporté le Tournoi du Quai montent sur ma scène.', 'Belle trajectoire. Revenez quand vous voudrez la refaire.'],
     };
     const [hello, after] = lines[id] ?? ['Une partie ?', 'Encore une ?'];
     this.offerEncounter(enc, who, won ? after : hello, `npc-${id}`, id, won ? 'Revanche' : 'Défier');
@@ -230,9 +288,28 @@ export class DemoHub {
     }
     const rival = personalityOf(enc.rival);
     this.say(title, text, [
-      { label: `${verb} — ${rival.name}`, key: 'dlg-duel', primary: true, run: () => { this.closeDialog(); this.returnTo = back; sh.go({ type: 'prep', encounterId: enc.id }); } },
+      { label: `${verb} — ${rival.name}`, key: 'dlg-duel', primary: true, run: () => { this.closeDialog(); this.returnTo = { ilot: this.town!.ilotId(), spawn: back }; sh.go({ type: 'prep', encounterId: enc.id }); } },
       { label: 'Plus tard', key: 'dlg-close', run: () => this.closeDialog() },
     ], speaker ?? enc.rival);
+  }
+
+  /** Passage vers l'îlot voisin : fondu au noir court, changement d'îlot, fondu retour (mouvement réduit : direct). */
+  private travel(to: IlotId, spawn: string): void {
+    const town = this.town!;
+    town.setInputLocked(true);
+    const veil = document.createElement('div');
+    veil.className = 'ville-fade';
+    document.body.append(veil);
+    const still = this.sh!.params.reducedMotion || this.sh!.params.freeze;
+    const swap = () => {
+      town.goTo(to, spawn);
+      this.remember();
+      town.setInputLocked(false);
+      if (still) { veil.remove(); return; }
+      veil.classList.add('out');
+      setTimeout(() => veil.remove(), 420);
+    };
+    if (still) swap(); else { requestAnimationFrame(() => veil.classList.add('in')); setTimeout(swap, 300); }
   }
 
   /** Boîte de dialogue (bas de l'écran) : portrait V2 du personnage, texte, choix au clavier et à la souris. */
@@ -286,6 +363,7 @@ export class DemoHub {
     const sh = this.sh!;
     this.say('Menu', 'Le Quai attend. Vos duels et votre deck sont sauvegardés automatiquement.', [
       { label: 'Reprendre', key: 'dlg-close', primary: true, run: () => this.closeDialog() },
+      { label: 'Toutes les rencontres', key: 'menu-board', run: () => { this.closeDialog(); sh.hubBoard = true; sh.render(); } },
       { label: 'Deck', key: 'menu-deck', run: () => { this.closeDialog(); sh.go({ type: 'open', screen: 'deck' }); } },
       { label: 'Collection', key: 'menu-collection', run: () => { this.closeDialog(); sh.go({ type: 'open', screen: 'collection' }); } },
       { label: 'Options', key: 'menu-options', run: () => { this.closeDialog(); sh.go({ type: 'open', screen: 'options' }); } },
@@ -295,6 +373,10 @@ export class DemoHub {
   }
 }
 
+const ALL_NPCS = Object.values(ILOTS).flatMap((d) => d.npcs);
+/** « le Quai » → « Le Quai » (nom d'îlot en titre). */
+const placeName = (n: string) => n.charAt(0).toUpperCase() + n.slice(1);
+
 /** Rencontres atteignables depuis le Quai (QA : chaque rencontre de la démo existe dans le produit). */
-export const DEMO_ENCOUNTERS = [...new Set([...NPCS.map((n) => n.encounter).filter((e): e is string => !!e), ...SERIES.steps.map((_, i) => `quai-${i + 1}`), 'libre-voile', 'libre-ronce', 'libre-astre'])]
+export const DEMO_ENCOUNTERS = [...new Set([...ALL_NPCS.map((n) => n.encounter).filter((e): e is string => !!e), ...SERIES.steps.map((_, i) => `quai-${i + 1}`), 'libre-voile', 'libre-ronce', 'libre-astre'])]
   .filter((id) => ENCOUNTERS.some((e) => e.id === id));

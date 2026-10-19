@@ -49,6 +49,9 @@ export function installVilleStyles(): void {
 .ville-card b { font: 700 clamp(40px, 6vw, 84px)/1 Georgia, serif; letter-spacing: 0.04em; text-shadow: 0 0 24px rgba(255, 190, 110, 0.35); }
 .ville-card span { margin-top: 10px; font: italic 18px/1.2 Georgia, serif; color: #d8ccb4; letter-spacing: 0.2em; text-transform: uppercase; }
 .ville-card.out { opacity: 0; transition: opacity 1.4s ease 1.4s; }
+.ville-fade { position: fixed; inset: 0; z-index: 2950; pointer-events: none; background: #04060c; opacity: 0; transition: opacity 0.28s ease; }
+.ville-fade.in { opacity: 1; }
+.ville-fade.out { opacity: 0; transition-duration: 0.4s; }
 .ville-toast { position: fixed; left: 50%; bottom: 28px; z-index: 2800; transform: translateX(-50%); padding: 9px 16px; border-radius: 10px; background: rgba(10, 10, 18, 0.92); border: 1px solid rgba(226, 196, 138, 0.55); color: #f6eedc; font: 14px/1.35 system-ui, sans-serif; max-width: calc(100vw - 32px); }
 `;
   document.head.append(s);
