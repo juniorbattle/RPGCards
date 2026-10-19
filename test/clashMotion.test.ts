@@ -167,5 +167,5 @@ describe('ClashMotionDirector — six chorégraphies pilotées par le moteur', (
     }
     expect(n).toBeGreaterThan(200);
     expect(seen.size).toBeGreaterThanOrEqual(5);
-  });
+  }, 30_000); // test de propriété long : délai propre (dépassait 5 s sous charge, retour de la session cloud du 2026-10-19)
 });

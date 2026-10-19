@@ -81,3 +81,17 @@ Captures réelles, tests, build, journal, ADR pour toute décision structurante 
 commit et push sur `main`. Les décisions ouvertes sont réunies dans une **fiche d'arbitrages** (`docs/FICHE_ARBITRAGES_M09.md` :
 pour chaque décision, contexte, sources, captures, option recommandée et alternatives), que la session principale
 transformera en fiche interactive pour le responsable.
+
+## Décisions du responsable — 2026-10-19 (fiche « RC 0.8 et ville »)
+
+- **Q1 :** **passe de qualité visuelle du Quai d’abord**, avant d’ajouter des îlots : lot **V3** ci-dessous.
+- **B1** réglages de la caméra frontale gardés, ajustés à l’œil sur GPU réel ; **B2** îlots chargés un à un ; **B3**
+  préparation systématique avant le duel ; **B4** la ville devient le hub par défaut **après validation de la démo** ;
+  **B6** tutoriel en bulles non bloquantes ; **B7** textes gardés « prototype ».
+- **B5 :** Aseprite pour les personnages clés **après la démo**, par un amendement de la règle « aucune image externe ».
+  Note du responsable : « L'API OpenAI sera aussi disponible pour optimiser la tâche et le rendu » (images générées en
+  local comme aide à la production des feuilles, sous l’amendement à venir).
+
+| Lot | Objet | Critères d'acceptation |
+|---|---|---|
+| **V3** | **Passe de qualité visuelle du Quai** : plans de profondeur (eau et bord du quai au premier plan, rue, façades, silhouettes lointaines), façades variées et détaillées par code dans la DA de Cité du Tournoi, éclairage de nuit, taille et dessin des personnages, cadrage ajusté à l’œil | comparaison côte à côte avec les références de DA (`reference/generated/`) ; captures avant / après sur GPU réel ; coût par image mesuré sur la 780M et la RTX 4060 ; démo `qa:demo` et jeu par défaut sans régression ; validation du responsable avant d’étendre aux autres îlots |

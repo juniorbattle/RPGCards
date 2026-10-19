@@ -4,7 +4,7 @@ Date : 2026-10-19
 Statut : **APPROUVÉ — frontale 2.5D**, décision du responsable pendant le run cloud (« Non, on ne veut pas
 d'inclinaison, mais frontale. », JOURNAL passe 39, `demandes-images/README.md`). La vue de dessus inclinée est
 abandonnée. Les réglages chiffrés ci-dessous (angle, distance, focale) sont des **choix provisoires de la session
-cloud**, à revoir sur GPU réel et à l'œil du responsable ; seul le principe « frontale » est décidé.
+cloud**, à revoir sur GPU réel et à l'œil du responsable ; seul le principe « frontale » est décidé. **2026-10-19, fiche B1 :** réglages gardés pour la démo, à ajuster à l’œil sur GPU réel (pendant la passe de qualité du Quai).
 
 ## Contexte
 
