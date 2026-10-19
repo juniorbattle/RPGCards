@@ -3,3 +3,10 @@ dist/
 *.log
 .DS_Store
 artifacts/qa/tmp/
+
+# Local environment files (machine-local, never committed)
+.env.local
+.env.*.local
+
+# Brouillons d'images générées (références de conception, jamais commités ; voir AGENTS)
+art-gen/

@@ -94,6 +94,14 @@ Au démarrage, seules les commandes **du simulateur existant** sont avérées, d
 - Ne jamais utiliser `taskkill`, `Stop-Process` ni un balayage des processus du système (`Get-CimInstance Win32_Process`, listes de processus filtrées par ligne de commande) pour retrouver ou arrêter des restes : chaque usage exige l'accord du responsable et peut toucher des programmes sans rapport. Si un processus échappe aux outils (un orphelin qui occupe un port), signaler le port et le PID propriétaire (`Get-NetTCPConnection -LocalPort <port>`) et laisser le responsable décider.
 - Avant de terminer une session, arrêter tous les serveurs et tâches de fond qu'elle a lancés.
 
+## Images générées : références seulement (décision du responsable, 2026-10-19)
+
+- Une clé OpenAI est disponible **en local seulement** (`.env.local` du dossier principal, ignoré par git, jamais commité, jamais injecté dans le build : pas de préfixe `VITE_`). Les sessions cloud n'y ont pas accès.
+- Les images générées sont des **références de conception** (ville et quartiers, ambiance, essais de caméra, fiches de personnages pour guider le dessin par code ou un futur Aseprite). Elles n'entrent **jamais** dans le jeu ni dans le build : la règle « art par code, aucune image externe au runtime » est inchangée.
+- Elles doivent rester **cohérentes avec le thème et l'atmosphère du jeu** : HD-2D théâtral ; nuit à dominante indigo / ardoise, pierre froide, ambre comme seul accent chaud, ivoire désaturé (DA reprise de Cité du Tournoi, M09) ; l'univers des Quatre Voies (familles Cendre, Voile, Ronce, Astre ; le Quai, le Fanal, la salle de jeu de cartes, l'arène ; personnages en « vectoriel V2 »). Pas de style étranger au jeu.
+- Traçabilité : brouillons dans `art-gen/` (ignoré par git) ; une image approuvée par le responsable est copiée dans `reference/generated/` avec une fiche (prompt, modèle, date, usage).
+- Coût : générer seulement pour une tâche en cours, en annonçant le nombre d'images.
+
 ## Priorité de la première mission
 
 **M0** cadrage+reconnaissance > **M1** moteur TS normatif > **M2** duel humain/IA ergonomique par cartes > **M3** art procédural pour cartes/effets/arène minimale > **M4** captures+profiling+handoff. Une scène HD-2D à grande échelle n'est pas un livrable de M1.
