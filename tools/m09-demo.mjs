@@ -3,7 +3,7 @@
 // préparation → duel (tour guidé) → abandon → résultat → « Retour au Quai » (réapparition devant le docker) →
 // porte de la salle de jeu (Tournoi, manche 1) → préparation → retour → Fanal verrouillé → Parvis de l’arène (Orin
 // verrouillé, défi de la joueuse) → retour au Quai → menu → deck. Erreurs console relevées.
-// Usage : npm run build && [LQV_DIST=<dist>] node tools/m09-demo.mjs [dossier] [rapport.json]
+// Usage : npm run build && [LQV_DIST=<dist>] [LQV_VP=1920x1080] node tools/m09-demo.mjs [dossier] [rapport.json]
 import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
@@ -13,6 +13,7 @@ const DIR = process.argv[2] ?? 'screenshots/qa/m09/v2-demo';
 const OUT = process.argv[3] ?? 'artifacts/qa/m09/v2-demo.json';
 const head = execSync('git rev-parse --short HEAD').toString().trim();
 mkdirSync(DIR, { recursive: true });
+const VP = (process.env.LQV_VP ?? '1280x720').split('x').map(Number);
 const server = await startPreview(Number(process.env.LQV_PREVIEW_PORT) || 4283, process.env.LQV_DIST || 'dist');
 const browser = await launch();
 const issues = [];
@@ -21,7 +22,7 @@ const checks = [];
 const check = (ok, what) => { checks.push(`${ok ? 'OK' : 'ÉCHEC'} ${what}`); console.log(`${ok ? 'OK' : 'ÉCHEC'} ${what}`); };
 let n = 0;
 try {
-  const ctx = await browser.newContext({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 });
+  const ctx = await browser.newContext({ viewport: { width: VP[0], height: VP[1] }, deviceScaleFactor: 1 });
   const p = await ctx.newPage();
   p.setDefaultTimeout(90000);
   watchConsole(p, issues);
