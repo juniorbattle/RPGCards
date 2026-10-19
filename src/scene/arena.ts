@@ -180,10 +180,10 @@ function tableTexture(seed: number): THREE.CanvasTexture {
     ctx.fillStyle = sh;
     ctx.fillRect(0, 0, W, H);
   }
-  // M03.2 : flaque de lumière chaude peinte au centre du plateau (x 0, z 0,6), à la place d’une lampe.
+  // M03.2 : flaque de lumière chaude peinte au centre du plateau (x 0, z CLASH_Z + 0,5), à la place d’une lampe.
   {
     const px = W / 2;
-    const py = H * ((0.6 - TABLE_FAR_Z) / (TABLE_NEAR_Z - TABLE_FAR_Z));
+    const py = H * ((CLASH_Z + 0.5 - TABLE_FAR_Z) / (TABLE_NEAR_Z - TABLE_FAR_Z));
     const rx = (W / TABLE_W) * 5.2;
     const ry = (H / (TABLE_NEAR_Z - TABLE_FAR_Z)) * 3.6;
     ctx.save();
@@ -246,9 +246,9 @@ function tableTexture(seed: number): THREE.CanvasTexture {
     drawEmblem(ctx, f, Math.cos(a) * 2.25, Math.sin(a) * 2.25, 0.16);
   });
   ctx.restore();
-  // losanges d’ornement (bords des zones des duellistes)
+  // losanges d’ornement (bords des zones des duellistes) : au-delà des deux rangées de la vue A (M08, cadres de cartes)
   ctx.fillStyle = 'rgba(240,200,120,0.7)';
-  for (const z of [-1.6, 3.4]) {
+  for (const z of [-2.1, 4.4]) {
     const y = H * ((z - TABLE_FAR_Z) / (TABLE_NEAR_Z - TABLE_FAR_Z));
     ctx.beginPath(); ctx.moveTo(cx, y - 14); ctx.lineTo(cx + 22, y); ctx.lineTo(cx, y + 14); ctx.lineTo(cx - 22, y); ctx.closePath(); ctx.fill();
     ctx.strokeStyle = goldDim;

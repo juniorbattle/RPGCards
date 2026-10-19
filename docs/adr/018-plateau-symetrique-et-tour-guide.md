@@ -4,7 +4,9 @@ Date : 2026-10-17
 Statut : **APPROUVÉ par le responsable** pour la direction (séance du 2026-10-17 : symétrie, lisibilité d’un coup d’œil,
 tour intuitif ; référence donnée : Yu-Gi-Oh! Duel Links) et pour le **maintien du rival de face**. Le rendu de ce lot
 lui est présenté en captures avant / après. **Amende l’ADR 013** (baseline desktop) et l’**ADR 016** (géométrie des cases
-en vue A).
+en vue A). **Amendement 1** (M08, 2026-10-18, option B validée par le responsable, Primaire plus présente à sa
+demande) : rangée du rival « au loin » sur la table, Primaire plus grande que les Secondaires, cases incrustées dans le
+bois, cercle de Clash peint recentré sur l’axe du plateau (voir en fin de document).
 
 ## Contexte
 
@@ -82,3 +84,75 @@ de l’engagement en une phrase longue.
   `qa:rc`, en arbitrage). Rapports `artifacts/qa/m07/contraste-l2-*.json`.
 
 **Cette décision n’introduit aucune règle métier nouvelle.**
+
+## Amendement 1 — M08 : cases intégrées à la table, Primaire plus présente (2026-10-18)
+
+Statut : **APPROUVÉ par le responsable** : « Je valide l’option B (rangée du rival au loin, 0,85×, table recentrée,
+cases incrustées et ombre de contact). Implémente-la. », puis, en séance : « parmi les 3 cartes donc primaire et 2
+secondaires, la primaire est censée montrer plus de présence que les secondaires sur la table car c’est la carte qui
+ira au clash ».
+
+### Contexte
+
+Retour du responsable sur une capture de la vue A à 1280×720 : les cadres de cartes du rival « ne sont pas bien intégrés
+à la table et semblent flotter », ceux du joueur « ont l’air d’être bien configurés ». Audit (caméra A inchangée,
+projection identique à `frame()` d’`arena.ts`, `screenshots/qa/m08/cadres/proposition/analyse-actuel-1280.png`) :
+
+- entre le bord lointain de la table (y 328) et le centre du cercle de Clash (y 400, z 0,1), le rival n’a que **72 px**
+  de table ; sa rangée en faisait 105 (y 341 → 446) : elle couvrait l’étoile du cercle et débordait sur la moitié du
+  joueur ; axe de symétrie du plateau à y 455, milieu peint de la table à y 400 ;
+- même taille et même inclinaison que la rangée du joueur alors qu’elle est plus loin : une vraie carte couchée ferait
+  31 px de haut côté rival, 42 px côté joueur, contre 97 px pour les deux rangées (3,1 fois « debout » contre 2,3) ;
+- fuyantes de la table aux colonnes latérales : 31° (rival), 24° (joueur) ; cases : 2,7° (perspective propre à chacune) ;
+- haut des cases à 13 px du bord lointain, contre le support de l’éventail ; aucune ombre de contact, voile sombre
+  translucide lu comme une vitre.
+
+Quatre options maquettées et présentées (`screenshots/qa/m08/cadres/proposition/planche-options-1280.png`) : A
+(ancrage seul), **B** (A + rangée du rival au loin), C (B + fuite douce des cases latérales, joueur compris, texte
+cisaillé), témoin B sans table recentrée (l’étoile restait sous la Primaire du rival). Écartée : une perspective commune
+exacte qui garde la rangée du joueur, car elle allonge la rangée du rival au lieu de la coucher.
+
+### Décision
+
+1. **Rangée du rival au loin** (vue A bureau) : `top` 45,6 % → 48,25 %, 16 vh → 13 vh, 30° → 34° ; cartes posées à
+   0,85 fois celles du joueur (76 px au lieu de 89 à 1280×720, 114 au lieu de 134 à 1920×1080) ; colonnes au même pas
+   relatif, donc resserrées (222 → 189 px à 1280) ; ≈ 30 px de bois visibles entre le bord lointain et ses Secondaires.
+   Rangée du joueur inchangée. Les deux rangées restent en miroir (mêmes cases, mêmes libellés, même ordre) ; c’est la
+   perspective qui réduit la rangée lointaine. Le principe de l’ADR 016 « le cadre est le contour de la carte » est
+   gardé.
+2. **Primaire plus présente** que les Secondaires dans les deux rangées : 1,12 fois plus grande en vue A bureau (même
+   colonne, même bas de case ; joueur 100 px, rival 85 px de large à 1280×720), double filet doré autour du cadre et
+   lueur chaude sur le bois, sous la carte posée aussi. Les deux Primaires forment l’axe du Clash au centre de la table.
+   Les « six cadres identiques » de l’ADR 016 deviennent deux familles : Primaire et Secondaire.
+3. **Cases incrustées dans le bois**, dans la langue de la table : filet doré intérieur, creux sombre au bord lointain,
+   lèvre claire au bord proche (au lieu du voile sombre translucide), et **ombre de contact** floue sous chaque case et
+   chaque carte posée (`.zone::before`, même perspective que le cadre). Toutes vues. Les états de la case (pose légale,
+   cible, temps de résolution, pulsation de l’étape en cours) gardent leurs liserés.
+4. **Libellé de case** masqué sous une carte posée (il dépassait d’une carte plus petite) : visible seulement case vide,
+   comme l’ADR 018 le voulait.
+5. **Table recentrée sur le plateau** : `CLASH_Z` (`src/scene/world.ts`) 0,1 → 1,38 : le cercle de Clash peint, son
+   étoile, la flaque de lumière peinte (`CLASH_Z` + 0,5), le vignettage peint de la table, la lumière du Clash (éteinte au
+   repos) et les anneaux et gerbes du Clash passent sur l’axe du plateau de la vue A (y ≈ 456 à 1280×720), entre les deux
+   rangées. Losanges des zones des duellistes au-delà des rangées (z −1,6 / 3,4 → −2,1 / 4,4). La table elle-même (bord
+   lointain, ancrage de la caméra), le gréement de lumières des lieux (ADR 022), la caméra et les décors ne bougent pas.
+   La table est commune à tous les lieux : ils reçoivent tous cette peinture.
+
+### Conséquences
+
+- Visage du rival inchangé : matrices de projection, de vue et du rival identiques entre `d018915` et ce lot, région du
+  visage de la scène 3D identique au pixel près (`artifacts/qa/m08/cadres/cadrage-visage.json`) ; visage à 83 px à
+  1280×720 comme avant.
+- Vue B : géométrie des rangées inchangée ; le centre du cercle peint, qui tombait déjà sous le haut de la rangée du
+  joueur (y 344 à 1280×720), passe sous son milieu (y 429).
+- Textes plus petits sur les cartes du rival (−15 %) et plus grands sur les Primaires (+12 %). Contraste mesuré sur
+  capture (`tools/shots-m07.mjs`, 40 captures, 1 470 textes : vues A et B, 1280×720 et 1920×1080, cinq états dont le
+  nouvel état « plein ») : **0 sous 4,5:1**, minimum 4,9:1 (A) et 4,8:1 (B) ; `artifacts/qa/m08/cadres/`. L’état « plein »
+  a révélé des défauts antérieurs (build `d018915` : bandeaux ASSAUT / GARDE à 3,2–3,6:1, Rang et Puissance de la Primaire
+  du rival sous son bandeau à 2,5–2,8:1) : bandeaux assombris (dégradés des boutons de pose), plaque de la Primaire révélée
+  remontée au-dessus de son bandeau.
+- Le filigrane de phase reste sur l’axe ; les Primaires plus grandes en recouvrent le milieu (décor, `aria-hidden`).
+- `tools/shots-m07.mjs` : état `plein` (scénario « interférence », Primaires révélées et Secondaires actives des deux
+  côtés). Mobile et paysage : positions inchangées ; seuls l’incrustation, l’ombre de contact et le double filet de la
+  Primaire s’y appliquent.
+
+**Cet amendement n’introduit aucune règle métier nouvelle.**
