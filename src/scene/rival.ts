@@ -499,8 +499,9 @@ const prepCounters = { generated: 0, built: 0, taken: 0, prepared: 0, uploaded: 
  * Rigs retirés de la scène, libérés après la première image de leur remplaçant. Libérés avant, ils emportaient les
  * programmes GPU qu’ils partagent avec lui (45 → 36 programmes à `setRival`), recompilés à sa première image : ≈ 40 ms
  * d’à-coup même avec des textures prêtes (principe de la passe 12 : garder vivant un programme utilisé par intermittence).
- * La libération elle-même est étalée aux temps morts (une couche par étape) : d’un bloc, elle retardait d’une image
- * (≈ 12 ms à 165 Hz) la seconde qui suit. File jamais suspendue (libérer n’est pas générer).
+ * La libération elle-même est étalée aux temps morts (une couche par étape), comme celle des préparations devenues
+ * inutiles : d’un bloc, elle retardait d’une image (≈ 12 ms à 165 Hz) la seconde qui suit. File jamais suspendue
+ * (libérer n’est pas générer).
  */
 const retired: BuiltRig[] = [];
 const release = new IdleWork();
@@ -549,7 +550,9 @@ export function prepareRivals(ps: readonly RivalPersonality[], artSeed: number):
   const showing = shown && mode === 'full' && !shown.built.uploaded ? `shown|${shown.key}` : null;
   if (showing) keys.add(showing);
   for (const k of work.keys()) if (!keys.has(k)) work.cancel(k);
-  for (const [k, r] of ready) if (!keys.has(k)) { r.rig?.dispose(); ready.delete(k); }
+  // Préparations devenues inutiles : libérées aux temps morts, elles aussi (d’un bloc, les ≈ 70 textures de trois rigs
+  // retardaient d’une image la seconde suivante).
+  for (const [k, r] of ready) if (!keys.has(k)) { if (r.rig) release.add(`release|${released++}`, r.rig.disposeSteps()); ready.delete(k); }
   if (showing && !work.has(showing)) work.add(showing, uploadSteps(shown!.built));
   for (const { p, key } of want) if (!ready.has(key) && !work.has(key)) work.add(key, prepSteps(p, artSeed, key));
 }
