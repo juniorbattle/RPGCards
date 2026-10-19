@@ -1,8 +1,9 @@
 # ADR 023 — Duellistes PNJ de la ville : gabarits V2 et variations par graine (M08, lot C3)
 
 Date : 2026-10-18
-Statut : **PROPOSÉ — porte de validation** : planche de 12 PNJ montrée au responsable ; le nombre de gabarits (quatre
-proposés) et leur direction attendent son retour. Retours déjà intégrés en séance (voir « Finition »). Complète
+Statut : **APPROUVÉ — quatre gabarits validés par le responsable** le 2026-10-18 sur la planche de 12 PNJ : « Je valide
+les quatre gabarits PNJ (docker, marchande, commis, joueuse) tels que sur la planche. » Le nombre de gabarits est figé
+à quatre ; retours de finition intégrés en séance (voir « Finition »). Complète
 l’ADR 021 (socle « vectoriel V2 ») ; ne change ni les règles (V3.0 + delta V3.2), ni le cadrage (ADR 013), ni les secrets
 (ADR 011). Numéro 023 : l’ADR 022 est réservé au chantier C2 (lieux), mené en parallèle.
 
