@@ -1,0 +1,101 @@
+{
+  "date": "2026-10-19T15:47:42.252Z",
+  "commit": "c9c3b86",
+  "dist": "dist",
+  "assets": [
+    {
+      "f": "cardArtWorker-C3PyS6SL.js",
+      "octets": 8322
+    },
+    {
+      "f": "demo-KDaLXgDJ.js",
+      "octets": 12787
+    },
+    {
+      "f": "index-Bco1EIiU.css",
+      "octets": 81051
+    },
+    {
+      "f": "index-DC3k-rE6.js",
+      "octets": 999384
+    },
+    {
+      "f": "labo-DdGp7HEj.js",
+      "octets": 2487
+    },
+    {
+      "f": "ville-CjEw1TJq.js",
+      "octets": 70330
+    }
+  ],
+  "renderer": "Chrome headless, GPU réel : ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11) — arguments : --force_high_performance_gpu",
+  "rounds": [
+    {
+      "home": 1539,
+      "arene": 1629,
+      "dcl": 686,
+      "load": 688,
+      "longTasks": 3,
+      "longTasksMs": 1037,
+      "maxLongTask": 640,
+      "duel": 108,
+      "octets": 1088757
+    },
+    {
+      "home": 548,
+      "arene": 585,
+      "dcl": 188,
+      "load": 188,
+      "longTasks": 2,
+      "longTasksMs": 423,
+      "maxLongTask": 287,
+      "duel": 101,
+      "octets": 1088757
+    },
+    {
+      "home": 776,
+      "arene": 826,
+      "dcl": 252,
+      "load": 252,
+      "longTasks": 3,
+      "longTasksMs": 653,
+      "maxLongTask": 405,
+      "duel": 61,
+      "octets": 1088757
+    },
+    {
+      "home": 549,
+      "arene": 573,
+      "dcl": 164,
+      "load": 164,
+      "longTasks": 2,
+      "longTasksMs": 389,
+      "maxLongTask": 272,
+      "duel": 62,
+      "octets": 1088757
+    },
+    {
+      "home": 540,
+      "arene": 570,
+      "dcl": 163,
+      "load": 163,
+      "longTasks": 2,
+      "longTasksMs": 400,
+      "maxLongTask": 282,
+      "duel": 70,
+      "octets": 1088757
+    }
+  ],
+  "median": {
+    "home": 549,
+    "arene": 585,
+    "dcl": 188,
+    "load": 188,
+    "longTasks": 2,
+    "longTasksMs": 423,
+    "maxLongTask": 287,
+    "duel": 70,
+    "octets": 1088757
+  },
+  "issues": []
+}

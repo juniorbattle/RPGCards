@@ -1321,3 +1321,22 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **Pensée :** une capture se lit aussi aux bords : une caméra en butée montre ce qu'il y a au-delà du dernier bâtiment, et une fente de 40 cm entre deux maisons laisse passer le ciel brumeux. Fermer le décor là où la caméra peut regarder.
 - **Pensée :** deux écouteurs de la même touche (la ville et l'enveloppe) se départagent par l'ordre de propagation : la ville écoute en phase de capture et se tait quand elle est en pause, sinon la touche qui ferme un écran rouvre aussitôt le menu de la ville.
 - **À reprendre :** réglages fins de la caméra frontale à l'œil sur GPU réel ; mesure GPU de la ville ; décision d'intégration de la démo au jeu par défaut ; Aseprite pour les personnages clés (amendement de règle) ; îlot suivant (Place du Fanal) et carte de la ville.
+
+## Passe 43 — Mesures locales de la RC 0.8 et de la ville (GPU réel, Windows) ; fiche d'arbitrages interactive — 2026-10-19, session principale, départ 
+- **Mission / contraintes :** section E de  et §2 du retour de la session cloud : ce que le cloud ne pouvait pas mesurer. Poste du responsable, Chrome 155 sans fenêtre, Radeon 780M (adaptateur par défaut) et RTX 4060 (), Windows.
+- **[OK] Vérifications :**  0 erreur ; Unknown command: "test"
+
+
+Did you mean this?
+  npm test # Test a package
+To see a list of supported npm commands, run:
+  npm help 241/241 ;  OK.
+- **[OK] Démarrage à froid** (, médiane de 5 rondes, profil neuf) : accueil interactif 569 ms (780M) et 654 ms (RTX) ; avec  : 443 ms (−22 %) et 549 ms (−16 %) ; premier duel 70 → 58 ms (780M), 130 → 70 ms (RTX).
+- **[OK] Fluidité du duel** (, deux parties 1280 et 1920 par GPU) : 164 images/s en médiane partout (plafond de l'écran) ; p95 12 à 14 ms sur la 780M, 6,2 à 6,4 ms sur la RTX.
+- **[?] Constat :** le repli automatique du post-traitement (ADR 019) se déclenche quand même : 780M jusqu'au rendu direct (1280) et sans halo (1920), RTX sans halo une fois sur deux, sur une médiane passagère de 10 ms. Possible artefact d'un Chrome sans fenêtre ; à vérifier en fenêtre (fiche C6).
+- **[OK] Contraste sous Windows :**  9/9 campagnes (S : 11/11) ;  : rang « II » ≥ 18,6:1 (qa-rc) et ≥ 17,5:1 boîte élargie.
+- **[OK] Ville sur GPU réel** (, deux GPU) : intervalle médian 6 ms, 48 appels, 7 k triangles, 0 erreur ; démo  : tous les contrôles OK, 0 erreur.
+- **[OK] Écran Rencontres et personnages** contre le build  (RTX) :  identique au pixel près (témoin positif) ;  : 0 pixel en six captures, A/A compris : la bande transitoire du cloud ne se reproduit pas sur GPU réel.
+- **Preuves :**  (journaux et rapports). Les captures et rapports de référence du cloud (, ) sont restaurés à l'identique : les outils les avaient réécrits avec le panneau de mesure visible.
+- **Fiche d'arbitrages interactive** publiée pour le responsable (14 entrées : C1 à C6, Q1, B1 à B7), avec ces résultats.
+- **À reprendre :** décisions du responsable sur la fiche ; puis passe de qualité du Quai en local (plan validé par le responsable).

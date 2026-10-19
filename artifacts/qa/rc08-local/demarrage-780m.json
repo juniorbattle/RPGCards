@@ -1,0 +1,101 @@
+{
+  "date": "2026-10-19T15:46:56.119Z",
+  "commit": "c9c3b86",
+  "dist": "dist",
+  "assets": [
+    {
+      "f": "cardArtWorker-C3PyS6SL.js",
+      "octets": 8322
+    },
+    {
+      "f": "demo-KDaLXgDJ.js",
+      "octets": 12787
+    },
+    {
+      "f": "index-Bco1EIiU.css",
+      "octets": 81051
+    },
+    {
+      "f": "index-DC3k-rE6.js",
+      "octets": 999384
+    },
+    {
+      "f": "labo-DdGp7HEj.js",
+      "octets": 2487
+    },
+    {
+      "f": "ville-CjEw1TJq.js",
+      "octets": 70330
+    }
+  ],
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "rounds": [
+    {
+      "home": 2331,
+      "arene": 2460,
+      "dcl": 2049,
+      "load": 2049,
+      "longTasks": 3,
+      "longTasksMs": 2151,
+      "maxLongTask": 1995,
+      "duel": 166,
+      "octets": 1088757
+    },
+    {
+      "home": 558,
+      "arene": 586,
+      "dcl": 466,
+      "load": 466,
+      "longTasks": 1,
+      "longTasksMs": 415,
+      "maxLongTask": 415,
+      "duel": 59,
+      "octets": 1088757
+    },
+    {
+      "home": 569,
+      "arene": 641,
+      "dcl": 442,
+      "load": 442,
+      "longTasks": 1,
+      "longTasksMs": 391,
+      "maxLongTask": 391,
+      "duel": 63,
+      "octets": 1088757
+    },
+    {
+      "home": 623,
+      "arene": 695,
+      "dcl": 462,
+      "load": 462,
+      "longTasks": 2,
+      "longTasksMs": 475,
+      "maxLongTask": 418,
+      "duel": 70,
+      "octets": 1088757
+    },
+    {
+      "home": 528,
+      "arene": 616,
+      "dcl": 439,
+      "load": 439,
+      "longTasks": 1,
+      "longTasksMs": 395,
+      "maxLongTask": 395,
+      "duel": 72,
+      "octets": 1088757
+    }
+  ],
+  "median": {
+    "home": 569,
+    "arene": 641,
+    "dcl": 462,
+    "load": 462,
+    "longTasks": 1,
+    "longTasksMs": 415,
+    "maxLongTask": 415,
+    "duel": 70,
+    "octets": 1088757
+  },
+  "issues": []
+}
