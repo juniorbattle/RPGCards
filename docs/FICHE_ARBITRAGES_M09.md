@@ -88,8 +88,8 @@ frontale ; B2 structure en îlots ; C2 pastille du rang ; B3, B6, B7 (préparati
 ### B5. Personnages de la ville et échéance d'Aseprite
 - **Contexte** : marcheurs dessinés par code dans l'esprit du V2 (aplats, contour, tête ≈ 1/3), couleurs et coupes des
   gabarits PNJ (ADR 023) ; joueur à capuche et besace d'après la référence de travail du 2026-10-19 (non approuvée).
-  Planche : `screenshots/qa/m09/marcheurs.png` (avec Sélène). Point connu : à cette échelle, un joueur de la voie du Voile
-  (manteau bleu, capuche claire) ressemble à Sélène (cheveux argentés, bandeau) ; à corriger avec les personnages clés.
+  Planche : `screenshots/qa/m09/marcheurs.png` (avec Sélène, coiffée de son diadème d'argent au cristal comme dans son
+  identité V2, et non du bandeau du joueur : sans cela, un joueur de la voie du Voile lui ressemblait à cette échelle).
 - **Recommandation** : garder ces marcheurs pour la démo ; ouvrir Aseprite pour les **personnages clés** (joueur, quatre
   rivaux) seulement après validation de la démo, par un amendement de la règle « aucune image externe » avec manifeste
   de provenance (comme Cité du Tournoi, `src/characters/BakedCast.ts`). **Raison** : la démo n'en dépend pas ; un
