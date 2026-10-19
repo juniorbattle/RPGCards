@@ -56,3 +56,33 @@ retirée du code, comme demandé.
 Voir `artifacts/qa/m09/v1-labo.json` et `docs/RAPPORT_RC_0_8.md` (annexe M09) : appels de dessin, triangles,
 textures, programmes, temps de construction de l'îlot. Mesure GPU réelle (Radeon 780M, RTX 4060) **à faire sur le
 poste du responsable** (`LQV_GPU=1 CHROMIUM_PATH=… node tools/m09-labo.mjs`).
+
+## Amendement 1 — cadrage du Quai retravaillé (M09 V3, passe 45) — **PROPOSÉ, en attente du responsable**
+
+Fiche B1 : « réglages gardés, ajustés à l'œil sur GPU réel, pendant la passe de qualité du Quai ». Constat de départ
+(session principale, validé par le responsable) : peu de profondeur, eau à peine visible, personnages petits.
+
+- **Le cadrage devient une donnée de l'îlot** (`IlotDef.rig`, `ilots.ts`) par-dessus `RIGS.frontale`, et **réglable par
+  l'URL** pour l'ajuster à l'œil sans reconstruire : `rig=inclinaison,distance,focale,hauteur visée` (`parseRig`, pur et
+  testé ; valeurs hors bornes ignorées), dans le laboratoire et la démo. Le Parvis et les Ruelles gardent le cadrage
+  d'origine (8°, 19 m, 33°, 3,6 m) jusqu'à validation.
+- **Quai : 7° sous l'horizontale, 18,5 m, focale verticale 39°, point visé à 3,05 m**, et **personnages de 2,2 m**
+  (`IlotDef.walkerH` ; proportions « chibi », portes portées à 2,65 m) : 118 px en 1280 × 720 (99 px avant) et
+  177 px en 1920 × 1080 par projection au centre de la rue, l'ordre de grandeur de la frontale approuvée de Cité du
+  Tournoi (≈ 150 à 170 px en 1080p).
+- **Arbitrage de composition (mesuré par projection, script de session)** : avec une seule caméra perspective, on ne
+  peut pas avoir à la fois une large bande d'eau, les toits, la ville haute, le ciel ET de grands personnages ; la
+  taille des personnages à l'écran est fixée par le rapport personnage / hauteur des façades. D'où trois choix :
+  façades plus basses (égout 5,5 à 6,9 m, l'armateur 8,1 m), personnages plus grands dans le monde, et **ville haute
+  sur une colline** (rangs de plus en plus hauts et lointains) pour qu'elle apparaisse au-dessus des toits malgré une
+  caméra qui regarde vers le bas, comme dans la référence frontale de travail. Bandes de l'image par projection
+  (avant → après) : eau et reflets 0 → 6,8 % (l'eau sortait du cadre), mur du quai 13,3 → 11,6 %, rue 19,1 → 14,5 % ;
+  le faîtage des façades du premier rang (9 m) à 11 % du haut de l'image, la ville haute, la lune et le ciel au-dessus.
+- **Variantes proposées au responsable** (même build, paramètre d'URL) : plus serrée `rig=6.5,18.5,37,3.2`
+  (personnages 125 px, eau 3 %, moins de ciel) ; plus large `rig=7.5,20,38,3` (eau 9,8 % et ses reflets, personnages
+  112 px).
+- Lune basse propre au Quai (au-dessus de la ville haute, derrière les façades : le contre-jour est gardé), rendue à
+  la sortie de l'îlot.
+
+Statut : **proposé** ; le responsable valide ou demande une reprise sur la planche avant / après
+(`screenshots/qa/m09/v3/planche-v3-quai.png`). Coût mesuré : JOURNAL passe 45.

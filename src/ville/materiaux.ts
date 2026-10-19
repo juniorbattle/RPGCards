@@ -84,9 +84,15 @@ void lightSum(vec3 P, vec3 N, vec3 V, float wrap, float shin, out vec3 diff, out
 const SURFACE_VERT = /* glsl */ `
 varying vec3 vWorld; varying vec3 vN; varying vec2 vUv;
 uniform vec2 uTile;
+#ifdef VAO
+attribute float ao; varying float vAO;
+#endif
 void main(){
   vec4 w = modelMatrix * vec4(position, 1.0);
   vWorld = w.xyz; vN = normalize(mat3(modelMatrix) * normal); vUv = uv * uTile;
+#ifdef VAO
+  vAO = ao;
+#endif
   gl_Position = projectionMatrix * viewMatrix * w;
 }`;
 
@@ -95,6 +101,24 @@ ${COMMON_GLSL}
 uniform sampler2D tAlbedo; uniform vec3 uTint; uniform float uWrap; uniform float uSpec; uniform float uShin;
 uniform float uContact; uniform float uEmissive; uniform float uBreakup; uniform float uWet;
 varying vec3 vWorld; varying vec3 vN; varying vec2 vUv;
+#ifdef VAO
+varying float vAO;
+#endif
+#ifdef MIRROR
+// M09 V3 : reflets des lanternes sur le pavé mouillé, sans cible de rendu (« lightMirror » de Cité du Tournoi,
+// ShaderChunks.ts L. 110-127) : pour chaque lumière, distance de la source au rayon réfléchi, halo exp(-d²/s²) dont la
+// largeur croît avec la rugosité et la distance parcourue : traînées étirées vers le spectateur.
+vec3 lightMirror(vec3 P, vec3 R, float rough){
+  vec3 acc = vec3(0.0);
+  for (int i = 0; i < ${MAX_LIGHTS}; i++) {
+    if (i >= uLightCount) break;
+    vec3 L = uLightPos[i].xyz - P; float t = max(dot(L, R), 0.0);
+    vec3 d = L - R * t; float s = 0.12 + 0.9 * rough + (0.018 + 0.18 * rough) * t;
+    acc += uLightCol[i] * exp(-dot(d, d) / (s * s)) / (1.0 + 0.08 * t * t);
+  }
+  return acc;
+}
+#endif
 void main(){
   vec4 A = texture2D(tAlbedo, vUv);
   vec3 albedo = A.rgb * uTint;
@@ -103,6 +127,9 @@ void main(){
   vec3 V = normalize(cameraPosition - vWorld);
   float gc = 1.0 - smoothstep(0.0, 1.15, vWorld.y);
   float ao = mix(1.0, 0.6 + 0.4 * smoothstep(0.0, 0.9, vWorld.y), uContact);
+#ifdef VAO
+  ao *= vAO;
+#endif
   albedo = mix(albedo, albedo * 0.55, gc * uContact * 0.6);
   // Sol mouillé : flaques en bruit basse fréquence, plus sombres et plus brillantes (reflets des lanternes).
   float puddle = uWet * smoothstep(0.55, 0.72, vn2(vWorld.xz * 0.23 + 3.7) * 0.75 + (1.0 - A.a) * 0.4);
@@ -112,6 +139,14 @@ void main(){
   vec3 diff, spec; lightSum(vWorld, N, V, uWrap, mix(uShin, 220.0, puddle), diff, spec);
   vec3 col = albedo * (hemi * ao + uMoonCol * mw * 0.85 + diff * mix(1.0, ao, 0.65));
   col += spec * (uSpec + puddle * 1.6) * ao;
+#ifdef MIRROR
+  {
+    float rough = mix(0.55, 0.06, puddle);
+    vec3 Nm = normalize(mix(N, vec3(0.0, 1.0, 0.0), puddle * 0.9) + vec3(vn2(vWorld.xz * 6.0) - 0.5, 0.0, vn2(vWorld.zx * 6.0 + 2.0) - 0.5) * 0.06);
+    float fr = 0.05 + 0.95 * pow(1.0 - max(dot(Nm, V), 0.0), 4.0);
+    col += lightMirror(vWorld, reflect(-V, Nm), rough) * fr * mix(0.35, 1.0, puddle) * uWet * 0.55;
+  }
+#endif
   col += A.rgb * uTint * uEmissive;
   gl_FragColor = vec4(applyFog(col, vWorld), 1.0);
 }`;
@@ -128,6 +163,10 @@ export interface SurfaceOpts {
   breakup?: number;
   wet?: number;
   side?: THREE.Side;
+  /** M09 V3 : occlusion par sommet (attribut `ao` des géométries fusionnées). */
+  vertexAO?: boolean;
+  /** M09 V3 : reflets analytiques des lumières sur un sol mouillé (`lightMirror`). */
+  mirror?: boolean;
 }
 
 /** Matériau de surface « nuit » : un programme partagé par toutes les matières (seuls les uniformes changent). */
@@ -150,17 +189,21 @@ export function surface(o: SurfaceOpts): THREE.ShaderMaterial {
     vertexShader: SURFACE_VERT,
     fragmentShader: SURFACE_FRAG,
     side: o.side ?? THREE.FrontSide,
+    defines: { ...(o.vertexAO ? { VAO: '' } : {}), ...(o.mirror ? { MIRROR: '' } : {}) },
   });
 }
 
-/** Eau du port : profonde, rides anisotropes, ciel en Fresnel, reflets des lanternes en traînées verticales. */
-export function waterMaterial(): THREE.ShaderMaterial {
+/** Eau du port : profonde, rides anisotropes, ciel en Fresnel, reflets des lanternes en traînées verticales.
+ *  M09 V3 (Quai) : `streak` règle la force des traînées (défaut d'origine 0,12), `spillZ` ajoute la lueur chaude du quai
+ *  sur l'eau le long du mur (Cité du Tournoi, `GroundShaders.ts` L. 141-201) ; sans option, l'eau d'origine. */
+export function waterMaterial(o: { streak?: number; spillZ?: number } = {}): THREE.ShaderMaterial {
   return new THREE.ShaderMaterial({
     name: 'VilleEau',
-    uniforms: { ...U },
+    uniforms: { ...U, uStreak: { value: o.streak ?? 0.12 }, uSpillZ: { value: o.spillZ ?? 1e4 }, uSpill: { value: o.spillZ === undefined ? 0 : 1 } },
     vertexShader: /* glsl */ `varying vec3 vWorld; void main(){ vec4 w = modelMatrix * vec4(position, 1.0); vWorld = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
     fragmentShader: /* glsl */ `
 ${COMMON_GLSL}
+uniform float uStreak; uniform float uSpillZ; uniform float uSpill;
 varying vec3 vWorld;
 void main(){
   vec3 P = vWorld; float t = uTime;
@@ -183,8 +226,9 @@ void main(){
     float ax = dot(dv, right) + g.x * 0.012; float ay = dot(dv, up);
     float s = exp(-ax * ax / 0.00012) * exp(-ay * ay / 0.006);
     float br = 0.55 + 0.45 * vn2(vec2(P.x * 3.0, P.z * 9.0 - t * 0.6));
-    col += uLightCol[i] * s * br * 0.12;
+    col += uLightCol[i] * s * br * uStreak;
   }
+  col += vec3(0.5, 0.3, 0.14) * exp(-max(P.z - uSpillZ, 0.0) / 1.8) * 0.02 * uSpill * (0.7 + 0.3 * vn2(vec2(P.x * 0.7, t * 0.3)));
   float mu = max(dot(R, uMoonDir), 0.0);
   col += uMoonCol * pow(mu, 300.0) * 1.4;
   gl_FragColor = vec4(applyFog(col, P), 1.0);

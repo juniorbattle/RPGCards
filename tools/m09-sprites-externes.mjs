@@ -26,8 +26,9 @@ try {
   await p0.waitForFunction(() => !!window.__lqvVille);
   const png = await p0.evaluate(async () => {
     const i = new Image(); i.src = window.__lqvVille.atlas('player-Cendre'); await i.decode();
-    const c = document.createElement('canvas'); c.width = i.width; c.height = i.height;
-    const g = c.getContext('2d'); g.filter = 'hue-rotate(160deg) saturate(1.6)'; g.drawImage(i, 0, 0);
+    // Grille logique du contrat des feuilles (96 × 160 par case) : l'atlas par code est dessiné plus fin (M09 V3, 1,5×).
+    const c = document.createElement('canvas'); c.width = 96 * 5; c.height = 160 * 3;
+    const g = c.getContext('2d'); g.filter = 'hue-rotate(160deg) saturate(1.6)'; g.drawImage(i, 0, 0, c.width, c.height);
     return c.toDataURL('image/png');
   });
   await p0.context().close();

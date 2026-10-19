@@ -41,6 +41,25 @@ export const RIGS: Record<CameraId, RigParams> = {
   },
 };
 
+/** Réglages de cadrage qu'un îlot ou l'URL peut remplacer (fiche B1 : « gardés, ajustés à l'œil »). */
+export type RigTuning = Partial<Pick<RigParams, 'pitch' | 'distance' | 'fov' | 'aimY'>>;
+
+/**
+ * Réglage par l'URL, pour ajuster le cadrage à l'œil sans reconstruire (laboratoire et démo) :
+ * `rig=inclinaison,distance,focale,hauteur visée` (degrés, mètres, degrés, mètres), par exemple `rig=6.5,18.5,37,3`.
+ * Valeurs hors des bornes raisonnables ignorées ; null si absent ou illisible.
+ */
+export function parseRig(s: string | null | undefined): RigTuning | null {
+  if (!s) return null;
+  const [pitch, distance, fov, aimY] = s.split(',').map((v) => Number(v));
+  const t: RigTuning = {};
+  if (pitch !== undefined && Number.isFinite(pitch) && pitch >= 0 && pitch <= 30) t.pitch = pitch;
+  if (distance !== undefined && Number.isFinite(distance) && distance >= 6 && distance <= 60) t.distance = distance;
+  if (fov !== undefined && Number.isFinite(fov) && fov >= 15 && fov <= 60) t.fov = fov;
+  if (aimY !== undefined && Number.isFinite(aimY) && aimY >= 0 && aimY <= 12) t.aimY = aimY;
+  return Object.keys(t).length ? t : null;
+}
+
 export interface Framing { pos: THREE.Vector3; aim: THREE.Vector3 }
 
 /** Cadrage visé pour une position du personnage (pur : mêmes entrées, même cadrage). */
@@ -60,9 +79,11 @@ export interface CameraRig {
   resize(camera: THREE.PerspectiveCamera, aspect: number): void;
 }
 
-/** Caméra suiveuse ; `bounds` remplace les bornes du point visé (propres à chaque îlot). */
-export function createRig(id: CameraId, bounds?: { minX: number; maxX: number }): CameraRig {
+/** Caméra suiveuse ; `bounds` remplace les bornes du point visé (propres à chaque îlot), `tuning` les réglages de
+ *  cadrage (ceux de l'îlot, puis ceux de l'URL). */
+export function createRig(id: CameraId, bounds?: { minX: number; maxX: number }, ...tuning: (RigTuning | null | undefined)[]): CameraRig {
   const params: RigParams = { ...RIGS[id], ...(bounds ?? {}) };
+  for (const t of tuning) if (t) Object.assign(params, t);
   const aim = new THREE.Vector3();
   const pos = new THREE.Vector3();
   let primed = false;

@@ -84,7 +84,7 @@ export function promptBubble(town: Town, onClick?: () => void, labelFor?: (z: No
       if (!z) { el.hidden = true; last = ''; return; }
       const a = z.area;
       const c = 'r' in a ? { x: a.x, z: a.z } : { x: (a.x0 + a.x1) / 2, z: (a.z0 + a.z1) / 2 };
-      const h = z.kind === 'parler' ? 2.05 : 2.6;
+      const h = z.kind === 'parler' ? town.walkerH() + 0.43 : Math.max(2.6, town.walkerH() + 0.65);
       const p = town.project({ x: c.x, y: h, z: c.z });
       el.hidden = !p.visible;
       el.style.left = `${Math.round(p.x)}px`;

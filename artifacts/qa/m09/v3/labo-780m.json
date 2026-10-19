@@ -1,0 +1,140 @@
+{
+  "date": "2026-10-19T17:14:06.375Z",
+  "commit": "7796e8b+arbre de travail",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "shots": [
+    {
+      "cam": "frontale",
+      "spot": "arrivee",
+      "size": "1280x720",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-arrivee-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "etal",
+      "size": "1280x720",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-etal-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "fanal",
+      "size": "1280x720",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-fanal-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "salle",
+      "size": "1280x720",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-salle-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "kai",
+      "size": "1280x720",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-kai-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "parvis-porte",
+      "size": "1280x720",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-parvis-porte-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "parvis-joueuse",
+      "size": "1280x720",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-parvis-joueuse-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "ruelles-fontaine",
+      "size": "1280x720",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-ruelles-fontaine-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "ruelles-selene",
+      "size": "1280x720",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-ruelles-selene-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "arrivee",
+      "size": "1920x1080",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-arrivee-1920x1080.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "etal",
+      "size": "1920x1080",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-etal-1920x1080.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "fanal",
+      "size": "1920x1080",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-fanal-1920x1080.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "salle",
+      "size": "1920x1080",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-salle-1920x1080.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "kai",
+      "size": "1920x1080",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-kai-1920x1080.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "parvis-porte",
+      "size": "1920x1080",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-parvis-porte-1920x1080.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "parvis-joueuse",
+      "size": "1920x1080",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-parvis-joueuse-1920x1080.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "ruelles-fontaine",
+      "size": "1920x1080",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-ruelles-fontaine-1920x1080.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "ruelles-selene",
+      "size": "1920x1080",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/afe09ed6-abbc-4ff6-bd42-efd62652e478/scratchpad/labo-780m/frontale-ruelles-selene-1920x1080.png"
+    }
+  ],
+  "cost": {
+    "frontale": {
+      "readyMs": 528,
+      "st": {
+        "camera": "frontale",
+        "calls": 63,
+        "triangles": 28222,
+        "textures": 44,
+        "geometries": 51,
+        "programs": 23,
+        "lights": 14,
+        "cpuMs": 0.5,
+        "frames": 664,
+        "buildMs": 300
+      },
+      "median": 6,
+      "p95": 6,
+      "n": 115,
+      "walked": {
+        "x": -4.776925256821808,
+        "z": 0.6
+      }
+    }
+  },
+  "issues": []
+}

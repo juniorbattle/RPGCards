@@ -4,6 +4,8 @@
  * coupes et les accessoires des PNJ viennent de leurs gabarits (ADR 023, `npcLook`) : même identifiant, même
  * personnage qu'au duel. Proportions « chibi » modérées (tête ≈ 1/3,4 de la hauteur) pour la lisibilité en ville.
  * Provisoire : les personnages clés passeront à Aseprite plus tard (M09, amendement de la règle des images).
+ * M09 V3 (passe de qualité du Quai) : atlas 1,5 fois plus fin, contour extérieur épais par dilatation, liserés, ceinture,
+ * poignets, bottes à revers, yeux à iris et reflets, capuche du joueur ; liserés de lumière dans le nuanceur.
  *
  * Atlas : 5 colonnes (repos, 4 temps de marche) × 3 rangées (face, dos, profil droit ; le profil gauche est le miroir).
  */
@@ -11,7 +13,7 @@ import * as THREE from 'three';
 import { FAMILY_PALETTE } from '../art/palette';
 import type { Family } from '../game/catalog/cards';
 import { NPC_HAIRS, NPC_SKINS, npcLook, type Accessory, type HairCut, type Tone } from '../presentation/npcs';
-import { COMMON_GLSL, U } from './materiaux';
+import { COMMON_GLSL, MAX_LIGHTS, U } from './materiaux';
 import type { Facing } from './monde';
 
 export const CELL_W = 96;
@@ -87,22 +89,72 @@ export function walkerLook(id: string): WalkerLook {
   };
 }
 
-const INK = '#16121c';
-type Ctx = CanvasRenderingContext2D;
 
-function blob(ctx: Ctx, fill: string, path: () => void, line = 2.4): void {
+/**
+ * Résolution de l'atlas dessiné par code. La grille logique reste 96 × 160 par case (contrat des feuilles externes de
+ * `spritesExternes.ts`) ; M09 V3 dessine 1,5 fois plus fin, pour des personnages plus grands à l'écran (≈ 110 px en
+ * 1280 × 720, ≈ 165 px en 1920 × 1080) sans flou d'agrandissement.
+ */
+export const ATLAS_SCALE = 1.5;
+
+const INK = '#15111c';
+type Ctx = CanvasRenderingContext2D;
+type View = 'face' | 'dos' | 'profil';
+
+/** Remplit un tracé et le cerne d'un trait intérieur fin (le contour extérieur épais est ajouté à part, par dilatation). */
+function blob(ctx: Ctx, fill: string, path: () => void, line = 1.5): void {
   ctx.beginPath();
   path();
   ctx.fillStyle = fill;
   ctx.fill();
-  ctx.lineWidth = line;
-  ctx.strokeStyle = INK;
+  if (line > 0) {
+    ctx.lineWidth = line;
+    ctx.strokeStyle = INK;
+    ctx.stroke();
+  }
+}
+/** Bande d'ombre (lumière venue de la gauche, comme le contre-jour des duels), découpée dans la silhouette du tracé. */
+function shadeIn(ctx: Ctx, path: () => void, color: string, fromX: number, alpha = 0.75): void {
+  ctx.save();
+  ctx.beginPath();
+  path();
+  ctx.clip();
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = color;
+  ctx.fillRect(fromX, -200, 200, 260);
+  ctx.restore();
+}
+/** Reflet (bord éclairé à gauche), découpé dans la silhouette. */
+function lightIn(ctx: Ctx, path: () => void, color: string, toX: number, alpha = 0.45): void {
+  ctx.save();
+  ctx.beginPath();
+  path();
+  ctx.clip();
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = color;
+  ctx.fillRect(-200, -200, 200 + toX, 260);
+  ctx.restore();
+}
+function line(ctx: Ctx, color: string, w: number, pts: readonly (readonly [number, number])[]): void {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = w;
+  ctx.beginPath();
+  pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
   ctx.stroke();
 }
+function shadeOf(hex: string, k = 0.72): string {
+  const n = parseInt(hex.slice(1), 16);
+  return `rgb(${Math.round(((n >> 16) & 255) * k)},${Math.round(((n >> 8) & 255) * k)},${Math.round((n & 255) * k)})`;
+}
 
-type View = 'face' | 'dos' | 'profil';
+/** Couleur des liserés : ivoire pour le duelliste joueur (référence de travail « marcheur »), sinon le clair de la tenue. */
+const trimOf = (L: WalkerLook) => (L.hood ? '#d9d0bb' : L.cloth.hi);
 
-/** Dessine un personnage dans une cellule (origine : pieds au centre bas). `t` : temps de marche 0..1, null = repos. */
+/**
+ * Dessine un personnage dans une case (origine : pieds au centre bas, unités logiques ; figure ≈ 148 de haut).
+ * `t` : temps de marche 0..1, null = repos. Proportions « chibi » (tête ≈ 1/3,1 de la hauteur), une seule bande d'ombre
+ * à droite et un reflet à gauche, liserés, ceinture, poignets, bottes à revers (planche « marcheur » du 2026-10-19).
+ */
 function drawWalker(ctx: Ctx, L: WalkerLook, view: View, t: number | null): void {
   const swing = t === null ? 0 : Math.sin(t * Math.PI * 2);
   const bob = t === null ? 0 : Math.abs(Math.sin(t * Math.PI * 2)) * 2.2;
@@ -111,16 +163,27 @@ function drawWalker(ctx: Ctx, L: WalkerLook, view: View, t: number | null): void
   ctx.lineJoin = 'round';
   ctx.lineCap = 'round';
   const hipY = -50;
-  const shoulderY = -96;
-  const headY = -120;
+  const shoulderY = -92;
+  const headY = -117;
   const side = view === 'profil';
-  // --- jambes (derrière le manteau) ---
-  const leg = (dx: number, a: number, shade: boolean) => {
+  const back = view === 'dos';
+  const trim = trimOf(L);
+  // --- capuche rabattue : le fond de la capuche, derrière la tête et sur les épaules ---
+  if (L.hood && !back) blob(ctx, L.cloth.deep, () => ctx.ellipse(side ? -9 : 0, headY + 12, side ? 19 : 27, 18, 0, 0, Math.PI * 2));
+  // --- cheveux longs derrière (face, profil) ---
+  if (!back) backHair(ctx, L, view, headY);
+  // --- jambes et bottes ---
+  const leg = (dx: number, a: number, far: boolean) => {
     ctx.save();
     ctx.translate(dx, hipY);
     ctx.rotate(a);
-    blob(ctx, shade ? shadeOf(L.legs) : L.legs, () => ctx.roundRect(-5.5, 0, 11, 44, 4));
-    blob(ctx, '#1b1a1e', () => ctx.roundRect(side ? -6 : -6.5, 40, side ? 15 : 13, 8, 3));
+    const legC = far ? shadeOf(L.legs, 0.7) : L.legs;
+    blob(ctx, legC, () => ctx.roundRect(-5.8, 0, 11.6, 40, 4.5));
+    // botte : tige, revers clair, semelle, reflet
+    blob(ctx, far ? '#141217' : '#221e24', () => { ctx.moveTo(-6.2, 30); ctx.lineTo(6.2, 30); ctx.lineTo(side ? 9.5 : 7, 44); ctx.quadraticCurveTo(side ? 10 : 7.5, 49, side ? 6 : 4, 49); ctx.lineTo(-6.6, 49); ctx.quadraticCurveTo(-7.4, 44, -6.2, 30); });
+    blob(ctx, far ? '#2c2830' : '#3a3440', () => ctx.roundRect(-6.6, 28, 13.2, 5, 2), 1.2);
+    ctx.fillStyle = 'rgba(200,205,225,0.28)';
+    ctx.fillRect(-4.2, 35, 2, 9);
     ctx.restore();
   };
   if (side) {
@@ -128,221 +191,301 @@ function drawWalker(ctx: Ctx, L: WalkerLook, view: View, t: number | null): void
     leg(0, -swing * 0.5, false);
   } else {
     const lift = (s: number) => (t === null ? 0 : Math.max(0, s) * 4);
-    ctx.save(); ctx.translate(0, -lift(swing)); leg(-7, 0, false); ctx.restore();
-    ctx.save(); ctx.translate(0, -lift(-swing)); leg(7, 0, false); ctx.restore();
+    ctx.save(); ctx.translate(0, -lift(swing)); leg(-7.5, 0, false); ctx.restore();
+    ctx.save(); ctx.translate(0, -lift(-swing)); leg(7.5, 0, false); ctx.restore();
   }
   // --- bras arrière (profil) ---
-  const arm = (dx: number, a: number, back: boolean) => {
+  const arm = (dx: number, a: number, far: boolean) => {
     ctx.save();
-    ctx.translate(dx, shoulderY + 6);
+    ctx.translate(dx, shoulderY + 7);
     ctx.rotate(a);
-    blob(ctx, back ? L.cloth.shade : L.cloth.base, () => ctx.roundRect(-5, 0, 10, 36, 5));
-    blob(ctx, back ? L.skin.shade : L.skin.base, () => ctx.ellipse(0, 39, 5, 5.5, 0, 0, Math.PI * 2), 2);
+    blob(ctx, far ? L.cloth.deep : L.cloth.base, () => ctx.roundRect(-5.6, 0, 11.2, 35, 5.5));
+    if (!far) shadeIn(ctx, () => ctx.roundRect(-5.6, 0, 11.2, 35, 5.5), L.cloth.shade, 1.5, 0.7);
+    blob(ctx, far ? shadeOf(trim, 0.6) : trim, () => ctx.roundRect(-6, 29, 12, 6, 2.5), 1.2);
+    blob(ctx, far ? L.skin.shade : L.skin.base, () => ctx.ellipse(0, 39.5, 5, 5.6, 0, 0, Math.PI * 2), 1.4);
     ctx.restore();
   };
-  if (side) arm(2, -swing * 0.55, true);
+  if (side) arm(3, -swing * 0.55, true);
   // --- buste et manteau ---
-  const bodyW = side ? 26 : 36;
-  const hem = L.long ? hipY + 30 : hipY + 8;
+  const bodyW = side ? 27 : 38;
+  const hem = L.long ? -11 : hipY + 9;
+  const flare = L.long ? 7 : 1.5;
   const coat = () => {
-    ctx.moveTo(-bodyW / 2 + 2, shoulderY);
-    ctx.quadraticCurveTo(-bodyW / 2 - 3, shoulderY + 30, -bodyW / 2 - (L.long ? 6 : 1), hem);
-    ctx.lineTo(bodyW / 2 + (L.long ? 6 : 1), hem);
-    ctx.quadraticCurveTo(bodyW / 2 + 3, shoulderY + 30, bodyW / 2 - 2, shoulderY);
-    ctx.quadraticCurveTo(0, shoulderY - 7, -bodyW / 2 + 2, shoulderY);
+    ctx.moveTo(-bodyW / 2 + 3, shoulderY - 1);
+    ctx.quadraticCurveTo(-bodyW / 2 - 2, shoulderY + 2, -bodyW / 2 - 1, shoulderY + 14);
+    ctx.lineTo(-bodyW / 2 + 0.5, hipY);
+    ctx.quadraticCurveTo(-bodyW / 2 - flare * 0.5, (hipY + hem) / 2, -bodyW / 2 - flare, hem);
+    ctx.quadraticCurveTo(0, hem + 3, bodyW / 2 + flare, hem);
+    ctx.quadraticCurveTo(bodyW / 2 + flare * 0.5, (hipY + hem) / 2, bodyW / 2 - 0.5, hipY);
+    ctx.lineTo(bodyW / 2 + 1, shoulderY + 14);
+    ctx.quadraticCurveTo(bodyW / 2 + 2, shoulderY + 2, bodyW / 2 - 3, shoulderY - 1);
+    ctx.quadraticCurveTo(0, shoulderY - 6, -bodyW / 2 + 3, shoulderY - 1);
   };
-  blob(ctx, L.cloth.base, coat);
-  // bande d'ombre (lumière venue de la gauche, comme le contre-jour des duels), découpée DANS la silhouette du manteau
+  blob(ctx, L.cloth.base, coat, 1.6);
+  shadeIn(ctx, coat, L.cloth.shade, side ? 2 : bodyW * 0.14, 0.78);
+  lightIn(ctx, coat, L.cloth.hi, side ? -bodyW / 2 + 4 : -bodyW / 2 + 4, 0.35);
+  // liseré de l'ourlet
   ctx.save();
-  ctx.beginPath();
-  coat();
-  ctx.clip();
-  ctx.fillStyle = L.cloth.shade;
-  ctx.globalAlpha = 0.7;
-  ctx.fillRect(bodyW * 0.12, shoulderY - 8, bodyW, hem - shoulderY + 12);
-  ctx.restore();
-  ctx.beginPath();
-  coat();
-  ctx.lineWidth = 2.4;
-  ctx.strokeStyle = INK;
-  ctx.stroke();
-  if (view === 'face') {
-    // chemise / plastron et détail de gabarit
-    blob(ctx, L.shirt.base, () => { ctx.moveTo(-7, shoulderY - 2); ctx.lineTo(7, shoulderY - 2); ctx.lineTo(5, shoulderY + 24); ctx.lineTo(-5, shoulderY + 24); ctx.closePath(); }, 2);
-    if (L.detail === 'chale') blob(ctx, L.cloth.hi, () => { ctx.moveTo(-bodyW / 2 + 1, shoulderY + 2); ctx.lineTo(0, shoulderY + 26); ctx.lineTo(bodyW / 2 - 1, shoulderY + 2); ctx.lineTo(0, shoulderY + 14); ctx.closePath(); }, 2);
-    if (L.detail === 'bretelles') { ctx.strokeStyle = L.cloth.deep; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(-9, shoulderY + 1); ctx.lineTo(-7, hipY + 4); ctx.moveTo(9, shoulderY + 1); ctx.lineTo(7, hipY + 4); ctx.stroke(); }
-    if (L.detail === 'revers') { blob(ctx, L.cloth.hi, () => { ctx.moveTo(-8, shoulderY); ctx.lineTo(-2, shoulderY + 18); ctx.lineTo(-12, shoulderY + 10); ctx.closePath(); }, 1.6); blob(ctx, L.cloth.hi, () => { ctx.moveTo(8, shoulderY); ctx.lineTo(2, shoulderY + 18); ctx.lineTo(12, shoulderY + 10); ctx.closePath(); }, 1.6); }
-    if (L.detail === 'echarpe') blob(ctx, L.cloth.hi, () => ctx.roundRect(-12, shoulderY - 4, 24, 9, 4), 2);
-    if (L.accessory === 'cravate') blob(ctx, '#7a2e2e', () => { ctx.moveTo(-2.5, shoulderY + 2); ctx.lineTo(2.5, shoulderY + 2); ctx.lineTo(3.5, shoulderY + 20); ctx.lineTo(0, shoulderY + 24); ctx.lineTo(-3.5, shoulderY + 20); ctx.closePath(); }, 1.5);
+  ctx.beginPath(); coat(); ctx.clip();
+  line(ctx, trim, 3.2, [[-bodyW / 2 - flare - 2, hem - 2.5], [0, hem + 0.5], [bodyW / 2 + flare + 2, hem - 2.5]]);
+  if (L.long) line(ctx, shadeOf(trim, 0.8), 1.2, [[-bodyW / 2 - flare, hem - 6], [0, hem - 3], [bodyW / 2 + flare, hem - 6]]);
+  if (back) {
+    // dos : couture centrale et fente basse du manteau
+    line(ctx, L.cloth.deep, 1.6, [[0, shoulderY + 2], [0, hem]]);
+    if (L.long) blob(ctx, L.cloth.deep, () => { ctx.moveTo(-3, hipY + 8); ctx.lineTo(3, hipY + 8); ctx.lineTo(4, hem + 1); ctx.lineTo(-4, hem + 1); ctx.closePath(); }, 0);
+  } else if (!side) {
+    // face : ouverture du manteau sous la ceinture (doublure sombre), liserés de devant, boutons
+    if (L.long) blob(ctx, shadeOf(L.legs, 0.85), () => { ctx.moveTo(0, hipY + 3); ctx.lineTo(7, hem + 2); ctx.lineTo(-7, hem + 2); ctx.closePath(); }, 1.2);
+    line(ctx, trim, 2.2, [[-2.5, shoulderY + 6], [-2.5, hipY], [L.long ? -7 : -2.5, hem]]);
+    line(ctx, trim, 2.2, [[2.5, shoulderY + 6], [2.5, hipY], [L.long ? 7 : 2.5, hem]]);
+    ctx.fillStyle = L.cloth.deep;
+    for (const y of [shoulderY + 22, shoulderY + 32]) { ctx.beginPath(); ctx.arc(5.5, y, 1.5, 0, Math.PI * 2); ctx.fill(); }
+  } else {
+    // profil : bord de devant du manteau
+    line(ctx, trim, 2.2, [[bodyW / 2 - 1, shoulderY + 6], [bodyW / 2 + 0.5, hipY], [bodyW / 2 + flare, hem]]);
   }
-  // ceinture
-  ctx.fillStyle = L.cloth.deep;
-  ctx.fillRect(-bodyW / 2, hipY - 3, bodyW, 4);
+  ctx.restore();
+  ctx.beginPath(); coat(); ctx.lineWidth = 1.6; ctx.strokeStyle = INK; ctx.stroke();
+  if (view === 'face') {
+    // plastron, col et détail du gabarit
+    blob(ctx, L.shirt.base, () => { ctx.moveTo(-7.5, shoulderY - 3); ctx.lineTo(7.5, shoulderY - 3); ctx.lineTo(4.5, shoulderY + 20); ctx.lineTo(-4.5, shoulderY + 20); ctx.closePath(); }, 1.3);
+    shadeIn(ctx, () => { ctx.moveTo(-7.5, shoulderY - 3); ctx.lineTo(7.5, shoulderY - 3); ctx.lineTo(4.5, shoulderY + 20); ctx.lineTo(-4.5, shoulderY + 20); ctx.closePath(); }, L.shirt.shade, 1, 0.8);
+    blob(ctx, trim, () => { ctx.moveTo(-10, shoulderY - 3); ctx.lineTo(-2, shoulderY + 12); ctx.lineTo(-5, shoulderY - 4); ctx.closePath(); }, 1.1);
+    blob(ctx, trim, () => { ctx.moveTo(10, shoulderY - 3); ctx.lineTo(2, shoulderY + 12); ctx.lineTo(5, shoulderY - 4); ctx.closePath(); }, 1.1);
+    if (L.detail === 'chale') blob(ctx, L.cloth.hi, () => { ctx.moveTo(-bodyW / 2 + 1, shoulderY + 1); ctx.lineTo(0, shoulderY + 25); ctx.lineTo(bodyW / 2 - 1, shoulderY + 1); ctx.lineTo(0, shoulderY + 13); ctx.closePath(); }, 1.4);
+    if (L.detail === 'bretelles') { line(ctx, L.cloth.deep, 3, [[-9, shoulderY + 1], [-7, hipY + 3]]); line(ctx, L.cloth.deep, 3, [[9, shoulderY + 1], [7, hipY + 3]]); }
+    if (L.detail === 'revers') { blob(ctx, L.cloth.hi, () => { ctx.moveTo(-8, shoulderY); ctx.lineTo(-2, shoulderY + 18); ctx.lineTo(-13, shoulderY + 10); ctx.closePath(); }, 1.2); blob(ctx, L.cloth.hi, () => { ctx.moveTo(8, shoulderY); ctx.lineTo(2, shoulderY + 18); ctx.lineTo(13, shoulderY + 10); ctx.closePath(); }, 1.2); }
+    if (L.detail === 'echarpe') blob(ctx, L.cloth.hi, () => ctx.roundRect(-12, shoulderY - 5, 24, 9, 4), 1.4);
+    if (L.accessory === 'cravate') blob(ctx, '#7a2e2e', () => { ctx.moveTo(-2.5, shoulderY + 2); ctx.lineTo(2.5, shoulderY + 2); ctx.lineTo(3.5, shoulderY + 19); ctx.lineTo(0, shoulderY + 23); ctx.lineTo(-3.5, shoulderY + 19); ctx.closePath(); }, 1.1);
+  }
+  // ceinture et boucle
+  blob(ctx, L.cloth.deep, () => ctx.roundRect(-bodyW / 2 + 0.5, hipY - 4, bodyW - 1, 5, 1.5), 1.1);
+  if (!back) blob(ctx, '#b8975a', () => ctx.roundRect(side ? bodyW / 2 - 7 : -3, hipY - 4.6, 6, 6.2, 1.2), 1);
   // --- bras avant ---
   if (side) arm(-2, swing * 0.55, false);
   else {
-    arm(-bodyW / 2 - 1, 0.12 + swing * 0.18, false);
-    arm(bodyW / 2 + 1, -0.12 - swing * 0.18, false);
+    arm(-bodyW / 2 - 1.5, 0.1 + swing * 0.18, false);
+    arm(bodyW / 2 + 1.5, -0.1 - swing * 0.18, false);
   }
-  // --- besace en bandoulière (joueur) ---
-  if (L.hood && view !== 'dos') {
-    ctx.strokeStyle = '#3a2a1e';
-    ctx.lineWidth = 3.2;
-    ctx.beginPath();
-    ctx.moveTo(side ? 6 : -bodyW / 2 + 4, shoulderY + 1);
-    ctx.lineTo(side ? -4 : bodyW / 2 - 4, hipY - 2);
-    ctx.stroke();
-    blob(ctx, '#6a5640', () => ctx.roundRect(side ? -16 : bodyW / 2 - 12, hipY - 12, 16, 13, 3), 2);
-    ctx.fillStyle = '#e2c48a';
-    ctx.fillRect(side ? -10 : bodyW / 2 - 6, hipY - 8, 4, 4);
-  }
-  // --- capuche rabattue (derrière la tête) et liseré ivoire du manteau ---
+  // --- besace en bandoulière (duelliste joueur) ---
   if (L.hood) {
-    blob(ctx, L.cloth.shade, () => ctx.ellipse(side ? -8 : 0, headY + 10, side ? 18 : 25, 17, 0, 0, Math.PI * 2));
-    ctx.strokeStyle = '#d8d0bc';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(-bodyW / 2 - (L.long ? 5 : 0), hipY + 28);
-    ctx.lineTo(bodyW / 2 + (L.long ? 5 : 0), hipY + 28);
-    ctx.stroke();
+    if (!back) line(ctx, '#3a2a1e', 3.4, [[side ? 7 : -bodyW / 2 + 5, shoulderY], [side ? -5 : bodyW / 2 - 5, hipY - 2]]);
+    else line(ctx, '#3a2a1e', 3.4, [[bodyW / 2 - 5, shoulderY], [-bodyW / 2 + 5, hipY - 2]]);
+    const bx = side ? -18 : back ? -bodyW / 2 - 4 : bodyW / 2 - 9;
+    blob(ctx, '#6a5640', () => ctx.roundRect(bx, hipY - 12, 16, 14, 3), 1.4);
+    blob(ctx, '#56442f', () => ctx.roundRect(bx, hipY - 12, 16, 6, [3, 3, 1, 1]), 1.1);
+    ctx.fillStyle = '#d6b878';
+    ctx.fillRect(bx + 6.5, hipY - 8, 3, 3.5);
+  }
+  // --- capuche rabattue : plis autour du cou, liseré ---
+  if (L.hood) {
+    if (back) {
+      // capuche rabattue pendant dans le dos, en pointe
+      const hoodBack = () => { ctx.moveTo(-17, shoulderY - 3); ctx.quadraticCurveTo(-19, shoulderY + 18, 0, shoulderY + 30); ctx.quadraticCurveTo(19, shoulderY + 18, 17, shoulderY - 3); ctx.quadraticCurveTo(0, shoulderY - 10, -17, shoulderY - 3); };
+      blob(ctx, L.cloth.base, hoodBack, 1.4);
+      shadeIn(ctx, hoodBack, L.cloth.shade, 3, 0.7);
+      line(ctx, trim, 1.8, [[-15, shoulderY + 6], [0, shoulderY + 24], [15, shoulderY + 6]]);
+    } else {
+      blob(ctx, L.cloth.shade, () => { ctx.moveTo(side ? -10 : -15, shoulderY - 4); ctx.quadraticCurveTo(side ? -12 : -16, shoulderY + 4, side ? -2 : -8, shoulderY + 3); ctx.lineTo(side ? 8 : 8, shoulderY + 3); ctx.quadraticCurveTo(side ? 9 : 16, shoulderY + 4, side ? 7 : 15, shoulderY - 4); ctx.closePath(); }, 1.3);
+      line(ctx, trim, 1.6, [[side ? -9 : -14, shoulderY - 1], [side ? 7 : 14, shoulderY - 1]]);
+    }
   }
   // --- cou et tête ---
-  blob(ctx, L.skin.shade, () => ctx.roundRect(-5, shoulderY - 12, 10, 12, 3), 2);
+  blob(ctx, L.skin.shade, () => ctx.roundRect(-5, shoulderY - 11, 10, 11, 3), 1.3);
   drawHead(ctx, L, view, headY);
   ctx.restore();
 }
 
-function shadeOf(hex: string): string {
-  const n = parseInt(hex.slice(1), 16);
-  const k = 0.72;
-  return `rgb(${Math.round(((n >> 16) & 255) * k)},${Math.round(((n >> 8) & 255) * k)},${Math.round((n & 255) * k)})`;
+/** Masse arrière des cheveux longs (derrière la tête, face et profil). */
+function backHair(ctx: Ctx, L: WalkerLook, view: View, y: number): void {
+  const H = L.hair;
+  const R = 24;
+  const side = view === 'profil';
+  if (L.cut === 'milongs' || L.cut === 'ondulee') {
+    blob(ctx, H.shade, () => { ctx.moveTo(-R - 2, y - 4); ctx.quadraticCurveTo(-R - 6, y + 26, -R + 2, y + 34); ctx.lineTo(R - 2, y + 34); ctx.quadraticCurveTo(R + 6, y + 26, R + 2, y - 4); ctx.closePath(); });
+    if (L.cut === 'ondulee') for (const sx of [-1, 1]) line(ctx, H.deep, 1.4, [[sx * (R - 2), y + 6], [sx * (R + 1), y + 16], [sx * (R - 3), y + 26]]);
+  } else if (L.cut === 'carre' || L.cut === 'carre-argent') {
+    blob(ctx, H.shade, () => ctx.roundRect(-R - 3, y - 8, 2 * R + 6, 30, [10, 10, 6, 6]));
+  } else if (L.cut === 'queue' && side) {
+    blob(ctx, H.base, () => ctx.ellipse(-R + 1, y + 14, 7, 17, 0.35, 0, Math.PI * 2));
+  }
 }
 
 function drawHead(ctx: Ctx, L: WalkerLook, view: View, y: number): void {
-  const R = 22;
+  const R = 24;
   const H = L.hair;
   const side = view === 'profil';
-  // masse arrière des cheveux (longs, queue, chignon) derrière la tête
-  if (L.cut === 'milongs' || L.cut === 'ondulee' || L.cut === 'carre' || L.cut === 'carre-argent') {
-    blob(ctx, H.shade, () => ctx.roundRect(-R - 2, y - 8, 2 * R + 4, L.cut === 'milongs' || L.cut === 'ondulee' ? 38 : 28, 10));
-  }
-  if (L.cut === 'queue' && view !== 'face') blob(ctx, H.base, () => ctx.ellipse(side ? -R + 2 : 0, y + 16, 7, 18, side ? 0.3 : 0, 0, Math.PI * 2));
-  // tête
-  blob(ctx, L.skin.base, () => {
-    if (side) ctx.ellipse(1, y, R * 0.92, R, 0, 0, Math.PI * 2);
-    else ctx.ellipse(0, y, R, R * 1.02, 0, 0, Math.PI * 2);
-  });
-  if (side) {
-    // nez et oreille
-    blob(ctx, L.skin.base, () => { ctx.moveTo(R * 0.86, y - 2); ctx.quadraticCurveTo(R + 6, y + 4, R * 0.84, y + 7); }, 1.8);
-    blob(ctx, L.skin.shade, () => ctx.ellipse(-4, y + 2, 4, 5.5, 0, 0, Math.PI * 2), 1.6);
-  }
-  if (view !== 'dos') {
-    // ombre de joue côté droit
-    ctx.save();
-    ctx.globalAlpha = 0.35;
-    ctx.fillStyle = L.skin.shade;
-    ctx.beginPath();
-    ctx.ellipse(side ? -6 : 9, y + 4, 10, 14, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-    // yeux : amande sombre, iris coloré, reflet (lisibles à 20 px)
-    const eye = (ex: number) => {
-      ctx.fillStyle = INK;
-      ctx.beginPath();
-      ctx.ellipse(ex, y + 2, 3.6, 4.6, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = L.iris;
-      ctx.beginPath();
-      ctx.ellipse(ex, y + 3, 2.3, 3, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(ex - 1.1, y + 0.6, 1.1, 0, Math.PI * 2);
-      ctx.fill();
-    };
-    if (side) eye(11);
-    else { eye(-8); eye(8); }
-    // sourcils, bouche, rougeur
-    ctx.strokeStyle = H.deep;
-    ctx.lineWidth = 2.2;
-    ctx.beginPath();
-    if (side) { ctx.moveTo(7, y - 6); ctx.lineTo(15, y - 7); } else { ctx.moveTo(-12, y - 6); ctx.lineTo(-4, y - 7); ctx.moveTo(4, y - 7); ctx.lineTo(12, y - 6); }
-    ctx.stroke();
-    ctx.strokeStyle = '#6a2c26';
-    ctx.lineWidth = 1.8;
-    ctx.beginPath();
-    if (side) { ctx.moveTo(12, y + 13); ctx.lineTo(17, y + 12.5); } else { ctx.moveTo(-4, y + 13); ctx.quadraticCurveTo(0, y + 15, 4, y + 13); }
-    ctx.stroke();
-    ctx.fillStyle = 'rgba(214,110,96,0.35)';
-    for (const cx of side ? [8] : [-12, 12]) { ctx.beginPath(); ctx.ellipse(cx, y + 9, 4, 2.5, 0, 0, Math.PI * 2); ctx.fill(); }
-    if (L.accessory === 'barbe') { ctx.fillStyle = 'rgba(40,30,26,0.28)'; ctx.beginPath(); ctx.ellipse(side ? 8 : 0, y + 14, side ? 10 : 15, 8, 0, 0, Math.PI); ctx.fill(); }
-    if (L.accessory === 'lunettes') { ctx.strokeStyle = INK; ctx.lineWidth = 1.6; for (const ex of side ? [11] : [-8, 8]) ctx.strokeRect(ex - 5, y - 2, 10, 8); }
-  }
-  // cheveux : calotte selon la coupe (face/profil), masse complète de dos
-  const cap = () => {
-    if (view === 'dos') { ctx.ellipse(0, y - 1, R + 1.5, R + 2, 0, 0, Math.PI * 2); return; }
-    ctx.moveTo(-R - 1, y + (L.cut === 'rase' ? -6 : 2));
-    ctx.quadraticCurveTo(-R - 2, y - R - 6, 0, y - R - 4);
-    ctx.quadraticCurveTo(R + 2, y - R - 6, R + 1, y + (L.cut === 'rase' ? -6 : 2));
-    const fr = L.cut === 'frange' || L.cut === 'carre' || L.cut === 'carre-argent' ? 2 : L.cut === 'plaquee' || L.cut === 'chignon' || L.cut === 'queue' ? -10 : -5;
-    ctx.quadraticCurveTo(R * 0.4, y + fr - 6, 0, y + fr - 2);
-    ctx.quadraticCurveTo(-R * 0.5, y + fr - 8, -R - 1, y + (L.cut === 'rase' ? -6 : 2));
+  const back = view === 'dos';
+  if (L.cut === 'queue' && back) blob(ctx, H.base, () => ctx.ellipse(0, y + 18, 7, 18, 0, 0, Math.PI * 2));
+  // oreilles
+  if (!back && !side) for (const sx of [-1, 1]) blob(ctx, L.skin.shade, () => ctx.ellipse(sx * (R - 1), y + 3, 4, 5.5, 0, 0, Math.PI * 2), 1.2);
+  // visage : ovale à menton doux
+  const face = () => {
+    if (side) { ctx.ellipse(1, y, R * 0.93, R, 0, 0, Math.PI * 2); return; }
+    ctx.moveTo(-R, y - 2);
+    ctx.bezierCurveTo(-R, y - R * 1.35, R, y - R * 1.35, R, y - 2);
+    ctx.bezierCurveTo(R, y + R * 0.62, R * 0.42, y + R * 0.98, 0, y + R * 0.98);
+    ctx.bezierCurveTo(-R * 0.42, y + R * 0.98, -R, y + R * 0.62, -R, y - 2);
   };
-  blob(ctx, view === 'dos' ? H.base : H.base, cap);
-  if (L.cut === 'pics') {
-    for (let i = -3; i <= 3; i++) blob(ctx, H.base, () => { ctx.moveTo(i * 6 - 5, y - R + 2); ctx.lineTo(i * 6 + (side ? -5 : 0), y - R - 14 + Math.abs(i) * 2); ctx.lineTo(i * 6 + 5, y - R + 2); }, 1.8);
-    ctx.fillStyle = H.hi;
-    ctx.globalAlpha = 0.6;
-    ctx.fillRect(-10, y - R - 6, 6, 3);
-    ctx.globalAlpha = 1;
+  blob(ctx, L.skin.base, face, 1.5);
+  if (!back) {
+    shadeIn(ctx, face, L.skin.shade, side ? -8 : 7, 0.42);
+    lightIn(ctx, face, L.skin.hi, side ? -12 : -12, 0.35);
   }
-  if (L.cut === 'boucles') for (let i = -2; i <= 2; i++) blob(ctx, H.base, () => ctx.arc(i * 9, y - R + 1, 6, 0, Math.PI * 2), 1.6);
-  if (L.cut === 'chignon') blob(ctx, H.base, () => ctx.arc(side ? -10 : 0, y - R - 6, 9, 0, Math.PI * 2));
-  // reflet de cheveux
+  if (side) {
+    blob(ctx, L.skin.base, () => { ctx.moveTo(R * 0.85, y - 3); ctx.quadraticCurveTo(R + 6.5, y + 4, R * 0.84, y + 7); }, 1.4);
+    blob(ctx, L.skin.shade, () => ctx.ellipse(-5, y + 2, 4, 5.5, 0, 0, Math.PI * 2), 1.2);
+  }
+  if (!back) {
+    // yeux : amande sombre, iris coloré, pupille, deux reflets ; paupière supérieure appuyée (lisibles à 25 px)
+    const eye = (ex: number) => {
+      ctx.fillStyle = '#f4efe6';
+      ctx.beginPath(); ctx.ellipse(ex, y + 3, 4.4, 5.6, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = L.iris;
+      ctx.beginPath(); ctx.ellipse(ex + (side ? 0.8 : 0), y + 3.6, 3.4, 4.6, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = INK;
+      ctx.beginPath(); ctx.ellipse(ex + (side ? 0.8 : 0), y + 4, 1.7, 2.4, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath(); ctx.arc(ex - 1.2, y + 1.6, 1.3, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(ex + 1.4, y + 6, 0.6, 0, Math.PI * 2); ctx.fill();
+      line(ctx, INK, 2.2, [[ex - 4.6, y - 0.6], [ex, y - 2.8], [ex + 4.8, y - 0.4]]);
+      line(ctx, INK, 0.9, [[ex - 3.4, y + 8.2], [ex + 3.4, y + 8.2]]);
+    };
+    if (side) eye(11.5);
+    else { eye(-8.5); eye(8.5); }
+    // sourcils, nez, bouche, joues
+    ctx.strokeStyle = H.deep;
+    ctx.lineWidth = 2.1;
+    ctx.beginPath();
+    if (side) { ctx.moveTo(7.5, y - 7); ctx.lineTo(15.5, y - 7.5); } else { ctx.moveTo(-12.5, y - 6.5); ctx.lineTo(-4.5, y - 7.5); ctx.moveTo(4.5, y - 7.5); ctx.lineTo(12.5, y - 6.5); }
+    ctx.stroke();
+    if (!side) { ctx.fillStyle = L.skin.deep; ctx.beginPath(); ctx.ellipse(0.8, y + 10, 1.4, 1, 0, 0, Math.PI * 2); ctx.fill(); }
+    ctx.strokeStyle = '#6a2c26';
+    ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    if (side) { ctx.moveTo(12, y + 15); ctx.lineTo(17, y + 14.5); } else { ctx.moveTo(-3.6, y + 14.5); ctx.quadraticCurveTo(0, y + 16.8, 3.6, y + 14.5); }
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(214,110,96,0.32)';
+    for (const cx of side ? [8] : [-12.5, 12.5]) { ctx.beginPath(); ctx.ellipse(cx, y + 11, 4.2, 2.6, 0, 0, Math.PI * 2); ctx.fill(); }
+    if (L.accessory === 'barbe') { ctx.fillStyle = 'rgba(40,30,26,0.32)'; ctx.beginPath(); ctx.ellipse(side ? 8 : 0, y + 16, side ? 10 : 15, 8, 0, 0, Math.PI); ctx.fill(); }
+    if (L.accessory === 'lunettes') { ctx.strokeStyle = INK; ctx.lineWidth = 1.4; for (const ex of side ? [11.5] : [-8.5, 8.5]) ctx.strokeRect(ex - 5.5, y - 2, 11, 9); }
+  }
+  // cheveux : calotte et frange selon la coupe ; mèches ; reflet
+  const fr = L.cut === 'frange' || L.cut === 'carre' || L.cut === 'carre-argent' ? 1 : L.cut === 'plaquee' || L.cut === 'chignon' || L.cut === 'queue' ? -11 : -6;
+  const low = L.cut === 'rase' ? -8 : 2;
+  const cap = () => {
+    if (back) { ctx.ellipse(0, y - 1, R + 1.8, R + 2.2, 0, 0, Math.PI * 2); return; }
+    if (side) {
+      ctx.moveTo(R * 0.7, y + fr - 6);
+      ctx.quadraticCurveTo(R * 0.9, y - R - 6, -2, y - R - 5);
+      ctx.quadraticCurveTo(-R - 4, y - R + 2, -R - 2, y + low + 8);
+      ctx.quadraticCurveTo(-6, y + 4, R * 0.7, y + fr - 6);
+      return;
+    }
+    ctx.moveTo(-R - 1.5, y + low);
+    ctx.quadraticCurveTo(-R - 3, y - R - 7, 0, y - R - 5);
+    ctx.quadraticCurveTo(R + 3, y - R - 7, R + 1.5, y + low);
+    ctx.quadraticCurveTo(R * 0.55, y + fr - 4, R * 0.18, y + fr - 2);
+    ctx.quadraticCurveTo(-R * 0.15, y + fr - 7, -R * 0.4, y + fr - 2);
+    ctx.quadraticCurveTo(-R * 0.75, y + fr - 6, -R - 1.5, y + low);
+  };
+  blob(ctx, H.base, cap, 1.5);
+  shadeIn(ctx, cap, H.shade, side ? -6 : back ? 6 : 8, 0.55);
+  if (back && L.cut !== 'rase') {
+    // de dos : mèches qui descendent du sommet en éventail, nuque plus sombre, bas de coupe festonné
+    ctx.save();
+    ctx.beginPath(); cap(); ctx.clip();
+    const g = ctx.createLinearGradient(0, y - R, 0, y + R);
+    g.addColorStop(0, 'rgba(0,0,0,0)');
+    g.addColorStop(1, H.deep);
+    ctx.globalAlpha = 0.55;
+    ctx.fillStyle = g;
+    ctx.fillRect(-R - 3, y - R, 2 * R + 6, 2 * R + 4);
+    ctx.globalAlpha = 1;
+    for (const dx of [-16, -9, -2, 5, 12, 18]) line(ctx, H.shade, 1.6, [[dx * 0.25, y - R - 2], [dx * 0.8, y - 4], [dx * 1.02, y + R]]);
+    ctx.restore();
+    ctx.fillStyle = H.base;
+    for (const dx of [-14, -5, 4, 13]) { ctx.beginPath(); ctx.moveTo(dx - 5, y + R - 4); ctx.lineTo(dx, y + R + 2); ctx.lineTo(dx + 5, y + R - 4); ctx.fill(); }
+  }
+  if (L.cut === 'pics') {
+    for (let i = -3; i <= 3; i++) blob(ctx, H.base, () => { ctx.moveTo(i * 6.4 - 5.5, y - R + 2); ctx.lineTo(i * 6.4 + (side ? -5 : 0), y - R - 15 + Math.abs(i) * 2.2); ctx.lineTo(i * 6.4 + 5.5, y - R + 2); }, 1.4);
+    ctx.fillStyle = H.hi; ctx.globalAlpha = 0.7; ctx.fillRect(-11, y - R - 7, 7, 3); ctx.globalAlpha = 1;
+  }
+  if (L.cut === 'boucles') for (let i = -2; i <= 2; i++) blob(ctx, H.base, () => ctx.arc(i * 9.5, y - R + 1, 6.4, 0, Math.PI * 2), 1.3);
+  if (L.cut === 'chignon') blob(ctx, H.base, () => ctx.arc(side ? -11 : 0, y - R - 7, 9.5, 0, Math.PI * 2));
+  // mèches (traits sombres) et reflet en arc
+  if (!back && L.cut !== 'rase') {
+    line(ctx, H.deep, 1.1, [[-R * 0.5, y - R + 3], [-R * 0.35, y + fr - 6]]);
+    line(ctx, H.deep, 1.1, [[R * 0.2, y - R + 1], [R * 0.3, y + fr - 7]]);
+  }
+  ctx.save();
   ctx.strokeStyle = H.hi;
-  ctx.globalAlpha = 0.55;
-  ctx.lineWidth = 2;
+  ctx.globalAlpha = 0.65;
+  ctx.lineWidth = 2.4;
   ctx.beginPath();
-  ctx.arc(side ? -2 : -4, y - 6, R - 4, Math.PI * 1.15, Math.PI * 1.45);
+  ctx.arc(side ? -3 : -5, y - 7, R - 5, Math.PI * 1.12, Math.PI * 1.48);
   ctx.stroke();
-  ctx.globalAlpha = 1;
+  ctx.restore();
   // accessoires de tête
   const acc = L.accessory;
-  if (acc === 'bandeau' || acc === 'bandeau-braise') blob(ctx, acc === 'bandeau-braise' ? '#c8321c' : L.cloth.hi, () => ctx.roundRect(-R - 1, y - 12, 2 * R + 2, 6, 3), 1.8);
+  if (acc === 'bandeau' || acc === 'bandeau-braise') {
+    blob(ctx, acc === 'bandeau-braise' ? '#c8321c' : L.cloth.hi, () => ctx.roundRect(-R - 1.5, y - 13, 2 * R + 3, 6.5, 3), 1.4);
+    if (acc === 'bandeau-braise' && !side) blob(ctx, '#c8321c', () => { ctx.moveTo(R - 2, y - 10); ctx.lineTo(R + 9, y - 2); ctx.lineTo(R + 4, y - 0.5); ctx.closePath(); }, 1.1);
+  }
   // Sélène : diadème d'argent et cristal (son identité V2), pas le bandeau du joueur.
   if (acc === 'diademe-voile') {
-    blob(ctx, '#d6dcf4', () => ctx.roundRect(-R, y - 13, 2 * R, 3.2, 1.6), 1.2);
-    if (view !== 'dos') blob(ctx, '#a8e6ff', () => ctx.arc(side ? 9 : 0, y - 11.4, 3, 0, Math.PI * 2), 1.2);
+    blob(ctx, '#d6dcf4', () => ctx.roundRect(-R, y - 14, 2 * R, 3.4, 1.6), 1.1);
+    if (!back) blob(ctx, '#a8e6ff', () => ctx.arc(side ? 9 : 0, y - 12.3, 3.2, 0, Math.PI * 2), 1.1);
   }
-  if (acc === 'bonnet') blob(ctx, L.cloth.hi, () => { ctx.moveTo(-R - 2, y - 6); ctx.quadraticCurveTo(0, y - R - 20, R + 2, y - 6); ctx.closePath(); });
-  if (acc === 'casquette') { blob(ctx, L.cloth.base, () => { ctx.moveTo(-R, y - 8); ctx.quadraticCurveTo(0, y - R - 12, R, y - 8); ctx.closePath(); }); if (view !== 'dos') blob(ctx, L.cloth.deep, () => ctx.roundRect(side ? 4 : -R + 2, y - 10, side ? 24 : 2 * R - 4, 5, 2), 1.6); }
-  if (acc === 'fichu') blob(ctx, '#8a3a3a', () => { ctx.moveTo(-R - 2, y - 2); ctx.quadraticCurveTo(0, y - R - 14, R + 2, y - 2); ctx.quadraticCurveTo(0, y - 10, -R - 2, y - 2); });
-  if (acc === 'fleur' && view !== 'dos') blob(ctx, '#e8a0b0', () => ctx.arc(side ? -6 : -14, y - 12, 4.5, 0, Math.PI * 2), 1.4);
-  if (acc === 'boucle' && view !== 'dos') { ctx.fillStyle = '#e2c48a'; ctx.beginPath(); ctx.arc(side ? -4 : -R + 1, y + 10, 2.2, 0, Math.PI * 2); ctx.fill(); }
+  if (acc === 'bonnet') blob(ctx, L.cloth.hi, () => { ctx.moveTo(-R - 2.5, y - 6); ctx.quadraticCurveTo(0, y - R - 22, R + 2.5, y - 6); ctx.closePath(); });
+  if (acc === 'casquette') { blob(ctx, L.cloth.base, () => { ctx.moveTo(-R, y - 8); ctx.quadraticCurveTo(0, y - R - 13, R, y - 8); ctx.closePath(); }); if (!back) blob(ctx, L.cloth.deep, () => ctx.roundRect(side ? 4 : -R + 2, y - 10, side ? 25 : 2 * R - 4, 5, 2), 1.3); }
+  if (acc === 'fichu') blob(ctx, '#8a3a3a', () => { ctx.moveTo(-R - 2.5, y - 2); ctx.quadraticCurveTo(0, y - R - 15, R + 2.5, y - 2); ctx.quadraticCurveTo(0, y - 10, -R - 2.5, y - 2); });
+  if (acc === 'fleur' && !back) blob(ctx, '#e8a0b0', () => ctx.arc(side ? -6 : -15, y - 13, 4.8, 0, Math.PI * 2), 1.2);
+  if (acc === 'boucle' && !back) { ctx.fillStyle = '#e2c48a'; ctx.beginPath(); ctx.arc(side ? -5 : -R + 1, y + 11, 2.3, 0, Math.PI * 2); ctx.fill(); }
 }
 
 const ATLAS = new Map<string, THREE.CanvasTexture>();
 
-/** Atlas d'un personnage (mis en cache par identifiant). */
+/**
+ * Atlas d'un personnage (mis en cache par identifiant). Chaque case est dessinée à part puis posée sur sa silhouette
+ * dilatée à l'encre : un contour extérieur épais et régulier (lisibilité de nuit, à la manière du V2), des traits
+ * intérieurs fins.
+ */
 export function walkerAtlas(id: string): THREE.CanvasTexture {
   const hit = ATLAS.get(id);
   if (hit) return hit;
+  const S = ATLAS_SCALE;
+  const cw = Math.round(CELL_W * S);
+  const ch = Math.round(CELL_H * S);
   const c = document.createElement('canvas');
-  c.width = CELL_W * COLS;
-  c.height = CELL_H * ROWS;
+  c.width = cw * COLS;
+  c.height = ch * ROWS;
   const ctx = c.getContext('2d')!;
+  const cell = document.createElement('canvas');
+  cell.width = cw;
+  cell.height = ch;
+  const cc = cell.getContext('2d')!;
+  const sil = document.createElement('canvas');
+  sil.width = cw;
+  sil.height = ch;
+  const sc = sil.getContext('2d')!;
   const L = walkerLook(id);
   const views: View[] = ['face', 'dos', 'profil'];
+  const rOut = 1.35 * S;
   views.forEach((v, r) => {
     for (let k = 0; k < COLS; k++) {
-      ctx.save();
-      ctx.translate(k * CELL_W, r * CELL_H);
-      ctx.beginPath();
-      ctx.rect(0, 0, CELL_W, CELL_H);
-      ctx.clip();
-      drawWalker(ctx, L, v, k === 0 ? null : (k - 1) / 4);
-      ctx.restore();
+      cc.setTransform(1, 0, 0, 1, 0, 0);
+      cc.clearRect(0, 0, cw, ch);
+      cc.setTransform(S, 0, 0, S, 0, 0);
+      drawWalker(cc, L, v, k === 0 ? null : (k - 1) / 4);
+      sc.globalCompositeOperation = 'source-over';
+      sc.clearRect(0, 0, cw, ch);
+      for (let a = 0; a < 12; a++) sc.drawImage(cell, Math.cos((a / 12) * Math.PI * 2) * rOut, Math.sin((a / 12) * Math.PI * 2) * rOut);
+      sc.globalCompositeOperation = 'source-in';
+      sc.fillStyle = INK;
+      sc.fillRect(0, 0, cw, ch);
+      ctx.drawImage(sil, k * cw, r * ch);
+      ctx.drawImage(cell, k * cw, r * ch);
     }
   });
   const t = new THREE.CanvasTexture(c);
@@ -358,20 +501,43 @@ export function walkerAtlasCanvas(id: string): HTMLCanvasElement {
   return walkerAtlas(id).image as HTMLCanvasElement;
 }
 
+/**
+ * Éclairage du personnage, plat comme une figurine peinte, au centre du corps : ambiante, lune, lanternes proches
+ * (compressées). M09 V3, d'après Cité du Tournoi (`SpriteRenderer.ts` L. 77-202) : dégradé vertical (pieds plus
+ * sombres), liseré de lumière sur le bord tourné vers la lanterne la plus forte (bord détecté dans l'alpha de l'atlas),
+ * liseré froid de lune sur le haut, ombre légèrement refroidie, compression douce des hautes lumières.
+ */
 const SPRITE_FRAG = /* glsl */ `
 ${COMMON_GLSL}
-uniform sampler2D tAtlas; uniform vec2 uCell; uniform vec2 uOff; uniform float uFlip; uniform vec3 uWorld;
+uniform sampler2D tAtlas; uniform vec2 uCell; uniform vec2 uOff; uniform float uFlip; uniform vec3 uWorld; uniform vec2 uTexel;
 varying vec2 vUv; varying vec3 vWorld;
+float alphaAt(vec2 uv){ uv = clamp(uv, vec2(0.0), vec2(1.0)); return texture2D(tAtlas, (uOff + vec2(uFlip > 0.5 ? 1.0 - uv.x : uv.x, uv.y)) * uCell).a; }
 void main(){
   vec2 uv = vec2(uFlip > 0.5 ? 1.0 - vUv.x : vUv.x, vUv.y);
   vec4 A = texture2D(tAtlas, (uOff + uv) * uCell);
   if (A.a < 0.5) discard;
-  // Éclairage au centre du personnage (plat, comme une figurine peinte) : ambiante, lune, lanternes proches.
   vec3 P = uWorld + vec3(0.0, 0.9, 0.0);
   vec3 N = normalize(cameraPosition - P); N.y = 0.25; N = normalize(N);
-  vec3 V = N;
-  vec3 diff, spec; lightSum(P, N, V, 1.0, 8.0, diff, spec);
-  vec3 col = A.rgb * (mix(uGroundAmb, uSkyAmb, 0.7) * 1.25 + uMoonCol * 0.42 + diff * 0.9);
+  vec3 diff, spec; lightSum(P, N, N, 1.0, 8.0, diff, spec);
+  // lanterne dominante : côté (écran) d'où vient la lumière
+  vec3 key = vec3(0.0); float kx = 0.0;
+  for (int i = 0; i < ${MAX_LIGHTS}; i++) {
+    if (i >= uLightCount) break;
+    vec3 Lv = uLightPos[i].xyz - P; float d2 = dot(Lv, Lv); float r = uLightPos[i].w;
+    float x = max(1.0 - d2 / (r * r), 0.0); float att = x * x / (1.0 + 0.22 * d2);
+    vec3 c = uLightCol[i] * att; key += c; kx += dot(c, vec3(0.3, 0.5, 0.2)) * sign(Lv.x);
+  }
+  diff = diff / (1.0 + 0.6 * diff);
+  vec3 col = A.rgb * (mix(uGroundAmb, uSkyAmb, 0.7) * 1.3 + uMoonCol * 0.42 + diff * 1.15);
+  col *= mix(0.74, 1.04, smoothstep(0.0, 0.45, vUv.y));
+  // liserés : bord de la silhouette tourné vers la lumière dominante (chaud), haut de la silhouette (froid, lune)
+  float sx = kx >= 0.0 ? 1.0 : -1.0;
+  float edgeKey = 1.0 - alphaAt(vUv + vec2(sx * 2.5 * uTexel.x, 0.0));
+  float edgeTop = 1.0 - alphaAt(vUv + vec2(0.0, 2.5 * uTexel.y));
+  float keyLum = dot(key, vec3(0.3, 0.5, 0.2));
+  col += A.rgb * key * edgeKey * 0.9 + vec3(1.0, 0.72, 0.42) * edgeKey * min(keyLum, 1.2) * 0.22;
+  col += uMoonCol * edgeTop * 0.35;
+  col /= 1.0 + 0.12 * col;
   gl_FragColor = vec4(applyFog(col, vWorld), 1.0);
 }`;
 
@@ -379,6 +545,8 @@ export interface WalkerSprite {
   group: THREE.Group;
   set(pos: { x: number; z: number }, facing: Facing, phase: number, moving: boolean, time: number): void;
   setTilt(rad: number): void;
+  /** Hauteur du personnage dans le monde (m) : l'atlas est le même, le panneau et l'ombre suivent. */
+  setHeight(h: number): void;
   /** Remplace l'atlas dessiné par code (feuille externe vérifiée, `spritesExternes.ts`). */
   setAtlas(tex: THREE.Texture): void;
   dispose(): void;
@@ -389,6 +557,7 @@ export function createWalkerSprite(id: string): WalkerSprite {
   const atlas = walkerAtlas(id);
   const geo = new THREE.PlaneGeometry(PLANE_W, PLANE_H);
   geo.translate(0, PLANE_H / 2 - (8 / CELL_H) * PLANE_H, 0);
+  const img = atlas.image as HTMLCanvasElement;
   const uniforms = {
     ...U,
     tAtlas: { value: atlas as THREE.Texture },
@@ -396,6 +565,8 @@ export function createWalkerSprite(id: string): WalkerSprite {
     uOff: { value: new THREE.Vector2(0, ROWS - 1) },
     uFlip: { value: 0 },
     uWorld: { value: new THREE.Vector3() },
+    // pas d'un texel de l'atlas, exprimé dans les UV d'une case (détection du bord pour les liserés)
+    uTexel: { value: new THREE.Vector2(COLS / img.width, ROWS / img.height) },
   };
   const mat = new THREE.ShaderMaterial({
     name: 'VilleMarcheur',
@@ -431,7 +602,12 @@ export function createWalkerSprite(id: string): WalkerSprite {
       pivot.scale.y = moving ? 1 : 1 + Math.sin(time * 2.2) * 0.008;
     },
     setTilt(rad) { pivot.rotation.x = rad; },
-    setAtlas(tex) { uniforms.tAtlas.value = tex; },
+    setHeight(h) { group.scale.setScalar(h / WALKER_H); },
+    setAtlas(tex) {
+      uniforms.tAtlas.value = tex;
+      const im = tex.image as { width?: number; height?: number } | undefined;
+      if (im?.width && im.height) uniforms.uTexel.value.set(COLS / im.width, ROWS / im.height);
+    },
     dispose() { geo.dispose(); mat.dispose(); shadow.geometry.dispose(); (shadow.material as THREE.Material).dispose(); },
   };
 }
@@ -443,8 +619,8 @@ function contactShadow(): THREE.CanvasTexture {
   c.width = c.height = 128;
   const ctx = c.getContext('2d')!;
   const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-  g.addColorStop(0, 'rgba(3,5,12,0.82)');
-  g.addColorStop(0.5, 'rgba(3,5,12,0.4)');
+  g.addColorStop(0, 'rgba(3,5,12,0.85)');
+  g.addColorStop(0.5, 'rgba(3,5,12,0.42)');
   g.addColorStop(1, 'rgba(3,5,12,0)');
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, 128, 128);

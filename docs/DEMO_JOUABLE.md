@@ -18,6 +18,13 @@ qa:demo` (sur GPU réel : `LQV_GPU=1 CHROMIUM_PATH=<Chrome> npm run qa:demo`) ; 
 `?demo=1` seul suffit. Sans le paramètre : le jeu habituel (tableau des rencontres). `?ville=1` : la ville seule
 (laboratoire, sans le reste du jeu).
 
+**Cadrage réglable à l'œil (fiche B1, M09 V3)** : `&rig=inclinaison,distance,focale,hauteur visée` (degrés, mètres,
+degrés, mètres) remplace le cadrage de l'îlot, par exemple `/?demo=1&rig=7,18.5,39,3.05` (cadrage du Quai retravaillé)
+ou `/?ville=1&ilot=quai&rig=6.5,18.5,37,3.2` (plus serré, personnages un peu plus grands, moins d'eau). Les valeurs hors
+des bornes sont ignorées. Le Quai a été retravaillé (passe de qualité V3, JOURNAL passe 45) ; le Parvis et les Ruelles
+gardent le décor et le cadrage d'origine jusqu'à la validation du responsable (seuls les personnages, communs aux îlots,
+ont le nouveau dessin).
+
 ## Commandes
 
 | Action | Clavier | Souris |
