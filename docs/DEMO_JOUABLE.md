@@ -12,6 +12,9 @@ npm run dev            # puis ouvrir http://localhost:5173/?demo=1
 npm run build && npm run preview   # http://localhost:4173/?demo=1
 ```
 
+Parcours automatique (navigateur headless, 30 contrôles, captures `screenshots/qa/m09/v2-demo/`) : `npm run build && npm run
+qa:demo` (sur GPU réel : `LQV_GPU=1 CHROMIUM_PATH=<Chrome> npm run qa:demo`) ; vues de la ville : `npm run qa:ville`.
+
 `?demo=1` seul suffit. Sans le paramètre : le jeu habituel (tableau des rencontres). `?ville=1` : la ville seule
 (laboratoire, sans le reste du jeu).
 
@@ -53,6 +56,7 @@ L'aide (menu → Aide) commence, en démo seulement, par ces commandes de la vil
 - Trois îlots (le Quai, le Parvis, les Ruelles) ; pas encore de carte de la ville ni de Place du Fanal.
 - Personnages de la ville dessinés par code (provisoires, en attendant Aseprite pour les personnages clés).
 - Textes de prototype ; aucun son.
+- Sans WebGL (navigateur ou poste qui le refuse), pas de ville : la démo reste le jeu habituel.
 - Le tableau des rencontres classique reste accessible par le menu de la ville (« Toutes les rencontres »).
 
 Décisions à prendre : `docs/FICHE_ARBITRAGES_M09.md`.
