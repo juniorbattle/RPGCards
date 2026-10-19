@@ -1,0 +1,346 @@
+{
+  "date": "2026-10-19T04:33:24.466Z",
+  "mode": "cycle",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "commit": "1aa9872",
+  "prepare": [
+    {
+      "venue": "salle",
+      "ok": false,
+      "ms": 0
+    },
+    {
+      "venue": "rue",
+      "ok": false,
+      "ms": 0
+    },
+    {
+      "venue": "bar",
+      "ok": true,
+      "ms": 338.4
+    },
+    {
+      "venue": "arene",
+      "ok": true,
+      "ms": 354.6
+    }
+  ],
+  "memory": {
+    "textures": true,
+    "geometries": true,
+    "programs": true,
+    "heapFirst": 9.02,
+    "heapLast": 9.28
+  },
+  "steps": [
+    {
+      "round": 1,
+      "venue": "rue",
+      "handler": 0.5,
+      "firstFrame": 4,
+      "render": 8,
+      "venueMs": 0.2,
+      "textures": 69,
+      "geometries": 108,
+      "programs": 74,
+      "mounted": [
+        "salle",
+        "bar",
+        "arene",
+        "rue"
+      ],
+      "venueMB": 65.8,
+      "heapMb": 8.9
+    },
+    {
+      "round": 1,
+      "venue": "bar",
+      "handler": 0.2,
+      "firstFrame": 4.7,
+      "render": 5.9,
+      "venueMs": 0,
+      "textures": 69,
+      "geometries": 108,
+      "programs": 74,
+      "mounted": [
+        "salle",
+        "arene",
+        "rue",
+        "bar"
+      ],
+      "venueMB": 65.8,
+      "heapMb": 8.94
+    },
+    {
+      "round": 1,
+      "venue": "arene",
+      "handler": 0.2,
+      "firstFrame": 3,
+      "render": 5.9,
+      "venueMs": 0,
+      "textures": 69,
+      "geometries": 108,
+      "programs": 74,
+      "mounted": [
+        "salle",
+        "rue",
+        "bar",
+        "arene"
+      ],
+      "venueMB": 65.8,
+      "heapMb": 9
+    },
+    {
+      "round": 1,
+      "venue": "salle",
+      "handler": 0.2,
+      "firstFrame": 5.8,
+      "render": 7.2,
+      "venueMs": 0,
+      "textures": 69,
+      "geometries": 108,
+      "programs": 74,
+      "mounted": [
+        "rue",
+        "bar",
+        "arene",
+        "salle"
+      ],
+      "venueMB": 65.8,
+      "heapMb": 9.02
+    },
+    {
+      "round": 2,
+      "venue": "rue",
+      "handler": 0.3,
+      "firstFrame": 5.2,
+      "render": 5.2,
+      "venueMs": 0.1,
+      "textures": 69,
+      "geometries": 108,
+      "programs": 74,
+      "mounted": [
+        "bar",
+        "arene",
+        "salle",
+        "rue"
+      ],
+      "venueMB": 65.8,
+      "heapMb": 9.11
+    },
+    {
+      "round": 2,
+      "venue": "bar",
+      "handler": 0,
+      "firstFrame": 3.7,
+      "render": 3.6,
+      "venueMs": 0,
+      "textures": 69,
+      "geometries": 108,
+      "programs": 74,
+      "mounted": [
+        "arene",
+        "salle",
+        "rue",
+        "bar"
+      ],
+      "venueMB": 65.8,
+      "heapMb": 9.19
+    },
+    {
+      "round": 2,
+      "venue": "arene",
+      "handler": 0.2,
+      "firstFrame": 3.2,
+      "render": 8.9,
+      "venueMs": 0.1,
+      "textures": 69,
+      "geometries": 108,
+      "programs": 74,
+      "mounted": [
+        "salle",
+        "rue",
+        "bar",
+        "arene"
+      ],
+      "venueMB": 65.8,
+      "heapMb": 9.2
+    },
+    {
+      "round": 2,
+      "venue": "salle",
+      "handler": 0.1,
+      "firstFrame": 2.3,
+      "render": 3.7,
+      "venueMs": 0,
+      "textures": 69,
+      "geometries": 108,
+      "programs": 74,
+      "mounted": [
+        "rue",
+        "bar",
+        "arene",
+        "salle"
+      ],
+      "venueMB": 65.8,
+      "heapMb": 9.2
+    },
+    {
+      "round": 3,
+      "venue": "rue",
+      "handler": 0.1,
+      "firstFrame": 2.4,
+      "render": 3.3,
+      "venueMs": 0,
+      "textures": 69,
+      "geometries": 108,
+      "programs": 74,
+      "mounted": [
+        "bar",
+        "arene",
+        "salle",
+        "rue"
+      ],
+      "venueMB": 65.8,
+      "heapMb": 9.22
+    },
+    {
+      "round": 3,
+      "venue": "bar",
+      "handler": 0.2,
+      "firstFrame": 1.9,
+      "render": 6.9,
+      "venueMs": 0.1,
+      "textures": 69,
+      "geometries": 108,
+      "programs": 74,
+      "mounted": [
+        "arene",
+        "salle",
+        "rue",
+        "bar"
+      ],
+      "venueMB": 65.8,
+      "heapMb": 9.22
+    },
+    {
+      "round": 3,
+      "venue": "arene",
+      "handler": 0.1,
+      "firstFrame": 1.9,
+      "render": 5.5,
+      "venueMs": 0,
+      "textures": 69,
+      "geometries": 108,
+      "programs": 74,
+      "mounted": [
+        "salle",
+        "rue",
+        "bar",
+        "arene"
+      ],
+      "venueMB": 65.8,
+      "heapMb": 9.22
+    },
+    {
+      "round": 3,
+      "venue": "salle",
+      "handler": 0,
+      "firstFrame": 2.6,
+      "render": 4.4,
+      "venueMs": 0,
+      "textures": 69,
+      "geometries": 108,
+      "programs": 74,
+      "mounted": [
+        "rue",
+        "bar",
+        "arene",
+        "salle"
+      ],
+      "venueMB": 65.8,
+      "heapMb": 9.22
+    },
+    {
+      "round": 4,
+      "venue": "rue",
+      "handler": 0.2,
+      "firstFrame": 2.5,
+      "render": 4.7,
+      "venueMs": 0,
+      "textures": 69,
+      "geometries": 108,
+      "programs": 74,
+      "mounted": [
+        "bar",
+        "arene",
+        "salle",
+        "rue"
+      ],
+      "venueMB": 65.8,
+      "heapMb": 9.22
+    },
+    {
+      "round": 4,
+      "venue": "bar",
+      "handler": 0.1,
+      "firstFrame": 2.7,
+      "render": 3.1,
+      "venueMs": 0,
+      "textures": 69,
+      "geometries": 108,
+      "programs": 74,
+      "mounted": [
+        "arene",
+        "salle",
+        "rue",
+        "bar"
+      ],
+      "venueMB": 65.8,
+      "heapMb": 9.23
+    },
+    {
+      "round": 4,
+      "venue": "arene",
+      "handler": 0.1,
+      "firstFrame": 2.7,
+      "render": 3.2,
+      "venueMs": 0.1,
+      "textures": 69,
+      "geometries": 108,
+      "programs": 74,
+      "mounted": [
+        "salle",
+        "rue",
+        "bar",
+        "arene"
+      ],
+      "venueMB": 65.8,
+      "heapMb": 9.23
+    },
+    {
+      "round": 4,
+      "venue": "salle",
+      "handler": 0.1,
+      "firstFrame": 2.8,
+      "render": 8.2,
+      "venueMs": 0,
+      "textures": 69,
+      "geometries": 108,
+      "programs": 74,
+      "mounted": [
+        "rue",
+        "bar",
+        "arene",
+        "salle"
+      ],
+      "venueMB": 65.8,
+      "heapMb": 9.28
+    }
+  ],
+  "firstFrame": {
+    "median": 2.7,
+    "max": 5.2
+  },
+  "issues": []
+}

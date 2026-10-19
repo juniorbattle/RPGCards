@@ -1,0 +1,346 @@
+{
+  "date": "2026-10-19T04:33:09.071Z",
+  "mode": "invariance",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "commit": "1aa9872",
+  "invariant": true,
+  "results": [
+    {
+      "viewport": "1280x720",
+      "view": "A",
+      "venues": [
+        "salle",
+        "rue"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      },
+      "projection": true,
+      "cameraView": true,
+      "rival": true,
+      "anchors": {
+        "head": ".205",
+        "edge": ".455"
+      }
+    },
+    {
+      "viewport": "1280x720",
+      "view": "A",
+      "venues": [
+        "salle",
+        "bar"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      },
+      "projection": true,
+      "cameraView": true,
+      "rival": true,
+      "anchors": {
+        "head": ".205",
+        "edge": ".455"
+      }
+    },
+    {
+      "viewport": "1280x720",
+      "view": "A",
+      "venues": [
+        "salle",
+        "arene"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      },
+      "projection": true,
+      "cameraView": true,
+      "rival": true,
+      "anchors": {
+        "head": ".205",
+        "edge": ".455"
+      }
+    },
+    {
+      "viewport": "1280x720",
+      "view": "B",
+      "venues": [
+        "salle",
+        "rue"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      },
+      "projection": true,
+      "cameraView": true,
+      "rival": true,
+      "anchors": {
+        "head": ".205",
+        "edge": ".455"
+      }
+    },
+    {
+      "viewport": "1280x720",
+      "view": "B",
+      "venues": [
+        "salle",
+        "bar"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      },
+      "projection": true,
+      "cameraView": true,
+      "rival": true,
+      "anchors": {
+        "head": ".205",
+        "edge": ".455"
+      }
+    },
+    {
+      "viewport": "1280x720",
+      "view": "B",
+      "venues": [
+        "salle",
+        "arene"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      },
+      "projection": true,
+      "cameraView": true,
+      "rival": true,
+      "anchors": {
+        "head": ".205",
+        "edge": ".455"
+      }
+    },
+    {
+      "viewport": "1280x720",
+      "screen": "preparation",
+      "venues": [
+        "salle",
+        "rue"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      }
+    },
+    {
+      "viewport": "1280x720",
+      "screen": "preparation",
+      "venues": [
+        "salle",
+        "bar"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      }
+    },
+    {
+      "viewport": "1280x720",
+      "screen": "preparation",
+      "venues": [
+        "salle",
+        "arene"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "view": "A",
+      "venues": [
+        "salle",
+        "rue"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      },
+      "projection": true,
+      "cameraView": true,
+      "rival": true,
+      "anchors": {
+        "head": ".205",
+        "edge": ".455"
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "view": "A",
+      "venues": [
+        "salle",
+        "bar"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      },
+      "projection": true,
+      "cameraView": true,
+      "rival": true,
+      "anchors": {
+        "head": ".205",
+        "edge": ".455"
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "view": "A",
+      "venues": [
+        "salle",
+        "arene"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      },
+      "projection": true,
+      "cameraView": true,
+      "rival": true,
+      "anchors": {
+        "head": ".205",
+        "edge": ".455"
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "view": "B",
+      "venues": [
+        "salle",
+        "rue"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      },
+      "projection": true,
+      "cameraView": true,
+      "rival": true,
+      "anchors": {
+        "head": ".205",
+        "edge": ".455"
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "view": "B",
+      "venues": [
+        "salle",
+        "bar"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      },
+      "projection": true,
+      "cameraView": true,
+      "rival": true,
+      "anchors": {
+        "head": ".205",
+        "edge": ".455"
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "view": "B",
+      "venues": [
+        "salle",
+        "arene"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      },
+      "projection": true,
+      "cameraView": true,
+      "rival": true,
+      "anchors": {
+        "head": ".205",
+        "edge": ".455"
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "screen": "preparation",
+      "venues": [
+        "salle",
+        "rue"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "screen": "preparation",
+      "venues": [
+        "salle",
+        "bar"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "screen": "preparation",
+      "venues": [
+        "salle",
+        "arene"
+      ],
+      "dom": {
+        "meanAbs": 0,
+        "max": 0,
+        "pixels": 0,
+        "box": null
+      }
+    }
+  ],
+  "issues": []
+}

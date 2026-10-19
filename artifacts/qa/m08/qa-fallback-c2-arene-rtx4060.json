@@ -1,0 +1,127 @@
+{
+  "commit": "21a53a2",
+  "date": "2026-10-19T04:02:38.049Z",
+  "gpu": true,
+  "chromeArgs": [
+    "--force_high_performance_gpu"
+  ],
+  "stressMs": 6,
+  "renderer": "Chrome headless, GPU réel : ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11) — arguments : --force_high_performance_gpu",
+  "checks": [
+    "OK duel 1 : départ au rendu complet, repli actif",
+    "OK duel 1 sous charge GPU (6 → 9 ms) : rendu direct atteint (16 images > 16,7 ms sur 3878, médiane 6.1 ms)",
+    "OK duel 1 : crans après un décrochage mesuré par l’outil (7 secondes mauvaises de suite)",
+    "OK duel 1 : crans dans l’ordre (halo coupé, puis rendu direct)",
+    "OK duel 1 : aucun cran pendant la mise en place (2 premières secondes)",
+    "OK duel 1 : aucun programme GPU compilé par les changements de niveau (53 → 53)",
+    "OK duel suivant (après les menus) : rendu complet, historique remis à zéro",
+    "OK duel suivant sans charge, 20 s : reste au rendu complet (0 images > 16,7 ms sur 3291)",
+    "OK duel suivant : rythme nominal remesuré (6 ms)",
+    "OK console : 0 erreur(s) ou avertissement(s)"
+  ],
+  "fails": [],
+  "duel1": {
+    "start": {
+      "level": "full",
+      "auto": true,
+      "nominalMs": null,
+      "slice": null,
+      "badSlices": 0,
+      "steps": [],
+      "runs": 2,
+      "programs": 53
+    },
+    "end": {
+      "level": "direct",
+      "auto": true,
+      "nominalMs": 6,
+      "slice": {
+        "frames": 107,
+        "medianMs": 12,
+        "lateShare": 0,
+        "bad": "median"
+      },
+      "badSlices": 0,
+      "steps": [
+        {
+          "atS": 24.15,
+          "from": "full",
+          "to": "nobloom",
+          "reason": "median",
+          "medianMs": 12,
+          "lateShare": 0,
+          "nominalMs": 6
+        },
+        {
+          "atS": 28.18,
+          "from": "nobloom",
+          "to": "direct",
+          "reason": "median",
+          "medianMs": 12,
+          "lateShare": 0,
+          "nominalMs": 6
+        }
+      ],
+      "runs": 2,
+      "programs": 53
+    },
+    "frames": {
+      "frames": 3878,
+      "medianMs": 6.1,
+      "late": 16,
+      "lateShare": 0.004,
+      "badRun": 7
+    },
+    "stressTargetsMs": [
+      6,
+      9
+    ],
+    "stressMs": [
+      9,
+      9,
+      9,
+      9,
+      9,
+      9,
+      9,
+      9,
+      9,
+      9
+    ]
+  },
+  "duel2": {
+    "start": {
+      "level": "full",
+      "auto": true,
+      "nominalMs": null,
+      "slice": null,
+      "badSlices": 0,
+      "steps": [],
+      "runs": 3,
+      "programs": 53
+    },
+    "end": {
+      "level": "full",
+      "auto": true,
+      "nominalMs": 6,
+      "slice": {
+        "frames": 166,
+        "medianMs": 6.1,
+        "lateShare": 0,
+        "bad": null
+      },
+      "badSlices": 0,
+      "steps": [],
+      "runs": 3,
+      "programs": 53
+    },
+    "frames": {
+      "frames": 3291,
+      "medianMs": 6.1,
+      "late": 0,
+      "lateShare": 0,
+      "badRun": 0
+    }
+  },
+  "consoleIssues": []
+}

@@ -1,0 +1,473 @@
+{
+  "date": "2026-10-19T03:25:41.544Z",
+  "mode": "planche",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "commit": "21a53a2",
+  "shots": [
+    {
+      "name": "salle-scene-vueA-1280x720.png",
+      "venue": "salle",
+      "view": "A",
+      "viewport": "1280x720",
+      "drawCalls": 96,
+      "textures": 40,
+      "geometries": 54,
+      "programs": 51
+    },
+    {
+      "name": "salle-complet-vueA-1280x720.png",
+      "venue": "salle",
+      "view": "A",
+      "viewport": "1280x720",
+      "drawCalls": 96,
+      "textures": 40,
+      "geometries": 54,
+      "programs": 51
+    },
+    {
+      "name": "salle-scene-vueB-1280x720.png",
+      "venue": "salle",
+      "view": "B",
+      "viewport": "1280x720",
+      "drawCalls": 98,
+      "textures": 40,
+      "geometries": 54,
+      "programs": 51
+    },
+    {
+      "name": "salle-complet-vueB-1280x720.png",
+      "venue": "salle",
+      "view": "B",
+      "viewport": "1280x720",
+      "drawCalls": 98,
+      "textures": 40,
+      "geometries": 54,
+      "programs": 51
+    },
+    {
+      "name": "salle-accueil-1280x720.png",
+      "venue": "salle",
+      "screen": "accueil",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "salle-preparation-1280x720.png",
+      "venue": "salle",
+      "screen": "preparation",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "salle-scene-direct-1280x720.png",
+      "venue": "salle",
+      "level": "direct",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "rue-scene-vueA-1280x720.png",
+      "venue": "rue",
+      "view": "A",
+      "viewport": "1280x720",
+      "drawCalls": 81,
+      "textures": 41,
+      "geometries": 45,
+      "programs": 52
+    },
+    {
+      "name": "rue-complet-vueA-1280x720.png",
+      "venue": "rue",
+      "view": "A",
+      "viewport": "1280x720",
+      "drawCalls": 81,
+      "textures": 41,
+      "geometries": 45,
+      "programs": 52
+    },
+    {
+      "name": "rue-scene-vueB-1280x720.png",
+      "venue": "rue",
+      "view": "B",
+      "viewport": "1280x720",
+      "drawCalls": 80,
+      "textures": 40,
+      "geometries": 44,
+      "programs": 51
+    },
+    {
+      "name": "rue-complet-vueB-1280x720.png",
+      "venue": "rue",
+      "view": "B",
+      "viewport": "1280x720",
+      "drawCalls": 80,
+      "textures": 40,
+      "geometries": 44,
+      "programs": 51
+    },
+    {
+      "name": "rue-accueil-1280x720.png",
+      "venue": "rue",
+      "screen": "accueil",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "rue-preparation-1280x720.png",
+      "venue": "rue",
+      "screen": "preparation",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "rue-scene-direct-1280x720.png",
+      "venue": "rue",
+      "level": "direct",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "bar-scene-vueA-1280x720.png",
+      "venue": "bar",
+      "view": "A",
+      "viewport": "1280x720",
+      "drawCalls": 90,
+      "textures": 40,
+      "geometries": 51,
+      "programs": 50
+    },
+    {
+      "name": "bar-complet-vueA-1280x720.png",
+      "venue": "bar",
+      "view": "A",
+      "viewport": "1280x720",
+      "drawCalls": 90,
+      "textures": 40,
+      "geometries": 51,
+      "programs": 50
+    },
+    {
+      "name": "bar-scene-vueB-1280x720.png",
+      "venue": "bar",
+      "view": "B",
+      "viewport": "1280x720",
+      "drawCalls": 84,
+      "textures": 40,
+      "geometries": 45,
+      "programs": 49
+    },
+    {
+      "name": "bar-complet-vueB-1280x720.png",
+      "venue": "bar",
+      "view": "B",
+      "viewport": "1280x720",
+      "drawCalls": 84,
+      "textures": 40,
+      "geometries": 45,
+      "programs": 49
+    },
+    {
+      "name": "bar-accueil-1280x720.png",
+      "venue": "bar",
+      "screen": "accueil",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "bar-preparation-1280x720.png",
+      "venue": "bar",
+      "screen": "preparation",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "bar-scene-direct-1280x720.png",
+      "venue": "bar",
+      "level": "direct",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "arene-scene-vueA-1280x720.png",
+      "venue": "arene",
+      "view": "A",
+      "viewport": "1280x720",
+      "drawCalls": 83,
+      "textures": 42,
+      "geometries": 42,
+      "programs": 53
+    },
+    {
+      "name": "arene-complet-vueA-1280x720.png",
+      "venue": "arene",
+      "view": "A",
+      "viewport": "1280x720",
+      "drawCalls": 83,
+      "textures": 42,
+      "geometries": 42,
+      "programs": 53
+    },
+    {
+      "name": "arene-scene-vueB-1280x720.png",
+      "venue": "arene",
+      "view": "B",
+      "viewport": "1280x720",
+      "drawCalls": 83,
+      "textures": 42,
+      "geometries": 42,
+      "programs": 53
+    },
+    {
+      "name": "arene-complet-vueB-1280x720.png",
+      "venue": "arene",
+      "view": "B",
+      "viewport": "1280x720",
+      "drawCalls": 83,
+      "textures": 42,
+      "geometries": 42,
+      "programs": 53
+    },
+    {
+      "name": "arene-accueil-1280x720.png",
+      "venue": "arene",
+      "screen": "accueil",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "arene-preparation-1280x720.png",
+      "venue": "arene",
+      "screen": "preparation",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "arene-scene-direct-1280x720.png",
+      "venue": "arene",
+      "level": "direct",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "salle-scene-vueA-1920x1080.png",
+      "venue": "salle",
+      "view": "A",
+      "viewport": "1920x1080",
+      "drawCalls": 96,
+      "textures": 40,
+      "geometries": 54,
+      "programs": 51
+    },
+    {
+      "name": "salle-complet-vueA-1920x1080.png",
+      "venue": "salle",
+      "view": "A",
+      "viewport": "1920x1080",
+      "drawCalls": 96,
+      "textures": 40,
+      "geometries": 54,
+      "programs": 51
+    },
+    {
+      "name": "salle-scene-vueB-1920x1080.png",
+      "venue": "salle",
+      "view": "B",
+      "viewport": "1920x1080",
+      "drawCalls": 98,
+      "textures": 40,
+      "geometries": 54,
+      "programs": 51
+    },
+    {
+      "name": "salle-complet-vueB-1920x1080.png",
+      "venue": "salle",
+      "view": "B",
+      "viewport": "1920x1080",
+      "drawCalls": 98,
+      "textures": 40,
+      "geometries": 54,
+      "programs": 51
+    },
+    {
+      "name": "salle-accueil-1920x1080.png",
+      "venue": "salle",
+      "screen": "accueil",
+      "viewport": "1920x1080"
+    },
+    {
+      "name": "salle-preparation-1920x1080.png",
+      "venue": "salle",
+      "screen": "preparation",
+      "viewport": "1920x1080"
+    },
+    {
+      "name": "salle-scene-direct-1920x1080.png",
+      "venue": "salle",
+      "level": "direct",
+      "viewport": "1920x1080"
+    },
+    {
+      "name": "rue-scene-vueA-1920x1080.png",
+      "venue": "rue",
+      "view": "A",
+      "viewport": "1920x1080",
+      "drawCalls": 81,
+      "textures": 41,
+      "geometries": 45,
+      "programs": 52
+    },
+    {
+      "name": "rue-complet-vueA-1920x1080.png",
+      "venue": "rue",
+      "view": "A",
+      "viewport": "1920x1080",
+      "drawCalls": 81,
+      "textures": 41,
+      "geometries": 45,
+      "programs": 52
+    },
+    {
+      "name": "rue-scene-vueB-1920x1080.png",
+      "venue": "rue",
+      "view": "B",
+      "viewport": "1920x1080",
+      "drawCalls": 80,
+      "textures": 40,
+      "geometries": 44,
+      "programs": 51
+    },
+    {
+      "name": "rue-complet-vueB-1920x1080.png",
+      "venue": "rue",
+      "view": "B",
+      "viewport": "1920x1080",
+      "drawCalls": 80,
+      "textures": 40,
+      "geometries": 44,
+      "programs": 51
+    },
+    {
+      "name": "rue-accueil-1920x1080.png",
+      "venue": "rue",
+      "screen": "accueil",
+      "viewport": "1920x1080"
+    },
+    {
+      "name": "rue-preparation-1920x1080.png",
+      "venue": "rue",
+      "screen": "preparation",
+      "viewport": "1920x1080"
+    },
+    {
+      "name": "rue-scene-direct-1920x1080.png",
+      "venue": "rue",
+      "level": "direct",
+      "viewport": "1920x1080"
+    },
+    {
+      "name": "bar-scene-vueA-1920x1080.png",
+      "venue": "bar",
+      "view": "A",
+      "viewport": "1920x1080",
+      "drawCalls": 90,
+      "textures": 40,
+      "geometries": 51,
+      "programs": 50
+    },
+    {
+      "name": "bar-complet-vueA-1920x1080.png",
+      "venue": "bar",
+      "view": "A",
+      "viewport": "1920x1080",
+      "drawCalls": 90,
+      "textures": 40,
+      "geometries": 51,
+      "programs": 50
+    },
+    {
+      "name": "bar-scene-vueB-1920x1080.png",
+      "venue": "bar",
+      "view": "B",
+      "viewport": "1920x1080",
+      "drawCalls": 84,
+      "textures": 40,
+      "geometries": 45,
+      "programs": 49
+    },
+    {
+      "name": "bar-complet-vueB-1920x1080.png",
+      "venue": "bar",
+      "view": "B",
+      "viewport": "1920x1080",
+      "drawCalls": 84,
+      "textures": 40,
+      "geometries": 45,
+      "programs": 49
+    },
+    {
+      "name": "bar-accueil-1920x1080.png",
+      "venue": "bar",
+      "screen": "accueil",
+      "viewport": "1920x1080"
+    },
+    {
+      "name": "bar-preparation-1920x1080.png",
+      "venue": "bar",
+      "screen": "preparation",
+      "viewport": "1920x1080"
+    },
+    {
+      "name": "bar-scene-direct-1920x1080.png",
+      "venue": "bar",
+      "level": "direct",
+      "viewport": "1920x1080"
+    },
+    {
+      "name": "arene-scene-vueA-1920x1080.png",
+      "venue": "arene",
+      "view": "A",
+      "viewport": "1920x1080",
+      "drawCalls": 83,
+      "textures": 42,
+      "geometries": 42,
+      "programs": 53
+    },
+    {
+      "name": "arene-complet-vueA-1920x1080.png",
+      "venue": "arene",
+      "view": "A",
+      "viewport": "1920x1080",
+      "drawCalls": 83,
+      "textures": 42,
+      "geometries": 42,
+      "programs": 53
+    },
+    {
+      "name": "arene-scene-vueB-1920x1080.png",
+      "venue": "arene",
+      "view": "B",
+      "viewport": "1920x1080",
+      "drawCalls": 83,
+      "textures": 42,
+      "geometries": 42,
+      "programs": 53
+    },
+    {
+      "name": "arene-complet-vueB-1920x1080.png",
+      "venue": "arene",
+      "view": "B",
+      "viewport": "1920x1080",
+      "drawCalls": 83,
+      "textures": 42,
+      "geometries": 42,
+      "programs": 53
+    },
+    {
+      "name": "arene-accueil-1920x1080.png",
+      "venue": "arene",
+      "screen": "accueil",
+      "viewport": "1920x1080"
+    },
+    {
+      "name": "arene-preparation-1920x1080.png",
+      "venue": "arene",
+      "screen": "preparation",
+      "viewport": "1920x1080"
+    },
+    {
+      "name": "arene-scene-direct-1920x1080.png",
+      "venue": "arene",
+      "level": "direct",
+      "viewport": "1920x1080"
+    }
+  ],
+  "issues": []
+}
