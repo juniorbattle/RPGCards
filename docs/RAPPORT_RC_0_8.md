@@ -2,8 +2,10 @@
 
 Mission : `docs/missions/M08_CONSOLIDATION_DU_COMBAT.md` (lot C5) et `docs/missions/BRIEF_SESSION_CLOUD_2026-10-19.md`
 (phase 1). Exécution : **session cloud autonome du 2026-10-19**, sans le responsable, développement directement sur
-`main`. Build de la RC : **`66b7997`** (version `0.8.0-rc.1`), qui contient aussi le prototype de la ville (M09),
-**inactif** dans le jeu par défaut (chargé seulement avec `?ville=1` ou `?demo=1`). Toutes les preuves ont été
+`main`. Version `0.8.0-rc.1` posée en `42f4562` ; **campagne de QA sur le build `6b67271`** (dernier commit de code du
+jeu de la session ; le build final `e934f7a` n'ajoute que du code de la ville, reprouvé sans effet sur le rendu par
+défaut, §3.2), qui contient aussi la ville (M09), **inactive** dans le jeu par défaut (chargée seulement avec `?ville=1` ou
+`?demo=1`), et la piste `?qa=1&compileAsync=1` (inactive sans le paramètre). Toutes les preuves ont été
 produites dans ce conteneur : Chromium headless, **WebGL logiciel SwiftShader, jamais une mesure de GPU**.
 
 Règles : **V3.0 + delta V3.2 (+ D-01 ratifié en V3.3) inchangées** : `git diff d19667e..66b7997 -- src/game/engine
@@ -19,7 +21,7 @@ les deux profils génériques des PNJ (M08 C3, passe 29). Secrets : aucun change
 | 3. Contraste du « II » | **OK** (`38b32a8`) | pastille sombre propre au chiffre (vignettes de l'éditeur de deck seulement) ; ≥ 18,6:1 même boîte élargie (§3.3) |
 | 4. Optimisations vers la démo | **OK en partie** | démarrage mesuré et profilé ; préchauffage des portraits étalé (§5) ; code mort du V1 retiré ; parcours nouveau joueur sans erreur console (§6) ; découpage du bundle **non fait** (aucun gain mesurable ici, §5.3) |
 | 5. Version `0.8.0-rc.1` | **OK** (`42f4562`) | `package.json`, `src/product/version.ts` (test) ; schéma de sauvegarde inchangé (2), pas de migration |
-| 6. Campagne de QA complète | voir §3 | |
+| 6. Campagne de QA complète | **OK** (verte au premier passage) | §3 : `qa:browser` 5/5, `qa:product` 9/9, `qa:rc` 9/9 dans trois lieux, `qa:techniques` 8/8 |
 | 7. Rapport | ce document | |
 
 ## 2. Ce que contient la RC 0.8 (depuis la RC 0.6)
@@ -34,12 +36,32 @@ les deux profils génériques des PNJ (M08 C3, passe 29). Secrets : aucun change
 | Éditeur de deck | rang des vignettes lisible (pastille) | ce lot |
 | Démarrage | accueil peint plus tôt (portraits préchauffés un par temps mort) | ce lot, §5 |
 
-## 3. Campagne de validation (build `66b7997`, `tools/rc08-campagne.sh`)
+## 3. Campagne de validation (build `6b67271`, `tools/rc08-campagne.sh`)
 
-[À COMPLÉTER APRÈS LA CAMPAGNE]
+Campagne complète du jalon, **en série et seule sur la machine** (aucune autre activité navigateur), sur le build figé
+`6b67271`, du 2026-10-19 09:18 au 11:10 UTC (1 h 52) : `tools/rc08-campagne.sh` avec `LQV_QA_NAV_TIMEOUT=90000` et
+`LQV_QA_TIMEOUT=60000` (délais d'attente adaptés au chargement à froid de ce conteneur ; **aucun critère de réussite
+modifié**). Rapports : `artifacts/qa/rc08/campagne/` ; tableau produit par `python3 tools/rc08-synthese.py
+artifacts/qa/rc08/campagne`. **Tout est vert au premier passage, 0 erreur console.**
+
+| Campagne | Résultat | Détail |
+|---|---|---|
+| qa:browser (duels par l’interface) | **5/5** | desktop-1280-drag : ended tour 13, vues 54/0 écarts, console 0 ; desktop-1920-click : ended tour 14, vues 57/0 écarts, console 0 ; desktop-1280-keyboard : ended tour 10, vues 37/0 écarts, console 0 ; mobile-390-touch : ended tour 19, vues 68/0 écarts, console 0 ; mobile-rotation-touch : ended tour 16, vues 56/0 écarts, console 0 |
+| qa:product (parcours de joueur) | **9/9 parcours, 71/71 contrôles, console 0** | A-nouveau-joueur-1280-clic : 11/11 ; B-1920-glisser-abandon : 4/4 ; C-deck-illegal-refuse : 5/5 ; D-sauvegarde-illisible : 6/6 ; E-serie-complete-1280 : 22/22 ; F-reprise-en-plein-duel : 10/10 ; G-migration-v1-reelle : 4/4 ; H-reprise-alteree-refusee : 3/3 ; I-duel-de-la-ville-1280 : 6/6 |
+| qa:rc (lieu par défaut) | **9/9 campagnes, 47/47 contrôles** | I-sans-webgl : 5/5 ; J-longevite-12-duels : 7/7 ; K-moteur-independant-des-animations : 3/3 ; L-mode-demo-reversible : 5/5 ; M-stockage-refuse : 3/3 ; N-recommencer-effacer-confirmes : 5/5 ; S-contraste-ecrans : 11/11 ; T-clavier-seul : 6/6 ; P-cout-cpu-ecrans : 2/2 — contraste (minimum par écran) : accueil vide 9.6:1, nouveau duelliste 7.1:1, rencontres 7.6:1, deck 7.4:1, collection 9.2:1, préparation 7.4:1, menu du duel 9.1:1, options (duel) 9.1:1, résultat 7.1:1, accueil avec sauvegarde 9.7:1, aide 11:1 |
+| qa:rc (venue=bar) | **9/9 campagnes, 47/47 contrôles** | I-sans-webgl : 5/5 ; J-longevite-12-duels : 7/7 ; K-moteur-independant-des-animations : 3/3 ; L-mode-demo-reversible : 5/5 ; M-stockage-refuse : 3/3 ; N-recommencer-effacer-confirmes : 5/5 ; S-contraste-ecrans : 11/11 ; T-clavier-seul : 6/6 ; P-cout-cpu-ecrans : 2/2 — contraste (minimum par écran) : accueil vide 9.6:1, nouveau duelliste 7.1:1, rencontres 7.6:1, deck 7.4:1, collection 9:1, préparation 7.4:1, menu du duel 9.1:1, options (duel) 9.1:1, résultat 7.1:1, accueil avec sauvegarde 9.8:1, aide 11:1 |
+| qa:rc (venue=arene) | **9/9 campagnes, 47/47 contrôles** | I-sans-webgl : 5/5 ; J-longevite-12-duels : 7/7 ; K-moteur-independant-des-animations : 3/3 ; L-mode-demo-reversible : 5/5 ; M-stockage-refuse : 3/3 ; N-recommencer-effacer-confirmes : 5/5 ; S-contraste-ecrans : 11/11 ; T-clavier-seul : 6/6 ; P-cout-cpu-ecrans : 2/2 — contraste (minimum par écran) : accueil vide 9.6:1, nouveau duelliste 7.1:1, rencontres 7.6:1, deck 7.3:1, collection 9.4:1, préparation 7.4:1, menu du duel 9.1:1, options (duel) 9.1:1, résultat 7.1:1, accueil avec sauvegarde 9.8:1, aide 11:1 |
+| qa:techniques (Rupture, Dissipation, effet camouflé) | **8/8** | rupture souris-1280 : OK ; rupture tactile-390 : OK ; rupture-cachee souris-1280 : OK ; rupture-cachee tactile-390 : OK ; dissipation souris-1280 : OK ; dissipation tactile-390 : OK ; masque souris-1280 : OK ; masque tactile-390 : OK |
+
+Durées (SwiftShader) : `qa:browser` 21 min 41 s, `qa:product` 43 min 6 s, `qa:rc` 14 min 23 s / 13 min 8 s / 13 min 55 s
+(salle, bar, arène), `qa:techniques` 5 min 20 s. Contraste : minimum de chaque écran ≥ 7,1:1 (seuil 4,5:1), dans les
+trois lieux. Les campagnes `qa:rc` du bar et de l'arène (`LQV_QA_QUERY=venue=…`) couvrent les décors de C2 avec les mêmes
+contrôles que la salle. Après la campagne, le seul code ajouté (`e934f7a` : troisième îlot de la ville, aide de la ville
+en démo, raccourcis de la ville en pause) ne touche que `?demo=1` et `?ville=1` ; le rendu par défaut du build final
+est reprouvé identique au pixel près au départ (§3.2).
 
 ### 3.1 Porte de démarrage
-`npm run typecheck` 0 erreur · `npm test` **235/235** · `npm run build` OK.
+`npm run typecheck` 0 erreur · `npm test` **240/240** au build de la campagne (`6b67271`), **241/241** au build final (`e934f7a`, trois passages ; un premier passage isolé à 240/241 juste après un parcours navigateur, test en échec non relevé : les longs tests de propriété du moteur dépassent le délai de vitest sous charge, constat de la passe 41) · `npm run build` OK.
 
 ### 3.2 Rendu par défaut identique au pixel près
 
@@ -48,14 +70,17 @@ les deux profils génériques des PNJ (M08 C3, passe 29). Secrets : aucun change
 | `l5-identique` : scène 3D seule des quatre rivaux, duel complet contre Maëlle (HUD, portrait du joueur), écran Rencontres ; 1280×720 et 1920×1080 | `4a30504` → `0f8c20a` (retrait du V1) | **0 pixel** sur 12 captures ; témoin `pose=surprised` 53 463 / 118 001 pixels (`artifacts/qa/rc08/v1-retire-l5-identique.json`) |
 | `c1-identique` : parcours produit (préparation des quatre rivaux pris tout prêts, scène du duel, duel complet) | `4a30504` → build de l'arbre de travail (V1 retiré + préchauffage étalé) | **0 pixel** sur la scène et les préparations aux deux tailles ; duel complet 1920 : 0 ; duel complet 1280 : **un passage à 11 263 pixels (max 18/255, zone de la main)**, puis **0 pixel** au passage de contrôle (bruit avant/avant compris) sur machine moins chargée (`v1-retire-c1-identique.log`) |
 | `l5-identique` | `4a30504` → `66b7997` (avec la ville, inactive) | **0 pixel** partout sauf Rencontres 1280 : 37 pixels (max 17/255) **par intermittence** (voir ci-dessous) |
+| `l5-identique` (**build final**, après la campagne) | `4a30504` → `e934f7a` (trois îlots, démo, aide de la ville en démo) | **0 pixel** sur 11 captures sur 12 ; témoins 53 463 / 118 001 pixels ; Rencontres 1920 : **157 pixels (max 18/255) au passage unique** (`artifacts/qa/rc08/final-l5-identique.json`) |
+| `c1-identique` 1280×720 (**build final**) : préparations des quatre rivaux pris tout prêts, scène du duel, duel complet | `4a30504` → `e934f7a` | **0 pixel** partout ; bruit avant/avant du duel complet 20 187 pixels (max 6/255, zone de la main) ; témoin 25 440 pixels (`artifacts/qa/rc08/final-c1-identique.json`) |
+| `rc08-rencontres-transitoire` (nouvel outil) : écran Rencontres 1920×1080 répété, avant/après et après/après (A/A), attente 1,2 s et 5 s | `4a30504` → `e934f7a`, machine calme | **0 pixel sur 6 comparaisons avant/après et 6 A/A** (`artifacts/qa/rc08/final-rencontres-transitoire.json`) |
 
-**Écart intermittent de l'écran Rencontres (1280×720), analysé** : bande de 223 × 15 px en haut de la première affiche
+**Écart intermittent de l'écran Rencontres (1280×720 puis 1920×1080), analysé** : bande de 223 × 15 px en haut de la première affiche
 (Kaï). Captures répétées : ancien build 11/11 identiques ; nouveau build identique dans 7 cas sur 13 tant qu'un
 autre parcours SwiftShader saturait le processeur, puis **6/6 identiques** sur machine calme (3,5 s comme 1,2 s
-d'attente). Cause la plus probable : le préchauffage des portraits, désormais un par temps mort, se termine plus tard
-quand les temps morts manquent (rendu logiciel saturé) ; l'affiche est alors dans un état intermédiaire au moment de
-la capture. **État final identique** ; état transitoire possible seulement sous forte charge. À revérifier sur le
-poste du responsable (GPU réel, temps morts abondants).
+d'attente). Cause **non établie** ; deux hypothèses : (a) le préchauffage des portraits, désormais un par temps mort,
+se termine plus tard quand les temps morts manquent (rendu logiciel saturé) ; (b) une transition d'affiche (survol,
+`transform` 0,35 s) prise en cours d'image quand les images sont rares. **État final identique** ; état transitoire
+observé seulement sous forte charge. Au build final, machine calme, il est réapparu **une fois** en 1920 (157 pixels, `l5-identique` exécuté seul) puis **jamais** en six captures répétées de chaque build, à 1,2 s comme à 5 s d'attente : état transitoire, **état final identique**. À revérifier sur le poste du responsable (GPU réel, temps morts abondants).
 
 ### 3.3 Contraste du rang « II » (`tools/rc08-contraste-rang.mjs`)
 Quatre mesures, 1280×720 et 1920×1080, 32 chiffres de rang : méthode `qa-rc` (médiane de la boîte, glyphe compris) ;
@@ -74,7 +99,7 @@ Sous Windows : **à vérifier sur le poste du responsable** (non faisable ici). 
 
 ## 4. Secrets et équité
 Aucune modification des surfaces publiques, de l'IA (hors profils PNJ déjà livrés) ni de la visibilité ; tests de
-non-fuite inclus dans `npm test` (235/235).
+non-fuite inclus dans `npm test` (241/241 au build final).
 
 ## 5. Performance (SwiftShader : ordres de grandeur entre builds, jamais une mesure de GPU)
 
@@ -83,9 +108,11 @@ non-fuite inclus dans `npm test` (235/235).
 |---|---|---|
 | `4a30504` (départ) | 1 009 852 o | 297,4 Ko |
 | `0f8c20a` (V1 retiré) | 993 217 o | 292,4 Ko |
-| `66b7997` (RC, ville incluse mais chargée à la demande) | 997 750 o | 294,6 Ko |
+| `66b7997` (ville incluse, chargée à la demande) | 997 750 o | 294,6 Ko |
+| `6b67271` (build de la campagne : deux îlots, démo, préparations) | 998 831 o | 294,8 Ko |
+| `e934f7a` (build final : trois îlots, aide de la ville en démo) | 999 378 o | 295,1 Ko |
 
-La ville vit dans des fichiers séparés (`ville-*.js` 53 Ko, `demo-*.js` 9,6 Ko, `labo-*.js` 2,3 Ko), jamais chargés par le
+La ville vit dans des fichiers séparés (au build final `e934f7a` : `ville-*.js` 70 Ko, `demo-*.js` 12,8 Ko, `labo-*.js` 2,5 Ko), jamais chargés par le
 jeu par défaut ; le bundle principal ne prend que les classes de Three.js partagées (+3,6 Ko, ramené de +12,3 Ko en
 retirant de la ville le tube, la courbe, le cône, les sprites et le lanceur de rayons).
 
@@ -142,4 +169,9 @@ démo est l'absence de ville entre les duels : c'est l'objet de M09 (démo `?dem
 | Ville et démo | prototype derrière `?demo=1` | fiche d'arbitrages M09 |
 
 ## 9. Arbitrages restants
-Voir `docs/FICHE_ARBITRAGES_M09.md`, section C.
+Voir `docs/FICHE_ARBITRAGES_M09.md`, sections C (RC), D (préparé derrière un paramètre) et E (à relancer en local).
+
+## Annexe — la ville (M09) dans le même build
+Démo `?demo=1` : `tools/m09-demo.mjs` **24/24** au build de la campagne, **30/30** au build final `e934f7a` (trois îlots : le Quai, le Parvis, les Ruelles), 0 erreur console ; laboratoire : 45 appels de dessin, 6,9 k triangles,
+36 textures, 18 programmes, 11 lumières, construction de l'îlot ≈ 0,25 s (SwiftShader) ; détails dans le journal
+(passe 42), `docs/DEMO_JOUABLE.md`, `docs/M09_CADRAGE_VILLE.md`, ADR 024 et 025.

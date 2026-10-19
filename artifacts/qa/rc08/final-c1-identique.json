@@ -1,0 +1,139 @@
+{
+  "date": "2026-10-19T11:45:08.962Z",
+  "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU",
+  "builds": {
+    "avant": "4a30504",
+    "apres": "e934f7a"
+  },
+  "identical": true,
+  "preparedPathUsed": true,
+  "prepared": {
+    "1280x720": {
+      "ronce": true,
+      "voile": true,
+      "astre": true,
+      "braise": true
+    }
+  },
+  "results": [
+    {
+      "viewport": "1280x720",
+      "kind": "prep-ronce",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "prep-voile",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "prep-astre",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "prep-braise",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "duel-scene",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "duel-complet",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    }
+  ],
+  "noise": [
+    {
+      "viewport": "1280x720",
+      "kind": "prep-ronce",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "prep-voile",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "prep-astre",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "prep-braise",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "duel-scene",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0,
+      "box": null
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "duel-complet",
+      "meanAbs": 0.027,
+      "max": 6,
+      "pixels": 20187,
+      "box": [
+        408,
+        555,
+        871,
+        719
+      ]
+    }
+  ],
+  "control": [
+    {
+      "viewport": "1280x720",
+      "kind": "duel-scene, pose=surprised",
+      "meanAbs": 0.48,
+      "max": 241,
+      "pixels": 25440,
+      "box": [
+        555,
+        4,
+        747,
+        252
+      ]
+    }
+  ],
+  "issues": []
+}

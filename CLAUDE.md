@@ -6,6 +6,8 @@ Le développement se fait **directement sur `main`** : commit puis push sur `mai
 
 > **DÉCISION DU RESPONSABLE (2026-10-19, pendant le run) : caméra d'exploration = FRONTALE 2.5D.** « Non, on ne veut pas d'inclinaison, mais frontale. » La vue de dessus inclinée est abandonnée : ne la construis pas (ou retire-la du laboratoire), fais V1 et V2 directement en frontale 2.5D (≈ 10–20°, plans de profondeur), et demande les images de référence en frontale. ADR 024 : statut « approuvé, frontale 2.5D ».
 
+> **ÉTAT AU 2026-10-19 (fin de la session cloud autonome, passes 41 et 42)** : M08 C5 **livré** (RC `0.8.0-rc.1`, campagne de QA complète verte au premier passage, `docs/RAPPORT_RC_0_8.md` ; réception par le responsable en attente, après mesures GPU et contraste sous Windows en local). M09 **en cours** : V0 cadrage (`docs/M09_CADRAGE_VILLE.md`), V1 laboratoire `?ville=1` en frontale 2.5D (ADR 024), **V2 provisoire : démo jouable `?demo=1`** (le Quai, le Parvis de l'arène, les Ruelles, `docs/DEMO_JOUABLE.md`, ADR 025 proposé) ; jeu par défaut inchangé. Décisions ouvertes : `docs/FICHE_ARBITRAGES_M09.md`.
+
 ## MANDAT SUIVANT — M09 : ville d'exploration HD-2D (préparé le 2026-10-19)
 
 Lire `docs/missions/M09_VILLE_EXPLORATION_HD2D.md` (et le brief de la session cloud `docs/missions/BRIEF_SESSION_CLOUD_2026-10-19.md`). Démarre après M08 C5 (RC 0.8) si le combat est sain : cadrage de la ville, laboratoire de caméra (dessus inclinée contre frontale 2.5D), décision de caméra au responsable. DA de Cité du Tournoi (RPG-ArtByCode) autorisée en référence, sans sa caméra ; règles et secrets inchangés.

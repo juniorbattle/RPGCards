@@ -37,8 +37,8 @@ Comment voir le travail :
 ### B2. Structure des zones
 - **Contexte** : `docs/M09_CADRAGE_VILLE.md` §2 propose ville → quartiers → îlots chargés un à un, reliés par des
   sorties avec fondu court.
-- **Fait à titre provisoire** : deux îlots (le Quai, le Parvis de l'arène) reliés par des sorties avec fondu, un seul
-  en mémoire (`src/ville/ilots.ts`) ; captures `screenshots/qa/m09/`.
+- **Fait à titre provisoire** : trois îlots (le Quai au centre, le Parvis de l'arène à l'est, les Ruelles du Voile à
+  l'ouest) reliés par des sorties avec fondu, un seul en mémoire (`src/ville/ilots.ts`) ; captures `screenshots/qa/m09/`.
 - **Recommandation** : garder les îlots chargés un à un (préparer le voisin aux temps morts si le changement d'îlot se
   voit sur GPU réel). **Raison** : budget mémoire et GPU maîtrisé (les quatre lieux de duel occupent déjà ≈ 66 Mo de
   textures), même principe que C1/C2.
@@ -53,9 +53,10 @@ Comment voir le travail :
 
 ### B4. Intégration de la démo au jeu par défaut
 - **Contexte** : derrière `?demo=1`, l'écran « tableau des rencontres » est rendu par la ville ; le jeu par défaut
-  reste identique au pixel près (preuves dans le rapport RC). En démo, le tableau classique n'est plus accessible.
-- **Recommandation** : valider d'abord la démo telle quelle, puis faire de la ville le hub par défaut **avec** un accès
-  « Toutes les rencontres » dans son menu. **Raison** : la ville devient le liant du jeu (direction du responsable),
+  reste identique au pixel près (preuves dans le rapport RC). En démo, le tableau classique reste accessible par le
+  menu de la ville (« Toutes les rencontres », bouton « Retour au Quai »).
+- **Recommandation** : valider d'abord la démo telle quelle, puis faire de la ville le hub par défaut, en gardant cet
+  accès « Toutes les rencontres » dans son menu. **Raison** : la ville devient le liant du jeu (direction du responsable),
   le tableau reste utile pour rejouer vite un rival précis.
 - **Alternatives** : (a) garder le tableau par défaut et ajouter une entrée « Explorer le Quai » ; (b) ville seule.
 
@@ -87,8 +88,10 @@ Comment voir le travail :
 ## C. Décisions ouvertes — release candidate 0.8 du combat
 
 ### C1. Réception de la RC 0.8.0-rc.1 (décision réservée au responsable)
-- **Contexte** : C5 livré (`docs/RAPPORT_RC_0_8.md`) ; campagne complète en SwiftShader ; mesures GPU et contraste sous
-  Windows impossibles dans le cloud.
+- **Contexte** : C5 livré (`docs/RAPPORT_RC_0_8.md`) ; campagne complète en SwiftShader **verte au premier passage**
+  (`qa:browser` 5/5, `qa:product` 9/9, `qa:rc` 9/9 dans la salle, au bar et à l'arène, `qa:techniques` 8/8, 0 erreur
+  console) ; rendu par défaut du build final identique au pixel près au départ ; mesures GPU et contraste sous Windows
+  impossibles dans le cloud.
 - **Recommandation** : recevoir la RC après les trois vérifications locales (§5.4 du rapport : `rc08-demarrage` et
   `perf:play` sur la 780M et la RTX 4060, `qa:rc` S et `rc08-contraste-rang` sous Windows). **Raison** : ce sont les
   seuls critères de C5 non vérifiables ici.
@@ -116,5 +119,28 @@ Comment voir le travail :
   (meilleur cache entre deux versions, pas de gain au premier chargement).
 
 ### C5. État transitoire de l'écran Rencontres sous forte charge
-- **Contexte** : `docs/RAPPORT_RC_0_8.md` §3.2 (37 pixels, intermittent, seulement sous charge ; état final identique).
+- **Contexte** : `docs/RAPPORT_RC_0_8.md` §3.2 (37 pixels en 1280 sous charge, 157 pixels une fois en 1920 au build final ;
+  jamais en six captures répétées de chaque build, `tools/rc08-rencontres-transitoire.mjs` ; état final identique).
 - **Recommandation** : revérifier sur le poste du responsable ; ne rien changer si absent sur GPU réel.
+
+---
+
+## D. Préparé derrière un paramètre d'URL (décisions réservées, non prises)
+
+| Sujet | Paramètre | État | Ce qu'il faut décider |
+|---|---|---|---|
+| Feuilles de sprites externes (Aseprite) pour les personnages clés | `?qa=1&sprites=externes` (+ `sprites/manifest.json` à côté de la page) | code prêt, éprouvé avec nos propres atlas exportés (`tools/m09-sprites-externes.mjs`, 3/3) ; aucune image dans le dépôt | amendement de la règle « aucune image externe au runtime », approbation des assets, échéance |
+| Compilation non bloquante du premier rendu | `?qa=1&compileAsync=1` | code prêt, sans effet dans le cloud (extension absente en SwiftShader) | activer par défaut si la mesure locale le justifie (C3) |
+| Ville comme hub du jeu | `?demo=1` | démo complète, trois îlots | intégration par défaut (B4) |
+
+## E. À relancer sur la machine du responsable (GPU réel, Windows)
+
+1. Démarrage : `LQV_GPU=1 CHROMIUM_PATH=<Chrome> node tools/rc08-demarrage.mjs`, puis avec
+   `LQV_DEMARRAGE_QUERY=compileAsync=1` (profil neuf à chaque ronde : c'est déjà le cas).
+2. Fluidité du duel (RC) : `LQV_GPU=1 … npm run perf:play` sur la Radeon 780M et la RTX 4060 (procédure de la passe 11).
+3. Contraste sous Windows : `npm run qa:rc` (campagne S) et `node tools/rc08-contraste-rang.mjs` (police Georgia réelle).
+4. Ville : `LQV_GPU=1 … node tools/m09-labo.mjs` (coût par image sur les deux GPU) ; jouer `/?demo=1` et juger à l'œil
+   le cadrage frontal (B1), le flou de bascule et le halo.
+5. Écran Rencontres : vérifier l'absence de l'état transitoire relevé sous forte charge (C5) :
+   `LQV_BEFORE=<build 4a30504> node tools/l5-identique.mjs`, et `LQV_BEFORE=<build 4a30504> LQV_GPU=1 … node
+   tools/rc08-rencontres-transitoire.mjs` (captures répétées avec contrôle A/A).

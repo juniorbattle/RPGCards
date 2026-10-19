@@ -1,6 +1,6 @@
 {
-  "commit": "d19667e",
-  "date": "2026-10-17T05:02:12.255Z",
+  "commit": "6b67271",
+  "date": "2026-10-19T11:04:42.621Z",
   "note": "Chromium headless, WebGL logiciel SwiftShader ; rival SCRIPTÉ (scénarios de démonstration), jamais présenté comme l’IA.",
   "runs": [
     {
@@ -26,7 +26,7 @@
         "Fin du tour 5."
       ],
       "console": [],
-      "ms": 29591
+      "ms": 56311
     },
     {
       "scenario": "rupture",
@@ -51,7 +51,7 @@
         "Fin du tour 5."
       ],
       "console": [],
-      "ms": 15318
+      "ms": 36249
     },
     {
       "scenario": "rupture-cachee",
@@ -81,7 +81,7 @@
         "Fin du tour 5."
       ],
       "console": [],
-      "ms": 21787
+      "ms": 41881
     },
     {
       "scenario": "rupture-cachee",
@@ -111,7 +111,7 @@
         "Fin du tour 5."
       ],
       "console": [],
-      "ms": 15534
+      "ms": 35722
     },
     {
       "scenario": "dissipation",
@@ -140,7 +140,7 @@
         "Fin du tour 5."
       ],
       "console": [],
-      "ms": 29758
+      "ms": 48757
     },
     {
       "scenario": "dissipation",
@@ -169,7 +169,7 @@
         "Fin du tour 5."
       ],
       "console": [],
-      "ms": 18164
+      "ms": 36159
     },
     {
       "scenario": "masque",
@@ -211,7 +211,7 @@
         "Fin du tour 5."
       ],
       "console": [],
-      "ms": 17918
+      "ms": 32931
     },
     {
       "scenario": "masque",
@@ -253,7 +253,7 @@
         "Fin du tour 5."
       ],
       "console": [],
-      "ms": 12888
+      "ms": 26674
     }
   ]
 }

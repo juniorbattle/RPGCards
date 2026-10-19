@@ -40,7 +40,11 @@ Proposition de démo (un seul quartier, **le Port**) :
   après le Tournoi) et une joueuse (duel de la ville). Relié au Quai par la sortie est du Quai et la sortie ouest du
   Parvis (fondu court).
 
-État au 2026-10-19 (fin du run cloud) : **deux îlots construits** (le Quai, le Parvis), registre `src/ville/ilots.ts`
+- **Îlot 4 — les Ruelles** (**construit**, V2, quartier du Voile) : ruelle étroite le long d'un canal, maisons
+  hautes à pignon sur rue et encorbellement, bannières du Voile, linge tendu, fontaine, étal de la liseuse ; Sélène
+  (duel libre, ouvert après l'avoir rencontrée au Tournoi). Reliée au Quai par sa sortie ouest.
+
+État au 2026-10-19 (fin du run cloud) : **trois îlots construits** (le Quai, le Parvis, les Ruelles), registre `src/ville/ilots.ts`
 (plan pur, personnages, passants, bornes de caméra, constructeur, liaisons) ; un seul îlot en mémoire à la fois.
 
 Liaisons : une **sortie** est une zone de bord d'îlot (passage, escalier, pont) qui charge l'îlot voisin par un fondu
@@ -100,6 +104,7 @@ Fanal, l'arène) ouvrent les duels libres. Données de prototype, non canoniques
    (existant, ADR 018) → résultat → **retour au Quai**.
 4. **Le Tournoi** : porte de la salle de jeu de cartes → manche 1 contre Kaï → retour.
 4 bis. **Le Parvis de l'arène** (sortie est du Quai) : la joueuse en duel de la ville, Orin après le Tournoi.
+4 ter. **Les Ruelles** (sortie ouest du Quai) : Sélène, la fontaine du Voile.
 5. Accès aux écrans existants depuis la ville (menu : deck, collection, options, aide, sauvegarder et quitter).
 
 Avant M09 existaient 1, la préparation, le duel, le résultat, la sauvegarde et la reprise. **Construits pendant le run
@@ -115,7 +120,8 @@ Avant M09 existaient 1, la préparation, le duel, le résultat, la sauvegarde et
 - Choix d'implémentation (session cloud) : **la machine de flux ne change pas**. Avec `?demo=1`, l'écran « tableau des
   rencontres » est rendu par la ville (`DemoHub`, `src/ville/demo.ts`) ; toutes les transitions existantes (retour de
   préparation, fin de duel, deck, options) y ramènent donc naturellement. Le bouton « Rencontres » du résultat devient
-  « Retour au Quai ». Le tableau des rencontres classique n'est pas accessible en démo (à décider : fiche).
+  « Retour au Quai ». Le tableau des rencontres classique reste accessible par le menu de la ville (« Toutes les
+  rencontres »).
 - Sauvegarde : champ facultatif `ville: { ilot, x, z }` ; absent = début au point d'arrivée (pas de migration de schéma
   obligatoire : lecture tolérante).
 - Une seule scène WebGL pour toute la session (règle M04) : la ville est une **scène Three.js** distincte de l'arène,
