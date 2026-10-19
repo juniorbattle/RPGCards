@@ -7,8 +7,9 @@ Quai proposée**, en attente de son retour sur la planche (`screenshots/qa/m09/v
 et les Ruelles. Retour du responsable : amélioration nette, pousser plus loin (profondeur de champ, flaques, décors) :
 amendement 1 (passe 47), planche `screenshots/qa/m09/v3/planche-v3-relief.png` ; **le Quai de la passe 47 est VALIDÉ
 par le responsable** (« Je valide le Quai de la passe 47 tel que sur la planche. Étends-le au Parvis et aux
-Ruelles. ») ; **amendement 2 (passe 49) : le Parvis et les Ruelles dans la même direction, proposé**, planche
-`screenshots/qa/m09/v3/planche-v3-ilots.png`.
+Ruelles. ») ; **amendement 2 (passe 49) : le Parvis et les Ruelles dans la même direction, VALIDÉ par le responsable**
+(« Je valide le Parvis et les Ruelles tels que sur la planche. »), planche `screenshots/qa/m09/v3/planche-v3-ilots.png` : **les trois îlots de la ville sont
+validés dans la direction D**.
 
 ## Contexte
 
@@ -100,7 +101,7 @@ moment de cette tâche.
 
 Le Parvis et les Ruelles, le combat et le jeu par défaut ne changent pas. Coût et preuves : JOURNAL passe 47.
 
-## Amendement 2 — le Parvis et les Ruelles dans la direction D (passe 49, 2026-10-19) — proposé
+## Amendement 2 — le Parvis et les Ruelles dans la direction D (passe 49, 2026-10-19) — **VALIDÉ** (passe 50 : « Je valide le Parvis et les Ruelles tels que sur la planche. »)
 
 Le responsable valide le Quai de la passe 47 et demande : « Étends-le au Parvis et aux Ruelles. »
 
