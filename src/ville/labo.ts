@@ -9,7 +9,8 @@ import type { Zone } from './monde';
 import { installVilleStyles, promptBubble, toast } from './ui';
 import { createTown, type Town } from './ville';
 import { isIlotId, type IlotId } from './ilots';
-import { walkerAtlasCanvas } from './sprites';
+import { walkerAtlasCanvas, walkerAtlasCanvasFor } from './sprites';
+import { spritePolicy, type RecolorSlot } from './spritesExternes';
 
 export interface LabParams { artSeed: number; qa: boolean; freeze: boolean; reducedMotion: boolean; sig: Family | null }
 
@@ -23,7 +24,7 @@ export function startLab(p: LabParams, q: URLSearchParams): Town {
   const town = createTown({
     host, artSeed: p.artSeed, camera: cam, player: `player-${p.sig ?? 'Cendre'}`, spawn: q.get('spawn') ?? undefined,
     ilot: isIlotId(q.get('ilot')) ? (q.get('ilot') as IlotId) : 'quai',
-    freeze: p.freeze, reducedMotion: p.reducedMotion, externalSprites: p.qa && q.get('sprites') === 'externes', rig: parseRig(q.get('rig')),
+    freeze: p.freeze, reducedMotion: p.reducedMotion, sprites: spritePolicy(p.qa, q.get('sprites')), rig: parseRig(q.get('rig')),
     onInteract: (z: Zone) => toast(`Laboratoire : « ${z.label} » sera branché dans la démo (M09 V2).`),
   });
   const panel = document.createElement('div');
@@ -83,6 +84,15 @@ export function startLab(p: LabParams, q: URLSearchParams): Town {
     }
   };
   requestAnimationFrame(loop);
-  if (p.qa) (window as unknown as Record<string, unknown>).__lqvVille = { town, setCam, intervals: () => [...intervals], atlas: (id: string) => walkerAtlasCanvas(id).toDataURL('image/png') };
+  // Crochets de QA publiés une fois les feuilles de personnages de l'îlot décidées (une capture ne les voit jamais en
+  // attente). `atlasAt` : atlas à une autre échelle, au besoin en tons clés (preuves du contrat v2, ADR 027).
+  if (p.qa) {
+    void town.ready().then(() => {
+      (window as unknown as Record<string, unknown>).__lqvVille = {
+        town, setCam, intervals: () => [...intervals], atlas: (id: string) => walkerAtlasCanvas(id).toDataURL('image/png'),
+        atlasAt: (id: string, scale: number, keyed: RecolorSlot[] = []) => walkerAtlasCanvasFor(id, { scale, keyed }).toDataURL('image/png'),
+      };
+    });
+  }
   return town;
 }

@@ -21,8 +21,8 @@ import type { IlotNpc } from './quai';
 import { U } from './materiaux';
 import { LAYER_NOREFLECT, PlanarReflection } from './reflets';
 import type { QuaiScene } from './scene';
-import { CELL_H, CELL_W, COLS, ROWS, WALKER_H, createWalkerSprite, type WalkerSprite } from './sprites';
-import { loadExternalAtlas } from './spritesExternes';
+import { WALKER_H, createWalkerSprite, recolorTargets, type WalkerSprite } from './sprites';
+import { createSheetResolver, type ExternalReport, type SheetSpec, type SpritePolicy } from './spritesExternes';
 
 export interface TownOptions {
   host: HTMLElement;
@@ -40,8 +40,11 @@ export interface TownOptions {
   onInteract?: (zone: Zone) => void;
   /** Touche Échap (menu). */
   onMenu?: () => void;
-  /** PRÉPARATION (QA, `?qa=1&sprites=externes`) : feuilles de sprites externes vérifiées si un manifeste existe. */
-  externalSprites?: boolean;
+  /**
+   * Feuilles de personnages (ADR 027, `spritePolicy`) :`approuvees` (défaut, jeu) n'accepte que les feuilles approuvées
+   * du manifeste, `qa` aussi les autres (signalées), `code` garde l'atlas dessiné par code.
+   */
+  sprites?: SpritePolicy;
   /** Réglages de cadrage pris dans l'URL (`rig=…`, `parseRig`), par-dessus ceux de l'îlot : ajustement à l'œil (fiche B1). */
   rig?: RigTuning | null;
 }
@@ -57,6 +60,11 @@ export interface TownStats {
   cpuMs: number;
   frames: number;
   buildMs: number;
+  /** Première entrée : de la création de la ville à sa première image (feuilles préparées comprises). */
+  firstFrameMs: number | null;
+  /** Dernier changement d'îlot (`goTo`) : construction, puis jusqu'à la première image qui suit. */
+  mountMs: number | null;
+  mountFrameMs: number | null;
 }
 
 export interface Town {
@@ -76,8 +84,20 @@ export interface Town {
   /** Bloque les entrées du joueur (dialogue ouvert). */
   setInputLocked(l: boolean): void;
   stats(): TownStats;
-  /** Feuilles externes chargées et refus motivés (préparation Aseprite). */
-  externalReport(): { loaded: string[]; issues: string[] };
+  /**
+   * Feuilles de personnages : politique, personnages dessinés par une feuille (dont non approuvées, en QA), refus motivés ;
+   * `hiddenFrames` : images rendues alors qu'un personnage attendait encore sa feuille (0 attendu : préparation avant).
+   */
+  externalReport(): ExternalReport & { hiddenFrames: number };
+  /**
+   * Prépare les feuilles des personnages d'un îlot (décodage, envoi au GPU) avant d'y entrer, derrière le fondu
+   * (C3, ADR 027) ; résolu quand chacune est prête ou refusée.
+   */
+  prepare(id: IlotId): Promise<void>;
+  /** Les feuilles de cet îlot sont-elles déjà décidées (prêtes ou refusées) ? Alors `goTo` n'attend rien. */
+  isPrepared(id: IlotId): boolean;
+  /** Résolu quand aucun personnage de l'îlot courant n'attend plus sa feuille (crochets de QA, captures). */
+  ready(): Promise<void>;
   /** Rend une image tout de suite (captures en temps figé). */
   renderNow(): void;
   /** Repères au-dessus des personnages de l'îlot (« ! » : un défi à relever ; « ? » : quelqu'un à écouter). */
@@ -233,6 +253,16 @@ export function createTown(o: TownOptions): Town {
   o.host.appendChild(renderer.domElement);
 
   let def: IlotDef = ILOTS[o.ilot ?? 'quai'];
+  // Feuilles de personnages (ADR 027) : lecture du manifeste et décodage lancés avant la construction de l'îlot (le
+  // réseau et le décodeur avancent pendant qu'elle occupe le fil principal) ; envoi au GPU dès qu'une feuille est prête.
+  const sheets = createSheetResolver(o.sprites ?? 'approuvees', (t) => renderer.initTexture(t), {
+    check: (id: string, spec: SheetSpec) => {
+      const targets = recolorTargets(id);
+      return spec.recolor.filter((s) => !targets[s]).map((s) => `${id} : teinte « ${s} » sans couleur cible pour ce personnage`);
+    },
+  });
+  const castOf = (d: IlotDef) => [o.player, ...d.npcs.map((n) => n.id), ...d.ambient.map((a) => a.id)];
+  void sheets.prepare(castOf(def));
   let world: QuaiScene = def.build(o.artSeed);
   let scene = world.scene;
   const camera = new THREE.PerspectiveCamera(30, 16 / 9, 0.5, 400);
@@ -244,16 +274,38 @@ export function createTown(o: TownOptions): Town {
   const markerY = () => walkerH() + 0.53;
 
   // --- personnages ---
+  // Un personnage dont la feuille est encore en attente reste caché, et l'image n'est pas rendue tant qu'il y en a un
+  // (au plus `HOLD_MS`) : jamais de bascule visible du dessin par code vers la feuille (C3).
+  const pending = new Map<WalkerSprite, string>();
+  let pendingSince = 0;
+  let hiddenFrames = 0;
+  const waiters: (() => void)[] = [];
+  const flush = () => { if (!pending.size) for (const f of waiters.splice(0)) f(); };
+  const applySheet = (id: string, s: WalkerSprite) => {
+    const st = sheets.peek(id);
+    if (st.state === 'prete') { s.setSheet(st.sheet); s.group.visible = true; return; }
+    if (st.state === 'code') { s.group.visible = true; return; }
+    if (!pending.size) pendingSince = performance.now();
+    pending.set(s, id);
+    s.group.visible = false;
+    void sheets.prepare([id]).then(() => {
+      if (pending.get(s) !== id) return;
+      pending.delete(s);
+      applySheet(id, s);
+      flush();
+    });
+  };
   const playerSprite: WalkerSprite = createWalkerSprite(o.player);
   playerSprite.setHeight(walkerH());
   scene.add(playerSprite.group);
+  applySheet(o.player, playerSprite);
   type NpcSprite = { n: IlotNpc; s: WalkerSprite; marker: THREE.Mesh; kind: '!' | '?' | null };
   const makeNpcs = (): NpcSprite[] => def.npcs.map((n) => {
     const s = createWalkerSprite(n.id);
     s.setHeight(walkerH());
     scene.add(s.group);
     s.set(n.at, n.facing, 0, false, 0);
-    applyExternal(n.id, s);
+    applySheet(n.id, s);
     const marker = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.42), new THREE.MeshBasicMaterial({ map: markerTexture('!'), transparent: true, depthWrite: false, color: new THREE.Color(1.5, 1.5, 1.5) }));
     marker.position.set(n.at.x, markerY(), n.at.z + 0.02);
     marker.visible = false;
@@ -268,16 +320,9 @@ export function createTown(o: TownOptions): Town {
     const s = createWalkerSprite(a.id);
     s.setHeight(walkerH());
     scene.add(s.group);
-    applyExternal(a.id, s);
+    applySheet(a.id, s);
     return { a, s, x: a.x0 + (a.phase ?? 0) * (a.x1 - a.x0), dir: 1, phase: 0, blocked: false };
   });
-  // Feuilles externes (préparation, inactive par défaut) : appliquées dès qu'elles sont vérifiées, sinon atlas par code.
-  const ext = { loaded: [] as string[], issues: [] as string[] };
-  const applyExternal = (id: string, s: WalkerSprite) => {
-    if (!o.externalSprites) return;
-    void loadExternalAtlas(id, { cell: [CELL_W, CELL_H], cols: COLS, rows: ROWS }, ext.issues).then((a) => { if (a) { s.setAtlas(a.texture); if (!ext.loaded.includes(id)) ext.loaded.push(id); } });
-  };
-  applyExternal(o.player, playerSprite);
   let npcSprites = makeNpcs();
   let passers = makePassers();
   const spawn = def.ilot.spawns[o.spawn ?? 'arrivee'] ?? def.ilot.spawns.arrivee!;
@@ -461,7 +506,13 @@ export function createTown(o: TownOptions): Town {
     composer.render();
     cpuMs = performance.now() - c0;
     frames++;
+    if (pending.size) hiddenFrames++;
+    if (firstFrameMs === null) firstFrameMs = Math.round(performance.now() - t0);
+    if (mountT0 !== null) { mountFrameMs = Math.round(performance.now() - mountT0); mountT0 = null; }
   };
+  /** Feuilles en attente : l'image précédente reste (ou rien, à la première entrée), au plus `HOLD_MS`. */
+  const HOLD_MS = 1500;
+  const holding = () => pending.size > 0 && performance.now() - pendingSince < HOLD_MS;
   const tick = (now: number) => {
     raf = requestAnimationFrame(tick);
     if (paused) { last = now; return; }
@@ -489,19 +540,28 @@ export function createTown(o: TownOptions): Town {
       acc = Math.min(acc, STEP);
     }
     rig.update(camera, walker.pos, dt, o.freeze);
+    if (holding()) return;
     render();
   };
+  let firstFrameMs: number | null = null;
+  let mountT0: number | null = null;
+  let mountMs: number | null = null;
+  let mountFrameMs: number | null = null;
   rig.update(camera, walker.pos, 0, true);
   raf = requestAnimationFrame(tick);
   const buildMs = Math.round(performance.now() - t0);
 
   /** Démonte l'îlot courant (personnages, passants, scène) et monte le suivant ; le renderer et le post-traitement restent. */
   const mount = (id: IlotId, spawnKey: string) => {
+    const m0 = performance.now();
+    mountT0 = m0;
     scene.remove(playerSprite.group);
-    for (const e of npcSprites) { e.s.dispose(); e.marker.geometry.dispose(); (e.marker.material as THREE.Material).dispose(); }
-    for (const p of passers) p.s.dispose();
+    for (const e of npcSprites) { pending.delete(e.s); e.s.dispose(); e.marker.geometry.dispose(); (e.marker.material as THREE.Material).dispose(); }
+    for (const p of passers) { pending.delete(p.s); p.s.dispose(); }
     world.dispose();
     def = ILOTS[id];
+    // feuilles de l'îlot d'arrivée : déjà prêtes si l'appelant les a préparées derrière le fondu (`prepare`)
+    void sheets.prepare(castOf(def));
     world = def.build(o.artSeed);
     scene = world.scene;
     renderPass.scene = scene;
@@ -517,6 +577,8 @@ export function createTown(o: TownOptions): Town {
     applyRig();
     resize();
     rig.update(camera, walker.pos, 0, true);
+    mountMs = Math.round(performance.now() - m0);
+    flush();
   };
 
   return {
@@ -544,10 +606,13 @@ export function createTown(o: TownOptions): Town {
       return {
         camera: rig.params.id, calls: info.render.calls, triangles: info.render.triangles, textures: info.memory.textures,
         geometries: info.memory.geometries, programs: info.programs?.length ?? 0, lights: world.lights.length,
-        cpuMs: Math.round(cpuMs * 10) / 10, frames, buildMs,
+        cpuMs: Math.round(cpuMs * 10) / 10, frames, buildMs, firstFrameMs, mountMs, mountFrameMs,
       };
     },
-    externalReport: () => ({ loaded: [...ext.loaded], issues: [...ext.issues] }),
+    externalReport: () => ({ ...sheets.report(), hiddenFrames }),
+    prepare: (id) => sheets.prepare(castOf(ILOTS[id])),
+    isPrepared: (id) => castOf(ILOTS[id]).every((x) => sheets.peek(x).state !== 'attente'),
+    ready: () => (pending.size ? new Promise<void>((res) => waiters.push(res)) : Promise.resolve()),
     renderNow() { rig.update(camera, walker.pos, 0, true); render(); },
     walkerH,
     setMarkers(m) {
