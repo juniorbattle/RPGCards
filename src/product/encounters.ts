@@ -10,6 +10,7 @@ import { FAMILIES, type Family } from '../game/catalog/cards';
 import type { TechniqueId } from '../game/catalog/techniques';
 import type { GameConfig } from '../game/model/types';
 import { PERSONALITIES, type RivalPersonality } from '../presentation/personalities';
+import { DEFAULT_VENUE, type VenueId } from '../presentation/venues';
 import { playerSeat, type DeckChoice } from './deck';
 
 /** PV du duelliste joueur : repère « quartier » (§9.1), fixe tant qu’aucune progression de PV n’est ratifiée. */
@@ -57,14 +58,22 @@ export interface Encounter {
   title: string;
   /** Étape 1..3 de la série. */
   step?: number;
+  /** M08 C2 (ADR 022) : lieu du duel (décor, plan de feux, ambiance) ; par défaut la salle de jeu de cartes. */
+  venue: VenueId;
 }
 
 /** Mini-série rejouable de trois duels (M05) : difficulté croissante, déclarative (données ci-dessus). */
 export const SERIES = { id: 'quai', title: 'Tournoi du Quai', steps: ['braise', 'ronce', 'voile'] as RivalPersonality['id'][] };
 
+/**
+ * M08 C2 — lieu des duels libres (porte de validation de la rue, décision du responsable du 2026-10-18) : Kaï, le
+ * docker du Quai, se défie dans la rue ; les autres rencontres restent dans la salle de jeu de cartes.
+ */
+const FREE_VENUE: Partial<Record<RivalPersonality['id'], VenueId>> = { braise: 'rue' };
+
 export const ENCOUNTERS: Encounter[] = [
-  ...SERIES.steps.map((rival, i) => ({ id: `quai-${i + 1}`, rival, kind: 'series' as const, step: i + 1, title: `${SERIES.title} — manche ${i + 1} sur ${SERIES.steps.length}` })),
-  ...PERSONALITIES.map((p) => ({ id: `libre-${p.id}`, rival: p.id, kind: 'free' as const, title: `Duel libre — ${p.name}` })),
+  ...SERIES.steps.map((rival, i) => ({ id: `quai-${i + 1}`, rival, kind: 'series' as const, step: i + 1, title: `${SERIES.title} — manche ${i + 1} sur ${SERIES.steps.length}`, venue: DEFAULT_VENUE })),
+  ...PERSONALITIES.map((p) => ({ id: `libre-${p.id}`, rival: p.id, kind: 'free' as const, title: `Duel libre — ${p.name}`, venue: FREE_VENUE[p.id] ?? DEFAULT_VENUE })),
 ];
 
 export function encounterById(id: string): Encounter | null {

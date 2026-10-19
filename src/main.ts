@@ -13,6 +13,7 @@ import { PERSONALITIES, personalityFor, type RivalPersonality } from './presenta
 import { setFigureStyle } from './scene/figureStyle';
 import { figureCost, portraitCost } from './scene/figureBench';
 import { playerFigure } from './art/portrait';
+import { DEFAULT_VENUE, type VenueId } from './presentation/venues';
 
 const params = readParams();
 // M07 L5 : modèle artistique des personnages fixé avant toute scène ou portrait (`?qa=1&figure=v2`).
@@ -30,14 +31,18 @@ document.documentElement.classList.toggle('freeze', params.freeze);
 let arena: ArenaHandle | null = null;
 let arenaFor: string | null = null;
 
-/** Crée (ou recrée) l’arène pour une personnalité de rival donnée. */
-function ensureArena(p: RivalPersonality): ArenaHandle | null {
-  if (arena && arenaFor === p.id) return arena;
-  // Une seule scène pour toute la session : le rival change, le contexte WebGL reste (M04).
-  if (arena) { arena.setRival(p); arenaFor = p.id; return arena; }
+/** Crée (ou recrée) l’arène pour une personnalité de rival et un lieu donnés (M08 C2 : `?qa=1&venue=` impose le lieu). */
+function ensureArena(p: RivalPersonality, place: VenueId = DEFAULT_VENUE): ArenaHandle | null {
+  const venue = params.venue ?? place;
+  // Une seule scène pour toute la session : le rival et le lieu changent, le contexte WebGL reste (M04).
+  if (arena) {
+    if (arenaFor !== p.id) { arena.setRival(p); arenaFor = p.id; }
+    arena.setVenue(venue);
+    return arena;
+  }
   if (arenaFor !== null) return null; // WebGL déjà refusé : repli CSS conservé
   try {
-    arena = createArena(arenaHost, { artSeed: params.artSeed, view: params.view === 'B' ? 'B' : 'A', reducedMotion: params.reducedMotion, freeze: params.freeze, personality: p, ablate: params.ablate, fallback: params.fallback ?? undefined });
+    arena = createArena(arenaHost, { artSeed: params.artSeed, view: params.view === 'B' ? 'B' : 'A', reducedMotion: params.reducedMotion, freeze: params.freeze, personality: p, venue, venueCache: params.venueCache ?? undefined, ablate: params.ablate, fallback: params.fallback ?? undefined });
   } catch (err) {
     console.warn('Three.js indisponible, repli CSS', err);
     arena = null;
