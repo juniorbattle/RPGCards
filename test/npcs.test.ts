@@ -4,7 +4,6 @@ import {
 } from '../src/presentation/npcs';
 import { PERSONALITIES, isSignatureRival, personalityById, personalityFor } from '../src/presentation/personalities';
 import { kitV2 } from '../src/scene/v2';
-import { usesV2 } from '../src/scene/figureStyle';
 import { PROFILES } from '../src/game/ai/policy';
 import { applyOutcome, encounterStatus, newProgress } from '../src/product/progression';
 import { ENCOUNTERS, TOWN_DUELS, encounterConfig, sheetOf } from '../src/product/encounters';
@@ -94,7 +93,6 @@ describe('PNJ de la ville : personnalité et profil de jeu', () => {
   });
 
   it('un seul modèle V2 pour le duel et le portrait de chaque PNJ', () => {
-    expect(usesV2('pnj-joueuse-9')).toBe(true);
     expect(kitV2('pnj-joueuse-9')?.id).toBe('pnj-joueuse-9');
     expect(kitV2('pnj-joueuse-9')).toBe(kitV2('pnj-joueuse-9'));
     expect(kitV2('pnj-inconnu-9')).toBeNull();

@@ -38,8 +38,6 @@ export interface AppParams {
   renderCheck: boolean;
   /** QA (`qa=1&artCheck=1`) : chaque illustration pré-générée par le worker est comparée à une génération synchrone (passe 14). */
   artCheck: boolean;
-  /** M07 L5 : modèle des personnages. « vectoriel V2 » par défaut (validé par le responsable) ; `qa=1&figure=v1` = rendu V1 (comparaison QA). */
-  figure: 'v1' | 'v2';
   /** M08 C2 (QA, `qa=1&venue=salle|rue`) : lieu imposé à tous les duels et écrans (captures, mesures). Null en jeu : lieu de la rencontre. */
   venue: VenueId | null;
   /** M08 C2 (QA, `qa=1&venueCache=1`) : nombre de décors gardés montés (mesure du changement de lieu). Null en jeu : défaut de l’arène. */
@@ -81,7 +79,6 @@ export function readParams(search = window.location.search): AppParams {
     beat: q.has('beat') ? Math.max(0, Math.floor(Number(q.get('beat')) || 0)) : null,
     renderCheck: q.get('qa') === '1' && q.get('renderCheck') === '1',
     artCheck: q.get('qa') === '1' && q.get('artCheck') === '1',
-    figure: q.get('qa') === '1' && q.get('figure') === 'v1' ? 'v1' : 'v2',
     venue: q.get('qa') === '1' && isVenueId(q.get('venue')) ? (q.get('venue') as VenueId) : null,
     venueCache: q.get('qa') === '1' && q.has('venueCache') ? Math.max(1, Math.floor(Number(q.get('venueCache')) || 1)) : null,
     prep: q.get('qa') === '1' && (q.get('prep') === 'art' || q.get('prep') === 'off') ? (q.get('prep') as 'art' | 'off') : 'full',

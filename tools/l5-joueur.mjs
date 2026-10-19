@@ -3,11 +3,11 @@
 // dist/ (portrait joueur V2 par défaut). Duel seed 202 (Maëlle), vue A, rendu figé.
 //  1. Captures : HUD joueur des quatre familles de Signature (`sig=`) à 1280×720 et 1920×1080 (échelle 1:1), portrait
 //     source agrandi, duel complet (Cendre) aux deux tailles, et planche avant / après.
-//  2. Contrôles : (a) chemin V1 intact : portrait joueur de `?qa=1&figure=v1` (après) = portrait par défaut d’avant, quatre
-//     familles (images source identiques) ; (b) portraits des quatre rivaux (après, défaut) = avant ; (c) duel complet,
-//     portrait du joueur masqué : 0 pixel différent aux deux tailles ; témoin : même comparaison portrait visible.
-//  3. Coût (`__lqvPortraitCost`, après) : portrait V1 contre V2 (dessin + PNG) pour le joueur des quatre familles et les
-//     quatre rivaux ; couches V2 toutes (`figureV2Art`) contre celles du portrait (`figureV2PortraitArt`).
+//  2. Contrôles : (b) portraits des quatre rivaux (après, défaut) = avant ; (c) duel complet, portrait du joueur masqué :
+//     0 pixel différent aux deux tailles ; témoin : même comparaison portrait visible. Le contrôle (a), chemin V1 du
+//     joueur (`?qa=1&figure=v1`), est retiré avec le rendu V1 (M08 C5).
+//  3. Coût (`__lqvPortraitCost`, après) : portrait V2 (dessin + PNG) pour le joueur des quatre familles et les quatre
+//     rivaux ; couches V2 toutes (`figureV2Art`) contre celles du portrait (`figureV2PortraitArt`).
 // Usage : npm run build && LQV_BEFORE=<dist avant> LQV_BEFORE_SHA=<sha> LQV_GPU=1 CHROMIUM_PATH=<Chrome>
 //         node tools/l5-joueur.mjs [captures=screenshots/qa/m07/l5-joueur] [rapport=artifacts/qa/m07/l5-joueur.json]
 // COUT_SEUL=1 : coût seulement (autre adaptateur : LQV_CHROME_ARGS=--force_high_performance_gpu), sans LQV_BEFORE.
@@ -76,7 +76,7 @@ const srcOf = (p, sel) => p.locator(sel).getAttribute('src');
 try {
   if (!COST_ONLY) {
     const shots = { avant: {}, apres: {} };
-    const checks = { cheminV1Joueur: [], portraitsRivaux: [], duelHorsPortrait: [], temoin: [] };
+    const checks = { portraitsRivaux: [], duelHorsPortrait: [], temoin: [] };
     for (const [W, H] of SIZES) {
       const ctx = await browser.newContext({ viewport: { width: W, height: H }, deviceScaleFactor: 1 });
       for (const fam of FAMS) {
@@ -111,16 +111,6 @@ try {
           checks.duelHorsPortrait.push({ taille: `${W}x${H}`, ...d });
           // Écart : garder les deux captures pour l’analyse.
           if (d.pixels) for (const which of ['avant', 'apres']) writeFileSync(`${OUT}/ecart-masque-${which}-${W}.png`, Buffer.from(masked[which].split(',')[1], 'base64'));
-        }
-        // (a) chemin V1 du joueur.
-        if (W === 1280) {
-          const before = await open(ctx, servers.avant.base, `&sig=${fam}`);
-          const a = await srcOf(before, '.hud.me .portrait img');
-          await before.close();
-          const v1 = await open(ctx, servers.apres.base, `&sig=${fam}&figure=v1`);
-          const b = await srcOf(v1, '.hud.me .portrait img');
-          await v1.close();
-          checks.cheminV1Joueur.push({ famille: fam, identique: a === b, ...(await diff(a, b)) });
         }
       }
       // (b) portraits des rivaux (portrait du HUD rival, même cache que les affiches).
@@ -178,10 +168,9 @@ const out = COST_ONLY ? REPORT.replace(/\.json$/, '-cout.json') : REPORT;
 writeFileSync(out, `${JSON.stringify(report, null, 2)}\n`);
 const c = report.controles;
 if (c) {
-  console.log(`chemin V1 du joueur : ${c.cheminV1Joueur.map((x) => `${x.famille} ${x.identique ? 'identique' : `${x.pixels} px`}`).join(', ')}`);
   console.log(`portraits des rivaux : ${c.portraitsRivaux.map((x) => `${x.rival} ${x.identique ? 'identique' : `${x.pixels} px`}`).join(', ')}`);
   console.log(`duel hors portrait : ${c.duelHorsPortrait.map((x) => `${x.taille} ${x.pixels} px${x.zone ? ` (zone ${x.zone.join(',')})` : ''}`).join(', ')} ; témoin (portrait visible) : ${c.temoin.map((x) => `${x.taille} ${x.pixels} px`).join(', ')}`);
 }
-for (const [id, v] of Object.entries(report.cout ?? {})) console.log(`coût ${id} : V1 ${v.v1.medianMs} ms → V2 ${v.v2?.medianMs} ms ; couches toutes ${v.couches?.toutes.medianMs} ms → portrait ${v.couches?.portrait.medianMs} ms`);
+for (const [id, v] of Object.entries(report.cout ?? {})) console.log(`coût ${id} : portrait V2 ${v.portrait.medianMs} ms ; couches toutes ${v.couches.toutes.medianMs} ms → portrait ${v.couches.portrait.medianMs} ms`);
 console.log(`console : ${issues.length} · ${out}`);
 if (issues.length) process.exitCode = 1;

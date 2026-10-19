@@ -2,8 +2,9 @@
 // (LQV_BEFORE) contre build après (dist/) : profil de test (quatre duels libres ouverts), tableau, temps mort, clic sur
 // l’affiche de Maëlle, Sélène, Orin puis Kaï (côté après, chacun est pris TOUT PRÊT : `__lqvPrep().taken`) ; à l’écran de
 // préparation, scène 3D seule (calques DOM masqués) ; puis duel lancé contre Kaï : scène seule et capture complète
-// (HUD compris). Rendu figé, mouvement réduit, 1280×720 et 1920×1080. Témoin : même parcours, `figure=v1` côté après,
-// qui doit différer (la méthode voit un changement de personnage).
+// (HUD compris). Rendu figé, mouvement réduit, 1280×720 et 1920×1080. Témoin : même parcours côté après, humeur du rival
+// imposée (`pose=surprised`), dont la scène du duel doit différer (la méthode voit un changement du visage ; jusqu’à
+// M08 C5, le témoin était le rendu V1, `figure=v1`, retiré depuis).
 // Usage : npm run build && LQV_BEFORE=<dist avant> LQV_BEFORE_SHA=<sha> [LQV_GPU=1 CHROMIUM_PATH=…] [LQV_SHOTS=<dossier>]
 //         node tools/c1-identique.mjs [sortie.json]
 // LQV_SHOTS : les captures avant / après (préparation contre Maëlle, duel complet) y sont enregistrées en PNG.
@@ -135,11 +136,11 @@ try {
       noise.push({ viewport: v, kind: k, ...d });
       if (d.pixels) console.log(`  bruit avant/avant ${k} : écart moyen ${d.meanAbs}/255, max ${d.max}, ${d.pixels} pixels, boîte ${JSON.stringify(d.box)}`);
     }
-    // Témoin : personnages en V1 côté après (même parcours) : la comparaison doit relever un écart.
-    const t = await journey('apres', vp, '&figure=v1');
-    const d = await diff(a.shots['prep-ronce'], t.shots['prep-ronce']);
-    control.push({ viewport: v, kind: 'prep-ronce, figure=v1', ...d });
-    console.log(`  témoin (figure=v1) : écart moyen ${d.meanAbs}/255, ${d.pixels} pixels différents`);
+    // Témoin : humeur du rival imposée côté après (même parcours) : la scène du duel doit relever un écart.
+    const t = await journey('apres', vp, '&pose=surprised');
+    const d = await diff(a.shots['duel-scene'], t.shots['duel-scene']);
+    control.push({ viewport: v, kind: 'duel-scene, pose=surprised', ...d });
+    console.log(`  témoin (pose=surprised) : écart moyen ${d.meanAbs}/255, ${d.pixels} pixels différents`);
   }
 } finally {
   await browser.close();

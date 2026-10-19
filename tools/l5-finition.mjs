@@ -1,5 +1,7 @@
 // M07 L5 — planche « avant / après la passe de finition » du modèle V2 d’un rival (deux builds, V2 des deux côtés) :
 // six humeurs (visage, scène 3D seule) à 1280×720 et 1920×1080, à l’échelle 1:1, affiche de rencontre et vue A.
+// `figure=v2` : sans effet depuis le retrait du rendu V1 (M08 C5), gardé pour un build « avant » antérieur à la passe 25
+// (V1 par défaut).
 // Usage : LQV_BEFORE=<dist avant finition> LQV_BEFORE_SHA=<sha> LQV_GPU=1 CHROMIUM_PATH=<Chrome>
 //         node tools/l5-finition.mjs [sortie=screenshots/qa/m07/l5-finition] [rival=ronce]
 import { execSync } from 'node:child_process';

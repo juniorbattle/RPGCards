@@ -13,7 +13,9 @@
  * apporte son identité dans `src/scene/v2/` (tête, mèches, plan arrière, buste, couleurs, tempérament).
  */
 import type { Mood } from '../presentation/personalities';
-import type { MouthShape } from './rivalTextures';
+
+/** Formes de bouche du rig et des portraits (ordre de `MOUTHS_V2`). */
+export type MouthShape = 'neutral' | 'smile' | 'grin' | 'frown' | 'grimace' | 'open' | 'smirk' | 'tight';
 
 export type Ctx = CanvasRenderingContext2D;
 export type Cubic = [number, number, number, number, number, number, number, number];

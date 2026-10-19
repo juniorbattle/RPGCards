@@ -8,14 +8,9 @@ import * as THREE from 'three';
 import { hashString, makeRng } from '../game/engine/rng';
 import type { Expression, Gaze, Gesture } from '../presentation/expression';
 import type { Mood, RivalPersonality } from '../presentation/personalities';
-import {
-  browTexture, headTexture, hoodTexture, irisTexture, lidTexture, MOUTHS, mouthTexture, scleraTexture, torsoTexture,
-  type MouthShape,
-} from './rivalTextures';
-import { usesV2 } from './figureStyle';
-import { figureV2Art, figureV2ArtSteps, RIG_V2, runSteps, type BrowShape, type FigureV2Art } from './figureV2';
+import { figureV2Art, figureV2ArtSteps, MOUTHS_V2, RIG_V2, runSteps, type BrowShape, type FigureV2Art, type MouthShape } from './figureV2';
 import { IdleWork } from './idleWork';
-import { kitV2 } from './v2';
+import { figureKitV2 } from './v2';
 
 interface FaceParams {
   browL: number; // haussement −1..1
@@ -26,23 +21,6 @@ interface FaceParams {
   flush: number;
   mouth: MouthShape;
 }
-
-const MOODS: Record<Mood, FaceParams> = {
-  neutral: { browL: 0, browR: 0, browAngle: 0, lid: 0.12, tilt: 0, flush: 0, mouth: 'neutral' },
-  focused: { browL: -0.3, browR: -0.3, browAngle: 0.35, lid: 0.32, tilt: 0, flush: 0, mouth: 'tight' },
-  confident: { browL: 0.15, browR: 0.05, browAngle: 0.1, lid: 0.22, tilt: 0.04, flush: 0, mouth: 'smirk' },
-  smug: { browL: 0.45, browR: -0.15, browAngle: 0.05, lid: 0.38, tilt: 0.07, flush: 0, mouth: 'smirk' },
-  pleased: { browL: 0.25, browR: 0.25, browAngle: -0.05, lid: 0.25, tilt: 0.03, flush: 0.1, mouth: 'smile' },
-  triumphant: { browL: 0.4, browR: 0.4, browAngle: -0.1, lid: 0.15, tilt: -0.03, flush: 0.2, mouth: 'grin' },
-  surprised: { browL: 0.85, browR: 0.85, browAngle: -0.3, lid: -0.3, tilt: 0, flush: 0, mouth: 'open' },
-  pained: { browL: -0.1, browR: -0.1, browAngle: -0.65, lid: 0.55, tilt: -0.06, flush: 0.55, mouth: 'grimace' },
-  annoyed: { browL: -0.35, browR: -0.35, browAngle: 0.55, lid: 0.35, tilt: 0, flush: 0.15, mouth: 'frown' },
-  angry: { browL: -0.55, browR: -0.55, browAngle: 0.95, lid: 0.28, tilt: 0, flush: 0.45, mouth: 'grimace' },
-  relieved: { browL: 0.3, browR: 0.3, browAngle: -0.45, lid: 0.45, tilt: 0.03, flush: 0, mouth: 'smile' },
-  defeated: { browL: -0.2, browR: -0.2, browAngle: -0.8, lid: 0.62, tilt: -0.08, flush: 0.2, mouth: 'frown' },
-  thinking: { browL: 0.35, browR: -0.2, browAngle: 0.15, lid: 0.3, tilt: 0.08, flush: 0, mouth: 'tight' },
-  shocked: { browL: 1, browR: 1, browAngle: -0.4, lid: -0.35, tilt: 0, flush: 0.1, mouth: 'open' },
-};
 
 const GAZE: Record<Gaze, [number, number]> = {
   player: [0, 0.05],
@@ -78,7 +56,7 @@ function plane(w: number, h: number, map: THREE.Texture, order: number, opts: { 
   return m;
 }
 
-/** Texture d’un canvas de couche (mêmes réglages que `rivalTextures`). */
+/** Texture d’un canvas de couche (espace sRGB, anisotropie 4). */
 function canvasTexture(c: HTMLCanvasElement): THREE.CanvasTexture {
   const t = new THREE.CanvasTexture(c);
   t.colorSpace = THREE.SRGBColorSpace;
@@ -186,7 +164,7 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
   if (r?.rig && r.back === backTexture) { prepCounters.taken++; built = r.rig; } else {
     r?.rig?.dispose();
     prepCounters.built++;
-    built = buildRival(p, artSeed, backTexture, r?.art ?? undefined);
+    built = buildRival(p, artSeed, backTexture, r?.art);
   }
   shown = { key, built };
   return built.rig;
@@ -203,22 +181,21 @@ interface BuiltRig {
   disposeSteps(): Generator<void, void, void>;
 }
 
-function buildRival(p: RivalPersonality, artSeed: number, backTexture: THREE.Texture, art?: FigureV2Art | null): BuiltRig {
+function buildRival(p: RivalPersonality, artSeed: number, backTexture: THREE.Texture, art?: FigureV2Art): BuiltRig {
   const group = new THREE.Group();
   group.position.set(0, 0, RIVAL_Z);
   const rng = makeRng(hashString(`anim|${p.id}|${artSeed}`));
 
-  // M07 L5 : modèle « vectoriel V2 » (défaut) ; null = ancien rendu V1 (`?qa=1&figure=v1`), inchangé.
-  const kit = usesV2(p.id) ? kitV2(p.id) : null;
-  const v2 = kit ? art ?? figureV2Art(kit, artSeed) : null;
-  if (kit) prepCounters.generated += art ? 0 : 1;
+  // M07 L5 : modèle « vectoriel V2 », seul rendu des personnages depuis le retrait du V1 (M08 C5).
+  const v2 = art ?? figureV2Art(figureKitV2(p), artSeed);
+  prepCounters.generated += art ? 0 : 1;
 
   // Ce qui bouge avec le rival (recul, se pencher) ; le support et l’éventail restent posés sur la table (`group`).
   const actor = new THREE.Group();
   group.add(actor);
   const body = new THREE.Group(); // respiration, inclinaison
   actor.add(body);
-  const torso = plane(2.7, 2.1, v2 ? canvasTexture(v2.torso) : torsoTexture(p, artSeed), 1);
+  const torso = plane(2.7, 2.1, canvasTexture(v2.torso), 1);
   torso.position.set(0, NECK_Y - 0.8, 0);
   body.add(torso);
 
@@ -226,108 +203,66 @@ function buildRival(p: RivalPersonality, artSeed: number, backTexture: THREE.Tex
   neckPivot.position.set(0, NECK_Y, 0.02);
   neckPivot.scale.setScalar(HEAD_SCALE);
   body.add(neckPivot);
-  if (v2) {
-    // V2 : capuche et pèlerine sur un plan plus grand, DEVANT le buste (ordre 1,5) et derrière la tête.
-    const hood = plane(RIG_V2.hood.w, RIG_V2.hood.h, canvasTexture(v2.hood), 1.5);
-    hood.position.set(0, RIG_V2.hood.y, -0.02);
-    neckPivot.add(hood);
-  } else if (p.look.outfit === 'cloak') {
-    // Capuche derrière la tête (suit l’inclinaison du cou).
-    const hood = plane(1.62, 1.82, hoodTexture(p), 1);
-    hood.position.set(0, 0.5, -0.02);
-    neckPivot.add(hood);
-  }
-  const head = plane(1.15, 1.4, v2 ? canvasTexture(v2.head) : headTexture(p, artSeed), 2);
+  // Capuche et pèlerine (plan arrière de l’identité) sur un plan plus grand, DEVANT le buste (ordre 1,5) et derrière la tête.
+  const hood = plane(RIG_V2.hood.w, RIG_V2.hood.h, canvasTexture(v2.hood), 1.5);
+  hood.position.set(0, RIG_V2.hood.y, -0.02);
+  neckPivot.add(hood);
+  const head = plane(1.15, 1.4, canvasTexture(v2.head), 2);
   head.position.set(0, 0.6, 0);
   head.onBeforeRender = captureRenderer;
   neckPivot.add(head);
-  if (v2) {
-    // V2 : mèches avant et frange sur une couche au-dessus des yeux et des sourcils.
-    const front = plane(1.15, 1.4, canvasTexture(v2.front), 7);
-    front.position.set(0, 0.6, 0.012);
-    neckPivot.add(front);
-  }
+  // Mèches avant et frange sur une couche au-dessus des yeux et des sourcils.
+  const front = plane(1.15, 1.4, canvasTexture(v2.front), 7);
+  front.position.set(0, 0.6, 0.012);
+  neckPivot.add(front);
 
   // Repère visage (coordonnées locales de la tête : centre du plan)
   const face = new THREE.Group();
   face.position.set(0, 0.6, 0.01);
   neckPivot.add(face);
 
-  const eyes: Array<{ iris: THREE.Mesh; lid: THREE.Mesh; brow: THREE.Mesh; side: number; low?: THREE.Mesh; shut?: THREE.Mesh }> = [];
-  let browTex: Record<BrowShape, THREE.CanvasTexture> | null = null;
-  if (v2) {
-    // V2 : paupières découpées dans la tête, qui glissent (cils d’épaisseur constante) ; paupière inférieure pour le
-    // plissement ; paupière close pour le clignement ; sclère et sourcils en miroir pour l’œil droit.
-    const sclera = canvasTexture(v2.sclera);
-    const iris = canvasTexture(v2.iris);
-    browTex = { rest: canvasTexture(v2.brows.rest), arch: canvasTexture(v2.brows.arch), knit: canvasTexture(v2.brows.knit) };
-    for (const side of [-1, 1]) {
-      const i = side < 0 ? 0 : 1;
-      const e = new THREE.Group();
-      e.position.set(side * 0.21, 0.02, 0);
-      face.add(e);
-      const sc = plane(RIG_V2.sclera.w, RIG_V2.sclera.h, sclera, 3);
-      if (side > 0) sc.scale.x = -1;
-      e.add(sc);
-      const ir = plane(RIG_V2.iris, RIG_V2.iris, iris, 4);
-      ir.position.z = 0.002;
-      e.add(ir);
-      const low = plane(RIG_V2.low.w, RIG_V2.low.h, canvasTexture(v2.lidLow[i]), 5);
-      low.position.set(0, RIG_V2.low.y, 0.003);
-      e.add(low);
-      const lid = plane(RIG_V2.up.w, RIG_V2.up.h, canvasTexture(v2.lidUp[i]), 5.1);
-      lid.position.set(0, RIG_V2.up.y, 0.004);
-      e.add(lid);
-      const shut = plane(RIG_V2.shut.w, RIG_V2.shut.h, canvasTexture(v2.lidShut[i]), 5.2);
-      shut.position.set(0, RIG_V2.shut.y, 0.005);
-      shut.visible = false;
-      e.add(shut);
-      const brow = plane(RIG_V2.brow.w, RIG_V2.brow.h, browTex.rest, 6);
-      brow.position.set(side * 0.21, RIG_V2.brow.y, 0.006);
-      if (side > 0) brow.scale.x = -1;
-      face.add(brow);
-      eyes.push({ iris: ir, lid, brow, side, low, shut });
-    }
-  } else {
-    const sclera = scleraTexture();
-    const iris = irisTexture(p.look.eyes);
-    const lidT = lidTexture(p);
-    const browT = browTexture(p);
-    for (const side of [-1, 1]) {
-      const e = new THREE.Group();
-      e.position.set(side * 0.21, 0.02, 0);
-      face.add(e);
-      const sc = plane(0.27, 0.17, sclera, 3);
-      e.add(sc);
-      const ir = plane(0.14, 0.14, iris, 4);
-      ir.position.z = 0.002;
-      e.add(ir);
-      const lidGeo = new THREE.PlaneGeometry(0.29, 0.19);
-      lidGeo.translate(0, -0.095, 0); // pivot sur le bord supérieur
-      const lid = new THREE.Mesh(lidGeo, new THREE.MeshLambertMaterial({ map: lidT, transparent: true, depthWrite: false }));
-      lid.renderOrder = 5;
-      lid.position.set(0, 0.095, 0.004);
-      e.add(lid);
-      const brow = plane(0.32, 0.08, browT, 6);
-      brow.position.set(side * 0.21, 0.2, 0.006);
-      if (side > 0) brow.scale.x = -1;
-      face.add(brow);
-      eyes.push({ iris: ir, lid, brow, side });
-    }
+  const eyes: Array<{ iris: THREE.Mesh; lid: THREE.Mesh; brow: THREE.Mesh; side: number; low: THREE.Mesh; shut: THREE.Mesh }> = [];
+  // Paupières découpées dans la tête, qui glissent (cils d’épaisseur constante) ; paupière inférieure pour le
+  // plissement ; paupière close pour le clignement ; sclère et sourcils en miroir pour l’œil droit.
+  const sclera = canvasTexture(v2.sclera);
+  const iris = canvasTexture(v2.iris);
+  const browTex: Record<BrowShape, THREE.CanvasTexture> = { rest: canvasTexture(v2.brows.rest), arch: canvasTexture(v2.brows.arch), knit: canvasTexture(v2.brows.knit) };
+  for (const side of [-1, 1]) {
+    const i = side < 0 ? 0 : 1;
+    const e = new THREE.Group();
+    e.position.set(side * 0.21, 0.02, 0);
+    face.add(e);
+    const sc = plane(RIG_V2.sclera.w, RIG_V2.sclera.h, sclera, 3);
+    if (side > 0) sc.scale.x = -1;
+    e.add(sc);
+    const ir = plane(RIG_V2.iris, RIG_V2.iris, iris, 4);
+    ir.position.z = 0.002;
+    e.add(ir);
+    const low = plane(RIG_V2.low.w, RIG_V2.low.h, canvasTexture(v2.lidLow[i]), 5);
+    low.position.set(0, RIG_V2.low.y, 0.003);
+    e.add(low);
+    const lid = plane(RIG_V2.up.w, RIG_V2.up.h, canvasTexture(v2.lidUp[i]), 5.1);
+    lid.position.set(0, RIG_V2.up.y, 0.004);
+    e.add(lid);
+    const shut = plane(RIG_V2.shut.w, RIG_V2.shut.h, canvasTexture(v2.lidShut[i]), 5.2);
+    shut.position.set(0, RIG_V2.shut.y, 0.005);
+    shut.visible = false;
+    e.add(shut);
+    const brow = plane(RIG_V2.brow.w, RIG_V2.brow.h, browTex.rest, 6);
+    brow.position.set(side * 0.21, RIG_V2.brow.y, 0.006);
+    if (side > 0) brow.scale.x = -1;
+    face.add(brow);
+    eyes.push({ iris: ir, lid, brow, side, low, shut });
   }
-  const mouthTex = (v2
-    ? Object.fromEntries(MOUTHS.map((m) => [m, canvasTexture(v2.mouths[m])]))
-    : Object.fromEntries(MOUTHS.map((m) => [m, mouthTexture(m)]))) as Record<MouthShape, THREE.CanvasTexture>;
+  const mouthTex = Object.fromEntries(MOUTHS_V2.map((m) => [m, canvasTexture(v2.mouths[m])])) as Record<MouthShape, THREE.CanvasTexture>;
   const mouth = plane(0.36, 0.18, mouthTex.neutral, 6);
   mouth.position.set(0, -0.3, 0.006);
   face.add(mouth);
-  // V2 : rougeur peinte sur les pommettes (texture), au-dessus des paupières découpées ; V1 : bandeau uni.
-  const flushMat = v2
-    ? new THREE.MeshBasicMaterial({ map: canvasTexture(v2.flush), transparent: true, opacity: 0, depthWrite: false })
-    : new THREE.MeshBasicMaterial({ color: 0xff4a4a, transparent: true, opacity: 0, depthWrite: false });
-  const flush = new THREE.Mesh(new THREE.PlaneGeometry(v2 ? RIG_V2.flush.w : 0.75, v2 ? RIG_V2.flush.h : 0.16), flushMat);
-  flush.renderOrder = v2 ? 6.5 : 4;
-  flush.position.set(0, -0.12, v2 ? 0.007 : 0.003);
+  // Rougeur peinte sur les pommettes (texture), au-dessus des paupières découpées.
+  const flushMat = new THREE.MeshBasicMaterial({ map: canvasTexture(v2.flush), transparent: true, opacity: 0, depthWrite: false });
+  const flush = new THREE.Mesh(new THREE.PlaneGeometry(RIG_V2.flush.w, RIG_V2.flush.h), flushMat);
+  flush.renderOrder = 6.5;
+  flush.position.set(0, -0.12, 0.007);
   face.add(flush);
 
   // Éventail de cartes : taille publique de la main. M07 : plus de mains peintes (ADR 017) ; depuis la demande du
@@ -359,7 +294,7 @@ function buildRival(p: RivalPersonality, artSeed: number, backTexture: THREE.Tex
 
   // État d’animation
   let target: Expression = { mood: p.restMood, intensity: 0.4, gaze: 'player', gesture: null, hold: 0, cause: 'repos' };
-  const cur: FaceParams & { gx: number; gy: number; squint: number } = { ...(v2 ? v2.moods.neutral : MOODS.neutral), gx: 0, gy: 0, squint: 0 };
+  const cur: FaceParams & { gx: number; gy: number; squint: number } = { ...v2.moods.neutral, gx: 0, gy: 0, squint: 0 };
   let browShape: BrowShape = 'rest';
   let gestureT = -1;
   let gesture: Gesture | null = null;
@@ -397,7 +332,7 @@ function buildRival(p: RivalPersonality, artSeed: number, backTexture: THREE.Tex
       return { mood: target.mood, gesture, cause: target.cause };
     },
     update(dt: number, t: number, reduced: boolean) {
-      const moods: Record<Mood, FaceParams> = v2 ? v2.moods : MOODS;
+      const moods: Record<Mood, FaceParams> = v2.moods;
       const base = moods[target.mood];
       const k = target.intensity;
       const want: FaceParams = {
@@ -419,20 +354,18 @@ function buildRival(p: RivalPersonality, artSeed: number, backTexture: THREE.Tex
       if (cur.mouth !== want.mouth) {
         cur.mouth = want.mouth;
         (mouth.material as THREE.MeshLambertMaterial).map = mouthTex[cur.mouth];
-        // V2 : l’auto-éclairage suit la forme affichée (V1 garde celui de la bouche neutre, défaut relevé en L5).
-        if (v2) (mouth.material as THREE.MeshLambertMaterial).emissiveMap = mouthTex[cur.mouth];
+        // L’auto-éclairage suit la forme affichée.
+        (mouth.material as THREE.MeshLambertMaterial).emissiveMap = mouthTex[cur.mouth];
         (mouth.material as THREE.MeshLambertMaterial).needsUpdate = true;
       }
-      if (v2 && browTex) {
-        cur.squint = lerp(cur.squint, v2.moods[target.mood].squint * k, s);
-        const shape: BrowShape = k > 0.2 ? v2.moods[target.mood].brow : 'rest';
-        if (shape !== browShape) {
-          browShape = shape;
-          for (const e of eyes) {
-            (e.brow.material as THREE.MeshLambertMaterial).map = browTex[shape];
-            (e.brow.material as THREE.MeshLambertMaterial).emissiveMap = browTex[shape];
-            (e.brow.material as THREE.MeshLambertMaterial).needsUpdate = true;
-          }
+      cur.squint = lerp(cur.squint, v2.moods[target.mood].squint * k, s);
+      const shape: BrowShape = k > 0.2 ? v2.moods[target.mood].brow : 'rest';
+      if (shape !== browShape) {
+        browShape = shape;
+        for (const e of eyes) {
+          (e.brow.material as THREE.MeshLambertMaterial).map = browTex[shape];
+          (e.brow.material as THREE.MeshLambertMaterial).emissiveMap = browTex[shape];
+          (e.brow.material as THREE.MeshLambertMaterial).needsUpdate = true;
         }
       }
       // Regard + micro-saccades seedées
@@ -457,24 +390,15 @@ function buildRival(p: RivalPersonality, artSeed: number, backTexture: THREE.Tex
       for (const e of eyes) {
         const raise = e.side < 0 ? cur.browL : cur.browR;
         const wide = Math.max(0, -cur.lid) * 0.05;
-        if (e.low && e.shut) {
-          // V2 : la paupière glisse (cils d’épaisseur constante) ; au-delà de 0,8, paupière close dessinée.
-          e.iris.position.x = cur.gx * RIG_V2.gaze.x;
-          e.iris.position.y = cur.gy * RIG_V2.gaze.y;
-          e.lid.position.y = RIG_V2.up.y - RIG_V2.lidShift(lidVal);
-          e.shut.visible = lidVal > 0.8;
-          e.low.position.y = RIG_V2.low.y + RIG_V2.squintShift(cur.squint);
-          e.brow.position.y = RIG_V2.brow.y + raise * 0.06 + wide;
-          // Sens corrigé en V2 : browAngle > 0 abaisse la tête du sourcil (côté nez).
-          e.brow.rotation.z = e.side * cur.browAngle * 0.35;
-          continue;
-        }
-        e.iris.position.x = cur.gx * 0.055;
-        e.iris.position.y = cur.gy * 0.03;
-        e.lid.scale.y = Math.max(0.001, lidVal);
-        e.lid.visible = lidVal > 0.01;
-        e.brow.position.y = 0.2 + raise * 0.06 + wide;
-        e.brow.rotation.z = e.side * -cur.browAngle * 0.35;
+        // La paupière glisse (cils d’épaisseur constante) ; au-delà de 0,8, paupière close dessinée.
+        e.iris.position.x = cur.gx * RIG_V2.gaze.x;
+        e.iris.position.y = cur.gy * RIG_V2.gaze.y;
+        e.lid.position.y = RIG_V2.up.y - RIG_V2.lidShift(lidVal);
+        e.shut.visible = lidVal > 0.8;
+        e.low.position.y = RIG_V2.low.y + RIG_V2.squintShift(cur.squint);
+        e.brow.position.y = RIG_V2.brow.y + raise * 0.06 + wide;
+        // Sens corrigé en V2 : browAngle > 0 abaisse la tête du sourcil (côté nez).
+        e.brow.rotation.z = e.side * cur.browAngle * 0.35;
       }
       flushMat.opacity = cur.flush * 0.35;
       flush.visible = flushMat.opacity > 0.002; // invisible = aucun fragment à mélanger
@@ -535,12 +459,12 @@ function buildRival(p: RivalPersonality, artSeed: number, backTexture: THREE.Tex
     }
     // Formes de bouche non affichées à cet instant (déjà envoyées au GPU si elles ont été montrées) :
     // sans cela, chaque duel laissait en mémoire les bouches de ses expressions passées (QA M06 J).
-    for (const t of [...Object.values(mouthTex), ...Object.values(browTex ?? {})]) { t.dispose(); yield; }
+    for (const t of [...Object.values(mouthTex), ...Object.values(browTex)]) { t.dispose(); yield; }
   }
   function disposeNow(): void {
     runSteps(disposeSteps());
   }
-  const textures = new Set<THREE.Texture>([...Object.values(mouthTex), ...Object.values(browTex ?? {})]);
+  const textures = new Set<THREE.Texture>([...Object.values(mouthTex), ...Object.values(browTex)]);
   group.traverse((o) => {
     const map = ((o as THREE.Mesh).material as THREE.MeshLambertMaterial | undefined)?.map;
     if (map && map !== backTexture) textures.add(map);
@@ -563,7 +487,7 @@ export function setPrepMode(m: PrepMode): void {
 }
 
 /** Préparation prête : couches seules (`art`) ou rig complet, construit avec le verso de cartes de l’arène `back`. */
-interface Ready { art?: FigureV2Art | null; rig?: BuiltRig; back?: THREE.Texture }
+interface Ready { art?: FigureV2Art; rig?: BuiltRig; back?: THREE.Texture }
 
 /** Au plus autant de rivaux préparés à la fois (mémoire GPU bornée : ≈ 10 Mo de textures par rival V2). */
 export const MAX_PREPARED = 6;
@@ -646,9 +570,8 @@ export function holdPreparation(on: boolean): void {
 }
 
 function* prepSteps(p: RivalPersonality, artSeed: number, key: string): Generator<void, void, void> {
-  const kit = usesV2(p.id) ? kitV2(p.id) : null;
-  const art = kit ? yield* figureV2ArtSteps(kit, artSeed) : null;
-  if (kit) prepCounters.generated++;
+  const art = yield* figureV2ArtSteps(figureKitV2(p), artSeed);
+  prepCounters.generated++;
   if (mode === 'art' || !lastBack) { ready.set(key, { art }); return; }
   const back = lastBack;
   yield;
