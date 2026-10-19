@@ -1,0 +1,528 @@
+/**
+ * M09 V1 — matériaux « nuit » de la ville, adaptés de Cité du Tournoi (RPG-ArtByCode, commit 0398c4f, lecture seule) :
+ *   - un SEUL jeu d'uniformes partagé par référence (`U`, d'après `src/atmosphere/SceneUniforms.ts` L. 26-79) : brume,
+ *     ciel, lune, ambiante hémisphérique, liste de lumières ponctuelles ;
+ *   - brume exponentielle en hauteur en forme close, résolue vers la couleur du ciel dans la même direction
+ *     (`src/materials/ShaderChunks.ts` L. 143-181) ; atténuation des lanternes `x²/(1+0,22 d²)` coupée au rayon (L. 75) ;
+ *   - un shader de surface paramétré par uniformes pour toutes les matières (L. 184-355, simplifié : pas de normal map,
+ *     pas d'ombre de lune) ;
+ *   - palette en valeurs LINÉAIRES (jamais d'hex pour les lumières : Three convertirait l'hex sRGB).
+ * Textures peintes par code sur canvas, graine d'art, aucune image externe (pavés : grammaire de `paintCobble`,
+ * `src/materials/TexturePainters.ts` L. 367-450, en canvas 2D et en plus petit).
+ */
+import * as THREE from 'three';
+import { hashString, makeRng } from '../game/engine/rng';
+
+export const MAX_LIGHTS = 16;
+
+/** Uniformes partagés par tous les matériaux de la ville (mêmes objets `{ value }`). */
+export const U = {
+  uFogColor: { value: new THREE.Color(0.034, 0.055, 0.098) },
+  uSkyZenith: { value: new THREE.Color(0.007, 0.012, 0.034) },
+  uCityGlow: { value: new THREE.Color(0.034, 0.028, 0.026) },
+  uSkyAmb: { value: new THREE.Color(0.07, 0.1, 0.16) },
+  uGroundAmb: { value: new THREE.Color(0.03, 0.036, 0.055) },
+  uMoonCol: { value: new THREE.Color(0.27, 0.37, 0.58) },
+  uMoonDir: { value: new THREE.Vector3(0.62, 0.32, -0.72).normalize() },
+  uFogDensity: { value: 0.013 },
+  uFogFalloff: { value: 0.06 },
+  uFogStart: { value: 16 },
+  uMist: { value: 0.35 },
+  uLightPos: { value: Array.from({ length: MAX_LIGHTS }, () => new THREE.Vector4(0, -100, 0, 0.001)) },
+  uLightCol: { value: Array.from({ length: MAX_LIGHTS }, () => new THREE.Vector3()) },
+  uLightCount: { value: 0 },
+  uTime: { value: 0 },
+};
+
+/** Ambre des lanternes (linéaire), seul accent chaud. */
+export const LAMP_WARM = new THREE.Color(1.0, 0.6, 0.27);
+
+export const COMMON_GLSL = /* glsl */ `
+uniform vec3 uFogColor; uniform vec3 uSkyZenith; uniform vec3 uCityGlow; uniform vec3 uSkyAmb; uniform vec3 uGroundAmb;
+uniform vec3 uMoonCol; uniform vec3 uMoonDir; uniform float uFogDensity; uniform float uFogFalloff; uniform float uFogStart;
+uniform float uMist; uniform vec4 uLightPos[${MAX_LIGHTS}]; uniform vec3 uLightCol[${MAX_LIGHTS}]; uniform int uLightCount;
+uniform float uTime;
+float hash12(vec2 p){ vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
+float vn2(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(hash12(i), hash12(i + vec2(1, 0)), f.x), mix(hash12(i + vec2(0, 1)), hash12(i + vec2(1, 1)), f.x), f.y); }
+vec3 skyHaze(vec3 rd){
+  float low = 1.0 - smoothstep(-0.04, 0.3, rd.y);
+  vec3 c = uFogColor * (0.84 + 0.16 * low);
+  c += uCityGlow * low * low * 0.6;
+  float mu = max(dot(rd, uMoonDir), 0.0);
+  c += uMoonCol * (0.016 * pow(mu, 6.0) + 0.04 * pow(mu, 56.0));
+  return c;
+}
+vec3 skyColor(vec3 rd){ return mix(skyHaze(rd), uSkyZenith, smoothstep(-0.01, 0.27, rd.y)); }
+float fogDepth(float y0, float y1, float len, float b){
+  float a0 = -b * max(y0, -2.0), a1 = -b * max(y1, -2.0); float da = a1 - a0;
+  float avg = abs(da) > 1e-4 ? (exp(a1) - exp(a0)) / da : exp(a0);
+  return len * avg;
+}
+vec3 applyFog(vec3 c, vec3 P){
+  vec3 dv = P - cameraPosition; float L = length(dv); vec3 rd = dv / max(L, 1e-4);
+  float s = min(uFogStart, L); float y0 = max(cameraPosition.y, 0.0) + rd.y * s;
+  float od = uFogDensity * (fogDepth(y0, P.y, L - s, uFogFalloff) + uMist * fogDepth(y0, P.y, L - s, 0.32));
+  return mix(c, skyColor(rd), clamp(1.0 - exp(-od), 0.0, 0.985));
+}
+void lightSum(vec3 P, vec3 N, vec3 V, float wrap, float shin, out vec3 diff, out vec3 spec){
+  diff = vec3(0.0); spec = vec3(0.0);
+  for (int i = 0; i < ${MAX_LIGHTS}; i++) {
+    if (i >= uLightCount) break;
+    vec3 Lv = uLightPos[i].xyz - P; float d2 = dot(Lv, Lv); float r = uLightPos[i].w;
+    float x = max(1.0 - d2 / (r * r), 0.0); float att = x * x / (1.0 + 0.22 * d2);
+    if (att <= 0.0) continue;
+    vec3 l = Lv * inversesqrt(max(d2, 1e-4));
+    float nl = max((dot(N, l) + wrap) / (1.0 + wrap), 0.0);
+    diff += uLightCol[i] * att * nl;
+    vec3 h = normalize(l + V);
+    spec += uLightCol[i] * att * pow(max(dot(N, h), 0.0), shin) * step(0.0, dot(N, l));
+  }
+}
+`;
+
+const SURFACE_VERT = /* glsl */ `
+varying vec3 vWorld; varying vec3 vN; varying vec2 vUv;
+uniform vec2 uTile;
+void main(){
+  vec4 w = modelMatrix * vec4(position, 1.0);
+  vWorld = w.xyz; vN = normalize(mat3(modelMatrix) * normal); vUv = uv * uTile;
+  gl_Position = projectionMatrix * viewMatrix * w;
+}`;
+
+const SURFACE_FRAG = /* glsl */ `
+${COMMON_GLSL}
+uniform sampler2D tAlbedo; uniform vec3 uTint; uniform float uWrap; uniform float uSpec; uniform float uShin;
+uniform float uContact; uniform float uEmissive; uniform float uBreakup; uniform float uWet;
+varying vec3 vWorld; varying vec3 vN; varying vec2 vUv;
+void main(){
+  vec4 A = texture2D(tAlbedo, vUv);
+  vec3 albedo = A.rgb * uTint;
+  albedo *= 1.0 + (vn2(vWorld.xz * 0.42 + vWorld.y * 0.3) - 0.5) * uBreakup;
+  vec3 N = normalize(vN); if (!gl_FrontFacing) N = -N;
+  vec3 V = normalize(cameraPosition - vWorld);
+  float gc = 1.0 - smoothstep(0.0, 1.15, vWorld.y);
+  float ao = mix(1.0, 0.6 + 0.4 * smoothstep(0.0, 0.9, vWorld.y), uContact);
+  albedo = mix(albedo, albedo * 0.55, gc * uContact * 0.6);
+  // Sol mouillé : flaques en bruit basse fréquence, plus sombres et plus brillantes (reflets des lanternes).
+  float puddle = uWet * smoothstep(0.55, 0.72, vn2(vWorld.xz * 0.23 + 3.7) * 0.75 + (1.0 - A.a) * 0.4);
+  albedo *= mix(1.0, 0.55, puddle);
+  vec3 hemi = mix(uGroundAmb, uSkyAmb, N.y * 0.5 + 0.5);
+  float mw = clamp((dot(N, uMoonDir) + 0.14) / 1.14, 0.0, 1.0);
+  vec3 diff, spec; lightSum(vWorld, N, V, uWrap, mix(uShin, 220.0, puddle), diff, spec);
+  vec3 col = albedo * (hemi * ao + uMoonCol * mw * 0.85 + diff * mix(1.0, ao, 0.65));
+  col += spec * (uSpec + puddle * 1.6) * ao;
+  col += A.rgb * uTint * uEmissive;
+  gl_FragColor = vec4(applyFog(col, vWorld), 1.0);
+}`;
+
+export interface SurfaceOpts {
+  map: THREE.Texture;
+  tile?: [number, number];
+  tint?: THREE.ColorRepresentation;
+  wrap?: number;
+  spec?: number;
+  shin?: number;
+  contact?: number;
+  emissive?: number;
+  breakup?: number;
+  wet?: number;
+  side?: THREE.Side;
+}
+
+/** Matériau de surface « nuit » : un programme partagé par toutes les matières (seuls les uniformes changent). */
+export function surface(o: SurfaceOpts): THREE.ShaderMaterial {
+  return new THREE.ShaderMaterial({
+    name: 'VilleSurface',
+    uniforms: {
+      ...U,
+      tAlbedo: { value: o.map },
+      uTile: { value: new THREE.Vector2(...(o.tile ?? [1, 1])) },
+      uTint: { value: new THREE.Color(o.tint ?? 0xffffff) },
+      uWrap: { value: o.wrap ?? 0.3 },
+      uSpec: { value: o.spec ?? 0.15 },
+      uShin: { value: o.shin ?? 24 },
+      uContact: { value: o.contact ?? 1 },
+      uEmissive: { value: o.emissive ?? 0 },
+      uBreakup: { value: o.breakup ?? 0.35 },
+      uWet: { value: o.wet ?? 0 },
+    },
+    vertexShader: SURFACE_VERT,
+    fragmentShader: SURFACE_FRAG,
+    side: o.side ?? THREE.FrontSide,
+  });
+}
+
+/** Eau du port : profonde, rides anisotropes, ciel en Fresnel, reflets des lanternes en traînées verticales. */
+export function waterMaterial(): THREE.ShaderMaterial {
+  return new THREE.ShaderMaterial({
+    name: 'VilleEau',
+    uniforms: { ...U },
+    vertexShader: /* glsl */ `varying vec3 vWorld; void main(){ vec4 w = modelMatrix * vec4(position, 1.0); vWorld = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
+    fragmentShader: /* glsl */ `
+${COMMON_GLSL}
+varying vec3 vWorld;
+void main(){
+  vec3 P = vWorld; float t = uTime;
+  vec2 q = vec2(P.x, P.z * 0.38);
+  vec2 g = vec2(vn2(q * 1.1 + vec2(t * 0.11, 0.0)) - vn2(q * 1.1 + vec2(0.07 + t * 0.11, 0.0)), vn2(q * 2.3 + vec2(0.0, t * 0.07)) - vn2(q * 2.3 + vec2(0.0, 0.07 + t * 0.07)));
+  g *= 1.8 / (1.0 + length(P - cameraPosition) * 0.02);
+  vec3 N = normalize(vec3(-g.x, 1.0, -g.y * 0.38));
+  vec3 V = normalize(cameraPosition - P); vec3 R = reflect(-V, N);
+  float fr = 0.02 + 0.98 * pow(1.0 - max(dot(N, V), 0.0), 5.0);
+  vec3 col = vec3(0.003, 0.007, 0.015) + skyColor(normalize(vec3(R.x, abs(R.y), R.z))) * fr * 0.9;
+  // Reflets des lumières : image miroir de chaque source, étirée verticalement à l'écran par les rides.
+  vec3 vd = normalize(P - cameraPosition);
+  vec3 right = normalize(vec3(viewMatrix[0][0], viewMatrix[1][0], viewMatrix[2][0]));
+  vec3 up = normalize(vec3(viewMatrix[0][1], viewMatrix[1][1], viewMatrix[2][1]));
+  for (int i = 0; i < ${MAX_LIGHTS}; i++) {
+    if (i >= uLightCount) break;
+    vec3 Lm = vec3(uLightPos[i].x, 2.0 * P.y - uLightPos[i].y, uLightPos[i].z);
+    vec3 ld = normalize(Lm - cameraPosition) + N * 0.0;
+    vec3 dv = vd - ld;
+    float ax = dot(dv, right) + g.x * 0.012; float ay = dot(dv, up);
+    float s = exp(-ax * ax / 0.00012) * exp(-ay * ay / 0.006);
+    float br = 0.55 + 0.45 * vn2(vec2(P.x * 3.0, P.z * 9.0 - t * 0.6));
+    col += uLightCol[i] * s * br * 0.12;
+  }
+  float mu = max(dot(R, uMoonDir), 0.0);
+  col += uMoonCol * pow(mu, 300.0) * 1.4;
+  gl_FragColor = vec4(applyFog(col, P), 1.0);
+}`,
+  });
+}
+
+/** Ciel : dôme au plan lointain, lune, étoiles, voile de nuages (d'après `src/atmosphere/Sky.ts` L. 10-53). */
+export function skyDome(): THREE.Mesh {
+  const mat = new THREE.ShaderMaterial({
+    name: 'VilleCiel',
+    uniforms: { ...U },
+    vertexShader: /* glsl */ `varying vec3 vDir; void main(){ vDir = position; vec4 p = projectionMatrix * vec4(mat3(viewMatrix) * position, 1.0); gl_Position = vec4(p.xy, p.w * 0.99999, p.w); }`,
+    fragmentShader: /* glsl */ `
+${COMMON_GLSL}
+varying vec3 vDir;
+float hash13(vec3 p){ p = fract(p * 0.1031); p += dot(p, p.zyx + 31.32); return fract((p.x + p.y) * p.z); }
+void main(){
+  vec3 rd = normalize(vDir);
+  vec3 col = skyColor(rd);
+  float mu = max(dot(rd, uMoonDir), 0.0);
+  float hz = max(rd.y, 0.0); vec2 sp = rd.xz / (hz + 0.16);
+  float n = vn2(sp * 0.8 + vec2(uTime * 0.003, 0.0)) * 0.62 + vn2(sp * 2.1 + 3.7) * 0.38;
+  float cl = smoothstep(0.56, 0.8, n) * smoothstep(0.02, 0.14, rd.y) * (1.0 - smoothstep(0.3, 0.62, rd.y));
+  col = mix(col, uFogColor * 0.62 + uMoonCol * 0.32 * pow(mu, 10.0), cl * 0.42);
+  float disc = smoothstep(0.99984, 0.99991, mu);
+  col += vec3(1.2, 1.26, 1.36) * disc * 1.45 * (1.0 - cl * 0.7);
+  col += uMoonCol * (pow(mu, 2600.0) * 0.45 + pow(mu, 220.0) * 0.05);
+  vec3 sd = rd * 240.0, cell = floor(sd); float h = hash13(cell);
+  float star = step(0.994, h) * smoothstep(0.24, 0.0, length(fract(sd) - 0.5));
+  star *= smoothstep(0.2, 0.5, rd.y) * (1.0 - pow(mu, 30.0)) * (1.0 - cl);
+  col += vec3(0.62, 0.68, 0.85) * star * (0.08 + 0.22 * hash13(cell + 7.0));
+  gl_FragColor = vec4(col, 1.0);
+}`,
+    side: THREE.BackSide,
+    depthWrite: false,
+  });
+  const m = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 24), mat);
+  m.frustumCulled = false;
+  m.renderOrder = 1000;
+  return m;
+}
+
+// --- Textures peintes par code ------------------------------------------------------------------------------
+
+type Ctx = CanvasRenderingContext2D;
+function cnv(w: number, h: number): { c: HTMLCanvasElement; ctx: Ctx } {
+  const c = document.createElement('canvas');
+  c.width = w;
+  c.height = h;
+  return { c, ctx: c.getContext('2d')! };
+}
+function tex(c: HTMLCanvasElement, repeat = true, srgb = true): THREE.CanvasTexture {
+  const t = new THREE.CanvasTexture(c);
+  if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+  if (repeat) t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.anisotropy = 8;
+  return t;
+}
+const rgb = (c: readonly number[], k = 1) => `rgb(${Math.round(c[0]! * k)},${Math.round(c[1]! * k)},${Math.round(c[2]! * k)})`;
+
+/** Pavés gris-bleu (palette de Cité du Tournoi, deux tons chauds rares) ; alpha = relief (joints bas → flaques). */
+export function cobbleTexture(seed: number): THREE.CanvasTexture {
+  const S = 512;
+  const { c, ctx } = cnv(S, S);
+  const rng = makeRng(hashString(`ville|paves|${seed}`));
+  // Bande froide plus étroite que Cité du Tournoi (un seul ton chaud, rare) : l'ambre doit rester l'accent des lanternes.
+  const pal = [[78, 84, 98], [70, 76, 90], [88, 90, 100], [96, 92, 94], [62, 68, 84], [84, 86, 92], [74, 74, 84], [92, 90, 100]];
+  ctx.fillStyle = 'rgba(22,22,28,1)';
+  ctx.fillRect(0, 0, S, S);
+  const rows = 8;
+  const rh = S / rows;
+  for (let r = 0; r < rows; r++) {
+    let x = -rng() * 40;
+    while (x < S) {
+      const w = 44 + rng() * 34;
+      const tone = pal[Math.floor(rng() * pal.length)]!;
+      const k = 0.82 + rng() * 0.22;
+      const g = 3 + rng() * 1.5;
+      const draw = (ox: number) => {
+        const x0 = x + g + ox;
+        const y0 = r * rh + g;
+        const ww = w - 2 * g;
+        const hh = rh - 2 * g;
+        const grd = ctx.createRadialGradient(x0 + ww * 0.42, y0 + hh * 0.38, 2, x0 + ww / 2, y0 + hh / 2, Math.max(ww, hh) * 0.7);
+        grd.addColorStop(0, rgb(tone, k * 1.12));
+        grd.addColorStop(1, rgb(tone, k * 0.72));
+        ctx.fillStyle = grd;
+        ctx.beginPath();
+        ctx.roundRect(x0, y0, ww, hh, Math.min(ww, hh) * 0.28);
+        ctx.fill();
+      };
+      draw(0);
+      if (x + w > S) draw(-S);
+      x += w;
+    }
+  }
+  // grain fin
+  const img = ctx.getImageData(0, 0, S, S);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const n = (rng() - 0.5) * 10;
+    const lum = img.data[i]! + img.data[i + 1]! + img.data[i + 2]!;
+    img.data[i] = img.data[i]! + n;
+    img.data[i + 1] = img.data[i + 1]! + n;
+    img.data[i + 2] = img.data[i + 2]! + n;
+    img.data[i + 3] = lum < 100 ? 60 : 255; // joints bas : l'eau s'y rassemble d'abord
+  }
+  ctx.putImageData(img, 0, 0);
+  return tex(c);
+}
+
+/** Pierre de taille froide (assises, blocs, mortier, coulures). */
+export function ashlarTexture(seed: number, base: readonly (readonly number[])[] = [[128, 132, 142], [110, 116, 128], [136, 136, 140], [98, 104, 118], [120, 122, 128]]): THREE.CanvasTexture {
+  const S = 512;
+  const { c, ctx } = cnv(S, S);
+  const rng = makeRng(hashString(`ville|pierre|${seed}`));
+  ctx.fillStyle = 'rgb(58,60,66)';
+  ctx.fillRect(0, 0, S, S);
+  const rows = 6;
+  const rh = S / rows;
+  for (let r = 0; r < rows; r++) {
+    let x = r % 2 ? -rh * 0.8 : 0;
+    while (x < S) {
+      const w = rh * (1.3 + rng() * 0.9);
+      const tone = base[Math.floor(rng() * base.length)]!;
+      const k = 0.82 + rng() * 0.26;
+      const g = 3;
+      const blk = (ox: number) => {
+        ctx.fillStyle = rgb(tone, k);
+        ctx.fillRect(x + g + ox, r * rh + g, w - 2 * g, rh - 2 * g);
+        const sh = ctx.createLinearGradient(0, r * rh, 0, (r + 1) * rh);
+        sh.addColorStop(0, 'rgba(255,255,255,0.06)');
+        sh.addColorStop(1, 'rgba(0,0,0,0.18)');
+        ctx.fillStyle = sh;
+        ctx.fillRect(x + g + ox, r * rh + g, w - 2 * g, rh - 2 * g);
+      };
+      blk(0);
+      if (x + w > S) blk(-S);
+      x += w;
+    }
+  }
+  // coulures verticales et taches
+  for (let i = 0; i < 40; i++) {
+    const x = rng() * S;
+    const y = rng() * S;
+    const g = ctx.createLinearGradient(x, y, x, y + 60 + rng() * 120);
+    g.addColorStop(0, 'rgba(20,24,34,0.22)');
+    g.addColorStop(1, 'rgba(20,24,34,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(x, y, 3 + rng() * 6, 180);
+  }
+  return tex(c);
+}
+
+/** Enduit ivoire désaturé, usé, laissant voir la pierre par endroits ; colombages sombres optionnels. */
+export function plasterTexture(seed: number, timber: boolean): THREE.CanvasTexture {
+  const S = 512;
+  const { c, ctx } = cnv(S, S);
+  const rng = makeRng(hashString(`ville|enduit|${seed}|${timber}`));
+  ctx.fillStyle = 'rgb(170,168,164)';
+  ctx.fillRect(0, 0, S, S);
+  for (let i = 0; i < 260; i++) {
+    const x = rng() * S;
+    const y = rng() * S;
+    const r = 6 + rng() * 40;
+    const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+    const d = rng() < 0.5;
+    g.addColorStop(0, d ? 'rgba(120,122,130,0.22)' : 'rgba(196,194,188,0.18)');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(x - r, y - r, 2 * r, 2 * r);
+  }
+  if (timber) {
+    ctx.fillStyle = 'rgb(58,52,50)';
+    const t = 22;
+    ctx.fillRect(0, 0, S, t);
+    ctx.fillRect(0, S / 2 - t / 2, S, t);
+    for (const x of [0, S / 2 - t / 2, S - t]) ctx.fillRect(x, 0, t, S);
+    ctx.lineWidth = t * 0.8;
+    ctx.strokeStyle = 'rgb(66,58,54)';
+    ctx.beginPath();
+    ctx.moveTo(t, S / 2); ctx.lineTo(S / 2 - t, t);
+    ctx.moveTo(S / 2 + t, t); ctx.lineTo(S - t, S / 2);
+    ctx.stroke();
+  }
+  return tex(c);
+}
+
+/** Ardoise des toits : rangs d'écailles décalés. */
+export function slateTexture(seed: number): THREE.CanvasTexture {
+  const S = 256;
+  const { c, ctx } = cnv(S, S);
+  const rng = makeRng(hashString(`ville|ardoise|${seed}`));
+  const pal = [[84, 88, 98], [70, 74, 86], [96, 98, 106], [90, 92, 100], [78, 80, 92]];
+  ctx.fillStyle = 'rgb(40,42,50)';
+  ctx.fillRect(0, 0, S, S);
+  const rows = 12;
+  const rh = S / rows;
+  for (let r = 0; r < rows; r++) {
+    for (let i = -1; i < 10; i++) {
+      const w = S / 9;
+      const x = i * w + (r % 2) * w * 0.5;
+      ctx.fillStyle = rgb(pal[Math.floor(rng() * pal.length)]!, 0.85 + rng() * 0.25);
+      ctx.beginPath();
+      ctx.roundRect(x + 1, r * rh + 1, w - 2, rh * 1.15, [0, 0, 5, 5]);
+      ctx.fill();
+    }
+  }
+  return tex(c);
+}
+
+/** Planches de bois sombre (étal, caisses, coques, portes). */
+export function woodTexture(seed: number): THREE.CanvasTexture {
+  const S = 256;
+  const { c, ctx } = cnv(S, S);
+  const rng = makeRng(hashString(`ville|bois|${seed}`));
+  for (let i = 0; i < 8; i++) {
+    const k = 0.8 + rng() * 0.35;
+    ctx.fillStyle = rgb([84, 72, 62], k);
+    ctx.fillRect(0, i * 32, S, 32);
+    ctx.fillStyle = 'rgba(20,16,14,0.7)';
+    ctx.fillRect(0, i * 32, S, 2);
+    for (let j = 0; j < 6; j++) {
+      ctx.strokeStyle = `rgba(30,24,20,${0.15 + rng() * 0.2})`;
+      ctx.beginPath();
+      const y = i * 32 + 4 + rng() * 24;
+      ctx.moveTo(0, y);
+      ctx.bezierCurveTo(S * 0.3, y + rng() * 6 - 3, S * 0.7, y + rng() * 6 - 3, S, y);
+      ctx.stroke();
+    }
+  }
+  return tex(c);
+}
+
+/** Toile ivoire désaturée (étal) ; bande de famille facultative. */
+export function canvasCloth(seed: number): THREE.CanvasTexture {
+  const S = 256;
+  const { c, ctx } = cnv(S, S);
+  const rng = makeRng(hashString(`ville|toile|${seed}`));
+  ctx.fillStyle = 'rgb(188,182,166)';
+  ctx.fillRect(0, 0, S, S);
+  for (let i = 0; i < 12; i++) {
+    ctx.fillStyle = i % 2 ? 'rgba(150,146,134,0.5)' : 'rgba(210,204,190,0.35)';
+    ctx.fillRect((i * S) / 12, 0, S / 12, S);
+  }
+  for (let i = 0; i < 80; i++) {
+    ctx.fillStyle = `rgba(90,86,80,${rng() * 0.08})`;
+    ctx.fillRect(rng() * S, rng() * S, 2 + rng() * 20, 1 + rng() * 3);
+  }
+  return tex(c);
+}
+
+/** Fenêtre : vitre chaude allumée (dégradé ambre, croisillons) ou sombre (reflet de ciel). Émissive si allumée. */
+export function windowTexture(lit: boolean, seed: number): THREE.CanvasTexture {
+  const W = 64;
+  const H = 96;
+  const { c, ctx } = cnv(W, H);
+  const rng = makeRng(hashString(`ville|fenetre|${lit}|${seed}`));
+  ctx.fillStyle = '#1a1716';
+  ctx.fillRect(0, 0, W, H);
+  if (lit) {
+    const g = ctx.createLinearGradient(0, 6, 0, H - 6);
+    g.addColorStop(0, '#ffd890');
+    g.addColorStop(1, '#c8631a');
+    ctx.fillStyle = g;
+  } else {
+    const g = ctx.createLinearGradient(0, 6, 0, H - 6);
+    g.addColorStop(0, '#16233a');
+    g.addColorStop(1, '#0c1424');
+    ctx.fillStyle = g;
+  }
+  ctx.fillRect(6, 6, W - 12, H - 12);
+  if (lit && rng() < 0.6) {
+    // silhouette d'un rideau à demi tiré
+    ctx.fillStyle = 'rgba(120,52,20,0.55)';
+    ctx.fillRect(6, 6, (W - 12) * (0.25 + rng() * 0.2), H - 12);
+  }
+  ctx.fillStyle = '#1a1716';
+  ctx.fillRect(W / 2 - 2, 6, 4, H - 12);
+  ctx.fillRect(6, H / 2 - 2, W - 12, 4);
+  return tex(c, false);
+}
+
+/** Halo radial (sprite additif des lanternes) ; une texture partagée. */
+let haloTex: THREE.CanvasTexture | null = null;
+export function haloTexture(): THREE.CanvasTexture {
+  if (haloTex) return haloTex;
+  const S = 128;
+  const { c, ctx } = cnv(S, S);
+  const g = ctx.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+  g.addColorStop(0, 'rgba(255,255,255,1)');
+  g.addColorStop(0.18, 'rgba(255,255,255,0.45)');
+  g.addColorStop(0.5, 'rgba(255,255,255,0.08)');
+  g.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, S, S);
+  haloTex = tex(c, false);
+  return haloTex;
+}
+
+/** Ombre de contact (ellipse douce sous un personnage ou un objet). */
+let shadowTex: THREE.CanvasTexture | null = null;
+export function contactShadowTexture(): THREE.CanvasTexture {
+  if (shadowTex) return shadowTex;
+  const S = 128;
+  const { c, ctx } = cnv(S, S);
+  const g = ctx.createRadialGradient(S / 2, S / 2, 0, S / 2, S / 2, S / 2);
+  g.addColorStop(0, 'rgba(3,5,12,0.85)');
+  g.addColorStop(0.45, 'rgba(3,5,12,0.45)');
+  g.addColorStop(1, 'rgba(3,5,12,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, S, S);
+  shadowTex = tex(c, false);
+  return shadowTex;
+}
+
+/** Enseigne du Fanal : planche suspendue, lanterne peinte, aucune lettre (règle : aucun texte lisible). */
+export function fanalSignTexture(): THREE.CanvasTexture {
+  const { c, ctx } = cnv(256, 128);
+  ctx.fillStyle = '#3a2a1e';
+  ctx.beginPath();
+  ctx.roundRect(4, 4, 248, 120, 18);
+  ctx.fill();
+  ctx.strokeStyle = '#c9a25a';
+  ctx.lineWidth = 5;
+  ctx.stroke();
+  // lanterne stylisée (le « fanal »)
+  ctx.fillStyle = '#ffcf7a';
+  ctx.beginPath();
+  ctx.moveTo(128, 26); ctx.lineTo(150, 50); ctx.lineTo(144, 96); ctx.lineTo(112, 96); ctx.lineTo(106, 50); ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#c9a25a';
+  ctx.fillRect(104, 96, 48, 8);
+  ctx.fillRect(118, 16, 20, 10);
+  for (const x of [56, 200]) {
+    ctx.beginPath();
+    ctx.arc(x, 64, 14, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  return tex(c, false);
+}
