@@ -6,6 +6,8 @@
  * Post-traitement en trois passes, à la manière de l'arène (ADR 019) et de Cité du Tournoi (`PostFX.ts`) : scène HDR
  * linéaire → halo des lanternes à demi-définition → finition (flou de bascule « miniature » au-dessus et au-dessous du
  * personnage, étalonnage ombres froides / hautes lumières chaudes, vignettage, ACES, sRGB) en une seule passe.
+ * Îlots à l'encre (direction D, ADR 026) : passe d'encre puis, si l'îlot le demande (passe 47), flou de profondeur à la
+ * place du flou de bascule ; reflet plan de la rue rendu avant la scène (`reflets.ts`) pour les flaques et le port.
  */
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
@@ -16,6 +18,8 @@ import { createRig, RIGS, type CameraId, type CameraRig, type RigTuning } from '
 import { ILOTS, type IlotDef, type IlotId, type Passer } from './ilots';
 import { activeZone, nearestFree, newWalker, stepWalker, type Facing, type Ilot, type Vec2, type Walker, type Zone } from './monde';
 import type { IlotNpc } from './quai';
+import { U } from './materiaux';
+import { LAYER_NOREFLECT, PlanarReflection } from './reflets';
 import type { QuaiScene } from './scene';
 import { CELL_H, CELL_W, COLS, ROWS, WALKER_H, createWalkerSprite, type WalkerSprite } from './sprites';
 import { loadExternalAtlas } from './spritesExternes';
@@ -157,7 +161,53 @@ void main(){
   float e = max(edgeAt(vUv, uTexel, w0), 0.8 * edgeAt(vUv, uTexel * uInkW, w0));
   float z = 1.0 / max(w0, 1e-6);
   e *= 1.0 - smoothstep(30.0, 110.0, z) * 0.55;
-  gl_FragColor = vec4(mix(c, uInkColor, e * uInk), 1.0);
+  // la profondeur de vue (m) passe au flou de profondeur dans l'alpha (la passe suivante ne peut pas relire la texture
+  // de profondeur : elle est attachée au tampon qu'elle écrit)
+  gl_FragColor = vec4(mix(c, uInkColor, e * uInk), z);
+}`;
+
+/**
+ * M09 V3 (passe 47) : flou de profondeur, adapté de Cité du Tournoi (RPG-ArtByCode, lecture seule, `src/atmosphere/PostFX.ts`
+ * L. 35-80) : cercle de confusion tiré de la profondeur (alpha écrit par la passe d'encre), nul dans la bande jouable,
+ * croissant au premier plan (eau, bateaux) et au loin (ville haute, atténué) ; 24 échantillons en spirale d'or, une
+ * contribution par échantillon qui l'atteint (son propre cercle couvre la distance), les plus lointains ne bavent pas
+ * sur un centre plus proche et plus net ; les points lumineux pèsent davantage (bokeh des lanternes).
+ */
+const DOF_VERT = /* glsl */ `
+precision highp float;
+uniform mat4 modelViewMatrix; uniform mat4 projectionMatrix;
+in vec3 position; in vec2 uv; out vec2 vUv;
+void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
+// GLSL 3 : lectures à niveau fixe (textureLod) dans la boucle ; avec texture2D, le compilateur D3D signalait des
+// dérivées indéfinies (boucle après un retour anticipé, avertissement X3595).
+const DOF_FRAG = /* glsl */ `
+precision highp float;
+uniform sampler2D tDiffuse; uniform vec2 uTexel; uniform vec4 uBand; uniform float uFarAmt; uniform float uMaxBlur;
+in vec2 vUv; out vec4 fragColor;
+float coc(float z){
+  return max(1.0 - smoothstep(uBand.y, uBand.x, z), smoothstep(uBand.z, uBand.w, z) * uFarAmt);
+}
+void main(){
+  vec4 base = textureLod(tDiffuse, vUv, 0.0);
+  float z0 = base.a;
+  float c0 = coc(z0);
+  float rad = c0 * uMaxBlur;
+  if (rad < 0.35) { fragColor = vec4(base.rgb, 1.0); return; }
+  vec3 acc = base.rgb; float wsum = 1.0;
+  for (int i = 0; i < 24; i++) {
+    float fi = float(i) + 0.5;
+    float r = sqrt(fi / 24.0);
+    float a = fi * 2.3999632;
+    vec4 sc = textureLod(tDiffuse, vUv + vec2(cos(a), sin(a)) * r * rad * uTexel, 0.0);
+    float rs = coc(sc.a) * uMaxBlur;
+    float dist = r * rad;
+    float reach = smoothstep(dist - 1.2, dist + 0.6, rs);
+    float behind = sc.a > z0 + 1.5 ? smoothstep(0.0, 1.0, c0 * 2.0) : 1.0;
+    float lum = dot(sc.rgb, vec3(0.3, 0.55, 0.15));
+    float w = reach * behind * (1.0 + smoothstep(1.2, 5.0, lum) * 1.6);
+    acc += sc.rgb * w; wsum += w;
+  }
+  fragColor = vec4(acc / wsum, 1.0);
 }`;
 
 /** Passe d'encre : lit la profondeur du tampon où la scène vient d'être rendue (les tampons du compositeur alternent). */
@@ -186,6 +236,9 @@ export function createTown(o: TownOptions): Town {
   let world: QuaiScene = def.build(o.artSeed);
   let scene = world.scene;
   const camera = new THREE.PerspectiveCamera(30, 16 / 9, 0.5, 400);
+  // la caméra principale voit aussi ce que le reflet ne montre pas (sol, eau, brumes)
+  camera.layers.enable(LAYER_NOREFLECT);
+  const refl = new PlanarReflection();
   let rig: CameraRig = createRig(o.camera, def.camera, def.rig, o.rig);
   const walkerH = () => def.walkerH ?? WALKER_H;
   const markerY = () => walkerH() + 0.53;
@@ -247,6 +300,16 @@ export function createTown(o: TownOptions): Town {
     fragmentShader: INK_FRAG,
   }));
   composer.addPass(ink);
+  const dof = new ShaderPass(new THREE.RawShaderMaterial({
+    name: 'VilleFlou',
+    uniforms: {
+      tDiffuse: { value: null }, uTexel: { value: new THREE.Vector2() }, uBand: { value: new THREE.Vector4(10, 7, 30, 75) }, uFarAmt: { value: 0.5 }, uMaxBlur: { value: 0 },
+    },
+    vertexShader: DOF_VERT,
+    fragmentShader: DOF_FRAG,
+    glslVersion: THREE.GLSL3,
+  }));
+  composer.addPass(dof);
   const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.42, 0.55, 0.92);
   const bloomSize = bloom.setSize.bind(bloom);
   bloom.setSize = (w: number, h: number) => bloomSize(Math.max(1, Math.round(w / 2)), Math.max(1, Math.round(h / 2)));
@@ -266,10 +329,14 @@ export function createTown(o: TownOptions): Town {
   const applyRig = () => {
     const encre = def.style === 'encre';
     ink.enabled = encre;
+    // le flou de profondeur lit la profondeur écrite par la passe d'encre ; il remplace alors le flou de bascule
+    dof.enabled = encre && !!def.dof;
     finish.uniforms.uPaper!.value = encre ? 1 : 0;
     finish.uniforms.toneMappingExposure!.value = encre ? 1.22 : 1.05;
+    if (def.reflets) U.uReflProxy.value.set(def.reflets.proxyZ, def.reflets.proxyY);
+    else U.uReflReady.value = 0;
     const tl = TILT[rig.params.id];
-    finish.uniforms.uTilt!.value = tl.amount;
+    finish.uniforms.uTilt!.value = dof.enabled ? 0 : tl.amount;
     finish.uniforms.uFocusW!.value = tl.width;
     playerSprite.setTilt(rig.params.spriteTilt);
     for (const { s } of npcSprites) s.setTilt(rig.params.spriteTilt);
@@ -290,6 +357,9 @@ export function createTown(o: TownOptions): Town {
     ink.uniforms.uInkW!.value = Math.max(1.5, (h * pixelRatio) / 540);
     ink.uniforms.uNear!.value = camera.near;
     ink.uniforms.uFar!.value = camera.far;
+    (dof.uniforms.uTexel!.value as THREE.Vector2).set(1 / (w * pixelRatio), 1 / (h * pixelRatio));
+    dof.uniforms.uMaxBlur!.value = (def.dof?.maxBlur ?? 0) * ((h * pixelRatio) / 1080);
+    refl.setSize(w * pixelRatio, h * pixelRatio);
   };
   window.addEventListener('resize', resize);
   resize();
@@ -362,6 +432,8 @@ export function createTown(o: TownOptions): Town {
     return { x, z };
   };
   const focus = new THREE.Vector3();
+  /** Profondeur de vue (m) d'un point du monde, à la verticale de la caméra. */
+  const viewDepth = (y: number, z: number) => -focus.set(camera.position.x, y, z).applyMatrix4(camera.matrixWorldInverse).z;
   const render = () => {
     world.update(time);
     playerSprite.set(walker.pos, walker.facing, walker.phase, walker.moving, time);
@@ -375,8 +447,17 @@ export function createTown(o: TownOptions): Town {
     for (const p of passers) p.s.set({ x: p.x, z: p.a.z }, p.dir > 0 ? 'droite' : 'gauche', p.phase, !o.freeze && !p.blocked, time);
     focus.set(walker.pos.x, 0.9, walker.pos.z).project(camera);
     finish.uniforms.uFocusY!.value = THREE.MathUtils.clamp(focus.y * 0.5 + 0.5, 0.2, 0.8);
+    if (dof.enabled && def.dof) {
+      camera.updateMatrixWorld();
+      const d = def.dof;
+      const n0 = viewDepth(0.3, d.nearZ);
+      const f0 = viewDepth(4, d.farZ);
+      (dof.uniforms.uBand!.value as THREE.Vector4).set(n0, Math.max(camera.near, n0 - d.nearSpan), f0, f0 + d.farSpan);
+      dof.uniforms.uFarAmt!.value = d.farAmt;
+    }
     const c0 = performance.now();
     renderer.info.reset();
+    if (def.reflets) refl.update(renderer, scene, camera);
     composer.render();
     cpuMs = performance.now() - c0;
     frames++;
@@ -496,6 +577,7 @@ export function createTown(o: TownOptions): Town {
       for (const t of MARKERS.values()) t.dispose();
       MARKERS.clear();
       world.dispose();
+      refl.dispose();
       composer.dispose();
       renderer.dispose();
       renderer.domElement.remove();

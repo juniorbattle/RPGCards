@@ -759,3 +759,143 @@ export function glyphUV(geo: THREE.BufferGeometry, k: number): THREE.BufferGeome
   for (let i = 0; i < uv.count; i++) uv.setX(i, (k + uv.getX(i)) / 4);
   return geo;
 }
+
+/**
+ * M09 V3 (passe 47) : masque des flaques d'eau dormante de la rue (canal rouge, 1 = eau), peint en coordonnées du monde
+ * sur le rectangle `rect` (x0, z0, largeur, profondeur) : chaque flaque est un amas d'ellipses floues (bords irréguliers),
+ * le nuanceur du pavé seuille le masque en suivant les joints. Données linéaires, sans répétition.
+ */
+export function puddleMask(seed: number, rect: readonly [number, number, number, number], spots: readonly (readonly [number, number, number, number])[]): THREE.CanvasTexture {
+  const c = painted(`flaques|${seed}|${JSON.stringify(rect)}|${JSON.stringify(spots)}`, () => {
+    const W = 1024;
+    const H = 128;
+    const { c, ctx } = cnv(W, H);
+    const rng = makeRng(hashString(`ville|flaques|${seed}`));
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+    const sx = W / rect[2];
+    const sz = H / rect[3];
+    ctx.globalCompositeOperation = 'lighter';
+    for (const [x, z, rx, rz] of spots) {
+      const n = 5 + Math.floor(rng() * 4);
+      for (let k = 0; k < n; k++) {
+        const ox = (rng() - 0.5) * rx * 1.1;
+        const oz = (rng() - 0.5) * rz * 1.0;
+        const ex = rx * (0.45 + rng() * 0.4) * sx;
+        const ez = rz * (0.45 + rng() * 0.4) * sz;
+        const px = (x + ox - rect[0]) * sx;
+        const pz = (z + oz - rect[1]) * sz;
+        ctx.save();
+        ctx.translate(px, pz);
+        ctx.scale(1, ez / ex);
+        const g = ctx.createRadialGradient(0, 0, 0, 0, 0, ex);
+        g.addColorStop(0, 'rgba(150,0,0,1)');
+        g.addColorStop(0.6, 'rgba(110,0,0,1)');
+        g.addColorStop(1, 'rgba(0,0,0,1)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(0, 0, ex, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+    return c;
+  });
+  const t = new THREE.CanvasTexture(c);
+  t.flipY = false;
+  t.colorSpace = THREE.NoColorSpace;
+  t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
+  return t;
+}
+
+/** M09 V3 (passe 47) : atelier du chantier naval vu par la grande porte ouverte : braises de la forge (Cendre), membrures
+ *  d'une coque en construction en contre-jour, outils pendus. */
+export function workshopInterior(seed: number): THREE.CanvasTexture {
+  const W = 192;
+  const H = 192;
+  const { c, ctx } = cnv(W, H);
+  const rng = makeRng(hashString(`v3|atelier|${seed}`));
+  const g = ctx.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#2a1208'); g.addColorStop(0.5, '#8a3a12'); g.addColorStop(0.85, '#e0702a'); g.addColorStop(1, '#5a2008');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  const glow = ctx.createRadialGradient(W * 0.32, H * 0.86, 4, W * 0.32, H * 0.86, H * 0.55);
+  glow.addColorStop(0, 'rgba(255,190,90,0.95)'); glow.addColorStop(1, 'rgba(255,120,40,0)');
+  ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
+  // membrures de la coque : arcs sombres en contre-jour
+  ctx.strokeStyle = 'rgba(30,10,4,0.92)';
+  for (let k = 0; k < 6; k++) {
+    const x = 70 + k * 22;
+    ctx.lineWidth = 6 - k * 0.5;
+    ctx.beginPath(); ctx.moveTo(x, H * 0.92); ctx.quadraticCurveTo(x - 30 + k * 4, H * 0.45, x + 8, H * 0.12); ctx.stroke();
+  }
+  ctx.lineWidth = 7; ctx.beginPath(); ctx.moveTo(56, H * 0.9); ctx.lineTo(W, H * 0.86); ctx.stroke();
+  // poutres du plafond, outils pendus
+  ctx.fillStyle = 'rgba(24,8,4,0.9)'; ctx.fillRect(0, 10, W, 9); ctx.fillRect(0, 40, W, 6);
+  for (let k = 0; k < 5; k++) { const x = 12 + k * 13 + rng() * 4; ctx.fillRect(x, 46, 3, 22 + rng() * 14); }
+  // braises de la forge
+  for (let k = 0; k < 40; k++) {
+    ctx.fillStyle = `rgba(255,${170 + rng() * 70},${60 + rng() * 60},${0.5 + rng() * 0.5})`;
+    ctx.fillRect(30 + rng() * 60, H * 0.8 + rng() * 22, 2, 2);
+  }
+  ctx.fillStyle = 'rgba(28,10,4,0.95)'; ctx.fillRect(22, H * 0.9, 80, H * 0.1);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+/**
+ * M09 V3 (passe 47) : frise sculptée et dorée de la salle de jeu (1024 × 96, une case par travée) : bande de pierre
+ * sombre entre deux filets d'or, médaillon de chaque famille (emblème du jeu en or sur le fond de sa couleur),
+ * rinceaux et losanges dorés entre eux. Relief du peintre cuit (ombre portée sous les ornements).
+ */
+export function friezeTexture(): THREE.CanvasTexture {
+  const c = painted('frise', () => {
+    const W = 1024;
+    const H = 96;
+    const { c, ctx } = cnv(W, H);
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#3a3f52'); bg.addColorStop(0.5, '#2c3142'); bg.addColorStop(1, '#22263a');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    const gold = (y: number, h: number) => {
+      const g = ctx.createLinearGradient(0, y, 0, y + h);
+      g.addColorStop(0, '#fff0b8'); g.addColorStop(0.5, '#d9a84a'); g.addColorStop(1, '#8a6224');
+      ctx.fillStyle = g; ctx.fillRect(0, y, W, h);
+    };
+    gold(4, 7); gold(H - 11, 7);
+    ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fillRect(0, 11, W, 3); ctx.fillRect(0, H - 4, W, 4);
+    const cw = W / 4;
+    FAMILIES.forEach((fam, k) => {
+      const p = FAMILY_PALETTE[fam];
+      const cx = k * cw + cw / 2;
+      const cy = H / 2;
+      // rinceaux : deux volutes dorées de part et d'autre du médaillon
+      ctx.strokeStyle = '#d9a84a'; ctx.lineWidth = 4; ctx.lineCap = 'round';
+      for (const sx of [-1, 1]) {
+        ctx.beginPath();
+        ctx.moveTo(cx + sx * 36, cy);
+        ctx.bezierCurveTo(cx + sx * 60, cy - 26, cx + sx * 86, cy + 22, cx + sx * 104, cy - 4);
+        ctx.stroke();
+        ctx.beginPath(); ctx.arc(cx + sx * 104, cy - 12, 8, 0, Math.PI * 2); ctx.stroke();
+        ctx.fillStyle = '#e8c070';
+        ctx.beginPath(); ctx.arc(cx + sx * 62, cy + 8, 4, 0, Math.PI * 2); ctx.fill();
+      }
+      // losange doré à la jonction des cases
+      ctx.fillStyle = '#e8c070';
+      ctx.beginPath(); ctx.moveTo(k * cw, cy - 14); ctx.lineTo(k * cw + 10, cy); ctx.lineTo(k * cw, cy + 14); ctx.lineTo(k * cw - 10, cy); ctx.closePath(); ctx.fill();
+      // médaillon : ombre portée, disque de la famille cerclé d'or, emblème en or
+      ctx.fillStyle = 'rgba(0,0,0,0.45)';
+      ctx.beginPath(); ctx.arc(cx + 3, cy + 4, 32, 0, Math.PI * 2); ctx.fill();
+      const md = ctx.createRadialGradient(cx - 8, cy - 10, 4, cx, cy, 32);
+      md.addColorStop(0, p.light); md.addColorStop(1, p.deep);
+      ctx.fillStyle = md;
+      ctx.beginPath(); ctx.arc(cx, cy, 30, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#e8c070'; ctx.lineWidth = 5; ctx.stroke();
+      ctx.fillStyle = '#f2d283';
+      drawEmblem(ctx, fam, cx, cy, 19);
+    });
+    return c;
+  });
+  const t = tex(c, true);
+  t.wrapT = THREE.ClampToEdgeWrapping;
+  return t;
+}

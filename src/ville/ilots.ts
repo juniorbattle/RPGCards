@@ -6,7 +6,7 @@
 import type { RigTuning } from './cameras';
 import type { Ilot } from './monde';
 import { P_NPCS, PARVIS } from './parvis';
-import { NPCS, QUAI, type IlotNpc } from './quai';
+import { FACADE_Z, NPCS, QUAI, QUAY_Z, type IlotNpc } from './quai';
 import { RUELLES, R_NPCS } from './ruelles';
 import { buildQuai } from './quaiScene';
 import { buildParvis, buildRuelles, type QuaiScene } from './scene';
@@ -14,6 +14,17 @@ import { buildParvis, buildRuelles, type QuaiScene } from './scene';
 export type IlotId = 'quai' | 'parvis' | 'ruelles';
 
 export interface Passer { id: string; x0: number; x1: number; z: number; speed: number; phase?: number }
+
+/**
+ * M09 V3 (passe 47) : flou de profondeur à la manière de Cité du Tournoi (`PostFX.ts` L. 35-80). Net dans la bande jouable,
+ * de la face du mur du quai (`nearZ`) jusqu'au fond des maisons du premier rang (`farZ`) ; flou croissant au premier plan
+ * (pleine force `nearSpan` m plus près) et au loin (pleine force `farSpan` m plus loin, atténuée par `farAmt`) ; rayon
+ * maximal en pixels à 1080 lignes.
+ */
+export interface DofDef { nearZ: number; farZ: number; nearSpan: number; farSpan: number; farAmt: number; maxBlur: number }
+/** M09 V3 (passe 47) : reflet plan de la rue (flaques, eau du port) ; relais du reflet de l'eau : plan des façades
+ *  (z) et hauteur des toits (au-delà, la ville lointaine). */
+export interface RefletsDef { proxyZ: number; proxyY: number }
 
 export interface IlotDef {
   id: IlotId;
@@ -29,6 +40,8 @@ export interface IlotDef {
   /** Direction artistique du rendu : `encre` = illustration de carte encrée (direction D retenue par le responsable le
    *  2026-10-19, ADR 026) : contours à l'encre, grain de papier ; sinon le rendu d'origine. */
   style?: 'encre';
+  dof?: DofDef;
+  reflets?: RefletsDef;
   build(artSeed: number): QuaiScene;
   /** Liaisons : zone de sortie → îlot voisin et point d'apparition à l'arrivée. */
   exits: Readonly<Record<string, { to: IlotId; spawn: string }>>;
@@ -40,6 +53,10 @@ export const ILOTS: Record<IlotId, IlotDef> = {
     // M09 V3 (passe de qualité du Quai) : cadrage plus large et plus bas (eau au premier plan, toits, ville haute et ciel
     // au loin) avec des personnages plus grands ; le Parvis et les Ruelles gardent le cadrage d'origine jusqu'à validation.
     rig: { pitch: 7, distance: 18.5, fov: 39, aimY: 3.05 }, walkerH: 2.2, style: 'encre',
+    // Passe 47 (retour du responsable : « il nous manque le blur et les flaques d'eau réfléchissantes ») : la rue et les
+    // façades nettes, l'eau et les bateaux du premier plan flous, la ville haute adoucie ; flaques et port en miroir.
+    dof: { nearZ: QUAY_Z + 0.5, farZ: FACADE_Z - 7.5, nearSpan: 3.2, farSpan: 45, farAmt: 0.42, maxBlur: 9 },
+    reflets: { proxyZ: FACADE_Z, proxyY: 11 },
     ambient: [
       { id: 'pnj-joueuse-1', x0: -16.5, x1: -5.5, z: 2.35, speed: 0.95, phase: 0.3 },
       { id: 'pnj-docker-9', x0: 5.5, x1: 16.5, z: 2.5, speed: 1.1, phase: 0.7 },

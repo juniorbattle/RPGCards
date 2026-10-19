@@ -23,7 +23,8 @@ degrés, mètres) remplace le cadrage de l'îlot, par exemple `/?demo=1&rig=7,18
 ou `/?ville=1&ilot=quai&rig=6.5,18.5,37,3.2` (plus serré, personnages un peu plus grands, moins d'eau). Les valeurs hors
 des bornes sont ignorées. Le Quai a été retravaillé (passe de qualité V3, JOURNAL passe 45), puis rendu dans la
 **direction D** retenue par le responsable (décor encré comme une illustration de carte, couleurs des quatre familles ;
-ADR 026, passe 46) ; le Parvis et les Ruelles
+ADR 026, passe 46), enrichie en passe 47 (profondeur de champ, flaques et port en reflet, décors du centre ; ADR 026
+amendement 1) ; le Parvis et les Ruelles
 gardent le décor et le cadrage d'origine jusqu'à la validation du responsable (seuls les personnages, communs aux îlots,
 ont le nouveau dessin).
 
