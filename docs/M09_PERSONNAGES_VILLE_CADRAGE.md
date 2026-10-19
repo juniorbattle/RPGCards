@@ -341,7 +341,9 @@ Chaque changement garde le jeu par défaut identique au pixel près (`tools/l5-i
 
 ## 6. Décisions à demander au responsable
 
-Les trois premières bloquent le démarrage de la porte. La session principale peut en faire une fiche interactive.
+Les trois premières bloquent le démarrage de la porte. **Fiche d'arbitrages interactive** publiée le 2026-10-19
+(privée, choix enregistrés dans sa collection `decisions`) : <https://claude.ai/artifact/5F8xmaBwRCe7RAhQFiSQmH> ; elle
+reprend D1 à D10 et deux points à confirmer, R1 (rangement, §4.4) et R2 (Maëlle en ville).
 
 | Réf. | Question | Recommandation (raison) | Alternatives |
 |---|---|---|---|
