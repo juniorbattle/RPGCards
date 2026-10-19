@@ -30,7 +30,7 @@ export interface WalkerLook {
   cloth: Tone;
   shirt: Tone;
   legs: string;
-  accessory: Accessory | 'bandeau-braise';
+  accessory: Accessory | 'bandeau-braise' | 'diademe-voile';
   /** Manteau long (marchande, joueuse, joueur) ou veste courte (docker, commis). */
   long: boolean;
   /** Châle croisé, bretelles, revers : un détail de gabarit. */
@@ -73,7 +73,7 @@ export function walkerLook(id: string): WalkerLook {
     voile: {
       skin: tone('#f0c9b0', '#c99a82', '#a07a66', '#fde2d0'), hair: tone('#c9cbe8', '#9fa2c4', '#7a7ea2', '#ffffff'), cut: 'carre',
       cloth: tone('#2f2d6e', '#211f50', '#151336', '#5d63c4'), shirt: tone('#a8e6ff', '#7cc0e0', '#5a98b8', '#e0f6ff'), legs: '#1c1c34',
-      accessory: 'bandeau', long: true, detail: 'chale', iris: '#8a5cd6',
+      accessory: 'diademe-voile', long: true, detail: 'chale', iris: '#8a5cd6',
     },
     astre: {
       skin: tone('#9a6444', '#6e432c', '#4e2e1e', '#b8825e'), hair: tone('#1c1f33', '#12141f', '#08090f', '#6f80c4'), cut: 'pics',
@@ -310,6 +310,11 @@ function drawHead(ctx: Ctx, L: WalkerLook, view: View, y: number): void {
   // accessoires de tête
   const acc = L.accessory;
   if (acc === 'bandeau' || acc === 'bandeau-braise') blob(ctx, acc === 'bandeau-braise' ? '#c8321c' : L.cloth.hi, () => ctx.roundRect(-R - 1, y - 12, 2 * R + 2, 6, 3), 1.8);
+  // Sélène : diadème d'argent et cristal (son identité V2), pas le bandeau du joueur.
+  if (acc === 'diademe-voile') {
+    blob(ctx, '#d6dcf4', () => ctx.roundRect(-R, y - 13, 2 * R, 3.2, 1.6), 1.2);
+    if (view !== 'dos') blob(ctx, '#a8e6ff', () => ctx.arc(side ? 9 : 0, y - 11.4, 3, 0, Math.PI * 2), 1.2);
+  }
   if (acc === 'bonnet') blob(ctx, L.cloth.hi, () => { ctx.moveTo(-R - 2, y - 6); ctx.quadraticCurveTo(0, y - R - 20, R + 2, y - 6); ctx.closePath(); });
   if (acc === 'casquette') { blob(ctx, L.cloth.base, () => { ctx.moveTo(-R, y - 8); ctx.quadraticCurveTo(0, y - R - 12, R, y - 8); ctx.closePath(); }); if (view !== 'dos') blob(ctx, L.cloth.deep, () => ctx.roundRect(side ? 4 : -R + 2, y - 10, side ? 24 : 2 * R - 4, 5, 2), 1.6); }
   if (acc === 'fichu') blob(ctx, '#8a3a3a', () => { ctx.moveTo(-R - 2, y - 2); ctx.quadraticCurveTo(0, y - R - 14, R + 2, y - 2); ctx.quadraticCurveTo(0, y - 10, -R - 2, y - 2); });
