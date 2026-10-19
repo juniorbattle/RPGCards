@@ -46,3 +46,9 @@ Ce mandat **amende l’ADR 013** (baseline desktop) sur la représentation du ri
 Pour chaque lot : captures avant / après sur GPU réel (1280×720 et 1920×1080), `npm run typecheck`, `npm test`,
 `npm run build`, QA navigateur, journal, ADR pour toute décision structurante, commit et push sur `main`. Les captures
 sont montrées au responsable à la fin de chaque lot ; ses retours priment sur ce document.
+
+## Réception — 2026-10-19
+
+Le responsable a **reçu L1 à L5** sur la fiche d’arbitrages du 2026-10-19 (artefact privé du responsable, choix enregistrés et relus par la session principale), à partir des captures de l’état de `main` (duel dans la salle et la
+rue, écrans hors duel, écran Rencontres avec les personnages V2), sans retour. Il a décidé le **retrait de l’ancien rendu
+V1** des personnages (`?qa=1&figure=v1`) dans la release candidate 0.8. **M07 est clos.**

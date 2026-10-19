@@ -1,5 +1,7 @@
 # 02 — Avenant opérationnel V3.2 au règlement V3.0
 
+**Ratification (2026-10-19) :** le responsable a **ratifié D-01 comme règle V3.3** (ADR 004, dernière section) ; le texte historique V3.0 reste intact et ce delta fait foi pour D-01.
+
 **Statut :** baseline **mandatée pour le démarrage de production** à partir des échanges de conception. Cette pièce **n'efface pas le V3.0**, elle lui apporte les seules précisions ci-dessous. À intégrer explicitement dans une prochaine version canonique après revue par le responsable.
 
 ## D-01 — Affinité lors de « Amplifier le Rang »

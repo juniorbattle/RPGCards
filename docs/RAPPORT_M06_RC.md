@@ -516,3 +516,8 @@ celle du worker : aucune commande n’était reconnue et les profils sortaient v
    - écart de pixels moyen ≤ 1,8/255, indiscernable à l’œil (`screenshots/qa/passe12/`) ;
    - génération 1,3× plus rapide sur poste calme, 1,9× sous charge ; rendu identique d’une machine à l’autre ;
    - réversible en une ligne (`willReadFrequently` dans `src/art/cardArt.ts`).
+
+**Décisions du responsable du 2026-10-19** (fiche d’arbitrages du 2026-10-19 (artefact privé du responsable, choix enregistrés et relus par la session principale)) : point 1 (ADR 014, reprise par rejeu) **approuvé** ; point 2
+(progression de prototype) **base provisoire du MVP**, à revoir dans M09 ; point 3 (rivaux, Orin) **structure approuvée**,
+chiffres à affiner en jeu ; point 4 : ARB-002, ARB-001, ARB-005, ARB-005b et ARB-011 **ratifiés**, D-01 **ratifié en V3.3** ;
+point 6 (illustrations tramées par le processeur) **confirmé**. Détail : ADR 004 et ADR 014.

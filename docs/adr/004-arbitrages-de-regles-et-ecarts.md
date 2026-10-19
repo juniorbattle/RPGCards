@@ -1,6 +1,6 @@
 # ADR 004 — Interprétations de raccordement, écarts au simulateur, points à arbitrer
 Date : 2026-10-16
-Statut : proposé — **aucune règle canonique modifiée** ; interprétations marquées, testées, à confirmer.
+Statut : **RATIFIÉ par le responsable le 2026-10-19** pour ARB-001, ARB-002, ARB-005, ARB-005b (fin de tour) et ARB-011 ; **D-01 ratifié comme règle V3.3** (voir la dernière section). Interprétations inchangées dans le code.
 
 Base : règlement V3.0 + avenant mandaté V3.2 (D-01 affinité de Rang +1 ; D-02 à D-06).
 
@@ -34,3 +34,20 @@ Base : règlement V3.0 + avenant mandaté V3.2 (D-01 affinité de Rang +1 ; D-02
 - ARB-005 reste **proposé** (non ratifié) ; sa chronologie implémentée (« identité visible en défausse publique à la fin du tour ») est désormais appliquée partout : la vue adverse ne nomme plus pendant la fenêtre de Repoussement une carte camouflée qui vient d’être consommée (elle y figurait en clair dans `viewFor().opp.discard`), et une carte camouflée **remplacée** pendant l’engagement n’est plus nommée par l’événement public `replaced` (elle l’était aussitôt) : elle rejoint la défausse masquée, nommée à la fin du tour.
 - **Point à arbitrer (ARB-005b)** : si l’opérateur juge qu’une carte remplacée sort du périmètre de Dissimulation (« l’autre Secondaire ») et devient aussitôt une carte « réellement défaussée » publique (§13.2), il suffit de revenir à la publication immédiate dans `applyCommit` ; aucune issue de jeu n’en dépend.
 - Effets d’une Secondaire camouflée : voir ADR 011 (conséquences publiques, origine privée).
+
+## Ratification du responsable — 2026-10-19
+
+Décisions prises sur la fiche d’arbitrages du 2026-10-19 (artefact privé du responsable, choix enregistrés et relus par la session principale), toutes conformes aux options recommandées, sans note :
+
+| ID | Décision |
+|---|---|
+| ARB-001 | **Ratifié** : Sondage observe un instantané de la main adverse pris avant le Recentrage |
+| ARB-002 | **Ratifié** : Signature et Techniques équipées du rival **publiques** avant le duel |
+| ARB-005 | **Ratifié** : une carte camouflée consommée est nommée dans la défausse publique **à la fin du tour** |
+| ARB-005b | **Ratifié** : une carte camouflée remplacée pendant l’engagement est nommée **à la fin du tour** (comportement actuel conservé) |
+| ARB-011 | **Ratifié** : Silence neutralise l’effet d’Emprise / Entrave ; le Repoussement Basic de la Garde gagnante reste disponible |
+| D-01 | **Ratifié comme règle V3.3** : affinité de famille +1 au Rang (`contracts/02`, D-01) ; le texte historique V3.0 reste intact |
+
+Aucun changement de code : le moteur appliquait déjà ces interprétations, testées. ARB-003 (un seul Repoussement) reste
+maintenu comme découlant du contrat (§12.3). Une rédaction consolidée « V3.3 » (V3.0 + D-01 à D-06 + ces ratifications)
+reste à rédiger si le responsable la souhaite ; elle demandera sa validation explicite (gouvernance 00).
