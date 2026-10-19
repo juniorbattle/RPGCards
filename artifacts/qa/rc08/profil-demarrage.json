@@ -1,0 +1,407 @@
+{
+  "totalMs": 22818,
+  "selfTop": [
+    [
+      "R index-CwCnLUWZ.js:3773:286",
+      10111
+    ],
+    [
+      "Eo index-CwCnLUWZ.js:4017:24885",
+      7828
+    ],
+    [
+      "A index-CwCnLUWZ.js:3937:15568",
+      2385
+    ],
+    [
+      "setSize index-CwCnLUWZ.js:3832:22150",
+      1097
+    ],
+    [
+      "t index-CwCnLUWZ.js:3729:970",
+      348
+    ],
+    [
+      "(idle) :0:0",
+      170
+    ],
+    [
+      "(program) :0:0",
+      121
+    ],
+    [
+      "(garbage collector) :0:0",
+      92
+    ],
+    [
+      "QM index-CwCnLUWZ.js:3961:53591",
+      86
+    ],
+    [
+      "ne index-CwCnLUWZ.js:3832:20308",
+      37
+    ],
+    [
+      "Wf index-CwCnLUWZ.js:3729:15090",
+      28
+    ],
+    [
+      "H index-CwCnLUWZ.js:3937:16180",
+      27
+    ],
+    [
+      "Vt index-CwCnLUWZ.js:3937:15331",
+      24
+    ],
+    [
+      "render index-CwCnLUWZ.js:4018:157899",
+      18
+    ],
+    [
+      "r index-CwCnLUWZ.js:3579:19059",
+      17
+    ],
+    [
+      "Xf index-CwCnLUWZ.js:3739:352",
+      14
+    ],
+    [
+      "_M index-CwCnLUWZ.js:3961:1146",
+      13
+    ],
+    [
+      "i index-CwCnLUWZ.js:4017:12696",
+      10
+    ],
+    [
+      "T0 index-CwCnLUWZ.js:1:60086",
+      10
+    ],
+    [
+      "da index-CwCnLUWZ.js:1:185744",
+      9
+    ],
+    [
+      "setXYZ index-CwCnLUWZ.js:1:169174",
+      8
+    ],
+    [
+      "vd index-CwCnLUWZ.js:3739:1217",
+      8
+    ],
+    [
+      "(anonyme) index-CwCnLUWZ.js:1:1",
+      8
+    ],
+    [
+      "m index-CwCnLUWZ.js:3780:2366",
+      7
+    ],
+    [
+      "cM index-CwCnLUWZ.js:3937:122773",
+      6
+    ],
+    [
+      "Jf index-CwCnLUWZ.js:3780:12438",
+      6
+    ],
+    [
+      "RegExp: #pragma unroll_loop_start\\s+for\\s*\\(\\s*int\\s+i\\s*=\\s*(\\d+)\\s*;\\s*i\\s*<\\s*(\\d+)\\s*;\\s*i\\s*\\+\\+\\s*\\)\\s*{([\\s\\S]+?)}\\s+#pragma unroll_loop_end :0:0",
+      6
+    ],
+    [
+      "Sh index-CwCnLUWZ.js:3937:19856",
+      6
+    ],
+    [
+      "i3 index-CwCnLUWZ.js:4017:17",
+      5
+    ],
+    [
+      "computeBoundingSphere index-CwCnLUWZ.js:1:173691",
+      5
+    ],
+    [
+      "a index-CwCnLUWZ.js:3937:30744",
+      5
+    ],
+    [
+      "me index-CwCnLUWZ.js:3937:15541",
+      5
+    ],
+    [
+      "Lm index-CwCnLUWZ.js:3937:30370",
+      5
+    ],
+    [
+      "w index-CwCnLUWZ.js:3780:11507",
+      5
+    ],
+    [
+      "ie index-CwCnLUWZ.js:3808:12336",
+      5
+    ],
+    [
+      "I4 index-CwCnLUWZ.js:3729:7680",
+      5
+    ],
+    [
+      "e1 index-CwCnLUWZ.js:3937:132978",
+      5
+    ],
+    [
+      "zl index-CwCnLUWZ.js:3729:14526",
+      5
+    ],
+    [
+      "render index-CwCnLUWZ.js:3855:5349",
+      4
+    ],
+    [
+      "Ed index-CwCnLUWZ.js:4017:25118",
+      4
+    ]
+  ],
+  "inclusiveTop": [
+    [
+      "(root) :0:0",
+      22818
+    ],
+    [
+      "(anonyme) index-CwCnLUWZ.js:1:1",
+      14493
+    ],
+    [
+      "eC index-CwCnLUWZ.js:4018:149107",
+      14473
+    ],
+    [
+      "render index-CwCnLUWZ.js:4018:157899",
+      14469
+    ],
+    [
+      "zs index-CwCnLUWZ.js:4017:8419",
+      10573
+    ],
+    [
+      "setPaused index-CwCnLUWZ.js:4017:10227",
+      10573
+    ],
+    [
+      "fs index-CwCnLUWZ.js:4017:7923",
+      10571
+    ],
+    [
+      "render index-CwCnLUWZ.js:3855:3629",
+      10569
+    ],
+    [
+      "render index-CwCnLUWZ.js:3832:28600",
+      10258
+    ],
+    [
+      "fs index-CwCnLUWZ.js:3832:33261",
+      10221
+    ],
+    [
+      "Bs index-CwCnLUWZ.js:3832:31419",
+      10221
+    ],
+    [
+      "Ar index-CwCnLUWZ.js:3832:33521",
+      10220
+    ],
+    [
+      "renderBufferDirect index-CwCnLUWZ.js:3832:25290",
+      10218
+    ],
+    [
+      "zo index-CwCnLUWZ.js:3832:36517",
+      10211
+    ],
+    [
+      "getUniforms index-CwCnLUWZ.js:3780:298",
+      10120
+    ],
+    [
+      "R index-CwCnLUWZ.js:3773:286",
+      10119
+    ],
+    [
+      "render index-CwCnLUWZ.js:3855:5349",
+      9540
+    ],
+    [
+      "i index-CwCnLUWZ.js:4018:151408",
+      7922
+    ],
+    [
+      "Eo index-CwCnLUWZ.js:4017:24885",
+      7920
+    ],
+    [
+      "(anonyme) index-CwCnLUWZ.js:4018:151456",
+      7920
+    ],
+    [
+      "Dh index-CwCnLUWZ.js:4018:163936",
+      3875
+    ],
+    [
+      "i3 index-CwCnLUWZ.js:4017:17",
+      3873
+    ],
+    [
+      "_p index-CwCnLUWZ.js:3937:123719",
+      2476
+    ],
+    [
+      "Ym index-CwCnLUWZ.js:3937:123987",
+      2475
+    ],
+    [
+      "Rm index-CwCnLUWZ.js:3937:29816",
+      2413
+    ],
+    [
+      "Pm index-CwCnLUWZ.js:3937:30304",
+      2413
+    ],
+    [
+      "bc index-CwCnLUWZ.js:3937:29780",
+      2413
+    ],
+    [
+      "Om index-CwCnLUWZ.js:3937:49086",
+      2398
+    ],
+    [
+      "A index-CwCnLUWZ.js:3937:15568",
+      2390
+    ],
+    [
+      "t6 index-CwCnLUWZ.js:3937:47949",
+      2386
+    ],
+    [
+      "At index-CwCnLUWZ.js:4017:6990",
+      1098
+    ],
+    [
+      "setSize index-CwCnLUWZ.js:3832:22150",
+      1097
+    ],
+    [
+      "render index-CwCnLUWZ.js:3855:520",
+      1028
+    ],
+    [
+      "render index-CwCnLUWZ.js:3887:3363",
+      921
+    ],
+    [
+      "t index-CwCnLUWZ.js:3729:970",
+      348
+    ],
+    [
+      "$e index-CwCnLUWZ.js:3808:22633",
+      322
+    ],
+    [
+      "setRenderTarget index-CwCnLUWZ.js:3832:42076",
+      307
+    ],
+    [
+      "has index-CwCnLUWZ.js:3729:1800",
+      304
+    ],
+    [
+      "I index-CwCnLUWZ.js:3808:37555",
+      304
+    ],
+    [
+      "(idle) :0:0",
+      170
+    ],
+    [
+      "(program) :0:0",
+      121
+    ],
+    [
+      "En index-CwCnLUWZ.js:3832:33987",
+      111
+    ],
+    [
+      "render index-CwCnLUWZ.js:3855:1065",
+      108
+    ],
+    [
+      "(garbage collector) :0:0",
+      92
+    ],
+    [
+      "m_ index-CwCnLUWZ.js:3832:19004",
+      90
+    ],
+    [
+      "Ed index-CwCnLUWZ.js:4017:25118",
+      89
+    ],
+    [
+      "QM index-CwCnLUWZ.js:3961:53591",
+      86
+    ],
+    [
+      "Lm index-CwCnLUWZ.js:3937:30370",
+      80
+    ],
+    [
+      "w index-CwCnLUWZ.js:3780:11507",
+      78
+    ],
+    [
+      "$S index-CwCnLUWZ.js:3759:882",
+      73
+    ],
+    [
+      "compile index-CwCnLUWZ.js:3832:27380",
+      62
+    ],
+    [
+      "(anonyme) index-CwCnLUWZ.js:3832:27736",
+      61
+    ],
+    [
+      "traverse index-CwCnLUWZ.js:1:136850",
+      61
+    ],
+    [
+      "Te index-CwCnLUWZ.js:3937:15845",
+      60
+    ],
+    [
+      "At index-CwCnLUWZ.js:3832:27199",
+      60
+    ],
+    [
+      "cM index-CwCnLUWZ.js:3937:122773",
+      57
+    ],
+    [
+      "V index-CwCnLUWZ.js:3832:21031",
+      52
+    ],
+    [
+      "init index-CwCnLUWZ.js:3729:1837",
+      44
+    ],
+    [
+      "ne index-CwCnLUWZ.js:3832:20308",
+      37
+    ],
+    [
+      "upload index-CwCnLUWZ.js:3729:14853",
+      33
+    ]
+  ]
+}

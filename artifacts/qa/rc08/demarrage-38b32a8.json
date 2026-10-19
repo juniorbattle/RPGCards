@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-19T07:01:00.474Z",
+  "commit": "38b32a8",
+  "dist": "dist",
+  "assets": [
+    {
+      "f": "cardArtWorker-C3PyS6SL.js",
+      "octets": 8322
+    },
+    {
+      "f": "index-Bco1EIiU.css",
+      "octets": 81051
+    },
+    {
+      "f": "index-CwCnLUWZ.js",
+      "octets": 1009852
+    }
+  ],
+  "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU",
+  "rounds": [
+    {
+      "home": 24300,
+      "arene": 24337,
+      "dcl": 16122,
+      "load": 16123,
+      "longTasks": 2,
+      "longTasksMs": 23730,
+      "maxLongTask": 15920,
+      "duel": 2044,
+      "octets": 1099225
+    },
+    {
+      "home": 17212,
+      "arene": 17229,
+      "dcl": 11023,
+      "load": 11023,
+      "longTasks": 2,
+      "longTasksMs": 16771,
+      "maxLongTask": 10881,
+      "duel": 3497,
+      "octets": 1099225
+    },
+    {
+      "home": 17067,
+      "arene": 17086,
+      "dcl": 10925,
+      "load": 10925,
+      "longTasks": 2,
+      "longTasksMs": 16600,
+      "maxLongTask": 10788,
+      "duel": 1441,
+      "octets": 1099225
+    }
+  ],
+  "median": {
+    "home": 17212,
+    "arene": 17229,
+    "dcl": 11023,
+    "load": 11023,
+    "longTasks": 2,
+    "longTasksMs": 16771,
+    "maxLongTask": 10881,
+    "duel": 2044,
+    "octets": 1099225
+  },
+  "issues": []
+}

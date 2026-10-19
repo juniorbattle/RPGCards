@@ -1,6 +1,6 @@
 {
   "name": "rpgcards-les-quatre-voies",
-  "version": "0.6.0-rc.1",
+  "version": "0.8.0-rc.1",
   "private": true,
   "type": "module",
   "description": "Les Quatre Voies — RPG de cartes : moteur de duel V3.0 + delta V3.2, plateau manipulable, art procédural par code (Three.js).",

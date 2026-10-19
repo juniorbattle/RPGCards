@@ -74,7 +74,9 @@ const results = [];
 const control = [];
 try {
   for (const vp of [[1280, 720], [1920, 1080]]) {
-    const cases = [...['braise', 'ronce', 'voile', 'astre'].map((r) => ['scene', r]), ['complet', 'ronce'], ['rencontres', null]];
+    // LQV_IDENT_RIVALS : adversaires de la scène seule (défaut : les quatre rivaux) ; LQV_IDENT_EXTRA=0 : sans duel complet ni Rencontres.
+    const rivals = (process.env.LQV_IDENT_RIVALS ?? 'braise,ronce,voile,astre').split(',');
+    const cases = [...rivals.map((r) => ['scene', r]), ...(process.env.LQV_IDENT_EXTRA === '0' ? [] : [['complet', 'ronce'], ['rencontres', null]])];
     for (const [kind, rival] of cases) {
       const a = await capture('avant', vp, kind, rival);
       const b = await capture('apres', vp, kind, rival, APRES);
