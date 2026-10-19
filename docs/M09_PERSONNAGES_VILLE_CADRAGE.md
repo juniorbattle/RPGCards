@@ -1,8 +1,8 @@
 # Cadrage — régénération des personnages de la ville (Aseprite et/ou gpt-image-2), M09
 
-Date : 2026-10-19 · Statut : **PROPOSÉ, rien n'est décidé** (préparation documentaire, aucune image générée, aucun
-code modifié) · Session : worktree local lancé par la session principale · Départ `d2b266a` (après la passe 47) ·
-JOURNAL passe 48.
+Date : 2026-10-19 · Statut : **DÉCIDÉ par le responsable le 2026-10-19** (fiche interactive : les douze entrées sur
+l'option recommandée, §8 ; ADR 027 ; amendement d'AGENTS appliqué) ; production pas commencée · Rédaction : worktree
+local lancé par la session principale · Départ `d2b266a` (après la passe 47) · JOURNAL passes 48 et 51.
 
 Décision du responsable à l'origine (2026-10-19, JOURNAL passe 47, ADR 026 amendement 1) : « le décor d'environnement sur
 nos PNJ, personnages actuels qui ont un design temporaire : on va régénérer cela avec Aseprite et/ou gpt-image-2 ». Ce
@@ -370,3 +370,30 @@ en ville ou non ; le duel (V2 en code) hors du périmètre.
    pixel près ; C4 à C6 au besoin de la porte.
 3. Essai É0 (2 images annoncées), puis fiche de conception du duelliste joueur (É1), présentée au responsable.
 4. Poses, nettoyage, assemblage, vérifications (É2 à É6), planche *in situ* ; approbation (É7) ; puis généralisation.
+
+---
+
+## 8. Décisions du responsable (2026-10-19)
+
+Relues dans la fiche interactive (collection `decisions`, 12 documents, 19:50 à 19:54 UTC) et consignées dans
+l'ADR 027 :
+
+| Réf. | Choix | Note du responsable |
+|---|---|---|
+| D1 | Adopter tel quel (amendement appliqué à AGENTS) | « Il fautdrait determiner si on a un avantage concret de l'utilisation des images gtp-image-2 pour nos prersonnages et decors afin d'avoir une veritable valeur ajoute, et donc on pourrait modifier la restriction et regles du AGENTS.md » |
+| D2 | Illustration encrée HD | « Utilisons les outils externe ( mene si la regle dans AGENTS.md ) le refusait initialement » |
+| D3 | Hybride gpt-image-2 + Aseprite | — |
+| D4 | Le duelliste joueur | — |
+| D5 | Feuille par gabarit, recolorée | — |
+| D6 | Identités V2, capuche rabattue | — |
+| D7 | Échelle 2 | — |
+| D8 | Contrat actuel, 5 × 3 | — |
+| D9 | Chibi modéré, tête ≈ 1/3 | — |
+| D10 | 16 au plus pour la porte | — |
+| R1 | Rangement proposé (§4.4) | — |
+| R2 | Maëlle plus tard | — |
+
+Lecture de la note sur D1 (ADR 027) : l'amendement vaut tel quel pour les personnages ; l'apport concret de gpt-image-2
+est à démontrer, par la porte pour les personnages (feuille du duelliste joueur comparée au dessin par code sur le
+Quai), par une évaluation à cadrer à part pour les décors. Toute ouverture au-delà des personnages demandera une
+nouvelle décision du responsable.
