@@ -1,0 +1,82 @@
+{
+  "demande": "2026-10-19-0805-quai-marcheur-facades",
+  "date": "2026-10-19T07:13:32.537Z",
+  "statut": "référence de travail, non approuvée",
+  "usage": "référence de conception, jamais dans le jeu",
+  "format": "1536x1024",
+  "quality": "medium",
+  "images": [
+    {
+      "file": "01.png",
+      "model": "gpt-image-2",
+      "prompt": "Character turnaround sheet on a plain neutral dark slate background: a generic town card-duellist, full body, shown from the front, from the back and in profile, plus a 4-pose walk cycle in a row. Flat illustration style with clean flat colour areas and a thin outline, simple expressive face, slightly large head with moderate chibi proportions, clear silhouette readable at small size. Hooded travel coat, satchel with a card case, no weapon. Consistent design across all views.\n\nStyle bible: HD-2D theatrical look, polished illustrated rendering, staged like a theatre play; night scene, near-monochrome indigo and slate dominant, cool grey stone as secondary, warm amber lantern light as the ONLY warm accent, desaturated ivory for canvas and highlights; props concentrated at focal points (lantern clusters, quay edge, stalls, a few banners), never uniform clutter; world of \"Les Quatre Voies\": a harbour city where people challenge each other at card duels; four families: Ember (embers, orange), Veil (blue and silver), Bramble (green, thorns), Star (gold, stars). No readable text, no logos, no watermark, no modern objects.",
+      "usage": {
+        "input_tokens": 253,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 253
+        },
+        "output_tokens": 1372,
+        "output_tokens_details": {
+          "image_tokens": 1372,
+          "text_tokens": 0
+        },
+        "total_tokens": 1625
+      }
+    },
+    {
+      "file": "02.png",
+      "model": "gpt-image-2",
+      "prompt": "Character turnaround sheet on a plain neutral dark slate background: two generic harbour townsfolk side by side, a female market merchant (apron, headscarf, small coin pouch) and a male dockworker (rolled sleeves, cap, rope over shoulder), each full body seen from the front, from the back and in profile, plus a 4-pose walk cycle. Same flat illustration style with clean flat colour areas and thin outline, simple expressive faces, slightly large heads with moderate chibi proportions, subtle colour variations between them, no weapons.\n\nStyle bible: HD-2D theatrical look, polished illustrated rendering, staged like a theatre play; night scene, near-monochrome indigo and slate dominant, cool grey stone as secondary, warm amber lantern light as the ONLY warm accent, desaturated ivory for canvas and highlights; props concentrated at focal points (lantern clusters, quay edge, stalls, a few banners), never uniform clutter; world of \"Les Quatre Voies\": a harbour city where people challenge each other at card duels; four families: Ember (embers, orange), Veil (blue and silver), Bramble (green, thorns), Star (gold, stars). No readable text, no logos, no watermark, no modern objects.",
+      "usage": {
+        "input_tokens": 262,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 262
+        },
+        "output_tokens": 1372,
+        "output_tokens_details": {
+          "image_tokens": 1372,
+          "text_tokens": 0
+        },
+        "total_tokens": 1634
+      }
+    },
+    {
+      "file": "03.png",
+      "model": "gpt-image-2",
+      "prompt": "Concept art, TILTED TOP-DOWN perspective camera at about 45 degrees: the entrance facade of the Fanal, a harbour tavern on the night quay. Timber and stone front, a hanging signboard with a painted lantern emblem and no text, a warm amber lantern by the door, the door open with warm light spilling onto wet cobblestones, a couple of barrels and a bench, dark water at the quay edge in the foreground.\n\nStyle bible: HD-2D theatrical look, polished illustrated rendering, staged like a theatre play; night scene, near-monochrome indigo and slate dominant, cool grey stone as secondary, warm amber lantern light as the ONLY warm accent, desaturated ivory for canvas and highlights; props concentrated at focal points (lantern clusters, quay edge, stalls, a few banners), never uniform clutter; world of \"Les Quatre Voies\": a harbour city where people challenge each other at card duels; four families: Ember (embers, orange), Veil (blue and silver), Bramble (green, thorns), Star (gold, stars). No readable text, no logos, no watermark, no modern objects.",
+      "usage": {
+        "input_tokens": 243,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 243
+        },
+        "output_tokens": 1372,
+        "output_tokens_details": {
+          "image_tokens": 1372,
+          "text_tokens": 0
+        },
+        "total_tokens": 1615
+      }
+    },
+    {
+      "file": "04.png",
+      "model": "gpt-image-2",
+      "prompt": "Concept art, TILTED TOP-DOWN perspective camera at about 45 degrees: the entrance of the card hall on the night quay, a vaulted stone archway with a heavy wooden door, four tall family banners hanging beside it (ember orange, veil blue-silver, bramble green, star gold, emblems only, no text), two amber lanterns flanking the door, a few steps and cobblestones.\n\nStyle bible: HD-2D theatrical look, polished illustrated rendering, staged like a theatre play; night scene, near-monochrome indigo and slate dominant, cool grey stone as secondary, warm amber lantern light as the ONLY warm accent, desaturated ivory for canvas and highlights; props concentrated at focal points (lantern clusters, quay edge, stalls, a few banners), never uniform clutter; world of \"Les Quatre Voies\": a harbour city where people challenge each other at card duels; four families: Ember (embers, orange), Veil (blue and silver), Bramble (green, thorns), Star (gold, stars). No readable text, no logos, no watermark, no modern objects.",
+      "usage": {
+        "input_tokens": 238,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 238
+        },
+        "output_tokens": 1372,
+        "output_tokens_details": {
+          "image_tokens": 1372,
+          "text_tokens": 0
+        },
+        "total_tokens": 1610
+      }
+    }
+  ]
+}
