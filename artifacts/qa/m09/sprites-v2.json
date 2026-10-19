@@ -1,0 +1,754 @@
+{
+  "date": "2026-10-19T20:22:16.091Z",
+  "commit": "6a37aea+arbre de travail",
+  "dist": "dist",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "checks": [
+    "OK A : politique QA",
+    "OK A : player-Cendre dessiné par sa feuille",
+    "OK A : pnj-docker-1 dessiné par sa feuille",
+    "OK A : pnj-docker-9 dessiné par sa feuille",
+    "OK A : braise dessiné par sa feuille",
+    "OK A : feuilles non approuvées affichées en QA et signalées (pas Kaï, approuvée)",
+    "OK A : feuille de la joueuse refusée, empreinte (pnj-joueuse-1 (feuille pnj-joueuse) : empreinte 6013b0584634… ≠ manifeste 000000000000…)",
+    "OK A : feuille du commis refusée, dimensions (pnj-commis-5 : 960×960 au lieu de 720×720 (échelle 1.5))",
+    "OK A : feuille de la marchande refusée, teinte sans couleur cible (pnj-marchande-9 : teinte « accent » sans couleur cible pour ce personnage)",
+    "OK A : aucune image rendue avec un personnage en attente de sa feuille (0)",
+    "OK B : hors QA, seule la feuille approuvée (Kaï) est chargée (braise)",
+    "OK B : la feuille non approuvée du joueur est refusée, raison rapportée",
+    "OK `sprites=code` : aucune feuille lue, atlas par code",
+    "OK D : le duelliste joueur Voile prend la même feuille (clé « player »)",
+    "OK D : la tenue change de couleur avec la famille (3824 pixels)",
+    "OK E : manifeste v1 toujours accepté (feuille de 480 × 480, échelle 1)",
+    "OK F : la feuille d’Orin (Parvis) n’était pas prête avant le passage, elle l’est à l’arrivée",
+    "OK F : aucune image rendue avec un personnage en attente pendant le passage (0)",
+    "OK F : changement d’îlot derrière le fondu (523 ms après le départ, préparation 22 ms, construction 74 ms, première image 214 ms ; feuille d’Orin {\"bytes\":202315,\"fetchMs\":11.3,\"hashMs\":0.3,\"decodeMs\":8.1,\"uploadMs\":2.2})",
+    "OK G : première entrée sans image rendue avec un personnage en attente (toutes les rondes)",
+    "OK aucune erreur ni avertissement de console (0)"
+  ],
+  "console": [],
+  "runs": {
+    "A": {
+      "rep": {
+        "policy": "qa",
+        "loaded": [
+          "pnj-docker-1",
+          "pnj-docker-9",
+          "player-Cendre",
+          "braise"
+        ],
+        "unapproved": [
+          "pnj-docker-1",
+          "pnj-docker-9",
+          "player-Cendre"
+        ],
+        "issues": [
+          "pnj-marchande-9 : teinte « accent » sans couleur cible pour ce personnage",
+          "pnj-joueuse-1 (feuille pnj-joueuse) : empreinte 6013b0584634… ≠ manifeste 000000000000…",
+          "pnj-commis-5 : 960×960 au lieu de 720×720 (échelle 1.5)"
+        ],
+        "timings": {
+          "pnj-docker": {
+            "bytes": 182751,
+            "fetchMs": 12.3,
+            "hashMs": 0.7,
+            "decodeMs": 13.3,
+            "uploadMs": 4.6
+          },
+          "player": {
+            "bytes": 201509,
+            "fetchMs": 15.7,
+            "hashMs": 0.3,
+            "decodeMs": 19.7,
+            "uploadMs": 1.7
+          },
+          "braise": {
+            "bytes": 191373,
+            "fetchMs": 18.6,
+            "hashMs": 0.2,
+            "decodeMs": 19.9,
+            "uploadMs": 2.2
+          }
+        },
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 55,
+        "geometries": 66,
+        "programs": 27,
+        "lights": 15,
+        "cpuMs": 3.1,
+        "frames": 2,
+        "buildMs": 389,
+        "firstFrameMs": 649,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "A0": {
+      "rep": {
+        "policy": "code",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [],
+        "timings": {},
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 54,
+        "geometries": 66,
+        "programs": 27,
+        "lights": 15,
+        "cpuMs": 1.8,
+        "frames": 4,
+        "buildMs": 548,
+        "firstFrameMs": 790,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "B": {
+      "rep": {
+        "policy": "approuvees",
+        "loaded": [
+          "braise"
+        ],
+        "unapproved": [],
+        "issues": [
+          "player-Cendre (feuille player) : feuille non approuvée, refusée hors QA (dessin par code gardé)",
+          "pnj-marchande-9 (feuille pnj-marchande) : feuille non approuvée, refusée hors QA (dessin par code gardé)",
+          "pnj-docker-1 (feuille pnj-docker) : feuille non approuvée, refusée hors QA (dessin par code gardé)",
+          "pnj-commis-5 : feuille non approuvée, refusée hors QA (dessin par code gardé)",
+          "pnj-joueuse-1 (feuille pnj-joueuse) : feuille non approuvée, refusée hors QA (dessin par code gardé)",
+          "pnj-docker-9 (feuille pnj-docker) : feuille non approuvée, refusée hors QA (dessin par code gardé)"
+        ],
+        "timings": {
+          "braise": {
+            "bytes": 191373,
+            "fetchMs": 7.2,
+            "hashMs": 0.3,
+            "decodeMs": 7.4,
+            "uploadMs": 5.8
+          }
+        },
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 55,
+        "geometries": 66,
+        "programs": 27,
+        "lights": 15,
+        "cpuMs": 2.8,
+        "frames": 2,
+        "buildMs": 414,
+        "firstFrameMs": 693,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "C": {
+      "rep": {
+        "policy": "code",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [],
+        "timings": {},
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 54,
+        "geometries": 66,
+        "programs": 27,
+        "lights": 15,
+        "cpuMs": 5.2,
+        "frames": 4,
+        "buildMs": 474,
+        "firstFrameMs": 727,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "D": {
+      "rep": {
+        "policy": "qa",
+        "loaded": [
+          "player-Voile",
+          "pnj-docker-1",
+          "pnj-docker-9",
+          "braise"
+        ],
+        "unapproved": [
+          "player-Voile",
+          "pnj-docker-1",
+          "pnj-docker-9"
+        ],
+        "issues": [
+          "pnj-marchande-9 : teinte « accent » sans couleur cible pour ce personnage",
+          "pnj-joueuse-1 (feuille pnj-joueuse) : empreinte 6013b0584634… ≠ manifeste 000000000000…",
+          "pnj-commis-5 : 960×960 au lieu de 720×720 (échelle 1.5)"
+        ],
+        "timings": {
+          "player": {
+            "bytes": 201509,
+            "fetchMs": 11.9,
+            "hashMs": 0.5,
+            "decodeMs": 16.4,
+            "uploadMs": 5.7
+          },
+          "pnj-docker": {
+            "bytes": 182751,
+            "fetchMs": 17.1,
+            "hashMs": 0.4,
+            "decodeMs": 19.5,
+            "uploadMs": 2.4
+          },
+          "braise": {
+            "bytes": 191373,
+            "fetchMs": 18.9,
+            "hashMs": 0.2,
+            "decodeMs": 22.9,
+            "uploadMs": 4.5
+          }
+        },
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 55,
+        "geometries": 66,
+        "programs": 27,
+        "lights": 15,
+        "cpuMs": 4.7,
+        "frames": 2,
+        "buildMs": 494,
+        "firstFrameMs": 792,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "E": {
+      "rep": {
+        "policy": "qa",
+        "loaded": [
+          "player-Cendre"
+        ],
+        "unapproved": [
+          "player-Cendre"
+        ],
+        "issues": [],
+        "timings": {
+          "player-Cendre": {
+            "bytes": 87120,
+            "fetchMs": 4.4,
+            "hashMs": 0.2,
+            "decodeMs": 4.3,
+            "uploadMs": 2.9
+          }
+        },
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 54,
+        "geometries": 66,
+        "programs": 27,
+        "lights": 15,
+        "cpuMs": 7.3,
+        "frames": 2,
+        "buildMs": 442,
+        "firstFrameMs": 670,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "F": {
+      "avant": {
+        "rep": {
+          "policy": "qa",
+          "loaded": [
+            "pnj-docker-1",
+            "pnj-docker-9",
+            "player-Cendre",
+            "braise"
+          ],
+          "unapproved": [
+            "pnj-docker-1",
+            "pnj-docker-9",
+            "player-Cendre"
+          ],
+          "issues": [
+            "pnj-marchande-9 : teinte « accent » sans couleur cible pour ce personnage",
+            "pnj-joueuse-1 (feuille pnj-joueuse) : empreinte 6013b0584634… ≠ manifeste 000000000000…",
+            "pnj-commis-5 : 960×960 au lieu de 720×720 (échelle 1.5)"
+          ],
+          "timings": {
+            "pnj-docker": {
+              "bytes": 182751,
+              "fetchMs": 25.8,
+              "hashMs": 0.4,
+              "decodeMs": 20,
+              "uploadMs": 236.9
+            },
+            "player": {
+              "bytes": 201509,
+              "fetchMs": 24.5,
+              "hashMs": 0.4,
+              "decodeMs": 262.5,
+              "uploadMs": 2.6
+            },
+            "braise": {
+              "bytes": 191373,
+              "fetchMs": 28.1,
+              "hashMs": 0.1,
+              "decodeMs": 263.5,
+              "uploadMs": 3.1
+            }
+          },
+          "hiddenFrames": 0
+        },
+        "st": {
+          "camera": "frontale",
+          "calls": 141,
+          "triangles": 101097,
+          "textures": 57,
+          "geometries": 68,
+          "programs": 27,
+          "lights": 15,
+          "cpuMs": 3.9,
+          "frames": 3,
+          "buildMs": 400,
+          "firstFrameMs": 973,
+          "mountMs": null,
+          "mountFrameMs": null
+        },
+        "parvisPret": false
+      },
+      "apres": {
+        "swapMs": 523,
+        "prepMs": 22,
+        "rep": {
+          "policy": "qa",
+          "loaded": [
+            "pnj-docker-1",
+            "pnj-docker-9",
+            "player-Cendre",
+            "braise",
+            "astre"
+          ],
+          "unapproved": [
+            "pnj-docker-1",
+            "pnj-docker-9",
+            "player-Cendre",
+            "astre"
+          ],
+          "issues": [
+            "pnj-marchande-9 : teinte « accent » sans couleur cible pour ce personnage",
+            "pnj-joueuse-1 (feuille pnj-joueuse) : empreinte 6013b0584634… ≠ manifeste 000000000000…",
+            "pnj-commis-5 : 960×960 au lieu de 720×720 (échelle 1.5)",
+            "pnj-joueuse-5 (feuille pnj-joueuse) : empreinte 6013b0584634… ≠ manifeste 000000000000…"
+          ],
+          "timings": {
+            "pnj-docker": {
+              "bytes": 182751,
+              "fetchMs": 25.8,
+              "hashMs": 0.4,
+              "decodeMs": 20,
+              "uploadMs": 236.9
+            },
+            "player": {
+              "bytes": 201509,
+              "fetchMs": 24.5,
+              "hashMs": 0.4,
+              "decodeMs": 262.5,
+              "uploadMs": 2.6
+            },
+            "braise": {
+              "bytes": 191373,
+              "fetchMs": 28.1,
+              "hashMs": 0.1,
+              "decodeMs": 263.5,
+              "uploadMs": 3.1
+            },
+            "astre": {
+              "bytes": 202315,
+              "fetchMs": 11.3,
+              "hashMs": 0.3,
+              "decodeMs": 8.1,
+              "uploadMs": 2.2
+            }
+          },
+          "hiddenFrames": 0
+        },
+        "st": {
+          "camera": "frontale",
+          "calls": 115,
+          "triangles": 129282,
+          "textures": 57,
+          "geometries": 54,
+          "programs": 25,
+          "lights": 10,
+          "cpuMs": 1,
+          "frames": 24,
+          "buildMs": 400,
+          "firstFrameMs": 973,
+          "mountMs": 74,
+          "mountFrameMs": 214
+        },
+        "parvisPret": true
+      }
+    },
+    "G": {
+      "vide": {
+        "rounds": [
+          {
+            "buildMs": 432,
+            "firstFrameMs": 694,
+            "textures": 54,
+            "loaded": 0,
+            "hidden": 0
+          },
+          {
+            "buildMs": 383,
+            "firstFrameMs": 588,
+            "textures": 54,
+            "loaded": 0,
+            "hidden": 0
+          },
+          {
+            "buildMs": 354,
+            "firstFrameMs": 557,
+            "textures": 54,
+            "loaded": 0,
+            "hidden": 0
+          },
+          {
+            "buildMs": 420,
+            "firstFrameMs": 622,
+            "textures": 54,
+            "loaded": 0,
+            "hidden": 0
+          },
+          {
+            "buildMs": 367,
+            "firstFrameMs": 562,
+            "textures": 54,
+            "loaded": 0,
+            "hidden": 0
+          }
+        ],
+        "buildMs": 383,
+        "firstFrameMs": 588,
+        "textures": 54
+      },
+      "feuilles": {
+        "rounds": [
+          {
+            "buildMs": 399,
+            "firstFrameMs": 639,
+            "textures": 55,
+            "loaded": 4,
+            "hidden": 0
+          },
+          {
+            "buildMs": 380,
+            "firstFrameMs": 621,
+            "textures": 55,
+            "loaded": 4,
+            "hidden": 0
+          },
+          {
+            "buildMs": 401,
+            "firstFrameMs": 596,
+            "textures": 55,
+            "loaded": 4,
+            "hidden": 0
+          },
+          {
+            "buildMs": 376,
+            "firstFrameMs": 597,
+            "textures": 55,
+            "loaded": 4,
+            "hidden": 0
+          },
+          {
+            "buildMs": 368,
+            "firstFrameMs": 569,
+            "textures": 55,
+            "loaded": 4,
+            "hidden": 0
+          }
+        ],
+        "buildMs": 380,
+        "firstFrameMs": 597,
+        "textures": 55
+      },
+      "code": {
+        "rounds": [
+          {
+            "buildMs": 393,
+            "firstFrameMs": 601,
+            "textures": 54,
+            "loaded": 0,
+            "hidden": 0
+          },
+          {
+            "buildMs": 398,
+            "firstFrameMs": 605,
+            "textures": 54,
+            "loaded": 0,
+            "hidden": 0
+          },
+          {
+            "buildMs": 389,
+            "firstFrameMs": 581,
+            "textures": 54,
+            "loaded": 0,
+            "hidden": 0
+          },
+          {
+            "buildMs": 368,
+            "firstFrameMs": 551,
+            "textures": 54,
+            "loaded": 0,
+            "hidden": 0
+          },
+          {
+            "buildMs": 369,
+            "firstFrameMs": 552,
+            "textures": 54,
+            "loaded": 0,
+            "hidden": 0
+          }
+        ],
+        "buildMs": 389,
+        "firstFrameMs": 581,
+        "textures": 54
+      }
+    }
+  },
+  "sheets": {
+    "player": {
+      "bytes": 201509,
+      "sha256": "bb2cda2e4b450d8b0875448dd0d1123959ae587dbf1157846b784819a6803df0"
+    },
+    "docker": {
+      "bytes": 182751,
+      "sha256": "b6bb32a9bad98414be583a16ecceeed51492dbb0974c5d7719cb2ace4958a5bd"
+    },
+    "braise": {
+      "bytes": 191373,
+      "sha256": "6013b0584634386eb5a906e14a5f30bf3652bbb94332fc11dd60db8c1375117c"
+    },
+    "astre": {
+      "bytes": 202315,
+      "sha256": "af817d11d0708b817c2b75702705c25039a6c877175c2c443278f68e145e859c"
+    },
+    "legacy": {
+      "bytes": 87120,
+      "sha256": "375a192de9062bce4915daa9df50b2406999db87bfa06cd53e2674d2087254e9"
+    }
+  },
+  "manifest": {
+    "version": 2,
+    "sprites": {
+      "player": {
+        "file": "player.png",
+        "sha256": "bb2cda2e4b450d8b0875448dd0d1123959ae587dbf1157846b784819a6803df0",
+        "cell": [
+          96,
+          160
+        ],
+        "cols": 5,
+        "rows": 3,
+        "scale": 2,
+        "anchor": [
+          48,
+          152
+        ],
+        "figureH": 148,
+        "source": "QA : atlas dessiné par code, exporté (aucune image externe)",
+        "fiche": "art-src/sprites/qa/fiche.json",
+        "approved": false,
+        "recolor": [
+          "tenue"
+        ]
+      },
+      "pnj-docker": {
+        "file": "docker.png",
+        "sha256": "b6bb32a9bad98414be583a16ecceeed51492dbb0974c5d7719cb2ace4958a5bd",
+        "cell": [
+          96,
+          160
+        ],
+        "cols": 5,
+        "rows": 3,
+        "scale": 2,
+        "anchor": [
+          48,
+          152
+        ],
+        "figureH": 148,
+        "source": "QA : atlas dessiné par code, exporté (aucune image externe)",
+        "fiche": "art-src/sprites/qa/fiche.json",
+        "approved": false,
+        "recolor": [
+          "peau",
+          "cheveux",
+          "tenue",
+          "chemise"
+        ]
+      },
+      "braise": {
+        "file": "braise.png",
+        "sha256": "6013b0584634386eb5a906e14a5f30bf3652bbb94332fc11dd60db8c1375117c",
+        "cell": [
+          96,
+          160
+        ],
+        "cols": 5,
+        "rows": 3,
+        "scale": 2,
+        "anchor": [
+          48,
+          152
+        ],
+        "figureH": 148,
+        "source": "QA : atlas dessiné par code, exporté (aucune image externe)",
+        "fiche": "art-src/sprites/qa/fiche.json",
+        "approved": true
+      },
+      "astre": {
+        "file": "astre.png",
+        "sha256": "af817d11d0708b817c2b75702705c25039a6c877175c2c443278f68e145e859c",
+        "cell": [
+          96,
+          160
+        ],
+        "cols": 5,
+        "rows": 3,
+        "scale": 2,
+        "anchor": [
+          48,
+          152
+        ],
+        "figureH": 148,
+        "source": "QA : atlas dessiné par code, exporté (aucune image externe)",
+        "fiche": "art-src/sprites/qa/fiche.json",
+        "approved": false
+      },
+      "pnj-joueuse": {
+        "file": "braise.png",
+        "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "cell": [
+          96,
+          160
+        ],
+        "cols": 5,
+        "rows": 3,
+        "scale": 2,
+        "anchor": [
+          48,
+          152
+        ],
+        "figureH": 148,
+        "source": "QA : atlas dessiné par code, exporté (aucune image externe)",
+        "fiche": "art-src/sprites/qa/fiche.json",
+        "approved": false
+      },
+      "pnj-commis-5": {
+        "file": "braise.png",
+        "sha256": "6013b0584634386eb5a906e14a5f30bf3652bbb94332fc11dd60db8c1375117c",
+        "cell": [
+          96,
+          160
+        ],
+        "cols": 5,
+        "rows": 3,
+        "scale": 1.5,
+        "anchor": [
+          48,
+          152
+        ],
+        "figureH": 148,
+        "source": "QA : atlas dessiné par code, exporté (aucune image externe)",
+        "fiche": "art-src/sprites/qa/fiche.json",
+        "approved": false
+      },
+      "pnj-marchande": {
+        "file": "docker.png",
+        "sha256": "b6bb32a9bad98414be583a16ecceeed51492dbb0974c5d7719cb2ace4958a5bd",
+        "cell": [
+          96,
+          160
+        ],
+        "cols": 5,
+        "rows": 3,
+        "scale": 2,
+        "anchor": [
+          48,
+          152
+        ],
+        "figureH": 148,
+        "source": "QA : atlas dessiné par code, exporté (aucune image externe)",
+        "fiche": "art-src/sprites/qa/fiche.json",
+        "approved": false,
+        "recolor": [
+          "accent"
+        ]
+      }
+    }
+  },
+  "compare": {
+    "joueur_code_vs_feuille_recoloree": {
+      "meanAbs": 1.64,
+      "over8": 3247,
+      "total": 46605,
+      "max": 152
+    },
+    "clip": {
+      "x": 863,
+      "y": 581,
+      "width": 195,
+      "height": 239
+    },
+    "joueur_cendre_vs_voile": {
+      "meanAbs": 3.35,
+      "over8": 3824,
+      "total": 46605,
+      "max": 182
+    },
+    "joueur_voile_code_vs_feuille": {
+      "meanAbs": 1.63,
+      "over8": 3105,
+      "total": 46605,
+      "max": 142
+    },
+    "docker1_code_vs_feuille_recoloree": {
+      "meanAbs": 0.78,
+      "over8": 1585,
+      "total": 54180,
+      "max": 183
+    }
+  },
+  "gpuMemory": {
+    "feuilles": 3,
+    "octetsParFeuille": 4915200,
+    "totalMo": 14.7
+  }
+}

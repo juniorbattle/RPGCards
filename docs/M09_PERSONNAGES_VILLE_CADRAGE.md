@@ -306,6 +306,15 @@ personne dans Aseprite (le responsable ou un illustrateur), ou des reprises de g
 Chaque changement garde le jeu par défaut identique au pixel près (`tools/l5-identique.mjs`) et la démo verte
 (`qa:demo`) ; la campagne complète reste réservée aux jalons.
 
+**Fait en passe 52 (2026-10-19) : C1, C2, C3, C5, C7** (détail : ADR 027, « Conséquences faites »). Restent C4 et C6,
+selon la porte. Pour la production des feuilles, retenir du contrat v2 : entrée de manifeste `version: 2` avec
+`scale: 2`, `anchor` et `figureH` déclarés (défaut [48, 152] et 148), `fiche` ; feuille commune `player` (les quatre
+familles) et `pnj-<gabarit>` ; zones recolorables peintes en **tons clés réservés** à quatre niveaux sRGB 64, 128, 191,
+255 (ombre profonde, ombre, aplat, rehaut) : peau rouge `#bf0000`, cheveux jaune `#bfbf00`, tenue magenta `#bf00bf`,
+chemise cyan `#00bfbf`, accent vert `#00bf00` (valeurs de l'aplat), déclarées dans `recolor` ; **un trait d'encre
+sépare toute zone en ton clé d'une autre couleur** (sinon un liseré de la teinte clé reste après filtrage) ; aucune
+autre couleur de la feuille proche de ces teintes.
+
 ### 4.4 Rangement
 
 - `art-gen/` (ignoré) : bruts de génération, essais, reprises.

@@ -8,6 +8,9 @@
  * poignets, bottes à revers, yeux à iris et reflets, capuche du joueur ; liserés de lumière dans le nuanceur.
  *
  * Atlas : 5 colonnes (repos, 4 temps de marche) × 3 rangées (face, dos, profil droit ; le profil gauche est le miroir).
+ * Contrat commun avec les feuilles externes (ADR 027, `spritesExternes.ts`) : une feuille qui le respecte remplace
+ * l'atlas d'un personnage, avec sa propre échelle, son ancrage et sa hauteur de figure (panneau tiré de la feuille), et
+ * ses tons clés recolorés dans le nuanceur (peau, cheveux, tenue, chemise, accent : `recolorTargets`).
  */
 import * as THREE from 'three';
 import { FAMILY_PALETTE } from '../art/palette';
@@ -15,6 +18,7 @@ import type { Family } from '../game/catalog/cards';
 import { NPC_HAIRS, NPC_SKINS, npcLook, type Accessory, type HairCut, type Tone } from '../presentation/npcs';
 import { COMMON_GLSL, MAX_LIGHTS, U } from './materiaux';
 import type { Facing } from './monde';
+import { DEFAULT_ANCHOR, DEFAULT_FIGURE_H, RAMP_STEPS, RECOLOR_SLOTS, keyColor, type RecolorSlot, type SheetSpec } from './spritesExternes';
 
 export const CELL_W = 96;
 export const CELL_H = 160;
@@ -22,8 +26,6 @@ export const COLS = 5;
 export const ROWS = 3;
 /** Hauteur du personnage dans le monde (m) ; la cellule couvre un peu plus (marge du contour). */
 export const WALKER_H = 1.62;
-const PLANE_H = WALKER_H * (CELL_H / 148);
-const PLANE_W = PLANE_H * (CELL_W / CELL_H);
 
 export interface WalkerLook {
   skin: Tone;
@@ -41,6 +43,8 @@ export interface WalkerLook {
   /** Capuche rabattue sur la nuque et besace en bandoulière (duelliste joueur, d'après la référence de travail du
    *  2026-10-19 « marcheur », non approuvée). */
   hood?: boolean;
+  /** QA (preuve de la recoloration) : tons remplacés par les tons clés ; sans les voiles posés sur la peau (joues, barbe). */
+  keyed?: boolean;
 }
 
 const tone = (base: string, shade: string, deep: string, hi: string): Tone => ({ base, shade, deep, hi });
@@ -86,6 +90,36 @@ export function walkerLook(id: string): WalkerLook {
   return rivals[id] ?? {
     skin: NPC_SKINS[2]!, hair: NPC_HAIRS[1]!, cut: 'courte', cloth: tone('#3e5068', '#2c3a4e', '#1c2636', '#5e7290'),
     shirt: tone('#d8cdb4', '#b4a88e', '#8c826c', '#ece4d0'), legs: '#2a2d36', accessory: 'aucun', long: false, detail: 'aucun', iris: '#4a3a2a',
+  };
+}
+
+/**
+ * Couleurs cibles de la recoloration d'une feuille (C5, ADR 027) : les tons du personnage par code, pour qu'un même
+ * identifiant garde ses couleurs (PNJ : `npcLook` par graine ; duelliste joueur : tenue de sa famille, `FAMILY_PALETTE`) ;
+ * l'accent n'existe que pour le joueur (couleur d'accent de sa famille).
+ */
+export function recolorTargets(id: string): Partial<Record<RecolorSlot, Tone>> {
+  const L = walkerLook(id);
+  const t: Partial<Record<RecolorSlot, Tone>> = { peau: L.skin, cheveux: L.hair, tenue: L.cloth, chemise: L.shirt };
+  if (id.startsWith('player-')) {
+    const p = FAMILY_PALETTE[id.slice(7) as Family] ?? FAMILY_PALETTE.Cendre;
+    t.accent = tone(p.accent, p.light, p.mid, p.ink);
+  }
+  return t;
+}
+
+/** Ton clé réservé d'un emplacement (quatre niveaux), pour peindre une feuille recolorable. */
+const keyTone = (slot: RecolorSlot): Tone => tone(keyColor(slot, 2), keyColor(slot, 1), keyColor(slot, 0), keyColor(slot, 3));
+
+/** QA : apparence d'un personnage dont les emplacements donnés sont peints en tons clés (feuille de preuve de C5). */
+export function keyedLook(L: WalkerLook, slots: readonly RecolorSlot[]): WalkerLook {
+  const k = new Set(slots);
+  return {
+    ...L, keyed: true,
+    skin: k.has('peau') ? keyTone('peau') : L.skin,
+    hair: k.has('cheveux') ? keyTone('cheveux') : L.hair,
+    cloth: k.has('tenue') ? keyTone('tenue') : L.cloth,
+    shirt: k.has('chemise') ? keyTone('chemise') : L.shirt,
   };
 }
 
@@ -366,8 +400,8 @@ function drawHead(ctx: Ctx, L: WalkerLook, view: View, y: number): void {
     if (side) { ctx.moveTo(12, y + 15); ctx.lineTo(17, y + 14.5); } else { ctx.moveTo(-3.6, y + 14.5); ctx.quadraticCurveTo(0, y + 16.8, 3.6, y + 14.5); }
     ctx.stroke();
     ctx.fillStyle = 'rgba(214,110,96,0.32)';
-    for (const cx of side ? [8] : [-12.5, 12.5]) { ctx.beginPath(); ctx.ellipse(cx, y + 11, 4.2, 2.6, 0, 0, Math.PI * 2); ctx.fill(); }
-    if (L.accessory === 'barbe') { ctx.fillStyle = 'rgba(40,30,26,0.32)'; ctx.beginPath(); ctx.ellipse(side ? 8 : 0, y + 16, side ? 10 : 15, 8, 0, 0, Math.PI); ctx.fill(); }
+    if (!L.keyed) for (const cx of side ? [8] : [-12.5, 12.5]) { ctx.beginPath(); ctx.ellipse(cx, y + 11, 4.2, 2.6, 0, 0, Math.PI * 2); ctx.fill(); }
+    if (L.accessory === 'barbe' && !L.keyed) { ctx.fillStyle = 'rgba(40,30,26,0.32)'; ctx.beginPath(); ctx.ellipse(side ? 8 : 0, y + 16, side ? 10 : 15, 8, 0, 0, Math.PI); ctx.fill(); }
     if (L.accessory === 'lunettes') { ctx.strokeStyle = INK; ctx.lineWidth = 1.4; for (const ex of side ? [11.5] : [-8.5, 8.5]) ctx.strokeRect(ex - 5.5, y - 2, 11, 9); }
   }
   // cheveux : calotte et frange selon la coupe ; mèches ; reflet
@@ -454,7 +488,16 @@ const ATLAS = new Map<string, THREE.CanvasTexture>();
 export function walkerAtlas(id: string): THREE.CanvasTexture {
   const hit = ATLAS.get(id);
   if (hit) return hit;
-  const S = ATLAS_SCALE;
+  const t = new THREE.CanvasTexture(drawAtlas(walkerLook(id), ATLAS_SCALE));
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 4;
+  t.generateMipmaps = true;
+  ATLAS.set(id, t);
+  return t;
+}
+
+/** Feuille d'atlas dessinée à l'échelle `S` (px par px logique). */
+function drawAtlas(L: WalkerLook, S: number): HTMLCanvasElement {
   const cw = Math.round(CELL_W * S);
   const ch = Math.round(CELL_H * S);
   const c = document.createElement('canvas');
@@ -469,7 +512,6 @@ export function walkerAtlas(id: string): THREE.CanvasTexture {
   sil.width = cw;
   sil.height = ch;
   const sc = sil.getContext('2d')!;
-  const L = walkerLook(id);
   const views: View[] = ['face', 'dos', 'profil'];
   const rOut = 1.35 * S;
   views.forEach((v, r) => {
@@ -488,12 +530,7 @@ export function walkerAtlas(id: string): THREE.CanvasTexture {
       ctx.drawImage(cell, k * cw, r * ch);
     }
   });
-  const t = new THREE.CanvasTexture(c);
-  t.colorSpace = THREE.SRGBColorSpace;
-  t.anisotropy = 4;
-  t.generateMipmaps = true;
-  ATLAS.set(id, t);
-  return t;
+  return c;
 }
 
 /** Canvas de l'atlas (planche de revue, QA). */
@@ -502,20 +539,65 @@ export function walkerAtlasCanvas(id: string): HTMLCanvasElement {
 }
 
 /**
+ * QA (preuves du contrat v2, jamais en jeu) : atlas d'un personnage dessiné à une autre échelle (feuille de 960 × 960 à
+ * l'échelle 2), et au besoin avec des emplacements en tons clés (`keyedLook`), non mis en cache.
+ */
+export function walkerAtlasCanvasFor(id: string, o: { scale?: number; keyed?: readonly RecolorSlot[] } = {}): HTMLCanvasElement {
+  const L = walkerLook(id);
+  return drawAtlas(o.keyed?.length ? keyedLook(L, o.keyed) : L, o.scale ?? ATLAS_SCALE);
+}
+
+/** Feuille de l'atlas par code : échelle 1,5, ancrage et figure du contrat, aucune teinte. */
+export const CODE_SPEC: SheetSpec = { scale: ATLAS_SCALE, anchor: DEFAULT_ANCHOR, figureH: DEFAULT_FIGURE_H, recolor: [] };
+
+/**
  * Éclairage du personnage, plat comme une figurine peinte, au centre du corps : ambiante, lune, lanternes proches
  * (compressées). M09 V3, d'après Cité du Tournoi (`SpriteRenderer.ts` L. 77-202) : dégradé vertical (pieds plus
  * sombres), liseré de lumière sur le bord tourné vers la lanterne la plus forte (bord détecté dans l'alpha de l'atlas),
  * liseré froid de lune sur le haut, ombre légèrement refroidie, compression douce des hautes lumières.
+ *
+ * Recoloration des feuilles (C5, ADR 027 ; `uRecolor`, inactive pour l'atlas par code) : un texel proche d'un ton clé
+ * réservé (`RECOLOR_KEYS`) prend la rampe du personnage (`uRamp`, quatre tons par emplacement, linéaires) à son niveau.
+ * L'encre est retirée avant le test : un bord filtré « ton clé + encre » reste sur la droite du ton clé et prend un ton
+ * plus sombre de la rampe ; le test se fait en racine (proche du sRGB) pour ne pas confondre un rouge franc avec la peau.
  */
 const SPRITE_FRAG = /* glsl */ `
 ${COMMON_GLSL}
 uniform sampler2D tAtlas; uniform vec2 uCell; uniform vec2 uOff; uniform float uFlip; uniform vec3 uWorld; uniform vec2 uTexel;
+uniform float uRecolor; uniform vec3 uRamp[20]; uniform float uSlots[5]; uniform vec3 uInkLin;
 varying vec2 vUv; varying vec3 vWorld;
 float alphaAt(vec2 uv){ uv = clamp(uv, vec2(0.0), vec2(1.0)); return texture2D(tAtlas, (uOff + vec2(uFlip > 0.5 ? 1.0 - uv.x : uv.x, uv.y)) * uCell).a; }
+// niveaux des tons clés (sRGB 64, 128, 191, 255), en linéaire
+const vec4 KEY_LV = vec4(0.05127, 0.21586, 0.52099, 1.0);
+vec3 keyMask(int s){ return s == 0 ? vec3(1.0, 0.0, 0.0) : s == 1 ? vec3(1.0, 1.0, 0.0) : s == 2 ? vec3(1.0, 0.0, 1.0) : s == 3 ? vec3(0.0, 1.0, 1.0) : vec3(0.0, 1.0, 0.0); }
+vec3 keyRamp(int s, float t){
+  vec3 r0 = uRamp[s * 4]; vec3 r1 = uRamp[s * 4 + 1]; vec3 r2 = uRamp[s * 4 + 2]; vec3 r3 = uRamp[s * 4 + 3];
+  if (t < KEY_LV.x) return mix(uInkLin, r0, t / KEY_LV.x);
+  if (t < KEY_LV.y) return mix(r0, r1, (t - KEY_LV.x) / (KEY_LV.y - KEY_LV.x));
+  if (t < KEY_LV.z) return mix(r1, r2, (t - KEY_LV.y) / (KEY_LV.z - KEY_LV.y));
+  return mix(r2, r3, clamp((t - KEY_LV.z) / (KEY_LV.w - KEY_LV.z), 0.0, 1.0));
+}
+vec3 recolorKeys(vec3 c){
+  vec3 d = max(c - uInkLin, 0.0);
+  vec3 best = c; float bw = 0.0;
+  for (int s = 0; s < 5; s++) {
+    if (uSlots[s] < 0.5) continue;
+    vec3 m = keyMask(s);
+    vec3 o = d * (1.0 - m);
+    vec3 hiA = d * m; vec3 loA = d * m + (1.0 - m) * 4.0;
+    float ts = sqrt(dot(d, m) / dot(m, vec3(1.0)));
+    float spread = sqrt(max(max(hiA.r, hiA.g), hiA.b)) - sqrt(min(min(loA.r, loA.g), loA.b));
+    float r = max(sqrt(max(max(o.r, o.g), o.b)), spread) / max(ts, 1e-4);
+    float w = (1.0 - smoothstep(0.06, 0.16, r)) * smoothstep(0.03, 0.08, ts);
+    if (w > bw) { bw = w; best = keyRamp(s, dot(c, m) / dot(m, vec3(1.0))); }
+  }
+  return mix(c, best, bw);
+}
 void main(){
   vec2 uv = vec2(uFlip > 0.5 ? 1.0 - vUv.x : vUv.x, vUv.y);
   vec4 A = texture2D(tAtlas, (uOff + uv) * uCell);
   if (A.a < 0.5) discard;
+  if (uRecolor > 0.5) A.rgb = recolorKeys(A.rgb);
   vec3 P = uWorld + vec3(0.0, 0.9, 0.0);
   vec3 N = normalize(cameraPosition - P); N.y = 0.25; N = normalize(N);
   vec3 diff, spec; lightSum(P, N, N, 1.0, 8.0, diff, spec);
@@ -547,16 +629,31 @@ export interface WalkerSprite {
   setTilt(rad: number): void;
   /** Hauteur du personnage dans le monde (m) : l'atlas est le même, le panneau et l'ombre suivent. */
   setHeight(h: number): void;
-  /** Remplace l'atlas dessiné par code (feuille externe vérifiée, `spritesExternes.ts`). */
-  setAtlas(tex: THREE.Texture): void;
+  /**
+   * Remplace l'atlas dessiné par code par une feuille vérifiée (`spritesExternes.ts`) : panneau tiré de son ancrage et
+   * de sa hauteur de figure, tons clés recolorés aux couleurs du personnage.
+   */
+  setSheet(sheet: { texture: THREE.Texture; spec: SheetSpec }): void;
   dispose(): void;
+}
+
+/**
+ * Panneau d'un personnage à la hauteur de référence `WALKER_H` (la hauteur de l'îlot s'applique par l'échelle du
+ * groupe) : la figure (`figureH` px logiques) vaut `WALKER_H`, les pieds (`anchor`) sont à l'origine. `ax` : décalage
+ * horizontal du panneau qui ramène l'ancrage sous l'origine (nul pour l'atlas par code, centré).
+ */
+function walkerPanel(spec: SheetSpec): { geo: THREE.PlaneGeometry; ax: number } {
+  const planeH = WALKER_H * (CELL_H / spec.figureH);
+  const planeW = planeH * (CELL_W / CELL_H);
+  const geo = new THREE.PlaneGeometry(planeW, planeH);
+  geo.translate(0, planeH / 2 - ((CELL_H - spec.anchor[1]) / CELL_H) * planeH, 0);
+  return { geo, ax: (0.5 - spec.anchor[0] / CELL_W) * planeW };
 }
 
 /** Personnage en panneau tourné vers le plan de la caméra, ombre de contact au sol, découpe nette (alpha testé). */
 export function createWalkerSprite(id: string): WalkerSprite {
   const atlas = walkerAtlas(id);
-  const geo = new THREE.PlaneGeometry(PLANE_W, PLANE_H);
-  geo.translate(0, PLANE_H / 2 - (8 / CELL_H) * PLANE_H, 0);
+  let { geo, ax } = walkerPanel(CODE_SPEC);
   const img = atlas.image as HTMLCanvasElement;
   const uniforms = {
     ...U,
@@ -567,6 +664,11 @@ export function createWalkerSprite(id: string): WalkerSprite {
     uWorld: { value: new THREE.Vector3() },
     // pas d'un texel de l'atlas, exprimé dans les UV d'une case (détection du bord pour les liserés)
     uTexel: { value: new THREE.Vector2(COLS / img.width, ROWS / img.height) },
+    // recoloration des tons clés d'une feuille (inactive pour l'atlas par code)
+    uRecolor: { value: 0 },
+    uRamp: { value: Array.from({ length: RECOLOR_SLOTS.length * 4 }, () => new THREE.Color()) },
+    uSlots: { value: RECOLOR_SLOTS.map(() => 0) },
+    uInkLin: { value: new THREE.Color(INK) },
   };
   const mat = new THREE.ShaderMaterial({
     name: 'VilleMarcheur',
@@ -598,15 +700,31 @@ export function createWalkerSprite(id: string): WalkerSprite {
       const col = moving ? 1 + (Math.floor(phase * 4) % 4) : 0;
       uniforms.uOff.value.set(col, ROWS - 1 - row);
       uniforms.uFlip.value = facing === 'gauche' ? 1 : 0;
+      // ancrage hors du milieu de la case (feuille) : le miroir du profil gauche le renverse
+      if (ax !== 0) body.position.x = facing === 'gauche' ? -ax : ax;
       // respiration discrète au repos
       pivot.scale.y = moving ? 1 : 1 + Math.sin(time * 2.2) * 0.008;
     },
     setTilt(rad) { pivot.rotation.x = rad; },
     setHeight(h) { group.scale.setScalar(h / WALKER_H); },
-    setAtlas(tex) {
-      uniforms.tAtlas.value = tex;
-      const im = tex.image as { width?: number; height?: number } | undefined;
+    setSheet({ texture, spec }) {
+      uniforms.tAtlas.value = texture;
+      const im = texture.image as { width?: number; height?: number } | undefined;
       if (im?.width && im.height) uniforms.uTexel.value.set(COLS / im.width, ROWS / im.height);
+      const panel = walkerPanel(spec);
+      geo.dispose();
+      geo = panel.geo;
+      ax = panel.ax;
+      body.geometry = geo;
+      body.position.x = 0;
+      const targets = recolorTargets(id);
+      const slots = RECOLOR_SLOTS.map((s) => (spec.recolor.includes(s) && targets[s] ? 1 : 0));
+      RECOLOR_SLOTS.forEach((s, i) => {
+        const t = targets[s];
+        if (t) RAMP_STEPS.forEach((k, j) => uniforms.uRamp.value[i * 4 + j]!.set(t[k]));
+      });
+      uniforms.uSlots.value = slots;
+      uniforms.uRecolor.value = slots.some((x) => x) ? 1 : 0;
     },
     dispose() { geo.dispose(); mat.dispose(); shadow.geometry.dispose(); (shadow.material as THREE.Material).dispose(); },
   };

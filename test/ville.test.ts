@@ -290,19 +290,93 @@ describe('ville : points d’apparition devant les personnages', () => {
   });
 });
 
-describe('ville : feuilles de sprites externes (préparation Aseprite, inactive par défaut)', () => {
-  it('le contrôle de manifeste exige fichier, empreinte, grille de l’atlas, provenance et statut', async () => {
-    const { checkManifestEntry } = await import('../src/ville/spritesExternes');
-    const exp = { cell: [96, 160] as [number, number], cols: 5, rows: 3 };
-    const ok = { file: 'player-Cendre.png', sha256: 'a'.repeat(64), cell: [96, 160], cols: 5, rows: 3, source: 'Aseprite 1.3, joueur.aseprite', approved: false };
-    expect(checkManifestEntry('player-Cendre', ok, exp)).toEqual([]);
-    expect(checkManifestEntry('x', null, exp)).toHaveLength(1);
-    expect(checkManifestEntry('x', { ...ok, file: '../hors.png' }, exp).join()).toMatch(/fichier/);
-    expect(checkManifestEntry('x', { ...ok, sha256: 'xyz' }, exp).join()).toMatch(/SHA-256/);
-    expect(checkManifestEntry('x', { ...ok, cell: [64, 64] }, exp).join()).toMatch(/cellule/);
-    expect(checkManifestEntry('x', { ...ok, cols: 4 }, exp).join()).toMatch(/grille/);
-    expect(checkManifestEntry('x', { ...ok, source: '' }, exp).join()).toMatch(/provenance/);
-    expect(checkManifestEntry('x', { ...ok, approved: undefined }, exp).join()).toMatch(/approbation/);
+describe('ville : feuilles de personnages (ADR 027, contrat v2)', () => {
+  const v1 = { file: 'player-Cendre.png', sha256: 'a'.repeat(64), cell: [96, 160] as [number, number], cols: 5, rows: 3, source: 'Aseprite 1.3, joueur.aseprite', approved: false };
+  const v2 = { ...v1, file: 'player.png', scale: 2, anchor: [48, 152] as [number, number], figureH: 148, recolor: ['tenue' as const, 'accent' as const], fiche: 'art-src/sprites/player/fiche.json' };
+
+  it('contrat v1 toujours accepté : fichier, empreinte, grille de l’atlas, provenance et statut', async () => {
+    const { checkManifestEntry, specOf } = await import('../src/ville/spritesExternes');
+    expect(checkManifestEntry('player-Cendre', v1, 1)).toEqual([]);
+    expect(checkManifestEntry('x', null, 1)).toHaveLength(1);
+    expect(checkManifestEntry('x', { ...v1, file: '../hors.png' }, 1).join()).toMatch(/fichier/);
+    expect(checkManifestEntry('x', { ...v1, sha256: 'xyz' }, 1).join()).toMatch(/SHA-256/);
+    expect(checkManifestEntry('x', { ...v1, cell: [64, 64] }, 1).join()).toMatch(/cellule/);
+    expect(checkManifestEntry('x', { ...v1, cols: 4 }, 1).join()).toMatch(/grille/);
+    expect(checkManifestEntry('x', { ...v1, source: '' }, 1).join()).toMatch(/provenance/);
+    expect(checkManifestEntry('x', { ...v1, approved: undefined }, 1).join()).toMatch(/approbation/);
+    // v1 : échelle 1, ancrage et figure de l'atlas par code, ni teinte ni fiche
+    expect(specOf(v1, 1)).toEqual({ scale: 1, anchor: [48, 152], figureH: 148, recolor: [] });
+  });
+
+  it('contrat v2 : échelle 1, 1,5 ou 2, ancrage et hauteur de figure dans la case, teintes connues, fiche de provenance', async () => {
+    const { checkManifestEntry, specOf, sheetSize } = await import('../src/ville/spritesExternes');
+    expect(checkManifestEntry('player', v2, 2)).toEqual([]);
+    expect(specOf(v2, 2)).toEqual({ scale: 2, anchor: [48, 152], figureH: 148, recolor: ['tenue', 'accent'] });
+    // une entrée v1 dans un manifeste v2 n'est pas complète (échelle, ancrage, figure, fiche)
+    expect(checkManifestEntry('x', v1, 2).join()).toMatch(/échelle.*ancrage.*fiche/s);
+    expect(checkManifestEntry('x', { ...v2, scale: 3 }, 2).join()).toMatch(/échelle/);
+    expect(checkManifestEntry('x', { ...v2, anchor: [0, 152] }, 2).join()).toMatch(/ancrage/);
+    expect(checkManifestEntry('x', { ...v2, anchor: [48, 170] }, 2).join()).toMatch(/ancrage/);
+    expect(checkManifestEntry('x', { ...v2, figureH: 156 }, 2).join()).toMatch(/figure/);
+    expect(checkManifestEntry('x', { ...v2, figureH: 40 }, 2).join()).toMatch(/figure/);
+    expect(checkManifestEntry('x', { ...v2, anchor: [50, 158], figureH: 156 }, 2)).toEqual([]);
+    expect(checkManifestEntry('x', { ...v2, recolor: ['tenue', 'tenue'] }, 2).join()).toMatch(/teintes/);
+    expect(checkManifestEntry('x', { ...v2, recolor: ['cape'] }, 2).join()).toMatch(/teintes/);
+    expect(checkManifestEntry('x', { ...v2, fiche: 'ailleurs/fiche.json' }, 2).join()).toMatch(/fiche/);
+    expect(sheetSize(1)).toEqual([480, 480]);
+    expect(sheetSize(1.5)).toEqual([720, 720]);
+    expect(sheetSize(2)).toEqual([960, 960]);
+  });
+
+  it('le contrat est celui de l’atlas par code (grille, ancrage, figure) ; l’atlas par code se déclare à l’échelle 1,5', async () => {
+    const { SHEET_CELL, SHEET_COLS, SHEET_ROWS, DEFAULT_ANCHOR, DEFAULT_FIGURE_H } = await import('../src/ville/spritesExternes');
+    const { CELL_W, CELL_H, COLS, ROWS, ATLAS_SCALE, CODE_SPEC } = await import('../src/ville/sprites');
+    expect([CELL_W, CELL_H, COLS, ROWS]).toEqual([...SHEET_CELL, SHEET_COLS, SHEET_ROWS]);
+    expect(CODE_SPEC).toEqual({ scale: ATLAS_SCALE, anchor: DEFAULT_ANCHOR, figureH: DEFAULT_FIGURE_H, recolor: [] });
+  });
+
+  it('clés du manifeste : identifiant exact, puis feuille commune du joueur ou du gabarit de PNJ', async () => {
+    const { sheetKeys } = await import('../src/ville/spritesExternes');
+    expect(sheetKeys('player-Voile')).toEqual(['player-Voile', 'player']);
+    expect(sheetKeys('pnj-docker-9')).toEqual(['pnj-docker-9', 'pnj-docker']);
+    expect(sheetKeys('braise')).toEqual(['braise']);
+  });
+
+  it('approbation (C2) : hors QA, une feuille non approuvée est refusée ; en QA elle passe, signalée ; `sprites=code` force l’atlas par code', async () => {
+    const { admit, spritePolicy } = await import('../src/ville/spritesExternes');
+    expect(spritePolicy(false, null)).toBe('approuvees');
+    expect(spritePolicy(false, 'code')).toBe('approuvees');
+    expect(spritePolicy(true, null)).toBe('qa');
+    expect(spritePolicy(true, 'externes')).toBe('qa');
+    expect(spritePolicy(true, 'code')).toBe('code');
+    expect(spritePolicy(true, 'approuvees')).toBe('approuvees');
+    expect(admit('approuvees', false)).toEqual({ ok: false, unapproved: true });
+    expect(admit('approuvees', true)).toEqual({ ok: true, unapproved: false });
+    expect(admit('qa', false)).toEqual({ ok: true, unapproved: true });
+    expect(admit('code', true).ok).toBe(false);
+  });
+
+  it('recoloration (C5) : tons clés réservés distincts ; couleurs cibles du joueur par famille, des PNJ par graine', async () => {
+    const { RECOLOR_SLOTS, keyColor } = await import('../src/ville/spritesExternes');
+    const { recolorTargets } = await import('../src/ville/sprites');
+    const { FAMILY_PALETTE } = await import('../src/art/palette');
+    const { npcLook } = await import('../src/presentation/npcs');
+    expect(keyColor('tenue', 0)).toBe('#400040');
+    expect(keyColor('tenue', 3)).toBe('#ff00ff');
+    expect(keyColor('peau', 2)).toBe('#bf0000');
+    const keys = RECOLOR_SLOTS.flatMap((s) => [0, 1, 2, 3].map((l) => keyColor(s, l)));
+    expect(new Set(keys).size).toBe(keys.length);
+    const c = recolorTargets('player-Cendre');
+    const v = recolorTargets('player-Voile');
+    expect(c.tenue!.base).toBe(FAMILY_PALETTE.Cendre.mid);
+    expect(v.tenue!.base).toBe(FAMILY_PALETTE.Voile.mid);
+    expect(v.accent!.base).toBe(FAMILY_PALETTE.Voile.accent);
+    expect(c.peau).toEqual(v.peau);
+    const d1 = recolorTargets('pnj-docker-1');
+    expect(d1.peau).toEqual(npcLook('pnj-docker-1')!.skin);
+    expect(d1.tenue).toEqual(npcLook('pnj-docker-1')!.cloth);
+    expect(d1.accent).toBeUndefined();
+    expect(recolorTargets('pnj-docker-9')).toEqual(recolorTargets('pnj-docker-9'));
   });
 });
 

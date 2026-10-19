@@ -17,6 +17,7 @@ import { parseRig } from './cameras';
 import { blocked, type Zone } from './monde';
 import { ILOTS, isIlotId, type IlotId } from './ilots';
 import { demoObjective, doorEncounter } from './objectifs';
+import { spritePolicy } from './spritesExternes';
 import { installVilleStyles, promptBubble } from './ui';
 import { createTown, type Town } from './ville';
 
@@ -70,7 +71,7 @@ export class DemoHub {
       this.town = createTown({
         host: this.host, artSeed: sh.params.artSeed, camera: 'frontale', player: `player-${sig}`, spawn: 'arrivee',
         freeze: sh.params.freeze, reducedMotion: sh.params.reducedMotion,
-        externalSprites: sh.params.qa && new URLSearchParams(location.search).get('sprites') === 'externes',
+        sprites: spritePolicy(sh.params.qa, new URLSearchParams(location.search).get('sprites')),
         rig: parseRig(new URLSearchParams(location.search).get('rig')),
         onInteract: (z) => this.interact(z),
         onMenu: () => this.menu(),
@@ -83,7 +84,8 @@ export class DemoHub {
       window.addEventListener('pagehide', () => { if (this.town && !this.host?.hidden) this.remember(); });
 
       this.bubble = promptBubble(this.town, () => { const z = this.town?.zone(); if (z) this.interact(z); }, (z) => (z.kind === 'parler' && z.target ? `Parler à ${personalityOf(z.target).name}` : z.label));
-      if (sh.params.qa) (window as unknown as Record<string, unknown>).__lqvDemo = this;
+      // crochet de QA publié une fois les feuilles de personnages de l'îlot décidées (ADR 027)
+      if (sh.params.qa) { const t = this.town; void t.ready().then(() => { if (this.town === t) (window as unknown as Record<string, unknown>).__lqvDemo = this; }); }
       this.titleCard(sh.params.reducedMotion || sh.params.freeze);
     } else {
       this.town.setPaused(false);
@@ -299,7 +301,11 @@ export class DemoHub {
     ], speaker ?? enc.rival);
   }
 
-  /** Passage vers l'îlot voisin : fondu au noir court, changement d'îlot, fondu retour (mouvement réduit : direct). */
+  /**
+   * Passage vers l'îlot voisin : fondu au noir court, changement d'îlot, fondu retour (mouvement réduit : direct). Les
+   * feuilles de personnages de l'îlot d'arrivée sont préparées pendant le fondu (ADR 027, C3) ; le changement attend
+   * qu'elles le soient (au plus 1,5 s), sinon il se fait au même moment qu'avant.
+   */
   private travel(to: IlotId, spawn: string): void {
     const town = this.town!;
     town.setInputLocked(true);
@@ -307,6 +313,8 @@ export class DemoHub {
     veil.className = 'ville-fade';
     document.body.append(veil);
     const still = this.sh!.params.reducedMotion || this.sh!.params.freeze;
+    const ready = town.isPrepared(to);
+    const prep = ready ? null : Promise.race([town.prepare(to), new Promise<void>((res) => setTimeout(res, 1500))]);
     const swap = () => {
       town.goTo(to, spawn);
       this.remember();
@@ -315,7 +323,10 @@ export class DemoHub {
       veil.classList.add('out');
       setTimeout(() => veil.remove(), 420);
     };
-    if (still) swap(); else { requestAnimationFrame(() => veil.classList.add('in')); setTimeout(swap, 300); }
+    if (still) { if (prep) void prep.then(swap); else swap(); return; }
+    requestAnimationFrame(() => veil.classList.add('in'));
+    if (prep) void Promise.all([prep, new Promise<void>((res) => setTimeout(res, 300))]).then(swap);
+    else setTimeout(swap, 300);
   }
 
   /** Boîte de dialogue (bas de l'écran) : portrait V2 du personnage, texte, choix au clavier et à la souris. */

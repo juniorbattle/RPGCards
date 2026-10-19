@@ -2,9 +2,9 @@
 
 Date : 2026-10-19
 Statut : **APPROUVÉ par le responsable** (fiche d'arbitrages interactive du 2026-10-19,
-<https://claude.ai/artifact/5F8xmaBwRCe7RAhQFiSQmH>, 12 entrées, toutes sur l'option recommandée) ; **production pas
-commencée** : porte de validation sur le duelliste joueur à venir. Cadrage : `docs/M09_PERSONNAGES_VILLE_CADRAGE.md`
-(passe 48). Amende la règle « art par code, aucune image externe au runtime » (AGENTS, « Non négociable ») et la règle
+<https://claude.ai/artifact/5F8xmaBwRCe7RAhQFiSQmH>, 12 entrées, toutes sur l'option recommandée) ; **code préalable
+fait** (passe 52 : C1, C2, C3, C5, C7, voir « Conséquences faites ») ; **production pas commencée** : essai É0 et porte
+de validation sur le duelliste joueur à venir. Cadrage : `docs/M09_PERSONNAGES_VILLE_CADRAGE.md` (passe 48). Amende la règle « art par code, aucune image externe au runtime » (AGENTS, « Non négociable ») et la règle
 « Images générées : références seulement » (AGENTS), pour les seules feuilles de personnages de la ville.
 
 ## Contexte
@@ -73,3 +73,46 @@ production) et listé les décisions ; le responsable les a tranchées sur la fi
   vérifications automatiques et *in situ*, approbation (É2 à É7).
 - Les fiches de conception approuvées restent des références dans `reference/generated/` ; seules les feuilles finales
   approuvées entrent dans le build.
+
+## Conséquences faites (passe 52, 2026-10-19)
+
+Code préalable à la porte, sans aucune image générée ni feuille réelle ; preuves faites avec nos propres atlas dessinés
+par code, exportés et teintés ou peints en tons clés (`tools/m09-sprites-externes.mjs`, JOURNAL passe 52).
+
+- **C1 contrat v2** (`src/ville/spritesExternes.ts`) : manifeste `version: 2` ; chaque entrée déclare `file`, `sha256`,
+  `cell: [96, 160]`, `cols: 5`, `rows: 3`, `scale` (1, 1,5 ou 2 ; feuille de 480, 720 ou 960 px de côté), `anchor`
+  (pieds, px logiques de la case, défaut [48, 152]), `figureH` (semelle → sommet de la tête, px logiques, de 80 à la
+  ligne des pieds ; défaut 148), `recolor` (facultatif, tons clés), `source`, `fiche`
+  (`art-src/sprites/<id>/fiche.json`) et `approved`. Le panneau du personnage est tiré de la feuille (`walkerPanel`,
+  `src/ville/sprites.ts` : la figure vaut `walkerH`, les pieds à l'origine, décalage horizontal si l'ancrage n'est pas
+  centré, renversé en profil gauche) ; l'atlas par code se déclare lui-même au contrat (`CODE_SPEC` : échelle 1,5). Le
+  contrat v1 (`version: 1`) reste accepté (échelle 1, ancrage et figure par défaut). Clés du manifeste : l'identifiant,
+  puis la feuille commune du dessin (`player` pour les quatre `player-<Famille>`, `pnj-<gabarit>` pour les PNJ).
+- **C2 approbation** : politique `approuvees` par défaut (jeu, `?demo=1`, `?ville=1`) : une feuille non approuvée est
+  refusée, le dessin par code reste, la raison est rapportée ; `?qa=1` affiche aussi les non approuvées et
+  `externalReport().unapproved` les nomme ; `?qa=1&sprites=approuvees` éprouve la politique du jeu avec les crochets de
+  QA ; `?qa=1&sprites=code` garde l'atlas par code (`sprites=externes`, ancien interrupteur, vaut désormais `qa`).
+- **C3 préparation** : lecture du manifeste et décodage lancés avant la construction de l'îlot ; une feuille est vérifiée
+  (empreinte, dimensions), décodée hors du fil principal (`createImageBitmap`, sans prémultiplication ni conversion de
+  couleur) puis envoyée au GPU (`renderer.initTexture`) ; tant qu'un personnage attend sa feuille, il est caché et
+  l'image n'est pas rendue (au plus 1,5 s) : **plus de bascule visible** de l'atlas par code vers la feuille. La démo
+  prépare les feuilles de l'îlot d'arrivée pendant le fondu du passage (`Town.prepare`, `isPrepared`) ; les crochets de
+  QA (`__lqvVille`, `__lqvDemo`) sont publiés une fois les feuilles décidées (`Town.ready`). Mesures (Radeon 780M,
+  1920 × 1080) : feuille de 960 × 960 lue en 11 à 19 ms, décodée en 8 à 20 ms, envoyée au GPU en 2 à 5 ms ; première
+  entrée sur le Quai inchangée (médiane de 5 rondes : 588 ms sans feuille, 597 ms avec trois feuilles, 581 ms en
+  `sprites=code`) ; passage au Parvis : feuille d'Orin prête en 22 ms, changement d'îlot à ≈ 500 ms comme avant
+  (fondu de 300 ms et construction de l'îlot, mesuré à l'identique sur le build de départ).
+- **C5 recoloration** (`SPRITE_FRAG`, inactive pour l'atlas par code) : tons clés réservés, sRGB, quatre niveaux 64,
+  128, 191, 255 (ombre profonde, ombre, aplat, rehaut) : peau rouge, cheveux jaune, tenue magenta, chemise cyan, accent
+  vert ; remplacés par la rampe du personnage (`recolorTargets` : tons du personnage par code, soit `npcLook` par graine
+  pour les PNJ, `FAMILY_PALETTE` pour la tenue et l'accent du duelliste joueur). L'encre est retirée avant le test (un
+  bord filtré « ton clé + encre » prend un ton plus sombre de la rampe) ; le test se fait en racine (proche du sRGB).
+  Une teinte déclarée sans couleur cible pour le personnage fait refuser la feuille. **Règle de dessin** : un trait
+  d'encre sépare toute zone en ton clé d'une autre couleur ; sinon le filtrage mêle les deux et un liseré de la teinte
+  clé reste (constaté sur la feuille de preuve, dont les liserés ivoire sont posés sur la tenue sans encre).
+- **C7** : `public/sprites/manifest.json` (copié par Vite dans `dist/sprites/`), vide et valable ; test Node
+  `test/spritesManifeste.test.ts` : chaque entrée pointe vers un PNG présent, à l'empreinte, aux dimensions (échelle) et
+  au poids (≤ 1 Mo) déclarés, avec sa fiche commitée ; aucune image du dossier hors du manifeste.
+- **Non fait, selon la porte** : C4 (foulée par feuille), C6 (liserés de lumière en unités logiques : à l'échelle 2 ils
+  font 1,25 px logique au lieu de 1,67) ; la QA des feuilles qui cherche une clé dans `dist/` viendra avec la première
+  feuille réelle.
