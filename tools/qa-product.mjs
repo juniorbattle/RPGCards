@@ -99,7 +99,14 @@ const runs = {
     await page.click('[data-key="enc-libre-braise"]');
     await screenIs(page, 'prep');
     await page.click('[data-key="prep-start"]');
+    // M08 C1 : aucune génération ni préparation de personnage pendant le duel (compteurs figés du début à la fin).
+    await page.waitForFunction(() => !!window.__lqv);
+    const prepCount = () => page.evaluate(() => { const s = window.__lqvPrep(); return { held: s.held, n: [s.steps, s.finishedSteps, s.generated, s.built, s.taken, s.uploaded] }; });
+    const prepAtStart = await prepCount();
     const duel = await playDuel(page, { name: 'A', useLecture: true }, 'click');
+    const prepAtEnd = await prepCount();
+    res.prepDuringDuel = { start: prepAtStart, end: prepAtEnd };
+    check(prepAtStart.held && prepAtEnd.held && prepAtStart.n.join() === prepAtEnd.n.join(), `aucune génération ni préparation de personnage pendant le duel (compteurs ${prepAtStart.n.join('/')} → ${prepAtEnd.n.join('/')})`);
     res.duel = duel;
     check(duel.outcome === 'ended', `duel joué jusqu’au K.-O. (tour ${duel.turn})`);
     await screenIs(page, 'result', 40000);

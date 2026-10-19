@@ -669,24 +669,43 @@ export function moodsFor(kit: Pick<FigureV2Kit, 'moods'>): Record<Mood, FaceV2> 
 
 /** Toutes les couches V2 d’un rival (graine d’art : détails semés, taches de rousseur…). */
 export function figureV2Art(kit: FigureV2Kit, seed: number): FigureV2Art {
+  return runSteps(figureV2ArtSteps(kit, seed));
+}
+
+/**
+ * M08 C1 — les couches de `figureV2Art` en étapes (mêmes fonctions de dessin, dans le même ordre, donc mêmes pixels) :
+ * la préparation aux temps morts (`rival.ts`) les exécute une à une entre deux images.
+ */
+export function* figureV2ArtSteps(kit: FigureV2Kit, seed: number): Generator<void, FigureV2Art, void> {
   const k = kit.colors;
   const head = kit.head(seed);
   const shapes = kit.brows ?? BROWS;
-  return {
-    head,
-    front: kit.front(),
-    hood: kit.back(),
-    torso: kit.torso(),
-    sclera: drawSclera(),
-    iris: drawIris(k),
-    lidUp: [drawUpperLid(k, head, 0), drawUpperLid(k, head, 1)],
-    lidLow: [drawLowerLid(k, head, 0), drawLowerLid(k, head, 1)],
-    lidShut: [drawShutLid(k, head, 0), drawShutLid(k, head, 1)],
-    brows: { rest: drawBrow(k, shapes, 'rest'), arch: drawBrow(k, shapes, 'arch'), knit: drawBrow(k, shapes, 'knit') },
-    mouths: Object.fromEntries(MOUTHS_V2.map((m) => [m, drawMouth(k, m)])) as Record<MouthShape, HTMLCanvasElement>,
-    flush: drawFlush(),
-    moods: moodsFor(kit),
-  };
+  yield;
+  const front = kit.front();
+  yield;
+  const hood = kit.back();
+  yield;
+  const torso = kit.torso();
+  yield;
+  const sclera = drawSclera();
+  const iris = drawIris(k);
+  const lidUp: [HTMLCanvasElement, HTMLCanvasElement] = [drawUpperLid(k, head, 0), drawUpperLid(k, head, 1)];
+  yield;
+  const lidLow: [HTMLCanvasElement, HTMLCanvasElement] = [drawLowerLid(k, head, 0), drawLowerLid(k, head, 1)];
+  const lidShut: [HTMLCanvasElement, HTMLCanvasElement] = [drawShutLid(k, head, 0), drawShutLid(k, head, 1)];
+  yield;
+  const brows = { rest: drawBrow(k, shapes, 'rest'), arch: drawBrow(k, shapes, 'arch'), knit: drawBrow(k, shapes, 'knit') };
+  const mouths = Object.fromEntries(MOUTHS_V2.map((m) => [m, drawMouth(k, m)])) as Record<MouthShape, HTMLCanvasElement>;
+  const flush = drawFlush();
+  return { head, front, hood, torso, sclera, iris, lidUp, lidLow, lidShut, brows, mouths, flush, moods: moodsFor(kit) };
+}
+
+/** Exécute d’un trait un travail découpé en étapes et rend son résultat. */
+export function runSteps<T>(steps: Iterator<void, T, void>): T {
+  for (;;) {
+    const r = steps.next();
+    if (r.done) return r.value;
+  }
 }
 
 /** Couches dont le portrait a besoin (expression de repos, une bouche) : sous-ensemble de `FigureV2Art`. */

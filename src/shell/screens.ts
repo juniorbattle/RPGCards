@@ -12,6 +12,7 @@ import { STARTER_DECK } from '../product/collection';
 import { deckSummary, type DeckChoice } from '../product/deck';
 import { DIFFICULTY_LABEL, ENCOUNTERS, PLAYER_HP, RIVALS, SERIES, encounterById, personalityOf, type Encounter } from '../product/encounters';
 import { FIRST_WIN_REWARDS, encounterStatus, replaySeries, unlockLabel, type EncounterStatus } from '../product/progression';
+import { nextSeriesEncounter } from '../product/upcoming';
 import { record } from '../product/stats';
 import type { DuelSummary } from '../product/save';
 import type { Shell } from './shell';
@@ -302,7 +303,7 @@ export function renderResult(sh: Shell): HTMLElement {
   const enc = encounterById(r.encounterId)!;
   const p = personalityOf(enc.rival);
   const rec = record(sh.save?.history ?? [], enc.rival);
-  const next = sh.lastEffect?.series && !sh.lastEffect.series.completed ? ENCOUNTERS.find((x) => x.kind === 'series' && x.step === sh.lastEffect!.series!.step + 1) ?? null : null;
+  const next = nextSeriesEncounter(sh.lastEffect);
   const how = r.outcome === 'abandon' ? `Duel abandonné au tour ${r.turns} (ce n’est pas un K.-O.).`
     : r.outcome === 'victory' ? `${p.name} tombe à 0 PV au tour ${r.turns}.` : `Vous tombez à 0 PV au tour ${r.turns}.`;
   const bar = (who: string, hp: number, max: number, cls2: string, k: number) => {

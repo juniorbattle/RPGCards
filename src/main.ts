@@ -12,12 +12,16 @@ import { Shell } from './shell/shell';
 import { PERSONALITIES, personalityFor, type RivalPersonality } from './presentation/personalities';
 import { setFigureStyle } from './scene/figureStyle';
 import { figureCost, portraitCost } from './scene/figureBench';
+import { prepStats, setPrepMode } from './scene/rival';
 import { playerFigure } from './art/portrait';
 import { DEFAULT_VENUE, type VenueId } from './presentation/venues';
 
 const params = readParams();
-// M07 L5 : modèle artistique des personnages fixé avant toute scène ou portrait (`?qa=1&figure=v2`).
+// M07 L5 : modèle artistique des personnages fixé avant toute scène ou portrait (`?qa=1&figure=v1`).
 setFigureStyle(params.figure);
+// M08 C1 : préparation des rivaux aux temps morts (`?qa=1&prep=art|off` pour la mesure) ; état lisible en QA.
+setPrepMode(params.prep);
+if (params.qa) (window as unknown as Record<string, unknown>).__lqvPrep = prepStats;
 if (params.qa) (window as unknown as Record<string, unknown>).__lqvFigureCost = (runs?: number, id = 'ronce') => figureCost(PERSONALITIES.find((x) => x.id === id)!, params.artSeed, runs);
 // Passe 26 : coût d’un portrait (id de rival, ou `player-<Famille>` pour le duelliste joueur).
 if (params.qa) (window as unknown as Record<string, unknown>).__lqvPortraitCost = (runs?: number, id = 'player-Cendre') =>
