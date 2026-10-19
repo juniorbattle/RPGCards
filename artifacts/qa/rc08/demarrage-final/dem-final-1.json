@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-19T11:48:00.206Z",
+  "commit": "cc7de58",
+  "dist": "dist",
+  "assets": [
+    {
+      "f": "cardArtWorker-C3PyS6SL.js",
+      "octets": 8322
+    },
+    {
+      "f": "demo-MzGcjokg.js",
+      "octets": 12787
+    },
+    {
+      "f": "index-Bco1EIiU.css",
+      "octets": 81051
+    },
+    {
+      "f": "index-XoBNVpsa.js",
+      "octets": 999378
+    },
+    {
+      "f": "labo-Doh9Mw1d.js",
+      "octets": 2487
+    },
+    {
+      "f": "ville-CE9tdLTg.js",
+      "octets": 70177
+    }
+  ],
+  "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU",
+  "rounds": [
+    {
+      "home": 16312,
+      "arene": 17403,
+      "dcl": 14920,
+      "load": 14920,
+      "longTasks": 1,
+      "longTasksMs": 14800,
+      "maxLongTask": 14800,
+      "duel": 2297,
+      "octets": 1088751
+    }
+  ],
+  "median": {
+    "home": 16312,
+    "arene": 17403,
+    "dcl": 14920,
+    "load": 14920,
+    "longTasks": 1,
+    "longTasksMs": 14800,
+    "maxLongTask": 14800,
+    "duel": 2297,
+    "octets": 1088751
+  },
+  "issues": []
+}
