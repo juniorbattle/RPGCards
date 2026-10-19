@@ -17,6 +17,8 @@ import type { Controller } from '../app/controller';
 import { cardTitle, cardDef } from '../game/catalog/cards';
 import { viewFor } from '../game/visibility/view';
 import type { ArenaHandle, Staging } from '../scene/arena';
+import { holdPreparation, prepareRivals } from '../scene/rival';
+import { upcomingRivals } from '../product/upcoming';
 import type { RivalPersonality } from '../presentation/personalities';
 import { FULL_COLLECTION, STARTER_COLLECTION } from '../product/collection';
 import { validateDeck, type Collection, type DeckChoice } from '../product/deck';
@@ -404,6 +406,8 @@ export class Shell {
     const s = this.flow;
     const inDuel = s.screen === 'duel';
     const scr = s.screen === 'home' && this.homeMode === 'new' ? 'new' : s.screen;
+    // M08 C1 : aucune préparation de personnage pendant un duel (jamais pendant une commande).
+    holdPreparation(inDuel);
     if (!inDuel) {
       const arena = this.d.ensureArena(this.backdropRival());
       // M07 L4 : plan de feux de l’écran, posé avant de figer (une seule image par changement d’écran).
@@ -412,6 +416,9 @@ export class Shell {
       arena?.setPaused(s.screen !== 'result');
       arena?.setView('A');
       this.d.app.hidden = true;
+      // M08 C1 : les rivaux qu’un clic peut asseoir à la table depuis cet écran sont préparés aux temps morts
+      // (couches, rig, textures envoyées au GPU) : leur apparition ne coûte plus de génération.
+      if (arena) prepareRivals(upcomingRivals(s.screen, { activeEncounter: this.save?.activeDuel?.encounterId ?? null, playable: this.playable(), lastEffect: this.lastEffect }).map(personalityOf), this.params.artSeed);
     }
     const screenKey = `${scr}:${s.overlay ?? ''}`;
     const same = screenKey === this.renderedScreen;

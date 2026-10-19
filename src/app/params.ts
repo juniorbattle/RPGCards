@@ -39,6 +39,8 @@ export interface AppParams {
   artCheck: boolean;
   /** M07 L5 : modèle des personnages. « vectoriel V2 » par défaut (validé par le responsable) ; `qa=1&figure=v1` = rendu V1 (comparaison QA). */
   figure: 'v1' | 'v2';
+  /** M08 C1 : préparation des rivaux aux temps morts ; `qa=1&prep=art|off` = couches seules, ou rien (mesure). */
+  prep: 'full' | 'art' | 'off';
 }
 
 export function readParams(search = window.location.search): AppParams {
@@ -75,5 +77,6 @@ export function readParams(search = window.location.search): AppParams {
     renderCheck: q.get('qa') === '1' && q.get('renderCheck') === '1',
     artCheck: q.get('qa') === '1' && q.get('artCheck') === '1',
     figure: q.get('qa') === '1' && q.get('figure') === 'v1' ? 'v1' : 'v2',
+    prep: q.get('qa') === '1' && (q.get('prep') === 'art' || q.get('prep') === 'off') ? (q.get('prep') as 'art' | 'off') : 'full',
   };
 }
