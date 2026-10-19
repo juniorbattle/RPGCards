@@ -1,7 +1,11 @@
 # ADR 026 — Direction artistique du décor de la ville : illustration de carte encrée, couleurs des quatre familles (M09)
 
 Date : 2026-10-19
-Statut : **APPROUVÉ pour la direction** par le responsable (« Je retiens la direction D : décor encré comme une
+Statut : **REMPLACÉ par l'ADR 028** (décisions du responsable du 2026-10-19, passes 53 et 54 : « les décors et
+personnages ne sont pas qualitatif, je ne valide pas la direction artistique » ; cible : la référence initiale en HD-2D
+stylisé, images générées ; note : « la direction D est plutôt bonne en soit, mais nous pouvons améliorer/optimiser
+davantage le rendu »). La réalisation en code ci-dessous reste dans le jeu, **provisoire**, jusqu'à son remplacement îlot
+par îlot. Historique : **APPROUVÉ pour la direction** par le responsable (« Je retiens la direction D : décor encré comme une
 illustration de carte, avec les couleurs des quatre familles. Applique-la au Quai. ») ; **première réalisation sur le
 Quai proposée**, en attente de son retour sur la planche (`screenshots/qa/m09/v3/planche-v3-encre.png`) avant le Parvis
 et les Ruelles. Retour du responsable : amélioration nette, pousser plus loin (profondeur de champ, flaques, décors) :
