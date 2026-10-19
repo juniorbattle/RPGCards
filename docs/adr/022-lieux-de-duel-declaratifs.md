@@ -5,7 +5,7 @@ Statut : **cadrage APPROUVÉ par le responsable** (« Cadrage C2 validé tel que
 porte = la rue (le Quai, la nuit), même table partout pour la porte, Duel libre — Kaï dans la rue. Lance la porte. »,
 séance du 2026-10-18). **Porte de validation livrée** (système de lieux, salle migrée, rue) et **rue validée par le
 responsable** (« Je valide la rue (le Quai, la nuit) : lance le bar et l'arène sur le même système de lieux. »,
-2026-10-18) ; bar et arène : amendement en fin de document. Complète l’ADR 019 (mise en scène HD-2D) et l’ADR 020
+2026-10-18) ; **bar et arène validés par le responsable** (« Je valide le bar et l'arène tels que sur la planche des quatre lieux. », 2026-10-19) : amendement en fin de document. Complète l’ADR 019 (mise en scène HD-2D) et l’ADR 020
 (écrans hors duel) ; ne modifie ni la composition du duel (ADR 013, 016, 018), ni les personnages (ADR 021), ni les
 règles.
 
@@ -106,7 +106,8 @@ la rue ; papillons de nuit. Plan de feux : clair de lune froid, projecteurs chau
 
 Statut : rue **validée** par le responsable (« Je valide la rue (le Quai, la nuit) : lance le bar et l'arène sur le même
 système de lieux. ») ; **bar et arène livrés** sur le même système, présentés au responsable sur la planche des quatre
-lieux (`screenshots/qa/m08/c2/planche-c2-quatre-lieux.png`, build fusionné avec les cadres de cartes de la passe 32).
+lieux (`screenshots/qa/m08/c2/planche-c2-quatre-lieux.png`, build fusionné avec les cadres de cartes de la passe 32), et
+**validés** : « Je valide le bar et l'arène tels que sur la planche des quatre lieux. » (2026-10-19).
 Aucun changement du contrat du duel : gréement fixe, projecteurs à ±15 % de la salle, caméra, table, rival, HUD et
 plateau DOM communs aux quatre lieux.
 
