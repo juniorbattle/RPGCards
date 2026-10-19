@@ -65,6 +65,10 @@ export interface ArenaOptions {
   /** Repli automatique du post-traitement (QA, `?qa=1&fallback=…` uniquement) : `off` le désactive (mesure du
    *  rendu complet) ; `nobloom` / `direct` imposent ce niveau pour toute la session. Absent en jeu : repli actif. */
   fallback?: 'off' | 'nobloom' | 'direct';
+  /** RC 0.8 (QA, `?qa=1&compileAsync=1`, piste à mesurer sur GPU réel) : programmes de la scène compilés sans bloquer
+   *  le fil principal (`compileAsync`, seulement si `KHR_parallel_shader_compile` est présent), première image après.
+   *  Absent en jeu : compilation lancée puis première image tout de suite (comportement historique). */
+  asyncCompile?: boolean;
 }
 
 export interface ArenaStats {
@@ -839,6 +843,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   }
 
   function renderOnce(): void {
+    if (!compiled) return;
     placeCamera(clock);
     const scale = camera.projectionMatrix.elements[5]! * H * pixelRatio * 0.5;
     venue.prerender(scale);
@@ -889,6 +894,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
 
   function start(): void {
     cancelAnimationFrame(raf);
+    if (!compiled) return;
     if (still()) {
       clock = clock || 1.234;
       update(0);
@@ -907,7 +913,11 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   resize();
   // Tous les programmes de la scène (objets hors champ de la vue A et témoin des FX compris) lancés
   // maintenant : la compilation est asynchrone côté GPU, les erreurs ne sont lues qu’au premier usage.
-  renderer.compile(scene, camera);
+  let compiled = true;
+  if (opts.asyncCompile && parallel) {
+    compiled = false;
+    void compileFor(scene).then(() => { compiled = true; start(); });
+  } else renderer.compile(scene, camera);
   start();
 
   function disposeObj(o: THREE.Object3D): void {

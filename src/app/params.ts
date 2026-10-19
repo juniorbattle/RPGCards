@@ -40,6 +40,8 @@ export interface AppParams {
   artCheck: boolean;
   /** M08 C2 (QA, `qa=1&venue=salle|rue`) : lieu imposé à tous les duels et écrans (captures, mesures). Null en jeu : lieu de la rencontre. */
   venue: VenueId | null;
+  /** RC 0.8 (QA, `qa=1&compileAsync=1`) : premier rendu de l'arène après une compilation non bloquante (GPU réel). */
+  compileAsync: boolean;
   /** M09 V2 (provisoire, `demo=1`) : démo jouable, le Quai remplace le tableau des rencontres. Faux en jeu par défaut. */
   demo: boolean;
   /** M08 C2 (QA, `qa=1&venueCache=1`) : nombre de décors gardés montés (mesure du changement de lieu). Null en jeu : défaut de l’arène. */
@@ -83,6 +85,7 @@ export function readParams(search = window.location.search): AppParams {
     artCheck: q.get('qa') === '1' && q.get('artCheck') === '1',
     venue: q.get('qa') === '1' && isVenueId(q.get('venue')) ? (q.get('venue') as VenueId) : null,
     demo: q.get('demo') === '1',
+    compileAsync: q.get('qa') === '1' && q.get('compileAsync') === '1',
     venueCache: q.get('qa') === '1' && q.has('venueCache') ? Math.max(1, Math.floor(Number(q.get('venueCache')) || 1)) : null,
     prep: q.get('qa') === '1' && (q.get('prep') === 'art' || q.get('prep') === 'off') ? (q.get('prep') as 'art' | 'off') : 'full',
   };
