@@ -9,9 +9,9 @@ import { cls, h } from './presentation/dom';
 import { createArena, type ArenaHandle } from './scene/arena';
 import { DuelSession } from './app/duelSession';
 import { Shell } from './shell/shell';
-import { PERSONALITIES, personalityFor, type RivalPersonality } from './presentation/personalities';
+import { PERSONALITIES, personalityById, personalityFor, type RivalPersonality } from './presentation/personalities';
 import { setFigureStyle } from './scene/figureStyle';
-import { figureCost, portraitCost } from './scene/figureBench';
+import { figureCost, figureLayers, portraitCost } from './scene/figureBench';
 import { prepStats, setPrepMode } from './scene/rival';
 import { playerFigure } from './art/portrait';
 import { DEFAULT_VENUE, type VenueId } from './presentation/venues';
@@ -22,10 +22,12 @@ setFigureStyle(params.figure);
 // M08 C1 : préparation des rivaux aux temps morts (`?qa=1&prep=art|off` pour la mesure) ; état lisible en QA.
 setPrepMode(params.prep);
 if (params.qa) (window as unknown as Record<string, unknown>).__lqvPrep = prepStats;
-if (params.qa) (window as unknown as Record<string, unknown>).__lqvFigureCost = (runs?: number, id = 'ronce') => figureCost(PERSONALITIES.find((x) => x.id === id)!, params.artSeed, runs);
+if (params.qa) (window as unknown as Record<string, unknown>).__lqvFigureCost = (runs?: number, id = 'ronce') => figureCost(personalityById(id)!, params.artSeed, runs);
+// M08 C3 : couches V2 fraîchement générées d’une figure (rival, PNJ ou joueur) : empreintes de déterminisme en QA.
+if (params.qa) (window as unknown as Record<string, unknown>).__lqvFigureLayers = (id: string) => figureLayers(id, params.artSeed);
 // Passe 26 : coût d’un portrait (id de rival, ou `player-<Famille>` pour le duelliste joueur).
 if (params.qa) (window as unknown as Record<string, unknown>).__lqvPortraitCost = (runs?: number, id = 'player-Cendre') =>
-  portraitCost(id.startsWith('player-') ? playerFigure(id.slice(7) as Family) : PERSONALITIES.find((x) => x.id === id)!, params.artSeed, runs);
+  portraitCost(id.startsWith('player-') ? playerFigure(id.slice(7) as Family) : personalityById(id)!, params.artSeed, runs);
 const app = document.getElementById('app')!;
 const arenaHost = document.getElementById('arena')!;
 document.documentElement.style.setProperty('--ui-scale', String(params.scale));

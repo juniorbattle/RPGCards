@@ -35,6 +35,10 @@ export const PROFILES: Record<string, AiProfile> = {
   offensif: { name: 'Offensif', aggression: 1.35, caution: 0.55, bluff: 0.05, techniqueRate: 0.4, stanceBias: 4, keepValue: 0.6, interfereBonus: 0, memoryWeight: 0.3 },
   prudent: { name: 'Prudent', aggression: 0.8, caution: 1.4, bluff: 0.2, techniqueRate: 0.7, stanceBias: -3, keepValue: 2.2, interfereBonus: 0.5, memoryWeight: 0.4 },
   lecteur: { name: 'Lecteur / interférent', aggression: 1, caution: 1, bluff: 0.3, techniqueRate: 0.8, stanceBias: 0, keepValue: 1.4, interfereBonus: 3, memoryWeight: 0.75 },
+  // M08 C3 — profils génériques des duellistes PNJ de la ville (difficulté basse) : mêmes règles et même vue que les
+  // rivaux, mais peu de Techniques, presque pas de mémoire des cartes vues et des Secondaires moins bien gérées.
+  novice: { name: 'Novice franc', aggression: 1.15, caution: 0.6, bluff: 0.03, techniqueRate: 0.2, stanceBias: 2, keepValue: 0.5, interfereBonus: 0, memoryWeight: 0.1 },
+  timide: { name: 'Novice prudent', aggression: 0.85, caution: 1.15, bluff: 0.08, techniqueRate: 0.25, stanceBias: -2, keepValue: 1.6, interfereBonus: 0, memoryWeight: 0.1 },
 };
 
 const RANKS: OrdinaryRank[] = [1, 2, 3, 4];

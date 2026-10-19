@@ -63,3 +63,11 @@ export function portraitCost(f: Figure, seed: number, runs = 9): { v1: FigureCos
   if (kit) { v2(); all(); lean(); }
   return { v1: bench(v1, runs), v2: kit ? bench(v2, runs) : null, couches: kit ? { toutes: bench(all, runs), portrait: bench(lean, runs) } : null };
 }
+
+/** M08 C3 : toutes les couches V2 d’une figure (rival, PNJ `pnj-…`, joueur `player-<Famille>`), générées à neuf. */
+export function figureLayers(id: string, seed: number): HTMLCanvasElement[] {
+  const kit = kitV2(id);
+  if (!kit) return [];
+  const a = figureV2Art(kit, seed);
+  return [a.head, a.front, a.hood, a.torso, a.sclera, a.iris, ...a.lidUp, ...a.lidLow, ...a.lidShut, ...Object.values(a.brows), ...Object.values(a.mouths), a.flush];
+}
