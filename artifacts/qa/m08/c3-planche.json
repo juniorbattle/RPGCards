@@ -1,0 +1,348 @@
+{
+  "date": "2026-10-19T00:59:31.531Z",
+  "commit": "1e7ef20+arbre de travail",
+  "chromeArgs": [],
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "npcs": {
+    "pnj-docker-1": {
+      "cost": {
+        "medianMs": 44.1,
+        "minMs": 36.8,
+        "maxMs": 78.6,
+        "runs": 15,
+        "textures": 24,
+        "texels": 1853223
+      },
+      "name": "Théo",
+      "title": "docker du Quai",
+      "family": "Voile",
+      "npc": "docker"
+    },
+    "pnj-docker-5": {
+      "cost": {
+        "medianMs": 51.8,
+        "minMs": 43,
+        "maxMs": 75.6,
+        "runs": 15,
+        "textures": 24,
+        "texels": 1853223
+      },
+      "name": "Joël",
+      "title": "docker du Quai",
+      "family": "Astre",
+      "npc": "docker"
+    },
+    "pnj-docker-9": {
+      "cost": {
+        "medianMs": 61.9,
+        "minMs": 50.9,
+        "maxMs": 82.9,
+        "runs": 15,
+        "textures": 24,
+        "texels": 1853223
+      },
+      "name": "Gaël",
+      "title": "docker du Quai",
+      "family": "Cendre",
+      "npc": "docker"
+    },
+    "pnj-marchande-1": {
+      "cost": {
+        "medianMs": 55.6,
+        "minMs": 49.6,
+        "maxMs": 126.3,
+        "runs": 15,
+        "textures": 24,
+        "texels": 1853223
+      },
+      "name": "Nina",
+      "title": "marchande des halles",
+      "family": "Voile",
+      "npc": "marchande"
+    },
+    "pnj-marchande-5": {
+      "cost": {
+        "medianMs": 65.4,
+        "minMs": 48.6,
+        "maxMs": 102.9,
+        "runs": 15,
+        "textures": 24,
+        "texels": 1853223
+      },
+      "name": "Margot",
+      "title": "marchande des halles",
+      "family": "Astre",
+      "npc": "marchande"
+    },
+    "pnj-marchande-9": {
+      "cost": {
+        "medianMs": 59.1,
+        "minMs": 45,
+        "maxMs": 100.6,
+        "runs": 15,
+        "textures": 24,
+        "texels": 1853223
+      },
+      "name": "Céleste",
+      "title": "marchande des halles",
+      "family": "Voile",
+      "npc": "marchande"
+    },
+    "pnj-commis-1": {
+      "cost": {
+        "medianMs": 51,
+        "minMs": 43.6,
+        "maxMs": 70.7,
+        "runs": 15,
+        "textures": 24,
+        "texels": 1853223
+      },
+      "name": "Arthur",
+      "title": "commis de la ville",
+      "family": "Astre",
+      "npc": "commis"
+    },
+    "pnj-commis-5": {
+      "cost": {
+        "medianMs": 44.3,
+        "minMs": 37.7,
+        "maxMs": 69.9,
+        "runs": 15,
+        "textures": 24,
+        "texels": 1853223
+      },
+      "name": "Victor",
+      "title": "commis de la ville",
+      "family": "Astre",
+      "npc": "commis"
+    },
+    "pnj-commis-9": {
+      "cost": {
+        "medianMs": 37.7,
+        "minMs": 33.5,
+        "maxMs": 64.2,
+        "runs": 15,
+        "textures": 24,
+        "texels": 1853223
+      },
+      "name": "Félix",
+      "title": "commis de la ville",
+      "family": "Ronce",
+      "npc": "commis"
+    },
+    "pnj-joueuse-1": {
+      "cost": {
+        "medianMs": 42.6,
+        "minMs": 40.1,
+        "maxMs": 65.1,
+        "runs": 15,
+        "textures": 24,
+        "texels": 1853223
+      },
+      "name": "Mila",
+      "title": "habituée du tripot",
+      "family": "Cendre",
+      "npc": "joueuse"
+    },
+    "pnj-joueuse-5": {
+      "cost": {
+        "medianMs": 46.4,
+        "minMs": 35.3,
+        "maxMs": 79.8,
+        "runs": 15,
+        "textures": 24,
+        "texels": 1853223
+      },
+      "name": "Agathe",
+      "title": "habituée du tripot",
+      "family": "Ronce",
+      "npc": "joueuse"
+    },
+    "pnj-joueuse-9": {
+      "cost": {
+        "medianMs": 43.2,
+        "minMs": 36.9,
+        "maxMs": 86.9,
+        "runs": 15,
+        "textures": 24,
+        "texels": 1853223
+      },
+      "name": "Elsa",
+      "title": "habituée du tripot",
+      "family": "Ronce",
+      "npc": "joueuse"
+    }
+  },
+  "rivals": {
+    "braise": {
+      "cost": {
+        "medianMs": 51.3,
+        "minMs": 39.3,
+        "maxMs": 78,
+        "runs": 15,
+        "textures": 24,
+        "texels": 1853223
+      }
+    },
+    "ronce": {
+      "cost": {
+        "medianMs": 67.5,
+        "minMs": 47.9,
+        "maxMs": 102.7,
+        "runs": 15,
+        "textures": 24,
+        "texels": 1853223
+      }
+    },
+    "voile": {
+      "cost": {
+        "medianMs": 46.6,
+        "minMs": 38.6,
+        "maxMs": 84.1,
+        "runs": 15,
+        "textures": 24,
+        "texels": 1853223
+      }
+    },
+    "astre": {
+      "cost": {
+        "medianMs": 57.5,
+        "minMs": 48.6,
+        "maxMs": 86.7,
+        "runs": 15,
+        "textures": 24,
+        "texels": 1853223
+      }
+    }
+  },
+  "determinism": {
+    "pnj-docker-1": [
+      "512x624:33ab41ef,512x624:c1d07f8f,672x702:4ae381c5,768x640:43e2addd,120x89:ed20c81b,87x87:c474f8fc,129x100:3a57b262,129x100:a349236a,129x68:f800edcc,129x68:83284d49,129x136:548fdb5a,129x136:d4352f98,142x45:44247b03,142x45:97f5c946,142x45:3712177e,160x80:24a0c6d2,160x80:a2084c80,160x80:a289ac9a,160x80:2a0bac7f,160x80:b90ea4a,160x80:fa965043,160x80:908d1b3d,160x80:b51165f9,334x98:38317bd5",
+      "512x624:33ab41ef,512x624:c1d07f8f,672x702:4ae381c5,768x640:43e2addd,120x89:ed20c81b,87x87:c474f8fc,129x100:3a57b262,129x100:a349236a,129x68:f800edcc,129x68:83284d49,129x136:548fdb5a,129x136:d4352f98,142x45:44247b03,142x45:97f5c946,142x45:3712177e,160x80:24a0c6d2,160x80:a2084c80,160x80:a289ac9a,160x80:2a0bac7f,160x80:b90ea4a,160x80:fa965043,160x80:908d1b3d,160x80:b51165f9,334x98:38317bd5"
+    ],
+    "pnj-docker-5": [
+      "512x624:871bc44b,512x624:2f2dafb0,672x702:4ae381c5,768x640:c39e6aa3,120x89:ed20c81b,87x87:202bb0e3,129x100:e3946832,129x100:63b36afa,129x68:594d8d79,129x68:dafc2d29,129x136:7ec669b7,129x136:324a57c2,142x45:7ec9c8b7,142x45:43dd80e0,142x45:6041fef1,160x80:e1bbb0d2,160x80:90120f36,160x80:86297013,160x80:d770ff41,160x80:3cbbfb9e,160x80:76861de6,160x80:5dbcc894,160x80:49377d73,334x98:38317bd5",
+      "512x624:871bc44b,512x624:2f2dafb0,672x702:4ae381c5,768x640:c39e6aa3,120x89:ed20c81b,87x87:202bb0e3,129x100:e3946832,129x100:63b36afa,129x68:594d8d79,129x68:dafc2d29,129x136:7ec669b7,129x136:324a57c2,142x45:7ec9c8b7,142x45:43dd80e0,142x45:6041fef1,160x80:e1bbb0d2,160x80:90120f36,160x80:86297013,160x80:d770ff41,160x80:3cbbfb9e,160x80:76861de6,160x80:5dbcc894,160x80:49377d73,334x98:38317bd5"
+    ],
+    "pnj-docker-9": [
+      "512x624:42722938,512x624:c1d07f8f,672x702:4ae381c5,768x640:adcc6175,120x89:ed20c81b,87x87:a354a1f3,129x100:8896a7b,129x100:77453c9,129x68:fa9d178b,129x68:9b095fa6,129x136:2a4b948b,129x136:52d9c14b,142x45:edd2589,142x45:9dc1d604,142x45:1da4eb86,160x80:f6b7273f,160x80:94ee502c,160x80:8b61d3e1,160x80:34201aca,160x80:23ef54b3,160x80:351ac444,160x80:93126d95,160x80:11093bcb,334x98:38317bd5",
+      "512x624:42722938,512x624:c1d07f8f,672x702:4ae381c5,768x640:adcc6175,120x89:ed20c81b,87x87:a354a1f3,129x100:8896a7b,129x100:77453c9,129x68:fa9d178b,129x68:9b095fa6,129x136:2a4b948b,129x136:52d9c14b,142x45:edd2589,142x45:9dc1d604,142x45:1da4eb86,160x80:f6b7273f,160x80:94ee502c,160x80:8b61d3e1,160x80:34201aca,160x80:23ef54b3,160x80:351ac444,160x80:93126d95,160x80:11093bcb,334x98:38317bd5"
+    ],
+    "pnj-marchande-1": [
+      "512x624:b5af678d,512x624:c1d07f8f,672x702:8542e6f,768x640:5e89c8a2,120x89:ed20c81b,87x87:c474f8fc,129x100:1821587b,129x100:dbe0b1ff,129x68:19d4f270,129x68:cde84c8a,129x136:e4025d00,129x136:978f8a90,142x45:a3753998,142x45:5247c38d,142x45:40269ab2,160x80:f6b7273f,160x80:94ee502c,160x80:8b61d3e1,160x80:34201aca,160x80:23ef54b3,160x80:351ac444,160x80:93126d95,160x80:11093bcb,334x98:38317bd5",
+      "512x624:b5af678d,512x624:c1d07f8f,672x702:8542e6f,768x640:5e89c8a2,120x89:ed20c81b,87x87:c474f8fc,129x100:1821587b,129x100:dbe0b1ff,129x68:19d4f270,129x68:cde84c8a,129x136:e4025d00,129x136:978f8a90,142x45:a3753998,142x45:5247c38d,142x45:40269ab2,160x80:f6b7273f,160x80:94ee502c,160x80:8b61d3e1,160x80:34201aca,160x80:23ef54b3,160x80:351ac444,160x80:93126d95,160x80:11093bcb,334x98:38317bd5"
+    ],
+    "pnj-marchande-5": [
+      "512x624:1f2acae1,512x624:b98f68b2,672x702:a00c7562,768x640:60915e00,120x89:ed20c81b,87x87:fcf76ad3,129x100:6310629,129x100:14007166,129x68:568f6d0a,129x68:fe254c14,129x136:a35dee8c,129x136:92d883ad,142x45:70e4d830,142x45:16191751,142x45:4862ea3d,160x80:1981cf24,160x80:8e6d244,160x80:4acb0825,160x80:5ae869aa,160x80:7ad08740,160x80:da8250f5,160x80:1aa433a2,160x80:6e74be1b,334x98:38317bd5",
+      "512x624:1f2acae1,512x624:b98f68b2,672x702:a00c7562,768x640:60915e00,120x89:ed20c81b,87x87:fcf76ad3,129x100:6310629,129x100:14007166,129x68:568f6d0a,129x68:fe254c14,129x136:a35dee8c,129x136:92d883ad,142x45:70e4d830,142x45:16191751,142x45:4862ea3d,160x80:1981cf24,160x80:8e6d244,160x80:4acb0825,160x80:5ae869aa,160x80:7ad08740,160x80:da8250f5,160x80:1aa433a2,160x80:6e74be1b,334x98:38317bd5"
+    ],
+    "pnj-marchande-9": [
+      "512x624:9c9b4f27,512x624:c1d07f8f,672x702:29476e4a,768x640:5e89c8a2,120x89:ed20c81b,87x87:4c26a8e3,129x100:91fa90ab,129x100:c146a5ef,129x68:569d3019,129x68:32d5e251,129x136:bf1379e0,129x136:60e0856d,142x45:e48f8f75,142x45:23d0c41d,142x45:681927fc,160x80:94157623,160x80:b8df38c0,160x80:426c255b,160x80:2b852e90,160x80:46a465e0,160x80:80620032,160x80:adfa35f8,160x80:281a5a0e,334x98:38317bd5",
+      "512x624:9c9b4f27,512x624:c1d07f8f,672x702:29476e4a,768x640:5e89c8a2,120x89:ed20c81b,87x87:4c26a8e3,129x100:91fa90ab,129x100:c146a5ef,129x68:569d3019,129x68:32d5e251,129x136:bf1379e0,129x136:60e0856d,142x45:e48f8f75,142x45:23d0c41d,142x45:681927fc,160x80:94157623,160x80:b8df38c0,160x80:426c255b,160x80:2b852e90,160x80:46a465e0,160x80:80620032,160x80:adfa35f8,160x80:281a5a0e,334x98:38317bd5"
+    ],
+    "pnj-commis-1": [
+      "512x624:4df59b93,512x624:7889df5b,672x702:4ae381c5,768x640:42f7ace0,120x89:ed20c81b,87x87:fcf76ad3,129x100:6c9b04c2,129x100:7db2298c,129x68:b46fdf7e,129x68:4b7d98b8,129x136:11402514,129x136:e79393df,142x45:9f038679,142x45:e533f96e,142x45:1bb2fe50,160x80:24a0c6d2,160x80:a2084c80,160x80:a289ac9a,160x80:2a0bac7f,160x80:b90ea4a,160x80:fa965043,160x80:908d1b3d,160x80:b51165f9,334x98:38317bd5",
+      "512x624:4df59b93,512x624:7889df5b,672x702:4ae381c5,768x640:42f7ace0,120x89:ed20c81b,87x87:fcf76ad3,129x100:6c9b04c2,129x100:7db2298c,129x68:b46fdf7e,129x68:4b7d98b8,129x136:11402514,129x136:e79393df,142x45:9f038679,142x45:e533f96e,142x45:1bb2fe50,160x80:24a0c6d2,160x80:a2084c80,160x80:a289ac9a,160x80:2a0bac7f,160x80:b90ea4a,160x80:fa965043,160x80:908d1b3d,160x80:b51165f9,334x98:38317bd5"
+    ],
+    "pnj-commis-5": [
+      "512x624:f4a8048e,512x624:7f8903f4,672x702:4ae381c5,768x640:bdccf530,120x89:ed20c81b,87x87:fcf76ad3,129x100:af0548dc,129x100:bcda9937,129x68:18bae6e2,129x68:37ddf95b,129x136:c0cc1f1a,129x136:348f6c61,142x45:29f334c8,142x45:fbeb49b,142x45:3a10a08,160x80:94157623,160x80:b8df38c0,160x80:426c255b,160x80:2b852e90,160x80:46a465e0,160x80:80620032,160x80:adfa35f8,160x80:281a5a0e,334x98:38317bd5",
+      "512x624:f4a8048e,512x624:7f8903f4,672x702:4ae381c5,768x640:bdccf530,120x89:ed20c81b,87x87:fcf76ad3,129x100:af0548dc,129x100:bcda9937,129x68:18bae6e2,129x68:37ddf95b,129x136:c0cc1f1a,129x136:348f6c61,142x45:29f334c8,142x45:fbeb49b,142x45:3a10a08,160x80:94157623,160x80:b8df38c0,160x80:426c255b,160x80:2b852e90,160x80:46a465e0,160x80:80620032,160x80:adfa35f8,160x80:281a5a0e,334x98:38317bd5"
+    ],
+    "pnj-commis-9": [
+      "512x624:e5b25250,512x624:c1d07f8f,672x702:4ae381c5,768x640:2b068dfc,120x89:ed20c81b,87x87:4c26a8e3,129x100:41840ba0,129x100:1bef063,129x68:470bd6a3,129x68:c9e98601,129x136:b772bd3b,129x136:e010192,142x45:18e8648c,142x45:66633a71,142x45:a4b32536,160x80:f6b7273f,160x80:94ee502c,160x80:8b61d3e1,160x80:34201aca,160x80:23ef54b3,160x80:351ac444,160x80:93126d95,160x80:11093bcb,334x98:38317bd5",
+      "512x624:e5b25250,512x624:c1d07f8f,672x702:4ae381c5,768x640:2b068dfc,120x89:ed20c81b,87x87:4c26a8e3,129x100:41840ba0,129x100:1bef063,129x68:470bd6a3,129x68:c9e98601,129x136:b772bd3b,129x136:e010192,142x45:18e8648c,142x45:66633a71,142x45:a4b32536,160x80:f6b7273f,160x80:94ee502c,160x80:8b61d3e1,160x80:34201aca,160x80:23ef54b3,160x80:351ac444,160x80:93126d95,160x80:11093bcb,334x98:38317bd5"
+    ],
+    "pnj-joueuse-1": [
+      "512x624:ce1e4b4,512x624:768d7a83,672x702:7dec53cc,768x640:c3f7666a,120x89:ed20c81b,87x87:fcf76ad3,129x100:a9510b47,129x100:348784f2,129x68:572c0963,129x68:36605220,129x136:2ebd4dee,129x136:f23beaae,142x45:7f2e670d,142x45:bc9905f0,142x45:60870b93,160x80:1981cf24,160x80:8e6d244,160x80:4acb0825,160x80:5ae869aa,160x80:7ad08740,160x80:da8250f5,160x80:1aa433a2,160x80:6e74be1b,334x98:38317bd5",
+      "512x624:ce1e4b4,512x624:768d7a83,672x702:7dec53cc,768x640:c3f7666a,120x89:ed20c81b,87x87:fcf76ad3,129x100:a9510b47,129x100:348784f2,129x68:572c0963,129x68:36605220,129x136:2ebd4dee,129x136:f23beaae,142x45:7f2e670d,142x45:bc9905f0,142x45:60870b93,160x80:1981cf24,160x80:8e6d244,160x80:4acb0825,160x80:5ae869aa,160x80:7ad08740,160x80:da8250f5,160x80:1aa433a2,160x80:6e74be1b,334x98:38317bd5"
+    ],
+    "pnj-joueuse-5": [
+      "512x624:e9487694,512x624:af7cda05,672x702:4ae381c5,768x640:b68a74b2,120x89:ed20c81b,87x87:c474f8fc,129x100:a0351cbf,129x100:b2400701,129x68:f512a10d,129x68:88277e3c,129x136:bfd6e82c,129x136:526270c4,142x45:a88bb221,142x45:7f91708a,142x45:33f433a9,160x80:94157623,160x80:b8df38c0,160x80:426c255b,160x80:2b852e90,160x80:46a465e0,160x80:80620032,160x80:adfa35f8,160x80:281a5a0e,334x98:38317bd5",
+      "512x624:e9487694,512x624:af7cda05,672x702:4ae381c5,768x640:b68a74b2,120x89:ed20c81b,87x87:c474f8fc,129x100:a0351cbf,129x100:b2400701,129x68:f512a10d,129x68:88277e3c,129x136:bfd6e82c,129x136:526270c4,142x45:a88bb221,142x45:7f91708a,142x45:33f433a9,160x80:94157623,160x80:b8df38c0,160x80:426c255b,160x80:2b852e90,160x80:46a465e0,160x80:80620032,160x80:adfa35f8,160x80:281a5a0e,334x98:38317bd5"
+    ],
+    "pnj-joueuse-9": [
+      "512x624:42945102,512x624:6c5a59d9,672x702:4ae381c5,768x640:c8c3d351,120x89:ed20c81b,87x87:c474f8fc,129x100:ffff5e5f,129x100:63fdbab3,129x68:72b55e1d,129x68:e7a65dfb,129x136:900b435d,129x136:a652349c,142x45:9f038679,142x45:e533f96e,142x45:1bb2fe50,160x80:24a0c6d2,160x80:a2084c80,160x80:a289ac9a,160x80:2a0bac7f,160x80:b90ea4a,160x80:fa965043,160x80:908d1b3d,160x80:b51165f9,334x98:38317bd5",
+      "512x624:42945102,512x624:6c5a59d9,672x702:4ae381c5,768x640:c8c3d351,120x89:ed20c81b,87x87:c474f8fc,129x100:ffff5e5f,129x100:63fdbab3,129x68:72b55e1d,129x68:e7a65dfb,129x136:900b435d,129x136:a652349c,142x45:9f038679,142x45:e533f96e,142x45:1bb2fe50,160x80:24a0c6d2,160x80:a2084c80,160x80:a289ac9a,160x80:2a0bac7f,160x80:b90ea4a,160x80:fa965043,160x80:908d1b3d,160x80:b51165f9,334x98:38317bd5"
+    ],
+    "braise": [
+      "512x624:73ff0023,512x624:774e8a55,672x702:4d9c2571,768x640:19f2ad25,120x89:ed20c81b,87x87:d6837,129x100:1f58fc71,129x100:b85fbf0b,129x68:38c6c1f,129x68:618eb44b,129x136:11bbf9e8,129x136:d4119f35,142x45:d822c909,142x45:86110c1b,142x45:8df54c2f,160x80:6cd8b4a9,160x80:90eac1c1,160x80:46a133d1,160x80:b7432512,160x80:9f920631,160x80:814493a3,160x80:a4051ff5,160x80:a8c27f45,334x98:38317bd5",
+      "512x624:73ff0023,512x624:774e8a55,672x702:4d9c2571,768x640:19f2ad25,120x89:ed20c81b,87x87:d6837,129x100:1f58fc71,129x100:b85fbf0b,129x68:38c6c1f,129x68:618eb44b,129x136:11bbf9e8,129x136:d4119f35,142x45:d822c909,142x45:86110c1b,142x45:8df54c2f,160x80:6cd8b4a9,160x80:90eac1c1,160x80:46a133d1,160x80:b7432512,160x80:9f920631,160x80:814493a3,160x80:a4051ff5,160x80:a8c27f45,334x98:38317bd5"
+    ],
+    "ronce": [
+      "512x624:69c8a4ad,512x624:7439804e,672x702:48be4d16,768x640:9b6a2b58,120x89:ed20c81b,87x87:cc0658b0,129x100:c11f1023,129x100:c3d4b591,129x68:ae684c0c,129x68:3e842b82,129x136:5be32a5e,129x136:741461b8,142x45:77cee319,142x45:86296944,142x45:dd264842,160x80:47bd5003,160x80:2875bb2d,160x80:e8da377e,160x80:955aad44,160x80:56136385,160x80:a13e2d6d,160x80:ac6fc629,160x80:6e33f3e6,334x98:38317bd5",
+      "512x624:69c8a4ad,512x624:7439804e,672x702:48be4d16,768x640:9b6a2b58,120x89:ed20c81b,87x87:cc0658b0,129x100:c11f1023,129x100:c3d4b591,129x68:ae684c0c,129x68:3e842b82,129x136:5be32a5e,129x136:741461b8,142x45:77cee319,142x45:86296944,142x45:dd264842,160x80:47bd5003,160x80:2875bb2d,160x80:e8da377e,160x80:955aad44,160x80:56136385,160x80:a13e2d6d,160x80:ac6fc629,160x80:6e33f3e6,334x98:38317bd5"
+    ],
+    "voile": [
+      "512x624:7ca91bf3,512x624:6f0b2b15,672x702:390152e7,768x640:7f9770ad,120x89:ed20c81b,87x87:8e1f26a2,129x100:11e6a5b2,129x100:1394c26d,129x68:9a3ced78,129x68:e57165f9,129x136:9edb3ca7,129x136:3570d620,142x45:6238a630,142x45:6310886b,142x45:6c2f21ac,160x80:cd5236c9,160x80:23294885,160x80:432005e,160x80:c9b450d2,160x80:e0c75e81,160x80:8c15380e,160x80:83b95bee,160x80:2d7e59f8,334x98:38317bd5",
+      "512x624:7ca91bf3,512x624:6f0b2b15,672x702:390152e7,768x640:7f9770ad,120x89:ed20c81b,87x87:8e1f26a2,129x100:11e6a5b2,129x100:1394c26d,129x68:9a3ced78,129x68:e57165f9,129x136:9edb3ca7,129x136:3570d620,142x45:6238a630,142x45:6310886b,142x45:6c2f21ac,160x80:cd5236c9,160x80:23294885,160x80:432005e,160x80:c9b450d2,160x80:e0c75e81,160x80:8c15380e,160x80:83b95bee,160x80:2d7e59f8,334x98:38317bd5"
+    ],
+    "astre": [
+      "512x624:4b98f5d5,512x624:25f67e83,672x702:a48cdd81,768x640:15bcdbb1,120x89:ed20c81b,87x87:162afef5,129x100:8d1ad642,129x100:32ffdaf1,129x68:3de91fb,129x68:c431d16c,129x136:8fa7f4d6,129x136:754c83f5,142x45:23932168,142x45:52fae5d4,142x45:cb5f5313,160x80:903ff034,160x80:aec8c39b,160x80:98f79b7d,160x80:7619c166,160x80:4ff9eb9d,160x80:e4b761c7,160x80:1b68bb21,160x80:e466c5f8,334x98:38317bd5",
+      "512x624:4b98f5d5,512x624:25f67e83,672x702:a48cdd81,768x640:15bcdbb1,120x89:ed20c81b,87x87:162afef5,129x100:8d1ad642,129x100:32ffdaf1,129x68:3de91fb,129x68:c431d16c,129x136:8fa7f4d6,129x136:754c83f5,142x45:23932168,142x45:52fae5d4,142x45:cb5f5313,160x80:903ff034,160x80:aec8c39b,160x80:98f79b7d,160x80:7619c166,160x80:4ff9eb9d,160x80:e4b761c7,160x80:1b68bb21,160x80:e466c5f8,334x98:38317bd5"
+    ]
+  },
+  "files": [
+    {
+      "file": "screenshots/qa/m08/c3/vueA-pnj-docker-5-1280.png",
+      "desc": "Vue A complète du duel contre Joël (pnj-docker-5), 1280×720"
+    },
+    {
+      "file": "screenshots/qa/m08/c3/vueA-pnj-marchande-5-1280.png",
+      "desc": "Vue A complète du duel contre Margot (pnj-marchande-5), 1280×720"
+    },
+    {
+      "file": "screenshots/qa/m08/c3/vueA-pnj-commis-5-1280.png",
+      "desc": "Vue A complète du duel contre Victor (pnj-commis-5), 1280×720"
+    },
+    {
+      "file": "screenshots/qa/m08/c3/vueA-pnj-joueuse-5-1280.png",
+      "desc": "Vue A complète du duel contre Agathe (pnj-joueuse-5), 1280×720"
+    },
+    {
+      "file": "screenshots/qa/m08/c3/vueA-pnj-docker-5-1920.png",
+      "desc": "Vue A complète du duel contre Joël (pnj-docker-5), 1920×1080"
+    },
+    {
+      "file": "screenshots/qa/m08/c3/vueA-pnj-marchande-5-1920.png",
+      "desc": "Vue A complète du duel contre Margot (pnj-marchande-5), 1920×1080"
+    },
+    {
+      "file": "screenshots/qa/m08/c3/vueA-pnj-commis-5-1920.png",
+      "desc": "Vue A complète du duel contre Victor (pnj-commis-5), 1920×1080"
+    },
+    {
+      "file": "screenshots/qa/m08/c3/vueA-pnj-joueuse-5-1920.png",
+      "desc": "Vue A complète du duel contre Agathe (pnj-joueuse-5), 1920×1080"
+    },
+    {
+      "file": "screenshots/qa/m08/c3/duels-de-la-ville-1280.png",
+      "desc": "Rubrique « Duels de la ville » seule, 1280×720"
+    },
+    {
+      "file": "screenshots/qa/m08/c3/planche-pnj-1280.png",
+      "desc": "Planche des 12 PNJ (vue A recadrée et portrait) et des 4 rivaux, 1280×720"
+    },
+    {
+      "file": "screenshots/qa/m08/c3/planche-pnj-1920.png",
+      "desc": "Planche des 12 PNJ (vue A recadrée et portrait) et des 4 rivaux, 1920×1080"
+    },
+    {
+      "file": "screenshots/qa/m08/c3/rencontres-avant-1280.png",
+      "desc": "Écran Rencontres avant C3 (build 1e7ef20), 1280×720 (page entière)"
+    },
+    {
+      "file": "screenshots/qa/m08/c3/rencontres-avant-1920.png",
+      "desc": "Écran Rencontres avant C3 (build 1e7ef20), 1920×1080 (page entière)"
+    },
+    {
+      "file": "screenshots/qa/m08/c3/rencontres-apres-1280.png",
+      "desc": "Écran Rencontres après C3, 1280×720 (page entière)"
+    },
+    {
+      "file": "screenshots/qa/m08/c3/rencontres-apres-1920.png",
+      "desc": "Écran Rencontres après C3, 1920×1080 (page entière)"
+    }
+  ],
+  "issues": [],
+  "deterministic": true
+}

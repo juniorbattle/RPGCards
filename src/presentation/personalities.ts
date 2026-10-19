@@ -2,21 +2,35 @@
  * Personnalités de rivaux — PROVISOIRES (aucun personnage canonique validé).
  * Une personnalité relie : apparence procédurale, tempérament expressif et profil tactique de l’IA.
  * Les expressions dépendent du tempérament et des événements PUBLICS uniquement (pas de tells).
+ * M08 C3 : un adversaire est soit l’un des quatre rivaux signatures, soit un duelliste PNJ de la ville
+ * (`pnj-<gabarit>-<graine>`, `./npcs`), dont la personnalité est dérivée de l’identifiant.
  */
 import type { Family } from '../game/catalog/cards';
 import type { TechniqueId } from '../game/catalog/techniques';
+import { NPC_TEMPLATES, npcIdentity, npcLook, type NpcId, type NpcTemplateId } from './npcs';
+
+/** Les quatre rivaux signatures (personnages uniques). */
+export type SignatureRivalId = 'braise' | 'ronce' | 'voile' | 'astre';
+/** Identifiant d’un adversaire : rival signature ou duelliste PNJ de la ville. */
+export type OpponentId = SignatureRivalId | NpcId;
+export const SIGNATURE_RIVAL_IDS: readonly SignatureRivalId[] = ['braise', 'ronce', 'voile', 'astre'];
+
+export function isSignatureRival(id: string): id is SignatureRivalId {
+  return (SIGNATURE_RIVAL_IDS as readonly string[]).includes(id);
+}
 
 export type HairStyle = 'spiky' | 'braid' | 'bob';
 export type Outfit = 'jacket' | 'cloak' | 'coat';
 
 export interface RivalPersonality {
-  id: 'braise' | 'ronce' | 'voile' | 'astre';
+  id: OpponentId;
   name: string;
   title: string;
   /** Accord des libellés d’humeur (« concentré » / « concentrée »). */
   gender: 'f' | 'm';
   family: Family;
-  aiProfile: 'offensif' | 'prudent' | 'lecteur' | 'equilibre';
+  /** Profil de l’IA ; `novice` et `timide` : profils génériques des PNJ (difficulté basse, M08 C3). */
+  aiProfile: 'offensif' | 'prudent' | 'lecteur' | 'equilibre' | 'novice' | 'timide';
   techniques: TechniqueId[];
   /** Tempérament : amplitude des réactions (0..1), humeur de repos. */
   expressiveness: number;
@@ -36,6 +50,8 @@ export interface RivalPersonality {
     mark: 'scar' | 'freckles' | 'beauty' | null;
     headband: boolean;
   };
+  /** M08 C3 : gabarit d’un duelliste PNJ de la ville (absent pour un rival signature). */
+  npc?: NpcTemplateId;
 }
 
 export type Mood =
@@ -67,8 +83,43 @@ export const PERSONALITIES: RivalPersonality[] = [
   },
 ];
 
+const NPC_CACHE = new Map<string, RivalPersonality>();
+
+/**
+ * Personnalité d’un duelliste PNJ, dérivée de son identifiant (`pnj-<gabarit>-<graine>`) : prénom, Signature et
+ * Techniques tirés de la graine, tempérament et profil de jeu génériques du gabarit ; `look` reprend ses couleurs pour
+ * l’ancien rendu V1 (`?qa=1&figure=v1`). En cache (même objet pour un même identifiant). Null si l’identifiant est inconnu.
+ */
+export function npcPersonality(id: string): RivalPersonality | null {
+  const hit = NPC_CACHE.get(id);
+  if (hit) return hit;
+  const L = npcLook(id);
+  const I = npcIdentity(id);
+  if (!L || !I) return null;
+  const t = NPC_TEMPLATES[L.template];
+  const short = ['rase', 'courte', 'plaquee', 'raie', 'frange', 'boucles', 'garconne'].includes(L.cut);
+  const p: RivalPersonality = {
+    id: id as NpcId, name: I.name, title: t.title, gender: t.gender, family: I.family, aiProfile: t.aiProfile,
+    techniques: I.techniques, expressiveness: t.expressiveness, restMood: t.restMood, npc: t.id,
+    look: {
+      skin: L.skin.base, skinShade: L.skin.shade, hair: L.hair.base, hairHi: L.hair.hi, hairStyle: short ? 'spiky' : 'bob',
+      outfit: L.template === 'docker' ? 'jacket' : 'coat', cloth: L.cloth.base, clothHi: L.cloth.hi, trim: L.shirt.base,
+      eyes: L.iris.iris, jaw: L.face === 'carre' ? 0.8 : L.face === 'ovale' ? 0.3 : 0.45, mark: null, headband: L.accessory === 'bandeau',
+    },
+  };
+  NPC_CACHE.set(id, p);
+  return p;
+}
+
+/** Personnalité d’un adversaire quelconque (rival signature ou PNJ), ou null. */
+export function personalityById(id: string | null | undefined): RivalPersonality | null {
+  if (!id) return null;
+  return PERSONALITIES.find((p) => p.id === id) ?? npcPersonality(id);
+}
+
 export function personalityFor(seed: number, forced?: string | null): RivalPersonality {
-  const byId = PERSONALITIES.find((p) => p.id === forced);
+  // M08 C3 : `?rival=pnj-<gabarit>-<graine>` impose aussi un PNJ (entrée QA directe, planche).
+  const byId = personalityById(forced);
   if (byId) return byId;
   // Toujours parmi les trois rivaux historiques : les seeds QA M02–M03 gardent le même adversaire.
   return PERSONALITIES[((seed % 3) + 3) % 3]!;

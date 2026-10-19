@@ -10,7 +10,8 @@ import { portraitUrl } from '../art/portrait';
 import { cardEl } from '../presentation/cardView';
 import { STARTER_DECK } from '../product/collection';
 import { deckSummary, type DeckChoice } from '../product/deck';
-import { DIFFICULTY_LABEL, ENCOUNTERS, PLAYER_HP, RIVALS, SERIES, encounterById, personalityOf, type Encounter } from '../product/encounters';
+import { DIFFICULTY_LABEL, ENCOUNTERS, PLAYER_HP, SERIES, encounterById, personalityOf, sheetOf, type Encounter } from '../product/encounters';
+import { isSignatureRival, personalityById } from '../presentation/personalities';
 import { FIRST_WIN_REWARDS, encounterStatus, replaySeries, unlockLabel, type EncounterStatus } from '../product/progression';
 import { nextSeriesEncounter } from '../product/upcoming';
 import { record } from '../product/stats';
@@ -173,6 +174,7 @@ export function renderBoard(sh: Shell): HTMLElement {
   const active = save.activeDuel ? encounterById(save.activeDuel.encounterId) : null;
   const series = ENCOUNTERS.filter((e) => e.kind === 'series');
   const free = ENCOUNTERS.filter((e) => e.kind === 'free');
+  const town = ENCOUNTERS.filter((e) => e.kind === 'town');
   const banner = active ? h('div', { class: 'sh-active', role: 'status' },
     h('div', null, h('b', null, `Duel en cours contre ${personalityOf(active.rival).name}`), h('span', null, ` — ${active.title}, tour ${save.activeDuel!.turn}. Il sera repris exactement où vous l’avez laissé.`)),
     h('div', { class: 'btn-row' },
@@ -193,6 +195,10 @@ export function renderBoard(sh: Shell): HTMLElement {
     h('section', { class: 'sh-free', 'aria-label': 'Duels libres' },
       h('h2', null, 'Duels libres'),
       h('div', { class: 'sh-enc-grid' }, free.map((e) => encounterCard(sh, e, encounterStatus(e, prog), !!active, i++)))),
+    // M08 C3 : duellistes PNJ de la ville (entraînement ouvert d’emblée, sans récompense).
+    h('section', { class: 'sh-free sh-town', 'aria-label': 'Duels de la ville' },
+      h('h2', null, 'Duels de la ville'),
+      h('div', { class: 'sh-enc-grid' }, town.map((e) => encounterCard(sh, e, encounterStatus(e, prog), !!active, i++)))),
     h('div', { class: 'sh-logs' }, progressLog(sh), historyList(save.history.slice(-6).reverse())),
     h('div', { class: 'sh-actions' },
       btn('Accueil', () => sh.go({ type: 'home' }), { ghost: true, key: 'board-home' }),
@@ -207,13 +213,15 @@ function stars(n: 1 | 2 | 3, label: string): HTMLElement {
 
 function encounterCard(sh: Shell, e: Encounter, st: EncounterStatus, busy: boolean, index: number): HTMLElement {
   const p = personalityOf(e.rival);
-  const r = RIVALS[e.rival];
+  const r = sheetOf(e.rival);
   const rec = record(sh.save!.history, e.rival);
-  const firstWin = !sh.save!.progress.defeated.includes(e.rival);
-  const reward = FIRST_WIN_REWARDS[e.rival];
+  // Récompense de première victoire : rivaux signatures seulement (un PNJ de la ville n’en donne aucune).
+  const reward = isSignatureRival(e.rival) ? FIRST_WIN_REWARDS[e.rival] : null;
+  const firstWin = !!reward && isSignatureRival(e.rival) && !sh.save!.progress.defeated.includes(e.rival);
   const played = rec.w + rec.l + rec.a;
-  const rewardText = `${reward.variants.length} variantes ${p.family}${reward.techniques.length ? ` + ${reward.techniques.join(', ')}` : ''}`;
-  return h('article', { class: cls('sh-enc', 'sh-in', `fam-${p.family}`, `st-${st.state}`), 'data-encounter': e.id, style: `--i:${index}`, 'aria-label': `${e.kind === 'series' ? `Manche ${e.step} : ` : ''}${p.name}, ${p.title}` },
+  const rewardText = reward ? `${reward.variants.length} variantes ${p.family}${reward.techniques.length ? ` + ${reward.techniques.join(', ')}` : ''}` : '';
+  const prefer = () => sh.preferOpponent(e.rival);
+  return h('article', { class: cls('sh-enc', 'sh-in', `fam-${p.family}`, `st-${st.state}`), 'data-encounter': e.id, style: `--i:${index}`, onpointerenter: prefer, onfocusin: prefer, 'aria-label': `${e.kind === 'series' ? `Manche ${e.step} : ` : ''}${p.name}, ${p.title}` },
     h('div', { class: 'sh-enc-art' },
       h('img', { class: 'sh-face', src: portraitUrl(p, sh.params.artSeed), alt: `Portrait de ${p.name}` }),
       e.kind === 'series' ? h('span', { class: 'sh-step', 'aria-hidden': 'true' }, st.state === 'done' ? '✓' : String(e.step)) : null,
@@ -225,7 +233,8 @@ function encounterCard(sh: Shell, e: Encounter, st: EncounterStatus, busy: boole
       h('div', { class: 'sh-enc-facts' },
         stars(r.difficulty, DIFFICULTY_LABEL[r.difficulty]),
         h('span', { class: 'sh-hp', title: `${r.hp} points de vie`, 'aria-label': `${r.hp} PV`, html: `${iconSvg('heart', 15)}<b aria-hidden="true">${r.hp}</b>` })),
-      firstWin ? h('p', { class: 'sh-enc-reward', title: `Première victoire : ${rewardText} (prototype)`, 'aria-label': `Première victoire : ${rewardText} (prototype)`, html: `${iconSvg('gift', 15)}<span aria-hidden="true">${rewardText}</span>` }) : null,
+      firstWin ? h('p', { class: 'sh-enc-reward', title: `Première victoire : ${rewardText} (prototype)`, 'aria-label': `Première victoire : ${rewardText} (prototype)`, html: `${iconSvg('gift', 15)}<span aria-hidden="true">${rewardText}</span>` })
+        : e.kind === 'town' ? h('p', { class: 'sh-enc-reward', title: 'Duel d’entraînement : aucune récompense (prototype)' }, 'Entraînement') : null,
       h('p', { class: cls('sh-enc-rec', !played && 'new') }, played ? `${rec.w} V · ${rec.l} D${rec.a ? ` · ${rec.a} ab.` : ''}` : 'Jamais affronté'),
       st.open
         ? btn(e.kind === 'series' ? 'Jouer' : 'Défier', () => sh.go({ type: 'prep', encounterId: e.id }), { key: `enc-${e.id}`, disabled: busy, title: busy ? 'Un duel est en cours' : undefined })
@@ -245,7 +254,7 @@ function historyList(items: DuelSummary[]): HTMLElement | null {
   return h('section', { class: 'sh-history', 'aria-label': 'Derniers duels' },
     h('h2', null, 'Derniers duels'),
     h('ol', null, items.map((x) => h('li', { class: `out-${x.outcome}` },
-      h('b', null, OUTCOME[x.outcome]), ` contre ${personalityOf(x.rival as never).name} — ${x.turns} tours, ${x.dealt} infligés / ${x.taken} subis`, h('small', null, ` · ${fmtDate(x.at)}`)))));
+      h('b', null, OUTCOME[x.outcome]), ` contre ${personalityById(x.rival)?.name ?? x.rival} — ${x.turns} tours, ${x.dealt} infligés / ${x.taken} subis`, h('small', null, ` · ${fmtDate(x.at)}`)))));
 }
 
 // ---------------------------------------------------------------------------
@@ -260,7 +269,7 @@ export function renderPrep(sh: Shell): HTMLElement {
   const save = sh.save!;
   const enc = encounterById(sh.flow.encounterId!)!;
   const p = personalityOf(enc.rival);
-  const r = RIVALS[enc.rival];
+  const r = sheetOf(enc.rival);
   const issues = sh.deckIssues();
   const sum = deckSummary(save.deck);
   const side = (who: 'me' | 'opp', name: string, family: string, hp: number, techs: readonly TechniqueId[], extra: HTMLElement | null) =>
@@ -321,7 +330,7 @@ export function renderResult(sh: Shell): HTMLElement {
       r.outcome === 'abandon' || r.overtime ? h('p', { class: 'sh-sub' }, r.outcome === 'abandon' ? how : '', r.overtime ? ` Après ${r.overtime} prolongation(s) (double K.-O. → 1 PV chacun).` : '') : h('p', { class: 'sh-visually-hidden' }, how)),
     h('div', { class: 'sh-hpbars' },
       bar('Vous', r.hp.me, PLAYER_HP, 'me', 0),
-      bar(p.name, r.hp.opp, RIVALS[enc.rival].hp, 'opp', 1)),
+      bar(p.name, r.hp.opp, sheetOf(enc.rival).hp, 'opp', 1)),
     h('dl', { class: 'sh-bigstats' },
       bigStat('Infligés', String(r.dealt)), bigStat('Subis', String(r.taken)), bigStat('Tours', String(r.turns)),
       bigStat('Bilan', `${rec.w} V · ${rec.l} D${rec.a ? ` · ${rec.a} ab.` : ''}`)),
