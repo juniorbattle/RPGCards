@@ -31,6 +31,8 @@ type Deadline = { timeRemaining(): number; didTimeout: boolean };
 const MIN_SLICE = 2;
 
 export class IdleWork {
+  /** `perSlice` : au plus tant d’étapes par tranche d’inactivité (défaut : tant qu’il reste du temps). */
+  constructor(private readonly perSlice = Infinity) {}
   private jobs: Job[] = [];
   private held = false;
   private scheduled = false;
@@ -86,7 +88,8 @@ export class IdleWork {
 
   private run(deadline: Deadline): void {
     this.scheduled = false;
-    while (!this.held && this.jobs.length && deadline.timeRemaining() > MIN_SLICE) {
+    let n = 0;
+    while (!this.held && this.jobs.length && n++ < this.perSlice && deadline.timeRemaining() > MIN_SLICE) {
       const job = this.jobs[0]!;
       const t0 = performance.now();
       const done = job.it.next().done;
