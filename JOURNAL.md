@@ -1457,7 +1457,8 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **Tests :** aucun (documentaire, aucun code touché).
 - **Perf / visuels :** sans objet.
 - **Pensée :** avant de remplacer un dessin par code par une feuille externe, comparer leurs contrats : ici la feuille « conforme » aurait été plus floue que l'existant et ses pieds auraient glissé ; le contrat doit déclarer échelle, ancrage et foulée.
-- **À reprendre :** décisions du responsable sur D1 à D10 ; si D1 est accepté : ADR 027 et texte d'AGENTS, code C1 (contrat v2), C2 (approbation), C3 (feuilles préparées avant l'entrée dans l'îlot), C7 (`public/sprites/`), avec jeu par défaut identique au pixel près ; puis essai É0 et fiche de conception du duelliste joueur.
+- **Fiche d'arbitrages interactive** publiée à la demande du responsable (privée, 12 entrées : D1 à D10, R1 rangement, R2 Maëlle en ville ; référence D et capture du Quai en preuves ; choix enregistrés dans la collection `decisions`, vide à la publication) : <https://claude.ai/artifact/5F8xmaBwRCe7RAhQFiSQmH>.
+- **À reprendre :** relire la fiche quand le responsable l'a remplie, consigner ses choix ; décisions du responsable sur D1 à D10 ; si D1 est accepté : ADR 027 et texte d'AGENTS, code C1 (contrat v2), C2 (approbation), C3 (feuilles préparées avant l'entrée dans l'îlot), C7 (`public/sprites/`), avec jeu par défaut identique au pixel près ; puis essai É0 et fiche de conception du duelliste joueur.
 
 ## Passe 49 — M09 V3 : Quai validé ; le Parvis et les Ruelles dans la direction D, grammaire de façade commune (ADR 026 amendement 2) — 2026-10-19, worktree local (session V3), départ `cdd1a6f`, commits sur `main`
 
