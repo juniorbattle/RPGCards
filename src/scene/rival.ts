@@ -13,7 +13,7 @@ import {
   type MouthShape,
 } from './rivalTextures';
 import { usesV2 } from './figureStyle';
-import { figureV2Art, figureV2ArtSteps, RIG_V2, type BrowShape, type FigureV2Art } from './figureV2';
+import { figureV2Art, figureV2ArtSteps, RIG_V2, runSteps, type BrowShape, type FigureV2Art } from './figureV2';
 import { IdleWork } from './idleWork';
 import { kitV2 } from './v2';
 
@@ -124,6 +124,8 @@ interface BuiltRig {
   /** Toutes ses textures sont déjà envoyées au GPU. */
   uploaded: boolean;
   dispose(): void;
+  /** La même libération, en étapes (étalée aux temps morts). */
+  disposeSteps(): Generator<void, void, void>;
 }
 
 function buildRival(p: RivalPersonality, artSeed: number, backTexture: THREE.Texture, art?: FigureV2Art | null): BuiltRig {
@@ -437,26 +439,31 @@ function buildRival(p: RivalPersonality, artSeed: number, backTexture: THREE.Tex
       if (mode === 'off') disposeNow(); else retired.push(built);
     },
   };
-  function disposeNow(): void {
-    group.traverse((o) => {
-      const m = o as THREE.Mesh;
+  /** Libération en étapes (une couche par étape) : `disposeNow` les enchaîne, les temps morts les étalent (M08 C1). */
+  function* disposeSteps(): Generator<void, void, void> {
+    const meshes: THREE.Mesh[] = [];
+    group.traverse((o) => meshes.push(o as THREE.Mesh));
+    for (const m of meshes) {
       m.geometry?.dispose();
       const mat = m.material as THREE.MeshLambertMaterial | undefined;
       // Le verso des cartes est partagé avec l’arène (qui le libère elle-même).
       if (mat?.map && mat.map !== backTexture) mat.map.dispose();
       mat?.dispose();
-    });
+      yield;
+    }
     // Formes de bouche non affichées à cet instant (déjà envoyées au GPU si elles ont été montrées) :
     // sans cela, chaque duel laissait en mémoire les bouches de ses expressions passées (QA M06 J).
-    for (const t of Object.values(mouthTex)) t.dispose();
-    for (const t of Object.values(browTex ?? {})) t.dispose();
+    for (const t of [...Object.values(mouthTex), ...Object.values(browTex ?? {})]) { t.dispose(); yield; }
+  }
+  function disposeNow(): void {
+    runSteps(disposeSteps());
   }
   const textures = new Set<THREE.Texture>([...Object.values(mouthTex), ...Object.values(browTex ?? {})]);
   group.traverse((o) => {
     const map = ((o as THREE.Mesh).material as THREE.MeshLambertMaterial | undefined)?.map;
     if (map && map !== backTexture) textures.add(map);
   });
-  const built: BuiltRig = { rig, textures: [...textures], uploaded: false, dispose: disposeNow };
+  const built: BuiltRig = { rig, textures: [...textures], uploaded: false, dispose: disposeNow, disposeSteps };
   return built;
 }
 
@@ -492,23 +499,27 @@ const prepCounters = { generated: 0, built: 0, taken: 0, prepared: 0, uploaded: 
  * Rigs retirés de la scène, libérés après la première image de leur remplaçant. Libérés avant, ils emportaient les
  * programmes GPU qu’ils partagent avec lui (45 → 36 programmes à `setRival`), recompilés à sa première image : ≈ 40 ms
  * d’à-coup même avec des textures prêtes (principe de la passe 12 : garder vivant un programme utilisé par intermittence).
+ * La libération elle-même est étalée aux temps morts (une couche par étape) : d’un bloc, elle retardait d’une image
+ * (≈ 12 ms à 165 Hz) la seconde qui suit. File jamais suspendue (libérer n’est pas générer).
  */
 const retired: BuiltRig[] = [];
-let flushScheduled = false;
+const release = new IdleWork();
+let released = 0;
 
 const prepKey = (id: string, artSeed: number) => `${id}|${artSeed}`;
 
-/** Appelé au rendu de la tête du rig affiché : capte le moteur de rendu, puis libère les rigs retirés après cette image. */
+/**
+ * Appelé au rendu de la tête du rig affiché : capte le moteur de rendu, puis confie les rigs retirés à la file de
+ * libération (ses étapes ne s’exécutent qu’aux temps morts, donc après cette image).
+ */
 function captureRenderer(r: THREE.WebGLRenderer): void {
   renderer = r;
-  if (retired.length && !flushScheduled) {
-    flushScheduled = true;
-    setTimeout(flushRetired, 0);
-  }
+  for (const b of retired.splice(0)) release.add(`release|${released++}`, b.disposeSteps());
 }
 
+/** Libère sur-le-champ tout rig retiré (fin de l’arène). */
 function flushRetired(): void {
-  flushScheduled = false;
+  for (const k of release.keys()) release.finish(k);
   for (const b of retired.splice(0)) b.dispose();
 }
 
@@ -580,5 +591,8 @@ function* uploadSteps(built: BuiltRig): Generator<void, void, void> {
 
 /** QA : état de la préparation (temps morts, compteurs, rivaux prêts, rival affiché et ses textures). */
 export function prepStats() {
-  return { mode, ...work.stats(), ...prepCounters, ready: [...ready.keys()], shown: shown?.key ?? null, shownUploaded: shown?.built.uploaded ?? false };
+  const w = work.stats();
+  const rel = release.stats();
+  // `pending` compte aussi les libérations en attente : « préparation au repos » = plus rien à faire aux temps morts.
+  return { mode, ...w, pending: w.pending + rel.pending + retired.length, releasing: rel.pending + retired.length, ...prepCounters, ready: [...ready.keys()], shown: shown?.key ?? null, shownUploaded: shown?.built.uploaded ?? false };
 }

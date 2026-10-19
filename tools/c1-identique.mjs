@@ -18,9 +18,11 @@ const BEFORE = process.env.LQV_BEFORE;
 if (!BEFORE) throw new Error('LQV_BEFORE=<dossier du build avant> requis');
 const OUT = process.argv[2] ?? 'artifacts/qa/m08/c1-identique.json';
 const head = execSync('git rev-parse --short HEAD').toString().trim();
-const commit = execSync('git status --porcelain src').toString().trim() ? `${head}+arbre de travail` : head;
+// LQV_AFTER / LQV_AFTER_SHA : build « après » construit hors du dépôt (commit précis), au lieu de `dist`.
+const AFTER = process.env.LQV_AFTER ?? 'dist';
+const commit = process.env.LQV_AFTER_SHA ?? (execSync('git status --porcelain src').toString().trim() ? `${head}+arbre de travail` : head);
 const port = Number(process.env.LQV_PREVIEW_PORT) || 4221;
-const servers = { avant: await startPreview(port, BEFORE), apres: await startPreview(port + 1) };
+const servers = { avant: await startPreview(port, BEFORE), apres: await startPreview(port + 1, AFTER) };
 const browser = await launch();
 const helper = await (await browser.newContext()).newPage();
 const issues = [];
