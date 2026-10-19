@@ -2,7 +2,8 @@
 //   node tools/shots-m07.mjs <dossier dist> <préfixe> <dossier de sortie>
 // États (SHOTS=…, défaut « debut,select,commit,tactics ») : début de tour, carte choisie (boutons de pose),
 // Primaire + Secondaire posées, puis verrouillage jusqu’aux choix tactiques (au tour 1 de la graine 202, les Secondaires
-// sont en chargement : pas de choix tactique, la capture montre le tour résolu). Tailles : SIZES=… (défaut « 1280x720,1920x1080 ») ;
+// sont en chargement : pas de choix tactique, la capture montre le tour résolu) ; « plein » : scénario « interférence » en phase
+// tactique, Primaires révélées et Secondaires actives des deux côtés (M08, cadres de cartes). Tailles : SIZES=… (défaut « 1280x720,1920x1080 ») ;
 // vue inclinée : VIEW=B (suffixe « -b » au fichier) ; autre duel : SEED=… (défaut 202, suffixe « -s<graine> »).
 // GPU réel : LQV_GPU=1 CHROMIUM_PATH=…
 // CONTRAST=<fichier.json> : contraste de chaque texte visible du duel, mesuré sur la capture (méthode de qa:rc :
@@ -114,9 +115,24 @@ async function shot(w, h, action) {
   const page = await ctx.newPage();
   page.on('console', (m) => { if (m.type() === 'error') errors.push(`${action}: ${m.text()}`); });
   page.on('pageerror', (e) => errors.push(`${action}: ${e.message}`));
-  await page.goto(`${server.base}/?seed=${seed}&autostart=1&qa=1&aiDelay=0&freeze=1${view ? `&view=${view}` : ''}${query}`);
+  // « plein » (M08, cadres de cartes) : scénario « interférence », Primaires révélées et Secondaires actives des deux
+  // côtés (phase tactique) : les deux rangées sont garnies, cartes du rival comprises.
+  const start = action === 'plein' ? '?scenario=interference' : `?seed=${seed}&autostart=1`;
+  await page.goto(`${server.base}/${start}&qa=1&aiDelay=0&freeze=1${view ? `&view=${view}` : ''}${query}`);
   await page.waitForFunction(() => !!window.__lqv);
-  if (action === 'select') {
+  if (action === 'plein') {
+    const v = await waitDecision(page);
+    const card = v.me.hand.find((x) => x.defId.startsWith('Cendre-4'));
+    await page.click(`[data-key="hand-${card.cardId}"]`);
+    await page.click('[data-drop="primary"]');
+    await page.click('[data-key="stance-assault"]');
+    await page.click('[data-key="act-commit"]');
+    for (let i = 0; i < 6; i++) {
+      const w = await waitDecision(page);
+      if (w.phase !== 'LECTURE') break;
+      await page.click('[data-key="act-lecture-pass"]');
+    }
+  } else if (action === 'select') {
     const v = await waitDecision(page);
     const card = v.me.hand.find((x) => !x.defId.startsWith('sig-'));
     await page.click(`[data-key="hand-${card.cardId}"]`);

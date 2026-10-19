@@ -1,0 +1,90 @@
+{
+  "avant": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-local-cloud-project-2e4bcf/b6f7af5c-8170-4703-bb5e-8fec4b371e78/scratchpad/dist-avant-d018915",
+  "apres": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-local-cloud-project-2e4bcf/b6f7af5c-8170-4703-bb5e-8fec4b371e78/scratchpad/dist-apres",
+  "results": [
+    {
+      "viewport": "1280x720",
+      "rival": "graine 202",
+      "projection": true,
+      "camera": true,
+      "rig": true,
+      "anchors": [
+        ".205",
+        ".455"
+      ],
+      "visage": {
+        "region": [
+          486,
+          43,
+          307,
+          245
+        ],
+        "pixels": 0,
+        "max": 0
+      }
+    },
+    {
+      "viewport": "1280x720",
+      "rival": "braise",
+      "projection": true,
+      "camera": true,
+      "rig": true,
+      "anchors": [
+        ".205",
+        ".455"
+      ],
+      "visage": {
+        "region": [
+          486,
+          43,
+          307,
+          245
+        ],
+        "pixels": 0,
+        "max": 0
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "rival": "graine 202",
+      "projection": true,
+      "camera": true,
+      "rig": true,
+      "anchors": [
+        ".205",
+        ".455"
+      ],
+      "visage": {
+        "region": [
+          730,
+          65,
+          461,
+          367
+        ],
+        "pixels": 0,
+        "max": 0
+      }
+    },
+    {
+      "viewport": "1920x1080",
+      "rival": "braise",
+      "projection": true,
+      "camera": true,
+      "rig": true,
+      "anchors": [
+        ".205",
+        ".455"
+      ],
+      "visage": {
+        "region": [
+          730,
+          65,
+          461,
+          367
+        ],
+        "pixels": 0,
+        "max": 0
+      }
+    }
+  ]
+}

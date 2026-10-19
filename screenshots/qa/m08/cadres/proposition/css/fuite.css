@@ -1,0 +1,7 @@
+/* Point de fuite commun : chaque case penche vers l'axe de la table comme les fuyantes du bois (perspective centrée
+   sur l'axe de l'écran au lieu du centre de chaque case). Même taille, même inclinaison. */
+.view-a .row > .zone:nth-child(1) { --col: -1; }
+.view-a .row > .zone:nth-child(2) { --col: 0; }
+.view-a .row > .zone:nth-child(3) { --col: 1; }
+.view-a .zone { --P: calc(var(--card-w) * 6); --dx: calc(var(--col) * var(--zw) * -1.14); --dy: var(--fdy, 0px); }
+.view-a .zone > .zone-floor, .view-a .zone > .card.on-board, .view-a .zone::before { transform: translateX(-50%) translate(var(--dx), var(--dy)) perspective(var(--P)) translate(calc(-1 * var(--dx)), calc(-1 * var(--dy))) rotateX(var(--ct)); }

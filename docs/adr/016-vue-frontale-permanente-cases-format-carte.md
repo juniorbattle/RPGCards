@@ -5,6 +5,8 @@ Statut : **APPROUVÉ par le responsable** (retours en séance du 2026-10-17 ; ch
 face » parmi trois options proposées). **Amende l'ADR 013** sur la caméra pendant la pose et sur le dessin des cases.
 **Amendé par l’ADR 018** (M07 lot 2, 2026-10-17) : rangées en miroir de 16 vh à 30° en vue A bureau, main à 19 vh,
 cases en contour plein avec libellé gravé dedans ; le principe « cases au format des cartes » est conservé.
+**Amendé par l’amendement 1 de l’ADR 018** (M08, 2026-10-18) : rangée du rival à 0,85 fois celle du joueur, plus loin
+sur la table, Primaire 1,12 fois plus grande que les Secondaires ; les cadres restent le contour de leur carte.
 
 ## Contexte
 
