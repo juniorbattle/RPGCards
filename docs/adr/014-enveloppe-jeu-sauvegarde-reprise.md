@@ -1,6 +1,6 @@
 # ADR 014 — Enveloppe de jeu : flux produit, sauvegarde versionnée et reprise exacte par rejeu (M04–M05)
 Date : 2026-10-17
-Statut : proposé (mandat `docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md` ; respecte ADR 013 sans le modifier)
+Statut : **APPROUVÉ par le responsable le 2026-10-19** (reprise exacte par rejeu ; données de prototype = base provisoire du MVP, à revoir dans M09 ; ARB-002 ratifié) — mandat `docs/missions/M04_M06_PROGRAMME_JEU_OPERATIONNEL.md` ; respecte ADR 013 sans le modifier
 
 **Contexte.** Le runtime M03.2 était un duel isolé : entrée par paramètres d’URL, fin de duel par
 rechargement de la page, aucune persistance. Le programme M04–M06 demande un jeu solo local : accueil,
@@ -54,3 +54,14 @@ tester) ; un framework d’UI pour les menus (le DOM par code suffit, ADR 002).
 **Question d’approbation.** Valider : (1) la reprise exacte par rejeu vérifié ; (2) la forme des données
 de prototype (PV des rivaux, série du Quai, déblocages à la première victoire, collection de départ) ;
 (3) l’affichage public de la Signature et des Techniques du rival avant le duel (ARB-002, inchangé).
+
+## Approbation du responsable — 2026-10-19
+
+Sur la fiche d’arbitrages du 2026-10-19 (artefact privé du responsable, choix enregistrés et relus par la session principale) :
+1. **Reprise exacte par rejeu vérifié : approuvée.**
+2. **Données de prototype** (collection de départ : 16 Basic, 4 Signatures, 4 Techniques, variantes de Rang I ; première
+   victoire contre un rival : variantes II à IV de sa famille et sa Technique distinctive ; PV du joueur fixes à 90 ;
+   aucune monnaie) : **base provisoire du MVP**, à revoir avec la ville (M09), qui apportera l’économie et les récompenses.
+   **Rivaux** (PV Kaï 80, Maëlle 95, Sélène 100, Orin 110 ; série du Quai Kaï → Maëlle → Sélène ; Orin quatrième
+   personnage, duel libre à l’arène) : **structure approuvée**, chiffres réglables à affiner en jeu.
+3. **Signature et Techniques du rival publiques avant le duel (ARB-002) : ratifié** (ADR 004).
