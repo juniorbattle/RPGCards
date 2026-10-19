@@ -44,6 +44,12 @@ Proposition de démo (un seul quartier, **le Port**) :
   hautes à pignon sur rue et encorbellement, bannières du Voile, linge tendu, fontaine, étal de la liseuse ; Sélène
   (duel libre, ouvert après l'avoir rencontrée au Tournoi). Reliée au Quai par sa sortie ouest.
 
+- **Îlot 5 — la Grande Cour** (**décidée** par le responsable le 2026-10-19, ADR 028 ; pas encore construite) : grand
+  espace au cœur de la ville, lieu de rassemblement relié au Quai, au Parvis et aux Ruelles ; place vivante (monument
+  ou fontaine des Quatre Voies au centre, foule de PNJ, étals, estrade de duels publics, tableau des annonces du
+  Tournoi, la guide et des défis de la ville) ; îlot profond (≈ 32 × 18 m, au lieu des bandes d'environ 38 × 6 m),
+  caméra de face plus haute (15 à 20°) qui suit aussi le joueur en profondeur. Construite après la porte HD-2D du Quai.
+
 État au 2026-10-19 (fin du run cloud) : **trois îlots construits** (le Quai, le Parvis, les Ruelles), registre `src/ville/ilots.ts`
 (plan pur, personnages, passants, bornes de caméra, constructeur, liaisons) ; un seul îlot en mémoire à la fois.
 

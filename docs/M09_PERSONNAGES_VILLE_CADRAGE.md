@@ -4,6 +4,14 @@ Date : 2026-10-19 · Statut : **DÉCIDÉ par le responsable le 2026-10-19** (fic
 l'option recommandée, §8 ; ADR 027 ; amendement d'AGENTS appliqué) ; production pas commencée · Rédaction : worktree
 local lancé par la session principale · Départ `d2b266a` (après la passe 47) · JOURNAL passes 48 et 51.
 
+> **Amendé par l'ADR 028 (2026-10-19, passe 54).** Personnages en **pixel art net** (D2), cible de style = la
+> référence initiale, le Quai la nuit vu de face (`reference/generated/2026-10-19-quai-nuit-cameras/02.png`), et non
+> plus la référence D : le §3.4 (style aligné sur la direction D) et l'encre de 2,5 px ne valent plus ; traitement
+> **par scripts seulement**, sans retouche à la main, une image qui ne tient pas est régénérée (D3) ; porte du Quai,
+> décor et duelliste joueur, **30 images au plus** (D4, D10) ; résolution logique et agrandissement entier du pixel art
+> fixés par l'essai technique (D7, D9). Le reste (grille 5 × 3, ancrage, alpha binaire, recoloration par tons clés,
+> provenance, approbation) est inchangé.
+
 Décision du responsable à l'origine (2026-10-19, JOURNAL passe 47, ADR 026 amendement 1) : « le décor d'environnement sur
 nos PNJ, personnages actuels qui ont un design temporaire : on va régénérer cela avec Aseprite et/ou gpt-image-2 ». Ce
 document prépare ce chantier : la règle à amender (§2), le cahier des charges des feuilles (§3), la chaîne de production

@@ -26,7 +26,9 @@ des bornes sont ignorées. Le Quai a été retravaillé (passe de qualité V3, J
 ADR 026, passe 46), enrichie en passe 47 (profondeur de champ, flaques et port en reflet, décors du centre ; ADR 026
 amendement 1), **validée par le responsable** ; le Parvis de l'arène et les Ruelles ont été reconstruits dans la même
 direction en passe 49 (même cadrage, mêmes personnages, grammaire de façade commune ; ADR 026 amendement 2),
-**validés par le responsable** : les trois îlots de la démo sont dans la direction D.
+**validés par le responsable** : les trois îlots de la démo sont dans la direction D. **2026-10-19 (ADR 028)** : le
+responsable ne valide plus cette direction ; la ville passera en HD-2D stylisé (images générées, diorama de plans
+peints, personnages en pixel art), le Quai d'abord, puis la Grande Cour ; d'ici là, ce rendu reste en provisoire.
 
 ## Commandes
 

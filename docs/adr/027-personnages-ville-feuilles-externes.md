@@ -1,7 +1,10 @@
 # ADR 027 — Personnages de la ville en feuilles de sprites produites avec gpt-image-2 et Aseprite (M09)
 
 Date : 2026-10-19
-Statut : **APPROUVÉ par le responsable** (fiche d'arbitrages interactive du 2026-10-19,
+Statut : **AMENDÉ par l'ADR 028** (2026-10-19, passe 54) : D2 « pixel art » au lieu de l'illustration encrée ; D3
+« scripts seulement, une image qui ne tient pas est régénérée » ; D4 « porte du Quai, décor et duelliste joueur » ; D10
+« 30 images au plus » ; D7 et D9 à revoir pour le pixel art par l'essai technique ; garde-fous étendus aux décors de la
+ville. Historique : **APPROUVÉ par le responsable** (fiche d'arbitrages interactive du 2026-10-19,
 <https://claude.ai/artifact/5F8xmaBwRCe7RAhQFiSQmH>, 12 entrées, toutes sur l'option recommandée) ; **code préalable
 fait** (passe 52 : C1, C2, C3, C5, C7, voir « Conséquences faites ») ; **production pas commencée** : essai É0 et porte
 de validation sur le duelliste joueur à venir. Cadrage : `docs/M09_PERSONNAGES_VILLE_CADRAGE.md` (passe 48). Amende la règle « art par code, aucune image externe au runtime » (AGENTS, « Non négociable ») et la règle

@@ -74,13 +74,27 @@ concret de gpt-image-2 (personnages, puis décors) avant d'ouvrir davantage la r
 Cette DA est cohérente avec nos lieux de duel (la rue « le Quai, la nuit », le bar « le Fanal », ADR 022) : la ville
 doit prolonger ces lieux, pas les contredire.
 
+**Nouvelle direction — décisions du responsable du 2026-10-19 (passes 53 et 54, fiche « HD-2D stylisé et grande cour »,
+ADR 028 ; remplace la direction D de l'ADR 026).** « Les décors et personnages ne sont pas qualitatif, je ne valide pas
+la direction artistique » ; cible : **la référence initiale, le Quai la nuit vu de face**
+(`reference/generated/2026-10-19-quai-nuit-cameras/02.png`) en **HD-2D stylisé** : personnages et accessoires en pixel
+art net, décor peint au grain fin, lumière, profondeur de champ, halo, reflets et brume par le moteur. Décor en
+**diorama de plans peints** générés (5 ou 6 plans par îlot), exception d'AGENTS étendue aux décors de la ville ;
+traitement **par scripts seulement** (Aseprite en mode batch, Node), une image qui ne tient pas est régénérée ; **porte
+sur le Quai, 30 images au plus** (décor et duelliste joueur) ; puis **la Grande Cour**, nouvel îlot au cœur de la ville
+relié au Quai, au Parvis et aux Ruelles : place vivante (monument ou fontaine des Quatre Voies, foule, étals, estrade de
+duels publics, annonces du Tournoi, la guide et des défis), îlot profond (≈ 32 × 18 m), caméra de face plus haute (15 à
+20°) qui suit en profondeur ; puis le Parvis et les Ruelles. Décor et personnages par code gardés en provisoire jusqu'à
+leur remplacement. Note du responsable : « je trouve que la direction D est plutôt bonne en soit. mais je sens que nous
+pouvons améliorer/optimiser davantage le rendu » (lecture : ADR 028).
+
 ## Ce qui reste acquis
 
 - Le combat et toute sa présentation (ADR 013 à 023) : le duel garde sa caméra, son plateau, ses HUD et ses lieux.
   La ville **mène** aux duels ; elle ne modifie pas l'écran de duel.
-- Art par code, Three.js + TypeScript ; aucune image ni police externe au runtime, sauf les feuilles de personnages de
-  la ville (gpt-image-2 et Aseprite, manifestes de provenance comme dans Cité du Tournoi), amendement du 2026-10-19
-  (ADR 027).
+- Art par code, Three.js + TypeScript ; aucune image ni police externe au runtime, sauf les images de la ville
+  (feuilles de personnages et décors des îlots, gpt-image-2 et Aseprite, manifestes de provenance comme dans Cité du
+  Tournoi), amendements du 2026-10-19 (ADR 027 et 028).
 - Personnages : socle « vectoriel V2 » (ADR 021) et gabarits PNJ génériques (ADR 023) comme base.
 - Règle des QA aux jalons (AGENTS) ; développement sur `main`.
 
@@ -122,3 +136,5 @@ transformera en fiche interactive pour le responsable.
 | Lot | Objet | Critères d'acceptation |
 |---|---|---|
 | **V3** | **Passe de qualité visuelle du Quai** (passe 45 : livrée pour validation ; planche `screenshots/qa/m09/v3/planche-v3-quai.png` ; **validation du responsable attendue avant le Parvis et les Ruelles**) : plans de profondeur (eau et bord du quai au premier plan, rue, façades, silhouettes lointaines), façades variées et détaillées par code dans la DA de Cité du Tournoi, éclairage de nuit, taille et dessin des personnages, cadrage ajusté à l’œil | comparaison côte à côte avec les références de DA (`reference/generated/`) ; captures avant / après sur GPU réel ; coût par image mesuré sur la 780M et la RTX 4060 ; démo `qa:demo` et jeu par défaut sans régression ; validation du responsable avant d’étendre aux autres îlots |
+| **V4** | **Porte HD-2D stylisé sur le Quai** (ADR 028) : essai technique (2 images annoncées), plans peints du Quai et duelliste joueur en pixel art, traitement par scripts, chargement préparé derrière le fondu, **30 images au plus** | planche *in situ* : référence initiale, Quai actuel (direction D) et Quai de la porte, 1280 × 720 et 1920 × 1080 ; coût par image sur les deux GPU ; démo et jeu par défaut sans régression ; images au manifeste (empreintes, fiches) ; **approbation du responsable** avant d’étendre |
+| **V5** | **La Grande Cour** (ADR 028) : nouvel îlot au cœur de la ville relié au Quai, au Parvis et aux Ruelles ; place vivante ; îlot profond, caméra de face plus haute qui suit en profondeur ; dans la direction validée par V4 | plan pur testé (collisions, zones, liaisons) ; planche ; démo verte ; budget d’images décidé sur le résultat de V4 |
