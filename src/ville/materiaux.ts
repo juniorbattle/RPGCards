@@ -137,8 +137,35 @@ void main(){
   vec3 hemi = mix(uGroundAmb, uSkyAmb, N.y * 0.5 + 0.5);
   float mw = clamp((dot(N, uMoonDir) + 0.14) / 1.14, 0.0, 1.0);
   vec3 diff, spec; lightSum(vWorld, N, V, uWrap, mix(uShin, 220.0, puddle), diff, spec);
+#ifdef ILLU
+  // Direction D (ADR 026) : la lumière des lanternes en aplats à bords doux, comme une illustration (paliers 0,05 /
+  // 0,2 / 0,55 / 1,35 ; sous 0,03, la pénombre reste continue).
+  {
+    float l = dot(diff, vec3(0.3, 0.5, 0.2));
+    float s0 = smoothstep(0.03, 0.045, l);
+    float q = mix(l, 0.05 + 0.15 * smoothstep(0.12, 0.16, l) + 0.35 * smoothstep(0.38, 0.48, l) + 0.8 * smoothstep(0.95, 1.2, l), s0);
+    diff *= mix(1.0, q / max(l, 1e-4), 0.85);
+  }
+#endif
   vec3 col = albedo * (hemi * ao + uMoonCol * mw * 0.85 + diff * mix(1.0, ao, 0.65));
   col += spec * (uSpec + puddle * 1.6) * ao;
+#ifdef ILLU
+  // Hachures de gravure dans les demi-teintes et les ombres, tracées dans le monde (elles ne glissent pas quand la caméra
+  // suit le joueur) : un réseau diagonal, croisé dans les ombres profondes ; effacées quand elles deviennent trop serrées.
+  {
+    vec3 an = abs(N);
+    vec2 hp = an.y > 0.6 ? vWorld.xz : (an.x > an.z ? vWorld.zy : vWorld.xy);
+    float k1 = (hp.x + hp.y) / 0.14;
+    float k2 = (hp.x - hp.y) / 0.14;
+    float a1 = fwidth(k1);
+    float a2 = fwidth(k2);
+    float l1 = (1.0 - smoothstep(0.1 - a1, 0.1 + a1, abs(fract(k1) - 0.5))) * (1.0 - smoothstep(0.25, 0.5, a1));
+    float l2 = (1.0 - smoothstep(0.1 - a2, 0.1 + a2, abs(fract(k2) - 0.5))) * (1.0 - smoothstep(0.25, 0.5, a2));
+    float lum = dot(col, vec3(0.2126, 0.7152, 0.0722));
+    float h = (1.0 - smoothstep(0.015, 0.07, lum)) * l1 * 0.85 + (1.0 - smoothstep(0.004, 0.014, lum)) * l2 * 0.5;
+    col *= 1.0 - clamp(h, 0.0, 1.0) * 0.45 * (1.0 - smoothstep(26.0, 44.0, length(cameraPosition - vWorld)));
+  }
+#endif
 #ifdef MIRROR
   {
     float rough = mix(0.55, 0.06, puddle);
@@ -167,6 +194,8 @@ export interface SurfaceOpts {
   vertexAO?: boolean;
   /** M09 V3 : reflets analytiques des lumières sur un sol mouillé (`lightMirror`). */
   mirror?: boolean;
+  /** M09 V3, direction D (ADR 026) : lumière en aplats et hachures de gravure. */
+  illu?: boolean;
 }
 
 /** Matériau de surface « nuit » : un programme partagé par toutes les matières (seuls les uniformes changent). */
@@ -189,7 +218,7 @@ export function surface(o: SurfaceOpts): THREE.ShaderMaterial {
     vertexShader: SURFACE_VERT,
     fragmentShader: SURFACE_FRAG,
     side: o.side ?? THREE.FrontSide,
-    defines: { ...(o.vertexAO ? { VAO: '' } : {}), ...(o.mirror ? { MIRROR: '' } : {}) },
+    defines: { ...(o.vertexAO ? { VAO: '' } : {}), ...(o.mirror ? { MIRROR: '' } : {}), ...(o.illu ? { ILLU: '' } : {}) },
   });
 }
 

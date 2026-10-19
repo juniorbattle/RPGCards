@@ -173,7 +173,7 @@ function farCity(batch: Batcher, k: ReturnType<typeof kit>, rng: () => number, a
  * Finition commune d'un îlot : géométries fusionnées, ciel, halos additifs (un appel de dessin), lumières dans les
  * uniformes partagés, scintillement, libération.
  */
-export function finish(scene: THREE.Scene, batch: { build(into: THREE.Object3D): number }, lights: LightDef[], extraHalos: readonly { p: THREE.Vector3; size: number; k: number }[], textures: THREE.Texture[]): QuaiScene {
+export function finish(scene: THREE.Scene, batch: { build(into: THREE.Object3D): number }, lights: LightDef[], extraHalos: readonly { p: THREE.Vector3; size: number; k: number; color?: THREE.Color }[], textures: THREE.Texture[]): QuaiScene {
   const meshes = batch.build(scene);
   scene.add(skyDome());
   const haloMat = new THREE.MeshBasicMaterial({ map: haloTexture(), vertexColors: true, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true });
@@ -186,7 +186,7 @@ export function finish(scene: THREE.Scene, batch: { build(into: THREE.Object3D):
     haloGeos.push(g);
   };
   for (const l of lights) if (l.halo) haloQuad(l.x, l.y, l.z + 0.12, l.halo, 0.55, l.color ?? LAMP_WARM);
-  for (const h of extraHalos) haloQuad(h.p.x, h.p.y, h.p.z + 0.05, h.size, h.k, LAMP_WARM);
+  for (const h of extraHalos) haloQuad(h.p.x, h.p.y, h.p.z + 0.05, h.size, h.k, h.color ?? LAMP_WARM);
   if (haloGeos.length) {
     const halos = new THREE.Mesh(mergeGeometries(haloGeos, false)!, haloMat);
     halos.renderOrder = 2;

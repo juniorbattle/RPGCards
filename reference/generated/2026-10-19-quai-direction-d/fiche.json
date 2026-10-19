@@ -1,0 +1,30 @@
+{
+  "demande": "2026-10-19-quai-direction-d",
+  "date": "2026-10-19T17:28:47.128Z",
+  "statut": "référence de travail ; direction D retenue par le responsable le 2026-10-19 (« Je retiens la direction D : décor encré comme une illustration de carte, avec les couleurs des quatre familles. »)",
+  "usage": "référence de conception de la direction artistique du décor de la ville (M09 V3), jamais dans le jeu ni dans le build",
+  "remarque": "l'image emploie des enseignes du jeu de cartes classique (pique, trèfle) : dans le jeu, ce sont les emblèmes des quatre familles (src/art/emblems.ts) qui les remplacent",
+  "format": "1536x1024",
+  "quality": "medium",
+  "images": [
+    {
+      "file": "01.png",
+      "model": "gpt-image-2",
+      "prompt": "Concept art in a FRONTAL 2.5D side-on view with a gentle 8-degree downward tilt (the camera faces the building fronts like a stage seen from the stalls; NOT top-down, NOT isometric): a night harbour quay in a port city where people challenge each other to card duels. Bottom of the image: dark water with long lantern reflections and two moored boats with masts and rigging. Then the stone quay wall with iron mooring rings and a small water stair. Middle: a wet cobbled quay street where a small chibi-proportioned hooded card duellist in a long coat walks, a market stall with an ivory canvas awning and a cluster of hanging lanterns, iron lamp posts. Behind: a row of varied facades: a stone card hall with four tall family banners and arched doors, a narrow half-timbered house with its gable facing the street, the Fanal tavern with a wooden balcony, an open glowing door and a hanging lantern sign, a shipowner's house; slate roofs, chimneys, dormers. Far behind: an upper town climbing a hill with a cathedral, and a low moon. Four card families: Ember (orange embers), Veil (blue and silver), Bramble (green thorns), Star (gold stars). No readable text, no letters, no logos, no watermark, no modern objects.\n\nArt style: the inked illustration of a collectible playing card combined with the colour identity of the four card families: hand-inked contour lines on every edge, flat colour shapes with one or two shading bands, fine hatching in the shadows, a subtle paper grain; deep ink-blue night; each family brings its jewel colour to lights and glass (ember-orange braziers and lanterns at the tavern, bramble-green lamps at the stall, a blue-silver Veil moonlight on the hill town, star-gold gilding on emblems, sign frames and ironwork); softly glowing card-suit glyphs on the quay wall and lamp posts; stained glass with the family emblems in the card hall. Graphic, elegant, readable, theatrical.",
+      "usage": {
+        "input_tokens": 449,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 449
+        },
+        "output_tokens": 1372,
+        "output_tokens_details": {
+          "image_tokens": 1372,
+          "text_tokens": 0
+        },
+        "total_tokens": 1821
+      },
+      "variantes non retenues": "A encre et feuille d'or, B théâtre de papier, C la ville des Quatre Voies (brouillons dans art-gen/, non commités)"
+    }
+  ]
+}

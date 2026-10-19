@@ -40,6 +40,12 @@ La session principale surveille `origin/main`, génère les images, puis :
 
 ## Bible de style ajoutée à chaque prompt
 
+> **Direction D (décision du responsable, 2026-10-19, ADR 026)** : pour la ville, illustration de carte encrée (contours
+> à l'encre, aplats à une ou deux ombres, hachures fines dans les ombres, grain de papier) et couleurs des quatre
+> familles en accents lumineux (Cendre braise, Voile bleu argenté, Ronce vert, Astre or) sur une nuit bleu d'encre ;
+> vitraux et glyphes des familles, dorures. Cette direction remplace « ambre comme seul accent chaud » ci-dessous pour
+> la ville. Référence approuvée : `reference/generated/2026-10-19-quai-direction-d/`.
+
 HD-2D théâtral, rendu illustré et soigné, mise en scène comme une pièce de théâtre ; nuit à dominante presque
 monochrome **indigo / ardoise**, **pierre froide** en secondaire, **lumière ambrée comme seul accent chaud**, **ivoire
 désaturé** pour les toiles et les rehauts ; accessoires concentrés aux points focaux (lanternes, bord du quai, étals,

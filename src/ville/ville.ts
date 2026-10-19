@@ -94,6 +94,7 @@ void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(p
 const FINISH_FRAG = /* glsl */ `
 precision highp float;
 uniform sampler2D tDiffuse; uniform vec2 uTexel; uniform float uAspect; uniform float uTilt; uniform float uFocusY; uniform float uFocusW;
+uniform float uPaper;
 #include <tonemapping_pars_fragment>
 #include <colorspace_pars_fragment>
 varying vec2 vUv;
@@ -110,15 +111,62 @@ void main(){
     c = acc / n;
   }
   float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
+  // direction D : couleurs de joaillerie un peu plus franches (vitraux, lanternes des familles)
+  if (uPaper > 0.0) c = max(mix(vec3(l), c, 1.14), 0.0);
   c = mix(c, c * vec3(0.92, 0.98, 1.22), (1.0 - smoothstep(0.0, 0.2, l)) * 0.6);
   c *= mix(vec3(1.0), vec3(1.07, 1.0, 0.9), smoothstep(0.25, 1.2, l));
   c += vec3(0.005, 0.008, 0.017) * (1.0 - smoothstep(0.0, 0.08, l));
   vec2 p = (vUv - vec2(0.5, 0.5)) * vec2(uAspect, 1.0);
   float r = length(p) / length(vec2(uAspect * 0.5, 0.5));
   c *= 1.0 - smoothstep(0.45, 1.05, r) * 0.42;
+  if (uPaper > 0.0) {
+    // grain de papier (direction D) : fibres fines et ondulation douce, fixes à l'écran comme le support d'une carte
+    vec2 px = vUv / uTexel;
+    float h = fract(sin(dot(floor(px), vec2(12.9898, 78.233))) * 43758.5453);
+    float fib = sin(px.x * 0.37 + sin(px.y * 0.051) * 4.0) * 0.5 + 0.5;
+    c *= 1.0 - uPaper * (0.035 * h + 0.025 * fib);
+  }
   gl_FragColor = vec4(ACESFilmicToneMapping(c), 1.0);
   gl_FragColor = sRGBTransferOETF(gl_FragColor);
 }`;
+
+/**
+ * M09 V3, direction D (« décor encré comme une illustration de carte », ADR 026) : contours à l'encre tirés de la
+ * profondeur, avant le halo et le flou de bascule (les traits se fondent dans le flou comme le reste de l'image).
+ * La profondeur 1/z est linéaire à l'écran sur un plan : son laplacien relatif est nul sur une surface plane et marque
+ * les plis et les marches (poutres en saillie de 9 cm, encadrements, rives de toit) ; un saut relatif marque les
+ * silhouettes (bâtiments sur le ciel, personnages). Traits plus légers au loin (ville haute).
+ */
+const INK_FRAG = /* glsl */ `
+precision highp float;
+uniform sampler2D tDiffuse; uniform sampler2D tDepth; uniform vec2 uTexel; uniform float uNear; uniform float uFar;
+uniform float uInk; uniform vec3 uInkColor; uniform vec4 uInkEdge; uniform float uInkW;
+varying vec2 vUv;
+float invZ(vec2 uv){ float d = texture2D(tDepth, uv).x; return (uFar - (uFar - uNear) * d) / (uNear * uFar); }
+float edgeAt(vec2 uv, vec2 o, float w0){
+  float wl = invZ(uv - vec2(o.x, 0.0)), wr = invZ(uv + vec2(o.x, 0.0));
+  float wd = invZ(uv - vec2(0.0, o.y)), wu = invZ(uv + vec2(0.0, o.y));
+  float lap = abs(wl + wr + wd + wu - 4.0 * w0) / w0;
+  float jump = max(max(abs(wl - w0), abs(wr - w0)), max(abs(wd - w0), abs(wu - w0))) / w0;
+  return max(smoothstep(uInkEdge.x, uInkEdge.y, lap), smoothstep(uInkEdge.z, uInkEdge.w, jump));
+}
+void main(){
+  vec3 c = texture2D(tDiffuse, vUv).rgb;
+  float w0 = invZ(vUv);
+  // trait d'environ deux pixels à 1280 × 720, trois à 1920 × 1080 : deux voisinages, le plus marqué l'emporte
+  float e = max(edgeAt(vUv, uTexel, w0), 0.8 * edgeAt(vUv, uTexel * uInkW, w0));
+  float z = 1.0 / max(w0, 1e-6);
+  e *= 1.0 - smoothstep(30.0, 110.0, z) * 0.55;
+  gl_FragColor = vec4(mix(c, uInkColor, e * uInk), 1.0);
+}`;
+
+/** Passe d'encre : lit la profondeur du tampon où la scène vient d'être rendue (les tampons du compositeur alternent). */
+class InkPass extends ShaderPass {
+  override render(renderer: THREE.WebGLRenderer, writeBuffer: THREE.WebGLRenderTarget, readBuffer: THREE.WebGLRenderTarget, deltaTime: number, maskActive: boolean): void {
+    this.uniforms.tDepth!.value = readBuffer.depthTexture;
+    super.render(renderer, writeBuffer, readBuffer, deltaTime, maskActive);
+  }
+}
 
 /** Flou de bascule par caméra (discret en frontale : surtout le haut des façades et le premier plan). */
 const TILT: Record<CameraId, { amount: number; width: number }> = { frontale: { amount: 0.55, width: 0.24 } };
@@ -183,9 +231,22 @@ export function createTown(o: TownOptions): Town {
   let walker = newWalker(spawn, spawn.face ?? 'face');
 
   // --- post-traitement ---
-  const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType }));
+  // Cible avec texture de profondeur (passe d'encre) ; le compositeur la clone pour son second tampon.
+  const sceneTarget = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType });
+  sceneTarget.depthTexture = new THREE.DepthTexture(1, 1);
+  const composer = new EffectComposer(renderer, sceneTarget);
   const renderPass = new RenderPass(scene, camera);
   composer.addPass(renderPass);
+  const ink = new InkPass(new THREE.RawShaderMaterial({
+    name: 'VilleEncre',
+    uniforms: {
+      tDiffuse: { value: null }, tDepth: { value: null }, uTexel: { value: new THREE.Vector2() }, uNear: { value: 0.5 }, uFar: { value: 400 },
+      uInk: { value: 0.92 }, uInkColor: { value: new THREE.Color(0.005, 0.006, 0.018) }, uInkEdge: { value: new THREE.Vector4(0.0008, 0.003, 0.008, 0.025) }, uInkW: { value: 2 },
+    },
+    vertexShader: FINISH_VERT,
+    fragmentShader: INK_FRAG,
+  }));
+  composer.addPass(ink);
   const bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.42, 0.55, 0.92);
   const bloomSize = bloom.setSize.bind(bloom);
   bloom.setSize = (w: number, h: number) => bloomSize(Math.max(1, Math.round(w / 2)), Math.max(1, Math.round(h / 2)));
@@ -194,7 +255,7 @@ export function createTown(o: TownOptions): Town {
     name: 'VilleFinition',
     uniforms: {
       tDiffuse: { value: null }, uTexel: { value: new THREE.Vector2() }, uAspect: { value: 16 / 9 }, toneMappingExposure: { value: 1.05 },
-      uTilt: { value: 1 }, uFocusY: { value: 0.45 }, uFocusW: { value: 0.16 },
+      uTilt: { value: 1 }, uFocusY: { value: 0.45 }, uFocusW: { value: 0.16 }, uPaper: { value: 0 },
     },
     defines: { ACES_FILMIC_TONE_MAPPING: '', SRGB_TRANSFER: '' },
     vertexShader: FINISH_VERT,
@@ -203,6 +264,10 @@ export function createTown(o: TownOptions): Town {
   composer.addPass(finish);
 
   const applyRig = () => {
+    const encre = def.style === 'encre';
+    ink.enabled = encre;
+    finish.uniforms.uPaper!.value = encre ? 1 : 0;
+    finish.uniforms.toneMappingExposure!.value = encre ? 1.22 : 1.05;
     const tl = TILT[rig.params.id];
     finish.uniforms.uTilt!.value = tl.amount;
     finish.uniforms.uFocusW!.value = tl.width;
@@ -221,6 +286,10 @@ export function createTown(o: TownOptions): Town {
     (finish.uniforms.uTexel!.value as THREE.Vector2).set(1 / (w * pixelRatio), 1 / (h * pixelRatio));
     finish.uniforms.uAspect!.value = w / h;
     rig.resize(camera, w / h);
+    (ink.uniforms.uTexel!.value as THREE.Vector2).set(1 / (w * pixelRatio), 1 / (h * pixelRatio));
+    ink.uniforms.uInkW!.value = Math.max(1.5, (h * pixelRatio) / 540);
+    ink.uniforms.uNear!.value = camera.near;
+    ink.uniforms.uFar!.value = camera.far;
   };
   window.addEventListener('resize', resize);
   resize();

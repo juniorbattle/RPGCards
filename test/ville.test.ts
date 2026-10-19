@@ -174,6 +174,13 @@ describe('ville : caméra frontale (ADR 024)', () => {
     expect(ILOTS.parvis.walkerH).toBeUndefined();
     expect(ILOTS.ruelles.walkerH).toBeUndefined();
   });
+
+  it('M09 V3, direction D (ADR 026) : le Quai est rendu à l’encre ; le Parvis et les Ruelles pas encore', async () => {
+    const { ILOTS } = await import('../src/ville/ilots');
+    expect(ILOTS.quai.style).toBe('encre');
+    expect(ILOTS.parvis.style).toBeUndefined();
+    expect(ILOTS.ruelles.style).toBeUndefined();
+  });
 });
 
 describe('ville : îlot et produit', () => {
