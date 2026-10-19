@@ -5,6 +5,8 @@
 plus bas). Elle ne change **aucune règle** du duel (V3.0, delta V3.2, D-01 ratifié en V3.3) ni la confidentialité des
 secrets (ADR 011).
 
+**DÉCISION DU RESPONSABLE (2026-10-19, pendant le run) : caméra d'exploration = FRONTALE 2.5D.** « Non, on ne veut pas d'inclinaison, mais frontale. » La vue de dessus inclinée est abandonnée : ne la construis pas (ou retire-la du laboratoire), fais V1 et V2 directement en frontale 2.5D (≈ 10–20°, plans de profondeur), et demande les images de référence en frontale. ADR 024 : statut « approuvé, frontale 2.5D ».
+
 ## Direction du responsable
 
 - « Maintenant que nous avons une base solide, je veux optimiser le plus possible notre structure actuelle et

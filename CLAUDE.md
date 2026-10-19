@@ -4,6 +4,8 @@
 
 Le développement se fait **directement sur `main`** : commit puis push sur `main` après validation (typecheck, tests, build ; vérification ciblée quand le rendu change). **Campagnes de QA complètes** (`qa:browser`, `qa:product`, `qa:rc`, séries GPU sur les deux cartes, comparaisons au pixel près répétées) **aux jalons seulement** : quand un atout majeur est consolidé ou que la conception a réellement avancé (règle du responsable du 2026-10-19, JOURNAL). **Pas de branche provisoire ni de PR**, sauf demande explicite du responsable. Ne jamais réécrire l’historique de `main` (pas de force-push, pas de rebase de commits publiés). Les branches `claude/*` M01–M03 sont de l’historique, déjà intégré.
 
+> **DÉCISION DU RESPONSABLE (2026-10-19, pendant le run) : caméra d'exploration = FRONTALE 2.5D.** « Non, on ne veut pas d'inclinaison, mais frontale. » La vue de dessus inclinée est abandonnée : ne la construis pas (ou retire-la du laboratoire), fais V1 et V2 directement en frontale 2.5D (≈ 10–20°, plans de profondeur), et demande les images de référence en frontale. ADR 024 : statut « approuvé, frontale 2.5D ».
+
 ## MANDAT SUIVANT — M09 : ville d'exploration HD-2D (préparé le 2026-10-19)
 
 Lire `docs/missions/M09_VILLE_EXPLORATION_HD2D.md` (et le brief de la session cloud `docs/missions/BRIEF_SESSION_CLOUD_2026-10-19.md`). Démarre après M08 C5 (RC 0.8) si le combat est sain : cadrage de la ville, laboratoire de caméra (dessus inclinée contre frontale 2.5D), décision de caméra au responsable. DA de Cité du Tournoi (RPG-ArtByCode) autorisée en référence, sans sa caméra ; règles et secrets inchangés.
