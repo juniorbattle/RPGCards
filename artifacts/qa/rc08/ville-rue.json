@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-19T06:45:39.331Z",
+  "commit": "4a30504+arbre de travail",
+  "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU",
+  "encounters": {
+    "quai-1": {
+      "playable": true,
+      "venue": "salle"
+    },
+    "libre-braise": {
+      "playable": true,
+      "venue": "rue"
+    },
+    "ville-pnj-docker-1": {
+      "playable": true,
+      "venue": "rue"
+    },
+    "ville-pnj-marchande-9": {
+      "playable": true,
+      "venue": "rue"
+    },
+    "ville-pnj-commis-5": {
+      "playable": true,
+      "venue": "rue"
+    },
+    "ville-pnj-joueuse-5": {
+      "playable": true,
+      "venue": "rue"
+    }
+  },
+  "duel": {
+    "encounter": "ville-pnj-docker-1",
+    "venue": "rue"
+  },
+  "issues": [],
+  "ok": true
+}

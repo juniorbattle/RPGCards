@@ -97,7 +97,7 @@ const FREE_VENUE: Partial<Record<RivalPersonality['id'], VenueId>> = { braise: '
 export const ENCOUNTERS: Encounter[] = [
   ...SERIES.steps.map((rival, i) => ({ id: `quai-${i + 1}`, rival, kind: 'series' as const, step: i + 1, title: `${SERIES.title} — manche ${i + 1} sur ${SERIES.steps.length}`, venue: DEFAULT_VENUE })),
   ...PERSONALITIES.map((p) => ({ id: `libre-${p.id}`, rival: p.id, kind: 'free' as const, title: `Duel libre — ${p.name}`, venue: FREE_VENUE[p.id] ?? DEFAULT_VENUE })),
-  ...TOWN_DUELS.map((id) => { const p = personalityOf(id); return { id: `ville-${id}`, rival: id, kind: 'town' as const, venue: DEFAULT_VENUE, title: `Duel de la ville — ${p.name}, ${NPC_TEMPLATES[p.npc!].label.toLowerCase()}` }; }),
+  ...TOWN_DUELS.map((id) => { const p = personalityOf(id); return { id: `ville-${id}`, rival: id, kind: 'town' as const, venue: 'rue' as const, title: `Duel de la ville — ${p.name}, ${NPC_TEMPLATES[p.npc!].label.toLowerCase()}` }; }),
 ];
 
 export function encounterById(id: string): Encounter | null {
