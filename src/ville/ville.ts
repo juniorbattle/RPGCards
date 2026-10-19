@@ -8,6 +8,10 @@
  * personnage, étalonnage ombres froides / hautes lumières chaudes, vignettage, ACES, sRGB) en une seule passe.
  * Îlots à l'encre (direction D, ADR 026) : passe d'encre puis, si l'îlot le demande (passe 47), flou de profondeur à la
  * place du flou de bascule ; reflet plan de la rue rendu avant la scène (`reflets.ts`) pour les flaques et le port.
+ * M09 V4 (ADR 028) : un îlot dont le diorama de plans peints est admis (`decors.ts`) est construit en diorama
+ * (`diorama.ts`) au lieu de son décor par code ; la décision est prise avant la construction, les plans décodés et envoyés
+ * au GPU avant l'entrée (derrière le fondu de la démo), l'image retenue tant qu'elle attend ; sans diorama admis, l'îlot
+ * garde son décor par code. Diorama : pas d'encre ni de papier, la passe d'encre ne fait que porter la profondeur au flou.
  */
 import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
@@ -15,6 +19,8 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { createRig, RIGS, type CameraId, type CameraRig, type RigTuning } from './cameras';
+import { createDecorResolver, type DecorReport, type DecorState } from './decors';
+import { buildDiorama } from './diorama';
 import { ILOTS, type IlotDef, type IlotId, type Passer } from './ilots';
 import { activeZone, nearestFree, newWalker, stepWalker, type Facing, type Ilot, type Vec2, type Walker, type Zone } from './monde';
 import type { IlotNpc } from './quai';
@@ -45,6 +51,11 @@ export interface TownOptions {
    * du manifeste, `qa` aussi les autres (signalées), `code` garde l'atlas dessiné par code.
    */
   sprites?: SpritePolicy;
+  /**
+   * Plans de décor (ADR 028, `decorPolicy`) : `approuvees` (défaut, jeu) n'accepte que les dioramas dont tous les plans
+   * sont approuvés, `qa` aussi les autres (signalés), `code` garde le décor par code.
+   */
+  decors?: SpritePolicy;
   /** Réglages de cadrage pris dans l'URL (`rig=…`, `parseRig`), par-dessus ceux de l'îlot : ajustement à l'œil (fiche B1). */
   rig?: RigTuning | null;
 }
@@ -90,13 +101,19 @@ export interface Town {
    */
   externalReport(): ExternalReport & { hiddenFrames: number };
   /**
-   * Prépare les feuilles des personnages d'un îlot (décodage, envoi au GPU) avant d'y entrer, derrière le fondu
-   * (C3, ADR 027) ; résolu quand chacune est prête ou refusée.
+   * Plans de décor (ADR 028) : politique, îlots en diorama, plans non approuvés (QA), refus motivés, temps et mémoire GPU ;
+   * `world` : décor de l'îlot courant ; `pendingFrames` : images rendues alors que la décision du décor attendait encore
+   * (0 attendu) ; `late` : dioramas prêts après le délai, l'îlot ayant déjà été montré avec son décor par code.
+   */
+  decorReport(): DecorReport & { ilot: IlotId; world: 'code' | 'diorama'; pendingFrames: number; late: string[] };
+  /**
+   * Prépare les feuilles des personnages d'un îlot et son diorama (décodage, envoi au GPU) avant d'y entrer, derrière
+   * le fondu (C3, ADR 027 ; ADR 028) ; résolu quand chacun est prêt ou refusé.
    */
   prepare(id: IlotId): Promise<void>;
-  /** Les feuilles de cet îlot sont-elles déjà décidées (prêtes ou refusées) ? Alors `goTo` n'attend rien. */
+  /** Les feuilles et le décor de cet îlot sont-ils déjà décidés (prêts ou refusés) ? Alors `goTo` n'attend rien. */
   isPrepared(id: IlotId): boolean;
-  /** Résolu quand aucun personnage de l'îlot courant n'attend plus sa feuille (crochets de QA, captures). */
+  /** Résolu quand aucun personnage de l'îlot courant n'attend plus sa feuille ni l'îlot son décor (crochets de QA). */
   ready(): Promise<void>;
   /** Rend une image tout de suite (captures en temps figé). */
   renderNow(): void;
@@ -263,7 +280,18 @@ export function createTown(o: TownOptions): Town {
   });
   const castOf = (d: IlotDef) => [o.player, ...d.npcs.map((n) => n.id), ...d.ambient.map((a) => a.id)];
   void sheets.prepare(castOf(def));
-  let world: QuaiScene = def.build(o.artSeed);
+  // Plans de décor (ADR 028) : décision immédiate si le manifeste est déjà lu et les plans décodés (`preloadDecors`,
+  // laboratoire et démo), sinon décor par code construit tout de suite et image retenue jusqu'à la décision (au plus
+  // `HOLD_MS`) : un diorama admis le remplace alors avant la première image.
+  const decors = createDecorResolver(o.decors ?? 'approuvees', (t) => renderer.initTexture(t));
+  void decors.prepare(def.id);
+  let worldKind: 'code' | 'diorama' = 'code';
+  const buildWorld = (d: IlotDef, st: DecorState): QuaiScene => {
+    worldKind = st.state === 'diorama' ? 'diorama' : 'code';
+    return st.state === 'diorama' ? buildDiorama(d, st.diorama, o.artSeed) : d.build(o.artSeed);
+  };
+  const decorAtStart = decors.peek(def.id);
+  let world: QuaiScene = buildWorld(def, decorAtStart);
   let scene = world.scene;
   const camera = new THREE.PerspectiveCamera(30, 16 / 9, 0.5, 400);
   // la caméra principale voit aussi ce que le reflet ne montre pas (sol, eau, brumes)
@@ -279,8 +307,15 @@ export function createTown(o: TownOptions): Town {
   const pending = new Map<WalkerSprite, string>();
   let pendingSince = 0;
   let hiddenFrames = 0;
+  // décor de l'îlot courant pas encore décidé (manifeste ou plans en cours) : image retenue, comme pour les feuilles
+  let decorPending = decorAtStart.state === 'attente';
+  let decorSince = performance.now();
+  let decorPendingFrames = 0;
+  /** Images rendues depuis l'entrée dans l'îlot courant (un diorama prêt trop tard ne remplace plus un décor déjà vu). */
+  let visitFrames = 0;
+  const decorLate: string[] = [];
   const waiters: (() => void)[] = [];
-  const flush = () => { if (!pending.size) for (const f of waiters.splice(0)) f(); };
+  const flush = () => { if (!pending.size && !decorPending) for (const f of waiters.splice(0)) f(); };
   const applySheet = (id: string, s: WalkerSprite) => {
     const st = sheets.peek(id);
     if (st.state === 'prete') { s.setSheet(st.sheet); s.group.visible = true; return; }
@@ -372,10 +407,13 @@ export function createTown(o: TownOptions): Town {
   composer.addPass(finish);
 
   const applyRig = () => {
-    const encre = def.style === 'encre';
-    ink.enabled = encre;
+    // diorama (ADR 028) : ni encre ni papier ; la passe d'encre, à force nulle, ne fait que porter la profondeur au flou
+    const peint = worldKind === 'diorama';
+    const encre = def.style === 'encre' && !peint;
+    ink.enabled = encre || peint;
+    ink.uniforms.uInk!.value = peint ? 0 : 0.92;
     // le flou de profondeur lit la profondeur écrite par la passe d'encre ; il remplace alors le flou de bascule
-    dof.enabled = encre && !!def.dof;
+    dof.enabled = (encre || peint) && !!def.dof;
     finish.uniforms.uPaper!.value = encre ? 1 : 0;
     finish.uniforms.toneMappingExposure!.value = encre ? 1.22 : 1.05;
     if (def.reflets) U.uReflProxy.value.set(def.reflets.proxyZ, def.reflets.proxyY);
@@ -506,13 +544,15 @@ export function createTown(o: TownOptions): Town {
     composer.render();
     cpuMs = performance.now() - c0;
     frames++;
+    visitFrames++;
     if (pending.size) hiddenFrames++;
+    if (decorPending) decorPendingFrames++;
     if (firstFrameMs === null) firstFrameMs = Math.round(performance.now() - t0);
     if (mountT0 !== null) { mountFrameMs = Math.round(performance.now() - mountT0); mountT0 = null; }
   };
-  /** Feuilles en attente : l'image précédente reste (ou rien, à la première entrée), au plus `HOLD_MS`. */
+  /** Feuilles ou décor en attente : l'image précédente reste (ou rien, à la première entrée), au plus `HOLD_MS`. */
   const HOLD_MS = 1500;
-  const holding = () => pending.size > 0 && performance.now() - pendingSince < HOLD_MS;
+  const holding = () => (pending.size > 0 && performance.now() - pendingSince < HOLD_MS) || (decorPending && performance.now() - decorSince < HOLD_MS);
   const tick = (now: number) => {
     raf = requestAnimationFrame(tick);
     if (paused) { last = now; return; }
@@ -551,24 +591,62 @@ export function createTown(o: TownOptions): Town {
   raf = requestAnimationFrame(tick);
   const buildMs = Math.round(performance.now() - t0);
 
-  /** Démonte l'îlot courant (personnages, passants, scène) et monte le suivant ; le renderer et le post-traitement restent. */
-  const mount = (id: IlotId, spawnKey: string) => {
-    const m0 = performance.now();
-    mountT0 = m0;
+  /** Retire les personnages de l'îlot courant (le joueur reste, détaché), puis sa scène. */
+  const unmountWorld = () => {
     scene.remove(playerSprite.group);
     for (const e of npcSprites) { pending.delete(e.s); e.s.dispose(); e.marker.geometry.dispose(); (e.marker.material as THREE.Material).dispose(); }
     for (const p of passers) { pending.delete(p.s); p.s.dispose(); }
     world.dispose();
-    def = ILOTS[id];
-    // feuilles de l'îlot d'arrivée : déjà prêtes si l'appelant les a préparées derrière le fondu (`prepare`)
-    void sheets.prepare(castOf(def));
-    world = def.build(o.artSeed);
+  };
+  /** Monte la scène de l'îlot `def` selon la décision de son décor, puis le joueur, les PNJ et les passants. */
+  const mountWorld = (st: DecorState) => {
+    world = buildWorld(def, st);
     scene = world.scene;
     renderPass.scene = scene;
     scene.add(playerSprite.group);
     playerSprite.setHeight(walkerH());
     npcSprites = makeNpcs();
     passers = makePassers();
+  };
+  /**
+   * Décor de l'îlot courant pas encore décidé : image retenue (au plus `HOLD_MS`) ; à la décision, un diorama admis
+   * remplace le décor par code s'il n'a pas encore été montré, sinon l'îlot le garde pour cette visite (rapporté).
+   */
+  const settleDecor = (id: IlotId) => {
+    decorPending = true;
+    decorSince = performance.now();
+    void decors.prepare(id).then(() => {
+      if (def.id !== id || !decorPending) return;
+      decorPending = false;
+      const st = decors.peek(id);
+      if (st.state === 'diorama' && worldKind === 'code') {
+        if (visitFrames === 0) {
+          unmountWorld();
+          mountWorld(st);
+          applyRig();
+          resize();
+        } else decorLate.push(`${id} : diorama prêt après ${Math.round(performance.now() - decorSince)} ms, décor par code gardé pour cette visite`);
+      }
+      flush();
+    });
+  };
+
+  /** Démonte l'îlot courant (personnages, passants, scène) et monte le suivant ; le renderer et le post-traitement restent. */
+  const mount = (id: IlotId, spawnKey: string) => {
+    const m0 = performance.now();
+    mountT0 = m0;
+    unmountWorld();
+    const prev = def.id;
+    def = ILOTS[id];
+    // feuilles et diorama de l'îlot d'arrivée : déjà prêts si l'appelant les a préparés derrière le fondu (`prepare`)
+    void sheets.prepare(castOf(def));
+    const st = decors.peek(def.id);
+    mountWorld(st);
+    // les plans de l'îlot quitté sont libérés (un retour les prépare de nouveau)
+    if (prev !== def.id) decors.release(prev);
+    visitFrames = 0;
+    decorPending = false;
+    if (st.state === 'attente') settleDecor(def.id);
     const sp = def.ilot.spawns[spawnKey] ?? def.ilot.spawns.arrivee!;
     walker = newWalker(sp, sp.face ?? walker.facing);
     target = null;
@@ -580,6 +658,8 @@ export function createTown(o: TownOptions): Town {
     mountMs = Math.round(performance.now() - m0);
     flush();
   };
+  // première entrée sans décision du décor (manifeste pas encore lu) : décor par code construit, image retenue
+  if (decorPending) settleDecor(def.id);
 
   return {
     get ilot() { return def.ilot; },
@@ -610,9 +690,11 @@ export function createTown(o: TownOptions): Town {
       };
     },
     externalReport: () => ({ ...sheets.report(), hiddenFrames }),
-    prepare: (id) => sheets.prepare(castOf(ILOTS[id])),
-    isPrepared: (id) => castOf(ILOTS[id]).every((x) => sheets.peek(x).state !== 'attente'),
-    ready: () => (pending.size ? new Promise<void>((res) => waiters.push(res)) : Promise.resolve()),
+    decorReport: () => ({ ...decors.report(), ilot: def.id, world: worldKind, pendingFrames: decorPendingFrames, late: [...decorLate] }),
+    // plans décodés puis envoyés au GPU dès qu'ils sont prêts (`peek`), pendant le fondu : `goTo` n'a plus qu'à construire
+    prepare: (id) => Promise.all([sheets.prepare(castOf(ILOTS[id])), decors.prepare(id).then(() => { decors.peek(id); })]).then(() => undefined),
+    isPrepared: (id) => castOf(ILOTS[id]).every((x) => sheets.peek(x).state !== 'attente') && decors.peek(id).state !== 'attente',
+    ready: () => (pending.size || decorPending ? new Promise<void>((res) => waiters.push(res)) : Promise.resolve()),
     renderNow() { rig.update(camera, walker.pos, 0, true); render(); },
     walkerH,
     setMarkers(m) {
@@ -642,6 +724,7 @@ export function createTown(o: TownOptions): Town {
       for (const t of MARKERS.values()) t.dispose();
       MARKERS.clear();
       world.dispose();
+      decors.release(def.id);
       refl.dispose();
       composer.dispose();
       renderer.dispose();

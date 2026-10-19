@@ -10,7 +10,10 @@ local lancé par la session principale · Départ `d2b266a` (après la passe 47)
 > **par scripts seulement**, sans retouche à la main, une image qui ne tient pas est régénérée (D3) ; porte du Quai,
 > décor et duelliste joueur, **30 images au plus** (D4, D10) ; résolution logique et agrandissement entier du pixel art
 > fixés par l'essai technique (D7, D9). Le reste (grille 5 × 3, ancrage, alpha binaire, recoloration par tons clés,
-> provenance, approbation) est inchangé.
+> provenance, approbation) est inchangé. **Passe 55 : contrat v3 des feuilles** (`spritesExternes.ts`) : `pixel: true`,
+> grille d'art `cell` déclarée (16 × 24 à 96 × 160 px d'art par case), agrandissement entier `scale` (1 à 8), ancrage et
+> figure en px d'art ; lecture au plus proche, tons clés reconnus à l'octet près et recolorés exactement (un pixel d'art
+> en ton clé n'a plus besoin d'être bordé d'encre ; aucune autre couleur ne doit être exactement un ton clé).
 
 Décision du responsable à l'origine (2026-10-19, JOURNAL passe 47, ADR 026 amendement 1) : « le décor d'environnement sur
 nos PNJ, personnages actuels qui ont un design temporaire : on va régénérer cela avec Aseprite et/ou gpt-image-2 ». Ce

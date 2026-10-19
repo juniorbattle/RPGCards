@@ -593,11 +593,48 @@ vec3 recolorKeys(vec3 c){
   }
   return mix(c, best, bw);
 }
+#ifdef PIXEL
+// Pixel art (contrat v3, ADR 028) : la feuille garde ses octets sRGB (texture sans conversion, lue au plus proche).
+// Chaque pixel d'art est lu au centre de son bloc, reconnu à l'octet près s'il est un ton clé et remplacé par la rampe
+// du personnage (exacte, sans liseré), sinon converti en linéaire ; puis les quatre pixels d'art voisins sont mêlés par
+// un pas net d'un pixel d'écran (« pixel épais ») : aplats exacts, aucun scintillement à un agrandissement non entier.
+uniform vec2 uArt;
+const vec4 KEY_8 = vec4(64.0, 128.0, 191.0, 255.0);
+vec3 srgbToLin(vec3 c){ return mix(c * 0.0773993808, pow(c * 0.9478672986 + 0.0521327014, vec3(2.4)), step(0.04045, c)); }
+vec3 recolorExact(vec3 raw){
+  vec3 q = floor(raw * 255.0 + 0.5);
+  for (int s = 0; s < 5; s++) {
+    if (uSlots[s] < 0.5) continue;
+    vec3 m = keyMask(s);
+    for (int l = 0; l < 4; l++) {
+      if (all(equal(q, m * KEY_8[l]))) return uRamp[s * 4 + l];
+    }
+  }
+  return srgbToLin(raw);
+}
+vec4 artTexel(vec2 p, vec2 lo, vec2 hi){
+  vec4 t = texture2D(tAtlas, (clamp(p, lo, hi) + 0.5) / uArt);
+  vec3 c = uRecolor > 0.5 ? recolorExact(t.rgb) : srgbToLin(t.rgb);
+  return vec4(c * t.a, t.a);
+}
+#endif
 void main(){
   vec2 uv = vec2(uFlip > 0.5 ? 1.0 - vUv.x : vUv.x, vUv.y);
+#ifdef PIXEL
+  vec2 cellArt = uArt * uCell;
+  vec2 lo = uOff * cellArt;
+  vec2 hi = lo + cellArt - 1.0;
+  vec2 pa = (uOff + uv) * cellArt - 0.5;
+  vec2 i0 = floor(pa);
+  vec2 k = clamp((fract(pa) - 0.5) / max(fwidth(pa), vec2(1e-4)) + 0.5, 0.0, 1.0);
+  vec4 Am = mix(mix(artTexel(i0, lo, hi), artTexel(i0 + vec2(1.0, 0.0), lo, hi), k.x), mix(artTexel(i0 + vec2(0.0, 1.0), lo, hi), artTexel(i0 + vec2(1.0, 1.0), lo, hi), k.x), k.y);
+  if (Am.a < 0.5) discard;
+  vec4 A = vec4(Am.rgb / Am.a, 1.0);
+#else
   vec4 A = texture2D(tAtlas, (uOff + uv) * uCell);
   if (A.a < 0.5) discard;
   if (uRecolor > 0.5) A.rgb = recolorKeys(A.rgb);
+#endif
   vec3 P = uWorld + vec3(0.0, 0.9, 0.0);
   vec3 N = normalize(cameraPosition - P); N.y = 0.25; N = normalize(N);
   vec3 diff, spec; lightSum(P, N, N, 1.0, 8.0, diff, spec);
@@ -612,10 +649,16 @@ void main(){
   diff = diff / (1.0 + 0.6 * diff);
   vec3 col = A.rgb * (mix(uGroundAmb, uSkyAmb, 0.7) * 1.3 + uMoonCol * 0.42 + diff * 1.15);
   col *= mix(0.74, 1.04, smoothstep(0.0, 0.45, vUv.y));
-  // liserés : bord de la silhouette tourné vers la lumière dominante (chaud), haut de la silhouette (froid, lune)
+  // liserés : bord de la silhouette tourné vers la lumière dominante (chaud), haut de la silhouette (froid, lune) ;
+  // en pixel art, un pixel d'art de large (C6 : liserés en unités logiques)
   float sx = kx >= 0.0 ? 1.0 : -1.0;
+#ifdef PIXEL
+  float edgeKey = 1.0 - alphaAt(vUv + vec2(sx * uTexel.x, 0.0));
+  float edgeTop = 1.0 - alphaAt(vUv + vec2(0.0, uTexel.y));
+#else
   float edgeKey = 1.0 - alphaAt(vUv + vec2(sx * 2.5 * uTexel.x, 0.0));
   float edgeTop = 1.0 - alphaAt(vUv + vec2(0.0, 2.5 * uTexel.y));
+#endif
   float keyLum = dot(key, vec3(0.3, 0.5, 0.2));
   col += A.rgb * key * edgeKey * 0.9 + vec3(1.0, 0.72, 0.42) * edgeKey * min(keyLum, 1.2) * 0.22;
   col += uMoonCol * edgeTop * 0.35;
@@ -642,12 +685,14 @@ export interface WalkerSprite {
  * groupe) : la figure (`figureH` px logiques) vaut `WALKER_H`, les pieds (`anchor`) sont à l'origine. `ax` : décalage
  * horizontal du panneau qui ramène l'ancrage sous l'origine (nul pour l'atlas par code, centré).
  */
-function walkerPanel(spec: SheetSpec): { geo: THREE.PlaneGeometry; ax: number } {
-  const planeH = WALKER_H * (CELL_H / spec.figureH);
-  const planeW = planeH * (CELL_W / CELL_H);
+export function walkerPanel(spec: SheetSpec): { geo: THREE.PlaneGeometry; ax: number } {
+  // grille de la feuille : 96 × 160 px logiques (v1, v2, atlas par code), ou la grille d'art d'une feuille en pixel art (v3)
+  const [cw, ch] = spec.cell ?? [CELL_W, CELL_H];
+  const planeH = WALKER_H * (ch / spec.figureH);
+  const planeW = planeH * (cw / ch);
   const geo = new THREE.PlaneGeometry(planeW, planeH);
-  geo.translate(0, planeH / 2 - ((CELL_H - spec.anchor[1]) / CELL_H) * planeH, 0);
-  return { geo, ax: (0.5 - spec.anchor[0] / CELL_W) * planeW };
+  geo.translate(0, planeH / 2 - ((ch - spec.anchor[1]) / ch) * planeH, 0);
+  return { geo, ax: (0.5 - spec.anchor[0] / cw) * planeW };
 }
 
 /** Personnage en panneau tourné vers le plan de la caméra, ombre de contact au sol, découpe nette (alpha testé). */
@@ -669,6 +714,8 @@ export function createWalkerSprite(id: string): WalkerSprite {
     uRamp: { value: Array.from({ length: RECOLOR_SLOTS.length * 4 }, () => new THREE.Color()) },
     uSlots: { value: RECOLOR_SLOTS.map(() => 0) },
     uInkLin: { value: new THREE.Color(INK) },
+    // pixel art (contrat v3) : taille de la feuille en pixels d'art (lue par la variante `PIXEL` du nuanceur)
+    uArt: { value: new THREE.Vector2(1, 1) },
   };
   const mat = new THREE.ShaderMaterial({
     name: 'VilleMarcheur',
@@ -710,7 +757,17 @@ export function createWalkerSprite(id: string): WalkerSprite {
     setSheet({ texture, spec }) {
       uniforms.tAtlas.value = texture;
       const im = texture.image as { width?: number; height?: number } | undefined;
-      if (im?.width && im.height) uniforms.uTexel.value.set(COLS / im.width, ROWS / im.height);
+      if (spec.pixel && spec.cell) {
+        // pas d'un pixel d'art (et non d'un pixel de la feuille) : liserés d'un pixel d'art, lecture au centre des blocs
+        uniforms.uArt.value.set(spec.cell[0] * COLS, spec.cell[1] * ROWS);
+        uniforms.uTexel.value.set(1 / spec.cell[0], 1 / spec.cell[1]);
+      } else if (im?.width && im.height) uniforms.uTexel.value.set(COLS / im.width, ROWS / im.height);
+      const pixel = !!spec.pixel;
+      if (pixel !== ('PIXEL' in mat.defines)) {
+        if (pixel) mat.defines.PIXEL = '';
+        else delete mat.defines.PIXEL;
+        mat.needsUpdate = true;
+      }
       const panel = walkerPanel(spec);
       geo.dispose();
       geo = panel.geo;

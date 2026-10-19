@@ -9,22 +9,27 @@ import type { Zone } from './monde';
 import { installVilleStyles, promptBubble, toast } from './ui';
 import { createTown, type Town } from './ville';
 import { isIlotId, type IlotId } from './ilots';
-import { walkerAtlasCanvas, walkerAtlasCanvasFor } from './sprites';
+import { recolorTargets, walkerAtlasCanvas, walkerAtlasCanvasFor } from './sprites';
 import { spritePolicy, type RecolorSlot } from './spritesExternes';
+import { decorPolicy, preloadDecors } from './decors';
 
 export interface LabParams { artSeed: number; qa: boolean; freeze: boolean; reducedMotion: boolean; sig: Family | null }
 
-export function startLab(p: LabParams, q: URLSearchParams): Town {
+export async function startLab(p: LabParams, q: URLSearchParams): Promise<Town> {
   installVilleStyles();
   document.title = 'Les Quatre Voies — laboratoire de la ville';
+  const ilot: IlotId = isIlotId(q.get('ilot')) ? (q.get('ilot') as IlotId) : 'quai';
+  const decors = decorPolicy(p.qa, q.get('decors'));
+  // plans de décor de l'îlot de départ lus et décodés avant la ville (ADR 028) : diorama construit tout de suite
+  await preloadDecors([ilot], decors);
   const host = document.createElement('div');
   host.className = 'ville-host';
   document.body.append(host);
   const cam: CameraId = 'frontale';
   const town = createTown({
     host, artSeed: p.artSeed, camera: cam, player: `player-${p.sig ?? 'Cendre'}`, spawn: q.get('spawn') ?? undefined,
-    ilot: isIlotId(q.get('ilot')) ? (q.get('ilot') as IlotId) : 'quai',
-    freeze: p.freeze, reducedMotion: p.reducedMotion, sprites: spritePolicy(p.qa, q.get('sprites')), rig: parseRig(q.get('rig')),
+    ilot,
+    freeze: p.freeze, reducedMotion: p.reducedMotion, sprites: spritePolicy(p.qa, q.get('sprites')), decors, rig: parseRig(q.get('rig')),
     onInteract: (z: Zone) => toast(`Laboratoire : « ${z.label} » sera branché dans la démo (M09 V2).`),
   });
   const panel = document.createElement('div');
@@ -91,6 +96,8 @@ export function startLab(p: LabParams, q: URLSearchParams): Town {
       (window as unknown as Record<string, unknown>).__lqvVille = {
         town, setCam, intervals: () => [...intervals], atlas: (id: string) => walkerAtlasCanvas(id).toDataURL('image/png'),
         atlasAt: (id: string, scale: number, keyed: RecolorSlot[] = []) => walkerAtlasCanvasFor(id, { scale, keyed }).toDataURL('image/png'),
+        // couleurs cibles de la recoloration d'un personnage (preuve de l'exactitude en pixel art, ADR 028)
+        targets: (id: string) => recolorTargets(id),
       };
     });
   }
