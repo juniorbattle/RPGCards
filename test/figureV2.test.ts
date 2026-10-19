@@ -1,33 +1,39 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { readParams } from '../src/app/params';
-import { figureStyle, setFigureStyle, usesV2 } from '../src/scene/figureStyle';
 import { moodsFor, MOODS_V2, RIG_V2 } from '../src/scene/figureV2';
-import { kitV2, V2_IDS } from '../src/scene/v2';
-import { PERSONALITIES } from '../src/presentation/personalities';
+import { figureKitV2, kitV2, V2_IDS } from '../src/scene/v2';
+import { PERSONALITIES, personalityById } from '../src/presentation/personalities';
 import { FAMILIES } from '../src/game/catalog/cards';
 import { playerFigure } from '../src/art/portrait';
+import { ENCOUNTERS } from '../src/product/encounters';
 
-// M07 L5 : le modèle « vectoriel V2 » est le rendu par défaut des quatre rivaux et, depuis la passe 26, du portrait du
-// duelliste joueur ; l’ancien rendu reste en `?qa=1&figure=v1`.
-describe('interrupteur du modèle des personnages (L5)', () => {
-  afterEach(() => setFigureStyle('v2'));
-
-  it('V2 par défaut ; V1 seulement avec ?qa=1&figure=v1', () => {
-    expect(readParams('').figure).toBe('v2');
-    expect(readParams('?figure=v1').figure).toBe('v2');
-    expect(readParams('?qa=1').figure).toBe('v2');
-    expect(readParams('?qa=1&figure=v1').figure).toBe('v1');
-    expect(figureStyle()).toBe('v2');
+// M07 L5 : le modèle « vectoriel V2 » dessine les quatre rivaux, les PNJ de la ville (M08 C3) et le portrait du duelliste
+// joueur (passe 26). M08 C5 : l’ancien rendu V1 est retiré, avec le paramètre `figure`.
+describe('modèle des personnages : vectoriel V2 seul (M08 C5)', () => {
+  it('paramètre `figure` retiré : `?qa=1&figure=v1` est sans effet', () => {
+    const p = readParams('?qa=1&figure=v1');
+    expect('figure' in p).toBe(false);
+    expect(p).toEqual(readParams('?qa=1'));
+    expect(readParams('?figure=v1')).toEqual(readParams(''));
   });
 
-  it('les quatre rivaux et le duelliste joueur sont dessinés en V2 ; tout repasse en V1 avec figure=v1', () => {
-    for (const p of PERSONALITIES) expect(usesV2(p.id)).toBe(true);
-    for (const fam of FAMILIES) expect(usesV2(playerFigure(fam).id)).toBe(true);
-    expect(usesV2('player-Inconnue')).toBe(false);
-    expect(usesV2('inconnu')).toBe(false);
-    setFigureStyle('v1');
-    for (const p of PERSONALITIES) expect(usesV2(p.id)).toBe(false);
-    for (const fam of FAMILIES) expect(usesV2(playerFigure(fam).id)).toBe(false);
+  it('toute figure du jeu a une identité V2 : rivaux, adversaires des rencontres (PNJ compris), joueur', () => {
+    for (const p of PERSONALITIES) expect(kitV2(p.id)).not.toBeNull();
+    for (const e of ENCOUNTERS) expect(kitV2(e.rival)).not.toBeNull();
+    for (const fam of FAMILIES) expect(kitV2(playerFigure(fam).id)).not.toBeNull();
+    expect(kitV2('player-Inconnue')).toBeNull();
+    expect(kitV2('inconnu')).toBeNull();
+  });
+
+  it('repli sûr d’un identifiant sans identité V2 : le rival signature de sa famille, sinon l’identité de la figure', () => {
+    for (const fam of FAMILIES) {
+      const rival = PERSONALITIES.find((p) => p.family === fam)!;
+      expect(figureKitV2({ id: 'inconnu', family: fam })).toBe(kitV2(rival.id));
+      expect(figureKitV2(playerFigure(fam))).toBe(kitV2(`player-${fam}`));
+    }
+    for (const p of PERSONALITIES) expect(figureKitV2(p)).toBe(kitV2(p.id));
+    const npc = personalityById('pnj-joueuse-9')!;
+    expect(figureKitV2(npc)).toBe(kitV2('pnj-joueuse-9'));
   });
 
   it('passe 26 : une identité V2 du joueur par famille de Signature, distincte des rivaux', () => {
@@ -36,7 +42,8 @@ describe('interrupteur du modèle des personnages (L5)', () => {
     expect(kitV2('player-Voile')).toBe(kitV2('player-Voile'));
     for (const id of ids) expect(V2_IDS).not.toContain(id);
     const kit = kitV2('player-Cendre')!;
-    expect(kit.colors.iris).toBe(playerFigure('Cendre').look.eyes);
+    // Yeux bleus du duelliste joueur (même apparence qu’avant la passe 26).
+    expect(kit.colors.iris).toBe('#4a6fd6');
     expect(moodsFor(kit).neutral.lid).toBe(MOODS_V2.neutral.lid);
   });
 

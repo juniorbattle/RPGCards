@@ -1,7 +1,8 @@
-// M07 L5 — coût des personnages V1 contre V2, pour chaque rival : génération des couches (`__lqvFigureCost`, page
+// M07 L5 — coût des personnages « vectoriel V2 », pour chaque rival : génération des couches (`__lqvFigureCost`, page
 // `?qa=1`, médiane de 25 essais) et apparition du rival en jeu : l’arène, créée sur un autre rival, passe au rival
 // mesuré (`setRival`, comme au clic sur une rencontre) ; on chronomètre `setRival` (rig et canvas) puis l’image suivante
-// (envoi des textures au GPU compris), page neuve à chaque mesure, en rondes entrelacées V1 / V2.
+// (envoi des textures au GPU compris), page neuve à chaque mesure. Jusqu’à M08 C5, V1 et V2 étaient mesurés en rondes
+// entrelacées (`figure=v1|v2`) ; le rendu V1 est retiré depuis.
 // Usage : npm run build && LQV_GPU=1 CHROMIUM_PATH=<Chrome> [LQV_CHROME_ARGS=--force_high_performance_gpu]
 //         node tools/l5-cout.mjs <sortie.json> [rondes=5] [rivaux=braise,ronce,voile,astre]
 import { execSync } from 'node:child_process';
@@ -31,36 +32,34 @@ try {
     const personality = await page.evaluate(() => JSON.parse(JSON.stringify(window.__lqv.controller.rival)));
     await page.close();
     const from = id === 'braise' ? 'ronce' : 'braise';
-    const swap = { v1: [], v2: [] };
+    const swap = [];
     for (let r = 0; r < ROUNDS; r++) {
-      for (const fig of r % 2 ? ['v2', 'v1'] : ['v1', 'v2']) {
-        const p = await browser.newPage({ viewport: { width: 1280, height: 720 } });
-        await p.goto(`${server.base}/?seed=202&autostart=1&rival=${from}&qa=1&aiDelay=0&reducedMotion=0&view=A&figure=${fig}`);
-        await p.waitForFunction(() => !!window.__lqv);
-        await p.waitForTimeout(2500);
-        const res = await p.evaluate(async (pers) => {
-          const arena = window.__lqv.controller.arena;
-          const t0 = performance.now();
-          arena.setRival(pers);
-          const t1 = performance.now();
-          await new Promise((r) => requestAnimationFrame(() => r()));
-          const t2 = performance.now();
-          await new Promise((r) => requestAnimationFrame(() => r()));
-          const t3 = performance.now();
-          const st = arena.stats();
-          const q = (x) => Math.round(x * 100) / 100;
-          return { setRivalMs: q(t1 - t0), firstFrameMs: q(t3 - t1), nextFrameMs: q(t3 - t2), textures: st.textures, programs: st.programs, drawCalls: st.drawCalls };
-        }, personality);
-        swap[fig].push(res);
-        console.log(`${id} · ronde ${r + 1} · ${fig} : setRival ${res.setRivalMs} ms, image suivante ${res.firstFrameMs} ms`);
-        await p.close();
-      }
+      const p = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+      await p.goto(`${server.base}/?seed=202&autostart=1&rival=${from}&qa=1&aiDelay=0&reducedMotion=0&view=A`);
+      await p.waitForFunction(() => !!window.__lqv);
+      await p.waitForTimeout(2500);
+      const res = await p.evaluate(async (pers) => {
+        const arena = window.__lqv.controller.arena;
+        const t0 = performance.now();
+        arena.setRival(pers);
+        const t1 = performance.now();
+        await new Promise((r) => requestAnimationFrame(() => r()));
+        const t2 = performance.now();
+        await new Promise((r) => requestAnimationFrame(() => r()));
+        const t3 = performance.now();
+        const st = arena.stats();
+        const q = (x) => Math.round(x * 100) / 100;
+        return { setRivalMs: q(t1 - t0), firstFrameMs: q(t3 - t1), nextFrameMs: q(t3 - t2), textures: st.textures, programs: st.programs, drawCalls: st.drawCalls };
+      }, personality);
+      swap.push(res);
+      console.log(`${id} · ronde ${r + 1} : setRival ${res.setRivalMs} ms, image suivante ${res.firstFrameMs} ms`);
+      await p.close();
     }
     const med = (xs, k) => r2(median(xs.map((x) => x[k])));
     report.rivals[id] = {
       generation,
       swap,
-      swapSummary: Object.fromEntries(['v1', 'v2'].map((f) => [f, { setRivalMs: med(swap[f], 'setRivalMs'), firstFrameMs: med(swap[f], 'firstFrameMs'), textures: swap[f][0]?.textures, programs: swap[f][0]?.programs, drawCalls: swap[f][0]?.drawCalls }])),
+      swapSummary: { setRivalMs: med(swap, 'setRivalMs'), firstFrameMs: med(swap, 'firstFrameMs'), textures: swap[0]?.textures, programs: swap[0]?.programs, drawCalls: swap[0]?.drawCalls },
     };
   }
 } finally {
@@ -70,4 +69,4 @@ try {
 report.renderer = rendererLabel(renderer);
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, JSON.stringify(report, null, 2));
-console.log(JSON.stringify({ renderer: report.renderer, rivals: Object.fromEntries(Object.entries(report.rivals).map(([k, v]) => [k, { genV1: v.generation.v1.medianMs, genV2: v.generation.v2?.medianMs, texelsV1: v.generation.v1.texels, texelsV2: v.generation.v2?.texels, swap: v.swapSummary }])) }, null, 2));
+console.log(JSON.stringify({ renderer: report.renderer, rivals: Object.fromEntries(Object.entries(report.rivals).map(([k, v]) => [k, { genMs: v.generation.medianMs, texels: v.generation.texels, swap: v.swapSummary }])) }, null, 2));

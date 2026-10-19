@@ -22,7 +22,8 @@ const browser = await launch();
 const errors = [];
 const view = process.env.VIEW === 'B' ? 'B' : null;
 const seed = process.env.SEED ?? '202';
-// QUERY=… : paramètres d’URL en plus (M07 L5 : `figure=v2`, modèle V2 de Maëlle — graine 202 = Maëlle).
+// QUERY=… : paramètres d’URL en plus (M07 L5 : `figure=v2` imposait le modèle V2 de Maëlle — graine 202 = Maëlle — sur
+// un build antérieur à la passe 25 ; sans effet depuis le retrait du rendu V1, M08 C5).
 const query = process.env.QUERY ? `&${process.env.QUERY}` : '';
 const sizes = (process.env.SIZES ?? '1280x720,1920x1080').split(',').map((x) => x.split('x').map(Number));
 const contrastOut = process.env.CONTRAST ?? null;

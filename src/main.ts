@@ -10,15 +10,12 @@ import { createArena, type ArenaHandle } from './scene/arena';
 import { DuelSession } from './app/duelSession';
 import { Shell } from './shell/shell';
 import { PERSONALITIES, personalityById, personalityFor, type RivalPersonality } from './presentation/personalities';
-import { setFigureStyle } from './scene/figureStyle';
 import { figureCost, figureLayers, portraitCost } from './scene/figureBench';
 import { prepStats, setPrepMode } from './scene/rival';
 import { playerFigure } from './art/portrait';
 import { DEFAULT_VENUE, type VenueId } from './presentation/venues';
 
 const params = readParams();
-// M07 L5 : modèle artistique des personnages fixé avant toute scène ou portrait (`?qa=1&figure=v1`).
-setFigureStyle(params.figure);
 // M08 C1 : préparation des rivaux aux temps morts (`?qa=1&prep=art|off` pour la mesure) ; état lisible en QA.
 setPrepMode(params.prep);
 if (params.qa) (window as unknown as Record<string, unknown>).__lqvPrep = prepStats;

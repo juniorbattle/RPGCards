@@ -57,7 +57,7 @@ try {
       (report.determinism[id] ??= []).push(fp);
       if (pass === 1) {
         const cost = await p.evaluate((id) => window.__lqvFigureCost(15, id), id);
-        (NPCS.includes(id) ? report.npcs : report.rivals)[id] = { cost: cost.v2 };
+        (NPCS.includes(id) ? report.npcs : report.rivals)[id] = { cost };
       }
     }
     await ctx.close();

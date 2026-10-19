@@ -1,7 +1,12 @@
-// M07 L5 — preuve que le rendu V1 est inchangé au pixel près entre deux builds (avant : LQV_BEFORE, rendu par défaut ;
-// après : dist/, rendu `LQV_APRES_QUERY`, défaut `&figure=v1` depuis que le V2 est le rendu par défaut) : scène 3D seule du duel (vue A, rendu figé, seed 202) pour les quatre rivaux, capture complète (HUD compris)
+// M07 L5 — preuve que le rendu des personnages est inchangé au pixel près entre deux builds : avant (LQV_BEFORE) et
+// après (dist/), rendu par défaut des deux côtés (`LQV_APRES_QUERY` : paramètres d’URL en plus côté après, vide par
+// défaut). Scène 3D seule du duel (vue A, rendu figé, seed 202) pour les quatre rivaux, capture complète (HUD compris)
 // du duel contre Maëlle, et écran Rencontres (affiches et portraits des quatre rivaux), à 1280×720 et 1920×1080.
-// Usage : LQV_BEFORE=<dist avant> LQV_BEFORE_SHA=<sha> [LQV_GPU=1 CHROMIUM_PATH=…] node tools/l5-identique.mjs [sortie.json]
+// Témoin : la scène de Maëlle, côté après, avec une humeur imposée (`pose=surprised`) doit relever un écart (la méthode
+// voit un changement du visage). Historique : jusqu’à M08 C5, le défaut côté après était `&figure=v1` (chemin V1,
+// retiré depuis avec le paramètre `figure`).
+// Usage : LQV_BEFORE=<dist avant> LQV_BEFORE_SHA=<sha> [LQV_APRES_QUERY=&…] [LQV_GPU=1 CHROMIUM_PATH=…]
+//         node tools/l5-identique.mjs [sortie.json]
 import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
@@ -64,7 +69,7 @@ async function capture(which, vp, kind, rival, extra = '') {
   return buf;
 }
 
-const APRES = process.env.LQV_APRES_QUERY ?? '&figure=v1';
+const APRES = process.env.LQV_APRES_QUERY ?? '';
 const results = [];
 const control = [];
 try {
@@ -77,10 +82,10 @@ try {
       results.push({ viewport: `${vp[0]}x${vp[1]}`, kind, rival, ...d });
       console.log(`${vp[0]}×${vp[1]} ${kind}${rival ? ` ${rival}` : ''} : écart moyen ${d.meanAbs}/255, max ${d.max}, ${d.pixels} pixels différents`);
       if (kind === 'scene' && rival === 'ronce') {
-        // Témoin : la même comparaison, V2 activée côté « après », doit relever un écart (la méthode le voit).
-        const t = await diff(a, await capture('apres', vp, kind, rival, '&figure=v2'));
-        control.push({ viewport: `${vp[0]}x${vp[1]}`, ...t });
-        console.log(`  témoin (V2 activée) : écart moyen ${t.meanAbs}/255, ${t.pixels} pixels différents`);
+        // Témoin : la même comparaison, humeur imposée côté « après », doit relever un écart (la méthode le voit).
+        const t = await diff(a, await capture('apres', vp, kind, rival, `${APRES}&pose=surprised`));
+        control.push({ viewport: `${vp[0]}x${vp[1]}`, kind: 'scene ronce, pose=surprised', ...t });
+        console.log(`  témoin (pose=surprised) : écart moyen ${t.meanAbs}/255, ${t.pixels} pixels différents`);
       }
     }
   }

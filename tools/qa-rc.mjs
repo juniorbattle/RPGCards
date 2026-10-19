@@ -20,7 +20,7 @@ import { newStats, playTurn } from './duel-driver.mjs';
 const OUT = 'artifacts/qa';
 mkdirSync(`${OUT}/tmp`, { recursive: true });
 const commit = execSync('git rev-parse --short HEAD').toString().trim();
-// LQV_QA_QUERY=… : paramètres d’URL en plus (M07 L5 : `figure=v2`, personnages vectoriels V2).
+// LQV_QA_QUERY=… : paramètres d’URL en plus (par exemple `venue=rue`).
 const Q = `qa=1&aiDelay=0${process.env.LQV_QA_QUERY ? `&${process.env.LQV_QA_QUERY}` : ''}`;
 const report = { commit, date: new Date().toISOString(), machine: { cpu: os.cpus()[0]?.model, cores: os.cpus().length }, renderer: 'Chromium headless + SwiftShader (CPU) — jamais une mesure de GPU', runs: {} };
 const only = process.env.QA_ONLY?.split(',') ?? null;

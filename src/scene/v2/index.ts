@@ -30,3 +30,16 @@ export function kitV2(id: string): FigureV2Kit | null {
   const fam = id.startsWith('player-') ? id.slice('player-'.length) : null;
   return fam && (FAMILIES as readonly string[]).includes(fam) ? playerKitV2(fam as Family) : null;
 }
+
+/** Rival signature de chaque famille (repli de `figureKitV2`). */
+const BY_FAMILY: Record<Family, FigureV2Kit> = { Cendre: KAI_V2, Ronce: MAELLE_V2, Voile: SELENE_V2, Astre: ORIN_V2 };
+
+/**
+ * Identité V2 d’une figure (rig du rival, portraits), jamais nulle depuis le retrait du rendu V1 (M08 C5) : toute
+ * figure que le jeu produit en a une (quatre rivaux, PNJ `pnj-…` valides, joueur `player-<Famille>`). Repli sûr pour un
+ * identifiant sans identité, qu’aucune donnée du jeu ne produit : l’identité du rival signature de sa famille, plutôt
+ * qu’une scène ou un portrait en échec.
+ */
+export function figureKitV2(f: { id: string; family: Family }): FigureV2Kit {
+  return kitV2(f.id) ?? BY_FAMILY[f.family];
+}
