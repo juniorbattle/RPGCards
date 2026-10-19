@@ -7,6 +7,8 @@ une session locale.
 Les images produites sont des **références de conception** (AGENTS, « Images générées : références seulement ») :
 elles guident le travail par code et n'entrent jamais dans le jeu ni dans le build.
 
+> **DÉCISION DU RESPONSABLE (2026-10-19, pendant le run) : caméra d'exploration = FRONTALE 2.5D.** « Non, on ne veut pas d'inclinaison, mais frontale. » La vue de dessus inclinée est abandonnée : ne la construis pas (ou retire-la du laboratoire), fais V1 et V2 directement en frontale 2.5D (≈ 10–20°, plans de profondeur), et demande les images de référence en frontale. ADR 024 : statut « approuvé, frontale 2.5D ».
+
 ## Demander
 
 1. Crée un fichier `demandes-images/AAAA-MM-JJ-HHMM-<sujet>.md` à partir du modèle ci-dessous, commit, push sur `main`.
