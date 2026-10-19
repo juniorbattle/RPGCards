@@ -1,0 +1,241 @@
+{
+  "date": "2026-10-19T00:20:37.473Z",
+  "mode": "planche",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "commit": "ceadc0f",
+  "shots": [
+    {
+      "name": "salle-scene-vueA-1280x720.png",
+      "venue": "salle",
+      "view": "A",
+      "viewport": "1280x720",
+      "drawCalls": 93,
+      "textures": 39,
+      "geometries": 51,
+      "programs": 45
+    },
+    {
+      "name": "salle-complet-vueA-1280x720.png",
+      "venue": "salle",
+      "view": "A",
+      "viewport": "1280x720",
+      "drawCalls": 93,
+      "textures": 39,
+      "geometries": 51,
+      "programs": 45
+    },
+    {
+      "name": "salle-scene-vueB-1280x720.png",
+      "venue": "salle",
+      "view": "B",
+      "viewport": "1280x720",
+      "drawCalls": 95,
+      "textures": 39,
+      "geometries": 51,
+      "programs": 45
+    },
+    {
+      "name": "salle-complet-vueB-1280x720.png",
+      "venue": "salle",
+      "view": "B",
+      "viewport": "1280x720",
+      "drawCalls": 95,
+      "textures": 39,
+      "geometries": 51,
+      "programs": 45
+    },
+    {
+      "name": "salle-accueil-1280x720.png",
+      "venue": "salle",
+      "screen": "accueil",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "salle-preparation-1280x720.png",
+      "venue": "salle",
+      "screen": "preparation",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "salle-scene-direct-1280x720.png",
+      "venue": "salle",
+      "level": "direct",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "rue-scene-vueA-1280x720.png",
+      "venue": "rue",
+      "view": "A",
+      "viewport": "1280x720",
+      "drawCalls": 78,
+      "textures": 40,
+      "geometries": 42,
+      "programs": 46
+    },
+    {
+      "name": "rue-complet-vueA-1280x720.png",
+      "venue": "rue",
+      "view": "A",
+      "viewport": "1280x720",
+      "drawCalls": 78,
+      "textures": 40,
+      "geometries": 42,
+      "programs": 46
+    },
+    {
+      "name": "rue-scene-vueB-1280x720.png",
+      "venue": "rue",
+      "view": "B",
+      "viewport": "1280x720",
+      "drawCalls": 77,
+      "textures": 39,
+      "geometries": 41,
+      "programs": 45
+    },
+    {
+      "name": "rue-complet-vueB-1280x720.png",
+      "venue": "rue",
+      "view": "B",
+      "viewport": "1280x720",
+      "drawCalls": 77,
+      "textures": 39,
+      "geometries": 41,
+      "programs": 45
+    },
+    {
+      "name": "rue-accueil-1280x720.png",
+      "venue": "rue",
+      "screen": "accueil",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "rue-preparation-1280x720.png",
+      "venue": "rue",
+      "screen": "preparation",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "rue-scene-direct-1280x720.png",
+      "venue": "rue",
+      "level": "direct",
+      "viewport": "1280x720"
+    },
+    {
+      "name": "salle-scene-vueA-1920x1080.png",
+      "venue": "salle",
+      "view": "A",
+      "viewport": "1920x1080",
+      "drawCalls": 93,
+      "textures": 39,
+      "geometries": 51,
+      "programs": 45
+    },
+    {
+      "name": "salle-complet-vueA-1920x1080.png",
+      "venue": "salle",
+      "view": "A",
+      "viewport": "1920x1080",
+      "drawCalls": 93,
+      "textures": 39,
+      "geometries": 51,
+      "programs": 45
+    },
+    {
+      "name": "salle-scene-vueB-1920x1080.png",
+      "venue": "salle",
+      "view": "B",
+      "viewport": "1920x1080",
+      "drawCalls": 95,
+      "textures": 39,
+      "geometries": 51,
+      "programs": 45
+    },
+    {
+      "name": "salle-complet-vueB-1920x1080.png",
+      "venue": "salle",
+      "view": "B",
+      "viewport": "1920x1080",
+      "drawCalls": 95,
+      "textures": 39,
+      "geometries": 51,
+      "programs": 45
+    },
+    {
+      "name": "salle-accueil-1920x1080.png",
+      "venue": "salle",
+      "screen": "accueil",
+      "viewport": "1920x1080"
+    },
+    {
+      "name": "salle-preparation-1920x1080.png",
+      "venue": "salle",
+      "screen": "preparation",
+      "viewport": "1920x1080"
+    },
+    {
+      "name": "salle-scene-direct-1920x1080.png",
+      "venue": "salle",
+      "level": "direct",
+      "viewport": "1920x1080"
+    },
+    {
+      "name": "rue-scene-vueA-1920x1080.png",
+      "venue": "rue",
+      "view": "A",
+      "viewport": "1920x1080",
+      "drawCalls": 78,
+      "textures": 40,
+      "geometries": 42,
+      "programs": 46
+    },
+    {
+      "name": "rue-complet-vueA-1920x1080.png",
+      "venue": "rue",
+      "view": "A",
+      "viewport": "1920x1080",
+      "drawCalls": 78,
+      "textures": 40,
+      "geometries": 42,
+      "programs": 46
+    },
+    {
+      "name": "rue-scene-vueB-1920x1080.png",
+      "venue": "rue",
+      "view": "B",
+      "viewport": "1920x1080",
+      "drawCalls": 77,
+      "textures": 39,
+      "geometries": 41,
+      "programs": 45
+    },
+    {
+      "name": "rue-complet-vueB-1920x1080.png",
+      "venue": "rue",
+      "view": "B",
+      "viewport": "1920x1080",
+      "drawCalls": 77,
+      "textures": 39,
+      "geometries": 41,
+      "programs": 45
+    },
+    {
+      "name": "rue-accueil-1920x1080.png",
+      "venue": "rue",
+      "screen": "accueil",
+      "viewport": "1920x1080"
+    },
+    {
+      "name": "rue-preparation-1920x1080.png",
+      "venue": "rue",
+      "screen": "preparation",
+      "viewport": "1920x1080"
+    },
+    {
+      "name": "rue-scene-direct-1920x1080.png",
+      "venue": "rue",
+      "level": "direct",
+      "viewport": "1920x1080"
+    }
+  ],
+  "issues": []
+}
