@@ -423,6 +423,9 @@
 .sh-ident-opts { display: flex; gap: 0.35rem; justify-content: center; }
 .sh-ver { position: relative; padding: 0; border: 0; background: none; border-radius: 6px; overflow: visible; transition: transform 0.18s var(--sh-ease), filter 0.18s, opacity 0.18s; }
 .sh-ver .card.sh-mini { --card-w: 74px; --card-h: 104px; --radius: 5px; }
+/* RC 0.8 (M08 C5) : le chiffre de rang des vignettes porte sa propre pastille sombre. Son contraste ne dépend plus de
+   l’illustration ni du liseré sous la boîte du glyphe (3,5:1 mesuré sous Windows, police Georgia réelle). */
+.sh-ver .card.sh-mini .rank, .sh-sig .card.sh-mini .rank { padding: 0.08em 0.2em 0.04em; margin: -0.08em 0 0 -0.2em; border-radius: 0.16em; background: rgba(10, 7, 6, 0.8); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.6); }
 .sh-ver:not(.on) { filter: saturate(0.55) brightness(0.62); }
 .sh-ver.on { transform: translateY(-3px); filter: drop-shadow(0 0 8px var(--fam, var(--gold))) drop-shadow(0 6px 10px rgba(0, 0, 0, 0.7)); }
 .sh-ver.on::after { content: ""; position: absolute; left: 25%; right: 25%; bottom: -6px; height: 3px; border-radius: 2px; background: var(--gold-hi); box-shadow: 0 0 8px var(--gold-hi); }
