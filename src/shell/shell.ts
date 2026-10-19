@@ -48,6 +48,8 @@ export interface ShellDeps {
   resetArena(): void;
   /** Arène courante (ou `null`). */
   arena(): ArenaHandle | null;
+  /** M09 V2 (provisoire, `?demo=1`) : la ville remplace le tableau des rencontres ; absent en jeu par défaut. */
+  hub?: { show(sh: Shell): HTMLElement; hide(): void };
 }
 
 /** Duel en cours dans cette page (son état durable est `save.activeDuel`). */
@@ -454,6 +456,16 @@ export class Shell {
       // (couches, rig, textures envoyées au GPU) : leur apparition ne coûte plus de génération.
       if (arena) this.prepareUpcoming();
     }
+    // M09 V2 (`?demo=1`) : au tableau des rencontres, la ville prend l'écran (HUD dans l'enveloppe, transparente aux clics).
+    if (this.d.hub && s.screen === 'board') {
+      host.className = 'shell scr-ville';
+      host.hidden = false;
+      host.replaceChildren(this.d.hub.show(this));
+      this.renderedScreen = 'ville';
+      document.title = 'Les Quatre Voies — le Quai';
+      return;
+    }
+    this.d.hub?.hide();
     const screenKey = `${scr}:${s.overlay ?? ''}`;
     const same = screenKey === this.renderedScreen;
     // Même écran (ex. bascule d’une carte du deck) : focus et défilement conservés ; sinon, action principale.

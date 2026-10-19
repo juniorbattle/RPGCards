@@ -339,7 +339,7 @@ export function renderResult(sh: Shell): HTMLElement {
       btn('Accueil', () => sh.go({ type: 'home' }), { ghost: true, key: 'result-home' }),
       sh.playable().includes(enc.id) ? btn(enc.kind === 'series' ? 'Rejouer la manche' : 'Revanche', () => sh.go({ type: 'prep', encounterId: enc.id }), { ghost: true, key: 'result-rematch' }) : null,
       next ? btn(`Manche suivante : ${personalityOf(next.rival).name}`, () => sh.go({ type: 'prep', encounterId: next.id }), { key: 'result-next', primary: true }) : null,
-      btn('Rencontres', () => sh.go({ type: 'board' }), { key: 'result-board', primary: !next, ghost: !!next })));
+      btn(sh.d.hub ? 'Retour au Quai' : 'Rencontres', () => sh.go({ type: 'board' }), { key: 'result-board', primary: !next, ghost: !!next })));
 }
 
 function bigStat(k: string, v: string): HTMLElement {

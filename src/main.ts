@@ -145,6 +145,25 @@ function gallery(): void {
   (window as unknown as Record<string, unknown>).__artGenMs = Math.round((performance.now() - t0) * 10) / 10;
 }
 
+/** Hub de la démo chargé à la demande (import dynamique : rien dans le jeu par défaut) ; HUD provisoire en attendant. */
+function lazyHub(): NonNullable<ConstructorParameters<typeof Shell>[0]['hub']> {
+  let hub: import('./ville/demo').DemoHub | null = null;
+  let wanted: Shell | null = null;
+  const load = import('./ville/demo').then((m) => {
+    hub = new m.DemoHub();
+    if (wanted && wanted.flow.screen === 'board') wanted.render();
+  });
+  void load;
+  return {
+    show(sh) {
+      wanted = sh;
+      if (hub) return hub.show(sh);
+      return h('div', { class: 'ville-hud' }, h('div', { class: 'sh-sub', style: 'position:fixed;left:16px;top:16px' }, 'Le Quai se prépare…'));
+    },
+    hide() { wanted = null; hub?.hide(); },
+  };
+}
+
 function resetArena(): void {
   arena?.dispose();
   arena = null;
@@ -153,10 +172,17 @@ function resetArena(): void {
 
 // Entrées : galerie de revue (`?gallery=1`), duel direct QA (`?autostart=1`, `?scenario=`), ancien
 // écran de configuration (`?setup=1`) ; sinon le JEU (accueil, deck, rencontres, sauvegarde — M04).
+const query = new URLSearchParams(window.location.search);
 if (params.gallery) gallery();
+// M09 V1 : laboratoire de caméra de la ville (`?ville=1&vcam=dessus|frontale`), à part du jeu, chargé à la demande.
+else if (query.get('ville') === '1') {
+  arenaHost.style.display = 'none';
+  void import('./ville/labo').then((m) => m.startLab({ artSeed: params.artSeed, qa: params.qa, freeze: params.freeze, reducedMotion: params.reducedMotion, sig: params.sig }, query));
+}
 else if (params.autostart) start(makeConfig(params, params.sig ?? 'Cendre', params.techs ?? ['Lecture', 'Ancrage']), params.scenario);
-else if (new URLSearchParams(window.location.search).get('setup') === '1') setupScreen();
+else if (query.get('setup') === '1') setupScreen();
 else {
-  const shell = new Shell({ shellHost: document.getElementById('shell')!, app, params, ensureArena, resetArena, arena: () => arena });
+  // M09 V2 (provisoire, `?demo=1`) : la ville, chargée à la demande, remplace le tableau des rencontres.
+  const shell = new Shell({ shellHost: document.getElementById('shell')!, app, params, ensureArena, resetArena, arena: () => arena, hub: params.demo ? lazyHub() : undefined });
   if (params.qa) (window as unknown as Record<string, unknown>).__lqvShell = shell;
 }

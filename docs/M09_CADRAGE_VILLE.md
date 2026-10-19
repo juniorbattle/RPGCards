@@ -98,30 +98,26 @@ Fanal, l'arène) ouvrent les duels libres. Données de prototype, non canoniques
 Ce qui existe déjà : 1, la préparation, le duel, le résultat, la sauvegarde et la reprise. À construire : 2, 3 (bulles,
 défi, retour), 4 (porte), le menu de ville, et la reprise « dans la ville ».
 
-## 8. Intégration au produit (proposée, réversible)
+## 8. Intégration au produit (faite derrière `?demo=1`, réversible)
 
-- Le prototype vit dans `src/ville/` et s'ouvre par `?ville=1` (laboratoire) ; le jeu par défaut reste **identique au
-  pixel près** tant que le responsable n'a pas validé l'intégration (règle M09).
-- Pour la démo, une entrée **« Explorer le Quai (démo) »** sur l'accueil et le tableau des rencontres, seulement avec
-  `?demo=1` dans un premier temps (même règle d'identité), puis par défaut après validation.
-- Écran `ville` dans le flux du produit (`src/product/flow.ts`) : la ville devient le **hub** à la place du tableau des
-  rencontres ; le tableau reste accessible depuis le menu (« Toutes les rencontres »).
+- Le prototype vit dans `src/ville/` : laboratoire `?ville=1`, **démo jouable `?demo=1`**. Le jeu par défaut reste
+  **identique au pixel près** tant que le responsable n'a pas validé l'intégration (règle M09) ; le code de la ville est
+  chargé à la demande (fichiers séparés), le bundle principal ne prend que ≈ 3,6 Ko (classes de Three.js partagées).
+- Choix d'implémentation (session cloud) : **la machine de flux ne change pas**. Avec `?demo=1`, l'écran « tableau des
+  rencontres » est rendu par la ville (`DemoHub`, `src/ville/demo.ts`) ; toutes les transitions existantes (retour de
+  préparation, fin de duel, deck, options) y ramènent donc naturellement. Le bouton « Rencontres » du résultat devient
+  « Retour au Quai ». Le tableau des rencontres classique n'est pas accessible en démo (à décider : fiche).
 - Sauvegarde : champ facultatif `ville: { ilot, x, z }` ; absent = début au point d'arrivée (pas de migration de schéma
   obligatoire : lecture tolérante).
 - Une seule scène WebGL pour toute la session (règle M04) : la ville est une **scène Three.js** distincte de l'arène,
   rendue par le même renderer ; on bascule de scène sans recréer le contexte.
 
-## 9. Caméra (décision au responsable)
+## 9. Caméra : frontale 2.5D (décidée par le responsable pendant le run)
 
-Deux options comparées dans le laboratoire V1 (`?ville=1&cam=dessus|frontale`), derrière une interface commune
-(`CameraRig` : `update(cible, dt)`, `resize`, `params`) pour que l'autre reste branchable :
-
-- **Vue de dessus inclinée** (perspective, ≈ 45°) : lit le plan du quai, les portes et les PNJ autour ; proche de la
-  référence 01 et d'Octopath Traveler ; les façades sont vues de haut (toits, ardoise), le personnage plus petit.
-- **Frontale 2.5D** (≈ 15°) : plans de profondeur, façades de face, personnages plus grands et proches du cadrage du
-  duel ; déplacement surtout latéral, la profondeur se lit moins.
-
-Recommandation et mesures : ADR 024 (proposé).
+**Décision du responsable (2026-10-19, passe 39) : frontale 2.5D**, « Non, on ne veut pas d'inclinaison, mais
+frontale. » La vue de dessus inclinée, essayée une fois dans le laboratoire (captures `screenshots/qa/m09/v1/essai-*`),
+est retirée du code. Caméra suiveuse unique derrière l'interface `CameraRig` (`src/ville/cameras.ts`), réglages
+provisoires (13°, 14 m, focale 30°) : ADR 024 (approuvé pour le principe frontal).
 
 ## 10. Budget de performance (cibles, à confirmer sur GPU réel)
 
@@ -137,7 +133,7 @@ Recommandation et mesures : ADR 024 (proposé).
 
 ## 11. Questions ouvertes (fiche d'arbitrages)
 
-1. Caméra d'exploration : dessus inclinée ou frontale 2.5D (ADR 024).
+1. Caméra d’exploration : **décidée, frontale 2.5D** (ADR 024) ; restent les réglages fins (angle, distance, focale) à l’œil du responsable sur GPU réel.
 2. Structure des zones : îlots chargés un à un (proposé) ou monde continu.
 3. Entrée en duel : préparation systématique (proposé) ou lancement direct depuis la bulle de défi.
 4. Intégration : la ville comme hub par défaut, ou une entrée « Explorer » à côté du tableau des rencontres.
