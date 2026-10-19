@@ -523,6 +523,8 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   };
   let venueSwitches = 0;
   let venueMs = 0;
+  /** Cible de 1 × 1 pixel où un décor préparé est dessiné une fois (tampons de géométrie envoyés au GPU). */
+  let warmTarget: THREE.WebGLRenderTarget | null = null;
   /** QA : octets des textures des décors montés (largeur × hauteur × 4, × 4/3 avec mipmaps), chaque texture une fois. */
   const venueBytes = () => {
     const seen = new Set<THREE.Texture>();
@@ -1061,7 +1063,28 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
           if (u) for (const x of Object.values(u)) if (x?.value instanceof THREE.Texture) renderer.initTexture(x.value);
         }
       });
-      return compileFor(set.group).then(() => true);
+      return compileFor(set.group).then(() => {
+        // Géométries envoyées au GPU : three.js n’en crée les tampons qu’au premier dessin, et la première image d’un lieu
+        // préparé coûtait encore 10 à 12 ms au lieu de 3 à 5 (Radeon 780M ; `qa:rc` J voyait les géométries monter à la
+        // première visite de chaque lieu, journal, passe 33). Une image de la scène, le décor posé le temps de ce rendu,
+        // dans une cible de 1 × 1 pixel : une cible prend les variantes de programme de la cible HDR, déjà compilées par
+        // `compileFor`, rien ne recompile. Sans post-traitement (ablation QA `post`), les tampons partent à la première
+        // image. Tout le décor est dessiné, hors du champ de la caméra compris (vue B, autres plans de feux). Rien si le
+        // lieu est devenu le lieu courant (déjà dessiné) ou a été libéré pendant la compilation.
+        if (post && mounted.get(d.id) === set && set.group.parent === null) {
+          warmTarget ??= new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType });
+          const culled: THREE.Object3D[] = [];
+          set.group.traverse((o) => { if (o.frustumCulled) { o.frustumCulled = false; culled.push(o); } });
+          const prev = renderer.getRenderTarget();
+          scene.add(set.group);
+          renderer.setRenderTarget(warmTarget);
+          renderer.render(scene, camera);
+          renderer.setRenderTarget(prev);
+          scene.remove(set.group);
+          for (const o of culled) o.frustumCulled = true;
+        }
+        return true;
+      });
     },
     setStaging(s: Staging) {
       if (s === staging) return;
@@ -1090,6 +1113,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
       document.removeEventListener('visibilitychange', onVis);
       rival.dispose();
       for (const set of mounted.values()) set.dispose();
+      warmTarget?.dispose();
       scene.traverse((o) => {
         const mat = (o as THREE.Mesh).material as THREE.MeshBasicMaterial | THREE.MeshBasicMaterial[] | undefined;
         for (const m of Array.isArray(mat) ? mat : mat ? [mat] : []) m.map?.dispose();
