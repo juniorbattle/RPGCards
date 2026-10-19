@@ -11,6 +11,31 @@ Comment voir le travail :
 
 ---
 
+## 0. Bilan de la séance (fin du run, 2026-10-19 ≈ 12:15 UTC)
+
+**Fusionné dans `main`** (de `4a30504` à `d76651f`, sans réécriture d'historique) :
+- **RC 0.8.0-rc.1 du combat (M08 C5)** : « Duels de la ville » dans la rue (`21632b8`), rang « II » lisible (`38b32a8`),
+  rendu V1 retiré (`0f8c20a`), version et démarrage plus rapide (`42f4562`), piste `compileAsync` derrière un paramètre
+  (`6b67271`), rapport `docs/RAPPORT_RC_0_8.md`.
+- **M09, ville d'exploration** : cadrage V0 (`296ee71`), le Quai en frontale 2.5D, laboratoire `?ville=1` et démo
+  `?demo=1` (`66b7997`), le Parvis de l'arène (`9b420b6`), les Ruelles du Voile, aide de la ville, Échap fiable
+  (`e934f7a`), démo sans WebGL rendue sûre (`b128bd9`) ; ADR 024 (frontale, approuvé) et 025 (architecture, proposé).
+
+**Mesures (SwiftShader, jamais un GPU)** : campagne complète du jalon **verte au premier passage** (`qa:browser` 5/5,
+`qa:product` 9/9, `qa:rc` 9/9 dans la salle, au bar et à l'arène, `qa:techniques` 8/8, 0 erreur console) ; rendu par
+défaut identique au pixel près au départ (scènes des quatre rivaux, duel complet, préparations ; seule une bande
+transitoire de 37 pixels sur l'écran Rencontres, état final identique) ; accueil interactif ≈ 6 s plus tôt ; bundle
+principal 1 009 852 → 999 384 octets (la ville est chargée à la demande) ; `npm test` 241/241 ; démo 30/30 contrôles.
+
+**À vérifier sur ta machine** : section E ci-dessous (GPU 780M et RTX 4060, contraste sous Windows, `compileAsync`,
+cadrage de la ville à l'œil, écran Rencontres).
+
+**Décisions à te demander** : C1 réception de la RC ; B4 démo comme hub par défaut ; B5 et D Aseprite et feuilles de
+sprites externes (amendement de la règle « aucune image externe ») ; C3 `compileAsync` ; B1 réglages de la caméra
+frontale ; B2 structure en îlots ; C2 pastille du rang ; B3, B6, B7 (préparation systématique, tutoriels, textes).
+
+---
+
 ## A. Décisions déjà prises par le responsable pendant le run (pour mémoire)
 
 | Sujet | Décision | Source |
