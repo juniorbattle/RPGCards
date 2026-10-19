@@ -6,7 +6,7 @@
 // 2. charge retirée, « Sauvegarder et quitter » (menus : arène figée, LQV_QA_MENU_S secondes, défaut 8, le temps que
 //    le poste refroidisse), puis « Reprendre » : le duel suivant repart au rendu complet, rythme nominal remesuré, et
 //    n’y descend pas sans décrochage MESURÉ par l’outil (intervalles rAF relevés dans la page, indépendamment du jeu) ;
-// console sans erreur ni avertissement. Sortie : artifacts/qa/qa-fallback.json (ou LQV_QA_OUT).
+// console sans erreur ni avertissement. Sortie : artifacts/qa/qa-fallback.json (ou LQV_QA_OUT) ; LQV_QA_QUERY=… : paramètres d’URL en plus (M08 C2 : `venue=bar`, lieu du duel imposé).
 // Usage : LQV_GPU=1 CHROMIUM_PATH=<Chrome> [LQV_CHROME_ARGS=…] node tools/qa-fallback.mjs
 import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -55,7 +55,7 @@ try {
   const page = await ctx.newPage();
   page.setDefaultTimeout(15000);
   watchConsole(page, report.consoleIssues);
-  await page.goto(`${server.base}/?qa=1&aiDelay=0&reducedMotion=0&profileSeed=7`);
+  await page.goto(`${server.base}/?qa=1&aiDelay=0&reducedMotion=0&profileSeed=7${process.env.LQV_QA_QUERY ? `&${process.env.LQV_QA_QUERY}` : ""}`);
   report.renderer = rendererLabel(await webglRenderer(page));
   await screenIs(page, 'home');
   await page.click('[data-key="home-new"]');

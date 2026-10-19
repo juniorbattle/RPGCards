@@ -21,7 +21,9 @@ import { launch, rendererLabel, startPreview, watchConsole, webglRenderer } from
 const MODE = process.argv[2] ?? 'identique';
 const OUT = process.argv[3] ?? `artifacts/qa/m08/c2-${MODE}.json`;
 const SHOTS = process.env.SHOTS_OUT ?? 'screenshots/qa/m08/c2';
-const VENUES = (process.env.LQV_VENUES ?? 'salle,rue').split(',');
+const VENUES = (process.env.LQV_VENUES ?? 'salle,rue,bar,arene').split(',');
+/** Lieux déjà livrés dont le rendu doit rester identique au build d’avant (mode `identique`, hors salle par défaut). */
+const IDENT_VENUES = (process.env.LQV_IDENT_VENUES ?? '').split(',').filter(Boolean);
 const head = execSync('git rev-parse --short HEAD').toString().trim();
 const commit = execSync('git status --porcelain src').toString().trim() ? `${head}+arbre de travail` : head;
 const PORT = Number(process.env.LQV_PREVIEW_PORT) || 4201;
@@ -117,14 +119,15 @@ try {
     const control = [];
     for (const vp of VIEWPORTS) {
       const tag = `${vp[0]}x${vp[1]}`;
-      const cases = [...['braise', 'ronce', 'voile', 'astre'].map((r) => ['scene', r]), ['complet', 'ronce']];
-      for (const [kind, rival] of cases) {
-        const a = (await captureDuel('avant', vp, kind, rival)).buf;
-        const b = (await captureDuel('apres', vp, kind, rival)).buf;
+      const cases = [...['braise', 'ronce', 'voile', 'astre'].map((r) => ['scene', r, '']), ['complet', 'ronce', ''],
+        ...IDENT_VENUES.flatMap((v) => [['scene', 'braise', `&venue=${v}`], ['scene', 'ronce', `&venue=${v}`], ['complet', 'ronce', `&venue=${v}`]])];
+      for (const [kind, rival, q] of cases) {
+        const a = (await captureDuel('avant', vp, kind, rival, q)).buf;
+        const b = (await captureDuel('apres', vp, kind, rival, q)).buf;
         const d = await diff(a, b);
-        results.push({ viewport: tag, kind, rival, ...d });
-        console.log(`${tag} duel ${kind} ${rival} : écart moyen ${d.meanAbs}/255, max ${d.max}, ${d.pixels} pixels différents`);
-        if (kind === 'scene' && rival === 'ronce') {
+        results.push({ viewport: tag, kind, rival, venue: q ? q.slice(7) : 'salle', ...d });
+        console.log(`${tag} duel ${kind} ${rival}${q ? ` (${q.slice(7)})` : ''} : écart moyen ${d.meanAbs}/255, max ${d.max}, ${d.pixels} pixels différents`);
+        if (kind === 'scene' && rival === 'ronce' && !q) {
           const t = await diff(a, (await captureDuel('apres', vp, kind, rival, '&venue=rue')).buf);
           control.push({ viewport: tag, ...t });
           console.log(`  témoin (venue=rue) : écart moyen ${t.meanAbs}/255, ${t.pixels} pixels différents`);
@@ -172,7 +175,7 @@ try {
         }
         if (!quick) {
           for (const screen of ['accueil', 'preparation']) {
-            const enc = venue === 'rue' ? 'libre-braise' : 'quai-1';
+            const enc = 'quai-1';
             const name = `${venue}-${screen}-${tag}.png`;
             save(name, await captureProduct('apres', vp, screen, `&venue=${venue}`, enc));
             shots.push({ name, venue, screen, viewport: tag });
@@ -209,12 +212,14 @@ try {
           await ctx.close();
           runs[venue] = { dom: dom.buf, framing: st.framing, anchors, venue: st.venue };
         }
-        const [a, b] = VENUES;
-        const d = await diff(runs[a].dom, runs[b].dom);
-        const same = (k) => JSON.stringify(runs[a].framing[k]) === JSON.stringify(runs[b].framing[k]);
-        const r = { viewport: tag, view, venues: [runs[a].venue, runs[b].venue], dom: d, projection: same('projection'), cameraView: same('view'), rival: same('rival'), anchors: JSON.stringify(runs[a].anchors) === JSON.stringify(runs[b].anchors) ? runs[a].anchors : null };
-        results.push(r);
-        console.log(`${tag} vue ${view} ${a}/${b} : calques DOM ${d.pixels} pixels différents · projection ${r.projection ? '=' : '≠'} · caméra ${r.cameraView ? '=' : '≠'} · rival ${r.rival ? '=' : '≠'} · ancres ${r.anchors ? `${r.anchors.head}/${r.anchors.edge}` : '≠'}`);
+        const a = VENUES[0];
+        for (const b of VENUES.slice(1)) {
+          const d = await diff(runs[a].dom, runs[b].dom);
+          const same = (k) => JSON.stringify(runs[a].framing[k]) === JSON.stringify(runs[b].framing[k]);
+          const r = { viewport: tag, view, venues: [runs[a].venue, runs[b].venue], dom: d, projection: same('projection'), cameraView: same('view'), rival: same('rival'), anchors: JSON.stringify(runs[a].anchors) === JSON.stringify(runs[b].anchors) ? runs[a].anchors : null };
+          results.push(r);
+          console.log(`${tag} vue ${view} ${a}/${b} : calques DOM ${d.pixels} pixels différents · projection ${r.projection ? '=' : '≠'} · caméra ${r.cameraView ? '=' : '≠'} · rival ${r.rival ? '=' : '≠'} · ancres ${r.anchors ? `${r.anchors.head}/${r.anchors.edge}` : '≠'}`);
+        }
       }
       // Écran Préparation (manche 1) : calques DOM du shell seuls, lieu imposé.
       const doms = [];
@@ -234,13 +239,68 @@ try {
         doms.push(await p.screenshot());
         await ctx.close();
       }
-      const d = await diff(doms[0], doms[1]);
-      results.push({ viewport: tag, screen: 'preparation', dom: d });
-      console.log(`${tag} préparation ${VENUES.join('/')} : calques DOM ${d.pixels} pixels différents`);
+      for (let i = 1; i < doms.length; i++) {
+        const d = await diff(doms[0], doms[i]);
+        results.push({ viewport: tag, screen: 'preparation', venues: [VENUES[0], VENUES[i]], dom: d });
+        console.log(`${tag} préparation ${VENUES[0]}/${VENUES[i]} : calques DOM ${d.pixels} pixels différents`);
+      }
     }
     report.invariant = results.every((r) => r.dom.pixels === 0 && (r.screen || (r.projection && r.cameraView && r.rival && r.anchors)));
     report.results = results;
     console.log(report.invariant ? 'INVARIANT d’un lieu à l’autre' : 'ÉCARTS relevés');
+  }
+
+  if (MODE === 'cycle') {
+    // Changement de lieu seul, appelé directement sur l’arène au tableau des rencontres (scène figée, préparation des
+    // personnages coupée : `prep=off`) : N tours des quatre lieux. `LQV_CYCLE_QUERY=&venueCache=1` : un seul décor
+    // résident ; `LQV_CYCLE_PREPARE=1` : chaque lieu préparé aux temps morts (prepareVenue) avant le premier tour.
+    const N = Number(process.env.LQV_CYCLE_N ?? 4);
+    const { ctx, p } = await page(VIEWPORTS[0]);
+    const cdp = await ctx.newCDPSession(p);
+    await p.goto(`${servers.apres.base}/?qa=1&aiDelay=0&profileSeed=5&prep=off${process.env.LQV_CYCLE_QUERY ?? ''}`);
+    renderer ??= await webglRenderer(p);
+    await p.click('[data-key="home-new"]');
+    await p.fill('[data-key="new-name"]', 'Cycle');
+    await p.click('[data-key="new-sig-Ronce"]');
+    await p.click('[data-key="new-create"]');
+    await p.waitForSelector('[data-screen="board"]');
+    await p.waitForTimeout(2500);
+    if (process.env.LQV_CYCLE_PREPARE === '1') {
+      report.prepare = await p.evaluate(async (venues) => {
+        const a = window.__lqvShell.d.arena();
+        const out = [];
+        for (const v of venues) { const t0 = performance.now(); const ok = await a.prepareVenue(v); out.push({ venue: v, ok, ms: Math.round((performance.now() - t0) * 10) / 10 }); }
+        return out;
+      }, VENUES);
+      console.log(`préparation : ${report.prepare.map((x) => `${x.venue} ${x.ok ? x.ms + ' ms' : 'non'}`).join(', ')}`);
+    }
+    const heap = async () => { await cdp.send('HeapProfiler.collectGarbage'); return Math.round(((await cdp.send('Runtime.getHeapUsage')).usedSize / 1048576) * 100) / 100; };
+    const steps = [];
+    for (let i = 0; i < N; i++) {
+      for (const v of [...VENUES.slice(1), VENUES[0]]) {
+        const r = await p.evaluate(async (v) => {
+          const a = window.__lqvShell.d.arena();
+          const t0 = performance.now();
+          a.setVenue(v);
+          const handler = performance.now() - t0;
+          const f = await new Promise((res) => requestAnimationFrame((ts) => { const done = performance.now(); requestAnimationFrame((ts2) => res({ render: done - ts, sinceCall: done - t0 })); }));
+          const st = a.stats();
+          return { venue: st.venue, handler: Math.round(handler * 10) / 10, firstFrame: Math.round(f.sinceCall * 10) / 10, render: Math.round(f.render * 10) / 10, venueMs: st.venueMs, textures: st.textures, geometries: st.geometries, programs: st.programs, mounted: st.venuesMounted, venueMB: st.venueMB };
+        }, v);
+        await p.waitForTimeout(400);
+        r.heapMb = await heap();
+        steps.push({ round: i + 1, ...r });
+        console.log(`tour ${i + 1} → ${r.venue} : appel ${r.handler} ms (montage ${r.venueMs} ms), première image ${r.firstFrame} ms · ${r.textures} textures, ${r.programs} programmes, décors montés ${r.mounted.join('+')} (${r.venueMB} Mo), tas ${r.heapMb} Mo`);
+      }
+    }
+    await ctx.close();
+    const later = steps.filter((x) => x.round > 1);
+    const stable = (k) => VENUES.every((v) => new Set(later.filter((x) => x.venue === v).map((x) => x[k])).size === 1);
+    report.memory = { textures: stable('textures'), geometries: stable('geometries'), programs: stable('programs'), heapFirst: steps[VENUES.length - 1]?.heapMb, heapLast: steps.at(-1)?.heapMb };
+    report.steps = steps;
+    const ff = later.map((x) => x.firstFrame).sort((x, y) => x - y);
+    report.firstFrame = { median: ff[Math.floor(ff.length / 2)], max: ff.at(-1) };
+    console.log(`après le premier tour : première image médiane ${report.firstFrame.median} ms, max ${report.firstFrame.max} ms ; mémoire : textures ${report.memory.textures ? 'stables' : 'INSTABLES'}, géométries ${report.memory.geometries ? 'stables' : 'INSTABLES'}, programmes ${report.memory.programs ? 'stables' : 'INSTABLES'} ; tas ${report.memory.heapFirst} → ${report.memory.heapLast} Mo`);
   }
 
   if (MODE === 'bascule') {

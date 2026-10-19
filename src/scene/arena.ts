@@ -25,7 +25,7 @@ import { cardBackCanvas } from '../art/cardArt';
 import type { ViewMode } from '../presentation/director';
 import type { Expression, Gesture } from '../presentation/expression';
 import type { Mood, RivalPersonality } from '../presentation/personalities';
-import { DEFAULT_VENUE, type VenueId } from '../presentation/venues';
+import { DEFAULT_VENUE, VENUE_IDS, type VenueId } from '../presentation/venues';
 import { PostFallback, type FallbackState, type PostLevel } from './postFallback';
 import { CHEST_WORLD, createRival, HEAD_WORLD, RIVAL_Z, type RivalRig } from './rival';
 import { STAGING, type Staging, type StagingMul } from './staging';
@@ -89,6 +89,9 @@ export interface ArenaStats {
   venueSwitches: number;
   /** Durée (ms) du dernier changement de lieu : libération, peinture et montage du décor, préparation des programmes. */
   venueMs: number;
+  /** Lieux montés (courant compris) et mémoire GPU estimée de leurs textures, en Mo (mipmaps comprises). */
+  venuesMounted: VenueId[];
+  venueMB: number;
   /** Cadrage (QA) : identique d’un lieu à l’autre. */
   framing: { projection: number[]; view: number[]; rival: number[] };
 }
@@ -115,8 +118,8 @@ export interface ArenaHandle {
   /** M07 L4 : plan de feux de l’écran courant (`duel` pendant un duel). Scène figée : une seule image. */
   setStaging(s: Staging): void;
   /** M08 C2 : lieu du décor (hors duel seulement : écrans de menu, lancement d’un duel). Même scène, même contexte
-   *  WebGL ; l’ancien décor reste monté hors de la scène (deux décors au plus, le plus ancien est libéré au-delà),
-   *  un décor neuf est monté et ses programmes préparés. */
+   *  WebGL ; l’ancien décor reste monté hors de la scène (tous les lieux par défaut, le plus ancien est libéré
+   *  au-delà de la capacité), un décor neuf est monté et ses programmes préparés. */
   setVenue(v: VenueId): void;
   /** M08 C2 : prépare aux temps morts le décor d’un lieu (peinture, textures au GPU, programmes), hors de la scène,
    *  si la capacité du cache le permet ; le changement de lieu suivant n’a plus qu’à l’ajouter à la scène. */
@@ -127,8 +130,13 @@ export interface ArenaHandle {
 
 /** Densité de rendu maximale de la scène 3D quand le post-traitement est actif (voir createArena). */
 const RENDER_SCALE_POST = 1;
-/** Décors gardés montés (ADR 022) : le lieu courant et le précédent, ou le suivant préparé aux temps morts. */
-const VENUE_CACHE = 2;
+/**
+ * Décors gardés montés (ADR 022, amendement « bar et arène ») : tous les lieux. Mesuré sur la Radeon 780M en faisant le
+ * tour des quatre lieux : avec deux décors gardés, chaque changement remonte un décor (première image 106 ms en médiane,
+ * jusqu’à 163 ms) ; avec les quatre, préparés aux temps morts, 1,8 ms (4,1 ms au pire), pour ≈ 66 Mo de textures au GPU
+ * au lieu de ≈ 32 Mo. `?qa=1&venueCache=n` pour mesurer une autre capacité.
+ */
+const VENUE_CACHE = VENUE_IDS.length;
 const EDGE_WORLD = new THREE.Vector3(0, TABLE_TOP, TABLE_FAR_Z);
 const ME_Z = 1.9;
 const VIEW_A = { pos: new THREE.Vector3(0, 3.15, 8.6), look: new THREE.Vector3(0, 2.45, RIVAL_Z) };
@@ -501,7 +509,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   // --- Décor du lieu (M08 C2) : géométrie, textures peintes, éléments animés.
   let venueId: VenueId = def.id;
   let venue: VenueSet = def.mount({ artSeed: opts.artSeed });
-  // Décors montés (du plus ancien au plus récent) : un lieu récent reste peint, compilé et envoyé au GPU, hors de la
+  // Décors montés (du plus ancien au plus récent) : un lieu monté reste peint, compilé et envoyé au GPU, hors de la
   // scène ; y revenir ne coûte qu’un ajout à la scène. Au-delà de la capacité, le plus ancien est libéré (ADR 022).
   const mounted = new Map<VenueId, VenueSet>([[venueId, venue]]);
   const venueCache = Math.max(1, opts.venueCache ?? VENUE_CACHE);
@@ -515,6 +523,26 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
   };
   let venueSwitches = 0;
   let venueMs = 0;
+  /** QA : octets des textures des décors montés (largeur × hauteur × 4, × 4/3 avec mipmaps), chaque texture une fois. */
+  const venueBytes = () => {
+    const seen = new Set<THREE.Texture>();
+    for (const set of mounted.values()) {
+      set.group.traverse((o) => {
+        const mat = (o as THREE.Mesh).material as THREE.Material | THREE.Material[] | undefined;
+        for (const m of Array.isArray(mat) ? mat : mat ? [mat] : []) {
+          for (const v of Object.values(m)) if (v instanceof THREE.Texture) seen.add(v);
+          const u = (m as THREE.ShaderMaterial).uniforms;
+          if (u) for (const x of Object.values(u)) if (x?.value instanceof THREE.Texture) seen.add(x.value);
+        }
+      });
+    }
+    let n = 0;
+    for (const t of seen) {
+      const img = t.image as { width?: number; height?: number } | null;
+      if (img?.width && img.height) n += img.width * img.height * 4 * (t.generateMipmaps ? 4 / 3 : 1);
+    }
+    return n;
+  };
   /** QA : cadrage courant (projection et vue de la caméra, transformation du rival), arrondi au millionième. */
   const framing = () => {
     const r = (m: THREE.Matrix4) => m.elements.map((x) => Math.round(x * 1e6) / 1e6);
@@ -1051,6 +1079,8 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
         venue: venueId,
         venueSwitches,
         venueMs: Math.round(venueMs * 10) / 10,
+        venuesMounted: [...mounted.keys()],
+        venueMB: Math.round(venueBytes() / 1e5) / 10,
         framing: framing(),
       };
     },
