@@ -1,5 +1,5 @@
 /**
- * M09 V3, passe 48 — grammaire de façade et décor de la direction D (ADR 026), communs aux trois îlots de la ville.
+ * M09 V3, passe 49 — grammaire de façade et décor de la direction D (ADR 026), communs aux trois îlots de la ville.
  * Extraite telle quelle de la passe de qualité du Quai (`quaiScene.ts`, passes 45 à 47) ; seules les particularités du
  * Quai sont devenues des options : porte (`Spec.doorKind`, `doorW`, `doorH`), vitraux de la salle (`groundGlass`,
  * `noUpperWindows`), crochets de façade (`FacadeHooks`), rue et flaques (`KitOptions`), brumes (`MistPlane`).
@@ -141,7 +141,7 @@ export interface Spec {
   pediments?: boolean;
   /** Jardinières fleuries aux fenêtres du premier étage. */
   flowers?: boolean;
-  /** Passe 48 (grammaire commune) : porte (largeur, hauteur ; défaut 1,3 × 2,65 m à l'échelle des personnages) et son
+  /** Passe 49 (grammaire commune) : porte (largeur, hauteur ; défaut 1,3 × 2,65 m à l'échelle des personnages) et son
    *  genre : atelier ouvert rougeoyant, taverne ouverte, porte du Tournoi (tympan en rose, vantaux cloutés d'or). */
   doorW?: number;
   doorH?: number;
@@ -767,7 +767,7 @@ export function createKit(o: KitOptions) {
   }
 
   /** Lampadaire du quai (≈ 4 m) : socle, fût, bague, lanterne en cage ; lumière de quai de Cité du Tournoi. */
-  function lampPost(x: number, z: number, fam = 3): void {
+  function lampPost(x: number, z: number, fam = 3, color: THREE.Color = FAM.Astre): void {
     // passe 47 : socle carré à doucine, fût cannelé, plaque émaillée de la famille cerclée d'or, consoles à volutes
     batch.add(box(0.46, 0.18, 0.46, 1), m.iron, M(x, 0.09, z));
     batch.add(new THREE.CylinderGeometry(0.16, 0.24, 0.3, 12), m.iron, M(x, 0.33, z));
@@ -786,8 +786,8 @@ export function createKit(o: KitOptions) {
       batch.add(box(0.06, 0.12, 0.06, 1), m.gold, M(x, 2.06, z + 0.06));
     }
     for (const sx of [-1, 1]) batch.add(new THREE.TorusGeometry(0.16, 0.018, 5, 12, Math.PI), m.gold, M(x + sx * 0.14, 3.62, z, 0, 0, sx > 0 ? -Math.PI / 2 : Math.PI / 2));
-    lanternCage(x, 4.05, z, 0.3, 0.44, true, FAM.Astre);
-    lights.push({ x, y: 4.0, z, intensity: 3.2, radius: 10, halo: 2.0, flicker: 'lantern', color: FAM.Astre });
+    lanternCage(x, 4.05, z, 0.3, 0.44, true, color);
+    lights.push({ x, y: 4.0, z, intensity: 3.2, radius: 10, halo: 2.0, flicker: 'lantern', color });
   }
 
   /** Second rang de maisons derrière le quai : toits, pignons et fenêtres hautes entre les toits du premier rang. */

@@ -36,7 +36,7 @@ npm run qa:product   # JEU (M04–M05) : 8 parcours de joueur depuis l’accueil
 npm run qa:rc        # porte RC (M06) : sans WebGL, longévité, moteur indépendant des animations, mode démo, stockage refusé, réinitialisations, contraste, coût par écran → artifacts/qa/qa-rc.json
 npm run qa:demo      # M09 V2 : parcours de la démo ?demo=1 (accueil → ville → duels → trois îlots → menu → reprise), 30 contrôles → artifacts/qa/m09/v2-demo.json, captures screenshots/qa/m09/v2-demo/
 npm run qa:ville     # M09 V1 : vues du laboratoire ?ville=1 (LQV_SPOTS, LQV_SIZES) et coût du rendu → artifacts/qa/m09/v1-labo.json
-node tools/m09-v3.mjs shots|cout|planche  # M09 V3 : Quai avant / après (captures sans panneau, coût GPU par image en rondes entrelacées, planche avec la référence)
+node tools/m09-v3.mjs shots|cout|planche  # M09 V3 : îlots avant / après (captures sans panneau des positions LQV_SPOTS des trois îlots, coût GPU par image en rondes entrelacées sur l'îlot LQV_V3_ILOT, planche avec la référence et la grande vue LQV_V3_BIG)
 npm run shots:m04    # captures des écrans du jeu 1280×720 / 1920×1080 + preuve de cadrage du duel (SHOTS_OUT=…)
 npm run video        # vidéo du parcours complet (Playwright) → screenshots/qa/m06/parcours-1280.mp4
 npm run preview      # sert le build (dist/) sur http://localhost:4173

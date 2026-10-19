@@ -18,7 +18,7 @@
  * peintes le long du bord du quai, eau du port en reflet brisé, fronton doré et pinacles de la salle de jeu, frise des
  * familles, pignon à oculus de l'armateur, balconnets, crêtes et épis des toits, clair de lune peint sur les étages,
  * atelier rougeoyant du chantier, lampadaires ouvragés, étal garni, jardinières, fumées du second rang.
- * Passe 48 : la grammaire de façade et le décor commun sont dans `grammaire.ts` (partagés avec le Parvis et les Ruelles) ;
+ * Passe 49 : la grammaire de façade et le décor commun sont dans `grammaire.ts` (partagés avec le Parvis et les Ruelles) ;
  * ce fichier ne garde que le Quai (ses façades, la salle de jeu, le bord du quai, les bateaux, l'étal, les accessoires).
  */
 import * as THREE from 'three';
