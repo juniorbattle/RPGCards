@@ -20,7 +20,7 @@ function verifySpriteDir(dir: string, root: string): string[] {
   if (!existsSync(path)) return ['manifest.json absent'];
   let m: SpriteManifest;
   try { m = JSON.parse(readFileSync(path, 'utf8')) as SpriteManifest; } catch { return ['manifest.json illisible']; }
-  if ((m.version !== 1 && m.version !== 2) || !m.sprites || typeof m.sprites !== 'object' || Array.isArray(m.sprites)) return ['manifeste : version 1 ou 2 et objet « sprites » attendus'];
+  if ((m.version !== 1 && m.version !== 2 && m.version !== 3) || !m.sprites || typeof m.sprites !== 'object' || Array.isArray(m.sprites)) return ['manifeste : version 1, 2 ou 3 et objet « sprites » attendus'];
   const listed = new Set<string>();
   for (const [id, e] of Object.entries(m.sprites)) {
     const bad = checkManifestEntry(id, e, m.version);
@@ -33,9 +33,10 @@ function verifySpriteDir(dir: string, root: string): string[] {
     if (buf.length > SHEET_MAX_BYTES) out.push(`${id} : ${e.file} pèse ${buf.length} octets (> 1 Mo)`);
     const png = buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) && buf.toString('latin1', 12, 16) === 'IHDR';
     if (!png) { out.push(`${id} : ${e.file} n'est pas un PNG`); continue; }
-    const [w, h] = sheetSize(specOf(e, m.version).scale);
+    const spec = specOf(e, m.version);
+    const [w, h] = sheetSize(spec.scale, spec.cell);
     if (buf.readUInt32BE(16) !== w || buf.readUInt32BE(20) !== h) out.push(`${id} : ${buf.readUInt32BE(16)}×${buf.readUInt32BE(20)} au lieu de ${w}×${h}`);
-    if (m.version === 2) {
+    if (m.version >= 2) {
       const fiche = (e as { fiche: string }).fiche;
       if (!existsSync(join(root, fiche))) out.push(`${id} : fiche de provenance ${fiche} absente`);
     }
@@ -93,6 +94,18 @@ describe('manifeste des feuilles de personnages (C7, ADR 027)', () => {
     const v1 = { file: 'braise.png', sha256: sha(s1), cell: [96, 160], cols: 5, rows: 3, source: 'QA', approved: false };
     const b = fixture({ braise: v1 }, { 'braise.png': s1 }, [], 1);
     expect(verifySpriteDir(join(b, 'public', 'sprites'), b)).toEqual([]);
+  });
+
+  it('contrat v3 (pixel art, ADR 028) : dimensions tirées de la grille d’art et de l’agrandissement entier', () => {
+    const art = png(720, 720);
+    const px = entry({ file: 'player.png', sha256: sha(art), pixel: true, cell: [48, 80], scale: 3, anchor: [24, 76], figureH: 72 });
+    const a = fixture({ player: px, braise: entry({ file: 'braise.png' }) }, { 'player.png': art, 'braise.png': sheet }, ['art-src/sprites/player/fiche.json'], 3);
+    expect(verifySpriteDir(join(a, 'public', 'sprites'), a)).toEqual([]);
+    const b = fixture({ player: { ...px, scale: 2 } }, { 'player.png': art }, ['art-src/sprites/player/fiche.json'], 3);
+    expect(verifySpriteDir(join(b, 'public', 'sprites'), b).join()).toMatch(/720×720 au lieu de 480×480/);
+    // pixel art dans un manifeste v2 : refusé
+    const c = fixture({ player: px }, { 'player.png': art }, ['art-src/sprites/player/fiche.json'], 2);
+    expect(verifySpriteDir(join(c, 'public', 'sprites'), c).join()).toMatch(/contrat v3/);
   });
 
   it('le vérificateur refuse empreinte, fichier absent, dimensions, fiche absente, image hors manifeste, poids', () => {

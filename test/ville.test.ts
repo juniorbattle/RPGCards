@@ -380,6 +380,132 @@ describe('ville : feuilles de personnages (ADR 027, contrat v2)', () => {
   });
 });
 
+describe('ville : feuilles en pixel art (ADR 028, A2 : contrat v3)', () => {
+  const v2 = { file: 'player.png', sha256: 'a'.repeat(64), cell: [96, 160] as [number, number], cols: 5, rows: 3, scale: 2, anchor: [48, 152] as [number, number], figureH: 148, recolor: ['tenue' as const], source: 'QA', fiche: 'art-src/sprites/player/fiche.json', approved: false };
+  const px = { ...v2, pixel: true, cell: [48, 80] as [number, number], scale: 3, anchor: [24, 76] as [number, number], figureH: 72 };
+
+  it('v3 : grille d’art déclarée (16 × 24 à 96 × 160), agrandissement entier, ancrage et figure en px d’art ; v1 et v2 toujours acceptés', async () => {
+    const { checkManifestEntry, specOf, sheetSize } = await import('../src/ville/spritesExternes');
+    expect(checkManifestEntry('player', px, 3)).toEqual([]);
+    // un manifeste v3 accepte aussi les entrées lisses du contrat v2 ; un manifeste v2 refuse le pixel art
+    expect(checkManifestEntry('player', v2, 3)).toEqual([]);
+    expect(checkManifestEntry('player', v2, 2)).toEqual([]);
+    expect(checkManifestEntry('player', px, 2).join()).toMatch(/contrat v3/);
+    expect(specOf(px, 3)).toEqual({ scale: 3, anchor: [24, 76], figureH: 72, recolor: ['tenue'], cell: [48, 80], pixel: true });
+    expect(specOf(v2, 3)).toEqual({ scale: 2, anchor: [48, 152], figureH: 148, recolor: ['tenue'] });
+    expect(sheetSize(3, [48, 80])).toEqual([720, 720]);
+    expect(sheetSize(1, [32, 48])).toEqual([160, 144]);
+    // agrandissement entier seulement, de 1 à 8 ; grille d'art en px entiers dans les bornes
+    expect(checkManifestEntry('x', { ...px, scale: 1.5 }, 3).join()).toMatch(/agrandissement/);
+    expect(checkManifestEntry('x', { ...px, scale: 9 }, 3).join()).toMatch(/agrandissement/);
+    expect(checkManifestEntry('x', { ...px, cell: [12, 80] }, 3).join()).toMatch(/grille d'art/);
+    expect(checkManifestEntry('x', { ...px, cell: [48.5, 80] }, 3).join()).toMatch(/grille d'art/);
+    expect(checkManifestEntry('x', { ...px, cell: [96, 170] }, 3).join()).toMatch(/grille d'art/);
+    // la plus grande feuille admise : 480 × 8 = 3840 px de côté
+    expect(checkManifestEntry('x', { ...px, cell: [96, 160], anchor: [48, 152], figureH: 148, scale: 8 }, 3)).toEqual([]);
+    // ancrage et figure lus dans la grille d'art
+    expect(checkManifestEntry('x', { ...px, anchor: [50, 76] }, 3).join()).toMatch(/ancrage.*48×80/);
+    expect(checkManifestEntry('x', { ...px, figureH: 30 }, 3).join()).toMatch(/figure/);
+    expect(checkManifestEntry('x', { ...px, pixel: 'oui' }, 3).join()).toMatch(/pixel/);
+  });
+
+  it('panneau tiré de la feuille : la figure vaut la hauteur de référence, les pieds à l’origine, quelle que soit la grille', async () => {
+    const { walkerPanel, CODE_SPEC, WALKER_H } = await import('../src/ville/sprites');
+    for (const spec of [CODE_SPEC, { scale: 3, anchor: [24, 76] as const, figureH: 72, recolor: [], cell: [48, 80] as const, pixel: true }, { scale: 2, anchor: [20, 46] as const, figureH: 44, recolor: [], cell: [40, 48] as const, pixel: true }]) {
+      const { geo, ax } = walkerPanel(spec);
+      geo.computeBoundingBox();
+      const bb = geo.boundingBox!;
+      const [cw, ch] = spec.cell ?? [96, 160];
+      const unit = (bb.max.y - bb.min.y) / ch;
+      // pieds (ancrage) à y = 0 ; sommet de la figure à WALKER_H ; rapport de la case conservé
+      // (géométrie en flottants 32 bits)
+      expect(bb.min.y + (ch - spec.anchor[1]) * unit).toBeCloseTo(0, 6);
+      expect(spec.figureH * unit).toBeCloseTo(WALKER_H, 6);
+      expect((bb.max.x - bb.min.x) / (bb.max.y - bb.min.y)).toBeCloseTo(cw / ch, 6);
+      expect(ax).toBeCloseTo((0.5 - spec.anchor[0] / cw) * (bb.max.x - bb.min.x), 6);
+      geo.dispose();
+    }
+  });
+});
+
+describe('ville : plans de décor (ADR 028, B2 : diorama de plans peints)', () => {
+  const plate = (o: Record<string, unknown> = {}) => ({
+    file: 'facades.png', sha256: 'b'.repeat(64), size: [3072, 1024], at: [0, 0, -3], width: 48, orient: 'face', order: 3, blend: 'decoupe',
+    source: 'QA', fiche: 'art-src/decors/quai-facades/fiche.json', approved: false, ...o,
+  });
+  const ilot = (plans: Record<string, unknown>, extra: Record<string, unknown> = {}) => ({ plans, ...extra });
+
+  it('contrôle d’un plan : fichier, empreinte, dimensions, pose au monde, ordre, mélange, parts d’éclairage et de brume, fiche, statut', async () => {
+    const { checkPlate } = await import('../src/ville/decors');
+    expect(checkPlate('quai/facades', plate())).toEqual([]);
+    expect(checkPlate('x', plate({ orient: 'sol', blend: 'fondu', lit: 0.4, fog: 0 }))).toEqual([]);
+    expect(checkPlate('x', null)).toHaveLength(1);
+    expect(checkPlate('x', plate({ file: '../hors.png' })).join()).toMatch(/fichier/);
+    expect(checkPlate('x', plate({ sha256: 'nope' })).join()).toMatch(/SHA-256/);
+    expect(checkPlate('x', plate({ size: [5000, 1024] })).join()).toMatch(/dimensions/);
+    expect(checkPlate('x', plate({ size: [1024.5, 1024] })).join()).toMatch(/dimensions/);
+    expect(checkPlate('x', plate({ at: [0, 0] })).join()).toMatch(/position/);
+    expect(checkPlate('x', plate({ width: 0 })).join()).toMatch(/largeur/);
+    expect(checkPlate('x', plate({ orient: 'biais' })).join()).toMatch(/orientation/);
+    expect(checkPlate('x', plate({ order: 1.5 })).join()).toMatch(/ordre/);
+    expect(checkPlate('x', plate({ blend: 'additif' })).join()).toMatch(/mélange/);
+    expect(checkPlate('x', plate({ lit: 2 })).join()).toMatch(/éclairage/);
+    expect(checkPlate('x', plate({ fog: -1 })).join()).toMatch(/brume/);
+    expect(checkPlate('x', plate({ fiche: 'art-src/sprites/x/fiche.json' })).join()).toMatch(/fiche/);
+    expect(checkPlate('x', plate({ approved: 'oui' })).join()).toMatch(/approbation/);
+  });
+
+  it('contrôle d’un diorama : 1 à 8 plans, ordres uniques et d’arrière en avant, lumières, budget GPU', async () => {
+    const { checkIlotDecor, DECOR_MAX_PLATES } = await import('../src/ville/decors');
+    const ok = ilot({ ciel: plate({ file: 'ciel.png', at: [0, -2, -60], width: 200, order: 0, blend: 'fondu', fog: 0 }), facades: plate(), eau: plate({ file: 'eau.png', orient: 'sol', at: [0, -1.15, 8], order: 5 }) }, { lumieres: [{ at: [-13, 3.4, 2.95], color: 'Astre', intensity: 2.2, radius: 9, halo: 1.6 }, { at: [7, 2.5, -2.9], color: [1, 0.5, 0.2], intensity: 1, radius: 6 }], sol: true });
+    expect(checkIlotDecor('quai', ok)).toEqual([]);
+    expect(checkIlotDecor('quai', ilot({})).join()).toMatch(/0 plans/);
+    const many = Object.fromEntries(Array.from({ length: DECOR_MAX_PLATES + 1 }, (_, i) => [`p${i}`, plate({ order: i, at: [0, 0, -50 + i] })]));
+    expect(checkIlotDecor('quai', ilot(many)).join()).toMatch(/9 plans/);
+    expect(checkIlotDecor('quai', ilot({ a: plate(), b: plate({ at: [0, 0, 4] }) })).join()).toMatch(/ordre 3 partagé/);
+    // un plan plus lointain dessiné après un plan plus proche : refusé
+    expect(checkIlotDecor('quai', ilot({ loin: plate({ at: [0, 0, -20], order: 4 }), pres: plate({ at: [0, 0, 2], order: 1 }) })).join()).toMatch(/plus lointain.*dessiné après/);
+    // même profondeur : l'ordre départage, sans contradiction
+    expect(checkIlotDecor('quai', ilot({ a: plate({ order: 1 }), b: plate({ order: 2 }) }))).toEqual([]);
+    expect(checkIlotDecor('quai', ilot({ 'pl/an': plate() })).join()).toMatch(/identifiant/);
+    expect(checkIlotDecor('quai', ilot({ a: plate() }, { lumieres: [{ at: [0, 0, 0], color: 'rose', intensity: 1, radius: 5 }] })).join()).toMatch(/couleur/);
+    expect(checkIlotDecor('quai', ilot({ a: plate() }, { lumieres: Array.from({ length: 17 }, () => ({ at: [0, 0, 0], color: 'ambre', intensity: 1, radius: 5 })) })).join()).toMatch(/16 au plus/);
+    expect(checkIlotDecor('quai', ilot({ a: plate() }, { sol: 'oui' })).join()).toMatch(/sol/);
+    // budget : 8 plans de 4096 × 4096 dépassent les 160 Mo de mémoire GPU
+    const big = Object.fromEntries(Array.from({ length: 8 }, (_, i) => [`p${i}`, plate({ size: [4096, 4096], order: i, at: [0, 0, -50 + i] })]));
+    expect(checkIlotDecor('quai', ilot(big)).join()).toMatch(/mémoire GPU/);
+    expect(checkIlotDecor('quai', null).join()).toMatch(/illisible/);
+    expect(checkIlotDecor('quai', { plans: [] }).join()).toMatch(/plans/);
+  });
+
+  it('pose au monde : plan de face posé sur son bas, plan couché centré ; ordre de dessin d’arrière en avant', async () => {
+    const { plateRect, platesInOrder, plateGpuBytes } = await import('../src/ville/decors');
+    expect(plateRect({ at: [2, 0.5, -3], width: 48, size: [3072, 1024], orient: 'face' })).toEqual({ center: [2, 0.5 + 8, -3], w: 48, h: 16, orient: 'face' });
+    expect(plateRect({ at: [0, -1.15, 8], width: 64, size: [2048, 256], orient: 'sol' })).toEqual({ center: [0, -1.15, 8], w: 64, h: 8, orient: 'sol' });
+    const e = ilot({ b: plate({ order: 4 }), a: plate({ order: 1 }), c: plate({ order: 2 }) }) as never;
+    expect(platesInOrder(e).map(([id]) => id)).toEqual(['a', 'c', 'b']);
+    expect(plateGpuBytes([3072, 1024])).toBe(Math.round(3072 * 1024 * 4 * 4 / 3));
+  });
+
+  it('admission tout ou rien : hors QA, un seul plan non approuvé refuse l’îlot ; en QA il passe, nommé ; `decors=code` garde le décor par code', async () => {
+    const { decideIlot, decorPolicy } = await import('../src/ville/decors');
+    expect(decorPolicy(false, 'code')).toBe('approuvees');
+    expect(decorPolicy(true, 'code')).toBe('code');
+    const all = ilot({ ciel: plate({ order: 0, at: [0, 0, -60], approved: true }), facades: plate({ approved: true }) });
+    const one = ilot({ ciel: plate({ order: 0, at: [0, 0, -60], approved: true }), facades: plate({ approved: false }) });
+    expect(decideIlot('approuvees', 'quai', all)).toEqual({ ok: true, unapproved: [], issues: [] });
+    const refused = decideIlot('approuvees', 'quai', one);
+    expect(refused.ok).toBe(false);
+    expect(refused.issues.join()).toMatch(/quai\/facades : plan non approuvé/);
+    expect(decideIlot('qa', 'quai', one)).toEqual({ ok: true, unapproved: ['quai/facades'], issues: [] });
+    expect(decideIlot('code', 'quai', all)).toEqual({ ok: false, unapproved: [], issues: [] });
+    // non conforme : refusé dans toutes les politiques, avec la raison et le décor par code gardé
+    const bad = decideIlot('qa', 'quai', ilot({ a: plate({ sha256: 'x' }) }));
+    expect(bad.ok).toBe(false);
+    expect(bad.issues.join(' | ')).toMatch(/SHA-256.*décor par code gardé/);
+  });
+});
+
 describe('ville : premier plan de la frontale', () => {
   it('aucun lampadaire du quai devant une porte (à moins de 1,5 m en x)', async () => {
     const { LAMPS, FACADES } = await import('../src/ville/quai');

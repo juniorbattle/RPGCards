@@ -18,6 +18,7 @@ import { blocked, type Zone } from './monde';
 import { ILOTS, isIlotId, type IlotId } from './ilots';
 import { demoObjective, doorEncounter } from './objectifs';
 import { spritePolicy } from './spritesExternes';
+import { decorPolicy, preloadDecors } from './decors';
 import { installVilleStyles, promptBubble } from './ui';
 import { createTown, type Town } from './ville';
 
@@ -52,6 +53,14 @@ export class DemoHub {
   private returnTo: { ilot: IlotId; spawn: string } | null = null;
   private startX = 0;
 
+  constructor() {
+    // Plans de décor de l'îlot d'arrivée lus et décodés dès le chargement de la démo, bien avant l'entrée en ville
+    // (ADR 028) : la ville construit alors son diorama tout de suite ; sans diorama, simple lecture du manifeste.
+    const q = new URLSearchParams(location.search);
+    const at: IlotId = isIlotId(this.state.ilot) ? this.state.ilot : 'quai';
+    void preloadDecors(at === 'quai' ? ['quai'] : ['quai', at], decorPolicy(q.get('qa') === '1', q.get('decors')));
+  }
+
   /** L'enveloppe est au hub : la ville apparaît (créée au premier passage), le HUD prend place dans l'enveloppe. */
   show(sh: Shell): HTMLElement {
     this.sh = sh;
@@ -72,6 +81,7 @@ export class DemoHub {
         host: this.host, artSeed: sh.params.artSeed, camera: 'frontale', player: `player-${sig}`, spawn: 'arrivee',
         freeze: sh.params.freeze, reducedMotion: sh.params.reducedMotion,
         sprites: spritePolicy(sh.params.qa, new URLSearchParams(location.search).get('sprites')),
+        decors: decorPolicy(sh.params.qa, new URLSearchParams(location.search).get('decors')),
         rig: parseRig(new URLSearchParams(location.search).get('rig')),
         onInteract: (z) => this.interact(z),
         onMenu: () => this.menu(),

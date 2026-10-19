@@ -1,0 +1,1305 @@
+{
+  "date": "2026-10-19T22:22:24.460Z",
+  "commit": "245a661+arbre de travail",
+  "dist": "dist",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "checks": [
+    "OK A : le Quai est dessiné par son diorama (diorama)",
+    "OK A : plans du Quai tous approuvés, aucun signalé (aucun)",
+    "OK A : aucune image rendue avant la décision du décor (0), aucun diorama en retard",
+    "OK A : six plans préparés : {\"quai/ciel\":{\"bytes\":408965,\"fetchMs\":16.4,\"hashMs\":0.2,\"decodeMs\":22.1,\"uploadMs\":5.8},\"quai/ville-haute\":{\"bytes\":48971,\"fetchMs\":9.1,\"hashMs\":0.3,\"decodeMs\":10.1,\"uploadMs\":1.8},\"quai/facades\":{\"bytes\":105910,\"fetchMs\":11,\"hashMs\":0.1,\"decodeMs\":22.2,\"uploadMs\":10.4},\"quai/rue\":{\"bytes\":22836,\"fetchMs\":12.7,\"hashMs\":0.1,\"decodeMs\":12.9,\"uploadMs\":10.1},\"quai/premier-plan\":{\"bytes\":51368,\"fetchMs\":14.5,\"hashMs\":0.1,\"decodeMs\":12.9,\"uploadMs\":0.9},\"quai/eau\":{\"bytes\":179725,\"fetchMs\":19.3,\"hashMs\":0.1,\"decodeMs\":15.4,\"uploadMs\":0.8}}",
+    "OK A : mémoire GPU des plans du Quai 48 Mo",
+    "OK `decors=code` : décor par code, aucun plan lu",
+    "OK B : hors QA, le diorama du Quai (plans approuvés) est admis",
+    "OK B : le Parvis (un plan non approuvé) est refusé en entier, décor par code (parvis/amphi : plan non approuvé, refusé hors QA (décor par code gardé))",
+    "OK `decors=code` au Parvis : décor par code, aucun plan lu, aucun refus",
+    "OK D : Ruelles refusées, décor par code gardé (ruelles/ciel : empreinte 930426e24f4a… ≠ manifeste 000000000000… ; ruelles/maisons : 2048×512 au lieu de 1024×512 ; ruelles : diorama refusé, décor par code gardé)",
+    "OK D : aucune image rendue avant la décision (0)",
+    "OK D2 : ordre contraire à la profondeur, refusé sans décodage (ruelles : « ciel » (z -70) plus lointain que « avant » (z 4) mais dessiné après (ordre 1 > 0) ; ruelles : diorama refusé, décor par code gardé)",
+    "OK E : sans préparation, décor par code construit puis diorama substitué avant la première image (262 ms ; 0 image en attente)",
+    "OK F : démo sur le Quai en diorama (pré-lu au chargement), plans du Parvis pas encore prêts (diorama)",
+    "OK F : le Parvis arrive directement en diorama, préparé pendant le fondu, aucune image en attente (0)",
+    "OK F : changement d'îlot derrière le fondu (385 ms après le départ, préparation 16 ms, construction 10 ms, première image 77 ms)",
+    "OK F : retour au Quai en diorama, sans image en attente",
+    "OK G : décor attendu à chaque ronde (vide : code ; diorama ; code)",
+    "OK G : aucune image rendue avant la décision du décor (toutes les rondes)",
+    "OK aucune erreur ni avertissement de console (0)"
+  ],
+  "console": [],
+  "runs": {
+    "A": {
+      "hookMs": 304,
+      "dec": {
+        "policy": "qa",
+        "loaded": [
+          "quai"
+        ],
+        "unapproved": [],
+        "issues": [],
+        "timings": {
+          "quai/ciel": {
+            "bytes": 408965,
+            "fetchMs": 16.4,
+            "hashMs": 0.2,
+            "decodeMs": 22.1,
+            "uploadMs": 5.8
+          },
+          "quai/ville-haute": {
+            "bytes": 48971,
+            "fetchMs": 9.1,
+            "hashMs": 0.3,
+            "decodeMs": 10.1,
+            "uploadMs": 1.8
+          },
+          "quai/facades": {
+            "bytes": 105910,
+            "fetchMs": 11,
+            "hashMs": 0.1,
+            "decodeMs": 22.2,
+            "uploadMs": 10.4
+          },
+          "quai/rue": {
+            "bytes": 22836,
+            "fetchMs": 12.7,
+            "hashMs": 0.1,
+            "decodeMs": 12.9,
+            "uploadMs": 10.1
+          },
+          "quai/premier-plan": {
+            "bytes": 51368,
+            "fetchMs": 14.5,
+            "hashMs": 0.1,
+            "decodeMs": 12.9,
+            "uploadMs": 0.9
+          },
+          "quai/eau": {
+            "bytes": 179725,
+            "fetchMs": 19.3,
+            "hashMs": 0.1,
+            "decodeMs": 15.4,
+            "uploadMs": 0.8
+          }
+        },
+        "gpuBytes": {
+          "quai": 50331647
+        },
+        "ilot": "quai",
+        "world": "diorama",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 48,
+        "triangles": 4766,
+        "textures": 30,
+        "geometries": 18,
+        "programs": 17,
+        "lights": 6,
+        "cpuMs": 203.5,
+        "frames": 1,
+        "buildMs": 155,
+        "firstFrameMs": 377,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "A0": {
+      "hookMs": 602,
+      "dec": {
+        "policy": "code",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [],
+        "timings": {},
+        "gpuBytes": {},
+        "ilot": "quai",
+        "world": "code",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 54,
+        "geometries": 66,
+        "programs": 27,
+        "lights": 15,
+        "cpuMs": 4.6,
+        "frames": 2,
+        "buildMs": 346,
+        "firstFrameMs": 515,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "B": {
+      "hookMs": 286,
+      "dec": {
+        "policy": "approuvees",
+        "loaded": [
+          "quai"
+        ],
+        "unapproved": [],
+        "issues": [],
+        "timings": {
+          "quai/ciel": {
+            "bytes": 408965,
+            "fetchMs": 9.5,
+            "hashMs": 0.3,
+            "decodeMs": 17.1,
+            "uploadMs": 5.3
+          },
+          "quai/ville-haute": {
+            "bytes": 48971,
+            "fetchMs": 7.7,
+            "hashMs": 0.2,
+            "decodeMs": 9.9,
+            "uploadMs": 1.6
+          },
+          "quai/facades": {
+            "bytes": 105910,
+            "fetchMs": 10.5,
+            "hashMs": 0.2,
+            "decodeMs": 20.9,
+            "uploadMs": 11.3
+          },
+          "quai/rue": {
+            "bytes": 22836,
+            "fetchMs": 8.8,
+            "hashMs": 0,
+            "decodeMs": 12.9,
+            "uploadMs": 2.5
+          },
+          "quai/premier-plan": {
+            "bytes": 51368,
+            "fetchMs": 11.2,
+            "hashMs": 0,
+            "decodeMs": 8.5,
+            "uploadMs": 0.9
+          },
+          "quai/eau": {
+            "bytes": 179725,
+            "fetchMs": 11.4,
+            "hashMs": 0.3,
+            "decodeMs": 11.6,
+            "uploadMs": 1.1
+          }
+        },
+        "gpuBytes": {
+          "quai": 50331647
+        },
+        "ilot": "quai",
+        "world": "diorama",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 48,
+        "triangles": 4766,
+        "textures": 30,
+        "geometries": 18,
+        "programs": 17,
+        "lights": 6,
+        "cpuMs": 80.4,
+        "frames": 1,
+        "buildMs": 149,
+        "firstFrameMs": 245,
+        "mountMs": null,
+        "mountFrameMs": null
+      },
+      "parvis": {
+        "policy": "approuvees",
+        "loaded": [
+          "quai"
+        ],
+        "unapproved": [],
+        "issues": [
+          "parvis/amphi : plan non approuvé, refusé hors QA (décor par code gardé)"
+        ],
+        "timings": {
+          "quai/ciel": {
+            "bytes": 408965,
+            "fetchMs": 9.5,
+            "hashMs": 0.3,
+            "decodeMs": 17.1,
+            "uploadMs": 5.3
+          },
+          "quai/ville-haute": {
+            "bytes": 48971,
+            "fetchMs": 7.7,
+            "hashMs": 0.2,
+            "decodeMs": 9.9,
+            "uploadMs": 1.6
+          },
+          "quai/facades": {
+            "bytes": 105910,
+            "fetchMs": 10.5,
+            "hashMs": 0.2,
+            "decodeMs": 20.9,
+            "uploadMs": 11.3
+          },
+          "quai/rue": {
+            "bytes": 22836,
+            "fetchMs": 8.8,
+            "hashMs": 0,
+            "decodeMs": 12.9,
+            "uploadMs": 2.5
+          },
+          "quai/premier-plan": {
+            "bytes": 51368,
+            "fetchMs": 11.2,
+            "hashMs": 0,
+            "decodeMs": 8.5,
+            "uploadMs": 0.9
+          },
+          "quai/eau": {
+            "bytes": 179725,
+            "fetchMs": 11.4,
+            "hashMs": 0.3,
+            "decodeMs": 11.6,
+            "uploadMs": 1.1
+          }
+        },
+        "gpuBytes": {
+          "quai": 50331647
+        },
+        "ilot": "parvis",
+        "world": "code",
+        "pendingFrames": 0,
+        "late": []
+      }
+    },
+    "C": {
+      "hookMs": 564,
+      "dec": {
+        "policy": "code",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [],
+        "timings": {},
+        "gpuBytes": {},
+        "ilot": "parvis",
+        "world": "code",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 113,
+        "triangles": 129278,
+        "textures": 51,
+        "geometries": 53,
+        "programs": 25,
+        "lights": 10,
+        "cpuMs": 2.4,
+        "frames": 2,
+        "buildMs": 325,
+        "firstFrameMs": 481,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "D": {
+      "hookMs": 437,
+      "dec": {
+        "policy": "qa",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [
+          "ruelles/ciel : empreinte 930426e24f4a… ≠ manifeste 000000000000…",
+          "ruelles/maisons : 2048×512 au lieu de 1024×512",
+          "ruelles : diorama refusé, décor par code gardé"
+        ],
+        "timings": {},
+        "gpuBytes": {},
+        "ilot": "ruelles",
+        "world": "code",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 118,
+        "triangles": 90066,
+        "textures": 47,
+        "geometries": 57,
+        "programs": 27,
+        "lights": 10,
+        "cpuMs": 113.2,
+        "frames": 1,
+        "buildMs": 316,
+        "firstFrameMs": 455,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "D2": {
+      "hookMs": 418,
+      "dec": {
+        "policy": "qa",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [
+          "ruelles : « ciel » (z -70) plus lointain que « avant » (z 4) mais dessiné après (ordre 1 > 0)",
+          "ruelles : diorama refusé, décor par code gardé"
+        ],
+        "timings": {},
+        "gpuBytes": {},
+        "ilot": "ruelles",
+        "world": "code",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 118,
+        "triangles": 90066,
+        "textures": 47,
+        "geometries": 57,
+        "programs": 27,
+        "lights": 10,
+        "cpuMs": 118.1,
+        "frames": 1,
+        "buildMs": 296,
+        "firstFrameMs": 444,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "E": {
+      "atMount": "code",
+      "readyMs": 262,
+      "framesDuringWait": 2,
+      "rep": {
+        "policy": "qa",
+        "loaded": [
+          "quai",
+          "parvis"
+        ],
+        "unapproved": [
+          "parvis/amphi"
+        ],
+        "issues": [],
+        "timings": {
+          "quai/ciel": {
+            "bytes": 408965,
+            "fetchMs": 14.9,
+            "hashMs": 0.2,
+            "decodeMs": 18.9,
+            "uploadMs": 5.4
+          },
+          "quai/ville-haute": {
+            "bytes": 48971,
+            "fetchMs": 10.6,
+            "hashMs": 0.1,
+            "decodeMs": 9.1,
+            "uploadMs": 1.8
+          },
+          "quai/facades": {
+            "bytes": 105910,
+            "fetchMs": 9.7,
+            "hashMs": 0.2,
+            "decodeMs": 20.6,
+            "uploadMs": 8.6
+          },
+          "quai/rue": {
+            "bytes": 22836,
+            "fetchMs": 11.8,
+            "hashMs": 0.1,
+            "decodeMs": 9.7,
+            "uploadMs": 5.8
+          },
+          "quai/premier-plan": {
+            "bytes": 51368,
+            "fetchMs": 12.1,
+            "hashMs": 0.1,
+            "decodeMs": 12.9,
+            "uploadMs": 1.9
+          },
+          "quai/eau": {
+            "bytes": 179725,
+            "fetchMs": 13.2,
+            "hashMs": 0.2,
+            "decodeMs": 9.9,
+            "uploadMs": 1.8
+          },
+          "parvis/ciel": {
+            "bytes": 79437,
+            "fetchMs": 250.3,
+            "hashMs": 0,
+            "decodeMs": 3.9,
+            "uploadMs": 0.6
+          },
+          "parvis/amphi": {
+            "bytes": 29316,
+            "fetchMs": 250.5,
+            "hashMs": 0,
+            "decodeMs": 6.2,
+            "uploadMs": 1.1
+          },
+          "parvis/avant": {
+            "bytes": 11837,
+            "fetchMs": 250.7,
+            "hashMs": 0.1,
+            "decodeMs": 4.1,
+            "uploadMs": 0.5
+          }
+        },
+        "gpuBytes": {
+          "quai": 50331647,
+          "parvis": 11184811
+        },
+        "ilot": "parvis",
+        "world": "diorama",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 43,
+        "triangles": 4740,
+        "textures": 30,
+        "geometries": 15,
+        "programs": 17,
+        "lights": 2,
+        "cpuMs": 0.7,
+        "frames": 4,
+        "buildMs": 151,
+        "firstFrameMs": 253,
+        "mountMs": 238,
+        "mountFrameMs": 319
+      }
+    },
+    "F": {
+      "avant": {
+        "dec": {
+          "policy": "qa",
+          "loaded": [
+            "quai"
+          ],
+          "unapproved": [],
+          "issues": [],
+          "timings": {
+            "quai/ciel": {
+              "bytes": 408965,
+              "fetchMs": 61.6,
+              "hashMs": 0.6,
+              "decodeMs": 35.1,
+              "uploadMs": 4.6
+            },
+            "quai/ville-haute": {
+              "bytes": 48971,
+              "fetchMs": 62.5,
+              "hashMs": 0,
+              "decodeMs": 11.5,
+              "uploadMs": 1.8
+            },
+            "quai/facades": {
+              "bytes": 105910,
+              "fetchMs": 63.1,
+              "hashMs": 0.1,
+              "decodeMs": 30.3,
+              "uploadMs": 8.3
+            },
+            "quai/rue": {
+              "bytes": 22836,
+              "fetchMs": 63.4,
+              "hashMs": 0,
+              "decodeMs": 13.1,
+              "uploadMs": 2.9
+            },
+            "quai/premier-plan": {
+              "bytes": 51368,
+              "fetchMs": 63.6,
+              "hashMs": 0,
+              "decodeMs": 14.6,
+              "uploadMs": 0.8
+            },
+            "quai/eau": {
+              "bytes": 179725,
+              "fetchMs": 63.9,
+              "hashMs": 0.1,
+              "decodeMs": 16.4,
+              "uploadMs": 0.8
+            }
+          },
+          "gpuBytes": {
+            "quai": 50331647
+          },
+          "ilot": "quai",
+          "world": "diorama",
+          "pendingFrames": 0,
+          "late": []
+        },
+        "parvisPret": false
+      },
+      "apres": {
+        "swapMs": 385,
+        "worldAtSwap": "diorama",
+        "prepMs": 16,
+        "dec": {
+          "policy": "qa",
+          "loaded": [
+            "quai",
+            "parvis"
+          ],
+          "unapproved": [
+            "parvis/amphi"
+          ],
+          "issues": [],
+          "timings": {
+            "quai/ciel": {
+              "bytes": 408965,
+              "fetchMs": 61.6,
+              "hashMs": 0.6,
+              "decodeMs": 35.1,
+              "uploadMs": 4.6
+            },
+            "quai/ville-haute": {
+              "bytes": 48971,
+              "fetchMs": 62.5,
+              "hashMs": 0,
+              "decodeMs": 11.5,
+              "uploadMs": 1.8
+            },
+            "quai/facades": {
+              "bytes": 105910,
+              "fetchMs": 63.1,
+              "hashMs": 0.1,
+              "decodeMs": 30.3,
+              "uploadMs": 8.3
+            },
+            "quai/rue": {
+              "bytes": 22836,
+              "fetchMs": 63.4,
+              "hashMs": 0,
+              "decodeMs": 13.1,
+              "uploadMs": 2.9
+            },
+            "quai/premier-plan": {
+              "bytes": 51368,
+              "fetchMs": 63.6,
+              "hashMs": 0,
+              "decodeMs": 14.6,
+              "uploadMs": 0.8
+            },
+            "quai/eau": {
+              "bytes": 179725,
+              "fetchMs": 63.9,
+              "hashMs": 0.1,
+              "decodeMs": 16.4,
+              "uploadMs": 0.8
+            },
+            "parvis/ciel": {
+              "bytes": 79437,
+              "fetchMs": 22.1,
+              "hashMs": 0.1,
+              "decodeMs": 6.5,
+              "uploadMs": 0.5
+            },
+            "parvis/amphi": {
+              "bytes": 29316,
+              "fetchMs": 22.4,
+              "hashMs": 0.1,
+              "decodeMs": 8.5,
+              "uploadMs": 0.9
+            },
+            "parvis/avant": {
+              "bytes": 11837,
+              "fetchMs": 22.9,
+              "hashMs": 0,
+              "decodeMs": 6.4,
+              "uploadMs": 0.5
+            }
+          },
+          "gpuBytes": {
+            "quai": 50331647,
+            "parvis": 11184811
+          },
+          "ilot": "parvis",
+          "world": "diorama",
+          "pendingFrames": 0,
+          "late": []
+        },
+        "st": {
+          "camera": "frontale",
+          "calls": 45,
+          "triangles": 4744,
+          "textures": 32,
+          "geometries": 16,
+          "programs": 17,
+          "lights": 2,
+          "cpuMs": 1.1,
+          "frames": 21,
+          "buildMs": 137,
+          "firstFrameMs": 248,
+          "mountMs": 10,
+          "mountFrameMs": 77
+        }
+      },
+      "liberation": {
+        "dec": {
+          "policy": "qa",
+          "loaded": [
+            "quai",
+            "parvis"
+          ],
+          "unapproved": [
+            "parvis/amphi"
+          ],
+          "issues": [],
+          "timings": {
+            "quai/ciel": {
+              "bytes": 408965,
+              "fetchMs": 8.5,
+              "hashMs": 0.4,
+              "decodeMs": 20.4,
+              "uploadMs": 2
+            },
+            "quai/ville-haute": {
+              "bytes": 48971,
+              "fetchMs": 9.8,
+              "hashMs": 0.1,
+              "decodeMs": 11.8,
+              "uploadMs": 0.8
+            },
+            "quai/facades": {
+              "bytes": 105910,
+              "fetchMs": 10.4,
+              "hashMs": 0.1,
+              "decodeMs": 23.8,
+              "uploadMs": 85.4
+            },
+            "quai/rue": {
+              "bytes": 22836,
+              "fetchMs": 11,
+              "hashMs": 0,
+              "decodeMs": 8.4,
+              "uploadMs": 2.6
+            },
+            "quai/premier-plan": {
+              "bytes": 51368,
+              "fetchMs": 11.2,
+              "hashMs": 0.1,
+              "decodeMs": 12.2,
+              "uploadMs": 1
+            },
+            "quai/eau": {
+              "bytes": 179725,
+              "fetchMs": 11.4,
+              "hashMs": 0.4,
+              "decodeMs": 13.4,
+              "uploadMs": 0.8
+            },
+            "parvis/ciel": {
+              "bytes": 79437,
+              "fetchMs": 22.1,
+              "hashMs": 0.1,
+              "decodeMs": 6.5,
+              "uploadMs": 0.5
+            },
+            "parvis/amphi": {
+              "bytes": 29316,
+              "fetchMs": 22.4,
+              "hashMs": 0.1,
+              "decodeMs": 8.5,
+              "uploadMs": 0.9
+            },
+            "parvis/avant": {
+              "bytes": 11837,
+              "fetchMs": 22.9,
+              "hashMs": 0,
+              "decodeMs": 6.4,
+              "uploadMs": 0.5
+            }
+          },
+          "gpuBytes": {
+            "quai": 50331647,
+            "parvis": 11184811
+          },
+          "ilot": "quai",
+          "world": "diorama",
+          "pendingFrames": 0,
+          "late": []
+        },
+        "textures": 38
+      }
+    },
+    "G": {
+      "vide": {
+        "rounds": [
+          {
+            "wallMs": 642,
+            "buildMs": 341,
+            "firstFrameMs": 508,
+            "textures": 54,
+            "calls": 137,
+            "world": "code",
+            "pending": 0
+          },
+          {
+            "wallMs": 606,
+            "buildMs": 354,
+            "firstFrameMs": 510,
+            "textures": 54,
+            "calls": 137,
+            "world": "code",
+            "pending": 0
+          },
+          {
+            "wallMs": 612,
+            "buildMs": 352,
+            "firstFrameMs": 518,
+            "textures": 54,
+            "calls": 137,
+            "world": "code",
+            "pending": 0
+          },
+          {
+            "wallMs": 613,
+            "buildMs": 346,
+            "firstFrameMs": 517,
+            "textures": 54,
+            "calls": 137,
+            "world": "code",
+            "pending": 0
+          },
+          {
+            "wallMs": 633,
+            "buildMs": 367,
+            "firstFrameMs": 533,
+            "textures": 54,
+            "calls": 137,
+            "world": "code",
+            "pending": 0
+          }
+        ],
+        "wallMs": 613,
+        "buildMs": 352,
+        "firstFrameMs": 517,
+        "calls": 137
+      },
+      "diorama": {
+        "rounds": [
+          {
+            "wallMs": 385,
+            "buildMs": 148,
+            "firstFrameMs": 247,
+            "textures": 30,
+            "calls": 48,
+            "world": "diorama",
+            "pending": 0
+          },
+          {
+            "wallMs": 375,
+            "buildMs": 140,
+            "firstFrameMs": 239,
+            "textures": 30,
+            "calls": 48,
+            "world": "diorama",
+            "pending": 0
+          },
+          {
+            "wallMs": 393,
+            "buildMs": 148,
+            "firstFrameMs": 268,
+            "textures": 30,
+            "calls": 48,
+            "world": "diorama",
+            "pending": 0
+          },
+          {
+            "wallMs": 373,
+            "buildMs": 142,
+            "firstFrameMs": 241,
+            "textures": 30,
+            "calls": 48,
+            "world": "diorama",
+            "pending": 0
+          },
+          {
+            "wallMs": 377,
+            "buildMs": 143,
+            "firstFrameMs": 243,
+            "textures": 30,
+            "calls": 48,
+            "world": "diorama",
+            "pending": 0
+          }
+        ],
+        "wallMs": 377,
+        "buildMs": 143,
+        "firstFrameMs": 243,
+        "calls": 48
+      },
+      "code": {
+        "rounds": [
+          {
+            "wallMs": 612,
+            "buildMs": 357,
+            "firstFrameMs": 524,
+            "textures": 54,
+            "calls": 137,
+            "world": "code",
+            "pending": 0
+          },
+          {
+            "wallMs": 613,
+            "buildMs": 366,
+            "firstFrameMs": 527,
+            "textures": 54,
+            "calls": 137,
+            "world": "code",
+            "pending": 0
+          },
+          {
+            "wallMs": 603,
+            "buildMs": 357,
+            "firstFrameMs": 517,
+            "textures": 54,
+            "calls": 137,
+            "world": "code",
+            "pending": 0
+          },
+          {
+            "wallMs": 627,
+            "buildMs": 358,
+            "firstFrameMs": 538,
+            "textures": 54,
+            "calls": 137,
+            "world": "code",
+            "pending": 0
+          },
+          {
+            "wallMs": 599,
+            "buildMs": 347,
+            "firstFrameMs": 510,
+            "textures": 54,
+            "calls": 137,
+            "world": "code",
+            "pending": 0
+          }
+        ],
+        "wallMs": 612,
+        "buildMs": 357,
+        "firstFrameMs": 524,
+        "calls": 137
+      }
+    }
+  },
+  "plates": {
+    "ciel": {
+      "bytes": 408965,
+      "sha256": "733441d506547161292fcf24086e94a86f2b31622f5dd2331e29afef260cb7bf",
+      "size": [
+        2048,
+        1024
+      ]
+    },
+    "ville-haute": {
+      "bytes": 48971,
+      "sha256": "5eb15f4cfa6228224c7700b4e93bbcdc82c3b08f992ac3322cb4ca5a27fe3d77",
+      "size": [
+        2048,
+        512
+      ]
+    },
+    "facades": {
+      "bytes": 105910,
+      "sha256": "1f3855db81354ff9e3473e0612ba724e8eb4f535227275d9e91e94c5a62a68b9",
+      "size": [
+        3072,
+        1024
+      ]
+    },
+    "rue": {
+      "bytes": 22836,
+      "sha256": "b48a9eccba9b81b4ebd5421a9efbd3f219c8009c1b77a46be6e8b492432688ef",
+      "size": [
+        2048,
+        512
+      ]
+    },
+    "premier-plan": {
+      "bytes": 51368,
+      "sha256": "63913ee90621f37261df8d07e7d5a2b2f8abe58e4d2c28fca6dc87ab53de251c",
+      "size": [
+        2048,
+        512
+      ]
+    },
+    "eau": {
+      "bytes": 179725,
+      "sha256": "a106cb77b4ed957294f684e7c098a123f284169bfcadfb360c303102e992d58d",
+      "size": [
+        2048,
+        512
+      ]
+    },
+    "parvis-ciel": {
+      "bytes": 79437,
+      "sha256": "930426e24f4acd9e14af4a34dcf2ff8cfeb39262a07abb0bec674c5206dd57d2",
+      "size": [
+        1024,
+        512
+      ]
+    },
+    "parvis-amphi": {
+      "bytes": 29316,
+      "sha256": "3d6ae9083ef81a4428e65d80d3efb53cf8e9db3f5eb72c113a6bca01308ca2b9",
+      "size": [
+        2048,
+        512
+      ]
+    },
+    "parvis-avant": {
+      "bytes": 11837,
+      "sha256": "44d88ae024e71796c250d70f43c5c69ca54f46564ee80d975ec777a04d6effc7",
+      "size": [
+        2048,
+        256
+      ]
+    }
+  },
+  "manifest": {
+    "version": 1,
+    "ilots": {
+      "quai": {
+        "plans": {
+          "ciel": {
+            "file": "ciel.png",
+            "sha256": "733441d506547161292fcf24086e94a86f2b31622f5dd2331e29afef260cb7bf",
+            "size": [
+              2048,
+              1024
+            ],
+            "source": "QA : plan dessiné par code dans la page (aucune image externe ni générée)",
+            "fiche": "art-src/decors/qa/fiche.json",
+            "approved": true,
+            "at": [
+              0,
+              -6,
+              -70
+            ],
+            "width": 240,
+            "orient": "face",
+            "order": 0,
+            "blend": "fondu",
+            "fog": 0
+          },
+          "ville-haute": {
+            "file": "ville-haute.png",
+            "sha256": "5eb15f4cfa6228224c7700b4e93bbcdc82c3b08f992ac3322cb4ca5a27fe3d77",
+            "size": [
+              2048,
+              512
+            ],
+            "source": "QA : plan dessiné par code dans la page (aucune image externe ni générée)",
+            "fiche": "art-src/decors/qa/fiche.json",
+            "approved": true,
+            "at": [
+              0,
+              0,
+              -24
+            ],
+            "width": 100,
+            "orient": "face",
+            "order": 1,
+            "blend": "decoupe"
+          },
+          "facades": {
+            "file": "facades.png",
+            "sha256": "1f3855db81354ff9e3473e0612ba724e8eb4f535227275d9e91e94c5a62a68b9",
+            "size": [
+              3072,
+              1024
+            ],
+            "source": "QA : plan dessiné par code dans la page (aucune image externe ni générée)",
+            "fiche": "art-src/decors/qa/fiche.json",
+            "approved": true,
+            "at": [
+              0,
+              0,
+              -3
+            ],
+            "width": 48,
+            "orient": "face",
+            "order": 2,
+            "blend": "decoupe",
+            "lit": 0.35
+          },
+          "rue": {
+            "file": "rue.png",
+            "sha256": "b48a9eccba9b81b4ebd5421a9efbd3f219c8009c1b77a46be6e8b492432688ef",
+            "size": [
+              2048,
+              512
+            ],
+            "source": "QA : plan dessiné par code dans la page (aucune image externe ni générée)",
+            "fiche": "art-src/decors/qa/fiche.json",
+            "approved": true,
+            "at": [
+              0,
+              0,
+              2.95
+            ],
+            "width": 48,
+            "orient": "face",
+            "order": 3,
+            "blend": "decoupe"
+          },
+          "premier-plan": {
+            "file": "premier-plan.png",
+            "sha256": "63913ee90621f37261df8d07e7d5a2b2f8abe58e4d2c28fca6dc87ab53de251c",
+            "size": [
+              2048,
+              512
+            ],
+            "source": "QA : plan dessiné par code dans la page (aucune image externe ni générée)",
+            "fiche": "art-src/decors/qa/fiche.json",
+            "approved": true,
+            "at": [
+              0,
+              -2,
+              4.6
+            ],
+            "width": 48,
+            "orient": "face",
+            "order": 4,
+            "blend": "decoupe"
+          },
+          "eau": {
+            "file": "eau.png",
+            "sha256": "a106cb77b4ed957294f684e7c098a123f284169bfcadfb360c303102e992d58d",
+            "size": [
+              2048,
+              512
+            ],
+            "source": "QA : plan dessiné par code dans la page (aucune image externe ni générée)",
+            "fiche": "art-src/decors/qa/fiche.json",
+            "approved": true,
+            "at": [
+              0,
+              -1.15,
+              12
+            ],
+            "width": 64,
+            "orient": "sol",
+            "order": 5,
+            "blend": "decoupe"
+          }
+        },
+        "lumieres": [
+          {
+            "at": [
+              -13,
+              4,
+              2.95
+            ],
+            "color": "Astre",
+            "intensity": 3.2,
+            "radius": 10,
+            "halo": 2,
+            "flicker": "lantern"
+          },
+          {
+            "at": [
+              -4,
+              4,
+              2.95
+            ],
+            "color": "Astre",
+            "intensity": 3.2,
+            "radius": 10,
+            "halo": 2,
+            "flicker": "lantern"
+          },
+          {
+            "at": [
+              5,
+              4,
+              2.95
+            ],
+            "color": "Astre",
+            "intensity": 3.2,
+            "radius": 10,
+            "halo": 2,
+            "flicker": "lantern"
+          },
+          {
+            "at": [
+              14,
+              4,
+              2.95
+            ],
+            "color": "Astre",
+            "intensity": 3.2,
+            "radius": 10,
+            "halo": 2,
+            "flicker": "lantern"
+          },
+          {
+            "at": [
+              -6.75,
+              2.2,
+              -2.3
+            ],
+            "color": "Astre",
+            "intensity": 2.6,
+            "radius": 7,
+            "halo": 1.2,
+            "flicker": "candle"
+          },
+          {
+            "at": [
+              7.2,
+              2.2,
+              -2.3
+            ],
+            "color": "Cendre",
+            "intensity": 2.6,
+            "radius": 7,
+            "halo": 1.2,
+            "flicker": "candle"
+          }
+        ]
+      },
+      "parvis": {
+        "plans": {
+          "ciel": {
+            "file": "parvis-ciel.png",
+            "sha256": "930426e24f4acd9e14af4a34dcf2ff8cfeb39262a07abb0bec674c5206dd57d2",
+            "size": [
+              1024,
+              512
+            ],
+            "source": "QA : plan dessiné par code dans la page (aucune image externe ni générée)",
+            "fiche": "art-src/decors/qa/fiche.json",
+            "approved": true,
+            "at": [
+              0,
+              -6,
+              -70
+            ],
+            "width": 240,
+            "orient": "face",
+            "order": 0,
+            "blend": "fondu",
+            "fog": 0
+          },
+          "amphi": {
+            "file": "parvis-amphi.png",
+            "sha256": "3d6ae9083ef81a4428e65d80d3efb53cf8e9db3f5eb72c113a6bca01308ca2b9",
+            "size": [
+              2048,
+              512
+            ],
+            "source": "QA : plan dessiné par code dans la page (aucune image externe ni générée)",
+            "fiche": "art-src/decors/qa/fiche.json",
+            "approved": false,
+            "at": [
+              0,
+              0,
+              -4
+            ],
+            "width": 40,
+            "orient": "face",
+            "order": 1,
+            "blend": "decoupe"
+          },
+          "avant": {
+            "file": "parvis-avant.png",
+            "sha256": "44d88ae024e71796c250d70f43c5c69ca54f46564ee80d975ec777a04d6effc7",
+            "size": [
+              2048,
+              256
+            ],
+            "source": "QA : plan dessiné par code dans la page (aucune image externe ni générée)",
+            "fiche": "art-src/decors/qa/fiche.json",
+            "approved": true,
+            "at": [
+              0,
+              -1,
+              4.2
+            ],
+            "width": 40,
+            "orient": "face",
+            "order": 2,
+            "blend": "decoupe"
+          }
+        },
+        "lumieres": [
+          {
+            "at": [
+              -4,
+              3,
+              0
+            ],
+            "color": "Cendre",
+            "intensity": 3,
+            "radius": 9,
+            "halo": 1.5
+          },
+          {
+            "at": [
+              4,
+              3,
+              0
+            ],
+            "color": "Cendre",
+            "intensity": 3,
+            "radius": 9,
+            "halo": 1.5
+          }
+        ]
+      },
+      "ruelles": {
+        "plans": {
+          "ciel": {
+            "file": "parvis-ciel.png",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "size": [
+              1024,
+              512
+            ],
+            "source": "QA : plan dessiné par code dans la page (aucune image externe ni générée)",
+            "fiche": "art-src/decors/qa/fiche.json",
+            "approved": true,
+            "at": [
+              0,
+              -6,
+              -70
+            ],
+            "width": 240,
+            "orient": "face",
+            "order": 0,
+            "blend": "fondu"
+          },
+          "maisons": {
+            "file": "parvis-amphi.png",
+            "sha256": "3d6ae9083ef81a4428e65d80d3efb53cf8e9db3f5eb72c113a6bca01308ca2b9",
+            "size": [
+              1024,
+              512
+            ],
+            "source": "QA : plan dessiné par code dans la page (aucune image externe ni générée)",
+            "fiche": "art-src/decors/qa/fiche.json",
+            "approved": true,
+            "at": [
+              0,
+              0,
+              -4
+            ],
+            "width": 40,
+            "orient": "face",
+            "order": 1,
+            "blend": "decoupe"
+          }
+        }
+      }
+    }
+  }
+}

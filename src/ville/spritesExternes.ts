@@ -14,6 +14,12 @@
  * provenance `fiche` (`art-src/sprites/<id>/fiche.json`). Contrat v1 (passe 42) toujours accepté : échelle 1, ancrage
  * [48, 152], figure de 148, ni teinte ni fiche.
  *
+ * Contrat v3 (ADR 028, A2 : personnages en pixel art) : le contrat v2, plus des feuilles `pixel: true` qui déclarent leur
+ * résolution logique (`cell` : la grille du dessin en pixels d'art, de 16 × 24 à 96 × 160) et un agrandissement entier
+ * `scale` (pixels de la feuille par pixel d'art, 1 à 8) ; ancrage et figure en pixels d'art. Filtrage au plus proche dans
+ * le nuanceur, chaque pixel d'art lu au centre de son bloc et recoloré seul (tons clés exacts, sans liseré de filtrage),
+ * bords d'un pixel d'écran adoucis (`SPRITE_FRAG`, variante `PIXEL`). Un manifeste v3 accepte aussi les entrées v2.
+ *
  * Clés du manifeste : l'identifiant exact d'abord, puis la feuille commune d'un dessin recoloré : `player` pour les
  * quatre `player-<Famille>`, `pnj-<gabarit>` pour tous les `pnj-<gabarit>-<graine>` (ADR 027, D5).
  */
@@ -30,6 +36,11 @@ export const DEFAULT_FIGURE_H = 148;
 export const SHEET_SCALES = [1, 1.5, 2] as const;
 /** Budget d'une feuille (AGENTS) : vérifié par le test du manifeste. */
 export const SHEET_MAX_BYTES = 1024 * 1024;
+/** Contrat v3, feuilles en pixel art : grille du dessin (px d'art, bornes incluses), agrandissement entier, côté maximal. */
+export const PIXEL_CELL_MIN: readonly [number, number] = [16, 24];
+export const PIXEL_CELL_MAX: readonly [number, number] = [96, 160];
+export const PIXEL_SCALE_MAX = 8;
+export type ManifestVersion = 1 | 2 | 3;
 
 /**
  * Recoloration (C5). Une feuille peint chaque zone recolorable dans un ton clé réservé, à quatre niveaux ; le nuanceur
@@ -83,8 +94,13 @@ export interface SpriteManifestEntryV2 extends SpriteManifestEntryV1 {
   fiche: string;
 }
 
-export type SpriteManifestEntry = SpriteManifestEntryV1 | SpriteManifestEntryV2;
-export interface SpriteManifest { version: 1 | 2; sprites: Record<string, SpriteManifestEntry> }
+/** Contrat v3 : feuille en pixel art (grille `cell` en px d'art, agrandissement entier `scale`). */
+export interface SpriteManifestEntryV3 extends SpriteManifestEntryV2 {
+  pixel?: boolean;
+}
+
+export type SpriteManifestEntry = SpriteManifestEntryV1 | SpriteManifestEntryV2 | SpriteManifestEntryV3;
+export interface SpriteManifest { version: ManifestVersion; sprites: Record<string, SpriteManifestEntry> }
 
 /** Géométrie et teintes d'une feuille, déduites de son entrée (v1 : valeurs de l'atlas par code). */
 export interface SheetSpec {
@@ -92,31 +108,48 @@ export interface SheetSpec {
   anchor: readonly [number, number];
   figureH: number;
   recolor: readonly RecolorSlot[];
+  /** Grille logique d'une case (px logiques ; px d'art d'une feuille en pixel art). Défaut : `SHEET_CELL`. */
+  cell?: readonly [number, number];
+  /** Pixel art (contrat v3) : filtrage au plus proche, recoloration exacte texel par texel. */
+  pixel?: boolean;
 }
 
 const isNum = (x: unknown): x is number => typeof x === 'number' && Number.isFinite(x);
+const isInt = (x: unknown): x is number => isNum(x) && Number.isInteger(x);
 
 /**
  * Contrôle pur d'une entrée de manifeste (forme, grille du contrat, échelle, ancrage, figure, teintes, fiche) : liste
  * des problèmes, vide si l'entrée est valable. `version` : celle du manifeste qui la contient.
  */
-export function checkManifestEntry(id: string, e: unknown, version: 1 | 2 = 2): string[] {
+export function checkManifestEntry(id: string, e: unknown, version: ManifestVersion = 2): string[] {
   const out: string[] = [];
   if (!e || typeof e !== 'object') return [`${id} : entrée absente`];
-  const x = e as Partial<SpriteManifestEntryV2>;
+  const x = e as Partial<SpriteManifestEntryV3>;
+  const pixel = x.pixel === true;
+  if (x.pixel !== undefined && typeof x.pixel !== 'boolean') out.push(`${id} : champ « pixel » non booléen`);
+  if (pixel && version < 3) out.push(`${id} : feuille en pixel art réservée au contrat v3`);
   if (typeof x.file !== 'string' || !/^[\w.-]+\.png$/.test(x.file)) out.push(`${id} : fichier invalide`);
   if (typeof x.sha256 !== 'string' || !/^[0-9a-f]{64}$/.test(x.sha256)) out.push(`${id} : empreinte SHA-256 invalide`);
-  if (!Array.isArray(x.cell) || x.cell[0] !== SHEET_CELL[0] || x.cell[1] !== SHEET_CELL[1]) out.push(`${id} : cellule différente de ${SHEET_CELL.join('×')}`);
+  const c = x.cell;
+  const cellOk = pixel
+    ? Array.isArray(c) && c.length === 2 && isInt(c[0]) && isInt(c[1]) && c[0] >= PIXEL_CELL_MIN[0] && c[0] <= PIXEL_CELL_MAX[0] && c[1] >= PIXEL_CELL_MIN[1] && c[1] <= PIXEL_CELL_MAX[1]
+    : Array.isArray(c) && c[0] === SHEET_CELL[0] && c[1] === SHEET_CELL[1];
+  if (!cellOk) out.push(pixel ? `${id} : grille d'art invalide (px entiers, de ${PIXEL_CELL_MIN.join('×')} à ${PIXEL_CELL_MAX.join('×')})` : `${id} : cellule différente de ${SHEET_CELL.join('×')}`);
   if (x.cols !== SHEET_COLS || x.rows !== SHEET_ROWS) out.push(`${id} : grille différente de ${SHEET_COLS}×${SHEET_ROWS}`);
   if (typeof x.source !== 'string' || !x.source.trim()) out.push(`${id} : provenance manquante`);
   if (typeof x.approved !== 'boolean') out.push(`${id} : statut d'approbation manquant`);
   if (version === 1) return out;
-  if (!(SHEET_SCALES as readonly unknown[]).includes(x.scale)) out.push(`${id} : échelle ${String(x.scale)} hors de ${SHEET_SCALES.join(', ')}`);
+  const cell: readonly [number, number] = pixel && cellOk ? [c![0]!, c![1]!] : SHEET_CELL;
+  if (pixel) {
+    // grille et agrandissement bornés : une feuille fait au plus 480 × 8 = 3840 px de côté
+    if (!isInt(x.scale) || x.scale < 1 || x.scale > PIXEL_SCALE_MAX) out.push(`${id} : agrandissement ${String(x.scale)} non entier ou hors de 1 à ${PIXEL_SCALE_MAX}`);
+  } else if (!(SHEET_SCALES as readonly unknown[]).includes(x.scale)) out.push(`${id} : échelle ${String(x.scale)} hors de ${SHEET_SCALES.join(', ')}`);
   const a = x.anchor;
-  if (!Array.isArray(a) || a.length !== 2 || !isNum(a[0]) || !isNum(a[1]) || a[0] <= 0 || a[0] >= SHEET_CELL[0] || a[1] <= 0 || a[1] > SHEET_CELL[1]) {
-    out.push(`${id} : ancrage des pieds invalide (px logiques dans la case ${SHEET_CELL.join('×')})`);
-  } else if (!isNum(x.figureH) || x.figureH < SHEET_CELL[1] / 2 || x.figureH > a[1]) {
-    out.push(`${id} : hauteur de figure invalide (de ${SHEET_CELL[1] / 2} à la ligne des pieds, ${a[1]})`);
+  const unit = pixel ? 'px d’art' : 'px logiques';
+  if (!Array.isArray(a) || a.length !== 2 || !isNum(a[0]) || !isNum(a[1]) || a[0] <= 0 || a[0] >= cell[0] || a[1] <= 0 || a[1] > cell[1]) {
+    out.push(`${id} : ancrage des pieds invalide (${unit} dans la case ${cell.join('×')})`);
+  } else if (!isNum(x.figureH) || x.figureH < cell[1] / 2 || x.figureH > a[1]) {
+    out.push(`${id} : hauteur de figure invalide (de ${cell[1] / 2} à la ligne des pieds, ${a[1]})`);
   }
   if (x.recolor !== undefined) {
     const r = x.recolor as unknown;
@@ -129,15 +162,17 @@ export function checkManifestEntry(id: string, e: unknown, version: 1 | 2 = 2): 
 }
 
 /** Spécification d'une entrée valable (à n'appeler qu'après `checkManifestEntry`). */
-export function specOf(e: SpriteManifestEntry, version: 1 | 2): SheetSpec {
+export function specOf(e: SpriteManifestEntry, version: ManifestVersion): SheetSpec {
   if (version === 1) return { scale: 1, anchor: DEFAULT_ANCHOR, figureH: DEFAULT_FIGURE_H, recolor: [] };
-  const v = e as SpriteManifestEntryV2;
-  return { scale: v.scale, anchor: [v.anchor[0], v.anchor[1]], figureH: v.figureH, recolor: v.recolor ?? [] };
+  const v = e as SpriteManifestEntryV3;
+  const spec: SheetSpec = { scale: v.scale, anchor: [v.anchor[0], v.anchor[1]], figureH: v.figureH, recolor: v.recolor ?? [] };
+  if (v.pixel === true) { spec.cell = [v.cell[0], v.cell[1]]; spec.pixel = true; }
+  return spec;
 }
 
-/** Dimensions attendues d'une feuille (px) pour une échelle. */
-export function sheetSize(scale: number): [number, number] {
-  return [Math.round(SHEET_CELL[0] * scale) * SHEET_COLS, Math.round(SHEET_CELL[1] * scale) * SHEET_ROWS];
+/** Dimensions attendues d'une feuille (px) pour une échelle et une grille (défaut : celle du contrat v1/v2). */
+export function sheetSize(scale: number, cell: readonly [number, number] = SHEET_CELL): [number, number] {
+  return [Math.round(cell[0] * scale) * SHEET_COLS, Math.round(cell[1] * scale) * SHEET_ROWS];
 }
 
 /** Clés du manifeste essayées pour un personnage, dans l'ordre : l'identifiant, puis la feuille commune de son dessin. */
@@ -182,8 +217,8 @@ export function readManifest(base = 'sprites/'): Promise<ManifestRead> {
       .then(async (r): Promise<ManifestRead> => {
         if (!r.ok) return { manifest: null, issue: null };
         const j = (await r.json()) as Partial<SpriteManifest> | null;
-        if (!j || (j.version !== 1 && j.version !== 2) || !j.sprites || typeof j.sprites !== 'object' || Array.isArray(j.sprites)) {
-          return { manifest: null, issue: 'manifeste des feuilles illisible (version 1 ou 2 et objet « sprites » attendus)' };
+        if (!j || (j.version !== 1 && j.version !== 2 && j.version !== 3) || !j.sprites || typeof j.sprites !== 'object' || Array.isArray(j.sprites)) {
+          return { manifest: null, issue: 'manifeste des feuilles illisible (version 1, 2 ou 3 et objet « sprites » attendus)' };
         }
         return { manifest: j as SpriteManifest, issue: null };
       })
@@ -198,7 +233,7 @@ const decoded = new Map<string, Promise<THREE.Texture | string>>();
 
 /** Lecture, empreinte, décodage hors du fil principal (ImageBitmap) et contrôle des dimensions d'une feuille. */
 function decodeSheet(base: string, e: SpriteManifestEntry, spec: SheetSpec): Promise<THREE.Texture | string> {
-  const k = `${base}|${e.file}|${e.sha256}|${spec.scale}`;
+  const k = `${base}|${e.file}|${e.sha256}|${spec.scale}|${spec.pixel ? `pixel ${spec.cell!.join('×')}` : 'lisse'}`;
   let p = decoded.get(k);
   if (!p) {
     p = (async () => {
@@ -214,9 +249,9 @@ function decodeSheet(base: string, e: SpriteManifestEntry, spec: SheetSpec): Pro
         // Retournée à la création (`flipY` est ignoré pour une ImageBitmap) : même convention de lignes que l'atlas sur
         // canvas. Ni prémultiplication ni conversion de couleur : les tons clés et le fond d'encre sous l'alpha restent exacts.
         const bmp = await createImageBitmap(new Blob([buf], { type: 'image/png' }), { imageOrientation: 'flipY', premultiplyAlpha: 'none', colorSpaceConversion: 'none' });
-        const [w, h] = sheetSize(spec.scale);
+        const [w, h] = sheetSize(spec.scale, spec.cell);
         if (bmp.width !== w || bmp.height !== h) {
-          const why = `${bmp.width}×${bmp.height} au lieu de ${w}×${h} (échelle ${spec.scale})`;
+          const why = `${bmp.width}×${bmp.height} au lieu de ${w}×${h} (${spec.pixel ? `grille d'art ${spec.cell!.join('×')}, agrandissement` : 'échelle'} ${spec.scale})`;
           bmp.close();
           return why;
         }
@@ -224,10 +259,19 @@ function decodeSheet(base: string, e: SpriteManifestEntry, spec: SheetSpec): Pro
         const ms = (x: number) => Math.round(x * 10) / 10;
         tex.userData.timing = { bytes: buf.byteLength, fetchMs: ms(t1 - t0), hashMs: ms(t2 - t1), decodeMs: ms(performance.now() - t2) };
         tex.name = `feuille:${e.file}`;
-        tex.colorSpace = THREE.SRGBColorSpace;
         tex.flipY = false;
-        tex.anisotropy = 4;
-        tex.generateMipmaps = true;
+        if (spec.pixel) {
+          // Pixel art (contrat v3) : valeurs sRGB brutes (le nuanceur reconnaît les tons clés à l'octet près, puis convertit
+          // en linéaire), lues au plus proche, sans mipmaps (chaque pixel d'art est lu au centre de son bloc).
+          tex.colorSpace = THREE.NoColorSpace;
+          tex.magFilter = THREE.NearestFilter;
+          tex.minFilter = THREE.NearestFilter;
+          tex.generateMipmaps = false;
+        } else {
+          tex.colorSpace = THREE.SRGBColorSpace;
+          tex.anisotropy = 4;
+          tex.generateMipmaps = true;
+        }
         tex.needsUpdate = true;
         return tex;
       } catch (err) {

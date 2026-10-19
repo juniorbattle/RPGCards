@@ -1,0 +1,358 @@
+{
+  "date": "2026-10-19T22:22:54.524Z",
+  "commit": "245a661+arbre de travail",
+  "dist": "dist",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "checks": [
+    "OK P1 : joueur et dockers dessinés par leurs feuilles en pixel art (contrat v3)",
+    "OK P1 : feuille v3 aux dimensions fausses refusée, raison rapportée (pnj-commis-5 (feuille pnj-commis) : 720×720 au lieu de 480×480 (grille d'art 48×80, agrandissement 2))",
+    "OK aucune image rendue avec un personnage en attente de sa feuille (tous les parcours)",
+    "OK 1920 : recoloration exacte : feuille en tons clés recolorée = feuille déjà peinte (joueur 0 px, écart max 0 ; docker 0 px, écart max 0)",
+    "OK 1920 : agrandissement entier sans effet : feuille ×1 = feuille ×3 (6 px, écart max 1)",
+    "OK 1920 : témoin : la même feuille en contrat v2 lisse diffère (1377 px au-delà de 8/255, écart moyen 1.031/255)",
+    "OK 1280 : recoloration exacte : feuille en tons clés recolorée = feuille déjà peinte (joueur 0 px, écart max 0 ; docker 0 px, écart max 0)",
+    "OK 1280 : agrandissement entier sans effet : feuille ×1 = feuille ×3 (0 px, écart max 0)",
+    "OK 1280 : témoin : la même feuille en contrat v2 lisse diffère (683 px au-delà de 8/255, écart moyen 1.062/255)",
+    "OK agrandissement à l'écran du joueur : 2.39 px d'écran par px d'art en 1920 × 1080, 1.59 en 1280 × 720 (figure de 74 px d'art)",
+    "OK aucune erreur ni avertissement de console (0)"
+  ],
+  "console": [],
+  "runs": {
+    "P0": {
+      "rep": {
+        "policy": "code",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [],
+        "timings": {},
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 54,
+        "geometries": 66,
+        "programs": 27,
+        "lights": 15,
+        "cpuMs": 153.1,
+        "frames": 1,
+        "buildMs": 341,
+        "firstFrameMs": 512,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "P1": {
+      "rep": {
+        "policy": "qa",
+        "loaded": [
+          "pnj-docker-1",
+          "pnj-docker-9",
+          "player-Cendre"
+        ],
+        "unapproved": [
+          "pnj-docker-1",
+          "pnj-docker-9",
+          "player-Cendre"
+        ],
+        "issues": [
+          "pnj-commis-5 (feuille pnj-commis) : 720×720 au lieu de 480×480 (grille d'art 48×80, agrandissement 2)"
+        ],
+        "timings": {
+          "pnj-docker": {
+            "bytes": 54076,
+            "fetchMs": 4.8,
+            "hashMs": 0.2,
+            "decodeMs": 4.8,
+            "uploadMs": 3.3
+          },
+          "player": {
+            "bytes": 69852,
+            "fetchMs": 6.2,
+            "hashMs": 0.1,
+            "decodeMs": 8.4,
+            "uploadMs": 1
+          }
+        },
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 54,
+        "geometries": 66,
+        "programs": 28,
+        "lights": 15,
+        "cpuMs": 267.9,
+        "frames": 1,
+        "buildMs": 340,
+        "firstFrameMs": 651,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "P2": {
+      "rep": {
+        "policy": "qa",
+        "loaded": [
+          "player-Cendre",
+          "pnj-docker-1"
+        ],
+        "unapproved": [
+          "player-Cendre",
+          "pnj-docker-1"
+        ],
+        "issues": [],
+        "timings": {
+          "player": {
+            "bytes": 69738,
+            "fetchMs": 5.7,
+            "hashMs": 0.2,
+            "decodeMs": 5.1,
+            "uploadMs": 3.7
+          },
+          "pnj-docker-1": {
+            "bytes": 53548,
+            "fetchMs": 6.3,
+            "hashMs": 0,
+            "decodeMs": 9,
+            "uploadMs": 0.9
+          }
+        },
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 54,
+        "geometries": 66,
+        "programs": 28,
+        "lights": 15,
+        "cpuMs": 122.8,
+        "frames": 1,
+        "buildMs": 336,
+        "firstFrameMs": 499,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "P3": {
+      "rep": {
+        "policy": "qa",
+        "loaded": [
+          "player-Cendre"
+        ],
+        "unapproved": [
+          "player-Cendre"
+        ],
+        "issues": [],
+        "timings": {
+          "player": {
+            "bytes": 30795,
+            "fetchMs": 5.6,
+            "hashMs": 0.3,
+            "decodeMs": 1.3,
+            "uploadMs": 1.9
+          }
+        },
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 54,
+        "geometries": 66,
+        "programs": 28,
+        "lights": 15,
+        "cpuMs": 136.5,
+        "frames": 1,
+        "buildMs": 341,
+        "firstFrameMs": 511,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "P4": {
+      "rep": {
+        "policy": "qa",
+        "loaded": [
+          "player-Cendre",
+          "pnj-docker-1",
+          "pnj-docker-9"
+        ],
+        "unapproved": [
+          "player-Cendre",
+          "pnj-docker-1",
+          "pnj-docker-9"
+        ],
+        "issues": [],
+        "timings": {
+          "player": {
+            "bytes": 52275,
+            "fetchMs": 5,
+            "hashMs": 0.1,
+            "decodeMs": 2.7,
+            "uploadMs": 3.3
+          },
+          "pnj-docker": {
+            "bytes": 39471,
+            "fetchMs": 5.2,
+            "hashMs": 0.1,
+            "decodeMs": 5.9,
+            "uploadMs": 0.5
+          }
+        },
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 54,
+        "geometries": 66,
+        "programs": 27,
+        "lights": 15,
+        "cpuMs": 121.3,
+        "frames": 1,
+        "buildMs": 351,
+        "firstFrameMs": 508,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    }
+  },
+  "compare": {
+    "exact_1920": {
+      "meanAbs": 0,
+      "pixels": 0,
+      "over8": 0,
+      "total": 46605,
+      "max": 0
+    },
+    "agrandissement_1920": {
+      "meanAbs": 0,
+      "pixels": 6,
+      "over8": 0,
+      "total": 46605,
+      "max": 1
+    },
+    "temoin_lisse_1920": {
+      "meanAbs": 1.031,
+      "pixels": 6705,
+      "over8": 1377,
+      "total": 46605,
+      "max": 145
+    },
+    "docker_exact_1920": {
+      "meanAbs": 0,
+      "pixels": 0,
+      "over8": 0,
+      "total": 54180,
+      "max": 0
+    },
+    "docker_temoin_lisse_1920": {
+      "meanAbs": 0.726,
+      "pixels": 4004,
+      "over8": 883,
+      "total": 54180,
+      "max": 193
+    },
+    "ecran_1920": {
+      "figurePx": 177,
+      "pxEcranParPxArt": 2.39
+    },
+    "exact_1280": {
+      "meanAbs": 0,
+      "pixels": 0,
+      "over8": 0,
+      "total": 20670,
+      "max": 0
+    },
+    "agrandissement_1280": {
+      "meanAbs": 0,
+      "pixels": 0,
+      "over8": 0,
+      "total": 20670,
+      "max": 0
+    },
+    "temoin_lisse_1280": {
+      "meanAbs": 1.062,
+      "pixels": 3672,
+      "over8": 683,
+      "total": 20670,
+      "max": 130
+    },
+    "docker_exact_1280": {
+      "meanAbs": 0,
+      "pixels": 0,
+      "over8": 0,
+      "total": 24080,
+      "max": 0
+    },
+    "docker_temoin_lisse_1280": {
+      "meanAbs": 0.71,
+      "pixels": 1743,
+      "over8": 422,
+      "total": 24080,
+      "max": 162
+    },
+    "ecran_1280": {
+      "figurePx": 118,
+      "pxEcranParPxArt": 1.59
+    }
+  },
+  "feuille_player": {
+    "grille": [
+      240,
+      240
+    ],
+    "pixelsCles": 10495,
+    "pixelsDesatures": 2677
+  },
+  "feuille_docker": {
+    "grille": [
+      240,
+      240
+    ],
+    "pixelsCles": 15920,
+    "pixelsDesatures": 1871
+  },
+  "dimensions": {
+    "player-K1": [
+      240,
+      240
+    ],
+    "player-K2": [
+      480,
+      480
+    ],
+    "player-K3": [
+      720,
+      720
+    ],
+    "player-C3": [
+      720,
+      720
+    ],
+    "docker-K1": [
+      240,
+      240
+    ],
+    "docker-K2": [
+      480,
+      480
+    ],
+    "docker-K3": [
+      720,
+      720
+    ],
+    "docker-C3": [
+      720,
+      720
+    ]
+  }
+}
