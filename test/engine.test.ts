@@ -376,7 +376,7 @@ describe('Déterminisme, replay et parcours multi-seeds (G26, G27)', () => {
       outcomes.push(m.state.winner!);
     }
     expect(new Set(outcomes).size).toBe(2);
-  });
+  }, 30_000); // test de propriété long : délai propre (dépassait 5 s sous charge, retour de la session cloud du 2026-10-19)
   it('G26 : replay des commandes → même état et même journal (hash identique)', () => {
     const m = autoplay({ ...DEFAULT_CONFIG, seed: 7 });
     const rec = m.record();

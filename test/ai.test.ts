@@ -56,7 +56,7 @@ describe('IA non omnisciente (G25)', () => {
     const { autoplay } = await import('../src/game/match');
     const { DEFAULT_CONFIG } = await import('../src/game/engine/engine');
     for (let seed = 100; seed < 130; seed++) expect(autoplay({ ...DEFAULT_CONFIG, seed }).state.phase).toBe('ENDED');
-  });
+  }, 30_000); // test de propriété long : délai propre (dépassait 5 s sous charge, retour de la session cloud du 2026-10-19)
 });
 
 describe('M02 §5 — mémoire autorisée et profils distincts', () => {

@@ -1,7 +1,7 @@
 # ADR 025 — Architecture de la ville d'exploration (M09 V1 et V2)
 
 Date : 2026-10-19
-Statut : **PROPOSÉ** (choix de la session cloud autonome, sans le responsable ; réversible). La caméra est décidée à
+Statut : **APPROUVÉ par le responsable le 2026-10-19** (fiche B2, B3, B4, B6) : îlots chargés un à un ; entrée en duel par la préparation existante ; la ville deviendra le hub par défaut **après validation de la démo** (avec « Toutes les rencontres » dans son menu) ; tutoriel en bulles non bloquantes. Choix d’origine : session cloud autonome. La caméra est décidée à
 part (ADR 024, frontale 2.5D, approuvée). L'intégration de la démo au jeu par défaut reste une décision du responsable
 (`docs/FICHE_ARBITRAGES_M09.md`, B4).
 

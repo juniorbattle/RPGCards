@@ -189,3 +189,11 @@ Voir `docs/FICHE_ARBITRAGES_M09.md`, sections C (RC), D (préparé derrière un 
 Démo `?demo=1` : `tools/m09-demo.mjs` **24/24** au build de la campagne, **30/30** au build final `e934f7a` (trois îlots : le Quai, le Parvis, les Ruelles), 0 erreur console ; laboratoire : 45 appels de dessin, 6,9 k triangles,
 36 textures, 18 programmes, 11 lumières, construction de l'îlot ≈ 0,25 s (SwiftShader) ; détails dans le journal
 (passe 42), `docs/DEMO_JOUABLE.md`, `docs/M09_CADRAGE_VILLE.md`, ADR 024 et 025.
+
+## Réception — 2026-10-19
+
+Sur la fiche d’arbitrages « RC 0.8 et ville » du 2026-10-19 (artefact privé du responsable, 14 décisions relues par la session principale), après les mesures locales sur GPU réel et sous Windows (JOURNAL passe 43, `artifacts/qa/rc08-local/`) :
+**RC 0.8.0-rc.1 reçue** (C1). Décisions associées : pastille du rang **gardée** (C2) ; compilation non bloquante du premier
+rendu **activée par défaut** (C3, `qa=1&compileAsync=0` pour l'ancien comportement) ; bundle **non découpé** (C4) ; état
+transitoire de l'écran Rencontres : **rien à changer**, absent sur GPU réel (C5) ; repli du post-traitement déclenché même
+sur la RTX 4060 : **vérifier en fenêtre puis corriger** (C6, tâche ouverte).
