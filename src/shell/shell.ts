@@ -18,6 +18,7 @@ import { cardTitle, cardDef } from '../game/catalog/cards';
 import { viewFor } from '../game/visibility/view';
 import type { ArenaHandle, Staging } from '../scene/arena';
 import type { RivalPersonality } from '../presentation/personalities';
+import { DEFAULT_VENUE, type VenueId } from '../presentation/venues';
 import { FULL_COLLECTION, STARTER_COLLECTION } from '../product/collection';
 import { validateDeck, type Collection, type DeckChoice } from '../product/deck';
 import { RIVALS, encounterById, encounterConfig, personalityOf, type Encounter } from '../product/encounters';
@@ -39,8 +40,8 @@ export interface ShellDeps {
   shellHost: HTMLElement;
   app: HTMLElement;
   params: AppParams;
-  /** Arène unique (ou `null` sans WebGL) ; `ensure` crée/échange le rival. */
-  ensureArena(p: RivalPersonality): ArenaHandle | null;
+  /** Arène unique (ou `null` sans WebGL) ; `ensure` crée/échange le rival et le lieu (M08 C2). */
+  ensureArena(p: RivalPersonality, venue?: VenueId): ArenaHandle | null;
   /** Recrée l’arène (changement de seed esthétique hors duel). */
   resetArena(): void;
   /** Arène courante (ou `null`). */
@@ -297,7 +298,7 @@ export class Shell {
 
   private launch(meta: Omit<LiveDuel, 'session'>, config: GameConfig, resume: readonly Command[] = []): void {
     const personality = personalityOf(meta.encounter.rival);
-    const arena = this.d.ensureArena(personality);
+    const arena = this.d.ensureArena(personality, meta.encounter.venue);
     arena?.setStaging('duel');
     arena?.setPaused(false);
     this.d.app.hidden = false;
@@ -399,19 +400,37 @@ export class Shell {
     return personalityOf((last?.rival as RivalPersonality['id'] | undefined) ?? 'braise');
   }
 
+  /** M08 C2 : décors des lieux des rencontres jouables préparés aux temps morts (peinture, GPU), pas au premier clic. */
+  private prepareVenues(arena: ArenaHandle | null): void {
+    if (!arena || this.params.venue) return;
+    const venues = [...new Set(this.playable().map((id) => encounterById(id)?.venue).filter((v): v is VenueId => !!v))];
+    const next = () => {
+      const v = venues.shift();
+      if (v) void arena.prepareVenue(v).then(next);
+    };
+    if ('requestIdleCallback' in window) window.requestIdleCallback(next, { timeout: 2000 }); else setTimeout(next, 300);
+  }
+
+  /** M08 C2 : lieu montré derrière les écrans, même règle que le rival (rencontre courante, sinon dernier duel). */
+  private backdropVenue(): VenueId {
+    const id = this.flow.encounterId ?? this.save?.history.at(-1)?.encounterId ?? null;
+    return (id ? encounterById(id)?.venue : null) ?? DEFAULT_VENUE;
+  }
+
   render(): void {
     const host = this.d.shellHost;
     const s = this.flow;
     const inDuel = s.screen === 'duel';
     const scr = s.screen === 'home' && this.homeMode === 'new' ? 'new' : s.screen;
     if (!inDuel) {
-      const arena = this.d.ensureArena(this.backdropRival());
+      const arena = this.d.ensureArena(this.backdropRival(), this.backdropVenue());
       // M07 L4 : plan de feux de l’écran, posé avant de figer (une seule image par changement d’écran).
       arena?.setStaging(STAGING_OF[scr] ?? 'gallery');
       // L’écran Résultat garde le rival vivant (sa réaction finale) ; les menus figent la scène.
       arena?.setPaused(s.screen !== 'result');
       arena?.setView('A');
       this.d.app.hidden = true;
+      this.prepareVenues(arena);
     }
     const screenKey = `${scr}:${s.overlay ?? ''}`;
     const same = screenKey === this.renderedScreen;
