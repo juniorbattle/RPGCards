@@ -56,6 +56,13 @@ cartes, porte = la rue (le Quai, la nuit), même table partout pour la porte, Du
 validation livrée et mesurée (système de lieux, salle migrée au pixel près, rue) ; **bar et arène après son retour** sur
 les captures `screenshots/qa/m08/c2/`.
 
+**Plateau intégré à la table (2026-10-18, passe 32, amendement 1 de l’ADR 018)**, demande du responsable (« les cadres
+cartes de l’adversaire ne sont pas bien intégrés à la table et semblent flotter ») : option B validée sur maquettes
+(`screenshots/qa/m08/cadres/proposition/`) — rangée du rival « au loin » (0,85 fois celle du joueur, 34°, descendue,
+colonnes resserrées), cases incrustées dans le bois et ombre de contact, cercle de Clash peint recentré sur l’axe du
+plateau (`CLASH_Z`, commun à tous les lieux) ; puis, à sa demande, **Primaire plus présente** que les Secondaires
+(1,12 fois, double filet doré, lueur). Rangée du joueur, caméra et visage du rival inchangés.
+
 **Ordre :** C1 puis C3 touchent le pipeline des personnages (`src/scene/figureV2.ts`, `src/scene/v2/`, `rival.ts`,
 `portrait.ts`, pré-génération du shell) : ils se suivent dans le même chantier. C2 touche le décor (`src/scene/arena.ts` et
 ce qui en sera extrait) et peut avancer en parallèle. **Point de raccord :** C2 ajoute le lieu aux rencontres

@@ -1,0 +1,5 @@
+/* Rangée du rival plus loin sur la table : 0,85 × la carte du joueur, un peu plus couchée (34°), descendue pour laisser
+   voir le bois entre le bord lointain et les cases ; colonnes au même pas relatif (donc resserrées). Joueur inchangé. */
+@media (min-width: 821px) and (min-height: 561px) {
+  .view-a .side.opp { top: 48.75%; --zh: 13vh; --ct: 34deg; }
+}
