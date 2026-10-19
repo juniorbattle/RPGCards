@@ -6,9 +6,10 @@
 import type { Ilot } from './monde';
 import { P_NPCS, PARVIS } from './parvis';
 import { NPCS, QUAI, type IlotNpc } from './quai';
-import { buildParvis, buildQuai, type QuaiScene } from './scene';
+import { RUELLES, R_NPCS } from './ruelles';
+import { buildParvis, buildQuai, buildRuelles, type QuaiScene } from './scene';
 
-export type IlotId = 'quai' | 'parvis';
+export type IlotId = 'quai' | 'parvis' | 'ruelles';
 
 export interface Passer { id: string; x0: number; x1: number; z: number; speed: number; phase?: number }
 
@@ -31,13 +32,18 @@ export const ILOTS: Record<IlotId, IlotDef> = {
       { id: 'pnj-joueuse-1', x0: -16.5, x1: -5.5, z: 2.35, speed: 0.95, phase: 0.3 },
       { id: 'pnj-docker-9', x0: 5.5, x1: 16.5, z: 2.5, speed: 1.1, phase: 0.7 },
     ],
-    exits: { 'sortie-arene': { to: 'parvis', spawn: 'arrivee' } },
+    exits: { 'sortie-arene': { to: 'parvis', spawn: 'arrivee' }, 'sortie-ruelles': { to: 'ruelles', spawn: 'arrivee' } },
   },
   parvis: {
     id: 'parvis', ilot: PARVIS, npcs: P_NPCS, camera: { minX: -8, maxX: 8 }, build: buildParvis,
     ambient: [{ id: 'pnj-commis-2', x0: -11, x1: 11, z: 2.2, speed: 0.85, phase: 0.55 }],
     exits: { 'sortie-quai': { to: 'quai', spawn: 'sortie-arene' } },
   },
+  ruelles: {
+    id: 'ruelles', ilot: RUELLES, npcs: R_NPCS, camera: { minX: -7.5, maxX: 7.5 }, build: buildRuelles,
+    ambient: [{ id: 'pnj-marchande-4', x0: -11, x1: 10.5, z: 1.7, speed: 0.8, phase: 0.2 }],
+    exits: { 'sortie-quai': { to: 'quai', spawn: 'sortie-ruelles' } },
+  },
 };
 
-export const isIlotId = (x: unknown): x is IlotId => x === 'quai' || x === 'parvis';
+export const isIlotId = (x: unknown): x is IlotId => x === 'quai' || x === 'parvis' || x === 'ruelles';

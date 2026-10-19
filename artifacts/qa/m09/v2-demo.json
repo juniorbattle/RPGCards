@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-19T09:17:02.917Z",
-  "commit": "66b7997",
+  "date": "2026-10-19T11:19:03.948Z",
+  "commit": "6b67271",
   "checks": [
     "OK après « Créer » : la ville remplace le tableau des rencontres",
     "OK tutoriel de déplacement affiché à l’arrivée",
@@ -21,7 +21,13 @@
     "OK Parvis : défi de la joueuse → préparation",
     "OK retour de la préparation : on reste sur le Parvis",
     "OK retour au Quai, au bout est (point d’arrivée de la liaison)",
+    "OK au bout ouest du Quai : sortie vers les Ruelles",
+    "OK Ruelles : Sélène verrouillée tant qu’on ne l’a pas rencontrée au Tournoi, raison affichée",
+    "OK Ruelles : la fontaine (information)",
+    "OK retour au Quai, au bout ouest",
+    "OK Échap hors de la ville (deck) : aucun menu de la ville par-dessus",
     "OK menu → deck → retour au Quai",
+    "OK aide : commandes de la ville en tête",
     "OK menu → tableau classique des rencontres, bouton « Retour au Quai »",
     "OK tableau → retour au Quai",
     "OK rechargement → Continuer : retour au Parvis, au même endroit (parvis, 5.50, 1.20)",
@@ -30,67 +36,75 @@
   "steps": [
     {
       "name": "accueil",
-      "file": "/tmp/claude-0/-home-user-RPGCards/b037a208-e5e7-51d9-9247-95cb0f14867f/scratchpad/demo4/01-accueil.png"
+      "file": "screenshots/qa/m09/v2-demo/01-accueil.png"
     },
     {
       "name": "arrivee-tutoriel",
-      "file": "/tmp/claude-0/-home-user-RPGCards/b037a208-e5e7-51d9-9247-95cb0f14867f/scratchpad/demo4/02-arrivee-tutoriel.png"
+      "file": "screenshots/qa/m09/v2-demo/02-arrivee-tutoriel.png"
     },
     {
       "name": "bulle-guide",
-      "file": "/tmp/claude-0/-home-user-RPGCards/b037a208-e5e7-51d9-9247-95cb0f14867f/scratchpad/demo4/03-bulle-guide.png"
+      "file": "screenshots/qa/m09/v2-demo/03-bulle-guide.png"
     },
     {
       "name": "dialogue-guide",
-      "file": "/tmp/claude-0/-home-user-RPGCards/b037a208-e5e7-51d9-9247-95cb0f14867f/scratchpad/demo4/04-dialogue-guide.png"
+      "file": "screenshots/qa/m09/v2-demo/04-dialogue-guide.png"
     },
     {
       "name": "defi-docker",
-      "file": "/tmp/claude-0/-home-user-RPGCards/b037a208-e5e7-51d9-9247-95cb0f14867f/scratchpad/demo4/05-defi-docker.png"
+      "file": "screenshots/qa/m09/v2-demo/05-defi-docker.png"
     },
     {
       "name": "preparation",
-      "file": "/tmp/claude-0/-home-user-RPGCards/b037a208-e5e7-51d9-9247-95cb0f14867f/scratchpad/demo4/06-preparation.png"
+      "file": "screenshots/qa/m09/v2-demo/06-preparation.png"
     },
     {
       "name": "duel",
-      "file": "/tmp/claude-0/-home-user-RPGCards/b037a208-e5e7-51d9-9247-95cb0f14867f/scratchpad/demo4/07-duel.png"
+      "file": "screenshots/qa/m09/v2-demo/07-duel.png"
     },
     {
       "name": "resultat",
-      "file": "/tmp/claude-0/-home-user-RPGCards/b037a208-e5e7-51d9-9247-95cb0f14867f/scratchpad/demo4/08-resultat.png"
+      "file": "screenshots/qa/m09/v2-demo/08-resultat.png"
     },
     {
       "name": "retour-quai",
-      "file": "/tmp/claude-0/-home-user-RPGCards/b037a208-e5e7-51d9-9247-95cb0f14867f/scratchpad/demo4/09-retour-quai.png"
+      "file": "screenshots/qa/m09/v2-demo/09-retour-quai.png"
     },
     {
       "name": "porte-salle",
-      "file": "/tmp/claude-0/-home-user-RPGCards/b037a208-e5e7-51d9-9247-95cb0f14867f/scratchpad/demo4/10-porte-salle.png"
+      "file": "screenshots/qa/m09/v2-demo/10-porte-salle.png"
     },
     {
       "name": "fanal-verrouille",
-      "file": "/tmp/claude-0/-home-user-RPGCards/b037a208-e5e7-51d9-9247-95cb0f14867f/scratchpad/demo4/11-fanal-verrouille.png"
+      "file": "screenshots/qa/m09/v2-demo/11-fanal-verrouille.png"
     },
     {
       "name": "parvis-arrivee",
-      "file": "/tmp/claude-0/-home-user-RPGCards/b037a208-e5e7-51d9-9247-95cb0f14867f/scratchpad/demo4/12-parvis-arrivee.png"
+      "file": "screenshots/qa/m09/v2-demo/12-parvis-arrivee.png"
     },
     {
       "name": "parvis-orin",
-      "file": "/tmp/claude-0/-home-user-RPGCards/b037a208-e5e7-51d9-9247-95cb0f14867f/scratchpad/demo4/13-parvis-orin.png"
+      "file": "screenshots/qa/m09/v2-demo/13-parvis-orin.png"
+    },
+    {
+      "name": "ruelles-arrivee",
+      "file": "screenshots/qa/m09/v2-demo/14-ruelles-arrivee.png"
+    },
+    {
+      "name": "ruelles-selene",
+      "file": "screenshots/qa/m09/v2-demo/15-ruelles-selene.png"
     },
     {
       "name": "menu",
-      "file": "/tmp/claude-0/-home-user-RPGCards/b037a208-e5e7-51d9-9247-95cb0f14867f/scratchpad/demo4/14-menu.png"
+      "file": "screenshots/qa/m09/v2-demo/16-menu.png"
     },
     {
       "name": "tableau-classique",
-      "file": "/tmp/claude-0/-home-user-RPGCards/b037a208-e5e7-51d9-9247-95cb0f14867f/scratchpad/demo4/15-tableau-classique.png"
+      "file": "screenshots/qa/m09/v2-demo/17-tableau-classique.png"
     },
     {
       "name": "reprise-parvis",
-      "file": "/tmp/claude-0/-home-user-RPGCards/b037a208-e5e7-51d9-9247-95cb0f14867f/scratchpad/demo4/16-reprise-parvis.png"
+      "file": "screenshots/qa/m09/v2-demo/18-reprise-parvis.png"
     }
   ],
   "issues": []

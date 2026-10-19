@@ -5,6 +5,8 @@
 set -u
 # Chargement à froid de ce conteneur : 11 à 17 s jusqu'à load (compilation des programmes WebGL en SwiftShader).
 export LQV_QA_NAV_TIMEOUT=${LQV_QA_NAV_TIMEOUT:-90000}
+# Actions (clics, attentes) : une image peut coûter plusieurs secondes en 1920×1080 avec animations réelles ici.
+export LQV_QA_TIMEOUT=${LQV_QA_TIMEOUT:-60000}
 OUT=${1:-artifacts/qa/rc08/campagne}
 mkdir -p "$OUT"
 run() { # nom, commande…

@@ -226,20 +226,27 @@ export function createTown(o: TownOptions): Town {
   };
   const onKey = (e: KeyboardEvent) => {
     const down = e.type === 'keydown';
+    // Ville en pause (préparation, duel, deck, options…) : ses raccourcis ne doivent rien faire par-dessus l'écran.
+    if (paused) { keys.clear(); return; }
     if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
     if (KEYMAP[e.code] || e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
       if (down) keys.add(e.code); else keys.delete(e.code);
       if (down) { target = null; e.preventDefault(); }
       return;
     }
-    if (!down || locked) return;
+    if (!down) return;
+    // Échap passe toujours (fermer un dialogue ouvert même si le focus est resté sur la scène).
+    if (e.code === 'Escape') { o.onMenu?.(); return; }
+    if (locked) return;
     if (e.code === 'KeyE' || e.code === 'Enter' || e.code === 'Space') {
       const z = activeZone(def.ilot, walker.pos);
       if (z) { e.preventDefault(); o.onInteract?.(z); }
-    } else if (e.code === 'Escape') o.onMenu?.();
+    }
   };
-  window.addEventListener('keydown', onKey);
-  window.addEventListener('keyup', onKey);
+  // Phase de capture : la ville voit la touche AVANT l'enveloppe (qui peut la remettre en marche en quittant un écran ;
+  // sans cela, l'Échap qui ferme le deck rouvrait aussitôt le menu de la ville).
+  window.addEventListener('keydown', onKey, true);
+  window.addEventListener('keyup', onKey, true);
   const blurAll = () => keys.clear();
   window.addEventListener('blur', blurAll);
   // Clic au sol : rayon de la caméra par le pixel (dé-projection), intersection avec le plan y = 0.
@@ -400,8 +407,8 @@ export function createTown(o: TownOptions): Town {
     dispose() {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
-      window.removeEventListener('keydown', onKey);
-      window.removeEventListener('keyup', onKey);
+      window.removeEventListener('keydown', onKey, true);
+      window.removeEventListener('keyup', onKey, true);
       window.removeEventListener('blur', blurAll);
       playerSprite.dispose();
       for (const { s, marker } of npcSprites) { s.dispose(); marker.geometry.dispose(); (marker.material as THREE.Material).dispose(); }

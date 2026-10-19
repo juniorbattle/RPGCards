@@ -90,7 +90,7 @@ export const QUAI: Ilot = {
     door(facade('salle'), 'Entrer dans la salle de jeu de cartes', 'salle'),
     door(facade('fanal'), 'Entrer au Fanal', 'fanal'),
     { id: 'sortie-arene', kind: 'sortie', label: 'Vers le Parvis de l’arène', target: 'arene', area: { x0: X_MAX - 1.1, z0: -1.4, x1: X_MAX, z1: 2.2 } },
-    { id: 'sortie-ruelles', kind: 'info', label: 'Les Ruelles (bientôt)', area: { x0: X_MIN, z0: -1.4, x1: X_MIN + 0.9, z1: 2.2 } },
+    { id: 'sortie-ruelles', kind: 'sortie', label: 'Vers les Ruelles', target: 'ruelles', area: { x0: X_MIN, z0: -1.4, x1: X_MIN + 0.9, z1: 2.2 } },
     ...NPCS.map((n): Zone => ({ id: `npc-${n.id}`, kind: 'parler', label: 'Parler', target: n.id, area: { x: n.at.x, z: n.at.z, r: TALK_RADIUS } })),
   ],
   spawns: {
@@ -98,6 +98,7 @@ export const QUAI: Ilot = {
     'porte-salle': { x: -6.75, z: -1.3, face: 'face' },
     'porte-fanal': { x: 7.2, z: -1.3, face: 'face' },
     'sortie-arene': { x: 17.2, z: 0.4, face: 'gauche' },
+    'sortie-ruelles': { x: -17.0, z: 1.2, face: 'droite' },
     ...Object.fromEntries(NPCS.map((n) => [`npc-${n.id}`, { x: n.at.x + (n.facing === 'gauche' ? -1.0 : 1.0), z: n.at.z + 0.2, face: n.facing === 'gauche' ? 'droite' as const : 'gauche' as const }])),
   },
 };

@@ -1,96 +1,24 @@
 {
-  "date": "2026-10-19T09:11:20.198Z",
-  "commit": "66b7997+arbre de travail",
+  "date": "2026-10-19T11:12:29.299Z",
+  "commit": "6b67271+arbre de travail",
   "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU",
   "shots": [
     {
       "cam": "frontale",
-      "spot": "arrivee",
+      "spot": "ruelles-fontaine",
       "size": "1280x720",
-      "file": "screenshots/qa/m09/v1/frontale-arrivee-1280x720.png"
+      "file": "screenshots/qa/m09/v1/frontale-ruelles-fontaine-1280x720.png"
     },
     {
       "cam": "frontale",
-      "spot": "etal",
+      "spot": "ruelles-selene",
       "size": "1280x720",
-      "file": "screenshots/qa/m09/v1/frontale-etal-1280x720.png"
-    },
-    {
-      "cam": "frontale",
-      "spot": "fanal",
-      "size": "1280x720",
-      "file": "screenshots/qa/m09/v1/frontale-fanal-1280x720.png"
-    },
-    {
-      "cam": "frontale",
-      "spot": "salle",
-      "size": "1280x720",
-      "file": "screenshots/qa/m09/v1/frontale-salle-1280x720.png"
-    },
-    {
-      "cam": "frontale",
-      "spot": "kai",
-      "size": "1280x720",
-      "file": "screenshots/qa/m09/v1/frontale-kai-1280x720.png"
-    },
-    {
-      "cam": "frontale",
-      "spot": "parvis-porte",
-      "size": "1280x720",
-      "file": "screenshots/qa/m09/v1/frontale-parvis-porte-1280x720.png"
-    },
-    {
-      "cam": "frontale",
-      "spot": "parvis-joueuse",
-      "size": "1280x720",
-      "file": "screenshots/qa/m09/v1/frontale-parvis-joueuse-1280x720.png"
-    },
-    {
-      "cam": "frontale",
-      "spot": "arrivee",
-      "size": "1920x1080",
-      "file": "screenshots/qa/m09/v1/frontale-arrivee-1920x1080.png"
-    },
-    {
-      "cam": "frontale",
-      "spot": "etal",
-      "size": "1920x1080",
-      "file": "screenshots/qa/m09/v1/frontale-etal-1920x1080.png"
-    },
-    {
-      "cam": "frontale",
-      "spot": "fanal",
-      "size": "1920x1080",
-      "file": "screenshots/qa/m09/v1/frontale-fanal-1920x1080.png"
-    },
-    {
-      "cam": "frontale",
-      "spot": "salle",
-      "size": "1920x1080",
-      "file": "screenshots/qa/m09/v1/frontale-salle-1920x1080.png"
-    },
-    {
-      "cam": "frontale",
-      "spot": "kai",
-      "size": "1920x1080",
-      "file": "screenshots/qa/m09/v1/frontale-kai-1920x1080.png"
-    },
-    {
-      "cam": "frontale",
-      "spot": "parvis-porte",
-      "size": "1920x1080",
-      "file": "screenshots/qa/m09/v1/frontale-parvis-porte-1920x1080.png"
-    },
-    {
-      "cam": "frontale",
-      "spot": "parvis-joueuse",
-      "size": "1920x1080",
-      "file": "screenshots/qa/m09/v1/frontale-parvis-joueuse-1920x1080.png"
+      "file": "screenshots/qa/m09/v1/frontale-ruelles-selene-1280x720.png"
     }
   ],
   "cost": {
     "frontale": {
-      "readyMs": 2358,
+      "readyMs": 962,
       "st": {
         "camera": "frontale",
         "calls": 45,
@@ -99,15 +27,15 @@
         "geometries": 32,
         "programs": 18,
         "lights": 11,
-        "cpuMs": 2.4,
-        "frames": 5,
-        "buildMs": 253
+        "cpuMs": 3.7,
+        "frames": 4,
+        "buildMs": 275
       },
       "median": null,
       "p95": null,
       "n": 0,
       "walked": {
-        "x": -16.971357814098738,
+        "x": -17.244288399557128,
         "z": 0.6
       }
     }

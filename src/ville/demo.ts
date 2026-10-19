@@ -236,7 +236,10 @@ export class DemoHub {
       if (exit) return this.travel(exit.to, exit.spawn);
     }
     if (enc && z.target === 'arene') return this.offer(enc, 'L’arène', 'La grande scène s’illumine : Orin, l’arpenteur des Astres, y attend les duellistes qui ont remporté le Tournoi.', 'porte-arene');
-    this.say(z.label, 'Ce passage mène aux Ruelles. Il ouvrira plus tard (prototype).', [{ label: 'Fermer', key: 'dlg-close', primary: true, run: () => this.closeDialog() }]);
+    const INFO: Record<string, string> = {
+      fontaine: 'On dit que son eau porte chance aux liseuses du Voile : les duellistes y jettent une carte usée avant un grand duel.',
+    };
+    this.say(z.label, INFO[z.id] ?? 'Rien de plus ici pour l’instant (prototype).', [{ label: 'Fermer', key: 'dlg-close', primary: true, run: () => this.closeDialog() }]);
   }
 
   private talk(id: string): void {
@@ -266,6 +269,7 @@ export class DemoHub {
       'pnj-commis-5': ['Pardon… vous jouez ? Mon deck est tout neuf, je ne l’ai encore jamais essayé.', 'Vous m’avez beaucoup appris. On remet ça ?'],
       braise: ['Alors c’est toi, le nouveau ? Le Quai, c’est mon terrain. Montre-moi ce que tu vaux.', 'Pas mal… Mais la prochaine fois, je ne te laisserai rien.'],
       'pnj-joueuse-5': ['Tu viens voir l’arène ? En attendant les grands duels, une partie pour se chauffer ?', 'Bien joué. Tu iras loin, peut-être jusqu’à Orin.'],
+      voile: ['Je lis les mains des duellistes avant qu’ils ne jouent leurs cartes. La vôtre hésite encore…', 'Vous avez lu juste. Revenez quand l’envie vous prendra de recommencer.'],
       astre: ['Les étoiles tournent, les duellistes passent. Seuls ceux qui ont remporté le Tournoi du Quai montent sur ma scène.', 'Belle trajectoire. Revenez quand vous voudrez la refaire.'],
     };
     const [hello, after] = lines[id] ?? ['Une partie ?', 'Encore une ?'];
