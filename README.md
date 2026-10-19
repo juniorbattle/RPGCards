@@ -34,6 +34,8 @@ npm run perf:trace   # même duel SANS sondage ni audit (pilote `lean`) : à-cou
 npm run sim          # (optionnel) 200 duels IA/IA headless
 npm run qa:product   # JEU (M04–M05) : 8 parcours de joueur depuis l’accueil (série complète, reprise, migration…) → artifacts/qa/qa-product.json (QA_SHOTS=dossier pour des captures ; LQV_RENDER_CHECK=1, LQV_QA_OUT comme qa:browser)
 npm run qa:rc        # porte RC (M06) : sans WebGL, longévité, moteur indépendant des animations, mode démo, stockage refusé, réinitialisations, contraste, coût par écran → artifacts/qa/qa-rc.json
+npm run qa:demo      # M09 V2 : parcours de la démo ?demo=1 (accueil → ville → duels → trois îlots → menu → reprise), 30 contrôles → artifacts/qa/m09/v2-demo.json, captures screenshots/qa/m09/v2-demo/
+npm run qa:ville     # M09 V1 : vues du laboratoire ?ville=1 (LQV_SPOTS, LQV_SIZES) et coût du rendu → artifacts/qa/m09/v1-labo.json
 npm run shots:m04    # captures des écrans du jeu 1280×720 / 1920×1080 + preuve de cadrage du duel (SHOTS_OUT=…)
 npm run video        # vidéo du parcours complet (Playwright) → screenshots/qa/m06/parcours-1280.mp4
 npm run preview      # sert le build (dist/) sur http://localhost:4173
@@ -86,8 +88,8 @@ Clavier : `Tab`, `Entrée/Espace`, `1–4` (main), `A`/`G` (mode), `Échap` (ann
 | `gallery=1` | galerie de revue art (toutes les définitions + verso) |
 | `qa=1` | crochets `window.__lqv` (duel) et `window.__lqvShell` (jeu) pour la QA automatisée (jamais actifs par défaut) |
 | `setup=1` | ancien écran de configuration du duel (avant M04) |
-| `demo=1` | **M09 V2, démo jouable (provisoire)** : le jeu complet, mais le tableau des rencontres est remplacé par la ville (« le Quai, la nuit », caméra frontale 2.5D, ADR 024) : tutoriel de déplacement, guide, défis des PNJ et de Kaï, porte du Tournoi du Quai, le Fanal, l’arène ; « Retour au Quai » après chaque duel. Clavier ZQSD / WASD / flèches, Maj, E ; clic au sol. Le jeu par défaut est inchangé |
-| `ville=1` | M09 V1 : laboratoire de la ville seul (îlot du Quai, marcheur, PNJ), à part du jeu ; avec `qa=1`, mesures et `window.__lqvVille` |
+| `demo=1` | **M09 V2, démo jouable (provisoire)** : le jeu complet, mais le tableau des rencontres est remplacé par la ville (caméra frontale 2.5D, ADR 024) : trois îlots (le Quai, le Parvis de l’arène, les Ruelles), tutoriel de déplacement, guide, défis des PNJ, de Kaï et de Sélène, porte du Tournoi du Quai, le Fanal, l’arène ; « Retour au Quai » après chaque duel ; menu (Échap) avec le tableau classique. Clavier ZQSD / WASD / flèches, Maj, E ; clic au sol. Sans WebGL : jeu habituel. Le jeu par défaut est inchangé (`docs/DEMO_JOUABLE.md`) |
+| `ville=1` | M09 V1 : laboratoire de la ville seul (`ilot=quai\|parvis\|ruelles`, marcheur, PNJ), à part du jeu ; avec `qa=1`, mesures et `window.__lqvVille` |
 | `profileSeed=N` | avec `qa=1` : seed du profil créé (parcours de QA reproductibles) |
 | `ablate=candles,banners,dust,bloom,post` | mesure de coût (avec `qa=1` uniquement) : retire du rendu les bougies, les bannières, les poussières, le halo lumineux ou tout le post-traitement (rendu direct à la densité 1,5 d’avant le lot 3) |
 | `fallback=off\|nobloom\|direct` | avec `qa=1` uniquement : `off` désactive le repli automatique du post-traitement (mesure du rendu complet) ; `nobloom` / `direct` imposent ce niveau (même densité que le post-traitement). État du repli : `window.__lqv.arenaStats().post` (amendement ADR 019) |
