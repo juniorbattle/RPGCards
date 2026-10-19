@@ -24,9 +24,11 @@ const TARGETS = ['ronce', 'voile', 'astre', 'braise'];
 /** Clics mesurés : chaque rival, puis la même affiche une seconde fois (témoin, aucun changement de rival). */
 const CLICKS = TARGETS.flatMap((id) => [{ id, control: false }, { id, control: true }]);
 const head = execSync('git rev-parse --short HEAD').toString().trim();
-const commit = execSync('git status --porcelain src').toString().trim() ? `${head}+arbre de travail` : head;
+// LQV_AFTER / LQV_AFTER_SHA : build « après » construit hors du dépôt (commit précis), au lieu de `dist`.
+const AFTER = process.env.LQV_AFTER ?? 'dist';
+const commit = process.env.LQV_AFTER_SHA ?? (execSync('git status --porcelain src').toString().trim() ? `${head}+arbre de travail` : head);
 const portA = Number(process.env.LQV_PREVIEW_PORT) || 4211;
-const after = await startPreview(portA, 'dist');
+const after = await startPreview(portA, AFTER);
 const before = VARIANTS.includes('avant') ? await startPreview(portA + 1, BEFORE) : null;
 const browser = await launch();
 const median = (xs) => { const s = [...xs].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
