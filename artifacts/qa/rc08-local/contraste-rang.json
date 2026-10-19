@@ -1,0 +1,865 @@
+{
+  "date": "2026-10-19T15:55:05.718Z",
+  "commit": "c9c3b86",
+  "dist": "dist",
+  "selector": ".sh-ver .card .rank",
+  "viewports": {
+    "1280x720": {
+      "n": 32,
+      "minQaRc": 18.8,
+      "minFondSeul": 19.1,
+      "minFondSeulII": 19.2,
+      "minBoiteElargie": 17.5,
+      "minBoiteElargieII": 18.6,
+      "minGlypheReel": 2.6,
+      "minGlypheReelII": 2.6,
+      "rows": [
+        {
+          "text": "I",
+          "box": [
+            80,
+            339,
+            14,
+            18
+          ],
+          "qaRc": 20,
+          "fondSeul": 19.9,
+          "boiteElargie": 19.2,
+          "glypheReel": 7.4
+        },
+        {
+          "text": "I",
+          "box": [
+            159,
+            336,
+            14,
+            18
+          ],
+          "qaRc": 19.4,
+          "fondSeul": 19.3,
+          "boiteElargie": 17.5,
+          "glypheReel": 19.3
+        },
+        {
+          "text": "II",
+          "box": [
+            80,
+            447,
+            21,
+            18
+          ],
+          "qaRc": 19.3,
+          "fondSeul": 19.2,
+          "boiteElargie": 18.6,
+          "glypheReel": 19.2
+        },
+        {
+          "text": "II",
+          "box": [
+            159,
+            450,
+            21,
+            18
+          ],
+          "qaRc": 20.5,
+          "fondSeul": 20.5,
+          "boiteElargie": 20.4,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "III",
+          "box": [
+            80,
+            558,
+            28,
+            18
+          ],
+          "qaRc": 19.2,
+          "fondSeul": 19.1,
+          "boiteElargie": 18.6,
+          "glypheReel": 19.1
+        },
+        {
+          "text": "III",
+          "box": [
+            159,
+            561,
+            28,
+            18
+          ],
+          "qaRc": 20.5,
+          "fondSeul": 20.5,
+          "boiteElargie": 20.4,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "IV",
+          "box": [
+            80,
+            668,
+            26,
+            18
+          ],
+          "qaRc": 19.1,
+          "fondSeul": 19.2,
+          "boiteElargie": 18.6,
+          "glypheReel": 19.2
+        },
+        {
+          "text": "IV",
+          "box": [
+            159,
+            671,
+            26,
+            18
+          ],
+          "qaRc": 20.5,
+          "fondSeul": 20.5,
+          "boiteElargie": 20.3,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "I",
+          "box": [
+            304,
+            339,
+            14,
+            18
+          ],
+          "qaRc": 19.9,
+          "fondSeul": 20,
+          "boiteElargie": 19,
+          "glypheReel": 7.5
+        },
+        {
+          "text": "I",
+          "box": [
+            383,
+            336,
+            14,
+            18
+          ],
+          "qaRc": 19.5,
+          "fondSeul": 19.4,
+          "boiteElargie": 18.3,
+          "glypheReel": 19.4
+        },
+        {
+          "text": "II",
+          "box": [
+            304,
+            447,
+            21,
+            18
+          ],
+          "qaRc": 19,
+          "fondSeul": 19.3,
+          "boiteElargie": 18.7,
+          "glypheReel": 19.3
+        },
+        {
+          "text": "II",
+          "box": [
+            383,
+            450,
+            21,
+            18
+          ],
+          "qaRc": 20.5,
+          "fondSeul": 20.5,
+          "boiteElargie": 20.3,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "III",
+          "box": [
+            304,
+            558,
+            28,
+            18
+          ],
+          "qaRc": 19.2,
+          "fondSeul": 19.2,
+          "boiteElargie": 18.8,
+          "glypheReel": 19.2
+        },
+        {
+          "text": "III",
+          "box": [
+            383,
+            561,
+            28,
+            18
+          ],
+          "qaRc": 20.5,
+          "fondSeul": 20.4,
+          "boiteElargie": 20.4,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "IV",
+          "box": [
+            304,
+            668,
+            26,
+            18
+          ],
+          "qaRc": 19,
+          "fondSeul": 19.2,
+          "boiteElargie": 18.5,
+          "glypheReel": 19.2
+        },
+        {
+          "text": "IV",
+          "box": [
+            383,
+            671,
+            26,
+            18
+          ],
+          "qaRc": 20.4,
+          "fondSeul": 20.5,
+          "boiteElargie": 20.3,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "I",
+          "box": [
+            527,
+            339,
+            14,
+            18
+          ],
+          "qaRc": 20.1,
+          "fondSeul": 20,
+          "boiteElargie": 19.2,
+          "glypheReel": 7.4
+        },
+        {
+          "text": "I",
+          "box": [
+            606,
+            336,
+            14,
+            18
+          ],
+          "qaRc": 19.4,
+          "fondSeul": 19.3,
+          "boiteElargie": 17.5,
+          "glypheReel": 19.3
+        },
+        {
+          "text": "II",
+          "box": [
+            527,
+            447,
+            21,
+            18
+          ],
+          "qaRc": 19.2,
+          "fondSeul": 19.2,
+          "boiteElargie": 18.6,
+          "glypheReel": 19.2
+        },
+        {
+          "text": "II",
+          "box": [
+            606,
+            450,
+            21,
+            18
+          ],
+          "qaRc": 20.4,
+          "fondSeul": 20.4,
+          "boiteElargie": 20.3,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "III",
+          "box": [
+            527,
+            558,
+            28,
+            18
+          ],
+          "qaRc": 18.9,
+          "fondSeul": 19.1,
+          "boiteElargie": 18.1,
+          "glypheReel": 19.1
+        },
+        {
+          "text": "III",
+          "box": [
+            606,
+            561,
+            28,
+            18
+          ],
+          "qaRc": 20.3,
+          "fondSeul": 20.3,
+          "boiteElargie": 20,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "IV",
+          "box": [
+            527,
+            668,
+            26,
+            18
+          ],
+          "qaRc": 18.8,
+          "fondSeul": 19.1,
+          "boiteElargie": 18.3,
+          "glypheReel": 19.1
+        },
+        {
+          "text": "IV",
+          "box": [
+            606,
+            671,
+            26,
+            18
+          ],
+          "qaRc": 20.4,
+          "fondSeul": 20.4,
+          "boiteElargie": 20.3,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "I",
+          "box": [
+            751,
+            339,
+            14,
+            18
+          ],
+          "qaRc": 20.1,
+          "fondSeul": 20.1,
+          "boiteElargie": 19.3,
+          "glypheReel": 7.5
+        },
+        {
+          "text": "I",
+          "box": [
+            830,
+            336,
+            14,
+            18
+          ],
+          "qaRc": 19.6,
+          "fondSeul": 19.6,
+          "boiteElargie": 18.3,
+          "glypheReel": 19.6
+        },
+        {
+          "text": "II",
+          "box": [
+            751,
+            447,
+            21,
+            18
+          ],
+          "qaRc": 19.3,
+          "fondSeul": 19.5,
+          "boiteElargie": 19,
+          "glypheReel": 19.5
+        },
+        {
+          "text": "II",
+          "box": [
+            830,
+            450,
+            21,
+            18
+          ],
+          "qaRc": 20.5,
+          "fondSeul": 20.5,
+          "boiteElargie": 20.4,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "III",
+          "box": [
+            751,
+            558,
+            28,
+            18
+          ],
+          "qaRc": 19.5,
+          "fondSeul": 19.5,
+          "boiteElargie": 19.2,
+          "glypheReel": 19.5
+        },
+        {
+          "text": "III",
+          "box": [
+            830,
+            561,
+            28,
+            18
+          ],
+          "qaRc": 20.5,
+          "fondSeul": 20.5,
+          "boiteElargie": 20.5,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "IV",
+          "box": [
+            751,
+            668,
+            26,
+            18
+          ],
+          "qaRc": 19.3,
+          "fondSeul": 19.5,
+          "boiteElargie": 19.1,
+          "glypheReel": 19.5
+        },
+        {
+          "text": "IV",
+          "box": [
+            830,
+            671,
+            26,
+            18
+          ],
+          "qaRc": 20.5,
+          "fondSeul": 20.5,
+          "boiteElargie": 20.4,
+          "glypheReel": 2.6
+        }
+      ]
+    },
+    "1920x1080": {
+      "n": 32,
+      "minQaRc": 18.6,
+      "minFondSeul": 18.9,
+      "minFondSeulII": 19.2,
+      "minBoiteElargie": 18,
+      "minBoiteElargieII": 18.7,
+      "minGlypheReel": 2.6,
+      "minGlypheReelII": 2.6,
+      "rows": [
+        {
+          "text": "I",
+          "box": [
+            400,
+            374,
+            14,
+            18
+          ],
+          "qaRc": 20.1,
+          "fondSeul": 19.9,
+          "boiteElargie": 19.5,
+          "glypheReel": 7.4
+        },
+        {
+          "text": "I",
+          "box": [
+            480,
+            371,
+            14,
+            18
+          ],
+          "qaRc": 19.4,
+          "fondSeul": 19.3,
+          "boiteElargie": 18.2,
+          "glypheReel": 19.3
+        },
+        {
+          "text": "II",
+          "box": [
+            400,
+            482,
+            21,
+            18
+          ],
+          "qaRc": 19.4,
+          "fondSeul": 19.2,
+          "boiteElargie": 18.8,
+          "glypheReel": 19.2
+        },
+        {
+          "text": "II",
+          "box": [
+            480,
+            485,
+            21,
+            18
+          ],
+          "qaRc": 20.5,
+          "fondSeul": 20.5,
+          "boiteElargie": 20.4,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "III",
+          "box": [
+            400,
+            594,
+            28,
+            18
+          ],
+          "qaRc": 19.1,
+          "fondSeul": 19.1,
+          "boiteElargie": 18.6,
+          "glypheReel": 19.1
+        },
+        {
+          "text": "III",
+          "box": [
+            480,
+            597,
+            28,
+            18
+          ],
+          "qaRc": 20.5,
+          "fondSeul": 20.5,
+          "boiteElargie": 20.4,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "IV",
+          "box": [
+            400,
+            706,
+            26,
+            18
+          ],
+          "qaRc": 19.2,
+          "fondSeul": 19.2,
+          "boiteElargie": 18.6,
+          "glypheReel": 19.2
+        },
+        {
+          "text": "IV",
+          "box": [
+            480,
+            709,
+            26,
+            18
+          ],
+          "qaRc": 20.5,
+          "fondSeul": 20.5,
+          "boiteElargie": 20.3,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "I",
+          "box": [
+            610,
+            374,
+            14,
+            18
+          ],
+          "qaRc": 20,
+          "fondSeul": 20,
+          "boiteElargie": 19.6,
+          "glypheReel": 7.5
+        },
+        {
+          "text": "I",
+          "box": [
+            690,
+            371,
+            14,
+            18
+          ],
+          "qaRc": 19.6,
+          "fondSeul": 19.4,
+          "boiteElargie": 18.8,
+          "glypheReel": 19.4
+        },
+        {
+          "text": "II",
+          "box": [
+            610,
+            482,
+            21,
+            18
+          ],
+          "qaRc": 19.4,
+          "fondSeul": 19.3,
+          "boiteElargie": 18.8,
+          "glypheReel": 19.3
+        },
+        {
+          "text": "II",
+          "box": [
+            690,
+            485,
+            21,
+            18
+          ],
+          "qaRc": 20.5,
+          "fondSeul": 20.5,
+          "boiteElargie": 20.3,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "III",
+          "box": [
+            610,
+            594,
+            28,
+            18
+          ],
+          "qaRc": 19.2,
+          "fondSeul": 19.2,
+          "boiteElargie": 18.8,
+          "glypheReel": 19.2
+        },
+        {
+          "text": "III",
+          "box": [
+            690,
+            597,
+            28,
+            18
+          ],
+          "qaRc": 20.4,
+          "fondSeul": 20.4,
+          "boiteElargie": 20.3,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "IV",
+          "box": [
+            610,
+            706,
+            26,
+            18
+          ],
+          "qaRc": 19.1,
+          "fondSeul": 19.3,
+          "boiteElargie": 18.5,
+          "glypheReel": 19.3
+        },
+        {
+          "text": "IV",
+          "box": [
+            690,
+            709,
+            26,
+            18
+          ],
+          "qaRc": 20.4,
+          "fondSeul": 20.5,
+          "boiteElargie": 20.3,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "I",
+          "box": [
+            820,
+            374,
+            14,
+            18
+          ],
+          "qaRc": 20.1,
+          "fondSeul": 20,
+          "boiteElargie": 19.6,
+          "glypheReel": 7.4
+        },
+        {
+          "text": "I",
+          "box": [
+            900,
+            371,
+            14,
+            18
+          ],
+          "qaRc": 19.3,
+          "fondSeul": 19.3,
+          "boiteElargie": 18.3,
+          "glypheReel": 19.3
+        },
+        {
+          "text": "II",
+          "box": [
+            820,
+            482,
+            21,
+            18
+          ],
+          "qaRc": 19.3,
+          "fondSeul": 19.2,
+          "boiteElargie": 18.7,
+          "glypheReel": 19.2
+        },
+        {
+          "text": "II",
+          "box": [
+            900,
+            485,
+            21,
+            18
+          ],
+          "qaRc": 20.4,
+          "fondSeul": 20.4,
+          "boiteElargie": 20.3,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "III",
+          "box": [
+            820,
+            594,
+            28,
+            18
+          ],
+          "qaRc": 18.6,
+          "fondSeul": 18.9,
+          "boiteElargie": 18,
+          "glypheReel": 18.9
+        },
+        {
+          "text": "III",
+          "box": [
+            900,
+            597,
+            28,
+            18
+          ],
+          "qaRc": 20.3,
+          "fondSeul": 20.3,
+          "boiteElargie": 20,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "IV",
+          "box": [
+            820,
+            706,
+            26,
+            18
+          ],
+          "qaRc": 19,
+          "fondSeul": 19.1,
+          "boiteElargie": 18.3,
+          "glypheReel": 19.1
+        },
+        {
+          "text": "IV",
+          "box": [
+            900,
+            709,
+            26,
+            18
+          ],
+          "qaRc": 20.4,
+          "fondSeul": 20.4,
+          "boiteElargie": 20.3,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "I",
+          "box": [
+            1030,
+            374,
+            14,
+            18
+          ],
+          "qaRc": 20.2,
+          "fondSeul": 20.1,
+          "boiteElargie": 20,
+          "glypheReel": 7.5
+        },
+        {
+          "text": "I",
+          "box": [
+            1110,
+            371,
+            14,
+            18
+          ],
+          "qaRc": 19.6,
+          "fondSeul": 19.6,
+          "boiteElargie": 18.8,
+          "glypheReel": 19.6
+        },
+        {
+          "text": "II",
+          "box": [
+            1030,
+            482,
+            21,
+            18
+          ],
+          "qaRc": 19.6,
+          "fondSeul": 19.5,
+          "boiteElargie": 19.1,
+          "glypheReel": 19.5
+        },
+        {
+          "text": "II",
+          "box": [
+            1110,
+            485,
+            21,
+            18
+          ],
+          "qaRc": 20.5,
+          "fondSeul": 20.5,
+          "boiteElargie": 20.4,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "III",
+          "box": [
+            1030,
+            594,
+            28,
+            18
+          ],
+          "qaRc": 19.5,
+          "fondSeul": 19.5,
+          "boiteElargie": 19.1,
+          "glypheReel": 19.5
+        },
+        {
+          "text": "III",
+          "box": [
+            1110,
+            597,
+            28,
+            18
+          ],
+          "qaRc": 20.5,
+          "fondSeul": 20.5,
+          "boiteElargie": 20.4,
+          "glypheReel": 2.6
+        },
+        {
+          "text": "IV",
+          "box": [
+            1030,
+            706,
+            26,
+            18
+          ],
+          "qaRc": 19.5,
+          "fondSeul": 19.5,
+          "boiteElargie": 19,
+          "glypheReel": 19.5
+        },
+        {
+          "text": "IV",
+          "box": [
+            1110,
+            709,
+            26,
+            18
+          ],
+          "qaRc": 20.5,
+          "fondSeul": 20.5,
+          "boiteElargie": 20.4,
+          "glypheReel": 2.6
+        }
+      ]
+    }
+  },
+  "issues": []
+}

@@ -1,0 +1,91 @@
+{
+  "date": "2026-10-19T15:59:15.318Z",
+  "viewport": "1920x1080",
+  "rows": [
+    {
+      "round": 1,
+      "wait": 1200,
+      "avantApres": {
+        "pixels": 0,
+        "max": 0,
+        "box": null
+      },
+      "apresApres": {
+        "pixels": 0,
+        "max": 0,
+        "box": null
+      }
+    },
+    {
+      "round": 1,
+      "wait": 5000,
+      "avantApres": {
+        "pixels": 0,
+        "max": 0,
+        "box": null
+      },
+      "apresApres": {
+        "pixels": 0,
+        "max": 0,
+        "box": null
+      }
+    },
+    {
+      "round": 2,
+      "wait": 1200,
+      "avantApres": {
+        "pixels": 0,
+        "max": 0,
+        "box": null
+      },
+      "apresApres": {
+        "pixels": 0,
+        "max": 0,
+        "box": null
+      }
+    },
+    {
+      "round": 2,
+      "wait": 5000,
+      "avantApres": {
+        "pixels": 0,
+        "max": 0,
+        "box": null
+      },
+      "apresApres": {
+        "pixels": 0,
+        "max": 0,
+        "box": null
+      }
+    },
+    {
+      "round": 3,
+      "wait": 1200,
+      "avantApres": {
+        "pixels": 0,
+        "max": 0,
+        "box": null
+      },
+      "apresApres": {
+        "pixels": 0,
+        "max": 0,
+        "box": null
+      }
+    },
+    {
+      "round": 3,
+      "wait": 5000,
+      "avantApres": {
+        "pixels": 0,
+        "max": 0,
+        "box": null
+      },
+      "apresApres": {
+        "pixels": 0,
+        "max": 0,
+        "box": null
+      }
+    }
+  ],
+  "issues": []
+}

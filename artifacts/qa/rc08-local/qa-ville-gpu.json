@@ -1,0 +1,140 @@
+{
+  "date": "2026-10-19T15:55:34.954Z",
+  "commit": "c9c3b86",
+  "renderer": "Chrome headless, GPU réel : ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11) — arguments : --force_high_performance_gpu",
+  "shots": [
+    {
+      "cam": "frontale",
+      "spot": "arrivee",
+      "size": "1280x720",
+      "file": "screenshots/qa/m09/v1/frontale-arrivee-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "etal",
+      "size": "1280x720",
+      "file": "screenshots/qa/m09/v1/frontale-etal-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "fanal",
+      "size": "1280x720",
+      "file": "screenshots/qa/m09/v1/frontale-fanal-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "salle",
+      "size": "1280x720",
+      "file": "screenshots/qa/m09/v1/frontale-salle-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "kai",
+      "size": "1280x720",
+      "file": "screenshots/qa/m09/v1/frontale-kai-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "parvis-porte",
+      "size": "1280x720",
+      "file": "screenshots/qa/m09/v1/frontale-parvis-porte-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "parvis-joueuse",
+      "size": "1280x720",
+      "file": "screenshots/qa/m09/v1/frontale-parvis-joueuse-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "ruelles-fontaine",
+      "size": "1280x720",
+      "file": "screenshots/qa/m09/v1/frontale-ruelles-fontaine-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "ruelles-selene",
+      "size": "1280x720",
+      "file": "screenshots/qa/m09/v1/frontale-ruelles-selene-1280x720.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "arrivee",
+      "size": "1920x1080",
+      "file": "screenshots/qa/m09/v1/frontale-arrivee-1920x1080.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "etal",
+      "size": "1920x1080",
+      "file": "screenshots/qa/m09/v1/frontale-etal-1920x1080.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "fanal",
+      "size": "1920x1080",
+      "file": "screenshots/qa/m09/v1/frontale-fanal-1920x1080.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "salle",
+      "size": "1920x1080",
+      "file": "screenshots/qa/m09/v1/frontale-salle-1920x1080.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "kai",
+      "size": "1920x1080",
+      "file": "screenshots/qa/m09/v1/frontale-kai-1920x1080.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "parvis-porte",
+      "size": "1920x1080",
+      "file": "screenshots/qa/m09/v1/frontale-parvis-porte-1920x1080.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "parvis-joueuse",
+      "size": "1920x1080",
+      "file": "screenshots/qa/m09/v1/frontale-parvis-joueuse-1920x1080.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "ruelles-fontaine",
+      "size": "1920x1080",
+      "file": "screenshots/qa/m09/v1/frontale-ruelles-fontaine-1920x1080.png"
+    },
+    {
+      "cam": "frontale",
+      "spot": "ruelles-selene",
+      "size": "1920x1080",
+      "file": "screenshots/qa/m09/v1/frontale-ruelles-selene-1920x1080.png"
+    }
+  ],
+  "cost": {
+    "frontale": {
+      "readyMs": 321,
+      "st": {
+        "camera": "frontale",
+        "calls": 48,
+        "triangles": 6932,
+        "textures": 37,
+        "geometries": 35,
+        "programs": 18,
+        "lights": 11,
+        "cpuMs": 0.6,
+        "frames": 665,
+        "buildMs": 58
+      },
+      "median": 6,
+      "p95": 6,
+      "n": 115,
+      "walked": {
+        "x": -4.776925256821808,
+        "z": 0.6
+      }
+    }
+  },
+  "issues": []
+}
