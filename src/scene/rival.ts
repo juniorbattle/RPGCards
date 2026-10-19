@@ -86,6 +86,81 @@ function canvasTexture(c: HTMLCanvasElement): THREE.CanvasTexture {
   return t;
 }
 
+/**
+ * Support de l’éventail, posé sur la table (dessus de la table à y = 1,05 dans le repère du rival) : socle de bois galbé
+ * dont la face avant suit l’arc de l’éventail, arêtes arrondies, filet de laiton sur le bord avant et rainure sombre où
+ * les cartes sont plantées (repère plan : x à droite, z vers le joueur).
+ */
+const STAND = { y: 1.05, z: 0.7, half: 0.5, front: 0.15, back: -0.09, h: 0.11, bevel: 0.016 };
+
+/** Bois sombre veiné, tracé en code (graine d’art). */
+function woodCanvas(artSeed: number): HTMLCanvasElement {
+  const c = document.createElement('canvas');
+  c.width = 256;
+  c.height = 64;
+  const g = c.getContext('2d')!;
+  const grad = g.createLinearGradient(0, 0, 0, 64);
+  grad.addColorStop(0, '#5a3420');
+  grad.addColorStop(1, '#3e2214');
+  g.fillStyle = grad;
+  g.fillRect(0, 0, 256, 64);
+  const r = makeRng(hashString(`support|${artSeed}`));
+  for (let i = 0; i < 26; i++) {
+    const y0 = r() * 64;
+    const a = 1 + r() * 3;
+    const f = 30 + r() * 20;
+    g.strokeStyle = i % 3 ? 'rgba(30,14,6,0.45)' : 'rgba(140,90,52,0.35)';
+    g.lineWidth = 0.6 + r() * 1.2;
+    g.beginPath();
+    g.moveTo(0, y0);
+    for (let x = 4; x <= 256; x += 4) g.lineTo(x, y0 + Math.sin(x / f + i) * a);
+    g.stroke();
+  }
+  return c;
+}
+
+/** Bord avant en arc (plan x, z) : de la pointe gauche à la pointe droite en passant par l’avant. */
+const standFront = (y: number, inset = 0) => new THREE.CubicBezierCurve3(
+  new THREE.Vector3(-STAND.half + inset, y, STAND.back + 0.03),
+  new THREE.Vector3(-STAND.half * 0.55, y, STAND.front * 1.3 - inset),
+  new THREE.Vector3(STAND.half * 0.55, y, STAND.front * 1.3 - inset),
+  new THREE.Vector3(STAND.half - inset, y, STAND.back + 0.03),
+);
+
+function cardStand(artSeed: number): THREE.Group {
+  const g = new THREE.Group();
+  const tex = new THREE.CanvasTexture(woodCanvas(artSeed));
+  tex.colorSpace = THREE.SRGBColorSpace;
+  tex.anisotropy = 4;
+  tex.wrapS = THREE.RepeatWrapping;
+  tex.wrapT = THREE.RepeatWrapping;
+  const wood = new THREE.MeshLambertMaterial({ map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: SELF_LIGHT });
+  const brass = new THREE.MeshLambertMaterial({ color: 0xc89a48, emissive: 0x5a3c14, emissiveIntensity: 0.6 });
+  const groove = new THREE.MeshBasicMaterial({ color: 0x140a06 });
+  // Plan du socle : dos légèrement creusé, pointes arrondies, avant en arc (forme 2D en x, -z ; extrudée vers le haut).
+  const sh = new THREE.Shape();
+  const { half, front, back } = STAND;
+  sh.moveTo(-half, -(back + 0.03));
+  sh.bezierCurveTo(-half * 0.55, -(front * 1.3), half * 0.55, -(front * 1.3), half, -(back + 0.03));
+  sh.bezierCurveTo(half + 0.02, -(back - 0.01), half - 0.03, -(back - 0.03), half - 0.08, -(back - 0.02));
+  sh.bezierCurveTo(half * 0.3, -(back + 0.03), -half * 0.3, -(back + 0.03), -(half - 0.08), -(back - 0.02));
+  sh.bezierCurveTo(-(half - 0.03), -(back - 0.03), -(half + 0.02), -(back - 0.01), -half, -(back + 0.03));
+  const geo = new THREE.ExtrudeGeometry(sh, { depth: STAND.h - 2 * STAND.bevel, bevelEnabled: true, bevelThickness: STAND.bevel, bevelSize: STAND.bevel, bevelSegments: 4, curveSegments: 32 });
+  geo.rotateX(-Math.PI / 2);
+  geo.translate(0, STAND.bevel, 0);
+  const base = new THREE.Mesh(geo, wood);
+  g.add(base);
+  // Filet de laiton sur le bord avant, rainure sombre (là où les cartes sont plantées).
+  const top = STAND.h + 0.002;
+  g.add(new THREE.Mesh(new THREE.TubeGeometry(standFront(top - 0.004, 0.012), 48, 0.01, 8, false), brass));
+  const slot = new THREE.CubicBezierCurve3(
+    new THREE.Vector3(-half * 0.62, top, -0.005), new THREE.Vector3(-half * 0.2, top, 0.035),
+    new THREE.Vector3(half * 0.2, top, 0.035), new THREE.Vector3(half * 0.62, top, -0.005),
+  );
+  g.add(new THREE.Mesh(new THREE.TubeGeometry(slot, 40, 0.007, 5, false), groove));
+  return g;
+}
+
 export interface RivalRig {
   group: THREE.Group;
   setExpression(e: Expression): void;
@@ -138,8 +213,11 @@ function buildRival(p: RivalPersonality, artSeed: number, backTexture: THREE.Tex
   const v2 = kit ? art ?? figureV2Art(kit, artSeed) : null;
   if (kit) prepCounters.generated += art ? 0 : 1;
 
+  // Ce qui bouge avec le rival (recul, se pencher) ; le support et l’éventail restent posés sur la table (`group`).
+  const actor = new THREE.Group();
+  group.add(actor);
   const body = new THREE.Group(); // respiration, inclinaison
-  group.add(body);
+  actor.add(body);
   const torso = plane(2.7, 2.1, v2 ? canvasTexture(v2.torso) : torsoTexture(p, artSeed), 1);
   torso.position.set(0, NECK_Y - 0.8, 0);
   body.add(torso);
@@ -252,8 +330,12 @@ function buildRival(p: RivalPersonality, artSeed: number, backTexture: THREE.Tex
   flush.position.set(0, -0.12, v2 ? 0.007 : 0.003);
   face.add(flush);
 
-  // Éventail de cartes tenu derrière le bord de la table : taille publique de la main. M07 : plus de mains
-  // peintes (décision du responsable, ADR 017) ; le pied de l’éventail passe sous le plateau, que la table cache.
+  // Éventail de cartes : taille publique de la main. M07 : plus de mains peintes (ADR 017) ; depuis la demande du
+  // responsable du 2026-10-18, l’éventail est planté dans un support posé sur la table (au lieu de flotter derrière le
+  // bord) : réglette de bois sombre, lèvre avant qui cache le pied des cartes, liseré de laiton.
+  const stand = cardStand(artSeed);
+  stand.position.set(0, STAND.y, STAND.z);
+  group.add(stand);
   const FAN_REST = new THREE.Vector3(0, 0.98, 0.7);
   const fan = new THREE.Group();
   fan.position.copy(FAN_REST);
@@ -403,7 +485,7 @@ function buildRival(p: RivalPersonality, artSeed: number, backTexture: THREE.Tex
       neckPivot.rotation.z = cur.tilt + (reduced ? 0 : Math.sin(t * 0.7) * 0.012);
       neckPivot.rotation.x = cur.gy * -0.06;
       neckPivot.position.y = NECK_Y;
-      group.position.z = RIVAL_Z;
+      actor.position.z = 0;
       body.position.y = 0;
       fan.position.copy(FAN_REST);
       fan.rotation.x = 0;
@@ -418,9 +500,9 @@ function buildRival(p: RivalPersonality, artSeed: number, backTexture: THREE.Tex
           if (g === 'nod') neckPivot.rotation.x += Math.sin(u * Math.PI * 4) * 0.08 * (1 - u);
           if (g === 'shake-head') neckPivot.rotation.y = Math.sin(u * Math.PI * 4) * 0.1 * (1 - u);
           if (g === 'tilt') neckPivot.rotation.z += env * 0.08;
-          if (g === 'recoil') { group.position.z = RIVAL_Z - env * 0.25; neckPivot.rotation.x -= env * 0.12; }
+          if (g === 'recoil') { actor.position.z = -env * 0.25; neckPivot.rotation.x -= env * 0.12; }
           if (g === 'laugh') { neckPivot.position.y = NECK_Y + Math.abs(Math.sin(u * Math.PI * 6)) * 0.035; neckPivot.rotation.x -= env * 0.1; }
-          if (g === 'lean-in') group.position.z = RIVAL_Z + env * 0.3;
+          if (g === 'lean-in') actor.position.z = env * 0.3;
         }
         if (g === 'slump') { body.position.y = -0.12 * (reduced ? 1 : Math.min(1, u * 2)); neckPivot.rotation.x += 0.12; }
         if (g === 'place-card' || g === 'flip-card') {

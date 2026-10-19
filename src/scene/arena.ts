@@ -584,7 +584,7 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
    * M08 C2 — programmes d’un objet préparés pour les DEUX sorties possibles : la cible HDR du post-traitement (sans
    * tonemapping, sortie linéaire : les variantes de chaque image en rendu complet) et l’écran (rendu direct du repli).
    * `renderer.compile` seul ne vise que l’écran : un décor préparé ainsi compilait encore ses variantes HDR à sa
-   * première image (234 ms, 54 programmes au lieu de 46 ; journal, passe 30). Sans compilation parallèle
+   * première image (234 ms, 54 programmes au lieu de 46 ; journal, passe 31). Sans compilation parallèle
    * (`KHR_parallel_shader_compile` absent, par exemple en rendu logiciel), `compileAsync` avertit dans la console :
    * compilation synchrone, hors duel seulement.
    */

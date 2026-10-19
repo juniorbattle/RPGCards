@@ -77,7 +77,7 @@ la rue ; papillons de nuit. Plan de feux : clair de lune froid, projecteurs chau
 
 ## Conséquences
 
-### Mesures de la porte (journal, passe 30 ; `artifacts/qa/m08/`)
+### Mesures de la porte (journal, passe 31 ; `artifacts/qa/m08/`)
 
 - **Salle migrée identique au pixel près** au build `bb0535b` : 24 cas (scène 3D seule des quatre rivaux, duel complet,
   écrans Rencontres, Accueil et Préparation, scène seule et capture complète, 1280×720 et 1920×1080), 0 pixel ; témoin

@@ -2,7 +2,7 @@
 
 Date : 2026-10-17
 Statut : **APPROUVÉ par le responsable** (demande en séance du 2026-10-17, `docs/missions/M07_MISE_EN_SCENE_ET_LISIBILITE.md`).
-**Amende l’ADR 013** (baseline desktop) et l’ADR 007 (rival procédural).
+**Amende l’ADR 013** (baseline desktop) et l’ADR 007 (rival procédural). **Amendé le 2026-10-18** : éventail planté dans un support posé sur la table (section finale).
 
 ## Contexte
 
@@ -28,3 +28,27 @@ haut du corps et surtout le visage ; voir les cartes suffit.
   personnages, sur nouvelle décision.
 
 **Cette décision n’introduit aucune règle métier nouvelle.**
+
+## Amendement du 2026-10-18 — support de l’éventail (M08)
+
+Statut : **demande du responsable** en séance (2026-10-18, pendant le lot C3) : « ajouter un support pour les cartes de
+l’adversaire ». Constat : depuis le lot 1, l’éventail flottait derrière le bord de la table, son pied caché par le
+plateau, et reculait ou avançait avec le buste (gestes « recul » et « se pencher »).
+
+### Décision
+
+- **Support posé sur la table** (`src/scene/rival.ts`, `cardStand`) : socle de bois galbé dont la face avant suit l’arc
+  de l’éventail (forme tracée en courbes de Bézier, extrudée, arêtes arrondies par un biseau), bois veiné tracé en code
+  (graine d’art), filet de laiton courbe sur le bord avant, rainure sombre où les cartes sont plantées. Aucune image
+  externe ; même auto-éclairage que les plans du rival.
+- **L’éventail et le support restent posés** : le rig sépare le corps (`actor` : recul, se pencher) de ce qui est sur la
+  table (support, éventail, carte posée). Le geste « pose une carte » incline toujours l’éventail depuis son pied.
+- Aucune règle, aucun secret : l’éventail montre toujours la seule taille publique de la main.
+
+### Conséquences
+
+- Captures avant / après : `screenshots/qa/m08/support/` (Kaï, Maëlle, une marchande ; 1280 et 1920 ; planche).
+- **Seule la zone du support change** (vue A complète, même parcours, avant / après) : 2 460 pixels dans une boîte de
+  136 × 23 px à 1280×720 (Kaï comme la marchande), 5 304 pixels dans 202 × 34 px à 1920×1080 (Maëlle) ; le reste de
+  l’image (visage, buste, éventail visible, décor, HUD) est identique au pixel près. Le support suit le rival (même rig) :
+  il apparaît aussi pour les PNJ et entre dans la pré-génération (sa texture est envoyée avec les autres).
