@@ -5,7 +5,10 @@ Statut : **APPROUVÉ pour la direction** par le responsable (« Je retiens la di
 illustration de carte, avec les couleurs des quatre familles. Applique-la au Quai. ») ; **première réalisation sur le
 Quai proposée**, en attente de son retour sur la planche (`screenshots/qa/m09/v3/planche-v3-encre.png`) avant le Parvis
 et les Ruelles. Retour du responsable : amélioration nette, pousser plus loin (profondeur de champ, flaques, décors) :
-**amendement 1 (passe 47) proposé**, planche `screenshots/qa/m09/v3/planche-v3-relief.png`.
+amendement 1 (passe 47), planche `screenshots/qa/m09/v3/planche-v3-relief.png` ; **le Quai de la passe 47 est VALIDÉ
+par le responsable** (« Je valide le Quai de la passe 47 tel que sur la planche. Étends-le au Parvis et aux
+Ruelles. ») ; **amendement 2 (passe 49) : le Parvis et les Ruelles dans la même direction, proposé**, planche
+`screenshots/qa/m09/v3/planche-v3-ilots.png`.
 
 ## Contexte
 
@@ -96,3 +99,25 @@ des images de gpt-image-2 dans le jeu demandera d'amender la règle « images g�
 moment de cette tâche.
 
 Le Parvis et les Ruelles, le combat et le jeu par défaut ne changent pas. Coût et preuves : JOURNAL passe 47.
+
+## Amendement 2 — le Parvis et les Ruelles dans la direction D (passe 49, 2026-10-19) — proposé
+
+Le responsable valide le Quai de la passe 47 et demande : « Étends-le au Parvis et aux Ruelles. »
+
+1. **Grammaire commune** (`src/ville/grammaire.ts`, `createKit`) : matières, façades, toits, fenêtres, portes,
+   lanternes, lampadaires, second rang, ville haute, brumes, fumées, poussières et finition d'un îlot, extraits tels
+   quels du Quai (Quai identique au pixel près après l'extraction) ; les particularités du Quai deviennent des options.
+2. **Mêmes réglages pour les trois îlots** : cadrage (ADR 024 amendement 1), personnages de 2,2 m, encre, profondeur de
+   champ (bande nette = l'îlot jouable), reflets (flaques ; eau du canal et de la fontaine en reflet brisé).
+3. **Le Parvis de l'arène** (`parvisScene.ts`) : l'arène en amphithéâtre (la façade fuit sur les côtés), deux rangs
+   d'arcades (couloirs à la torche, vitraux des familles), colonnes engagées, frise des familles, merlons et fanions ;
+   la porte du Tournoi en arc de triomphe (intérieur embrasé, archivolte dorée, rose à quatre quartiers, bannières,
+   soleil d'Astre) ; braseros ; « rose des Quatre Voies » incrustée dans le dallage ; balustrade, tentures du Tournoi
+   sur le mur de la terrasse, toits de la ville basse au premier plan ; table des inscriptions, râtelier du Tournoi.
+4. **Les Ruelles** (`ruellesScene.ts`) : maisons étroites à pignon sur rue de la grammaire commune (colombages et
+   enduits bleutés, rives dorées, rosaces du Voile, jardinières, balconnets, enseignes, fanions), linge tendu aux
+   couleurs des familles, fontaine du Voile (vasque, filets d'eau, cristal de l'emblème), étal de la liseuse (boule de
+   cristal, cartes, bougies, dais étoilé), canal, barques et fanaux bleu argenté ; le bleu du Voile domine, quelques
+   lanternes chaudes aux portes.
+5. Les plans purs des îlots (`parvis.ts`, `ruelles.ts` : collisions, zones, personnages) ne changent pas ; les
+   constructeurs d'origine (M09 V1/V2) sont retirés. Combat et jeu par défaut inchangés. Mesures : JOURNAL passe 49.

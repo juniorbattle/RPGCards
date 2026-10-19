@@ -55,7 +55,13 @@ chaud ; la nuit bleu d'encre, la pierre froide et l'ivoire désaturé restent.
 réfléchissantes », décors du centre plus impressionnants, l'eau du port ne doit pas avoir l'air d'une vitre) : profondeur
 de champ (rue et façades nettes, premier plan et ville haute flous), reflet plan de la rue (flaques, port en reflet
 brisé), clair de lune peint sur les étages, décors du centre enrichis (fronton doré de la salle de jeu, frise des
-familles, pignon à oculus de l'armateur, lampadaires ouvragés, étal garni). Le Quai seulement.
+familles, pignon à oculus de l'armateur, lampadaires ouvragés, étal garni). **Quai validé par le responsable.**
+
+**Amendement 2 (passe 49, ADR 026)** : « Étends-le au Parvis et aux Ruelles. » Grammaire de façade commune
+(`src/ville/grammaire.ts`) ; le Parvis de l'arène (amphithéâtre, porte du Tournoi en arc de triomphe, rose des Quatre
+Voies au sol, braseros, tentures) et les Ruelles du Voile (maisons à pignon, fontaine au cristal, étal de la liseuse,
+canal) dans la direction D, avec le cadrage et les personnages du Quai. Les personnages de la ville restent provisoires
+(Aseprite et/ou gpt-image-2 plus tard) ; le décor ne s'en inspire pas.
 
 Cette DA est cohérente avec nos lieux de duel (la rue « le Quai, la nuit », le bar « le Fanal », ADR 022) : la ville
 doit prolonger ces lieux, pas les contredire.

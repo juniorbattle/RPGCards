@@ -57,15 +57,16 @@ Voir `artifacts/qa/m09/v1-labo.json` et `docs/RAPPORT_RC_0_8.md` (annexe M09) : 
 textures, programmes, temps de construction de l'îlot. Mesure GPU réelle (Radeon 780M, RTX 4060) **à faire sur le
 poste du responsable** (`LQV_GPU=1 CHROMIUM_PATH=… node tools/m09-labo.mjs`).
 
-## Amendement 1 — cadrage du Quai retravaillé (M09 V3, passe 45) — **PROPOSÉ, en attente du responsable**
+## Amendement 1 — cadrage du Quai retravaillé (M09 V3, passe 45) — **APPROUVÉ avec la planche du Quai validée (passe 47), étendu au Parvis et aux Ruelles (passe 49)**
 
 Fiche B1 : « réglages gardés, ajustés à l'œil sur GPU réel, pendant la passe de qualité du Quai ». Constat de départ
 (session principale, validé par le responsable) : peu de profondeur, eau à peine visible, personnages petits.
 
 - **Le cadrage devient une donnée de l'îlot** (`IlotDef.rig`, `ilots.ts`) par-dessus `RIGS.frontale`, et **réglable par
   l'URL** pour l'ajuster à l'œil sans reconstruire : `rig=inclinaison,distance,focale,hauteur visée` (`parseRig`, pur et
-  testé ; valeurs hors bornes ignorées), dans le laboratoire et la démo. Le Parvis et les Ruelles gardent le cadrage
-  d'origine (8°, 19 m, 33°, 3,6 m) jusqu'à validation.
+  testé ; valeurs hors bornes ignorées), dans le laboratoire et la démo. Le Parvis et les Ruelles gardaient le cadrage
+  d'origine (8°, 19 m, 33°, 3,6 m) jusqu'à validation ; depuis la passe 49 (« Je valide le Quai de la passe 47 tel que
+  sur la planche. Étends-le au Parvis et aux Ruelles. »), les trois îlots ont le cadrage et les personnages du Quai.
 - **Quai : 7° sous l'horizontale, 18,5 m, focale verticale 39°, point visé à 3,05 m**, et **personnages de 2,2 m**
   (`IlotDef.walkerH` ; proportions « chibi », portes portées à 2,65 m) : 118 px en 1280 × 720 (99 px avant) et
   177 px en 1920 × 1080 par projection au centre de la rue, l'ordre de grandeur de la frontale approuvée de Cité du

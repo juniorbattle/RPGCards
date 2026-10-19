@@ -5,11 +5,13 @@
  */
 import type { RigTuning } from './cameras';
 import type { Ilot } from './monde';
-import { P_NPCS, PARVIS } from './parvis';
+import { P_FACADE_Z, P_FRONT_Z, P_NPCS, PARVIS } from './parvis';
 import { FACADE_Z, NPCS, QUAI, QUAY_Z, type IlotNpc } from './quai';
-import { RUELLES, R_NPCS } from './ruelles';
+import { RUELLES, R_EDGE_Z, R_FACADE_Z, R_NPCS } from './ruelles';
+import { buildRuellesD } from './ruellesScene';
+import { buildParvisD } from './parvisScene';
 import { buildQuai } from './quaiScene';
-import { buildParvis, buildRuelles, type QuaiScene } from './scene';
+import type { QuaiScene } from './scene';
 
 export type IlotId = 'quai' | 'parvis' | 'ruelles';
 
@@ -64,12 +66,21 @@ export const ILOTS: Record<IlotId, IlotDef> = {
     exits: { 'sortie-arene': { to: 'parvis', spawn: 'arrivee' }, 'sortie-ruelles': { to: 'ruelles', spawn: 'arrivee' } },
   },
   parvis: {
-    id: 'parvis', ilot: PARVIS, npcs: P_NPCS, camera: { minX: -8, maxX: 8 }, build: buildParvis,
+    id: 'parvis', ilot: PARVIS, npcs: P_NPCS, camera: { minX: -8, maxX: 8 }, build: buildParvisD,
+    // Passe 49 (validation du Quai par le responsable : « Étends-le au Parvis et aux Ruelles ») : même cadrage, mêmes
+    // personnages et même direction que le Quai ; net de la balustrade à l'amphithéâtre, ville basse et ville haute floues.
+    rig: { pitch: 7, distance: 18.5, fov: 39, aimY: 3.05 }, walkerH: 2.2, style: 'encre',
+    dof: { nearZ: P_FRONT_Z + 0.6, farZ: P_FACADE_Z - 8, nearSpan: 3.2, farSpan: 45, farAmt: 0.42, maxBlur: 9 },
+    reflets: { proxyZ: P_FACADE_Z, proxyY: 10 },
     ambient: [{ id: 'pnj-commis-2', x0: -11, x1: 11, z: 2.2, speed: 0.85, phase: 0.55 }],
     exits: { 'sortie-quai': { to: 'quai', spawn: 'sortie-arene' } },
   },
   ruelles: {
-    id: 'ruelles', ilot: RUELLES, npcs: R_NPCS, camera: { minX: -7.5, maxX: 7.5 }, build: buildRuelles,
+    id: 'ruelles', ilot: RUELLES, npcs: R_NPCS, camera: { minX: -7.5, maxX: 7.5 }, build: buildRuellesD,
+    // Passe 49 : même cadrage, mêmes personnages et même direction que le Quai ; net du canal au fond des maisons.
+    rig: { pitch: 7, distance: 18.5, fov: 39, aimY: 3.05 }, walkerH: 2.2, style: 'encre',
+    dof: { nearZ: R_EDGE_Z + 0.5, farZ: R_FACADE_Z - 8, nearSpan: 3.2, farSpan: 45, farAmt: 0.42, maxBlur: 9 },
+    reflets: { proxyZ: R_FACADE_Z, proxyY: 10 },
     ambient: [{ id: 'pnj-marchande-4', x0: -11, x1: 10.5, z: 1.7, speed: 0.8, phase: 0.2 }],
     exits: { 'sortie-quai': { to: 'quai', spawn: 'sortie-ruelles' } },
   },

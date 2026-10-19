@@ -26,10 +26,18 @@ const SPOTS = {
   fanal: [7.2, -1.4, 'dos', 'Devant le Fanal'],
   salle: [-6.75, -1.4, 'dos', 'Devant la salle de jeu de cartes'],
   kai: [12.0, 1.0, 'droite', 'Kaï, bout est du Quai'],
+  // passe 49 : le Parvis et les Ruelles dans la direction D (5e élément : l'îlot)
+  'parvis-porte': [0, -2.6, 'dos', 'Parvis : devant la porte du Tournoi', 'parvis'],
+  'parvis-joueuse': [-4.8, 0.9, 'gauche', 'Parvis : la joueuse et les braseros', 'parvis'],
+  'parvis-est': [7.6, 1.4, 'droite', 'Parvis : la table des inscriptions', 'parvis'],
+  'ruelles-fontaine': [-1.8, 1.0, 'gauche', 'Ruelles : la fontaine du Voile', 'ruelles'],
+  'ruelles-selene': [8.4, -0.3, 'droite', 'Ruelles : Sélène et l’étal de la liseuse', 'ruelles'],
+  'ruelles-ouest': [-9.0, 1.4, 'gauche', 'Ruelles : l’ouest du canal', 'ruelles'],
 };
 const ONLY = process.env.LQV_SPOTS?.split(',') ?? Object.keys(SPOTS);
 const SIZES = (process.env.LQV_SIZES ?? '1280x720,1920x1080').split(',').map((s) => s.split('x').map(Number));
 const QUERY = process.env.LQV_V3_QUERY ? `&${process.env.LQV_V3_QUERY}` : '';
+const ILOT = process.env.LQV_V3_ILOT ?? 'quai';
 const median = (xs) => { const s = [...xs].sort((a, b) => a - b); const m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 const pct = (xs, p) => [...xs].sort((a, b) => a - b)[Math.min(xs.length - 1, Math.floor(xs.length * p))];
 const r2 = (x) => Math.round(x * 100) / 100;
@@ -51,8 +59,8 @@ if (MODE === 'shots') {
       await p.goto(`${server.base}/?ville=1&qa=1&freeze=1${QUERY}`);
       await p.waitForFunction(() => !!window.__lqvVille);
       for (const k of ONLY) {
-        const [x, z, f] = SPOTS[k];
-        await p.evaluate(({ x, z, f }) => { const t = window.__lqvVille.town; if (t.ilotId() !== 'quai') t.goTo('quai', 'arrivee'); t.place({ x, z }, f); t.renderNow(); }, { x, z, f });
+        const [x, z, f, , ilot = 'quai'] = SPOTS[k];
+        await p.evaluate(({ x, z, f, ilot }) => { const t = window.__lqvVille.town; if (t.ilotId() !== ilot) t.goTo(ilot, 'arrivee'); t.place({ x, z }, f); t.renderNow(); }, { x, z, f, ilot });
         await p.waitForTimeout(400);
         await p.evaluate(hideUi);
         const file = join(dir, `${k}-${w}x${h}.png`);
@@ -120,7 +128,8 @@ if (MODE === 'shots') {
     await page.goto(`${base}/?ville=1&qa=1${QUERY}`);
     await page.waitForFunction(() => !!window.__lqvVille && window.__lqvVille.town.stats().frames > 2);
     renderer ??= await webglRenderer(page);
-    await page.evaluate(() => window.__lqvVille.town.place({ x: -8, z: 0.6 }, 'droite'));
+    // LQV_V3_ILOT : îlot mesuré (défaut : le Quai) ; départ à x = −8, sur une ligne libre de l'îlot
+    await page.evaluate((il) => { const t = window.__lqvVille.town; if (t.ilotId() !== il) t.goTo(il, 'arrivee'); t.place({ x: -8, z: il === 'ruelles' ? 1.6 : 0.6 }, 'droite'); }, ILOT);
     await page.waitForTimeout(3000);
     await page.evaluate(() => { window.__gpuMs.length = 0; window.__gpuDisjoint = 0; window.__iv = []; let l = performance.now(); const f = (t) => { window.__iv.push(t - l); l = t; if (!window.__ivStop) requestAnimationFrame(f); }; requestAnimationFrame(f); });
     await page.keyboard.down('KeyD');
@@ -164,7 +173,7 @@ if (MODE === 'shots') {
     }
   }
   const machine = { cpu: os.cpus()[0]?.model, cores: os.cpus().length, memGB: Math.round(os.totalmem() / 2 ** 30), node: process.version };
-  const report = { date: new Date().toISOString(), machine, renderer: rendererLabel(renderer), gpu: GPU, chromeArgs: EXTRA_ARGS, protocol: `${ROUNDS} rondes entrelacées par taille ; page neuve, 3 s de mise en régime, 3 s de marche vers l’est depuis x = −8 ; temps GPU par image (médiane et p95)`, builds: { avant: builds.avant.sha, apres: builds.apres.sha }, query: QUERY.slice(1) || null, summary, runs, console: issues };
+  const report = { date: new Date().toISOString(), machine, renderer: rendererLabel(renderer), gpu: GPU, chromeArgs: EXTRA_ARGS, ilot: ILOT, protocol: `${ROUNDS} rondes entrelacées par taille ; page neuve, 3 s de mise en régime, 3 s de marche vers l’est depuis x = −8 ; temps GPU par image (médiane et p95)`, builds: { avant: builds.avant.sha, apres: builds.apres.sha }, query: QUERY.slice(1) || null, summary, runs, console: issues };
   mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(OUT, JSON.stringify(report, null, 2));
   console.log(JSON.stringify(summary, null, 2));
@@ -177,11 +186,14 @@ if (MODE === 'shots') {
   const REF = process.env.LQV_V3_REF ?? 'reference/generated/2026-10-19-quai-nuit-cameras/02.png';
   const [CA, CB] = (process.env.LQV_V3_COLS ?? 'avant|après').split('|');
   const TITLE = process.env.LQV_V3_TITLE ?? 'M09 V3 — le Quai, la nuit : avant (gauche) | après (droite)';
+  // LQV_V3_BIG : position montrée en 1920 × 1080 (première et dernière rangées ; défaut : le centre du Quai)
+  const BIG = process.env.LQV_V3_BIG ?? 'etal';
+  const bigLabel = SPOTS[BIG]?.[3] ?? BIG;
   const data = (f) => (existsSync(f) ? `data:image/png;base64,${readFileSync(f).toString('base64')}` : null);
   const rows = [
-    { label: `Référence (image générée, jamais dans le jeu) | ${CB}, centre du Quai 1920×1080`, srcs: [data(REF), data(join(apres, 'etal-1920x1080.png'))] },
+    { label: `Référence (image générée, jamais dans le jeu) | ${CB}, ${bigLabel} 1920×1080`, srcs: [data(REF), data(join(apres, `${BIG}-1920x1080.png`))] },
     ...ONLY.map((k) => ({ label: `${SPOTS[k][3]} — 1280×720 : ${CA} | ${CB}`, srcs: [data(join(avant, `${k}-1280x720.png`)), data(join(apres, `${k}-1280x720.png`))] })),
-    { label: `Centre du Quai — 1920×1080 : ${CA} | ${CB}`, srcs: [data(join(avant, 'etal-1920x1080.png')), data(join(apres, 'etal-1920x1080.png'))] },
+    { label: `${bigLabel} — 1920×1080 : ${CA} | ${CB}`, srcs: [data(join(avant, `${BIG}-1920x1080.png`)), data(join(apres, `${BIG}-1920x1080.png`))] },
   ].filter((r) => r.srcs.some(Boolean));
   const browser = await launch();
   const page = await (await browser.newContext()).newPage();

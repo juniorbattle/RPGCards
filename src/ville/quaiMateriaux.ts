@@ -899,3 +899,132 @@ export function friezeTexture(): THREE.CanvasTexture {
   t.wrapT = THREE.ClampToEdgeWrapping;
   return t;
 }
+
+// --- Passe 49 : le Parvis de l'arène et les Ruelles dans la direction D ------------------------------------------------
+
+/**
+ * Intérieur de l'arène vu par la grande porte (256 × 320) : piste de sable embrasée par les feux, gradins en bandes
+ * sombres, silhouettes du public, bannières des quatre familles au-dessus des gradins, poutres de la herse en contre-jour.
+ */
+export function arenaInterior(seed: number): THREE.CanvasTexture {
+  const c = painted(`arene|${seed}`, () => {
+    const W = 256;
+    const H = 320;
+    const { c, ctx } = cnv(W, H);
+    const rng = makeRng(hashString(`v3|arene|${seed}`));
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#120806'); g.addColorStop(0.35, '#3a160a'); g.addColorStop(0.7, '#a24a18'); g.addColorStop(0.86, '#f0a050'); g.addColorStop(1, '#6a2a0c');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    // bannières des familles au fond, au-dessus des gradins
+    FAMILIES.forEach((fam, k) => {
+      const p = FAMILY_PALETTE[fam];
+      const x = 22 + k * 58;
+      ctx.fillStyle = p.mid; ctx.fillRect(x, 26, 30, 64);
+      ctx.beginPath(); ctx.moveTo(x, 90); ctx.lineTo(x + 15, 102); ctx.lineTo(x + 30, 90); ctx.fill();
+      ctx.fillStyle = p.accent; drawEmblem(ctx, fam, x + 15, 56, 9);
+    });
+    // gradins : bandes, public en silhouettes, petites lueurs (lanternes, éclats)
+    for (let i = 0; i < 6; i++) {
+      const y = 108 + i * 22;
+      ctx.fillStyle = `rgba(14,6,3,${0.82 - i * 0.07})`; ctx.fillRect(0, y, W, 9);
+      for (let k = 0; k < 26; k++) {
+        const x = rng() * W;
+        ctx.fillStyle = `rgba(20,8,4,${0.7 + rng() * 0.25})`;
+        ctx.beginPath(); ctx.arc(x, y - 3, 3 + rng() * 1.5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillRect(x - 3.5, y - 1, 7, 6);
+      }
+      for (let k = 0; k < 6; k++) { ctx.fillStyle = `rgba(255,${170 + rng() * 60},90,0.9)`; ctx.fillRect(rng() * W, y - 8, 2, 2); }
+    }
+    // piste : sable chaud, feux aux bords, reflets
+    const sand = ctx.createRadialGradient(W / 2, H * 0.92, 10, W / 2, H * 0.92, W * 0.7);
+    sand.addColorStop(0, 'rgba(255,214,140,0.95)'); sand.addColorStop(1, 'rgba(255,150,60,0)');
+    ctx.fillStyle = sand; ctx.fillRect(0, H * 0.7, W, H * 0.3);
+    for (const x of [30, 226]) {
+      const f = ctx.createRadialGradient(x, H * 0.8, 2, x, H * 0.8, 40);
+      f.addColorStop(0, 'rgba(255,230,160,1)'); f.addColorStop(1, 'rgba(255,120,40,0)');
+      ctx.fillStyle = f; ctx.fillRect(x - 40, H * 0.8 - 40, 80, 80);
+    }
+    // herse relevée : barreaux en contre-jour en haut de l'ouverture
+    ctx.fillStyle = 'rgba(10,4,2,0.92)';
+    for (let k = 0; k < 9; k++) ctx.fillRect(10 + k * 29, 0, 6, 34);
+    ctx.fillRect(0, 30, W, 6);
+    return c;
+  });
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+/** Couloir d'arcade éclairé à la torche (64 × 128) : voûte sombre, lueur chaude au fond, sol. */
+export function arcadeGlow(seed: number): THREE.CanvasTexture {
+  const c = painted(`arcade|${seed}`, () => {
+    const W = 64;
+    const H = 128;
+    const { c, ctx } = cnv(W, H);
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#0a0507'); g.addColorStop(0.55, '#2c1208'); g.addColorStop(0.85, '#7a3410'); g.addColorStop(1, '#2a1006');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    const f = ctx.createRadialGradient(W / 2, H * 0.72, 2, W / 2, H * 0.72, 34);
+    f.addColorStop(0, 'rgba(255,200,120,0.95)'); f.addColorStop(1, 'rgba(255,120,40,0)');
+    ctx.fillStyle = f; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(8,4,3,0.8)'; ctx.fillRect(0, 0, 6, H); ctx.fillRect(W - 6, 0, 6, H);
+    return c;
+  });
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+/**
+ * « Rose des Quatre Voies » incrustée dans le dallage du Parvis (512 × 512) : quatre quartiers de marbre aux couleurs des
+ * familles et leur emblème, rose des vents dorée au centre, couronne de tesselles, anneaux d'or ; relief du peintre.
+ */
+export function roseDesVoies(): THREE.CanvasTexture {
+  const c = painted('rose-des-voies', () => {
+    const S = 512;
+    const { c, ctx } = cnv(S, S);
+    const cx = S / 2;
+    ctx.clearRect(0, 0, S, S);
+    // couronne de tesselles
+    ctx.fillStyle = '#4a4e5c'; ctx.beginPath(); ctx.arc(cx, cx, 250, 0, Math.PI * 2); ctx.fill();
+    const rng = makeRng(hashString('v3|rose-voies'));
+    for (let a = 0; a < Math.PI * 2; a += 0.06) {
+      for (const r of [214, 232]) {
+        ctx.fillStyle = rng() < 0.5 ? '#6a6e7c' : '#3a3e4a';
+        ctx.save(); ctx.translate(cx + Math.cos(a) * r, cx + Math.sin(a) * r); ctx.rotate(a); ctx.fillRect(-6, -6, 12, 12); ctx.restore();
+      }
+    }
+    // quatre quartiers aux couleurs des familles
+    FAMILIES.forEach((fam, k) => {
+      const p = FAMILY_PALETTE[fam];
+      const a0 = -Math.PI / 2 + (k * Math.PI) / 2;
+      const gr = ctx.createRadialGradient(cx, cx, 30, cx, cx, 200);
+      gr.addColorStop(0, p.light); gr.addColorStop(1, p.deep);
+      ctx.fillStyle = gr;
+      ctx.beginPath(); ctx.moveTo(cx, cx); ctx.arc(cx, cx, 200, a0, a0 + Math.PI / 2); ctx.closePath(); ctx.fill();
+      const am = a0 + Math.PI / 4;
+      ctx.fillStyle = '#f2d283';
+      drawEmblem(ctx, fam, cx + Math.cos(am) * 128, cx + Math.sin(am) * 128, 34);
+    });
+    // filets d'or : anneaux, rayons entre les quartiers, rose des vents
+    ctx.strokeStyle = '#e8c070'; ctx.lineWidth = 8;
+    for (const r of [200, 246]) { ctx.beginPath(); ctx.arc(cx, cx, r, 0, Math.PI * 2); ctx.stroke(); }
+    ctx.lineWidth = 6;
+    for (let k = 0; k < 4; k++) { const a = (k * Math.PI) / 2; ctx.beginPath(); ctx.moveTo(cx, cx); ctx.lineTo(cx + Math.cos(a) * 200, cx + Math.sin(a) * 200); ctx.stroke(); }
+    ctx.fillStyle = '#f0cc78';
+    ctx.beginPath();
+    for (let k = 0; k < 16; k++) {
+      const a = (k * Math.PI) / 8 - Math.PI / 2;
+      const r = k % 4 === 0 ? 92 : k % 2 === 0 ? 46 : 26;
+      ctx.lineTo(cx + Math.cos(a) * r, cx + Math.sin(a) * r);
+    }
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = '#7a5418'; ctx.lineWidth = 2.5; ctx.stroke();
+    ctx.fillStyle = '#2a2e3c'; ctx.beginPath(); ctx.arc(cx, cx, 12, 0, Math.PI * 2); ctx.fill();
+    return c;
+  });
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = 8;
+  return t;
+}

@@ -163,39 +163,44 @@ describe('ville : caméra frontale (ADR 024)', () => {
     expect(RIGS.frontale.fov).toBe(33);
   });
 
-  it('M09 V3 : le Quai a son cadrage et ses personnages plus grands ; le Parvis et les Ruelles gardent les leurs', async () => {
+  it('M09 V3, passe 49 : les trois îlots ont le cadrage et les personnages du Quai validé', async () => {
     const { ILOTS } = await import('../src/ville/ilots');
     const { WALKER_H } = await import('../src/ville/sprites');
-    expect(ILOTS.quai.rig?.pitch).toBeGreaterThanOrEqual(5);
-    expect(ILOTS.quai.rig?.pitch).toBeLessThanOrEqual(20);
-    expect(ILOTS.quai.walkerH).toBeGreaterThan(WALKER_H);
-    expect(ILOTS.parvis.rig).toBeUndefined();
-    expect(ILOTS.ruelles.rig).toBeUndefined();
-    expect(ILOTS.parvis.walkerH).toBeUndefined();
-    expect(ILOTS.ruelles.walkerH).toBeUndefined();
+    for (const id of ['quai', 'parvis', 'ruelles'] as const) {
+      expect(ILOTS[id].rig).toEqual(ILOTS.quai.rig);
+      expect(ILOTS[id].rig?.pitch).toBeGreaterThanOrEqual(5);
+      expect(ILOTS[id].rig?.pitch).toBeLessThanOrEqual(20);
+      expect(ILOTS[id].walkerH).toBeGreaterThan(WALKER_H);
+      expect(ILOTS[id].walkerH).toBe(ILOTS.quai.walkerH);
+    }
   });
 
-  it('M09 V3, direction D (ADR 026) : le Quai est rendu à l’encre ; le Parvis et les Ruelles pas encore', async () => {
+  it('M09 V3, direction D (ADR 026) étendue au Parvis et aux Ruelles (passe 49) : les trois îlots sont rendus à l’encre', async () => {
     const { ILOTS } = await import('../src/ville/ilots');
-    expect(ILOTS.quai.style).toBe('encre');
-    expect(ILOTS.parvis.style).toBeUndefined();
-    expect(ILOTS.ruelles.style).toBeUndefined();
+    for (const id of ['quai', 'parvis', 'ruelles'] as const) expect(ILOTS[id].style).toBe('encre');
   });
 
-  it('M09 V3, passe 47 : flou de profondeur et reflets sur le Quai seulement ; la rue jouable reste nette', async () => {
+  it('M09 V3 : flou de profondeur et reflets dans chaque îlot ; la bande jouable reste nette (personnages, lampadaires)', async () => {
     const { ILOTS } = await import('../src/ville/ilots');
-    const { FACADE_Z, QUAY_Z, NPCS: Q_NPCS, LAMPS } = await import('../src/ville/quai');
-    const dof = ILOTS.quai.dof!;
-    // net du pied des façades au bord du quai : personnages, lampadaires et portes ne sont jamais flous
-    expect(dof.nearZ).toBeGreaterThan(QUAY_Z);
-    expect(dof.farZ).toBeLessThan(FACADE_Z);
-    for (const p of [...Q_NPCS.map((n) => n.at), ...LAMPS]) expect(p.z).toBeLessThan(dof.nearZ);
-    expect(dof.farAmt).toBeGreaterThan(0);
-    expect(dof.farAmt).toBeLessThanOrEqual(1);
-    expect(ILOTS.quai.reflets?.proxyZ).toBe(FACADE_Z);
-    for (const id of ['parvis', 'ruelles'] as const) {
-      expect(ILOTS[id].dof).toBeUndefined();
-      expect(ILOTS[id].reflets).toBeUndefined();
+    const quai = await import('../src/ville/quai');
+    const parvis = await import('../src/ville/parvis');
+    const ruelles = await import('../src/ville/ruelles');
+    const cases = [
+      { id: 'quai' as const, front: quai.QUAY_Z, back: quai.FACADE_Z, pts: [...quai.NPCS.map((n) => n.at), ...quai.LAMPS] },
+      { id: 'parvis' as const, front: parvis.P_FRONT_Z, back: parvis.P_FACADE_Z, pts: [...parvis.P_NPCS.map((n) => n.at), ...parvis.P_LAMPS, ...parvis.BRAZIERS] },
+      { id: 'ruelles' as const, front: ruelles.R_EDGE_Z, back: ruelles.R_FACADE_Z, pts: [...ruelles.R_NPCS.map((n) => n.at), ...ruelles.R_LAMPS] },
+    ];
+    for (const c of cases) {
+      const dof = ILOTS[c.id].dof!;
+      expect(dof.nearZ).toBeGreaterThan(c.front);
+      expect(dof.farZ).toBeLessThan(c.back);
+      for (const p of c.pts) expect(p.z).toBeLessThan(dof.nearZ);
+      expect(dof.farAmt).toBeGreaterThan(0);
+      expect(dof.farAmt).toBeLessThanOrEqual(1);
+      expect(ILOTS[c.id].reflets?.proxyZ).toBe(c.back);
+      // l'îlot entier tient dans la bande nette (de son bord avant au pied des façades)
+      expect(ILOTS[c.id].ilot.bounds.z1).toBeLessThan(dof.nearZ);
+      expect(ILOTS[c.id].ilot.bounds.z0).toBeGreaterThan(dof.farZ);
     }
   });
 });

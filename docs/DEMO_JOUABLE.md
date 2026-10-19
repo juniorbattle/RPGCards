@@ -24,9 +24,9 @@ ou `/?ville=1&ilot=quai&rig=6.5,18.5,37,3.2` (plus serré, personnages un peu pl
 des bornes sont ignorées. Le Quai a été retravaillé (passe de qualité V3, JOURNAL passe 45), puis rendu dans la
 **direction D** retenue par le responsable (décor encré comme une illustration de carte, couleurs des quatre familles ;
 ADR 026, passe 46), enrichie en passe 47 (profondeur de champ, flaques et port en reflet, décors du centre ; ADR 026
-amendement 1) ; le Parvis et les Ruelles
-gardent le décor et le cadrage d'origine jusqu'à la validation du responsable (seuls les personnages, communs aux îlots,
-ont le nouveau dessin).
+amendement 1), **validée par le responsable** ; le Parvis de l'arène et les Ruelles ont été reconstruits dans la même
+direction en passe 49 (même cadrage, mêmes personnages, grammaire de façade commune ; ADR 026 amendement 2, retour du
+responsable attendu).
 
 ## Commandes
 
