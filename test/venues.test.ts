@@ -102,6 +102,12 @@ describe('lieux : rencontres', () => {
     expect(encounterById('libre-voile')!.venue).toBe('salle');
   });
 
+  it('les « Duels de la ville » (PNJ) se jouent dans la rue (M08 C5)', () => {
+    const town = ENCOUNTERS.filter((x) => x.kind === 'town');
+    expect(town.length).toBeGreaterThan(0);
+    for (const e of town) expect(e.venue).toBe('rue');
+  });
+
   it('chaque lieu construit est joué par au moins une rencontre', () => {
     for (const v of VENUE_IDS) expect(ENCOUNTERS.some((e) => e.venue === v)).toBe(true);
   });
