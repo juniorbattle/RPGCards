@@ -7,6 +7,25 @@ ce qui les dépasse va dans la fiche d'arbitrages (phase 3) et tu continues le r
 **Objectif :** optimiser la structure actuelle et s'approcher d'une version démo (release candidate du combat), puis,
 si le combat est sain, ouvrir la conception de la ville d'exploration HD-2D (cadrage et laboratoire de caméra).
 
+## Mode autonome (prioritaire sur tout le reste du brief)
+
+Le responsable a précisé : « je ne validerai rien durant ces 6 prochaines heures, donc il faut que la session soit la
+plus autonome possible ». En conséquence :
+
+- **Ne t'arrête jamais pour attendre une validation** et ne pose aucune question : personne ne répondra pendant 6 heures.
+- **Face à une décision**, prends l'option la plus réversible et la plus conforme aux contrats ; consigne-la (journal,
+  ADR « proposé » si elle est structurante, fiche d'arbitrages) et continue. Une décision prise seule reste
+  **provisoire** jusqu'à la fiche.
+- **Face à un blocage** (outil indisponible dans le cloud, test instable, accès refusé) : contourne s'il existe un
+  contournement sûr, sinon consigne en `[KO]` avec la raison exacte et passe à l'étape suivante. Un blocage ne doit
+  jamais immobiliser le run.
+- **Ne laisse jamais le temps inoccupé** : si une phase finit plus tôt, passe à la suivante ; s'il reste du temps à la
+  fin, prends la liste « Si le temps le permet » plus bas.
+- Les seules limites dures sont celles des « Règles du run » (règles du duel, secrets, branche, dépôt de référence en
+  lecture seule, aucune image externe au runtime). Le reste se décide.
+- Pas de génération d'images dans le cloud (la clé OpenAI n'existe qu'en local) : les références visuelles se font par
+  code et par captures.
+
 ## Lecture obligatoire (phase 0, ≈ 15 min)
 
 `CLAUDE.md`, `AGENTS.md` en entier, `JOURNAL.md` (en-tête, « À reprendre », passes 28 à 35), `README_START_HERE.md`,
@@ -66,7 +85,17 @@ corrige le combat, consigne et arrête-toi là : M09 attendra.
    personnage générique (socle V2 / gabarit PNJ, ADR 021 et 023) qui marche au clavier, avec collisions simples.
    **Ne reprends pas** le graphe de caméras de Cité du Tournoi. Captures comparables des deux caméras (1280×720 et
    1920×1080), coût mesuré (SwiftShader), **ADR 024 au statut « proposé »** avec ta recommandation argumentée.
-4. **Ne commence pas V2** (première zone jouable) : elle attend la décision du responsable sur la caméra.
+4. **V2 provisoire si le temps le permet** : après V1, commence la première zone jouable (déplacement, collisions,
+   un ou deux PNJ génériques à défier, entrée dans un lieu de duel existant et retour) **sur la caméra que tu
+   recommandes**, toujours à part du jeu, avec la caméra isolée derrière une interface pour que l'autre option reste
+   branchable sans réécriture. Écris-le clairement : la caméra n'est pas décidée, V2 est provisoire.
+
+## Si le temps le permet (dans cet ordre)
+
+1. Avancer V2 (ci-dessus) jusqu'à une boucle complète : ville → duel → retour.
+2. Tests unitaires de la logique pure de la ville (déplacement, collisions, zones, déclencheurs de duel).
+3. Mesures de démarrage et de rendu du prototype (SwiftShader) et allègements évidents.
+4. Petites dettes du rapport de la RC 0.8 qui ne changent ni les règles ni le rendu validé.
 
 ## Phase 3 (≈ 30 min) — Fiche d'arbitrages et passation
 
