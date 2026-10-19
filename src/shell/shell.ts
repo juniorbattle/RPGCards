@@ -19,10 +19,10 @@ import { viewFor } from '../game/visibility/view';
 import type { ArenaHandle, Staging } from '../scene/arena';
 import { holdPreparation, prepareRivals } from '../scene/rival';
 import { upcomingRivals } from '../product/upcoming';
-import type { RivalPersonality } from '../presentation/personalities';
+import { personalityById, type RivalPersonality } from '../presentation/personalities';
 import { FULL_COLLECTION, STARTER_COLLECTION } from '../product/collection';
 import { validateDeck, type Collection, type DeckChoice } from '../product/deck';
-import { RIVALS, encounterById, encounterConfig, personalityOf, type Encounter } from '../product/encounters';
+import { ENCOUNTERS, encounterById, encounterConfig, personalityOf, type Encounter } from '../product/encounters';
 import { INITIAL_FLOW, transition, type DuelOverlay, type FlowContext, type FlowEvent, type FlowState } from '../product/flow';
 import { applyOutcome, playableEncounters, type OutcomeEffect } from '../product/progression';
 import { DEFAULT_OPTIONS, HISTORY_MAX, SaveStore, duelSeed, newSave, type ActiveDuel, type DuelSummary, type LoadResult, type SaveData } from '../product/save';
@@ -77,6 +77,8 @@ export class Shell {
   private lastPersistError = 0;
   /** Écran du dernier rendu (le focus et le défilement ne sont conservés que sur le même écran). */
   private renderedScreen = '';
+  /** Adversaire dont l’affiche a été survolée ou focalisée en dernier (préparé en priorité, M08 C3). */
+  private preferred: string | null = null;
 
   constructor(readonly d: ShellDeps) {
     this.store = new SaveStore(SaveStore.browser());
@@ -170,8 +172,9 @@ export class Shell {
     // M07 L4 : portraits des affiches de rivaux générés et décodés aux temps morts, pas au premier clic.
     const seed = p.artSeed;
     // Passe 26 : aussi le portrait V2 du joueur (≈ 20 ms une fois) pour la Signature du deck sauvegardé.
+    // M08 C3 : tous les adversaires du tableau, duellistes PNJ de la ville compris.
     const warm = () => predecode([
-      ...(Object.keys(RIVALS) as RivalPersonality['id'][]).map((id) => portraitUrl(personalityOf(id), seed)),
+      ...[...new Set(ENCOUNTERS.map((e) => e.rival))].map((id) => portraitUrl(personalityOf(id), seed)),
       ...(this.save ? [portraitUrl(playerFigure(this.save.deck.signature), seed)] : []),
     ]);
     if ('requestIdleCallback' in window) window.requestIdleCallback(warm, { timeout: 2000 }); else setTimeout(warm, 300);
@@ -398,7 +401,7 @@ export class Shell {
     const enc = this.flow.encounterId ? encounterById(this.flow.encounterId) : null;
     if (enc) return personalityOf(enc.rival);
     const last = this.save?.history.at(-1);
-    return personalityOf((last?.rival as RivalPersonality['id'] | undefined) ?? 'braise');
+    return personalityById(last?.rival) ?? personalityOf('braise');
   }
 
   render(): void {
@@ -418,7 +421,7 @@ export class Shell {
       this.d.app.hidden = true;
       // M08 C1 : les rivaux qu’un clic peut asseoir à la table depuis cet écran sont préparés aux temps morts
       // (couches, rig, textures envoyées au GPU) : leur apparition ne coûte plus de génération.
-      if (arena) prepareRivals(upcomingRivals(s.screen, { activeEncounter: this.save?.activeDuel?.encounterId ?? null, playable: this.playable(), lastEffect: this.lastEffect }).map(personalityOf), this.params.artSeed);
+      if (arena) this.prepareUpcoming();
     }
     const screenKey = `${scr}:${s.overlay ?? ''}`;
     const same = screenKey === this.renderedScreen;
@@ -440,6 +443,23 @@ export class Shell {
     const keep = focusKey ? host.querySelector<HTMLElement>(`[data-key="${CSS.escape(focusKey)}"]`) : null;
     const primary = keep ?? host.querySelector<HTMLElement>('[data-shell-primary]:not(:disabled)') ?? host.querySelector<HTMLElement>('.sh-title');
     if (primary && !host.hidden) primary.focus({ preventScroll: true });
+  }
+
+  /**
+   * M08 C1 / C3 : prépare les adversaires à venir (par ordre de probabilité, au plus `MAX_PREPARED`) ; celui dont
+   * l’affiche est survolée ou a le focus passe en tête (le tableau compte plus d’adversaires que de places).
+   */
+  private prepareUpcoming(): void {
+    const ids: string[] = upcomingRivals(this.flow.screen, { activeEncounter: this.save?.activeDuel?.encounterId ?? null, playable: this.playable(), lastEffect: this.lastEffect });
+    const first = this.preferred && ids.includes(this.preferred) ? [this.preferred] : [];
+    prepareRivals([...first, ...ids].map(personalityOf), this.params.artSeed);
+  }
+
+  /** Adversaire survolé ou focalisé au tableau : préparé en priorité. */
+  preferOpponent(id: string): void {
+    if (this.preferred === id || this.flow.screen !== 'board') return;
+    this.preferred = id;
+    if (this.d.arena()) this.prepareUpcoming();
   }
 
   private screenEl(): HTMLElement | null {

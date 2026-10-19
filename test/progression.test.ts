@@ -11,7 +11,7 @@ import { CATALOG_VERSION, replay } from '../src/game/replay/replay';
 import { viewFor } from '../src/game/visibility/view';
 import { STARTER_COLLECTION, STARTER_DECK } from '../src/product/collection';
 import { validateDeck } from '../src/product/deck';
-import { ENCOUNTERS, RIVALS, SERIES, encounterById, encounterConfig } from '../src/product/encounters';
+import { ENCOUNTERS, SERIES, TOWN_DUELS, encounterById, encounterConfig, sheetOf } from '../src/product/encounters';
 import { FIRST_WIN_REWARDS, applyOutcome, deriveFromHistory, encounterStatus, newProgress, playableEncounters, replaySeries } from '../src/product/progression';
 import { SCHEMA_VERSION, SaveStore, newSave, parseSave, validateSave, type DuelSummary, type StorageLike } from '../src/product/save';
 import { summarize } from '../src/product/stats';
@@ -30,11 +30,15 @@ class Mem implements StorageLike {
   removeItem(k: string) { this.m.delete(k); }
 }
 
+/** Rencontres jouables hors duels de la ville (toujours ouverts, M08 C3). */
+const signatureOnly = (p: Parameters<typeof playableEncounters>[0]) => playableEncounters(p).filter((id) => !id.startsWith('ville-'));
+
 describe('M05 — série, rencontres libres et déblocages (prototype)', () => {
-  it('au départ : manche 1 et duel libre contre Kaï seulement ; les autres sont verrouillés avec une raison', () => {
+  it('au départ : manche 1, duel libre contre Kaï et duels de la ville (M08 C3) ; les autres sont verrouillés avec une raison', () => {
     const p = newProgress();
-    expect(playableEncounters(p)).toEqual(['quai-1', 'libre-braise']);
-    for (const e of ENCOUNTERS.filter((x) => !['quai-1', 'libre-braise'].includes(x.id))) {
+    const town = TOWN_DUELS.map((id) => `ville-${id}`);
+    expect(playableEncounters(p)).toEqual(['quai-1', 'libre-braise', ...town]);
+    for (const e of ENCOUNTERS.filter((x) => !['quai-1', 'libre-braise', ...town].includes(x.id))) {
       const st = encounterStatus(e, p);
       expect(st.open).toBe(false);
       expect(st.reason.length).toBeGreaterThan(5);
@@ -51,17 +55,17 @@ describe('M05 — série, rencontres libres et déblocages (prototype)', () => {
     r = applyOutcome(r.collection, r.progress, sum('quai-1', 'victory', 1));
     expect(r.series).toEqual({ step: 1, completed: false });
     expect(r.unlocked).toEqual(FIRST_WIN_REWARDS.braise.variants);
-    expect(playableEncounters(r.progress)).toEqual(['quai-2', 'libre-braise']);
+    expect(signatureOnly(r.progress)).toEqual(['quai-2', 'libre-braise']);
     r = applyOutcome(r.collection, r.progress, sum('quai-2', 'victory', 2));
     expect(r.unlocked).toContain('Rupture');
-    expect(playableEncounters(r.progress)).toEqual(['quai-3', 'libre-braise', 'libre-ronce']);
+    expect(signatureOnly(r.progress)).toEqual(['quai-3', 'libre-braise', 'libre-ronce']);
     r = applyOutcome(r.collection, r.progress, sum('quai-3', 'abandon', 3));
     expect(r.progress.series.step).toBe(2);
     expect(r.progress.met).toContain('voile');
     r = applyOutcome(r.collection, r.progress, sum('quai-3', 'victory', 4));
     expect(r.series).toEqual({ step: 3, completed: true });
     expect(r.progress.series.completed).toBe(1);
-    expect(playableEncounters(r.progress)).toEqual(['libre-braise', 'libre-ronce', 'libre-voile', 'libre-astre']);
+    expect(signatureOnly(r.progress)).toEqual(['libre-braise', 'libre-ronce', 'libre-voile', 'libre-astre']);
     col = r.collection;
     p = r.progress;
     expect(col.techniques).toEqual(['Sondage', 'Recentrage', 'Lecture', 'Ancrage', 'Rupture', 'Dissipation']);
@@ -89,7 +93,7 @@ describe('M05 — série, rencontres libres et déblocages (prototype)', () => {
   it('chaque rencontre se joue jusqu’au bout avec les mêmes règles ; Orin (Astre, profil équilibré) compris', () => {
     for (const e of ENCOUNTERS) {
       const cfg = encounterConfig(e, STARTER_DECK, 900 + ENCOUNTERS.indexOf(e));
-      expect(cfg.players.p2.hp).toBe(RIVALS[e.rival].hp);
+      expect(cfg.players.p2.hp).toBe(sheetOf(e.rival).hp);
       expect(autoplay(cfg, 200, [PROFILES.equilibre!, PROFILES.equilibre!]).state.phase).toBe('ENDED');
     }
     expect(SERIES.steps).toEqual(['braise', 'ronce', 'voile']);

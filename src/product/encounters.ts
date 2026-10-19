@@ -1,5 +1,5 @@
 /**
- * Rivaux et rencontres — DONNÉES DE PROTOTYPE, NON CANONIQUES (M04/M05).
+ * Rivaux et rencontres — DONNÉES DE PROTOTYPE, NON CANONIQUES (M04/M05 ; duellistes PNJ de la ville : M08 C3).
  *
  * Les PV sont propres à chaque personnage (§9.1 : pas de réserve universelle, repères de calibration
  * 60 / 90 / 125…) ; la difficulté vient du deck du rival (variantes équipées), de ses Techniques et
@@ -9,14 +9,15 @@
 import { FAMILIES, type Family } from '../game/catalog/cards';
 import type { TechniqueId } from '../game/catalog/techniques';
 import type { GameConfig } from '../game/model/types';
-import { PERSONALITIES, type RivalPersonality } from '../presentation/personalities';
+import { NPC_TEMPLATES, type NpcId } from '../presentation/npcs';
+import { PERSONALITIES, isSignatureRival, personalityById, type OpponentId, type RivalPersonality, type SignatureRivalId } from '../presentation/personalities';
 import { playerSeat, type DeckChoice } from './deck';
 
 /** PV du duelliste joueur : repère « quartier » (§9.1), fixe tant qu’aucune progression de PV n’est ratifiée. */
 export const PLAYER_HP = 90;
 
 export interface RivalSheet {
-  id: RivalPersonality['id'];
+  id: OpponentId;
   hp: number;
   /** Identités jouées en variante par le rival (les autres en Basic). */
   variants: string[];
@@ -28,7 +29,7 @@ export interface RivalSheet {
 
 const ids = (fam: Family, ranks: number[]) => ranks.map((r) => `${fam}-${r}`);
 
-export const RIVALS: Record<RivalPersonality['id'], RivalSheet> = {
+export const RIVALS: Record<SignatureRivalId, RivalSheet> = {
   braise: {
     id: 'braise', hp: 80, variants: [...ids('Cendre', [1, 2, 3, 4]), 'Astre-1'], techniques: ['Sondage', 'Lecture'], difficulty: 1,
     style: 'Attaque souvent, soutient peu ses Assauts et garde rarement ses Secondaires.',
@@ -47,38 +48,62 @@ export const RIVALS: Record<RivalPersonality['id'], RivalSheet> = {
   },
 };
 
+/** M08 C3 — style PUBLIC des profils génériques des PNJ (aucune intention cachée). */
+const NPC_STYLE: Partial<Record<RivalPersonality['aiProfile'], string>> = {
+  novice: 'Joue franc : engage souvent en Assaut et se sert peu de ses Techniques.',
+  timide: 'Prudent : se met volontiers en Garde et garde ses Secondaires.',
+};
+
+/**
+ * Fiche de jeu d’un adversaire. Rival signature : ses données ci-dessus. Duelliste PNJ : fiche générique de difficulté
+ * basse — PV au repère bas de calibration (60, §9.1), deck tout en Basic, ses deux Techniques ordinaires, une étoile.
+ */
+export function sheetOf(id: string): RivalSheet {
+  if (isSignatureRival(id)) return RIVALS[id];
+  const p = personalityOf(id);
+  return { id: p.id, hp: 60, variants: [], techniques: [...p.techniques], style: NPC_STYLE[p.aiProfile] ?? '', difficulty: 1 };
+}
+
 export const DIFFICULTY_LABEL: Record<1 | 2 | 3, string> = { 1: 'Abordable', 2: 'Coriace', 3: 'Redoutable' };
 
 export interface Encounter {
   id: string;
-  rival: RivalPersonality['id'];
-  /** `series` : étape d’une mini-série (dans l’ordre) ; `free` : rencontre libre, rejouable. */
-  kind: 'series' | 'free';
+  rival: OpponentId;
+  /** `series` : étape d’une mini-série (dans l’ordre) ; `free` : rencontre libre, rejouable ; `town` : duel contre un
+   *  duelliste PNJ de la ville (M08 C3), ouvert d’emblée, sans récompense. */
+  kind: 'series' | 'free' | 'town';
   title: string;
   /** Étape 1..3 de la série. */
   step?: number;
 }
 
 /** Mini-série rejouable de trois duels (M05) : difficulté croissante, déclarative (données ci-dessus). */
-export const SERIES = { id: 'quai', title: 'Tournoi du Quai', steps: ['braise', 'ronce', 'voile'] as RivalPersonality['id'][] };
+export const SERIES = { id: 'quai', title: 'Tournoi du Quai', steps: ['braise', 'ronce', 'voile'] as SignatureRivalId[] };
+
+/** M08 C3 — « Duels de la ville » de prototype : un duelliste PNJ par gabarit (identifiants `pnj-<gabarit>-<graine>`). */
+export const TOWN_DUELS: readonly NpcId[] = ['pnj-docker-1', 'pnj-marchande-9', 'pnj-commis-5', 'pnj-joueuse-5'];
 
 export const ENCOUNTERS: Encounter[] = [
   ...SERIES.steps.map((rival, i) => ({ id: `quai-${i + 1}`, rival, kind: 'series' as const, step: i + 1, title: `${SERIES.title} — manche ${i + 1} sur ${SERIES.steps.length}` })),
   ...PERSONALITIES.map((p) => ({ id: `libre-${p.id}`, rival: p.id, kind: 'free' as const, title: `Duel libre — ${p.name}` })),
+  ...TOWN_DUELS.map((id) => { const p = personalityOf(id); return { id: `ville-${id}`, rival: id, kind: 'town' as const, title: `Duel de la ville — ${p.name}, ${NPC_TEMPLATES[p.npc!].label.toLowerCase()}` }; }),
 ];
 
 export function encounterById(id: string): Encounter | null {
   return ENCOUNTERS.find((e) => e.id === id) ?? null;
 }
 
-export function personalityOf(id: RivalPersonality['id']): RivalPersonality {
-  return PERSONALITIES.find((p) => p.id === id)!;
+/** Personnalité d’un adversaire (rival signature ou PNJ) ; un identifiant inconnu est une erreur de données. */
+export function personalityOf(id: string): RivalPersonality {
+  const p = personalityById(id);
+  if (!p) throw new Error(`Adversaire inconnu : ${id}`);
+  return p;
 }
 
 /** Configuration moteur d’une rencontre : siège joueur (deck du profil) contre siège rival (données). */
 export function encounterConfig(enc: Encounter, deck: DeckChoice, seed: number): GameConfig {
   const p = personalityOf(enc.rival);
-  const r = RIVALS[enc.rival];
+  const r = sheetOf(enc.rival);
   return {
     seed,
     players: {

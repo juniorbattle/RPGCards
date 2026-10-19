@@ -20,7 +20,9 @@ const VARIANTS = (process.argv[4] ?? 'avant,full,art,off').split(',');
 const BEFORE = process.env.LQV_BEFORE;
 if (VARIANTS.includes('avant') && !BEFORE) throw new Error('LQV_BEFORE (dist du build avant C1) requis pour la variante « avant »');
 const IDLE_MS = 2500; // temps mort sur le tableau avant chaque clic (identique pour tous les builds)
-const TARGETS = ['ronce', 'voile', 'astre', 'braise'];
+// LQV_TARGETS : rencontres visées (identifiants de rencontre), par défaut les quatre duels libres ; M08 C3 : un duel de la
+// ville (`ville-pnj-…`) mesure l’apparition d’un PNJ.
+const TARGETS = (process.env.LQV_TARGETS ?? 'libre-ronce,libre-voile,libre-astre,libre-braise').split(',');
 /** Clics mesurés : chaque rival, puis la même affiche une seconde fois (témoin, aucun changement de rival). */
 const CLICKS = TARGETS.flatMap((id) => [{ id, control: false }, { id, control: true }]);
 const head = execSync('git rev-parse --short HEAD').toString().trim();
@@ -102,7 +104,7 @@ try {
       await page.waitForSelector('[data-screen="board"]');
       for (const { id, control } of CLICKS) {
         await idle(page, variant);
-        const res = await measureClick(page, `enc-libre-${id}`);
+        const res = await measureClick(page, `enc-${id}`);
         await page.waitForSelector('[data-screen="prep"]');
         samples[variant].push({ round: r + 1, rival: id, control, ...res, errors: errors.splice(0) });
         console.log(`ronde ${r + 1} · ${variant} · ${id}${control ? ' (témoin)' : ''} : clic ${res.clickMs} ms, première image ${res.firstFrameMs} ms (${res.frame1Ms} + ${res.frame2Ms}), plus longue ensuite ${res.maxGapAfterMs} ms${res.prep ? ` · pris prêts ${res.prep.taken}, construits ${res.prep.built}` : ''}`);

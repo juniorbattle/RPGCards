@@ -377,6 +377,30 @@ const runs = {
     const v = await page.evaluate(() => window.__lqv.view());
     check(v.turn === 1 && v.opp.hp === 5, 'recommencé depuis le début avec la configuration enregistrée (tour 1)');
   }),
+  // I — M08 C3 : duel de la ville contre un duelliste PNJ (rubrique « Duels de la ville »), joué jusqu’au K.-O. par
+  // l’interface ; le résultat entre dans l’historique sans aucune progression ni déblocage ; la sauvegarde reste valide.
+  'I-duel-de-la-ville-1280': () => withPage(browser, server.base, { width: 1280, height: 720 }, async (page, check, res) => {
+    await page.goto(`${server.base}/?${Q}&reducedMotion=1&profileSeed=777`);
+    await newProfile(page, { name: 'QA Ville', sig: 'Ronce', techs: ['Lecture', 'Ancrage'] });
+    const town = await page.locator('.sh-town [data-encounter]').evaluateAll((els) => els.map((e) => e.getAttribute('data-encounter')));
+    check(town.length >= 3 && town.every((id) => id.startsWith('ville-pnj-')), `rubrique « Duels de la ville » : ${town.length} rencontres de PNJ ouvertes d’emblée`);
+    await page.click(`[data-key="enc-${town[0]}"]`);
+    await screenIs(page, 'prep');
+    await page.click('[data-key="prep-start"]');
+    const duel = await playDuel(page, { name: 'I', useLecture: true }, 'click');
+    res.duel = duel;
+    check(duel.outcome === 'ended', `duel joué jusqu’au K.-O. (tour ${duel.turn})`);
+    check(String(duel.personality).startsWith('pnj-'), `adversaire : duelliste PNJ (${duel.personality})`);
+    await screenIs(page, 'result', 40000);
+    let st = await shellState(page);
+    check(st.save.history.length === 1 && st.save.history[0].rival === duel.personality, 'résultat enregistré dans l’historique contre le PNJ');
+    check(!st.save.progress.met.length && !st.save.progress.defeated.length && !st.save.progress.unlockLog.length, 'aucune progression ni déblocage (entraînement)');
+    await page.click('[data-key="result-board"]');
+    await screenIs(page, 'board');
+    await page.reload();
+    st = await shellState(page);
+    check(st.load === 'ok' && st.save.history.length === 1, 'sauvegarde valide après un duel de la ville (rechargement)');
+  }),
 };
 try {
   for (const [name, fn] of Object.entries(runs)) {
