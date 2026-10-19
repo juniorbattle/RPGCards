@@ -6,7 +6,7 @@ Le développement se fait **directement sur `main`** : commit puis push sur `mai
 
 ## MANDAT ACTIF — M08 : consolidation du combat (2026-10-18)
 
-Lire `docs/missions/M08_CONSOLIDATION_DU_COMBAT.md` et la section M08 d’`AGENTS.md`. Pousser au maximum la structure et le visuel du combat avant l’extension RPG : C1 pré-génération des personnages, C2 environnements de combat variés (rue, salle de jeu de cartes, bar, arène), C3 duellistes PNJ génériques à variations subtiles sur le socle V2, C4 réception de M07. « Vectoriel V2 » = base graphique ; V1 retiré seulement après réception ; règles et secrets inchangés.
+Lire `docs/missions/M08_CONSOLIDATION_DU_COMBAT.md` et la section M08 d’`AGENTS.md`. Pousser au maximum la structure et le visuel du combat avant l’extension RPG : C1 pré-génération des personnages, C2 environnements de combat variés (rue, salle de jeu de cartes, bar, arène), C3 duellistes PNJ génériques à variations subtiles sur le socle V2, C4 réception de M07. « Vectoriel V2 » = base graphique ; V1 retiré seulement après réception ; règles et secrets inchangés. C2 : porte livrée (système de lieux, salle migrée au pixel près, rue « le Quai, la nuit », ADR 022) ; bar et arène après le retour du responsable.
 
 ## Mandat M07 : mise en scène du duel et lisibilité (livré L1 à L5, réception en cours ; 2026-10-17)
 

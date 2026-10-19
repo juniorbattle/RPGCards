@@ -1,0 +1,34 @@
+{
+  "dist": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/4ecc3973-ddc1-4191-8aa4-8151bf702bf2/scratchpad/dist-c2",
+  "view": "A",
+  "mesures": {
+    "debut-1280": {
+      "textes": 70,
+      "min": 7.2,
+      "plusPetitPx": 8.6,
+      "sousSeuil": [],
+      "desactives": 3
+    },
+    "tactics-1280": {
+      "textes": 64,
+      "min": 5.1,
+      "plusPetitPx": 8.6,
+      "sousSeuil": [],
+      "desactives": 2
+    },
+    "debut-1920": {
+      "textes": 71,
+      "min": 7,
+      "plusPetitPx": 10.5,
+      "sousSeuil": [],
+      "desactives": 3
+    },
+    "tactics-1920": {
+      "textes": 64,
+      "min": 5.1,
+      "plusPetitPx": 10.5,
+      "sousSeuil": [],
+      "desactives": 2
+    }
+  }
+}
