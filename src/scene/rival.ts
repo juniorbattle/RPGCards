@@ -504,7 +504,8 @@ const prepCounters = { generated: 0, built: 0, taken: 0, prepared: 0, uploaded: 
  * (libérer n’est pas générer).
  */
 const retired: BuiltRig[] = [];
-const release = new IdleWork();
+// Une étape par tranche : plusieurs suppressions de textures dans la même tranche retardaient encore une image.
+const release = new IdleWork(1);
 let released = 0;
 
 const prepKey = (id: string, artSeed: number) => `${id}|${artSeed}`;
