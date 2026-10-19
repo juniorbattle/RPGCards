@@ -125,8 +125,14 @@ try {
       await screenIs(page, 'board');
       const order = ['braise', 'ronce', 'voile', 'astre'];
       res.samples = [];
+      // M08 C1 : les rivaux à venir sont préparés aux temps morts (rig et textures au GPU) : chaque relevé se fait une
+      // fois la préparation achevée (comme un joueur qui regarde l’écran), sinon il dépendrait du minutage.
+      const prepIdle = () => page.waitForFunction(() => !window.__lqvPrep || window.__lqvPrep().pending === 0, null, { timeout: 20000 });
+      const prepState = () => page.evaluate(() => window.__lqvPrep?.() ?? null);
       for (let i = 0; i < 12; i++) {
         const rival = order[i % 4];
+        await prepIdle();
+        const onBoard = await prepState();
         const frameBefore = await page.evaluate(() => window.__lqvShell.d.arena().stats().frame);
         await page.click(`[data-key="enc-libre-${rival}"]`);
         // Mesure à l’écran de préparation : rival tout juste installé, scène figée, expression de repos
@@ -139,7 +145,9 @@ try {
         // après l’image (25/32 contre 33/47, passe 21).
         const atClick = await page.evaluate(() => window.__lqvShell.d.arena().stats().textures);
         await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+        await prepIdle();
         const inDuel = await page.evaluate(() => window.__lqvShell.d.arena().stats());
+        const atPrep = await prepState();
         await page.click('[data-key="prep-start"]');
         await page.waitForFunction(() => !!window.__lqv);
         await decisions(page, 3);
@@ -147,7 +155,7 @@ try {
         await page.click('[data-key="result-board"]');
         await screenIs(page, 'board');
         const m = await page.evaluate(() => { window.gc?.(); return { heapMB: Math.round((performance.memory?.usedJSHeapSize ?? 0) / 1048576 * 10) / 10, dom: document.querySelectorAll('*').length, stage: document.querySelectorAll('#stage *').length, app: document.getElementById('app').childElementCount, hooks: !!window.__lqv }; });
-        res.samples.push({ i: i + 1, rival, textures: inDuel.textures, geometries: inDuel.geometries, texturesAtClick: atClick, rendered: inDuel.frame > frameBefore, ...m });
+        res.samples.push({ i: i + 1, rival, textures: inDuel.textures, geometries: inDuel.geometries, texturesAtClick: atClick, rendered: inDuel.frame > frameBefore, preparedOnBoard: onBoard?.ready.length ?? null, preparedAtPrep: atPrep?.ready.length ?? null, ...m });
       }
       const s = res.samples;
       // Par rival, d’un tour à l’autre. La toute première mesure précède toute image en vue B : 6 géométries
@@ -157,6 +165,9 @@ try {
       check(s.every((x) => x.rendered), 'une image de la scène rendue après chaque changement de rival, avant le relevé');
       check(byRival('textures'), `textures GPU stables par rival sur 3 tours (${order.map((r) => s.find((x) => x.rival === r).textures).join('/')})`);
       check(byRival('geometries', 1), `géométries stables par rival après la première image en vue B (${order.map((r) => s.slice(1).find((x) => x.rival === r).geometries).join('/')} ; 1re mesure ${s[0].geometries})`);
+      if (s[0].preparedOnBoard !== null) {
+        check(s.every((x) => x.preparedOnBoard === 3 && x.preparedAtPrep === 0), `rivaux préparés bornés : 3 au tableau (les autres que celui assis), 0 à la préparation (${[...new Set(s.map((x) => `${x.preparedOnBoard}/${x.preparedAtPrep}`))].join(', ')})`);
+      }
       check(s.every((x) => x.stage === 0 && x.app === 0 && !x.hooks), 'aucune scène de Clash, plateau ni crochet résiduel hors duel');
       check(Math.max(...s.map((x) => x.dom)) - Math.min(...s.map((x) => x.dom)) < 60, `nœuds DOM stables au tableau (${Math.min(...s.map((x) => x.dom))}–${Math.max(...s.map((x) => x.dom))})`);
       const h4 = s[3].heapMB;

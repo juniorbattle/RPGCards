@@ -2,6 +2,7 @@
  * Rival 2.5D procédural (esthétique HD-2D : éléments peints par code, en couches dans la 3D).
  * L’animation n’utilise que : l’expression demandée (issue de l’ExpressionDirector, faits publics),
  * la taille publique de la main adverse et une RNG d’animation seedée. Aucun accès au moteur.
+ * M08 C1 : les rivaux qui peuvent apparaître sont préparés aux temps morts (`prepareRivals`, fin de module).
  */
 import * as THREE from 'three';
 import { hashString, makeRng } from '../game/engine/rng';
@@ -12,7 +13,8 @@ import {
   type MouthShape,
 } from './rivalTextures';
 import { usesV2 } from './figureStyle';
-import { figureV2Art, RIG_V2, type BrowShape } from './figureV2';
+import { figureV2Art, figureV2ArtSteps, RIG_V2, type BrowShape, type FigureV2Art } from './figureV2';
+import { IdleWork } from './idleWork';
 import { kitV2 } from './v2';
 
 interface FaceParams {
@@ -94,14 +96,45 @@ export interface RivalRig {
   dispose(): void;
 }
 
+/**
+ * Rig du rival à la table. M08 C1 : pris tout prêt s’il a été préparé aux temps morts (`prepareRivals` : couches
+ * générées, rig construit, textures envoyées au GPU), sinon construit sur place comme avant (mêmes couches, même rendu).
+ */
 export function createRival(p: RivalPersonality, artSeed: number, backTexture: THREE.Texture): RivalRig {
+  adoptBack(backTexture);
+  const key = prepKey(p.id, artSeed);
+  if (shown) work.cancel(`shown|${shown.key}`);
+  if (work.has(key)) work.finish(key); // préparation en cours : achevée sur place
+  const r = ready.get(key);
+  ready.delete(key);
+  let built: BuiltRig;
+  if (r?.rig && r.back === backTexture) { prepCounters.taken++; built = r.rig; } else {
+    r?.rig?.dispose();
+    prepCounters.built++;
+    built = buildRival(p, artSeed, backTexture, r?.art ?? undefined);
+  }
+  shown = { key, built };
+  return built.rig;
+}
+
+interface BuiltRig {
+  rig: RivalRig;
+  /** Textures propres au rig (toutes les formes de bouche et de sourcils comprises), pour l’envoi anticipé au GPU. */
+  textures: THREE.Texture[];
+  /** Toutes ses textures sont déjà envoyées au GPU. */
+  uploaded: boolean;
+  dispose(): void;
+}
+
+function buildRival(p: RivalPersonality, artSeed: number, backTexture: THREE.Texture, art?: FigureV2Art | null): BuiltRig {
   const group = new THREE.Group();
   group.position.set(0, 0, RIVAL_Z);
   const rng = makeRng(hashString(`anim|${p.id}|${artSeed}`));
 
-  // M07 L5 : modèle « vectoriel V2 » (derrière `?qa=1&figure=v2`) ; null = rendu V1 approuvé, inchangé.
+  // M07 L5 : modèle « vectoriel V2 » (défaut) ; null = ancien rendu V1 (`?qa=1&figure=v1`), inchangé.
   const kit = usesV2(p.id) ? kitV2(p.id) : null;
-  const v2 = kit ? figureV2Art(kit, artSeed) : null;
+  const v2 = kit ? art ?? figureV2Art(kit, artSeed) : null;
+  if (kit) prepCounters.generated += art ? 0 : 1;
 
   const body = new THREE.Group(); // respiration, inclinaison
   group.add(body);
@@ -126,6 +159,7 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
   }
   const head = plane(1.15, 1.4, v2 ? canvasTexture(v2.head) : headTexture(p, artSeed), 2);
   head.position.set(0, 0.6, 0);
+  head.onBeforeRender = captureRenderer;
   neckPivot.add(head);
   if (v2) {
     // V2 : mèches avant et frange sur une couche au-dessus des yeux et des sourcils.
@@ -265,7 +299,7 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
 
   const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
 
-  return {
+  const rig: RivalRig = {
     group,
     setExpression(e: Expression) {
       target = e;
@@ -399,18 +433,152 @@ export function createRival(p: RivalPersonality, artSeed: number, backTexture: T
       placed.visible = placedAlpha > 0.01;
     },
     dispose() {
-      group.traverse((o) => {
-        const m = o as THREE.Mesh;
-        m.geometry?.dispose();
-        const mat = m.material as THREE.MeshLambertMaterial | undefined;
-        // Le verso des cartes est partagé avec l’arène (qui le libère elle-même).
-        if (mat?.map && mat.map !== backTexture) mat.map.dispose();
-        mat?.dispose();
-      });
-      // Formes de bouche non affichées à cet instant (déjà envoyées au GPU si elles ont été montrées) :
-      // sans cela, chaque duel laissait en mémoire les bouches de ses expressions passées (QA M06 J).
-      for (const t of Object.values(mouthTex)) t.dispose();
-      for (const t of Object.values(browTex ?? {})) t.dispose();
+      // M08 C1 : rig retiré de la scène, libéré après la première image de son remplaçant (programmes GPU gardés).
+      if (mode === 'off') disposeNow(); else retired.push(built);
     },
   };
+  function disposeNow(): void {
+    group.traverse((o) => {
+      const m = o as THREE.Mesh;
+      m.geometry?.dispose();
+      const mat = m.material as THREE.MeshLambertMaterial | undefined;
+      // Le verso des cartes est partagé avec l’arène (qui le libère elle-même).
+      if (mat?.map && mat.map !== backTexture) mat.map.dispose();
+      mat?.dispose();
+    });
+    // Formes de bouche non affichées à cet instant (déjà envoyées au GPU si elles ont été montrées) :
+    // sans cela, chaque duel laissait en mémoire les bouches de ses expressions passées (QA M06 J).
+    for (const t of Object.values(mouthTex)) t.dispose();
+    for (const t of Object.values(browTex ?? {})) t.dispose();
+  }
+  const textures = new Set<THREE.Texture>([...Object.values(mouthTex), ...Object.values(browTex ?? {})]);
+  group.traverse((o) => {
+    const map = ((o as THREE.Mesh).material as THREE.MeshLambertMaterial | undefined)?.map;
+    if (map && map !== backTexture) textures.add(map);
+  });
+  const built: BuiltRig = { rig, textures: [...textures], uploaded: false, dispose: disposeNow };
+  return built;
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// M08 C1 — préparation des rivaux aux temps morts
+
+/**
+ * Mode de préparation : `full` (défaut : couches, rig et textures envoyées au GPU, programmes gardés), `art` (couches
+ * seules, programmes gardés) ou `off` (rien, comme avant C1) ; les deux derniers ne servent qu’à la mesure (`?qa=1&prep=…`).
+ */
+export type PrepMode = 'full' | 'art' | 'off';
+let mode: PrepMode = 'full';
+export function setPrepMode(m: PrepMode): void {
+  mode = m;
+}
+
+/** Préparation prête : couches seules (`art`) ou rig complet, construit avec le verso de cartes de l’arène `back`. */
+interface Ready { art?: FigureV2Art | null; rig?: BuiltRig; back?: THREE.Texture }
+
+/** Au plus autant de rivaux préparés à la fois (mémoire GPU bornée : ≈ 10 Mo de textures par rival V2). */
+export const MAX_PREPARED = 6;
+const work = new IdleWork();
+const ready = new Map<string, Ready>();
+/** Rival assis à la table : le sien n’est jamais préparé une seconde fois, mais ses textures pas encore montrées le sont. */
+let shown: { key: string; built: BuiltRig } | null = null;
+/** Moteur de rendu et verso de cartes de l’arène, captés au passage (l’arène n’a pas à connaître la préparation). */
+let renderer: THREE.WebGLRenderer | null = null;
+let lastBack: THREE.Texture | null = null;
+const watchedBacks = new WeakSet<THREE.Texture>();
+/** Compteurs (QA) : couches générées (préparation comprise), rigs construits sur place, rigs pris tout prêts. */
+const prepCounters = { generated: 0, built: 0, taken: 0, prepared: 0, uploaded: 0 };
+/**
+ * Rigs retirés de la scène, libérés après la première image de leur remplaçant. Libérés avant, ils emportaient les
+ * programmes GPU qu’ils partagent avec lui (45 → 36 programmes à `setRival`), recompilés à sa première image : ≈ 40 ms
+ * d’à-coup même avec des textures prêtes (principe de la passe 12 : garder vivant un programme utilisé par intermittence).
+ */
+const retired: BuiltRig[] = [];
+let flushScheduled = false;
+
+const prepKey = (id: string, artSeed: number) => `${id}|${artSeed}`;
+
+/** Appelé au rendu de la tête du rig affiché : capte le moteur de rendu, puis libère les rigs retirés après cette image. */
+function captureRenderer(r: THREE.WebGLRenderer): void {
+  renderer = r;
+  if (retired.length && !flushScheduled) {
+    flushScheduled = true;
+    setTimeout(flushRetired, 0);
+  }
+}
+
+function flushRetired(): void {
+  flushScheduled = false;
+  for (const b of retired.splice(0)) b.dispose();
+}
+
+/** Verso de l’arène courante ; sa libération signale la fin de l’arène : tout ce qui a été préparé pour elle est libéré. */
+function adoptBack(back: THREE.Texture): void {
+  lastBack = back;
+  if (watchedBacks.has(back)) return;
+  watchedBacks.add(back);
+  back.addEventListener('dispose', () => {
+    flushRetired();
+    for (const k of work.keys()) work.cancel(k);
+    for (const [k, r] of ready) if (r.back === back) { r.rig?.dispose(); ready.delete(k); }
+    if (lastBack === back) { lastBack = null; renderer = null; shown = null; }
+  });
+}
+
+/**
+ * Prépare aux temps morts les rivaux qui peuvent apparaître depuis l’écran courant (par ordre de probabilité) et
+ * libère les préparations devenues inutiles. Sans effet pendant un duel (`holdPreparation`).
+ */
+export function prepareRivals(ps: readonly RivalPersonality[], artSeed: number): void {
+  const want = mode === 'off' ? [] : ps.map((p) => ({ p, key: prepKey(p.id, artSeed) }))
+    .filter((x, i, all) => x.key !== shown?.key && all.findIndex((y) => y.key === x.key) === i).slice(0, MAX_PREPARED);
+  const keys = new Set(want.map((x) => x.key));
+  // Rival affiché : ses textures pas encore montrées (bouches, sourcils, paupière close, rougeur) sont envoyées avant
+  // le duel, pas à leur première apparition pendant une commande.
+  const showing = shown && mode === 'full' && !shown.built.uploaded ? `shown|${shown.key}` : null;
+  if (showing) keys.add(showing);
+  for (const k of work.keys()) if (!keys.has(k)) work.cancel(k);
+  for (const [k, r] of ready) if (!keys.has(k)) { r.rig?.dispose(); ready.delete(k); }
+  if (showing && !work.has(showing)) work.add(showing, uploadSteps(shown!.built));
+  for (const { p, key } of want) if (!ready.has(key) && !work.has(key)) work.add(key, prepSteps(p, artSeed, key));
+}
+
+/** Suspend la préparation (pendant un duel : aucune génération pendant une commande) ou la reprend. */
+export function holdPreparation(on: boolean): void {
+  work.hold(on);
+}
+
+function* prepSteps(p: RivalPersonality, artSeed: number, key: string): Generator<void, void, void> {
+  const kit = usesV2(p.id) ? kitV2(p.id) : null;
+  const art = kit ? yield* figureV2ArtSteps(kit, artSeed) : null;
+  if (kit) prepCounters.generated++;
+  if (mode === 'art' || !lastBack) { ready.set(key, { art }); return; }
+  const back = lastBack;
+  yield;
+  const built = buildRival(p, artSeed, back, art);
+  let kept = false;
+  try {
+    yield* uploadSteps(built);
+    ready.set(key, { art, rig: built, back });
+    prepCounters.prepared++;
+    kept = true;
+  } finally {
+    if (!kept) built.dispose();
+  }
+}
+
+/** Une texture par étape : le tramage des canvas et l’envoi au GPU se font ici, pas à l’apparition du rival. */
+function* uploadSteps(built: BuiltRig): Generator<void, void, void> {
+  for (const t of built.textures) {
+    yield;
+    if (!renderer) return;
+    renderer.initTexture(t); // sans effet sur une texture déjà envoyée
+    prepCounters.uploaded++;
+  }
+  built.uploaded = true;
+}
+
+/** QA : état de la préparation (temps morts, compteurs, rivaux prêts, rival affiché et ses textures). */
+export function prepStats() {
+  return { mode, ...work.stats(), ...prepCounters, ready: [...ready.keys()], shown: shown?.key ?? null, shownUploaded: shown?.built.uploaded ?? false };
 }
