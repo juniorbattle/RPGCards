@@ -118,7 +118,9 @@ const control = [];
 const noise = [];
 const prepared = {};
 try {
-  for (const vp of [[1280, 720], [1920, 1080]]) {
+  // LQV_C1_VP=1280x720 : une seule taille (diagnostic).
+  const VPS = (process.env.LQV_C1_VP ?? '1280x720,1920x1080').split(',').map((s) => s.split('x').map(Number));
+  for (const vp of VPS) {
     const v = `${vp[0]}x${vp[1]}`;
     const a = await journey('avant', vp);
     const b = await journey('apres', vp);

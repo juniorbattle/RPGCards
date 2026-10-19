@@ -174,11 +174,21 @@ export class Shell {
     const seed = p.artSeed;
     // Passe 26 : aussi le portrait V2 du joueur (≈ 20 ms une fois) pour la Signature du deck sauvegardé.
     // M08 C3 : tous les adversaires du tableau, duellistes PNJ de la ville compris.
-    const warm = () => predecode([
-      ...[...new Set(ENCOUNTERS.map((e) => e.rival))].map((id) => portraitUrl(personalityOf(id), seed)),
-      ...(this.save ? [portraitUrl(playerFigure(this.save.deck.signature), seed)] : []),
-    ]);
-    if ('requestIdleCallback' in window) window.requestIdleCallback(warm, { timeout: 2000 }); else setTimeout(warm, 300);
+    // RC 0.8 : un portrait par temps mort, à partir de la première image peinte. Avant, les neuf étaient générés en une
+    // seule tâche, que le délai de 2 s forçait pendant le démarrage : la première image de l’accueil attendait leur fin.
+    const sig = this.save?.deck.signature;
+    const jobs: (() => string)[] = [
+      ...[...new Set(ENCOUNTERS.map((e) => e.rival))].map((id) => () => portraitUrl(personalityOf(id), seed)),
+      ...(sig ? [() => portraitUrl(playerFigure(sig), seed)] : []),
+    ];
+    const idle = (cb: () => void) => ('requestIdleCallback' in window ? window.requestIdleCallback(cb, { timeout: 2000 }) : setTimeout(cb, 300));
+    const step = () => {
+      const job = jobs.shift();
+      if (!job) return;
+      predecode([job()]);
+      idle(step);
+    };
+    requestAnimationFrame(() => setTimeout(() => idle(step), 0));
   }
 
   /** Reporte dans les options sauvegardées un réglage changé depuis la barre d’outils du duel. */

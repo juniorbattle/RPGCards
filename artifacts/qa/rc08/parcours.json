@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-19T07:08:15.407Z",
+  "commit": "38b32a8",
+  "steps": [
+    {
+      "name": "accueil",
+      "file": "screenshots/qa/rc08/parcours/01-accueil.png",
+      "text": "Les Quatre Voies DUELS DE CARTES TACTIQUES · PROTOTYPE Nouvelle partie Créer un duelliste et son deck Options Aide Aucune partie sauvegardée dans ce navigateur."
+    },
+    {
+      "name": "nouveau-duelliste",
+      "file": "screenshots/qa/rc08/parcours/02-nouveau-duelliste.png",
+      "text": "Nouveau duelliste Choisissez votre voie et deux Techniques. Le deck de départ (16 cartes de base + 4 variantes de Rang I + votre Signature) est légal tel quel ; vous pourrez l’ajuster ensuite. Nom du profil Signature (votre voie) ∞ Brasier Originel Signature · Flamme conquérante R ∞ P 14 Brasier Originel Pression, prise de risque offensive ∞ Miroir du Voile Signature · Clairvoyance voilée R ∞ P 12 Miroir du Voile Information, camouflage et perturbation ∞ Couronne de Ronce Signature · Emprise R ∞ P 12 Couronne de Ronce Garde, contrôle et préservation ∞ Convergence Astrale Signature · Cycle astral R ∞ P 13 Convergence Astrale Adaptation, recirculation, synergies Deux Techniques (2/2) Sondage ◆ Début de tour, avant engagement Observe privément une carte aléatoire de la main adverse. Recentrage ◆ Début de tour, avant engagement Place une carte de votre main sous votre pioche, puis piochez un"
+    },
+    {
+      "name": "rencontres",
+      "file": "screenshots/qa/rc08/parcours/03-rencontres.png",
+      "text": "Rencontres données de prototype Tournoi du Quai 1 Kaï la Braise du quai Attaque souvent, soutient peu ses Assauts et garde rarement ses Secondaires. 80 3 variantes Cendre Jamais affronté Jouer 2 Maëlle gardienne des Ronces Prudente : Gardes renforcées, Secondaires conservées longtemps, Interférences de protection. 95 3 variantes Ronce + Rupture Jamais affronté Battez d’abord Kaï dans la série 3 Sélène liseuse du Voile Lectrice : observe vos habitudes publiques, interfère volontiers et camoufle ses soutiens. 100 3 variantes Voile + Dissipation Jamais affronté Battez d’abord Maëlle dans la série Duels libres Kaï la Braise du quai Attaque souvent, soutient peu ses Assauts et garde rarement ses Secondaires. 80 3 variantes Cendre Jamais affronté Défier Maëlle gardienne des Ronces Prudente : Gardes renforcées, Secondaires conservées longtemps, Interférences de protection. 95 3 variantes Ronce "
+    },
+    {
+      "name": "deck",
+      "file": "screenshots/qa/rc08/parcours/04-deck.png",
+      "text": "Votre deck Deck légal Signature ∞ (Primaire uniquement) ∞ Brasier Originel Signature · Flamme conquérante R ∞ P 14 ∞ Miroir du Voile Signature · Clairvoyance voilée R ∞ P 12 ∞ Couronne de Ronce Signature · Emprise R ∞ P 12 ∞ Convergence Astrale Signature · Cycle astral R ∞ P 13 Identités ordinaires — 4 variante(s), 12 Basic Cendre Pression, prise de risque offensive I Cendre I Basic R 1 P 3 I Cendre I Étincelle R 1 P 3 II Cendre II Basic R 2 P 6 II Cendre II Braise R 2 P 6 III Cendre III Basic R 3 P 9 III Cendre III Ferveur R 3 P 9 IV Cendre IV Basic R 4 P 12 IV Cendre IV Contrecoup R 4 P 12 Voile Information, camouflage et perturbation I Voile I Basic R 1 P 3 I Voile I Éclaireur R 1 P 3 II Voile II Basic R 2 P 6 II Voile II Détour R 2 P 6 III Voile III Basic R 3 P 9 III Voile III Dissimulation R 3 P 9 IV Voile IV Basic R 4 P 12 IV Voile IV Silence R 4 P 12 Ronce Garde, contrôle et prése"
+    },
+    {
+      "name": "collection",
+      "file": "screenshots/qa/rc08/parcours/05-collection.png",
+      "text": "Collection 24 cartes équipables sur 36 · 4 Techniques sur 6. déblocages de prototype Toutes Cendre Voile Ronce Astre Cendre 6/9 Pression, prise de risque offensive I Cendre I Basic R 1 P 3 I Cendre I Étincelle R 1 P 3 II Cendre II Basic R 2 P 6 II Cendre II Braise R 2 P 6 III Cendre III Basic R 3 P 9 III Cendre III Ferveur R 3 P 9 IV Cendre IV Basic R 4 P 12 IV Cendre IV Contrecoup R 4 P 12 ∞ Brasier Originel Signature · Flamme conquérante R ∞ P 14 Voile 6/9 Information, camouflage et perturbation I Voile I Basic R 1 P 3 I Voile I Éclaireur R 1 P 3 II Voile II Basic R 2 P 6 II Voile II Détour R 2 P 6 III Voile III Basic R 3 P 9 III Voile III Dissimulation R 3 P 9 IV Voile IV Basic R 4 P 12 IV Voile IV Silence R 4 P 12 ∞ Miroir du Voile Signature · Clairvoyance voilée R ∞ P 12 Ronce 6/9 Garde, contrôle et préservation I Ronce I Basic R 1 P 3 I Ronce I Racine R 1 P 3 II Ronce II Basic R 2 "
+    },
+    {
+      "name": "preparation",
+      "file": "screenshots/qa/rc08/parcours/06-preparation.png",
+      "text": "TOURNOI DU QUAI — MANCHE 1 SUR 3 Kaï la Braise du quai prototype Vous ∞ Brasier Originel Signature · Flamme conquérante R ∞ P 14 90 Lecture ◆◆ Ancrage ◆ Deck légal · 17 cartes VS Kaï ∞ Brasier Originel Signature · Flamme conquérante R ∞ P 14 80 Sondage ◆ Lecture ◆◆ « Attaque souvent, soutient peu ses Assauts et garde rarement ses Secondaires. » Son deck, sa main et ses intentions restent secrets. Retour Deck Duel !"
+    },
+    {
+      "name": "duel-debut",
+      "file": "screenshots/qa/rc08/parcours/07-duel-debut.png",
+      "text": "Tour 1 Engagement Menu Vue plateau ⤓ Journal Rythme : normal Mvt réduit A− A+ ? Kaï 80 / 80 PV Insight Main 4 | Pioche 13 | Déf. 0 Verrouillé (secret) Sondage (1) Lecture (2) Kaï la Braise du quai Sûr de lui « Tu vas sentir la chaleur. » ENGAGEMENT SECONDAIRE 1 PRIMAIRE Le rival engage… SECONDAIRE 2 SECONDAIRE 1 Facultative PRIMAIRE Obligatoire SECONDAIRE 2 Facultative III Voile III Basic R 3 P 9 III Ronce III Basic R 3 P 9 I Astre I Repère R 1 P 3 I Voile I Éclaireur R 1 P 3 Vous 90 / 90 PV Insight Main 4 | Pioche 13 | Déf. 0 ENGAGEMENT ◆ À vous de jouer Engagement secret Glissez une carte de votre main sur la case PRIMAIRE (ou cliquez la carte, puis la case). Primaire Verrouiller l’engagement Lecture (2) Ancrage (1) Journal public + vos informations privées ✕ Tour 1 — 3 évènement(s) Vous piochez 4 carte(s). Le rival pioche 4 carte(s). Le rival utilise la Technique Sondage (−1 Insight)."
+    },
+    {
+      "name": "duel-menu",
+      "file": "screenshots/qa/rc08/parcours/08-duel-menu.png",
+      "text": "Duel en pause Contre Kaï. Rien n’est décidé à votre place pendant la pause. Reprendre le duel Options Aide et règles Sauvegarder et quitter Abandonner le duel… Le duel est sauvegardé à chaque action : en le quittant (ou en fermant la page), vous le reprendrez exactement où il en est. Seuls vos choix non verrouillés du moment sont à refaire."
+    },
+    {
+      "name": "duel-confirmer-abandon",
+      "file": "screenshots/qa/rc08/parcours/09-duel-confirmer-abandon.png",
+      "text": "Duel en pause Contre Kaï. Rien n’est décidé à votre place pendant la pause. Reprendre le duel Options Aide et règles Sauvegarder et quitter Abandonner le duel… Le duel est sauvegardé à chaque action : en le quittant (ou en fermant la page), vous le reprendrez exactement où il en est. Seuls vos choix non verrouillés du moment sont à refaire."
+    },
+    {
+      "name": "resultat",
+      "file": "screenshots/qa/rc08/parcours/10-resultat.png",
+      "text": "TOURNOI DU QUAI — MANCHE 1 SUR 3 Abandon Duel abandonné au tour 1 (ce n’est pas un K.-O.). Vous 90 / 90 Kaï 80 / 80 Infligés 0 Subis 0 Tours 1 Bilan 0 V · 0 D · 1 ab. Aucune progression sur une défaite ou un abandon ; la revanche reste possible. Accueil Rejouer la manche Rencontres"
+    },
+    {
+      "name": "accueil-retour",
+      "file": "screenshots/qa/rc08/parcours/11-accueil-retour.png",
+      "text": "Les Quatre Voies DUELS DE CARTES TACTIQUES · PROTOTYPE Continuer Dernier duel : abandon contre Kaï · Tournoi du Quai 0/3 Deck Collection Options Aide Recommencer Duelliste 1 0 4/16 4/6 sauvegardé le 19/10 07:09"
+    }
+  ],
+  "issues": []
+}

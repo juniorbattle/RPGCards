@@ -272,3 +272,23 @@ image, et — découvert pendant ce lot — programmes GPU du rig recompilés.
 - Rendu **identique au pixel près** (`tools/c1-identique.mjs`, parcours réel ; rivaux pris tout prêts vérifiés).
 - Mémoire : textures du rival assis 37 → 49 (ses 24 textures sont toutes envoyées avant le duel), stables par rival ;
   au tableau, au plus `MAX_PREPARED` rivaux préparés ; tas JS stable (`qa:rc` J).
+
+## Amendement 5 — Retrait du rendu V1 (M08 C5, RC 0.8, 2026-10-19)
+
+Décision du responsable du 2026-10-19 (fiche d'arbitrages, « V1 retiré dans la RC 0.8 »), exécutée par la session
+cloud.
+
+- **Retirés** : le paramètre `?qa=1&figure=v1` (désormais sans effet), `src/scene/figureStyle.ts`,
+  `src/scene/rivalTextures.ts` (textures V1 : tête, buste, capuche, yeux, sourcils, paupières, bouches), les branches V1
+  du rig (`MOODS` V1, paupière pivotante, rougeur unie) et du portrait (`portrait.ts`), les coûts `v1` du banc
+  (`figureBench.ts`), le champ `look` des personnalités (il ne servait qu'au V1), l'outil `tools/l5-planche.mjs`
+  (porte de validation V1 contre V2 de Maëlle). Le type `MouthShape` passe dans `figureV2.ts` ; `figureKitV2(f)` rend
+  l'identité V2 d'une figure, avec repli sur le rival signature de sa famille (aucune donnée du jeu ne l'atteint).
+- **Outils adaptés** : `l5-identique` compare le rendu par défaut avant / après (et `LQV_IDENT_RIVALS` choisit les
+  adversaires), `c1-identique` prend `pose=surprised` pour témoin, `l5-cout`, `l5-joueur`, `l5-galerie`, `c3-planche`,
+  `qa-product`, `qa-rc`, `shots-m07` sans chemin V1.
+- **Preuves** (SwiftShader, `artifacts/qa/rc08/v1-retire-l5-identique.json`, `v1-retire-c1-identique.log`) : rendu par
+  défaut identique au pixel près au build `4a30504` pour la scène des quatre rivaux, le duel complet contre Maëlle (HUD
+  et portrait du joueur compris) et l'écran Rencontres, à 1280×720 et 1920×1080 (témoin `pose=surprised` : 53 463 et
+  118 001 pixels différents) ; parcours produit (préparation des quatre rivaux, scène du duel) identique. Bundle
+  principal 1 009 852 → 993 217 octets (−16,6 Ko, −5 Ko gzip). Tests 230/230.
