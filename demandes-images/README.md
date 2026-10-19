@@ -4,8 +4,9 @@ Canal entre une session qui n'a pas la clé OpenAI (session cloud) et la session
 (décision du responsable, 2026-10-19). Le canal passe **par git** : une session cloud ne peut pas envoyer de message à
 une session locale.
 
-Les images produites sont des **références de conception** (AGENTS, « Images générées : références seulement ») :
-elles guident le travail par code et n'entrent jamais dans le jeu ni dans le build.
+Les images produites sont des **références de conception** (AGENTS, « Images générées ») : elles guident le travail
+par code et n'entrent pas dans le jeu ni dans le build. Seule exception : les feuilles de personnages de la ville,
+produites en local sous les garde-fous d'AGENTS (« Feuilles de personnages de la ville », ADR 027).
 
 > **CANAL D'IMAGES FERMÉ (2026-10-19, en cours de run) :** le poste du responsable est éteint ; la session principale ne répond plus et ne livrera plus d'images. N'envoie plus de demande, ne vérifie plus de livraison : avance en **autonomie complète** avec les références déjà dans `reference/generated/` et le travail par code. Rien ne doit attendre la session principale ni le responsable jusqu'à la fin du run.
 

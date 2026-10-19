@@ -97,7 +97,7 @@ façades abaissées, passe 45) a été réglée sur la hauteur des personnages. 
 (`src/ville/sprites.ts`) sont provisoires ; le décor ne s'en inspire pas** ; les futurs personnages (Aseprite et/ou
 gpt-image-2) seront ajustés au décor, et seule leur hauteur dans le monde (`IlotDef.walkerH`, portes) sera recalée. Utiliser
 des images de gpt-image-2 dans le jeu demandera d'amender la règle « images générées : références seulement » (AGENTS) au
-moment de cette tâche.
+moment de cette tâche. *(Fait le 2026-10-19 pour les seules feuilles de personnages de la ville : ADR 027.)*
 
 Le Parvis et les Ruelles, le combat et le jeu par défaut ne changent pas. Coût et preuves : JOURNAL passe 47.
 

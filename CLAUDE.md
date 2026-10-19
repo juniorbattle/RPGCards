@@ -10,7 +10,7 @@ Le développement se fait **directement sur `main`** : commit puis push sur `mai
 
 ## MANDAT ACTIF — M09 : ville d'exploration HD-2D (depuis le 2026-10-19 ; RC 0.8 reçue ; lot en cours : V3, passe de qualité du Quai)
 
-Lire `docs/missions/M09_VILLE_EXPLORATION_HD2D.md` (et le brief de la session cloud `docs/missions/BRIEF_SESSION_CLOUD_2026-10-19.md`). Démarre après M08 C5 (RC 0.8) si le combat est sain : cadrage de la ville, laboratoire de caméra (dessus inclinée contre frontale 2.5D), décision de caméra au responsable. DA de Cité du Tournoi (RPG-ArtByCode) autorisée en référence, sans sa caméra ; règles et secrets inchangés.
+Lire `docs/missions/M09_VILLE_EXPLORATION_HD2D.md` (et le brief de la session cloud `docs/missions/BRIEF_SESSION_CLOUD_2026-10-19.md`). Démarre après M08 C5 (RC 0.8) si le combat est sain : cadrage de la ville, laboratoire de caméra (dessus inclinée contre frontale 2.5D), décision de caméra au responsable. DA de Cité du Tournoi (RPG-ArtByCode) autorisée en référence, sans sa caméra ; règles et secrets inchangés. Personnages de la ville : feuilles de sprites produites avec gpt-image-2 et Aseprite autorisées dans le jeu (décisions du responsable du 2026-10-19, ADR 027, AGENTS « Feuilles de personnages de la ville » ; porte sur le duelliste joueur, 16 images au plus).
 
 ## Mandat M08 : consolidation du combat (livré C1 à C5, RC 0.8 reçue le 2026-10-19, clos)
 

@@ -64,6 +64,13 @@ canal) dans la direction D, avec le cadrage et les personnages du Quai. **Valid�
 les trois îlots sont validés dans la direction D. Les personnages de la ville restent provisoires (Aseprite et/ou
 gpt-image-2 plus tard, cadrage `docs/M09_PERSONNAGES_VILLE_CADRAGE.md`) ; le décor ne s'en inspire pas.
 
+**Personnages de la ville — décisions du responsable du 2026-10-19 (fiche interactive, ADR 027)** : feuilles de
+sprites produites avec gpt-image-2 (dessin) et Aseprite (retouche, animation, assemblage) **autorisées dans le jeu**
+(amendement d'AGENTS, section « Feuilles de personnages de la ville ») ; illustration encrée haute définition, identités
+V2 du duel (le joueur avec une capuche rabattue), PNJ par gabarit recolorés par graine, échelle 2, contrat 5 × 3, chibi
+modéré ; **porte de validation sur le duelliste joueur, 16 images au plus**. Note du responsable : démontrer l'apport
+concret de gpt-image-2 (personnages, puis décors) avant d'ouvrir davantage la règle.
+
 Cette DA est cohérente avec nos lieux de duel (la rue « le Quai, la nuit », le bar « le Fanal », ADR 022) : la ville
 doit prolonger ces lieux, pas les contredire.
 
@@ -71,9 +78,9 @@ doit prolonger ces lieux, pas les contredire.
 
 - Le combat et toute sa présentation (ADR 013 à 023) : le duel garde sa caméra, son plateau, ses HUD et ses lieux.
   La ville **mène** aux duels ; elle ne modifie pas l'écran de duel.
-- Art par code, Three.js + TypeScript ; aucune image ni police externe au runtime (les sprites Aseprite des personnages
-  clés viendront plus tard, par un amendement explicite de cette règle, avec manifestes de provenance comme dans Cité du
-  Tournoi).
+- Art par code, Three.js + TypeScript ; aucune image ni police externe au runtime, sauf les feuilles de personnages de
+  la ville (gpt-image-2 et Aseprite, manifestes de provenance comme dans Cité du Tournoi), amendement du 2026-10-19
+  (ADR 027).
 - Personnages : socle « vectoriel V2 » (ADR 021) et gabarits PNJ génériques (ADR 023) comme base.
 - Règle des QA aux jalons (AGENTS) ; développement sur `main`.
 
@@ -109,7 +116,8 @@ transformera en fiche interactive pour le responsable.
   **B6** tutoriel en bulles non bloquantes ; **B7** textes gardés « prototype ».
 - **B5 :** Aseprite pour les personnages clés **après la démo**, par un amendement de la règle « aucune image externe ».
   Note du responsable : « L'API OpenAI sera aussi disponible pour optimiser la tâche et le rendu » (images générées en
-  local comme aide à la production des feuilles, sous l’amendement à venir).
+  local comme aide à la production des feuilles, sous l’amendement à venir). **Amendement adopté le 2026-10-19**
+  (ADR 027) : voir « Personnages de la ville » plus haut.
 
 | Lot | Objet | Critères d'acceptation |
 |---|---|---|
