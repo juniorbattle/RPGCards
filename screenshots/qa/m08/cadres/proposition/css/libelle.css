@@ -1,0 +1,2 @@
+/* Libellé de case masqué sous une carte posée (il dépassait d'une carte plus petite). */
+.zone:has(> .card) > .zone-label { visibility: hidden; }

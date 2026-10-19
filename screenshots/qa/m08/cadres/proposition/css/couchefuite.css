@@ -1,0 +1,7 @@
+/* + fuite douce : chaque case latérale penche vers l'axe (perspective centrée sur l'axe de l'écran, 14 à 16°), comme
+   les rayons du cercle ; hauteurs et tailles de l'option B inchangées. */
+.view-a .row > .zone:nth-child(1) { --col: -1; }
+.view-a .row > .zone:nth-child(2) { --col: 0; }
+.view-a .row > .zone:nth-child(3) { --col: 1; }
+.view-a .zone { --P: calc(var(--card-w) * 6); --dx: calc(var(--col) * var(--zw) * -1.14); }
+.view-a .zone > .zone-floor, .view-a .zone > .card.on-board, .view-a .zone::before { transform: translateX(-50%) translateX(var(--dx)) perspective(var(--P)) translateX(calc(-1 * var(--dx))) rotateX(var(--ct)); }
