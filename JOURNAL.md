@@ -1267,3 +1267,9 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **Décision du responsable, pendant le run cloud :** « Non, on ne veut pas d'inclinaison, mais frontale. » La caméra d'exploration de M09 est la **frontale 2.5D** ; la vue de dessus inclinée est abandonnée.
 - **Modifications :** décision inscrite en tête du brief cloud, de M09, de CLAUDE, d'AGENTS et de `demandes-images/README.md` pour que la session cloud la voie à son prochain `git pull`.
 - **À reprendre :** vérifier que la session cloud a suivi la décision (V1 et V2 en frontale, ADR 024).
+
+## Passe 40 — Canal d'images fermé ; session cloud en autonomie complète (documentaire) — 2026-10-19, session principale
+
+- Le responsable éteint son poste : la session principale s'arrête, la surveillance des demandes d'images aussi. Note en tête du brief et de `demandes-images/README.md` : plus de demande ni d'attente, autonomie complète jusqu'à la fin du run.
+- Livré pendant le run : 6 images de référence sur 24 (`reference/generated/`).
+- **À reprendre (au retour du responsable) :** relire ce qu'a poussé la session cloud (RC 0.8, M09 V0 à V2 en frontale, ADR 024, `docs/FICHE_ARBITRAGES_M09.md`), en faire une fiche interactive ; mesures GPU et contraste sous Windows en local.
