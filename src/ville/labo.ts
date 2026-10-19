@@ -4,7 +4,7 @@
  * pas. Crochets de QA (`qa=1`) : `window.__lqvVille` (position, mesures).
  */
 import type { Family } from '../game/catalog/cards';
-import { CAMERA_IDS, RIGS, type CameraId } from './cameras';
+import { CAMERA_IDS, RIGS, parseRig, type CameraId } from './cameras';
 import type { Zone } from './monde';
 import { installVilleStyles, promptBubble, toast } from './ui';
 import { createTown, type Town } from './ville';
@@ -23,7 +23,7 @@ export function startLab(p: LabParams, q: URLSearchParams): Town {
   const town = createTown({
     host, artSeed: p.artSeed, camera: cam, player: `player-${p.sig ?? 'Cendre'}`, spawn: q.get('spawn') ?? undefined,
     ilot: isIlotId(q.get('ilot')) ? (q.get('ilot') as IlotId) : 'quai',
-    freeze: p.freeze, reducedMotion: p.reducedMotion, externalSprites: p.qa && q.get('sprites') === 'externes',
+    freeze: p.freeze, reducedMotion: p.reducedMotion, externalSprites: p.qa && q.get('sprites') === 'externes', rig: parseRig(q.get('rig')),
     onInteract: (z: Zone) => toast(`Laboratoire : « ${z.label} » sera branché dans la démo (M09 V2).`),
   });
   const panel = document.createElement('div');

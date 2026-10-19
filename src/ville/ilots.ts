@@ -3,11 +3,13 @@
  * pur, personnages, passants, bornes de la caméra, constructeur de la scène. Les sorties d'un îlot nomment l'îlot voisin
  * (`Zone.target`) et le point d'apparition d'arrivée.
  */
+import type { RigTuning } from './cameras';
 import type { Ilot } from './monde';
 import { P_NPCS, PARVIS } from './parvis';
 import { NPCS, QUAI, type IlotNpc } from './quai';
 import { RUELLES, R_NPCS } from './ruelles';
-import { buildParvis, buildQuai, buildRuelles, type QuaiScene } from './scene';
+import { buildQuai } from './quaiScene';
+import { buildParvis, buildRuelles, type QuaiScene } from './scene';
 
 export type IlotId = 'quai' | 'parvis' | 'ruelles';
 
@@ -20,6 +22,10 @@ export interface IlotDef {
   ambient: readonly Passer[];
   /** Bornes du point visé par la caméra (l'îlot ne sort pas du cadre). */
   camera: { minX: number; maxX: number };
+  /** Réglages de cadrage propres à l'îlot (sinon ceux de `RIGS.frontale`). */
+  rig?: RigTuning;
+  /** Hauteur des personnages dans l'îlot (m ; défaut `WALKER_H`). M09 V3 : plus grands sur le Quai retravaillé. */
+  walkerH?: number;
   build(artSeed: number): QuaiScene;
   /** Liaisons : zone de sortie → îlot voisin et point d'apparition à l'arrivée. */
   exits: Readonly<Record<string, { to: IlotId; spawn: string }>>;
@@ -28,6 +34,9 @@ export interface IlotDef {
 export const ILOTS: Record<IlotId, IlotDef> = {
   quai: {
     id: 'quai', ilot: QUAI, npcs: NPCS, camera: { minX: -11, maxX: 11 }, build: buildQuai,
+    // M09 V3 (passe de qualité du Quai) : cadrage plus large et plus bas (eau au premier plan, toits, ville haute et ciel
+    // au loin) avec des personnages plus grands ; le Parvis et les Ruelles gardent le cadrage d'origine jusqu'à validation.
+    rig: { pitch: 7, distance: 18.5, fov: 39, aimY: 3.05 }, walkerH: 2.2,
     ambient: [
       { id: 'pnj-joueuse-1', x0: -16.5, x1: -5.5, z: 2.35, speed: 0.95, phase: 0.3 },
       { id: 'pnj-docker-9', x0: 5.5, x1: 16.5, z: 2.5, speed: 1.1, phase: 0.7 },

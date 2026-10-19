@@ -12,12 +12,12 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { createRig, RIGS, type CameraId, type CameraRig } from './cameras';
+import { createRig, RIGS, type CameraId, type CameraRig, type RigTuning } from './cameras';
 import { ILOTS, type IlotDef, type IlotId, type Passer } from './ilots';
 import { activeZone, nearestFree, newWalker, stepWalker, type Facing, type Ilot, type Vec2, type Walker, type Zone } from './monde';
 import type { IlotNpc } from './quai';
 import type { QuaiScene } from './scene';
-import { CELL_H, CELL_W, COLS, ROWS, createWalkerSprite, type WalkerSprite } from './sprites';
+import { CELL_H, CELL_W, COLS, ROWS, WALKER_H, createWalkerSprite, type WalkerSprite } from './sprites';
 import { loadExternalAtlas } from './spritesExternes';
 
 export interface TownOptions {
@@ -38,6 +38,8 @@ export interface TownOptions {
   onMenu?: () => void;
   /** PRÉPARATION (QA, `?qa=1&sprites=externes`) : feuilles de sprites externes vérifiées si un manifeste existe. */
   externalSprites?: boolean;
+  /** Réglages de cadrage pris dans l'URL (`rig=…`, `parseRig`), par-dessus ceux de l'îlot : ajustement à l'œil (fiche B1). */
+  rig?: RigTuning | null;
 }
 
 export interface TownStats {
@@ -76,6 +78,8 @@ export interface Town {
   renderNow(): void;
   /** Repères au-dessus des personnages de l'îlot (« ! » : un défi à relever ; « ? » : quelqu'un à écouter). */
   setMarkers(m: Readonly<Record<string, '!' | '?' | null>>): void;
+  /** Hauteur des personnages dans l'îlot courant (m), pour placer les bulles au-dessus des têtes. */
+  walkerH(): number;
   /** Position écran (px CSS) d'un point du monde, pour les bulles DOM. */
   project(p: { x: number; y: number; z: number }): { x: number; y: number; visible: boolean };
   dispose(): void;
@@ -134,19 +138,23 @@ export function createTown(o: TownOptions): Town {
   let world: QuaiScene = def.build(o.artSeed);
   let scene = world.scene;
   const camera = new THREE.PerspectiveCamera(30, 16 / 9, 0.5, 400);
-  let rig: CameraRig = createRig(o.camera, def.camera);
+  let rig: CameraRig = createRig(o.camera, def.camera, def.rig, o.rig);
+  const walkerH = () => def.walkerH ?? WALKER_H;
+  const markerY = () => walkerH() + 0.53;
 
   // --- personnages ---
   const playerSprite: WalkerSprite = createWalkerSprite(o.player);
+  playerSprite.setHeight(walkerH());
   scene.add(playerSprite.group);
   type NpcSprite = { n: IlotNpc; s: WalkerSprite; marker: THREE.Mesh; kind: '!' | '?' | null };
   const makeNpcs = (): NpcSprite[] => def.npcs.map((n) => {
     const s = createWalkerSprite(n.id);
+    s.setHeight(walkerH());
     scene.add(s.group);
     s.set(n.at, n.facing, 0, false, 0);
     applyExternal(n.id, s);
     const marker = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.42), new THREE.MeshBasicMaterial({ map: markerTexture('!'), transparent: true, depthWrite: false, color: new THREE.Color(1.5, 1.5, 1.5) }));
-    marker.position.set(n.at.x, 2.15, n.at.z + 0.02);
+    marker.position.set(n.at.x, markerY(), n.at.z + 0.02);
     marker.visible = false;
     marker.renderOrder = 3;
     scene.add(marker);
@@ -157,6 +165,7 @@ export function createTown(o: TownOptions): Town {
   type PasserSprite = { a: Passer; s: WalkerSprite; x: number; dir: 1 | -1; phase: number; blocked: boolean };
   const makePassers = (): PasserSprite[] => def.ambient.map((a) => {
     const s = createWalkerSprite(a.id);
+    s.setHeight(walkerH());
     scene.add(s.group);
     applyExternal(a.id, s);
     return { a, s, x: a.x0 + (a.phase ?? 0) * (a.x1 - a.x0), dir: 1, phase: 0, blocked: false };
@@ -293,7 +302,7 @@ export function createTown(o: TownOptions): Town {
       const face: Facing = d < 2.5 ? (Math.abs(walker.pos.x - n.at.x) > Math.abs(walker.pos.z - n.at.z) ? (walker.pos.x > n.at.x ? 'droite' : 'gauche') : walker.pos.z > n.at.z ? 'face' : 'dos') : n.facing;
       s.set(n.at, face, 0, false, time + n.at.x);
     }
-    for (const { n, marker } of npcSprites) if (marker.visible) marker.position.y = 2.15 + (o.freeze ? 0 : Math.sin(time * 2.4 + n.at.x) * 0.05);
+    for (const { n, marker } of npcSprites) if (marker.visible) marker.position.y = markerY() + (o.freeze ? 0 : Math.sin(time * 2.4 + n.at.x) * 0.05);
     for (const p of passers) p.s.set({ x: p.x, z: p.a.z }, p.dir > 0 ? 'droite' : 'gauche', p.phase, !o.freeze && !p.blocked, time);
     focus.set(walker.pos.x, 0.9, walker.pos.z).project(camera);
     finish.uniforms.uFocusY!.value = THREE.MathUtils.clamp(focus.y * 0.5 + 0.5, 0.2, 0.8);
@@ -347,13 +356,14 @@ export function createTown(o: TownOptions): Town {
     scene = world.scene;
     renderPass.scene = scene;
     scene.add(playerSprite.group);
+    playerSprite.setHeight(walkerH());
     npcSprites = makeNpcs();
     passers = makePassers();
     const sp = def.ilot.spawns[spawnKey] ?? def.ilot.spawns.arrivee!;
     walker = newWalker(sp, sp.face ?? walker.facing);
     target = null;
     keys.clear();
-    rig = createRig(rig.params.id, def.camera);
+    rig = createRig(rig.params.id, def.camera, def.rig, o.rig);
     applyRig();
     resize();
     rig.update(camera, walker.pos, 0, true);
@@ -364,7 +374,7 @@ export function createTown(o: TownOptions): Town {
     ilotId: () => def.id,
     goTo: mount,
     setCamera(id) {
-      rig = createRig(id, def.camera);
+      rig = createRig(id, def.camera, def.rig, o.rig);
       applyRig();
       resize();
       rig.update(camera, walker.pos, 0, true);
@@ -389,6 +399,7 @@ export function createTown(o: TownOptions): Town {
     },
     externalReport: () => ({ loaded: [...ext.loaded], issues: [...ext.issues] }),
     renderNow() { rig.update(camera, walker.pos, 0, true); render(); },
+    walkerH,
     setMarkers(m) {
       for (const e of npcSprites) {
         const k = m[e.n.id] ?? null;

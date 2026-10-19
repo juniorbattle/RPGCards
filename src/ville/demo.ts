@@ -13,6 +13,7 @@ import { encounterById, ENCOUNTERS, personalityOf, SERIES } from '../product/enc
 import { encounterStatus } from '../product/progression';
 import { NPC_TEMPLATES } from '../presentation/npcs';
 import type { Shell } from '../shell/shell';
+import { parseRig } from './cameras';
 import { blocked, type Zone } from './monde';
 import { ILOTS, isIlotId, type IlotId } from './ilots';
 import { demoObjective, doorEncounter } from './objectifs';
@@ -70,6 +71,7 @@ export class DemoHub {
         host: this.host, artSeed: sh.params.artSeed, camera: 'frontale', player: `player-${sig}`, spawn: 'arrivee',
         freeze: sh.params.freeze, reducedMotion: sh.params.reducedMotion,
         externalSprites: sh.params.qa && new URLSearchParams(location.search).get('sprites') === 'externes',
+        rig: parseRig(new URLSearchParams(location.search).get('rig')),
         onInteract: (z) => this.interact(z),
         onMenu: () => this.menu(),
       });

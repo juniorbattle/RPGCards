@@ -149,6 +149,31 @@ describe('ville : caméra frontale (ADR 024)', () => {
     const dz = framingFor(p, { x: 0, z: 3 }).aim.z - framingFor(p, { x: 0, z: -3 }).aim.z;
     expect(dz).toBeCloseTo(6 * p.followZ, 6);
   });
+
+  it('M09 V3 : réglages par l’URL (`rig=`), valeurs hors bornes ignorées ; l’URL l’emporte sur l’îlot', async () => {
+    const { parseRig, createRig, RIGS } = await import('../src/ville/cameras');
+    expect(parseRig(null)).toBeNull();
+    expect(parseRig('')).toBeNull();
+    expect(parseRig('abc')).toBeNull();
+    expect(parseRig('7,18.5,39,3.05')).toEqual({ pitch: 7, distance: 18.5, fov: 39, aimY: 3.05 });
+    expect(parseRig('45,18,90,3')).toEqual({ distance: 18, aimY: 3 });
+    expect(parseRig('9')).toEqual({ pitch: 9 });
+    const rig = createRig('frontale', { minX: -4, maxX: 4 }, { pitch: 7, fov: 39 }, { fov: 33 }, null);
+    expect(rig.params).toMatchObject({ pitch: 7, fov: 33, distance: RIGS.frontale.distance, minX: -4, maxX: 4 });
+    expect(RIGS.frontale.fov).toBe(33);
+  });
+
+  it('M09 V3 : le Quai a son cadrage et ses personnages plus grands ; le Parvis et les Ruelles gardent les leurs', async () => {
+    const { ILOTS } = await import('../src/ville/ilots');
+    const { WALKER_H } = await import('../src/ville/sprites');
+    expect(ILOTS.quai.rig?.pitch).toBeGreaterThanOrEqual(5);
+    expect(ILOTS.quai.rig?.pitch).toBeLessThanOrEqual(20);
+    expect(ILOTS.quai.walkerH).toBeGreaterThan(WALKER_H);
+    expect(ILOTS.parvis.rig).toBeUndefined();
+    expect(ILOTS.ruelles.rig).toBeUndefined();
+    expect(ILOTS.parvis.walkerH).toBeUndefined();
+    expect(ILOTS.ruelles.walkerH).toBeUndefined();
+  });
 });
 
 describe('ville : îlot et produit', () => {
