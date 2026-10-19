@@ -25,8 +25,8 @@ des bornes sont ignorées. Le Quai a été retravaillé (passe de qualité V3, J
 **direction D** retenue par le responsable (décor encré comme une illustration de carte, couleurs des quatre familles ;
 ADR 026, passe 46), enrichie en passe 47 (profondeur de champ, flaques et port en reflet, décors du centre ; ADR 026
 amendement 1), **validée par le responsable** ; le Parvis de l'arène et les Ruelles ont été reconstruits dans la même
-direction en passe 49 (même cadrage, mêmes personnages, grammaire de façade commune ; ADR 026 amendement 2, retour du
-responsable attendu).
+direction en passe 49 (même cadrage, mêmes personnages, grammaire de façade commune ; ADR 026 amendement 2),
+**validés par le responsable** : les trois îlots de la démo sont dans la direction D.
 
 ## Commandes
 
