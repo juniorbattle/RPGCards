@@ -4,7 +4,8 @@
 > d'arbitrages M10 (<https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7> ; tableau : `docs/FICHE_ARBITRAGES_M10.md`,
 > « Décisions du responsable »). Il n'entrera dans `contracts/` (sous le nom `contracts/06_AVENANT_M10A_MODE_AVENTURE.md`)
 > qu'après sa validation explicite de cette rédaction (gouvernance, `contracts/00_GOUVERNANCE_AUTORITE.md`, point 1).
-> Différences avec l'avenant proposé : fin de ce document.
+> Différences avec l'avenant proposé : fin de ce document. Validation demandée sur la fiche d'arbitrages du lot M10-A
+> (entrées C1 à C3) : <https://claude.ai/artifact/B6y9Qow8gbuNhk8ragTvni>.
 
 **Statut (après validation) :** avenant **APPROUVÉ** au règlement V3.0 + delta V3.2 (D-01 ratifié V3.3), pour le **seul
 mode Aventure**. Il remplace, pour ce mode, l'avenant proposé `docs/m10/AVENANT_M10A_PROPOSE.md`, qui reste comme

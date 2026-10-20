@@ -1,6 +1,6 @@
 # Annexe de calibrage de l'avenant M10-A — paliers de decks adverses et PV du joueur (PROPOSÉ, à valider)
 
-**Date :** 2026-10-20 (lot M10-A, étape 4). **Statut : PROPOSÉ, à valider par le responsable avant d'être figé.**
+**Date :** 2026-10-20 (lot M10-A, étape 4). **Statut : PROPOSÉ, à valider par le responsable avant d'être figé** (fiche d'arbitrages du lot M10-A, entrées K1 à K5 : <https://claude.ai/artifact/B6y9Qow8gbuNhk8ragTvni>).
 Règle (AV-08 du texte canonique) : décision du responsable sur l'ARB-M10-09 : **paliers de decks adverses** et **PV du
 joueur qui montent à chaque combat, sans plafond** ; **pas de format miroir ni de PV égaux** ; simulation « plus favorable
 au joueur de manière générale » que celle de la fiche (inaugural 52 %, cadet 57 %, bras droit 46 %, chef 37 %).
