@@ -132,6 +132,9 @@ describe('M10-B/C — ascension (ADR 031)', () => {
     // victoire : variante III
     r = run(r.etat, [{ type: 'lancerDefi', figure: 'cadet-Cendre' }, { type: 'duelStructurant', figure: 'cadet-Cendre', issue: 'victoire', duel: 'a2' }]);
     expect(r.gains).toEqual(['variante:Cendre-3-ferveur']);
+    // la variante remplace la Basic de même identité dans le deck (équipée à son gain)
+    expect(r.etat.deck.cartes).toContain('Cendre-3-ferveur');
+    expect(r.etat.deck.cartes).not.toContain('Cendre-3-basic');
     // revanche gagnée : rien
     r = run(r.etat, [{ type: 'lancerDefi', figure: 'cadet-Cendre' }, { type: 'duelStructurant', figure: 'cadet-Cendre', issue: 'victoire', duel: 'a3' }]);
     expect(r.gains).toEqual([]);
