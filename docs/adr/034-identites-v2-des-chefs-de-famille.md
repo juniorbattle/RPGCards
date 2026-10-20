@@ -1,7 +1,7 @@
 # ADR 034 — Identités « vectoriel V2 » des quatre chefs de famille (M10-C)
 
-**Date :** 2026-10-20 (lot M10-C, étape 1). **Statut : PROPOSÉ**, à valider par le responsable sur la planche (comme
-les quatre rivaux, ADR 021, et les gabarits PNJ, ADR 023). Complète l'ADR 021 (socle V2) et l'ADR 032 (mode Aventure) ;
+**Date :** 2026-10-20 (lot M10-C, étape 1). **Statut : APPROUVÉ** par le responsable le 2026-10-20 sur la planche (fiche
+du lot M10-C, C1 : « Validées », sans retouche), comme les quatre rivaux (ADR 021) et les gabarits PNJ (ADR 023). Complète l'ADR 021 (socle V2) et l'ADR 032 (mode Aventure) ;
 ne change ni les règles (V3.0 + delta V3.2, avenant M10-A), ni le cadrage (ADR 013), ni les secrets (ADR 011).
 
 ## Contexte
@@ -50,3 +50,8 @@ socle V2 dessine tout par code, comme les rivaux.
 - Les chefs s'affichent dans les duels, les portraits, les fiches de défi et la ville de l'aventure ; rien ne change
   dans le mode Duel standard, la démo ou le jeu par défaut.
 - Si le responsable demande des retouches, elles se font dans `chefs.ts` sans toucher au socle.
+
+## Ratification (2026-10-20)
+
+Fiche d'arbitrages du lot M10-C (<https://claude.ai/artifact/VzdgB2W2wmUw1Bp9MNE5ux>), entrée C1 : « Validées », sans
+note. Les quatre identités sont figées telles que sur la planche `screenshots/qa/m10c/chefs/planche-chefs-1280.png`.

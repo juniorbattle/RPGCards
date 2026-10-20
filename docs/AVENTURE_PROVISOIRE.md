@@ -99,7 +99,7 @@ les commandes du jeu standard ; « Menu » met en pause (reprendre, sauvegarder 
 
 ## Ce que le prototype ne fait pas encore
 
-- Les chefs ont leurs identités V2 (ADR 034, **à valider par le responsable**) ; les cadets n'ont pas d'accent de
+- Les chefs ont leurs identités V2 (ADR 034, validées par le responsable) ; les cadets n'ont pas d'accent de
   couleur familial ; les bras droits gardent leurs identités V2. Aucune image nouvelle.
 - Championnat, Épreuves et Joutes en squelette (textes et adversaires provisoires, apparences de PNJ) ; pas de Grande
   Cour (M09 en pause) : la proclamation se fait au Parvis ; foule figurée par quelques PNJ.

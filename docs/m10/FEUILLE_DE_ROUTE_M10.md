@@ -68,7 +68,7 @@ M10-A : duel du prologue en **deck de prêt** sous bandeau « provisoire ».
 
 ## M10-C — La maison (famille d'accueil)
 
-> **Livré le 2026-10-20, à recevoir** (passes 84 à 86) : identités V2 des quatre chefs (ADR 034, à valider) ; écran
+> **Livré et reçu le 2026-10-20** (passes 84 à 87 ; fiche du lot M10-C, R1) : identités V2 des quatre chefs (ADR 034, approuvé) ; écran
 > Deck et collection (éditeur case par case, Collection, Registre ; ADR 032 amendement 3) ; tests de la feuille de
 > route (`test/m10c.test.ts`, dont le parcours paramétré des quatre familles et la reprise d'un duel de lieutenant) ;
 > parcours de la Cendre au navigateur (`npm run qa:maison`) et planche des écrans de récompense ; jalon de QA vert sur
