@@ -16,6 +16,11 @@ export interface QuaiScene {
   lights: LightDef[];
   /** Avance l'animation (scintillement des lanternes, eau, ciel). */
   update(time: number): void;
+  /**
+   * Position du personnage (passe 62, diorama) : les plans `coupe` derrière lesquels il passe s'effacent ; `snap` :
+   * immédiatement (captures figées), sinon en douceur.
+   */
+  focus?(p: { x: number; z: number }, snap: boolean): void;
   stats(): { meshes: number; textures: number; lights: number };
   dispose(): void;
 }

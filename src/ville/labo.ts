@@ -8,7 +8,7 @@ import { CAMERA_IDS, RIGS, parseRig, type CameraId } from './cameras';
 import type { Zone } from './monde';
 import { installVilleStyles, promptBubble, toast } from './ui';
 import { createTown, type Town } from './ville';
-import { isIlotId, type IlotId } from './ilots';
+import { isIlotId, QUAI_PROFOND_DEF, type IlotId } from './ilots';
 import { recolorTargets, walkerAtlasCanvas, walkerAtlasCanvasFor } from './sprites';
 import { spritePolicy, type RecolorSlot } from './spritesExternes';
 import { decorPolicy, preloadDecors } from './decors';
@@ -20,8 +20,11 @@ export async function startLab(p: LabParams, q: URLSearchParams): Promise<Town> 
   document.title = 'Les Quatre Voies — laboratoire de la ville';
   const ilot: IlotId = isIlotId(q.get('ilot')) ? (q.get('ilot') as IlotId) : 'quai';
   const decors = decorPolicy(p.qa, q.get('decors'));
+  // preuve de la profondeur praticable (passe 62) : le Quai profond et son manifeste de preuve, en QA seulement
+  const profondeur = p.qa && q.get('profondeur') === '1' && ilot === 'quai';
+  const decorsManifest = profondeur ? 'manifest-profondeur.json' : undefined;
   // plans de décor de l'îlot de départ lus et décodés avant la ville (ADR 028) : diorama construit tout de suite
-  await preloadDecors([ilot], decors);
+  await preloadDecors([ilot], decors, 'decors/', decorsManifest);
   const host = document.createElement('div');
   host.className = 'ville-host';
   document.body.append(host);
@@ -30,6 +33,7 @@ export async function startLab(p: LabParams, q: URLSearchParams): Promise<Town> 
     host, artSeed: p.artSeed, camera: cam, player: `player-${p.sig ?? 'Cendre'}`, spawn: q.get('spawn') ?? undefined,
     ilot,
     freeze: p.freeze, reducedMotion: p.reducedMotion, sprites: spritePolicy(p.qa, q.get('sprites')), decors, rig: parseRig(q.get('rig')),
+    ...(profondeur ? { ilotDef: QUAI_PROFOND_DEF, decorsManifest } : {}),
     onInteract: (z: Zone) => toast(`Laboratoire : « ${z.label} » sera branché dans la démo (M09 V2).`),
   });
   const panel = document.createElement('div');

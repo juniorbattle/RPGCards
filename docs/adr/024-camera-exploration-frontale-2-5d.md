@@ -89,3 +89,10 @@ Fiche B1 : « réglages gardés, ajustés à l'œil sur GPU réel, pendant la pa
 
 Statut : **proposé** ; le responsable valide ou demande une reprise sur la planche avant / après
 (`screenshots/qa/m09/v3/planche-v3-quai.png`). Coût mesuré : JOURNAL passe 45.
+
+## Profondeur praticable (passe 62, 2026-10-20) — proposé
+
+Sur la demande du responsable (fiche de la porte du Quai, ADR 028), la caméra reste frontale et peut désormais suivre le
+personnage en profondeur (`followZ`) et s'élever quand il s'enfonce dans l'îlot (`pitchFond` atteint en `zFond`) ;
+preuve au laboratoire (`?ville=1&qa=1&profondeur=1`) : 6° au quai, 16° dans la rue haute. Le cadrage des îlots actuels
+est inchangé. Conception et décision : ADR 028, « Profondeur praticable : conception proposée ».

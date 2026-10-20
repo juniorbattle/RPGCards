@@ -7,6 +7,7 @@ import type { RigTuning } from './cameras';
 import type { Ilot } from './monde';
 import { P_FACADE_Z, P_FRONT_Z, P_NPCS, PARVIS } from './parvis';
 import { FACADE_Z, NPCS, QUAI, QUAY_Z, type IlotNpc } from './quai';
+import { LANE_BACK_Z, NPCS_PROFOND, QUAI_PROFOND } from './quaiProfond';
 import { RUELLES, R_EDGE_Z, R_FACADE_Z, R_NPCS } from './ruelles';
 import { buildRuellesD } from './ruellesScene';
 import { buildParvisD } from './parvisScene';
@@ -87,3 +88,16 @@ export const ILOTS: Record<IlotId, IlotDef> = {
 };
 
 export const isIlotId = (x: unknown): x is IlotId => x === 'quai' || x === 'parvis' || x === 'ruelles';
+
+/**
+ * Preuve de la profondeur praticable (passe 62, laboratoire seulement : `?ville=1&qa=1&profondeur=1`, manifeste
+ * `decors/manifest-profondeur.json`) : le Quai profond (`quaiProfond.ts`), à faire valider par le responsable avant toute
+ * image. Même îlot pour le reste (personnages, passants, sorties) ; net du bord du quai au fond de la rue haute. Sans son
+ * diorama, le décor par code du Quai en bande serait dessiné sur ce plan : la preuve se lit en QA, diorama admis.
+ */
+export const QUAI_PROFOND_DEF: IlotDef = {
+  ...ILOTS.quai,
+  ilot: QUAI_PROFOND,
+  npcs: NPCS_PROFOND,
+  dof: { nearZ: QUAY_Z + 0.5, farZ: LANE_BACK_Z - 1.5, nearSpan: 3.2, farSpan: 45, farAmt: 0.42, maxBlur: 9 },
+};

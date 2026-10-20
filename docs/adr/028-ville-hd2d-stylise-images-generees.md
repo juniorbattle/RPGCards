@@ -9,8 +9,10 @@ diorama du Quai et feuille complète du joueur, 12 images sur 30, `approved: fal
 production ») ; retours du responsable (passe 59) puis **ses décisions appliquées** (passe 60 : cadrage élargi,
 profondeur, feuille du joueur en 64 × 96 ; 16 images sur 30, voir « Profondeur, cadrage élargi et feuille du joueur en
 64 × 96 ») ; **fiche d'arbitrages de la porte remplie** (passe 61 : emblèmes brodés, cadrage élargi, lumières
-ambrées, sans ruelles peintes ; **profondeur praticable demandée** : conception à proposer avant toute image ; voir
-« Fiche d'arbitrages de la porte ») ; approbation en bloc sur la prochaine planche. **Remplace l'ADR 026** comme direction artistique de la
+ambrées, sans ruelles peintes ; **profondeur praticable demandée**, voir « Fiche d'arbitrages de la porte ») ;
+**conception de la profondeur praticable proposée** (passe 62, preuve jouable au laboratoire, voir « Profondeur
+praticable : conception proposée »), **à décider par le responsable avant toute image** ; approbation en bloc sur la
+prochaine planche. **Remplace l'ADR 026** comme direction artistique de la
 ville ; **amende l'ADR 027** (D2, D3, D4, D10) et l'exception d'AGENTS (décors de la ville) ; s'inscrit dans l'ADR 024
 (caméra de face ; la Grande Cour la règle plus haute, dans la plage décidée).
 
@@ -369,3 +371,55 @@ dépôt. Aucune de leurs feuilles ne sera donnée en image d'entrée sans un acc
 **Suite** : après l'accord sur la conception, les images seront annoncées : troisième rang et ville haute (1 ou 2, si la
 conception les change) et feuille du joueur refaite (le reste de J1). Puis viendra la planche d'approbation en bloc (A1),
 après la vérification des conditions d'OpenAI par le responsable (A2). Rien n'est approuvé.
+
+## Profondeur praticable : conception proposée (passe 62, 2026-10-20) — à décider par le responsable
+
+Demande : notes E2 et E4 de la fiche (citées plus haut), « on doit pouvoir s'enfoncer au loin dans la scene » et
+« se deplacer en profondeur de la ville et non avoir l'impression que seul le premier plan est pratiquable ». La
+conception ci-dessous est prouvée dans le laboratoire (`?ville=1&qa=1&profondeur=1`). Le jeu et la démo gardent le
+Quai en bande.
+
+- **Plan de l'îlot (le Quai)** :
+  - le quai reste la rue du premier plan (z de −3 à 3,4 m) ;
+  - les façades deviennent trois blocs de 8 m de profondeur (z de −11 à −3 m) ;
+  - deux passages de 3 m les séparent, aux raccords des trois images de façades (x de −13,6 à −10,6 m et de 11,2 à
+    14,2 m) ;
+  - ils mènent à la **rue haute** (z de −17 à −11 m, x de −15 à 15 m), bordée au fond par le second rang, devenu une
+    façade où l'on marche ;
+  - la ville haute et le ciel restent au loin.
+
+  Plan pur : `src/ville/quaiProfond.ts` (collisions, zones, points d'apparition).
+- **Caméra** : frontale (ADR 024), cadrage élargi. Elle suit 60 % de la profondeur (`followZ`) et s'incline de 6° au
+  quai à 16° dans la rue haute (`pitchFond`, `zFond`). Le personnage rapetisse en s'éloignant ; en 1920 × 1080 :
+  120 px sur le quai, 113 à l'entrée du passage, 104 dans le passage, 93 dans la rue haute.
+- **Place des plans** :
+  - chaque bloc garde sa façade peinte : les morceaux de l'image actuelle, découpés par `uv` ;
+  - les passages ont leurs murs (`orient: 'cote'`, côté peint `vers` l'intérieur du passage), ici dessinés par code
+    pour la preuve ;
+  - le bloc derrière lequel passe le personnage s'efface à 12 % (`coupe`, vue en coupe) ;
+  - la brume et le voile de l'air restent entre les rangs.
+- **Contrat des plans** (champs facultatifs ; le Quai actuel ne les emploie pas, et son rendu est inchangé au pixel
+  près) : `uv`, `orient: 'cote'` et `vers`, `coupe`, caméra `followZ`, `aimZ`, `pitchFond`, `zFond`, manifeste
+  nommé du même dossier, 16 plans au plus (les morceaux d'une image partagent sa texture, comptée une fois).
+- **Preuve** :
+  - outil `tools/m09-profondeur-preuve.mjs` : le manifeste `public/decors/manifest-profondeur.json` est tiré des plans
+    actuels du Quai ; les murs `preuve-joue.png` sont dessinés par code ; **aucune image générée** ;
+  - planche : `screenshots/qa/m09/v4-profondeur/planche-profondeur.png` (plan vu de dessus, cinq vues de plus en plus
+    profondes, référence) ;
+  - tests : `test/profondeur.test.ts`.
+- **Limites vues sur la preuve** :
+  - les blocs n'ont pas de toit : vu en coupe, leur emprise se lit comme du sol ;
+  - la rue haute est peinte pour être vue de loin (pied sombre) ;
+  - les murs des passages sont des plans de preuve ;
+  - la marchande est écartée de l'entrée du passage ouest ;
+  - le décor par code ne suit pas ce plan.
+- **Si la conception est retenue**, dans l'ordre :
+  1. images annoncées : murs de passage et rue haute peints à l'échelle des personnages, troisième rang et ville haute
+     (E4), puis feuille du joueur (J1) ;
+  2. le même principe pour le Parvis, les Ruelles et la Grande Cour ;
+  3. le plan profond dans la démo et le jeu, après l'approbation.
+- **À décider** :
+  - la conception elle-même (blocs, passages, rue haute) ;
+  - la caméra (part du suivi, élévation au fond) ;
+  - la vue en coupe : bloc effacé, ou trouée ronde autour du personnage ;
+  - ou une autre forme : terrasses étagées, passages plus larges, caméra plus haute.

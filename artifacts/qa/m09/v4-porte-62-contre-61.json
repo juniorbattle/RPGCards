@@ -1,0 +1,58 @@
+{
+  "A": "captures de la passe 61 (verifier, QA : diorama du Quai actuel)",
+  "B": "captures de la passe 62 (même outil, même poste)",
+  "total": 10,
+  "identical": 10,
+  "results": [
+    {
+      "f": "porte-centre-1280.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-centre-1920.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-est-1280.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-est-1920.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-fanal-1280.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-fanal-1920.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-ouest-1280.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-ouest-1920.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-salle-1280.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-salle-1920.png",
+      "identical": true,
+      "bytes": true
+    }
+  ]
+}

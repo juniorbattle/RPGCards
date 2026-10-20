@@ -1,0 +1,17 @@
+{
+  "id": "preuve-joue",
+  "projet": "Les Quatre Voies (RPGCards)",
+  "decision": "ADR 028, « Profondeur praticable » (passe 62) : preuve de conception, laboratoire seulement",
+  "source": "dessiné par code (tools/m09-profondeur-preuve.mjs, paintJoue : canvas 2D, graine fixe) ; aucune image générée, aucune image externe",
+  "sortie": {
+    "fichier": "public/decors/preuve-joue.png",
+    "sha256": "be578e60b1cd38df45ebc59b1ace1fe02da7fbcd2d1a38a51fd2edb477b993a3",
+    "octets": 304981,
+    "dimensions": [
+      512,
+      576
+    ]
+  },
+  "usage": "murs des passages du Quai profond (manifest-profondeur.json) ; plan de preuve, remplacé si la conception est retenue",
+  "approved": false
+}
