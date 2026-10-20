@@ -1,0 +1,58 @@
+{
+  "A": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/0af5397b-0581-4ec4-9eee-466da2456a57/scratchpad/p61",
+  "B": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/0b49e8d1-58a8-49d9-8f96-922efff42fe2/scratchpad/p65",
+  "total": 10,
+  "identical": 10,
+  "results": [
+    {
+      "f": "porte-centre-1280.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-centre-1920.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-est-1280.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-est-1920.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-fanal-1280.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-fanal-1920.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-ouest-1280.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-ouest-1920.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-salle-1280.png",
+      "identical": true,
+      "bytes": true
+    },
+    {
+      "f": "porte-salle-1920.png",
+      "identical": true,
+      "bytes": true
+    }
+  ]
+}

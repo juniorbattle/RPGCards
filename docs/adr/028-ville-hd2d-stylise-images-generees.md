@@ -453,3 +453,25 @@ Puis, sur la capture de la passe 63 qu'il a jointe : « non je veux que le batim
 on passe derrière, façade entière (étages et rez-de-chaussée), et l'emprise sombre de la passe 63 est retirée (les pavés
 se voient sous le fantôme) ; `coupeY` reste au contrat, inutilisé.
 Les 2 images annoncées en passe 63 restent à décider.
+
+### Quartiers en rangs (passe 65, 2026-10-20) — conception proposée
+
+Demande du responsable : « Okay dans ce cas je veux que les quartiers soient composés de plusieurs ruelles superposées qui débordent vers des places marchables, donc plus on s'enfonce dans les ruelles plus on découvre de nouveaux spots. Donc on aura 1er rang, 2e rang, 3e rang, voire un 4e rang ; design-moi de manière cohérente et structurée tout en gardant un décor autour (sur les côtés correct) ; avec les images générées cela devrait être pas trop compliqué ni coûteux ». Conception détaillée : `docs/M09_QUARTIERS_EN_RANGS.md` ; grammaire pure commune à tous
+les quartiers : `src/ville/rangs.ts`.
+
+- **Grammaire** : rang 1 = la rue du premier plan ; entre deux rangs, une bande bâtie percée de passages **jamais alignés**
+  d'une bande à l'autre (on longe chaque ruelle pour trouver le suivant) ; rangs 2 à 4 = des ruelles de plus en plus
+  courtes, fermées par un mur à leurs bouts, qui **débordent chacune sur une place** (le recul de la bande suivante : le
+  spot du rang) ; le dernier rang est le cœur du quartier ; **côtés** : façades plus larges que la vue, flancs (les
+  maisons des côtés de chaque ruelle), murs et brume aux bouts ; au plus 4 rangs, sol plat.
+- **Lisibilité** : caméra frontale qui suit 90 % de la profondeur (6° au quai, 16° dès le rang 2 ; 120 px au quai, 98 px
+  au quatrième rang) ; fantôme à 12 % (décision de la passe 64) du bloc devant le personnage, puis de **tout le rang de
+  devant** dès qu'il a dépassé sa bande (`coupeZ`, halos compris) ; fondu lointain des rangs dépassés de deux.
+- **Preuve** : le Quai en quatre rangs au laboratoire (rue Haute et place de la Halle, ruelle des Lanternes et placette
+  du Puits, cour de la Chapelle), avec les plans actuels découpés par script (56 plans, 10 images, 87,4 Mo) ; Quai actuel,
+  jeu et démo inchangés.
+- **Images : un kit, non des décors** : 5 images annoncées (`tools/m09-lot-quai-3.mjs`, remplace les 2 de la passe 63) :
+  deux rangées de maisons de ruelle, trois murs de côté, trois monuments de places, six objets ; chacune découpée et
+  reposée à plusieurs rangs et dans plusieurs quartiers ; 21 images sur 30 après le lot ; **générées après accord**.
+- **Proposé** : la même grammaire pour le Parvis et les Ruelles ; le cœur de chaque quartier s'ouvre sur la Grande Cour
+  (C1). Rien n'est approuvé (`approved: false`).

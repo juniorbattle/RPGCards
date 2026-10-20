@@ -25,56 +25,6 @@
           "fog": 0,
           "voile": 0.12
         },
-        "troisieme-rang": {
-          "file": "quai-troisieme-rang.png",
-          "sha256": "c251c22aadc61e4916ecbdd35e890724a8ab6e025503cdae8e7a5ee9325f356f",
-          "size": [
-            3072,
-            789
-          ],
-          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
-          "fiche": "art-src/decors/quai-troisieme-rang/fiche.json",
-          "approved": false,
-          "at": [
-            0,
-            9,
-            -40
-          ],
-          "width": 88,
-          "orient": "face",
-          "order": 1,
-          "blend": "decoupe",
-          "fog": 0.8,
-          "voile": 0.45
-        },
-        "rue-haute": {
-          "file": "quai-second-rang.png",
-          "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
-          "size": [
-            3072,
-            953
-          ],
-          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
-          "fiche": "art-src/decors/quai-second-rang/fiche.json",
-          "approved": false,
-          "at": [
-            0,
-            0,
-            -17.5
-          ],
-          "width": 62,
-          "orient": "face",
-          "order": 2,
-          "blend": "decoupe",
-          "fog": 0.2,
-          "uv": [
-            0,
-            0,
-            1,
-            0.91
-          ],
-          "lit": 0.35
-        },
         "facades-ouest": {
           "file": "quai-facades.png",
           "sha256": "6940c1ecf629335d062a35d24fd71013a23ce556d6a6fc8ffa7ee3ba38602afa",
@@ -92,7 +42,7 @@
           ],
           "width": 13.401,
           "orient": "face",
-          "order": 11,
+          "order": 43,
           "blend": "decoupe",
           "lit": 0.25,
           "uv": [
@@ -101,7 +51,8 @@
             0.279,
             1
           ],
-          "coupe": true
+          "coupe": true,
+          "coupeZ": -11.3
         },
         "facades-centre": {
           "file": "quai-facades.png",
@@ -120,7 +71,7 @@
           ],
           "width": 21.801,
           "orient": "face",
-          "order": 12,
+          "order": 44,
           "blend": "decoupe",
           "lit": 0.25,
           "uv": [
@@ -129,7 +80,8 @@
             0.733,
             1
           ],
-          "coupe": true
+          "coupe": true,
+          "coupeZ": -11.3
         },
         "facades-est": {
           "file": "quai-facades.png",
@@ -148,7 +100,7 @@
           ],
           "width": 12.798,
           "orient": "face",
-          "order": 13,
+          "order": 45,
           "blend": "decoupe",
           "lit": 0.25,
           "uv": [
@@ -157,7 +109,8 @@
             1,
             1
           ],
-          "coupe": true
+          "coupe": true,
+          "coupeZ": -11.3
         },
         "pied-ouest": {
           "file": "quai-pied-facades.png",
@@ -176,7 +129,7 @@
           ],
           "width": 12,
           "orient": "face",
-          "order": 14,
+          "order": 50,
           "blend": "decoupe",
           "lit": 0.3,
           "uv": [
@@ -185,7 +138,8 @@
             0.25,
             1
           ],
-          "coupe": true
+          "coupe": true,
+          "coupeZ": -11.3
         },
         "pied-centre": {
           "file": "quai-pied-facades.png",
@@ -204,7 +158,7 @@
           ],
           "width": 23.603,
           "orient": "face",
-          "order": 15,
+          "order": 51,
           "blend": "decoupe",
           "lit": 0.3,
           "uv": [
@@ -213,7 +167,8 @@
             0.742,
             1
           ],
-          "coupe": true
+          "coupe": true,
+          "coupeZ": -11.3
         },
         "pied-est": {
           "file": "quai-pied-facades.png",
@@ -232,7 +187,7 @@
           ],
           "width": 12.397,
           "orient": "face",
-          "order": 16,
+          "order": 52,
           "blend": "decoupe",
           "lit": 0.3,
           "uv": [
@@ -241,7 +196,8 @@
             1,
             1
           ],
-          "coupe": true
+          "coupe": true,
+          "coupeZ": -11.3
         },
         "rue": {
           "file": "quai-rue.png",
@@ -260,7 +216,7 @@
           ],
           "width": 48,
           "orient": "face",
-          "order": 17,
+          "order": 53,
           "blend": "decoupe",
           "lit": 0.2
         },
@@ -281,7 +237,7 @@
           ],
           "width": 44.17,
           "orient": "face",
-          "order": 18,
+          "order": 54,
           "blend": "decoupe"
         },
         "eau": {
@@ -301,20 +257,481 @@
           ],
           "width": 64,
           "orient": "sol",
-          "order": 19,
+          "order": 55,
           "blend": "decoupe"
         },
-        "joue-1": {
-          "vers": "est",
+        "fond-rang2--28": {
+          "file": "quai-second-rang.png",
+          "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
+          "size": [
+            3072,
+            953
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-second-rang/fiche.json",
+          "approved": false,
+          "at": [
+            -18,
+            0,
+            -17
+          ],
+          "width": 20,
+          "orient": "face",
+          "order": 28,
+          "blend": "decoupe",
+          "fog": 0.2,
+          "uv": [
+            0,
+            0,
+            0.286,
+            0.91
+          ],
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -25.3
+        },
+        "fond-rang2--5": {
+          "file": "quai-second-rang.png",
+          "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
+          "size": [
+            3072,
+            953
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-second-rang/fiche.json",
+          "approved": false,
+          "at": [
+            -2,
+            0,
+            -17
+          ],
+          "width": 6,
+          "orient": "face",
+          "order": 29,
+          "blend": "decoupe",
+          "fog": 0.2,
+          "uv": [
+            0.329,
+            0,
+            0.414,
+            0.91
+          ],
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -25.3
+        },
+        "fond-rang2-13": {
+          "file": "quai-second-rang.png",
+          "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
+          "size": [
+            3072,
+            953
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-second-rang/fiche.json",
+          "approved": false,
+          "at": [
+            22,
+            0,
+            -17
+          ],
+          "width": 18,
+          "orient": "face",
+          "order": 30,
+          "blend": "decoupe",
+          "fog": 0.2,
+          "uv": [
+            0.586,
+            0,
+            0.843,
+            0.91
+          ],
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -25.3
+        },
+        "fond-place-halle": {
+          "file": "quai-second-rang.png",
+          "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
+          "size": [
+            3072,
+            953
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-second-rang/fiche.json",
+          "approved": false,
+          "at": [
+            7,
+            0,
+            -23
+          ],
+          "width": 12,
+          "orient": "face",
+          "order": 24,
+          "blend": "decoupe",
+          "fog": 0.2,
+          "uv": [
+            0.414,
+            0,
+            0.586,
+            0.91
+          ],
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -25.3
+        },
+        "flanc-rang2--31": {
+          "file": "quai-second-rang.png",
+          "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
+          "size": [
+            3072,
+            953
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-second-rang/fiche.json",
+          "approved": false,
+          "at": [
+            -24,
+            0,
+            -11
+          ],
+          "width": 14,
+          "orient": "face",
+          "order": 39,
+          "blend": "decoupe",
+          "fog": 0.2,
+          "uv": [
+            0.061,
+            0,
+            0.273,
+            0.91
+          ],
+          "lit": 0.3,
+          "coupe": true,
+          "coupeZ": -25.3
+        },
+        "flanc-rang2-17": {
+          "file": "quai-second-rang.png",
+          "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
+          "size": [
+            3072,
+            953
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-second-rang/fiche.json",
+          "approved": false,
+          "at": [
+            24,
+            0,
+            -11
+          ],
+          "width": 14,
+          "orient": "face",
+          "order": 40,
+          "blend": "decoupe",
+          "fog": 0.2,
+          "uv": [
+            0.788,
+            0,
+            1,
+            0.91
+          ],
+          "lit": 0.3,
+          "coupe": true,
+          "coupeZ": -25.3
+        },
+        "fond-rang3--31": {
+          "file": "quai-second-rang.png",
+          "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
+          "size": [
+            3072,
+            953
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-second-rang/fiche.json",
+          "approved": false,
+          "at": [
+            -22.5,
+            0,
+            -29
+          ],
+          "width": 17,
+          "orient": "face",
+          "order": 12,
+          "blend": "decoupe",
+          "fog": 0.25,
+          "voile": 0.08,
+          "uv": [
+            0.125,
+            0,
+            0.361,
+            0.91
+          ],
+          "lit": 0.3,
+          "coupe": true,
+          "coupeZ": -36.3
+        },
+        "fond-rang3--8": {
+          "file": "quai-second-rang.png",
+          "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
+          "size": [
+            3072,
+            953
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-second-rang/fiche.json",
+          "approved": false,
+          "at": [
+            -1.25,
+            0,
+            -29
+          ],
+          "width": 13.5,
+          "orient": "face",
+          "order": 13,
+          "blend": "decoupe",
+          "fog": 0.25,
+          "voile": 0.08,
+          "uv": [
+            0.444,
+            0,
+            0.632,
+            0.91
+          ],
+          "lit": 0.3,
+          "coupe": true,
+          "coupeZ": -36.3
+        },
+        "fond-rang3-9": {
+          "file": "quai-second-rang.png",
+          "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
+          "size": [
+            3072,
+            953
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-second-rang/fiche.json",
+          "approved": false,
+          "at": [
+            19.75,
+            0,
+            -29
+          ],
+          "width": 22.5,
+          "orient": "face",
+          "order": 14,
+          "blend": "decoupe",
+          "fog": 0.25,
+          "voile": 0.08,
+          "uv": [
+            0.674,
+            0,
+            0.986,
+            0.91
+          ],
+          "lit": 0.3,
+          "coupe": true,
+          "coupeZ": -36.3
+        },
+        "fond-placette-puits": {
+          "file": "quai-second-rang.png",
+          "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
+          "size": [
+            3072,
+            953
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-second-rang/fiche.json",
+          "approved": false,
+          "at": [
+            -11,
+            0,
+            -34
+          ],
+          "width": 6,
+          "orient": "face",
+          "order": 9,
+          "blend": "decoupe",
+          "fog": 0.25,
+          "voile": 0.08,
+          "uv": [
+            0.361,
+            0,
+            0.444,
+            0.91
+          ],
+          "lit": 0.3,
+          "coupe": true,
+          "coupeZ": -36.3
+        },
+        "flanc-rang3--23": {
+          "file": "quai-second-rang.png",
+          "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
+          "size": [
+            3072,
+            953
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-second-rang/fiche.json",
+          "approved": false,
+          "at": [
+            -18.5,
+            0,
+            -25
+          ],
+          "width": 9,
+          "orient": "face",
+          "order": 20,
+          "blend": "decoupe",
+          "fog": 0.25,
+          "voile": 0.05,
+          "uv": [
+            0,
+            0,
+            0.129,
+            0.91
+          ],
+          "lit": 0.3,
+          "coupe": true,
+          "coupeZ": -36.3
+        },
+        "flanc-rang3-14": {
+          "file": "quai-second-rang.png",
+          "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
+          "size": [
+            3072,
+            953
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-second-rang/fiche.json",
+          "approved": false,
+          "at": [
+            22.5,
+            0,
+            -25
+          ],
+          "width": 17,
+          "orient": "face",
+          "order": 21,
+          "blend": "decoupe",
+          "fog": 0.25,
+          "voile": 0.05,
+          "uv": [
+            0.529,
+            0,
+            0.771,
+            0.91
+          ],
+          "lit": 0.3,
+          "coupe": true,
+          "coupeZ": -36.3
+        },
+        "flanc-rang4--31": {
+          "file": "quai-second-rang.png",
+          "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
+          "size": [
+            3072,
+            953
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-second-rang/fiche.json",
+          "approved": false,
+          "at": [
+            -20.5,
+            0,
+            -36
+          ],
+          "width": 21,
+          "orient": "face",
+          "order": 5,
+          "blend": "decoupe",
+          "fog": 0.3,
+          "voile": 0.1,
+          "uv": [
+            0.069,
+            0,
+            0.361,
+            0.91
+          ],
+          "lit": 0.3,
+          "coupe": true
+        },
+        "flanc-rang4-10": {
+          "file": "quai-second-rang.png",
+          "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
+          "size": [
+            3072,
+            953
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-second-rang/fiche.json",
+          "approved": false,
+          "at": [
+            20.5,
+            0,
+            -36
+          ],
+          "width": 21,
+          "orient": "face",
+          "order": 6,
+          "blend": "decoupe",
+          "fog": 0.3,
+          "voile": 0.1,
+          "uv": [
+            0.639,
+            0,
+            0.931,
+            0.91
+          ],
+          "lit": 0.3,
+          "coupe": true
+        },
+        "fond-cour": {
+          "file": "quai-troisieme-rang.png",
+          "sha256": "c251c22aadc61e4916ecbdd35e890724a8ab6e025503cdae8e7a5ee9325f356f",
+          "size": [
+            3072,
+            789
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-troisieme-rang/fiche.json",
+          "approved": false,
+          "at": [
+            0,
+            0,
+            -43
+          ],
+          "width": 96,
+          "orient": "face",
+          "order": 1,
+          "blend": "decoupe",
+          "fog": 0.5,
+          "voile": 0.3,
+          "uv": [
+            0,
+            0,
+            1,
+            0.88
+          ],
+          "lit": 0.2
+        },
+        "mur-passage-1-1": {
           "file": "preuve-joue.png",
           "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
           "size": [
             512,
             576
           ],
-          "source": "dessiné par code (preuve de la profondeur, passe 62)",
+          "source": "dessiné par code (preuve de la profondeur)",
           "fiche": "art-src/decors/preuve-joue/fiche.json",
           "approved": false,
+          "vers": "est",
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
           "at": [
             -13.6,
             0,
@@ -322,21 +739,29 @@
           ],
           "width": 8,
           "orient": "cote",
-          "order": 7,
           "blend": "decoupe",
-          "lit": 0.35
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -11.3,
+          "order": 46
         },
-        "joue-2": {
-          "vers": "ouest",
+        "mur-passage-1-2": {
           "file": "preuve-joue.png",
           "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
           "size": [
             512,
             576
           ],
-          "source": "dessiné par code (preuve de la profondeur, passe 62)",
+          "source": "dessiné par code (preuve de la profondeur)",
           "fiche": "art-src/decors/preuve-joue/fiche.json",
           "approved": false,
+          "vers": "ouest",
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
           "at": [
             -10.6,
             0,
@@ -344,21 +769,29 @@
           ],
           "width": 8,
           "orient": "cote",
-          "order": 8,
           "blend": "decoupe",
-          "lit": 0.35
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -11.3,
+          "order": 47
         },
-        "joue-3": {
-          "vers": "est",
+        "mur-passage-1-3": {
           "file": "preuve-joue.png",
           "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
           "size": [
             512,
             576
           ],
-          "source": "dessiné par code (preuve de la profondeur, passe 62)",
+          "source": "dessiné par code (preuve de la profondeur)",
           "fiche": "art-src/decors/preuve-joue/fiche.json",
           "approved": false,
+          "vers": "est",
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
           "at": [
             11.2,
             0,
@@ -366,21 +799,29 @@
           ],
           "width": 8,
           "orient": "cote",
-          "order": 9,
           "blend": "decoupe",
-          "lit": 0.35
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -11.3,
+          "order": 48
         },
-        "joue-4": {
-          "vers": "ouest",
+        "mur-passage-1-4": {
           "file": "preuve-joue.png",
           "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
           "size": [
             512,
             576
           ],
-          "source": "dessiné par code (preuve de la profondeur, passe 62)",
+          "source": "dessiné par code (preuve de la profondeur)",
           "fiche": "art-src/decors/preuve-joue/fiche.json",
           "approved": false,
+          "vers": "ouest",
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
           "at": [
             14.2,
             0,
@@ -388,9 +829,429 @@
           ],
           "width": 8,
           "orient": "cote",
-          "order": 10,
           "blend": "decoupe",
-          "lit": 0.35
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -11.3,
+          "order": 49
+        },
+        "mur-place-2-1": {
+          "file": "preuve-joue.png",
+          "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
+          "size": [
+            512,
+            576
+          ],
+          "source": "dessiné par code (preuve de la profondeur)",
+          "fiche": "art-src/decors/preuve-joue/fiche.json",
+          "approved": false,
+          "vers": "est",
+          "uv": [
+            0,
+            0,
+            0.75,
+            1
+          ],
+          "at": [
+            1,
+            0,
+            -20
+          ],
+          "width": 6,
+          "orient": "cote",
+          "blend": "decoupe",
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -25.3,
+          "order": 31
+        },
+        "mur-place-2-2": {
+          "file": "preuve-joue.png",
+          "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
+          "size": [
+            512,
+            576
+          ],
+          "source": "dessiné par code (preuve de la profondeur)",
+          "fiche": "art-src/decors/preuve-joue/fiche.json",
+          "approved": false,
+          "vers": "ouest",
+          "uv": [
+            0,
+            0,
+            0.75,
+            1
+          ],
+          "at": [
+            13,
+            0,
+            -20
+          ],
+          "width": 6,
+          "orient": "cote",
+          "blend": "decoupe",
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -25.3,
+          "order": 32
+        },
+        "mur-bout-2-1": {
+          "file": "preuve-joue.png",
+          "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
+          "size": [
+            512,
+            576
+          ],
+          "source": "dessiné par code (preuve de la profondeur)",
+          "fiche": "art-src/decors/preuve-joue/fiche.json",
+          "approved": false,
+          "vers": "est",
+          "uv": [
+            0,
+            0,
+            0.75,
+            1
+          ],
+          "at": [
+            -17,
+            0,
+            -14
+          ],
+          "width": 6,
+          "orient": "cote",
+          "blend": "decoupe",
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -25.3,
+          "order": 41
+        },
+        "mur-bout-2-2": {
+          "file": "preuve-joue.png",
+          "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
+          "size": [
+            512,
+            576
+          ],
+          "source": "dessiné par code (preuve de la profondeur)",
+          "fiche": "art-src/decors/preuve-joue/fiche.json",
+          "approved": false,
+          "vers": "ouest",
+          "uv": [
+            0,
+            0,
+            0.75,
+            1
+          ],
+          "at": [
+            17,
+            0,
+            -14
+          ],
+          "width": 6,
+          "orient": "cote",
+          "blend": "decoupe",
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -25.3,
+          "order": 42
+        },
+        "mur-passage-2-1": {
+          "file": "preuve-joue.png",
+          "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
+          "size": [
+            512,
+            576
+          ],
+          "source": "dessiné par code (preuve de la profondeur)",
+          "fiche": "art-src/decors/preuve-joue/fiche.json",
+          "approved": false,
+          "vers": "est",
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "at": [
+            -8,
+            0,
+            -21
+          ],
+          "width": 8,
+          "orient": "cote",
+          "blend": "decoupe",
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -25.3,
+          "order": 33
+        },
+        "mur-passage-2-2": {
+          "file": "preuve-joue.png",
+          "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
+          "size": [
+            512,
+            576
+          ],
+          "source": "dessiné par code (preuve de la profondeur)",
+          "fiche": "art-src/decors/preuve-joue/fiche.json",
+          "approved": false,
+          "vers": "ouest",
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "at": [
+            -5,
+            0,
+            -21
+          ],
+          "width": 8,
+          "orient": "cote",
+          "blend": "decoupe",
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -25.3,
+          "order": 34
+        },
+        "mur-place-3-1": {
+          "file": "preuve-joue.png",
+          "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
+          "size": [
+            512,
+            576
+          ],
+          "source": "dessiné par code (preuve de la profondeur)",
+          "fiche": "art-src/decors/preuve-joue/fiche.json",
+          "approved": false,
+          "vers": "est",
+          "uv": [
+            0,
+            0,
+            0.625,
+            1
+          ],
+          "at": [
+            -14,
+            0,
+            -31.5
+          ],
+          "width": 5,
+          "orient": "cote",
+          "blend": "decoupe",
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -36.3,
+          "order": 15
+        },
+        "mur-place-3-2": {
+          "file": "preuve-joue.png",
+          "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
+          "size": [
+            512,
+            576
+          ],
+          "source": "dessiné par code (preuve de la profondeur)",
+          "fiche": "art-src/decors/preuve-joue/fiche.json",
+          "approved": false,
+          "vers": "ouest",
+          "uv": [
+            0,
+            0,
+            0.625,
+            1
+          ],
+          "at": [
+            -8,
+            0,
+            -31.5
+          ],
+          "width": 5,
+          "orient": "cote",
+          "blend": "decoupe",
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -36.3,
+          "order": 16
+        },
+        "mur-bout-3-1": {
+          "file": "preuve-joue.png",
+          "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
+          "size": [
+            512,
+            576
+          ],
+          "source": "dessiné par code (preuve de la profondeur)",
+          "fiche": "art-src/decors/preuve-joue/fiche.json",
+          "approved": false,
+          "vers": "est",
+          "uv": [
+            0,
+            0,
+            0.5,
+            1
+          ],
+          "at": [
+            -14,
+            0,
+            -27
+          ],
+          "width": 4,
+          "orient": "cote",
+          "blend": "decoupe",
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -36.3,
+          "order": 22
+        },
+        "mur-bout-3-2": {
+          "file": "preuve-joue.png",
+          "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
+          "size": [
+            512,
+            576
+          ],
+          "source": "dessiné par code (preuve de la profondeur)",
+          "fiche": "art-src/decors/preuve-joue/fiche.json",
+          "approved": false,
+          "vers": "ouest",
+          "uv": [
+            0,
+            0,
+            0.5,
+            1
+          ],
+          "at": [
+            14,
+            0,
+            -27
+          ],
+          "width": 4,
+          "orient": "cote",
+          "blend": "decoupe",
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -36.3,
+          "order": 23
+        },
+        "mur-passage-3-1": {
+          "file": "preuve-joue.png",
+          "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
+          "size": [
+            512,
+            576
+          ],
+          "source": "dessiné par code (preuve de la profondeur)",
+          "fiche": "art-src/decors/preuve-joue/fiche.json",
+          "approved": false,
+          "vers": "est",
+          "uv": [
+            0,
+            0,
+            0.875,
+            1
+          ],
+          "at": [
+            5.5,
+            0,
+            -32.5
+          ],
+          "width": 7,
+          "orient": "cote",
+          "blend": "decoupe",
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -36.3,
+          "order": 17
+        },
+        "mur-passage-3-2": {
+          "file": "preuve-joue.png",
+          "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
+          "size": [
+            512,
+            576
+          ],
+          "source": "dessiné par code (preuve de la profondeur)",
+          "fiche": "art-src/decors/preuve-joue/fiche.json",
+          "approved": false,
+          "vers": "ouest",
+          "uv": [
+            0,
+            0,
+            0.875,
+            1
+          ],
+          "at": [
+            8.5,
+            0,
+            -32.5
+          ],
+          "width": 7,
+          "orient": "cote",
+          "blend": "decoupe",
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -36.3,
+          "order": 18
+        },
+        "mur-bout-4-1": {
+          "file": "preuve-joue.png",
+          "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
+          "size": [
+            512,
+            576
+          ],
+          "source": "dessiné par code (preuve de la profondeur)",
+          "fiche": "art-src/decors/preuve-joue/fiche.json",
+          "approved": false,
+          "vers": "est",
+          "uv": [
+            0,
+            0,
+            0.875,
+            1
+          ],
+          "at": [
+            -10,
+            0,
+            -39.5
+          ],
+          "width": 7,
+          "orient": "cote",
+          "blend": "decoupe",
+          "lit": 0.35,
+          "coupe": true,
+          "order": 7
+        },
+        "mur-bout-4-2": {
+          "file": "preuve-joue.png",
+          "sha256": "25c7d2a9074019aa9286acf9762751f7112949f54ea037f3a54b4eec382fa75c",
+          "size": [
+            512,
+            576
+          ],
+          "source": "dessiné par code (preuve de la profondeur)",
+          "fiche": "art-src/decors/preuve-joue/fiche.json",
+          "approved": false,
+          "vers": "ouest",
+          "uv": [
+            0,
+            0,
+            0.875,
+            1
+          ],
+          "at": [
+            10,
+            0,
+            -39.5
+          ],
+          "width": 7,
+          "orient": "cote",
+          "blend": "decoupe",
+          "lit": 0.35,
+          "coupe": true,
+          "order": 8
         },
         "rue-haute-caisses": {
           "file": "quai-pied-facades.png",
@@ -405,11 +1266,11 @@
           "at": [
             -14,
             0,
-            -13
+            -12.6
           ],
           "width": 1.426,
           "orient": "face",
-          "order": 4,
+          "order": 36,
           "blend": "decoupe",
           "lit": 0.3,
           "uv": [
@@ -430,13 +1291,13 @@
           "fiche": "art-src/decors/quai-pied-facades/fiche.json",
           "approved": false,
           "at": [
-            14,
+            15,
             0,
-            -15.6
+            -15.2
           ],
           "width": 1.191,
           "orient": "face",
-          "order": 3,
+          "order": 35,
           "blend": "decoupe",
           "lit": 0.3,
           "uv": [
@@ -446,7 +1307,136 @@
             1
           ]
         },
-        "rue-haute-lampadaire-1": {
+        "halle-etal": {
+          "file": "quai-pied-facades.png",
+          "sha256": "2469063c799562e7f9bc0fbd1920bffd369b7fbf71b6a31066c0db014a95650f",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-pied-facades/fiche.json",
+          "approved": false,
+          "at": [
+            7.4,
+            0,
+            -20.8
+          ],
+          "width": 3.206,
+          "orient": "face",
+          "order": 27,
+          "blend": "decoupe",
+          "lit": 0.3,
+          "uv": [
+            0.512,
+            0.324,
+            0.579,
+            0.918
+          ]
+        },
+        "halle-caisses": {
+          "file": "quai-pied-facades.png",
+          "sha256": "2469063c799562e7f9bc0fbd1920bffd369b7fbf71b6a31066c0db014a95650f",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-pied-facades/fiche.json",
+          "approved": false,
+          "at": [
+            11.6,
+            0,
+            -21.9
+          ],
+          "width": 1.426,
+          "orient": "face",
+          "order": 25,
+          "blend": "decoupe",
+          "lit": 0.3,
+          "uv": [
+            0.75,
+            0.688,
+            0.779,
+            1
+          ]
+        },
+        "puits": {
+          "file": "preuve-puits.png",
+          "sha256": "4f71dfe8466130dcc03ce6fabddd758eb238b13ee526966aec3f78c0e0970727",
+          "size": [
+            320,
+            352
+          ],
+          "source": "dessiné par code (preuve de la profondeur)",
+          "fiche": "art-src/decors/preuve-puits/fiche.json",
+          "approved": false,
+          "at": [
+            -11.2,
+            0,
+            -31
+          ],
+          "width": 2.2,
+          "orient": "face",
+          "blend": "decoupe",
+          "lit": 0.3,
+          "order": 11
+        },
+        "placette-tonneaux": {
+          "file": "quai-pied-facades.png",
+          "sha256": "2469063c799562e7f9bc0fbd1920bffd369b7fbf71b6a31066c0db014a95650f",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-pied-facades/fiche.json",
+          "approved": false,
+          "at": [
+            -13,
+            0,
+            -32.9
+          ],
+          "width": 1.191,
+          "orient": "face",
+          "order": 10,
+          "blend": "decoupe",
+          "lit": 0.3,
+          "uv": [
+            0.269,
+            0.741,
+            0.294,
+            1
+          ]
+        },
+        "cour-caisses": {
+          "file": "quai-pied-facades.png",
+          "sha256": "2469063c799562e7f9bc0fbd1920bffd369b7fbf71b6a31066c0db014a95650f",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-pied-facades/fiche.json",
+          "approved": false,
+          "at": [
+            -8.6,
+            0,
+            -42
+          ],
+          "width": 1.426,
+          "orient": "face",
+          "order": 2,
+          "blend": "decoupe",
+          "lit": 0.3,
+          "uv": [
+            0.11,
+            0.688,
+            0.14,
+            1
+          ]
+        },
+        "lampadaire-1": {
           "file": "quai-rue.png",
           "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
           "size": [
@@ -463,7 +1453,7 @@
           ],
           "width": 1.103,
           "orient": "face",
-          "order": 5,
+          "order": 37,
           "blend": "decoupe",
           "lit": 0.2,
           "uv": [
@@ -473,7 +1463,7 @@
             1
           ]
         },
-        "rue-haute-lampadaire-2": {
+        "lampadaire-2": {
           "file": "quai-rue.png",
           "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
           "size": [
@@ -490,7 +1480,115 @@
           ],
           "width": 1.103,
           "orient": "face",
-          "order": 6,
+          "order": 38,
+          "blend": "decoupe",
+          "lit": 0.2,
+          "uv": [
+            0.405,
+            0.141,
+            0.428,
+            1
+          ]
+        },
+        "lampadaire-3": {
+          "file": "quai-rue.png",
+          "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-rue/fiche.json",
+          "approved": false,
+          "at": [
+            2.2,
+            0,
+            -21.6
+          ],
+          "width": 1.103,
+          "orient": "face",
+          "order": 26,
+          "blend": "decoupe",
+          "lit": 0.2,
+          "uv": [
+            0.405,
+            0.141,
+            0.428,
+            1
+          ]
+        },
+        "lampadaire-4": {
+          "file": "quai-rue.png",
+          "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-rue/fiche.json",
+          "approved": false,
+          "at": [
+            1,
+            0,
+            -25.5
+          ],
+          "width": 1.103,
+          "orient": "face",
+          "order": 19,
+          "blend": "decoupe",
+          "lit": 0.2,
+          "uv": [
+            0.405,
+            0.141,
+            0.428,
+            1
+          ]
+        },
+        "lampadaire-5": {
+          "file": "quai-rue.png",
+          "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-rue/fiche.json",
+          "approved": false,
+          "at": [
+            -5.5,
+            0,
+            -36.6
+          ],
+          "width": 1.103,
+          "orient": "face",
+          "order": 3,
+          "blend": "decoupe",
+          "lit": 0.2,
+          "uv": [
+            0.405,
+            0.141,
+            0.428,
+            1
+          ]
+        },
+        "lampadaire-6": {
+          "file": "quai-rue.png",
+          "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-rue/fiche.json",
+          "approved": false,
+          "at": [
+            5.5,
+            0,
+            -36.6
+          ],
+          "width": 1.103,
+          "orient": "face",
+          "order": 4,
           "blend": "decoupe",
           "lit": 0.2,
           "uv": [
@@ -560,19 +1658,8 @@
           "intensity": 2.6,
           "radius": 7,
           "halo": 1,
-          "flicker": "lantern"
-        },
-        {
-          "at": [
-            0.9,
-            2.23,
-            -1.7999999999999998
-          ],
-          "color": "ambre",
-          "intensity": 2.6,
-          "radius": 7,
-          "halo": 1,
-          "flicker": "lantern"
+          "flicker": "lantern",
+          "coupeZ": -11.3
         },
         {
           "at": [
@@ -584,7 +1671,8 @@
           "intensity": 2,
           "radius": 6,
           "halo": 0.9,
-          "flicker": "lantern"
+          "flicker": "lantern",
+          "coupeZ": -11.3
         },
         {
           "at": [
@@ -596,55 +1684,8 @@
           "intensity": 2,
           "radius": 6,
           "halo": 0.9,
-          "flicker": "lantern"
-        },
-        {
-          "at": [
-            5.37,
-            6.66,
-            -2.4
-          ],
-          "color": "ambre",
-          "intensity": 2,
-          "radius": 6,
-          "halo": 0.9,
-          "flicker": "lantern"
-        },
-        {
-          "at": [
-            8.4,
-            2.4,
-            -2.4
-          ],
-          "color": "ambre",
-          "intensity": 2,
-          "radius": 6,
-          "halo": 0.9,
-          "flicker": "lantern"
-        },
-        {
-          "at": [
-            -8.84,
-            3.56,
-            -2.4
-          ],
-          "color": "ambre",
-          "intensity": 2,
-          "radius": 6,
-          "halo": 0.9,
-          "flicker": "lantern"
-        },
-        {
-          "at": [
-            -14.99,
-            2.63,
-            -2.4
-          ],
-          "color": "ambre",
-          "intensity": 2,
-          "radius": 6,
-          "halo": 0.9,
-          "flicker": "lantern"
+          "flicker": "lantern",
+          "coupeZ": -11.3
         },
         {
           "at": [
@@ -672,27 +1713,88 @@
         },
         {
           "at": [
-            -12.1,
-            3,
-            -7.2
+            2.2,
+            3.9,
+            -21.5
           ],
           "color": "ambre",
-          "intensity": 2,
-          "radius": 6,
-          "halo": 0.6,
+          "intensity": 3,
+          "radius": 9,
+          "halo": 1.6,
           "flicker": "lantern"
         },
         {
           "at": [
-            12.7,
-            3,
-            -7.2
+            1,
+            3.9,
+            -25.4
+          ],
+          "color": "ambre",
+          "intensity": 3,
+          "radius": 9,
+          "halo": 1.6,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            -5.5,
+            3.9,
+            -36.5
+          ],
+          "color": "ambre",
+          "intensity": 3,
+          "radius": 9,
+          "halo": 1.6,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            5.5,
+            3.9,
+            -36.5
+          ],
+          "color": "ambre",
+          "intensity": 3,
+          "radius": 9,
+          "halo": 1.6,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            6.049,
+            2,
+            -20.7
+          ],
+          "color": "ambre",
+          "intensity": 2.6,
+          "radius": 7,
+          "halo": 1,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            -10.39,
+            1.5,
+            -30.9
+          ],
+          "color": "ambre",
+          "intensity": 2.4,
+          "radius": 6,
+          "halo": 0.9,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            -3,
+            3.2,
+            -28.85
           ],
           "color": "ambre",
           "intensity": 2,
           "radius": 6,
-          "halo": 0.6,
-          "flicker": "lantern"
+          "halo": 0.8,
+          "flicker": "lantern",
+          "coupeZ": -36.3
         }
       ],
       "camera": {
@@ -702,7 +1804,7 @@
         "aimY": 4.8,
         "minX": -5,
         "maxX": 5,
-        "followZ": 0.6,
+        "followZ": 0.9,
         "aimZ": 0.3,
         "pitchFond": 16,
         "zFond": -14
@@ -712,9 +1814,9 @@
           120,
           12,
           0,
-          17,
-          -21,
-          0.34,
+          18,
+          -47,
+          0.3,
           0.006,
           [
             6,
@@ -726,9 +1828,9 @@
           170,
           20,
           0,
-          21,
-          -30,
-          0.4,
+          22,
+          -56,
+          0.36,
           0.005,
           [
             5,
@@ -740,8 +1842,8 @@
           270,
           34,
           0,
-          24,
-          -62,
+          26,
+          -80,
           0.36,
           0.004,
           [
@@ -783,6 +1885,62 @@
           18.5,
           3.8,
           -14,
+          0.6,
+          0.004,
+          [
+            2,
+            1
+          ],
+          1
+        ],
+        [
+          10,
+          9,
+          -15.5,
+          3.8,
+          -27,
+          0.6,
+          0.004,
+          [
+            2,
+            1
+          ],
+          1
+        ],
+        [
+          10,
+          9,
+          15.5,
+          3.8,
+          -27,
+          0.6,
+          0.004,
+          [
+            2,
+            1
+          ],
+          1
+        ],
+        [
+          10,
+          9,
+          -11.5,
+          3.8,
+          -39.5,
+          0.6,
+          0.004,
+          [
+            2,
+            1
+          ],
+          1
+        ],
+        [
+          10,
+          9,
+          11.5,
+          3.8,
+          -39.5,
           0.6,
           0.004,
           [

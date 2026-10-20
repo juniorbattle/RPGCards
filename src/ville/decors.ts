@@ -35,7 +35,8 @@
  *   - `orient: 'cote'` : plan vertical parallèle à z (mur d'un passage), `at` = [x, y du bas, z du milieu], `width` =
  *     longueur le long de z ; `vers` : côté peint (`est` : tourné vers +x, défaut ; `ouest`), le haut de l'image
  *     en haut, le bord gauche de l'image vers la caméra (z le plus grand) ; l'autre côté n'est pas dessiné ;
- *   - `coupe` : le plan s'efface quand le personnage passe derrière lui, dans sa largeur (vue en coupe) ;
+ *   - `coupe` : le plan s'efface quand le personnage passe derrière lui, dans sa largeur (vue en coupe) ; `coupeZ`
+ *     (passe 65) : au-delà de ce z, sur toute sa largeur (rang dépassé), et les halos des lumières de même `coupeZ` ;
  *   - `camera` : `followZ` (part de la profondeur suivie), `aimZ`, `pitchFond` et `zFond` (inclinaison atteinte
  *     quand le personnage est en `zFond`) ;
  *   - un îlot peut lire un autre manifeste du même dossier (`manifest`, laboratoire : `manifest-profondeur.json`).
@@ -47,9 +48,11 @@ export const DECOR_VERSION = 1;
 /**
  * Plans par îlot : 8 au contrat v1, 12 depuis la passe 60 (profondeur : troisième rang), 16 depuis la passe 62 (profondeur
  * praticable : façades, pied et murs des passages découpés dans les mêmes images, textures partagées), 24 depuis la
- * passe 63 (zones arrière : emprise des blocs, murs aux bouts de la rue haute).
+ * passe 63 (zones arrière : emprise des blocs, murs aux bouts de la rue haute), 64 depuis la passe 65 (quartiers en rangs :
+ * quatre rangs, leurs places, murs des passages et des bouts des ruelles, mobilier ; les plans découpent quelques images
+ * partagées, le budget de mémoire GPU reste la vraie borne).
  */
-export const DECOR_MAX_PLATES = 24;
+export const DECOR_MAX_PLATES = 64;
 export const DECOR_MAX_SIDE = 4096;
 export const DECOR_MAX_BYTES = 8 * 1024 * 1024;
 export const DECOR_MAX_ILOT_BYTES = 32 * 1024 * 1024;
@@ -80,6 +83,12 @@ export interface PlateEntry {
    * vue en section) et n'efface que le haut ; défaut : tout le plan.
    */
   coupeY?: number;
+  /**
+   * Rang dépassé (passe 65, quartiers en rangs) : quand le personnage est plus loin que ce z (au-delà de la bande bâtie
+   * dont le plan fait partie), le plan devient un fantôme sur toute sa largeur, et non plus seulement devant lui : tout le
+   * rang de devant se voit au travers. Réservé aux plans « coupe ».
+   */
+  coupeZ?: number;
   /** Plan de côté : face peinte tournée vers l'est (+x, défaut) ou l'ouest (passe 62). */
   vers?: 'est' | 'ouest';
   order: number;
@@ -110,6 +119,8 @@ export interface DecorLight {
   /** Taille du halo additif (m ; 0 = aucun). */
   halo?: number;
   flicker?: 'lantern' | 'candle' | 'window' | 'none';
+  /** Lanterne d'un rang dépassé (passe 65) : au-delà de ce z, son halo s'atténue comme le plan fantôme qui la porte. */
+  coupeZ?: number;
 }
 
 /** Cadrage propre au diorama (mêmes bornes que le réglage par l'URL, `parseRig`) et bornes du point visé en x. */
@@ -125,7 +136,8 @@ export interface DecorCamera {
  * décor par code).
  */
 export type DecorMist = [number, number, number, number, number, number, number, [number, number]] | [number, number, number, number, number, number, number, [number, number], number];
-export const DECOR_MAX_MISTS = 6;
+/** Nappes de brume par îlot : 6, puis 10 depuis la passe 65 (quartiers en rangs : bouts de chaque ruelle). */
+export const DECOR_MAX_MISTS = 10;
 
 export interface IlotDecorEntry {
   plans: Record<string, PlateEntry>;
@@ -167,6 +179,7 @@ export function checkPlate(label: string, e: unknown): string[] {
   }
   if (x.coupe !== undefined && typeof x.coupe !== 'boolean') out.push(`${label} : champ « coupe » non booléen`);
   if (x.coupeY !== undefined && (!isNum(x.coupeY) || x.coupeY < 0 || x.coupeY > 30 || x.coupe !== true)) out.push(`${label} : hauteur de coupe « coupeY » (0 à 30 m) réservée aux plans « coupe »`);
+  if (x.coupeZ !== undefined && (!isNum(x.coupeZ) || x.coupeZ < -80 || x.coupeZ > 20 || x.coupe !== true)) out.push(`${label} : rang dépassé « coupeZ » (z de −80 à 20 m) réservé aux plans « coupe »`);
   if (x.vers !== undefined && (x.orient !== 'cote' || (x.vers !== 'est' && x.vers !== 'ouest'))) out.push(`${label} : « vers » (est ou ouest) réservé aux plans de côté`);
   if (!isInt(x.order) || x.order < 0 || x.order > 99) out.push(`${label} : ordre de dessin entier de 0 à 99 attendu`);
   if (x.blend !== 'decoupe' && x.blend !== 'fondu') out.push(`${label} : mélange « decoupe » ou « fondu » attendu`);
@@ -191,6 +204,7 @@ export function checkLight(label: string, e: unknown): string[] {
   if (!isNum(x.radius) || x.radius <= 0 || x.radius > 60) out.push(`${label} : rayon hors de 0 à 60 m`);
   if (x.halo !== undefined && (!isNum(x.halo) || x.halo < 0 || x.halo > 20)) out.push(`${label} : halo hors de 0 à 20 m`);
   if (x.flicker !== undefined && !['lantern', 'candle', 'window', 'none'].includes(x.flicker)) out.push(`${label} : scintillement inconnu`);
+  if (x.coupeZ !== undefined && (!isNum(x.coupeZ) || x.coupeZ < -80 || x.coupeZ > 20)) out.push(`${label} : rang dépassé « coupeZ » hors de −80 à 20 m`);
   return out;
 }
 

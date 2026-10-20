@@ -549,7 +549,9 @@ export function createTown(o: TownOptions): Town {
     if (dof.enabled && def.dof) {
       camera.updateMatrixWorld();
       const d = def.dof;
-      const n0 = viewDepth(0.3, d.nearZ);
+      // quartier en rangs (passe 65) : quand la caméra suit le personnage au-delà du bord net (nearZ derrière elle), le
+      // flou de premier plan reste devant la caméra au lieu de tout couvrir
+      const n0 = Math.max(viewDepth(0.3, d.nearZ), camera.near + d.nearSpan);
       const f0 = viewDepth(4, d.farZ);
       (dof.uniforms.uBand!.value as THREE.Vector4).set(n0, Math.max(camera.near, n0 - d.nearSpan), f0, f0 + d.farSpan);
       dof.uniforms.uFarAmt!.value = d.farAmt;
