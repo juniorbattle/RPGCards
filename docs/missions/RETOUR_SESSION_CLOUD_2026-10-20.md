@@ -11,7 +11,7 @@ responsable n'est arrivée par git pendant le run (en-têtes du brief, de `CLAUD
 | Sujet | État | À lire |
 |---|---|---|
 | **Phase 1 — contrats M10** | **livrée** : les huit livrables du §VII (prologue et recrutement, hiérarchie des familles, progression et récompenses, rival, ville et rencontres, quêtes et persistance, avenant M10-A, feuille de route M10-A à M10-F) ; tout est **PROPOSÉ** sauf ADR 029 à 031 | `docs/m10/README.md` |
-| **Fiche d'arbitrages M10** | 10 entrées indispensables (ARB-M10-01 à 10), dont **ARB-M10-02, bloquante** : faire entrer les neutres en duel touche deux lignes de `clash.ts` | `docs/FICHE_ARBITRAGES_M10.md` |
+| **Fiche d'arbitrages M10** | 11 entrées indispensables (ARB-M10-01 à 11), dont **ARB-M10-02, bloquante** : faire entrer les neutres en duel touche deux lignes de `clash.ts` | `docs/FICHE_ARBITRAGES_M10.md` |
 | **Preuve hors dépôt du patch M10-A** | patch complet des neutres appliqué dans un worktree temporaire : **305 tests du dépôt inchangés et verts**, 5 tests neutres ; **mesures d'équilibrage** IA contre IA (inaugural 51,7 %, cadet 57,3 %, bras droit 46,3 %, chef 36,7 % à 90 PV) ; patch prêt à appliquer **après ratification** | `docs/m10/MESURES_M10A.md`, `docs/m10/patch-m10a-neutres.diff` |
 | **Phase 2 — prototype `?aventure=1`** (M10-B, et M10-C, D, E en avance) | **livré, provisoire** : Nouvelle aventure → 16 cartes grises → le Quai → Kaï → duel public (deck de prêt) → foule → quatre émissaires → choix libre et confirmation → quatre Basics → défis de lieutenants (variantes), du chef (Signature), revanches sans duplication → Salle des Bannières (défi officiel d'une autre famille) ; **Épreuves et Joutes** (variantes I et II : les seize variantes atteignables) ; **squelette du Championnat** (Quatre Bannières, Miroir, Finale) ; rencontres facultatives (rue, Kaï) ; deck R-AV et registre ; journal ; sauvegarde à part et reprise exacte | `docs/AVENTURE_PROVISOIRE.md`, ADR 032 (proposé) |
 | Mode Duel standard, jeu par défaut, démo `?demo=1` | **inchangés** : jeu par défaut identique au pixel près au départ `255820c` (`l5-identique`, 0 pixel différent) ; `qa:demo` vert ; 281 tests d'origine inchangés | `artifacts/qa/m10/` |
@@ -53,9 +53,9 @@ Tous consignés au journal et dans la fiche (« Décisions prises seules par la 
 - **La limite « ne pas toucher au Clash » était la bonne** : la preuve hors dépôt (worktree détaché, rien poussé dans le
   moteur) a permis de chiffrer son coût réel et de proposer des PV mesurés au lieu de chiffres inventés. À refaire pour
   toute décision de règle : un patch prêt, des tests, des mesures, et la décision au responsable.
-- **Rendu logiciel** : `l5-identique` ≈ 25 min, `qa:demo` ≈ 15 min, `qa:aventure` ≈ 4 min par définition d'écran ;
-  aucune campagne complète n'a été nécessaire (le code du mode standard n'a pas changé : une branche dans `main.ts`,
-  un paramètre d'URL).
+- **Rendu logiciel** : `l5-identique` ≈ 6 min, `qa:demo` ≈ 4 min, `qa:aventure` ≈ 4 à 8 min par définition d'écran
+  (40 contrôles). Le code du mode standard n'a presque pas changé (une branche dans `main.ts`, un paramètre d'URL) ;
+  la campagne complète a tout de même été lancée en fin de run, seule, pour preuve (résultat en §1).
 - **Le brief pourrait préciser** si « chef » (ADR 029) veut dire « chef vaincu » ou « devenir chef » (ARB-M10-01), et
   si les variantes peuvent venir de compétitions malgré la phrase des tests d'ADR 031 (ARB-M10-06).
 

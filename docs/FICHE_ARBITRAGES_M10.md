@@ -9,7 +9,7 @@ Comment voir le travail : contrats `docs/m10/` (index `docs/m10/README.md`) ; pr
 (mode d'emploi : `docs/AVENTURE_PROVISOIRE.md`). Le jeu par défaut et `?demo=1` sont inchangés.
 
 **Ordre conseillé** : ARB-M10-02 (le seul qui bloque des neutres en duel), puis 01, 03, 04, 05 (l'avenant M10-A
-complet), puis 06 et 07 (contenu des familles, nécessaires à M10-C), puis 08 à 10.
+complet), puis 06 et 07 (contenu des familles, nécessaires à M10-C), puis 08 à 11.
 
 ---
 
@@ -120,6 +120,27 @@ complet), puis 06 et 07 (contenu des familles, nécessaires à M10-C), puis 08 �
   `lqv.save` jamais lue ni écrite ; aucun import de profil ; mode standard (Tournoi du Quai, duels libres, démo) inchangé.
   **Raison :** aucune migration, aucun risque pour les profils RC 0.8.
 - **Alternatives :** un profil unique avec deux progressions ; importer la collection standard dans l'Aventure.
+
+## ARB-M10-11 — Accord des textes avec le duelliste joueur (révélé par le prototype)
+
+- **Contexte :** le joueur n'a pas de genre déclaré ; les dialogues du prototype ont dû contourner les accords (« ton
+  jeu » plutôt que « t'avoir vu·e », « ce duelliste gris »). Une passe d'écriture du mode Aventure en dépend.
+- **Recommandé :** demander à la création **comment s'adresser au duelliste** (il, elle, neutre), choix modifiable,
+  sans effet de jeu ; les textes portent les trois formes. **Raison :** des dialogues naturels sans deviner.
+- **Alternatives :** écriture neutre partout (contraignante, plus pauvre) ; tutoiement et tournures sans accord.
+
+## Ce que la phase 2 a révélé (pour mémoire, détails dans le retour)
+
+1. **Le coût réel d'ARB-M10-02 est connu** : deux gardes dans `clash.ts` ; 305 tests inchangés ; 20 erreurs de typage
+   d'interface à traiter (`docs/m10/MESURES_M10A.md`).
+2. **Prisme et Convergence avec une Primaire neutre** : deux cas de règle à confirmer avec l'avenant (A-2).
+3. **PV des chefs** : 110 rendait le chef trop dur (23 %) ; 90 donne 37 % (mesuré) : proposé à 90.
+4. **Duels Aventure plus longs** (16 à 18 tours contre 10 en standard, moins de dégâts sans affinité ni Signature) :
+   surveiller la fatigue ; levier sans règle nouvelle : PV des personnages.
+5. **L'enveloppe du jeu standard n'est pas réutilisable telle quelle** pour l'aventure (liée à `lqv.save` et à la
+   progression de prototype M05) : une seconde enveloppe existe (ADR 032) ; la fusion est à décider avec M10-F.
+6. **Apparences provisoires** : chefs et membres en gabarits PNJ, cadets sans accent familial, tenue grise du joueur
+   sans famille (`player-gris`) : à confirmer avec la production (liste des images au retour, non demandée).
 
 ---
 
