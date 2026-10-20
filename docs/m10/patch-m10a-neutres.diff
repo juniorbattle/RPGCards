@@ -1,0 +1,253 @@
+diff --git a/src/game/catalog/cards.ts b/src/game/catalog/cards.ts
+index 5c31823..7e3d1b7 100644
+--- a/src/game/catalog/cards.ts
++++ b/src/game/catalog/cards.ts
+@@ -71,7 +71,8 @@ export interface CardDef {
+   defId: string;
+   /** Identité de deck (unicité) : `Cendre-3`, `Signature`. */
+   identity: string;
+-  family: Family;
++  /** Famille, ou `null` pour une carte NEUTRE (avenant M10-A proposé, ADR 030) : jamais d'affinité. */
++  family: Family | null;
+   /** Rang ordinaire 1..4, ou `null` pour une Signature ∞. */
+   rank: OrdinaryRank | null;
+   power: number;
+@@ -117,6 +118,10 @@ function buildCatalog(): Record<string, CardDef> {
+       rarity: 'Signature', name: sig.name, effect: sig.effect, signature: true,
+     };
+   }
++  // Avenant M10-A (PROPOSÉ) : quatre définitions neutres (ADR 030), Puissance 3/6/9/12 proposée (A-1), sans famille ni effet.
++  for (const rank of RANKS) {
++    out[`neutre-${rank}`] = { defId: `neutre-${rank}`, identity: `Neutre-${rank}`, family: null, rank, power: BASIC_POWER[rank], rarity: 'Basic', name: `Neutre ${ROMAN[rank]}`, effect: null, signature: false };
++  }
+   return out;
+ }
+ 
+diff --git a/src/game/engine/clash.ts b/src/game/engine/clash.ts
+index dd8abb8..5e5839b 100644
+--- a/src/game/engine/clash.ts
++++ b/src/game/engine/clash.ts
+@@ -110,14 +110,14 @@ const IDS: PlayerId[] = ['p1', 'p2'];
+ /** Delta V3.2 D-01 : soutien Rang = Rang imprimé + 1 si même famille que la Primaire. */
+ export function rankSupport(sec: CardDef, primary: CardDef): number {
+   const r = sec.rank ?? 0;
+-  return r + (sec.family === primary.family ? 1 : 0);
++  return r + (sec.family !== null && sec.family === primary.family ? 1 : 0);
+ }
+ 
+ /** §7.2 + variantes Prisme / Convergence : coefficient de dégâts d’une Secondaire. */
+ export function damageCoefficient(sec: CardDef, primary: CardDef): number {
+   const r = sec.rank ?? 0;
+   if (sec.effect === 'convergence' && sec.family !== primary.family) return 6;
+-  const affinity = sec.family === primary.family || sec.effect === 'prisme';
++  const affinity = (sec.family !== null && sec.family === primary.family) || sec.effect === 'prisme';
+   return r + (affinity ? 1 : 0);
+ }
+ 
+diff --git a/src/game/engine/engine.ts b/src/game/engine/engine.ts
+index 8e43767..e27422f 100644
+--- a/src/game/engine/engine.ts
++++ b/src/game/engine/engine.ts
+@@ -92,7 +92,8 @@ export function createGame(config: GameConfig = DEFAULT_CONFIG): { state: GameSt
+     const pc = config.players[pid];
+     const techniques = [...new Set(pc.techniques)];
+     if (techniques.length > 2) throw new RuleError('Deux Techniques équipées au maximum.');
+-    const defs = buildDeck({ signature: pc.signature, variants: pc.variants });
++    // Avenant M10-A (PROPOSÉ) : deck explicite (mode Aventure) ; sinon le deck standard, inchangé.
++    const defs = pc.deck ? [...pc.deck] : buildDeck({ signature: pc.signature!, variants: pc.variants });
+     const ids: string[] = [];
+     defs.forEach((defId, i) => {
+       const id = `${pid}#${String(i).padStart(2, '0')}`;
+@@ -635,7 +636,7 @@ function resolveClash(ctx: Ctx): void {
+       const def = ctx.def(p.slots[i]!.cardId);
+       const prim = input[pid].primary;
+       const value = plan.mode === 'rank' ? rankSupport(def, prim) : plan.mode === 'damage' ? damageCoefficient(def, prim) : null;
+-      return { slot: i, mode: plan.mode, target: plan.target ?? null, defId: masked ? null : def.defId, family: def.family, masked, value: masked ? null : value, affinity: masked ? null : def.family === prim.family };
++      return { slot: i, mode: plan.mode, target: plan.target ?? null, defId: masked ? null : def.defId, family: def.family, masked, value: masked ? null : value, affinity: masked ? null : def.family !== null && def.family === prim.family };
+     });
+   }
+   s.reveal.tactics = tacticsData as NonNullable<GameState['reveal']['tactics']>;
+diff --git a/src/game/engine/invariants.ts b/src/game/engine/invariants.ts
+index 5dab97c..d55c95f 100644
+--- a/src/game/engine/invariants.ts
++++ b/src/game/engine/invariants.ts
+@@ -11,15 +11,22 @@ export function assertInvariants(state: GameState): void {
+       ...p.slots.filter((s) => s !== null).map((s) => s!.cardId),
+       ...(p.primary ? [p.primary.cardId] : []),
+     ];
+-    if (zones.length !== 17) throw new Error(`${pid} : conservation rompue (${zones.length}/17 cartes)`);
+-    if (new Set(zones).size !== 17) throw new Error(`${pid} : carte dupliquée entre zones`);
++    // Avenant M10-A (proposé) : la taille du deck est celle de la création (17 en standard, 16 sans Signature en
++    // Aventure) ; seules les identités FAMILIALES (et la Signature) sont uniques, les neutres se répètent (ADR 030).
++    const owned = Object.values(state.cards).filter((c) => c.owner === pid).length;
++    if (zones.length !== owned) throw new Error(`${pid} : conservation rompue (${zones.length}/${owned} cartes)`);
++    if (new Set(zones).size !== owned) throw new Error(`${pid} : carte dupliquée entre zones`);
+     const identities = new Set<string>();
++    let familiales = 0;
+     for (const id of zones) {
+       const inst = state.cards[id];
+       if (!inst || inst.owner !== pid) throw new Error(`${pid} : carte étrangère ${id}`);
+-      identities.add(cardDef(inst.defId).identity);
++      const d = cardDef(inst.defId);
++      if (d.family === null) continue;
++      familiales += 1;
++      identities.add(d.identity);
+     }
+-    if (identities.size !== 17) throw new Error(`${pid} : identités non uniques`);
++    if (identities.size !== familiales) throw new Error(`${pid} : identités non uniques`);
+     for (const s of p.slots) {
+       if (s && cardDef(state.cards[s.cardId]!.defId).signature) throw new Error(`${pid} : Signature en Secondaire`);
+       if (s && s.active && s.revealedTurn !== null && s.revealedTurn <= s.placedTurn) throw new Error(`${pid} : révélation pendant le tour de pose`);
+diff --git a/src/game/model/types.ts b/src/game/model/types.ts
+index e3cfdc5..312834c 100644
+--- a/src/game/model/types.ts
++++ b/src/game/model/types.ts
+@@ -73,7 +73,7 @@ export interface PlayerState {
+   insightGained: number;
+   techniqueUsed: TechniqueId | null;
+   techniques: TechniqueId[];
+-  signatureFamily: Family;
++  signatureFamily: Family | null;
+   /** Pioche : index 0 = dessous, dernier = sommet. */
+   deck: string[];
+   hand: string[];
+@@ -105,8 +105,11 @@ export interface GameConfig {
+   players: Record<PlayerId, {
+     name: string;
+     hp: number;
+-    signature: Family;
++    /** `null` : aucune Signature (deck Aventure avant le premier chef, avenant M10-A proposé). */
++    signature: Family | null;
+     variants: 'all' | 'none' | string[];
++    /** Avenant M10-A (PROPOSÉ) : liste explicite des définitions du deck (mode Aventure) ; absent : deck standard. */
++    deck?: string[];
+     techniques: TechniqueId[];
+     insightStart?: number;
+   }>;
+@@ -209,8 +212,8 @@ export interface RevealedTactic {
+   mode: TacticMode;
+   target: SlotIndex | null;
+   defId: string | null;
+-  /** Famille toujours publique (§13.2), même sous camouflage. */
+-  family: Family;
++  /** Famille toujours publique (§13.2), même sous camouflage ; `null` : carte neutre. */
++  family: Family | null;
+   masked: boolean;
+   value: number | null;
+   affinity: boolean | null;
+diff --git a/test/neutres.test.ts b/test/neutres.test.ts
+new file mode 100644
+index 0000000..40da18c
+--- /dev/null
++++ b/test/neutres.test.ts
+@@ -0,0 +1,63 @@
++/**
++ * Avenant M10-A (PROPOSÉ, non ratifié) — cartes neutres dans le moteur : composition (ADR 030), aucune affinité, deck
++ * sans Signature jouable jusqu'au bout, et mode standard inchangé (les autres tests du dépôt passent sans modification).
++ */
++import { describe, expect, it } from 'vitest';
++import { cardDef } from '../src/game/catalog/cards';
++import { damageCoefficient, rankSupport } from '../src/game/engine/clash';
++import { createGame } from '../src/game/engine/engine';
++import { autoplay } from '../src/game/match';
++import type { GameConfig } from '../src/game/model/types';
++import { viewFor } from '../src/game/visibility/view';
++
++const N16 = [1, 2, 3, 4].flatMap((r) => Array.from({ length: 4 }, () => `neutre-${r}`));
++const seat = (deck: string[], signature: GameConfig['players']['p1']['signature'] = null, hp = 60): GameConfig['players']['p1'] =>
++  ({ name: 'x', hp, signature, variants: [], techniques: ['Sondage', 'Recentrage'], deck });
++
++describe('M10-A — neutres dans le moteur (proposé)', () => {
++  it('16 instances, 4 par Rang, identifiants distincts, sans famille ni effet', () => {
++    const { state } = createGame({ seed: 1, players: { p1: seat(N16), p2: seat(N16) } });
++    const p1 = Object.values(state.cards).filter((c) => c.owner === 'p1');
++    expect(p1).toHaveLength(16);
++    expect(new Set(p1.map((c) => c.id)).size).toBe(16);
++    for (const r of [1, 2, 3, 4]) expect(p1.filter((c) => c.defId === `neutre-${r}`)).toHaveLength(4);
++    for (const c of p1) { const d = cardDef(c.defId); expect(d.family).toBeNull(); expect(d.effect).toBeNull(); expect(d.power).toBe(3 * d.rank!); }
++  });
++
++  it('aucune affinité : neutre + neutre, neutre + Basic, Basic + neutre ; Basic + Basic de même famille : +1 (inchangé)', () => {
++    const n2 = cardDef('neutre-2'); const n4 = cardDef('neutre-4'); const c2 = cardDef('Cendre-2-basic'); const c4 = cardDef('Cendre-4-basic');
++    expect(rankSupport(n2, n4)).toBe(2);
++    expect(rankSupport(n2, c4)).toBe(2);
++    expect(rankSupport(c2, n4)).toBe(2);
++    expect(rankSupport(c2, c4)).toBe(3);
++    expect(damageCoefficient(n2, n4)).toBe(2);
++    expect(damageCoefficient(c2, n4)).toBe(2);
++    expect(damageCoefficient(c2, c4)).toBe(3);
++    // Prisme et Convergence gardent leur texte : une Primaire neutre est « d'une autre famille » (à arbitrer, A-2)
++    expect(damageCoefficient(cardDef('Astre-2-prisme'), n4)).toBe(3);
++    expect(damageCoefficient(cardDef('Astre-4-convergence'), n4)).toBe(6);
++  });
++
++  it('deck sans Signature : 300 duels IA contre IA terminés, sans exception, sans ∞', () => {
++    for (let s = 1; s <= 300; s++) {
++      const m = autoplay({ seed: s, players: { p1: seat(N16), p2: seat(N16) } });
++      expect(m.state.phase).toBe('ENDED');
++      expect(m.events.some((e) => e.kind === 'clash' && Object.values((e.data as { scores: Record<string, unknown> }).scores).includes('inf'))).toBe(false);
++    }
++  }, 180000);
++
++  it('vue adverse : main et Secondaires cachées du joueur invisibles ; famille publique « null » pour une neutre', () => {
++    const m = autoplay({ seed: 7, players: { p1: seat(N16), p2: seat(N16) } }, 3);
++    const v = viewFor(m.state, 'p2');
++    expect(v.opp.hand).toBeNull();
++    for (const s of v.opp.slots) if (s && s.state === 'hidden') expect(s.card).toBeNull();
++    expect(v.opp.slots.every((s) => !s || s.family === null)).toBe(true);
++  });
++
++  it('mixte : 12 neutres + 4 Basics, et adversaire à Signature (chef) : jouable', () => {
++    const deck = ['Voile-1-basic', 'Voile-2-basic', 'Voile-3-basic', 'Voile-4-basic', ...N16.filter((_, i) => i % 4 !== 0)];
++    const chef = ['Ronce-1-racine', 'Ronce-2-ecaille', 'Ronce-3-entrave', 'Ronce-4-tenacite', ...N16.filter((_, i) => i % 4 !== 0), 'sig-Ronce'];
++    const m = autoplay({ seed: 3, players: { p1: seat(deck, null, 90), p2: { ...seat(chef, 'Ronce', 110), techniques: ['Ancrage', 'Rupture'] } } });
++    expect(m.state.phase).toBe('ENDED');
++  });
++});
+diff --git a/tools/m10a-sim.ts b/tools/m10a-sim.ts
+new file mode 100644
+index 0000000..0936566
+--- /dev/null
++++ b/tools/m10a-sim.ts
+@@ -0,0 +1,41 @@
++// Avenant M10-A (PROPOSÉ) — simulation d'équilibrage IA contre IA sur le moteur patché (neutres, deck explicite,
++// Signature optionnelle). Usage : npx tsx tools/m10a-sim.ts [duels par matchup]
++import { autoplay } from '../src/game/match';
++import { PROFILES } from '../src/game/ai/policy';
++import type { GameConfig } from '../src/game/model/types';
++import type { TechniqueId } from '../src/game/catalog/techniques';
++
++const N = Number(process.argv[2] ?? 400);
++const N16 = [1, 2, 3, 4].flatMap((r) => Array.from({ length: 4 }, () => `neutre-${r}`));
++const sansUnParRang = (k: number) => [1, 2, 3, 4].flatMap((r) => Array.from({ length: 4 - k }, () => `neutre-${r}`));
++const fam = (f: string, v: Record<number, string | null>) => [1, 2, 3, 4].map((r) => (v[r] ? `${f}-${r}-${v[r]}` : `${f}-${r}-basic`));
++type Seat = GameConfig['players']['p1'];
++const seat = (deck: string[] | null, hp: number, techniques: TechniqueId[], signature: Seat['signature'] = null, variants: Seat['variants'] = []): Seat =>
++  ({ name: 'x', hp, signature, variants, techniques, ...(deck ? { deck } : {}) });
++const RUE: TechniqueId[] = ['Sondage', 'Recentrage'];
++
++const M: Array<{ id: string; p1: Seat; p2: Seat; prof: [string, string] }> = [
++  { id: 'Inaugural : 16 neutres contre 16 neutres, PV 60/60', p1: seat(N16, 60, RUE), p2: seat(N16, 60, RUE), prof: ['equilibre', 'offensif'] },
++  { id: 'Inaugural (miroir de profil équilibré)', p1: seat(N16, 60, RUE), p2: seat(N16, 60, RUE), prof: ['equilibre', 'equilibre'] },
++  { id: 'Cadet Voile : joueur 12 N + 4 Basics Voile (PV 90) contre cadet 12 N + Voile dont III Dissimulation (PV 80)', p1: seat([...fam('Voile', {}), ...sansUnParRang(1)], 90, ['Sondage', 'Dissipation']), p2: seat([...fam('Voile', { 3: 'dissimulation' }), ...sansUnParRang(1)], 80, ['Lecture', 'Dissipation']), prof: ['equilibre', 'lecteur'] },
++  { id: 'Bras droit Voile : joueur 12 N + Voile (III) contre Sélène 12 N + Voile (III, IV) (PV 100)', p1: seat([...fam('Voile', { 3: 'dissimulation' }), ...sansUnParRang(1)], 90, ['Sondage', 'Dissipation']), p2: seat([...fam('Voile', { 3: 'dissimulation', 4: 'silence' }), ...sansUnParRang(1)], 100, ['Lecture', 'Dissipation']), prof: ['equilibre', 'lecteur'] },
++  { id: 'Chef Voile : joueur 12 N + Voile (III, IV), sans Signature, contre Ilse 12 N + 4 variantes + Miroir du Voile (PV 110)', p1: seat([...fam('Voile', { 3: 'dissimulation', 4: 'silence' }), ...sansUnParRang(1)], 90, ['Sondage', 'Dissipation']), p2: seat([...fam('Voile', { 1: 'eclaireur', 2: 'detour', 3: 'dissimulation', 4: 'silence' }), ...sansUnParRang(1), 'sig-Voile'], 110, ['Lecture', 'Dissipation'], 'Voile'), prof: ['equilibre', 'lecteur'] },
++  { id: 'Chef Voile, PV 90 (variante d’équilibrage)', p1: seat([...fam('Voile', { 3: 'dissimulation', 4: 'silence' }), ...sansUnParRang(1)], 90, ['Sondage', 'Dissipation']), p2: seat([...fam('Voile', { 1: 'eclaireur', 2: 'detour', 3: 'dissimulation', 4: 'silence' }), ...sansUnParRang(1), 'sig-Voile'], 90, ['Lecture', 'Dissipation'], 'Voile'), prof: ['equilibre', 'lecteur'] },
++  { id: 'Référence standard : 17 cartes, toutes variantes, PV 90/90', p1: seat(null, 90, ['Lecture', 'Ancrage'], 'Cendre', 'all'), p2: seat(null, 90, ['Sondage', 'Rupture'], 'Ronce', 'all'), prof: ['equilibre', 'offensif'] },
++];
++
++const med = (xs: number[]) => { const s = [...xs].sort((a, b) => a - b); return s[Math.floor(s.length / 2)]!; };
++console.log(`| Matchup | Duels | Victoires p1 | Tours (moyenne / médiane) | Prolongations |`);
++console.log(`|---|---:|---:|---:|---:|`);
++for (const m of M) {
++  let w = 0; const turns: number[] = []; let ot = 0;
++  for (let s = 1; s <= N; s++) {
++    const cfg: GameConfig = { seed: 1000 + s, players: { p1: { ...m.p1, name: 'p1' }, p2: { ...m.p2, name: 'p2' } } };
++    const r = autoplay(cfg, 200, [PROFILES[m.prof[0]]!, PROFILES[m.prof[1]]!]);
++    if (r.state.winner === 'p1') w++;
++    turns.push(r.state.turn);
++    if (r.state.overtime > 0) ot++;
++  }
++  const mean = turns.reduce((a, b) => a + b, 0) / turns.length;
++  console.log(`| ${m.id} (IA ${m.prof.join(' / ')}) | ${N} | ${(100 * w / N).toFixed(1)} % | ${mean.toFixed(1)} / ${med(turns)} | ${(100 * ot / N).toFixed(1)} % |`);
++}

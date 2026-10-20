@@ -33,6 +33,10 @@ complet), puis 06 et 07 (contenu des familles, nécessaires à M10-C), puis 08 �
   ne change** (aucune carte standard n'a `family: null`), mais c'est le fichier du Clash, que le brief et AGENTS
   interdisent de toucher sans validation.
 - **Sources :** ADR 030 ; `docs/m10/AVENANT_M10A_PROPOSE.md` A-2 et A-11.
+- **Preuve faite (hors dépôt, `docs/m10/MESURES_M10A.md`)** : le patch complet (catalogue neutre, deux gardes dans
+  `clash.ts`, deck explicite, Signature optionnelle, invariants) laisse **les 305 tests du dépôt inchangés et verts** ;
+  5 tests neutres passent ; il est prêt à appliquer (`docs/m10/patch-m10a-neutres.diff`). Deux cas à confirmer en même
+  temps : Prisme (+1) et Convergence (×6) avec une Primaire neutre.
 - **Recommandé :** **autoriser** cette garde (deux lignes), avec en preuve les 281 tests actuels inchangés et verts,
   les hashes de replay standard identiques et le jeu par défaut identique au pixel près ; plus les tests neutres d'A-11.
   **Raison :** c'est le seul moyen de faire jouer les 16 neutres ratifiées sans inventer une cinquième famille.
@@ -105,7 +109,8 @@ complet), puis 06 et 07 (contenu des familles, nécessaires à M10-C), puis 08 �
 
 - **Recommandé :** joueur à **90 PV** toute l'aventure (60 pour le seul duel inaugural, contre Kaï à 60) ; adversaires
   structurants au **format miroir** (même nombre de neutres que le joueur ; variantes et Signature selon leur rang) ;
-  PV de personnage dans les repères 60 / 90 / 125 ; chiffres mesurés par `npm run sim` avant ratification.
+  **chefs à 90 PV** comme le joueur. **Mesuré** (IA contre IA, 300 duels, moteur patché hors dépôt) : inaugural 51,7 %,
+  cadet 57,3 %, bras droit 46,3 %, chef 36,7 % à 90 PV (23,3 % à 110 PV) : la difficulté monte par le deck seul.
 - **Alternatives :** decks adverses complets dès le cadet (difficulté forte, deck gris impuissant) ; PV croissants par
   chapitre (contraire à la mission §IV).
 
