@@ -1,0 +1,950 @@
+{
+  "date": "2026-10-19T23:59:32.521Z",
+  "commit": "77beaf7+arbre de travail",
+  "dist": "dist",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "checks": [
+    "OK plan détouré : 21 % transparent, 980 pixels opaques encore teintés de magenta",
+    "OK feuille : pas des pixels d'art 3.98 × 3.925 px, même pas dans les deux sens (résultantes 0.193, 0.175 : grille du modèle irrégulière, pas une vraie mise à l'échelle au plus proche) ; grille d'art 52 × 86 par case",
+    "OK feuille : 15 cases non vides, pieds alignés, aucun pixel rogné (0)",
+    "OK feuille : tons clés tenue [423,1458,2043,327], accent [47,145,118,70] ; 40 couleurs ; 0 couleurs naturelles écartées des tons clés",
+    "OK essai : le Quai en diorama (plan de l'essai non approuvé, admis en QA seulement), aucune image avant la décision ; {\"bytes\":2882060,\"fetchMs\":22,\"hashMs\":1.7,\"decodeMs\":26.2,\"uploadMs\":9.7}",
+    "OK essai : le joueur dessiné par la feuille de l'essai (contrat v3, non approuvée), aucun refus ; {\"player\":{\"bytes\":65265,\"fetchMs\":4.2,\"hashMs\":0.2,\"decodeMs\":3.6,\"uploadMs\":0.6}}",
+    "OK essai : la même feuille prend les couleurs de la famille Voile (recoloration par tons clés)",
+    "OK actuel : décor par code (direction D, provisoire)",
+    "OK agrandissement à l'écran du joueur (1920 × 1080) : 3 px d'écran par px d'art (figure de 59 px d'art, 177 px à l'écran)",
+    "OK aucune erreur ni avertissement de console (0)"
+  ],
+  "console": [],
+  "bruts": {
+    "plan": {
+      "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec",
+      "bytes": 2657416
+    },
+    "feuille": {
+      "sha256": "f9779778276dc19d94cf2c6743e50bff2fc0add4d7582afce6fd207c68c45f9f",
+      "bytes": 1106911
+    }
+  },
+  "traitement": {
+    "plan": {
+      "size": [
+        1477,
+        990
+      ],
+      "crop": {
+        "left": 18,
+        "top": 18,
+        "right": 1494,
+        "bottom": 1007
+      },
+      "transparentShare": 0.214,
+      "magentaSpill": 980,
+      "lanterns": [
+        {
+          "x": 471.42857142857144,
+          "y": 750.5714285714286,
+          "area": 448
+        },
+        {
+          "x": 67.04347826086956,
+          "y": 811.7391304347826,
+          "area": 368
+        },
+        {
+          "x": 1082,
+          "y": 538.3809523809524,
+          "area": 336
+        },
+        {
+          "x": 1287.142857142857,
+          "y": 827.5238095238095,
+          "area": 336
+        },
+        {
+          "x": 119,
+          "y": 749,
+          "area": 320
+        },
+        {
+          "x": 534.4444444444445,
+          "y": 816,
+          "area": 288
+        },
+        {
+          "x": 945.0588235294117,
+          "y": 803.8823529411765,
+          "area": 272
+        },
+        {
+          "x": 1213.142857142857,
+          "y": 532.2857142857143,
+          "area": 224
+        }
+      ],
+      "sha256": "b020b9075bb15436b20eb74e7f984affc41ba24207e83fb8a85bcad855fa7c1a",
+      "bytes": 2882060
+    },
+    "feuille": {
+      "cell": [
+        52,
+        86
+      ],
+      "anchor": [
+        26,
+        83
+      ],
+      "figureH": 59,
+      "pitch": {
+        "x": 3.98,
+        "y": 3.925,
+        "rx": 0.193,
+        "ry": 0.175,
+        "phaseX": 3.65,
+        "phaseY": 0.47
+      },
+      "shifts": [
+        {
+          "dx": 0,
+          "dy": 13,
+          "h": 59
+        },
+        {
+          "dx": 1,
+          "dy": 12,
+          "h": 59
+        },
+        {
+          "dx": 2,
+          "dy": 12,
+          "h": 59
+        },
+        {
+          "dx": 3,
+          "dy": 12,
+          "h": 59
+        },
+        {
+          "dx": 2,
+          "dy": 12,
+          "h": 59
+        },
+        {
+          "dx": 0,
+          "dy": 18,
+          "h": 59
+        },
+        {
+          "dx": 1,
+          "dy": 18,
+          "h": 58
+        },
+        {
+          "dx": 2,
+          "dy": 18,
+          "h": 58
+        },
+        {
+          "dx": 3,
+          "dy": 18,
+          "h": 58
+        },
+        {
+          "dx": 2,
+          "dy": 18,
+          "h": 58
+        },
+        {
+          "dx": 1,
+          "dy": 25,
+          "h": 58
+        },
+        {
+          "dx": 1,
+          "dy": 24,
+          "h": 58
+        },
+        {
+          "dx": 2,
+          "dy": 24,
+          "h": 58
+        },
+        {
+          "dx": 3,
+          "dy": 24,
+          "h": 58
+        },
+        {
+          "dx": 3,
+          "dy": 24,
+          "h": 58
+        }
+      ],
+      "clipped": 0,
+      "counts": {
+        "tenue": [
+          423,
+          1458,
+          2043,
+          327
+        ],
+        "accent": [
+          47,
+          145,
+          118,
+          70
+        ]
+      },
+      "nudged": 0,
+      "colors": 40,
+      "x1": {
+        "sha256": "d224afe3f716da674bfdc5e963ad4eb3f04a9984e3d0059bdd4c8fcda2ba2df2",
+        "bytes": 33503
+      },
+      "x3": {
+        "sha256": "bb69eb6b92f3a3a70896931509e1e40ad4e24e5de87ba6c0d1b4667136f15929",
+        "bytes": 65265
+      }
+    }
+  },
+  "runs": {
+    "actuel-1920": {
+      "dec": {
+        "policy": "code",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [],
+        "timings": {},
+        "gpuBytes": {},
+        "ilot": "quai",
+        "world": "code",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "spr": {
+        "policy": "code",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [],
+        "timings": {},
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 54,
+        "geometries": 66,
+        "programs": 27,
+        "lights": 15,
+        "cpuMs": 1.6,
+        "frames": 4,
+        "buildMs": 344,
+        "firstFrameMs": 504,
+        "mountMs": null,
+        "mountFrameMs": null
+      },
+      "figurePx": 177
+    },
+    "essai-1920": {
+      "dec": {
+        "policy": "qa",
+        "loaded": [
+          "quai"
+        ],
+        "unapproved": [
+          "quai/ciel",
+          "quai/ville-haute",
+          "quai/facades",
+          "quai/facades-essai",
+          "quai/rue",
+          "quai/premier-plan",
+          "quai/eau"
+        ],
+        "issues": [],
+        "timings": {
+          "quai/ciel": {
+            "bytes": 408965,
+            "fetchMs": 14.6,
+            "hashMs": 0.3,
+            "decodeMs": 24.5,
+            "uploadMs": 5.3
+          },
+          "quai/ville-haute": {
+            "bytes": 48971,
+            "fetchMs": 5,
+            "hashMs": 0.3,
+            "decodeMs": 5.9,
+            "uploadMs": 1.9
+          },
+          "quai/facades": {
+            "bytes": 105910,
+            "fetchMs": 15,
+            "hashMs": 0.1,
+            "decodeMs": 29.3,
+            "uploadMs": 8.1
+          },
+          "quai/facades-essai": {
+            "bytes": 2882060,
+            "fetchMs": 22,
+            "hashMs": 1.7,
+            "decodeMs": 26.2,
+            "uploadMs": 9.7
+          },
+          "quai/rue": {
+            "bytes": 22836,
+            "fetchMs": 20.2,
+            "hashMs": 0,
+            "decodeMs": 11.1,
+            "uploadMs": 1
+          },
+          "quai/premier-plan": {
+            "bytes": 51368,
+            "fetchMs": 20.5,
+            "hashMs": 0.1,
+            "decodeMs": 12.7,
+            "uploadMs": 1.4
+          },
+          "quai/eau": {
+            "bytes": 179725,
+            "fetchMs": 20.8,
+            "hashMs": 0.3,
+            "decodeMs": 14.2,
+            "uploadMs": 11.3
+          }
+        },
+        "gpuBytes": {
+          "quai": 58130207
+        },
+        "ilot": "quai",
+        "world": "diorama",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "spr": {
+        "policy": "qa",
+        "loaded": [
+          "player-Cendre"
+        ],
+        "unapproved": [
+          "player-Cendre"
+        ],
+        "issues": [],
+        "timings": {
+          "player": {
+            "bytes": 65265,
+            "fetchMs": 4.2,
+            "hashMs": 0.2,
+            "decodeMs": 3.6,
+            "uploadMs": 0.6
+          }
+        },
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 50,
+        "triangles": 4794,
+        "textures": 31,
+        "geometries": 19,
+        "programs": 18,
+        "lights": 12,
+        "cpuMs": 347.9,
+        "frames": 1,
+        "buildMs": 165,
+        "firstFrameMs": 544,
+        "mountMs": null,
+        "mountFrameMs": null
+      },
+      "figurePx": 177
+    },
+    "essai-voile-1920": {
+      "dec": {
+        "policy": "qa",
+        "loaded": [
+          "quai"
+        ],
+        "unapproved": [
+          "quai/ciel",
+          "quai/ville-haute",
+          "quai/facades",
+          "quai/facades-essai",
+          "quai/rue",
+          "quai/premier-plan",
+          "quai/eau"
+        ],
+        "issues": [],
+        "timings": {
+          "quai/ciel": {
+            "bytes": 408965,
+            "fetchMs": 19.8,
+            "hashMs": 0.5,
+            "decodeMs": 20.2,
+            "uploadMs": 5.3
+          },
+          "quai/ville-haute": {
+            "bytes": 48971,
+            "fetchMs": 6.4,
+            "hashMs": 0.3,
+            "decodeMs": 8.4,
+            "uploadMs": 1.8
+          },
+          "quai/facades": {
+            "bytes": 105910,
+            "fetchMs": 18.6,
+            "hashMs": 0.1,
+            "decodeMs": 26.4,
+            "uploadMs": 8.4
+          },
+          "quai/facades-essai": {
+            "bytes": 2882060,
+            "fetchMs": 21.2,
+            "hashMs": 1.8,
+            "decodeMs": 24.7,
+            "uploadMs": 3.1
+          },
+          "quai/rue": {
+            "bytes": 22836,
+            "fetchMs": 23.6,
+            "hashMs": 0,
+            "decodeMs": 8.6,
+            "uploadMs": 1
+          },
+          "quai/premier-plan": {
+            "bytes": 51368,
+            "fetchMs": 24,
+            "hashMs": 0,
+            "decodeMs": 10.4,
+            "uploadMs": 1.2
+          },
+          "quai/eau": {
+            "bytes": 179725,
+            "fetchMs": 24.2,
+            "hashMs": 0.2,
+            "decodeMs": 11.8,
+            "uploadMs": 1
+          }
+        },
+        "gpuBytes": {
+          "quai": 58130207
+        },
+        "ilot": "quai",
+        "world": "diorama",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "spr": {
+        "policy": "qa",
+        "loaded": [
+          "player-Voile"
+        ],
+        "unapproved": [
+          "player-Voile"
+        ],
+        "issues": [],
+        "timings": {
+          "player": {
+            "bytes": 65265,
+            "fetchMs": 4.1,
+            "hashMs": 0.2,
+            "decodeMs": 5,
+            "uploadMs": 0.6
+          }
+        },
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 50,
+        "triangles": 4794,
+        "textures": 31,
+        "geometries": 19,
+        "programs": 18,
+        "lights": 12,
+        "cpuMs": 81.6,
+        "frames": 1,
+        "buildMs": 141,
+        "firstFrameMs": 249,
+        "mountMs": null,
+        "mountFrameMs": null
+      },
+      "figurePx": 177
+    },
+    "actuel-1280": {
+      "dec": {
+        "policy": "code",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [],
+        "timings": {},
+        "gpuBytes": {},
+        "ilot": "quai",
+        "world": "code",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "spr": {
+        "policy": "code",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [],
+        "timings": {},
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 54,
+        "geometries": 66,
+        "programs": 27,
+        "lights": 15,
+        "cpuMs": 1.6,
+        "frames": 3,
+        "buildMs": 341,
+        "firstFrameMs": 507,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "essai-1280": {
+      "dec": {
+        "policy": "qa",
+        "loaded": [
+          "quai"
+        ],
+        "unapproved": [
+          "quai/ciel",
+          "quai/ville-haute",
+          "quai/facades",
+          "quai/facades-essai",
+          "quai/rue",
+          "quai/premier-plan",
+          "quai/eau"
+        ],
+        "issues": [],
+        "timings": {
+          "quai/ciel": {
+            "bytes": 408965,
+            "fetchMs": 14,
+            "hashMs": 0.6,
+            "decodeMs": 26.4,
+            "uploadMs": 5.4
+          },
+          "quai/ville-haute": {
+            "bytes": 48971,
+            "fetchMs": 15.2,
+            "hashMs": 0,
+            "decodeMs": 19.7,
+            "uploadMs": 2
+          },
+          "quai/facades": {
+            "bytes": 105910,
+            "fetchMs": 16.1,
+            "hashMs": 0.1,
+            "decodeMs": 29.3,
+            "uploadMs": 8.2
+          },
+          "quai/facades-essai": {
+            "bytes": 2882060,
+            "fetchMs": 21.6,
+            "hashMs": 2,
+            "decodeMs": 24.5,
+            "uploadMs": 2.9
+          },
+          "quai/rue": {
+            "bytes": 22836,
+            "fetchMs": 16.9,
+            "hashMs": 0,
+            "decodeMs": 16.1,
+            "uploadMs": 1.1
+          },
+          "quai/premier-plan": {
+            "bytes": 51368,
+            "fetchMs": 17,
+            "hashMs": 0,
+            "decodeMs": 14.1,
+            "uploadMs": 1.4
+          },
+          "quai/eau": {
+            "bytes": 179725,
+            "fetchMs": 20.4,
+            "hashMs": 0.3,
+            "decodeMs": 16.2,
+            "uploadMs": 1.5
+          }
+        },
+        "gpuBytes": {
+          "quai": 58130207
+        },
+        "ilot": "quai",
+        "world": "diorama",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "spr": {
+        "policy": "qa",
+        "loaded": [
+          "player-Cendre"
+        ],
+        "unapproved": [
+          "player-Cendre"
+        ],
+        "issues": [],
+        "timings": {
+          "player": {
+            "bytes": 65265,
+            "fetchMs": 4.4,
+            "hashMs": 0.1,
+            "decodeMs": 3.7,
+            "uploadMs": 0.6
+          }
+        },
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 50,
+        "triangles": 4794,
+        "textures": 31,
+        "geometries": 19,
+        "programs": 18,
+        "lights": 12,
+        "cpuMs": 80.2,
+        "frames": 1,
+        "buildMs": 140,
+        "firstFrameMs": 247,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    }
+  },
+  "manifestes": {
+    "decors": {
+      "quai": {
+        "plans": {
+          "ciel": {
+            "file": "ciel.png",
+            "sha256": "733441d506547161292fcf24086e94a86f2b31622f5dd2331e29afef260cb7bf",
+            "size": [
+              2048,
+              1024
+            ],
+            "source": "QA : plan de preuve dessiné par code",
+            "fiche": "art-src/decors/qa/fiche.json",
+            "approved": false,
+            "at": [
+              0,
+              -6,
+              -70
+            ],
+            "width": 240,
+            "orient": "face",
+            "order": 0,
+            "blend": "fondu",
+            "fog": 0
+          },
+          "ville-haute": {
+            "file": "ville-haute.png",
+            "sha256": "5eb15f4cfa6228224c7700b4e93bbcdc82c3b08f992ac3322cb4ca5a27fe3d77",
+            "size": [
+              2048,
+              512
+            ],
+            "source": "QA : plan de preuve dessiné par code",
+            "fiche": "art-src/decors/qa/fiche.json",
+            "approved": false,
+            "at": [
+              0,
+              0,
+              -24
+            ],
+            "width": 100,
+            "orient": "face",
+            "order": 1,
+            "blend": "decoupe"
+          },
+          "facades": {
+            "file": "facades.png",
+            "sha256": "1f3855db81354ff9e3473e0612ba724e8eb4f535227275d9e91e94c5a62a68b9",
+            "size": [
+              3072,
+              1024
+            ],
+            "source": "QA : plan de preuve dessiné par code",
+            "fiche": "art-src/decors/qa/fiche.json",
+            "approved": false,
+            "at": [
+              0,
+              0,
+              -3
+            ],
+            "width": 48,
+            "orient": "face",
+            "order": 2,
+            "blend": "decoupe",
+            "lit": 0.35
+          },
+          "facades-essai": {
+            "file": "quai-facades-essai.png",
+            "sha256": "b020b9075bb15436b20eb74e7f984affc41ba24207e83fb8a85bcad855fa7c1a",
+            "size": [
+              1477,
+              990
+            ],
+            "source": "gpt-image-2 (essai technique V4), détouré par script (tools/m09-essai-v4.mjs)",
+            "fiche": "art-src/decors/quai-facades-essai/fiche.json",
+            "approved": false,
+            "at": [
+              0.3000000000000007,
+              0,
+              -2.98
+            ],
+            "width": 21.8,
+            "orient": "face",
+            "order": 3,
+            "blend": "decoupe",
+            "lit": 0.25
+          },
+          "rue": {
+            "file": "rue.png",
+            "sha256": "b48a9eccba9b81b4ebd5421a9efbd3f219c8009c1b77a46be6e8b492432688ef",
+            "size": [
+              2048,
+              512
+            ],
+            "source": "QA : plan de preuve dessiné par code",
+            "fiche": "art-src/decors/qa/fiche.json",
+            "approved": false,
+            "at": [
+              0,
+              0,
+              2.95
+            ],
+            "width": 48,
+            "orient": "face",
+            "order": 4,
+            "blend": "decoupe"
+          },
+          "premier-plan": {
+            "file": "premier-plan.png",
+            "sha256": "63913ee90621f37261df8d07e7d5a2b2f8abe58e4d2c28fca6dc87ab53de251c",
+            "size": [
+              2048,
+              512
+            ],
+            "source": "QA : plan de preuve dessiné par code",
+            "fiche": "art-src/decors/qa/fiche.json",
+            "approved": false,
+            "at": [
+              0,
+              -2,
+              4.6
+            ],
+            "width": 48,
+            "orient": "face",
+            "order": 5,
+            "blend": "decoupe"
+          },
+          "eau": {
+            "file": "eau.png",
+            "sha256": "a106cb77b4ed957294f684e7c098a123f284169bfcadfb360c303102e992d58d",
+            "size": [
+              2048,
+              512
+            ],
+            "source": "QA : plan de preuve dessiné par code",
+            "fiche": "art-src/decors/qa/fiche.json",
+            "approved": false,
+            "at": [
+              0,
+              -1.15,
+              12
+            ],
+            "width": 64,
+            "orient": "sol",
+            "order": 6,
+            "blend": "decoupe"
+          }
+        },
+        "lumieres": [
+          {
+            "at": [
+              -13,
+              4,
+              2.95
+            ],
+            "color": "Astre",
+            "intensity": 3.2,
+            "radius": 10,
+            "halo": 2,
+            "flicker": "lantern"
+          },
+          {
+            "at": [
+              -4,
+              4,
+              2.95
+            ],
+            "color": "Astre",
+            "intensity": 3.2,
+            "radius": 10,
+            "halo": 2,
+            "flicker": "lantern"
+          },
+          {
+            "at": [
+              5,
+              4,
+              2.95
+            ],
+            "color": "Astre",
+            "intensity": 3.2,
+            "radius": 10,
+            "halo": 2,
+            "flicker": "lantern"
+          },
+          {
+            "at": [
+              14,
+              4,
+              2.95
+            ],
+            "color": "Astre",
+            "intensity": 3.2,
+            "radius": 10,
+            "halo": 2,
+            "flicker": "lantern"
+          },
+          {
+            "at": [
+              -3.64,
+              3.53,
+              -2.4
+            ],
+            "color": "ambre",
+            "intensity": 2,
+            "radius": 6,
+            "halo": 0.9,
+            "flicker": "lantern"
+          },
+          {
+            "at": [
+              -9.61,
+              2.63,
+              -2.4
+            ],
+            "color": "ambre",
+            "intensity": 2,
+            "radius": 6,
+            "halo": 0.9,
+            "flicker": "lantern"
+          },
+          {
+            "at": [
+              5.37,
+              6.67,
+              -2.4
+            ],
+            "color": "ambre",
+            "intensity": 2,
+            "radius": 6,
+            "halo": 0.9,
+            "flicker": "lantern"
+          },
+          {
+            "at": [
+              8.4,
+              2.4,
+              -2.4
+            ],
+            "color": "ambre",
+            "intensity": 2,
+            "radius": 6,
+            "halo": 0.9,
+            "flicker": "lantern"
+          },
+          {
+            "at": [
+              -8.84,
+              3.56,
+              -2.4
+            ],
+            "color": "ambre",
+            "intensity": 2,
+            "radius": 6,
+            "halo": 0.9,
+            "flicker": "lantern"
+          },
+          {
+            "at": [
+              -2.71,
+              2.57,
+              -2.4
+            ],
+            "color": "ambre",
+            "intensity": 2,
+            "radius": 6,
+            "halo": 0.9,
+            "flicker": "lantern"
+          },
+          {
+            "at": [
+              3.35,
+              2.75,
+              -2.4
+            ],
+            "color": "ambre",
+            "intensity": 2,
+            "radius": 6,
+            "halo": 0.9,
+            "flicker": "lantern"
+          },
+          {
+            "at": [
+              7.31,
+              6.76,
+              -2.4
+            ],
+            "color": "ambre",
+            "intensity": 2,
+            "radius": 6,
+            "halo": 0.9,
+            "flicker": "lantern"
+          }
+        ]
+      }
+    },
+    "sprites": {
+      "player": {
+        "file": "player-pixel-essai.png",
+        "sha256": "bb69eb6b92f3a3a70896931509e1e40ad4e24e5de87ba6c0d1b4667136f15929",
+        "cell": [
+          52,
+          86
+        ],
+        "cols": 5,
+        "rows": 3,
+        "pixel": true,
+        "scale": 3,
+        "anchor": [
+          26,
+          83
+        ],
+        "figureH": 59,
+        "recolor": [
+          "tenue",
+          "accent"
+        ],
+        "source": "gpt-image-2 (essai technique V4), grille d’art, alignement et tons clés par script (tools/m09-essai-v4.mjs)",
+        "fiche": "art-src/sprites/player-essai/fiche.json",
+        "approved": false
+      }
+    }
+  },
+  "ecran": {
+    "figurePx": 177,
+    "pxEcranParPxArt": 3,
+    "figureArt": 59
+  }
+}
