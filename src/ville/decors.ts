@@ -18,20 +18,23 @@
  *   - `lit` (0 à 1, défaut 0) : part de la lumière des lanternes du moteur ajoutée à la lumière peinte ; `fog` (0 à 1,
  *     défaut 1) : part de la brume du moteur (0 pour un ciel déjà peint dans sa brume) ;
  *   - `file`, `sha256`, `size` (px de l'image), `source`, `fiche` (`art-src/decors/<id>/fiche.json`), `approved`.
- * Par îlot aussi : `lumieres` (lumières du moteur posées sur les lanternes peintes : personnages éclairés, halos) et
+ * Par îlot aussi : `camera` (cadrage propre au diorama, passe 60 : inclinaison, distance, champ, hauteur visée, bornes en
+ * x ; le décor par code garde le sien) ; `brumes` (nappes de brume du moteur posées entre les plans, passe 60 : largeur,
+ * hauteur, x, y, z, opacité, dérive, échelle du bruit) ; `lumieres` (lumières du moteur posées sur les lanternes peintes : personnages éclairés, halos) et
  * `sol` (défaut vrai : le sol où l'on marche, pavés mouillés et reflets, reste au moteur). Le moteur garde aussi la brume,
  * la profondeur de champ et le halo (ADR 028, B2).
  *
  * Tout ou rien par îlot : le diorama ne remplace le décor par code que si tous ses plans sont conformes et admis ; un
  * seul plan refusé, et l'îlot garde son décor par code (jamais de mélange des deux). Budgets du contrat v1 (à revoir
  * après l'essai technique) : PNG ≤ 8 Mo, côté ≤ 4096 px, 8 plans au plus, 32 Mo de fichiers et 160 Mo de mémoire GPU
- * (mipmaps comprises) par îlot.
+ * (mipmaps comprises) par îlot ; 12 plans au plus depuis la passe 60 (diorama plus profond).
  */
 import * as THREE from 'three';
 import { admit, type SpritePolicy } from './spritesExternes';
 
 export const DECOR_VERSION = 1;
-export const DECOR_MAX_PLATES = 8;
+/** Plans par îlot : 8 au contrat v1, 12 depuis la passe 60 (profondeur : troisième rang, ruelles, passages). */
+export const DECOR_MAX_PLATES = 12;
 export const DECOR_MAX_SIDE = 4096;
 export const DECOR_MAX_BYTES = 8 * 1024 * 1024;
 export const DECOR_MAX_ILOT_BYTES = 32 * 1024 * 1024;
@@ -59,6 +62,11 @@ export interface PlateEntry {
   lit?: number;
   /** Part de la brume du moteur (0 à 1, défaut 1 ; 0 pour un ciel déjà peint dans sa brume). */
   fog?: number;
+  /**
+   * Voile atmosphérique (0 à 1, défaut 0 ; passe 60) : la couleur du plan tirée vers le bleu de nuit clair de l'air
+   * (perspective aérienne) ; les rangs lointains s'éclaircissent et perdent leur contraste, la profondeur se lit.
+   */
+  voile?: number;
   /** Provenance : outil, fichier source, auteur, date. */
   source: string;
   /** Fiche de provenance commitée : `art-src/decors/<id>/fiche.json`. */
@@ -78,11 +86,23 @@ export interface DecorLight {
   flicker?: 'lantern' | 'candle' | 'window' | 'none';
 }
 
+/** Cadrage propre au diorama (mêmes bornes que le réglage par l'URL, `parseRig`) et bornes du point visé en x. */
+export interface DecorCamera { pitch?: number; distance?: number; fov?: number; aimY?: number; minX?: number; maxX?: number }
+/**
+ * Nappe de brume du moteur : largeur, hauteur, x, y, z, opacité, vitesse de dérive, échelle du bruit [x, y], et ton
+ * (facultatif, de 0,5 à 4 : clarté de la brume rapportée à la couleur de la brume du moteur ; 1,25 par défaut, celui du
+ * décor par code).
+ */
+export type DecorMist = [number, number, number, number, number, number, number, [number, number]] | [number, number, number, number, number, number, number, [number, number], number];
+export const DECOR_MAX_MISTS = 6;
+
 export interface IlotDecorEntry {
   plans: Record<string, PlateEntry>;
   lumieres?: DecorLight[];
   /** Sol du moteur (pavés mouillés, reflets) sous le diorama ; défaut vrai. */
   sol?: boolean;
+  camera?: DecorCamera;
+  brumes?: DecorMist[];
 }
 export interface DecorManifest { version: 1; ilots: Record<string, IlotDecorEntry> }
 
@@ -113,6 +133,7 @@ export function checkPlate(label: string, e: unknown): string[] {
   if (x.blend !== 'decoupe' && x.blend !== 'fondu') out.push(`${label} : mélange « decoupe » ou « fondu » attendu`);
   if (x.lit !== undefined && (!isNum(x.lit) || x.lit < 0 || x.lit > 1)) out.push(`${label} : part d'éclairage hors de 0 à 1`);
   if (x.fog !== undefined && (!isNum(x.fog) || x.fog < 0 || x.fog > 1)) out.push(`${label} : part de brume hors de 0 à 1`);
+  if (x.voile !== undefined && (!isNum(x.voile) || x.voile < 0 || x.voile > 1)) out.push(`${label} : voile atmosphérique hors de 0 à 1`);
   if (typeof x.source !== 'string' || !x.source.trim()) out.push(`${label} : provenance manquante`);
   if (typeof x.fiche !== 'string' || !/^art-src\/decors\/[\w.-]+\/fiche\.json$/.test(x.fiche)) out.push(`${label} : fiche de provenance manquante (art-src/decors/<id>/fiche.json)`);
   if (typeof x.approved !== 'boolean') out.push(`${label} : statut d'approbation manquant`);
@@ -172,6 +193,19 @@ export function checkIlotDecor(ilot: string, e: unknown): string[] {
     else x.lumieres.forEach((l, i) => out.push(...checkLight(`${ilot}/lumière ${i + 1}`, l)));
   }
   if (x.sol !== undefined && typeof x.sol !== 'boolean') out.push(`${ilot} : champ « sol » non booléen`);
+  if (x.camera !== undefined) {
+    const c = x.camera as Partial<DecorCamera> | null;
+    const bad = (k: keyof DecorCamera, lo: number, hi: number) => c && c[k] !== undefined && (!isNum(c[k]) || c[k]! < lo || c[k]! > hi);
+    if (!c || typeof c !== 'object' || bad('pitch', 0, 30) || bad('distance', 6, 60) || bad('fov', 15, 60) || bad('aimY', 0, 12) || bad('minX', -60, 60) || bad('maxX', -60, 60) || (isNum(c.minX) && isNum(c.maxX) && c.minX > c.maxX)) {
+      out.push(`${ilot} : cadrage invalide (inclinaison 0–30°, distance 6–60 m, champ 15–60°, hauteur visée 0–12 m, minX ≤ maxX)`);
+    }
+  }
+  if (x.brumes !== undefined) {
+    const b = x.brumes as unknown;
+    const okTone = (m: unknown[]) => m.length === 8 || (m.length === 9 && isNum(m[8]) && (m[8] as number) >= 0.5 && (m[8] as number) <= 4);
+    const okMist = (m: unknown) => Array.isArray(m) && okTone(m) && m.slice(0, 7).every(isNum) && (m[0] as number) > 0 && (m[1] as number) > 0 && (m[5] as number) >= 0 && (m[5] as number) <= 1 && Array.isArray(m[7]) && m[7].length === 2 && (m[7] as unknown[]).every(isNum);
+    if (!Array.isArray(b) || b.length > DECOR_MAX_MISTS || !b.every(okMist)) out.push(`${ilot} : brumes en liste de ${DECOR_MAX_MISTS} au plus ([largeur, hauteur, x, y, z, opacité 0–1, dérive, [échelle x, y], ton 0,5–4 facultatif])`);
+  }
   return out;
 }
 
@@ -294,7 +328,7 @@ export async function preloadDecors(ilots: readonly string[], policy: SpritePoli
 }
 
 export interface PreparedPlate { id: string; entry: PlateEntry; texture: THREE.Texture }
-export interface PreparedDiorama { ilot: string; plates: PreparedPlate[]; lights: DecorLight[]; ground: boolean; gpuBytes: number }
+export interface PreparedDiorama { ilot: string; plates: PreparedPlate[]; lights: DecorLight[]; ground: boolean; gpuBytes: number; camera: DecorCamera | null; mists: DecorMist[] }
 export type DecorState = { state: 'code' } | { state: 'attente' } | { state: 'diorama'; diorama: PreparedDiorama };
 
 export interface PlateTiming { bytes: number; fetchMs: number; hashMs: number; decodeMs: number; uploadMs: number }
@@ -385,7 +419,7 @@ export function createDecorResolver(policy: SpritePolicy, upload: (t: THREE.Text
       report.gpuBytes[ilot] = gpuBytes;
       if (!report.loaded.includes(ilot)) report.loaded.push(ilot);
       for (const u of decision.unapproved) if (!report.unapproved.includes(u)) report.unapproved.push(u);
-      const st: DecorState = { state: 'diorama', diorama: { ilot, plates: prepared, lights: e.lumieres ?? [], ground: e.sol !== false, gpuBytes } };
+      const st: DecorState = { state: 'diorama', diorama: { ilot, plates: prepared, lights: e.lumieres ?? [], ground: e.sol !== false, gpuBytes, camera: e.camera ?? null, mists: e.brumes ?? [] } };
       done.set(ilot, st);
       return st;
     },

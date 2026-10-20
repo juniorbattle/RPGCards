@@ -8,10 +8,10 @@
   "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
   "sources": [
     {
-      "nom": "player-pixel",
+      "nom": "player-pixel-64",
       "modele": "gpt-image-2",
       "point_d_acces": "/v1/images/edits",
-      "date": "2026-10-20T01:03:46.822Z",
+      "date": "2026-10-20T02:54:13.868Z",
       "parametres": {
         "model": "gpt-image-2",
         "size": "1024x1024",
@@ -19,33 +19,33 @@
         "output_format": "png",
         "n": 1
       },
-      "prompt": "The attached image is our own pixel-art sprite sheet of the player character. Redraw it as a clean final sprite sheet: keep exactly the same character design, proportions, colours (coat and lowered hood in flat shades of pure magenta from #400040 to #FF00FF, headband and scarf in flat shades of pure green from #004000 to #00FF00, as placeholders for in-game recolouring; everything else in natural colours, no other magenta or green), the same pixel size and the same layout: an exact grid of 5 columns and 3 rows of equal cells, nothing between the cells.\n\nRow 1: facing the viewer; row 2: seen from the back; row 3: right profile walking to the right. Column 1: standing still; columns 2 to 5: a clear four-frame walking cycle in every row (contact, passing, contact with the other leg forward, passing), legs visibly alternating and arms swinging, the head steady. Same size in every cell, feet on the same baseline near the bottom of each cell, figure centred.\n\nTrue low-resolution pixel art: every art pixel a crisp square of the same size, a one-pixel dark outline, flat colour areas with at most three shades each, no anti-aliasing, no gradients, no blur, no shadows on the ground. A perfectly flat, uniform pure cyan (#00FFFF) background with no shading and no texture.\n\nNo text, no letters, no numbers, no grid lines, no labels, no watermark, no logos, no playing-card suit symbols.",
+      "prompt": "The attached image is our own pixel-art sprite sheet of the player character. Redraw it as a finer final sprite sheet with exactly the same character, layout and placeholder colours: an exact grid of 5 columns and 3 rows of equal cells, nothing between the cells; row 1 facing the viewer, row 2 seen from the back, row 3 right profile walking to the right; column 1 standing still, columns 2 to 5 a clear four-frame walking cycle (legs alternating, arms swinging, head steady); same size in every cell, feet on the same baseline, figure centred.\n\nHigher resolution pixel art: each cell is 64 art pixels wide and 96 art pixels tall, the character about 88 art pixels tall with a large readable head (about one third of the height). Give the head and face real care: silver-white bob with a straight fringe drawn as distinct locks with two highlight tones, clearly drawn eyes with dark outline, blue iris and a white catchlight, short eyebrows, a hint of nose shading and a small mouth, soft cheek shading; the cloth headband across the forehead and the lowered hood framing the neck.\n\nColour ramps of five tones per material, cool and saturated in the shadows and warm in the highlights. Placeholder colours for in-game recolouring: coat and lowered hood in flat shades of pure magenta only (from #400040 to #FF00FF), headband and scarf in flat shades of pure green only (from #004000 to #00FF00); everything else in natural colours, no other magenta or green.\n\nTrue pixel art: every art pixel a crisp square of the same size, a one-pixel dark outline, no anti-aliasing, no gradients, no blur, no shadow on the ground. A perfectly flat, uniform pure cyan (#00FFFF) background with no shading and no texture.\n\nNo text, no letters, no numbers, no grid lines, no labels, no watermark, no logos, no playing-card suit symbols.",
       "entrees": [
         {
-          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-19-v4-essai/player-pixel-essai.png",
-          "sha256": "f9779778276dc19d94cf2c6743e50bff2fc0add4d7582afce6fd207c68c45f9f"
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-20-v4-quai/player-pixel.png",
+          "sha256": "b29fd076e4e9cd30ba31e804d54f297d1fb5d0dc7209005c7688e8e9a1c2c7db"
         }
       ],
       "brut": {
-        "fichier": "art-gen/2026-10-20-v4-quai/player-pixel.png (dossier principal, ignoré par git)",
-        "sha256": "b29fd076e4e9cd30ba31e804d54f297d1fb5d0dc7209005c7688e8e9a1c2c7db",
+        "fichier": "art-gen/2026-10-20-v4-quai-2/player-pixel-64.png (dossier principal, ignoré par git)",
+        "sha256": "ddaac8592b896cc8d16e141d8d24d809c9ed0e5a31b606c1843e3945e97aa6f9",
         "dimensions": [
           1024,
           1024
         ]
       },
       "usage_api": {
-        "input_tokens": 1353,
+        "input_tokens": 1438,
         "input_tokens_details": {
           "image_tokens": 1024,
-          "text_tokens": 329
+          "text_tokens": 414
         },
         "output_tokens": 7024,
         "output_tokens_details": {
           "image_tokens": 7024,
           "text_tokens": 0
         },
-        "total_tokens": 8377
+        "total_tokens": 8462
       }
     }
   ],
@@ -56,8 +56,8 @@
     ],
     "etapes": [
       "fond cyan et liseré teinté de cyan retirés ; alpha binaire",
-      "pas des pixels d’art mesuré sur les arêtes (3.76 × 3.86 px)",
-      "grille d’art reconstruite : 48 × 70 px d’art par case (couleur majoritaire du cœur de chaque bloc)",
+      "pas des pixels d’art mesuré sur les arêtes (3.18 × 2.9 px)",
+      "figures repérées par les bandes vides ; grille d’art 64 × 96 px d’art par case imposée (décision du responsable), couleur majoritaire du cœur de chaque bloc",
       "pieds alignés sur une même ligne, tête centrée",
       "tons clés : tenue (magenta) et accent (vert) ramenés exactement sur 64, 128, 191, 255",
       "palette : couleurs naturelles réduites à 32 (k-moyennes)",
@@ -66,24 +66,24 @@
   },
   "sortie": {
     "fichier": "public/sprites/player.png",
-    "sha256": "b861c7056fd705232eb405f434953ba5e2ae7b8269463612c530ba509e7aa3b2",
-    "octets": 55916,
+    "sha256": "8dca354976c0e2bd3ff334d6dbef6c2ab4d4823599501d1f3a1418354d57e032",
+    "octets": 97436,
     "entree_du_manifeste": {
       "file": "player.png",
-      "sha256": "b861c7056fd705232eb405f434953ba5e2ae7b8269463612c530ba509e7aa3b2",
+      "sha256": "8dca354976c0e2bd3ff334d6dbef6c2ab4d4823599501d1f3a1418354d57e032",
       "cell": [
-        48,
-        70
+        64,
+        96
       ],
       "cols": 5,
       "rows": 3,
       "pixel": true,
       "scale": 3,
       "anchor": [
-        24,
-        67
+        32,
+        93
       ],
-      "figureH": 62,
+      "figureH": 86,
       "recolor": [
         "tenue",
         "accent"
@@ -94,23 +94,23 @@
     },
     "tons_cles": {
       "tenue": [
-        1185,
-        706,
-        2593,
-        0
+        1087,
+        2142,
+        4329,
+        1762
       ],
       "accent": [
-        77,
-        61,
-        120,
-        105
+        113,
+        165,
+        224,
+        158
       ]
     },
-    "couleurs": 39
+    "couleurs": 40
   },
   "chaine_des_empreintes": [
-    "f9779778276dc19d94cf2c6743e50bff2fc0add4d7582afce6fd207c68c45f9f (feuille brute de l’essai, en entrée)",
-    "b29fd076e4e9cd30ba31e804d54f297d1fb5d0dc7209005c7688e8e9a1c2c7db (brut)",
-    "b861c7056fd705232eb405f434953ba5e2ae7b8269463612c530ba509e7aa3b2 (feuille ×3)"
+    "b29fd076e4e9cd30ba31e804d54f297d1fb5d0dc7209005c7688e8e9a1c2c7db (feuille brute du lot 1, en entrée)",
+    "ddaac8592b896cc8d16e141d8d24d809c9ed0e5a31b606c1843e3945e97aa6f9 (brut)",
+    "8dca354976c0e2bd3ff334d6dbef6c2ab4d4823599501d1f3a1418354d57e032 (feuille ×3)"
   ]
 }

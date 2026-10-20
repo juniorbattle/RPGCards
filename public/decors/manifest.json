@@ -15,20 +15,43 @@
           "approved": false,
           "at": [
             0,
-            -38,
-            -60
+            -54,
+            -90
           ],
-          "width": 130,
+          "width": 176,
           "orient": "face",
           "order": 0,
           "blend": "fondu",
-          "fog": 0
+          "fog": 0,
+          "voile": 0.12
+        },
+        "troisieme-rang": {
+          "file": "quai-troisieme-rang.png",
+          "sha256": "2803fa498e930ce5402d90281907ee15da8da26927b7bd6b017d15fc81d38334",
+          "size": [
+            3072,
+            789
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-troisieme-rang/fiche.json",
+          "approved": false,
+          "at": [
+            0,
+            4,
+            -40
+          ],
+          "width": 88,
+          "orient": "face",
+          "order": 1,
+          "blend": "decoupe",
+          "fog": 0.8,
+          "voile": 0.5
         },
         "second-rang": {
           "file": "quai-second-rang.png",
-          "sha256": "b33760448f9b7b76582389f8b0c7f736ebd9efcf1664515ce1ebd93946032bc3",
+          "sha256": "321ad9f66c9e0b42f088a69fb50aa49fb9e1759abf5b56f2be48478078199cde",
           "size": [
-            1536,
+            3072,
             953
           ],
           "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
@@ -37,17 +60,60 @@
           "at": [
             0,
             0,
-            -14
+            -18
           ],
-          "width": 56,
+          "width": 62,
           "orient": "face",
-          "order": 1,
+          "order": 2,
           "blend": "decoupe",
-          "fog": 0.6
+          "fog": 0.6,
+          "voile": 0.28
+        },
+        "ruelle": {
+          "file": "quai-ruelle.png",
+          "sha256": "013791e05942f12bee7ad88013627c6266b5153cb2fc45d998bab137dc05ec7f",
+          "size": [
+            614,
+            1024
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-ruelle/fiche.json",
+          "approved": false,
+          "at": [
+            -23.74,
+            -1.6,
+            -7
+          ],
+          "width": 4.4,
+          "orient": "face",
+          "order": 4,
+          "blend": "decoupe",
+          "fog": 0.25
+        },
+        "passage": {
+          "file": "quai-passage-parvis.png",
+          "sha256": "bfcf3f25f855c86ab46a36f8a1d769840ef52e9f7fd1b05eb87a832af3916e64",
+          "size": [
+            1024,
+            1014
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-passage-parvis/fiche.json",
+          "approved": false,
+          "at": [
+            22.85,
+            -1.6,
+            -7.5
+          ],
+          "width": 6.6,
+          "orient": "face",
+          "order": 3,
+          "blend": "decoupe",
+          "fog": 0.25
         },
         "facades": {
           "file": "quai-facades.png",
-          "sha256": "a4eb3274bf5da0f9b87c04b6ce619fc5f130a0453b1dc018caa868c790cb5a1b",
+          "sha256": "a788d91c5f2e7d29ddc326458abcd03ef0c0709b9ee1df0ef1ae37355cfc6012",
           "size": [
             3263,
             993
@@ -62,7 +128,7 @@
           ],
           "width": 48,
           "orient": "face",
-          "order": 2,
+          "order": 5,
           "blend": "decoupe",
           "lit": 0.25
         },
@@ -83,7 +149,7 @@
           ],
           "width": 48,
           "orient": "face",
-          "order": 3,
+          "order": 6,
           "blend": "decoupe",
           "lit": 0.3
         },
@@ -104,7 +170,7 @@
           ],
           "width": 48,
           "orient": "face",
-          "order": 4,
+          "order": 7,
           "blend": "decoupe",
           "lit": 0.2
         },
@@ -125,7 +191,7 @@
           ],
           "width": 44.17,
           "orient": "face",
-          "order": 5,
+          "order": 8,
           "blend": "decoupe"
         },
         "eau": {
@@ -145,11 +211,47 @@
           ],
           "width": 64,
           "orient": "sol",
-          "order": 6,
+          "order": 9,
           "blend": "decoupe"
         }
       },
       "lumieres": [
+        {
+          "at": [
+            -21.43,
+            2.6,
+            -5.5
+          ],
+          "color": "Voile",
+          "intensity": 2.2,
+          "radius": 6,
+          "halo": 0,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            20.24,
+            0.92,
+            -7.1
+          ],
+          "color": "ambre",
+          "intensity": 2.2,
+          "radius": 6,
+          "halo": 0.8,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            24.98,
+            1.01,
+            -7.1
+          ],
+          "color": "ambre",
+          "intensity": 2.2,
+          "radius": 6,
+          "halo": 0.8,
+          "flicker": "lantern"
+        },
         {
           "at": [
             -13.35,
@@ -305,31 +407,72 @@
           "radius": 6,
           "halo": 0.9,
           "flicker": "lantern"
-        },
-        {
-          "at": [
-            3.35,
-            2.75,
-            -2.4
-          ],
-          "color": "ambre",
-          "intensity": 2,
-          "radius": 6,
-          "halo": 0.9,
-          "flicker": "lantern"
-        },
-        {
-          "at": [
-            7.31,
-            6.75,
-            -2.4
-          ],
-          "color": "ambre",
-          "intensity": 2,
-          "radius": 6,
-          "halo": 0.9,
-          "flicker": "lantern"
         }
+      ],
+      "camera": {
+        "pitch": 6,
+        "distance": 25,
+        "fov": 42,
+        "aimY": 4.8,
+        "minX": -5,
+        "maxX": 5
+      },
+      "brumes": [
+        [
+          120,
+          12,
+          0,
+          14,
+          -10,
+          0.36,
+          0.006,
+          [
+            6,
+            1.2
+          ],
+          2.2
+        ],
+        [
+          170,
+          20,
+          0,
+          18,
+          -28,
+          0.42,
+          0.005,
+          [
+            5,
+            1.3
+          ],
+          2.2
+        ],
+        [
+          270,
+          34,
+          0,
+          22,
+          -62,
+          0.36,
+          0.004,
+          [
+            4,
+            1.4
+          ],
+          2.2
+        ],
+        [
+          120,
+          2,
+          0,
+          -2.2,
+          6,
+          0.22,
+          0.012,
+          [
+            6,
+            1
+          ]
+        ]
       ]
     }
   }

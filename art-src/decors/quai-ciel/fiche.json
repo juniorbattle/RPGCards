@@ -78,14 +78,15 @@
       "approved": false,
       "at": [
         0,
-        -38,
-        -60
+        -54,
+        -90
       ],
-      "width": 130,
+      "width": 176,
       "orient": "face",
       "order": 0,
       "blend": "fondu",
-      "fog": 0
+      "fog": 0,
+      "voile": 0.12
     }
   },
   "chaine_des_empreintes": [

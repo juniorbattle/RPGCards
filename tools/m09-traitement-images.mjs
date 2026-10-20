@@ -169,6 +169,8 @@ export async function processSheet(arg) {
     if (figures.length !== 15) throw new Error(`feuille : ${figures.length} figures repérées au lieu de 15 (${rows.length} rangées)`);
     const maxW = Math.max(...figures.map((f) => (f[2] - f[0] + 1) / P)); const maxH = Math.max(...figures.map((f) => (f[3] - f[1] + 1) / P));
     cw = Math.min(96, Math.ceil(maxW * 1.5) + 4); ch = Math.min(160, Math.ceil(maxH) + 8);
+    // option `cell` : grille d'art imposée (décision du responsable, passe 60 : 64 × 96)
+    if (o.cell) { cw = o.cell[0]; ch = o.cell[1]; }
     AW = cw * 5; art = new Uint8ClampedArray(AW * ch * 3 * 4);
     figures.forEach((f, k) => {
       const r = Math.floor(k / 5); const col = k % 5;
@@ -404,8 +406,10 @@ export async function findLanterns({ url, from = 0, max = 8 }) {
 export async function composeRow({ parts, density, overlap = 0 }) {
   const imgs = await Promise.all(parts.map(async (p) => { const i = new Image(); i.src = p.url; await i.decode(); return i; }));
   const cl = parts.map((p, k) => Math.round((p.cropL ?? 0) * imgs[k].width));
+  // `cropR` : part retirée à droite (passe 60 : ruelle recadrée sur son centre)
+  const cr = parts.map((p, k) => Math.round((p.cropR ?? 0) * imgs[k].width));
   const ws = parts.map((p) => Math.round(p.worldW * density));
-  const hs = imgs.map((im, k) => Math.round((im.height / (im.width - cl[k])) * ws[k]));
+  const hs = imgs.map((im, k) => Math.round((im.height / (im.width - cl[k] - cr[k])) * ws[k]));
   const ov = Math.round(overlap * density);
   const W = ws.reduce((a, b) => a + b, 0) - ov * (parts.length - 1);
   const H = Math.max(...hs);
@@ -415,7 +419,10 @@ export async function composeRow({ parts, density, overlap = 0 }) {
   imgs.forEach((im, k) => {
     const tmp = new OffscreenCanvas(ws[k], hs[k]); const tg = tmp.getContext('2d', { willReadFrequently: true });
     tg.imageSmoothingQuality = 'high';
-    tg.drawImage(im, cl[k], 0, im.width - cl[k], im.height, 0, 0, ws[k], hs[k]);
+    // `flip` : copie en miroir (rangs du fond répétés pour couvrir la largeur vue, passe 60)
+    if (parts[k].flip) { tg.translate(ws[k], 0); tg.scale(-1, 1); }
+    tg.drawImage(im, cl[k], 0, im.width - cl[k] - cr[k], im.height, 0, 0, ws[k], hs[k]);
+    if (parts[k].flip) tg.setTransform(1, 0, 0, 1, 0, 0);
     if (k > 0 && ov > 0) {
       const d = tg.getImageData(0, 0, ov, hs[k]);
       for (let y = 0; y < hs[k]; y++) for (let xx = 0; xx < ov; xx++) d.data[(y * ov + xx) * 4 + 3] *= (xx + 0.5) / ov;
@@ -580,4 +587,23 @@ export async function fixBanners({ url, banners, seed = 7 }) {
   const blob = await c.convertToBlob({ type: 'image/png' });
   const out = await new Promise((r) => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(blob); });
   return { url: out, done };
+}
+
+/**
+ * Dans la page : ouverture découpée dans une image à fond magenta (arche, porche) : l'intérieur, rectangle et arc de
+ * cercle au-dessus, est peint en magenta pur, puis détouré comme le fond par `processPlate` ; un plan placé derrière
+ * (ruelle) se voit au travers. `rect` [x0, y0, x1, y1] et `arc` { cx, cy, r } en px de l'image brute, mesurés sur
+ * l'image ; `inset` : marge gardée sur la pierre (px).
+ */
+export async function cutOpening({ url, rect, arc, inset = 2 }) {
+  const img = new Image(); img.src = url; await img.decode();
+  const c = new OffscreenCanvas(img.width, img.height); const g = c.getContext('2d');
+  g.drawImage(img, 0, 0);
+  g.fillStyle = '#ff00ff';
+  g.beginPath();
+  g.rect(rect[0] + inset, rect[1], rect[2] - rect[0] - 2 * inset, rect[3] - rect[1]);
+  if (arc) { g.moveTo(arc.cx + arc.r - inset, arc.cy); g.arc(arc.cx, arc.cy, arc.r - inset, 0, Math.PI, true); }
+  g.fill();
+  const blob = await c.convertToBlob({ type: 'image/png' });
+  return new Promise((r) => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(blob); });
 }

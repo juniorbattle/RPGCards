@@ -3,20 +3,20 @@
   "sprites": {
     "player": {
       "file": "player.png",
-      "sha256": "b861c7056fd705232eb405f434953ba5e2ae7b8269463612c530ba509e7aa3b2",
+      "sha256": "8dca354976c0e2bd3ff334d6dbef6c2ab4d4823599501d1f3a1418354d57e032",
       "cell": [
-        48,
-        70
+        64,
+        96
       ],
       "cols": 5,
       "rows": 3,
       "pixel": true,
       "scale": 3,
       "anchor": [
-        24,
-        67
+        32,
+        93
       ],
-      "figureH": 62,
+      "figureH": 86,
       "recolor": [
         "tenue",
         "accent"

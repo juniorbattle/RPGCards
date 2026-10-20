@@ -1,0 +1,102 @@
+{
+  "id": "quai-ruelle",
+  "statut": "porte du Quai (ADR 028), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "auteur": "Claude Code (session V4, passe 57), à la demande du responsable : « Je valide la direction de l’essai. Prépare le lot suivant (plans du Quai et feuille complète du joueur) et annonce-moi ses images et leurs prompts avant de générer. »",
+  "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-quai.mjs",
+  "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production ; aucune analyse juridique faite par l’agent : point à confirmer par le responsable avant tout usage en jeu",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "sources": [
+    {
+      "nom": "quai-ruelle",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-20T02:50:49.793Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1024x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, night palette and warm amber lantern light of the harbour scene (first image); the second image shows, on its left, the stone archway that opens onto the lane to paint. Do not copy their composition.\n\nPaint ONE layer filling the whole image: a narrow cobbled lane seen straight on from its entrance, receding far into the distance in central perspective, its vanishing point slightly above the centre: tall stone and half-timbered houses on both sides leaning slightly inward, laundry lines across the lane, hanging lanterns glowing warm amber, one lantern glowing veil blue, a few lit windows, a small flight of steps going up at the far end, night mist deepening with distance.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-20-v4-quai/quai-facades-ouest.png",
+          "sha256": "a98ab2077882538223808f4ff1d24131643a657c1cf8181258acf17a96fe3929"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-20-v4-quai-2/quai-ruelle.png (dossier principal, ignoré par git)",
+        "sha256": "6494ced83c3cc43add5b3b8f5b22f3dbd44a3ece54722288e31df345533a853e",
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 2847,
+        "input_tokens_details": {
+          "image_tokens": 2560,
+          "text_tokens": 287
+        },
+        "output_tokens": 7024,
+        "output_tokens_details": {
+          "image_tokens": 7024,
+          "text_tokens": 0
+        },
+        "total_tokens": 9871
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs",
+      "tools/m09-porte-quai.mjs"
+    ],
+    "etapes": [
+      "emblèmes inventés par le modèle remplacés par ceux du jeu sur les bannières (fixBanners, tracés de src/art/emblems.ts ; tissu refait de son propre grain), sur le brut, avant tout traitement : quai-ruelle",
+      "image opaque, sans détourage",
+      "recadrée sur son centre (20 % retirés de chaque côté)",
+      "posée derrière l’arche ouest découpée (z -7 m), centrée sur la ligne de vue de la caméra à sa borne ; vue au travers"
+    ]
+  },
+  "sortie": {
+    "fichier": "public/decors/quai-ruelle.png",
+    "sha256": "013791e05942f12bee7ad88013627c6266b5153cb2fc45d998bab137dc05ec7f",
+    "octets": 1422664,
+    "dimensions": [
+      614,
+      1024
+    ],
+    "pose": {
+      "file": "quai-ruelle.png",
+      "sha256": "013791e05942f12bee7ad88013627c6266b5153cb2fc45d998bab137dc05ec7f",
+      "size": [
+        614,
+        1024
+      ],
+      "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+      "fiche": "art-src/decors/quai-ruelle/fiche.json",
+      "approved": false,
+      "at": [
+        -23.74,
+        -1.6,
+        -7
+      ],
+      "width": 4.4,
+      "orient": "face",
+      "order": 4,
+      "blend": "decoupe",
+      "fog": 0.25
+    }
+  },
+  "chaine_des_empreintes": [
+    "6494ced83c3cc43add5b3b8f5b22f3dbd44a3ece54722288e31df345533a853e (brut quai-ruelle)",
+    "013791e05942f12bee7ad88013627c6266b5153cb2fc45d998bab137dc05ec7f (plan)"
+  ]
+}

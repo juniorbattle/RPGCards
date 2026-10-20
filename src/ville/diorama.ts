@@ -10,10 +10,10 @@
  */
 import * as THREE from 'three';
 import { hashString, makeRng } from '../game/engine/rng';
-import { FAM } from './grammaire';
+import { FAM, mistPlane } from './grammaire';
 import type { IlotDef } from './ilots';
 import { COMMON_GLSL, LAMP_WARM, U, surface } from './materiaux';
-import { cobbleRelief, puddleMask } from './quaiMateriaux';
+import { cobbleRelief, mistTexture, puddleMask } from './quaiMateriaux';
 import { LAYER_NOREFLECT } from './reflets';
 import { finish, type LightDef, type QuaiScene } from './scene';
 import { plateRect, type DecorLight, type PreparedDiorama, type PreparedPlate } from './decors';
@@ -27,11 +27,11 @@ void main(){
 
 /**
  * Plan peint : la couleur de l'image (sa lumière peinte), plus, selon `uLit`, la lumière des lanternes du moteur
- * (elle vacille avec elles) ; brume du moteur selon `uFog` ; sortie prémultipliée.
+ * (elle vacille avec elles) ; voile atmosphérique selon `uVoile` ; brume du moteur selon `uFog` ; sortie prémultipliée.
  */
 const PLATE_FRAG = /* glsl */ `
 ${COMMON_GLSL}
-uniform sampler2D tPlate; uniform float uLit; uniform float uFog; uniform float uCut;
+uniform sampler2D tPlate; uniform float uLit; uniform float uFog; uniform float uCut; uniform float uVoile;
 varying vec2 vUv; varying vec3 vWorld; varying vec3 vN;
 void main(){
   vec4 A = texture2D(tPlate, vUv);
@@ -42,6 +42,8 @@ void main(){
     vec3 diff, spec; lightSum(vWorld, N, normalize(cameraPosition - vWorld), 0.6, 12.0, diff, spec);
     c += c * diff * uLit;
   }
+  // voile atmosphérique (passe 60) : vers le bleu de nuit clair de l'air, les rangs lointains s'éclaircissent
+  c = mix(c, uFogColor * 2.2 + uMoonCol * 0.05, uVoile);
   c = mix(c, applyFog(c, vWorld), uFog);
   gl_FragColor = vec4(c * A.a, A.a);
 }`;
@@ -51,7 +53,7 @@ function plateMaterial(p: PreparedPlate): THREE.ShaderMaterial {
   const cut = p.entry.blend === 'decoupe';
   return new THREE.ShaderMaterial({
     name: 'VillePlan',
-    uniforms: { ...U, tPlate: { value: p.texture }, uLit: { value: p.entry.lit ?? 0 }, uFog: { value: p.entry.fog ?? 1 }, uCut: { value: cut ? 0.02 : 0.004 } },
+    uniforms: { ...U, tPlate: { value: p.texture }, uLit: { value: p.entry.lit ?? 0 }, uFog: { value: p.entry.fog ?? 1 }, uCut: { value: cut ? 0.02 : 0.004 }, uVoile: { value: p.entry.voile ?? 0 } },
     vertexShader: PLATE_VERT,
     fragmentShader: PLATE_FRAG,
     transparent: true,
@@ -119,6 +121,14 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
   const lights: LightDef[] = d.lights.map((l) => ({
     x: l.at[0], y: l.at[1], z: l.at[2], intensity: l.intensity, radius: l.radius, halo: l.halo ?? 0, flicker: l.flicker ?? 'lantern', color: lightColor(l.color),
   }));
+  // brume entre les plans (passe 60) : nappes du moteur, comme celles du décor par code
+  const mistMats: THREE.ShaderMaterial[] = [];
+  if (d.mists.length) {
+    const tex = mistTexture(artSeed);
+    textures.push(tex);
+    for (const m of d.mists) { const { mesh, mat } = mistPlane(tex, m); meshes.push(mesh); mistMats.push(mat); }
+  }
   const base = finish(scene, { build: (into) => { for (const m of meshes) into.add(m); return meshes.length; } }, lights, [], textures);
-  return base;
+  if (!mistMats.length) return base;
+  return { ...base, update: (time: number) => { base.update(time); for (const mm of mistMats) mm.uniforms.uT!.value = time; } };
 }
