@@ -1,0 +1,187 @@
+{
+  "id": "player-pixel-essai",
+  "statut": "essai technique de la porte V4 (ADR 028), NON APPROUVÉ par le responsable ; hors du jeu et du build (vérifié en QA dans une copie temporaire du build, approved: false)",
+  "lot": "2026-10-19-v4-essai (2 images sur le budget de 30 de la porte du Quai)",
+  "auteur": "Claude Code (session V4, passe 56), à la demande du responsable (feu vert relayé par la session principale le 2026-10-19 : « Lance l’essai technique de 2 images (porte du Quai, ADR 028) […] annonce-moi les 2 images avant de générer »)",
+  "generation": {
+    "script": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite)",
+    "aseprite": "non utilisé : traitement par scripts Node et canvas (tools/m09-essai-v4.mjs)"
+  },
+  "fond_transparent": "demandé d’abord (background: transparent) : refusé par l’API, « HTTP 400 Transparent background is not supported for this model », aucune image produite ; repli annoncé : fond uni demandé dans le prompt puis détouré par script",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production (2026-10-19) ; aucune analyse juridique faite par l’agent : point à confirmer par le responsable avant tout usage en jeu",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans le prompt",
+  "modele": "gpt-image-2",
+  "point_d_acces": "/v1/images/edits",
+  "date": "2026-10-19T23:54:12.182Z",
+  "parametres": {
+    "model": "gpt-image-2",
+    "size": "1024x1024",
+    "quality": "high",
+    "output_format": "png",
+    "n": 1
+  },
+  "prompt": "Use the attached image only as a palette and mood reference (night harbour, cold slate tones, warm amber accents); do not copy its composition and do not paint any scenery.\n\nA pixel-art character sprite sheet for a side-scrolling 2.5D game: an exact grid of 5 columns and 3 rows of equal cells, with nothing between the cells, on a perfectly flat, uniform pure cyan (#00FFFF) background with no shading and no texture. The same character in every cell, same size, feet resting on the same baseline near the bottom of each cell, the figure centred horizontally. Row 1: facing the viewer. Row 2: seen from the back. Row 3: right profile, walking to the right. Column 1: standing still; columns 2 to 5: four frames of a walking cycle (alternating legs, slight arm swing).\n\nThe character: a young card duellist with moderate chibi proportions (head about one third of the height), silver-white hair cut in a straight bob with a fringe, blue eyes, a cloth headband, a hood lowered onto the shoulders, a long travel coat with ivory trims and a belt, dark trousers and boots, a brown leather satchel worn across the body, no weapon. Placeholder colours for in-game recolouring: paint the coat and the lowered hood in flat shades of pure magenta (from dark #400040 to light #FF00FF, no other hue mixed in) and the headband and scarf in flat shades of pure green (from #004000 to #00FF00); everything else in natural colours, with no other magenta or green anywhere.\n\nTrue low-resolution pixel art: each cell is about 48 pixels wide and 80 pixels tall in art pixels, enlarged with nearest-neighbour so every art pixel is a crisp square of the same size; a one-pixel dark outline around the figure; flat colour areas with at most three shades each; no anti-aliasing, no gradients, no blur, no soft shadows, no drop shadow on the ground.\n\nNo text, no letters, no numbers, no grid lines, no labels, no watermark, no logos, no playing-card suit symbols.",
+  "entrees": [
+    {
+      "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+      "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633",
+      "octets": 2174826
+    }
+  ],
+  "brut": {
+    "fichier": "art-gen/2026-10-19-v4-essai/player-pixel-essai.png (dossier principal, ignoré par git)",
+    "sha256": "f9779778276dc19d94cf2c6743e50bff2fc0add4d7582afce6fd207c68c45f9f",
+    "octets": 1106911,
+    "dimensions": [
+      1024,
+      1024
+    ],
+    "type_couleur_png": 2
+  },
+  "usage_api": {
+    "input_tokens": 1993,
+    "input_tokens_details": {
+      "image_tokens": 1536,
+      "text_tokens": 457
+    },
+    "output_tokens": 7024,
+    "output_tokens_details": {
+      "image_tokens": 7024,
+      "text_tokens": 0
+    },
+    "total_tokens": 9017
+  },
+  "duree_ms": 95900,
+  "usage": "feuille du duelliste joueur en pixel art (contrat v3 : pixel: true, grille d’art 52 × 86 par case, agrandissement 3, ancrage [26,83], figure 59 px d’art, tons clés tenue et accent)",
+  "traitement": {
+    "script": "tools/m09-essai-v4.mjs, processSheet",
+    "etapes": [
+      "fond cyan détouré : min(G, B) − R ≥ 120, et liseré teinté de cyan (teinte 165–200°, saturation > 0,35) retiré ; alpha binaire",
+      "pas des pixels d’art mesuré sur les arêtes de couleur (3.98 × 3.925 px ; résultantes 0.193 et 0.175 : grille du modèle irrégulière)",
+      "chaque case ramenée à sa grille d’art : couleur majoritaire (5 bits par canal) du cœur de chaque bloc",
+      "alignement : pieds sur la ligne de base commune, tête (35 % du haut de la figure) centrée ; aucun pixel rogné",
+      "tons clés : tenue (teinte 280–345°) et accent (85–165°) ramenés sur 64, 128, 191, 255 par la valeur rapportée à la plus claire (98e centile)",
+      "palette : couleurs naturelles réduites à 32 par k-moyennes (16 tours) ; aucune couleur naturelle égale à un ton clé",
+      "agrandissement ×3 au plus proche"
+    ],
+    "sortie": {
+      "x1": {
+        "fichier": "player-pixel-essai-x1.png",
+        "sha256": "d224afe3f716da674bfdc5e963ad4eb3f04a9984e3d0059bdd4c8fcda2ba2df2",
+        "bytes": 33503
+      },
+      "x3": {
+        "fichier": "player-pixel-essai-x3.png",
+        "sha256": "bb69eb6b92f3a3a70896931509e1e40ad4e24e5de87ba6c0d1b4667136f15929",
+        "bytes": 65265
+      },
+      "grille_art": [
+        52,
+        86
+      ],
+      "ancrage": [
+        26,
+        83
+      ],
+      "figureH": 59,
+      "tons_cles": {
+        "tenue": [
+          423,
+          1458,
+          2043,
+          327
+        ],
+        "accent": [
+          47,
+          145,
+          118,
+          70
+        ]
+      },
+      "couleurs": 40,
+      "decalages": [
+        {
+          "dx": 0,
+          "dy": 13,
+          "h": 59
+        },
+        {
+          "dx": 1,
+          "dy": 12,
+          "h": 59
+        },
+        {
+          "dx": 2,
+          "dy": 12,
+          "h": 59
+        },
+        {
+          "dx": 3,
+          "dy": 12,
+          "h": 59
+        },
+        {
+          "dx": 2,
+          "dy": 12,
+          "h": 59
+        },
+        {
+          "dx": 0,
+          "dy": 18,
+          "h": 59
+        },
+        {
+          "dx": 1,
+          "dy": 18,
+          "h": 58
+        },
+        {
+          "dx": 2,
+          "dy": 18,
+          "h": 58
+        },
+        {
+          "dx": 3,
+          "dy": 18,
+          "h": 58
+        },
+        {
+          "dx": 2,
+          "dy": 18,
+          "h": 58
+        },
+        {
+          "dx": 1,
+          "dy": 25,
+          "h": 58
+        },
+        {
+          "dx": 1,
+          "dy": 24,
+          "h": 58
+        },
+        {
+          "dx": 2,
+          "dy": 24,
+          "h": 58
+        },
+        {
+          "dx": 3,
+          "dy": 24,
+          "h": 58
+        },
+        {
+          "dx": 3,
+          "dy": 24,
+          "h": 58
+        }
+      ]
+    }
+  },
+  "chaine_des_empreintes": [
+    "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633 (référence 02.png)",
+    "f9779778276dc19d94cf2c6743e50bff2fc0add4d7582afce6fd207c68c45f9f (brut)",
+    "d224afe3f716da674bfdc5e963ad4eb3f04a9984e3d0059bdd4c8fcda2ba2df2 (feuille ×1)",
+    "bb69eb6b92f3a3a70896931509e1e40ad4e24e5de87ba6c0d1b4667136f15929 (feuille ×3)"
+  ]
+}

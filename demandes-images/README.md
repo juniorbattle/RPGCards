@@ -47,7 +47,10 @@ La session principale surveille `origin/main`, génère les images, puis :
 > stylisé : décor peint au grain fin (pierre détaillée, grappes de lanternes ambrées, ville haute en arrière-plan),
 > personnages et accessoires en pixel art net, bannières et accents aux couleurs des quatre familles, emblèmes du jeu ;
 > vue de face (jamais de dessus ni isométrique). Pour un plan de décor : un seul plan de profondeur par image, sans
-> personnage, éclairage de nuit peint, aucun texte.
+> personnage, éclairage de nuit peint, aucun texte. **gpt-image-2 refuse le fond transparent** (essai, passe 56) : pour une
+> image détourée, demander un fond uni absent du sujet (« a perfectly flat, uniform pure magenta (#FF00FF) background »
+> pour un décor, cyan pour un personnage), détouré ensuite par script ; prompts de l'essai dans
+> `art-src/decors/quai-facades-essai/fiche.json` et `art-src/sprites/player-essai/fiche.json`.
 
 > *Historique* — **Direction D (décision du responsable, 2026-10-19, ADR 026)** : pour la ville, illustration de carte encrée (contours
 > à l'encre, aplats à une ou deux ombres, hachures fines dans les ombres, grain de papier) et couleurs des quatre

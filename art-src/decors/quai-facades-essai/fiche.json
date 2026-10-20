@@ -1,0 +1,121 @@
+{
+  "id": "quai-facades-essai",
+  "statut": "essai technique de la porte V4 (ADR 028), NON APPROUVÉ par le responsable ; hors du jeu et du build (vérifié en QA dans une copie temporaire du build, approved: false)",
+  "lot": "2026-10-19-v4-essai (2 images sur le budget de 30 de la porte du Quai)",
+  "auteur": "Claude Code (session V4, passe 56), à la demande du responsable (feu vert relayé par la session principale le 2026-10-19 : « Lance l’essai technique de 2 images (porte du Quai, ADR 028) […] annonce-moi les 2 images avant de générer »)",
+  "generation": {
+    "script": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite)",
+    "aseprite": "non utilisé : traitement par scripts Node et canvas (tools/m09-essai-v4.mjs)"
+  },
+  "fond_transparent": "demandé d’abord (background: transparent) : refusé par l’API, « HTTP 400 Transparent background is not supported for this model », aucune image produite ; repli annoncé : fond uni demandé dans le prompt puis détouré par script",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production (2026-10-19) ; aucune analyse juridique faite par l’agent : point à confirmer par le responsable avant tout usage en jeu",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans le prompt",
+  "modele": "gpt-image-2",
+  "point_d_acces": "/v1/images/edits",
+  "date": "2026-10-19T23:52:26.453Z",
+  "parametres": {
+    "model": "gpt-image-2",
+    "size": "1536x1024",
+    "quality": "high",
+    "output_format": "png",
+    "n": 1
+  },
+  "prompt": "Use the attached image only as the style reference: match its painterly HD-2D look, fine grain, detailed cold stone masonry, dark timber, night palette and warm amber lantern light. Do not copy its composition.\n\nPaint ONE isolated background layer for a side-scrolling 2.5D night harbour street, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): three attached harbour buildings standing side by side and filling the full width of the image. From left to right: (1) the card-duel hall, the tallest, built of large stone blocks, with a tall arched double door at ground level, four vertical cloth banners hanging above the door, one per family colour (ember orange, veil blue with silver, bramble green, star gold), each banner showing a single simple abstract emblem (a flame, a crescent veil, a thorned branch, an eight-pointed star), and a round stained-glass window high on the gable; (2) a narrow half-timbered house with an overhanging upper floor, a small shop window with a desaturated ivory canvas awning at ground level, and a plain wooden door; (3) the harbour tavern: stone ground floor with a warm glowing arched entrance, timber upper floor with a small wooden balcony, warm lit windows, and an iron bracket holding a lantern-shaped sign with no lettering. Clusters of amber lanterns on wall brackets beside the doors. Slate roofs with chimneys and dormers along the top. The bottom edge of the image is the straight horizontal line where the walls meet the street; the street itself is not shown. The buildings fill about 85% of the image height; everything above the roofs is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading and no texture: no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no street paving, no water, no boats, no foreground objects, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+  "entrees": [
+    {
+      "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+      "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633",
+      "octets": 2174826
+    }
+  ],
+  "brut": {
+    "fichier": "art-gen/2026-10-19-v4-essai/quai-facades-essai.png (dossier principal, ignoré par git)",
+    "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec",
+    "octets": 2657416,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "type_couleur_png": 2
+  },
+  "usage_api": {
+    "input_tokens": 2075,
+    "input_tokens_details": {
+      "image_tokens": 1536,
+      "text_tokens": 539
+    },
+    "output_tokens": 5488,
+    "output_tokens_details": {
+      "image_tokens": 5488,
+      "text_tokens": 0
+    },
+    "total_tokens": 7563
+  },
+  "duree_ms": 71849,
+  "usage": "plan de décor « façades du centre du Quai » (salle de jeu de cartes, maison étroite, le Fanal), posé sur le plan pur du Quai, x de −10,6 à 11,2 m, z −2,98 m",
+  "traitement": {
+    "script": "tools/m09-essai-v4.mjs, processPlate",
+    "etapes": [
+      "alpha tiré de l’écart au magenta m = min(R, B) − G (opaque sous 45, transparent au-dessus de 205, linéaire entre) ; alpha < 0,04 → 0",
+      "couleur des bords démêlée du fond : F = (C − (1 − a)·(255, 0, 255)) / a",
+      "recadrage : bas sur la dernière rangée opaque à plus de 50 % (pied des murs), côtés sur les colonnes opaques à plus de 30 %, haut sur la première rangée non vide",
+      "lanternes peintes repérées (taches ambrées du rez-de-chaussée, blocs de 4 × 4 px) pour y poser les lumières du moteur"
+    ],
+    "sortie": {
+      "fichier": "quai-facades-essai.png",
+      "sha256": "b020b9075bb15436b20eb74e7f984affc41ba24207e83fb8a85bcad855fa7c1a",
+      "octets": 2882060,
+      "dimensions": [
+        1477,
+        990
+      ],
+      "recadrage": {
+        "left": 18,
+        "top": 18,
+        "right": 1494,
+        "bottom": 1007
+      },
+      "part_transparente": 0.214,
+      "pixels_opaques_teintes_de_magenta": 980,
+      "lanternes": [
+        [
+          471,
+          751
+        ],
+        [
+          67,
+          812
+        ],
+        [
+          1082,
+          538
+        ],
+        [
+          1287,
+          828
+        ],
+        [
+          119,
+          749
+        ],
+        [
+          534,
+          816
+        ],
+        [
+          945,
+          804
+        ],
+        [
+          1213,
+          532
+        ]
+      ]
+    }
+  },
+  "chaine_des_empreintes": [
+    "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633 (référence 02.png)",
+    "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec (brut)",
+    "b020b9075bb15436b20eb74e7f984affc41ba24207e83fb8a85bcad855fa7c1a (plan détouré)"
+  ]
+}

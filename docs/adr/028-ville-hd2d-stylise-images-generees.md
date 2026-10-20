@@ -3,8 +3,9 @@
 Date : 2026-10-19
 Statut : **APPROUVÉ par le responsable** (fiche d'arbitrages interactive du 2026-10-19,
 <https://claude.ai/artifact/J34iVbgwRjWJVxQwdJQGL3>, onze entrées, choix entre 21:35 et 21:41 UTC) ; **code préalable à
-la porte fait** (passe 55 : plans de décor et feuilles en pixel art, voir « Conséquences faites ») ; **production pas
-commencée** : essai technique (2 images, à annoncer) puis porte sur le Quai (30 images au plus). **Remplace l'ADR 026** comme direction artistique de la
+la porte fait** (passe 55 : plans de décor et feuilles en pixel art, voir « Conséquences faites ») ; **essai technique
+fait** (passe 56 : 2 images sur 30, non approuvées, voir « Essai technique ») ; ensuite, sur décision du responsable,
+plans du Quai et feuille complète du duelliste joueur (28 images au plus). **Remplace l'ADR 026** comme direction artistique de la
 ville ; **amende l'ADR 027** (D2, D3, D4, D10) et l'exception d'AGENTS (décors de la ville) ; s'inscrit dans l'ADR 024
 (caméra de face ; la Grande Cour la règle plus haute, dans la plage décidée).
 
@@ -147,3 +148,36 @@ ville sans manifeste sont identiques au pixel près au build de départ (`245a66
 - **Non fait** : l'essai technique (2 images, à annoncer au responsable avant de générer), les plans réels du Quai et
   la feuille du duelliste joueur ; selon l'essai : exposition des plans peints, brume en nappes devant les plans,
   accessoires en sprites, recherche d'une clé dans `dist/` à la première image réelle ; la Grande Cour (V5).
+
+## Essai technique (passe 56, 2026-10-19)
+
+Feu vert du responsable, relayé par la session principale : « Lance l'essai technique de 2 images (porte du Quai,
+ADR 028) […] annonce-moi les 2 images avant de générer ». Deux images annoncées avec leurs prompts complets, puis
+générées par `tools/m09-generer-images.mjs` (gpt-image-2, `/v1/images/edits`, qualité `high`, la référence `02.png`
+en image d'entrée), traitées par `tools/m09-essai-v4.mjs`, vérifiées en QA dans une copie temporaire du build
+(`approved: false`) ; fiches `art-src/decors/quai-facades-essai/fiche.json` et `art-src/sprites/player-essai/fiche.json` ;
+planche `screenshots/qa/m09/v4-essai/planche-essai-v4.png` ; JOURNAL passe 56. **Budget : 2 images sur 30.**
+
+- **Fond transparent refusé** par l'API pour gpt-image-2 (« HTTP 400 Transparent background is not supported for this
+  model », aucune image produite). Repli annoncé et retenu pour la production : **fond uni demandé dans le prompt**,
+  magenta pour les décors, cyan pour les personnages (couleurs absentes du sujet), **détouré par script**. Plan : alpha
+  tiré de l'écart au magenta, bords démêlés du fond, 21 % de pixels transparents, 980 pixels opaques encore teintés sur
+  1,46 million. Feuille : alpha binaire après retrait du liseré teinté de cyan.
+- **Plan de décor** (façades du centre du Quai : salle de jeu, maison étroite, le Fanal) : élévation de face respectée,
+  cohérente avec la référence (pierre détaillée, colombages, grappes de lanternes, bannières des quatre familles avec
+  leurs emblèmes, aucun texte) ; posé sur le plan pur (x de −10,6 à 11,2 m), 1 477 px pour 21,8 m, soit la densité de
+  l'écran en 1920 × 1080 à cette profondeur (≈ 70 px/m) : net, sans agrandissement visible ; portes peintes à moins
+  d'un mètre environ des portes du plan pur (estimé sur l'image) ; huit lanternes peintes repérées par script, une
+  lumière du moteur posée sur chacune ; 55 Mo de mémoire GPU pour le diorama de l'essai (plan généré et plans de
+  preuve). **Le plan généré fait 1 536 px de large : la rue entière (≈ 39 m) demande deux ou trois images par plan,
+  assemblées par script.** La cohérence entre plans n'est pas éprouvée (un seul plan généré).
+- **Feuille du duelliste joueur** : grille 5 × 3 respectée, même personnage dans les quinze cases, marche lisible ; le
+  « pixel art » du modèle a une grille irrégulière (pas de 3,98 × 3,93 px, faible régularité) : les scripts reconstruisent
+  la grille d'art (52 × 86 px d'art par case), alignent les pieds, réduisent la palette (32 couleurs naturelles et les
+  tons clés, 40 couleurs) et ramènent exactement la tenue (magenta) et l'accent (vert) sur les tons clés ; contrat v3
+  accepté sans refus, recoloration par famille vérifiée (Cendre, Voile). À l'écran, **×3,0 en 1920 × 1080** (figure de
+  59 px d'art pour 177 px) avec la hauteur actuelle des personnages du Quai (`walkerH` 2,2 m), donc ≈ ×2 en
+  1280 × 720 : la grille d'art de 52 × 86 et `walkerH` conviennent à un agrandissement entier.
+- **Non tranché, pour le responsable** : la direction de ces deux images (planche : référence | Quai actuel | essai) ;
+  le lancement de la production des plans du Quai (ciel et ville haute, second rang, façades en deux ou trois images,
+  rue et accessoires, premier plan, eau) et de la feuille complète du joueur, dans les 28 images restantes.
