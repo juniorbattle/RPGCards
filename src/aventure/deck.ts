@@ -9,7 +9,7 @@ import { CATALOG, FAMILIES, type Family, type OrdinaryRank } from '../game/catal
 import { TECHNIQUE_IDS, type TechniqueId } from '../game/catalog/techniques';
 import type { GameConfig } from '../game/model/types';
 import { validateDeck, type DeckChoice } from '../product/deck';
-import { isNeutre, NEUTRES, RANGS, rangNeutre, SIGNATURE_PRET, TECHNIQUES_RUE } from './modele';
+import { deF, isNeutre, NEUTRES, RANGS, rangNeutre, SIGNATURE_PRET, TECHNIQUES_RUE } from './modele';
 import type { CollectionAv } from './registre';
 
 export interface DeckAv {
@@ -43,7 +43,7 @@ export function validerDeckAv(d: DeckAv, col: CollectionAv): ProblemeDeck[] {
     parRang[def.rank!]! += 1;
     if (ids.has(def.identity)) out.push({ code: 'double', text: `Deux versions de ${def.name} : une seule par identité.` });
     ids.add(def.identity);
-    if (!col.basics.includes(def.family)) out.push({ code: 'non-possedee', text: `${def.name} : cartes de la ${def.family} non possédées.` });
+    if (!col.basics.includes(def.family)) out.push({ code: 'non-possedee', text: `${def.name} : cartes ${deF(def.family)} non possédées.` });
     else if (def.rarity !== 'Basic' && !col.variantes.includes(c)) out.push({ code: 'non-possedee', text: `${def.name} — variante non possédée.` });
   }
   for (const r of RANGS) {

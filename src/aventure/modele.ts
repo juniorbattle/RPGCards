@@ -155,3 +155,14 @@ export const PV_JOUEUR = 90;
 export const SIGNATURE_PRET: Family = 'Cendre';
 
 export const familles = (): Family[] => [...FAMILIES];
+
+/** Articles : la Cendre, le Voile, la Ronce, l'Astre (« de la Cendre », « du Voile », « de l'Astre »). */
+const ART: Record<Family, { le: string; de: string; a: string }> = {
+  Cendre: { le: 'la Cendre', de: 'de la Cendre', a: 'à la Cendre' },
+  Voile: { le: 'le Voile', de: 'du Voile', a: 'au Voile' },
+  Ronce: { le: 'la Ronce', de: 'de la Ronce', a: 'à la Ronce' },
+  Astre: { le: 'l’Astre', de: 'de l’Astre', a: 'à l’Astre' },
+};
+export const leF = (f: Family): string => ART[f].le;
+export const deF = (f: Family): string => ART[f].de;
+export const aF = (f: Family): string => ART[f].a;

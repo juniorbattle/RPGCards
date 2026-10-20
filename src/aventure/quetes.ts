@@ -4,7 +4,7 @@
  */
 import { FAMILIES } from '../game/catalog/cards';
 import { chapitre, statutDefi, type AventureEtat } from './aventure';
-import { emissaire, figureDe, KAI_PROLOGUE, MAISONS, ROLES } from './modele';
+import { deF, emissaire, figureDe, KAI_PROLOGUE, MAISONS, ROLES } from './modele';
 import { aGain } from './registre';
 
 export interface Quete {
@@ -20,7 +20,7 @@ export function objectif(e: AventureEtat): string {
   if (e.prologue === null) return `${KAI_PROLOGUE.nom} vous a défié. Retournez le voir pour relever le défi.`;
   if (e.affiliation === null) {
     const p = e.premier ? emissaire(e.premier) : null;
-    if (p && !e.scenes.includes('P6')) return `${p.nom}, de la ${p.famille}, veut vous parler.`;
+    if (p && !e.scenes.includes('P6')) return `${p.nom}, ${deF(p.famille)}, veut vous parler.`;
     return 'Quatre familles vous ont invité. Rendez visite à leurs émissaires et choisissez votre voie.';
   }
   const f = e.affiliation;
@@ -57,7 +57,7 @@ export function quetes(e: AventureEtat): Quete[] {
   if (f) out.push({ id: `maison:${f}`, titre: `La maison — ${MAISONS[f].nom}`, type: 'principale', etapes: ROLES.map((r) => { const fig = figureDe(f, r); return { texte: `Battre ${fig.nom}, ${fig.titre}`, faite: e.vaincues.includes(fig.id) }; }) });
   for (const x of FAMILIES) {
     if (x === f || (e.familles[x] !== 'defiee' && e.familles[x] !== 'chef')) continue;
-    out.push({ id: `voie:${x}`, titre: `La voie de la ${x}`, type: 'famille', etapes: [{ texte: 'Défi officiel engagé', faite: aGain(e.registre, `basics:${x}`) }, ...ROLES.map((r) => { const fig = figureDe(x, r); return { texte: `Battre ${fig.nom}`, faite: e.vaincues.includes(fig.id) }; })] });
+    out.push({ id: `voie:${x}`, titre: `La voie ${deF(x)}`, type: 'famille', etapes: [{ texte: 'Défi officiel engagé', faite: aGain(e.registre, `basics:${x}`) }, ...ROLES.map((r) => { const fig = figureDe(x, r); return { texte: `Battre ${fig.nom}`, faite: e.vaincues.includes(fig.id) }; })] });
   }
   return out;
 }

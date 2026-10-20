@@ -8,7 +8,7 @@
  */
 import { CATALOG, FAMILIES, type Family } from '../game/catalog/cards';
 import { TECHNIQUE_IDS, type TechniqueId } from '../game/catalog/techniques';
-import { COPIES_NEUTRES, RANGS } from './modele';
+import { COPIES_NEUTRES, deF, RANGS } from './modele';
 
 export type GainKind = 'neutres' | 'basics' | 'variante' | 'signature' | 'technique';
 
@@ -50,7 +50,7 @@ export function accorder(reg: readonly Gain[], g: Gain): { registre: Gain[]; nou
   if (g.kind === 'variante') {
     const d = CATALOG[g.items[0]!];
     if (!d || d.rarity === 'Basic' || d.signature) return { registre: [...reg], nouveau: false, refus: `Variante inconnue : ${g.items[0]}.` };
-    if (!aGain(reg, `basics:${d.family}`)) return { registre: [...reg], nouveau: false, refus: `Variante de ${d.name} refusée : les cartes de base de la ${d.family} ne sont pas possédées.` };
+    if (!aGain(reg, `basics:${d.family}`)) return { registre: [...reg], nouveau: false, refus: `Variante de ${d.name} refusée : les cartes de base ${deF(d.family)} ne sont pas possédées.` };
   }
   return { registre: [...reg, structuredClone(g)], nouveau: true };
 }
