@@ -13,6 +13,7 @@ import { chapitre, statutDefi, type AventureEtat } from './aventure';
 import { deF, emissaire, FIGURES, KAI_PROLOGUE } from './modele';
 import { ELITE_JOUTE, MEMBRES_EPREUVE } from './competitions';
 import { aGain } from './registre';
+import { personalityById } from '../presentation/personalities';
 
 export interface PlaceRencontre { ilot: IlotId; at: { x: number; z: number }; facing: Facing }
 
@@ -117,12 +118,12 @@ export const RENCONTRES: readonly RencontreDef[] = [
   // d'élite de la Joute, posés dans le quartier de leur famille dès qu'elles sont ouvertes (pas de tirage).
   ...(['Cendre', 'Ronce', 'Voile', 'Astre'] as const).flatMap((f): RencontreDef[] => [
     {
-      id: `epreuve-${f}`, genre: 'competition', apparence: MEMBRES_EPREUVE[f][0], nom: `l’organisatrice de l’Épreuve ${deF(f)}`,
+      id: `epreuve-${f}`, genre: 'competition', apparence: MEMBRES_EPREUVE[f][0], nom: `${personalityById(MEMBRES_EPREUVE[f][0])?.gender === 'f' ? 'l’organisatrice' : 'l’organisateur'} de l’Épreuve ${deF(f)}`,
       lieux: [PLACES_EPREUVE[f]], dispo: (e) => aGain(e.registre, `basics:${f}`), delai: 0, poids: 1,
       repere: (e) => (e.competitions.epreuves[f]?.gagnee ? null : '!'),
     },
     {
-      id: `joute-${f}`, genre: 'competition', apparence: ELITE_JOUTE[f], nom: `le champion de la Joute ${deF(f)}`,
+      id: `joute-${f}`, genre: 'competition', apparence: ELITE_JOUTE[f], nom: `${personalityById(ELITE_JOUTE[f])?.gender === 'f' ? 'la championne' : 'le champion'} de la Joute ${deF(f)}`,
       lieux: [PLACES_JOUTE[f]], dispo: (e) => e.vaincues.includes(`brasDroit-${f}`), delai: 0, poids: 1,
       repere: (e) => (e.competitions.joutes[f]?.gagnee ? null : '!'),
     },

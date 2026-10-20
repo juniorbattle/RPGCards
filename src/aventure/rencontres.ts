@@ -91,7 +91,7 @@ export function duelEpreuve(f: Family, etape: number, deck: DeckAv, seed: number
 /** Duel de la Joute de la maison (contrainte de construction vérifiée avant le duel). */
 export function duelJoute(f: Family, deck: DeckAv, seed: number, rejouee: boolean): DuelPrevu {
   const id = ELITE_JOUTE[f];
-  const p = personnalite(id, { nom: personalityById(id)!.name, titre: `champion de la Joute ${deF(f)}`, famille: f });
+  const p = personnalite(id, { nom: personalityById(id)!.name, titre: `${personalityById(id)!.gender === 'f' ? 'championne' : 'champion'} de la Joute ${deF(f)}`, famille: f });
   return {
     rencontre: `joute:${f}`, titre: `Joute de la maison ${deF(f)} — ${p.name}`, personnalite: p, venue: VENUE_DE[f], enjeu: rejouee ? null : varianteDe(f, 2),
     config: { seed, players: { p1: siegePret(deck, 'Vous', PV_JOUEUR), p2: { name: p.name, hp: 80, signature: f, variants: famVariants(f, [3, 4]), techniques: [...p.techniques] } } },
