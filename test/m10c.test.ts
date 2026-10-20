@@ -202,7 +202,8 @@ describe('M10-C — parcours complet d’une famille d’accueil (test paramétr
     // l'issue se consigne comme pour un duel joué d'une traite : variante IV à la victoire seulement
     const issue = repris.state.winner === 'p1' ? 'victoire' : 'defaite';
     const fin = appliquer(l.save.etat, { type: 'duelStructurant', figure: 'brasDroit-Voile', issue, duel: d.id }, AT);
-    expect(fin.gains.map((g) => g.key)).toEqual(issue === 'victoire' ? ['variante:Voile-4-mirage'] : []);
+    const enjeu = figureDe('Voile', 'brasDroit').enjeu;
+    expect(fin.gains.map((g) => g.key)).toEqual(issue === 'victoire' && enjeu.kind === 'variante' ? [`variante:${enjeu.defId}`] : []);
   });
 });
 
