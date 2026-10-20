@@ -1,4 +1,4 @@
-// M10-B (provisoire) — parcours du prototype du mode Aventure (`?aventure=1`) par l’interface, captures à chaque étape :
+// M10-A/B (provisoire) — parcours du prototype du mode Aventure (`?aventure=1`) par l’interface, captures à chaque étape :
 // écran titre → Nouvelle aventure (16 neutres) → le Quai → Kaï (« Pas maintenant », puis défi) → préparation (bandeau du
 // deck de prêt) → duel → rechargement pendant le duel → reprise exacte (hash) → abandon → résultat → la foule → premier
 // émissaire → « Chercher une autre voie » → les Ruelles → Lior → confirmation → « Revenir » (rien reçu) → confirmation →
@@ -228,6 +228,40 @@ try {
   }
   e = await etat();
   check(e.registre.some((g) => g.key === 'variante:Ronce-1-racine') && e.competitions.epreuves.Ronce.gagnee, 'Épreuve du quartier de la Ronce : trois victoires, variante I au registre');
+  // ARB-M10-12 : le Quai de l’aventure est le Quai en quatre rangs (diorama admis : en QA) ; avec le décor par code,
+  // l’ancien Quai en secours
+  const rangs = await av(() => window.__lqvAventure.quaiRangs);
+  const attendu = !/decors=code/.test(QS);
+  check(rangs === attendu, `Quai de l’aventure : ${rangs ? 'le Quai en quatre rangs (ARB-M10-12)' : 'l’ancien Quai, dessiné par code (secours)'}`);
+  check((await p.textContent('[data-key="ville-place"]')) === 'Le Quai', 'HUD : « Le Quai »');
+  if (rangs) {
+    const dr = await av(() => { const r = window.__lqvAventure.town.decorReport(); return { world: r.world, ilot: r.ilot, loaded: r.loaded, plans: r.unapproved.length }; });
+    check(dr.world === 'diorama' && dr.ilot === 'quai', `Quai en rangs : diorama des rangs affiché (${dr.plans} plans non approuvés, QA seulement)`);
+    // marche réelle (clavier) au travers du passage ouest, du Quai jusqu’à la rue Haute
+    await av(() => window.__lqvAventure.town.place({ x: -12.1, z: -1.8 }, 'dos'));
+    await p.waitForTimeout(400);
+    await p.keyboard.down('KeyW');
+    await p.waitForTimeout(4200);
+    await p.keyboard.up('KeyW');
+    const zr = await av(() => window.__lqvAventure.town.walker().pos.z);
+    check(zr < -11, `marche au clavier au travers du passage ouest jusqu’à la rue Haute (z ${zr.toFixed(1)})`);
+    await shot('rang-2-rue-haute', 1500);
+    // Mère Aubépine, cheffe de la Ronce, attend dans la ruelle des Lanternes (troisième rang)
+    await parler('chef-Ronce');
+    const za = await av(() => window.__lqvAventure.town.walker().pos.z);
+    check(za < -25 && /Pas encore/.test(await p.textContent('.ville-dialog')), `Mère Aubépine dans la ruelle des Lanternes (rang 3, z ${za.toFixed(1)}) ; défi pas encore ouvert`);
+    await shot('rang-3-aubepine');
+    await p.click('[data-key="dlg-close"]');
+    for (const [sp, nom] of [['placette-puits', 'rang-3-placette-puits'], ['cour-chapelle', 'rang-4-cour-chapelle']]) {
+      await av((x) => { const t = window.__lqvAventure.town; t.place(t.ilot.spawns[x], t.ilot.spawns[x].face); }, sp);
+      await shot(nom, 1800);
+    }
+  } else {
+    await parler('chef-Ronce');
+    const za = await av(() => window.__lqvAventure.town.walker().pos.z);
+    check(za > -3.5, `secours : Mère Aubépine devant le Fanal, sur l’ancien Quai (z ${za.toFixed(1)})`);
+    await p.click('[data-key="dlg-close"]');
+  }
   // Jeu par défaut : aucune trace de l’aventure, sauvegarde standard non créée
   await p.goto(`${server.base}/?qa=1&reducedMotion=1`);
   await p.waitForSelector('[data-key="home-new"]', { state: 'visible' });

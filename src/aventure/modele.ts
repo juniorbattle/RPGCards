@@ -57,10 +57,12 @@ export interface Figure {
   /** Apparence : un rival V2 (`braise`…) ou un gabarit PNJ (`pnj-<gabarit>-<graine>`) ; provisoire pour les chefs. */
   apparence: string;
   gender: 'f' | 'm';
-  /** Où il se tient dans la ville (îlot, place, regard). */
+  /** Où il se tient dans la ville (îlot, place, regard) ; au Quai, dans le Quai en quatre rangs (ARB-M10-12). */
   ilot: IlotId;
   at: { x: number; z: number };
   facing: Facing;
+  /** Place dans l'ancien Quai (en bande), le secours tant que le Quai en rangs n'est pas affiché ; absente : la même. */
+  bande?: { at: { x: number; z: number }; facing: Facing };
   /** Lieu du duel (ADR 022). */
   venue: VenueId;
   techniques: TechniqueId[];
@@ -116,12 +118,12 @@ const v = (fam: Family, rank: OrdinaryRank, effect: string) => ({ kind: 'variant
 export const FIGURES: readonly Figure[] = [
   // Cendre — la Maison du Chantier (le Quai, ouest, façade `chantier`)
   { id: 'cadet-Cendre', nom: 'Tessa', titre: 'cadette de la Cendre', famille: 'Cendre', role: 'cadet', apparence: 'pnj-marchande-21', gender: 'f', ilot: 'quai', at: { x: -15.2, z: -1.4 }, facing: 'face', venue: 'rue', techniques: ['Sondage', 'Lecture'], enjeu: v('Cendre', 3, 'ferveur') },
-  { id: 'brasDroit-Cendre', nom: 'Kaï', titre: 'la Braise du quai, bras droit de la Cendre', famille: 'Cendre', role: 'brasDroit', apparence: 'braise', gender: 'm', ilot: 'quai', at: { x: -17.6, z: -0.6 }, facing: 'droite', venue: 'rue', techniques: ['Sondage', 'Lecture'], enjeu: v('Cendre', 4, 'contrecoup') },
-  { id: 'chef-Cendre', nom: 'Bran', titre: 'le Premier Feu, chef de la Cendre', famille: 'Cendre', role: 'chef', apparence: 'pnj-docker-33', gender: 'm', ilot: 'quai', at: { x: -13.4, z: -2.3 }, facing: 'face', venue: 'rue', techniques: ['Lecture', 'Sondage'], enjeu: { kind: 'signature' } },
+  { id: 'brasDroit-Cendre', nom: 'Kaï', titre: 'la Braise du quai, bras droit de la Cendre', famille: 'Cendre', role: 'brasDroit', apparence: 'braise', gender: 'm', ilot: 'quai', at: { x: -9.5, z: -13.2 }, facing: 'face', bande: { at: { x: -17.6, z: -0.6 }, facing: 'droite' }, venue: 'rue', techniques: ['Sondage', 'Lecture'], enjeu: v('Cendre', 4, 'contrecoup') },
+  { id: 'chef-Cendre', nom: 'Bran', titre: 'le Premier Feu, chef de la Cendre', famille: 'Cendre', role: 'chef', apparence: 'pnj-docker-33', gender: 'm', ilot: 'quai', at: { x: -4.0, z: -40.2 }, facing: 'face', bande: { at: { x: -13.4, z: -2.3 }, facing: 'face' }, venue: 'rue', techniques: ['Lecture', 'Sondage'], enjeu: { kind: 'signature' } },
   // Ronce — le Fanal (le Quai, façade `fanal`)
   { id: 'cadet-Ronce', nom: 'Gaspard', titre: 'cadet de la Ronce, tavernier du Fanal', famille: 'Ronce', role: 'cadet', apparence: 'pnj-commis-17', gender: 'm', ilot: 'quai', at: { x: 8.8, z: -1.5 }, facing: 'face', venue: 'bar', techniques: ['Ancrage', 'Rupture'], enjeu: v('Ronce', 3, 'entrave') },
   { id: 'brasDroit-Ronce', nom: 'Maëlle', titre: 'gardienne des Ronces, bras droit de la Ronce', famille: 'Ronce', role: 'brasDroit', apparence: 'ronce', gender: 'f', ilot: 'quai', at: { x: 5.6, z: -1.5 }, facing: 'face', venue: 'bar', techniques: ['Ancrage', 'Rupture'], enjeu: v('Ronce', 4, 'tenacite') },
-  { id: 'chef-Ronce', nom: 'Mère Aubépine', titre: 'la Gardienne du Fanal, cheffe de la Ronce', famille: 'Ronce', role: 'chef', apparence: 'pnj-marchande-45', gender: 'f', ilot: 'quai', at: { x: 10.4, z: -2.3 }, facing: 'face', venue: 'bar', techniques: ['Ancrage', 'Rupture'], enjeu: { kind: 'signature' } },
+  { id: 'chef-Ronce', nom: 'Mère Aubépine', titre: 'la Gardienne du Fanal, cheffe de la Ronce', famille: 'Ronce', role: 'chef', apparence: 'pnj-marchande-45', gender: 'f', ilot: 'quai', at: { x: 10.5, z: -27.6 }, facing: 'face', bande: { at: { x: 10.4, z: -2.3 }, facing: 'face' }, venue: 'bar', techniques: ['Ancrage', 'Rupture'], enjeu: { kind: 'signature' } },
   // Voile — la maison de la Fontaine (les Ruelles)
   { id: 'cadet-Voile', nom: 'Lior', titre: 'cadet du Voile, colporteur des Ruelles', famille: 'Voile', role: 'cadet', apparence: 'pnj-commis-23', gender: 'm', ilot: 'ruelles', at: { x: -1.4, z: 1.0 }, facing: 'gauche', venue: 'salle', techniques: ['Lecture', 'Dissipation'], enjeu: v('Voile', 3, 'dissimulation') },
   { id: 'brasDroit-Voile', nom: 'Sélène', titre: 'liseuse du Voile, bras droit du Voile', famille: 'Voile', role: 'brasDroit', apparence: 'voile', gender: 'f', ilot: 'ruelles', at: { x: 9.6, z: -0.6 }, facing: 'gauche', venue: 'salle', techniques: ['Lecture', 'Dissipation'], enjeu: v('Voile', 4, 'silence') },

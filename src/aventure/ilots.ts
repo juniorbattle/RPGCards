@@ -1,10 +1,15 @@
 /**
- * M10-B — îlots de la ville pour l'aventure : les îlots M09 tels quels (décor, sol, sorties, portes, cadrage, passants,
+ * M10-A/B — îlots de la ville pour l'aventure : les îlots M09 tels quels (décor, sol, sorties, portes, cadrage, passants,
  * diorama et feuilles soumis à leurs approbations), dont on retire SEULEMENT les personnages de la démo pour y poser ceux
  * du directeur des rencontres. Aucune donnée de M09 n'est modifiée : on dérive des copies (M09 en pause). Pur.
+ *
+ * ARB-M10-12 (décision du responsable) : **le Quai de l'aventure est le Quai en quatre rangs** du laboratoire (passes 62
+ * à 68 : rue Haute et place de la Halle, ruelle des Lanternes et placette du Puits, cour de la Chapelle), réutilisé tel
+ * quel. Il n'existe qu'en diorama d'images générées : tant que ses plans ne sont pas admis (hors QA : approuvés par le
+ * responsable, A2 puis A1), l'ancien Quai en bande, dessiné par code, sert de secours (`quaiRangs` faux).
  */
 import type { Disc, Ilot, Zone } from '../ville/monde';
-import { ILOTS, type IlotDef, type IlotId } from '../ville/ilots';
+import { ILOTS, QUAI_PROFOND_DEF, type IlotDef, type IlotId } from '../ville/ilots';
 import type { IlotNpc } from '../ville/quai';
 import type { Pose } from './directeur';
 
@@ -12,9 +17,15 @@ import type { Pose } from './directeur';
 const NPC_R = 0.32;
 const TALK = 1.35;
 
+/** Manifeste des plans du Quai en quatre rangs (laboratoire M09, passes 62 à 68). */
+export const MANIFESTE_QUAI_RANGS = 'manifest-profondeur.json';
+
+/** L'îlot M09 d'origine : au Quai, le Quai en quatre rangs (`quaiRangs`) ou l'ancien Quai en bande (secours). */
+export const ilotBase = (id: IlotId, quaiRangs = false): IlotDef => (id === 'quai' && quaiRangs ? QUAI_PROFOND_DEF : ILOTS[id]);
+
 /** L'îlot M09 sans ses personnages de démo (obstacles, zones « parler », points d'apparition devant eux). */
-export function ilotNu(id: IlotId): Ilot {
-  const d = ILOTS[id];
+export function ilotNu(id: IlotId, quaiRangs = false): Ilot {
+  const d = ilotBase(id, quaiRangs);
   const at = new Set(d.npcs.map((n) => `${n.at.x},${n.at.z}`));
   return {
     ...d.ilot,
@@ -31,12 +42,14 @@ function devant(p: Pose): { x: number; z: number; face: 'dos' | 'gauche' | 'droi
 }
 
 /** Définition d'îlot de l'aventure : l'îlot M09 nu + les personnages posés par le directeur. */
-export function ilotAventure(id: IlotId, poses: readonly Pose[]): IlotDef {
-  const d = ILOTS[id];
-  const nu = ilotNu(id);
+export function ilotAventure(id: IlotId, poses: readonly Pose[], quaiRangs = false): IlotDef {
+  const d = ilotBase(id, quaiRangs);
+  const nu = ilotNu(id, quaiRangs);
   const npcs: IlotNpc[] = poses.map((p) => ({ id: p.apparence, at: p.at, facing: p.facing, role: p.genre === 'structurante' ? 'rival' : 'duel' }));
   const ilot: Ilot = {
     ...nu,
+    // le Quai en rangs du laboratoire s'appelle « le Quai (en rangs, preuve) » : dans l'aventure, le Quai
+    name: d.ilot.name.startsWith('le Quai') ? 'le Quai' : nu.name,
     discs: [...nu.discs, ...poses.map((p): Disc => ({ ...p.at, r: NPC_R }))],
     // la cible d'une zone « parler » est l'identifiant de la RENCONTRE (le produit décide, la ville ne lit rien)
     zones: [...nu.zones, ...poses.map((p): Zone => ({ id: `npc-${p.id}`, kind: 'parler', label: `Parler à ${p.nom}`, target: p.id, area: { x: p.at.x, z: p.at.z, r: TALK } }))],

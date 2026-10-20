@@ -156,6 +156,9 @@ Fiche d'arbitrages M10 interactive du 2026-10-20 (<https://claude.ai/artifact/P6
 - Dès le lot M10-A, le mode Aventure se joue dans **le Quai en quatre rangs** du laboratoire (passes 62 à 68), qui devient
   l'îlot du jeu pour l'aventure ; l'ancien Quai reste en secours. M09 reste en pause : ce branchement réutilise l'îlot tel
   quel, sans le refaire.
+- **Fait au lot M10-A (passe 81, ADR 032 amendement 2)** : le Quai en quatre rangs est l'îlot du Quai de l'aventure, réutilisé
+  tel quel (aucune image, aucun plan, aucune approbation changés) ; l'ancien Quai sert de secours tant que le diorama
+  n'est pas admis (hors QA : A2 puis A1).
 - **À la reprise de M09** : le Parvis et les Ruelles en rangs, branchés de la même façon ; puis la Grande Cour (V5) et la
   feuille du joueur (J1).
 - Le décor en images générées ne s'affiche hors QA qu'après les approbations du responsable : **A2** (vérification des

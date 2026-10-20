@@ -61,6 +61,18 @@ Clash avant la ratification d'un avenant (M10-A). Le brief du 2026-10-20 demande
   dérivent (`pvJoueur`). Valeurs proposées, à valider (`docs/m10/CALIBRAGE_M10A.md`) ; la simulation
   (`tools/m10a-paliers.ts`) lit le même module que le jeu.
 
+## Amendement 2 (2026-10-20, lot M10-A, passe 81) : le Quai en quatre rangs (ARB-M10-12)
+
+- Le Quai de l'aventure est **le Quai en quatre rangs** du laboratoire (`QUAI_PROFOND_DEF`, manifeste
+  `manifest-profondeur.json`), réutilisé tel quel (M09 en pause) : `ilotAventure(id, poses, quaiRangs)` en retire les
+  personnages du laboratoire et y pose ceux du directeur.
+- Il n'existe qu'en diorama : l'aventure **décide avant de construire la ville** (`quaiEnRangs` : tous les plans admis par
+  la politique et lisibles) ; sinon, l'ancien Quai en bande, dessiné par code, **en secours** (jamais de mélange). Hors QA,
+  le secours vaut tant que les images ne sont pas approuvées (A2 puis A1) ; aucun statut `approved` n'est changé.
+- Chaque place du Quai a sa position dans les rangs et, quand elle diffère, sa position de secours (`bande`) ; les
+  balises des passages sont des repères (aucun dialogue) ; la place de la Halle, la placette du Puits et la cour de la
+  Chapelle ont leur texte.
+
 ## Alternatives écartées
 
 - **Réutiliser l'enveloppe standard (`Shell`)** en lui donnant une autre source de données : refonte du code du mode
