@@ -3,7 +3,8 @@
 Session cloud autonome du 2026-10-20 (brief `docs/missions/BRIEF_SESSION_CLOUD_2026-10-20_M10.md`). **Seulement les
 décisions réellement indispensables avant l'implémentation**, chacune avec contexte, sources, **option recommandée et
 raison**, alternatives. Rien ici n'est décidé par la session ; les ADR 029, 030 et 031 sont repris comme acquis. La
-session principale en fera une fiche interactive.
+session principale en fera une fiche interactive. **Fiche interactive publiée le 2026-10-20** (privée, 16 entrées : les 11
+arbitrages et les 5 décisions prises seules ; choix enregistrés dans sa collection `decisions`) : <https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7>.
 
 Comment voir le travail : contrats `docs/m10/` (index `docs/m10/README.md`) ; prototype du prologue `/?aventure=1`
 (mode d'emploi : `docs/AVENTURE_PROVISOIRE.md`). Le jeu par défaut et `?demo=1` sont inchangés.
