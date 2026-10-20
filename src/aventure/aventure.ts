@@ -131,7 +131,7 @@ export function peutEngager(e: AventureEtat, f: Family): { ok: true } | { ok: fa
   if (e.affiliation === null) return { ok: false, raison: 'Choisissez d’abord votre voie.' };
   if (f === e.affiliation) return { ok: false, raison: `${capitale(leF(f))} est votre famille.` };
   if (e.familles[f] === 'defiee' || e.familles[f] === 'chef') return { ok: false, raison: `Le défi ${deF(f)} est déjà engagé.` };
-  if (!aGain(e.registre, `signature:${e.affiliation}`)) return { ok: false, raison: `Battez d’abord le chef ${deF(e.affiliation)} : on n’engage les autres familles qu’en duelliste reconnu.` };
+  if (!aGain(e.registre, `signature:${e.affiliation}`)) return { ok: false, raison: `Battez d’abord le chef ${deF(e.affiliation)} : on n’engage les autres familles qu’après avoir fait ses preuves dans la sienne.` };
   return { ok: true };
 }
 

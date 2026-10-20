@@ -156,7 +156,7 @@ export class AventureApp {
       items.push(bouton('Continuer l’aventure', () => this.continuer(), 'av-continue', true, sous));
       items.push(h('p', { class: 'av-profil' }, h('b', null, s.profil.nom), ` · ${capital(chapitre(s.etat))} · ${s.etat.affiliation ? `voie ${de(s.etat.affiliation)}` : 'sans famille'} · ${col.basics.length * 4} cartes familiales, ${col.variantes.length} variante(s), ${col.signatures.length} Signature(s)`));
     }
-    items.push(bouton('Nouvelle aventure', () => void this.nouveau(), 'av-new', !s, 'Un duelliste de la populace, seize cartes grises, aucune famille'));
+    items.push(bouton('Nouvelle aventure', () => void this.nouveau(), 'av-new', !s, 'Seize cartes grises, aucune famille : tout commence sur le Quai'));
     if (this.charge.status === 'illisible') items.push(h('p', { class: 'warn' }, `${this.charge.raison} « Nouvelle aventure » la mettra à l’écart (sans l’effacer).`));
     if (this.charge.status === 'future') items.push(h('p', { class: 'warn' }, this.charge.raison));
     if (this.charge.status === 'indisponible') items.push(h('p', { class: 'warn' }, 'Stockage local indisponible : l’aventure ne pourra pas être conservée.'));
@@ -181,7 +181,7 @@ export class AventureApp {
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
     this.ecranShell('scr-home av-scr',
       h('section', { class: 'av-titre', 'data-screen': 'av-nouveau' },
-        h('h1', { class: 'av-h1' }, 'Un duelliste de la populace'),
+        h('h1', { class: 'av-h1' }, 'De la populace'),
         h('p', { class: 'av-sous' }, 'Vous n’avez ni famille ni Signature : seize cartes grises, quatre de chaque Rang, sans effet ni bonus. Le soir du tournoi, le Quai est plein.'),
         h('div', { class: 'av-cards' }, ...[1, 2, 3, 4].map((r) => neutreEl(`neutre-${r}`, '×4'))),
         h('label', { class: 'av-label' }, 'Votre nom ', input),
@@ -485,7 +485,7 @@ export class AventureApp {
       h('h3', null, 'Ensuite'),
       h('p', null, `Défier ${c!.nom} (${ROLE_LABEL.cadet}), puis ${b!.nom} (${ROLE_LABEL.brasDroit}), puis ${ch!.nom} (${ROLE_LABEL.chef}) : chaque lieutenant vaincu donne une variante, le chef donne sa Signature ∞.`),
       h('h3', null, 'Ce qui ne change pas'),
-      h('p', null, `Les autres familles restent ouvertes ; une fois reconnu (le chef ${de(f)} vaincu), vous pourrez engager leur défi à la Salle des Bannières. ${changement ? 'Les cartes déjà reçues restent à vous.' : 'Jusqu’à votre premier défi de lieutenant, vous pourrez encore changer de voie.'}`),
+      h('p', null, `Les autres familles restent ouvertes ; quand le chef ${de(f)} sera vaincu, vous pourrez engager leur défi à la Salle des Bannières. ${changement ? 'Les cartes déjà reçues restent à vous.' : 'Jusqu’à votre premier défi de lieutenant, vous pourrez encore changer de voie.'}`),
       h('div', { class: 'ville-choices' },
         h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-confirmer', onclick: () => this.confirmer(f, changement) }, 'Confirmer l’affiliation'),
         h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-revenir', onclick: () => this.fermerModal() }, 'Revenir')));
@@ -515,7 +515,7 @@ export class AventureApp {
     // Cadet d'une autre famille, encore en invitation : changer de voie, si c'est encore possible (P-N6).
     if (fig.role === 'cadet' && e.familles[fig.famille] === 'invite' && e.affiliation) {
       const ok = peutChanger(e) && peutConfirmer({ ...e, affiliation: null }, fig.famille).ok;
-      return this.dire(`${fig.nom}, ${fig.titre}`, `« Tu as choisi ${la(e.affiliation)}. ${ok ? 'Si ce n’était pas la bonne voie, il est encore temps.' : 'Ta voie est engagée ; viens nous défier quand tu seras reconnu.'} »`, [
+      return this.dire(`${fig.nom}, ${fig.titre}`, `« Tu as choisi ${la(e.affiliation)}. ${ok ? 'Si ce n’était pas la bonne voie, il est encore temps.' : 'Ta voie est engagée ; viens nous défier quand ton chef sera tombé.'} »`, [
         ...(ok ? [{ label: `Rejoindre ${la(fig.famille)} à la place…`, key: 'dlg-changer', run: () => this.confirmation(fig.famille, true) }] : []),
         { label: 'Au revoir', key: 'dlg-close', primary: true, run: () => this.fermerDialogue() },
       ], fig.apparence);
@@ -569,7 +569,7 @@ export class AventureApp {
     const c = e.competitions;
     const m = manche(c);
     const sig = e.deck.signature;
-    if (m === 'titre') return this.dire('Le Championnat des Champions', 'Vous êtes le meilleur duelliste de la ville. La foule scande votre nom ; Kaï, le premier, vous salue.', [fermer(this)]);
+    if (m === 'titre') return this.dire('Le Championnat des Champions', 'Personne en ville ne joue mieux que vous. La foule scande votre nom ; Kaï, le premier, vous salue.', [fermer(this)]);
     if (m === 'poule') {
       const choix: Choix[] = FAMILIES.flatMap((f) => {
         const st = statutPoule(c, f, sig);
@@ -597,7 +597,7 @@ export class AventureApp {
     const contreKai = this.save!.historique.filter((h) => h.rencontre === 'rival-kai' || h.rencontre === 'prologue' || h.rencontre === 'brasDroit-Cendre');
     const gagnes = contreKai.filter((h) => h.issue === 'victoire').length;
     const ligneKai = ch === 'maison'
-      ? `« Alors, ${this.etat.affiliation ? `${la(this.etat.affiliation)} t’a pris` : 'toujours sans famille'} ? Moi, la Cendre m’a pris. Une partie, pour voir qui a le plus appris ? »`
+      ? `« Alors, ${this.etat.affiliation ? `tu as rejoint ${la(this.etat.affiliation)}` : 'toujours sans famille'} ? Moi, la Cendre m’a pris. Une partie, pour voir qui a le plus appris ? »`
       : ch === 'voies' ? `« Tu as fait tomber ton chef, à ce qu’on dit. Moi, je monte aussi. ${gagnes > contreKai.length / 2 ? 'Tu mènes, mais pas pour longtemps.' : 'Et je mène, ne l’oublie pas.'} »`
       : `« Le Championnat approche. On se retrouvera là-bas, j’en suis sûr. En attendant, une dernière pour la route ? »`;
     const texte = kai
@@ -612,7 +612,7 @@ export class AventureApp {
   /** Salle des Bannières (la salle de jeu de cartes) : l'engagement OFFICIEL du défi d'une autre famille (ADR 031 §4). */
   private salleDesBannieres(): void {
     const e = this.etat;
-    if (!e.affiliation) return this.dire('La Salle des Bannières', '« Le tournoi est réservé aux duellistes des familles. Revenez quand une Voie vous aura reçu. » La porte reste close.', [fermer(this)]);
+    if (!e.affiliation) return this.dire('La Salle des Bannières', '« Le tournoi est réservé aux duellistes des familles. Revenez quand vous appartiendrez à une Voie. » La porte reste close.', [fermer(this)]);
     const choix: Choix[] = [];
     const raisons: string[] = [];
     for (const f of FAMILIES) {
@@ -840,7 +840,7 @@ export class AventureApp {
     if (rencontre.startsWith('champ:')) {
       this.entrerVille(false, 'porte-arene');
       if (rencontre === 'champ:finale' && this.etat.competitions.championnat.titre && r.issue === 'victoire') {
-        this.dire('Le Championnat des Champions', 'La foule envahit le Parvis. Les quatre chefs se lèvent ; Kaï vous tend la main : « Le meilleur duelliste de la ville. Je le savais depuis le premier soir. » (La cérémonie aura lieu dans la Grande Cour quand elle sera construite.)', [fermer(this)]);
+        this.dire('Le Championnat des Champions', 'La foule envahit le Parvis. Les quatre chefs se lèvent ; Kaï vous tend la main : « Personne en ville ne joue mieux que toi. Je le savais depuis le premier soir. » (La cérémonie aura lieu dans la Grande Cour quand elle sera construite.)', [fermer(this)]);
       }
       return;
     }
@@ -852,8 +852,8 @@ export class AventureApp {
   private scenesFoule(): void {
     const e = this.etat;
     const victoire = e.prologue === 'victoire';
-    this.dire('La foule', victoire ? '« Un duelliste gris a battu la Braise du quai ! Avec des cartes de rien ! »' : '« Ce duelliste gris a tenu tête à Kaï jusqu’au bout, avec des cartes de rien. »', [{
-      label: 'Suivant', key: 'dlg-next', primary: true, run: () => this.dire('Kaï', victoire ? '« La prochaine fois, je ne te ferai pas de cadeau. »' : '« Pas mal. Pour un gris. »', [{
+    this.dire('La foule', victoire ? '« Des cartes grises ont battu la Braise du quai ! Des cartes de rien ! »' : '« Avec des cartes grises, tenir tête à Kaï jusqu’au bout… Des cartes de rien ! »', [{
+      label: 'Suivant', key: 'dlg-next', primary: true, run: () => this.dire('Kaï', victoire ? '« La prochaine fois, je ne te ferai pas de cadeau. »' : '« Pas mal. Avec des cartes grises. »', [{
         label: 'Suivant', key: 'dlg-next', primary: true, run: () => this.emissaireDialog(e.premier ?? 'Astre'),
       }], KAI_PROLOGUE.apparence),
     }]);

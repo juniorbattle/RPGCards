@@ -143,9 +143,9 @@ try {
   await townReady();
   await p.waitForSelector('.ville-dialog');
   e = await etat();
-  check(e.competitions.championnat.titre && /meilleur duelliste/.test(await p.textContent('.ville-dialog')), 'Finale gagnée : titre, proclamation');
+  check(e.competitions.championnat.titre && /ne joue mieux que/.test(await p.textContent('.ville-dialog')), 'Finale gagnée : titre, proclamation');
   await shot('titre');
-  check(/meilleur duelliste/.test(await p.textContent('[data-key="ville-objective"]')), 'objectif : meilleur duelliste de la ville');
+  check(/ne joue mieux que vous/.test(await p.textContent('[data-key="ville-objective"]')), 'objectif : personne en ville ne joue mieux que vous (écriture neutre)');
 } catch (err) {
   checks.push(`ÉCHEC exception : ${String(err.message).split('\n')[0]}`);
   console.log('exception', err.message);
