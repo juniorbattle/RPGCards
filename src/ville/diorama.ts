@@ -17,7 +17,8 @@ import { cobbleRelief, mistTexture, puddleMask } from './quaiMateriaux';
 import { LAYER_NOREFLECT } from './reflets';
 import { finish, type LightDef, type QuaiScene } from './scene';
 import { plateRect, type DecorLight, type PreparedDiorama, type PreparedPlate } from './decors';
-import { baliseMeshes } from './balises';
+import { cheminMesh } from './chemins';
+import { ombreMesh, ombresDuPlan } from './ombres';
 
 const PLATE_VERT = /* glsl */ `
 varying vec2 vUv; varying vec3 vWorld; varying vec3 vN;
@@ -32,7 +33,7 @@ void main(){
  */
 const PLATE_FRAG = /* glsl */ `
 ${COMMON_GLSL}
-uniform sampler2D tPlate; uniform float uLit; uniform float uFog; uniform float uCut; uniform float uVoile; uniform float uFade; uniform float uCutY; uniform float uCoupe;
+uniform sampler2D tPlate; uniform float uLit; uniform float uFog; uniform float uCut; uniform float uVoile; uniform float uFade; uniform float uCutY; uniform float uCoupe; uniform float uAO; uniform float uBase;
 varying vec2 vUv; varying vec3 vWorld; varying vec3 vN;
 void main(){
   vec4 A = texture2D(tPlate, vUv);
@@ -48,6 +49,8 @@ void main(){
   c = mix(c, applyFog(c, vWorld), uFog);
   // plans en coupe seulement (passe 62) : les autres gardent exactement le nuanceur d'origine (rendu identique au pixel près)
 #ifdef COUPE
+  // pied assombri (passe 68, diorama en rangs) : le bas d'un objet ou d'un mur posé au sol prend l'ombre du sol
+  c *= mix(1.0, mix(0.62, 1.0, smoothstep(uBase, uBase + 0.9, vWorld.y)), uAO);
   // vue en section (passe 64) : uFade de 0 (entier) à 1 (coupé) ; sous uCutY, le rez-de-chaussée reste
   float k = uFade * smoothstep(uCutY - 0.3, uCutY + 0.3, vWorld.y);
   // fantôme assourdi (passe 67) : gris et plus sombre, les détails clairs (emblèmes dorés, vitraux) ne flottent plus
@@ -64,7 +67,7 @@ function plateMaterial(p: PreparedPlate, profond = false): THREE.ShaderMaterial 
   const cut = p.entry.blend === 'decoupe';
   return new THREE.ShaderMaterial({
     name: 'VillePlan',
-    uniforms: { ...U, tPlate: { value: p.texture }, uLit: { value: p.entry.lit ?? 0 }, uFog: { value: p.entry.fog ?? 1 }, uCut: { value: cut ? 0.02 : 0.004 }, uVoile: { value: p.entry.voile ?? 0 }, uFade: { value: 0 }, uCutY: { value: p.entry.coupeY ?? -1000 }, uCoupe: { value: COUPE_ALPHA } },
+    uniforms: { ...U, tPlate: { value: p.texture }, uLit: { value: p.entry.lit ?? 0 }, uFog: { value: p.entry.fog ?? 1 }, uCut: { value: cut ? 0.02 : 0.004 }, uVoile: { value: p.entry.voile ?? 0 }, uFade: { value: 0 }, uCutY: { value: p.entry.coupeY ?? -1000 }, uCoupe: { value: COUPE_ALPHA }, uAO: { value: profond && p.entry.orient !== 'sol' && Math.abs(p.entry.at[1]) <= 0.25 ? 1 : 0 }, uBase: { value: p.entry.at[1] } },
     defines: p.entry.coupe || profond ? { COUPE: 1 } : {},
     vertexShader: PLATE_VERT,
     fragmentShader: PLATE_FRAG,
@@ -93,13 +96,36 @@ export function behindPlate(r: { center: [number, number, number]; w: number }, 
 }
 
 /**
- * Fondu lointain (passe 65, quartiers en rangs) : un plan à plus de `LOIN[0]` m devant le personnage (z de son bord
- * avant) s'efface jusqu'à disparaître à `LOIN[1]` m : quand on s'enfonce de deux rangs, les rangs de devant, que la
- * caméra dépasse, ne masquent plus la vue ; le rang juste devant reste en fantôme (`COUPE_ALPHA`).
+ * Fondu lointain (passe 65, quartiers en rangs) : un plan de `LOIN[0]` à `LOIN[1]` m devant le personnage (z de son bord
+ * avant) passe à l'opacité `FANTOME_LOIN` ; les plans tout près de la caméra s'effacent (`PRES`). Passe 68 : gardés un
+ * temps en fantôme léger (7 %, « garder un petit visuel du rang précédemment traversé »), puis effacés de nouveau à la
+ * demande du responsable : « plus besoin d'intégrer un fantôme visible car les chemins pavés sont à présent bien
+ * intégrés » ; seul le rang juste devant le personnage reste en fantôme (`COUPE_ALPHA`, décision de la passe 64).
  */
 export const LOIN: readonly [number, number] = [12, 18];
-export function farFade(r: { center: [number, number, number]; w: number; h: number; orient: 'face' | 'sol' | 'cote' }, p: { z: number }): number {
-  const front = r.center[2] + (r.orient === 'cote' ? r.w / 2 : r.orient === 'sol' ? r.h / 2 : 0);
+export const FANTOME_LOIN = 0;
+/** Distance à la caméra (m, en z) en deçà de laquelle un plan s'efface tout à fait (de `PRES[1]` à `PRES[0]`). */
+export const PRES: readonly [number, number] = [3, 7];
+export function nearFade(front: number, camZ: number): number {
+  const t = THREE.MathUtils.clamp((camZ - front - PRES[0]) / (PRES[1] - PRES[0]), 0, 1);
+  return 1 - t * t * (3 - 2 * t);
+}
+/**
+ * Opacité d'un plan d'un diorama en rangs : fantôme (`cut` de 0 à 1 : vers `COUPE_ALPHA`), puis rangs dépassés (`far` :
+ * vers `FANTOME_LOIN`), puis tout près de la caméra (`near` : vers 0). Renvoie aussi les uniformes du nuanceur (`fade` :
+ * part assourdie, `coupe` : opacité visée), tels que mix(1, coupe, fade) = opacité.
+ */
+export function ghostOpacity(cut: number, far: number, near: number): { o: number; fade: number; coupe: number } {
+  let o = 1 + (COUPE_ALPHA - 1) * cut;
+  if (o > FANTOME_LOIN) o += (FANTOME_LOIN - o) * far;
+  o *= 1 - near;
+  const fade = Math.min(1, (1 - o) / (1 - COUPE_ALPHA));
+  return { o, fade, coupe: fade >= 1 ? o : COUPE_ALPHA };
+}
+type RectZ = { center: [number, number, number]; w: number; h: number; orient: 'face' | 'sol' | 'cote' };
+const frontOf = (r: RectZ) => r.center[2] + (r.orient === 'cote' ? r.w / 2 : r.orient === 'sol' ? r.h / 2 : 0);
+export function farFade(r: RectZ, p: { z: number }): number {
+  const front = frontOf(r);
   const t = THREE.MathUtils.clamp((front - p.z - LOIN[0]) / (LOIN[1] - LOIN[0]), 0, 1);
   return t * t * (3 - 2 * t);
 }
@@ -148,8 +174,11 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
   /** Plans `coupe` (passe 62) : opacité courante, profondeur écrite d'origine ; diorama en rangs (passe 65) : tous les
    *  plans, pour le fondu lointain. */
   const profond = d.plates.some((p) => p.entry.coupe);
-  const cutaways: { rect: ReturnType<typeof plateRect>; mat: THREE.ShaderMaterial; cut: number; writes: boolean; ghost: boolean; vers: 'est' | 'ouest' | undefined; coupeZ: number | undefined }[] = [];
-  if (d.ground) meshes.push(engineGround(def, artSeed, textures));
+  const cutaways: { rect: ReturnType<typeof plateRect>; mat: THREE.ShaderMaterial; cut: number; writes: boolean; ghost: boolean; vers: 'est' | 'ouest' | undefined; coupeZ: number | undefined; ombres: { mat: THREE.ShaderMaterial; alpha: number }[] }[] = [];
+  /** Ombres au sol (passe 68), créées avant les plans : sous eux dans l'ordre de dessin. */
+  const ombreMeshes: THREE.Mesh[] = [];
+  const ground = d.ground ? engineGround(def, artSeed, textures) : null;
+  if (ground) meshes.push(ground);
   // créés dans l'ordre de dessin : à profondeur égale, three.js départage les transparents par ordre de création
   for (const p of d.plates) {
     const r = plateRect(p.entry);
@@ -176,7 +205,11 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
     }
     // de côté : normale vers +x (est) ou −x (ouest) ; le bord gauche de l'image vers la caméra (z le plus grand)
     if (r.orient === 'cote') mesh.rotation.y = p.entry.vers === 'ouest' ? -Math.PI / 2 : Math.PI / 2;
-    if (profond) cutaways.push({ rect: r, mat, cut: 0, writes: mat.depthWrite, ghost: !!p.entry.coupe, vers: r.orient === 'cote' ? p.entry.vers ?? 'est' : undefined, coupeZ: p.entry.coupeZ });
+    if (profond) {
+      // ombres du plan (passe 68) : contact sous un objet, pied d'une façade, pied d'un mur de passage
+      const ombres = ombresDuPlan(r, p.entry.at, p.entry.vers).map((o) => { const { mesh: m, mat: om } = ombreMesh(o); ombreMeshes.push(m); return { mat: om, alpha: o.alpha }; });
+      cutaways.push({ rect: r, mat, cut: 0, writes: mat.depthWrite, ghost: !!p.entry.coupe, vers: r.orient === 'cote' ? p.entry.vers ?? 'est' : undefined, coupeZ: p.entry.coupeZ, ombres });
+    }
     meshes.push(mesh);
   }
   const lights: LightDef[] = d.lights.map((l) => ({
@@ -189,9 +222,14 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
     textures.push(tex);
     for (const m of d.mists) { const { mesh, mat } = mistPlane(tex, m); meshes.push(mesh); mistMats.push(mat); }
   }
-  // balises des passages d'un quartier en rangs (passe 67) : lueurs au sol qui montrent le chemin, aller et retour
-  const balises = baliseMeshes(def.balises ?? []);
-  meshes.push(...balises.meshes);
+  // ombres au sol (passe 68), puis chemins lumineux d'un quartier en rangs (passe 68 : sans flèche, pavés qui luisent)
+  meshes.unshift(...ombreMeshes);
+  // le chemin épouse les pavés du sol du moteur : même texture, même pose (x de début, z de fin, 3 m par répétition)
+  const b = def.ilot.bounds;
+  const cobbleTex = ground ? ((ground.material as THREE.ShaderMaterial).uniforms.tAlbedo?.value as THREE.Texture | undefined) : undefined;
+  const chemin = cheminMesh(def.chemins ?? [], b, cobbleTex ? { tex: cobbleTex, x0: b.x0 - 14, zMax: b.z1 + 0.3, tile: 3 } : undefined);
+  const cheminMats = chemin ? [chemin.mat] : [];
+  if (chemin) meshes.push(chemin.mesh);
   const base = finish(scene, { build: (into) => { for (const m of meshes) into.add(m); return meshes.length; } }, lights, [], textures);
   // halos des lumières (diorama en rangs, passe 65) : ceux d'un rang dépassé s'atténuent avec leur plan fantôme, ceux
   // loin devant le personnage s'effacent avec le fondu lointain (le maillage des halos est fusionné : couleurs par sommet)
@@ -202,7 +240,7 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
   let lastFocus = performance.now();
   // vue en coupe (passe 62) : le plan derrière lequel passe le personnage devient un fantôme (et n'écrit plus la
   // profondeur) ; passe 65 : les plans loin devant lui s'effacent tout à fait (fondu lointain, continu avec la position)
-  const focus = (p: { x: number; z: number }, snap: boolean) => {
+  const focus = (p: { x: number; z: number }, snap: boolean, cam?: { z: number }) => {
     const now = performance.now();
     const k = snap ? 1 : Math.min(1, ((now - lastFocus) / 1000) * 7);
     lastFocus = now;
@@ -210,16 +248,20 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
       const want = c.ghost && behindPlate(c.rect, p, c.vers, c.coupeZ) ? 1 : 0;
       c.cut += (want - c.cut) * k;
       if (Math.abs(c.cut - want) < 0.005) c.cut = want;
-      const far = farFade(c.rect, p);
-      const fade = Math.max(c.cut, far);
-      c.mat.uniforms.uFade!.value = fade;
-      c.mat.uniforms.uCoupe!.value = c.ghost ? COUPE_ALPHA * (1 - far) : 0;
-      c.mat.depthWrite = c.writes && fade < 0.02;
+      // passe 68 : les rangs dépassés restent en fantôme léger ; seuls les plans tout près de la caméra s'effacent
+      const g = ghostOpacity(c.cut, farFade(c.rect, p), cam ? nearFade(frontOf(c.rect), cam.z) : 0);
+      c.mat.uniforms.uFade!.value = g.fade;
+      c.mat.uniforms.uCoupe!.value = g.coupe;
+      c.mat.depthWrite = c.writes && g.o > 0.98;
+      for (const o of c.ombres) o.mat.uniforms.uAlpha!.value = o.alpha * g.o;
     }
+    // le chemin se révèle autour du personnage
+    for (const cm of cheminMats) (cm.uniforms.uPlayer!.value as THREE.Vector2).set(p.x, p.z);
     if (haloCol && haloBase) {
       const per = haloBase.length / Math.max(1, haloLights.length);
       haloLights.forEach((h, i) => {
-        const want = (1 - farFade({ center: [0, 0, h.z], w: 0, h: 0, orient: 'face' }, p)) * (h.coupeZ !== undefined && p.z < h.coupeZ ? COUPE_ALPHA : 1);
+        const front: RectZ = { center: [0, 0, h.z], w: 0, h: 0, orient: 'face' };
+        const want = ghostOpacity(h.coupeZ !== undefined && p.z < h.coupeZ ? 1 : 0, farFade(front, p), cam ? nearFade(h.z, cam.z) : 0).o;
         h.k += (want - h.k) * k;
         if (Math.abs(h.k - want) < 0.005) h.k = want;
         for (let j = i * per; j < (i + 1) * per; j++) haloCol.array[j] = haloBase[j]! * h.k;
@@ -227,6 +269,6 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
       haloCol.needsUpdate = true;
     }
   };
-  if (!mistMats.length && !cutaways.length && !balises.mats.length) return base;
-  return { ...base, focus: cutaways.length ? focus : undefined, update: (time: number) => { base.update(time); for (const mm of [...mistMats, ...balises.mats]) mm.uniforms.uT!.value = time; } };
+  if (!mistMats.length && !cutaways.length && !cheminMats.length) return base;
+  return { ...base, focus: cutaways.length ? focus : undefined, update: (time: number) => { base.update(time); for (const mm of [...mistMats, ...cheminMats]) mm.uniforms.uT!.value = time; } };
 }

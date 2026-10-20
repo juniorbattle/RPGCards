@@ -20,7 +20,7 @@ export interface QuaiScene {
    * Position du personnage (passe 62, diorama) : les plans `coupe` derrière lesquels il passe s'effacent ; `snap` :
    * immédiatement (captures figées), sinon en douceur.
    */
-  focus?(p: { x: number; z: number }, snap: boolean): void;
+  focus?(p: { x: number; z: number }, snap: boolean, cam?: { z: number }): void;
   stats(): { meshes: number; textures: number; lights: number };
   dispose(): void;
 }

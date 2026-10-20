@@ -534,7 +534,7 @@ export function createTown(o: TownOptions): Town {
   const viewDepth = (y: number, z: number) => -focus.set(camera.position.x, y, z).applyMatrix4(camera.matrixWorldInverse).z;
   const render = () => {
     world.update(time);
-    world.focus?.(walker.pos, !!o.freeze);
+    world.focus?.(walker.pos, !!o.freeze, camera.position);
     playerSprite.set(walker.pos, walker.facing, walker.phase, walker.moving, time);
     for (const { n, s } of npcSprites) {
       // Les PNJ se tournent vers le joueur quand il approche (à moins de 2,5 m).

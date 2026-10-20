@@ -7,8 +7,8 @@ import type { RigTuning } from './cameras';
 import type { Ilot } from './monde';
 import { P_FACADE_Z, P_FRONT_Z, P_NPCS, PARVIS } from './parvis';
 import { FACADE_Z, NPCS, QUAI, QUAY_Z, type IlotNpc } from './quai';
-import { BALISES_QUAI, FOND_Z, LANE_BACK_Z, NPCS_PROFOND, PLAN_QUAI, QUAI_PROFOND } from './quaiProfond';
-import type { Balise } from './rangs';
+import { CHEMINS_QUAI, FOND_Z, LANE_BACK_Z, NPCS_PROFOND, PLAN_QUAI, QUAI_PROFOND } from './quaiProfond';
+import type { CheminSegment } from './rangs';
 import { RUELLES, R_EDGE_Z, R_FACADE_Z, R_NPCS } from './ruelles';
 import { buildRuellesD } from './ruellesScene';
 import { buildParvisD } from './parvisScene';
@@ -47,8 +47,8 @@ export interface IlotDef {
   dof?: DofDef;
   reflets?: RefletsDef;
   build(artSeed: number): QuaiScene;
-  /** Quartier en rangs (passe 67) : balises des passages, dessinées au sol par le diorama. */
-  balises?: readonly Balise[];
+  /** Quartier en rangs (passe 68) : chemins lumineux au sol, dessinés par le diorama (sans flèche). */
+  chemins?: readonly CheminSegment[];
   /** Liaisons : zone de sortie → îlot voisin et point d'apparition à l'arrivée. */
   exits: Readonly<Record<string, { to: IlotId; spawn: string }>>;
 }
@@ -103,7 +103,7 @@ export const QUAI_PROFOND_DEF: IlotDef = {
   ...ILOTS.quai,
   ilot: QUAI_PROFOND,
   npcs: NPCS_PROFOND,
-  balises: BALISES_QUAI,
+  chemins: CHEMINS_QUAI,
   dof: { nearZ: QUAY_Z + 0.5, farZ: FOND_Z - 1.5, nearSpan: 3.2, farSpan: 45, farAmt: 0.42, maxBlur: 9 },
   // passe 64 : un passant dans la rue haute (la rue vit aussi au fond) ; passe 65 : un autre dans la ruelle des Lanternes
   ambient: [
