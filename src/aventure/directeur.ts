@@ -15,7 +15,9 @@ import { ELITE_JOUTE, MEMBRES_EPREUVE } from './competitions';
 import { aGain } from './registre';
 import { personalityById } from '../presentation/personalities';
 
-export interface PlaceRencontre { ilot: IlotId; at: { x: number; z: number }; facing: Facing }
+/** Place d'une rencontre ; au Quai, dans le Quai en quatre rangs (ARB-M10-12), avec sa place dans l'ancien Quai en
+ *  bande (`bande`, le secours tant que le Quai en rangs n'est pas affiché ; absente : la même). */
+export interface PlaceRencontre { ilot: IlotId; at: { x: number; z: number }; facing: Facing; bande?: { at: { x: number; z: number }; facing: Facing } }
 
 export interface RencontreDef {
   id: string;
@@ -61,14 +63,16 @@ export function battre(d: EtatDirecteur): EtatDirecteur {
 }
 
 const PLACES_EPREUVE: Record<'Cendre' | 'Ronce' | 'Voile' | 'Astre', PlaceRencontre> = {
-  Cendre: { ilot: 'quai', at: { x: -9.0, z: 1.6 }, facing: 'face' },
+  // la Cendre : sur la place de la Halle (rue Haute, deuxième rang)
+  Cendre: { ilot: 'quai', at: { x: 10.2, z: -19.6 }, facing: 'gauche', bande: { at: { x: -9.0, z: 1.6 }, facing: 'face' } },
   Ronce: { ilot: 'quai', at: { x: 9.6, z: 1.6 }, facing: 'face' },
   Voile: { ilot: 'ruelles', at: { x: -11.0, z: 0.2 }, facing: 'droite' },
   Astre: { ilot: 'parvis', at: { x: -10.0, z: 1.4 }, facing: 'droite' },
 };
 const PLACES_JOUTE: Record<'Cendre' | 'Ronce' | 'Voile' | 'Astre', PlaceRencontre> = {
-  Cendre: { ilot: 'quai', at: { x: -17.0, z: 1.8 }, facing: 'droite' },
-  Ronce: { ilot: 'quai', at: { x: 7.2, z: 1.0 }, facing: 'face' },
+  // la Cendre : dans la cour de la Chapelle (le cœur du Quai) ; la Ronce : sur la placette du Puits (troisième rang)
+  Cendre: { ilot: 'quai', at: { x: 5.0, z: -40.0 }, facing: 'face', bande: { at: { x: -17.0, z: 1.8 }, facing: 'droite' } },
+  Ronce: { ilot: 'quai', at: { x: -9.0, z: -30.2 }, facing: 'gauche', bande: { at: { x: 7.2, z: 1.0 }, facing: 'face' } },
   Voile: { ilot: 'ruelles', at: { x: 2.2, z: -1.4 }, facing: 'face' },
   Astre: { ilot: 'parvis', at: { x: 10.4, z: -1.0 }, facing: 'gauche' },
 };
@@ -85,7 +89,7 @@ export const RENCONTRES: readonly RencontreDef[] = [
     const c = emissaire(f);
     return {
       id: `emissaire-${f}`, genre: 'structurante', apparence: c.apparence, nom: c.nom,
-      lieux: [{ ilot: c.ilot, at: c.at, facing: c.facing }],
+      lieux: [{ ilot: c.ilot, at: c.at, facing: c.facing, ...(c.bande ? { bande: c.bande } : {}) }],
       dispo: (e) => e.familles[f] === 'invite' && e.affiliation === null, delai: 0, poids: 1,
       repere: (e) => (e.premier === f && !e.scenes.includes('P6') ? '!' : '?'),
     };
@@ -93,7 +97,7 @@ export const RENCONTRES: readonly RencontreDef[] = [
   // Figures structurantes (lieutenants, chefs) : posées dès que leur famille est rejointe ou défiée.
   ...FIGURES.map((fig): RencontreDef => ({
     id: fig.id, genre: 'structurante', apparence: fig.apparence, nom: fig.nom,
-    lieux: [{ ilot: fig.ilot, at: fig.at, facing: fig.facing }],
+    lieux: [{ ilot: fig.ilot, at: fig.at, facing: fig.facing, ...(fig.bande ? { bande: fig.bande } : {}) }],
     dispo: (e) => ['affilie', 'defiee', 'chef'].includes(e.familles[fig.famille]) || (fig.role === 'cadet' && e.familles[fig.famille] === 'invite' && e.affiliation !== null),
     delai: 0, poids: 1,
     repere: (e) => { const s = statutDefi(e, fig); return s.ouvert && !s.deja ? '!' : null; },
@@ -101,7 +105,7 @@ export const RENCONTRES: readonly RencontreDef[] = [
   // Facultatives : duels de rue (aucune récompense), un docker et une joueuse de passage.
   {
     id: 'rue-docker', genre: 'facultative', apparence: 'pnj-docker-1', nom: 'un docker du Quai',
-    lieux: [{ ilot: 'quai', at: { x: -2.4, z: 1.4 }, facing: 'gauche' }, { ilot: 'quai', at: { x: 2.2, z: 1.8 }, facing: 'face' }],
+    lieux: [{ ilot: 'quai', at: { x: -2.4, z: 1.4 }, facing: 'gauche' }, { ilot: 'quai', at: { x: 2.2, z: -13.4 }, facing: 'face', bande: { at: { x: 2.2, z: 1.8 }, facing: 'face' } }],
     dispo: (e) => e.prologue !== null, delai: 2, poids: 2, repere: () => '!',
   },
   {
@@ -131,7 +135,7 @@ export const RENCONTRES: readonly RencontreDef[] = [
   // Le rival : un défi facultatif par chapitre au plus, après le prologue (P-N8).
   {
     id: 'rival-kai', genre: 'rival', apparence: 'braise', nom: 'Kaï',
-    lieux: [{ ilot: 'quai', at: { x: 11.8, z: 1.2 }, facing: 'gauche' }, { ilot: 'parvis', at: { x: 9.2, z: 0.8 }, facing: 'gauche' }, { ilot: 'ruelles', at: { x: -4.8, z: 1.4 }, facing: 'droite' }],
+    lieux: [{ ilot: 'quai', at: { x: 12.0, z: -13.0 }, facing: 'gauche', bande: { at: { x: 11.8, z: 1.2 }, facing: 'gauche' } }, { ilot: 'parvis', at: { x: 9.2, z: 0.8 }, facing: 'gauche' }, { ilot: 'ruelles', at: { x: -4.8, z: 1.4 }, facing: 'droite' }],
     dispo: (e) => e.affiliation !== null, delai: 4, poids: 1, maxParChapitre: 1, repere: () => '!',
   },
 ];
@@ -142,7 +146,7 @@ export const rencontreDef = (id: string): RencontreDef | undefined => RENCONTRES
  * POINT DE DÉCISION dans l'îlot `ilot` : retire les facultatives indisponibles, puis en tire au plus une nouvelle (graine,
  * battement, îlot) si moins de `MAX_FACULTATIVES` sont présentes. Renvoie le nouvel état et les personnages à poser.
  */
-export function decider(d0: EtatDirecteur, e: AventureEtat, ilot: IlotId): { directeur: EtatDirecteur; poses: Pose[] } {
+export function decider(d0: EtatDirecteur, e: AventureEtat, ilot: IlotId, quaiRangs = true): { directeur: EtatDirecteur; poses: Pose[] } {
   const d: EtatDirecteur = structuredClone(d0);
   const ch = chapitre(e);
   const cle = (id: string) => `${id}@${ch}`;
@@ -168,25 +172,29 @@ export function decider(d0: EtatDirecteur, e: AventureEtat, ilot: IlotId): { dir
     }
   }
   d.actives[ilot] = actives;
-  return { directeur: d, poses: poses(d, e, ilot) };
+  return { directeur: d, poses: poses(d, e, ilot, quaiRangs) };
 }
 
-/** Personnages à poser dans l'îlot (structurants disponibles + facultatives actives), SANS tirer : relecture pure. */
-export function poses(d: EtatDirecteur, e: AventureEtat, ilot: IlotId): Pose[] {
+/**
+ * Personnages à poser dans l'îlot (structurants disponibles + facultatives actives), SANS tirer : relecture pure.
+ * `quaiRangs` : le Quai est-il le Quai en quatre rangs (sinon l'ancien Quai, en secours : places `bande`) ?
+ */
+export function poses(d: EtatDirecteur, e: AventureEtat, ilot: IlotId, quaiRangs = true): Pose[] {
   const out: Pose[] = [];
+  const ou = (l: PlaceRencontre): { at: { x: number; z: number }; facing: Facing } => (!quaiRangs && l.ilot === 'quai' && l.bande ? l.bande : l);
   for (const r of RENCONTRES) {
     if ((r.genre !== 'structurante' && r.genre !== 'competition') || !r.dispo(e)) continue;
     const l = r.lieux.find((x) => x.ilot === ilot);
     if (!l) continue;
     // Un même personnage n'est posé qu'une fois (l'émissaire et le cadet sont la même figure).
     if (out.some((p) => p.apparence === r.apparence)) continue;
-    out.push({ id: r.id, apparence: r.apparence, nom: r.nom, at: l.at, facing: l.facing, repere: r.repere(e), genre: r.genre });
+    out.push({ id: r.id, apparence: r.apparence, nom: r.nom, ...ou(l), repere: r.repere(e), genre: r.genre });
   }
   for (const a of d.actives[ilot] ?? []) {
     const r = rencontreDef(a.id);
     const l = r?.lieux[a.place];
     if (!r || !l || !r.dispo(e) || out.some((p) => p.apparence === r.apparence)) continue;
-    out.push({ id: r.id, apparence: r.apparence, nom: r.nom, at: l.at, facing: l.facing, repere: r.repere(e), genre: r.genre });
+    out.push({ id: r.id, apparence: r.apparence, nom: r.nom, ...ou(l), repere: r.repere(e), genre: r.genre });
   }
   return out;
 }

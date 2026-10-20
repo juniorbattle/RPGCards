@@ -333,8 +333,36 @@ describe('M10-B — directeur des rencontres', () => {
 describe('M10-B — données (personnages, places, duels)', () => {
   it('chaque apparence a une personnalité ; chaque personnage se tient sur un sol praticable', () => {
     for (const a of APPARENCES) expect(personalityById(a), a).not.toBeNull();
-    for (const r of RENCONTRES) for (const l of r.lieux) expect(blocked(ilotNu(l.ilot), l.at, 0.32), `${r.id} @ ${l.ilot}`).toBe(false);
+    // ARB-M10-12 : chaque place tient dans le Quai en quatre rangs, et sa place de secours dans l'ancien Quai
+    for (const r of RENCONTRES) for (const l of r.lieux) {
+      expect(blocked(ilotNu(l.ilot, true), l.at, 0.32), `${r.id} @ ${l.ilot} (rangs)`).toBe(false);
+      expect(blocked(ilotNu(l.ilot, false), l.bande?.at ?? l.at, 0.32), `${r.id} @ ${l.ilot} (secours)`).toBe(false);
+    }
+    // la foule et l'émissaire du prologue, le retour du duel public (rang 1, mêmes places dans les deux Quai)
+    for (const p of [{ x: 10.6, z: 1.8 }, { x: 16.4, z: 1.6 }, { x: 12.2, z: -1.4 }, { x: 15.2, z: -1.2 }, { x: 13.6, z: 0.9 }, { x: 12.4, z: 1.3 }]) {
+      for (const rangs of [true, false]) expect(blocked(ilotNu('quai', rangs), p, 0.32), `${p.x},${p.z} ${rangs}`).toBe(false);
+    }
     for (const f of FIGURES) expect(f.enjeu.kind === 'signature' || f.enjeu.defId.startsWith(`${f.famille}-`)).toBe(true);
+  });
+
+  it('le Quai de l’aventure est le Quai en quatre rangs (ARB-M10-12) : figures dans les rangs, abordables ; l’ancien Quai en secours', () => {
+    let e = run(prologue(), [{ type: 'confirmer', famille: 'Cendre' }, ...conquerir('Cendre').slice(0, 4), { type: 'confirmer', famille: 'Cendre' }]).etat;
+    e = run(e, [{ type: 'engager', famille: 'Ronce' }]).etat;
+    for (const rangs of [true, false]) {
+      const p = poses(nouveauDirecteur(5), e, 'quai', rangs);
+      const d = ilotAventure('quai', p, rangs);
+      expect(d.ilot.name).toBe('le Quai');
+      expect(d.ilot.bounds.z0).toBe(rangs ? -43 : d.ilot.bounds.z0);
+      for (const x of p) {
+        const sp = d.ilot.spawns[`npc-${x.id}`]!;
+        expect(blocked(d.ilot, sp), `${x.id} ${rangs}`).toBe(false);
+        expect(d.ilot.zones.some((z) => z.target === x.id && z.kind === 'parler')).toBe(true);
+      }
+      const bran = p.find((x) => x.id === 'chef-Cendre')!;
+      // en rangs, le chef de la Cendre attend au cœur du Quai (la cour de la Chapelle) ; en secours, devant le Chantier
+      expect(rangs ? bran.at.z < -36 : bran.at.z > -3).toBe(true);
+      expect(d.ilot.zones.filter((z) => z.kind === 'sortie').length).toBe(2);
+    }
   });
 
   it('îlot de l’aventure : décor M09 intact, personnages de la démo retirés, ceux du directeur posés et abordables', () => {

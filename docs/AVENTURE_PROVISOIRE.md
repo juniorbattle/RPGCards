@@ -19,9 +19,22 @@ personnages par code (comme le jeu hors QA) : `LQV_AV_QS='&decors=code&sprites=c
 réel : `LQV_GPU=1 CHROMIUM_PATH=<Chrome> npm run qa:aventure`. Joute et Championnat (aventure avancée aux quatre
 chefs par des faits rejoués dans la machine d'états, 13 contrôles) : `npm run qa:championnat`.
 
-**Images de la ville** : hors QA, le Quai, le Parvis et les Ruelles sont dessinés par code (images non approuvées, ADR
-027 et 028). Avec `&qa=1`, le diorama généré du Quai s'affiche, **signalé à l'image** par un badge rouge « décor en images
-NON APPROUVÉES ».
+**Le Quai en quatre rangs (ARB-M10-12)** : le Quai de l'aventure est celui du laboratoire M09 (le Quai, la rue Haute et la
+place de la Halle, la ruelle des Lanternes et la placette du Puits, la cour de la Chapelle ; on passe d'un rang à l'autre
+par les passages, en suivant les chemins lumineux). Il n'existe qu'en images générées : **il s'affiche en QA** (`&qa=1`,
+signalé à l'image par un badge rouge « décor en images NON APPROUVÉES »), **et hors QA seulement quand le responsable aura
+approuvé ses images (A2 puis A1)** ; d'ici là, hors QA (et avec `&decors=code`), l'aventure se joue dans **l'ancien Quai**,
+dessiné par code, en secours, avec les mêmes personnages à des places adaptées. Le Parvis et les Ruelles sont dessinés par
+code (images non approuvées, ADR 027 et 028).
+
+| Personnage (Quai en rangs) | Rang | Secours (ancien Quai) |
+|---|---|---|
+| Kaï (prologue), la foule, les émissaires, Tessa, Gaspard, Maëlle | 1 : le Quai | mêmes places |
+| Kaï, bras droit de la Cendre ; un duel de rue ; Kaï, défi facultatif | 2 : la rue Haute | Quai, ouest / centre / est |
+| L'Épreuve de la Cendre | 2 : la place de la Halle | Quai, ouest |
+| Mère Aubépine, cheffe de la Ronce | 3 : la ruelle des Lanternes | devant le Fanal |
+| La Joute de la Ronce | 3 : la placette du Puits | devant le Fanal |
+| Bran, chef de la Cendre ; la Joute de la Cendre | 4 : la cour de la Chapelle | devant le Chantier ; Quai, ouest |
 
 ## Commandes
 

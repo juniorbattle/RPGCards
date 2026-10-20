@@ -25,7 +25,8 @@ import { duelSeed, SaveStore } from '../product/save';
 import { webglAvailable, type ArenaHandle } from '../scene/arena';
 import { confirmDialog, h } from '../shell/ui';
 import { parseRig } from '../ville/cameras';
-import { decorPolicy, preloadDecors } from '../ville/decors';
+import { createDecorResolver, decorPolicy, preloadDecors } from '../ville/decors';
+import type { SpritePolicy } from '../ville/spritesExternes';
 import { ILOTS, type IlotId } from '../ville/ilots';
 import { blocked, type Zone } from '../ville/monde';
 import { spritePolicy } from '../ville/spritesExternes';
@@ -35,7 +36,7 @@ import { appliquer, chapitre, peutChanger, peutConfirmer, peutEngager, statutDef
 import { equiperSignature, equiperVersion, validerDeckAv, type DeckAv } from './deck';
 import { battre, conclure, decider, poses, rencontreDef, type Pose } from './directeur';
 import { faitsPublics } from './faits';
-import { ilotAventure } from './ilots';
+import { ilotAventure, MANIFESTE_QUAI_RANGS } from './ilots';
 import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, rangNeutre, ROLE_LABEL, ROLES, ROMAIN } from './modele';
 import { objectif, quetes } from './quetes';
 import { collectionDe, type Gain } from './registre';
@@ -88,6 +89,13 @@ export class AventureApp {
   /** Écran courant (QA, aide au rendu). */
   ecran: 'titre' | 'nouveau' | 'ville' | 'preparation' | 'duel' | 'resultat' = 'titre';
   private posesAffichees = '';
+  /**
+   * ARB-M10-12 : le Quai de l'aventure est le Quai en quatre rangs, s'il peut s'afficher (son diorama admis : en QA, ou
+   * hors QA une fois ses images approuvées, A2 puis A1) ; sinon l'ancien Quai, dessiné par code, en secours.
+   */
+  quaiRangs = false;
+  private quaiDecide = false;
+  private decisionQuai: Promise<boolean>;
   private dernierResultat: { prevu: DuelPrevu; issue: Issue; gains: Gain[]; turns: number; faits: FaitsPublics; pv: [number, number] } | null = null;
 
   constructor(readonly d: DepsAventure) {
@@ -95,7 +103,14 @@ export class AventureApp {
     installAventureStyles();
     document.title = 'Les Quatre Voies — Aventure (prototype)';
     window.addEventListener('pagehide', () => this.memoriser());
-    void preloadDecors(['quai'], decorPolicy(d.params.qa, new URLSearchParams(location.search).get('decors')));
+    const politique = decorPolicy(d.params.qa, new URLSearchParams(location.search).get('decors'));
+    this.decisionQuai = quaiEnRangs(politique).then((oui) => {
+      this.quaiRangs = oui;
+      this.quaiDecide = true;
+      // l'ancien Quai en secours : ses plans éventuels (approuvés) préparés comme avant
+      if (!oui) void preloadDecors(['quai'], politique);
+      return oui;
+    });
     this.titre();
   }
 
@@ -199,14 +214,14 @@ export class AventureApp {
     this.save.etat = appliquer(this.save.etat, { type: 'scene', id: 'P1' }, new Date().toISOString()).etat;
     this.persist();
     this.detruireVille();
-    this.entrerVille(true);
+    void this.decisionQuai.then(() => this.entrerVille(true));
   }
 
   private continuer(): void {
     const s = this.save;
     if (!s) return;
     if (s.duel) { this.reprendreDuel(s.duel); return; }
-    this.entrerVille(false);
+    void this.decisionQuai.then(() => this.entrerVille(false));
   }
 
   // ------------------------------------------------------------------ la ville
@@ -216,7 +231,7 @@ export class AventureApp {
   }
 
   private posesDe(id: IlotId): Pose[] {
-    let out = poses(this.save!.directeur, this.etat, id);
+    let out = poses(this.save!.directeur, this.etat, id, this.quaiRangs);
     // P5 : le premier émissaire « fend la foule » sur le Quai ; il rejoint sa maison après la scène du choix (P6).
     const e = this.etat;
     if (e.premier && e.affiliation === null && !e.scenes.includes('P6')) {
@@ -235,7 +250,7 @@ export class AventureApp {
 
   /** Point de décision du directeur des rencontres (entrée dans un îlot, retour d'un duel). */
   private decider(id: IlotId): void {
-    const r = decider(this.save!.directeur, this.etat, id);
+    const r = decider(this.save!.directeur, this.etat, id, this.quaiRangs);
     this.save!.directeur = r.directeur;
     this.persist();
   }
@@ -257,7 +272,8 @@ export class AventureApp {
       host: this.host, artSeed: this.params.artSeed, camera: 'frontale', player: this.look, ilot: at, spawn: 'arrivee',
       freeze: this.params.freeze, reducedMotion: this.params.reducedMotion,
       sprites: spritePolicy(this.params.qa, q.get('sprites')), decors: decorPolicy(this.params.qa, q.get('decors')), rig: parseRig(q.get('rig')),
-      ilotDefOf: (id) => ilotAventure(id, this.posesDe(id)),
+      ilotDefOf: (id) => ilotAventure(id, this.posesDe(id), this.quaiRangs),
+      ...(this.quaiRangs ? { decorsManifest: MANIFESTE_QUAI_RANGS } : {}),
       onInteract: (z) => this.interagir(z),
       onMenu: () => this.menu(),
     });
@@ -290,6 +306,8 @@ export class AventureApp {
 
   /** Entrée (ou retour) dans la ville ; `spawn` : point d'apparition (devant un personnage) au retour d'un duel. */
   entrerVille(arrivee: boolean, spawn?: string): void {
+    // le Quai (en rangs ou en secours) se décide avant de construire la ville : quelques instants au lancement
+    if (!this.quaiDecide) { void this.decisionQuai.then(() => this.entrerVille(arrivee, spawn)); return; }
     this.ecran = 'ville';
     this.d.app.hidden = true;
     this.d.arena()?.setPaused(true);
@@ -424,9 +442,16 @@ export class AventureApp {
       if (exit) return this.voyager(exit.to, exit.spawn);
     }
     if (z.kind === 'porte' && z.target === 'salle') return this.salleDesBannieres();
-    if (z.kind === 'porte' && z.target === 'fanal') return this.dire('Le Fanal', `La taverne du port, maison de la Ronce. ${this.etat.affiliation ? 'Gaspard, Maëlle et Mère Aubépine y tiennent la maison.' : 'On dit que la Ronce y garde le feu du port.'}`, [fermer(this)]);
+    if (z.kind === 'porte' && z.target === 'fanal') return this.dire('Le Fanal', `La taverne du port, maison de la Ronce. ${this.etat.affiliation ? (this.quaiRangs ? 'Gaspard et Maëlle y tiennent la maison ; Mère Aubépine veille plus haut, dans la ruelle des Lanternes.' : 'Gaspard, Maëlle et Mère Aubépine y tiennent la maison.') : 'On dit que la Ronce y garde le feu du port.'}`, [fermer(this)]);
     if (z.kind === 'porte' && z.target === 'arene') return this.championnatDialog();
-    const INFO: Record<string, string> = { fontaine: 'La fontaine du Voile : les duellistes y jettent une carte usée avant un grand duel. Lior, l’émissaire du Voile, n’est jamais loin.' };
+    // Quai en rangs : les balises des passages ne sont que des repères (leur nom s'affiche en approchant)
+    if (z.kind === 'info' && z.target?.startsWith('rang-')) return;
+    const INFO: Record<string, string> = {
+      fontaine: 'La fontaine du Voile : les duellistes y jettent une carte usée avant un grand duel. Lior, l’émissaire du Voile, n’est jamais loin.',
+      'place-halle': 'La place de la Halle : on y joue aux cartes entre deux livraisons. Quand la Cendre ouvre son Épreuve, c’est ici.',
+      'placette-puits': 'La placette du Puits : on y tire l’eau et les défis. La Ronce y tient sa Joute.',
+      'cour-chapelle': 'La cour de la Chapelle, le cœur du Quai. Bran, le Premier Feu, y attend ceux qui montent jusqu’à lui.',
+    };
     this.dire(z.label, INFO[z.id] ?? 'Rien de plus ici pour l’instant (prototype).', [fermer(this)]);
   }
 
@@ -1052,4 +1077,17 @@ function gainEls(g: Gain, artSeed: number): HTMLElement[] {
   if (g.kind === 'technique') return [h('div', { class: 'av-tech', title: TECHNIQUES[g.items[0] as TechniqueId].text }, h('b', null, 'Technique'), h('span', null, g.items[0]!))];
   if (g.kind === 'neutres') return [1, 2, 3, 4].map((r) => neutreEl(`neutre-${r}`, '×4'));
   return g.items.map((d) => cardEl(d, { artSeed, tag: 'div' }));
+}
+
+/**
+ * Le Quai en quatre rangs n'existe qu'en diorama d'images générées (ARB-M10-12) : il est l'îlot du Quai de l'aventure
+ * seulement si tous ses plans sont admis par la politique (hors QA : approuvés par le responsable) et lisibles ; sinon,
+ * l'ancien Quai en bande, dessiné par code. Décidé avant de construire la ville (le décor n'est jamais mélangé). Les plans
+ * décodés ici sont ceux que la ville reprend (même cache).
+ */
+async function quaiEnRangs(politique: SpritePolicy): Promise<boolean> {
+  if (politique === 'code') return false;
+  const r = createDecorResolver(politique, () => {}, { manifest: MANIFESTE_QUAI_RANGS });
+  await r.prepare('quai');
+  return r.peek('quai').state === 'diorama';
 }
