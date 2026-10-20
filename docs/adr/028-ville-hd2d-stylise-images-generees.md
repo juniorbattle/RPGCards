@@ -491,3 +491,19 @@ avec leurs découpes dans `art-src/decors/kit-rangs.json` :
 Le Quai en quatre rangs est habillé du kit au laboratoire : 60 plans dans 12 images, 125,4 Mo de mémoire GPU. Les plans
 de preuve dessinés par code sont retirés. Rien n'est approuvé (`approved: false`). L'approbation en bloc (A1) suit la
 vérification des conditions d'OpenAI (A2).
+
+### Cohérence du quartier et balises des passages (passe 67, 2026-10-20)
+
+Retours du responsable sur la passe 66 : « ils semblent avec des bugs visuels et des incoherences de structure comme des morceaux de decors coupe/rogne ou un monument isole au centre avec des decors flou ( meme si on veut le flou ) mais dans aucun decor coherent pour peaufiner le visuel et la direction artistique, on doit a tout compris conserver une coherence et immersion car notre idee est genial mais mal integre » ; puis : « j'aimais bien aussi le fond au sol des decors precedent rang que nous avons depasse car cela nous permet de retrouver le chemin du retour pour revenir en arriere OU TOUT SIMPLEMENT je veux que tu iintegres des effets visuels indicatifs pour les chemins ruelles qui permet d'aller et revenir vers chaque rangs ».
+
+Corrigé par script et par le moteur, sans nouvelle image :
+
+- façades posées d'un mur mitoyen à l'autre (limites des maisons des frises) ;
+- murs des passages sous la ligne des toits et dans l'ombre ;
+- chapelle au milieu d'une rangée de maisons, ville haute au loin ;
+- fantômes assourdis (gris, plus sombres) ;
+- sol et pied des rangs dépassés gardés : ce sont les repères du retour.
+
+**Balises des passages** : à chaque bouche, une lueur ambrée au sol et des chevrons vers le rang où le passage mène, à
+l'aller comme au retour ; le nom de ce rang s'affiche en approchant. Elles sont dessinées par le moteur, et données par la
+grammaire (`balisesRangs`) : tout quartier en rangs les a.

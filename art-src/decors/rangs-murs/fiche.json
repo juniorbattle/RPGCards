@@ -65,14 +65,15 @@
     "etapes": [
       "fond magenta détouré (alpha tiré de l’écart au magenta, bords démêlés du fond), recadré sur le contenu",
       "trois panneaux séparés par les bandes vides",
-      "chacun ramené à la même case (8 × 12.5 m au monde, 64 px/m), côte à côte"
+      "chacun ramené à la même case (8 × 12.5 m au monde, 64 px/m), côte à côte",
+      "murs des passages et des places (colombages, plâtre) gardés sur leurs 9 m du bas (fondu sous la coupe) et assombris de 20 % au pied à 50 % en haut (l’ombre du passage) ; pignon gardé entier, assombri de 8 à 28 %"
     ],
     "decoupes": "art-src/decors/kit-rangs.json"
   },
   "sortie": {
     "fichier": "public/decors/rangs-murs.png",
-    "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
-    "octets": 2638355,
+    "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+    "octets": 1967375,
     "dimensions": [
       1536,
       800
@@ -81,6 +82,6 @@
   "approved": false,
   "chaine_des_empreintes": [
     "8301053764cb85e2685f4b1c2eb2289e6bd597d6205eccd097dd0c4750c526b7 (brut rangs-murs)",
-    "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e (planche)"
+    "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01 (planche)"
   ]
 }

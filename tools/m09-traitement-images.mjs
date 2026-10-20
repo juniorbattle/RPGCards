@@ -745,3 +745,33 @@ export async function atlasPanels({ url, boxes, slotW, slotH }) {
   const res = await new Promise((r) => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(blob); });
   return { url: res, size: [slotW * boxes.length, slotH] };
 }
+
+/**
+ * Dans la page (passe 67) : ombre et hauteur utile de panneaux d'un atlas (murs de côté des passages) : pour chaque case
+ * [x0, x1) (px), les rangées au-dessus de `cut` (fraction de la hauteur, depuis le haut) sont effacées, avec un fondu de
+ * `fade` px sous la coupe ; la couleur est multipliée par un dégradé vertical de `dark[0]` (pied) à `dark[1]` (haut de
+ * la partie gardée) : un passage étroit est dans l'ombre, et son mur ne dépasse plus des toits.
+ */
+export async function shadeSlots({ url, slots }) {
+  const img = new Image(); img.src = url; await img.decode();
+  const W = img.width; const H = img.height;
+  const c = new OffscreenCanvas(W, H); const g = c.getContext('2d', { willReadFrequently: true });
+  g.drawImage(img, 0, 0);
+  const id = g.getImageData(0, 0, W, H); const d = id.data;
+  for (const { x0, x1, cut = 0, fade = 0, dark = [1, 1] } of slots) {
+    const yc = Math.round(cut * H);
+    for (let y = 0; y < H; y++) {
+      const t = H - 1 - yc > 0 ? Math.min(1, Math.max(0, (H - 1 - y) / (H - 1 - yc))) : 0;
+      const m = dark[0] + (dark[1] - dark[0]) * t;
+      const a = y < yc ? 0 : fade > 0 ? Math.min(1, (y - yc) / fade) : 1;
+      for (let x = x0; x < x1; x++) {
+        const i = (y * W + x) * 4;
+        d[i] = Math.round(d[i] * m); d[i + 1] = Math.round(d[i + 1] * m); d[i + 2] = Math.round(d[i + 2] * m);
+        d[i + 3] = Math.round(d[i + 3] * a);
+      }
+    }
+  }
+  g.putImageData(id, 0, 0);
+  const blob = await c.convertToBlob({ type: 'image/png' });
+  return new Promise((r) => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(blob); });
+}
