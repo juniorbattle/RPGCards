@@ -15,9 +15,19 @@ responsable n'est arrivée par git pendant le run (en-têtes du brief, de `CLAUD
 | **Preuve hors dépôt du patch M10-A** | patch complet des neutres appliqué dans un worktree temporaire : **305 tests du dépôt inchangés et verts**, 5 tests neutres ; **mesures d'équilibrage** IA contre IA (inaugural 51,7 %, cadet 57,3 %, bras droit 46,3 %, chef 36,7 % à 90 PV) ; patch prêt à appliquer **après ratification** | `docs/m10/MESURES_M10A.md`, `docs/m10/patch-m10a-neutres.diff` |
 | **Phase 2 — prototype `?aventure=1`** (M10-B, et M10-C, D, E en avance) | **livré, provisoire** : Nouvelle aventure → 16 cartes grises → le Quai → Kaï → duel public (deck de prêt) → foule → quatre émissaires → choix libre et confirmation → quatre Basics → défis de lieutenants (variantes), du chef (Signature), revanches sans duplication → Salle des Bannières (défi officiel d'une autre famille) ; **Épreuves et Joutes** (variantes I et II : les seize variantes atteignables) ; **squelette du Championnat** (Quatre Bannières, Miroir, Finale) ; rencontres facultatives (rue, Kaï) ; deck R-AV et registre ; journal ; sauvegarde à part et reprise exacte | `docs/AVENTURE_PROVISOIRE.md`, ADR 032 (proposé) |
 | Vérifications (rendu logiciel) | `npm test` **310/310** (281 d'origine inchangés) ; `qa:aventure` **40/40** en 1280 × 720 au build final `011bf38`, et vert en 1920 × 1080 et décor par code au build `aa79398` (0 erreur console) | `artifacts/qa/m10/`, `screenshots/qa/m10/` |
-| Mode Duel standard, jeu par défaut, démo `?demo=1` | **inchangés** : jeu par défaut **identique au pixel près** au départ `255820c` (`l5-identique` au build `aa79398`, 0 pixel différent, témoins détectés) ; `qa:demo` vert en 1280 et 1920 ; campagne complète : §1 bis | `artifacts/qa/m10/` |
+| Mode Duel standard, jeu par défaut, démo `?demo=1` | **inchangés** : jeu par défaut **identique au pixel près** au départ `255820c` (`l5-identique` au build `aa79398`, 0 pixel différent, témoins détectés) ; `qa:demo` vert en 1280 et 1920 ; campagne complète **verte** : §1 bis | `artifacts/qa/m10/` |
 | M09 | **en pause**, rien de refait ; îlots, dioramas et feuilles réutilisés tels quels ; aucune approbation changée ; aucune image générée | `docs/missions/M09_VILLE_EXPLORATION_HD2D.md` |
 | Journal | passes 71 (contrats), 72 (prototype), 73 (preuve M10-A, passation) | `JOURNAL.md` |
+
+### 1 bis. Campagne de QA complète (jalon, lancée seule en fin de run)
+
+Build `011bf38` (les commits suivants ne touchent que la documentation et les preuves), rendu logiciel SwiftShader,
+`LQV_QA_NAV_TIMEOUT=90000 LQV_QA_TIMEOUT=60000`, de 09:09 à 10:06 UTC, **verte au premier passage** :
+`qa:browser` **5/5** duels complets (0 écart de vue, 0 fuite, 0 clic perdu, 0 erreur console) ; `qa:product` **9/9**
+parcours (dont la série complète du Tournoi, la reprise en plein duel, la migration réelle d'une sauvegarde v1, la
+reprise altérée refusée) ; `qa:rc` **9/9** (sans WebGL, longévité 12 duels, moteur indépendant des animations, stockage
+refusé, contraste, clavier seul, coût processeur) ; `qa:techniques` **8/8**. Rapports et journal :
+`artifacts/qa/m10/campagne/` (les rapports de la RC 0.8 sous `artifacts/qa/` sont laissés intacts).
 
 ## 2. À faire en local (impossible dans le cloud : pas de GPU, pas de Windows, pas de clé)
 
