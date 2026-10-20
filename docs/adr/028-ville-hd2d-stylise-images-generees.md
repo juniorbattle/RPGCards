@@ -475,3 +475,19 @@ les quartiers : `src/ville/rangs.ts`.
   reposée à plusieurs rangs et dans plusieurs quartiers ; 21 images sur 30 après le lot ; **générées après accord**.
 - **Proposé** : la même grammaire pour le Parvis et les Ruelles ; le cœur de chaque quartier s'ouvre sur la Grande Cour
   (C1). Rien n'est approuvé (`approved: false`).
+
+### Kit des quartiers en rangs généré et posé (passe 66, 2026-10-20)
+
+Accord du responsable : « Oui, génère les 5 images du kit des rangs (tools/m09-lot-quai-3.mjs), traite-les par script et pose-les dans le Quai en quatre rangs. ». Les 5 images ont été annoncées avec leurs prompts complets avant le lancement, et
+générées : 21 images sur 30. Le traitement est fait par script (`tools/m09-kit-rangs.mjs`). Il produit cinq planches,
+avec leurs découpes dans `art-src/decors/kit-rangs.json` :
+
+- deux frises de ruelle d'environ 64 m (les deux rangées ramenées à la même hauteur de porte, assemblées dans deux ordres) ;
+- un atlas de trois murs ;
+- trois monuments (l'emblème Ronce du jeu est brodé sur les bannières de la halle, à la place de l'emblème inventé par
+  le modèle) ;
+- six objets.
+
+Le Quai en quatre rangs est habillé du kit au laboratoire : 60 plans dans 12 images, 125,4 Mo de mémoire GPU. Les plans
+de preuve dessinés par code sont retirés. Rien n'est approuvé (`approved: false`). L'approbation en bloc (A1) suit la
+vérification des conditions d'OpenAI (A2).

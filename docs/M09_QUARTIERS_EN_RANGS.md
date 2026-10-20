@@ -94,8 +94,9 @@ Propositions, à valider ; chaque quartier garde son rang 1 actuel.
 
 Le coût reste bas parce que chaque image est un **kit** : découpée par script (`uv`), recalée et reposée à plusieurs
 rangs et dans plusieurs quartiers. La preuve fait déjà tout le Quai en quatre rangs avec les images de la porte. Le kit
-annoncé (`tools/m09-lot-quai-3.mjs`, **non généré, en attente de l'accord du responsable**) remplace les plans
-approximatifs. Il reprend aussi les deux images annoncées à la passe 63 :
+(`tools/m09-lot-quai-3.mjs`) a été **généré après l'accord du responsable (passe 66)**. Il est traité par script
+(`tools/m09-kit-rangs.mjs` : cinq planches, découpes dans `art-src/decors/kit-rangs.json`) et posé dans le Quai en
+quatre rangs. Il remplace les plans approximatifs, et reprend aussi les deux images annoncées à la passe 63 :
 
 | Image | Contenu | Usage (découpes) |
 |---|---|---|
@@ -113,6 +114,8 @@ lumières et les bannières se règlent par script.
 - **Plans par îlot** : 64 au plus (au lieu de 24). Les plans découpent quelques images partagées ; le budget de 160 Mo
   de mémoire GPU reste la vraie borne.
 - **Brumes** : 10 au plus (au lieu de 6).
+- **Fichiers par îlot** : 48 Mo au plus depuis la passe 66 (au lieu de 32 Mo) ; le Quai en rangs habillé du kit pèse
+  38 Mo, le Quai actuel 23 Mo.
 - **Nouveaux champs** :
   - `coupeZ` sur un plan `coupe` et sur une lumière : le rang dépassé passe en fantôme ;
   - fondu lointain de tous les plans d'un diorama en rangs (réglé par `LOIN`).
@@ -121,10 +124,10 @@ lumières et les bannières se règlent par script.
 
 ## 7. Ce qui reste provisoire
 
-Dans la preuve, plusieurs plans sont provisoires :
+Depuis la passe 66, le Quai en quatre rangs est habillé du kit. Restent provisoires :
 
-- les fonds des ruelles sont le second rang recalé : il est peint pour être vu de loin, et ses portes sont trop petites ;
-- les murs et le puits sont dessinés par code ;
-- le cœur a pour fond la ville haute, faute de monument.
+- le fond de la cour, la ville haute peinte pour être vue de loin, devant laquelle se dresse la chapelle du kit ;
+- les emblèmes brodés des rangs passés en fantôme, qui restent visibles à 12 % parce qu'ils sont clairs ;
+- le sol des blocs passés en fantôme, qui montre les pavés comme sur l'image jointe par le responsable.
 
-Le kit les remplace. Le sol des blocs passés en fantôme montre les pavés, comme sur l'image jointe par le responsable.
+Rien n'est approuvé (`approved: false`) ; l'approbation en bloc vient après la vérification des conditions d'OpenAI.

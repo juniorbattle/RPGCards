@@ -99,7 +99,7 @@ describe('quartiers en rangs : le Quai en quatre rangs', () => {
 
   it('parcours du quai à la cour : passage ouest, rue Haute, passage du rang 2, ruelle des Lanternes, passage du rang 3', () => {
     let w = newWalker({ x: -12.1, z: 0.5 });
-    for (const t of [{ x: -12.1, z: -14 }, { x: -6.5, z: -14 }, { x: -6.5, z: -27 }, { x: 7, z: -27 }, { x: 7, z: -38.5 }, { x: 0, z: -40 }]) {
+    for (const t of [{ x: -12.1, z: -14 }, { x: -6.5, z: -14 }, { x: -6.5, z: -27 }, { x: 7, z: -27 }, { x: 7, z: -38.5 }, { x: 4, z: -40 }]) {
       w = walkTo(w, t);
       expect(Math.hypot(w.pos.x - t.x, w.pos.z - t.z), `${t.x}, ${t.z}`).toBeLessThan(0.15);
     }

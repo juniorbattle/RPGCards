@@ -1,0 +1,85 @@
+{
+  "id": "rangs-mobilier",
+  "statut": "kit des quartiers en rangs (ADR 028, passe 66), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "auteur": "Claude Code (session V4, passe 66), à la demande du responsable : « Oui, génère les 5 images du kit des rangs (tools/m09-lot-quai-3.mjs), traite-les par script et pose-les dans le Quai en quatre rangs. »",
+  "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-quai-3.mjs",
+  "aseprite": "non utilisé : traitement par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-kit-rangs.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production ; aucune analyse juridique faite par l’agent : point à confirmer par le responsable avant tout usage en jeu",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "sources": [
+    {
+      "nom": "rangs-mobilier",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-20T05:55:37.777Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1536x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image) and of our harbour facades (second and third images). Do not copy their composition.\n\nPaint ONE isolated layer with SIX separate street objects arranged in a 3 × 2 grid with wide magenta gaps between them, each seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines) with a slight view from above, each standing on its own straight horizontal base line with a soft contact shadow and no ground around it. Scale: a person is about 170 pixels tall in this image; doors are about 200 pixels tall. Top row: a stone well with a small wooden roof, a winch, a rope and a bucket; a small round fountain with a carved stone basin and a thin stream of water catching the lamplight; a market stall with an ivory canvas awning and crates of fish and fruit. Bottom row: a wooden bench beside a potted olive tree; a handcart loaded with barrels and crates; a street shrine niche on a short stone post with candles and flowers glowing warm amber.\n\nEverything around the subjects (above the roofs, between the panels, around the objects) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-20-v4-quai/quai-facades-ouest.png",
+          "sha256": "a98ab2077882538223808f4ff1d24131643a657c1cf8181258acf17a96fe3929"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-20-v4-rangs/rangs-mobilier.png (dossier principal, ignoré par git)",
+        "sha256": "5c5da01160f58c41372b3378369cd807d74ff6168e5c8fe4aefe3b8f406338d8",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 4543,
+        "input_tokens_details": {
+          "image_tokens": 4096,
+          "text_tokens": 447
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10031
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs",
+      "tools/m09-kit-rangs.mjs"
+    ],
+    "etapes": [
+      "fond magenta détouré (alpha tiré de l’écart au magenta, bords démêlés du fond), sans recadrage",
+      "six objets séparés par les bandes vides (deux rangées de trois ; boîtes et lanternes peintes dans kit-rangs.json)"
+    ],
+    "decoupes": "art-src/decors/kit-rangs.json"
+  },
+  "sortie": {
+    "fichier": "public/decors/rangs-mobilier.png",
+    "sha256": "6c7384d62f3f07fbdfa05299e758162d02d75ce4692d3ea84e00738fc0c4c1c2",
+    "octets": 1383305,
+    "dimensions": [
+      1536,
+      1024
+    ]
+  },
+  "approved": false,
+  "chaine_des_empreintes": [
+    "5c5da01160f58c41372b3378369cd807d74ff6168e5c8fe4aefe3b8f406338d8 (brut rangs-mobilier)",
+    "6c7384d62f3f07fbdfa05299e758162d02d75ce4692d3ea84e00738fc0c4c1c2 (planche)"
+  ]
+}

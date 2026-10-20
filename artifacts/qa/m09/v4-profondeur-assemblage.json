@@ -1,9 +1,9 @@
 {
-  "date": "2026-10-20T05:39:17.787Z",
-  "commit": "f2f9348",
+  "date": "2026-10-20T06:03:55.517Z",
+  "commit": "3a7492e",
   "mode": "assembler",
   "checks": [
-    "OK manifeste de la preuve : 56 plans (fonds, murs, mobilier découpés dans 10 images), 16 lumières, 10 brumes"
+    "OK manifeste du Quai en rangs : 60 plans découpés dans 12 images (kit des rangs : 39 plans), 16 lumières, 10 brumes"
   ],
   "console": [],
   "plans": {
@@ -153,30 +153,30 @@
       "orient": "sol",
       "coupe": false
     },
-    "fond-rang2--28": {
-      "file": "quai-second-rang.png",
+    "fond-rang2--31": {
+      "file": "rangs-frise-a.png",
       "uv": [
+        0.018,
         0,
-        0,
-        0.286,
-        0.91
+        0.376,
+        1
       ],
       "at": [
-        -18,
+        -19.5,
         0,
         -17
       ],
-      "width": 20,
+      "width": 23,
       "orient": "face",
       "coupe": true
     },
     "fond-rang2--5": {
-      "file": "quai-second-rang.png",
+      "file": "rangs-frise-a.png",
       "uv": [
-        0.329,
+        0.422,
         0,
-        0.414,
-        0.91
+        0.516,
+        1
       ],
       "at": [
         -2,
@@ -188,12 +188,12 @@
       "coupe": true
     },
     "fond-rang2-13": {
-      "file": "quai-second-rang.png",
+      "file": "rangs-frise-a.png",
       "uv": [
-        0.586,
+        0.702,
         0,
-        0.843,
-        0.91
+        0.982,
+        1
       ],
       "at": [
         22,
@@ -204,30 +204,13 @@
       "orient": "face",
       "coupe": true
     },
-    "fond-place-halle": {
-      "file": "quai-second-rang.png",
-      "uv": [
-        0.414,
-        0,
-        0.586,
-        0.91
-      ],
-      "at": [
-        7,
-        0,
-        -23
-      ],
-      "width": 12,
-      "orient": "face",
-      "coupe": true
-    },
     "flanc-rang2--31": {
-      "file": "quai-second-rang.png",
+      "file": "rangs-frise-b.png",
       "uv": [
-        0.061,
+        0.014,
         0,
-        0.273,
-        0.91
+        0.233,
+        1
       ],
       "at": [
         -24,
@@ -239,12 +222,12 @@
       "coupe": true
     },
     "flanc-rang2-17": {
-      "file": "quai-second-rang.png",
+      "file": "rangs-frise-b.png",
       "uv": [
-        0.788,
+        0.767,
         0,
-        1,
-        0.91
+        0.986,
+        1
       ],
       "at": [
         24,
@@ -256,12 +239,12 @@
       "coupe": true
     },
     "fond-rang3--31": {
-      "file": "quai-second-rang.png",
+      "file": "rangs-frise-b.png",
       "uv": [
-        0.125,
+        0.014,
         0,
-        0.361,
-        0.91
+        0.28,
+        1
       ],
       "at": [
         -22.5,
@@ -273,12 +256,12 @@
       "coupe": true
     },
     "fond-rang3--8": {
-      "file": "quai-second-rang.png",
+      "file": "rangs-frise-b.png",
       "uv": [
-        0.444,
+        0.374,
         0,
-        0.632,
-        0.91
+        0.586,
+        1
       ],
       "at": [
         -1.25,
@@ -290,12 +273,12 @@
       "coupe": true
     },
     "fond-rang3-9": {
-      "file": "quai-second-rang.png",
+      "file": "rangs-frise-b.png",
       "uv": [
-        0.674,
+        0.633,
         0,
         0.986,
-        0.91
+        1
       ],
       "at": [
         19.75,
@@ -306,47 +289,30 @@
       "orient": "face",
       "coupe": true
     },
-    "fond-placette-puits": {
-      "file": "quai-second-rang.png",
+    "flanc-rang3--31": {
+      "file": "rangs-frise-a.png",
       "uv": [
-        0.361,
+        0.018,
         0,
-        0.444,
-        0.91
+        0.282,
+        1
       ],
       "at": [
-        -11,
-        0,
-        -34
-      ],
-      "width": 6,
-      "orient": "face",
-      "coupe": true
-    },
-    "flanc-rang3--23": {
-      "file": "quai-second-rang.png",
-      "uv": [
-        0,
-        0,
-        0.129,
-        0.91
-      ],
-      "at": [
-        -18.5,
+        -22.5,
         0,
         -25
       ],
-      "width": 9,
+      "width": 17,
       "orient": "face",
       "coupe": true
     },
     "flanc-rang3-14": {
-      "file": "quai-second-rang.png",
+      "file": "rangs-frise-a.png",
       "uv": [
-        0.529,
+        0.718,
         0,
-        0.771,
-        0.91
+        0.982,
+        1
       ],
       "at": [
         22.5,
@@ -358,12 +324,12 @@
       "coupe": true
     },
     "flanc-rang4--31": {
-      "file": "quai-second-rang.png",
+      "file": "rangs-frise-b.png",
       "uv": [
-        0.069,
+        0.014,
         0,
-        0.361,
-        0.91
+        0.343,
+        1
       ],
       "at": [
         -20.5,
@@ -375,12 +341,12 @@
       "coupe": true
     },
     "flanc-rang4-10": {
-      "file": "quai-second-rang.png",
+      "file": "rangs-frise-b.png",
       "uv": [
-        0.639,
+        0.657,
         0,
-        0.931,
-        0.91
+        0.986,
+        1
       ],
       "at": [
         20.5,
@@ -388,6 +354,40 @@
         -36
       ],
       "width": 21,
+      "orient": "face",
+      "coupe": true
+    },
+    "fond-place-halle": {
+      "file": "rangs-monuments.png",
+      "uv": [
+        0.008,
+        0.002,
+        0.452,
+        0.949
+      ],
+      "at": [
+        7,
+        0,
+        -23
+      ],
+      "width": 12,
+      "orient": "face",
+      "coupe": true
+    },
+    "fond-placette-puits": {
+      "file": "rangs-monuments.png",
+      "uv": [
+        0.452,
+        0.03,
+        0.744,
+        0.949
+      ],
+      "at": [
+        -11,
+        0,
+        -34
+      ],
+      "width": 6,
       "orient": "face",
       "coupe": true
     },
@@ -408,12 +408,29 @@
       "orient": "face",
       "coupe": false
     },
+    "cour-chapelle": {
+      "file": "rangs-monuments.png",
+      "uv": [
+        0.747,
+        0.046,
+        1,
+        0.949
+      ],
+      "at": [
+        0,
+        0,
+        -42.95
+      ],
+      "width": 8,
+      "orient": "face",
+      "coupe": false
+    },
     "mur-passage-1-1": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
         0,
         0,
-        1,
+        0.333,
         1
       ],
       "at": [
@@ -427,11 +444,11 @@
       "coupe": true
     },
     "mur-passage-1-2": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
+        0.333,
         0,
-        0,
-        1,
+        0.667,
         1
       ],
       "at": [
@@ -445,11 +462,11 @@
       "coupe": true
     },
     "mur-passage-1-3": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
         0,
         0,
-        1,
+        0.333,
         1
       ],
       "at": [
@@ -463,11 +480,11 @@
       "coupe": true
     },
     "mur-passage-1-4": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
+        0.333,
         0,
-        0,
-        1,
+        0.667,
         1
       ],
       "at": [
@@ -481,11 +498,11 @@
       "coupe": true
     },
     "mur-place-2-1": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
+        0.333,
         0,
-        0,
-        0.75,
+        0.584,
         1
       ],
       "at": [
@@ -499,11 +516,11 @@
       "coupe": true
     },
     "mur-place-2-2": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
+        0.333,
         0,
-        0,
-        0.75,
+        0.584,
         1
       ],
       "at": [
@@ -517,11 +534,11 @@
       "coupe": true
     },
     "mur-bout-2-1": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
+        0.709,
         0,
-        0,
-        0.75,
+        0.958,
         1
       ],
       "at": [
@@ -535,11 +552,11 @@
       "coupe": true
     },
     "mur-bout-2-2": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
+        0.709,
         0,
-        0,
-        0.75,
+        0.958,
         1
       ],
       "at": [
@@ -553,11 +570,11 @@
       "coupe": true
     },
     "mur-passage-2-1": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
         0,
         0,
-        1,
+        0.333,
         1
       ],
       "at": [
@@ -571,11 +588,11 @@
       "coupe": true
     },
     "mur-passage-2-2": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
+        0.333,
         0,
-        0,
-        1,
+        0.667,
         1
       ],
       "at": [
@@ -589,11 +606,11 @@
       "coupe": true
     },
     "mur-place-3-1": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
+        0.333,
         0,
-        0,
-        0.625,
+        0.542,
         1
       ],
       "at": [
@@ -607,11 +624,11 @@
       "coupe": true
     },
     "mur-place-3-2": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
+        0.333,
         0,
-        0,
-        0.625,
+        0.542,
         1
       ],
       "at": [
@@ -625,11 +642,11 @@
       "coupe": true
     },
     "mur-bout-3-1": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
+        0.75,
         0,
-        0,
-        0.5,
+        0.917,
         1
       ],
       "at": [
@@ -643,11 +660,11 @@
       "coupe": true
     },
     "mur-bout-3-2": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
+        0.75,
         0,
-        0,
-        0.5,
+        0.917,
         1
       ],
       "at": [
@@ -661,11 +678,11 @@
       "coupe": true
     },
     "mur-passage-3-1": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
         0,
         0,
-        0.875,
+        0.291,
         1
       ],
       "at": [
@@ -679,11 +696,11 @@
       "coupe": true
     },
     "mur-passage-3-2": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
+        0.333,
         0,
-        0,
-        0.875,
+        0.625,
         1
       ],
       "at": [
@@ -697,11 +714,11 @@
       "coupe": true
     },
     "mur-bout-4-1": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
+        0.688,
         0,
-        0,
-        0.875,
+        0.979,
         1
       ],
       "at": [
@@ -715,11 +732,11 @@
       "coupe": true
     },
     "mur-bout-4-2": {
-      "file": "preuve-joue.png",
+      "file": "rangs-murs.png",
       "uv": [
+        0.688,
         0,
-        0,
-        0.875,
+        0.979,
         1
       ],
       "at": [
@@ -766,20 +783,37 @@
       "orient": "face",
       "coupe": false
     },
-    "halle-etal": {
-      "file": "quai-pied-facades.png",
+    "rue-haute-charrette": {
+      "file": "rangs-mobilier.png",
       "uv": [
-        0.512,
-        0.324,
-        0.579,
-        0.918
+        0.374,
+        0.606,
+        0.665,
+        0.903
+      ],
+      "at": [
+        -2.6,
+        0,
+        -16
+      ],
+      "width": 4.48,
+      "orient": "face",
+      "coupe": false
+    },
+    "halle-etal": {
+      "file": "rangs-mobilier.png",
+      "uv": [
+        0.672,
+        0.089,
+        0.958,
+        0.446
       ],
       "at": [
         7.4,
         0,
         -20.8
       ],
-      "width": 3.206,
+      "width": 4.4,
       "orient": "face",
       "coupe": false
     },
@@ -792,7 +826,7 @@
         1
       ],
       "at": [
-        11.6,
+        11.8,
         0,
         -21.9
       ],
@@ -800,14 +834,37 @@
       "orient": "face",
       "coupe": false
     },
+    "lanternes-niche": {
+      "file": "rangs-mobilier.png",
+      "uv": [
+        0.766,
+        0.51,
+        0.898,
+        0.901
+      ],
+      "at": [
+        -3,
+        0,
+        -28.4
+      ],
+      "width": 1.421,
+      "orient": "face",
+      "coupe": false
+    },
     "puits": {
-      "file": "preuve-puits.png",
+      "file": "rangs-mobilier.png",
+      "uv": [
+        0.061,
+        0.065,
+        0.287,
+        0.446
+      ],
       "at": [
         -11.2,
         0,
         -31
       ],
-      "width": 2.2,
+      "width": 3.48,
       "orient": "face",
       "coupe": false
     },
@@ -820,28 +877,45 @@
         1
       ],
       "at": [
-        -13,
+        -13.3,
         0,
-        -32.9
+        -33.4
       ],
       "width": 1.191,
       "orient": "face",
       "coupe": false
     },
-    "cour-caisses": {
-      "file": "quai-pied-facades.png",
+    "cour-fontaine": {
+      "file": "rangs-mobilier.png",
       "uv": [
-        0.11,
-        0.688,
-        0.14,
-        1
+        0.374,
+        0.077,
+        0.622,
+        0.45
       ],
       "at": [
-        -8.6,
         0,
-        -42
+        0,
+        -39.6
       ],
-      "width": 1.426,
+      "width": 3.82,
+      "orient": "face",
+      "coupe": false
+    },
+    "cour-banc": {
+      "file": "rangs-mobilier.png",
+      "uv": [
+        0.023,
+        0.506,
+        0.308,
+        0.895
+      ],
+      "at": [
+        -6.4,
+        0,
+        -42.2
+      ],
+      "width": 4.37,
       "orient": "face",
       "coupe": false
     },

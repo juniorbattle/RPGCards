@@ -8,7 +8,8 @@
  *   bande 1 (8 m) : les façades du Quai, deux passages (ouest, est), aux raccords de ses trois images ;
  *   rang 2 : la rue Haute (6 m), qui déborde à l'est sur la **place de la Halle** (étal, marchande) ;
  *   bande 2 (8 m) : un passage à l'ouest du centre ;
- *   rang 3 : la ruelle des Lanternes (4 m), qui déborde à l'ouest sur la **placette du Puits** ;
+ *   rang 3 : la ruelle des Lanternes (4 m), qui déborde à l'ouest sur la **placette du Puits** (devant la maison des
+ *            Joueurs) ;
  *   bande 3 (7 m) : un passage à l'est ;
  *   rang 4 : la **cour de la Chapelle** (7 m), le cœur du quartier, au pied de la ville haute.
  * Mêmes conventions que `quai.ts` (mètres ; x ouest → est, z des façades (−) vers l'eau (+)).
@@ -54,19 +55,24 @@ export const PROPS_PROFOND: readonly Rect[] = [
 
 /**
  * Mobilier des rangs 2 à 4 (mêmes places dans le manifeste de la preuve, `m09-profondeur-preuve.mjs`, qui les lit ici) :
- * morceaux des bandes du pied et de la rue du diorama (`source` : bande et x de la source au monde, avant écart), ou
- * puits dessiné par code. `x`, `z` : pied du meuble au monde ; `rect` : obstacle.
+ * objets du kit des rangs (passe 66, `source: 'kit'`, `objet` : son nom dans `art-src/decors/kit-rangs.json`), ou
+ * morceaux des bandes du pied du diorama (`source: 'pied'`, x de la source au monde, avant écart). `x`, `z` : pied du
+ * meuble au monde ; `rect` : obstacle.
  */
-export interface MeubleRang { id: string; source: 'pied' | 'rue' | 'puits'; src?: readonly [number, number]; x: number; z: number; rect: Rect }
-const meuble = (id: string, source: MeubleRang['source'], src: readonly [number, number] | undefined, x: number, z: number, w: number, d: number): MeubleRang => ({ id, source, ...(src ? { src } : {}), x, z, rect: { x0: x - w / 2, z0: z - d, x1: x + w / 2, z1: z } });
+export interface MeubleRang { id: string; source: 'pied' | 'kit'; src?: readonly [number, number]; objet?: string; x: number; z: number; rect: Rect }
+const meuble = (id: string, src: readonly [number, number], x: number, z: number, w: number, d: number): MeubleRang => ({ id, source: 'pied', src, x, z, rect: { x0: x - w / 2, z0: z - d, x1: x + w / 2, z1: z } });
+const objet = (id: string, nom: string, x: number, z: number, w: number, d: number): MeubleRang => ({ id, source: 'kit', objet: nom, x, z, rect: { x0: x - w / 2, z0: z - d, x1: x + w / 2, z1: z } });
 export const MEUBLES_RANGS: readonly MeubleRang[] = [
-  meuble('rue-haute-caisses', 'pied', [-18.95, -17.05], -14.0, -12.6, 1.2, 0.8),
-  meuble('rue-haute-tonneaux', 'pied', [-11.3, -9.7], 15.0, -15.2, 1.0, 0.8),
-  meuble('halle-etal', 'pied', [0.4, 3.8], 7.4, -20.8, 3.0, 1.4),
-  meuble('halle-caisses', 'pied', [11.6, 13.7], 11.6, -21.9, 1.2, 0.8),
-  meuble('puits', 'puits', undefined, -11.2, -31.0, 1.8, 1.4),
-  meuble('placette-tonneaux', 'pied', [-11.3, -9.7], -13.0, -32.9, 1.0, 0.8),
-  meuble('cour-caisses', 'pied', [-18.95, -17.05], -8.6, -42.0, 1.2, 0.8),
+  meuble('rue-haute-caisses', [-18.95, -17.05], -14.0, -12.6, 1.2, 0.8),
+  meuble('rue-haute-tonneaux', [-11.3, -9.7], 15.0, -15.2, 1.0, 0.8),
+  objet('rue-haute-charrette', 'charrette', -2.6, -16.0, 4.0, 1.0),
+  objet('halle-etal', 'etal', 7.4, -20.8, 4.0, 1.4),
+  meuble('halle-caisses', [11.6, 13.7], 11.8, -21.9, 1.2, 0.8),
+  objet('lanternes-niche', 'niche', -3.0, -28.4, 1.0, 0.6),
+  objet('puits', 'puits', -11.2, -31.0, 2.6, 1.6),
+  meuble('placette-tonneaux', [-11.3, -9.7], -13.3, -33.4, 1.0, 0.6),
+  objet('cour-fontaine', 'fontaine', 0, -39.6, 3.2, 1.6),
+  objet('cour-banc', 'banc', -6.4, -42.2, 3.2, 0.8),
 ];
 /** Lampadaires des rangs 2 à 4 (morceau de la bande de la rue). */
 export const LAMPES_RANGS: readonly Vec2[] = [

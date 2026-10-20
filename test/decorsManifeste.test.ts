@@ -50,7 +50,7 @@ function verifyDecorDir(dir: string, root: string): string[] {
         if (buf.readUInt32BE(16) !== p.size[0] || buf.readUInt32BE(20) !== p.size[1]) out.push(`${tag}${ilot}/${id} : ${buf.readUInt32BE(16)}×${buf.readUInt32BE(20)} au lieu de ${p.size[0]}×${p.size[1]}`);
         if (!existsSync(join(root, p.fiche))) out.push(`${tag}${ilot}/${id} : fiche de provenance ${p.fiche} absente`);
       }
-      if (bytes > DECOR_MAX_ILOT_BYTES) out.push(`${tag}${ilot} : ${bytes} octets de plans (> 32 Mo)`);
+      if (bytes > DECOR_MAX_ILOT_BYTES) out.push(`${tag}${ilot} : ${bytes} octets de plans (> ${DECOR_MAX_ILOT_BYTES / 1048576} Mo)`);
     }
   }
   for (const f of readdirSync(dir)) if (!names.includes(f) && !listed.has(f) && statSync(join(dir, f)).isFile()) out.push(`${f} : fichier hors du manifeste`);
