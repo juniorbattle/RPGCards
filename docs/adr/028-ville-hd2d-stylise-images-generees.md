@@ -215,3 +215,41 @@ false`** : refusés par le jeu, montrés en QA (`?qa=1`) ; fiches `art-src/decor
   par code ; avec le cadrage actuel elles remplissent l'écran ; un cadrage élargi (`rig=6,25,42,4.8`) montre la rue
   entière, le second rang et la profondeur comme la référence, mais rend le joueur ≈ ×1,9 (non entier) ; (3) le sort de
   l'essai (`art-src/*-essai/`, gardé comme historique).
+
+## Retours du responsable sur la planche de décision (passe 59, 2026-10-20)
+
+Relayés par la session principale ; **rien n'est approuvé**. Ses mots : « presque bon mais les emblemes des familles ne
+sont pas bons car ils derivent des emblemes de cartes deja integre qui etaient ceux de la dirrection B, cela marquera une
+incoherence, sinon l'environnement integre tout en conservant la base sol code genere donne vraimemnt bien j'amerai
+ajouter plus de profondeur aux quartierss de la ville meme si nous appliquons un diorama, la feuille du joueur en pixel
+art est interessante mais je pense que nous devons optimiser le visage/tete qui manque encore des qualites, par ailleurs
+j'aime bien le style de ppersonnage piixel art que propose le projet cite du tournoi local, on pourrait le reprendre en y
+integrant notre logique visuel du projet pour rester coherent ».
+
+- **Emblèmes** : les bannières générées portaient des emblèmes inventés par le modèle (flamme, croissant, arbre, étoile à
+  huit branches), étrangers à ceux du jeu (`src/art/emblems.ts` : Cendre, losange à flamme évidée ; Voile, losanges
+  imbriqués ; Ronce, fleur à cinq pétales ; Astre, étoile à quatre branches ; ceux des cartes, de l'interface et de
+  l'arène). **Corrigé par script** (`fixBanners`, `tools/m09-traitement-images.mjs`) sur les bruts, avant le traitement :
+  tissu de chaque bannière refait à partir du sien (couleur, plis, grain), emblème exact du jeu posé (mêmes tracés que
+  `emblemSvg`, or, ombre portée) ; quatre bannières de la salle de jeu, quatre du second rang, celle du mât du premier
+  plan ; la bannière posée sur le mur du quai, dont seul le bas se voit, rendue unie. Aucune image générée. Si le tissu
+  refait ne convient pas : régénérer ces bannières sans motif (2 ou 3 images) et y poser les emblèmes de la même façon.
+- **Gardé** : le diorama sur le sol du moteur (pavés, flaques, reflets) « donne vraiment bien ».
+- **Profondeur des quartiers**, à choisir avant de produire, pour le Quai et les îlots à venir : (a) brume entre les plans
+  (nappes du moteur, comme le décor par code ; 0 image, champ `brumes` du diorama à ajouter) ; (b) plans plus espacés en z,
+  parallaxe plus marquée quand la caméra suit (0 image) ; (c) troisième rang de toits et ville haute étagée sur sa
+  colline (1 ou 2 images) ; (d) ruelles et passages qui s'enfoncent derrière des trouées des façades, avec leur lumière
+  (2 images) ; (e) la Grande Cour : marche et caméra en profondeur (ADR 028, C3). Recommandation : (a) et (b) d'abord
+  (sans image), puis (c) et (d) sur le Quai, le cadrage élargi les montrant mieux.
+- **Feuille du joueur** : gardée dans l'esprit ; tête et visage à améliorer.
+- **Référence de style, Cité du Tournoi** (`C:\Users\miche\Documents\Projects\HD-2D`, dépôt RPG-ArtByCode) : le
+  responsable autorise à prendre le **pixel art de ses personnages comme référence de style** (par exemple
+  `art-lab/characters/exports/hero-x2-v3.png`, `src/characters/PixelPainter.ts`), adapté à la logique visuelle du jeu
+  (identités V2, familles, tons clés recolorables, contrat v3). Le projet est lu en lecture seule ; ni ses images ni son
+  code ne sont copiés dans ce dépôt (AGENTS). Constat de lecture : cases de 64 × 96 px d'art, tête lisible (yeux, mèches),
+  rampes de couleur à cinq tons (ombres froides et saturées, lumières chaudes). Proposition : feuille du joueur refaite
+  sur une grille d'art de 64 × 96 (au lieu de 48 × 70), tête et visage plus détaillés, rampes à la manière de
+  `PixelPainter.ramp` pour la recoloration (code du jeu, réécrit) ; **donner `hero-x2-v3.png` en image d'entrée à
+  gpt-image-2 demande l'autorisation explicite du responsable** (AGENTS limite les entrées aux images du projet).
+- **Toujours ouverts** : cadrage (actuel ou élargi) ; lumières aux couleurs des familles (note A3). Planche
+  `screenshots/qa/m09/v4-decision-2/planche-decision-quai.png`. Budget : 12 images sur 30, 18 restantes.

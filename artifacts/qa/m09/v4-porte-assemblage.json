@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-20T01:12:50.147Z",
-  "commit": "2ae4c81",
+  "date": "2026-10-20T02:43:51.742Z",
+  "commit": "76280a4",
   "mode": "assembler",
   "checks": [
     "OK accessoires : 5 objets découpés (5 attendus : lampadaire, borne, caisses, tonneaux, filets), 0 taches écartées",
@@ -10,6 +10,154 @@
     "OK feuille du joueur : grille d’art 48 × 70, pas 3.76 × 3.86, 39 couleurs, tons clés tenue [1185,706,2593,0], accent [77,61,120,105], ancrage 24,67, figure 62"
   ],
   "console": [],
+  "bannieres": {
+    "quai-facades-essai": [
+      {
+        "box": [
+          100,
+          400,
+          176,
+          576
+        ],
+        "family": "Cendre",
+        "base": [
+          48,
+          27,
+          27
+        ]
+      },
+      {
+        "box": [
+          220,
+          400,
+          293,
+          576
+        ],
+        "family": "Voile",
+        "base": [
+          11,
+          25,
+          44
+        ]
+      },
+      {
+        "box": [
+          344,
+          400,
+          416,
+          600
+        ],
+        "family": "Ronce",
+        "base": [
+          23,
+          35,
+          34
+        ]
+      },
+      {
+        "box": [
+          466,
+          400,
+          539,
+          576
+        ],
+        "family": "Astre",
+        "base": [
+          7,
+          20,
+          36
+        ]
+      }
+    ],
+    "quai-second-rang": [
+      {
+        "box": [
+          18,
+          642,
+          65,
+          735
+        ],
+        "family": "Voile",
+        "base": [
+          19,
+          27,
+          42
+        ]
+      },
+      {
+        "box": [
+          126,
+          642,
+          175,
+          735
+        ],
+        "family": "Astre",
+        "base": [
+          9,
+          21,
+          38
+        ]
+      },
+      {
+        "box": [
+          762,
+          548,
+          799,
+          655
+        ],
+        "family": "Ronce",
+        "base": [
+          16,
+          29,
+          32
+        ]
+      },
+      {
+        "box": [
+          1320,
+          562,
+          1364,
+          700
+        ],
+        "family": "Cendre",
+        "base": [
+          38,
+          22,
+          28
+        ]
+      }
+    ],
+    "quai-premier-plan-ouest": [
+      {
+        "box": [
+          218,
+          150,
+          316,
+          400
+        ],
+        "family": "Astre",
+        "base": [
+          12,
+          29,
+          51
+        ]
+      },
+      {
+        "box": [
+          1362,
+          575,
+          1444,
+          722
+        ],
+        "family": "aucun",
+        "base": [
+          77,
+          67,
+          66
+        ]
+      }
+    ]
+  },
   "traitement": {
     "ciel": {
       "size": [
@@ -204,7 +352,7 @@
         "bottom": 1023
       },
       "transparentShare": 0.559,
-      "magentaSpill": 1812,
+      "magentaSpill": 1808,
       "lanterns": []
     },
     "premierEst": {
@@ -536,7 +684,7 @@
     },
     "second-rang": {
       "file": "quai-second-rang.png",
-      "sha256": "1c3332b884d0ec64e7fe9fa2b209065a83a9e6ad4c4b81322210d561ca46805a",
+      "sha256": "b33760448f9b7b76582389f8b0c7f736ebd9efcf1664515ce1ebd93946032bc3",
       "size": [
         1536,
         953
@@ -554,11 +702,11 @@
       "order": 1,
       "blend": "decoupe",
       "fog": 0.6,
-      "bytes": 2426315
+      "bytes": 2428368
     },
     "facades": {
       "file": "quai-facades.png",
-      "sha256": "5a13074f3a8c003c340ed90be40dda8d90613345105f1a7beb8e3e1e2c1ad1d8",
+      "sha256": "a4eb3274bf5da0f9b87c04b6ce619fc5f130a0453b1dc018caa868c790cb5a1b",
       "size": [
         3263,
         993
@@ -576,7 +724,7 @@
       "order": 2,
       "blend": "decoupe",
       "lit": 0.25,
-      "bytes": 5807145
+      "bytes": 5805313
     },
     "pied-facades": {
       "file": "quai-pied-facades.png",
@@ -624,7 +772,7 @@
     },
     "premier-plan": {
       "file": "quai-premier-plan.png",
-      "sha256": "a5073f92e3295b31d4300218fb0b8ae8ac10f1be7655e04643b6d5d7493962d8",
+      "sha256": "96d3e01b275ae485850d8bf886cd36f242667a599107de972aab6ea4cc00d921",
       "size": [
         2759,
         1024
@@ -641,7 +789,7 @@
       "orient": "face",
       "order": 5,
       "blend": "decoupe",
-      "bytes": 2867719
+      "bytes": 2871311
     },
     "eau": {
       "file": "quai-eau.png",

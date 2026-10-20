@@ -25,7 +25,7 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, write
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { launch, rendererLabel, startPreview, watchConsole, webglRenderer } from './browser.mjs';
-import { clearAbove, composeRow, composeStrip, extractProps, findLanterns, processPlate, processSheet } from './m09-traitement-images.mjs';
+import { clearAbove, composeRow, composeStrip, extractProps, findLanterns, fixBanners, processPlate, processSheet } from './m09-traitement-images.mjs';
 
 const MODE = process.argv[2];
 const main = dirname(resolve(execSync('git rev-parse --git-common-dir').toString().trim()));
@@ -64,16 +64,50 @@ const L = {
   eau: { y: -2.6, z: 20, width: 64 },
 };
 const PROPS = ['lampadaire', 'borne', 'caisses', 'tonneaux', 'filets'];
+/**
+ * Bannières à emblème inventé par le modèle, sur les bruts (boîte intérieure du tissu en px de l'image brute, mesurée
+ * sur l'image ; centre de l'emblème ; famille) : les emblèmes du jeu y sont posés par script (`fixBanners`). La
+ * bannière posée sur le mur du quai, dont seul le bas reste visible, est rendue unie.
+ */
+const BANNIERES = {
+  'quai-facades-essai': [
+    { box: [100, 400, 176, 576], center: [138, 482], family: 'Cendre' },
+    { box: [220, 400, 293, 576], center: [256, 482], family: 'Voile' },
+    { box: [344, 400, 416, 600], center: [380, 482], family: 'Ronce' },
+    { box: [466, 400, 539, 576], center: [502, 482], family: 'Astre' },
+  ],
+  'quai-second-rang': [
+    { box: [18, 642, 65, 735], center: [41, 686], family: 'Voile' },
+    { box: [126, 642, 175, 735], center: [150, 690], family: 'Astre' },
+    { box: [762, 548, 799, 655], center: [780, 596], family: 'Ronce' },
+    { box: [1320, 562, 1364, 700], center: [1342, 615], family: 'Cendre' },
+  ],
+  'quai-premier-plan-ouest': [
+    { box: [218, 150, 316, 400], center: [268, 266], family: 'Astre' },
+    { box: [1362, 575, 1444, 722], family: null },
+  ],
+};
 
 if (MODE === 'assembler') {
   const OUT = process.argv[3] ?? 'artifacts/qa/m09/v4-porte-assemblage.json';
   const prov = JSON.parse(readFileSync(join(RAW, 'provenance.json'), 'utf8'));
   const provEssai = JSON.parse(readFileSync(join(RAW_ESSAI, 'provenance.json'), 'utf8'));
   const gen = Object.fromEntries([...provEssai.images, ...prov.images].map((i) => [i.name, i]));
-  const raw = (name) => readFileSync(join(name === 'quai-facades-essai' || name === 'player-pixel-essai' ? RAW_ESSAI : RAW, `${name}.png`));
+  const rawFile = (name) => readFileSync(join(name === 'quai-facades-essai' || name === 'player-pixel-essai' ? RAW_ESSAI : RAW, `${name}.png`));
   const p = await page(800, 600);
   await p.setContent('<!doctype html><html><body></body></html>');
   const ev = (fn, arg) => p.evaluate(fn, arg);
+  // emblèmes du jeu posés sur les bannières des bruts, avant tout traitement (passe 59)
+  const fixed = {};
+  report.bannieres = {};
+  for (const [name, banners] of Object.entries(BANNIERES)) {
+    const r = await ev(fixBanners, { url: dataUrl(rawFile(name)), banners });
+    fixed[name] = fromUrl(r.url);
+    report.bannieres[name] = r.done;
+    mkdirSync('artifacts/qa/tmp', { recursive: true });
+    writeFileSync(join('artifacts/qa/tmp', `v4-bannieres-${name}.png`), fixed[name]);
+  }
+  const raw = (name) => fixed[name] ?? rawFile(name);
   const D = L.density;
   // ---- traitement de chaque brut ------------------------------------------------------------------------------------
   const ciel = await ev(processPlate, { url: dataUrl(raw('quai-ciel-ville-haute')), key: 'aucun', crop: 'aucun', maxLanterns: 0 });
@@ -198,6 +232,9 @@ if (MODE === 'assembler') {
     'quai-premier-plan': { sources: ['quai-premier-plan-ouest', 'quai-premier-plan-est'], etapes: ['fond magenta détouré, sans recadrage', 'au-dessus du haut du mur, seules les composantes qui montent jusqu’au haut de l’image (mâts, gréements) sont gardées : les objets posés sur le mur (caisses, bannière, lanterne) seraient devant la rue', `début de l’image est retiré (${L.premier.cropEst * 100} % : reprise du bout de l’image ouest), assemblées côte à côte avec ${L.premier.overlap} m de recouvrement fondu (rampe d’alpha) ; haut du mur du quai (rangée couverte à plus de 80 %) posé à fleur de rue`] },
     'quai-eau': { sources: ['quai-eau'], etapes: [`image opaque, sans détourage ; posée couchée (y ${L.eau.y} m)`] },
   };
+  // emblèmes du jeu posés par script sur les bannières des bruts (passe 59) : étape en tête des fiches concernées
+  const EMB = 'emblèmes inventés par le modèle remplacés par ceux du jeu sur les bannières (fixBanners, tracés de src/art/emblems.ts ; tissu refait de son propre grain), sur le brut, avant tout traitement';
+  for (const [id, srcs] of [['quai-facades', ['quai-facades-essai']], ['quai-second-rang', ['quai-second-rang']], ['quai-premier-plan', ['quai-premier-plan-ouest']]]) fiches[id].etapes.unshift(`${EMB} : ${srcs.join(', ')}`);
   for (const [id, f] of Object.entries(fiches)) {
     const file = `${id}.png`;
     const sources = f.sources.map(src);
@@ -300,7 +337,7 @@ if (MODE === 'verifier') {
   }
 }
 if (MODE === 'planche') {
-  const OUT = process.argv[3] ?? 'screenshots/qa/m09/v4-decision/planche-decision-quai.png';
+  const OUT = process.argv[3] ?? 'screenshots/qa/m09/v4-decision-2/planche-decision-quai.png';
   const REP = process.argv[4] ?? 'artifacts/qa/m09/v4-decision.json';
   const DIST = process.env.LQV_DIST || 'dist';
   const LARGE = '6,25,42,4.8';
@@ -341,12 +378,15 @@ if (MODE === 'planche') {
     const familles = await shot(srvB.base, `&rig=${LARGE}`);
     check(actuel.world === 'code' && porte.world === 'diorama' && large.world === 'diorama' && familles.world === 'diorama', 'planche : Quai actuel par code ; porte, cadrage élargi et variante A3 en diorama');
     const ref = readFileSync('reference/generated/2026-10-19-quai-nuit-cameras/02.png');
-    const pp = await page(2100, 1000);
+    // bannières de la salle de jeu : brut généré (emblèmes inventés) | emblèmes du jeu posés par script (passe 59)
+    const bAvant = readFileSync(join(RAW_ESSAI, 'quai-facades-essai.png'));
+    const bApres = readFileSync('artifacts/qa/tmp/v4-bannieres-quai-facades-essai.png');
+    const pp = await page(2100, 1100);
     const planche = await pp.evaluate(async (u) => {
       const load = async (src) => { const i = new Image(); i.src = src; await i.decode(); return i; };
       const im = await Promise.all(u.imgs.map(load));
       const pad = 16; const tw = 640; const th = 360; const top = 40;
-      const c = document.createElement('canvas'); c.width = 3 * tw + 4 * pad; c.height = top + 2 * (th + 36) + 150;
+      const c = document.createElement('canvas'); c.width = 3 * tw + 4 * pad; c.height = top + 2 * (th + 36) + 220;
       const g = c.getContext('2d'); g.fillStyle = '#10121a'; g.fillRect(0, 0, c.width, c.height);
       g.fillStyle = '#e8dcc0'; g.font = 'bold 17px system-ui';
       g.fillText('Porte du Quai (ADR 028) — planche de décision', pad, 26);
@@ -356,21 +396,29 @@ if (MODE === 'planche') {
       const X = (col) => pad + col * (tw + pad); const Y = (row) => top + row * (th + 36);
       tile(0, X(0), Y(0)); lab('Référence initiale approuvée (02.png)', X(0), Y(0) + th + 22);
       tile(1, X(1), Y(0)); lab('Quai actuel : direction D, par code (provisoire)', X(1), Y(0) + th + 22);
-      tile(2, X(2), Y(0)); lab('Quai de la porte : cadrage actuel (joueur ≈ ×2,9)', X(2), Y(0) + th + 22);
-      tile(3, X(0), Y(1)); lab('Quai de la porte : cadrage élargi (rig=6,25,42,4.8 ; joueur ≈ ×1,9)', X(0), Y(1) + th + 22);
+      tile(2, X(2), Y(0)); lab('Porte corrigée (emblèmes du jeu) : cadrage actuel (joueur ≈ ×2,9)', X(2), Y(0) + th + 22);
+      tile(3, X(0), Y(1)); lab('Porte corrigée : cadrage élargi (rig=6,25,42,4.8 ; joueur ≈ ×1,9)', X(0), Y(1) + th + 22);
       tile(4, X(1), Y(1)); lab('Variante A3 : même cadrage, lumières aux couleurs des familles (direction D)', X(1), Y(1) + th + 22);
-      g.drawImage(im[5], X(2), Y(1), tw, th / 2); g.drawImage(im[6], X(2), Y(1) + th / 2, tw, th / 2);
-      lab('Détail des bannières : direction D (haut), porte (bas)', X(2), Y(1) + th + 22);
+      // bannières avant | après : même région du brut (salle de jeu), 520 × 340 px
+      const bw = tw / 2 - 4; const bh = Math.round(bw * 340 / 520); const by = Y(1) + (th - bh) / 2;
+      g.drawImage(im[7], 60, 360, 520, 340, X(2), by, bw, bh); g.drawImage(im[8], 60, 360, 520, 340, X(2) + tw / 2 + 4, by, bw, bh);
+      lab('Bannières : générées (gauche), emblèmes du jeu posés par script (droite)', X(2), Y(1) + th + 22);
       g.font = 'bold 15px system-ui';
       const q0 = Y(2) + 10;
-      lab('Décisions :', pad, q0);
+      lab('Décisions ouvertes :', pad, q0);
       g.font = '14px system-ui';
-      lab('1. Approuver les 7 plans du Quai et la feuille du joueur (aujourd’hui approved: false, refusés par le jeu) ?', pad, q0 + 24);
-      lab('2. Cadrage : actuel (façades plein écran, joueur ×2,9) ou élargi (rue entière et profondeur comme la référence, joueur ×1,9) ?', pad, q0 + 46);
-      lab('3. Note A3 (ce qu’on garde de la direction D) : bannières et emblèmes des familles (déjà dans la porte) ; lumières aux couleurs des familles (variante) ;', pad, q0 + 68);
-      lab('    contours à l’encre, hachures et papier : hors de la cible selon l’ADR 028 (non repris).', pad, q0 + 88);
+      const L = [
+        '1. Emblèmes : les quatre emblèmes du jeu (src/art/emblems.ts) posés par script sur les bannières générées (tissu refait de leur propre grain) : convient-il, ou régénérer ces bannières sans motif (2 ou 3 images) ?',
+        '2. Cadrage : actuel ou élargi ?     3. Note A3 : lumières aux couleurs des familles (variante) ? (contours à l’encre, hachures, papier : non repris)',
+        '4. Profondeur des quartiers (à choisir avant production) : brume entre les plans (moteur, 0 image) ; plans plus espacés, parallaxe plus marquée (moteur, 0 image) ;',
+        '    troisième rang et ville haute étagée (1 ou 2 images) ; ruelles et passages qui s’enfoncent dans des trouées des façades (2 images) ; la Grande Cour : marche en profondeur.',
+        '5. Tête et visage du joueur : reprendre la feuille à la manière de Cité du Tournoi (grille d’art 64 × 96, tête plus grande, yeux et mèches lisibles, rampes à cinq tons, ombres froides et lumières chaudes),',
+        '    dans notre logique (identité V2, tons clés recolorables, contrat v3) ; donner hero-x2-v3.png de Cité du Tournoi en image d’entrée à gpt-image-2 : à autoriser explicitement (AGENTS limite les entrées au projet).',
+        '6. Approbation : rien n’est approuvé (approved: false) ; 12 images utilisées sur 30, 18 restantes.',
+      ];
+      L.forEach((t, k) => lab(t, pad, q0 + 24 + k * 22));
       return c.toDataURL('image/png');
-    }, { imgs: [dataUrl(ref), dataUrl(actuel.full), dataUrl(porte.full), dataUrl(large.full), dataUrl(familles.full), dataUrl(actuel.crop), dataUrl(porte.crop)] });
+    }, { imgs: [dataUrl(ref), dataUrl(actuel.full), dataUrl(porte.full), dataUrl(large.full), dataUrl(familles.full), dataUrl(actuel.crop), dataUrl(porte.crop), dataUrl(bAvant), dataUrl(bApres)] });
     writeFileSync(OUT, fromUrl(planche));
     writeFileSync(join(dirname(OUT), 'variante-a3-familles-large-1920.png'), familles.full);
     writeFileSync(join(dirname(OUT), 'porte-large-1920.png'), large.full);

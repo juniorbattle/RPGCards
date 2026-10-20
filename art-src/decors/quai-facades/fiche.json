@@ -149,6 +149,7 @@
       "tools/m09-porte-quai.mjs"
     ],
     "etapes": [
+      "emblèmes inventés par le modèle remplacés par ceux du jeu sur les bannières (fixBanners, tracés de src/art/emblems.ts ; tissu refait de son propre grain), sur le brut, avant tout traitement : quai-facades-essai",
       "fond magenta détouré et recadré sur le pied des murs, pour chaque image",
       "assemblées côte à côte, pieds alignés, à 68 px/m : ouest (x −24 à −10,6 m), centre de l’essai (−10,6 à 11,2 m), est (11,2 à 24 m)",
       "lanternes peintes repérées, une lumière du moteur sur chacune"
@@ -156,15 +157,15 @@
   },
   "sortie": {
     "fichier": "public/decors/quai-facades.png",
-    "sha256": "5a13074f3a8c003c340ed90be40dda8d90613345105f1a7beb8e3e1e2c1ad1d8",
-    "octets": 5807145,
+    "sha256": "a4eb3274bf5da0f9b87c04b6ce619fc5f130a0453b1dc018caa868c790cb5a1b",
+    "octets": 5805313,
     "dimensions": [
       3263,
       993
     ],
     "pose": {
       "file": "quai-facades.png",
-      "sha256": "5a13074f3a8c003c340ed90be40dda8d90613345105f1a7beb8e3e1e2c1ad1d8",
+      "sha256": "a4eb3274bf5da0f9b87c04b6ce619fc5f130a0453b1dc018caa868c790cb5a1b",
       "size": [
         3263,
         993
@@ -188,6 +189,6 @@
     "a98ab2077882538223808f4ff1d24131643a657c1cf8181258acf17a96fe3929 (brut quai-facades-ouest)",
     "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec (brut quai-facades-essai)",
     "2a920ffbc7eee1d9f4ddec52e29c90afad8b85d8d376939729a2649d1a2eccdc (brut quai-facades-est)",
-    "5a13074f3a8c003c340ed90be40dda8d90613345105f1a7beb8e3e1e2c1ad1d8 (plan)"
+    "a4eb3274bf5da0f9b87c04b6ce619fc5f130a0453b1dc018caa868c790cb5a1b (plan)"
   ]
 }
