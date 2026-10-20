@@ -1898,3 +1898,9 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **[?] M09 demeure actif :** le Quai profond en rangs, ses images et les manifestes de décor ne sont pas approuvés par cette décision. Aucune modification du runtime, des règles V3.x, de la progression prototype ni des tests n'est revendiquée.
 - **À reprendre (M10, ultérieurement) :** avenant de gameplay cartes neutres/deck/Signature/migration à faire approuver, puis tranche verticale prologue → invitation → choix parmi les quatre voies. Terminer et réceptionner les étapes M09 avant d'ouvrir le développement M10.
 
+
+## Clarification M10 — Composition des 16 cartes neutres (2026-10-20)
+
+- **[OK] Nouvelle décision explicite du responsable :** le lot de la populace comprend **4 cartes neutres de chaque Rang I, II, III et IV** = exactement 16 exemplaires physiques, quatre définitions seulement ; sans famille, bonus ou effet propre, blanc/gris. ADR 030 ; M10 mis à jour.
+- **[?] Restent à arbitrer avant d'étendre le moteur :** Puissances imprimées (3/6/9/12 proposées par continuité avec Basic, non ratifiées), Signature et Techniques du prologue, remplacement/conversion des copies neutres vers les 16 identités familiales, ancienne sauvegarde. Conserver le deck de duel standard intact.
+- **[OK] M09 toujours actif ;** ce commit est une clarification documentaire uniquement, aucun code ni paramètre de gameplay n'a changé.

@@ -1,6 +1,6 @@
 # ADR 029 — Recrutement par les Quatre Voies avec choix explicite du joueur (M10)
 
-**Date : 2026-10-20 — Statut : APPROUVÉ pour la narration / l'expérience d'affiliation, PAS pour les règles de deck neutre.**
+**Date : 2026-10-20 — Statut : APPROUVÉ pour l'affiliation option B. L'ADR 030 ratifie séparément la composition de 16 cartes neutres, mais PAS encore leurs Puissances / Signature / Techniques ni l'implémentation.**
 
 ## Décision du responsable
 
@@ -21,7 +21,8 @@ Cette décision s'inscrit dans l'arc proposé : duel public inattendu depuis un 
 
 - **Ratifié :** agence du joueur lors de l'affiliation, possibilité d'examiner/refuser/différer/rechercher une autre voie, quatre affiliations atteignables.
 - **Concept narratif à détailler :** duel inattendu, reconnaissance publique, recruteurs, progression familiale et championnat.
-- **Non ratifié :** nouvelles statistiques et nombre de cartes neutres, absence de Signature, modalités de remplacement, répartition des récompenses, timing/règles des défis aléatoires, changements d'affiliation postérieurs.
+- **Ratifié séparément (ADR 030) :** exactement seize cartes neutres, quatre copies des Rangs I, II, III et IV, sans famille, effet ni bonus propre.
+- **Non ratifié :** Puissances chiffrées des neutres, Signature, Techniques au prologue, remplacement des copies, répartition des récompenses, timing/règles des défis aléatoires, changements d'affiliation postérieurs.
 - **Chantier actif :** M09 ville frontale 2.5D, cadrage et kit du Quai encore en revue. L'ADR 024/025/028 et les limites des assets approuvés restent en vigueur.
 
 ## Tests d'acceptation futurs
