@@ -1,15 +1,16 @@
 /**
- * M10-B — deck du mode Aventure, règle R-AV (avenant A-4 à A-7, PROPOSÉE) :
+ * M10-A — deck du mode Aventure, règle R-AV (avenant M10-A, AV-03 à AV-06) :
  *   16 cartes ordinaires, exactement 4 de chaque Rang ; chaque identité familiale au plus une fois (Basic ou une variante
  *   possédée) ; neutres pour compléter (au plus celles possédées) ; 0 ou 1 Signature possédée ; 2 Techniques connues.
  * Le deck standard (16 identités + 1 Signature) en est le cas particulier « 0 neutre + 1 Signature » : `versStandard`.
- * Module pur : la carte neutre n'existe pas dans le moteur ; un duel du prototype passe par un deck de PRÊT (A-0).
+ * Module pur. Depuis l'avenant M10-A (ARB-M10-02), les neutres entrent dans le moteur : le deck de l'aventure se joue tel
+ * quel, en deck explicite (`siegeAventure`).
  */
 import { CATALOG, FAMILIES, type Family, type OrdinaryRank } from '../game/catalog/cards';
 import { TECHNIQUE_IDS, type TechniqueId } from '../game/catalog/techniques';
 import type { GameConfig } from '../game/model/types';
 import { validateDeck, type DeckChoice } from '../product/deck';
-import { deF, isNeutre, NEUTRES, RANGS, rangNeutre, SIGNATURE_PRET, TECHNIQUES_RUE } from './modele';
+import { deF, isNeutre, NEUTRES, RANGS, rangNeutre, TECHNIQUES_RUE } from './modele';
 import type { CollectionAv } from './registre';
 
 export interface DeckAv {
@@ -112,15 +113,16 @@ export function standardLegal(d: DeckAv, col: CollectionAv): boolean {
   return !!s && validateDeck(s, { variants: col.variantes, signatures: col.signatures, techniques: col.techniques }).length === 0;
 }
 
+/** Définitions envoyées au moteur : les 16 cartes ordinaires, puis la Signature équipée s'il y en a une (16 ou 17). */
+export const deckMoteur = (d: DeckAv): string[] => [...d.cartes, ...(d.signature ? [`sig-${d.signature}`] : [])];
+
 /**
- * DECK DE PRÊT du prototype (A-0) : tant que les neutres n'entrent pas dans le moteur (ARB-M10-02), le siège moteur du
- * joueur joue un deck standard : ses cartes familiales telles qu'équipées (variantes comprises), les autres identités en
- * Basic de prêt, sa Signature équipée ou, à défaut, la Signature de prêt.
+ * Siège moteur d'un duel de l'aventure (AV-03) : le deck tel qu'il est, en liste explicite (neutres, Basics, variantes,
+ * Signature éventuelle) ; le moteur en contrôle la forme R-AV.
  */
-export function siegePret(d: DeckAv, name: string, hp: number, signatureDefaut: Family = SIGNATURE_PRET): GameConfig['players']['p1'] {
-  const variants = d.cartes.filter((c) => !isNeutre(c) && CATALOG[c] && CATALOG[c]!.rarity !== 'Basic').map((c) => CATALOG[c]!.identity);
-  return { name, hp, signature: d.signature ?? signatureDefaut, variants, techniques: [...d.techniques] };
+export function siegeAventure(d: DeckAv, name: string, hp: number): GameConfig['players']['p1'] {
+  return { name, hp, signature: d.signature, variants: [], techniques: [...d.techniques], deck: deckMoteur(d) };
 }
 
-/** Nombre de cartes neutres du deck (bandeau « provisoire » : ce que le deck de prêt remplace). */
+/** Nombre de cartes neutres du deck. */
 export const neutresDuDeck = (d: DeckAv): number => d.cartes.filter(isNeutre).length;

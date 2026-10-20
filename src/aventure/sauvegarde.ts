@@ -7,7 +7,7 @@
  */
 import { FAMILIES } from '../game/catalog/cards';
 import type { Command, GameConfig } from '../game/model/types';
-import { CATALOG_VERSION } from '../game/replay/replay';
+import { CATALOG_VERSION, replay } from '../game/replay/replay';
 import { RULES } from '../product/resume';
 import type { StorageLike } from '../product/save';
 import { GAME_VERSION } from '../product/version';
@@ -37,7 +37,7 @@ export interface DuelAventure {
   commands: Command[];
   hash: string;
   turn: number;
-  /** Prototype (A-0) : le duel se joue avec un deck de prêt (bandeau « provisoire »). */
+  /** Duel commencé avec un deck de prêt (prototype d'avant l'avenant M10-A) ; `false` depuis : le deck d'aventure. */
   pret: boolean;
 }
 
@@ -157,5 +157,24 @@ export class MagasinAventure {
   }
 }
 
-/** Contrôle de version d'un duel sauvegardé avant reprise (mêmes règles que le jeu). */
-export const duelCompatible = (d: DuelAventure): boolean => d.rules === RULES && d.catalog === CATALOG_VERSION;
+/** Catalogue des duels de l'aventure : le catalogue standard et les quatre neutres (avenant M10-A, AV-09). */
+export const CATALOG_AVENTURE = `${CATALOG_VERSION}+4n`;
+
+/** Contrôle de version d'un duel sauvegardé avant reprise (mêmes règles que le jeu) ; un duel du prototype commencé avec
+ *  un deck de prêt (catalogue standard) se reprend encore exactement : sa configuration est gardée telle quelle. */
+export const duelCompatible = (d: DuelAventure): boolean => d.rules === RULES && (d.catalog === CATALOG_AVENTURE || d.catalog === CATALOG_VERSION);
+
+/**
+ * Contrôle d'un duel de l'aventure avant sa reprise (comme `verifyActiveCore` du mode standard, qui n'accepte que le
+ * catalogue standard) : versions, puis rejeu des commandes sur le moteur pur et comparaison de l'empreinte.
+ */
+export function verifierDuel(d: DuelAventure): { ok: true } | { ok: false; reason: string } {
+  if (!duelCompatible(d)) return { ok: false, reason: 'Version des règles ou du catalogue différente.' };
+  if (!d.commands.length) return { ok: true };
+  try {
+    const r = replay({ format: 'lqv-replay/1', rules: RULES, catalog: d.catalog, config: d.config, commands: d.commands });
+    return r.hash === d.hash ? { ok: true } : { ok: false, reason: 'Le rejeu du duel ne retrouve pas l’état sauvegardé (données modifiées ?).' };
+  } catch (err) {
+    return { ok: false, reason: `Le rejeu du duel a échoué (${err instanceof Error ? err.message : 'erreur'}).` };
+  }
+}

@@ -3,8 +3,8 @@
  * `docs/FICHE_ARBITRAGES_M10.md`). Ratifié : ADR 029 (choix libre), ADR 030 (16 neutres : 4 × I à IV, sans famille, effet
  * ni bonus), ADR 031 (Basics à l'affiliation / à l'engagement, variantes aux lieutenants, Signature au chef).
  *
- * Données pures, sans DOM ni rendu. Les cartes neutres n'existent ICI que pour la collection et le deck de l'Aventure :
- * elles n'entrent pas dans le moteur de duel tant que l'avenant M10-A n'est pas ratifié (ARB-M10-02).
+ * Données pures, sans DOM ni rendu. Les cartes neutres sont celles du moteur (`NEUTRAL_CATALOG`, avenant M10-A, AV-01) ;
+ * elles entrent en duel depuis la décision du responsable sur l'ARB-M10-02 (2026-10-20).
  */
 import { FAMILIES, type Family, type OrdinaryRank } from '../game/catalog/cards';
 import type { TechniqueId } from '../game/catalog/techniques';
@@ -15,7 +15,7 @@ import type { VenueId } from '../presentation/venues';
 export const RANGS: readonly OrdinaryRank[] = [1, 2, 3, 4];
 export const ROMAIN: Record<OrdinaryRank, string> = { 1: 'I', 2: 'II', 3: 'III', 4: 'IV' };
 
-/** Carte neutre (ADR 030) ; Puissance proposée 3 / 6 / 9 / 12 (avenant A-1, non ratifiée). */
+/** Carte neutre (ADR 030 ; avenant M10-A, AV-01 : Puissance 3 / 6 / 9 / 12, sans famille, effet ni bonus). */
 export interface NeutreDef {
   defId: string;
   rank: OrdinaryRank;
@@ -105,7 +105,7 @@ export const MAISONS: Record<Family, Maison> = {
   },
 };
 
-/** Techniques de la rue (prologue, A-3 proposée). */
+/** Techniques de la rue (prologue, avenant M10-A, AV-05). */
 export const TECHNIQUES_RUE: TechniqueId[] = ['Sondage', 'Recentrage'];
 
 const v = (fam: Family, rank: OrdinaryRank, effect: string) => ({ kind: 'variante' as const, defId: `${fam}-${rank}-${effect}` });
@@ -169,9 +169,6 @@ export const TENANTE = { apparence: 'pnj-joueuse-51', nom: 'Ysolde', titre: 'la 
 export const PV_PROLOGUE = 60;
 /** PV du joueur dans l'aventure (`PLAYER_HP` du produit, inchangé). */
 export const PV_JOUEUR = 90;
-
-/** Deck de prêt du prototype (A-0) : 16 Basics et la Signature de la Cendre, identiques pour les deux duellistes. */
-export const SIGNATURE_PRET: Family = 'Cendre';
 
 export const familles = (): Family[] => [...FAMILIES];
 

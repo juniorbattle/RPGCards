@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { FAMILIES, type Family } from '../src/game/catalog/cards';
 import { autoplay } from '../src/game/match';
 import { appliquer, chapitre, controlerEtat, defisOuverts, nouvelleAventure, peutConfirmer, premierEmissaire, statutDefi, type AventureEtat, type Evenement } from '../src/aventure/aventure';
-import { deckDepart, equiperSignature, equiperVersion, integrerBasics, standardLegal, validerDeckAv, versStandard } from '../src/aventure/deck';
+import { deckDepart, deckMoteur, equiperSignature, equiperVersion, integrerBasics, siegeAventure, standardLegal, validerDeckAv, versStandard } from '../src/aventure/deck';
 import { battre, conclure, decider, MAX_FACULTATIVES, nouveauDirecteur, poses, RENCONTRES } from '../src/aventure/directeur';
 import { faitsPublics } from '../src/aventure/faits';
 import { emissaire, figureDe, FIGURES, isNeutre, ROLES } from '../src/aventure/modele';
@@ -15,12 +15,13 @@ import { objectif, quetes } from '../src/aventure/quetes';
 import { accorder, collectionDe, gainVariante } from '../src/aventure/registre';
 import { APPARENCES, duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue } from '../src/aventure/rencontres';
 import { manche, statutFinale, statutJoute, statutPoule } from '../src/aventure/competitions';
-import { CLE_AVENTURE, CLE_SECOURS, MagasinAventure, nouvelleSauvegarde, validerSauvegarde } from '../src/aventure/sauvegarde';
+import { CATALOG_AVENTURE, CLE_AVENTURE, CLE_SECOURS, MagasinAventure, nouvelleSauvegarde, validerSauvegarde, verifierDuel, type DuelAventure } from '../src/aventure/sauvegarde';
 import { SAVE_KEY } from '../src/product/save';
 import { personalityById } from '../src/presentation/personalities';
 import { blocked } from '../src/ville/monde';
 import { ilotAventure, ilotNu } from '../src/aventure/ilots';
 import { createGame } from '../src/game/engine/engine';
+import { buildDeck, cardDef } from '../src/game/catalog/cards';
 
 const AT = '2026-10-20T12:00:00.000Z';
 const FAITS0 = { assautsGagnes: 0, gardesGagnees: 0, interferencesReussies: 0 };
@@ -349,9 +350,9 @@ describe('M10-B — données (personnages, places, duels)', () => {
     expect(d.build).toBeTypeOf('function');
   });
 
-  it('les duels du prototype sont des configurations ordinaires du moteur (deck de prêt), jouables jusqu’au bout', () => {
+  it('les duels de l’aventure sont des configurations ordinaires du moteur (deck R-AV explicite), jouables jusqu’au bout', () => {
     const e = run(prologue(), [{ type: 'confirmer', famille: 'Voile' }]).etat;
-    const cfgs = [duelPrologue(11).config, duelFigure('cadet-Voile', e.deck, 12, false).config, duelFigure('chef-Astre', e.deck, 13, false).config, duelFacultatif('rival-kai', e.deck, 14).config];
+    const cfgs = [duelPrologue(11, e.deck).config, duelFigure('cadet-Voile', e.deck, 12, false).config, duelFigure('chef-Astre', e.deck, 13, false).config, duelFacultatif('rival-kai', e.deck, 14).config];
     for (const c of cfgs) {
       expect(() => createGame(c)).not.toThrow();
       const m = autoplay(c);
@@ -360,6 +361,67 @@ describe('M10-B — données (personnages, places, duels)', () => {
       expect(f.assautsGagnes + f.gardesGagnees).toBeGreaterThan(0);
     }
     expect(duelPrologue(1).config.players.p1).toEqual({ ...duelPrologue(1).config.players.p2, name: 'Vous' });
+  });
+});
+
+describe('M10-A — deck R-AV réel dans les duels (AV-03 à AV-05, ARB-M10-04 et 05)', () => {
+  const cartesMoteur = (cfg: ReturnType<typeof duelPrologue>['config'], pid: 'p1' | 'p2') => {
+    const { state } = createGame(cfg);
+    return Object.values(state.cards).filter((x) => x.owner === pid).map((x) => x.defId).sort();
+  };
+
+  it('prologue : les seize cartes grises des deux côtés, sans Signature, Techniques de la rue', () => {
+    const cfg = duelPrologue(21).config;
+    for (const pid of ['p1', 'p2'] as const) {
+      expect(cartesMoteur(cfg, pid)).toEqual([...deckDepart().cartes].sort());
+      expect(cfg.players[pid].signature).toBeNull();
+      expect(cfg.players[pid].techniques).toEqual(['Sondage', 'Recentrage']);
+    }
+    expect(autoplay(cfg).state.phase).toBe('ENDED');
+  });
+
+  it('chaque lot de Basics remplace une neutre de chaque Rang ; le duel joue exactement ce deck', () => {
+    let e = run(prologue(), [{ type: 'confirmer', famille: 'Ronce' }]).etat;
+    expect(e.deck.cartes.filter(isNeutre)).toHaveLength(12);
+    for (const r of [1, 2, 3, 4]) expect(e.deck.cartes).toContain(`Ronce-${r}-basic`);
+    expect(e.deck.techniques).toContain('Rupture');
+    const cfg = duelFigure('cadet-Ronce', e.deck, 22, false).config;
+    expect(cartesMoteur(cfg, 'p1')).toEqual([...deckMoteur(e.deck)].sort());
+    expect(cfg.players.p1.signature).toBeNull();
+    e = run(e, conquerir('Ronce')).etat;
+    expect(e.deck.signature).toBe('Ronce');
+    expect(cartesMoteur(duelFigure('chef-Ronce', e.deck, 23, true).config, 'p1')).toHaveLength(17);
+  });
+
+  it('après les quatre lots et une Signature : 17 cartes, format standard, mêmes cartes que le deck standard équivalent', () => {
+    let r = run(prologue(), [{ type: 'confirmer', famille: 'Astre' }, ...conquerir('Astre')]);
+    for (const [i, x] of (['Cendre', 'Voile', 'Ronce'] as Family[]).entries()) r = run(r.etat, [{ type: 'engager', famille: x }]);
+    const d = r.etat.deck;
+    expect(d.cartes.some(isNeutre)).toBe(false);
+    expect(standardLegal(d, collectionDe(r.etat.registre))).toBe(true);
+    const s = siegeAventure(d, 'Vous', 90);
+    expect(s.deck).toHaveLength(17);
+    const std = versStandard(d)!;
+    const attendu = buildDeck({ signature: std.signature, variants: std.variants.map((v) => cardDef(v).identity) });
+    expect([...s.deck!].sort()).toEqual([...attendu].sort());
+  });
+
+  it('reprise exacte d’un duel à cartes grises : rejeu et empreinte (catalogue de l’aventure) ; données modifiées refusées', () => {
+    const cfg = duelPrologue(31).config;
+    const m = autoplay(cfg, 3);
+    const d: DuelAventure = { id: 'a1', rencontre: 'prologue', seed: 31, startedAt: AT, rules: 'V3.0+delta-V3.2', catalog: CATALOG_AVENTURE, config: cfg, commands: m.commands, hash: m.hash(), turn: m.state.turn, pret: false };
+    expect(verifierDuel(d)).toEqual({ ok: true });
+    expect(verifierDuel({ ...d, hash: '0'.repeat(16) }).ok).toBe(false);
+    expect(verifierDuel({ ...d, catalog: 'autre' }).ok).toBe(false);
+  });
+
+  it('Techniques : Sondage et Recentrage au prologue ; la Technique d’une famille arrive avec ses Basics (affiliation équipée, engagement appris)', () => {
+    let r = run(prologue(), [{ type: 'confirmer', famille: 'Voile' }]);
+    expect(r.gains).toEqual(['basics:Voile', 'technique:Dissipation']);
+    expect(r.etat.deck.techniques).toContain('Dissipation');
+    r = run(r.etat, [...conquerir('Voile'), { type: 'engager', famille: 'Astre' }]);
+    expect(collectionDe(r.etat.registre).techniques).toContain('Ancrage');
+    expect(r.etat.deck.techniques).toHaveLength(2);
   });
 });
 
