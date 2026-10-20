@@ -1,0 +1,72 @@
+{
+  "directe": {
+    "Cendre cadet": "niv 1, PV 53 contre 50 : 52 %",
+    "Cendre brasDroit": "niv 1, PV 56 contre 55 : 59 %",
+    "Cendre chef": "niv 1, PV 59 contre 55 : 38 %",
+    "Voile cadet": "niv 1, PV 53 contre 50 : 61 %",
+    "Voile brasDroit": "niv 1, PV 56 contre 55 : 59 %",
+    "Voile chef": "niv 1, PV 59 contre 55 : 43 %",
+    "Ronce cadet": "niv 1, PV 53 contre 50 : 64 %",
+    "Ronce brasDroit": "niv 1, PV 56 contre 55 : 40 %",
+    "Ronce chef": "niv 1, PV 59 contre 55 : 37 %",
+    "Astre cadet": "niv 1, PV 53 contre 50 : 60 %",
+    "Astre brasDroit": "niv 1, PV 56 contre 55 : 51 %",
+    "Astre chef": "niv 1, PV 59 contre 55 : 46 %"
+  },
+  "un-changement": {
+    "Cendre cadet": "niv 2, PV 53 contre 65 : 54 %",
+    "Cendre brasDroit": "niv 2, PV 56 contre 80 : 47 %",
+    "Cendre chef": "niv 2, PV 59 contre 80 : 29 %",
+    "Voile cadet": "niv 2, PV 53 contre 65 : 49 %",
+    "Voile brasDroit": "niv 2, PV 56 contre 80 : 38 %",
+    "Voile chef": "niv 2, PV 59 contre 80 : 33 %",
+    "Ronce cadet": "niv 2, PV 53 contre 65 : 49 %",
+    "Ronce brasDroit": "niv 2, PV 56 contre 80 : 20 %",
+    "Ronce chef": "niv 2, PV 59 contre 80 : 30 %",
+    "Astre cadet": "niv 2, PV 53 contre 65 : 55 %",
+    "Astre brasDroit": "niv 2, PV 56 contre 80 : 29 %",
+    "Astre chef": "niv 2, PV 59 contre 80 : 23 %"
+  },
+  "collection": {
+    "Cendre cadet": "niv 4, PV 53 contre 85 : 43 %",
+    "Cendre brasDroit": "niv 4, PV 56 contre 95 : 37 %",
+    "Cendre chef": "niv 4, PV 59 contre 105 : 14 %",
+    "Voile cadet": "niv 4, PV 53 contre 85 : 44 %",
+    "Voile brasDroit": "niv 4, PV 56 contre 95 : 32 %",
+    "Voile chef": "niv 4, PV 59 contre 105 : 23 %",
+    "Ronce cadet": "niv 4, PV 53 contre 85 : 45 %",
+    "Ronce brasDroit": "niv 4, PV 56 contre 95 : 13 %",
+    "Ronce chef": "niv 4, PV 59 contre 105 : 17 %",
+    "Astre cadet": "niv 4, PV 53 contre 85 : 39 %",
+    "Astre brasDroit": "niv 4, PV 56 contre 95 : 25 %",
+    "Astre chef": "niv 4, PV 59 contre 105 : 13 %"
+  },
+  "un-changement-propose": {
+    "Cendre cadet": "niv 1, PV 53 contre 50 : 59 %",
+    "Cendre brasDroit": "niv 1, PV 56 contre 55 : 67 %",
+    "Cendre chef": "niv 1, PV 59 contre 55 : 49 %",
+    "Voile cadet": "niv 1, PV 53 contre 50 : 59 %",
+    "Voile brasDroit": "niv 1, PV 56 contre 55 : 65 %",
+    "Voile chef": "niv 1, PV 59 contre 55 : 41 %",
+    "Ronce cadet": "niv 1, PV 53 contre 50 : 62 %",
+    "Ronce brasDroit": "niv 1, PV 56 contre 55 : 41 %",
+    "Ronce chef": "niv 1, PV 59 contre 55 : 41 %",
+    "Astre cadet": "niv 1, PV 53 contre 50 : 61 %",
+    "Astre brasDroit": "niv 1, PV 56 contre 55 : 55 %",
+    "Astre chef": "niv 1, PV 59 contre 55 : 47 %"
+  },
+  "collection-propose": {
+    "Cendre cadet": "niv 1, PV 53 contre 50 : 63 %",
+    "Cendre brasDroit": "niv 1, PV 56 contre 55 : 65 %",
+    "Cendre chef": "niv 1, PV 59 contre 55 : 45 %",
+    "Voile cadet": "niv 1, PV 53 contre 50 : 65 %",
+    "Voile brasDroit": "niv 1, PV 56 contre 55 : 67 %",
+    "Voile chef": "niv 1, PV 59 contre 55 : 50 %",
+    "Ronce cadet": "niv 1, PV 53 contre 50 : 65 %",
+    "Ronce brasDroit": "niv 1, PV 56 contre 55 : 50 %",
+    "Ronce chef": "niv 1, PV 59 contre 55 : 49 %",
+    "Astre cadet": "niv 1, PV 53 contre 50 : 65 %",
+    "Astre brasDroit": "niv 1, PV 56 contre 55 : 57 %",
+    "Astre chef": "niv 1, PV 59 contre 55 : 46 %"
+  }
+}

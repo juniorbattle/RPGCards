@@ -5,9 +5,9 @@
  * publics, choix du joueur). Propositions : `docs/m10/` ; rien n'est ratifié hors ADR 029 à 031.
  */
 import { FAMILIES, type Family } from '../game/catalog/cards';
-import { deF, figure, figureDe, FIGURES, leF, MAISONS, ORDRE_ETAT, ROLE_LABEL, TECHNIQUES_RUE, type EtatFamille, type Figure, type SceneId } from './modele';
+import { deF, figure, figureDe, FIGURES, isNeutre, leF, MAISONS, ORDRE_ETAT, ROLE_LABEL, TECHNIQUES_RUE, type EtatFamille, type Figure, type SceneId } from './modele';
 import { accorder, aGain, collectionDe, gainBasics, gainNeutres, gainSignature, gainTechnique, gainVariante, type Gain } from './registre';
-import { deckDepart, equiperTechnique, equiperVersion, integrerBasics, type DeckAv } from './deck';
+import { deckDepart, equiperTechnique, equiperVersion, integrerBasics, standardLegal, type DeckAv } from './deck';
 import { finEpreuve, finFinale, finJoute, finMiroir, finPoule, nouvellesCompetitions, ouvertChampionnat, statutEpreuve, statutJoute, type EtatCompetitions } from './competitions';
 
 /** Faits PUBLICS d'un duel (journal public du joueur) : aucun secret (ADR 011, ADR 029 §5). */
@@ -119,7 +119,10 @@ export function statutDefi(e: AventureEtat, fig: Figure): { ouvert: boolean; rai
   const deja = e.vaincues.includes(fig.id);
   const fam = fig.famille;
   if (!aGain(e.registre, `basics:${fam}`) || (e.familles[fam] !== 'affilie' && e.familles[fam] !== 'defiee' && e.familles[fam] !== 'chef')) {
-    return { ouvert: false, deja, raison: e.affiliation === null ? 'Choisissez d’abord votre voie.' : `Engagez d’abord le défi officiel ${deF(fam)} à la Salle des Bannières.` };
+    const raison = e.affiliation === null ? 'Choisissez d’abord votre voie.'
+      : !aGain(e.registre, `signature:${e.affiliation}`) ? `Battez d’abord le chef ${deF(e.affiliation)} ; ensuite, engagez le défi officiel ${deF(fam)} à la Salle des Bannières.`
+      : `Engagez d’abord le défi officiel ${deF(fam)} à la Salle des Bannières.`;
+    return { ouvert: false, deja, raison };
   }
   if (fig.role === 'brasDroit' && !e.vaincues.includes(figureDe(fam, 'cadet').id)) return { ouvert: false, deja, raison: `Battez d’abord ${figureDe(fam, 'cadet').nom}, ${ROLE_LABEL.cadet} ${deF(fam)}.` };
   if (fig.role === 'chef' && !e.vaincues.includes(figureDe(fam, 'brasDroit').id)) return { ouvert: false, deja, raison: `Battez d’abord ${figureDe(fam, 'brasDroit').nom}, ${ROLE_LABEL.brasDroit} ${deF(fam)}.` };
@@ -134,6 +137,55 @@ export function peutEngager(e: AventureEtat, f: Family): { ok: true } | { ok: fa
   if (!aGain(e.registre, `signature:${e.affiliation}`)) return { ok: false, raison: `Battez d’abord le chef ${deF(e.affiliation)} : on n’engage les autres familles qu’après avoir fait ses preuves dans la sienne.` };
   return { ok: true };
 }
+
+/**
+ * Bannière d'une famille à la Salle des Bannières (M10-D) : la famille d'accueil, un défi engageable, engagé (avec le
+ * prochain défi), conquis (chef vaincu) ou fermé avec sa raison. Jamais caché (P-N4).
+ */
+export type EtatBanniere = 'accueil' | 'engageable' | 'engagee' | 'conquise' | 'fermee';
+export interface Banniere { famille: Family; etat: EtatBanniere; texte: string }
+
+export function bannieres(e: AventureEtat): Banniere[] {
+  return FAMILIES.map((f): Banniere => {
+    const prochain = ROLES_ORDRE.map((r) => figureDe(f, r)).find((x) => !e.vaincues.includes(x.id));
+    if (f === e.affiliation) return { famille: f, etat: 'accueil', texte: e.familles[f] === 'chef' ? 'Votre famille : chef vaincu.' : `Votre famille : ${prochain ? `défiez ${prochain.nom}` : 'chef vaincu'}.` };
+    if (e.familles[f] === 'chef') return { famille: f, etat: 'conquise', texte: 'Chef vaincu : sa Signature est à vous.' };
+    if (e.familles[f] === 'defiee') return { famille: f, etat: 'engagee', texte: `Défi engagé : ${prochain ? `défiez ${prochain.nom}, ${prochain.titre}` : 'chef vaincu'}.` };
+    const ok = peutEngager(e, f);
+    return ok.ok ? { famille: f, etat: 'engageable', texte: `Défi officiel à engager (${MAISONS[f].nom}).` } : { famille: f, etat: 'fermee', texte: ok.raison };
+  });
+}
+
+/**
+ * Ce que fera l'engagement du défi d'une famille (écran de confirmation, M10-D) : calculé en appliquant le fait à blanc,
+ * donc toujours conforme à ce que la machine fera. Basics et Technique **déjà reçues** (changement d'affiliation) : rien
+ * n'est remis une seconde fois et le deck ne change pas (AV-07 : la clé `basics:<Famille>` empêche toute double remise).
+ */
+export interface ApercuEngagement {
+  famille: Family;
+  ok: boolean;
+  raison: string;
+  basicsDeja: boolean;
+  techniqueDeja: boolean;
+  /** Cartes grises du deck avant et après l'engagement. */
+  neutres: [number, number];
+  /** Le deck devient-il (ou reste-t-il) le format standard de 17 cartes (A-6) ? */
+  standard: boolean;
+}
+
+export function apercuEngagement(e: AventureEtat, f: Family, at = ''): ApercuEngagement {
+  const ok = peutEngager(e, f);
+  const r = appliquerBrut(e, { type: 'engager', famille: f }, at);
+  const apres = r.refus ? e : r.etat;
+  const grises = (x: AventureEtat) => x.deck.cartes.filter(isNeutre).length;
+  return {
+    famille: f, ok: ok.ok, raison: ok.ok ? '' : ok.raison,
+    basicsDeja: aGain(e.registre, `basics:${f}`), techniqueDeja: aGain(e.registre, `technique:${MAISONS[f].technique}`),
+    neutres: [grises(e), grises(apres)], standard: standardLegal(apres.deck, collectionDe(apres.registre)),
+  };
+}
+
+const ROLES_ORDRE = ['cadet', 'brasDroit', 'chef'] as const;
 
 /** Applique un fait ; un refus laisse l'état inchangé. Idempotent pour les gains (registre). */
 export function appliquer(e0: AventureEtat, ev: Evenement, at: string): Resultat {

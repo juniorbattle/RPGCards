@@ -38,7 +38,10 @@ export function objectif(e: AventureEtat): string {
       const fig = figureDe(x, r);
       if (!e.vaincues.includes(fig.id) && statutDefi(e, fig).ouvert) return `Défiez ${fig.nom}, ${fig.titre}.`;
     }
-    return 'Votre chef est vaincu : engagez le défi d’une autre famille à la Salle des Bannières (salle de jeu de cartes).';
+    const conquises = FAMILIES.filter((x) => x !== f && e.familles[x] === 'chef').length;
+    return conquises
+      ? `${conquises} voie${conquises > 1 ? 's' : ''} sur 3 conquise${conquises > 1 ? 's' : ''} : engagez le défi d’une autre famille à la Salle des Bannières (salle de jeu de cartes, sur le Quai).`
+      : 'Votre chef est vaincu : engagez le défi d’une autre famille à la Salle des Bannières (salle de jeu de cartes).';
   }
   if (ch === 'championnat') {
     const m = manche(e.competitions);
@@ -62,9 +65,17 @@ export function quetes(e: AventureEtat): Quete[] {
   }];
   const f = e.affiliation;
   if (f) out.push({ id: `maison:${f}`, titre: `La maison — ${MAISONS[f].nom}`, type: 'principale', etapes: ROLES.map((r) => { const fig = figureDe(f, r); return { texte: `Battre ${fig.nom}, ${fig.titre}`, faite: e.vaincues.includes(fig.id) }; }) });
+  // Les trois voies (PROGRESSION §6.2) : ouvertes quand le chef de la famille d'accueil est vaincu, dans l'ordre choisi.
+  if (f && aGain(e.registre, `signature:${f}`)) {
+    out.push({ id: 'voies', titre: 'Les trois voies', type: 'principale', etapes: FAMILIES.filter((x) => x !== f).map((x) => ({
+      texte: `La voie ${deF(x)} : ${e.familles[x] === 'chef' ? 'chef vaincu' : e.familles[x] === 'defiee' ? 'défi engagé' : 'défi à engager à la Salle des Bannières'}`,
+      faite: e.familles[x] === 'chef',
+    })) });
+  }
   for (const x of FAMILIES) {
     if (x === f || (e.familles[x] !== 'defiee' && e.familles[x] !== 'chef')) continue;
-    out.push({ id: `voie:${x}`, titre: `La voie ${deF(x)}`, type: 'famille', etapes: [{ texte: 'Défi officiel engagé', faite: aGain(e.registre, `basics:${x}`) }, ...ROLES.map((r) => { const fig = figureDe(x, r); return { texte: `Battre ${fig.nom}`, faite: e.vaincues.includes(fig.id) }; })] });
+    // l'engagement se lit dans l'état de la famille (les Basics peuvent venir d'une affiliation quittée)
+    out.push({ id: `voie:${x}`, titre: `La voie ${deF(x)}`, type: 'famille', etapes: [{ texte: 'Défi officiel engagé', faite: true }, ...ROLES.map((r) => { const fig = figureDe(x, r); return { texte: `Battre ${fig.nom}`, faite: e.vaincues.includes(fig.id) }; })] });
   }
   if (ouvertChampionnat(e.familles)) {
     const c = e.competitions.championnat;
