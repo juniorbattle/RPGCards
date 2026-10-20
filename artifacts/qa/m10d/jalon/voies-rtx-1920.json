@@ -1,0 +1,168 @@
+{
+  "date": "2026-10-20T21:35:03.406Z",
+  "commit": "eef4c3a",
+  "viewport": [
+    1920,
+    1080
+  ],
+  "qs": "",
+  "chromeArgs": [
+    "--force_high_performance_gpu"
+  ],
+  "renderer": "Chrome headless, GPU réel : ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11) — arguments : --force_high_performance_gpu",
+  "duelJoue": {
+    "contre": "Lior",
+    "issue": "victoire",
+    "tours": 16,
+    "ms": 42276,
+    "leaks": []
+  },
+  "checks": [
+    "OK devant kai-prologue",
+    "OK devant emissaire-Ronce",
+    "OK affiliation à la Ronce : quatre Basics, 12 cartes grises",
+    "OK devant cadet-Cendre",
+    "OK changement d’affiliation : les cartes reçues restent, le niveau des adversaires annoncé (2)",
+    "OK changement d’affiliation vers la Cendre : les Basics de la Ronce restent, 8 cartes grises",
+    "OK devant cadet-Cendre",
+    "OK devant brasDroit-Cendre",
+    "OK devant chef-Cendre",
+    "OK chef-Cendre : identité V2 du chef à la table (chef-cendre)",
+    "OK Bran vaincu : Signature de la Cendre, équipée",
+    "OK quai : sortie vers ruelles",
+    "OK devant cadet-Voile",
+    "OK entrer dans le quartier du Voile et parler à Lior n’engagent rien (renvoi à la Salle des Bannières)",
+    "OK ruelles : sortie vers quai",
+    "OK Salle des Bannières : Cendre accueil, Voile engageable, Ronce engageable, Astre engageable",
+    "OK Salle des Bannières : la bannière Ronce est à engager",
+    "OK confirmation (Ronce) : « Les quatre cartes de base de la Ronce sont déjà à vous (affi… » ; « Votre deck ne change pas (8 cartes grises). »",
+    "OK récompense (Ronce) : aucune carte remise, la raison affichée",
+    "OK Ronce défiée : Basics une seule fois au registre, deck inchangé",
+    "OK devant cadet-Ronce",
+    "OK devant brasDroit-Ronce",
+    "OK devant chef-Ronce",
+    "OK chef-Ronce : identité V2 du chef à la table (chef-ronce)",
+    "OK Mère Aubépine vaincue : deux Signatures possédées, la Cendre toujours seule équipée",
+    "OK Salle des Bannières : la bannière Voile est à engager",
+    "OK confirmation (Voile) : « Une carte grise de chaque Rang cède sa place à la Basic du même Rang : 8 → 4 cartes grises. »",
+    "OK Voile engagé : quatre Basics et la Dissipation remises, 4 cartes grises restent",
+    "OK objectif : Défiez Lior, cadet du Voile, colporteur des Ruelles.",
+    "OK quai : sortie vers ruelles",
+    "OK devant cadet-Voile",
+    "OK duel contre Lior joué jusqu’au bout par l’interface (victoire, 16 tours, 42 s)",
+    "OK duel joué : aucune fuite d’information (vue du joueur)",
+    "OK devant brasDroit-Voile",
+    "OK devant chef-Voile",
+    "OK chef-Voile : identité V2 du chef à la table (chef-voile)",
+    "OK devant epreuve-Voile",
+    "OK devant epreuve-Voile",
+    "OK devant epreuve-Voile",
+    "OK Voile : Ilse vaincue, l’Épreuve gagnée (variante I au registre, équipée)",
+    "OK ruelles : sortie vers quai",
+    "OK Salle des Bannières : la bannière Astre est à engager",
+    "OK confirmation (Astre) : « Une carte grise de chaque Rang cède sa place à la Basic du même Rang : 4 → 0 cartes grises. Format standard : 17 cartes, sans carte grise ; le validateur du mode Duel l’accepte tel quel. »",
+    "OK Astre engagé : plus aucune carte grise, 17 cartes au format standard (annoncé)",
+    "OK quai : sortie vers parvis",
+    "OK devant cadet-Astre",
+    "OK devant brasDroit-Astre",
+    "OK devant joute-Astre",
+    "OK Joute de l’Astre : contrainte de construction respectée",
+    "OK devant chef-Astre",
+    "OK chef-Astre : identité V2 du chef à la table (chef-astre)",
+    "OK les quatre chefs vaincus",
+    "OK quatre Signatures possédées, une seule équipée ; Joute de l’Astre gagnée (variante II)",
+    "OK objectif : le Championnat des Champions",
+    "OK éditeur : deck au format standard (17 cartes, validateur du mode Duel)",
+    "OK éditeur : quatre Signatures possédées au choix (aucune, Cendre, Voile, Ronce, Astre)",
+    "OK Signature du Voile équipée à la place de celle de la Cendre (une seule)",
+    "OK Collection : 30 cartes familiales et Signatures possédées (16 Basics, 10 variantes, 4 Signatures)",
+    "OK Registre : origines lisibles (affiliation quittée, défis engagés)",
+    "OK Journal : « Les trois voies »",
+    "OK rechargement : état de l’aventure identique",
+    "OK sauvegarde du jeu standard jamais créée"
+  ],
+  "steps": [
+    {
+      "name": "changement-cendre",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/01-changement-cendre.png"
+    },
+    {
+      "name": "duel-chef-Cendre",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/02-duel-chef-Cendre.png"
+    },
+    {
+      "name": "lior-avant-engagement",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/03-lior-avant-engagement.png"
+    },
+    {
+      "name": "salle-des-bannieres",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/04-salle-des-bannieres.png"
+    },
+    {
+      "name": "engagement-Ronce",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/05-engagement-Ronce.png"
+    },
+    {
+      "name": "recompense-Ronce",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/06-recompense-Ronce.png"
+    },
+    {
+      "name": "duel-chef-Ronce",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/07-duel-chef-Ronce.png"
+    },
+    {
+      "name": "engagement-Voile",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/08-engagement-Voile.png"
+    },
+    {
+      "name": "recompense-Voile",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/09-recompense-Voile.png"
+    },
+    {
+      "name": "preparation-lior",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/10-preparation-lior.png"
+    },
+    {
+      "name": "duel-chef-Voile",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/11-duel-chef-Voile.png"
+    },
+    {
+      "name": "epreuve-voile",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/12-epreuve-voile.png"
+    },
+    {
+      "name": "engagement-Astre",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/13-engagement-Astre.png"
+    },
+    {
+      "name": "recompense-Astre",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/14-recompense-Astre.png"
+    },
+    {
+      "name": "joute-astre",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/15-joute-astre.png"
+    },
+    {
+      "name": "duel-chef-Astre",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/16-duel-chef-Astre.png"
+    },
+    {
+      "name": "deck-standard",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/17-deck-standard.png"
+    },
+    {
+      "name": "collection-quatre-chefs",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/18-collection-quatre-chefs.png"
+    },
+    {
+      "name": "journal",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/19-journal.png"
+    },
+    {
+      "name": "planche-voies",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/voies-rtx-1920/planche-voies-1920.png"
+    }
+  ],
+  "issues": [],
+  "ok": true
+}

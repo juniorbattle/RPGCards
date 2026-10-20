@@ -1,5 +1,8 @@
 # AGENTS.md — Les Quatre Voies (nouveau dépôt indépendant)
 
+> **M10-D — LIVRÉ, À RECEVOIR (2026-10-20, passes 88 à 90) :** Salle des Bannières (quatre bannières, `bannieres`) et écran d'engagement (`apercuEngagement`, fait appliqué à blanc : l'écran n'annonce jamais autre chose que ce que la machine fera ; Basics déjà reçues jamais remises) ; tests `test/m10d.test.ts` ; `npm run qa:voies` (parcours jusqu'aux quatre chefs). Jalon de QA vert sur les deux GPU. Fiche du lot : <https://claude.ai/artifact/X2z6EuQJDLHdNGe1Cvps4g> (D1 : niveau des adversaires après un changement d'affiliation, K3 inchangé jusqu'à la décision).
+
+
 > **M10-C — LIVRÉ ET REÇU (2026-10-20, passes 84 à 87) :** chefs en « vectoriel V2 » (ADR 034 approuvé ; kits `chef-<famille>` hors de `PERSONALITIES`, le jeu standard ne les tire jamais) ; écran Deck et collection de l'aventure (éditeur case par case : une case n'accepte que ce qui garde la forme R-AV ; Collection dérivée du registre seul) ; `npm run qa:maison` (parcours d'une maison au navigateur). Jalon de QA vert sur les deux GPU. Fiche du lot : <https://claude.ai/artifact/VzdgB2W2wmUw1Bp9MNE5ux> (5 choix sur l'option recommandée ; cartes à gagner grisées et lisibles). **Lot suivant : M10-D.**
 
 
