@@ -1,9 +1,9 @@
 {
-  "date": "2026-10-20T04:53:10.317Z",
-  "commit": "8a22f5f",
+  "date": "2026-10-20T05:02:29.274Z",
+  "commit": "f588425",
   "mode": "assembler",
   "checks": [
-    "OK manifeste de la preuve : 21 plans (façades, pied, murs découpés ; textures partagées), 16 lumières"
+    "OK manifeste de la preuve : 20 plans (façades, pied, murs découpés ; textures partagées), 16 lumières"
   ],
   "console": [],
   "meuble-caisses": {
@@ -285,17 +285,6 @@
       ],
       "width": 8,
       "orient": "cote",
-      "coupe": false
-    },
-    "emprise": {
-      "file": "preuve-emprise.png",
-      "at": [
-        0,
-        0.04,
-        -7
-      ],
-      "width": 54,
-      "orient": "sol",
       "coupe": false
     },
     "rue-haute-caisses": {

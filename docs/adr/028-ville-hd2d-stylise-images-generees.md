@@ -449,5 +449,7 @@ Retour du responsable sur la rue haute : « je veux que tu ameliores le decor ca
 bouts de la rue perdus dans la brume (au lieu de murs nus), rue meublée (caisses, tonneaux, lampadaires allumés) et
 habitée (un passant), murs des passages redessinés (toit, colombages, fenêtres, gouttière, lanterne). Une vue en section
 (étages du bloc effacés, rez-de-chaussée gardé, champ `coupeY`) a été essayée ; le responsable l'a écartée : « non conserve le cote transparent du batiment de premier dont nous allons derriere ».
-Le bloc du premier rang reste donc transparent (8 %) quand on passe derrière ; `coupeY` reste au contrat, inutilisé.
+Puis, sur la capture de la passe 63 qu'il a jointe : « non je veux que le batiment en premier plan soient transparent comme l'image joint ». Le bloc du premier rang est donc transparent à 12 % quand
+on passe derrière, façade entière (étages et rez-de-chaussée), et l'emprise sombre de la passe 63 est retirée (les pavés
+se voient sous le fantôme) ; `coupeY` reste au contrat, inutilisé.
 Les 2 images annoncées en passe 63 restent à décider.

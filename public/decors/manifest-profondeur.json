@@ -92,7 +92,7 @@
           ],
           "width": 13.401,
           "orient": "face",
-          "order": 12,
+          "order": 11,
           "blend": "decoupe",
           "lit": 0.25,
           "uv": [
@@ -120,7 +120,7 @@
           ],
           "width": 21.801,
           "orient": "face",
-          "order": 13,
+          "order": 12,
           "blend": "decoupe",
           "lit": 0.25,
           "uv": [
@@ -148,7 +148,7 @@
           ],
           "width": 12.798,
           "orient": "face",
-          "order": 14,
+          "order": 13,
           "blend": "decoupe",
           "lit": 0.25,
           "uv": [
@@ -176,7 +176,7 @@
           ],
           "width": 12,
           "orient": "face",
-          "order": 15,
+          "order": 14,
           "blend": "decoupe",
           "lit": 0.3,
           "uv": [
@@ -204,7 +204,7 @@
           ],
           "width": 23.603,
           "orient": "face",
-          "order": 16,
+          "order": 15,
           "blend": "decoupe",
           "lit": 0.3,
           "uv": [
@@ -232,7 +232,7 @@
           ],
           "width": 12.397,
           "orient": "face",
-          "order": 17,
+          "order": 16,
           "blend": "decoupe",
           "lit": 0.3,
           "uv": [
@@ -260,7 +260,7 @@
           ],
           "width": 48,
           "orient": "face",
-          "order": 18,
+          "order": 17,
           "blend": "decoupe",
           "lit": 0.2
         },
@@ -281,7 +281,7 @@
           ],
           "width": 44.17,
           "orient": "face",
-          "order": 19,
+          "order": 18,
           "blend": "decoupe"
         },
         "eau": {
@@ -301,7 +301,7 @@
           ],
           "width": 64,
           "orient": "sol",
-          "order": 20,
+          "order": 19,
           "blend": "decoupe"
         },
         "joue-1": {
@@ -391,27 +391,6 @@
           "order": 10,
           "blend": "decoupe",
           "lit": 0.35
-        },
-        "emprise": {
-          "file": "preuve-emprise.png",
-          "sha256": "aa1c471bdf40fb0c4f8d20209c3a379ec730de45d62b71d779fd9908d5ebbab8",
-          "size": [
-            1728,
-            256
-          ],
-          "source": "dessiné par code (preuve de la profondeur, passe 63)",
-          "fiche": "art-src/decors/preuve-emprise/fiche.json",
-          "approved": false,
-          "at": [
-            0,
-            0.04,
-            -7
-          ],
-          "width": 54,
-          "orient": "sol",
-          "order": 11,
-          "blend": "decoupe",
-          "fog": 0.5
         },
         "rue-haute-caisses": {
           "file": "quai-pied-facades.png",

@@ -39,8 +39,6 @@ const P = {
   // passe 63 : pied de la façade recadré (ses 9 % du bas se perdaient dans le noir), éclairé par les lanternes de la rue ;
   // passe 64 (« décor isolé ») : les deux copies, 62 m, plus large que la vue : plus de bords ni de ciel sur les côtés
   rueHaute: { z: -17.5, v1: 0.91, width: 62, fog: 0.2, lit: 0.35 },
-  // passe 63 : emprise des blocs (sol sombre sous les blocs, lue quand un bloc s'efface)
-  emprise: { x0: -27, x1: 27, z0: -11, z1: -3, y: 0.04, ppm: 32 },
   // passe 64 : rue haute meublée avec les accessoires des plans actuels (morceaux de la bande du pied et de la rue, x de
   // la source au monde avant écart) ; mêmes places que `quaiProfond.ts` (RUE_HAUTE_PROPS, RUE_HAUTE_LAMPS)
   meubles: [['caisses', 'pied', [-18.95, -17.05], -14.0, -13.0], ['tonneaux', 'pied', [-11.3, -9.7], 14.0, -15.6]],
@@ -54,30 +52,6 @@ const P = {
   brumes: [[120, 12, 0, 17, -21, 0.34, 0.006, [6, 1.2], 2.2], [170, 20, 0, 21, -30, 0.4, 0.005, [5, 1.3], 2.2], [270, 34, 0, 24, -62, 0.36, 0.004, [4, 1.4], 2.2], [120, 2, 0, -2.2, 6, 0.22, 0.012, [6, 1]],
     [10, 9, -18.5, 3.8, -14, 0.6, 0.004, [2, 1], 1.0], [10, 9, 18.5, 3.8, -14, 0.6, 0.004, [2, 1], 1.0]],
 };
-
-/**
- * Dans la page : emprise des blocs (sol sombre et doux sous les blocs, trouée aux passages), `w` × `h` px, passages en
- * px (x de début et de fin) ; bords fondus sur 0,5 m.
- */
-function paintEmprise({ w, h, gaps, fade }) {
-  const c = document.createElement('canvas'); c.width = w; c.height = h;
-  const g = c.getContext('2d');
-  let s = 23; const rnd = () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
-  const d = g.createImageData(w, h);
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      const inGap = gaps.some(([a, b]) => x >= a && x < b);
-      if (inGap) continue;
-      const e = Math.min(y, h - 1 - y, ...gaps.map(([a, b]) => (x < a ? a - x : x - b)), x, w - 1 - x);
-      const a = Math.min(1, e / fade) * 0.88;
-      const n = 8 + rnd() * 6;
-      const i = (y * w + x) * 4;
-      d.data[i] = n; d.data[i + 1] = n + 2; d.data[i + 2] = n + 10; d.data[i + 3] = Math.round(a * 255);
-    }
-  }
-  g.putImageData(d, 0, 0);
-  return c.toDataURL('image/png');
-}
 
 /** Dans la page : boîte (px) des pixels visibles d'une image entre les colonnes `c0` et `c1`. */
 async function alphaBox({ url, c0, c1 }) {
@@ -152,21 +126,9 @@ if (MODE === 'assembler') {
   const pg = await (await browser.newContext()).newPage();
   await pg.setContent('<!doctype html><html><body></body></html>');
   const joue = fromUrl(await pg.evaluate(paintJoue));
-  const E = P.emprise; const ew = Math.round((E.x1 - E.x0) * E.ppm); const eh = Math.round((E.z1 - E.z0) * E.ppm);
-  const gaps = [[-13.6, -10.6], [11.2, 14.2]].map(([a, b]) => [Math.round((a - E.x0) * E.ppm), Math.round((b - E.x0) * E.ppm)]);
-  const emprise = fromUrl(await pg.evaluate(paintEmprise, { w: ew, h: eh, gaps, fade: E.ppm * 0.5 }));
   await browser.close();
   const dim = (b) => [b.readUInt32BE(16), b.readUInt32BE(20)];
   writeFileSync('public/decors/preuve-joue.png', joue);
-  writeFileSync('public/decors/preuve-emprise.png', emprise);
-  mkdirSync('art-src/decors/preuve-emprise', { recursive: true });
-  writeFileSync('art-src/decors/preuve-emprise/fiche.json', `${JSON.stringify({
-    id: 'preuve-emprise', projet: 'Les Quatre Voies (RPGCards)', decision: 'ADR 028, « Profondeur praticable » (passes 62 et 63) : preuve de conception, laboratoire seulement',
-    source: 'dessiné par code (tools/m09-profondeur-preuve.mjs, paintEmprise : canvas 2D, graine fixe) ; aucune image générée, aucune image externe',
-    sortie: { fichier: 'public/decors/preuve-emprise.png', sha256: sha(emprise), octets: emprise.length, dimensions: [emprise.readUInt32BE(16), emprise.readUInt32BE(20)] },
-    usage: 'emprise des blocs du Quai profond (sol sombre sous les blocs, lue quand un bloc s’efface) ; plan de preuve',
-    approved: false,
-  }, null, 2)}\n`);
   mkdirSync('art-src/decors/preuve-joue', { recursive: true });
   writeFileSync('art-src/decors/preuve-joue/fiche.json', `${JSON.stringify({
     id: 'preuve-joue', projet: 'Les Quatre Voies (RPGCards)', decision: 'ADR 028, « Profondeur praticable » (passe 62) : preuve de conception, laboratoire seulement',
@@ -206,7 +168,7 @@ if (MODE === 'assembler') {
   P.joue.xs.forEach(([x, vers], i) => {
     plans[`joue-${i + 1}`] = { vers, file: 'preuve-joue.png', sha256: sha(joue), size: dim(joue), source: 'dessiné par code (preuve de la profondeur, passe 62)', fiche: 'art-src/decors/preuve-joue/fiche.json', approved: false, at: [x, 0, P.joue.z], width: P.joue.length, orient: 'cote', order: 12 + i, blend: 'decoupe', lit: P.joue.lit };
   });
-  plans.emprise = { file: 'preuve-emprise.png', sha256: sha(emprise), size: [ew, eh], source: 'dessiné par code (preuve de la profondeur, passe 63)', fiche: 'art-src/decors/preuve-emprise/fiche.json', approved: false, at: [(E.x0 + E.x1) / 2, E.y, (E.z0 + E.z1) / 2], width: E.x1 - E.x0, orient: 'sol', order: 16, blend: 'decoupe', fog: 0.5 };
+
   // rue haute meublée (passe 64) : morceaux des bandes du pied et de la rue, posés à leur taille au monde
   const strips = { pied: pl['pied-facades'], rue: pl.rue };
   const stripUrl = { pied: dataUrl(readFileSync('public/decors/quai-pied-facades.png')), rue: dataUrl(readFileSync('public/decors/quai-rue.png')) };
