@@ -1,0 +1,1008 @@
+{
+  "date": "2026-10-20T01:12:50.147Z",
+  "commit": "2ae4c81",
+  "mode": "assembler",
+  "checks": [
+    "OK accessoires : 5 objets découpés (5 attendus : lampadaire, borne, caisses, tonneaux, filets), 0 taches écartées",
+    "OK accessoires : le premier objet est le lampadaire, haut et étroit (70 × 46 × 227 × 888)",
+    "OK plans ≤ 8 Mo : quai-ciel.png 2.9 Mo 1536×1024 ; quai-second-rang.png 2.3 Mo 1536×953 ; quai-facades.png 5.5 Mo 3263×993 ; quai-pied-facades.png 0.2 Mo 3264×340 ; quai-rue.png 0.1 Mo 3264×340 ; quai-premier-plan.png 2.7 Mo 2759×1024 ; quai-eau.png 3.3 Mo 1536×1024",
+    "OK lumières du moteur posées sur les lanternes peintes : 15 (rue 4, étal 2, façades 9 plus grandes)",
+    "OK feuille du joueur : grille d’art 48 × 70, pas 3.76 × 3.86, 39 couleurs, tons clés tenue [1185,706,2593,0], accent [77,61,120,105], ancrage 24,67, figure 62"
+  ],
+  "console": [],
+  "traitement": {
+    "ciel": {
+      "size": [
+        1536,
+        1024
+      ],
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "right": 1535,
+        "bottom": 1023
+      },
+      "transparentShare": 0,
+      "magentaSpill": 0,
+      "lanterns": []
+    },
+    "second": {
+      "size": [
+        1536,
+        953
+      ],
+      "crop": {
+        "left": 0,
+        "top": 71,
+        "right": 1535,
+        "bottom": 1023
+      },
+      "transparentShare": 0.299,
+      "magentaSpill": 743,
+      "lanterns": []
+    },
+    "facades": {
+      "ouest": {
+        "size": [
+          986,
+          957
+        ],
+        "crop": {
+          "left": 13,
+          "top": 33,
+          "right": 998,
+          "bottom": 989
+        },
+        "transparentShare": 0.171,
+        "magentaSpill": 668,
+        "lanterns": [
+          {
+            "x": 883.3333333333334,
+            "y": 763.7777777777778,
+            "area": 288
+          }
+        ]
+      },
+      "centre": {
+        "size": [
+          1477,
+          990
+        ],
+        "crop": {
+          "left": 18,
+          "top": 18,
+          "right": 1494,
+          "bottom": 1007
+        },
+        "transparentShare": 0.214,
+        "magentaSpill": 980,
+        "lanterns": [
+          {
+            "x": 471.42857142857144,
+            "y": 750.5714285714286,
+            "area": 448
+          },
+          {
+            "x": 67.04347826086956,
+            "y": 811.7391304347826,
+            "area": 368
+          },
+          {
+            "x": 1082,
+            "y": 538.3809523809524,
+            "area": 336
+          },
+          {
+            "x": 1287.142857142857,
+            "y": 827.5238095238095,
+            "area": 336
+          },
+          {
+            "x": 119,
+            "y": 749,
+            "area": 320
+          },
+          {
+            "x": 534.4444444444445,
+            "y": 816,
+            "area": 288
+          },
+          {
+            "x": 945.0588235294117,
+            "y": 803.8823529411765,
+            "area": 272
+          },
+          {
+            "x": 1213.142857142857,
+            "y": 532.2857142857143,
+            "area": 224
+          }
+        ]
+      },
+      "est": {
+        "size": [
+          821,
+          936
+        ],
+        "crop": {
+          "left": 66,
+          "top": 23,
+          "right": 886,
+          "bottom": 958
+        },
+        "transparentShare": 0.258,
+        "magentaSpill": 778,
+        "lanterns": [
+          {
+            "x": 396,
+            "y": 790,
+            "area": 160
+          },
+          {
+            "x": 779.7777777777778,
+            "y": 730.8888888888889,
+            "area": 144
+          },
+          {
+            "x": 304.5,
+            "y": 567.5,
+            "area": 128
+          },
+          {
+            "x": 646.6666666666666,
+            "y": 472.6666666666667,
+            "area": 96
+          },
+          {
+            "x": 150,
+            "y": 564.4,
+            "area": 80
+          },
+          {
+            "x": 456.4,
+            "y": 738,
+            "area": 80
+          }
+        ]
+      }
+    },
+    "etal": {
+      "size": [
+        970,
+        965
+      ],
+      "crop": {
+        "left": 0,
+        "top": 59,
+        "right": 969,
+        "bottom": 1023
+      },
+      "transparentShare": 0.408,
+      "magentaSpill": 1272,
+      "lanterns": [
+        {
+          "x": 106.25,
+          "y": 438.5,
+          "area": 768
+        },
+        {
+          "x": 142.44444444444446,
+          "y": 328.6666666666667,
+          "area": 144
+        }
+      ]
+    },
+    "premierOuest": {
+      "size": [
+        1536,
+        1024
+      ],
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "right": 1535,
+        "bottom": 1023
+      },
+      "transparentShare": 0.559,
+      "magentaSpill": 1812,
+      "lanterns": []
+    },
+    "premierEst": {
+      "size": [
+        1536,
+        1024
+      ],
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "right": 1535,
+        "bottom": 1023
+      },
+      "transparentShare": 0.591,
+      "magentaSpill": 2201,
+      "lanterns": []
+    },
+    "eau": {
+      "size": [
+        1536,
+        1024
+      ],
+      "crop": {
+        "left": 0,
+        "top": 0,
+        "right": 1535,
+        "bottom": 1023
+      },
+      "transparentShare": 0,
+      "magentaSpill": 0,
+      "lanterns": []
+    }
+  },
+  "accessoires": {
+    "size": [
+      1536,
+      1024
+    ],
+    "objets": [
+      {
+        "nom": "lampadaire",
+        "box": [
+          70,
+          46,
+          227,
+          888
+        ],
+        "pixels": 54107
+      },
+      {
+        "nom": "borne",
+        "box": [
+          320,
+          756,
+          142,
+          187
+        ],
+        "pixels": 18265
+      },
+      {
+        "nom": "caisses",
+        "box": [
+          509,
+          594,
+          295,
+          323
+        ],
+        "pixels": 73442
+      },
+      {
+        "nom": "tonneaux",
+        "box": [
+          878,
+          679,
+          247,
+          268
+        ],
+        "pixels": 54295
+      },
+      {
+        "nom": "filets",
+        "box": [
+          1159,
+          747,
+          333,
+          199
+        ],
+        "pixels": 42198
+      }
+    ],
+    "ignores": 0
+  },
+  "premierNettoye": {
+    "cleared": 56351,
+    "components": 7,
+    "kept": 4
+  },
+  "feuille": {
+    "cell": [
+      48,
+      70
+    ],
+    "anchor": [
+      24,
+      67
+    ],
+    "figureH": 62,
+    "pitch": {
+      "x": 3.76,
+      "y": 3.86,
+      "rx": 0.155,
+      "ry": 0.14,
+      "phaseX": 0.11,
+      "phaseY": 2.09
+    },
+    "shifts": [
+      {
+        "dx": 8,
+        "dy": 7,
+        "h": 58
+      },
+      {
+        "dx": 8,
+        "dy": 6,
+        "h": 59
+      },
+      {
+        "dx": 8,
+        "dy": 6,
+        "h": 59
+      },
+      {
+        "dx": 8,
+        "dy": 6,
+        "h": 59
+      },
+      {
+        "dx": 9,
+        "dy": 6,
+        "h": 59
+      },
+      {
+        "dx": 9,
+        "dy": 3,
+        "h": 61
+      },
+      {
+        "dx": 7,
+        "dy": 4,
+        "h": 61
+      },
+      {
+        "dx": 8,
+        "dy": 4,
+        "h": 61
+      },
+      {
+        "dx": 9,
+        "dy": 4,
+        "h": 61
+      },
+      {
+        "dx": 8,
+        "dy": 4,
+        "h": 61
+      },
+      {
+        "dx": 10,
+        "dy": 3,
+        "h": 62
+      },
+      {
+        "dx": 9,
+        "dy": 3,
+        "h": 61
+      },
+      {
+        "dx": 9,
+        "dy": 3,
+        "h": 61
+      },
+      {
+        "dx": 9,
+        "dy": 3,
+        "h": 61
+      },
+      {
+        "dx": 9,
+        "dy": 4,
+        "h": 61
+      }
+    ],
+    "clipped": 0,
+    "counts": {
+      "tenue": [
+        1185,
+        706,
+        2593,
+        0
+      ],
+      "accent": [
+        77,
+        61,
+        120,
+        105
+      ]
+    },
+    "nudged": 0,
+    "colors": 39,
+    "figures": [
+      [
+        61,
+        52,
+        160,
+        271
+      ],
+      [
+        260,
+        53,
+        366,
+        274
+      ],
+      [
+        461,
+        54,
+        565,
+        273
+      ],
+      [
+        660,
+        53,
+        765,
+        273
+      ],
+      [
+        865,
+        53,
+        966,
+        273
+      ],
+      [
+        58,
+        352,
+        162,
+        582
+      ],
+      [
+        258,
+        353,
+        366,
+        583
+      ],
+      [
+        455,
+        354,
+        563,
+        584
+      ],
+      [
+        661,
+        353,
+        767,
+        584
+      ],
+      [
+        860,
+        353,
+        965,
+        584
+      ],
+      [
+        64,
+        662,
+        149,
+        894
+      ],
+      [
+        260,
+        664,
+        369,
+        896
+      ],
+      [
+        462,
+        665,
+        569,
+        894
+      ],
+      [
+        663,
+        665,
+        763,
+        894
+      ],
+      [
+        860,
+        666,
+        966,
+        896
+      ]
+    ],
+    "x3": {
+      "sha256": "b861c7056fd705232eb405f434953ba5e2ae7b8269463612c530ba509e7aa3b2",
+      "bytes": 55916
+    }
+  },
+  "plans": {
+    "ciel": {
+      "file": "quai-ciel.png",
+      "sha256": "83fa4a309a28b3c790061e1e9614fcf02ef11444f87c72dfd0a8e7e4e114c9b2",
+      "size": [
+        1536,
+        1024
+      ],
+      "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+      "fiche": "art-src/decors/quai-ciel/fiche.json",
+      "approved": false,
+      "at": [
+        0,
+        -38,
+        -60
+      ],
+      "width": 130,
+      "orient": "face",
+      "order": 0,
+      "blend": "fondu",
+      "fog": 0,
+      "bytes": 3067681
+    },
+    "second-rang": {
+      "file": "quai-second-rang.png",
+      "sha256": "1c3332b884d0ec64e7fe9fa2b209065a83a9e6ad4c4b81322210d561ca46805a",
+      "size": [
+        1536,
+        953
+      ],
+      "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+      "fiche": "art-src/decors/quai-second-rang/fiche.json",
+      "approved": false,
+      "at": [
+        0,
+        0,
+        -14
+      ],
+      "width": 56,
+      "orient": "face",
+      "order": 1,
+      "blend": "decoupe",
+      "fog": 0.6,
+      "bytes": 2426315
+    },
+    "facades": {
+      "file": "quai-facades.png",
+      "sha256": "5a13074f3a8c003c340ed90be40dda8d90613345105f1a7beb8e3e1e2c1ad1d8",
+      "size": [
+        3263,
+        993
+      ],
+      "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+      "fiche": "art-src/decors/quai-facades/fiche.json",
+      "approved": false,
+      "at": [
+        0,
+        0,
+        -3
+      ],
+      "width": 48,
+      "orient": "face",
+      "order": 2,
+      "blend": "decoupe",
+      "lit": 0.25,
+      "bytes": 5807145
+    },
+    "pied-facades": {
+      "file": "quai-pied-facades.png",
+      "sha256": "2469063c799562e7f9bc0fbd1920bffd369b7fbf71b6a31066c0db014a95650f",
+      "size": [
+        3264,
+        340
+      ],
+      "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+      "fiche": "art-src/decors/quai-pied-facades/fiche.json",
+      "approved": false,
+      "at": [
+        0,
+        0,
+        -2.3
+      ],
+      "width": 48,
+      "orient": "face",
+      "order": 3,
+      "blend": "decoupe",
+      "lit": 0.3,
+      "bytes": 158922
+    },
+    "rue": {
+      "file": "quai-rue.png",
+      "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
+      "size": [
+        3264,
+        340
+      ],
+      "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+      "fiche": "art-src/decors/quai-rue/fiche.json",
+      "approved": false,
+      "at": [
+        0,
+        0,
+        2.95
+      ],
+      "width": 48,
+      "orient": "face",
+      "order": 4,
+      "blend": "decoupe",
+      "lit": 0.2,
+      "bytes": 79461
+    },
+    "premier-plan": {
+      "file": "quai-premier-plan.png",
+      "sha256": "a5073f92e3295b31d4300218fb0b8ae8ac10f1be7655e04643b6d5d7493962d8",
+      "size": [
+        2759,
+        1024
+      ],
+      "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+      "fiche": "art-src/decors/quai-premier-plan/fiche.json",
+      "approved": false,
+      "at": [
+        0,
+        -5.68,
+        3.8
+      ],
+      "width": 44.17,
+      "orient": "face",
+      "order": 5,
+      "blend": "decoupe",
+      "bytes": 2867719
+    },
+    "eau": {
+      "file": "quai-eau.png",
+      "sha256": "6c3726da2fd24730711da268d94ab3f405e720e8f43fc06958c34a430eba313e",
+      "size": [
+        1536,
+        1024
+      ],
+      "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+      "fiche": "art-src/decors/quai-eau/fiche.json",
+      "approved": false,
+      "at": [
+        0,
+        -2.6,
+        20
+      ],
+      "width": 64,
+      "orient": "sol",
+      "order": 6,
+      "blend": "decoupe",
+      "bytes": 3498048
+    }
+  },
+  "lumieres": [
+    {
+      "at": [
+        -13.35,
+        3.03,
+        3.0500000000000003
+      ],
+      "color": "Astre",
+      "intensity": 3.2,
+      "radius": 10,
+      "halo": 2,
+      "flicker": "lantern"
+    },
+    {
+      "at": [
+        -4.35,
+        3.03,
+        3.0500000000000003
+      ],
+      "color": "Astre",
+      "intensity": 3.2,
+      "radius": 10,
+      "halo": 2,
+      "flicker": "lantern"
+    },
+    {
+      "at": [
+        4.65,
+        3.03,
+        3.0500000000000003
+      ],
+      "color": "Astre",
+      "intensity": 3.2,
+      "radius": 10,
+      "halo": 2,
+      "flicker": "lantern"
+    },
+    {
+      "at": [
+        13.65,
+        3.03,
+        3.0500000000000003
+      ],
+      "color": "Astre",
+      "intensity": 3.2,
+      "radius": 10,
+      "halo": 2,
+      "flicker": "lantern"
+    },
+    {
+      "at": [
+        0.77,
+        1.85,
+        -1.7999999999999998
+      ],
+      "color": "ambre",
+      "intensity": 2.6,
+      "radius": 7,
+      "halo": 1,
+      "flicker": "lantern"
+    },
+    {
+      "at": [
+        0.9,
+        2.23,
+        -1.7999999999999998
+      ],
+      "color": "ambre",
+      "intensity": 2.6,
+      "radius": 7,
+      "halo": 1,
+      "flicker": "lantern"
+    },
+    {
+      "at": [
+        -3.64,
+        3.53,
+        -2.4
+      ],
+      "color": "ambre",
+      "intensity": 2,
+      "radius": 6,
+      "halo": 0.9,
+      "flicker": "lantern"
+    },
+    {
+      "at": [
+        -9.61,
+        2.63,
+        -2.4
+      ],
+      "color": "ambre",
+      "intensity": 2,
+      "radius": 6,
+      "halo": 0.9,
+      "flicker": "lantern"
+    },
+    {
+      "at": [
+        5.37,
+        6.66,
+        -2.4
+      ],
+      "color": "ambre",
+      "intensity": 2,
+      "radius": 6,
+      "halo": 0.9,
+      "flicker": "lantern"
+    },
+    {
+      "at": [
+        8.4,
+        2.4,
+        -2.4
+      ],
+      "color": "ambre",
+      "intensity": 2,
+      "radius": 6,
+      "halo": 0.9,
+      "flicker": "lantern"
+    },
+    {
+      "at": [
+        -8.84,
+        3.56,
+        -2.4
+      ],
+      "color": "ambre",
+      "intensity": 2,
+      "radius": 6,
+      "halo": 0.9,
+      "flicker": "lantern"
+    },
+    {
+      "at": [
+        -11.99,
+        2.63,
+        -2.4
+      ],
+      "color": "ambre",
+      "intensity": 2,
+      "radius": 6,
+      "halo": 0.9,
+      "flicker": "lantern"
+    },
+    {
+      "at": [
+        -2.71,
+        2.57,
+        -2.4
+      ],
+      "color": "ambre",
+      "intensity": 2,
+      "radius": 6,
+      "halo": 0.9,
+      "flicker": "lantern"
+    },
+    {
+      "at": [
+        3.35,
+        2.75,
+        -2.4
+      ],
+      "color": "ambre",
+      "intensity": 2,
+      "radius": 6,
+      "halo": 0.9,
+      "flicker": "lantern"
+    },
+    {
+      "at": [
+        7.31,
+        6.75,
+        -2.4
+      ],
+      "color": "ambre",
+      "intensity": 2,
+      "radius": 6,
+      "halo": 0.9,
+      "flicker": "lantern"
+    }
+  ],
+  "assemblage": {
+    "facades": {
+      "size": [
+        3263,
+        993
+      ],
+      "offsets": [
+        {
+          "x": 0,
+          "y": 109,
+          "w": 911,
+          "h": 884
+        },
+        {
+          "x": 911,
+          "y": 0,
+          "w": 1482,
+          "h": 993
+        },
+        {
+          "x": 2393,
+          "y": 1,
+          "w": 870,
+          "h": 992
+        }
+      ]
+    },
+    "pied": {
+      "size": [
+        3264,
+        340
+      ],
+      "placed": [
+        {
+          "name": "étal",
+          "x": 1659,
+          "y": 110,
+          "w": 231,
+          "h": 230
+        },
+        {
+          "name": "caisses",
+          "x": 360,
+          "y": 234,
+          "w": 97,
+          "h": 106
+        },
+        {
+          "name": "tonneaux",
+          "x": 878,
+          "y": 252,
+          "w": 81,
+          "h": 88
+        },
+        {
+          "name": "caisses",
+          "x": 2447,
+          "y": 234,
+          "w": 97,
+          "h": 106
+        }
+      ]
+    },
+    "rue": {
+      "size": [
+        3264,
+        340
+      ],
+      "placed": [
+        {
+          "name": "lampadaire",
+          "x": 711,
+          "y": 48,
+          "w": 75,
+          "h": 292
+        },
+        {
+          "name": "lampadaire",
+          "x": 1323,
+          "y": 48,
+          "w": 75,
+          "h": 292
+        },
+        {
+          "name": "lampadaire",
+          "x": 1935,
+          "y": 48,
+          "w": 75,
+          "h": 292
+        },
+        {
+          "name": "lampadaire",
+          "x": 2547,
+          "y": 48,
+          "w": 75,
+          "h": 292
+        },
+        {
+          "name": "borne",
+          "x": 793,
+          "y": 278,
+          "w": 47,
+          "h": 62
+        },
+        {
+          "name": "borne",
+          "x": 1432,
+          "y": 278,
+          "w": 47,
+          "h": 62
+        },
+        {
+          "name": "borne",
+          "x": 2044,
+          "y": 278,
+          "w": 47,
+          "h": 62
+        },
+        {
+          "name": "borne",
+          "x": 2663,
+          "y": 278,
+          "w": 47,
+          "h": 62
+        },
+        {
+          "name": "filets",
+          "x": 2815,
+          "y": 274,
+          "w": 110,
+          "h": 66
+        }
+      ]
+    },
+    "premier": {
+      "size": [
+        2759,
+        1024
+      ],
+      "offsets": [
+        {
+          "x": 0,
+          "y": 0,
+          "w": 1536,
+          "h": 1024
+        },
+        {
+          "x": 1499,
+          "y": 0,
+          "w": 1260,
+          "h": 1024
+        }
+      ],
+      "fullTop": 666,
+      "wallFrac": 0.35,
+      "heightM": 16.39
+    }
+  }
+}

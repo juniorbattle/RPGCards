@@ -1,4 +1,29 @@
 {
-  "version": 2,
-  "sprites": {}
+  "version": 3,
+  "sprites": {
+    "player": {
+      "file": "player.png",
+      "sha256": "b861c7056fd705232eb405f434953ba5e2ae7b8269463612c530ba509e7aa3b2",
+      "cell": [
+        48,
+        70
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        24,
+        67
+      ],
+      "figureH": 62,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "source": "gpt-image-2 (porte du Quai, ADR 028), grille d’art, alignement, palette et tons clés par script (tools/m09-porte-quai.mjs)",
+      "fiche": "art-src/sprites/player/fiche.json",
+      "approved": false
+    }
+  }
 }

@@ -1,0 +1,146 @@
+{
+  "id": "quai-pied-facades",
+  "statut": "porte du Quai (ADR 028), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "auteur": "Claude Code (session V4, passe 57), à la demande du responsable : « Je valide la direction de l’essai. Prépare le lot suivant (plans du Quai et feuille complète du joueur) et annonce-moi ses images et leurs prompts avant de générer. »",
+  "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-quai.mjs",
+  "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production ; aucune analyse juridique faite par l’agent : point à confirmer par le responsable avant tout usage en jeu",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "sources": [
+    {
+      "nom": "quai-etal",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-20T00:57:32.022Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1024x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, detailed cold stone masonry, dark timber, night palette and warm amber lantern light of the harbour scene (first image) and of the harbour facade layer (second image). Do not copy their composition.\n\nPaint ONE isolated object seen straight from the front at eye level, centred and filling about 80% of the image width, standing on an invisible ground line near the bottom edge: a harbour merchant stall, the focal point of the street: a wooden trestle table covered with a cloth, displaying small wooden boxes, stacked card packs with plain backs, folded cloths in the four family colours and a few trinkets; a large desaturated ivory canvas awning stretched on wooden poles above it; a cluster of two hanging amber lanterns casting warm light on the goods; a small crate and a barrel beside the table.\n\nEverything that is not the stall is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture and no cast shadow.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-20-v4-quai/quai-etal.png (dossier principal, ignoré par git)",
+        "sha256": "4f7f3916eb9c0a5e94d4810900544eee8a99e481b4f1f20f706e4ab9ea6ff553",
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 3417,
+        "input_tokens_details": {
+          "image_tokens": 3072,
+          "text_tokens": 345
+        },
+        "output_tokens": 7024,
+        "output_tokens_details": {
+          "image_tokens": 7024,
+          "text_tokens": 0
+        },
+        "total_tokens": 10441
+      }
+    },
+    {
+      "nom": "quai-accessoires",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-20T00:58:33.918Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1536x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, detailed cold stone masonry, dark timber, night palette and warm amber lantern light of the harbour scene (first image) and of the harbour facade layer (second image). Do not copy their composition.\n\nA prop sheet of separate street objects for the same night harbour, each seen straight from the front at eye level, all at the same scale, standing on invisible ground lines, spaced well apart with nothing overlapping or touching: (1) a tall ornate cast-iron street lamp post with a cluster of three glowing amber lanterns at the top (about three times as tall as the barrels); (2) a short stone mooring bollard with an iron cap and a coil of rope; (3) a stack of three wooden crates; (4) a group of three barrels; (5) a pile of fishing nets with cork floats and a coiled rope.\n\nEverything that is not an object is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture and no cast shadows.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-20-v4-quai/quai-accessoires.png (dossier principal, ignoré par git)",
+        "sha256": "c060e183401d0f805857e39b5174b86a973a3fa2d601d3d3fa5cb48b80791010",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 3425,
+        "input_tokens_details": {
+          "image_tokens": 3072,
+          "text_tokens": 353
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 8913
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs",
+      "tools/m09-porte-quai.mjs"
+    ],
+    "etapes": [
+      "étal détouré et recadré sur son contenu ; accessoires détourés et découpés (composantes connexes)",
+      "posés au monde aux emplacements du plan pur, à 68 px/m : étal (x 2,1 m, 3,4 m de large), caisses (−18 et 12,7 m), tonneaux (−10,5 m) ; échelle de la planche d’accessoires tirée du lampadaire (4.3 m)"
+    ]
+  },
+  "sortie": {
+    "fichier": "public/decors/quai-pied-facades.png",
+    "sha256": "2469063c799562e7f9bc0fbd1920bffd369b7fbf71b6a31066c0db014a95650f",
+    "octets": 158922,
+    "dimensions": [
+      3264,
+      340
+    ],
+    "pose": {
+      "file": "quai-pied-facades.png",
+      "sha256": "2469063c799562e7f9bc0fbd1920bffd369b7fbf71b6a31066c0db014a95650f",
+      "size": [
+        3264,
+        340
+      ],
+      "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+      "fiche": "art-src/decors/quai-pied-facades/fiche.json",
+      "approved": false,
+      "at": [
+        0,
+        0,
+        -2.3
+      ],
+      "width": 48,
+      "orient": "face",
+      "order": 3,
+      "blend": "decoupe",
+      "lit": 0.3
+    }
+  },
+  "chaine_des_empreintes": [
+    "4f7f3916eb9c0a5e94d4810900544eee8a99e481b4f1f20f706e4ab9ea6ff553 (brut quai-etal)",
+    "c060e183401d0f805857e39b5174b86a973a3fa2d601d3d3fa5cb48b80791010 (brut quai-accessoires)",
+    "2469063c799562e7f9bc0fbd1920bffd369b7fbf71b6a31066c0db014a95650f (plan)"
+  ]
+}

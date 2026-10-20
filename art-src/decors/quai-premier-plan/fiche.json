@@ -1,0 +1,150 @@
+{
+  "id": "quai-premier-plan",
+  "statut": "porte du Quai (ADR 028), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "auteur": "Claude Code (session V4, passe 57), à la demande du responsable : « Je valide la direction de l’essai. Prépare le lot suivant (plans du Quai et feuille complète du joueur) et annonce-moi ses images et leurs prompts avant de générer. »",
+  "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-quai.mjs",
+  "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production ; aucune analyse juridique faite par l’agent : point à confirmer par le responsable avant tout usage en jeu",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "sources": [
+    {
+      "nom": "quai-premier-plan-ouest",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-20T00:59:40.775Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1536x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, detailed cold stone masonry, dark timber, night palette and warm amber lantern light of the harbour scene (first image) and of the harbour facade layer (second image). Do not copy their composition.\n\nPaint ONE isolated foreground layer for a side-scrolling 2.5D night harbour scene, seen from the front at eye level. The bottom edge of the image is the water line. Along the whole bottom of the image rises the top part of a massive stone quay wall seen from the water side (large cut blocks, iron mooring rings, a small drainage arch, an iron ladder), its top edge a straight horizontal line at about one fifth of the image height. In front of the wall, in the lower left, the dark wooden hull and bow of a moored fishing boat; its mast and rigging lines rise to the top edge of the image; a few tall wooden mooring posts stand in front of the wall.\n\nEverything else is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading and no texture: the street and the houses behind are not shown, no sky, no water surface.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-20-v4-quai/quai-premier-plan-ouest.png (dossier principal, ignoré par git)",
+        "sha256": "39161f9c35c45f2a306c8d4e1724710b8d07e071210e6c62998c4a05c8fcdef4",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 3448,
+        "input_tokens_details": {
+          "image_tokens": 3072,
+          "text_tokens": 376
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 8936
+      }
+    },
+    {
+      "nom": "quai-premier-plan-est",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-20T01:00:47.734Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1536x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, detailed cold stone masonry, dark timber, night palette and warm amber lantern light of the harbour scene (first image), of the harbour facade layer (second image) and of the foreground layer (third image). Do not copy their composition.\n\nPaint ONE isolated foreground layer that continues the foreground layer of the third image to its RIGHT, seen from the front at eye level, with the same quay wall at exactly the same height and scale. The bottom edge of the image is the water line; the top edge of the quay wall is a straight horizontal line at about one fifth of the image height. In front of the wall: on the right, the stern of a larger moored boat with a small amber lantern at its stern, its mast and rigging rising to the top edge; a small rowing boat tied alongside; a few tall wooden mooring posts.\n\nEverything else is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading and no texture: the street and the houses behind are not shown, no sky, no water surface.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-20-v4-quai/quai-premier-plan-ouest.png",
+          "sha256": "39161f9c35c45f2a306c8d4e1724710b8d07e071210e6c62998c4a05c8fcdef4"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-20-v4-quai/quai-premier-plan-est.png (dossier principal, ignoré par git)",
+        "sha256": "d0dd8fcaf65b9dd4ba1f212b5b070757a53ff9b4ecabc26b3813213f9d8b8719",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 4968,
+        "input_tokens_details": {
+          "image_tokens": 4608,
+          "text_tokens": 360
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10456
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs",
+      "tools/m09-porte-quai.mjs"
+    ],
+    "etapes": [
+      "fond magenta détouré, sans recadrage",
+      "au-dessus du haut du mur, seules les composantes qui montent jusqu’au haut de l’image (mâts, gréements) sont gardées : les objets posés sur le mur (caisses, bannière, lanterne) seraient devant la rue",
+      "début de l’image est retiré (18 % : reprise du bout de l’image ouest), assemblées côte à côte avec 0.6 m de recouvrement fondu (rampe d’alpha) ; haut du mur du quai (rangée couverte à plus de 80 %) posé à fleur de rue"
+    ]
+  },
+  "sortie": {
+    "fichier": "public/decors/quai-premier-plan.png",
+    "sha256": "a5073f92e3295b31d4300218fb0b8ae8ac10f1be7655e04643b6d5d7493962d8",
+    "octets": 2867719,
+    "dimensions": [
+      2759,
+      1024
+    ],
+    "pose": {
+      "file": "quai-premier-plan.png",
+      "sha256": "a5073f92e3295b31d4300218fb0b8ae8ac10f1be7655e04643b6d5d7493962d8",
+      "size": [
+        2759,
+        1024
+      ],
+      "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+      "fiche": "art-src/decors/quai-premier-plan/fiche.json",
+      "approved": false,
+      "at": [
+        0,
+        -5.68,
+        3.8
+      ],
+      "width": 44.17,
+      "orient": "face",
+      "order": 5,
+      "blend": "decoupe"
+    }
+  },
+  "chaine_des_empreintes": [
+    "39161f9c35c45f2a306c8d4e1724710b8d07e071210e6c62998c4a05c8fcdef4 (brut quai-premier-plan-ouest)",
+    "d0dd8fcaf65b9dd4ba1f212b5b070757a53ff9b4ecabc26b3813213f9d8b8719 (brut quai-premier-plan-est)",
+    "a5073f92e3295b31d4300218fb0b8ae8ac10f1be7655e04643b6d5d7493962d8 (plan)"
+  ]
+}

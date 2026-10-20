@@ -1,0 +1,94 @@
+{
+  "id": "quai-eau",
+  "statut": "porte du Quai (ADR 028), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "auteur": "Claude Code (session V4, passe 57), à la demande du responsable : « Je valide la direction de l’essai. Prépare le lot suivant (plans du Quai et feuille complète du joueur) et annonce-moi ses images et leurs prompts avant de générer. »",
+  "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-quai.mjs",
+  "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production ; aucune analyse juridique faite par l’agent : point à confirmer par le responsable avant tout usage en jeu",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "sources": [
+    {
+      "nom": "quai-eau",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-20T01:02:08.534Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1536x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached image only as the style reference for its dark harbour water. Do not copy its composition.\n\nPaint a texture of calm dark harbour water at night seen from directly above, filling the whole image: near-black indigo water with gentle irregular ripples, long soft streaks of warm amber lantern reflections running from the top edge toward the bottom, a few cold silvery moonlight glints, painterly fine grain; even enough to be laid flat as the water surface of a game scene.\n\nNo boats, no objects, no shore, no people, no text, no letters, no numbers, no signature, no watermark, no logos.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-20-v4-quai/quai-eau.png (dossier principal, ignoré par git)",
+        "sha256": "5b87005a4f9d244e48386aa74770342ce51f8d09741c6588c706ced5da2f20ce",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 1672,
+        "input_tokens_details": {
+          "image_tokens": 1536,
+          "text_tokens": 136
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 7160
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs",
+      "tools/m09-porte-quai.mjs"
+    ],
+    "etapes": [
+      "image opaque, sans détourage ; posée couchée (y -2.6 m)"
+    ]
+  },
+  "sortie": {
+    "fichier": "public/decors/quai-eau.png",
+    "sha256": "6c3726da2fd24730711da268d94ab3f405e720e8f43fc06958c34a430eba313e",
+    "octets": 3498048,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "pose": {
+      "file": "quai-eau.png",
+      "sha256": "6c3726da2fd24730711da268d94ab3f405e720e8f43fc06958c34a430eba313e",
+      "size": [
+        1536,
+        1024
+      ],
+      "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+      "fiche": "art-src/decors/quai-eau/fiche.json",
+      "approved": false,
+      "at": [
+        0,
+        -2.6,
+        20
+      ],
+      "width": 64,
+      "orient": "sol",
+      "order": 6,
+      "blend": "decoupe"
+    }
+  },
+  "chaine_des_empreintes": [
+    "5b87005a4f9d244e48386aa74770342ce51f8d09741c6588c706ced5da2f20ce (brut quai-eau)",
+    "6c3726da2fd24730711da268d94ab3f405e720e8f43fc06958c34a430eba313e (plan)"
+  ]
+}
