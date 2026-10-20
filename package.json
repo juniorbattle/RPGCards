@@ -26,7 +26,8 @@
     "video": "node tools/video-m06.mjs",
     "qa:demo": "node tools/m09-demo.mjs",
     "qa:ville": "node tools/m09-labo.mjs",
-    "qa:aventure": "node tools/m10-aventure.mjs"
+    "qa:aventure": "node tools/m10-aventure.mjs",
+    "qa:championnat": "node tools/m10-championnat.mjs"
   },
   "engines": {
     "node": ">=20"

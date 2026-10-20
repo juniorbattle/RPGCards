@@ -16,7 +16,8 @@ npm run build && npm run preview   # http://localhost:4173/?aventure=1
 Parcours automatique (navigateur headless, 30 contrôles, captures `screenshots/qa/m10/aventure-<largeur>/`) :
 `npm run build && npm run qa:aventure` ; en 1920 × 1080 : `LQV_VP=1920x1080 npm run qa:aventure` ; décor et
 personnages par code (comme le jeu hors QA) : `LQV_AV_QS='&decors=code&sprites=code' npm run qa:aventure` ; sur GPU
-réel : `LQV_GPU=1 CHROMIUM_PATH=<Chrome> npm run qa:aventure`.
+réel : `LQV_GPU=1 CHROMIUM_PATH=<Chrome> npm run qa:aventure`. Joute et Championnat (aventure avancée aux quatre
+chefs par des faits rejoués dans la machine d'états, 13 contrôles) : `npm run qa:championnat`.
 
 **Images de la ville** : hors QA, le Quai, le Parvis et les Ruelles sont dessinés par code (images non approuvées, ADR
 027 et 028). Avec `&qa=1`, le diorama généré du Quai s'affiche, **signalé à l'image** par un badge rouge « décor en images

@@ -969,6 +969,22 @@ export class AventureApp {
     return true;
   }
 
+  /**
+   * QA : rejoue une suite de FAITS par la machine d'états (mêmes règles que le jeu : refus compris), puis remonte la
+   * ville ; pour atteindre un chapitre avancé sans jouer chaque duel (jamais sans `?qa=1`). Renvoie les refus.
+   */
+  qaFaits(evs: Evenement[]): string[] {
+    if (!this.params.qa || !this.save) return ['QA seulement'];
+    const refus: string[] = [];
+    for (const ev of evs) {
+      const r = appliquer(this.save.etat, ev, new Date().toISOString());
+      if (r.refus) refus.push(r.refus); else this.save.etat = r.etat;
+    }
+    this.persist();
+    if (this.ecran === 'ville') this.entrerVille(false);
+    return refus;
+  }
+
   /** QA : termine le duel en cours avec une issue imposée (parcours automatisés ; jamais sans `?qa=1`). */
   qaTerminer(issue: Issue): void {
     if (!this.params.qa || !this.live) return;
