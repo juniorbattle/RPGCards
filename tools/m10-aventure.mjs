@@ -212,6 +212,20 @@ try {
   await townReady();
   check(/Gaspard/.test(await p.textContent('[data-key="ville-objective"]')), 'objectif : défier Gaspard, cadet de la Ronce');
   await shot('quai-apres-engagement', 2000);
+  // Compétition facultative : l’Épreuve du quartier de la Ronce (trois duels en série, variante I)
+  for (let i = 1; i <= 3; i++) {
+    await parler('epreuve-Ronce');
+    if (i === 1) await shot('epreuve-ronce');
+    await p.click('[data-key="dlg-duel"]');
+    await p.click('[data-key="av-duel-go"]');
+    await duelPret();
+    await av(() => window.__lqvAventure.qaTerminer('victoire'));
+    await p.waitForSelector('[data-screen="av-resultat"]');
+    await p.click('[data-key="av-retour"]');
+    await townReady();
+  }
+  e = await etat();
+  check(e.registre.some((g) => g.key === 'variante:Ronce-1-racine') && e.competitions.epreuves.Ronce.gagnee, 'Épreuve du quartier de la Ronce : trois victoires, variante I au registre');
   // Jeu par défaut : aucune trace de l’aventure, sauvegarde standard non créée
   await p.goto(`${server.base}/?qa=1&reducedMotion=1`);
   await p.waitForSelector('[data-key="home-new"]', { state: 'visible' });

@@ -146,6 +146,9 @@ export const emissaire = (famille: Family): Figure => figureDe(famille, 'cadet')
 /** Kaï au prologue : le gris du Quai (rival récurrent, P-N7), à l'est du Quai, près des braseros. */
 export const KAI_PROLOGUE = { id: 'kai-prologue', apparence: 'braise', nom: 'Kaï', titre: 'le gris du Quai', ilot: 'quai' as IlotId, at: { x: 13.6, z: 0.9 }, facing: 'gauche' as Facing, venue: 'rue' as VenueId, hp: 60 };
 
+/** La Tenante du titre (finale du Championnat, PROGRESSION §4) : maîtresse du mélange des voies ; apparence provisoire. */
+export const TENANTE = { apparence: 'pnj-joueuse-51', nom: 'Ysolde', titre: 'la Tenante du titre', famille: 'Astre' as const };
+
 /** Duel du prologue (régime du prototype, A-0) : PV du joueur pour ce duel seulement (A-10, proposé). */
 export const PV_PROLOGUE = 60;
 /** PV du joueur dans l'aventure (`PLAYER_HP` du produit, inchangé). */

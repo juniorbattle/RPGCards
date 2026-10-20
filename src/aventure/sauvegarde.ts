@@ -14,6 +14,7 @@ import { GAME_VERSION } from '../product/version';
 import { isIlotId, type IlotId } from '../ville/ilots';
 import { controlerEtat, nouvelleAventure, type AventureEtat, type Issue } from './aventure';
 import { nouveauDirecteur, type EtatDirecteur } from './directeur';
+import { nouvellesCompetitions } from './competitions';
 import { validerDeckAv } from './deck';
 import { SCENES } from './modele';
 import { collectionDe, controlerRegistre } from './registre';
@@ -78,6 +79,7 @@ export function validerSauvegarde(x: unknown): string[] {
   if (!isObj(e.familles) || FAMILIES.some((f) => typeof e.familles[f] !== 'string')) errs.push('etat.familles invalide');
   if (!Array.isArray(e.registre)) errs.push('etat.registre invalide');
   if (!isObj(e.deck) || !Array.isArray(e.deck.cartes)) errs.push('etat.deck invalide');
+  if (!isObj(e.competitions) || !isObj(e.competitions.championnat)) errs.push('etat.competitions invalide');
   if (errs.length) return errs;
   errs.push(...controlerRegistre(e.registre), ...controlerEtat(e));
   const col = collectionDe(e.registre);
@@ -101,6 +103,8 @@ function lire(text: string): { ok: true; save: AventureSave } | { ok: false; fut
   if (isObj(x) && typeof x.schema === 'string' && x.schema.startsWith('aventure/') && x.schema !== SCHEMA_AVENTURE) {
     return { ok: false, future: true, raison: `Sauvegarde d’une version plus récente (${x.schema}) : elle n’est pas modifiée.` };
   }
+  // aventure/1 d'avant les compétitions (même schéma, champ ajouté) : état par défaut, sans perte.
+  if (isObj(x) && isObj(x.etat) && !('competitions' in x.etat)) (x.etat as Record<string, unknown>).competitions = nouvellesCompetitions();
   const errs = validerSauvegarde(x);
   return errs.length ? { ok: false, future: false, raison: `Sauvegarde incohérente : ${errs.slice(0, 3).join(' ; ')}` } : { ok: true, save: x as AventureSave };
 }

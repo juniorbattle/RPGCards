@@ -2,7 +2,8 @@
  * M10-B — quêtes DÉRIVÉES des faits (PROGRESSION_ET_RECOMPENSES §6) : aucune quête n'est un état stocké ; l'objectif
  * courant et le journal se recalculent depuis l'état de l'aventure. Pas de quête « échouée » (ADR 029). Pur.
  */
-import { FAMILIES } from '../game/catalog/cards';
+import { CATALOG, cardTitle, FAMILIES } from '../game/catalog/cards';
+import { CONTRAINTE_JOUTE, manche, ouvertChampionnat, varianteDe } from './competitions';
 import { chapitre, statutDefi, type AventureEtat } from './aventure';
 import { deF, emissaire, figureDe, KAI_PROLOGUE, MAISONS, ROLES } from './modele';
 import { aGain } from './registre';
@@ -39,7 +40,13 @@ export function objectif(e: AventureEtat): string {
     }
     return 'Duelliste reconnu : engagez le défi d’une autre famille à la Salle des Bannières (salle de jeu de cartes).';
   }
-  if (ch === 'championnat') return 'Les quatre chefs sont vaincus : le Championnat des Champions vous attend (prochain lot, M10-E).';
+  if (ch === 'championnat') {
+    const m = manche(e.competitions);
+    if (m === 'poule') return `Championnat (porte de l’arène, Parvis) — les Quatre Bannières : battez trois chefs, une Signature différente à chaque victoire (${Object.keys(e.competitions.championnat.poule).length}/3).`;
+    if (m === 'miroir') return 'Championnat — le Miroir : Kaï vous attend dans l’arène.';
+    return 'Championnat — la Finale : deux manches gagnantes contre la Tenante du titre, une Signature différente à chaque manche.';
+  }
+  if (ch === 'champion') return 'Vous êtes le meilleur duelliste de la ville. Revanches, Épreuves et Joutes restent ouvertes.';
   return '';
 }
 
@@ -59,5 +66,22 @@ export function quetes(e: AventureEtat): Quete[] {
     if (x === f || (e.familles[x] !== 'defiee' && e.familles[x] !== 'chef')) continue;
     out.push({ id: `voie:${x}`, titre: `La voie ${deF(x)}`, type: 'famille', etapes: [{ texte: 'Défi officiel engagé', faite: aGain(e.registre, `basics:${x}`) }, ...ROLES.map((r) => { const fig = figureDe(x, r); return { texte: `Battre ${fig.nom}`, faite: e.vaincues.includes(fig.id) }; })] });
   }
+  if (ouvertChampionnat(e.familles)) {
+    const c = e.competitions.championnat;
+    out.push({ id: 'championnat', titre: 'Le Championnat des Champions', type: 'principale', etapes: [
+      { texte: `Les Quatre Bannières (${Object.keys(c.poule).length}/3 chefs, une Signature différente par victoire)`, faite: Object.keys(c.poule).length >= 3 },
+      { texte: 'Le Miroir (Kaï)', faite: c.miroir },
+      { texte: `La Finale (${c.finale.filter((m) => m.gagnee).length}/2 manches)`, faite: c.titre },
+    ] });
+  }
+  for (const x of FAMILIES) {
+    if (!aGain(e.registre, `basics:${x}`)) continue;
+    out.push({ id: `competitions:${x}`, titre: `Compétitions ${deF(x)} (facultatives)`, type: 'facultative', etapes: [
+      { texte: `Épreuve du quartier (trois duels) : ${nomV(varianteDe(x, 1))}`, faite: !!e.competitions.epreuves[x]?.gagnee },
+      { texte: `Joute de la maison (${CONTRAINTE_JOUTE[x].texte}) : ${nomV(varianteDe(x, 2))}`, faite: !!e.competitions.joutes[x]?.gagnee },
+    ] });
+  }
   return out;
 }
+
+const nomV = (d: string) => (CATALOG[d] ? cardTitle(CATALOG[d]!) : d);
