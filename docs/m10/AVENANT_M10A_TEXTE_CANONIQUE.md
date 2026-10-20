@@ -1,6 +1,8 @@
 # 06 — Avenant M10-A : mode Aventure, cartes neutres et deck d'aventure
 
-> **TEXTE CANONIQUE SOUMIS AU RESPONSABLE (2026-10-20), NON ENCORE VALIDÉ.** Rédigé à partir de ses décisions sur la fiche
+> **VALIDÉ PAR LE RESPONSABLE LE 2026-10-20 (fiche du lot M10-A, C1 à C3) ET VERSÉ DANS
+> `contracts/06_AVENANT_M10A_MODE_AVENTURE.md`, QUI FAIT FOI.** Ce document garde la version soumise et ses différences
+> avec l'avenant proposé. Historique : Rédigé à partir de ses décisions sur la fiche
 > d'arbitrages M10 (<https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7> ; tableau : `docs/FICHE_ARBITRAGES_M10.md`,
 > « Décisions du responsable »). Il n'entrera dans `contracts/` (sous le nom `contracts/06_AVENANT_M10A_MODE_AVENTURE.md`)
 > qu'après sa validation explicite de cette rédaction (gouvernance, `contracts/00_GOUVERNANCE_AUTORITE.md`, point 1).

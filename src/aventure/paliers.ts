@@ -7,8 +7,9 @@
  * a reçu les Basics, 1 à 4). Tous les decks suivent la règle R-AV (AV-03). Module pur, partagé par le jeu
  * (`rencontres.ts`) et la simulation de calibrage (`tools/m10a-paliers.ts`).
  *
- * VALEURS PROPOSÉES (annexe de calibrage de l'avenant), mesurées par simulation IA contre IA, À VALIDER par le
- * responsable avant d'être figées.
+ * VALEURS VALIDÉES par le responsable le 2026-10-20 (annexe de calibrage `docs/m10/CALIBRAGE_M10A.md` de l'avenant
+ * `contracts/06_AVENANT_M10A_MODE_AVENTURE.md`, fiche du lot M10-A, K1 à K5), mesurées par simulation IA contre IA ;
+ * elles ne changent que sur une nouvelle décision du responsable.
  */
 import { FAMILIES, type Family, type OrdinaryRank } from '../game/catalog/cards';
 import type { TechniqueId } from '../game/catalog/techniques';

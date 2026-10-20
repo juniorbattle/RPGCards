@@ -20,6 +20,10 @@ pixel près (`tools/l5-identique.mjs`), journal ; **QA complète aux jalons** se
 
 ## M10-A — Règles du mode Aventure (avenant ratifié → moteur)
 
+> **Livré et reçu par le responsable le 2026-10-20** (passes 76 à 83 ; fiche du lot M10-A, R1) : avenant approuvé
+> (`contracts/06_AVENANT_M10A_MODE_AVENTURE.md`), neutres en duel (ADR 033), deck R-AV réel, paliers et PV validés
+> (`CALIBRAGE_M10A.md`), écriture neutre, l'aventure dans le Quai en quatre rangs ; jalon de QA vert sur GPU réel.
+
 **Contenu :** catalogue neutre séparé (`src/game/catalog/neutres.ts`) ; `CardDef.family: Family | null` ; affinité
 gardée (`family !== null`) dans `clash.ts` ; `GameConfig` à deck explicite et Signature optionnelle ; construction et
 contrôle R-AV dans `engine.ts` ; IA sans hypothèse de Signature ; carte neutre dessinée par code (blanche/grise, Rang

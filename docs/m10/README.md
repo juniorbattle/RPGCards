@@ -12,12 +12,12 @@ Seules les décisions des **ADR 029, 030 et 031** sont ratifiées ; tout le rest
 | 4. Rôle narratif et évolution du rival | [`CONTRAT_NARRATIF_M10.md`](CONTRAT_NARRATIF_M10.md) §4 |
 | 5. Rencontres et événements de ville | [`VILLE_RENCONTRES_EVENEMENTS.md`](VILLE_RENCONTRES_EVENEMENTS.md) |
 | 6. Quêtes et progression persistante | [`PROGRESSION_ET_RECOMPENSES.md`](PROGRESSION_ET_RECOMPENSES.md) §6 |
-| 7. Avenant cartes neutres et mode Aventure | [`AVENANT_M10A_PROPOSE.md`](AVENANT_M10A_PROPOSE.md) |
+| 7. Avenant cartes neutres et mode Aventure | **approuvé** : [`../../contracts/06_AVENANT_M10A_MODE_AVENTURE.md`](../../contracts/06_AVENANT_M10A_MODE_AVENTURE.md) (2026-10-20) ; annexe [`CALIBRAGE_M10A.md`](CALIBRAGE_M10A.md) ; version soumise [`AVENANT_M10A_TEXTE_CANONIQUE.md`](AVENANT_M10A_TEXTE_CANONIQUE.md) ; historique [`AVENANT_M10A_PROPOSE.md`](AVENANT_M10A_PROPOSE.md) |
 | 8. Feuille de route M10-A à M10-F | [`FEUILLE_DE_ROUTE_M10.md`](FEUILLE_DE_ROUTE_M10.md) |
 | Championnat des Champions (§IV) | [`PROGRESSION_ET_RECOMPENSES.md`](PROGRESSION_ET_RECOMPENSES.md) §4 |
 | Preuve hors dépôt du patch M10-A et mesures d'équilibrage | [`MESURES_M10A.md`](MESURES_M10A.md), [`patch-m10a-neutres.diff`](patch-m10a-neutres.diff) |
 | Arbitrages indispensables | [`../FICHE_ARBITRAGES_M10.md`](../FICHE_ARBITRAGES_M10.md) |
-| Prototype jouable du prologue (`?aventure=1`) | [`../AVENTURE_PROVISOIRE.md`](../AVENTURE_PROVISOIRE.md), ADR 032 (proposé) |
+| Prototype jouable du prologue (`?aventure=1`) | [`../AVENTURE_PROVISOIRE.md`](../AVENTURE_PROVISOIRE.md), ADR 032 (approuvé), ADR 033 |
 
 ## Les propositions en une page
 

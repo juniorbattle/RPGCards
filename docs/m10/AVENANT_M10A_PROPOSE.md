@@ -1,5 +1,8 @@
 # Avenant M10-A — Règles du mode Aventure et cartes neutres (PROPOSÉ)
 
+> **REMPLACÉ le 2026-10-20 par `contracts/06_AVENANT_M10A_MODE_AVENTURE.md`** (texte canonique validé par le responsable,
+> fiche du lot M10-A) : ce document reste l'historique de conception, avec ses options écartées.
+
 **Date :** 2026-10-20 (session cloud autonome). **Statut : DÉCISIONS DU RESPONSABLE RENDUES le 2026-10-20** (encadré ci-dessous : A-1 à A-9 ratifiés comme recommandés, **A-10 remplacé** par les paliers de decks et les PV du joueur qui montent) ; à l'origine : proposé, rien n'était en vigueur. Il entrera
 dans `contracts/` seulement après ratification par le responsable (gouvernance, `contracts/00_GOUVERNANCE_AUTORITE.md` :
 « pour un changement de règles, demander validation explicite de la nouvelle rédaction canonique »).

@@ -2,7 +2,8 @@
 
 **Date :** 2026-10-20 (lot M10-A, étape 2). **Statut : APPLIQUÉ** sur décision du responsable (fiche M10, ARB-M10-02 et 03 :
 garde `family !== null` autorisée dans `clash.ts`, neutres 3 / 6 / 9 / 12). Texte de règle : avenant M10-A
-(`docs/m10/AVENANT_M10A_TEXTE_CANONIQUE.md`, AV-01 à AV-03, soumis au responsable).
+**approuvé le 2026-10-20**, `contracts/06_AVENANT_M10A_MODE_AVENTURE.md` (AV-01 à AV-03 ; fiche du lot M10-A, C1) ; lot
+M10-A reçu par le responsable le même jour (R1).
 
 ## Contexte
 
