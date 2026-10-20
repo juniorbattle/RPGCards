@@ -74,7 +74,7 @@ la Grande Cour (îlot prévu par M09 ; dans le prototype, une scène au Parvis).
 
 **Principe :** intéresser **sans hausse systématique des statistiques** : chaque manche change **une contrainte de
 format** ou **un enjeu narratif**, jamais les PV ni la Puissance. Les adversaires ont des **decks d'auteur** (une
-identité tactique lisible), les meilleurs profils d'IA existants, et leurs PV de personnage (repères 90 à 125, §9.1).
+identité tactique lisible), les meilleurs profils d'IA existants, et **90 PV comme le joueur** (mesure M10-A : la difficulté vient du deck, `MESURES_M10A.md`).
 
 | Manche | Format (contrainte) | Adversaire(s) | Ce que la manche teste | Enjeu narratif |
 |---|---|---|---|---|
