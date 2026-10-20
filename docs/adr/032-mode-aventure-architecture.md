@@ -75,6 +75,9 @@ Clash avant la ratification d'un avenant (M10-A). Le brief du 2026-10-20 demande
 
 ## Amendement 3 (2026-10-20, lot M10-C, passes 84 et 85) : éditeur de deck, Collection, chefs
 
+**Reçu par le responsable le 2026-10-20** (fiche du lot M10-C : E1 « Reçu » ; E2 : les cartes à gagner restent grisées et
+lisibles dans la Collection).
+
 - **Éditeur case par case** (`deck.ts` : `choixPourCase`, `remplacerCase`, `basculerTechnique`) : une case n'accepte que
   ce qui garde la forme R-AV (même Rang, identité absente des autres cases et possédée, neutres dans la limite de celles
   possédées) ; le deck reste légal par construction, `validerDeckAv` reste le contrôle final avant l'enregistrement.
