@@ -1,0 +1,276 @@
+{
+  "date": "2026-10-20T01:16:58.260Z",
+  "machine": {
+    "cpu": "AMD Ryzen 7 8845HS w/ Radeon 780M Graphics",
+    "cores": 16,
+    "memGB": 31,
+    "node": "v22.14.0"
+  },
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "gpu": true,
+  "chromeArgs": [],
+  "ilot": "quai",
+  "protocol": "3 rondes entrelacées par taille ; page neuve, 3 s de mise en régime, 3 s de marche vers l’est depuis x = −8 ; temps GPU par image (médiane et p95)",
+  "builds": {
+    "avant": "245a661",
+    "apres": "2ae4c81"
+  },
+  "query": null,
+  "summary": {
+    "1280x720": {
+      "avant": {
+        "medianGpuMs": 3.91,
+        "medianGpuP95Ms": 5.53,
+        "medianIntervalMs": 6.1,
+        "calls": 145,
+        "triangles": 101129,
+        "textures": 57,
+        "programs": 27,
+        "lights": 15,
+        "buildMs": 496
+      },
+      "apres": {
+        "medianGpuMs": 3.71,
+        "medianGpuP95Ms": 4.32,
+        "medianIntervalMs": 6.1,
+        "calls": 54,
+        "triangles": 4814,
+        "textures": 32,
+        "programs": 18,
+        "lights": 15,
+        "buildMs": 206
+      }
+    },
+    "1920x1080": {
+      "avant": {
+        "medianGpuMs": 5.69,
+        "medianGpuP95Ms": 6.64,
+        "medianIntervalMs": 6.1,
+        "calls": 145,
+        "triangles": 101129,
+        "textures": 57,
+        "programs": 27,
+        "lights": 15,
+        "buildMs": 376
+      },
+      "apres": {
+        "medianGpuMs": 5.77,
+        "medianGpuP95Ms": 6.71,
+        "medianIntervalMs": 6.1,
+        "calls": 54,
+        "triangles": 4814,
+        "textures": 32,
+        "programs": 18,
+        "lights": 15,
+        "buildMs": 160
+      }
+    }
+  },
+  "runs": {
+    "1280x720": {
+      "avant": [
+        {
+          "gpuMs": 3.91,
+          "gpuP95Ms": 5.42,
+          "gpuFrames": 495,
+          "gpuDisjoint": 0,
+          "intervalMs": 6.1,
+          "over16_7": 0,
+          "calls": 145,
+          "triangles": 101129,
+          "textures": 57,
+          "programs": 27,
+          "lights": 15,
+          "cpuMs": 1.1,
+          "buildMs": 525,
+          "walkedTo": 1.42
+        },
+        {
+          "gpuMs": 3.97,
+          "gpuP95Ms": 5.61,
+          "gpuFrames": 499,
+          "gpuDisjoint": 0,
+          "intervalMs": 6.1,
+          "over16_7": 0,
+          "calls": 145,
+          "triangles": 101129,
+          "textures": 57,
+          "programs": 27,
+          "lights": 15,
+          "cpuMs": 2.5,
+          "buildMs": 496,
+          "walkedTo": 1.37
+        },
+        {
+          "gpuMs": 3.81,
+          "gpuP95Ms": 5.53,
+          "gpuFrames": 499,
+          "gpuDisjoint": 0,
+          "intervalMs": 6.1,
+          "over16_7": 0,
+          "calls": 145,
+          "triangles": 101129,
+          "textures": 57,
+          "programs": 27,
+          "lights": 15,
+          "cpuMs": 0.9,
+          "buildMs": 369,
+          "walkedTo": 1.41
+        }
+      ],
+      "apres": [
+        {
+          "gpuMs": 3.71,
+          "gpuP95Ms": 4.32,
+          "gpuFrames": 499,
+          "gpuDisjoint": 0,
+          "intervalMs": 6.1,
+          "over16_7": 0,
+          "calls": 54,
+          "triangles": 4814,
+          "textures": 32,
+          "programs": 18,
+          "lights": 15,
+          "cpuMs": 0.5,
+          "buildMs": 206,
+          "walkedTo": 1.42
+        },
+        {
+          "gpuMs": 3.77,
+          "gpuP95Ms": 4.29,
+          "gpuFrames": 496,
+          "gpuDisjoint": 0,
+          "intervalMs": 6.1,
+          "over16_7": 0,
+          "calls": 54,
+          "triangles": 4814,
+          "textures": 32,
+          "programs": 18,
+          "lights": 15,
+          "cpuMs": 0.5,
+          "buildMs": 239,
+          "walkedTo": 1.37
+        },
+        {
+          "gpuMs": 3.56,
+          "gpuP95Ms": 4.45,
+          "gpuFrames": 497,
+          "gpuDisjoint": 0,
+          "intervalMs": 6.1,
+          "over16_7": 0,
+          "calls": 54,
+          "triangles": 4814,
+          "textures": 32,
+          "programs": 18,
+          "lights": 15,
+          "cpuMs": 0.6,
+          "buildMs": 156,
+          "walkedTo": 1.42
+        }
+      ]
+    },
+    "1920x1080": {
+      "avant": [
+        {
+          "gpuMs": 5.29,
+          "gpuP95Ms": 6.15,
+          "gpuFrames": 478,
+          "gpuDisjoint": 0,
+          "intervalMs": 6.1,
+          "over16_7": 0.01,
+          "calls": 145,
+          "triangles": 101129,
+          "textures": 57,
+          "programs": 27,
+          "lights": 15,
+          "cpuMs": 1.6,
+          "buildMs": 383,
+          "walkedTo": 1.42
+        },
+        {
+          "gpuMs": 5.69,
+          "gpuP95Ms": 6.86,
+          "gpuFrames": 468,
+          "gpuDisjoint": 0,
+          "intervalMs": 6.1,
+          "over16_7": 0,
+          "calls": 145,
+          "triangles": 101129,
+          "textures": 57,
+          "programs": 27,
+          "lights": 15,
+          "cpuMs": 2.7,
+          "buildMs": 356,
+          "walkedTo": 1.47
+        },
+        {
+          "gpuMs": 5.72,
+          "gpuP95Ms": 6.64,
+          "gpuFrames": 473,
+          "gpuDisjoint": 0,
+          "intervalMs": 6.1,
+          "over16_7": 0,
+          "calls": 145,
+          "triangles": 101129,
+          "textures": 57,
+          "programs": 27,
+          "lights": 15,
+          "cpuMs": 1.5,
+          "buildMs": 376,
+          "walkedTo": 1.48
+        }
+      ],
+      "apres": [
+        {
+          "gpuMs": 5.64,
+          "gpuP95Ms": 6.71,
+          "gpuFrames": 447,
+          "gpuDisjoint": 0,
+          "intervalMs": 6.1,
+          "over16_7": 0.02,
+          "calls": 54,
+          "triangles": 4814,
+          "textures": 32,
+          "programs": 18,
+          "lights": 15,
+          "cpuMs": 0.7,
+          "buildMs": 160,
+          "walkedTo": 1.37
+        },
+        {
+          "gpuMs": 5.78,
+          "gpuP95Ms": 6.73,
+          "gpuFrames": 445,
+          "gpuDisjoint": 0,
+          "intervalMs": 6.1,
+          "over16_7": 0.02,
+          "calls": 54,
+          "triangles": 4814,
+          "textures": 32,
+          "programs": 18,
+          "lights": 15,
+          "cpuMs": 0.8,
+          "buildMs": 156,
+          "walkedTo": 1.48
+        },
+        {
+          "gpuMs": 5.77,
+          "gpuP95Ms": 6.68,
+          "gpuFrames": 465,
+          "gpuDisjoint": 0,
+          "intervalMs": 6.1,
+          "over16_7": 0,
+          "calls": 54,
+          "triangles": 4814,
+          "textures": 32,
+          "programs": 18,
+          "lights": 15,
+          "cpuMs": 1.1,
+          "buildMs": 178,
+          "walkedTo": 1.37
+        }
+      ]
+    }
+  },
+  "console": []
+}

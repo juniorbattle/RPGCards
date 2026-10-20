@@ -4,8 +4,9 @@ Date : 2026-10-19
 Statut : **APPROUVÉ par le responsable** (fiche d'arbitrages interactive du 2026-10-19,
 <https://claude.ai/artifact/J34iVbgwRjWJVxQwdJQGL3>, onze entrées, choix entre 21:35 et 21:41 UTC) ; **code préalable à
 la porte fait** (passe 55 : plans de décor et feuilles en pixel art, voir « Conséquences faites ») ; **essai technique
-fait** (passe 56 : 2 images sur 30, non approuvées, voir « Essai technique ») ; ensuite, sur décision du responsable,
-plans du Quai et feuille complète du duelliste joueur (28 images au plus). **Remplace l'ADR 026** comme direction artistique de la
+fait** (passe 56 : 2 images sur 30, direction validée par le responsable) ; **lot de production fait** (passe 57 :
+diorama du Quai et feuille complète du joueur, 12 images sur 30, `approved: false`, voir « Porte du Quai : lot de
+production ») ; décision du responsable attendue (approbation, cadrage). **Remplace l'ADR 026** comme direction artistique de la
 ville ; **amende l'ADR 027** (D2, D3, D4, D10) et l'exception d'AGENTS (décors de la ville) ; s'inscrit dans l'ADR 024
 (caméra de face ; la Grande Cour la règle plus haute, dans la plage décidée).
 
@@ -181,3 +182,31 @@ planche `screenshots/qa/m09/v4-essai/planche-essai-v4.png` ; JOURNAL passe 56. *
 - **Non tranché, pour le responsable** : la direction de ces deux images (planche : référence | Quai actuel | essai) ;
   le lancement de la production des plans du Quai (ciel et ville haute, second rang, façades en deux ou trois images,
   rue et accessoires, premier plan, eau) et de la feuille complète du joueur, dans les 28 images restantes.
+
+## Porte du Quai : lot de production (passe 57, 2026-10-20)
+
+Décision du responsable : « Je valide la direction de l'essai. Prépare le lot suivant (plans du Quai et feuille complète
+du joueur) et annonce-moi ses images et leurs prompts avant de générer. » Dix images annoncées avec leurs prompts
+(`tools/m09-lot-quai.mjs`), générées (gpt-image-2, qualité `high`, fond uni détouré), la façade centrale de l'essai
+reprise : **12 images sur 30** depuis le début de la porte. Traitement et assemblage par scripts
+(`tools/m09-traitement-images.mjs`, `tools/m09-porte-quai.mjs`) ; **manifestes réels** `public/decors/manifest.json`
+(le Quai, sept plans, 15 lumières) et `public/sprites/manifest.json` (contrat v3, feuille `player`), **`approved:
+false`** : refusés par le jeu, montrés en QA (`?qa=1`) ; fiches `art-src/decors/quai-*/fiche.json`,
+`art-src/sprites/player/fiche.json` ; planches `screenshots/qa/m09/v4-porte/` (cadrage actuel) et
+`screenshots/qa/m09/v4-porte-large/` (cadrage élargi) ; JOURNAL passe 57.
+
+- **Diorama du Quai** : ciel et ville haute (z −60), second rang (z −14), façades de la rue entière assemblées (ouest,
+  centre de l'essai, est ; 3 263 × 993 px pour 48 m, 68 px/m), pied des façades (étal, caisses, tonneaux) et rue
+  (lampadaires, bornes, filets) faits d'objets découpés et posés aux emplacements du plan pur, premier plan assemblé
+  (mur du quai à fleur de rue, bateaux et mâts aux extrémités), eau couchée ; 18 Mo de fichiers, 66 Mo de mémoire GPU.
+  Lumières du moteur posées par script sur les lanternes peintes repérées (lampadaires, étal, façades).
+- **Coût** (rondes alternées, Quai décor par code de `245a661` contre diorama) : Radeon 780M ≈ 3,6–3,8 ms contre
+  3,8–4,0 ms par image en 1280 × 720 et ≈ 5,6–5,8 ms contre 5,3–5,7 ms en 1920 × 1080 ; RTX 4060 ≈ 1,5 ms et 1,6 ms
+  des deux côtés : coût égal ; 54 appels de dessin et 5 k triangles contre 145 et 101 k.
+- **Feuille du joueur** : grille d'art 48 × 70, figure de 62 px d'art, 39 couleurs, tenue et accent en tons clés exacts ;
+  à l'écran ≈ ×2,9 en 1920 × 1080 avec le cadrage actuel.
+- **À trancher par le responsable** (planches) : (1) la direction de la porte, donc l'approbation des plans et de la
+  feuille ; (2) le **cadrage** : les façades générées sont plus hautes, par rapport aux personnages, que celles du décor
+  par code ; avec le cadrage actuel elles remplissent l'écran ; un cadrage élargi (`rig=6,25,42,4.8`) montre la rue
+  entière, le second rang et la profondeur comme la référence, mais rend le joueur ≈ ×1,9 (non entier) ; (3) le sort de
+  l'essai (`art-src/*-essai/`, gardé comme historique).

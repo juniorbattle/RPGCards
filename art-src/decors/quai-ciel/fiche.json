@@ -1,0 +1,95 @@
+{
+  "id": "quai-ciel",
+  "statut": "porte du Quai (ADR 028), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "auteur": "Claude Code (session V4, passe 57), à la demande du responsable : « Je valide la direction de l’essai. Prépare le lot suivant (plans du Quai et feuille complète du joueur) et annonce-moi ses images et leurs prompts avant de générer. »",
+  "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-quai.mjs",
+  "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production ; aucune analyse juridique faite par l’agent : point à confirmer par le responsable avant tout usage en jeu",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "sources": [
+    {
+      "nom": "quai-ciel-ville-haute",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-20T00:51:21.612Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1536x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached image only as the style reference: match its painterly HD-2D look, fine grain, night palette and the distant upper city of its background. Do not copy its composition.\n\nPaint ONE isolated far background layer for a side-scrolling 2.5D night harbour scene, seen from the front at eye level: the night sky and, on a hill, the upper city seen from far away. The lower half: the upper city climbing a hill, dense rooftops, spires, bell towers and a large cathedral with a rose window, many small warm windows and a few cold blue ones, softened by a thin layer of night mist; the city is darkest and most hazy at the bottom edge. The upper half: a deep indigo night sky with a bright moon to the upper right, a soft halo, thin silvery clouds and a few stars. No harbour, no water, no boats, no near houses, no foreground.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-20-v4-quai/quai-ciel-ville-haute.png (dossier principal, ignoré par git)",
+        "sha256": "457a83a19dac15c5849ba2c53f29582f87e041d3044ac1a0e4b84bf4a02da8a0",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 1861,
+        "input_tokens_details": {
+          "image_tokens": 1536,
+          "text_tokens": 325
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 7349
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs",
+      "tools/m09-porte-quai.mjs"
+    ],
+    "etapes": [
+      "image opaque, sans détourage ni recadrage"
+    ]
+  },
+  "sortie": {
+    "fichier": "public/decors/quai-ciel.png",
+    "sha256": "83fa4a309a28b3c790061e1e9614fcf02ef11444f87c72dfd0a8e7e4e114c9b2",
+    "octets": 3067681,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "pose": {
+      "file": "quai-ciel.png",
+      "sha256": "83fa4a309a28b3c790061e1e9614fcf02ef11444f87c72dfd0a8e7e4e114c9b2",
+      "size": [
+        1536,
+        1024
+      ],
+      "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+      "fiche": "art-src/decors/quai-ciel/fiche.json",
+      "approved": false,
+      "at": [
+        0,
+        -38,
+        -60
+      ],
+      "width": 130,
+      "orient": "face",
+      "order": 0,
+      "blend": "fondu",
+      "fog": 0
+    }
+  },
+  "chaine_des_empreintes": [
+    "457a83a19dac15c5849ba2c53f29582f87e041d3044ac1a0e4b84bf4a02da8a0 (brut quai-ciel-ville-haute)",
+    "83fa4a309a28b3c790061e1e9614fcf02ef11444f87c72dfd0a8e7e4e114c9b2 (plan)"
+  ]
+}

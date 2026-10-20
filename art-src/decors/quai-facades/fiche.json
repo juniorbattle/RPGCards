@@ -1,0 +1,193 @@
+{
+  "id": "quai-facades",
+  "statut": "porte du Quai (ADR 028), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "auteur": "Claude Code (session V4, passe 57), à la demande du responsable : « Je valide la direction de l’essai. Prépare le lot suivant (plans du Quai et feuille complète du joueur) et annonce-moi ses images et leurs prompts avant de générer. »",
+  "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-quai.mjs",
+  "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production ; aucune analyse juridique faite par l’agent : point à confirmer par le responsable avant tout usage en jeu",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "sources": [
+    {
+      "nom": "quai-facades-ouest",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-20T00:54:16.635Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1024x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, detailed cold stone masonry, dark timber, night palette and warm amber lantern light of the harbour scene (first image) and of the harbour facade layer (second image). Do not copy their composition.\n\nPaint ONE isolated layer that continues the harbour facade row of the second image to its LEFT, at exactly the same scale, storey heights, lighting and fine grain, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines); the bottom edge of the image is the straight line where the walls meet the street, the street itself is not shown. From left to right: (1) a tall stone archway opening onto a narrow dark alley that leads to the lanes, with a small lantern glowing veil blue beside it; (2) the shipwright's workshop: stone ground floor with a wide arched timber workshop door glowing warm orange from a forge inside, a half-timbered upper floor with two lit windows, a timber hoisting beam with a pulley and rope above the door, an iron bracket holding a pulley-shaped sign with no lettering, two dormers in a slate roof with a chimney. The buildings fill the full width and about 85% of the image height.\n\nEverything above the roofs is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading and no texture: no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols. No street paving, no water, no boats, no foreground objects.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-20-v4-quai/quai-facades-ouest.png (dossier principal, ignoré par git)",
+        "sha256": "a98ab2077882538223808f4ff1d24131643a657c1cf8181258acf17a96fe3929",
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 3521,
+        "input_tokens_details": {
+          "image_tokens": 3072,
+          "text_tokens": 449
+        },
+        "output_tokens": 7024,
+        "output_tokens_details": {
+          "image_tokens": 7024,
+          "text_tokens": 0
+        },
+        "total_tokens": 10545
+      }
+    },
+    {
+      "nom": "quai-facades-essai",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-19T23:52:26.453Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1536x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached image only as the style reference: match its painterly HD-2D look, fine grain, detailed cold stone masonry, dark timber, night palette and warm amber lantern light. Do not copy its composition.\n\nPaint ONE isolated background layer for a side-scrolling 2.5D night harbour street, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): three attached harbour buildings standing side by side and filling the full width of the image. From left to right: (1) the card-duel hall, the tallest, built of large stone blocks, with a tall arched double door at ground level, four vertical cloth banners hanging above the door, one per family colour (ember orange, veil blue with silver, bramble green, star gold), each banner showing a single simple abstract emblem (a flame, a crescent veil, a thorned branch, an eight-pointed star), and a round stained-glass window high on the gable; (2) a narrow half-timbered house with an overhanging upper floor, a small shop window with a desaturated ivory canvas awning at ground level, and a plain wooden door; (3) the harbour tavern: stone ground floor with a warm glowing arched entrance, timber upper floor with a small wooden balcony, warm lit windows, and an iron bracket holding a lantern-shaped sign with no lettering. Clusters of amber lanterns on wall brackets beside the doors. Slate roofs with chimneys and dormers along the top. The bottom edge of the image is the straight horizontal line where the walls meet the street; the street itself is not shown. The buildings fill about 85% of the image height; everything above the roofs is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading and no texture: no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no street paving, no water, no boats, no foreground objects, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-19-v4-essai/quai-facades-essai.png (dossier principal, ignoré par git)",
+        "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 2075,
+        "input_tokens_details": {
+          "image_tokens": 1536,
+          "text_tokens": 539
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 7563
+      }
+    },
+    {
+      "nom": "quai-facades-est",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-20T00:55:53.591Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1024x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, detailed cold stone masonry, dark timber, night palette and warm amber lantern light of the harbour scene (first image) and of the two harbour facade layers (second and third images). Do not copy their composition.\n\nPaint ONE isolated layer that continues the harbour facade row of the second image to its RIGHT, at exactly the same scale, storey heights, lighting and fine grain, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines); the bottom edge of the image is the straight line where the walls meet the street, the street itself is not shown. From left to right: (1) the shipowner's house, the tallest of the row: stone ground floor with a shop window under a slate-grey canvas awning and a plain door, plastered upper floors with stone corner quoins, small wrought-iron balconies at the first-floor windows, a cross gable facing the street with a round stained-glass window glowing veil blue, an iron bracket holding an anchor-shaped sign with no lettering, a small veil-blue pennant on a pole; (2) at the far right, a lower stone warehouse with large timber double doors and a stone ramp rising toward the right edge (the way up to the arena square), with a lantern at the ramp. The buildings fill the full width and about 85% of the image height.\n\nEverything above the roofs is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading and no texture: no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols. No street paving, no water, no boats, no foreground objects.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-20-v4-quai/quai-facades-ouest.png",
+          "sha256": "a98ab2077882538223808f4ff1d24131643a657c1cf8181258acf17a96fe3929"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-20-v4-quai/quai-facades-est.png (dossier principal, ignoré par git)",
+        "sha256": "2a920ffbc7eee1d9f4ddec52e29c90afad8b85d8d376939729a2649d1a2eccdc",
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 4578,
+        "input_tokens_details": {
+          "image_tokens": 4096,
+          "text_tokens": 482
+        },
+        "output_tokens": 7024,
+        "output_tokens_details": {
+          "image_tokens": 7024,
+          "text_tokens": 0
+        },
+        "total_tokens": 11602
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs",
+      "tools/m09-porte-quai.mjs"
+    ],
+    "etapes": [
+      "fond magenta détouré et recadré sur le pied des murs, pour chaque image",
+      "assemblées côte à côte, pieds alignés, à 68 px/m : ouest (x −24 à −10,6 m), centre de l’essai (−10,6 à 11,2 m), est (11,2 à 24 m)",
+      "lanternes peintes repérées, une lumière du moteur sur chacune"
+    ]
+  },
+  "sortie": {
+    "fichier": "public/decors/quai-facades.png",
+    "sha256": "5a13074f3a8c003c340ed90be40dda8d90613345105f1a7beb8e3e1e2c1ad1d8",
+    "octets": 5807145,
+    "dimensions": [
+      3263,
+      993
+    ],
+    "pose": {
+      "file": "quai-facades.png",
+      "sha256": "5a13074f3a8c003c340ed90be40dda8d90613345105f1a7beb8e3e1e2c1ad1d8",
+      "size": [
+        3263,
+        993
+      ],
+      "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+      "fiche": "art-src/decors/quai-facades/fiche.json",
+      "approved": false,
+      "at": [
+        0,
+        0,
+        -3
+      ],
+      "width": 48,
+      "orient": "face",
+      "order": 2,
+      "blend": "decoupe",
+      "lit": 0.25
+    }
+  },
+  "chaine_des_empreintes": [
+    "a98ab2077882538223808f4ff1d24131643a657c1cf8181258acf17a96fe3929 (brut quai-facades-ouest)",
+    "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec (brut quai-facades-essai)",
+    "2a920ffbc7eee1d9f4ddec52e29c90afad8b85d8d376939729a2649d1a2eccdc (brut quai-facades-est)",
+    "5a13074f3a8c003c340ed90be40dda8d90613345105f1a7beb8e3e1e2c1ad1d8 (plan)"
+  ]
+}
