@@ -1,11 +1,11 @@
 # M10 — Origines et ascension des Quatre Voies : cadrage narratif et produit
 
 **Date : 2026-10-20. Statut : CADRAGE / conception, PAS une autorisation de modifier le moteur.**  
-**Décision d'auteur ratifiée : OPTION B — le joueur conserve le choix de sa famille d'affiliation après que les familles ont remarqué son talent.** Voir `docs/adr/029-recrutement-libre-des-quatre-voies.md`.
+**Décisions ratifiées :** (1) **OPTION B** : le joueur choisit sa famille après avoir été remarqué ; (2) **deck neutre initial de 16 cartes physiques** : quatre copies de chaque Rang I, II, III, IV, sans famille, bonus intrinsèque ni effet de carte. Voir ADR 029 et ADR 030. Ces décisions de conception ne valent pas autorisation de modifier le moteur.
 
 ## Vision narrative
 
-Le joueur est un duelliste de la populace, **sans appartenance familiale initiale**. Il commence avec des **cartes neutres, blanches/grises, sans famille**. Un duel **imprévu et public** face à un rival récurrent attire une foule ; les Quatre Voies perçoivent son talent. Une famille peut être la première à manifester son intérêt, mais elle **ne peut pas décider de son affiliation à sa place**. Le joueur peut accepter l'invitation, la différer ou rechercher une autre voie. Toutes les quatre doivent pouvoir être choisies par des parcours jouables et compréhensibles, sans prédiction obligatoire de son style et sans mauvaise réponse cachée.
+Le joueur est un duelliste de la populace, **sans appartenance familiale initiale**. Il commence avec **16 cartes neutres, blanches/grises, sans famille, composées de 4 exemplaires de chaque Rang I, II, III et IV**, sans bonus intrinsèque ni effet de carte. Un duel **imprévu et public** face à un rival récurrent attire une foule ; les Quatre Voies perçoivent son talent. Une famille peut être la première à manifester son intérêt, mais elle **ne peut pas décider de son affiliation à sa place**. Le joueur peut accepter l'invitation, la différer ou rechercher une autre voie. Toutes les quatre doivent pouvoir être choisies par des parcours jouables et compréhensibles, sans prédiction obligatoire de son style et sans mauvaise réponse cachée.
 
 L'accueil par une famille déclenche une ascension : affronter ses membres et obtenir progressivement ses **quatre identités ordinaires de Rang I–IV** ; défier son chef pour accéder à la reconnaissance de chef ; puis se mesurer aux **lieutenants et chefs des trois autres familles**, acquérir les quatre identités de chacune et enfin accéder au **Championnat des Champions**. En parallèle : ville vivante, déplacements libres, duellistes PNJ rencontrés dans les ruelles ou places, défis ponctuels du rival et duels spéciaux permettant de débloquer des **variantes d'identités déjà possédées**.
 
@@ -28,14 +28,32 @@ L'accueil par une famille déclenche une ascension : affronter ses membres et ob
 
 ## Conception à instruire AVANT de coder le mode Aventure
 
-### A. Neutres du prologue — arbitrage gameplay bloquant
+### A. Neutres du prologue — composition RATIFIÉE ; paramètres moteur à arbitrer
 
-Le responsable approuve **l'intention narrative et visuelle** de cartes basiques sans famille, **pas encore leurs valeurs ou leur implémentation**. Faire une proposition technique et un avenant séparé, avec exemples chiffrés et tests, sur les points suivants :
+**Règle de conception expressément ratifiée (ADR 030) :** le lot initial comprend **exactement 16 cartes physiques ordinaires**, réparties ainsi :
 
-- Nombre d'identités neutres, structure du deck pendant le prologue et après chaque gain de carte. Une piste de travail **non ratifiée** : **16 emplacements ordinaires stables**, occupés initialement par 16 cartes neutres puis remplacés chacun par une identité familiale unique de Rang I–IV ; ne pas implémenter sans validation.
-- Signature avant recrutement / avant défi du chef, et passage éventuel de 16 à 17 cartes. Une piste **non ratifiée** est l'absence de Signature initiale, incompatible avec `buildDeck` actuel.
-- Rang, Puissance et rôles des neutres ; compatibilité Assaut/Garde/Secondaires, limites de Techniques, effet/famille `null` éventuels. **Ne pas ajouter « Neutre » à `Family` comme cinquième famille de jeu sans arbitrage** : absence de famille ≠ nouvelle voie, pas d'affinité neutre à inventer.
-- Remplacement, vente éventuelle (non demandée), conservation historique, tirage, équité contre un adversaire déjà familial ; tests d'absence de stratégie bloquante / duel interminable et onboarding.
+| Rang | Copies physiques | Famille | Bonus / effet propre |
+|---|---:|---|---|
+| I | 4 | aucune | aucun |
+| II | 4 | aucune | aucun |
+| III | 4 | aucune | aucun |
+| IV | 4 | aucune | aucun |
+| **Total** | **16** | **aucune** | **aucun** |
+
+- Quatre copies de **la même définition neutre de Rang I**, et idem pour II, III et IV ; **quatre définitions neutres de rang**, **16 instances physiques distinctes**. Aucun nom de famille, symbole familial ou affinité de famille. Aucune capacité individuelle, rareté spéciale ni multiplicateur propre aux neutres.
+- **Pas une cinquième famille :** « sans famille » ne constitue pas une nouvelle voie. L'absence de famille interdit un bonus *lié à la famille* ; les actions générales du combat restent soumises au futur avenant.
+- Ce deck initial **délibérément répétitif** constitue l'exception de prologue à l'unicité des 16 identités familiales du mode duel standard. Ne pas résoudre la duplication en créant 16 identités neutres artificiellement différentes.
+- **Identité graphique :** cartes blanches/grises sobres, rang immédiatement lisible, sans emblème de Cendre, Voile, Ronce ou Astre.
+- **Aucun effet bonus intrinsèque** ne signifie pas « aucun Assaut / aucune Garde » : la capacité à jouer le combat normal doit être spécifiée dans l'avenant ; ne pas inventer un gameplay simplifié non demandé.
+
+**Paramètres encore ouverts avant implémentation :**
+1. **Puissance imprimée** des neutres : suggestion à valider = même table de Puissances ordinaires que les familières I→IV (3/6/9/12) ; le responsable n'a pas ratifié ces nombres pour les neutres.
+2. **Signature et Techniques au prologue** : absence ou présence d'une Signature, choix et accès aux Techniques, taille du deck si une Signature existe. Le jeu standard exige aujourd'hui 17 cartes, Signature incluse. Le lot neutre de **16 cartes ne tranche pas à lui seul** le format complet du deck en toutes phases.
+3. **Transitions du deck** après obtention d'une carte familiale : emplacement remplacé, règle de duplication éventuelle, mélange neutres/familiales, moment où se termine l'exception.
+4. **Calcul et interfaces** : `family: null` ou représentation typée équivalente, validation du deck mode Aventure distincte, posture Assaut/Garde/Secondaires et absence d'affinité ; sécurité des secrets / IA / replay / sauvegardes.
+5. **Équilibrage** du duel fondateur contre un rival familial, du rythme de gain des cartes et des scénarios de défaite/revanche.
+
+**Porte obligatoire :** avenant gameplay chiffré, tests du deck neutre et non-régression du deck canonique **avant modification de `src/game` ou `src/product/deck.ts`**.
 - Frontière entre **mode Aventure** et **duels libres historiques** : le deck standard à 17 cartes doit continuer à fonctionner et à produire les mêmes hashes de replay ; proposer une version des sauvegardes avec migration **non destructive**.
 
 ### B. Progression et récompenses — design à ratifier
@@ -68,7 +86,7 @@ Le responsable approuve **l'intention narrative et visuelle** de cartes basiques
 
 ## Décisions ouvertes à présenter au responsable
 
-1. Deck neutre : 16 cartes ? classes de rang et puissances ? aucune Signature ? quelles Techniques ?
+1. Deck neutre : **composition 4 × I + 4 × II + 4 × III + 4 × IV RATIFIÉE**, sans famille/bonus/effet ; **à décider** : Puissances exactes, Signature et Techniques au prologue, transitions et validation du mode Aventure.
 2. Première acquisition : carte familiale offerte à l'adhésion ou gagnée au premier duel d'initiation ?
 3. Recrutement : chemin exact pour rencontrer les trois autres familles et modalité de confirmation / éventuel changement après adhésion.
 4. Échelle de récompenses membres → lieutenants → chefs ; Signatures / Techniques.
@@ -76,4 +94,4 @@ Le responsable approuve **l'intention narrative et visuelle** de cartes basiques
 6. Séquençage des rencontres dynamiques et du rival, et verrouillage des grands défis.
 7. Migration des sauvegardes RC ; place des duels libres et du Tournoi du Quai existants.
 
-**Statut explicite :** seule l'option **B, liberté de choisir l'affiliation après reconnaissance**, est ratifiée dans cette mission. Les règles et nombres cités comme pistes sont **non ratifiés**. **M09 reste le chantier d'exécution actif**, jusqu'à son jalon visuel/technique. Aucune règle de combat ni élément de ville en production n'est modifié par ce document.
+**Statut explicite :** sont ratifiés **l'option B** et **les 16 cartes neutres (quatre copies par Rang I–IV, sans famille/bonus/effet)**. Les autres choix de gameplay et valeurs chiffrées (Puissances, Signature, Techniques, conversion du deck) restent **non ratifiés**. **M09 reste le chantier d'exécution actif**, jusqu'à son jalon visuel/technique. Aucune règle de combat ni élément de ville en production n'est modifié par ce document.

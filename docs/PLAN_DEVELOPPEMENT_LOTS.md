@@ -7,7 +7,7 @@ Le MVP de duel M03.2 est réceptionné comme baseline visuelle desktop (ADR 013)
 
 ## Préparation future M10 — origines et ascension (2026-10-20)
 
-**Décision narrative ratifiée :** le joueur commence sans affiliation, son duel inaugural attire l'attention des familles, puis **il choisit lui-même sa voie** après une invitation, sans affiliation imposée (option B, ADR 029). Cadrage : `docs/missions/M10_ORIGINES_ASCENSION_QUATRE_VOIES.md`. Cartes neutres, deck du prologue, Signature et récompenses demandent **un avenant gameplay séparé et validé** ; aucune implémentation n'est lancée. **M09 demeure l'étape d'exécution active** : priorité aux quartiers et aux validations d'assets déjà en cours.
+**Décision narrative ratifiée :** le joueur commence sans affiliation, son duel inaugural attire l'attention des familles, puis **il choisit lui-même sa voie** après une invitation, sans affiliation imposée (option B, ADR 029). Cadrage : `docs/missions/M10_ORIGINES_ASCENSION_QUATRE_VOIES.md`. **Composition des cartes neutres ratifiée (ADR 030) :** 16 cartes physiques, quatre copies pour chacun des Rangs I–IV, aucune famille, effet ou bonus propre. Puissances exactes, Signature, Techniques, remplacement progressif et récompenses demandent toujours **un avenant gameplay séparé et validé** ; aucune implémentation n'est lancée. **M09 demeure l'étape d'exécution active** : priorité aux quartiers et aux validations d'assets déjà en cours.
 
 ## Mode d'exécution autonome — mandat mis à jour
 
