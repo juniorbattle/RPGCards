@@ -55,13 +55,14 @@ void main(){
 #endif
 }`;
 
-/** Matière d'un plan (une par plan : chacun a sa texture). */
-function plateMaterial(p: PreparedPlate): THREE.ShaderMaterial {
+/** Matière d'un plan (une par plan : chacun a sa texture). `profond` : diorama en rangs (passe 65), chaque plan peut
+ *  s'effacer (fondu lointain) ; sinon seuls les plans `coupe` ont le nuanceur d'effacement. */
+function plateMaterial(p: PreparedPlate, profond = false): THREE.ShaderMaterial {
   const cut = p.entry.blend === 'decoupe';
   return new THREE.ShaderMaterial({
     name: 'VillePlan',
-    uniforms: { ...U, tPlate: { value: p.texture }, uLit: { value: p.entry.lit ?? 0 }, uFog: { value: p.entry.fog ?? 1 }, uCut: { value: cut ? 0.02 : 0.004 }, uVoile: { value: p.entry.voile ?? 0 }, uFade: { value: 0 }, uCutY: { value: p.entry.coupeY ?? -1 }, uCoupe: { value: COUPE_ALPHA } },
-    defines: p.entry.coupe ? { COUPE: 1 } : {},
+    uniforms: { ...U, tPlate: { value: p.texture }, uLit: { value: p.entry.lit ?? 0 }, uFog: { value: p.entry.fog ?? 1 }, uCut: { value: cut ? 0.02 : 0.004 }, uVoile: { value: p.entry.voile ?? 0 }, uFade: { value: 0 }, uCutY: { value: p.entry.coupeY ?? -1000 }, uCoupe: { value: COUPE_ALPHA } },
+    defines: p.entry.coupe || profond ? { COUPE: 1 } : {},
     vertexShader: PLATE_VERT,
     fragmentShader: PLATE_FRAG,
     transparent: true,
@@ -77,9 +78,27 @@ function plateMaterial(p: PreparedPlate): THREE.ShaderMaterial {
  * qu'il a jointe (passe 63) : 12 %.
  */
 export const COUPE_ALPHA = 0.12;
-/** Le personnage est « derrière » un plan `coupe` : plus loin en z, dans sa largeur (marge de 0,6 m). */
-export function behindPlate(r: { center: [number, number, number]; w: number }, p: { x: number; z: number }): boolean {
+/**
+ * Le personnage est « derrière » un plan `coupe` : plus loin en z, dans sa largeur (marge de 0,6 m). Plan de côté (passe
+ * 65, `vers` donné) : plus loin que son bout avant, du côté non peint (le mur cache alors le personnage à la caméra).
+ */
+export function behindPlate(r: { center: [number, number, number]; w: number }, p: { x: number; z: number }, vers?: 'est' | 'ouest', coupeZ?: number): boolean {
+  // rang dépassé (passe 65) : tout le plan, quelle que soit sa largeur
+  if (coupeZ !== undefined && p.z < coupeZ) return true;
+  if (vers) return p.z < r.center[2] + r.w / 2 - 0.35 && (vers === 'est' ? p.x < r.center[0] - 0.2 : p.x > r.center[0] + 0.2);
   return p.z < r.center[2] - 0.35 && Math.abs(p.x - r.center[0]) < r.w / 2 + 0.6;
+}
+
+/**
+ * Fondu lointain (passe 65, quartiers en rangs) : un plan à plus de `LOIN[0]` m devant le personnage (z de son bord
+ * avant) s'efface jusqu'à disparaître à `LOIN[1]` m : quand on s'enfonce de deux rangs, les rangs de devant, que la
+ * caméra dépasse, ne masquent plus la vue ; le rang juste devant reste en fantôme (`COUPE_ALPHA`).
+ */
+export const LOIN: readonly [number, number] = [12, 18];
+export function farFade(r: { center: [number, number, number]; w: number; h: number; orient: 'face' | 'sol' | 'cote' }, p: { z: number }): number {
+  const front = r.center[2] + (r.orient === 'cote' ? r.w / 2 : r.orient === 'sol' ? r.h / 2 : 0);
+  const t = THREE.MathUtils.clamp((front - p.z - LOIN[0]) / (LOIN[1] - LOIN[0]), 0, 1);
+  return t * t * (3 - 2 * t);
 }
 
 /** Couleur linéaire d'une lumière du diorama : une famille (direction D, `FAM`), l'ambre des lanternes, ou donnée. */
@@ -123,8 +142,10 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
   scene.background = new THREE.Color(0x04060c);
   const textures: THREE.Texture[] = [];
   const meshes: THREE.Object3D[] = [];
-  /** Plans `coupe` (passe 62) : opacité courante, profondeur écrite d'origine. */
-  const cutaways: { rect: ReturnType<typeof plateRect>; mat: THREE.ShaderMaterial; cut: number; writes: boolean }[] = [];
+  /** Plans `coupe` (passe 62) : opacité courante, profondeur écrite d'origine ; diorama en rangs (passe 65) : tous les
+   *  plans, pour le fondu lointain. */
+  const profond = d.plates.some((p) => p.entry.coupe);
+  const cutaways: { rect: ReturnType<typeof plateRect>; mat: THREE.ShaderMaterial; cut: number; writes: boolean; ghost: boolean; vers: 'est' | 'ouest' | undefined; coupeZ: number | undefined }[] = [];
   if (d.ground) meshes.push(engineGround(def, artSeed, textures));
   // créés dans l'ordre de dessin : à profondeur égale, three.js départage les transparents par ordre de création
   for (const p of d.plates) {
@@ -142,7 +163,7 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
       const [u0, , u1] = p.entry.uv ?? [0, 0, 1, 1];
       for (let i = 0; i < uv.count; i++) uv.setX(i, u0 + u1 - uv.getX(i));
     }
-    const mat = plateMaterial(p);
+    const mat = plateMaterial(p, profond);
     const mesh = new THREE.Mesh(g, mat);
     mesh.name = `plan:${d.ilot}/${p.id}`;
     mesh.position.set(...r.center);
@@ -152,7 +173,7 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
     }
     // de côté : normale vers +x (est) ou −x (ouest) ; le bord gauche de l'image vers la caméra (z le plus grand)
     if (r.orient === 'cote') mesh.rotation.y = p.entry.vers === 'ouest' ? -Math.PI / 2 : Math.PI / 2;
-    if (p.entry.coupe) cutaways.push({ rect: r, mat, cut: 0, writes: mat.depthWrite });
+    if (profond) cutaways.push({ rect: r, mat, cut: 0, writes: mat.depthWrite, ghost: !!p.entry.coupe, vers: r.orient === 'cote' ? p.entry.vers ?? 'est' : undefined, coupeZ: p.entry.coupeZ });
     meshes.push(mesh);
   }
   const lights: LightDef[] = d.lights.map((l) => ({
@@ -166,18 +187,38 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
     for (const m of d.mists) { const { mesh, mat } = mistPlane(tex, m); meshes.push(mesh); mistMats.push(mat); }
   }
   const base = finish(scene, { build: (into) => { for (const m of meshes) into.add(m); return meshes.length; } }, lights, [], textures);
+  // halos des lumières (diorama en rangs, passe 65) : ceux d'un rang dépassé s'atténuent avec leur plan fantôme, ceux
+  // loin devant le personnage s'effacent avec le fondu lointain (le maillage des halos est fusionné : couleurs par sommet)
+  const haloMesh = profond ? [...scene.children].reverse().find((o): o is THREE.Mesh => o instanceof THREE.Mesh && !!o.geometry.getAttribute('color') && (o.material as THREE.Material).blending === THREE.AdditiveBlending) : undefined;
+  const haloCol = haloMesh?.geometry.getAttribute('color') as THREE.BufferAttribute | undefined;
+  const haloBase = haloCol ? Float32Array.from(haloCol.array as Float32Array) : null;
+  const haloLights = d.lights.filter((l) => l.halo).map((l) => ({ z: l.at[2], coupeZ: l.coupeZ, k: 1 }));
   let lastFocus = performance.now();
-  // vue en coupe (passe 62) : le plan derrière lequel passe le personnage s'efface (et n'écrit plus la profondeur)
+  // vue en coupe (passe 62) : le plan derrière lequel passe le personnage devient un fantôme (et n'écrit plus la
+  // profondeur) ; passe 65 : les plans loin devant lui s'effacent tout à fait (fondu lointain, continu avec la position)
   const focus = (p: { x: number; z: number }, snap: boolean) => {
     const now = performance.now();
     const k = snap ? 1 : Math.min(1, ((now - lastFocus) / 1000) * 7);
     lastFocus = now;
     for (const c of cutaways) {
-      const want = behindPlate(c.rect, p) ? 1 : 0;
+      const want = c.ghost && behindPlate(c.rect, p, c.vers, c.coupeZ) ? 1 : 0;
       c.cut += (want - c.cut) * k;
       if (Math.abs(c.cut - want) < 0.005) c.cut = want;
-      c.mat.uniforms.uFade!.value = c.cut;
-      c.mat.depthWrite = c.writes && c.cut < 0.02;
+      const far = farFade(c.rect, p);
+      const fade = Math.max(c.cut, far);
+      c.mat.uniforms.uFade!.value = fade;
+      c.mat.uniforms.uCoupe!.value = c.ghost ? COUPE_ALPHA * (1 - far) : 0;
+      c.mat.depthWrite = c.writes && fade < 0.02;
+    }
+    if (haloCol && haloBase) {
+      const per = haloBase.length / Math.max(1, haloLights.length);
+      haloLights.forEach((h, i) => {
+        const want = (1 - farFade({ center: [0, 0, h.z], w: 0, h: 0, orient: 'face' }, p)) * (h.coupeZ !== undefined && p.z < h.coupeZ ? COUPE_ALPHA : 1);
+        h.k += (want - h.k) * k;
+        if (Math.abs(h.k - want) < 0.005) h.k = want;
+        for (let j = i * per; j < (i + 1) * per; j++) haloCol.array[j] = haloBase[j]! * h.k;
+      });
+      haloCol.needsUpdate = true;
     }
   };
   if (!mistMats.length && !cutaways.length) return base;

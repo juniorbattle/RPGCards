@@ -1,73 +1,11 @@
 {
-  "date": "2026-10-20T05:02:29.274Z",
-  "commit": "f588425",
+  "date": "2026-10-20T05:39:17.787Z",
+  "commit": "f2f9348",
   "mode": "assembler",
   "checks": [
-    "OK manifeste de la preuve : 20 plans (façades, pied, murs découpés ; textures partagées), 16 lumières"
+    "OK manifeste de la preuve : 56 plans (fonds, murs, mobilier découpés dans 10 images), 16 lumières, 10 brumes"
   ],
   "console": [],
-  "meuble-caisses": {
-    "e": {
-      "file": "quai-pied-facades.png",
-      "sha256": "2469063c799562e7f9bc0fbd1920bffd369b7fbf71b6a31066c0db014a95650f",
-      "size": [
-        3264,
-        340
-      ],
-      "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
-      "fiche": "art-src/decors/quai-pied-facades/fiche.json",
-      "approved": false,
-      "at": [
-        0,
-        0,
-        -2.3
-      ],
-      "width": 48,
-      "orient": "face",
-      "order": 4,
-      "blend": "decoupe",
-      "lit": 0.3
-    },
-    "uv": [
-      0.11,
-      0.688,
-      0.14,
-      1
-    ],
-    "width": 1.426,
-    "lift": 0
-  },
-  "meuble-tonneaux": {
-    "e": {
-      "file": "quai-pied-facades.png",
-      "sha256": "2469063c799562e7f9bc0fbd1920bffd369b7fbf71b6a31066c0db014a95650f",
-      "size": [
-        3264,
-        340
-      ],
-      "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
-      "fiche": "art-src/decors/quai-pied-facades/fiche.json",
-      "approved": false,
-      "at": [
-        0,
-        0,
-        -2.3
-      ],
-      "width": 48,
-      "orient": "face",
-      "order": 4,
-      "blend": "decoupe",
-      "lit": 0.3
-    },
-    "uv": [
-      0.269,
-      0.741,
-      0.294,
-      1
-    ],
-    "width": 1.191,
-    "lift": 0
-  },
   "plans": {
     "ciel": {
       "file": "quai-ciel.png",
@@ -77,34 +15,6 @@
         -90
       ],
       "width": 176,
-      "orient": "face",
-      "coupe": false
-    },
-    "troisieme-rang": {
-      "file": "quai-troisieme-rang.png",
-      "at": [
-        0,
-        9,
-        -40
-      ],
-      "width": 88,
-      "orient": "face",
-      "coupe": false
-    },
-    "rue-haute": {
-      "file": "quai-second-rang.png",
-      "uv": [
-        0,
-        0,
-        1,
-        0.91
-      ],
-      "at": [
-        0,
-        0,
-        -17.5
-      ],
-      "width": 62,
       "orient": "face",
       "coupe": false
     },
@@ -243,8 +153,269 @@
       "orient": "sol",
       "coupe": false
     },
-    "joue-1": {
+    "fond-rang2--28": {
+      "file": "quai-second-rang.png",
+      "uv": [
+        0,
+        0,
+        0.286,
+        0.91
+      ],
+      "at": [
+        -18,
+        0,
+        -17
+      ],
+      "width": 20,
+      "orient": "face",
+      "coupe": true
+    },
+    "fond-rang2--5": {
+      "file": "quai-second-rang.png",
+      "uv": [
+        0.329,
+        0,
+        0.414,
+        0.91
+      ],
+      "at": [
+        -2,
+        0,
+        -17
+      ],
+      "width": 6,
+      "orient": "face",
+      "coupe": true
+    },
+    "fond-rang2-13": {
+      "file": "quai-second-rang.png",
+      "uv": [
+        0.586,
+        0,
+        0.843,
+        0.91
+      ],
+      "at": [
+        22,
+        0,
+        -17
+      ],
+      "width": 18,
+      "orient": "face",
+      "coupe": true
+    },
+    "fond-place-halle": {
+      "file": "quai-second-rang.png",
+      "uv": [
+        0.414,
+        0,
+        0.586,
+        0.91
+      ],
+      "at": [
+        7,
+        0,
+        -23
+      ],
+      "width": 12,
+      "orient": "face",
+      "coupe": true
+    },
+    "flanc-rang2--31": {
+      "file": "quai-second-rang.png",
+      "uv": [
+        0.061,
+        0,
+        0.273,
+        0.91
+      ],
+      "at": [
+        -24,
+        0,
+        -11
+      ],
+      "width": 14,
+      "orient": "face",
+      "coupe": true
+    },
+    "flanc-rang2-17": {
+      "file": "quai-second-rang.png",
+      "uv": [
+        0.788,
+        0,
+        1,
+        0.91
+      ],
+      "at": [
+        24,
+        0,
+        -11
+      ],
+      "width": 14,
+      "orient": "face",
+      "coupe": true
+    },
+    "fond-rang3--31": {
+      "file": "quai-second-rang.png",
+      "uv": [
+        0.125,
+        0,
+        0.361,
+        0.91
+      ],
+      "at": [
+        -22.5,
+        0,
+        -29
+      ],
+      "width": 17,
+      "orient": "face",
+      "coupe": true
+    },
+    "fond-rang3--8": {
+      "file": "quai-second-rang.png",
+      "uv": [
+        0.444,
+        0,
+        0.632,
+        0.91
+      ],
+      "at": [
+        -1.25,
+        0,
+        -29
+      ],
+      "width": 13.5,
+      "orient": "face",
+      "coupe": true
+    },
+    "fond-rang3-9": {
+      "file": "quai-second-rang.png",
+      "uv": [
+        0.674,
+        0,
+        0.986,
+        0.91
+      ],
+      "at": [
+        19.75,
+        0,
+        -29
+      ],
+      "width": 22.5,
+      "orient": "face",
+      "coupe": true
+    },
+    "fond-placette-puits": {
+      "file": "quai-second-rang.png",
+      "uv": [
+        0.361,
+        0,
+        0.444,
+        0.91
+      ],
+      "at": [
+        -11,
+        0,
+        -34
+      ],
+      "width": 6,
+      "orient": "face",
+      "coupe": true
+    },
+    "flanc-rang3--23": {
+      "file": "quai-second-rang.png",
+      "uv": [
+        0,
+        0,
+        0.129,
+        0.91
+      ],
+      "at": [
+        -18.5,
+        0,
+        -25
+      ],
+      "width": 9,
+      "orient": "face",
+      "coupe": true
+    },
+    "flanc-rang3-14": {
+      "file": "quai-second-rang.png",
+      "uv": [
+        0.529,
+        0,
+        0.771,
+        0.91
+      ],
+      "at": [
+        22.5,
+        0,
+        -25
+      ],
+      "width": 17,
+      "orient": "face",
+      "coupe": true
+    },
+    "flanc-rang4--31": {
+      "file": "quai-second-rang.png",
+      "uv": [
+        0.069,
+        0,
+        0.361,
+        0.91
+      ],
+      "at": [
+        -20.5,
+        0,
+        -36
+      ],
+      "width": 21,
+      "orient": "face",
+      "coupe": true
+    },
+    "flanc-rang4-10": {
+      "file": "quai-second-rang.png",
+      "uv": [
+        0.639,
+        0,
+        0.931,
+        0.91
+      ],
+      "at": [
+        20.5,
+        0,
+        -36
+      ],
+      "width": 21,
+      "orient": "face",
+      "coupe": true
+    },
+    "fond-cour": {
+      "file": "quai-troisieme-rang.png",
+      "uv": [
+        0,
+        0,
+        1,
+        0.88
+      ],
+      "at": [
+        0,
+        0,
+        -43
+      ],
+      "width": 96,
+      "orient": "face",
+      "coupe": false
+    },
+    "mur-passage-1-1": {
       "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        1,
+        1
+      ],
       "at": [
         -13.6,
         0,
@@ -252,10 +423,17 @@
       ],
       "width": 8,
       "orient": "cote",
-      "coupe": false
+      "vers": "est",
+      "coupe": true
     },
-    "joue-2": {
+    "mur-passage-1-2": {
       "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        1,
+        1
+      ],
       "at": [
         -10.6,
         0,
@@ -263,10 +441,17 @@
       ],
       "width": 8,
       "orient": "cote",
-      "coupe": false
+      "vers": "ouest",
+      "coupe": true
     },
-    "joue-3": {
+    "mur-passage-1-3": {
       "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        1,
+        1
+      ],
       "at": [
         11.2,
         0,
@@ -274,10 +459,17 @@
       ],
       "width": 8,
       "orient": "cote",
-      "coupe": false
+      "vers": "est",
+      "coupe": true
     },
-    "joue-4": {
+    "mur-passage-1-4": {
       "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        1,
+        1
+      ],
       "at": [
         14.2,
         0,
@@ -285,7 +477,260 @@
       ],
       "width": 8,
       "orient": "cote",
-      "coupe": false
+      "vers": "ouest",
+      "coupe": true
+    },
+    "mur-place-2-1": {
+      "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        0.75,
+        1
+      ],
+      "at": [
+        1,
+        0,
+        -20
+      ],
+      "width": 6,
+      "orient": "cote",
+      "vers": "est",
+      "coupe": true
+    },
+    "mur-place-2-2": {
+      "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        0.75,
+        1
+      ],
+      "at": [
+        13,
+        0,
+        -20
+      ],
+      "width": 6,
+      "orient": "cote",
+      "vers": "ouest",
+      "coupe": true
+    },
+    "mur-bout-2-1": {
+      "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        0.75,
+        1
+      ],
+      "at": [
+        -17,
+        0,
+        -14
+      ],
+      "width": 6,
+      "orient": "cote",
+      "vers": "est",
+      "coupe": true
+    },
+    "mur-bout-2-2": {
+      "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        0.75,
+        1
+      ],
+      "at": [
+        17,
+        0,
+        -14
+      ],
+      "width": 6,
+      "orient": "cote",
+      "vers": "ouest",
+      "coupe": true
+    },
+    "mur-passage-2-1": {
+      "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "at": [
+        -8,
+        0,
+        -21
+      ],
+      "width": 8,
+      "orient": "cote",
+      "vers": "est",
+      "coupe": true
+    },
+    "mur-passage-2-2": {
+      "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "at": [
+        -5,
+        0,
+        -21
+      ],
+      "width": 8,
+      "orient": "cote",
+      "vers": "ouest",
+      "coupe": true
+    },
+    "mur-place-3-1": {
+      "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        0.625,
+        1
+      ],
+      "at": [
+        -14,
+        0,
+        -31.5
+      ],
+      "width": 5,
+      "orient": "cote",
+      "vers": "est",
+      "coupe": true
+    },
+    "mur-place-3-2": {
+      "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        0.625,
+        1
+      ],
+      "at": [
+        -8,
+        0,
+        -31.5
+      ],
+      "width": 5,
+      "orient": "cote",
+      "vers": "ouest",
+      "coupe": true
+    },
+    "mur-bout-3-1": {
+      "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        0.5,
+        1
+      ],
+      "at": [
+        -14,
+        0,
+        -27
+      ],
+      "width": 4,
+      "orient": "cote",
+      "vers": "est",
+      "coupe": true
+    },
+    "mur-bout-3-2": {
+      "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        0.5,
+        1
+      ],
+      "at": [
+        14,
+        0,
+        -27
+      ],
+      "width": 4,
+      "orient": "cote",
+      "vers": "ouest",
+      "coupe": true
+    },
+    "mur-passage-3-1": {
+      "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        0.875,
+        1
+      ],
+      "at": [
+        5.5,
+        0,
+        -32.5
+      ],
+      "width": 7,
+      "orient": "cote",
+      "vers": "est",
+      "coupe": true
+    },
+    "mur-passage-3-2": {
+      "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        0.875,
+        1
+      ],
+      "at": [
+        8.5,
+        0,
+        -32.5
+      ],
+      "width": 7,
+      "orient": "cote",
+      "vers": "ouest",
+      "coupe": true
+    },
+    "mur-bout-4-1": {
+      "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        0.875,
+        1
+      ],
+      "at": [
+        -10,
+        0,
+        -39.5
+      ],
+      "width": 7,
+      "orient": "cote",
+      "vers": "est",
+      "coupe": true
+    },
+    "mur-bout-4-2": {
+      "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        0.875,
+        1
+      ],
+      "at": [
+        10,
+        0,
+        -39.5
+      ],
+      "width": 7,
+      "orient": "cote",
+      "vers": "ouest",
+      "coupe": true
     },
     "rue-haute-caisses": {
       "file": "quai-pied-facades.png",
@@ -298,7 +743,7 @@
       "at": [
         -14,
         0,
-        -13
+        -12.6
       ],
       "width": 1.426,
       "orient": "face",
@@ -313,15 +758,94 @@
         1
       ],
       "at": [
-        14,
+        15,
         0,
-        -15.6
+        -15.2
       ],
       "width": 1.191,
       "orient": "face",
       "coupe": false
     },
-    "rue-haute-lampadaire-1": {
+    "halle-etal": {
+      "file": "quai-pied-facades.png",
+      "uv": [
+        0.512,
+        0.324,
+        0.579,
+        0.918
+      ],
+      "at": [
+        7.4,
+        0,
+        -20.8
+      ],
+      "width": 3.206,
+      "orient": "face",
+      "coupe": false
+    },
+    "halle-caisses": {
+      "file": "quai-pied-facades.png",
+      "uv": [
+        0.75,
+        0.688,
+        0.779,
+        1
+      ],
+      "at": [
+        11.6,
+        0,
+        -21.9
+      ],
+      "width": 1.426,
+      "orient": "face",
+      "coupe": false
+    },
+    "puits": {
+      "file": "preuve-puits.png",
+      "at": [
+        -11.2,
+        0,
+        -31
+      ],
+      "width": 2.2,
+      "orient": "face",
+      "coupe": false
+    },
+    "placette-tonneaux": {
+      "file": "quai-pied-facades.png",
+      "uv": [
+        0.269,
+        0.741,
+        0.294,
+        1
+      ],
+      "at": [
+        -13,
+        0,
+        -32.9
+      ],
+      "width": 1.191,
+      "orient": "face",
+      "coupe": false
+    },
+    "cour-caisses": {
+      "file": "quai-pied-facades.png",
+      "uv": [
+        0.11,
+        0.688,
+        0.14,
+        1
+      ],
+      "at": [
+        -8.6,
+        0,
+        -42
+      ],
+      "width": 1.426,
+      "orient": "face",
+      "coupe": false
+    },
+    "lampadaire-1": {
       "file": "quai-rue.png",
       "uv": [
         0.405,
@@ -338,7 +862,7 @@
       "orient": "face",
       "coupe": false
     },
-    "rue-haute-lampadaire-2": {
+    "lampadaire-2": {
       "file": "quai-rue.png",
       "uv": [
         0.405,
@@ -350,6 +874,74 @@
         7.5,
         0,
         -11.6
+      ],
+      "width": 1.103,
+      "orient": "face",
+      "coupe": false
+    },
+    "lampadaire-3": {
+      "file": "quai-rue.png",
+      "uv": [
+        0.405,
+        0.141,
+        0.428,
+        1
+      ],
+      "at": [
+        2.2,
+        0,
+        -21.6
+      ],
+      "width": 1.103,
+      "orient": "face",
+      "coupe": false
+    },
+    "lampadaire-4": {
+      "file": "quai-rue.png",
+      "uv": [
+        0.405,
+        0.141,
+        0.428,
+        1
+      ],
+      "at": [
+        1,
+        0,
+        -25.5
+      ],
+      "width": 1.103,
+      "orient": "face",
+      "coupe": false
+    },
+    "lampadaire-5": {
+      "file": "quai-rue.png",
+      "uv": [
+        0.405,
+        0.141,
+        0.428,
+        1
+      ],
+      "at": [
+        -5.5,
+        0,
+        -36.6
+      ],
+      "width": 1.103,
+      "orient": "face",
+      "coupe": false
+    },
+    "lampadaire-6": {
+      "file": "quai-rue.png",
+      "uv": [
+        0.405,
+        0.141,
+        0.428,
+        1
+      ],
+      "at": [
+        5.5,
+        0,
+        -36.6
       ],
       "width": 1.103,
       "orient": "face",
