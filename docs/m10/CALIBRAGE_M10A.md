@@ -1,6 +1,6 @@
-# Annexe de calibrage de l'avenant M10-A — paliers de decks adverses et PV du joueur (PROPOSÉ, à valider)
+# Annexe de calibrage de l'avenant M10-A — paliers de decks adverses et PV du joueur (VALIDÉE)
 
-**Date :** 2026-10-20 (lot M10-A, étape 4). **Statut : PROPOSÉ, à valider par le responsable avant d'être figé** (fiche d'arbitrages du lot M10-A, entrées K1 à K5 : <https://claude.ai/artifact/B6y9Qow8gbuNhk8ragTvni>).
+**Date :** 2026-10-20 (lot M10-A, étape 4). **Statut : VALIDÉE ET FIGÉE par le responsable le 2026-10-20** (fiche d'arbitrages du lot M10-A, entrées K1 à K5, toutes sur l'option recommandée, sans note : <https://claude.ai/artifact/B6y9Qow8gbuNhk8ragTvni>). Annexe de `contracts/06_AVENANT_M10A_MODE_AVENTURE.md` (AV-08) ; elle ne change que sur une nouvelle décision du responsable.
 Règle (AV-08 du texte canonique) : décision du responsable sur l'ARB-M10-09 : **paliers de decks adverses** et **PV du
 joueur qui montent à chaque combat, sans plafond** ; **pas de format miroir ni de PV égaux** ; simulation « plus favorable
 au joueur de manière générale » que celle de la fiche (inaugural 52 %, cadet 57 %, bras droit 46 %, chef 37 %).
@@ -10,7 +10,7 @@ Code : `src/aventure/paliers.ts` (valeurs) ; mesure : `tools/m10a-paliers.ts` ; 
 ## 1. Lecture de la note du responsable
 
 - **« cartes basiques »** = les **cartes grises** (neutres) de la populace ; « Basics » reste le nom des cartes I à IV
-  d'une famille. *(Lecture à confirmer.)*
+  d'une famille. *(Lecture confirmée par le responsable, K1.)*
 - « la plupart des cartes de famille remplacent certaines cartes basiques, voire toutes, **selon le niveau du joueur** » :
   la composition d'un adversaire suit le **niveau du joueur**, c'est-à-dire **le nombre de familles dont il a reçu les
   Basics** (1 à 4). Un membre rencontré tôt a encore beaucoup de cartes grises ; tard, il a les quatre familles.
@@ -18,7 +18,7 @@ Code : `src/aventure/paliers.ts` (valeurs) ; mesure : `tools/m10a-paliers.ts` ; 
   « ce qui signifie qu'ils ont vaincu d'autres membres ») ; **duelliste avancé** (les quatre familles, avec ou sans
   variantes) ; **élite** (les chefs : leurs variantes et leur Signature) ; **champions** (le Championnat).
 
-## 2. Valeurs proposées
+## 2. Valeurs (validées le 2026-10-20)
 
 ### PV du joueur
 
@@ -96,11 +96,13 @@ Duels facultatifs (voie entraînée ; ils comptent dans les PV, sauf le défi de
 - **Durée** : 7 tours au prologue, 8 à 11 chez les lieutenants de la première maison, 12 à 15 en fin d'aventure.
 - **Pas de plafond** : en fin de voie entraînée, le joueur a 150 à 175 PV ; les champions en ont 110 et 120.
 
-## 4. Ce qu'il faut valider
+## 4. Décisions du responsable (2026-10-20)
 
-1. La lecture de « cartes basiques » (§1).
-2. **PV du joueur** : 50 au départ, +3 par combat ; défaites comptées, abandon non.
-3. **Composition selon le niveau du joueur** (§2), et ce qui en découle : un même cadet est plus fort si on le défie tard.
-4. **PV et IA des adversaires** (§2).
-5. Le **premier chef** reste le défi le plus dur du début (sans Signature, le joueur affronte la sienne) : voulu, ou à
-   adoucir encore ?
+Relues dans la collection `decisions` de la fiche du lot M10-A (choix entre 18:45 et 18:49 UTC) :
+
+1. **K1** « cartes basiques » = les cartes grises de la populace : **confirmé**.
+2. **K2** PV du joueur : **50 au départ, +3 par combat** (défaites comptées, abandon non) : **validé**.
+3. **K3** composition des adversaires **selon le niveau du joueur** : **validée** (un même cadet est plus fort si on le
+   défie tard).
+4. **K4** PV et IA des adversaires (§2) : **validés**.
+5. **K5** le premier chef, défi le plus dur du début (42 % sans entraînement, 52 % entraîné) : **gardé**.

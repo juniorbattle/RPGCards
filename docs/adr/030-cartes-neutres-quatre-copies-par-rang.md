@@ -1,7 +1,7 @@
 # ADR 030 — Lot de départ : seize cartes neutres sans famille (M10)
 
 Date : 2026-10-20  
-**Statut : APPROUVÉ pour la COMPOSITION du lot neutre initial et ses propriétés intrinsèques ; avenant moteur encore requis.**
+**Statut : APPROUVÉ pour la COMPOSITION du lot neutre initial et ses propriétés intrinsèques ; avenant moteur approuvé le 2026-10-20 : `contracts/06_AVENANT_M10A_MODE_AVENTURE.md` (AV-01 à AV-04), appliqué (ADR 033).**
 
 > **DÉCISIONS DU RESPONSABLE (2026-10-20, fiche M10 <https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7>) :** Puissances des neutres **3 / 6 / 9 / 12**, Assaut et Garde, Secondaire selon le Rang, jamais d’affinité (ARB-M10-03) ; **garde `family !== null` autorisée dans `clash.ts`**, Prisme et Convergence tels que proposés (ARB-M10-02), avec les preuves de l’avenant (A-11). Tableau complet : `docs/FICHE_ARBITRAGES_M10.md`, « Décisions du responsable ».
 

@@ -6,6 +6,14 @@ raison**, alternatives. Rien ici n'est décidé par la session ; les ADR 029, 03
 session principale en fera une fiche interactive. **Fiche interactive publiée le 2026-10-20** (privée, 17 entrées : les 11
 arbitrages, ARB-M10-12 ajoutée le même jour et les 5 décisions prises seules ; choix enregistrés dans sa collection `decisions`) : <https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7>.
 
+## Lot M10-A — décisions du responsable (2026-10-20, fiche du lot <https://claude.ai/artifact/B6y9Qow8gbuNhk8ragTvni>)
+
+Neuf entrées, toutes sur l'option recommandée, sans note (choix entre 18:40 et 18:49 UTC, relus par la session M10-A) :
+**C1** texte canonique de l'avenant **validé** et versé dans `contracts/06_AVENANT_M10A_MODE_AVENTURE.md` ; **C2** écriture
+épicène, sans point médian ; **C3** l'ancien Quai en secours hors QA jusqu'à A2 puis A1 ; **K1** « cartes basiques » =
+cartes grises (confirmé) ; **K2** PV du joueur 50, +3 par combat ; **K3** composition selon le niveau ; **K4** PV et IA
+des adversaires ; **K5** premier chef gardé ; **R1** lot M10-A **reçu**. Détail : `docs/m10/CALIBRAGE_M10A.md` §4.
+
 ## Décisions du responsable — 2026-10-20
 
 Relues depuis la fiche d'arbitrages M10 interactive du 2026-10-20 (<https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7>, 17 entrées, choix entre 14:48 et 15:25 UTC, relus par la session principale). **Quinze choix sur dix-sept suivent l'option recommandée** ; ARB-M10-09 et ARB-M10-11 suivent une
