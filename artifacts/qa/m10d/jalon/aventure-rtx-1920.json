@@ -1,0 +1,181 @@
+{
+  "date": "2026-10-20T21:31:59.844Z",
+  "commit": "eef4c3a",
+  "viewport": [
+    1920,
+    1080
+  ],
+  "checks": [
+    "OK écran titre : pas d’aventure, « Nouvelle aventure » seule",
+    "OK création : les quatre Rangs de cartes grises (×4) présentés",
+    "OK départ : deck de 16 neutres, sans Signature",
+    "OK sauvegarde à part : lqv.aventure écrite, lqv.save jamais créée",
+    "OK objectif : Kaï ; statut : sans famille",
+    "OK devant kai-prologue",
+    "OK « Pas maintenant » : aucun duel forcé, objectif mis à jour",
+    "OK devant kai-prologue",
+    "OK préparation : les deux decks annoncés (seize cartes grises de chaque côté)",
+    "OK duel : bandeau du prototype visible",
+    "OK duel du prologue : seize cartes grises de chaque côté dans le moteur (avenant M10-A)",
+    "OK duel du prologue : cartes neutres dessinées en main (blanches et grises, sans emblème)",
+    "OK rechargement pendant le duel : « Reprendre le duel en cours »",
+    "OK reprise exacte du duel (même hash)",
+    "OK retour au Quai : la foule",
+    "OK abandon au prologue : les quatre familles invitent quand même",
+    "OK le premier émissaire (Astre) s’avance et cite les trois autres",
+    "OK « Chercher une autre voie » : les autres émissaires et leurs lieux",
+    "OK devant emissaire-Voile",
+    "OK « Revenir » : aucune carte familiale avant la confirmation",
+    "OK devant emissaire-Voile",
+    "OK confirmation : affilié au Voile, quatre Basics au registre",
+    "OK deck : 12 neutres + 4 Basics du Voile",
+    "OK statut : voie du Voile",
+    "OK préparation du cadet : l’enjeu (variante) annoncé",
+    "OK victoire contre le cadet (issue imposée en QA) : variante III au registre",
+    "OK devant cadet-Voile",
+    "OK cadet battu : revanche proposée, sans récompense",
+    "OK revanche gagnée : registre inchangé (aucune duplication)",
+    "OK deck de l’aventure légal (R-AV)",
+    "OK reprise : les Ruelles, au même endroit (ruelles, 4.50, 1.20)",
+    "OK devant brasDroit-Voile",
+    "OK bras droit (Sélène) vaincu : variante IV au registre",
+    "OK devant chef-Voile",
+    "OK chef (Ilse) vaincu : Signature du Voile au registre, équipée ; état « chef »",
+    "OK Salle des Bannières : défi de la Ronce engagé, ses quatre Basics une fois, 8 neutres restantes",
+    "OK objectif : défier Gaspard, cadet de la Ronce",
+    "OK devant epreuve-Ronce",
+    "OK devant epreuve-Ronce",
+    "OK devant epreuve-Ronce",
+    "OK Épreuve du quartier de la Ronce : trois victoires, variante I au registre",
+    "OK Quai de l’aventure : le Quai en quatre rangs (ARB-M10-12)",
+    "OK HUD : « Le Quai »",
+    "OK Quai en rangs : diorama des rangs affiché (62 plans non approuvés, QA seulement)",
+    "OK marche au clavier au travers du passage ouest jusqu’à la rue Haute (z -15.0)",
+    "OK devant chef-Ronce",
+    "OK Mère Aubépine dans la ruelle des Lanternes (rang 3, z -26.6) ; défi pas encore ouvert",
+    "OK jeu par défaut : accueil habituel, sans le mode Aventure ni sa sauvegarde"
+  ],
+  "steps": [
+    {
+      "name": "titre",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/01-titre.png"
+    },
+    {
+      "name": "nouvelle-aventure",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/02-nouvelle-aventure.png"
+    },
+    {
+      "name": "arrivee-quai",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/03-arrivee-quai.png"
+    },
+    {
+      "name": "kai-defi",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/04-kai-defi.png"
+    },
+    {
+      "name": "preparation-prologue",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/05-preparation-prologue.png"
+    },
+    {
+      "name": "duel-prologue",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/06-duel-prologue.png"
+    },
+    {
+      "name": "resultat-prologue",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/07-resultat-prologue.png"
+    },
+    {
+      "name": "foule",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/08-foule.png"
+    },
+    {
+      "name": "premier-emissaire",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/09-premier-emissaire.png"
+    },
+    {
+      "name": "chercher-voie",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/10-chercher-voie.png"
+    },
+    {
+      "name": "ruelles",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/11-ruelles.png"
+    },
+    {
+      "name": "confirmation-voile",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/12-confirmation-voile.png"
+    },
+    {
+      "name": "basics-voile",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/13-basics-voile.png"
+    },
+    {
+      "name": "premier-defi",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/14-premier-defi.png"
+    },
+    {
+      "name": "preparation-cadet",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/15-preparation-cadet.png"
+    },
+    {
+      "name": "duel-cadet",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/16-duel-cadet.png"
+    },
+    {
+      "name": "victoire-cadet",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/17-victoire-cadet.png"
+    },
+    {
+      "name": "deck-registre",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/18-deck-registre.png"
+    },
+    {
+      "name": "journal",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/19-journal.png"
+    },
+    {
+      "name": "titre-reprise",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/20-titre-reprise.png"
+    },
+    {
+      "name": "signature-voile",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/21-signature-voile.png"
+    },
+    {
+      "name": "salle-des-bannieres",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/22-salle-des-bannieres.png"
+    },
+    {
+      "name": "engagement-ronce",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/23-engagement-ronce.png"
+    },
+    {
+      "name": "defi-ronce-engage",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/24-defi-ronce-engage.png"
+    },
+    {
+      "name": "quai-apres-engagement",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/25-quai-apres-engagement.png"
+    },
+    {
+      "name": "epreuve-ronce",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/26-epreuve-ronce.png"
+    },
+    {
+      "name": "rang-2-rue-haute",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/27-rang-2-rue-haute.png"
+    },
+    {
+      "name": "rang-3-aubepine",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/28-rang-3-aubepine.png"
+    },
+    {
+      "name": "rang-3-placette-puits",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/29-rang-3-placette-puits.png"
+    },
+    {
+      "name": "rang-4-cour-chapelle",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/f341ac4b-1fe5-4057-a172-5e6b34865b33/scratchpad/jalon/aventure-rtx-1920/30-rang-4-cour-chapelle.png"
+    }
+  ],
+  "issues": []
+}
