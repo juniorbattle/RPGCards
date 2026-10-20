@@ -59,6 +59,35 @@ export function installAventureStyles(): void {
 .av-tech { display: grid; place-items: center; width: 74px; height: 104px; border-radius: 6px; border: 1px solid #e2c48a; background: #1a1622; color: #ffe7b0; font-size: 12px; text-align: center; }
 .av-tech b { font: 700 11px/1 system-ui, sans-serif; color: #cfc3ac; text-transform: uppercase; } .av-tech span { font: 700 14px/1.2 Georgia, serif; }
 .av-resultat .av-h1 { font-size: clamp(34px, 4vw, 52px); }
+.av-confirm.av-ecran { width: min(1240px, 100%); max-height: calc(100vh - 24px); }
+.av-ecran-tete { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.av-onglets { display: flex; gap: 6px; margin: 8px 0 6px; flex-wrap: wrap; }
+.av-deck-grille { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px 22px; align-items: start; }
+@media (max-width: 1080px) { .av-deck-grille { grid-template-columns: 1fr; } }
+.av-rangs { display: grid; grid-template-columns: repeat(2, auto); gap: 4px 18px; justify-content: start; }
+.av-rang { display: grid; gap: 2px; }
+.av-deck-cote h3:first-of-type { margin-top: 6px; }
+.av-aide { color: #cfc3ac; font-size: 13px; }
+.av-resume { color: #d8ccb4; }
+.av-rang-nom { font: 700 15px/1.2 Georgia, serif; color: #e2c48a; }
+.av-rang-cases { --card-w: 62px; display: flex; flex-wrap: wrap; gap: 6px; }
+.av-case { display: grid; gap: 2px; justify-items: center; padding: 3px; border: 2px solid transparent; border-radius: 9px; background: none; color: #d8ccb4; font: 11px/1.2 system-ui, sans-serif; cursor: pointer; }
+.av-case:hover { border-color: rgba(226, 196, 138, 0.45); } .av-case.sel { border-color: #ffe7b0; background: rgba(226, 196, 138, 0.12); }
+.av-case.actuelle { border-color: #8fdc6a; }
+.av-case .card { pointer-events: none; }
+.av-choix { --card-w: 58px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 6px; margin: 0; padding: 6px 8px; border: 1px dashed rgba(226, 196, 138, 0.55); border-radius: 9px; }
+.av-choix p { flex-basis: 100%; margin: 0 0 2px; color: #cfc3ac; font-size: 12.5px; }
+.av-sig-ligne { display: flex; align-items: center; gap: 12px; } .av-sig-ligne .av-cards { --card-w: 62px; margin: 0; }
+.av-col-fam { --famc: #a9a6a0; margin: 10px 0; padding: 4px 0 6px 10px; border-left: 4px solid var(--famc); }
+.av-col-fam.fam-Cendre { --famc: #d0541f; } .av-col-fam.fam-Voile { --famc: #5d63c4; } .av-col-fam.fam-Ronce { --famc: #3f8a46; } .av-col-fam.fam-Astre { --famc: #c9a23a; }
+.av-col-fam h3 { display: flex; align-items: center; gap: 4px; } .av-col-fam .av-emb svg { width: 20px; height: 20px; }
+.av-col-cartes { --card-w: 70px; display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 8px 6px; }
+.av-col-entree { position: relative; display: grid; gap: 3px; justify-items: center; align-content: start; color: #d8ccb4; font: 11px/1.25 system-ui, sans-serif; text-align: center; }
+.av-col-titre { color: #e2c48a; font-weight: 700; }
+.av-col-entree.verrou .card { filter: grayscale(1) brightness(0.42); }
+.av-col-entree.verrou .av-col-texte { color: #a89e8c; }
+.av-badge { padding: 0 6px; border-radius: 999px; background: #e2c48a; color: #1a1408; font: 700 10px/1.5 system-ui, sans-serif; }
+.av-col-techs { list-style: none; padding-left: 4px; margin: 2px 0; columns: 2; } .av-col-techs li.faite { color: #b8e6a0; }
 `;
   document.head.append(s);
 }

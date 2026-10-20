@@ -74,7 +74,8 @@ les commandes du jeu standard ; « Menu » met en pause (reprendre, sauvegarder 
    famille.
 9. **Le premier défi** : votre cadet (l'émissaire) vous défie ; la préparation annonce **l'enjeu** (la variante de
    Rang III de la famille). Fin du prologue (M10-B).
-10. **Au-delà (M10-C et D, en avance)** : bras droit (Kaï, Maëlle, Sélène, Orin : variante IV), chef (Signature ∞) ;
+10. **La maison (M10-C)** : bras droit (Kaï, Maëlle, Sélène, Orin : variante IV), chef (Bran, Mère Aubépine, Ilse,
+    Halvard, avec leurs identités V2 : la Signature, équipée à son gain) ;
     revanches sans récompense ; une fois le chef vaincu, la **Salle des Bannières** (porte de la salle de jeu de cartes)
     engage le défi officiel d'une autre famille (ses quatre Basics) ; duels de rue et défi de Kaï facultatifs, posés par
     le directeur des rencontres (au plus deux par îlot, jamais d'embuscade).
@@ -87,15 +88,19 @@ les commandes du jeu standard ; « Menu » met en pause (reprendre, sauvegarder 
     vaincus : les Quatre Bannières (trois chefs à battre, une Signature différente à chaque victoire : changez-la dans le
     deck), le Miroir (Kaï), la Finale contre Ysolde, la Tenante du titre (deux manches gagnantes, une Signature
     différente à chaque manche) ; aucune carte en jeu, un titre ; champions à 110 PV (120 en finale).
-13. **Deck** : 16 cartes, quatre par Rang, une seule Signature, deux Techniques ; versions Basic ↔ variante ; **registre
-    des gains** visible. **Journal** : quêtes dérivées des faits, états des familles.
+13. **Deck et collection** (bouton « Deck », M10-C) : trois onglets. **Deck** : les seize cartes rangées par Rang ;
+    choisir une case montre ce qui peut y entrer sans rompre la règle R-AV (une neutre, la Basic ou une variante possédée
+    d'une identité absente des autres cases) ; une seule Signature ; deux Techniques ; « Enregistrer et fermer » ou
+    « Annuler les changements ». **Collection** : les neutres, puis par famille ses quatre Basics, ses quatre variantes
+    et sa Signature, possédées (avec l'origine du gain) ou grisées avec la manière de les gagner. **Registre des gains** :
+    chaque gain une fois, avec son origine. **Journal** : quêtes dérivées des faits, états des familles.
 14. **Fermer la page et revenir** : « Continuer l'aventure » ramène au même îlot et au même endroit, ou reprend
     exactement le duel en cours (rejeu et hash).
 
 ## Ce que le prototype ne fait pas encore
 
-- Les chefs ont une apparence **provisoire** (gabarits PNJ) ; les cadets n'ont pas d'accent de couleur familial ; les
-  bras droits gardent leurs identités V2. Aucune image nouvelle.
+- Les chefs ont leurs identités V2 (ADR 034, **à valider par le responsable**) ; les cadets n'ont pas d'accent de
+  couleur familial ; les bras droits gardent leurs identités V2. Aucune image nouvelle.
 - Championnat, Épreuves et Joutes en squelette (textes et adversaires provisoires, apparences de PNJ) ; pas de Grande
   Cour (M09 en pause) : la proclamation se fait au Parvis ; foule figurée par quelques PNJ.
 - Textes de prototype ; aucun son.

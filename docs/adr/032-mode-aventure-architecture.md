@@ -73,6 +73,17 @@ Clash avant la ratification d'un avenant (M10-A). Le brief du 2026-10-20 demande
   balises des passages sont des repères (aucun dialogue) ; la place de la Halle, la placette du Puits et la cour de la
   Chapelle ont leur texte.
 
+## Amendement 3 (2026-10-20, lot M10-C, passes 84 et 85) : éditeur de deck, Collection, chefs
+
+- **Éditeur case par case** (`deck.ts` : `choixPourCase`, `remplacerCase`, `basculerTechnique`) : une case n'accepte que
+  ce qui garde la forme R-AV (même Rang, identité absente des autres cases et possédée, neutres dans la limite de celles
+  possédées) ; le deck reste légal par construction, `validerDeckAv` reste le contrôle final avant l'enregistrement.
+- **Écran Collection** (`collection.ts`, module pur) : vue **dérivée** du registre et de l'état, sans autre source ;
+  chaque carte possédée porte l'origine de son gain, chaque carte manquante la manière de la gagner (rien n'est caché).
+- L'écran « Deck et collection » (`app.ts`) a trois onglets : Deck, Collection, Registre des gains ; « Enregistrer et
+  fermer » écrit la sauvegarde comme avant.
+- Les chefs portent leurs identités V2 (ADR 034).
+
 ## Alternatives écartées
 
 - **Réutiliser l'enveloppe standard (`Shell`)** en lui donnant une autre source de données : refonte du code du mode
