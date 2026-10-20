@@ -1,0 +1,17 @@
+{
+  "id": "preuve-emprise",
+  "projet": "Les Quatre Voies (RPGCards)",
+  "decision": "ADR 028, « Profondeur praticable » (passes 62 et 63) : preuve de conception, laboratoire seulement",
+  "source": "dessiné par code (tools/m09-profondeur-preuve.mjs, paintEmprise : canvas 2D, graine fixe) ; aucune image générée, aucune image externe",
+  "sortie": {
+    "fichier": "public/decors/preuve-emprise.png",
+    "sha256": "aa1c471bdf40fb0c4f8d20209c3a379ec730de45d62b71d779fd9908d5ebbab8",
+    "octets": 592603,
+    "dimensions": [
+      1728,
+      256
+    ]
+  },
+  "usage": "emprise des blocs du Quai profond (sol sombre sous les blocs, lue quand un bloc s’efface) ; plan de preuve",
+  "approved": false
+}

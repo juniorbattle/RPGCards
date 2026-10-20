@@ -1,9 +1,9 @@
 {
-  "date": "2026-10-20T03:53:04.662Z",
-  "commit": "30f5b28",
+  "date": "2026-10-20T04:08:00.037Z",
+  "commit": "85d20ab",
   "mode": "assembler",
   "checks": [
-    "OK manifeste de la preuve : 16 plans (façades, pied, murs découpés ; textures partagées), 16 lumières"
+    "OK manifeste de la preuve : 19 plans (façades, pied, murs découpés ; textures partagées), 16 lumières"
   ],
   "console": [],
   "plans": {
@@ -35,7 +35,7 @@
         0,
         0,
         0.5,
-        1
+        0.91
       ],
       "at": [
         0,
@@ -222,6 +222,51 @@
         -7
       ],
       "width": 8,
+      "orient": "cote",
+      "coupe": false
+    },
+    "emprise": {
+      "file": "preuve-emprise.png",
+      "at": [
+        0,
+        0.04,
+        -7
+      ],
+      "width": 54,
+      "orient": "sol",
+      "coupe": false
+    },
+    "bout-rue-1": {
+      "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        0.75,
+        1
+      ],
+      "at": [
+        -15,
+        0,
+        -14
+      ],
+      "width": 6,
+      "orient": "cote",
+      "coupe": false
+    },
+    "bout-rue-2": {
+      "file": "preuve-joue.png",
+      "uv": [
+        0,
+        0,
+        0.75,
+        1
+      ],
+      "at": [
+        15,
+        0,
+        -14
+      ],
+      "width": 6,
       "orient": "cote",
       "coupe": false
     }

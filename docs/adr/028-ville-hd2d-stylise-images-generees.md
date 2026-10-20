@@ -11,7 +11,8 @@ profondeur, feuille du joueur en 64 × 96 ; 16 images sur 30, voir « Profondeur
 64 × 96 ») ; **fiche d'arbitrages de la porte remplie** (passe 61 : emblèmes brodés, cadrage élargi, lumières
 ambrées, sans ruelles peintes ; **profondeur praticable demandée**, voir « Fiche d'arbitrages de la porte ») ;
 **conception de la profondeur praticable proposée** (passe 62, preuve jouable au laboratoire, voir « Profondeur
-praticable : conception proposée »), **à décider par le responsable avant toute image** ; approbation en bloc sur la
+praticable : conception proposée ») et **retenue par le responsable** (passe 63 : décor des zones arrière à
+améliorer, principe à porter dans divers quartiers) ; approbation en bloc sur la
 prochaine planche. **Remplace l'ADR 026** comme direction artistique de la
 ville ; **amende l'ADR 027** (D2, D3, D4, D10) et l'exception d'AGENTS (décors de la ville) ; s'inscrit dans l'ADR 024
 (caméra de face ; la Grande Cour la règle plus haute, dans la plage décidée).
@@ -423,3 +424,21 @@ Quai en bande.
   - la caméra (part du suivi, élévation au fond) ;
   - la vue en coupe : bloc effacé, ou trouée ronde autour du personnage ;
   - ou une autre forme : terrasses étagées, passages plus larges, caméra plus haute.
+
+### Décision du responsable (passe 63, 2026-10-20)
+
+Dans la session de la porte : « j'aime beaucoup ton idee de la profondeur praticable mais il faut optimiser et ameliorer
+le decors dde zone arriere car elle sont encore trop approximatif selon tes images reviews mais l'idee est excellente
+surtout avec notre vue frontale cela donne de la complexite a nos quartiers de ville et on pourrait l;integrer a divers
+quartiers ».
+
+- **Retenu** : la profondeur praticable (blocs, passages, rue haute, caméra qui suit et s'élève, vue en coupe), avec la
+  vue frontale ; le principe sera porté dans divers quartiers.
+- **À améliorer** : le décor des zones arrière (rue haute, passages, emprise des blocs), encore approximatif ; d'abord
+  par script, puis par des images peintes à l'échelle des personnages, annoncées avant la génération.
+- **Fait par script (passe 63)** : emprise sombre des blocs, murs aux bouts de la rue haute, pied de sa façade recadré et
+  éclairé, lanternes au milieu des passages, bloc effacé à 8 % ; 24 plans au plus par îlot (19 au Quai profond).
+- **Annoncé, à générer après accord** (`tools/m09-lot-quai-3.mjs`, 2 images, 18 sur 30 après le lot) : la façade de la
+  rue haute peinte à l'échelle des personnages (elle est aujourd'hui le second rang, peint pour être vu de loin) ; les
+  murs des passages, deux variantes dans une image (aujourd'hui dessinés par code).
+- Rien n'est approuvé (`approved: false`) ; approbation en bloc sur la prochaine planche (A1).
