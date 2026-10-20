@@ -16,7 +16,7 @@
  */
 import type { Disc, Ilot, Rect, Vec2, Zone } from './monde';
 import { BOLLARDS, FACADE_Z, LAMPS, NPC_RADIUS, NPCS, QUAY_Z, STALL, TALK_RADIUS, X_MAX, X_MIN, type IlotNpc } from './quai';
-import { balisesRangs, ilotRangs, planRangs, type QuartierRangs } from './rangs';
+import { balisesRangs, cheminsRangs, ilotRangs, planRangs, type QuartierRangs } from './rangs';
 
 /** Le Quai en rangs (grammaire de `rangs.ts`). Les passages de la bande 1 sont aux raccords des trois images de façades
  *  du diorama (ouest, centre de l'essai, est), écartées de 3 m de part et d'autre. */
@@ -35,8 +35,10 @@ export const QUAI_RANGS: QuartierRangs = {
   ],
 };
 export const PLAN_QUAI = planRangs(QUAI_RANGS);
-/** Balises des passages (passe 67) : aller vers le rang suivant, retour au précédent ; leur nom en zone « info ». */
+/** Bouches des passages (passe 67) : le nom du rang où l'on va, aller ou retour, en zone « info » (bulle en approchant). */
 export const BALISES_QUAI = balisesRangs(PLAN_QUAI, 'le Quai');
+/** Chemins lumineux (passe 68) : au travers des passages, d'un passage au suivant, et jusqu'au cœur (devant la fontaine). */
+export const CHEMINS_QUAI = cheminsRangs(PLAN_QUAI, { x: 2.8, z: -39.2 });
 
 /** Fond des blocs du premier rang (bord de la rue Haute) et fond de la rue Haute. */
 export const BLOCK_BACK_Z = PLAN_QUAI.bandes[0]!.z0;

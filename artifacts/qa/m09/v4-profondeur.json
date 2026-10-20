@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-20T06:26:39.246Z",
-  "commit": "9a773a9",
+  "date": "2026-10-20T06:49:44.457Z",
+  "commit": "0701e59",
   "mode": "verifier",
   "checks": [
     "OK Quai en rangs dessiné par son diorama de preuve (62 plans découpés dans 12 images, 125.4 Mo de mémoire GPU), aucun refus",
@@ -88,87 +88,87 @@
     "timings": {
       "quai/ciel": {
         "bytes": 3067681,
-        "fetchMs": 53.5,
-        "hashMs": 1.8,
-        "decodeMs": 89,
-        "uploadMs": 5.5
+        "fetchMs": 80.6,
+        "hashMs": 2.2,
+        "decodeMs": 98.3,
+        "uploadMs": 6.3
       },
       "quai/ville-haute": {
         "bytes": 3466186,
-        "fetchMs": 76.7,
-        "hashMs": 2.1,
-        "decodeMs": 91.8,
-        "uploadMs": 4.6
+        "fetchMs": 85,
+        "hashMs": 2.2,
+        "decodeMs": 104.3,
+        "uploadMs": 4.9
       },
       "quai/fond-rang4--31": {
         "bytes": 6183450,
-        "fetchMs": 100.8,
-        "hashMs": 3.5,
-        "decodeMs": 87.9,
-        "uploadMs": 21.2
+        "fetchMs": 171,
+        "hashMs": 4,
+        "decodeMs": 77.2,
+        "uploadMs": 21.1
       },
       "quai/cour-chapelle": {
         "bytes": 2533132,
-        "fetchMs": 56,
-        "hashMs": 1.6,
-        "decodeMs": 78.5,
-        "uploadMs": 19
+        "fetchMs": 68,
+        "hashMs": 1.8,
+        "decodeMs": 93.3,
+        "uploadMs": 21.4
       },
       "quai/cour-banc": {
         "bytes": 1383305,
-        "fetchMs": 60.5,
-        "hashMs": 1.3,
-        "decodeMs": 59.2,
-        "uploadMs": 1.6
+        "fetchMs": 52.5,
+        "hashMs": 1.2,
+        "decodeMs": 38.5,
+        "uploadMs": 1.8
       },
       "quai/lampadaire-5": {
         "bytes": 79461,
-        "fetchMs": 20.9,
-        "hashMs": 0.3,
-        "decodeMs": 7.1,
+        "fetchMs": 18.3,
+        "hashMs": 0.5,
+        "decodeMs": 11.5,
         "uploadMs": 1.6
       },
       "quai/flanc-rang4--31": {
         "bytes": 6392443,
-        "fetchMs": 136.1,
-        "hashMs": 3.6,
-        "decodeMs": 62.8,
-        "uploadMs": 28.2
+        "fetchMs": 154.5,
+        "hashMs": 4.1,
+        "decodeMs": 81.6,
+        "uploadMs": 26
       },
       "quai/mur-bout-4-1": {
         "bytes": 1967375,
-        "fetchMs": 86.3,
-        "hashMs": 1.2,
-        "decodeMs": 63.5,
-        "uploadMs": 3.8
+        "fetchMs": 106.4,
+        "hashMs": 2.2,
+        "decodeMs": 87,
+        "uploadMs": 4.2
       },
       "quai/placette-tonneaux": {
         "bytes": 158922,
-        "fetchMs": 88,
+        "fetchMs": 97.6,
         "hashMs": 0.1,
-        "decodeMs": 58.5,
+        "decodeMs": 72.7,
         "uploadMs": 1.6
       },
       "quai/facades-ouest": {
         "bytes": 5809679,
-        "fetchMs": 128.2,
+        "fetchMs": 162.9,
         "hashMs": 3.4,
-        "decodeMs": 65.5,
-        "uploadMs": 9.6
+        "decodeMs": 79.4,
+        "uploadMs": 11.9
       },
       "quai/premier-plan": {
         "bytes": 2871612,
-        "fetchMs": 112.1,
-        "hashMs": 1.7,
-        "decodeMs": 61,
-        "uploadMs": 12
+        "fetchMs": 148.3,
+        "hashMs": 1.9,
+        "decodeMs": 57.3,
+        "uploadMs": 7.7
       },
       "quai/eau": {
         "bytes": 3498048,
-        "fetchMs": 114.6,
-        "hashMs": 2.4,
-        "decodeMs": 60.9,
-        "uploadMs": 32.8
+        "fetchMs": 150.8,
+        "hashMs": 2.2,
+        "decodeMs": 57.4,
+        "uploadMs": 31.9
       }
     },
     "gpuBytes": {
@@ -181,16 +181,16 @@
   },
   "stats": {
     "camera": "frontale",
-    "calls": 204,
-    "triangles": 5118,
+    "calls": 251,
+    "triangles": 5212,
     "textures": 44,
-    "geometries": 105,
-    "programs": 20,
+    "geometries": 152,
+    "programs": 21,
     "lights": 16,
-    "cpuMs": 4.6,
+    "cpuMs": 6.4,
     "frames": 2,
-    "buildMs": 464,
-    "firstFrameMs": 1268,
+    "buildMs": 472,
+    "firstFrameMs": 1405,
     "mountMs": null,
     "mountFrameMs": null
   },

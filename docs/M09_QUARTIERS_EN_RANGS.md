@@ -65,11 +65,15 @@ Le diorama et la logique de marche lisent ce même plan.
 - **Fondu lointain.** Ce que la caméra dépasse s'efface tout à fait, de 12 à 18 m devant le personnage : les rangs
   dépassés de deux, et leurs halos.
 - **Fantôme assourdi** (passe 67) : gris et plus sombre, pour que les détails clairs (emblèmes dorés, vitraux) ne flottent
-  pas dans la vue. Le sol et le pied des rangs dépassés restent visibles : ce sont les repères du chemin du retour.
-- **Balises des passages** (passe 67, demandées par le responsable) : à chaque bouche d'un passage, une lueur ambrée au
-  sol et trois chevrons qui filent lentement vers le rang où il mène, à l'aller comme au retour. Le nom de ce rang
-  s'affiche en approchant (« Vers la rue Haute », « Retour vers le Quai »). La grammaire les donne (`balisesRangs`) et le
-  moteur les dessine (`balises.ts`).
+  pas dans la vue. Seul le rang juste devant le personnage est en fantôme. Les rangs déjà traversés s'effacent (passe 68,
+  décision du responsable) : les chemins lumineux guident le retour.
+- **Chemins lumineux** (passe 68, à la place des chevrons de la passe 67 : « pas des flèches ») : une lueur ambrée très
+  douce, posée sur le dessus des pavés, relie les rangs au travers des passages jusqu'au cœur. Le tracé est ondulé, les
+  coudes arrondis, sans sens marqué, et la lueur se révèle autour du personnage. La grammaire les donne
+  (`cheminsRangs`), le moteur les dessine (`chemins.ts`). Le nom du rang s'affiche en approchant d'un passage
+  (« Vers la rue Haute », « Retour vers le Quai »).
+- **Ombres** (passe 68) : ombre de contact sous chaque objet, pied des façades et des murs des passages dans l'ombre,
+  pied de chaque plan assombri, pour qu'aucun objet ne paraisse posé sur la scène.
 - **Raccords** (passe 67) : chaque façade est un morceau de frise posé d'un mur mitoyen à un autre (jamais une maison
   coupée) ; les murs des passages restent sous la ligne des toits ; le monument du cœur prend place au milieu d'une
   rangée de maisons.

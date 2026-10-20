@@ -1,0 +1,432 @@
+{
+  "date": "2026-10-20T06:50:18.297Z",
+  "commit": "0701e59",
+  "mode": "verifier",
+  "checks": [
+    "OK porte (QA) : le Quai dessiné par son diorama (8 plans, 85.36 Mo de mémoire GPU), aucune image avant la décision",
+    "OK porte (QA) : le joueur dessiné par sa feuille en pixel art (non approuvée, admise en QA seulement), aucun refus",
+    "OK politique du jeu : plans et feuille non approuvés refusés, Quai et joueur par code",
+    "OK politique du jeu identique au pixel près au Quai actuel (10/10 captures)",
+    "OK aucune erreur ni avertissement de console (0)"
+  ],
+  "console": [],
+  "runs": {
+    "actuel-1920": {
+      "dec": {
+        "policy": "code",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [],
+        "timings": {},
+        "gpuBytes": {},
+        "ilot": "quai",
+        "world": "code",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "spr": {
+        "policy": "code",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [],
+        "timings": {},
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 54,
+        "geometries": 66,
+        "programs": 27,
+        "lights": 15,
+        "cpuMs": 1.6,
+        "frames": 5,
+        "buildMs": 513,
+        "firstFrameMs": 1584,
+        "mountMs": null,
+        "mountFrameMs": null
+      },
+      "figurePx": 177.01
+    },
+    "jeu-1920": {
+      "dec": {
+        "policy": "approuvees",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [
+          "quai/ciel : plan non approuvé, refusé hors QA (décor par code gardé)",
+          "quai/troisieme-rang : plan non approuvé, refusé hors QA (décor par code gardé)",
+          "quai/second-rang : plan non approuvé, refusé hors QA (décor par code gardé)",
+          "quai/facades : plan non approuvé, refusé hors QA (décor par code gardé)",
+          "quai/pied-facades : plan non approuvé, refusé hors QA (décor par code gardé)",
+          "quai/rue : plan non approuvé, refusé hors QA (décor par code gardé)",
+          "quai/premier-plan : plan non approuvé, refusé hors QA (décor par code gardé)",
+          "quai/eau : plan non approuvé, refusé hors QA (décor par code gardé)"
+        ],
+        "timings": {},
+        "gpuBytes": {},
+        "ilot": "quai",
+        "world": "code",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "spr": {
+        "policy": "approuvees",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [
+          "player-Cendre (feuille player) : feuille non approuvée, refusée hors QA (dessin par code gardé)"
+        ],
+        "timings": {},
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 54,
+        "geometries": 66,
+        "programs": 27,
+        "lights": 15,
+        "cpuMs": 156.2,
+        "frames": 1,
+        "buildMs": 388,
+        "firstFrameMs": 574,
+        "mountMs": null,
+        "mountFrameMs": null
+      },
+      "figurePx": 177.01
+    },
+    "porte-1920": {
+      "dec": {
+        "policy": "qa",
+        "loaded": [
+          "quai"
+        ],
+        "unapproved": [
+          "quai/ciel",
+          "quai/troisieme-rang",
+          "quai/second-rang",
+          "quai/facades",
+          "quai/pied-facades",
+          "quai/rue",
+          "quai/premier-plan",
+          "quai/eau"
+        ],
+        "issues": [],
+        "timings": {
+          "quai/ciel": {
+            "bytes": 3067681,
+            "fetchMs": 50.4,
+            "hashMs": 2.2,
+            "decodeMs": 66.5,
+            "uploadMs": 4.4
+          },
+          "quai/troisieme-rang": {
+            "bytes": 3466186,
+            "fetchMs": 53.3,
+            "hashMs": 2.6,
+            "decodeMs": 67.1,
+            "uploadMs": 4.3
+          },
+          "quai/second-rang": {
+            "bytes": 4689617,
+            "fetchMs": 84.8,
+            "hashMs": 3.2,
+            "decodeMs": 49.5,
+            "uploadMs": 17.3
+          },
+          "quai/facades": {
+            "bytes": 5809679,
+            "fetchMs": 90.8,
+            "hashMs": 3.9,
+            "decodeMs": 48.5,
+            "uploadMs": 7.2
+          },
+          "quai/pied-facades": {
+            "bytes": 158922,
+            "fetchMs": 56.7,
+            "hashMs": 0.1,
+            "decodeMs": 44.5,
+            "uploadMs": 21.5
+          },
+          "quai/rue": {
+            "bytes": 79461,
+            "fetchMs": 57.5,
+            "hashMs": 0.2,
+            "decodeMs": 41.5,
+            "uploadMs": 1.2
+          },
+          "quai/premier-plan": {
+            "bytes": 2871612,
+            "fetchMs": 78.7,
+            "hashMs": 1.7,
+            "decodeMs": 48.4,
+            "uploadMs": 5.1
+          },
+          "quai/eau": {
+            "bytes": 3498048,
+            "fetchMs": 81.3,
+            "hashMs": 2.4,
+            "decodeMs": 49.1,
+            "uploadMs": 4
+          }
+        },
+        "gpuBytes": {
+          "quai": 89504251
+        },
+        "ilot": "quai",
+        "world": "diorama",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "spr": {
+        "policy": "qa",
+        "loaded": [
+          "player-Cendre"
+        ],
+        "unapproved": [
+          "player-Cendre"
+        ],
+        "issues": [],
+        "timings": {
+          "player": {
+            "bytes": 97436,
+            "fetchMs": 4.9,
+            "hashMs": 0.2,
+            "decodeMs": 5,
+            "uploadMs": 0.9
+          }
+        },
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 61,
+        "triangles": 4828,
+        "textures": 35,
+        "geometries": 27,
+        "programs": 19,
+        "lights": 15,
+        "cpuMs": 367.4,
+        "frames": 1,
+        "buildMs": 206,
+        "firstFrameMs": 602,
+        "mountMs": null,
+        "mountFrameMs": null
+      },
+      "figurePx": 120.17
+    },
+    "actuel-1280": {
+      "dec": {
+        "policy": "code",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [],
+        "timings": {},
+        "gpuBytes": {},
+        "ilot": "quai",
+        "world": "code",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "spr": {
+        "policy": "code",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [],
+        "timings": {},
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 54,
+        "geometries": 66,
+        "programs": 27,
+        "lights": 15,
+        "cpuMs": 1.7,
+        "frames": 3,
+        "buildMs": 345,
+        "firstFrameMs": 530,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "jeu-1280": {
+      "dec": {
+        "policy": "approuvees",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [
+          "quai/ciel : plan non approuvé, refusé hors QA (décor par code gardé)",
+          "quai/troisieme-rang : plan non approuvé, refusé hors QA (décor par code gardé)",
+          "quai/second-rang : plan non approuvé, refusé hors QA (décor par code gardé)",
+          "quai/facades : plan non approuvé, refusé hors QA (décor par code gardé)",
+          "quai/pied-facades : plan non approuvé, refusé hors QA (décor par code gardé)",
+          "quai/rue : plan non approuvé, refusé hors QA (décor par code gardé)",
+          "quai/premier-plan : plan non approuvé, refusé hors QA (décor par code gardé)",
+          "quai/eau : plan non approuvé, refusé hors QA (décor par code gardé)"
+        ],
+        "timings": {},
+        "gpuBytes": {},
+        "ilot": "quai",
+        "world": "code",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "spr": {
+        "policy": "approuvees",
+        "loaded": [],
+        "unapproved": [],
+        "issues": [
+          "player-Cendre (feuille player) : feuille non approuvée, refusée hors QA (dessin par code gardé)"
+        ],
+        "timings": {},
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 137,
+        "triangles": 101089,
+        "textures": 54,
+        "geometries": 66,
+        "programs": 27,
+        "lights": 15,
+        "cpuMs": 135.3,
+        "frames": 1,
+        "buildMs": 352,
+        "firstFrameMs": 516,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    },
+    "porte-1280": {
+      "dec": {
+        "policy": "qa",
+        "loaded": [
+          "quai"
+        ],
+        "unapproved": [
+          "quai/ciel",
+          "quai/troisieme-rang",
+          "quai/second-rang",
+          "quai/facades",
+          "quai/pied-facades",
+          "quai/rue",
+          "quai/premier-plan",
+          "quai/eau"
+        ],
+        "issues": [],
+        "timings": {
+          "quai/ciel": {
+            "bytes": 3067681,
+            "fetchMs": 79.2,
+            "hashMs": 1.8,
+            "decodeMs": 47.8,
+            "uploadMs": 4.5
+          },
+          "quai/troisieme-rang": {
+            "bytes": 3466186,
+            "fetchMs": 38.3,
+            "hashMs": 2.7,
+            "decodeMs": 56.7,
+            "uploadMs": 4.3
+          },
+          "quai/second-rang": {
+            "bytes": 4689617,
+            "fetchMs": 81.5,
+            "hashMs": 3.3,
+            "decodeMs": 56.5,
+            "uploadMs": 9.4
+          },
+          "quai/facades": {
+            "bytes": 5809679,
+            "fetchMs": 97.7,
+            "hashMs": 3.3,
+            "decodeMs": 45.2,
+            "uploadMs": 7.1
+          },
+          "quai/pied-facades": {
+            "bytes": 158922,
+            "fetchMs": 48,
+            "hashMs": 0.2,
+            "decodeMs": 24.4,
+            "uploadMs": 8.8
+          },
+          "quai/rue": {
+            "bytes": 79461,
+            "fetchMs": 48.9,
+            "hashMs": 0,
+            "decodeMs": 21.3,
+            "uploadMs": 0.9
+          },
+          "quai/premier-plan": {
+            "bytes": 2871612,
+            "fetchMs": 85.3,
+            "hashMs": 2.1,
+            "decodeMs": 46.2,
+            "uploadMs": 17.2
+          },
+          "quai/eau": {
+            "bytes": 3498048,
+            "fetchMs": 89.5,
+            "hashMs": 2.2,
+            "decodeMs": 44.7,
+            "uploadMs": 4.2
+          }
+        },
+        "gpuBytes": {
+          "quai": 89504251
+        },
+        "ilot": "quai",
+        "world": "diorama",
+        "pendingFrames": 0,
+        "late": []
+      },
+      "spr": {
+        "policy": "qa",
+        "loaded": [
+          "player-Cendre"
+        ],
+        "unapproved": [
+          "player-Cendre"
+        ],
+        "issues": [],
+        "timings": {
+          "player": {
+            "bytes": 97436,
+            "fetchMs": 3.5,
+            "hashMs": 0.2,
+            "decodeMs": 5,
+            "uploadMs": 0.9
+          }
+        },
+        "hiddenFrames": 0
+      },
+      "st": {
+        "camera": "frontale",
+        "calls": 61,
+        "triangles": 4828,
+        "textures": 35,
+        "geometries": 27,
+        "programs": 19,
+        "lights": 15,
+        "cpuMs": 97.1,
+        "frames": 1,
+        "buildMs": 192,
+        "firstFrameMs": 319,
+        "mountMs": null,
+        "mountFrameMs": null
+      }
+    }
+  },
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "ecran": {
+    "figurePx": 120.17,
+    "figureArt": 86,
+    "pxEcranParPxArt": 1.4
+  }
+}

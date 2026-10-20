@@ -218,3 +218,25 @@ export function balisesRangs(plan: PlanRangs, nomRang1: string): Balise[] {
     { id: `balise-${b.n}-${i + 1}-retour`, x: r3((a + c) / 2), z: r3(b.z0 - 0.9), largeur: r3(c - a), sens: 1, vers: b.n, label: `Retour vers ${nom(b.n)}` },
   ]));
 }
+
+/**
+ * Chemin lumineux (passe 68 ; le responsable : « non pas des flèches de direction, soyons plus optimistes : des chemins
+ * subtilement lumineux afin de connaître notre chemin ») : segments au sol qui relient les rangs, sans sens marqué : au
+ * travers de chaque passage (de 2,2 m devant sa bouche à 2,2 m derrière), puis, dans chaque ruelle, de chaque arrivée à
+ * chaque départ vers le rang suivant, et du dernier passage au cœur du quartier.
+ */
+export interface CheminSegment { x0: number; z0: number; x1: number; z1: number }
+
+export function cheminsRangs(plan: PlanRangs, coeur?: { x: number; z: number }): CheminSegment[] {
+  const out: CheminSegment[] = [];
+  const entree = (b: BandePlan) => r3(b.z1 + 2.2);
+  const sortie = (b: BandePlan) => r3(b.z0 - 2.2);
+  const milieu = ([a, c]: [number, number]) => r3((a + c) / 2);
+  plan.bandes.forEach((b, i) => {
+    for (const p of b.passages) out.push({ x0: milieu(p), z0: entree(b), x1: milieu(p), z1: sortie(b) });
+    const next = plan.bandes[i + 1];
+    const departs = next ? next.passages.map((p) => ({ x: milieu(p), z: entree(next) })) : coeur ? [coeur] : [];
+    for (const p of b.passages) for (const q of departs) out.push({ x0: milieu(p), z0: sortie(b), x1: q.x, z1: q.z });
+  });
+  return out;
+}

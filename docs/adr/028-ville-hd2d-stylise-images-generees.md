@@ -507,3 +507,16 @@ Corrigé par script et par le moteur, sans nouvelle image :
 **Balises des passages** : à chaque bouche, une lueur ambrée au sol et des chevrons vers le rang où le passage mène, à
 l'aller comme au retour ; le nom de ce rang s'affiche en approchant. Elles sont dessinées par le moteur, et données par la
 grammaire (`balisesRangs`) : tout quartier en rangs les a.
+
+### Chemins lumineux et ombres (passe 68, 2026-10-20)
+
+Retours du responsable sur la passe 67 : « non pas des fleches de direction soyons plus optimiste des chemin subtilement lumineux afin de connaitre notre chemin par contre les assets decors dans les rangs supperieur doivent etre bien integre toujours avvec ce cote diorama je remarque des assets mal integre qui donne cette sesnation de image pose sur la scene, eventuellement il faudrait mettre des ombres pour optimiser cette immersion, et je veux que tu conserves les fantomes des rangs precedents pour garder un petit visuelle du rang precedemment traverse » ; puis : « excellent les chemins sont presque bien mais un peu plus fluides et dissimules il faut qu'ils se fondent a la scene de maniere saine et coherente » ; enfin : « excellent plus besoin d'integrer un fantome visble car les chemins paves sont a present bien integres ».
+
+- Les chevrons de la passe 67 sont retirés. À leur place, des **chemins lumineux** relient les rangs au travers des
+  passages jusqu'au cœur : une lueur ambrée très douce, posée sur le dessus des pavés (les joints restent sombres). Le
+  tracé est ondulé, les coudes arrondis, sans sens marqué, et la lueur se révèle autour du personnage. La grammaire les
+  donne (`cheminsRangs`) et le moteur les dessine (`chemins.ts`).
+- **Ombres** tirées des plans eux-mêmes (`ombres.ts`) : ombre de contact sous chaque objet, pied des façades et des murs
+  des passages dans l'ombre, pied de chaque plan assombri.
+- **Fantômes** : seul le rang juste devant le personnage reste en fantôme (12 %, passe 64). Les rangs déjà traversés ont
+  d'abord été gardés à 7 %, puis effacés sur la dernière décision : ce sont les chemins qui guident le retour.

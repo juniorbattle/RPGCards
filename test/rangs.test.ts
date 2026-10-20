@@ -5,9 +5,10 @@
  * lointain des plans du diorama.
  */
 import { describe, expect, it } from 'vitest';
-import { behindPlate, farFade, LOIN } from '../src/ville/diorama';
+import { behindPlate, FANTOME_LOIN, farFade, ghostOpacity, LOIN, nearFade } from '../src/ville/diorama';
+import { ombresDuPlan } from '../src/ville/ombres';
 import { blocked, newWalker, stepWalker, type Vec2, type Walker } from '../src/ville/monde';
-import { BALISES_QUAI, PLAN_QUAI, QUAI_PROFOND, QUAI_RANGS } from '../src/ville/quaiProfond';
+import { BALISES_QUAI, CHEMINS_QUAI, PLAN_QUAI, QUAI_PROFOND, QUAI_RANGS } from '../src/ville/quaiProfond';
 import { checkRangs, minus, planRangs, rangAt, type QuartierRangs } from '../src/ville/rangs';
 
 const STEP = 1 / 60;
@@ -120,7 +121,7 @@ describe('quartiers en rangs : fantôme et fondu lointain', () => {
     expect(behindPlate({ ...mur, center: [-10.6, 4.5, -7] }, { x: -8, z: -13 }, 'ouest')).toBe(true);
   });
 
-  it('fondu lointain : rien à moins de LOIN[0] m devant, tout effacé au-delà de LOIN[1] m', () => {
+  it('fondu lointain : rien à moins de LOIN[0] m devant, effacé au-delà de LOIN[1] m', () => {
     const facade = { center: [0, 5, -3] as [number, number, number], w: 21.8, h: 10, orient: 'face' as const };
     expect(farFade(facade, { z: -3 - LOIN[0] + 0.1 })).toBe(0);
     expect(farFade(facade, { z: -3 - LOIN[1] })).toBe(1);
@@ -150,5 +151,48 @@ describe('quartiers en rangs : balises des passages (passe 67)', () => {
       // sa zone « info » nomme le rang où l'on va
       expect(QUAI_PROFOND.zones.find((z) => z.id === b.id)?.label).toBe(b.label);
     }
+  });
+});
+
+describe('quartiers en rangs : chemins lumineux, fantômes gardés, ombres (passe 68)', () => {
+  it('chemins : au travers de chaque passage, d’une arrivée au départ suivant, jusqu’au cœur ; tout sur le pavé praticable', () => {
+    const passages = QUAI_RANGS.bandes.reduce((s, b) => s + b.passages.length, 0);
+    // 4 passages, puis rue Haute : 2 arrivées × 1 départ, ruelle des Lanternes : 1 × 1, cour : 1 × le cœur
+    expect(CHEMINS_QUAI).toHaveLength(passages + 2 + 1 + 1);
+    for (const s of CHEMINS_QUAI) {
+      for (let t = 0; t <= 1; t += 0.1) {
+        const p = { x: s.x0 + (s.x1 - s.x0) * t, z: s.z0 + (s.z1 - s.z0) * t };
+        expect(blocked(QUAI_PROFOND, p, 0.05), `${JSON.stringify(s)} à ${t}`).toBe(false);
+      }
+    }
+    // le chemin mène du quai au cœur
+    expect(Math.max(...CHEMINS_QUAI.map((s) => Math.max(s.z0, s.z1)))).toBeGreaterThan(-1);
+    expect(Math.min(...CHEMINS_QUAI.map((s) => Math.min(s.z0, s.z1)))).toBeLessThan(-38);
+  });
+
+  it('fantômes : le rang juste devant à 12 %, les rangs déjà traversés effacés (les chemins guident le retour), le très proche de la caméra effacé', () => {
+    expect(ghostOpacity(0, 0, 0).o).toBe(1);
+    expect(ghostOpacity(1, 0, 0).o).toBeCloseTo(0.12, 5);
+    expect(FANTOME_LOIN).toBe(0);
+    expect(ghostOpacity(1, 1, 0).o).toBeCloseTo(FANTOME_LOIN, 5);
+    expect(ghostOpacity(0, 1, 0).o).toBeCloseTo(FANTOME_LOIN, 5);
+    expect(ghostOpacity(1, 1, 1).o).toBe(0);
+    // uniformes du nuanceur : mix(1, coupe, fade) = opacité
+    for (const [c, f, n] of [[0.5, 0, 0], [1, 0.3, 0], [1, 1, 0.5], [0, 0.6, 0.2]] as const) {
+      const g = ghostOpacity(c, f, n);
+      expect(1 + (g.coupe - 1) * g.fade).toBeCloseTo(g.o, 5);
+    }
+    expect(nearFade(-3, 20)).toBe(0);
+    expect(nearFade(-3, -1)).toBe(1);
+  });
+
+  it('ombres : contact sous un objet, pied d’une façade, pied d’un mur du côté peint ; rien hors du sol', () => {
+    const etal = ombresDuPlan({ center: [7.4, 1.8, -20.8], w: 4.4, h: 3.66, orient: 'face' }, [7.4, 0, -20.8]);
+    expect(etal.map((o) => o.kind)).toEqual(['contact']);
+    const facade = ombresDuPlan({ center: [0, 6.7, -17], w: 20, h: 13.4, orient: 'face' }, [0, 0, -17]);
+    expect(facade).toEqual([{ kind: 'pied', x: 0, z: -16.2, w: 20, d: 1.6, alpha: 0.42 }]);
+    const mur = ombresDuPlan({ center: [-8, 4.5, -21], w: 8, h: 9, orient: 'cote' }, [-8, 0, -21], 'est');
+    expect(mur[0]!.x).toBeGreaterThan(-8);
+    expect(ombresDuPlan({ center: [0, 20, -75], w: 140, h: 30, orient: 'face' }, [0, 2, -75])).toEqual([]);
   });
 });

@@ -270,7 +270,7 @@ if (MODE === 'verifier') {
       const c = document.createElement('canvas'); c.width = 3 * tw + 4 * pad; c.height = top + 3 * (th + 36) + 16;
       const g = c.getContext('2d'); g.fillStyle = '#10121a'; g.fillRect(0, 0, c.width, c.height);
       g.fillStyle = '#e8dcc0'; g.font = 'bold 17px system-ui';
-      g.fillText('Quartier en rangs : le Quai en quatre rangs (passe 67 : façades entières, murs sous les toits, cœur intégré, balises des passages ; kit non approuvé ; laboratoire)', pad, 26);
+      g.fillText('Quartier en rangs : le Quai en quatre rangs (passe 68 : chemins lumineux posés sur les pavés, ombres au sol ; kit non approuvé ; laboratoire seulement)', pad, 26);
       g.font = '14px system-ui';
       const X = (col) => pad + col * (tw + pad); const Y = (row) => top + row * (th + 36);
       const tile = (k, x, y) => { const i = im[k]; const s2 = Math.min(tw / i.width, th / i.height); g.drawImage(i, x + (tw - i.width * s2) / 2, y + (th - i.height * s2) / 2, i.width * s2, i.height * s2); };
@@ -297,8 +297,8 @@ if (MODE === 'verifier') {
       const qx = X(2); let qy = Y(2) - 2; const qw = tw;
       const wrap = (t, bold = false) => { g.font = `${bold ? 'bold ' : ''}13px system-ui`; const words = t.split(' '); let line = ''; for (const w of words) { const n = line ? `${line} ${w}` : w; if (g.measureText(n).width > qw) { qy += 17; g.fillText(line, qx, qy); line = w; } else line = n; } qy += 17; g.fillText(line, qx, qy); qy += 5; };
       wrap('Grammaire (rangs.ts) : rang 1 = la rue du premier plan ; entre deux rangs, une bande bâtie percée de passages jamais alignés d’une bande à l’autre ; rangs 2 à 4 = des ruelles de plus en plus courtes, fermées par un mur à leurs bouts, qui débordent chacune sur une place (le spot du rang) ; le dernier rang est le cœur du quartier.', true);
-      wrap('Côtés : les façades des bandes continuent au-delà des bouts des ruelles (62 m de large), murs et brume aux bouts. Caméra frontale : elle suit 90 % de la profondeur et s’élève de 6° à 16°. Le bloc juste devant le personnage devient un fantôme assourdi (12 %), les rangs dépassés de deux s’effacent ; le sol des rangs dépassés reste, pour le retour.');
-      wrap('Balises (passe 67) : à chaque bouche d’un passage, une lueur ambrée au sol et des chevrons qui filent vers le rang où il mène, à l’aller (« Vers la rue Haute ») comme au retour (« Retour vers le Quai ») ; leur nom s’affiche en approchant.');
+      wrap('Côtés : les façades des bandes continuent au-delà des bouts des ruelles (62 m de large), murs et brume aux bouts. Caméra frontale : elle suit 90 % de la profondeur et s’élève de 6° à 16°. Le bloc juste devant le personnage devient un fantôme assourdi (12 %) ; les rangs déjà traversés s’effacent : les chemins lumineux guident le retour.');
+      wrap('Chemins lumineux (passe 68) : une lueur ambrée très douce, posée sur le dessus des pavés (les joints restent sombres), relie les rangs au travers des passages jusqu’au cœur ; tracé ondulé, coudes arrondis, sans flèche ni sens ; elle se révèle autour du personnage. Ombres au sol : contact sous chaque objet, pied des façades, passages dans l’ombre.');
       wrap('Kit des rangs (5 images, 21 sur 30) : deux rangées de maisons de ruelle assemblées en deux frises (fonds et flancs), trois murs (passages, places, bouts), trois monuments (halle, maison des Joueurs, chapelle), six objets (étal, puits, fontaine, banc, charrette, niche). Rien n’est approuvé.');
       return c.toDataURL('image/png');
     }, { imgs: SPOTS.map(([k]) => dataUrl(shots[k])), spots: SPOTS, fig: Object.fromEntries(Object.entries(report.figures).map(([k, v]) => [k, v.figurePx])), ilot: info.ilot, plan: PLAN_QUAI });
