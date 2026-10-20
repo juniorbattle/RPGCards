@@ -182,7 +182,7 @@ describe('M10-B/C — ascension (ADR 031)', () => {
 
   it('les autres familles ne s’engagent qu’après la Signature de la famille d’accueil (A-6, proposé)', () => {
     const e = run(prologue(), [{ type: 'confirmer', famille: 'Astre' }]).etat;
-    expect(appliquer(e, { type: 'engager', famille: 'Ronce' }, AT).refus).toMatch(/chef de la Astre/);
+    expect(appliquer(e, { type: 'engager', famille: 'Ronce' }, AT).refus).toMatch(/chef de l’Astre/);
   });
 
   it('changement d’affiliation avant le premier lieutenant, sans perte ni double remise (P-N6, proposé)', () => {

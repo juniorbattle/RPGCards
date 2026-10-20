@@ -5,7 +5,7 @@
  * publics, choix du joueur). Propositions : `docs/m10/` ; rien n'est ratifié hors ADR 029 à 031.
  */
 import { FAMILIES, type Family } from '../game/catalog/cards';
-import { figure, figureDe, FIGURES, MAISONS, ORDRE_ETAT, ROLE_LABEL, TECHNIQUES_RUE, type EtatFamille, type Figure, type SceneId } from './modele';
+import { deF, figure, figureDe, FIGURES, leF, MAISONS, ORDRE_ETAT, ROLE_LABEL, TECHNIQUES_RUE, type EtatFamille, type Figure, type SceneId } from './modele';
 import { accorder, aGain, collectionDe, gainBasics, gainNeutres, gainSignature, gainTechnique, gainVariante, type Gain } from './registre';
 import { deckDepart, equiperTechnique, integrerBasics, type DeckAv } from './deck';
 
@@ -68,6 +68,7 @@ export function nouvelleAventure(at: string): AventureEtat {
   return { ...base, registre: reg };
 }
 
+const capitale = (x: string) => x.charAt(0).toUpperCase() + x.slice(1);
 const monter = (a: EtatFamille, b: EtatFamille): EtatFamille => (ORDRE_ETAT[b] > ORDRE_ETAT[a] ? b : a);
 const joue = (e: AventureEtat, s: SceneId) => e.scenes.includes(s);
 
@@ -82,10 +83,10 @@ export function premierEmissaire(f: FaitsPublics): Family {
 
 /** Une famille peut-elle être rejointe maintenant (écran de confirmation) ? Raison affichable sinon. */
 export function peutConfirmer(e: AventureEtat, f: Family): { ok: true } | { ok: false; raison: string } {
-  if (e.familles[f] === 'inconnue' || e.familles[f] === 'remarque') return { ok: false, raison: `La ${f} ne vous a pas encore invité.` };
-  if (e.affiliation === f) return { ok: false, raison: `Vous êtes déjà de la ${f}.` };
-  if (e.affiliation !== null) return { ok: false, raison: `Vous êtes de la ${e.affiliation} : changez d’abord d’affiliation auprès de votre émissaire.` };
-  if (e.familles[f] !== 'invite') return { ok: false, raison: `La ${f} n’est plus une invitation ouverte.` };
+  if (e.familles[f] === 'inconnue' || e.familles[f] === 'remarque') return { ok: false, raison: `${capitale(leF(f))} ne vous a pas encore invité.` };
+  if (e.affiliation === f) return { ok: false, raison: `Vous êtes déjà ${deF(f)}.` };
+  if (e.affiliation !== null) return { ok: false, raison: `Vous êtes ${deF(e.affiliation)} : changez d’abord d’affiliation auprès de votre émissaire.` };
+  if (e.familles[f] !== 'invite') return { ok: false, raison: `L’invitation ${deF(f)} n’est plus ouverte.` };
   return { ok: true };
 }
 
@@ -105,19 +106,19 @@ export function statutDefi(e: AventureEtat, fig: Figure): { ouvert: boolean; rai
   const deja = e.vaincues.includes(fig.id);
   const fam = fig.famille;
   if (!aGain(e.registre, `basics:${fam}`) || (e.familles[fam] !== 'affilie' && e.familles[fam] !== 'defiee' && e.familles[fam] !== 'chef')) {
-    return { ouvert: false, deja, raison: e.affiliation === null ? 'Choisissez d’abord votre voie.' : `Engagez d’abord le défi officiel de la ${fam} à la Salle des Bannières.` };
+    return { ouvert: false, deja, raison: e.affiliation === null ? 'Choisissez d’abord votre voie.' : `Engagez d’abord le défi officiel ${deF(fam)} à la Salle des Bannières.` };
   }
-  if (fig.role === 'brasDroit' && !e.vaincues.includes(figureDe(fam, 'cadet').id)) return { ouvert: false, deja, raison: `Battez d’abord ${figureDe(fam, 'cadet').nom}, ${ROLE_LABEL.cadet} de la ${fam}.` };
-  if (fig.role === 'chef' && !e.vaincues.includes(figureDe(fam, 'brasDroit').id)) return { ouvert: false, deja, raison: `Battez d’abord ${figureDe(fam, 'brasDroit').nom}, ${ROLE_LABEL.brasDroit} de la ${fam}.` };
+  if (fig.role === 'brasDroit' && !e.vaincues.includes(figureDe(fam, 'cadet').id)) return { ouvert: false, deja, raison: `Battez d’abord ${figureDe(fam, 'cadet').nom}, ${ROLE_LABEL.cadet} ${deF(fam)}.` };
+  if (fig.role === 'chef' && !e.vaincues.includes(figureDe(fam, 'brasDroit').id)) return { ouvert: false, deja, raison: `Battez d’abord ${figureDe(fam, 'brasDroit').nom}, ${ROLE_LABEL.brasDroit} ${deF(fam)}.` };
   return { ouvert: true, deja, raison: deja ? 'Revanche (sans récompense)' : 'Défi de progression' };
 }
 
 /** Défi officiel d'une autre famille (ADR 031 §4) : après la Signature de sa famille d'accueil (A-6, proposé). */
 export function peutEngager(e: AventureEtat, f: Family): { ok: true } | { ok: false; raison: string } {
   if (e.affiliation === null) return { ok: false, raison: 'Choisissez d’abord votre voie.' };
-  if (f === e.affiliation) return { ok: false, raison: `La ${f} est votre famille.` };
-  if (e.familles[f] === 'defiee' || e.familles[f] === 'chef') return { ok: false, raison: `Le défi de la ${f} est déjà engagé.` };
-  if (!aGain(e.registre, `signature:${e.affiliation}`)) return { ok: false, raison: `Battez d’abord le chef de la ${e.affiliation} : on n’engage les autres familles qu’en duelliste reconnu.` };
+  if (f === e.affiliation) return { ok: false, raison: `${capitale(leF(f))} est votre famille.` };
+  if (e.familles[f] === 'defiee' || e.familles[f] === 'chef') return { ok: false, raison: `Le défi ${deF(f)} est déjà engagé.` };
+  if (!aGain(e.registre, `signature:${e.affiliation}`)) return { ok: false, raison: `Battez d’abord le chef ${deF(e.affiliation)} : on n’engage les autres familles qu’en duelliste reconnu.` };
   return { ok: true };
 }
 
@@ -165,8 +166,8 @@ export function appliquer(e0: AventureEtat, ev: Evenement, at: string): Resultat
     case 'changer': {
       if (!peutChanger(e)) return refuse('Votre voie est engagée : vous avez déjà défié un lieutenant de votre famille.');
       const de = e.affiliation!;
-      if (de === ev.famille) return refuse(`Vous êtes déjà de la ${de}.`);
-      if (e.familles[ev.famille] !== 'invite') return refuse(`La ${ev.famille} ne vous a pas invité.`);
+      if (de === ev.famille) return refuse(`Vous êtes déjà ${deF(de)}.`);
+      if (e.familles[ev.famille] !== 'invite') return refuse(`${capitale(leF(ev.famille))} ne vous a pas invité.`);
       // P-N6 : seule régression d'état permise, explicite ; les cartes reçues restent (gains définitifs).
       e.familles[de] = 'invite';
       e.affiliation = null;

@@ -25,7 +25,8 @@
     "qa:rc": "node tools/qa-rc.mjs",
     "video": "node tools/video-m06.mjs",
     "qa:demo": "node tools/m09-demo.mjs",
-    "qa:ville": "node tools/m09-labo.mjs"
+    "qa:ville": "node tools/m09-labo.mjs",
+    "qa:aventure": "node tools/m10-aventure.mjs"
   },
   "engines": {
     "node": ">=20"

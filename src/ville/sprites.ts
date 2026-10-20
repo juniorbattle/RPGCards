@@ -49,6 +49,13 @@ export interface WalkerLook {
 
 const tone = (base: string, shade: string, deep: string, hi: string): Tone => ({ base, shade, deep, hi });
 
+/**
+ * M10-B (prototype `?aventure=1`) : tenue grise du duelliste de la populace, avant son affiliation (`player-gris`, ADR 030 :
+ * aucune couleur de famille). Sans effet sur les autres identifiants.
+ */
+const PALETTE_GRIS = { deep: '#141519', mid: '#4f5259', light: '#8a8c93', accent: '#c8c5bd', glow: '#d6d3cb', ink: '#f2f0ea', hex: 0xa8a8a8 };
+const paletteJoueur = (fam: string) => FAMILY_PALETTE[fam as Family] ?? (fam === 'gris' ? PALETTE_GRIS : FAMILY_PALETTE.Cendre);
+
 /** Apparence d'un marcheur : PNJ (gabarit et graine), rival signature, ou duelliste joueur (`player-<Famille>`). */
 export function walkerLook(id: string): WalkerLook {
   const n = npcLook(id);
@@ -61,8 +68,7 @@ export function walkerLook(id: string): WalkerLook {
     };
   }
   if (id.startsWith('player-')) {
-    const fam = id.slice(7) as Family;
-    const p = FAMILY_PALETTE[fam] ?? FAMILY_PALETTE.Cendre;
+    const p = paletteJoueur(id.slice(7));
     return {
       skin: NPC_SKINS[0]!, hair: tone('#dfe2ef', '#b4b8c8', '#8a8ea0', '#ffffff'), cut: 'carre-argent',
       cloth: tone(p.mid, p.deep, p.deep, p.light), shirt: tone('#e6e0d2', '#c2bcae', '#98928a', '#f6f2ea'), legs: '#262a34',
@@ -102,7 +108,7 @@ export function recolorTargets(id: string): Partial<Record<RecolorSlot, Tone>> {
   const L = walkerLook(id);
   const t: Partial<Record<RecolorSlot, Tone>> = { peau: L.skin, cheveux: L.hair, tenue: L.cloth, chemise: L.shirt };
   if (id.startsWith('player-')) {
-    const p = FAMILY_PALETTE[id.slice(7) as Family] ?? FAMILY_PALETTE.Cendre;
+    const p = paletteJoueur(id.slice(7));
     t.accent = tone(p.accent, p.light, p.mid, p.ink);
   }
   return t;

@@ -181,6 +181,10 @@ else if (query.get('ville') === '1') {
 }
 else if (params.autostart) start(makeConfig(params, params.sig ?? 'Cendre', params.techs ?? ['Lecture', 'Ancrage']), params.scenario);
 else if (query.get('setup') === '1') setupScreen();
+// M10-B (provisoire, `?aventure=1`) : prototype du mode Aventure, chargé à la demande (rien dans le jeu par défaut).
+else if (params.aventure) {
+  void import('./aventure/app').then((m) => m.startAventure({ app, shellHost: document.getElementById('shell')!, params, ensureArena, arena: () => arena }));
+}
 else {
   // M09 V2 (provisoire, `?demo=1`) : la ville, chargée à la demande, remplace le tableau des rencontres ; sans WebGL, la
   // démo reste le jeu habituel (tableau des rencontres, arène en repli CSS).
