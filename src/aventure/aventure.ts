@@ -7,7 +7,7 @@
 import { FAMILIES, type Family } from '../game/catalog/cards';
 import { deF, figure, figureDe, FIGURES, leF, MAISONS, ORDRE_ETAT, ROLE_LABEL, TECHNIQUES_RUE, type EtatFamille, type Figure, type SceneId } from './modele';
 import { accorder, aGain, collectionDe, gainBasics, gainNeutres, gainSignature, gainTechnique, gainVariante, type Gain } from './registre';
-import { deckDepart, equiperTechnique, integrerBasics, type DeckAv } from './deck';
+import { deckDepart, equiperTechnique, equiperVersion, integrerBasics, type DeckAv } from './deck';
 import { finEpreuve, finFinale, finJoute, finMiroir, finPoule, nouvellesCompetitions, ouvertChampionnat, statutEpreuve, statutJoute, type EtatCompetitions } from './competitions';
 
 /** Faits PUBLICS d'un duel (journal public du joueur) : aucun secret (ADR 011, ADR 029 §5). */
@@ -130,6 +130,13 @@ export function peutEngager(e: AventureEtat, f: Family): { ok: true } | { ok: fa
 
 /** Applique un fait ; un refus laisse l'état inchangé. Idempotent pour les gains (registre). */
 export function appliquer(e0: AventureEtat, ev: Evenement, at: string): Resultat {
+  const r = appliquerBrut(e0, ev, at);
+  // « Une variante remplace une Basic de même identité dans le deck » (cadrage M10, ADR 031) : équipée à son gain.
+  if (!r.refus) for (const g of r.gains) if (g.kind === 'variante') r.etat.deck = equiperVersion(r.etat.deck, g.items[0]!);
+  return r;
+}
+
+function appliquerBrut(e0: AventureEtat, ev: Evenement, at: string): Resultat {
   const e: AventureEtat = structuredClone(e0);
   const gains: Gain[] = [];
   const grant = (g: Gain): string | undefined => {
@@ -178,7 +185,7 @@ export function appliquer(e0: AventureEtat, ev: Evenement, at: string): Resultat
       e.familles[de] = 'invite';
       e.affiliation = null;
       e.changements.push({ de, vers: ev.famille, at });
-      const r = appliquer(e, { type: 'confirmer', famille: ev.famille }, at);
+      const r = appliquerBrut(e, { type: 'confirmer', famille: ev.famille }, at);
       return r.refus ? refuse(r.refus) : { etat: r.etat, gains: r.gains };
     }
 
