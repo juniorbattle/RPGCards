@@ -1,0 +1,67 @@
+{
+  "date": "2026-10-20T14:25:45.611Z",
+  "commit": "e234a2f",
+  "outil": "tools/m10-aventure.mjs",
+  "parcours": [
+    {
+      "nom": "780m-1280-decor-code",
+      "rendu": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "viewport": [
+        1280,
+        720
+      ],
+      "duree_s": 62,
+      "controles_ok": 40,
+      "controles": 40,
+      "erreurs_console": 0
+    },
+    {
+      "nom": "780m-1280",
+      "rendu": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "viewport": [
+        1280,
+        720
+      ],
+      "duree_s": 62,
+      "controles_ok": 40,
+      "controles": 40,
+      "erreurs_console": 0
+    },
+    {
+      "nom": "780m-1920",
+      "rendu": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+      "viewport": [
+        1920,
+        1080
+      ],
+      "duree_s": 69,
+      "controles_ok": 40,
+      "controles": 40,
+      "erreurs_console": 0
+    },
+    {
+      "nom": "rtx4060-1280",
+      "rendu": "Chrome headless, GPU réel : ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11) — arguments : --force_high_performance_gpu",
+      "viewport": [
+        1280,
+        720
+      ],
+      "duree_s": 63,
+      "controles_ok": 40,
+      "controles": 40,
+      "erreurs_console": 0
+    },
+    {
+      "nom": "rtx4060-1920",
+      "rendu": "Chrome headless, GPU réel : ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11) — arguments : --force_high_performance_gpu",
+      "viewport": [
+        1920,
+        1080
+      ],
+      "duree_s": 67,
+      "controles_ok": 40,
+      "controles": 40,
+      "erreurs_console": 0
+    }
+  ]
+}
