@@ -89,7 +89,7 @@ export function premierEmissaire(f: FaitsPublics): Family {
 
 /** Une famille peut-elle être rejointe maintenant (écran de confirmation) ? Raison affichable sinon. */
 export function peutConfirmer(e: AventureEtat, f: Family): { ok: true } | { ok: false; raison: string } {
-  if (e.familles[f] === 'inconnue' || e.familles[f] === 'remarque') return { ok: false, raison: `${capitale(leF(f))} ne vous a pas encore invité.` };
+  if (e.familles[f] === 'inconnue' || e.familles[f] === 'remarque') return { ok: false, raison: `${capitale(leF(f))} ne vous a pas encore adressé d’invitation.` };
   if (e.affiliation === f) return { ok: false, raison: `Vous êtes déjà ${deF(f)}.` };
   if (e.affiliation !== null) return { ok: false, raison: `Vous êtes ${deF(e.affiliation)} : changez d’abord d’affiliation auprès de votre émissaire.` };
   if (e.familles[f] !== 'invite') return { ok: false, raison: `L’invitation ${deF(f)} n’est plus ouverte.` };
@@ -180,7 +180,7 @@ function appliquerBrut(e0: AventureEtat, ev: Evenement, at: string): Resultat {
       if (!peutChanger(e)) return refuse('Votre voie est engagée : vous avez déjà défié un lieutenant de votre famille.');
       const de = e.affiliation!;
       if (de === ev.famille) return refuse(`Vous êtes déjà ${deF(de)}.`);
-      if (e.familles[ev.famille] !== 'invite') return refuse(`${capitale(leF(ev.famille))} ne vous a pas invité.`);
+      if (e.familles[ev.famille] !== 'invite') return refuse(`${capitale(leF(ev.famille))} ne vous a pas adressé d’invitation.`);
       // P-N6 : seule régression d'état permise, explicite ; les cartes reçues restent (gains définitifs).
       e.familles[de] = 'invite';
       e.affiliation = null;
