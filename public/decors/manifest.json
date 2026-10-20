@@ -27,7 +27,7 @@
         },
         "troisieme-rang": {
           "file": "quai-troisieme-rang.png",
-          "sha256": "2803fa498e930ce5402d90281907ee15da8da26927b7bd6b017d15fc81d38334",
+          "sha256": "c251c22aadc61e4916ecbdd35e890724a8ab6e025503cdae8e7a5ee9325f356f",
           "size": [
             3072,
             789
@@ -49,7 +49,7 @@
         },
         "second-rang": {
           "file": "quai-second-rang.png",
-          "sha256": "321ad9f66c9e0b42f088a69fb50aa49fb9e1759abf5b56f2be48478078199cde",
+          "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
           "size": [
             3072,
             953
@@ -69,51 +69,9 @@
           "fog": 0.6,
           "voile": 0.28
         },
-        "ruelle": {
-          "file": "quai-ruelle.png",
-          "sha256": "013791e05942f12bee7ad88013627c6266b5153cb2fc45d998bab137dc05ec7f",
-          "size": [
-            614,
-            1024
-          ],
-          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
-          "fiche": "art-src/decors/quai-ruelle/fiche.json",
-          "approved": false,
-          "at": [
-            -23.74,
-            -1.6,
-            -7
-          ],
-          "width": 4.4,
-          "orient": "face",
-          "order": 4,
-          "blend": "decoupe",
-          "fog": 0.25
-        },
-        "passage": {
-          "file": "quai-passage-parvis.png",
-          "sha256": "bfcf3f25f855c86ab46a36f8a1d769840ef52e9f7fd1b05eb87a832af3916e64",
-          "size": [
-            1024,
-            1014
-          ],
-          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
-          "fiche": "art-src/decors/quai-passage-parvis/fiche.json",
-          "approved": false,
-          "at": [
-            22.85,
-            -1.6,
-            -7.5
-          ],
-          "width": 6.6,
-          "orient": "face",
-          "order": 3,
-          "blend": "decoupe",
-          "fog": 0.25
-        },
         "facades": {
           "file": "quai-facades.png",
-          "sha256": "a788d91c5f2e7d29ddc326458abcd03ef0c0709b9ee1df0ef1ae37355cfc6012",
+          "sha256": "6940c1ecf629335d062a35d24fd71013a23ce556d6a6fc8ffa7ee3ba38602afa",
           "size": [
             3263,
             993
@@ -128,7 +86,7 @@
           ],
           "width": 48,
           "orient": "face",
-          "order": 5,
+          "order": 3,
           "blend": "decoupe",
           "lit": 0.25
         },
@@ -149,7 +107,7 @@
           ],
           "width": 48,
           "orient": "face",
-          "order": 6,
+          "order": 4,
           "blend": "decoupe",
           "lit": 0.3
         },
@@ -170,13 +128,13 @@
           ],
           "width": 48,
           "orient": "face",
-          "order": 7,
+          "order": 5,
           "blend": "decoupe",
           "lit": 0.2
         },
         "premier-plan": {
           "file": "quai-premier-plan.png",
-          "sha256": "96d3e01b275ae485850d8bf886cd36f242667a599107de972aab6ea4cc00d921",
+          "sha256": "6888176a752f64a5d6f1ac8844b06f4b80fa15c67bad6c8f655ad782ce1fc951",
           "size": [
             2759,
             1024
@@ -191,7 +149,7 @@
           ],
           "width": 44.17,
           "orient": "face",
-          "order": 8,
+          "order": 6,
           "blend": "decoupe"
         },
         "eau": {
@@ -211,47 +169,11 @@
           ],
           "width": 64,
           "orient": "sol",
-          "order": 9,
+          "order": 7,
           "blend": "decoupe"
         }
       },
       "lumieres": [
-        {
-          "at": [
-            -21.43,
-            2.6,
-            -5.5
-          ],
-          "color": "Voile",
-          "intensity": 2.2,
-          "radius": 6,
-          "halo": 0,
-          "flicker": "lantern"
-        },
-        {
-          "at": [
-            20.24,
-            0.92,
-            -7.1
-          ],
-          "color": "ambre",
-          "intensity": 2.2,
-          "radius": 6,
-          "halo": 0.8,
-          "flicker": "lantern"
-        },
-        {
-          "at": [
-            24.98,
-            1.01,
-            -7.1
-          ],
-          "color": "ambre",
-          "intensity": 2.2,
-          "radius": 6,
-          "halo": 0.8,
-          "flicker": "lantern"
-        },
         {
           "at": [
             -13.35,
@@ -400,6 +322,30 @@
           "at": [
             -2.71,
             2.57,
+            -2.4
+          ],
+          "color": "ambre",
+          "intensity": 2,
+          "radius": 6,
+          "halo": 0.9,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            3.35,
+            2.75,
+            -2.4
+          ],
+          "color": "ambre",
+          "intensity": 2,
+          "radius": 6,
+          "halo": 0.9,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            7.31,
+            6.75,
             -2.4
           ],
           "color": "ambre",

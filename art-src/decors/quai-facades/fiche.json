@@ -149,8 +149,7 @@
       "tools/m09-porte-quai.mjs"
     ],
     "etapes": [
-      "ouvertures découpées (rectangle et arc mesurés sur le brut, peints en magenta puis détourés) : arche ouest, la ruelle se voit au travers ; portail de l’entrepôt (est), l’escalier de l’arène se voit au travers",
-      "emblèmes inventés par le modèle remplacés par ceux du jeu sur les bannières (fixBanners, tracés de src/art/emblems.ts ; tissu refait de son propre grain), sur le brut, avant tout traitement : quai-facades-essai",
+      "emblèmes inventés par le modèle remplacés par ceux du jeu sur les bannières (fixBanners, tracés de src/art/emblems.ts ; tissu refait de son propre grain), brodés en relief (fil d’or en points lancés, bourrelet sombre, modelé, reflet ; 12 % plus grands), sur le brut, avant tout traitement : quai-facades-essai",
       "fond magenta détouré et recadré sur le pied des murs, pour chaque image",
       "assemblées côte à côte, pieds alignés, à 68 px/m : ouest (x −24 à −10,6 m), centre de l’essai (−10,6 à 11,2 m), est (11,2 à 24 m)",
       "lanternes peintes repérées, une lumière du moteur sur chacune"
@@ -158,15 +157,15 @@
   },
   "sortie": {
     "fichier": "public/decors/quai-facades.png",
-    "sha256": "a788d91c5f2e7d29ddc326458abcd03ef0c0709b9ee1df0ef1ae37355cfc6012",
-    "octets": 5579482,
+    "sha256": "6940c1ecf629335d062a35d24fd71013a23ce556d6a6fc8ffa7ee3ba38602afa",
+    "octets": 5809679,
     "dimensions": [
       3263,
       993
     ],
     "pose": {
       "file": "quai-facades.png",
-      "sha256": "a788d91c5f2e7d29ddc326458abcd03ef0c0709b9ee1df0ef1ae37355cfc6012",
+      "sha256": "6940c1ecf629335d062a35d24fd71013a23ce556d6a6fc8ffa7ee3ba38602afa",
       "size": [
         3263,
         993
@@ -181,7 +180,7 @@
       ],
       "width": 48,
       "orient": "face",
-      "order": 5,
+      "order": 3,
       "blend": "decoupe",
       "lit": 0.25
     }
@@ -190,6 +189,6 @@
     "a98ab2077882538223808f4ff1d24131643a657c1cf8181258acf17a96fe3929 (brut quai-facades-ouest)",
     "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec (brut quai-facades-essai)",
     "2a920ffbc7eee1d9f4ddec52e29c90afad8b85d8d376939729a2649d1a2eccdc (brut quai-facades-est)",
-    "a788d91c5f2e7d29ddc326458abcd03ef0c0709b9ee1df0ef1ae37355cfc6012 (plan)"
+    "6940c1ecf629335d062a35d24fd71013a23ce556d6a6fc8ffa7ee3ba38602afa (plan)"
   ]
 }

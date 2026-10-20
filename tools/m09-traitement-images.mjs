@@ -512,7 +512,8 @@ export async function clearAbove({ url, row, topFrac = 0.15, margin = 14 }) {
  * lumière par rangée, grain tiré de ses propres pixels, bords fondus sur 3 px), puis l'emblème exact du jeu est posé au
  * centre : mêmes tracés que `emblemSvg` (`src/art/emblems.ts`), or en dégradé, trait sombre, plis et grain du tissu.
  */
-export async function fixBanners({ url, banners, seed = 7 }) {
+// `brode` : emblème en relief de broderie (passe 61) au lieu de l'aplat doré à ombre portée (passe 59).
+export async function fixBanners({ url, banners, seed = 7, brode = false }) {
   const PATHS = {
     Cendre: ['M0,-10 L7.2,0 L0,10 L-7.2,0 Z M0,-5 Q3.2,-0.5 1.2,4.2 Q0,2 -1.2,4.2 Q-3.2,-0.5 0,-5 Z', 'evenodd'],
     Voile: ['M0,-10 L10,0 L0,10 L-10,0 Z M0,-6.2 L-6.2,0 L0,6.2 L6.2,0 Z M0,-3 L3,0 L0,3 L-3,0 Z', 'evenodd'],
@@ -554,23 +555,64 @@ export async function fixBanners({ url, banners, seed = 7 }) {
     }
     // emblème du jeu
     if (bn.family && PATHS[bn.family]) {
-      const size = Math.min(w * 0.78, h * 0.46); const sc = size / 20;
+      // `brode` (passe 61, décision E1 du responsable) : relief de broderie, emblème 12 % plus grand
+      const grow = brode ? 1.12 : 1;
+      const size = Math.min(w * (brode ? 0.86 : 0.78), h * 0.46 * grow); const sc = size / 20;
       const ex = (bn.center ? bn.center[0] - x0 : w / 2); const ey = (bn.center ? bn.center[1] - y0 : h * 0.42);
-      const m = new OffscreenCanvas(w, h); const mg = m.getContext('2d');
+      const m = new OffscreenCanvas(w, h); const mg = m.getContext('2d', { willReadFrequently: true });
       mg.translate(ex, ey); mg.scale(sc, sc);
       const path = new Path2D(PATHS[bn.family][0]);
-      // ombre portée sombre, un peu plus grande et décalée vers le bas à droite (pas de contour tracé : les tracés se
-      // recoupent dans la fleur de Ronce)
-      mg.save(); mg.translate(0.5, 0.7); mg.scale(1.12, 1.12); mg.fillStyle = 'rgba(30,18,8,0.85)'; mg.fill(path, PATHS[bn.family][1]); mg.restore();
-      const grd = mg.createLinearGradient(-8, -10, 8, 10); grd.addColorStop(0, '#f3d688'); grd.addColorStop(0.55, '#d4a64e'); grd.addColorStop(1, '#8e6526');
-      mg.fillStyle = grd; mg.fill(path, PATHS[bn.family][1]);
-      if (bn.family === 'Ronce') { mg.fillStyle = 'rgba(0,0,0,0.35)'; mg.beginPath(); mg.arc(0, 0, 2, 0, Math.PI * 2); mg.fill(); }
+      if (!brode) {
+        // ombre portée sombre, un peu plus grande et décalée vers le bas à droite (pas de contour tracé : les tracés se
+        // recoupent dans la fleur de Ronce)
+        mg.save(); mg.translate(0.5, 0.7); mg.scale(1.12, 1.12); mg.fillStyle = 'rgba(30,18,8,0.85)'; mg.fill(path, PATHS[bn.family][1]); mg.restore();
+        const grd = mg.createLinearGradient(-8, -10, 8, 10); grd.addColorStop(0, '#f3d688'); grd.addColorStop(0.55, '#d4a64e'); grd.addColorStop(1, '#8e6526');
+        mg.fillStyle = grd; mg.fill(path, PATHS[bn.family][1]);
+        if (bn.family === 'Ronce') { mg.fillStyle = 'rgba(0,0,0,0.35)'; mg.beginPath(); mg.arc(0, 0, 2, 0, Math.PI * 2); mg.fill(); }
+      } else {
+        // broderie : bourrelet sombre autour (fil de contour, centré, plus l'ombre portée vers le bas à droite), fil d'or
+        // en points lancés obliques, modelé éclairé du haut à gauche (gradient du masque adouci), reflet sur les crêtes
+        mg.save(); mg.translate(0.45, 0.65); mg.scale(1.13, 1.13); mg.fillStyle = 'rgba(22,13,6,0.8)'; mg.fill(path, PATHS[bn.family][1]); mg.restore();
+        mg.save(); mg.scale(1.09, 1.09); mg.fillStyle = 'rgba(38,24,10,0.95)'; mg.fill(path, PATHS[bn.family][1]); mg.restore();
+        const rimD = mg.getImageData(0, 0, w, h).data;
+        const k2 = new OffscreenCanvas(w, h); const kg = k2.getContext('2d', { willReadFrequently: true });
+        kg.translate(ex, ey); kg.scale(sc, sc); kg.fillStyle = '#fff'; kg.fill(path, PATHS[bn.family][1]);
+        if (bn.family === 'Ronce') { kg.globalCompositeOperation = 'destination-out'; kg.beginPath(); kg.arc(0, 0, 1.6, 0, Math.PI * 2); kg.fill(); }
+        const kd = kg.getImageData(0, 0, w, h).data;
+        const A = new Float32Array(w * h); for (let i = 0; i < w * h; i++) A[i] = kd[i * 4 + 3] / 255;
+        // masque adouci (deux passes de boîte, rayon ≈ 1/24 de l'emblème)
+        const r = Math.max(1, Math.round(size / 24));
+        const box = (src) => { const t = new Float32Array(w * h); const o = new Float32Array(w * h);
+          for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { let s0 = 0; let n = 0; for (let dx = -r; dx <= r; dx++) { const xx = x + dx; if (xx >= 0 && xx < w) { s0 += src[y * w + xx]; n++; } } t[y * w + x] = s0 / n; }
+          for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) { let s0 = 0; let n = 0; for (let dy = -r; dy <= r; dy++) { const yy = y + dy; if (yy >= 0 && yy < h) { s0 += t[yy * w + x]; n++; } } o[y * w + x] = s0 / n; }
+          return o; };
+        const B = box(box(A));
+        const at = (x, y) => B[Math.max(0, Math.min(h - 1, y)) * w + Math.max(0, Math.min(w - 1, x))];
+        const period = Math.max(1.8, size / 14);
+        const ramp = [[92, 60, 22], [150, 104, 42], [205, 156, 70], [240, 204, 122], [255, 240, 196]];
+        const rampAt = (t) => { const u = Math.max(0, Math.min(0.999, t)) * (ramp.length - 1); const i0 = Math.floor(u); const f = u - i0; return ramp[i0].map((v, k) => v + (ramp[i0 + 1][k] - v) * f); };
+        const md = new Uint8ClampedArray(w * h * 4);
+        for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+          const i = y * w + x; const a0 = A[i];
+          if (a0 <= 0) { for (let k = 0; k < 4; k++) md[i * 4 + k] = rimD[i * 4 + k]; continue; }
+          const gx = at(x + 1, y) - at(x - 1, y); const gy = at(x, y + 1) - at(x, y - 1);
+          const light = 0.5 + (gx + gy) * 1.25 + (B[i] - 0.5) * 0.25;
+          const st = 0.86 + 0.14 * Math.sin((2 * Math.PI * ((x - ex) * 0.8 + (y - ey) * 0.6)) / period);
+          const jit = 0.94 + rnd() * 0.08;
+          const c = rampAt(light * st * jit);
+          // le fil se pose sur le bourrelet : couleur de l'or, alpha de l'or plus celui du bourrelet dessous
+          const ra = rimD[i * 4 + 3] / 255;
+          for (let k = 0; k < 3; k++) md[i * 4 + k] = c[k] * a0 + rimD[i * 4 + k] * (1 - a0);
+          md[i * 4 + 3] = Math.round(255 * (a0 + ra * (1 - a0)));
+        }
+        mg.setTransform(1, 0, 0, 1, 0, 0); mg.clearRect(0, 0, w, h); mg.putImageData(new ImageData(md, w, h), 0, 0);
+      }
       const md = mg.getImageData(0, 0, w, h).data;
       for (let i = 0; i < w * h; i++) {
         const a = md[i * 4 + 3] / 255; if (!a) continue;
         const sh = Math.sqrt(shade[i]);
         const si = samples.length ? samples[Math.floor(rnd() * samples.length)] : i;
-        const grain = samples.length ? (lums[si] - colL[si % w]) * 0.5 : 0;
+        const grain = samples.length ? (lums[si] - colL[si % w]) * (brode ? 0.25 : 0.5) : 0;
         for (let k = 0; k < 3; k++) d[i * 4 + k] = d[i * 4 + k] * (1 - a) + (md[i * 4 + k] * sh + grain) * a;
       }
     }
