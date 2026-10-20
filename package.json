@@ -28,7 +28,8 @@
     "qa:ville": "node tools/m09-labo.mjs",
     "qa:aventure": "node tools/m10-aventure.mjs",
     "qa:championnat": "node tools/m10-championnat.mjs",
-    "qa:maison": "node tools/m10c-parcours.mjs"
+    "qa:maison": "node tools/m10c-parcours.mjs",
+    "qa:voies": "node tools/m10d-voies.mjs"
   },
   "engines": {
     "node": ">=20"

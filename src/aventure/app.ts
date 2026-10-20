@@ -32,15 +32,15 @@ import { blocked, type Zone } from '../ville/monde';
 import { spritePolicy } from '../ville/spritesExternes';
 import { installVilleStyles, promptBubble } from '../ville/ui';
 import { createTown, type Town } from '../ville/ville';
-import { appliquer, chapitre, peutChanger, peutConfirmer, peutEngager, statutDefi, type Evenement, type FaitsPublics, type Issue } from './aventure';
-import { basculerTechnique, choixPourCase, equiperSignature, rangDe, remplacerCase, validerDeckAv, type DeckAv } from './deck';
+import { apercuEngagement, appliquer, bannieres, chapitre, peutChanger, peutConfirmer, statutDefi, type EtatBanniere, type Evenement, type FaitsPublics, type Issue } from './aventure';
+import { basculerTechnique, choixPourCase, equiperSignature, rangDe, remplacerCase, standardLegal, validerDeckAv, type DeckAv } from './deck';
 import { origineGain, vueCollection, type EntreeCollection } from './collection';
 import { battre, conclure, decider, poses, rencontreDef, type Pose } from './directeur';
 import { faitsPublics } from './faits';
 import { ilotAventure, MANIFESTE_QUAI_RANGS } from './ilots';
 import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, RANGS, rangNeutre, ROLE_LABEL, ROLES, ROMAIN, type EtatFamille } from './modele';
 import { objectif, quetes } from './quetes';
-import { collectionDe, type Gain } from './registre';
+import { aGain, collectionDe, type Gain } from './registre';
 import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue, personnalite, type DuelPrevu } from './rencontres';
 import { CONTRAINTE_JOUTE, manche, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, varianteDe } from './competitions';
 import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave, type DuelAventure } from './sauvegarde';
@@ -65,6 +65,7 @@ const FOULE = [
 ];
 
 const capital = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const minuscule = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
 const de = deF;
 const la = leF;
 
@@ -502,6 +503,9 @@ export class AventureApp {
     this.fermerDialogue();
     const m = MAISONS[f];
     const [c, b, ch] = ROLES.map((r) => figureDe(f, r));
+    // AV-08 : le deck des adversaires suit le nombre de familles dont le joueur a les cartes de base (niveau)
+    const col = collectionDe(this.etat.registre);
+    const niveau = col.basics.length + (col.basics.includes(f) ? 0 : 1);
     const panel = h('div', { class: `av-confirm fam-${f}`, 'data-key': 'av-confirmation' },
       h('div', { class: 'av-confirm-head' }, h('span', { class: `av-emb fam-${f}`, html: emblemSvg(f, 46) }), h('div', null, h('h2', null, `Rejoindre ${la(f)}`), h('p', { class: 'av-devise' }, `${m.nom} · ${m.devise}`))),
       h('p', null, m.credo),
@@ -511,7 +515,7 @@ export class AventureApp {
       h('h3', null, 'Ensuite'),
       h('p', null, `Défier ${c!.nom} (${ROLE_LABEL.cadet}), puis ${b!.nom} (${ROLE_LABEL.brasDroit}), puis ${ch!.nom} (${ROLE_LABEL.chef}) : chaque lieutenant vaincu donne une variante, le chef donne sa Signature ∞.`),
       h('h3', null, 'Ce qui ne change pas'),
-      h('p', null, `Les autres familles restent ouvertes ; quand le chef ${de(f)} sera vaincu, vous pourrez engager leur défi à la Salle des Bannières. ${changement ? 'Les cartes déjà reçues restent à vous.' : 'Jusqu’à votre premier défi de lieutenant, vous pourrez encore changer de voie.'}`),
+      h('p', null, `Les autres familles restent ouvertes ; quand le chef ${de(f)} sera vaincu, vous pourrez engager leur défi à la Salle des Bannières. ${changement ? `Les cartes déjà reçues restent à vous. Vos adversaires en tiennent compte : leur deck suit le nombre de familles dont vous avez les cartes de base (${niveau} après ce changement).` : 'Jusqu’à votre premier défi de lieutenant, vous pourrez encore changer de voie.'}`),
       h('div', { class: 'ville-choices' },
         h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-confirmer', onclick: () => this.confirmer(f, changement) }, 'Confirmer l’affiliation'),
         h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-revenir', onclick: () => this.fermerModal() }, 'Revenir')));
@@ -541,7 +545,10 @@ export class AventureApp {
     // Cadet d'une autre famille, encore en invitation : changer de voie, si c'est encore possible (P-N6).
     if (fig.role === 'cadet' && e.familles[fig.famille] === 'invite' && e.affiliation) {
       const ok = peutChanger(e) && peutConfirmer({ ...e, affiliation: null }, fig.famille).ok;
-      return this.dire(`${fig.nom}, ${fig.titre}`, `« Tu as choisi ${la(e.affiliation)}. ${ok ? 'Si ce n’était pas la bonne voie, il est encore temps.' : 'Ta voie est engagée ; viens nous défier quand ton chef sera tombé.'} »`, [
+      const plusTard = aGain(e.registre, `signature:${e.affiliation}`)
+        ? 'Ton chef est tombé : si tu veux nous défier, engage le défi de notre famille à la Salle des Bannières, sur le Quai.'
+        : 'Ta voie est engagée ; viens nous défier quand ton chef sera tombé.';
+      return this.dire(`${fig.nom}, ${fig.titre}`, `« Tu as choisi ${la(e.affiliation)}. ${ok ? 'Si ce n’était pas la bonne voie, il est encore temps.' : plusTard} »`, [
         ...(ok ? [{ label: `Rejoindre ${la(fig.famille)} à la place…`, key: 'dlg-changer', run: () => this.confirmation(fig.famille, true) }] : []),
         { label: 'Au revoir', key: 'dlg-close', primary: true, run: () => this.fermerDialogue() },
       ], fig.apparence);
@@ -635,27 +642,75 @@ export class AventureApp {
     ], r.apparence);
   }
 
-  /** Salle des Bannières (la salle de jeu de cartes) : l'engagement OFFICIEL du défi d'une autre famille (ADR 031 §4). */
+  /**
+   * Salle des Bannières (la salle de jeu de cartes) : l'engagement OFFICIEL du défi d'une autre famille (ADR 031 §4,
+   * M10-D). Les quatre bannières, chacune avec son état (famille d'accueil, défi à engager, engagé, chef vaincu, ou
+   * fermé avec sa raison) ; seul ce lieu engage un défi.
+   */
   private salleDesBannieres(): void {
     const e = this.etat;
     if (!e.affiliation) return this.dire('La Salle des Bannières', '« Le tournoi est réservé aux duellistes des familles. Revenez quand vous appartiendrez à une Voie. » La porte reste close.', [fermer(this)]);
-    const choix: Choix[] = [];
-    const raisons: string[] = [];
-    for (const f of FAMILIES) {
-      if (f === e.affiliation) continue;
-      const ok = peutEngager(e, f);
-      if (ok.ok) choix.push({ label: `Engager le défi ${de(f)}…`, key: `dlg-engager-${f}`, run: () => void this.engager(f) });
-      else raisons.push(`${f} : ${ok.raison}`);
-    }
-    this.dire('La Salle des Bannières', `Le maître de table montre les quatre bannières. « Ici, on engage officiellement le défi d’une famille. » ${choix.length ? '' : raisons[0] ?? ''}`, [...choix, { label: 'Plus tard', key: 'dlg-close', primary: !choix.length, run: () => this.fermerDialogue() }]);
+    this.fermerDialogue();
+    const cartes = bannieres(e).map((b) => h('div', { class: `av-banniere fam-${b.famille} etat-${b.etat}`, 'data-key': `av-banniere-${b.famille}`, 'data-etat': b.etat },
+      h('span', { class: `av-emb fam-${b.famille}`, html: emblemSvg(b.famille, 40) }),
+      h('b', null, capital(la(b.famille))),
+      h('span', { class: 'av-banniere-etat' }, ETAT_BANNIERE[b.etat]),
+      h('small', null, b.texte),
+      b.etat === 'engageable' ? h('button', { class: 'ville-btn primary', type: 'button', 'data-key': `dlg-engager-${b.famille}`, onclick: () => this.confirmationEngagement(b.famille) }, 'Engager le défi…') : null));
+    this.ouvrirModal(h('div', { class: 'av-confirm av-large', 'data-key': 'av-bannieres' },
+      h('h2', null, 'La Salle des Bannières'),
+      h('p', null, 'Le maître de table montre les quatre bannières. « Ici, on engage officiellement le défi d’une famille. Entrer dans son quartier, parler à ses membres ou battre l’un d’eux dans la rue n’engage rien : c’est ici, et nulle part ailleurs. »'),
+      h('div', { class: 'av-bannieres' }, ...cartes),
+      h('p', { class: 'av-proto', 'data-key': 'av-bannieres-deck' }, `Votre deck : ${resumeDeck(e.deck)}.`),
+      h('div', { class: 'ville-choices' }, h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-bannieres-fermer', onclick: () => this.fermerModal() }, 'Fermer'))));
   }
 
-  private async engager(f: Family): Promise<void> {
-    this.fermerDialogue();
-    const r = await confirmDialog({ title: `Engager le défi ${de(f)} ?`, text: `Vous recevrez les quatre cartes de base ${de(f)} et sa Technique ${MAISONS[f].technique} ; vous pourrez ensuite défier ${figureDe(f, 'cadet').nom}, ${figureDe(f, 'brasDroit').nom} et ${figureDe(f, 'chef').nom}.`, confirm: 'Engager le défi' });
-    if (r !== 'confirm') return;
+  /**
+   * Écran de confirmation de l'engagement (M10-D, comme celui de l'affiliation, ADR 029 §3) : ce qui est remis, ou déjà
+   * possédé (affiliation quittée : rien n'est remis une seconde fois), ce que devient le deck, la suite, ce qui ne change
+   * pas. L'aperçu est calculé par la machine de l'aventure (`apercuEngagement`).
+   */
+  private confirmationEngagement(f: Family): void {
+    const e = this.etat;
+    const ap = apercuEngagement(e, f);
+    if (!ap.ok) { this.toast(ap.raison); return; }
+    const m = MAISONS[f];
+    const [c, b, ch] = ROLES.map((r) => figureDe(f, r));
+    const gb = e.registre.find((g) => g.key === `basics:${f}`);
+    const enjeu = (x: typeof c) => (x!.enjeu.kind === 'variante' ? nomCarte(x!.enjeu.defId) : `la Signature ∞ ${de(f)}`);
+    const remis = ap.basicsDeja
+      ? `Les quatre cartes de base ${de(f)} sont déjà à vous (${gb ? minuscule(origineGain(gb)) : 'registre'}) : rien n’est remis une seconde fois.${ap.techniqueDeja ? ` La Technique ${m.technique} est déjà apprise.` : ''}`
+      : `Les quatre cartes de base ${de(f)} (I à IV)${ap.techniqueDeja ? ` ; la Technique ${m.technique} est déjà apprise.` : `, et la Technique ${m.technique} (${TECHNIQUES[m.technique].text})`}`;
+    const deck = ap.basicsDeja
+      ? `Votre deck ne change pas (${ap.neutres[0]} carte${ap.neutres[0] > 1 ? 's' : ''} grise${ap.neutres[0] > 1 ? 's' : ''}).`
+      : `Une carte grise de chaque Rang cède sa place à la Basic du même Rang : ${ap.neutres[0]} → ${ap.neutres[1]} cartes grises.`;
+    this.ouvrirModal(h('div', { class: `av-confirm fam-${f}`, 'data-key': 'av-engagement' },
+      h('div', { class: 'av-confirm-head' }, h('span', { class: `av-emb fam-${f}`, html: emblemSvg(f, 46) }), h('div', null, h('h2', null, `Engager le défi ${de(f)}`), h('p', { class: 'av-devise' }, `${m.nom} · ${m.devise}`))),
+      h('p', null, m.credo),
+      h('h3', null, ap.basicsDeja ? 'Déjà à vous' : 'Vous recevrez tout de suite'),
+      h('div', { class: `av-cards${ap.basicsDeja ? ' av-deja' : ''}` }, ...[1, 2, 3, 4].map((r) => cardEl(`${f}-${r}-basic`, { artSeed: this.params.artSeed, tag: 'div' }))),
+      h('p', { 'data-key': 'av-engagement-basics' }, remis),
+      h('h3', null, 'Votre deck'),
+      h('p', { class: 'av-transition', 'data-key': 'av-engagement-deck' }, deck, ap.standard ? h('b', { class: 'av-standard' }, ` ${STANDARD}`) : null),
+      h('h3', null, 'Ensuite'),
+      h('p', null, `Défier ${c!.nom}, ${c!.titre} (${enjeu(c)}), puis ${b!.nom} (${enjeu(b)}), puis ${ch!.nom} (${enjeu(ch)}) ; leur maison : ${m.nom}, ${OU_ILOT[m.ilot]}. Dans le quartier, l’Épreuve (${nomCarte(varianteDe(f, 1))}) ; après le bras droit, la Joute de la maison (${nomCarte(varianteDe(f, 2))}).`),
+      h('h3', null, 'Ce qui ne change pas'),
+      h('p', null, `Votre famille reste ${la(e.affiliation!)}. Les autres défis restent ouverts, dans l’ordre que vous voulez ; une défaite ne ferme rien.`),
+      h('div', { class: 'ville-choices' },
+        h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-engager-confirmer', onclick: () => this.engager(f) }, 'Engager le défi'),
+        h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-engager-revenir', onclick: () => this.salleDesBannieres() }, 'Revenir'))));
+  }
+
+  private engager(f: Family): void {
+    const ap = apercuEngagement(this.etat, f);
+    this.fermerModal();
     const gains = this.faire({ type: 'engager', famille: f });
-    if (gains) this.recompense(`Défi ${de(f)} engagé`, gains, () => this.entrerVille(false));
+    if (!gains) return;
+    const notes = [
+      ...(ap.basicsDeja ? [`Les cartes de base ${de(f)} étaient déjà à vous : rien n’est remis une seconde fois (registre des gains).`] : []),
+      standardLegal(this.etat.deck, collectionDe(this.etat.registre)) ? `Votre deck : ${STANDARD}` : `Votre deck : ${resumeDeck(this.etat.deck)}.`,
+    ];
+    this.recompense(`Défi ${de(f)} engagé`, gains, () => this.entrerVille(false), notes);
   }
 
   // ------------------------------------------------------------------ duel
@@ -926,11 +981,12 @@ export class AventureApp {
     if (!this.dialog) this.town?.setInputLocked(false);
   }
 
-  private recompense(titre: string, gains: Gain[], suite: () => void): void {
+  private recompense(titre: string, gains: Gain[], suite: () => void, notes: string[] = []): void {
     const panel = h('div', { class: 'av-confirm av-recompense', 'data-key': 'av-recompense' },
       h('h2', null, titre),
-      h('p', null, 'Inscrit au registre des gains (une seule fois : un rechargement, une reprise ou une revanche ne le dupliquent pas).'),
-      h('div', { class: 'av-cards' }, ...gains.flatMap((g) => gainEls(g, this.params.artSeed))),
+      gains.length ? h('p', null, 'Inscrit au registre des gains (une seule fois : un rechargement, une reprise ou une revanche ne le dupliquent pas).') : null,
+      gains.length ? h('div', { class: 'av-cards' }, ...gains.flatMap((g) => gainEls(g, this.params.artSeed))) : null,
+      ...notes.map((n, i) => h('p', { class: 'av-transition', 'data-key': `av-recompense-note-${i}` }, n)),
       h('div', { class: 'ville-choices' }, h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-continuer', onclick: () => { this.fermerModal(); suite(); } }, 'Continuer')));
     this.ouvrirModal(panel);
   }
@@ -993,6 +1049,7 @@ export class AventureApp {
         h('div', { class: 'av-sig-ligne' }, draft.signature ? h('div', { class: 'av-cards' }, cardEl(`sig-${draft.signature}`, { artSeed: art, tag: 'div' })) : null, sigs),
         h('h3', null, `Techniques (${draft.techniques.length} sur 2)`), techs,
         issues.length ? h('ul', { class: 'av-issues', 'data-key': 'av-issues' }, ...issues.map((i) => h('li', null, i.text))) : h('p', { class: 'av-ok', 'data-key': 'av-deck-ok' }, `Deck légal (règle R-AV, avenant M10-A)${modifie() ? ' — modifications non enregistrées' : ''}.`),
+        !issues.length && standardLegal(draft, col) ? h('p', { class: 'av-standard', 'data-key': 'av-deck-standard' }, STANDARD) : null,
         h('div', { class: 'ville-choices' },
           h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-deck-save', disabled: issues.length ? true : null, onclick: () => { s.etat = { ...s.etat, deck: draft }; this.persist(); this.fermerModal(); this.toast('Deck enregistré.'); } }, 'Enregistrer et fermer'),
           h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-deck-reset', disabled: modifie() ? null : true, onclick: () => { draft = structuredClone(s.etat.deck); caseSel = null; render(); } }, 'Annuler les changements')));
@@ -1093,6 +1150,11 @@ const LIEU: Record<VenueId, string> = { salle: 'la salle de jeu de cartes', rue:
 const figureOuNull = (id: string) => { try { return figure(id); } catch { return null; } };
 const lieuDe = (f: Family) => (f === 'Cendre' ? 'à la Maison du Chantier, à l’ouest du Quai' : f === 'Ronce' ? 'devant le Fanal, sur le Quai' : f === 'Voile' ? 'dans les Ruelles, près de la fontaine' : 'sur le Parvis de l’arène');
 const nomCarte = (defId: string) => (CATALOG[defId] ? cardTitle(CATALOG[defId]!) : defId);
+/** Le deck au format standard (avenant M10-A, AV-04 ; A-6). */
+const STANDARD = 'Format standard : 17 cartes, sans carte grise ; le validateur du mode Duel l’accepte tel quel.';
+/** État d'une bannière, lu par le joueur (Salle des Bannières). */
+const ETAT_BANNIERE: Record<EtatBanniere, string> = { accueil: 'votre famille', engageable: 'défi à engager', engagee: 'défi engagé', conquise: 'chef vaincu', fermee: 'pas encore' };
+const OU_ILOT: Record<IlotId, string> = { quai: 'sur le Quai', ruelles: 'dans les Ruelles (sortie ouest du Quai)', parvis: 'sur le Parvis de l’arène (sortie est du Quai)' };
 /** État d'une famille, lu par le joueur (écran Collection). */
 const ETAT_FAMILLE: Record<EtatFamille, string> = { inconnue: 'pas encore rencontrée', remarque: 'a remarqué votre jeu', invite: 'vous invite', affilie: 'votre famille', defiee: 'défi officiel engagé', chef: 'chef vaincu' };
 /** Ce qu'un gain a remis : « Cartes de base de la Cendre », le nom d'une variante ou d'une Signature, « Technique Lecture ». */
