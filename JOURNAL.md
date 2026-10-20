@@ -1891,6 +1891,20 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **Pensée :** l'immersion tient aux raccords : une maison coupée, un mur qui dépasse d'un toit, un monument sans voisins suffisent à trahir le décor ; poser chaque façade d'un mur mitoyen à l'autre et ranger le monument dans sa rue rend au quartier sa vraisemblance, et une lueur au sol suffit à montrer le chemin sans rien écrire dans le décor.
 - **À reprendre :** réglage des balises selon le responsable ; planche d'approbation en bloc (A1, après A2) ; le Parvis et les Ruelles en rangs ; la Grande Cour (V5) ; feuille du joueur (J1).
 
+## Mandat de cadrage M10 — affiliation par choix explicite (2026-10-20)
+
+- **[OK] Décision du responsable :** option B ratifiée : les Quatre Voies remarquent le joueur après un premier duel public, mais **l'affiliation reste son choix libre**, avec possibilité d'accepter, différer, rechercher une autre famille sans attribution automatique ni softlock. ADR 029.
+- **[OK] Contrat narratif de préparation :** `docs/missions/M10_ORIGINES_ASCENSION_QUATRE_VOIES.md` décrit le prologue de cartes neutres, l'ascension familiale, les 16 identités ordinaires à acquérir, les variantes, le rival récurrent, les défis urbains et le championnat. Ce cadrage **n'est pas une implémentation** ; les chiffres et règles de deck neutre sont signalés comme propositions non ratifiées.
+- **[?] M09 demeure actif :** le Quai profond en rangs, ses images et les manifestes de décor ne sont pas approuvés par cette décision. Aucune modification du runtime, des règles V3.x, de la progression prototype ni des tests n'est revendiquée.
+- **À reprendre (M10, ultérieurement) :** avenant de gameplay cartes neutres/deck/Signature/migration à faire approuver, puis tranche verticale prologue → invitation → choix parmi les quatre voies. Terminer et réceptionner les étapes M09 avant d'ouvrir le développement M10.
+
+
+## Clarification M10 — Composition des 16 cartes neutres (2026-10-20)
+
+- **[OK] Nouvelle décision explicite du responsable :** le lot de la populace comprend **4 cartes neutres de chaque Rang I, II, III et IV** = exactement 16 exemplaires physiques, quatre définitions seulement ; sans famille, bonus ou effet propre, blanc/gris. ADR 030 ; M10 mis à jour.
+- **[?] Restent à arbitrer avant d'étendre le moteur :** Puissances imprimées (3/6/9/12 proposées par continuité avec Basic, non ratifiées), Signature et Techniques du prologue, remplacement/conversion des copies neutres vers les 16 identités familiales, ancienne sauvegarde. Conserver le deck de duel standard intact.
+- **[OK] M09 toujours actif ;** ce commit est une clarification documentaire uniquement, aucun code ni paramètre de gameplay n'a changé.
+
 ## Passe 68 — Quai en quatre rangs : chemins lumineux posés sur les pavés (sans flèche), ombres au sol ; fantômes des rangs traversés gardés puis retirés — 2026-10-20, worktree local (session V4), départ `0701e59`, commit sur `main`
 
 - **Mission / contraintes :** retours du responsable sur la passe 67 : « non pas des fleches de direction soyons plus optimiste des chemin subtilement lumineux afin de connaitre notre chemin par contre les assets decors dans les rangs supperieur doivent etre bien integre toujours avvec ce cote diorama je remarque des assets mal integre qui donne cette sesnation de image pose sur la scene, eventuellement il faudrait mettre des ombres pour optimiser cette immersion, et je veux que tu conserves les fantomes des rangs precedents pour garder un petit visuelle du rang precedemment traverse » ; puis, sur les premières captures : « excellent les chemins sont presque bien mais un peu plus fluides et dissimules il faut qu'ils se fondent a la scene de maniere saine et coherente » ; enfin, sur la planche : « excellent plus besoin d'integrer un fantome visble car les chemins paves sont a present bien integres ». Par le moteur seulement ; aucune image générée (21 sur 30) ; rien n'est approuvé.
