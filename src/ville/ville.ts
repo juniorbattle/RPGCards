@@ -60,6 +60,11 @@ export interface TownOptions {
   rig?: RigTuning | null;
   /** Îlot de départ remplacé (passe 62, laboratoire : le Quai profond, `?profondeur=1`). */
   ilotDef?: IlotDef;
+  /**
+   * M10-B (prototype `?aventure=1`) : définition de chaque îlot lue à chaque montage (personnages posés selon la
+   * progression) ; `undefined` = celle du registre. Absent : comportement inchangé (démo, laboratoire).
+   */
+  ilotDefOf?: (id: IlotId) => IlotDef | undefined;
   /** Manifeste des plans lu dans `decors/` (passe 62, laboratoire : `manifest-profondeur.json`). */
   decorsManifest?: string;
 }
@@ -274,7 +279,8 @@ export function createTown(o: TownOptions): Town {
   o.host.appendChild(renderer.domElement);
 
   // îlot de départ remplacé (passe 62 : Quai profond du laboratoire, `?profondeur=1`) ; les voisins restent ceux du registre
-  let def: IlotDef = o.ilotDef ?? ILOTS[o.ilot ?? 'quai'];
+  const defOf = (id: IlotId): IlotDef => o.ilotDefOf?.(id) ?? (o.ilotDef && o.ilotDef.id === id ? o.ilotDef : ILOTS[id]);
+  let def: IlotDef = o.ilotDef ?? defOf(o.ilot ?? 'quai');
   // Feuilles de personnages (ADR 027) : lecture du manifeste et décodage lancés avant la construction de l'îlot (le
   // réseau et le décodeur avancent pendant qu'elle occupe le fil principal) ; envoi au GPU dès qu'une feuille est prête.
   const sheets = createSheetResolver(o.sprites ?? 'approuvees', (t) => renderer.initTexture(t), {
@@ -657,7 +663,7 @@ export function createTown(o: TownOptions): Town {
     mountT0 = m0;
     unmountWorld();
     const prev = def.id;
-    def = o.ilotDef && o.ilotDef.id === id ? o.ilotDef : ILOTS[id];
+    def = defOf(id);
     // feuilles et diorama de l'îlot d'arrivée : déjà prêts si l'appelant les a préparés derrière le fondu (`prepare`)
     void sheets.prepare(castOf(def));
     const st = decors.peek(def.id);
@@ -712,8 +718,8 @@ export function createTown(o: TownOptions): Town {
     externalReport: () => ({ ...sheets.report(), hiddenFrames }),
     decorReport: () => ({ ...decors.report(), ilot: def.id, world: worldKind, pendingFrames: decorPendingFrames, late: [...decorLate] }),
     // plans décodés puis envoyés au GPU dès qu'ils sont prêts (`peek`), pendant le fondu : `goTo` n'a plus qu'à construire
-    prepare: (id) => Promise.all([sheets.prepare(castOf(ILOTS[id])), decors.prepare(id).then(() => { decors.peek(id); })]).then(() => undefined),
-    isPrepared: (id) => castOf(ILOTS[id]).every((x) => sheets.peek(x).state !== 'attente') && decors.peek(id).state !== 'attente',
+    prepare: (id) => Promise.all([sheets.prepare(castOf(o.ilotDefOf?.(id) ?? ILOTS[id])), decors.prepare(id).then(() => { decors.peek(id); })]).then(() => undefined),
+    isPrepared: (id) => castOf(o.ilotDefOf?.(id) ?? ILOTS[id]).every((x) => sheets.peek(x).state !== 'attente') && decors.peek(id).state !== 'attente',
     ready: () => (pending.size || decorPending ? new Promise<void>((res) => waiters.push(res)) : Promise.resolve()),
     renderNow() { rig.update(camera, walker.pos, 0, true); render(); },
     walkerH,
