@@ -61,8 +61,9 @@ les commandes du jeu standard ; « Menu » met en pause (reprendre, sauvegarder 
    **vos seize cartes grises jouent en duel**, contre les seize cartes grises de Kaï (la populace).
 4. **Le duel public** (vous : 50 PV ; Kaï : 40). Gagner, perdre ou abandonner mène à la même suite (ADR 029 : aucun
    blocage). **Vos PV montent de 3 à chaque combat mené à son terme** (victoire ou défaite), sans plafond ; chaque
-   adversaire a un deck de son palier, selon le nombre de familles dont vous avez les cartes (valeurs validées par le
-   responsable le 2026-10-20 : `docs/m10/CALIBRAGE_M10A.md`).
+   adversaire a un deck de son palier, selon le nombre de familles que vous avez rejointes ou dont vous avez engagé le
+   défi (valeurs validées par le responsable le 2026-10-20 : `docs/m10/CALIBRAGE_M10A.md`, amendement 1 compris : une
+   affiliation quittée ne compte qu'à l'engagement de son défi).
 5. **La foule** s'est formée ; Kaï réagit. **Le premier émissaire** fend la foule (choisi par un fait public du duel :
    Assauts gagnés → Cendre, Gardes gagnées → Ronce, Interférences réussies → Voile, sinon Astre) et dit que les trois
    autres familles vous ont remarqué aussi : **les quatre vous invitent**.

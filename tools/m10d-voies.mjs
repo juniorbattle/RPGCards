@@ -154,8 +154,8 @@ try {
   await parler('cadet-Cendre');
   await p.click('[data-key="dlg-changer"]');
   await p.waitForSelector('[data-key="av-confirmation"]');
-  check(/cartes déjà reçues restent à vous.*\(2 après ce changement\)/.test(await texte('[data-key="av-confirmation"]')), 'changement d’affiliation : les cartes reçues restent, le niveau des adversaires annoncé (2)');
-  await shot('changement-cendre', 1200, 'Changer de voie avant le premier lieutenant : la Ronce quittée pour la Cendre ; les cartes restent, les adversaires en tiennent compte');
+  check(/cartes déjà reçues restent à vous.*la Ronce ne comptera qu’à l’engagement de son défi/.test(await texte('[data-key="av-confirmation"]')), 'changement d’affiliation : les cartes reçues restent ; la famille quittée ne compte pas dans le niveau des adversaires (D1)');
+  await shot('changement-cendre', 1200, 'Changer de voie avant le premier lieutenant : la Ronce quittée pour la Cendre ; les cartes restent, la Ronce ne compte dans le niveau qu’à l’engagement de son défi');
   await p.click('[data-key="av-confirmer"]');
   await p.waitForSelector('[data-key="av-recompense"]');
   await p.click('[data-key="av-continuer"]');
