@@ -43,6 +43,7 @@ import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, du
 import { CONTRAINTE_JOUTE, manche, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, varianteDe } from './competitions';
 import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave, type DuelAventure } from './sauvegarde';
 import { installAventureStyles } from './styles';
+import { pvJoueur } from './paliers';
 
 export interface DepsAventure {
   app: HTMLElement;
@@ -87,7 +88,7 @@ export class AventureApp {
   /** Écran courant (QA, aide au rendu). */
   ecran: 'titre' | 'nouveau' | 'ville' | 'preparation' | 'duel' | 'resultat' = 'titre';
   private posesAffichees = '';
-  private dernierResultat: { prevu: DuelPrevu; issue: Issue; gains: Gain[]; turns: number; faits: FaitsPublics } | null = null;
+  private dernierResultat: { prevu: DuelPrevu; issue: Issue; gains: Gain[]; turns: number; faits: FaitsPublics; pv: [number, number] } | null = null;
 
   constructor(readonly d: DepsAventure) {
     installVilleStyles();
@@ -449,7 +450,7 @@ export class AventureApp {
     this.dire(`${p.name}, ${p.title}`, deja
       ? 'Alors, tu te décides ? La foule commence à regarder.'
       : 'Toi aussi, ils t’ont fermé la porte du tournoi ? Cartes grises, pas de famille… Alors jouons ici, sur le Quai. Qu’ils voient ce qu’ils ratent.', [
-      { label: 'Relever le défi', key: 'dlg-duel', primary: true, run: () => this.preparer(duelPrologue(this.prochaineGraine(), this.etat.deck)) },
+      { label: 'Relever le défi', key: 'dlg-duel', primary: true, run: () => this.preparer(duelPrologue(this.prochaineGraine(), this.etat)) },
       { label: 'Pas maintenant', key: 'dlg-close', run: () => this.fermerDialogue() },
     ], KAI_PROLOGUE.apparence);
   }
@@ -530,7 +531,7 @@ export class AventureApp {
 
   private lancerFigure(id: string): void {
     const st = statutDefi(this.etat, figure(id));
-    this.preparer(duelFigure(id, this.etat.deck, this.prochaineGraine(), st.deja));
+    this.preparer(duelFigure(id, this.etat, this.prochaineGraine(), st.deja));
   }
 
   /** Épreuve du quartier (facultative) : trois duels en série ; variante I à la première série gagnée. */
@@ -541,7 +542,7 @@ export class AventureApp {
     const etape = e.competitions.epreuves[f]?.etape ?? 0;
     const gagnee = !!e.competitions.epreuves[f]?.gagnee;
     this.dire(capital(r.nom), `« L’Épreuve du quartier : trois de nos membres, l’un après l’autre. Une défaite, et l’on recommence. » ${st.texte} ${gagnee ? '' : `Récompense : ${nomCarte(varianteDe(f, 1))}.`}`, st.ouvert ? [
-      { label: `Duel ${etape + 1} sur 3`, key: 'dlg-duel', primary: true, run: () => this.preparer(duelEpreuve(f, etape, this.etat.deck, this.prochaineGraine(), gagnee)) },
+      { label: `Duel ${etape + 1} sur 3`, key: 'dlg-duel', primary: true, run: () => this.preparer(duelEpreuve(f, etape, this.etat, this.prochaineGraine(), gagnee)) },
       { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
     ] : [fermer(this)], r.apparence);
   }
@@ -553,7 +554,7 @@ export class AventureApp {
     const r = rencontreDef(`joute-${f}`)!;
     const gagnee = !!e.competitions.joutes[f]?.gagnee;
     this.dire(capital(r.nom), `« La Joute de la maison se joue avec ${CONTRAINTE_JOUTE[f].texte}. » ${st.texte} ${gagnee ? '' : `Récompense : ${nomCarte(varianteDe(f, 2))}.`}`, st.ouvert ? [
-      { label: gagnee ? 'Rejouer la Joute' : 'Jouter', key: 'dlg-duel', primary: true, run: () => this.preparer(duelJoute(f, this.etat.deck, this.prochaineGraine(), gagnee)) },
+      { label: gagnee ? 'Rejouer la Joute' : 'Jouter', key: 'dlg-duel', primary: true, run: () => this.preparer(duelJoute(f, this.etat, this.prochaineGraine(), gagnee)) },
       { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
     ] : [{ label: 'Ouvrir le deck', key: 'dlg-deck', run: () => { this.fermerDialogue(); this.collection(); } }, fermer(this)], r.apparence);
   }
@@ -572,18 +573,18 @@ export class AventureApp {
     if (m === 'poule') {
       const choix: Choix[] = FAMILIES.flatMap((f) => {
         const st = statutPoule(c, f, sig);
-        return st.ouvert ? [{ label: `${figureDe(f, 'chef').nom} (${f})`, key: `dlg-poule-${f}`, run: () => this.preparer(duelChampionnat('poule', this.etat.deck, this.prochaineGraine(), f)) }] : [];
+        return st.ouvert ? [{ label: `${figureDe(f, 'chef').nom} (${f})`, key: `dlg-poule-${f}`, run: () => this.preparer(duelChampionnat('poule', this.etat, this.prochaineGraine(), f)) }] : [];
       });
       const vaincus = Object.keys(c.championnat.poule).length;
       return this.dire('Les Quatre Bannières', `Battez trois des quatre chefs, avec une Signature différente à chaque victoire (${vaincus}/3). Signature équipée : ${sig ? CATALOG[`sig-${sig}`]!.name : 'aucune'}.${choix.length ? '' : ' Aucun duel possible avec cette Signature : changez-la dans le deck.'}`, [...choix, { label: 'Ouvrir le deck', key: 'dlg-deck', run: () => { this.fermerDialogue(); this.collection(); } }, { label: 'Plus tard', key: 'dlg-close', primary: !choix.length, run: () => this.fermerDialogue() }]);
     }
     if (m === 'miroir') return this.dire('Le Miroir', '« On a commencé ensemble, le soir du tournoi. On finit ensemble. » Kaï a gagné sa place en demi-finale.', [
-      { label: 'Affronter Kaï', key: 'dlg-duel', primary: true, run: () => this.preparer(duelChampionnat('miroir', this.etat.deck, this.prochaineGraine())) },
+      { label: 'Affronter Kaï', key: 'dlg-duel', primary: true, run: () => this.preparer(duelChampionnat('miroir', this.etat, this.prochaineGraine())) },
       { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
     ], 'braise');
     const st = statutFinale(c, sig);
     this.dire('La Finale', `${TENANTE.nom}, ${TENANTE.titre}, vous attend. Deux manches gagnantes ; changez de Signature entre deux manches. ${st.texte}`, st.ouvert ? [
-      { label: 'Jouer la manche', key: 'dlg-duel', primary: true, run: () => this.preparer(duelChampionnat('finale', this.etat.deck, this.prochaineGraine())) },
+      { label: 'Jouer la manche', key: 'dlg-duel', primary: true, run: () => this.preparer(duelChampionnat('finale', this.etat, this.prochaineGraine())) },
       { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
     ] : [{ label: 'Ouvrir le deck', key: 'dlg-deck', run: () => { this.fermerDialogue(); this.collection(); } }, fermer(this)], TENANTE.apparence);
   }
@@ -603,7 +604,7 @@ export class AventureApp {
       ? `${ligneKai} (défi facultatif, sans récompense ; vos duels contre lui : ${gagnes} victoire(s) sur ${contreKai.length})`
       : '« Une partie, pour passer le temps ? » (duel de rue, sans récompense)';
     this.dire(capital(r.nom), texte, [
-      { label: 'Accepter', key: 'dlg-duel', primary: true, run: () => this.preparer(duelFacultatif(id, this.etat.deck, this.prochaineGraine())) },
+      { label: 'Accepter', key: 'dlg-duel', primary: true, run: () => this.preparer(duelFacultatif(id, this.etat, this.prochaineGraine())) },
       { label: 'Refuser', key: 'dlg-close', run: () => { this.save!.directeur = conclure(this.save!.directeur, id, false); this.persist(); this.fermerDialogue(); } },
     ], r.apparence);
   }
@@ -713,11 +714,11 @@ export class AventureApp {
     const [k, a, b] = d.rencontre.split(':');
     const e = this.etat;
     const base = d.rencontre === 'prologue' ? duelPrologue(d.seed)
-      : figureOuNull(d.rencontre) ? duelFigure(d.rencontre, e.deck, d.seed, e.vaincues.includes(d.rencontre))
-      : k === 'epreuve' ? duelEpreuve(a as Family, e.competitions.epreuves[a as Family]?.etape ?? 0, e.deck, d.seed, !!e.competitions.epreuves[a as Family]?.gagnee)
-      : k === 'joute' ? duelJoute(a as Family, e.deck, d.seed, !!e.competitions.joutes[a as Family]?.gagnee)
-      : k === 'champ' ? duelChampionnat(a as 'poule' | 'miroir' | 'finale', e.deck, d.seed, b as Family | undefined)
-      : rencontreDef(d.rencontre) ? duelFacultatif(d.rencontre, e.deck, d.seed) : null;
+      : figureOuNull(d.rencontre) ? duelFigure(d.rencontre, e, d.seed, e.vaincues.includes(d.rencontre))
+      : k === 'epreuve' ? duelEpreuve(a as Family, e.competitions.epreuves[a as Family]?.etape ?? 0, e, d.seed, !!e.competitions.epreuves[a as Family]?.gagnee)
+      : k === 'joute' ? duelJoute(a as Family, e, d.seed, !!e.competitions.joutes[a as Family]?.gagnee)
+      : k === 'champ' ? duelChampionnat(a as 'poule' | 'miroir' | 'finale', e, d.seed, b as Family | undefined)
+      : rencontreDef(d.rencontre) ? duelFacultatif(d.rencontre, e, d.seed) : null;
     return base ? { ...base, config: d.config } : null;
   }
 
@@ -776,6 +777,10 @@ export class AventureApp {
     s.duel = null;
     s.historique = [...s.historique, { id: live.duel.id, rencontre, issue, turns: v.turn, at }].slice(-60);
     s.directeur = battre(s.directeur);
+    // AV-08 : les PV du joueur montent à chaque combat mené à son terme (pas à l'abandon)
+    const pvAvant = pvJoueur(s.etat.combats);
+    s.etat = appliquer(s.etat, { type: 'combat', issue }, at).etat;
+    const pvApres = pvJoueur(s.etat.combats);
     const faits = faitsPublics(c.match.events);
     if (rencontre === 'prologue') s.etat = appliquer(s.etat, { type: 'duelPrologue', issue, faits }, at).etat;
     else if (figureOuNull(rencontre)) {
@@ -794,7 +799,7 @@ export class AventureApp {
       gains = r.gains;
     } else s.directeur = conclure(s.directeur, rencontre, true);
     this.persist();
-    this.dernierResultat = { prevu: live.prevu, issue, gains, turns: v.turn, faits };
+    this.dernierResultat = { prevu: live.prevu, issue, gains, turns: v.turn, faits, pv: [pvAvant, pvApres] };
     this.resultat();
   }
 
@@ -813,6 +818,7 @@ export class AventureApp {
         h('h1', { class: 'av-h1' }, titre),
         h('p', { class: 'av-sous' }, `${r.prevu.titre} · ${r.turns} tour(s)`),
         h('p', null, note),
+        h('p', { class: 'av-pv', 'data-key': 'av-pv' }, r.pv[1] > r.pv[0] ? `Entraînement : vos PV passent de ${r.pv[0]} à ${r.pv[1]}.` : `Un abandon ne compte pas comme un combat : vos PV restent à ${r.pv[0]}.`),
         prologue ? h('p', { class: 'av-proto', 'data-key': 'av-faits' }, `Ce que la foule a vu (faits publics du duel) : ${r.faits.assautsGagnes} Clash(es) gagné(s) en Assaut, ${r.faits.gardesGagnees} en Garde, ${r.faits.interferencesReussies} Interférence(s) réussie(s).`) : null,
         r.gains.length ? h('div', { class: 'av-cards' }, ...r.gains.flatMap((g) => gainEls(g, this.params.artSeed))) : null,
         h('div', { class: 'av-items' }, bouton('Retour en ville', () => this.apresResultat(), 'av-retour', true))));

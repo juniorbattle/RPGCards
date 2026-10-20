@@ -80,6 +80,7 @@ export function validerSauvegarde(x: unknown): string[] {
   if (!Array.isArray(e.registre)) errs.push('etat.registre invalide');
   if (!isObj(e.deck) || !Array.isArray(e.deck.cartes)) errs.push('etat.deck invalide');
   if (!isObj(e.competitions) || !isObj(e.competitions.championnat)) errs.push('etat.competitions invalide');
+  if (!Number.isInteger(e.combats) || e.combats < 0) errs.push('etat.combats invalide');
   if (errs.length) return errs;
   errs.push(...controlerRegistre(e.registre), ...controlerEtat(e));
   const col = collectionDe(e.registre);
@@ -105,6 +106,8 @@ function lire(text: string): { ok: true; save: AventureSave } | { ok: false; fut
   }
   // aventure/1 d'avant les compétitions (même schéma, champ ajouté) : état par défaut, sans perte.
   if (isObj(x) && isObj(x.etat) && !('competitions' in x.etat)) (x.etat as Record<string, unknown>).competitions = nouvellesCompetitions();
+  // aventure/1 d'avant les PV qui montent (avenant M10-A, AV-08) : combats menés à terme retrouvés dans l'historique.
+  if (isObj(x) && isObj(x.etat) && !('combats' in x.etat)) (x.etat as Record<string, unknown>).combats = Array.isArray(x.historique) ? (x.historique as DuelResume[]).filter((d) => d.issue !== 'abandon').length : 0;
   const errs = validerSauvegarde(x);
   return errs.length ? { ok: false, future: false, raison: `Sauvegarde incohérente : ${errs.slice(0, 3).join(' ; ')}` } : { ok: true, save: x as AventureSave };
 }
