@@ -279,7 +279,7 @@ Techniques), ce qui est l'enjeu.
 
 | Duel | Deck adversaire (proposé) | Techniques | IA | PV |
 |---|---|---|---|---:|
-| **Inaugural** (Kaï) | 16 neutres | Sondage + Recentrage | offensif | 60 (joueur : 60 pour ce duel seulement, duel court de prologue) |
+| **Inaugural** (Kaï) | 16 neutres | Sondage + Recentrage | offensif | **50** (joueur : 50 pour ce duel seulement ; mesuré : ≈ 9 tours, 49 % à profil égal ; 60 PV : ≈ 11 tours) |
 | **Cadet** de F | neutres du joueur + 4 cartes F dont **la variante mise en jeu** (III) | rue + Technique de F | profil de gabarit (novice / timide) relevé d'un cran | 80 |
 | **Bras droit** de F | idem + **2 variantes F** (III, IV) | celles de la figure (Kaï, Maëlle, Sélène, Orin) | profil de la figure | fiche actuelle (80 / 95 / 100 / 110) |
 | **Chef** de F | idem + **4 variantes F** + **sa Signature** | deux, choisies pour la famille | profil propre (à créer : « maître ») ou le plus fort existant | **90** (mesuré : 110 rend le chef trop dur, 23 % ; 90 donne 37 %, `MESURES_M10A.md`) |

@@ -107,7 +107,7 @@ complet), puis 06 et 07 (contenu des familles, nécessaires à M10-C), puis 08 �
 
 ## ARB-M10-09 — Équilibrage par le format, pas par les statistiques
 
-- **Recommandé :** joueur à **90 PV** toute l'aventure (60 pour le seul duel inaugural, contre Kaï à 60) ; adversaires
+- **Recommandé :** joueur à **90 PV** toute l'aventure (**50** pour le seul duel inaugural, contre Kaï à 50 : ≈ 9 tours mesurés, `MESURES_M10A.md` §3 bis) ; adversaires
   structurants au **format miroir** (même nombre de neutres que le joueur ; variantes et Signature selon leur rang) ;
   **chefs à 90 PV** comme le joueur. **Mesuré** (IA contre IA, 300 duels, moteur patché hors dépôt) : inaugural 51,7 %,
   cadet 57,3 %, bras droit 46,3 %, chef 36,7 % à 90 PV (23,3 % à 110 PV) : la difficulté monte par le deck seul.

@@ -65,9 +65,25 @@ plus. **Ce sont des IA, pas des joueurs** : un ordre de grandeur pour régler le
 - Les duels Aventure sont plus longs que le standard (16 à 18 tours contre 10) : moins de dégâts sans affinité et sans
   Signature. À surveiller (fatigue) ; levier possible sans toucher aux règles : PV des personnages.
 
+### 3 bis. Durée du duel inaugural selon les PV (même méthode, 300 duels par ligne)
+
+| Inaugural, 16 neutres contre 16 neutres (profils p1 / p2) | Victoires p1 | Tours (moyenne / médiane) | Prolongations |
+|---|---:|---:|---:|
+| PV 60/60 (équilibré / équilibré) | 51,7 % | 10,7 / 11 | 18,7 % |
+| PV 60/60 (équilibré / offensif) | 67,0 % | 9,1 / 9 | 16,0 % |
+| **PV 50/50 (équilibré / équilibré)** | **49,0 %** | **8,6 / 9** | 22,0 % |
+| PV 50/50 (équilibré / offensif) | 61,7 % | 7,6 / 7 | 19,3 % |
+| PV 40/40 (équilibré / équilibré) | 53,3 % | 7,0 / 7 | 24,7 % |
+| PV 40/40 (équilibré / offensif) | 61,7 % | 6,2 / 6 | 25,3 % |
+
+Les lignes à 60 PV redonnent exactement les chiffres du §3 (simulation déterministe). **Recommandation : 50 PV pour le
+duel inaugural à neutres** (≈ 9 tours, dans la cible de 6 à 10, équilibré). Le prototype garde 60 PV tant qu'il joue le
+deck de prêt (Basics et Signature : des duels plus courts). Commande : un script de simulation de même forme que
+`tools/m10a-sim.ts` (PV 60, 50, 40), sur le même worktree patché.
+
 ## 4. Ce que cela change pour la fiche
 
 - **ARB-M10-02** : le coût réel est connu : deux gardes dans `clash.ts`, aucun test existant modifié, aucun résultat
   standard changé. Recommandation maintenue : autoriser.
-- **ARB-M10-09** : PV des chefs ramenés à 90 (mesure ci-dessus) ; duel inaugural à 60 PV (ou 50, à mesurer).
+- **ARB-M10-09** : PV des chefs ramenés à 90 (mesure ci-dessus) ; duel inaugural à **50 PV** (≈ 9 tours, §3 bis).
 - **A-2** : Prisme et Convergence avec une Primaire neutre (§2) à confirmer.
