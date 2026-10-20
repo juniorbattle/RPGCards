@@ -1,11 +1,73 @@
 {
-  "date": "2026-10-20T04:08:00.037Z",
-  "commit": "85d20ab",
+  "date": "2026-10-20T04:53:10.317Z",
+  "commit": "8a22f5f",
   "mode": "assembler",
   "checks": [
-    "OK manifeste de la preuve : 19 plans (façades, pied, murs découpés ; textures partagées), 16 lumières"
+    "OK manifeste de la preuve : 21 plans (façades, pied, murs découpés ; textures partagées), 16 lumières"
   ],
   "console": [],
+  "meuble-caisses": {
+    "e": {
+      "file": "quai-pied-facades.png",
+      "sha256": "2469063c799562e7f9bc0fbd1920bffd369b7fbf71b6a31066c0db014a95650f",
+      "size": [
+        3264,
+        340
+      ],
+      "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+      "fiche": "art-src/decors/quai-pied-facades/fiche.json",
+      "approved": false,
+      "at": [
+        0,
+        0,
+        -2.3
+      ],
+      "width": 48,
+      "orient": "face",
+      "order": 4,
+      "blend": "decoupe",
+      "lit": 0.3
+    },
+    "uv": [
+      0.11,
+      0.688,
+      0.14,
+      1
+    ],
+    "width": 1.426,
+    "lift": 0
+  },
+  "meuble-tonneaux": {
+    "e": {
+      "file": "quai-pied-facades.png",
+      "sha256": "2469063c799562e7f9bc0fbd1920bffd369b7fbf71b6a31066c0db014a95650f",
+      "size": [
+        3264,
+        340
+      ],
+      "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+      "fiche": "art-src/decors/quai-pied-facades/fiche.json",
+      "approved": false,
+      "at": [
+        0,
+        0,
+        -2.3
+      ],
+      "width": 48,
+      "orient": "face",
+      "order": 4,
+      "blend": "decoupe",
+      "lit": 0.3
+    },
+    "uv": [
+      0.269,
+      0.741,
+      0.294,
+      1
+    ],
+    "width": 1.191,
+    "lift": 0
+  },
   "plans": {
     "ciel": {
       "file": "quai-ciel.png",
@@ -34,7 +96,7 @@
       "uv": [
         0,
         0,
-        0.5,
+        1,
         0.91
       ],
       "at": [
@@ -42,7 +104,7 @@
         0,
         -17.5
       ],
-      "width": 31,
+      "width": 62,
       "orient": "face",
       "coupe": false
     },
@@ -236,38 +298,72 @@
       "orient": "sol",
       "coupe": false
     },
-    "bout-rue-1": {
-      "file": "preuve-joue.png",
+    "rue-haute-caisses": {
+      "file": "quai-pied-facades.png",
       "uv": [
-        0,
-        0,
-        0.75,
+        0.11,
+        0.688,
+        0.14,
         1
       ],
       "at": [
-        -15,
+        -14,
         0,
-        -14
+        -13
       ],
-      "width": 6,
-      "orient": "cote",
+      "width": 1.426,
+      "orient": "face",
       "coupe": false
     },
-    "bout-rue-2": {
-      "file": "preuve-joue.png",
+    "rue-haute-tonneaux": {
+      "file": "quai-pied-facades.png",
       "uv": [
-        0,
-        0,
-        0.75,
+        0.269,
+        0.741,
+        0.294,
         1
       ],
       "at": [
-        15,
+        14,
         0,
-        -14
+        -15.6
       ],
-      "width": 6,
-      "orient": "cote",
+      "width": 1.191,
+      "orient": "face",
+      "coupe": false
+    },
+    "rue-haute-lampadaire-1": {
+      "file": "quai-rue.png",
+      "uv": [
+        0.405,
+        0.141,
+        0.428,
+        1
+      ],
+      "at": [
+        -7.5,
+        0,
+        -11.6
+      ],
+      "width": 1.103,
+      "orient": "face",
+      "coupe": false
+    },
+    "rue-haute-lampadaire-2": {
+      "file": "quai-rue.png",
+      "uv": [
+        0.405,
+        0.141,
+        0.428,
+        1
+      ],
+      "at": [
+        7.5,
+        0,
+        -11.6
+      ],
+      "width": 1.103,
+      "orient": "face",
       "coupe": false
     }
   }

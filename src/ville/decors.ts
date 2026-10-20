@@ -75,6 +75,11 @@ export interface PlateEntry {
   uv?: [number, number, number, number];
   /** Effacé quand le personnage passe derrière lui (passe 62). */
   coupe?: boolean;
+  /**
+   * Hauteur de la coupe (m au-dessus du sol, passe 64) : le plan coupé garde ce qui est en dessous (rez-de-chaussée,
+   * vue en section) et n'efface que le haut ; défaut : tout le plan.
+   */
+  coupeY?: number;
   /** Plan de côté : face peinte tournée vers l'est (+x, défaut) ou l'ouest (passe 62). */
   vers?: 'est' | 'ouest';
   order: number;
@@ -161,6 +166,7 @@ export function checkPlate(label: string, e: unknown): string[] {
     if (!ok) out.push(`${label} : sous-rectangle « uv » invalide ([u0, v0, u1, v1], 0 ≤ u0 < u1 ≤ 1, 0 ≤ v0 < v1 ≤ 1)`);
   }
   if (x.coupe !== undefined && typeof x.coupe !== 'boolean') out.push(`${label} : champ « coupe » non booléen`);
+  if (x.coupeY !== undefined && (!isNum(x.coupeY) || x.coupeY < 0 || x.coupeY > 30 || x.coupe !== true)) out.push(`${label} : hauteur de coupe « coupeY » (0 à 30 m) réservée aux plans « coupe »`);
   if (x.vers !== undefined && (x.orient !== 'cote' || (x.vers !== 'est' && x.vers !== 'ouest'))) out.push(`${label} : « vers » (est ou ouest) réservé aux plans de côté`);
   if (!isInt(x.order) || x.order < 0 || x.order > 99) out.push(`${label} : ordre de dessin entier de 0 à 99 attendu`);
   if (x.blend !== 'decoupe' && x.blend !== 'fondu') out.push(`${label} : mélange « decoupe » ou « fondu » attendu`);

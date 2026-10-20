@@ -442,3 +442,12 @@ quartiers ».
   rue haute peinte à l'échelle des personnages (elle est aujourd'hui le second rang, peint pour être vu de loin) ; les
   murs des passages, deux variantes dans une image (aujourd'hui dessinés par code).
 - Rien n'est approuvé (`approved: false`) ; approbation en bloc sur la prochaine planche (A1).
+
+### Quartier continu (passe 64, 2026-10-20)
+
+Retour du responsable sur la rue haute : « je veux que tu ameliores le decor caar cela ressemble a un decor isole ». Fait par script : façade de la rue haute sur toute la largeur vue,
+bouts de la rue perdus dans la brume (au lieu de murs nus), rue meublée (caisses, tonneaux, lampadaires allumés) et
+habitée (un passant), murs des passages redessinés (toit, colombages, fenêtres, gouttière, lanterne). Une vue en section
+(étages du bloc effacés, rez-de-chaussée gardé, champ `coupeY`) a été essayée ; le responsable l'a écartée : « non conserve le cote transparent du batiment de premier dont nous allons derriere ».
+Le bloc du premier rang reste donc transparent (8 %) quand on passe derrière ; `coupeY` reste au contrat, inutilisé.
+Les 2 images annoncées en passe 63 restent à décider.

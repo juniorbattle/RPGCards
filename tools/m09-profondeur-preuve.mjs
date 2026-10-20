@@ -36,18 +36,23 @@ const P = {
   piedCuts: [-12, 11.6],
   // murs des passages : x et côté peint (vers l'intérieur du passage)
   joue: { z: -7, length: 8, xs: [[-13.6, 'est'], [-10.6, 'ouest'], [11.2, 'est'], [14.2, 'ouest']], lit: 0.35 },
-  // passe 63 : pied de la façade recadré (ses 9 % du bas se perdaient dans le noir), éclairé par les lanternes de la rue
-  rueHaute: { z: -17.5, copyFrac: 0.5, v1: 0.91, width: 31, fog: 0.2, lit: 0.35 },
-  // passe 63 : emprise des blocs (sol sombre sous les blocs, lue quand un bloc s'efface) ; murs aux bouts de la rue haute
+  // passe 63 : pied de la façade recadré (ses 9 % du bas se perdaient dans le noir), éclairé par les lanternes de la rue ;
+  // passe 64 (« décor isolé ») : les deux copies, 62 m, plus large que la vue : plus de bords ni de ciel sur les côtés
+  rueHaute: { z: -17.5, v1: 0.91, width: 62, fog: 0.2, lit: 0.35 },
+  // passe 63 : emprise des blocs (sol sombre sous les blocs, lue quand un bloc s'efface)
   emprise: { x0: -27, x1: 27, z0: -11, z1: -3, y: 0.04, ppm: 32 },
-  boutsRue: { z: -14, length: 6, xs: [[-15, 'est'], [15, 'ouest']] },
+  // passe 64 : rue haute meublée avec les accessoires des plans actuels (morceaux de la bande du pied et de la rue, x de
+  // la source au monde avant écart) ; mêmes places que `quaiProfond.ts` (RUE_HAUTE_PROPS, RUE_HAUTE_LAMPS)
+  meubles: [['caisses', 'pied', [-18.95, -17.05], -14.0, -13.0], ['tonneaux', 'pied', [-11.3, -9.7], 14.0, -15.6]],
+  lampes: { src: [-4.95, -3.05], xs: [-7.5, 7.5], z: -11.6, lanternY: 3.9 },
   // lanternes au milieu des passages (les murs, `lit`, les reçoivent)
   passageLights: [[-12.1, 3.0, -7.2], [12.7, 3.0, -7.2]],
   troisieme: { z: -40, y: 9, voile: 0.45 },
   // cadrage : celui du Quai élargi, qui suit 60 % de la profondeur et s'incline de 6° au quai à 16° dans la rue haute
   camera: { pitch: 6, distance: 25, fov: 42, aimY: 4.8, minX: -5, maxX: 5, followZ: 0.6, aimZ: 0.3, pitchFond: 16, zFond: -14 },
-  brumes: [[120, 12, 0, 17, -21, 0.34, 0.006, [6, 1.2], 2.2], [170, 20, 0, 21, -30, 0.4, 0.005, [5, 1.3], 2.2], [270, 34, 0, 24, -62, 0.36, 0.004, [4, 1.4], 2.2], [120, 2, 0, -2.2, 6, 0.22, 0.012, [6, 1]]],
-  laneLights: [[-7, 3.0, -16.6], [6.5, 3.0, -16.6]],
+  // passe 64 : brume sombre aux deux bouts de la rue haute : la rue continue dans la nuit au lieu de buter sur un mur
+  brumes: [[120, 12, 0, 17, -21, 0.34, 0.006, [6, 1.2], 2.2], [170, 20, 0, 21, -30, 0.4, 0.005, [5, 1.3], 2.2], [270, 34, 0, 24, -62, 0.36, 0.004, [4, 1.4], 2.2], [120, 2, 0, -2.2, 6, 0.22, 0.012, [6, 1]],
+    [10, 9, -18.5, 3.8, -14, 0.6, 0.004, [2, 1], 1.0], [10, 9, 18.5, 3.8, -14, 0.6, 0.004, [2, 1], 1.0]],
 };
 
 /**
@@ -74,39 +79,68 @@ function paintEmprise({ w, h, gaps, fade }) {
   return c.toDataURL('image/png');
 }
 
+/** Dans la page : boîte (px) des pixels visibles d'une image entre les colonnes `c0` et `c1`. */
+async function alphaBox({ url, c0, c1 }) {
+  const i = new Image(); i.src = url; await i.decode();
+  const c = new OffscreenCanvas(i.width, i.height); const g = c.getContext('2d'); g.drawImage(i, 0, 0);
+  const d = g.getImageData(0, 0, i.width, i.height).data;
+  let x0 = Infinity; let y0 = Infinity; let x1 = -1; let y1 = -1;
+  for (let y = 0; y < i.height; y++) for (let x = Math.max(0, c0); x < Math.min(i.width, c1); x++) if (d[(y * i.width + x) * 4 + 3] > 16) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+  return [x0, y0, x1 + 1, y1 + 1];
+}
+
 /** Dans la page : mur de pierre d'un passage (plan de preuve dessiné par code, 8 × 9 m à 64 px/m), graine fixe. */
 function paintJoue() {
+  // passe 64 : rez-de-chaussée de pierre, étages à colombages, avant-toit d'ardoise en haut (le mur ne finit plus en
+  // ligne droite contre le ciel), fenêtres éclairées et sombres, gouttière, lanterne ; graine fixe
   const W = 512; const H = 576;
   const c = document.createElement('canvas'); c.width = W; c.height = H;
   const g = c.getContext('2d');
   let s = 11; const rnd = () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
+  const eave = 46; const ground = 250; // px : avant-toit en haut ; hauteur du rez-de-chaussée de pierre en bas
   g.fillStyle = '#1b1d28'; g.fillRect(0, 0, W, H);
-  const row = 26;
-  for (let y = 0, r = 0; y < H; y += row, r++) {
+  // rez-de-chaussée : pierre en assises
+  const row = 24;
+  for (let y = H - ground, r = 0; y < H; y += row, r++) {
     let x = -((r * 37) % 60);
     while (x < W) {
-      const w = 38 + rnd() * 52;
-      const t = rnd();
-      const base = [44 + t * 18, 44 + t * 14, 58 + t * 16];
-      g.fillStyle = `rgb(${base.map((v) => Math.round(v)).join(',')})`;
+      const w = 38 + rnd() * 52; const t = rnd();
+      g.fillStyle = `rgb(${Math.round(46 + t * 18)},${Math.round(45 + t * 14)},${Math.round(58 + t * 16)})`;
       g.fillRect(x + 1.5, y + 1.5, w - 3, row - 3);
       g.fillStyle = 'rgba(255,240,220,0.07)'; g.fillRect(x + 1.5, y + 1.5, w - 3, 2);
-      g.fillStyle = 'rgba(0,0,0,0.25)'; g.fillRect(x + 1.5, y + row - 4, w - 3, 2.5);
-      for (let k = 0; k < 6; k++) { g.fillStyle = `rgba(0,0,0,${0.08 + rnd() * 0.1})`; g.fillRect(x + 2 + rnd() * (w - 6), y + 2 + rnd() * (row - 6), 2 + rnd() * 3, 1 + rnd() * 2); }
       x += w;
     }
   }
-  // fenêtre éclairée et soubassement
-  g.fillStyle = '#120e0a'; g.fillRect(150, 230, 46, 70);
-  const win = g.createLinearGradient(0, 236, 0, 296); win.addColorStop(0, '#f2b45a'); win.addColorStop(1, '#a8601f');
-  g.fillStyle = win; g.fillRect(155, 236, 36, 58);
-  g.fillStyle = '#3a2614'; g.fillRect(171, 236, 4, 58); g.fillRect(155, 262, 36, 4);
-  g.fillStyle = 'rgba(0,0,0,0.35)'; g.fillRect(0, H - 40, W, 40);
-  // plus sombre vers le fond du passage (u = 1) et vers le haut
-  const fondu = g.createLinearGradient(0, 0, W, 0); fondu.addColorStop(0, 'rgba(0,0,0,0)'); fondu.addColorStop(1, 'rgba(0,0,0,0.55)');
+  // étages : enduit et colombages
+  g.fillStyle = '#3a3640'; g.fillRect(0, eave, W, H - ground - eave);
+  for (let i = 0; i < 900; i++) { g.fillStyle = `rgba(${rnd() < 0.5 ? '0,0,0' : '255,240,220'},${0.03 + rnd() * 0.05})`; g.fillRect(rnd() * W, eave + rnd() * (H - ground - eave), 2 + rnd() * 6, 1 + rnd() * 3); }
+  g.fillStyle = '#24170e';
+  const beam = (x, y, w, h) => g.fillRect(x, y, w, h);
+  beam(0, H - ground - 12, W, 12); beam(0, eave + 4, W, 10); beam(0, eave + (H - ground - eave) / 2, W, 9);
+  for (let x = 0; x <= W; x += 96) beam(x - 5, eave, 10, H - ground - eave);
+  g.lineWidth = 7; g.strokeStyle = '#24170e';
+  for (let x = 0; x < W; x += 96) { const y0 = eave + 14; const y1 = eave + (H - ground - eave) / 2; g.beginPath(); g.moveTo(x + 5, y1); g.lineTo(x + 91, y0); g.stroke(); g.beginPath(); g.moveTo(x + 5, H - ground - 12); g.lineTo(x + 91, y1 + 9); g.stroke(); }
+  // fenêtres : deux éclairées, une sombre
+  const win = (x, y, lit) => {
+    g.fillStyle = '#120e0a'; g.fillRect(x - 4, y - 4, 44, 64);
+    if (lit) { const gr = g.createLinearGradient(0, y, 0, y + 56); gr.addColorStop(0, '#f6c06a'); gr.addColorStop(1, '#a8601f'); g.fillStyle = gr; } else g.fillStyle = '#1d2233';
+    g.fillRect(x, y, 36, 56); g.fillStyle = '#3a2614'; g.fillRect(x + 16, y, 4, 56); g.fillRect(x, y + 26, 36, 4);
+  };
+  win(124, eave + 40, true); win(316, eave + 40, false); win(220, eave + 152, true);
+  // avant-toit d'ardoise vu de côté, avec son arête claire
+  g.fillStyle = '#151827'; g.fillRect(0, 0, W, eave);
+  for (let x = 0; x < W; x += 18) { g.fillStyle = `rgba(120,130,170,${0.08 + rnd() * 0.08})`; g.fillRect(x, 6 + rnd() * 8, 14, eave - 18); }
+  g.fillStyle = 'rgba(190,200,230,0.35)'; g.fillRect(0, eave - 5, W, 3);
+  // gouttière et lanterne
+  g.fillStyle = '#2a1c12'; g.fillRect(452, eave, 8, H - eave);
+  g.fillStyle = '#1a120c'; g.fillRect(70, H - ground + 40, 26, 6);
+  const lg = g.createRadialGradient(83, H - ground + 72, 2, 83, H - ground + 72, 70); lg.addColorStop(0, 'rgba(255,190,100,0.55)'); lg.addColorStop(1, 'rgba(255,190,100,0)');
+  g.fillStyle = lg; g.fillRect(10, H - ground, 150, 150);
+  g.fillStyle = '#ffcf7a'; g.fillRect(75, H - ground + 50, 16, 26); g.fillStyle = '#2a1c12'; g.fillRect(73, H - ground + 46, 20, 5);
+  // plus sombre vers le fond du passage (u = 1) et au pied
+  const fondu = g.createLinearGradient(0, 0, W, 0); fondu.addColorStop(0, 'rgba(0,0,0,0)'); fondu.addColorStop(1, 'rgba(0,0,0,0.5)');
   g.fillStyle = fondu; g.fillRect(0, 0, W, H);
-  const haut = g.createLinearGradient(0, 0, 0, H); haut.addColorStop(0, 'rgba(0,0,0,0.35)'); haut.addColorStop(0.5, 'rgba(0,0,0,0)');
-  g.fillStyle = haut; g.fillRect(0, 0, W, H);
+  g.fillStyle = 'rgba(0,0,0,0.3)'; g.fillRect(0, H - 30, W, 30);
   return c.toDataURL('image/png');
 }
 
@@ -151,7 +185,7 @@ if (MODE === 'assembler') {
   const plans = {};
   plans.ciel = { ...pl.ciel };
   plans['troisieme-rang'] = { ...pl['troisieme-rang'], at: [pl['troisieme-rang'].at[0], P.troisieme.y, P.troisieme.z], voile: P.troisieme.voile };
-  plans['rue-haute'] = { ...pl['second-rang'], uv: [0, 0, P.rueHaute.copyFrac, P.rueHaute.v1], width: P.rueHaute.width, at: [0, 0, P.rueHaute.z], voile: 0, fog: P.rueHaute.fog, lit: P.rueHaute.lit, order: 2 };
+  plans['rue-haute'] = { ...pl['second-rang'], uv: [0, 0, 1, P.rueHaute.v1], width: P.rueHaute.width, at: [0, 0, P.rueHaute.z], voile: 0, fog: P.rueHaute.fog, lit: P.rueHaute.lit, order: 2 };
   delete plans['rue-haute'].voile;
   ['ouest', 'centre', 'est'].forEach((k, i) => {
     const w = (cuts[i + 1] - cuts[i]) * mpx;
@@ -173,9 +207,26 @@ if (MODE === 'assembler') {
     plans[`joue-${i + 1}`] = { vers, file: 'preuve-joue.png', sha256: sha(joue), size: dim(joue), source: 'dessiné par code (preuve de la profondeur, passe 62)', fiche: 'art-src/decors/preuve-joue/fiche.json', approved: false, at: [x, 0, P.joue.z], width: P.joue.length, orient: 'cote', order: 12 + i, blend: 'decoupe', lit: P.joue.lit };
   });
   plans.emprise = { file: 'preuve-emprise.png', sha256: sha(emprise), size: [ew, eh], source: 'dessiné par code (preuve de la profondeur, passe 63)', fiche: 'art-src/decors/preuve-emprise/fiche.json', approved: false, at: [(E.x0 + E.x1) / 2, E.y, (E.z0 + E.z1) / 2], width: E.x1 - E.x0, orient: 'sol', order: 16, blend: 'decoupe', fog: 0.5 };
-  P.boutsRue.xs.forEach(([x, vers], i) => {
-    plans[`bout-rue-${i + 1}`] = { vers, file: 'preuve-joue.png', sha256: sha(joue), size: dim(joue), uv: [0, 0, 0.75, 1], source: 'dessiné par code (preuve de la profondeur, passe 63)', fiche: 'art-src/decors/preuve-joue/fiche.json', approved: false, at: [x, 0, P.boutsRue.z], width: P.boutsRue.length, orient: 'cote', order: 17 + i, blend: 'decoupe', lit: P.joue.lit };
-  });
+  // rue haute meublée (passe 64) : morceaux des bandes du pied et de la rue, posés à leur taille au monde
+  const strips = { pied: pl['pied-facades'], rue: pl.rue };
+  const stripUrl = { pied: dataUrl(readFileSync('public/decors/quai-pied-facades.png')), rue: dataUrl(readFileSync('public/decors/quai-rue.png')) };
+  const b2 = await launch();
+  const pg2 = await (await b2.newContext()).newPage();
+  await pg2.setContent('<!doctype html><html><body></body></html>');
+  const piece = async (strip, [xa, xb]) => {
+    const e = strips[strip]; const m = e.width / e.size[0]; const left = e.at[0] - e.width / 2;
+    const [bx0, by0, bx1, by1] = await pg2.evaluate(alphaBox, { url: stripUrl[strip], c0: Math.round((xa - left) / m), c1: Math.round((xb - left) / m) });
+    return { e, uv: [r3(bx0 / e.size[0]), r3(by0 / e.size[1]), r3(bx1 / e.size[0]), r3(by1 / e.size[1])], width: r3((bx1 - bx0) * m), lift: r3((e.size[1] - by1) * m) };
+  };
+  let ord = 17;
+  for (const [nom, strip, src, x, z] of P.meubles) {
+    const pc = await piece(strip, src);
+    plans[`rue-haute-${nom}`] = { ...pc.e, uv: pc.uv, width: pc.width, at: [x, -pc.lift, z], order: ord++ };
+    report[`meuble-${nom}`] = pc;
+  }
+  const lamp = await piece('rue', P.lampes.src);
+  P.lampes.xs.forEach((x, i) => { plans[`rue-haute-lampadaire-${i + 1}`] = { ...lamp.e, uv: lamp.uv, width: lamp.width, at: [x, -lamp.lift, P.lampes.z], order: ord++ }; });
+  await b2.close();
   plans.ciel.order = 0; plans['troisieme-rang'].order = 1;
   // lumières : celles du Quai, écartées avec leur bloc ; deux dans la rue haute
   const moved = q.lumieres.map((l) => {
@@ -184,10 +235,12 @@ if (MODE === 'assembler') {
     return { ...l, at: [r3(l.at[0] + dx), l.at[1], l.at[2]] };
   });
   const lane = [
-    ...P.laneLights.map((at) => ({ at, color: 'ambre', intensity: 2.4, radius: 7, halo: 0.8, flicker: 'lantern' })),
+    ...P.lampes.xs.map((x) => ({ at: [x, P.lampes.lanternY, P.lampes.z + 0.1], color: 'ambre', intensity: 3.0, radius: 9, halo: 1.6, flicker: 'lantern' })),
     ...P.passageLights.map((at) => ({ at, color: 'ambre', intensity: 2.0, radius: 6, halo: 0.6, flicker: 'lantern' })),
   ];
   const lumieres = [...moved.slice(0, 16 - lane.length), ...lane];
+  // ordre de dessin d'arrière en avant (contrat : un plan plus lointain n'est jamais dessiné après un plus proche)
+  Object.entries(plans).sort((u, v) => u[1].at[2] - v[1].at[2] || u[1].order - v[1].order).forEach(([k], i) => { plans[k].order = i; });
   const out = { version: 1, ilots: { quai: { plans, lumieres, camera: P.camera, brumes: P.brumes } } };
   writeFileSync('public/decors/manifest-profondeur.json', `${JSON.stringify(out, null, 2)}\n`);
   check(Object.keys(plans).length <= 24, `manifeste de la preuve : ${Object.keys(plans).length} plans (façades, pied, murs découpés ; textures partagées), ${lumieres.length} lumières`);
@@ -242,7 +295,7 @@ if (MODE === 'verifier') {
       const c = document.createElement('canvas'); c.width = 3 * tw + 4 * pad; c.height = top + 3 * (th + 36) + 24;
       const g = c.getContext('2d'); g.fillStyle = '#10121a'; g.fillRect(0, 0, c.width, c.height);
       g.fillStyle = '#e8dcc0'; g.font = 'bold 17px system-ui';
-      g.fillText('Profondeur praticable : conception retenue, zones arrière améliorées par script (laboratoire seulement ; aucune image générée)', pad, 26);
+      g.fillText('Profondeur praticable : conception retenue ; quartier continu (passe 64, par script ; laboratoire seulement, aucune image générée)', pad, 26);
       g.font = '14px system-ui';
       const X = (col) => pad + col * (tw + pad); const Y = (row) => top + row * (th + 36);
       const tile = (k, x, y) => { const i = im[k]; const s2 = Math.min(tw / i.width, th / i.height); g.drawImage(i, x + (tw - i.width * s2) / 2, y + (th - i.height * s2) / 2, i.width * s2, i.height * s2); };
@@ -278,9 +331,9 @@ if (MODE === 'verifier') {
       const qx = X(1); let qy = Y(2) + 4; const qw = 2 * tw + pad;
       const wrap = (t, bold = false) => { g.font = `${bold ? 'bold ' : ''}14px system-ui`; const words = t.split(' '); let line = ''; for (const w of words) { const n = line ? `${line} ${w}` : w; if (g.measureText(n).width > qw) { qy += 19; g.fillText(line, qx, qy); line = w; } else line = n; } qy += 19; g.fillText(line, qx, qy); qy += 7; };
       wrap('Conception retenue par le responsable (passe 63) : le quai reste la rue du premier plan ; les façades deviennent des blocs de 8 m de profondeur, séparés par des passages de 3 m, qui mènent à une rue haute bordée par le second rang (on y marche) ; la ville haute et le ciel restent au loin.', true);
-      wrap('Caméra frontale (ADR 024) : elle suit 60 % de la profondeur et s’élève de 6° au quai à 16° dans la rue haute ; le personnage rapetisse en s’éloignant. Un bloc derrière lequel on passe s’efface (vue en coupe).');
-      wrap('Passe 63, zones arrière améliorées par script (aucune image générée) : emprise sombre des blocs, rue haute fermée à ses bouts, pied de sa façade recadré et éclairé, lanternes dans les passages, bloc effacé à 8 %.');
-      wrap('Encore approximatif, à peindre (2 images annoncées, générées après accord) : la façade de la rue haute, peinte pour être vue de loin (fenêtres trop petites à côté du personnage), et les murs des passages, dessinés par code.');
+      wrap('Caméra frontale (ADR 024) : elle suit 60 % de la profondeur et s’élève de 6° au quai à 16° dans la rue haute ; le personnage rapetisse en s’éloignant. Quand on passe derrière un bloc, il devient transparent (décision du responsable).');
+      wrap('Passe 64 (« décor isolé ») : la rue haute continue sur toute la largeur et se perd dans la brume à ses bouts ; meublée (caisses, tonneaux, lampadaires allumés) et habitée (un passant) ; murs des passages redessinés (toit, colombages, fenêtres, gouttière, lanterne).');
+      wrap('Reste à peindre (2 images annoncées, générées après accord) : la façade de la rue haute (aujourd’hui le second rang répété en miroir, peint pour être vu de loin) et les murs des passages (dessinés par code).');
       return c.toDataURL('image/png');
     }, { imgs: [dataUrl(ref), ...SPOTS.map(([k]) => dataUrl(shots[k]))], spots: SPOTS, fig: Object.fromEntries(Object.entries(report.figures).map(([k, v]) => [k, v.figurePx])), ilot: info.ilot, plans: man.plans });
     writeFileSync(join(DIR, 'planche-profondeur.png'), fromUrl(planche));

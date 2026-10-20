@@ -61,6 +61,10 @@ describe('profondeur praticable : le Quai profond (preuve, passe 62)', () => {
     expect(checkPlate('x', { ...base, vers: 'ouest', coupe: true })).toEqual([]);
     expect(checkPlate('x', { ...base, orient: 'face', vers: 'est' }).join()).toMatch(/vers/);
     expect(checkPlate('x', { ...base, coupe: 'oui' }).join()).toMatch(/coupe/);
+    // hauteur de coupe (vue en section, passe 64) : réservée aux plans coupe, de 0 à 30 m
+    expect(checkPlate('x', { ...base, orient: 'face', coupe: true, coupeY: 3.2 })).toEqual([]);
+    expect(checkPlate('x', { ...base, orient: 'face', coupeY: 3.2 }).join()).toMatch(/coupeY/);
+    expect(checkPlate('x', { ...base, orient: 'face', coupe: true, coupeY: 40 }).join()).toMatch(/coupeY/);
     expect(checkPlate('x', { ...base, uv: [0.5, 0, 0.4, 1] }).join()).toMatch(/uv/);
     expect(checkPlate('x', { ...base, uv: [0, 0, 1.2, 1] }).join()).toMatch(/uv/);
     expect(checkPlate('x', { ...base, orient: 'biais' }).join()).toMatch(/orientation/);
