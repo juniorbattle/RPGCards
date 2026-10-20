@@ -89,13 +89,13 @@ même séquence vérifiée pour les **quatre** familles prises comme famille d'a
 
 ## M10-D — Les trois autres voies
 
-> **Livré le 2026-10-20, à recevoir** (passes 88 à 90 ; fiche du lot M10-D <https://claude.ai/artifact/X2z6EuQJDLHdNGe1Cvps4g>) : la Salle des Bannières à quatre bannières
+> **Livré et reçu le 2026-10-20** (passes 88 à 91 ; fiche du lot M10-D <https://claude.ai/artifact/X2z6EuQJDLHdNGe1Cvps4g>, R1 ; 5 choix sur l'option recommandée) : la Salle des Bannières à quatre bannières
 > et l'écran de confirmation de l'engagement (ADR 032 amendement 4) ; Basics à l'engagement une seule fois, jamais si déjà
 > reçues ; transition du deck jusqu'au format standard ; Épreuves et Joutes des quatre familles ; quête « Les trois
 > voies » ; tests de la feuille de route (`test/m10d.test.ts` : 24 ordres et 72 parcours avec changement d'affiliation) ;
 > parcours jusqu'aux quatre chefs au navigateur (`npm run qa:voies`) ; jalon de QA sur GPU réel
-> (`artifacts/qa/m10d/jalon/`, `artifacts/qa/m10d/campagne/`). Point proposé au responsable : le niveau des adversaires
-> après un changement d'affiliation (mesure `artifacts/qa/m10d/changements.json`).
+> (`artifacts/qa/m10d/jalon/`, `artifacts/qa/m10d/campagne/`). Décision D1 : le niveau des adversaires ne compte que les
+> familles rejointes ou engagées (amendement 1 de `CALIBRAGE_M10A.md`). Lot suivant (S1) : reprise de M09, puis M10-E.
 
 **Contenu :** Salle des Bannières (engagement officiel avec confirmation) ; Basics à l'engagement ; cadets, bras droits,
 chefs des trois autres familles (déjà des données de M10-C) ; transition du deck jusqu'au format standard (A-6) ;

@@ -89,7 +89,7 @@ lisibles dans la Collection).
 
 ## Amendement 4 (2026-10-20, lot M10-D, passes 88 et 89) : la Salle des Bannières et l'engagement officiel
 
-**Proposé** (fiche du lot M10-D).
+**Reçu par le responsable le 2026-10-20** (fiche du lot M10-D <https://claude.ai/artifact/X2z6EuQJDLHdNGe1Cvps4g> : E1 « Reçu » ; D2 : engager une famille dont on a déjà les Basics ne change pas le deck).
 
 - **Salle des Bannières** (porte de la salle de jeu de cartes, sur le Quai, en rangs comme en secours) : un écran à quatre
   bannières, une par famille, chacune avec son état lu dans la machine (`bannieres` : famille d'accueil, défi à engager,

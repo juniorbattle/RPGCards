@@ -1,6 +1,6 @@
 # Annexe de calibrage de l'avenant M10-A — paliers de decks adverses et PV du joueur (VALIDÉE)
 
-**Date :** 2026-10-20 (lot M10-A, étape 4). **Statut : VALIDÉE ET FIGÉE par le responsable le 2026-10-20** (fiche d'arbitrages du lot M10-A, entrées K1 à K5, toutes sur l'option recommandée, sans note : <https://claude.ai/artifact/B6y9Qow8gbuNhk8ragTvni>). Annexe de `contracts/06_AVENANT_M10A_MODE_AVENTURE.md` (AV-08) ; elle ne change que sur une nouvelle décision du responsable.
+**Date :** 2026-10-20 (lot M10-A, étape 4). **Statut : VALIDÉE ET FIGÉE par le responsable le 2026-10-20** (fiche d'arbitrages du lot M10-A, entrées K1 à K5, toutes sur l'option recommandée, sans note : <https://claude.ai/artifact/B6y9Qow8gbuNhk8ragTvni>). Annexe de `contracts/06_AVENANT_M10A_MODE_AVENTURE.md` (AV-08) ; elle ne change que sur une nouvelle décision du responsable. **Amendement 1 (2026-10-20, fiche du lot M10-D, D1) : le niveau ne compte que les familles rejointes ou engagées** (§1 et §5).
 Règle (AV-08 du texte canonique) : décision du responsable sur l'ARB-M10-09 : **paliers de decks adverses** et **PV du
 joueur qui montent à chaque combat, sans plafond** ; **pas de format miroir ni de PV égaux** ; simulation « plus favorable
 au joueur de manière générale » que celle de la fiche (inaugural 52 %, cadet 57 %, bras droit 46 %, chef 37 %).
@@ -12,8 +12,8 @@ Code : `src/aventure/paliers.ts` (valeurs) ; mesure : `tools/m10a-paliers.ts` ; 
 - **« cartes basiques »** = les **cartes grises** (neutres) de la populace ; « Basics » reste le nom des cartes I à IV
   d'une famille. *(Lecture confirmée par le responsable, K1.)*
 - « la plupart des cartes de famille remplacent certaines cartes basiques, voire toutes, **selon le niveau du joueur** » :
-  la composition d'un adversaire suit le **niveau du joueur**, c'est-à-dire **le nombre de familles dont il a reçu les
-  Basics** (1 à 4). Un membre rencontré tôt a encore beaucoup de cartes grises ; tard, il a les quatre familles.
+  la composition d'un adversaire suit le **niveau du joueur**, c'est-à-dire **le nombre de familles qu'il a rejointes ou
+  dont il a engagé le défi** (1 à 4 ; amendement 1, §5 ; d'abord : les familles dont il a reçu les Basics). Un membre rencontré tôt a encore beaucoup de cartes grises ; tard, il a les quatre familles.
 - Paliers : **populace** (seize cartes grises) ; **membre de famille** (ses quatre cartes et des cartes d'autres familles,
   « ce qui signifie qu'ils ont vaincu d'autres membres ») ; **duelliste avancé** (les quatre familles, avec ou sans
   variantes) ; **élite** (les chefs : leurs variantes et leur Signature) ; **champions** (le Championnat).
@@ -106,3 +106,21 @@ Relues dans la collection `decisions` de la fiche du lot M10-A (choix entre 18:4
    défie tard).
 4. **K4** PV et IA des adversaires (§2) : **validés**.
 5. **K5** le premier chef, défi le plus dur du début (42 % sans entraînement, 52 % entraîné) : **gardé**.
+
+## 5. Amendement 1 — le niveau après un changement d'affiliation (décision du responsable, 2026-10-20)
+
+Fiche d'arbitrages du lot M10-D, entrée **D1** (<https://claude.ai/artifact/X2z6EuQJDLHdNGe1Cvps4g>, choix du 2026-10-20 à 22:02 UTC, sans note) : « Niveau : familles
+rejointes ou engagées », l'option recommandée.
+
+- **Constat (lot M10-D, passe 88)** : l'avenant permet de changer de famille d'accueil jusqu'au premier défi de
+  lieutenant, Basics gardées (AV-07) ; avec le niveau compté sur les familles dont le joueur a les Basics, un changement
+  faisait passer toute la maison au niveau 2, trois changements au niveau 4. Mesure (`npx tsx tools/m10d-changements.ts
+  150`, 150 duels par ligne, IA « équilibré » pour le joueur) : chefs de la maison à 37–46 % de victoires par la voie
+  directe ; 23–33 % après un changement ; 13–23 % après trois.
+- **Règle** : le niveau du joueur est le nombre de familles dans l'état `affilié`, `défiée` ou `chef` : la famille
+  d'accueil et celles dont le défi officiel est engagé. Une affiliation quittée (état `invité`) ne compte qu'à
+  l'engagement de son défi. Dans la trame sans changement, le niveau est le même qu'avant (chaque lot de Basics vient
+  d'une affiliation ou d'un engagement) : les mesures du §3 restent valables.
+- **Mesure de la règle** : chefs de la maison à 41–49 % après un changement, 45–50 % après trois (cadets 59 à 65 %) ; ni
+  piège ni avantage excessif.
+- Code : `niveauDe` (`src/aventure/rencontres.ts`) ; aucune règle de duel, aucune autre valeur changée.

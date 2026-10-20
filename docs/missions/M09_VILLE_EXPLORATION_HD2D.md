@@ -146,6 +146,7 @@ transformera en fiche interactive pour le responsable.
 - **État :** le Quai en quatre rangs (rue Haute et place de la Halle, ruelle des Lanternes et placette du Puits, cour de la
   Chapelle), chemins lumineux, ombres au sol, au laboratoire seulement (`?ville=1&qa=1&profondeur=1`) ; démo et jeu par
   défaut inchangés ; manifestes `approved: false` (rien n'est approuvé) ; 21 images sur 30 utilisées.
+- **Reprise décidée par le responsable le 2026-10-20** (fiche du lot M10-D, S1 : « Reprendre M09, puis M10-E », <https://claude.ai/artifact/X2z6EuQJDLHdNGe1Cvps4g>) ; M10-E (ville vivante) viendra ensuite, sur les îlots en rangs.
 - **Reprise, dans l'ordre que fixera le responsable :** feuille du joueur (J1) ; le Parvis et les Ruelles en rangs ; la Grande Cour (V5) ; planche d’approbation en bloc (A1, après la vérification des conditions d’OpenAI par le responsable, A2) ; 9 images sur 30 restantes.
 - **Brouillons d'images** : `art-gen/` du dossier principal (ignoré par git), y compris l'étude des directions du
   2026-10-19 (`art-gen/2026-10-19-quai-directions/`, recopiée depuis le dossier de la session V4 avant son archivage).
