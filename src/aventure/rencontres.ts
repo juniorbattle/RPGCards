@@ -11,7 +11,8 @@ import { personalityById, type RivalPersonality } from '../presentation/personal
 import type { VenueId } from '../presentation/venues';
 import { siegePret, type DeckAv } from './deck';
 import { rencontreDef } from './directeur';
-import { figure, FIGURES, KAI_PROLOGUE, PV_JOUEUR, PV_PROLOGUE, SIGNATURE_PRET, TECHNIQUES_RUE, type Figure } from './modele';
+import { deF, figure, FIGURES, KAI_PROLOGUE, PV_JOUEUR, PV_PROLOGUE, SIGNATURE_PRET, TECHNIQUES_RUE, TENANTE, type Figure } from './modele';
+import { ELITE_JOUTE, MEMBRES_EPREUVE, varianteDe } from './competitions';
 
 export interface DuelPrevu {
   rencontre: string;
@@ -76,5 +77,55 @@ export function duelFacultatif(id: string, deck: DeckAv, seed: number): DuelPrev
   };
 }
 
+/** Duel d'Épreuve du quartier (série de trois, PV pleins à chaque duel). */
+export function duelEpreuve(f: Family, etape: number, deck: DeckAv, seed: number, rejouee: boolean): DuelPrevu {
+  const id = MEMBRES_EPREUVE[f][Math.min(2, etape)]!;
+  const p = personnalite(id, { nom: personalityById(id)!.name, titre: `membre ${deF(f)}`, famille: f });
+  return {
+    rencontre: `epreuve:${f}`, titre: `Épreuve du quartier ${deF(f)} — duel ${etape + 1} sur 3 — ${p.name}`, personnalite: p, venue: VENUE_DE[f], enjeu: rejouee || etape < 2 ? null : varianteDe(f, 1),
+    config: { seed, players: { p1: siegePret(deck, 'Vous', PV_JOUEUR), p2: { name: p.name, hp: 60, signature: f, variants: [], techniques: [...p.techniques] } } },
+    pret: 'Deck de prêt (avenant M10-A non ratifié) : vos neutres sont remplacées par des Basics de prêt.',
+  };
+}
+
+/** Duel de la Joute de la maison (contrainte de construction vérifiée avant le duel). */
+export function duelJoute(f: Family, deck: DeckAv, seed: number, rejouee: boolean): DuelPrevu {
+  const id = ELITE_JOUTE[f];
+  const p = personnalite(id, { nom: personalityById(id)!.name, titre: `champion de la Joute ${deF(f)}`, famille: f });
+  return {
+    rencontre: `joute:${f}`, titre: `Joute de la maison ${deF(f)} — ${p.name}`, personnalite: p, venue: VENUE_DE[f], enjeu: rejouee ? null : varianteDe(f, 2),
+    config: { seed, players: { p1: siegePret(deck, 'Vous', PV_JOUEUR), p2: { name: p.name, hp: 80, signature: f, variants: famVariants(f, [3, 4]), techniques: [...p.techniques] } } },
+    pret: 'Deck de prêt (avenant M10-A non ratifié) : vos neutres sont remplacées par des Basics de prêt.',
+  };
+}
+
+/** Duels du Championnat : decks d'auteur complets (16 variantes + Signature), PV 90 pour tous (mesure M10-A). */
+export function duelChampionnat(m: 'poule' | 'miroir' | 'finale', deck: DeckAv, seed: number, chef?: Family): DuelPrevu {
+  let p: RivalPersonality;
+  let signature: Family;
+  let titre: string;
+  if (m === 'poule') {
+    const fig = figure(`chef-${chef!}`);
+    p = personnalite(fig.apparence, { nom: fig.nom, titre: fig.titre, famille: fig.famille, techniques: fig.techniques, gender: fig.gender });
+    signature = fig.famille;
+    titre = `Championnat — les Quatre Bannières — ${fig.nom}`;
+  } else if (m === 'miroir') {
+    p = personnalite('braise', { nom: 'Kaï', titre: 'la Braise du quai, finaliste' });
+    signature = 'Cendre';
+    titre = 'Championnat — le Miroir — Kaï';
+  } else {
+    p = personnalite(TENANTE.apparence, { nom: TENANTE.nom, titre: TENANTE.titre, famille: TENANTE.famille, techniques: ['Lecture', 'Ancrage'] });
+    signature = TENANTE.famille;
+    titre = `Championnat — la Finale — ${TENANTE.nom}, ${TENANTE.titre}`;
+  }
+  return {
+    rencontre: m === 'poule' ? `champ:poule:${chef}` : `champ:${m}`, titre, personnalite: p, venue: 'arene', enjeu: null,
+    config: { seed, players: { p1: siegePret(deck, 'Vous', PV_JOUEUR), p2: { name: p.name, hp: PV_JOUEUR, signature, variants: 'all', techniques: [...p.techniques] } } },
+    pret: 'Decks complets des deux côtés ; Signature équipée selon les contraintes de la manche.',
+  };
+}
+
+const VENUE_DE: Record<Family, VenueId> = { Cendre: 'rue', Ronce: 'bar', Voile: 'salle', Astre: 'arene' };
+
 /** Tous les adversaires possibles (préparation des personnages aux temps morts, contrôles). */
-export const APPARENCES = [...new Set([KAI_PROLOGUE.apparence, ...FIGURES.map((f) => f.apparence), 'pnj-docker-1', 'pnj-joueuse-5', 'pnj-commis-5'])];
+export const APPARENCES = [...new Set([KAI_PROLOGUE.apparence, ...FIGURES.map((f) => f.apparence), 'pnj-docker-1', 'pnj-joueuse-5', 'pnj-commis-5', TENANTE.apparence, ...Object.values(MEMBRES_EPREUVE).flat(), ...Object.values(ELITE_JOUTE)])];

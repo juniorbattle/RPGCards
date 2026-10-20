@@ -10,13 +10,15 @@ import { hashString, makeRng } from '../game/engine/rng';
 import type { Facing } from '../ville/monde';
 import type { IlotId } from '../ville/ilots';
 import { chapitre, statutDefi, type AventureEtat } from './aventure';
-import { emissaire, FIGURES, KAI_PROLOGUE } from './modele';
+import { deF, emissaire, FIGURES, KAI_PROLOGUE } from './modele';
+import { ELITE_JOUTE, MEMBRES_EPREUVE } from './competitions';
+import { aGain } from './registre';
 
 export interface PlaceRencontre { ilot: IlotId; at: { x: number; z: number }; facing: Facing }
 
 export interface RencontreDef {
   id: string;
-  genre: 'structurante' | 'facultative' | 'rival' | 'ambiance';
+  genre: 'structurante' | 'facultative' | 'rival' | 'ambiance' | 'competition';
   /** Apparence (rival V2 ou PNJ `pnj-<gabarit>-<graine>`). */
   apparence: string;
   nom: string;
@@ -56,6 +58,19 @@ export function nouveauDirecteur(graineProfil: number): EtatDirecteur {
 export function battre(d: EtatDirecteur): EtatDirecteur {
   return { ...structuredClone(d), battement: d.battement + 1 };
 }
+
+const PLACES_EPREUVE: Record<'Cendre' | 'Ronce' | 'Voile' | 'Astre', PlaceRencontre> = {
+  Cendre: { ilot: 'quai', at: { x: -9.0, z: 1.6 }, facing: 'face' },
+  Ronce: { ilot: 'quai', at: { x: 9.6, z: 1.6 }, facing: 'face' },
+  Voile: { ilot: 'ruelles', at: { x: -11.0, z: 0.2 }, facing: 'droite' },
+  Astre: { ilot: 'parvis', at: { x: -10.0, z: 1.4 }, facing: 'droite' },
+};
+const PLACES_JOUTE: Record<'Cendre' | 'Ronce' | 'Voile' | 'Astre', PlaceRencontre> = {
+  Cendre: { ilot: 'quai', at: { x: -17.0, z: 1.8 }, facing: 'droite' },
+  Ronce: { ilot: 'quai', at: { x: 7.2, z: 1.0 }, facing: 'face' },
+  Voile: { ilot: 'ruelles', at: { x: 2.2, z: -1.4 }, facing: 'face' },
+  Astre: { ilot: 'parvis', at: { x: 10.4, z: -1.0 }, facing: 'gauche' },
+};
 
 /** Catalogue des rencontres de la première aventure (prototype). */
 export const RENCONTRES: readonly RencontreDef[] = [
@@ -98,6 +113,20 @@ export const RENCONTRES: readonly RencontreDef[] = [
     lieux: [{ ilot: 'ruelles', at: { x: -8.4, z: 0.9 }, facing: 'droite' }],
     dispo: (e) => e.prologue !== null, delai: 2, poids: 1, repere: () => '!',
   },
+  // Compétitions facultatives (M10-D, option a d'ARB-M10-06) : l'organisateur de l'Épreuve du quartier et le membre
+  // d'élite de la Joute, posés dans le quartier de leur famille dès qu'elles sont ouvertes (pas de tirage).
+  ...(['Cendre', 'Ronce', 'Voile', 'Astre'] as const).flatMap((f): RencontreDef[] => [
+    {
+      id: `epreuve-${f}`, genre: 'competition', apparence: MEMBRES_EPREUVE[f][0], nom: `l’organisatrice de l’Épreuve ${deF(f)}`,
+      lieux: [PLACES_EPREUVE[f]], dispo: (e) => aGain(e.registre, `basics:${f}`), delai: 0, poids: 1,
+      repere: (e) => (e.competitions.epreuves[f]?.gagnee ? null : '!'),
+    },
+    {
+      id: `joute-${f}`, genre: 'competition', apparence: ELITE_JOUTE[f], nom: `le champion de la Joute ${deF(f)}`,
+      lieux: [PLACES_JOUTE[f]], dispo: (e) => e.vaincues.includes(`brasDroit-${f}`), delai: 0, poids: 1,
+      repere: (e) => (e.competitions.joutes[f]?.gagnee ? null : '!'),
+    },
+  ]),
   // Le rival : un défi facultatif par chapitre au plus, après le prologue (P-N8).
   {
     id: 'rival-kai', genre: 'rival', apparence: 'braise', nom: 'Kaï',
@@ -145,7 +174,7 @@ export function decider(d0: EtatDirecteur, e: AventureEtat, ilot: IlotId): { dir
 export function poses(d: EtatDirecteur, e: AventureEtat, ilot: IlotId): Pose[] {
   const out: Pose[] = [];
   for (const r of RENCONTRES) {
-    if (r.genre !== 'structurante' || !r.dispo(e)) continue;
+    if ((r.genre !== 'structurante' && r.genre !== 'competition') || !r.dispo(e)) continue;
     const l = r.lieux.find((x) => x.ilot === ilot);
     if (!l) continue;
     // Un même personnage n'est posé qu'une fois (l'émissaire et le cadet sont la même figure).

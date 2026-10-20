@@ -13,7 +13,8 @@ import { faitsPublics } from '../src/aventure/faits';
 import { emissaire, figureDe, FIGURES, isNeutre, ROLES } from '../src/aventure/modele';
 import { objectif, quetes } from '../src/aventure/quetes';
 import { accorder, collectionDe, gainVariante } from '../src/aventure/registre';
-import { APPARENCES, duelFacultatif, duelFigure, duelPrologue } from '../src/aventure/rencontres';
+import { APPARENCES, duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue } from '../src/aventure/rencontres';
+import { manche, statutFinale, statutJoute, statutPoule } from '../src/aventure/competitions';
 import { CLE_AVENTURE, CLE_SECOURS, MagasinAventure, nouvelleSauvegarde, validerSauvegarde } from '../src/aventure/sauvegarde';
 import { SAVE_KEY } from '../src/product/save';
 import { personalityById } from '../src/presentation/personalities';
@@ -356,5 +357,83 @@ describe('M10-B — données (personnages, places, duels)', () => {
       expect(f.assautsGagnes + f.gardesGagnees).toBeGreaterThan(0);
     }
     expect(duelPrologue(1).config.players.p1).toEqual({ ...duelPrologue(1).config.players.p2, name: 'Vous' });
+  });
+});
+
+describe('M10-D/E en avance — compétitions facultatives et Championnat (proposés)', () => {
+  const conquis = (): AventureEtat => {
+    let r = run(prologue(), [{ type: 'confirmer', famille: 'Cendre' }, ...conquerir('Cendre')]);
+    for (const [i, x] of (['Voile', 'Ronce', 'Astre'] as Family[]).entries()) r = run(r.etat, [{ type: 'engager', famille: x }, ...conquerir(x, 10 * (i + 1))]);
+    return r.etat;
+  };
+
+  it('Épreuve du quartier : fermée sans les Basics ; une défaite remet la série à zéro ; trois victoires : variante I, une seule fois', () => {
+    let e = prologue();
+    expect(appliquer(e, { type: 'epreuve', famille: 'Ronce', issue: 'victoire', duel: 'x' }, AT).refus).toBeTruthy();
+    e = run(e, [{ type: 'confirmer', famille: 'Ronce' }]).etat;
+    let r = run(e, [{ type: 'epreuve', famille: 'Ronce', issue: 'victoire', duel: 'e1' }, { type: 'epreuve', famille: 'Ronce', issue: 'victoire', duel: 'e2' }, { type: 'epreuve', famille: 'Ronce', issue: 'defaite', duel: 'e3' }]);
+    expect(r.etat.competitions.epreuves.Ronce).toEqual({ etape: 0, gagnee: false });
+    expect(r.gains).toEqual([]);
+    r = run(r.etat, [1, 2, 3].map((i) => ({ type: 'epreuve', famille: 'Ronce', issue: 'victoire', duel: `f${i}` }) as Evenement));
+    expect(r.gains).toEqual(['variante:Ronce-1-racine']);
+    r = run(r.etat, [1, 2, 3].map((i) => ({ type: 'epreuve', famille: 'Ronce', issue: 'victoire', duel: `g${i}` }) as Evenement));
+    expect(r.gains).toEqual([]);
+  });
+
+  it('Joute de la maison : après le bras droit, sous contrainte de deck ; variante II une seule fois', () => {
+    let e = run(prologue(), [{ type: 'confirmer', famille: 'Ronce' }]).etat;
+    expect(appliquer(e, { type: 'joute', famille: 'Ronce', issue: 'victoire', duel: 'j' }, AT).refus).toBeTruthy();
+    e = run(e, conquerir('Ronce').slice(0, 4)).etat;
+    expect(statutJoute(e.competitions, e.vaincues, 'Ronce', e.deck).ouvert).toBe(true); // 4 cartes Ronce dans le deck
+    expect(statutJoute(e.competitions, e.vaincues, 'Ronce', { ...e.deck, cartes: e.deck.cartes.map((c) => (c.startsWith('Ronce-1') || c.startsWith('Ronce-2') ? `neutre-${c[6]}` : c)) }).ouvert).toBe(false);
+    const r = run(e, [{ type: 'joute', famille: 'Ronce', issue: 'victoire', duel: 'j1' }, { type: 'joute', famille: 'Ronce', issue: 'victoire', duel: 'j2' }]);
+    expect(r.gains).toEqual(['variante:Ronce-2-ecaille']);
+  });
+
+  it('les seize variantes sont atteignables (lieutenants III et IV, Épreuves I, Joutes II), sans duplication', () => {
+    let e = conquis();
+    for (const f of FAMILIES) {
+      e = run(e, [1, 2, 3].map((i) => ({ type: 'epreuve', famille: f, issue: 'victoire', duel: `${f}${i}` }) as Evenement)).etat;
+      e = run(e, [{ type: 'joute', famille: f, issue: 'victoire', duel: `j${f}` }]).etat;
+    }
+    const col = collectionDe(e.registre);
+    expect(col.variantes).toHaveLength(16);
+    expect(new Set(e.registre.map((g) => g.key)).size).toBe(e.registre.length);
+  });
+
+  it('Championnat : fermé avant les quatre chefs ; poule à Signatures distinctes ; Miroir ; Finale en deux manches gagnantes', () => {
+    const avant = run(prologue(), [{ type: 'confirmer', famille: 'Cendre' }, ...conquerir('Cendre')]).etat;
+    expect(appliquer(avant, { type: 'championnat', manche: 'poule', chef: 'Voile', signature: 'Cendre', issue: 'victoire' }, AT).refus).toBeTruthy();
+    let e = conquis();
+    expect(chapitre(e)).toBe('championnat');
+    expect(statutPoule(e.competitions, 'Voile', 'Cendre').ouvert).toBe(true);
+    e = run(e, [{ type: 'championnat', manche: 'poule', chef: 'Voile', signature: 'Cendre', issue: 'victoire' }]).etat;
+    expect(statutPoule(e.competitions, 'Ronce', 'Cendre').ouvert).toBe(false); // même Signature : refusée
+    e = run(e, [
+      { type: 'championnat', manche: 'poule', chef: 'Ronce', signature: 'Ronce', issue: 'defaite' },
+      { type: 'championnat', manche: 'poule', chef: 'Ronce', signature: 'Voile', issue: 'victoire' },
+      { type: 'championnat', manche: 'poule', chef: 'Astre', signature: 'Astre', issue: 'victoire' },
+    ]).etat;
+    expect(manche(e.competitions)).toBe('miroir');
+    e = run(e, [{ type: 'championnat', manche: 'miroir', signature: 'Astre', issue: 'victoire' }]).etat;
+    expect(manche(e.competitions)).toBe('finale');
+    expect(statutFinale(e.competitions, 'Astre').ouvert).toBe(true);
+    e = run(e, [{ type: 'championnat', manche: 'finale', signature: 'Astre', issue: 'defaite' }]).etat;
+    expect(statutFinale(e.competitions, 'Astre').ouvert).toBe(false); // changer de Signature entre deux manches
+    e = run(e, [{ type: 'championnat', manche: 'finale', signature: 'Voile', issue: 'defaite' }]).etat;
+    expect(e.competitions.championnat.finale).toEqual([]); // deux manches perdues : la finale recommence, sans perte
+    e = run(e, [{ type: 'championnat', manche: 'finale', signature: 'Voile', issue: 'victoire' }, { type: 'championnat', manche: 'finale', signature: 'Ronce', issue: 'victoire' }]).etat;
+    expect(e.competitions.championnat.titre).toBe(true);
+    expect(chapitre(e)).toBe('champion');
+    expect(objectif(e)).toMatch(/meilleur duelliste/);
+    // aucune carte gagnée au Championnat
+    expect(collectionDe(e.registre)).toEqual(collectionDe(conquis().registre));
+  });
+
+  it('duels des compétitions et du Championnat : configurations ordinaires du moteur, jouables', () => {
+    const e = conquis();
+    for (const c of [duelEpreuve('Voile', 0, e.deck, 1, false).config, duelJoute('Astre', e.deck, 2, false).config, duelChampionnat('poule', e.deck, 3, 'Ronce').config, duelChampionnat('miroir', e.deck, 4).config, duelChampionnat('finale', e.deck, 5).config]) {
+      expect(autoplay(c).state.phase).toBe('ENDED');
+    }
   });
 });

@@ -32,15 +32,16 @@ import { blocked, type Zone } from '../ville/monde';
 import { spritePolicy } from '../ville/spritesExternes';
 import { installVilleStyles, promptBubble } from '../ville/ui';
 import { createTown, type Town } from '../ville/ville';
-import { appliquer, chapitre, peutChanger, peutConfirmer, peutEngager, statutDefi, type Evenement, type Issue } from './aventure';
+import { appliquer, chapitre, peutChanger, peutConfirmer, peutEngager, statutDefi, type Evenement, type FaitsPublics, type Issue } from './aventure';
 import { equiperSignature, equiperVersion, validerDeckAv, type DeckAv } from './deck';
 import { battre, conclure, decider, poses, rencontreDef, type Pose } from './directeur';
 import { faitsPublics } from './faits';
 import { ilotAventure } from './ilots';
-import { aF, deF, emissaire, figure, figureDe, leF, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, rangNeutre, ROLE_LABEL, ROLES, ROMAIN } from './modele';
+import { aF, deF, emissaire, figure, figureDe, leF, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, rangNeutre, ROLE_LABEL, ROLES, ROMAIN } from './modele';
 import { objectif, quetes } from './quetes';
 import { collectionDe, type Gain } from './registre';
-import { duelFacultatif, duelFigure, duelPrologue, personnalite, type DuelPrevu } from './rencontres';
+import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue, personnalite, type DuelPrevu } from './rencontres';
+import { CONTRAINTE_JOUTE, manche, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, varianteDe } from './competitions';
 import { duelCompatible, MagasinAventure, nouvelleSauvegarde, type AventureSave, type DuelAventure } from './sauvegarde';
 import { installAventureStyles } from './styles';
 
@@ -87,7 +88,7 @@ export class AventureApp {
   /** Écran courant (QA, aide au rendu). */
   ecran: 'titre' | 'nouveau' | 'ville' | 'preparation' | 'duel' | 'resultat' = 'titre';
   private posesAffichees = '';
-  private dernierResultat: { prevu: DuelPrevu; issue: Issue; gains: Gain[]; turns: number } | null = null;
+  private dernierResultat: { prevu: DuelPrevu; issue: Issue; gains: Gain[]; turns: number; faits: FaitsPublics } | null = null;
 
   constructor(readonly d: DepsAventure) {
     installVilleStyles();
@@ -424,7 +425,7 @@ export class AventureApp {
     }
     if (z.kind === 'porte' && z.target === 'salle') return this.salleDesBannieres();
     if (z.kind === 'porte' && z.target === 'fanal') return this.dire('Le Fanal', `La taverne du port, maison de la Ronce. ${this.etat.affiliation ? 'Gaspard, Maëlle et Mère Aubépine y tiennent la maison.' : 'On dit que la Ronce y garde le feu du port.'}`, [fermer(this)]);
-    if (z.kind === 'porte' && z.target === 'arene') return this.dire('L’arène', 'La grande scène des duels. Le Championnat des Champions s’y tiendra (prochain lot du prototype). L’Astre veille sur le Parvis.', [fermer(this)]);
+    if (z.kind === 'porte' && z.target === 'arene') return this.championnatDialog();
     const INFO: Record<string, string> = { fontaine: 'La fontaine du Voile : les duellistes y jettent une carte usée avant un grand duel. Lior, l’émissaire du Voile, n’est jamais loin.' };
     this.dire(z.label, INFO[z.id] ?? 'Rien de plus ici pour l’instant (prototype).', [fermer(this)]);
   }
@@ -436,6 +437,8 @@ export class AventureApp {
     if (id === KAI_PROLOGUE.id) return this.kaiPrologue();
     if (id.startsWith('emissaire-')) return this.emissaireDialog(id.slice(10) as Family);
     if (/^(cadet|brasDroit|chef)-/.test(id)) return this.figureDialog(id);
+    if (id.startsWith('epreuve-')) return this.epreuveDialog(id.slice(8) as Family);
+    if (id.startsWith('joute-')) return this.jouteDialog(id.slice(6) as Family);
     const r = rencontreDef(id);
     if (r) return this.facultatif(id);
   }
@@ -530,6 +533,61 @@ export class AventureApp {
   private lancerFigure(id: string): void {
     const st = statutDefi(this.etat, figure(id));
     this.preparer(duelFigure(id, this.etat.deck, this.prochaineGraine(), st.deja));
+  }
+
+  /** Épreuve du quartier (facultative) : trois duels en série ; variante I à la première série gagnée. */
+  private epreuveDialog(f: Family): void {
+    const e = this.etat;
+    const st = statutEpreuve(e.competitions, e.registre, f);
+    const r = rencontreDef(`epreuve-${f}`)!;
+    const etape = e.competitions.epreuves[f]?.etape ?? 0;
+    const gagnee = !!e.competitions.epreuves[f]?.gagnee;
+    this.dire(capital(r.nom), `« L’Épreuve du quartier : trois de nos membres, l’un après l’autre. Une défaite, et l’on recommence. » ${st.texte} ${gagnee ? '' : `Récompense : ${nomCarte(varianteDe(f, 1))}.`}`, st.ouvert ? [
+      { label: `Duel ${etape + 1} sur 3`, key: 'dlg-duel', primary: true, run: () => this.preparer(duelEpreuve(f, etape, this.etat.deck, this.prochaineGraine(), gagnee)) },
+      { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
+    ] : [fermer(this)], r.apparence);
+  }
+
+  /** Joute de la maison (facultative) : un duel sous contrainte de construction ; variante II à la première victoire. */
+  private jouteDialog(f: Family): void {
+    const e = this.etat;
+    const st = statutJoute(e.competitions, e.vaincues, f, e.deck);
+    const r = rencontreDef(`joute-${f}`)!;
+    const gagnee = !!e.competitions.joutes[f]?.gagnee;
+    this.dire(capital(r.nom), `« La Joute de la maison se joue avec ${CONTRAINTE_JOUTE[f].texte}. » ${st.texte} ${gagnee ? '' : `Récompense : ${nomCarte(varianteDe(f, 2))}.`}`, st.ouvert ? [
+      { label: gagnee ? 'Rejouer la Joute' : 'Jouter', key: 'dlg-duel', primary: true, run: () => this.preparer(duelJoute(f, this.etat.deck, this.prochaineGraine(), gagnee)) },
+      { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
+    ] : [{ label: 'Ouvrir le deck', key: 'dlg-deck', run: () => { this.fermerDialogue(); this.collection(); } }, fermer(this)], r.apparence);
+  }
+
+  /** Porte de l'arène : le Championnat des Champions (M10-E en avance, PROGRESSION §4). */
+  private championnatDialog(): void {
+    const e = this.etat;
+    if (!ouvertChampionnat(e.familles)) {
+      const n = FAMILIES.filter((f) => e.familles[f] === 'chef').length;
+      return this.dire('L’arène', `La grande scène des duels. Le Championnat des Champions s’ouvre aux duellistes qui ont vaincu les quatre chefs (${n}/4).`, [fermer(this)]);
+    }
+    const c = e.competitions;
+    const m = manche(c);
+    const sig = e.deck.signature;
+    if (m === 'titre') return this.dire('Le Championnat des Champions', 'Vous êtes le meilleur duelliste de la ville. La foule scande votre nom ; Kaï, le premier, vous salue.', [fermer(this)]);
+    if (m === 'poule') {
+      const choix: Choix[] = FAMILIES.flatMap((f) => {
+        const st = statutPoule(c, f, sig);
+        return st.ouvert ? [{ label: `${figureDe(f, 'chef').nom} (${f})`, key: `dlg-poule-${f}`, run: () => this.preparer(duelChampionnat('poule', this.etat.deck, this.prochaineGraine(), f)) }] : [];
+      });
+      const vaincus = Object.keys(c.championnat.poule).length;
+      return this.dire('Les Quatre Bannières', `Battez trois des quatre chefs, avec une Signature différente à chaque victoire (${vaincus}/3). Signature équipée : ${sig ? CATALOG[`sig-${sig}`]!.name : 'aucune'}.${choix.length ? '' : ' Aucun duel possible avec cette Signature : changez-la dans le deck.'}`, [...choix, { label: 'Ouvrir le deck', key: 'dlg-deck', run: () => { this.fermerDialogue(); this.collection(); } }, { label: 'Plus tard', key: 'dlg-close', primary: !choix.length, run: () => this.fermerDialogue() }]);
+    }
+    if (m === 'miroir') return this.dire('Le Miroir', '« On a commencé ensemble, le soir du tournoi. On finit ensemble. » Kaï a gagné sa place en demi-finale.', [
+      { label: 'Affronter Kaï', key: 'dlg-duel', primary: true, run: () => this.preparer(duelChampionnat('miroir', this.etat.deck, this.prochaineGraine())) },
+      { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
+    ], 'braise');
+    const st = statutFinale(c, sig);
+    this.dire('La Finale', `${TENANTE.nom}, ${TENANTE.titre}, vous attend. Deux manches gagnantes ; changez de Signature entre deux manches. ${st.texte}`, st.ouvert ? [
+      { label: 'Jouer la manche', key: 'dlg-duel', primary: true, run: () => this.preparer(duelChampionnat('finale', this.etat.deck, this.prochaineGraine())) },
+      { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
+    ] : [{ label: 'Ouvrir le deck', key: 'dlg-deck', run: () => { this.fermerDialogue(); this.collection(); } }, fermer(this)], TENANTE.apparence);
   }
 
   private facultatif(id: string): void {
@@ -645,7 +703,14 @@ export class AventureApp {
   }
 
   private prevuDe(d: DuelAventure): DuelPrevu | null {
-    const base = d.rencontre === 'prologue' ? duelPrologue(d.seed) : figureOuNull(d.rencontre) ? duelFigure(d.rencontre, this.etat.deck, d.seed, this.etat.vaincues.includes(d.rencontre)) : rencontreDef(d.rencontre) ? duelFacultatif(d.rencontre, this.etat.deck, d.seed) : null;
+    const [k, a, b] = d.rencontre.split(':');
+    const e = this.etat;
+    const base = d.rencontre === 'prologue' ? duelPrologue(d.seed)
+      : figureOuNull(d.rencontre) ? duelFigure(d.rencontre, e.deck, d.seed, e.vaincues.includes(d.rencontre))
+      : k === 'epreuve' ? duelEpreuve(a as Family, e.competitions.epreuves[a as Family]?.etape ?? 0, e.deck, d.seed, !!e.competitions.epreuves[a as Family]?.gagnee)
+      : k === 'joute' ? duelJoute(a as Family, e.deck, d.seed, !!e.competitions.joutes[a as Family]?.gagnee)
+      : k === 'champ' ? duelChampionnat(a as 'poule' | 'miroir' | 'finale', e.deck, d.seed, b as Family | undefined)
+      : rencontreDef(d.rencontre) ? duelFacultatif(d.rencontre, e.deck, d.seed) : null;
     return base ? { ...base, config: d.config } : null;
   }
 
@@ -704,15 +769,25 @@ export class AventureApp {
     s.duel = null;
     s.historique = [...s.historique, { id: live.duel.id, rencontre, issue, turns: v.turn, at }].slice(-60);
     s.directeur = battre(s.directeur);
-    if (rencontre === 'prologue') s.etat = appliquer(s.etat, { type: 'duelPrologue', issue, faits: faitsPublics(c.match.events) }, at).etat;
+    const faits = faitsPublics(c.match.events);
+    if (rencontre === 'prologue') s.etat = appliquer(s.etat, { type: 'duelPrologue', issue, faits }, at).etat;
     else if (figureOuNull(rencontre)) {
       const r = appliquer(s.etat, { type: 'duelStructurant', figure: rencontre, issue, duel: live.duel.id }, at);
       if (r.refus) this.toast(r.refus);
       s.etat = r.etat;
       gains = r.gains;
+    } else if (/^(epreuve|joute|champ):/.test(rencontre)) {
+      const [k, a, b] = rencontre.split(':');
+      const ev: Evenement = k === 'epreuve' ? { type: 'epreuve', famille: a as Family, issue, duel: live.duel.id }
+        : k === 'joute' ? { type: 'joute', famille: a as Family, issue, duel: live.duel.id }
+        : { type: 'championnat', manche: a as 'poule' | 'miroir' | 'finale', chef: b as Family | undefined, signature: live.duel.config.players.p1.signature, issue };
+      const r = appliquer(s.etat, ev, at);
+      if (r.refus) this.toast(r.refus);
+      s.etat = r.etat;
+      gains = r.gains;
     } else s.directeur = conclure(s.directeur, rencontre, true);
     this.persist();
-    this.dernierResultat = { prevu: live.prevu, issue, gains, turns: v.turn };
+    this.dernierResultat = { prevu: live.prevu, issue, gains, turns: v.turn, faits };
     this.resultat();
   }
 
@@ -723,12 +798,15 @@ export class AventureApp {
     this.d.arena()?.setPaused(false);
     const titre = r.issue === 'victoire' ? 'Victoire' : r.issue === 'defaite' ? 'Défaite' : 'Abandon';
     const prologue = r.prevu.rencontre === 'prologue';
-    const note = prologue ? 'Quelle que soit l’issue, la foule a tout vu.' : r.issue === 'victoire' ? (r.gains.length ? 'Votre victoire entre au registre.' : 'Revanche : rien de nouveau au registre (aucune duplication).') : 'Rien n’est perdu : le défi reste ouvert.';
+    const note = prologue ? 'Quelle que soit l’issue, la foule a tout vu.'
+      : r.prevu.rencontre.startsWith('champ:') ? (r.issue === 'victoire' ? 'Le Championnat avance : aucune carte en jeu, seulement le titre.' : 'Rien n’est perdu : la manche peut se rejouer.')
+      : r.prevu.rencontre.startsWith('epreuve:') ? (r.issue === 'victoire' ? (r.gains.length ? 'Épreuve remportée : la variante entre au registre.' : 'Duel gagné : la série continue.') : 'La série repart du début.') : r.issue === 'victoire' ? (r.gains.length ? 'Votre victoire entre au registre.' : 'Revanche : rien de nouveau au registre (aucune duplication).') : 'Rien n’est perdu : le défi reste ouvert.';
     this.ecranShell('scr-result av-scr',
       h('section', { class: 'av-titre av-resultat', 'data-screen': 'av-resultat' },
         h('h1', { class: 'av-h1' }, titre),
         h('p', { class: 'av-sous' }, `${r.prevu.titre} · ${r.turns} tour(s)`),
         h('p', null, note),
+        prologue ? h('p', { class: 'av-proto', 'data-key': 'av-faits' }, `Ce que la foule a vu (faits publics du duel) : ${r.faits.assautsGagnes} Clash(es) gagné(s) en Assaut, ${r.faits.gardesGagnees} en Garde, ${r.faits.interferencesReussies} Interférence(s) réussie(s).`) : null,
         r.gains.length ? h('div', { class: 'av-cards' }, ...r.gains.flatMap((g) => gainEls(g, this.params.artSeed))) : null,
         h('div', { class: 'av-items' }, bouton('Retour en ville', () => this.apresResultat(), 'av-retour', true))));
   }
@@ -746,7 +824,15 @@ export class AventureApp {
       this.scenesFoule();
       return;
     }
-    this.entrerVille(false, `npc-${rencontre}`);
+    if (rencontre.startsWith('champ:')) {
+      this.entrerVille(false, 'porte-arene');
+      if (rencontre === 'champ:finale' && this.etat.competitions.championnat.titre && r.issue === 'victoire') {
+        this.dire('Le Championnat des Champions', 'La foule envahit le Parvis. Les quatre chefs se lèvent ; Kaï vous tend la main : « Le meilleur duelliste de la ville. Je le savais depuis le premier soir. » (La cérémonie aura lieu dans la Grande Cour quand elle sera construite.)', [fermer(this)]);
+      }
+      return;
+    }
+    const comp = rencontre.match(/^(epreuve|joute):(\w+)$/);
+    this.entrerVille(false, comp ? `npc-${comp[1]}-${comp[2]}` : `npc-${rencontre}`);
   }
 
   /** P4 et P5 : la foule, Kaï, puis le premier émissaire s'avance (les quatre ont invité). */

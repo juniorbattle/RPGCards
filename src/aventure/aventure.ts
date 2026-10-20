@@ -8,6 +8,7 @@ import { FAMILIES, type Family } from '../game/catalog/cards';
 import { deF, figure, figureDe, FIGURES, leF, MAISONS, ORDRE_ETAT, ROLE_LABEL, TECHNIQUES_RUE, type EtatFamille, type Figure, type SceneId } from './modele';
 import { accorder, aGain, collectionDe, gainBasics, gainNeutres, gainSignature, gainTechnique, gainVariante, type Gain } from './registre';
 import { deckDepart, equiperTechnique, integrerBasics, type DeckAv } from './deck';
+import { finEpreuve, finFinale, finJoute, finMiroir, finPoule, nouvellesCompetitions, ouvertChampionnat, statutEpreuve, statutJoute, type EtatCompetitions } from './competitions';
 
 /** Faits PUBLICS d'un duel (journal public du joueur) : aucun secret (ADR 011, ADR 029 §5). */
 export interface FaitsPublics {
@@ -39,6 +40,8 @@ export interface AventureEtat {
   rencontres: string[];
   /** Changements d'affiliation (P-N6), pour mémoire. */
   changements: Array<{ de: Family; vers: Family; at: string }>;
+  /** Compétitions facultatives et Championnat (M10-D/E en avance, `competitions.ts`). */
+  competitions: EtatCompetitions;
 }
 
 export type Evenement =
@@ -49,6 +52,9 @@ export type Evenement =
   | { type: 'engager'; famille: Family }
   | { type: 'lancerDefi'; figure: string }
   | { type: 'duelStructurant'; figure: string; issue: Issue; duel: string }
+  | { type: 'epreuve'; famille: Family; issue: Issue; duel: string }
+  | { type: 'joute'; famille: Family; issue: Issue; duel: string }
+  | { type: 'championnat'; manche: 'poule' | 'miroir' | 'finale'; chef?: Family; signature: Family; issue: Issue }
   | { type: 'visite'; lieu: string }
   | { type: 'rencontre'; personne: string };
 
@@ -62,7 +68,7 @@ export interface Resultat {
 
 export function nouvelleAventure(at: string): AventureEtat {
   const familles = Object.fromEntries(FAMILIES.map((f) => [f, 'inconnue'])) as Record<Family, EtatFamille>;
-  const base: AventureEtat = { scenes: ['P0'], familles, affiliation: null, premier: null, prologue: null, engages: [], vaincues: [], registre: [], deck: deckDepart(), visites: [], rencontres: [], changements: [] };
+  const base: AventureEtat = { scenes: ['P0'], familles, affiliation: null, premier: null, prologue: null, engages: [], vaincues: [], registre: [], deck: deckDepart(), visites: [], rencontres: [], changements: [], competitions: nouvellesCompetitions() };
   let reg = accorder(base.registre, gainNeutres(at)).registre;
   for (const t of TECHNIQUES_RUE) reg = accorder(reg, gainTechnique(t, 'P0', at)).registre;
   return { ...base, registre: reg };
@@ -216,6 +222,34 @@ export function appliquer(e0: AventureEtat, ev: Evenement, at: string): Resultat
       return { etat: e, gains };
     }
 
+    case 'epreuve': {
+      const st = statutEpreuve(e.competitions, e.registre, ev.famille);
+      if (!st.ouvert) return refuse(st.texte);
+      const r = finEpreuve(e.competitions, e.registre, ev.famille, ev.issue === 'victoire', ev.duel, at);
+      e.competitions = r.c;
+      e.registre = r.registre;
+      gains.push(...r.gains);
+      return { etat: e, gains };
+    }
+
+    case 'joute': {
+      if (!e.vaincues.includes(`brasDroit-${ev.famille}`)) return refuse(statutJoute(e.competitions, e.vaincues, ev.famille, e.deck).texte);
+      const r = finJoute(e.competitions, e.registre, ev.famille, ev.issue === 'victoire', ev.duel, at);
+      e.competitions = r.c;
+      e.registre = r.registre;
+      gains.push(...r.gains);
+      return { etat: e, gains };
+    }
+
+    case 'championnat': {
+      if (!ouvertChampionnat(e.familles)) return refuse('Le Championnat s’ouvre quand les quatre chefs sont vaincus.');
+      const v = ev.issue === 'victoire';
+      if (ev.manche === 'poule' && ev.chef) e.competitions = finPoule(e.competitions, ev.chef, ev.signature, v);
+      else if (ev.manche === 'miroir') e.competitions = finMiroir(e.competitions, v);
+      else if (ev.manche === 'finale') e.competitions = finFinale(e.competitions, ev.signature, v);
+      return { etat: e, gains };
+    }
+
     case 'visite':
       if (!e.visites.includes(ev.lieu)) e.visites.push(ev.lieu);
       return { etat: e, gains };
@@ -228,7 +262,8 @@ export function appliquer(e0: AventureEtat, ev: Evenement, at: string): Resultat
 }
 
 /** Chapitre courant (journal des quêtes, HUD). */
-export function chapitre(e: AventureEtat): 'prologue' | 'maison' | 'voies' | 'championnat' {
+export function chapitre(e: AventureEtat): 'prologue' | 'maison' | 'voies' | 'championnat' | 'champion' {
+  if (e.competitions?.championnat.titre) return 'champion';
   if (e.affiliation === null || !aGain(e.registre, `basics:${e.affiliation}`)) return 'prologue';
   if (!aGain(e.registre, `signature:${e.affiliation}`)) return 'maison';
   if (FAMILIES.every((f) => e.familles[f] === 'chef')) return 'championnat';

@@ -62,9 +62,18 @@ les commandes du jeu standard ; « Menu » met en pause (reprendre, sauvegarder 
     revanches sans récompense ; une fois le chef vaincu, la **Salle des Bannières** (porte de la salle de jeu de cartes)
     engage le défi officiel d'une autre famille (ses quatre Basics) ; duels de rue et défi de Kaï facultatifs, posés par
     le directeur des rencontres (au plus deux par îlot, jamais d'embuscade).
-11. **Deck** : 16 cartes, quatre par Rang, une seule Signature, deux Techniques ; versions Basic ↔ variante ; **registre
+11. **Compétitions facultatives** (M10-D en avance, option a d'ARB-M10-06) : dans le quartier de chaque famille dont
+    vous avez les Basics, l'**Épreuve du quartier** (trois membres en série ; une défaite fait repartir la série ; la
+    première série gagnée donne la variante de Rang I) ; après le bras droit, la **Joute de la maison** (un duel sous une
+    contrainte de construction propre à la famille, vérifiée avant le duel ; variante de Rang II). Les seize variantes
+    sont ainsi atteignables, chacune une seule fois.
+12. **Le Championnat des Champions** (M10-E en avance), à la porte de l'arène (Parvis) quand les quatre chefs sont
+    vaincus : les Quatre Bannières (trois chefs à battre, une Signature différente à chaque victoire : changez-la dans le
+    deck), le Miroir (Kaï), la Finale contre Ysolde, la Tenante du titre (deux manches gagnantes, une Signature
+    différente à chaque manche) ; aucune carte en jeu, un titre ; PV 90 pour tous.
+13. **Deck** : 16 cartes, quatre par Rang, une seule Signature, deux Techniques ; versions Basic ↔ variante ; **registre
     des gains** visible. **Journal** : quêtes dérivées des faits, états des familles.
-12. **Fermer la page et revenir** : « Continuer l'aventure » ramène au même îlot et au même endroit, ou reprend
+14. **Fermer la page et revenir** : « Continuer l'aventure » ramène au même îlot et au même endroit, ou reprend
     exactement le duel en cours (rejeu et hash).
 
 ## Ce que le prototype ne fait pas encore
@@ -72,7 +81,7 @@ les commandes du jeu standard ; « Menu » met en pause (reprendre, sauvegarder 
 - Les neutres n'entrent pas en duel (deck de prêt) : ARB-M10-02.
 - Les chefs ont une apparence **provisoire** (gabarits PNJ) ; les cadets n'ont pas d'accent de couleur familial ; les
   bras droits gardent leurs identités V2. Aucune image nouvelle.
-- Pas de Championnat (M10-E), pas d'Épreuves de quartier ni de Joutes (variantes I et II), pas de Grande Cour (M09 en
-  pause) ; foule figurée par quelques PNJ.
+- Championnat, Épreuves et Joutes en squelette (textes et adversaires provisoires, apparences de PNJ) ; pas de Grande
+  Cour (M09 en pause) : la proclamation se fait au Parvis ; foule figurée par quelques PNJ.
 - Textes de prototype ; aucun son.
 - Sans WebGL : pas de ville (le prototype suppose WebGL).

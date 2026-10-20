@@ -43,7 +43,8 @@ Clash avant la ratification d'un avenant (M10-A). Le brief du 2026-10-20 demande
 ## Conséquences
 
 - Le prototype est jouable du prologue au premier défi de lieutenant, et au-delà (bras droit, chef, défi officiel des
-  autres familles, rival et duels de rue facultatifs) ; tout est provisoire.
+  autres familles, Épreuves et Joutes, Championnat en squelette, rival et duels de rue facultatifs : `competitions.ts`) ;
+  tout est provisoire.
 - Quand l'avenant M10-A sera ratifié, seuls `deck.ts` (`siegePret` → deck explicite), `rencontres.ts` et le moteur
   (A-11) changent ; la machine, le registre, le directeur et la sauvegarde restent.
 - Coût : un second jeu d'écrans (l'enveloppe de l'aventure) à entretenir ; acceptable tant que le mode Aventure n'est
