@@ -1,10 +1,9 @@
 // M09 V4 — porte du Quai (ADR 028) : assemblage PAR SCRIPTS du diorama du Quai et de la feuille du duelliste joueur à
 // partir des images générées (gpt-image-2 ; bruts dans `art-gen/` du dossier principal, ignoré par git), puis
 // vérification in situ.
-//   assembler : traite chaque brut (`m09-traitement-images.mjs`), assemble dix plans posés sur le plan pur du Quai
+//   assembler : traite chaque brut (`m09-traitement-images.mjs`), assemble huit plans posés sur le plan pur du Quai
 //               (ciel et ville haute ; troisième rang et second rang, à leur échelle réelle, en deux copies dont une en
-//               miroir ; ruelle et escalier de l'arène vus par l'arche ouest et le portail de l'entrepôt, ouverts dans
-//               les façades ; façades de la rue entière : ouest + centre de l'essai + est ;
+//               miroir ; façades de la rue entière : ouest + centre de l'essai + est ;
 //               pied des façades : étal, caisses, tonneaux ; rue : lampadaires, bornes, filets ; premier plan : ouest +
 //               est ; eau couchée), pose une lumière du moteur sur chaque lanterne peinte repérée, écrit les plans dans
 //               `public/decors/` et la feuille du joueur dans `public/sprites/` avec leurs manifestes (`approved:
@@ -15,20 +14,18 @@
 //               politique du jeu (`decors=approuvees&sprites=approuvees` : doit rester le Quai actuel), porte (`?qa=1`) ;
 //               plusieurs positions, 1920 × 1080 et 1280 × 720, cadrage de l'URL (`LQV_RIG`) ; planche
 //               référence | actuel | porte ; rapports du décor et des feuilles.
-//   planche   : planche de décision (build requis ; passe 60) : référence | Quai actuel (direction D) | porte au
-//               centre ; porte à l'ouest (arche, ruelle) | à l'est (portail, escalier) | lumières aux couleurs des
-//               familles (variante A3, copie temporaire du build) ; feuille du joueur et joueur in situ ; les décisions
-//               ouvertes écrites à côté.
+//   planche   : planche de suivi (build requis ; passe 61) : référence | Quai actuel (direction D) | porte au
+//               centre ; porte à l'ouest | à l'est | bannières brodées (détail) ; feuille du joueur et joueur in situ ;
+//               décisions de la fiche et suite écrites à côté.
 // Usage : node tools/m09-porte-quai.mjs assembler [rapport.json]
 //         npm run build && node tools/m09-porte-quai.mjs verifier [captures] [rapport.json]
 //         npm run build && node tools/m09-porte-quai.mjs planche [planche.png] [rapport.json]
 import { createHash } from 'node:crypto';
 import { execSync } from 'node:child_process';
-import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { launch, rendererLabel, startPreview, watchConsole, webglRenderer } from './browser.mjs';
-import { clearAbove, composeRow, composeStrip, cutOpening, extractProps, findLanterns, fixBanners, processPlate, processSheet } from './m09-traitement-images.mjs';
+import { clearAbove, composeRow, composeStrip, extractProps, findLanterns, fixBanners, processPlate, processSheet } from './m09-traitement-images.mjs';
 
 const MODE = process.argv[2];
 const main = dirname(resolve(execSync('git rev-parse --git-common-dir').toString().trim()));
@@ -66,14 +63,6 @@ const L = {
   ciel: { z: -90, width: 176, bottom: -54, voile: 0.12 },
   troisieme: { z: -40, copy: 44, y: 4, voile: 0.5 },
   second: { z: -18, copy: 31, y: 0, voile: 0.28 },
-  // ruelle vue à travers l'arche ouest (découpée), passage vers le Parvis derrière l'entrepôt et sa rampe
-  // ruelle vue à travers l'arche ouest, escalier de l'arène à travers le portail de l'entrepôt (façade est) : plans
-  // resserrés derrière leur ouverture (assez larges pour la parallaxe, sans dépasser le bout des façades) ; `stairs` :
-  // x de l'axe de l'escalier sur le brut du passage, aligné sur l'axe du portail
-  // ruelle recadrée sur son centre (`crop` : part retirée de chaque côté) : plus étroite que haute ; bas des deux plans
-  // sous le sol (`y`) : la vue plongeante passe par le bas des ouvertures
-  ruelle: { z: -7, width: 4.4, crop: 0.2, y: -1.6 },
-  passage: { z: -7.5, width: 6.6, stairs: 545, y: -1.6 },
   // cadrage élargi décidé par le responsable (passe 60), propre au diorama ; bornes : la vue ne dépasse pas les façades
   camera: { pitch: 6, distance: 25, fov: 42, aimY: 4.8, minX: -5, maxX: 5 },
   // brume entre les plans (moteur) : [largeur, hauteur, x, y, z, opacité, dérive, échelle du bruit]
@@ -119,15 +108,7 @@ const BANNIERES = {
     { box: [508, 762, 544, 875], center: [526, 810], family: 'Cendre' },
     { box: [860, 742, 896, 855], center: [878, 785], family: 'Ronce' },
   ],
-  'quai-ruelle': [
-    { box: [62, 112, 140, 320], center: [100, 210], family: 'Astre' },
-    { box: [724, 302, 798, 485], center: [760, 390], family: 'Ronce' },
-  ],
 };
-/** Ouverture de l'arche ouest (passage vers les Ruelles), en px de l'image brute, mesurée sur l'image : la ruelle se voit au travers. */
-const ARCHE_OUEST = { rect: [122, 630, 282, 985], arc: { cx: 202, cy: 630, r: 80 } };
-/** Portail de l'entrepôt (façade est), mesuré sur le brut : ouvert, il montre l'escalier vers l'arène (sortie du Parvis). */
-const PORTAIL_EST = { rect: [568, 753, 770, 956], arc: { cx: 669, cy: 753, r: 101 } };
 
 if (MODE === 'assembler') {
   const OUT = process.argv[3] ?? 'artifacts/qa/m09/v4-porte-assemblage.json';
@@ -139,19 +120,17 @@ if (MODE === 'assembler') {
   const p = await page(800, 600);
   await p.setContent('<!doctype html><html><body></body></html>');
   const ev = (fn, arg) => p.evaluate(fn, arg);
-  // emblèmes du jeu posés sur les bannières des bruts, avant tout traitement (passe 59)
+  // emblèmes du jeu posés sur les bannières des bruts, avant tout traitement (passe 59), brodés en relief (passe 61,
+  // décision E1 du responsable : « Relief brodé par script (0 image) »)
   const fixed = {};
   report.bannieres = {};
   for (const [name, banners] of Object.entries(BANNIERES)) {
-    const r = await ev(fixBanners, { url: dataUrl(rawFile(name)), banners });
+    const r = await ev(fixBanners, { url: dataUrl(rawFile(name)), banners, brode: true });
     fixed[name] = fromUrl(r.url);
     report.bannieres[name] = r.done;
     mkdirSync('artifacts/qa/tmp', { recursive: true });
     writeFileSync(join('artifacts/qa/tmp', `v4-bannieres-${name}.png`), fixed[name]);
   }
-  // arche ouest découpée (passe 60) : la ruelle, plan placé derrière, se voit au travers
-  fixed['quai-facades-ouest'] = fromUrl(await ev(cutOpening, { url: dataUrl(rawFile('quai-facades-ouest')), ...ARCHE_OUEST }));
-  fixed['quai-facades-est'] = fromUrl(await ev(cutOpening, { url: dataUrl(rawFile('quai-facades-est')), ...PORTAIL_EST }));
   const raw = (name) => fixed[name] ?? rawFile(name);
   const D = L.density;
   // ---- traitement de chaque brut ------------------------------------------------------------------------------------
@@ -162,9 +141,6 @@ if (MODE === 'assembler') {
   const tile = (img, copyW) => ev(composeRow, { parts: [{ url: img.url, worldW: copyW }, { url: img.url, worldW: copyW, flip: true }], density: img.size[0] / copyW });
   const secondT = await tile(second, L.second.copy);
   const troisiemeT = await tile(troisieme, L.troisieme.copy);
-  const ruelleBrute = await ev(processPlate, { url: dataUrl(raw('quai-ruelle')), key: 'aucun', crop: 'aucun', maxLanterns: 0 });
-  const ruelle = await ev(composeRow, { parts: [{ url: ruelleBrute.url, worldW: L.ruelle.width, cropL: L.ruelle.crop, cropR: L.ruelle.crop }], density: (ruelleBrute.size[0] * (1 - 2 * L.ruelle.crop)) / L.ruelle.width });
-  const passage = await ev(processPlate, { url: dataUrl(raw('quai-passage-parvis')), crop: 'pied', maxLanterns: 3, lanternFrom: 0.3 });
   const fac = {
     ouest: await ev(processPlate, { url: dataUrl(raw('quai-facades-ouest')), crop: 'pied' }),
     centre: await ev(processPlate, dataUrl(raw('quai-facades-essai'))),
@@ -223,32 +199,13 @@ if (MODE === 'assembler') {
   // lanternes de l'étal : repérées sur son image, reportées à sa place dans la bande du pied des façades
   const stall = pied.placed.find((x) => x.name === 'étal');
   const stallLights = etal.lanterns.map((l) => toWorld(pied, 48, -24, { x: stall.x + (l.x / etal.size[0]) * stall.w, y: stall.y + (l.y / etal.size[1]) * stall.h }, L.pied.z + 0.5));
-  // arche ouest : centre en x au monde (part ouest des façades, x de −24 à −10,6 m)
-  // ouvertures vues de biais : la caméra, arrêtée à sa borne (±maxX) quand l'arche ou le portail est à l'écran, voit
-  // derrière l'ouverture une région décalée vers l'extérieur de (x ouverture − x caméra) × (recul du plan / distance de
-  // la caméra aux façades) ; chaque plan est centré sur cette région (point visé en z ≈ 0,6 m)
-  const dCam = L.camera.distance * Math.cos((L.camera.pitch * Math.PI) / 180) + 0.6 - L.facades.z;
-  const behind = (x, camX, z) => x + (x - camX) * ((L.facades.z - z) / dCam);
-  const oO = facades.offsets[0];
-  const archX = r2(-24 + ((oO.x + ((ARCHE_OUEST.arc.cx - fac.ouest.crop.left) / fac.ouest.size[0]) * oO.w) / facades.size[0]) * 48);
-  report.arche = { x: archX, crop: fac.ouest.crop };
-  // portail de l'entrepôt : centre en x au monde (part est des façades) ; l'axe de l'escalier du passage posé dessus
-  const oE = facades.offsets[2];
-  const gateX = r2(-24 + ((oE.x + ((PORTAIL_EST.arc.cx - fac.est.crop.left) / fac.est.size[0]) * oE.w) / facades.size[0]) * 48);
-  const passX0 = behind(gateX, L.camera.maxX, L.passage.z) - ((L.passage.stairs - passage.crop.left) / passage.size[0]) * L.passage.width;
-  const ruelleX = r2(behind(archX, L.camera.minX, L.ruelle.z));
-  const passX = r2(passX0 + L.passage.width / 2);
-  report.portail = { x: gateX, passage: passX, crop: fac.est.crop, ruelle: ruelleX, dCam: r2(dCam) };
-  const passLights = passage.lanterns.map((l) => toWorld(passage, L.passage.width, passX0, l, L.passage.z + 0.4, L.passage.y));
   const lights = [
-    { at: [archX, 2.6, L.ruelle.z + 1.5], color: 'Voile', intensity: 2.2, radius: 6, halo: 0, flicker: 'lantern' },
-    ...passLights.slice(0, 2).map((l) => ({ ...l, color: 'ambre', intensity: 2.2, radius: 6, halo: 0.8, flicker: 'lantern' })),
     ...lanternRue.map((l) => ({ ...toWorld(rue, 48, -24, l, L.rue.z + 0.1), color: 'Astre', intensity: 3.2, radius: 10, halo: 2.0, flicker: 'lantern' })),
     ...stallLights.map((l) => ({ ...l, color: 'ambre', intensity: 2.6, radius: 7, halo: 1.0, flicker: 'lantern' })),
     ...facLights.map((l) => ({ ...l, color: 'ambre', intensity: 2.0, radius: 6, halo: 0.9, flicker: 'lantern' })),
   ].slice(0, 16);
   const files = {
-    'quai-ciel.png': fromUrl(ciel.url), 'quai-troisieme-rang.png': fromUrl(troisiemeT.url), 'quai-second-rang.png': fromUrl(secondT.url), 'quai-ruelle.png': fromUrl(ruelle.url), 'quai-passage-parvis.png': fromUrl(passage.url), 'quai-facades.png': fromUrl(facades.url), 'quai-pied-facades.png': fromUrl(pied.url),
+    'quai-ciel.png': fromUrl(ciel.url), 'quai-troisieme-rang.png': fromUrl(troisiemeT.url), 'quai-second-rang.png': fromUrl(secondT.url), 'quai-facades.png': fromUrl(facades.url), 'quai-pied-facades.png': fromUrl(pied.url),
     'quai-rue.png': fromUrl(rue.url), 'quai-premier-plan.png': fromUrl(premier.url), 'quai-eau.png': fromUrl(eau.url),
   };
   const dim = (b) => [b.readUInt32BE(16), b.readUInt32BE(20)];
@@ -259,13 +216,11 @@ if (MODE === 'assembler') {
       ciel: plate('quai-ciel.png', 'quai-ciel', { at: [0, L.ciel.bottom, L.ciel.z], width: L.ciel.width, orient: 'face', order: 0, blend: 'fondu', fog: 0, voile: L.ciel.voile }),
       'troisieme-rang': plate('quai-troisieme-rang.png', 'quai-troisieme-rang', { at: [0, L.troisieme.y, L.troisieme.z], width: 2 * L.troisieme.copy, orient: 'face', order: 1, blend: 'decoupe', fog: 0.8, voile: L.troisieme.voile }),
       'second-rang': plate('quai-second-rang.png', 'quai-second-rang', { at: [0, L.second.y, L.second.z], width: 2 * L.second.copy, orient: 'face', order: 2, blend: 'decoupe', fog: 0.6, voile: L.second.voile }),
-      ruelle: plate('quai-ruelle.png', 'quai-ruelle', { at: [ruelleX, L.ruelle.y, L.ruelle.z], width: L.ruelle.width, orient: 'face', order: 4, blend: 'decoupe', fog: 0.25 }),
-      passage: plate('quai-passage-parvis.png', 'quai-passage-parvis', { at: [passX, L.passage.y, L.passage.z], width: L.passage.width, orient: 'face', order: 3, blend: 'decoupe', fog: 0.25 }),
-      facades: plate('quai-facades.png', 'quai-facades', { at: [0, 0, L.facades.z], width: 48, orient: 'face', order: 5, blend: 'decoupe', lit: 0.25 }),
-      'pied-facades': plate('quai-pied-facades.png', 'quai-pied-facades', { at: [0, 0, L.pied.z], width: 48, orient: 'face', order: 6, blend: 'decoupe', lit: 0.3 }),
-      rue: plate('quai-rue.png', 'quai-rue', { at: [0, 0, L.rue.z], width: 48, orient: 'face', order: 7, blend: 'decoupe', lit: 0.2 }),
-      'premier-plan': plate('quai-premier-plan.png', 'quai-premier-plan', { at: [0, r2(L.premier.wallTopY - wallFrac * premierH), L.premier.z], width: r2(premierW), orient: 'face', order: 8, blend: 'decoupe' }),
-      eau: plate('quai-eau.png', 'quai-eau', { at: [0, L.eau.y, L.eau.z], width: L.eau.width, orient: 'sol', order: 9, blend: 'decoupe' }),
+      facades: plate('quai-facades.png', 'quai-facades', { at: [0, 0, L.facades.z], width: 48, orient: 'face', order: 3, blend: 'decoupe', lit: 0.25 }),
+      'pied-facades': plate('quai-pied-facades.png', 'quai-pied-facades', { at: [0, 0, L.pied.z], width: 48, orient: 'face', order: 4, blend: 'decoupe', lit: 0.3 }),
+      rue: plate('quai-rue.png', 'quai-rue', { at: [0, 0, L.rue.z], width: 48, orient: 'face', order: 5, blend: 'decoupe', lit: 0.2 }),
+      'premier-plan': plate('quai-premier-plan.png', 'quai-premier-plan', { at: [0, r2(L.premier.wallTopY - wallFrac * premierH), L.premier.z], width: r2(premierW), orient: 'face', order: 6, blend: 'decoupe' }),
+      eau: plate('quai-eau.png', 'quai-eau', { at: [0, L.eau.y, L.eau.z], width: L.eau.width, orient: 'sol', order: 7, blend: 'decoupe' }),
     },
     lumieres: lights,
     camera: L.camera,
@@ -304,8 +259,6 @@ if (MODE === 'assembler') {
   const fiches = {
     'quai-ciel': { sources: ['quai-ciel-ville-haute'], etapes: ['image opaque, sans détourage ni recadrage'] },
     'quai-troisieme-rang': { sources: ['quai-troisieme-rang'], etapes: ['fond magenta détouré, recadré sur le pied des murs', `deux copies côte à côte, la seconde en miroir (${L.troisieme.copy} m chacune, échelle réelle)`, `posé entre le second rang et le ciel (z ${L.troisieme.z} m), voile atmosphérique ${L.troisieme.voile}`] },
-    'quai-ruelle': { sources: ['quai-ruelle'], etapes: ['image opaque, sans détourage', `recadrée sur son centre (${L.ruelle.crop * 100} % retirés de chaque côté)`, `posée derrière l’arche ouest découpée (z ${L.ruelle.z} m), centrée sur la ligne de vue de la caméra à sa borne ; vue au travers`] },
-    'quai-passage-parvis': { sources: ['quai-passage-parvis'], etapes: ['fond magenta détouré, recadré sur le pied des murs', `posé derrière le portail ouvert de l’entrepôt (z ${L.passage.z} m), l’axe de l’escalier sur celui du portail ; vu au travers`] },
     'quai-second-rang': { sources: ['quai-second-rang'], etapes: ['fond magenta détouré (alpha tiré de l’écart au magenta, bords démêlés du fond)', 'recadré sur le pied des murs', `deux copies côte à côte, la seconde en miroir (${L.second.copy} m chacune, échelle réelle)`, `posé à z ${L.second.z} m, voile atmosphérique ${L.second.voile}`] },
     'quai-facades': { sources: ['quai-facades-ouest', 'quai-facades-essai', 'quai-facades-est'], etapes: ['fond magenta détouré et recadré sur le pied des murs, pour chaque image', `assemblées côte à côte, pieds alignés, à ${D} px/m : ouest (x −24 à −10,6 m), centre de l’essai (−10,6 à 11,2 m), est (11,2 à 24 m)`, 'lanternes peintes repérées, une lumière du moteur sur chacune'] },
     'quai-pied-facades': { sources: ['quai-etal', 'quai-accessoires'], etapes: ['étal détouré et recadré sur son contenu ; accessoires détourés et découpés (composantes connexes)', `posés au monde aux emplacements du plan pur, à ${D} px/m : étal (x 2,1 m, 3,4 m de large), caisses (−18 et 12,7 m), tonneaux (−10,5 m) ; échelle de la planche d’accessoires tirée du lampadaire (${L.rue.lampH} m)`] },
@@ -314,9 +267,8 @@ if (MODE === 'assembler') {
     'quai-eau': { sources: ['quai-eau'], etapes: [`image opaque, sans détourage ; posée couchée (y ${L.eau.y} m)`] },
   };
   // emblèmes du jeu posés par script sur les bannières des bruts (passe 59) : étape en tête des fiches concernées
-  const EMB = 'emblèmes inventés par le modèle remplacés par ceux du jeu sur les bannières (fixBanners, tracés de src/art/emblems.ts ; tissu refait de son propre grain), sur le brut, avant tout traitement';
-  for (const [id, srcs] of [['quai-facades', ['quai-facades-essai']], ['quai-second-rang', ['quai-second-rang']], ['quai-premier-plan', ['quai-premier-plan-ouest']], ['quai-troisieme-rang', ['quai-troisieme-rang']], ['quai-ruelle', ['quai-ruelle']]]) fiches[id].etapes.unshift(`${EMB} : ${srcs.join(', ')}`);
-  fiches['quai-facades'].etapes.unshift('ouvertures découpées (rectangle et arc mesurés sur le brut, peints en magenta puis détourés) : arche ouest, la ruelle se voit au travers ; portail de l’entrepôt (est), l’escalier de l’arène se voit au travers');
+  const EMB = 'emblèmes inventés par le modèle remplacés par ceux du jeu sur les bannières (fixBanners, tracés de src/art/emblems.ts ; tissu refait de son propre grain), brodés en relief (fil d’or en points lancés, bourrelet sombre, modelé, reflet ; 12 % plus grands), sur le brut, avant tout traitement';
+  for (const [id, srcs] of [['quai-facades', ['quai-facades-essai']], ['quai-second-rang', ['quai-second-rang']], ['quai-premier-plan', ['quai-premier-plan-ouest']], ['quai-troisieme-rang', ['quai-troisieme-rang']]]) fiches[id].etapes.unshift(`${EMB} : ${srcs.join(', ')}`);
   for (const [id, f] of Object.entries(fiches)) {
     const file = `${id}.png`;
     const sources = f.sources.map(src);
@@ -335,7 +287,7 @@ if (MODE === 'assembler') {
   // ---- contrôles ----------------------------------------------------------------------------------------------------
   const big = Object.entries(files).filter(([, b]) => b.length > 8 * 1048576);
   check(big.length === 0, `plans ≤ 8 Mo : ${Object.entries(files).map(([f, b]) => `${f} ${Math.round(b.length / 1048576 * 10) / 10} Mo ${dim(b).join('×')}`).join(' ; ')}`);
-  check(lights.length >= 4, `lumières du moteur posées sur les lanternes peintes : ${lights.length} (rue ${lanternRue.length}, étal ${stallLights.length}, ruelle 1, passage ${Math.min(2, passLights.length)}, façades ${lights.length - 1 - Math.min(2, passLights.length) - lanternRue.length - stallLights.length} des ${facLights.length} plus grandes ; 16 au plus)`);
+  check(lights.length >= 4, `lumières du moteur posées sur les lanternes peintes : ${lights.length} (rue ${lanternRue.length}, étal ${stallLights.length}, façades ${lights.length - lanternRue.length - stallLights.length} des ${facLights.length} plus grandes ; 16 au plus)`);
   check(sheet.shifts.every((s) => s) && sheet.clipped === 0, `feuille du joueur : grille d’art ${sheet.cell.join(' × ')}, pas ${sheet.pitch.x} × ${sheet.pitch.y}, ${sheet.colors} couleurs, tons clés tenue ${JSON.stringify(sheet.counts.tenue)}, accent ${JSON.stringify(sheet.counts.accent)}, ancrage ${sheet.anchor}, figure ${sheet.figureH}`);
   mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(OUT, JSON.stringify(report, null, 2));
@@ -419,38 +371,32 @@ if (MODE === 'verifier') {
   }
 }
 if (MODE === 'planche') {
-  const OUT = process.argv[3] ?? 'screenshots/qa/m09/v4-decision-3/planche-decision-quai.png';
-  const REP = process.argv[4] ?? 'artifacts/qa/m09/v4-decision-3.json';
+  const OUT = process.argv[3] ?? 'screenshots/qa/m09/v4-passe-61/planche-quai.png';
+  const REP = process.argv[4] ?? 'artifacts/qa/m09/v4-passe-61.json';
   const DIST = process.env.LQV_DIST || 'dist';
   mkdirSync(dirname(OUT), { recursive: true });
-  // variante A3 (toujours ouverte) : lumières du diorama aux couleurs des familles, comme la direction D (ADR 026) :
-  // Voile au passage vers les Ruelles et chez l'armateur, Cendre au chantier et au Fanal, Astre à la salle de jeu et aux
-  // lampadaires, Ronce à l'étal et à la maison étroite ; copie temporaire du build, rien dans public/
-  const tmp = mkdtempSync(join(tmpdir(), 'lqv-a3-'));
-  cpSync(DIST, tmp, { recursive: true });
-  const man = JSON.parse(readFileSync(join(tmp, 'decors', 'manifest.json'), 'utf8'));
-  const famOf = (x) => (x < -19.5 ? 'Voile' : x < -11 ? 'Cendre' : x < -2.6 ? 'Astre' : x < 3.0 ? 'Ronce' : x < 11.4 ? 'Cendre' : x < 19.5 ? 'Voile' : 'ambre');
-  man.ilots.quai.lumieres = man.ilots.quai.lumieres.map((l) => (l.color === 'Astre' ? l : { ...l, color: famOf(l.at[0]) }));
-  writeFileSync(join(tmp, 'decors', 'manifest.json'), JSON.stringify(man, null, 2));
-  report.variante = { lumieres: man.ilots.quai.lumieres.map((l) => `${l.color} x ${l.at[0]}`) };
   const srvA = await startPreview(4441, DIST);
-  const srvB = await startPreview(4442, tmp);
   const hideUi = () => { for (const e of document.querySelectorAll('.ville-panel, .ville-bubble, .ville-toast')) e.style.display = 'none'; };
-  /** Capture 1920 × 1080 (cadrage du diorama), joueur placé en (x, z), tourné vers `f` ; découpe autour du joueur. */
+  /**
+   * Capture 1920 × 1080 (cadrage du diorama), joueur placé en (x, z), tourné vers `f` ; découpe autour du joueur et
+   * détail de 640 × 360 px autour des bannières de la salle de jeu.
+   */
   const shot = async (base, q, [x, z, f]) => {
     const pg = await page(1920, 1080);
     await pg.goto(`${base}/?ville=1&qa=1&freeze=1${q}`);
     await pg.waitForFunction(() => !!window.__lqvVille, null, { timeout: 120000 });
     if (!report.renderer) report.renderer = rendererLabel(await webglRenderer(pg));
-    const box = await pg.evaluate(({ x, z, f }) => { const t = window.__lqvVille.town; t.place({ x, z }, f); t.renderNow(); const p = t.walker().pos; return { feet: t.project({ x: p.x, y: 0, z: p.z }), top: t.project({ x: p.x, y: t.walkerH(), z: p.z }) }; }, { x, z, f });
+    const box = await pg.evaluate(({ x, z, f }) => { const t = window.__lqvVille.town; t.place({ x, z }, f); t.renderNow(); const p = t.walker().pos; return { feet: t.project({ x: p.x, y: 0, z: p.z }), top: t.project({ x: p.x, y: t.walkerH(), z: p.z }), ban: t.project({ x: -6.6, y: 6.6, z: -3 }) }; }, { x, z, f });
     await pg.evaluate(hideUi);
     await pg.waitForTimeout(250);
     const full = await pg.screenshot();
     const hh = box.feet.y - box.top.y;
     const crop = await pg.screenshot({ clip: { x: Math.round(box.feet.x - hh * 0.55), y: Math.round(box.top.y - hh * 0.175), width: Math.round(hh * 1.1), height: Math.round(hh * 1.35) } });
+    const bx = Math.max(320, Math.min(1920 - 320, Math.round(box.ban.x))); const by = Math.max(180, Math.min(1080 - 180, Math.round(box.ban.y)));
+    const ban = await pg.screenshot({ clip: { x: bx - 320, y: by - 180, width: 640, height: 360 } });
     const dec = await pg.evaluate(() => window.__lqvVille.town.decorReport());
     await pg.context().close();
-    return { full, crop, world: dec.world, figurePx: r2(hh) };
+    return { full, crop, ban, world: dec.world, figurePx: r2(hh) };
   };
   try {
     const C = [-0.6, 0.2, 'face'];
@@ -458,9 +404,8 @@ if (MODE === 'planche') {
     const centre = await shot(srvA.base, '', C);
     const ouest = await shot(srvA.base, '', [-16, 0.8, 'droite']);
     const est = await shot(srvA.base, '', [16, 0.8, 'gauche']);
-    const familles = await shot(srvB.base, '', C);
     report.figurePx = { actuel: actuel.figurePx, porte: centre.figurePx };
-    check(actuel.world === 'code' && [centre, ouest, est, familles].every((s) => s.world === 'diorama'), `planche : Quai actuel par code ; porte (centre, ouest, est) et variante A3 en diorama, cadrage du diorama (joueur ${centre.figurePx} px de haut)`);
+    check(actuel.world === 'code' && [centre, ouest, est].every((s) => s.world === 'diorama'), `planche : Quai actuel par code ; porte (centre, ouest, est) en diorama, cadrage du diorama (joueur ${centre.figurePx} px de haut)`);
     const ref = readFileSync('reference/generated/2026-10-19-quai-nuit-cameras/02.png');
     const sheetPng = readFileSync('public/sprites/player.png');
     const pp = await page(2100, 1500);
@@ -468,46 +413,40 @@ if (MODE === 'planche') {
       const load = async (src) => { const i = new Image(); i.src = src; await i.decode(); return i; };
       const im = await Promise.all(u.imgs.map(load));
       const pad = 16; const tw = 640; const th = 360; const top = 40;
-      const c = document.createElement('canvas'); c.width = 3 * tw + 4 * pad; c.height = top + 3 * (th + 36) + 170;
+      const c = document.createElement('canvas'); c.width = 3 * tw + 4 * pad; c.height = top + 3 * (th + 36) + 20;
       const g = c.getContext('2d'); g.fillStyle = '#10121a'; g.fillRect(0, 0, c.width, c.height);
       g.fillStyle = '#e8dcc0'; g.font = 'bold 17px system-ui';
-      g.fillText('Porte du Quai (ADR 028) — planche de décision 3 : profondeur, cadrage élargi, feuille du joueur en 64 × 96', pad, 26);
+      g.fillText('Porte du Quai (ADR 028) — passe 61 : fiche d’arbitrages appliquée (emblèmes brodés, lumières ambrées, sans ruelles peintes)', pad, 26);
       g.font = '14px system-ui';
       const tile = (k, x, y, w = tw, h = th, smooth = true) => { const i = im[k]; const s2 = Math.min(w / i.width, h / i.height); g.imageSmoothingEnabled = smooth; g.drawImage(i, x + (w - i.width * s2) / 2, y + (h - i.height * s2) / 2, i.width * s2, i.height * s2); g.imageSmoothingEnabled = true; };
       const lab = (t, x, y) => g.fillText(t, x, y);
       const X = (col) => pad + col * (tw + pad); const Y = (row) => top + row * (th + 36);
       tile(0, X(0), Y(0)); lab('Référence initiale approuvée (02.png)', X(0), Y(0) + th + 22);
       tile(1, X(1), Y(0)); lab('Quai actuel : direction D, par code (provisoire)', X(1), Y(0) + th + 22);
-      tile(2, X(2), Y(0)); lab('Porte (passe 60) : centre, cadrage élargi porté dans le diorama', X(2), Y(0) + th + 22);
-      tile(3, X(0), Y(1)); lab('Porte : ouest, arche ouverte sur la ruelle (vers les Ruelles)', X(0), Y(1) + th + 22);
-      tile(4, X(1), Y(1)); lab('Porte : est, portail de l’entrepôt ouvert sur l’escalier de l’arène', X(1), Y(1) + th + 22);
-      tile(5, X(2), Y(1)); lab('Variante A3 : lumières aux couleurs des familles (toujours ouverte)', X(2), Y(1) + th + 22);
-      // feuille du joueur (contrat v3, ×3) au pixel près ; le joueur in situ
+      tile(2, X(2), Y(0)); lab('Porte (passe 61) : centre, cadrage élargi, lumières ambrées', X(2), Y(0) + th + 22);
+      tile(3, X(0), Y(1)); lab('Porte : ouest (arche refermée, peinte)', X(0), Y(1) + th + 22);
+      tile(4, X(1), Y(1)); lab('Porte : est (portail de l’entrepôt refermé)', X(1), Y(1) + th + 22);
+      tile(5, X(2), Y(1)); lab('Bannières de la salle de jeu : emblèmes du jeu brodés par script (in situ)', X(2), Y(1) + th + 22);
       g.fillStyle = '#1c2030'; g.fillRect(X(0), Y(2), tw * 2 + pad, th); g.fillStyle = '#e8dcc0';
       tile(6, X(0), Y(2), tw * 2 + pad - th, th, false);
       tile(7, X(1) + tw + pad - th, Y(2), th, th, false);
-      lab('Feuille du joueur refaite en 64 × 96 px d’art par case (sans image de Cité du Tournoi) ; à droite : in situ, cadrage élargi', X(0), Y(2) + th + 22);
-      g.font = '14px system-ui';
+      lab('Feuille du joueur de la passe 60 (64 × 96, non approuvée) : à refaire (J1, ≈ 2 images, après la conception de la profondeur)', X(0), Y(2) + th + 22);
       const qx = X(2); let qy = Y(2) + 4;
       const wrap = (t, bold = false) => { g.font = `${bold ? 'bold ' : ''}14px system-ui`; const words = t.split(' '); let line = ''; for (const w of words) { const n = line ? `${line} ${w}` : w; if (g.measureText(n).width > tw) { qy += 19; g.fillText(line, qx, qy); line = w; } else line = n; } qy += 19; g.fillText(line, qx, qy); qy += 6; };
-      wrap('Fait selon vos décisions : emblèmes du jeu posés par script ; cadrage élargi ; brume entre les plans ; plans espacés à leur échelle réelle (rangs du fond plus petits, voile de l’air) ; troisième rang ; ruelle et escalier vus par des ouvertures ; feuille 64 × 96.', true);
-      wrap('1. Profondeur : la lecture des rangs (second rang, ville haute dans la brume, ciel et lune) convient-elle ? Voile plus ou moins fort ?');
-      wrap('2. Ouvertures : arche ouest (en partie cachée par la bannière du mât) et portail est : à garder ?');
-      wrap('3. Joueur : tête plus grande, yeux lisibles ; l’écharpe (ton clé vert) couvre la bouche comme un masque : une image ciblée, annoncée avant génération ?');
-      wrap('4. Note A3 (variante ci-dessus) ?   5. Approbation : rien n’est approuvé ; 16 images sur 30, 14 restantes.');
+      wrap('Fiche du 2026-10-20 appliquée : E1 relief brodé par script ; E2 cadrage élargi ; E3 lumières ambrées (A3 close) ; E4 moteur, troisième rang et ville haute, sans ruelles peintes (ruelle et passage retirés).', true);
+      wrap('À venir, dans l’ordre : conception de la profondeur praticable (marcher en profondeur dans le quartier), montrée avant toute image ; puis troisième rang et ville haute (1 ou 2 images) et feuille du joueur refaite (≈ 2 images), annoncées ; puis approbation en bloc (A1), après vérification des conditions d’OpenAI (A2).');
+      wrap('Rien n’est approuvé ; 16 images utilisées sur 30, 14 restantes.');
       return c.toDataURL('image/png');
-    }, { imgs: [dataUrl(ref), dataUrl(actuel.full), dataUrl(centre.full), dataUrl(ouest.full), dataUrl(est.full), dataUrl(familles.full), dataUrl(sheetPng), dataUrl(centre.crop)] });
+    }, { imgs: [dataUrl(ref), dataUrl(actuel.full), dataUrl(centre.full), dataUrl(ouest.full), dataUrl(est.full), dataUrl(centre.ban), dataUrl(sheetPng), dataUrl(centre.crop)] });
     writeFileSync(OUT, fromUrl(planche));
-    for (const [n, s] of [['centre', centre], ['ouest', ouest], ['est', est]]) writeFileSync(join(dirname(OUT), `porte-${n}-1920.png`), s.full);
-    writeFileSync(join(dirname(OUT), 'variante-a3-familles-1920.png'), familles.full);
-    writeFileSync(join(dirname(OUT), 'joueur-porte-1920.png'), centre.crop);
+    writeFileSync(join(dirname(OUT), 'porte-centre-1920.png'), centre.full);
+    writeFileSync(join(dirname(OUT), 'bannieres-brodees-1920.png'), centre.ban);
   } finally {
     const bad = report.console.filter((x) => !/GPU stall due to ReadPixels|Automatic fallback to software WebGL/.test(x));
     check(bad.length === 0, `aucune erreur ni avertissement de console (${bad.length})`);
     mkdirSync(dirname(REP), { recursive: true });
     writeFileSync(REP, JSON.stringify(report, null, 2));
-    srvA.stop(); srvB.stop();
-    rmSync(tmp, { recursive: true, force: true });
+    srvA.stop();
   }
 }
 await browser.close();

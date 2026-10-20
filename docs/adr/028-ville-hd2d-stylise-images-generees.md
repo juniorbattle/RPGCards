@@ -8,7 +8,9 @@ fait** (passe 56 : 2 images sur 30, direction validée par le responsable) ; **l
 diorama du Quai et feuille complète du joueur, 12 images sur 30, `approved: false`, voir « Porte du Quai : lot de
 production ») ; retours du responsable (passe 59) puis **ses décisions appliquées** (passe 60 : cadrage élargi,
 profondeur, feuille du joueur en 64 × 96 ; 16 images sur 30, voir « Profondeur, cadrage élargi et feuille du joueur en
-64 × 96 ») ; approbation attendue. **Remplace l'ADR 026** comme direction artistique de la
+64 × 96 ») ; **fiche d'arbitrages de la porte remplie** (passe 61 : emblèmes brodés, cadrage élargi, lumières
+ambrées, sans ruelles peintes ; **profondeur praticable demandée** : conception à proposer avant toute image ; voir
+« Fiche d'arbitrages de la porte ») ; approbation en bloc sur la prochaine planche. **Remplace l'ADR 026** comme direction artistique de la
 ville ; **amende l'ADR 027** (D2, D3, D4, D10) et l'exception d'AGENTS (décors de la ville) ; s'inscrit dans l'ADR 024
 (caméra de face ; la Grande Cour la règle plus haute, dans la plage décidée).
 
@@ -307,3 +309,63 @@ approuvé** : `approved: false` sur tous les plans et sur la feuille.
   - approbation.
 
   Planche : `screenshots/qa/m09/v4-decision-3/planche-decision-quai.png`.
+
+## Fiche d'arbitrages de la porte (passe 61, 2026-10-20)
+
+Le responsable a rempli la fiche <https://claude.ai/artifact/5n2Qgx6ahcxsRwhxz7aaMQ> (planche 2 ; choix entre 02:50 et
+02:56 UTC), relayée par la session principale. Ses choix, et ses notes mot pour mot :
+
+- **E1, emblèmes** : « Relief brodé par script (0 image) ».
+- **E2, cadrage** : « Élargi ». Note : « il y a pas vraiment la profondeur voulu de la scene on doit pouvoir s'enfoncer
+  au loin dans la scene actuellement on a plus tendance d'etre sur un semi-platformer premier prend ».
+- **E3, lumières** : « Lumières ambrées ». La note A3 est close : les couleurs des familles restent sur les bannières ;
+  contours à l'encre, hachures et papier ne sont pas repris.
+- **E4, profondeur** : « Moteur, troisième rang et ville haute (1 ou 2 images) ». Note : « On doit pouvoir se deplacer en
+  profondeur de la ville et non avoir l'impression que seul le premier plan est pratiquable ».
+- **J1, feuille du joueur** : « Refaire, cases plus grandes (≈ 2 images) ».
+- **J2, image d'entrée** : « Ne pas autoriser : style décrit dans le prompt ». Note : « donner plutot les prompt, feuille
+  des pnjs du district merchant du projet Cite du tournoi ».
+- **A1, approbation** : « En bloc sur la prochaine planche ».
+- **A2, conditions d'OpenAI** : « Je les vérifie avant l'approbation » (bloque l'entrée en jeu, pas la production).
+
+**Chronologie et écarts.** La fiche a été remplie pendant la génération du lot de la passe 60 (02:48 à 02:54 UTC), lancé
+sur la décision précédente du responsable dans la session de la porte. Les choix de la fiche sont les plus récents : ils
+priment. Trois écarts en découlent :
+
+- la ruelle et l'escalier de l'arène (2 images de la passe 60) sont hors du choix E4 : retirés du diorama ;
+- la feuille du joueur en 64 × 96 compte comme la première des ≈ 2 images de J1 ;
+- budget : 16 images sur 30 (la fiche, écrite avant la passe 60, en comptait 12).
+
+Les bruts restent dans `art-gen/` du dossier principal, et l'historique git garde les plans retirés (`58bf16b`).
+
+**Appliqué (passe 61)** :
+
+- **E1** : `fixBanners` brode les emblèmes par script (option `brode`). Fil d'or en points lancés obliques, bourrelet
+  sombre autour, modelé éclairé du haut à gauche (gradient du masque adouci), reflet sur les crêtes, emblème 12 % plus
+  grand. Les formes restent les tracés de `src/art/emblems.ts`. Bannières concernées : salle de jeu, second rang, mât du
+  premier plan, troisième rang.
+- **E2** : déjà porté dans le diorama (passe 60).
+- **E3** : lumières ambrées, celles du diorama par défaut ; variante A3 retirée de l'outil de planche.
+- **E4** : le moteur (brume, échelle réelle, voile) et le troisième rang sont gardés. La ruelle et le passage sont
+  retirés, l'arche ouest et le portail est refermés (tels que peints). Le diorama du Quai compte huit plans.
+
+**Le point majeur : la profondeur praticable** (notes E2 et E4). Le responsable veut marcher en profondeur dans le
+quartier, s'enfoncer au loin, et ne plus avoir l'impression d'un jeu de plateforme dont seul le premier plan est
+praticable. Cela vaut pour le Quai et les autres quartiers, pas seulement pour la Grande Cour. C'est un changement de
+conception :
+
+- sol praticable profond ;
+- caméra qui suit en profondeur ;
+- plans du diorama posés entre des zones où l'on marche ;
+- personnages à l'échelle de leur distance.
+
+Prochaine étape, **avant toute image** : proposer une conception (plan de l'îlot, caméra, place des plans) avec une
+preuve par code, la consigner ici ou dans l'ADR 024, et attendre la réponse du responsable.
+
+**J2, lecture à faire confirmer** : la référence de style serait les PNJ du Merchant District de Cité du Tournoi et leurs
+prompts (`art-lab/characters/briefs/`, manifestes et provenance des PNJ), lus en lecture seule, rien de copié dans ce
+dépôt. Aucune de leurs feuilles ne sera donnée en image d'entrée sans un accord explicite demandé dans l'annonce.
+
+**Suite** : après l'accord sur la conception, les images seront annoncées : troisième rang et ville haute (1 ou 2, si la
+conception les change) et feuille du joueur refaite (le reste de J1). Puis viendra la planche d'approbation en bloc (A1),
+après la vérification des conditions d'OpenAI par le responsable (A2). Rien n'est approuvé.

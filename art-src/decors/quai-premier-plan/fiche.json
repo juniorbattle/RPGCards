@@ -108,7 +108,7 @@
       "tools/m09-porte-quai.mjs"
     ],
     "etapes": [
-      "emblèmes inventés par le modèle remplacés par ceux du jeu sur les bannières (fixBanners, tracés de src/art/emblems.ts ; tissu refait de son propre grain), sur le brut, avant tout traitement : quai-premier-plan-ouest",
+      "emblèmes inventés par le modèle remplacés par ceux du jeu sur les bannières (fixBanners, tracés de src/art/emblems.ts ; tissu refait de son propre grain), brodés en relief (fil d’or en points lancés, bourrelet sombre, modelé, reflet ; 12 % plus grands), sur le brut, avant tout traitement : quai-premier-plan-ouest",
       "fond magenta détouré, sans recadrage",
       "au-dessus du haut du mur, seules les composantes qui montent jusqu’au haut de l’image (mâts, gréements) sont gardées : les objets posés sur le mur (caisses, bannière, lanterne) seraient devant la rue",
       "début de l’image est retiré (18 % : reprise du bout de l’image ouest), assemblées côte à côte avec 0.6 m de recouvrement fondu (rampe d’alpha) ; haut du mur du quai (rangée couverte à plus de 80 %) posé à fleur de rue"
@@ -116,15 +116,15 @@
   },
   "sortie": {
     "fichier": "public/decors/quai-premier-plan.png",
-    "sha256": "96d3e01b275ae485850d8bf886cd36f242667a599107de972aab6ea4cc00d921",
-    "octets": 2871311,
+    "sha256": "6888176a752f64a5d6f1ac8844b06f4b80fa15c67bad6c8f655ad782ce1fc951",
+    "octets": 2871612,
     "dimensions": [
       2759,
       1024
     ],
     "pose": {
       "file": "quai-premier-plan.png",
-      "sha256": "96d3e01b275ae485850d8bf886cd36f242667a599107de972aab6ea4cc00d921",
+      "sha256": "6888176a752f64a5d6f1ac8844b06f4b80fa15c67bad6c8f655ad782ce1fc951",
       "size": [
         2759,
         1024
@@ -139,13 +139,13 @@
       ],
       "width": 44.17,
       "orient": "face",
-      "order": 8,
+      "order": 6,
       "blend": "decoupe"
     }
   },
   "chaine_des_empreintes": [
     "39161f9c35c45f2a306c8d4e1724710b8d07e071210e6c62998c4a05c8fcdef4 (brut quai-premier-plan-ouest)",
     "d0dd8fcaf65b9dd4ba1f212b5b070757a53ff9b4ecabc26b3813213f9d8b8719 (brut quai-premier-plan-est)",
-    "96d3e01b275ae485850d8bf886cd36f242667a599107de972aab6ea4cc00d921 (plan)"
+    "6888176a752f64a5d6f1ac8844b06f4b80fa15c67bad6c8f655ad782ce1fc951 (plan)"
   ]
 }

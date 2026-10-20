@@ -59,7 +59,7 @@
       "tools/m09-porte-quai.mjs"
     ],
     "etapes": [
-      "emblèmes inventés par le modèle remplacés par ceux du jeu sur les bannières (fixBanners, tracés de src/art/emblems.ts ; tissu refait de son propre grain), sur le brut, avant tout traitement : quai-second-rang",
+      "emblèmes inventés par le modèle remplacés par ceux du jeu sur les bannières (fixBanners, tracés de src/art/emblems.ts ; tissu refait de son propre grain), brodés en relief (fil d’or en points lancés, bourrelet sombre, modelé, reflet ; 12 % plus grands), sur le brut, avant tout traitement : quai-second-rang",
       "fond magenta détouré (alpha tiré de l’écart au magenta, bords démêlés du fond)",
       "recadré sur le pied des murs",
       "deux copies côte à côte, la seconde en miroir (31 m chacune, échelle réelle)",
@@ -68,15 +68,15 @@
   },
   "sortie": {
     "fichier": "public/decors/quai-second-rang.png",
-    "sha256": "321ad9f66c9e0b42f088a69fb50aa49fb9e1759abf5b56f2be48478078199cde",
-    "octets": 4687217,
+    "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
+    "octets": 4689617,
     "dimensions": [
       3072,
       953
     ],
     "pose": {
       "file": "quai-second-rang.png",
-      "sha256": "321ad9f66c9e0b42f088a69fb50aa49fb9e1759abf5b56f2be48478078199cde",
+      "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
       "size": [
         3072,
         953
@@ -99,6 +99,6 @@
   },
   "chaine_des_empreintes": [
     "a53971fa1746f0deb5e433d75135701d0174579205821f00662b1ee7a975584e (brut quai-second-rang)",
-    "321ad9f66c9e0b42f088a69fb50aa49fb9e1759abf5b56f2be48478078199cde (plan)"
+    "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f (plan)"
   ]
 }

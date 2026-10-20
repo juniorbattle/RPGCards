@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-20T03:36:20.536Z",
+  "commit": "58bf16b",
+  "mode": "planche",
+  "checks": [
+    "OK planche : Quai actuel par code ; porte (centre, ouest, est) en diorama, cadrage du diorama (joueur 120.17 px de haut)",
+    "OK aucune erreur ni avertissement de console (0)"
+  ],
+  "console": [],
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "figurePx": {
+    "actuel": 177.01,
+    "porte": 120.17
+  }
+}

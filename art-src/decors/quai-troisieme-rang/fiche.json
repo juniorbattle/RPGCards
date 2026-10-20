@@ -63,7 +63,7 @@
       "tools/m09-porte-quai.mjs"
     ],
     "etapes": [
-      "emblèmes inventés par le modèle remplacés par ceux du jeu sur les bannières (fixBanners, tracés de src/art/emblems.ts ; tissu refait de son propre grain), sur le brut, avant tout traitement : quai-troisieme-rang",
+      "emblèmes inventés par le modèle remplacés par ceux du jeu sur les bannières (fixBanners, tracés de src/art/emblems.ts ; tissu refait de son propre grain), brodés en relief (fil d’or en points lancés, bourrelet sombre, modelé, reflet ; 12 % plus grands), sur le brut, avant tout traitement : quai-troisieme-rang",
       "fond magenta détouré, recadré sur le pied des murs",
       "deux copies côte à côte, la seconde en miroir (44 m chacune, échelle réelle)",
       "posé entre le second rang et le ciel (z -40 m), voile atmosphérique 0.5"
@@ -71,15 +71,15 @@
   },
   "sortie": {
     "fichier": "public/decors/quai-troisieme-rang.png",
-    "sha256": "2803fa498e930ce5402d90281907ee15da8da26927b7bd6b017d15fc81d38334",
-    "octets": 3463814,
+    "sha256": "c251c22aadc61e4916ecbdd35e890724a8ab6e025503cdae8e7a5ee9325f356f",
+    "octets": 3466186,
     "dimensions": [
       3072,
       789
     ],
     "pose": {
       "file": "quai-troisieme-rang.png",
-      "sha256": "2803fa498e930ce5402d90281907ee15da8da26927b7bd6b017d15fc81d38334",
+      "sha256": "c251c22aadc61e4916ecbdd35e890724a8ab6e025503cdae8e7a5ee9325f356f",
       "size": [
         3072,
         789
@@ -102,6 +102,6 @@
   },
   "chaine_des_empreintes": [
     "3315b2d6402992356c3f6c34db3fa8038ce163aeb44bdb7147e4ea75f4546812 (brut quai-troisieme-rang)",
-    "2803fa498e930ce5402d90281907ee15da8da26927b7bd6b017d15fc81d38334 (plan)"
+    "c251c22aadc61e4916ecbdd35e890724a8ab6e025503cdae8e7a5ee9325f356f (plan)"
   ]
 }
