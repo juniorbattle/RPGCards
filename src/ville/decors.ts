@@ -46,9 +46,10 @@ import { admit, type SpritePolicy } from './spritesExternes';
 export const DECOR_VERSION = 1;
 /**
  * Plans par îlot : 8 au contrat v1, 12 depuis la passe 60 (profondeur : troisième rang), 16 depuis la passe 62 (profondeur
- * praticable : façades, pied et murs des passages découpés dans les mêmes images, textures partagées).
+ * praticable : façades, pied et murs des passages découpés dans les mêmes images, textures partagées), 24 depuis la
+ * passe 63 (zones arrière : emprise des blocs, murs aux bouts de la rue haute).
  */
-export const DECOR_MAX_PLATES = 16;
+export const DECOR_MAX_PLATES = 24;
 export const DECOR_MAX_SIDE = 4096;
 export const DECOR_MAX_BYTES = 8 * 1024 * 1024;
 export const DECOR_MAX_ILOT_BYTES = 32 * 1024 * 1024;

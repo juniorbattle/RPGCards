@@ -70,7 +70,7 @@ function plateMaterial(p: PreparedPlate): THREE.ShaderMaterial {
 }
 
 /** Opacité d'un plan `coupe` quand le personnage est derrière lui (passe 62). */
-export const COUPE_ALPHA = 0.12;
+export const COUPE_ALPHA = 0.08;
 /** Le personnage est « derrière » un plan `coupe` : plus loin en z, dans sa largeur (marge de 0,6 m). */
 export function behindPlate(r: { center: [number, number, number]; w: number }, p: { x: number; z: number }): boolean {
   return p.z < r.center[2] - 0.35 && Math.abs(p.x - r.center[0]) < r.w / 2 + 0.6;
