@@ -3,6 +3,8 @@
 **Date : 2026-10-20. Statut : CADRAGE / conception, PAS une autorisation de modifier le moteur.**  
 **Décisions ratifiées :** (1) **OPTION B** : le joueur choisit sa famille après avoir été remarqué ; (2) **deck neutre initial de 16 cartes physiques** : quatre copies de chaque Rang I, II, III, IV, sans famille, bonus intrinsèque ni effet de carte. Voir ADR 029 et ADR 030. Ces décisions de conception ne valent pas autorisation de modifier le moteur.
 
+> **2026-10-20, décision du responsable :** la prochaine grosse tâche est la **structuration et la configuration narratives**, menée sur le cloud ; M09 est en pause après la passe 68. Son périmètre (documentaire ou code) sera fixé par le brief de la session cloud ; tant qu'un avenant n'est pas ratifié, les règles de combat restent intouchées et les « Décisions ouvertes » ci-dessous restent au responsable.
+
 ## Vision narrative
 
 Le joueur est un duelliste de la populace, **sans appartenance familiale initiale**. Il commence avec **16 cartes neutres, blanches/grises, sans famille, composées de 4 exemplaires de chaque Rang I, II, III et IV**, sans bonus intrinsèque ni effet de carte. Un duel **imprévu et public** face à un rival récurrent attire une foule ; les Quatre Voies perçoivent son talent. Une famille peut être la première à manifester son intérêt, mais elle **ne peut pas décider de son affiliation à sa place**. Le joueur peut accepter l'invitation, la différer ou rechercher une autre voie. Toutes les quatre doivent pouvoir être choisies par des parcours jouables et compréhensibles, sans prédiction obligatoire de son style et sans mauvaise réponse cachée.
