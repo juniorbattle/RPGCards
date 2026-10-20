@@ -70,11 +70,13 @@ try {
   await parler('kai-prologue');
   await p.click('[data-key="dlg-duel"]');
   await p.waitForSelector('[data-key="av-preparation"]');
-  check(/prêt/.test(await p.textContent('[data-key="av-pret"]')), 'préparation : bandeau « provisoire » du deck de prêt');
+  check(/cartes grises/.test(await p.textContent('[data-key="av-deck-adverse"]')) && /16 neutres/.test(await p.textContent('[data-key="av-deck-reel"]')), 'préparation : les deux decks annoncés (seize cartes grises de chaque côté)');
   await shot('preparation-prologue');
   await p.click('[data-key="av-duel-go"]');
   await duelPret();
   check(!!(await p.$('[data-key="av-banner"]')), 'duel : bandeau du prototype visible');
+  check(await av(() => { const c = window.__lqv.controller; const s = c.match.state; return Object.values(s.cards).length === 32 && Object.values(s.cards).every((x) => x.defId.startsWith('neutre-')); }), 'duel du prologue : seize cartes grises de chaque côté dans le moteur (avenant M10-A)');
+  check((await p.$$('.card.fam-neutre')).length > 0, 'duel du prologue : cartes neutres dessinées en main (blanches et grises, sans emblème)');
   await shot('duel-prologue', 2500);
   // un tour joué par l’IA du joueur, puis rechargement : reprise exacte
   const h1 = await av(() => window.__lqv.hash());

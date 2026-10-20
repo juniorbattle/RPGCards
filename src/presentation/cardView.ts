@@ -59,7 +59,7 @@ function cardFace(def: CardDef, artSeed: number): Node {
       h('span', { class: 'fam', html: def.family ? emblemSvg(def.family, 24) : '' }),
       h('span', { class: 'plate' },
         h('span', { class: 'name' }, def.signature ? def.name : def.name),
-        h('span', { class: 'variant' }, def.signature ? `Signature · ${def.effect ? EFFECTS[def.effect].name : ''}` : def.effect ? EFFECTS[def.effect].name : 'Basic'),
+        h('span', { class: 'variant' }, def.signature ? `Signature · ${def.effect ? EFFECTS[def.effect].name : ''}` : def.effect ? EFFECTS[def.effect].name : def.family ? 'Basic' : 'Sans famille'),
         h('span', { class: 'stats' }, h('span', { class: 'r', title: 'Rang : priorité du Clash' }, `R ${def.rank ?? '∞'}`), h('span', { class: 'p', title: 'Puissance : dégâts / absorption' }, `P ${def.power}`)),
       ),
     );

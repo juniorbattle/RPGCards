@@ -6,8 +6,8 @@
  * défaut, qui reste identique au pixel près. La logique est dans les modules purs de `src/aventure/` ; ce module affiche
  * et relie : ville (`createTown`), duel (`DuelSession`, inchangée), cartes (`cardEl`), arène (`ensureArena`).
  *
- * Régime du prototype (avenant M10-A, A-0) : les seize neutres vivent dans la collection et le deck de l'aventure, mais
- * chaque duel se joue avec un deck de PRÊT standard (bandeau « provisoire »), tant que l'ARB-M10-02 n'est pas tranché.
+ * Depuis l'avenant M10-A (ARB-M10-02, ADR 033), chaque duel se joue avec le deck d'aventure du joueur tel qu'il est
+ * (règle R-AV : cartes grises, Basics, variantes, Signature éventuelle).
  */
 import '../shell/shell.css';
 import type { AppParams } from '../app/params';
@@ -21,8 +21,7 @@ import { viewFor } from '../game/visibility/view';
 import { cardEl } from '../presentation/cardView';
 import type { RivalPersonality } from '../presentation/personalities';
 import type { VenueId } from '../presentation/venues';
-import { verifyActiveCore } from '../product/resume';
-import { duelSeed, SaveStore, type ActiveDuel } from '../product/save';
+import { duelSeed, SaveStore } from '../product/save';
 import { webglAvailable, type ArenaHandle } from '../scene/arena';
 import { confirmDialog, h } from '../shell/ui';
 import { parseRig } from '../ville/cameras';
@@ -42,7 +41,7 @@ import { objectif, quetes } from './quetes';
 import { collectionDe, type Gain } from './registre';
 import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue, personnalite, type DuelPrevu } from './rencontres';
 import { CONTRAINTE_JOUTE, manche, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, varianteDe } from './competitions';
-import { duelCompatible, MagasinAventure, nouvelleSauvegarde, type AventureSave, type DuelAventure } from './sauvegarde';
+import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave, type DuelAventure } from './sauvegarde';
 import { installAventureStyles } from './styles';
 
 export interface DepsAventure {
@@ -166,7 +165,7 @@ export class AventureApp {
         h('div', { class: 'av-emblems', 'aria-hidden': 'true', html: FAMILIES.map((f) => `<span class="fam-${f}">${emblemSvg(f, 30)}</span>`).join('') }),
         h('h1', { id: 'av-t', class: 'av-h1' }, 'Les Quatre Voies'),
         h('p', { class: 'av-sous' }, 'Aventure — prologue jouable'),
-        h('p', { class: 'av-proto' }, 'Prototype M10 provisoire : contrats proposés (docs/m10), rien n’est ratifié hors ADR 029 à 031. Les duels se jouent avec un deck de prêt.'),
+        h('p', { class: 'av-proto' }, 'Prototype M10 : règles de l’avenant M10-A (décisions du responsable du 2026-10-20) ; textes et apparences provisoires.'),
         h('div', { class: 'av-items' }, ...items)));
   }
 
@@ -450,7 +449,7 @@ export class AventureApp {
     this.dire(`${p.name}, ${p.title}`, deja
       ? 'Alors, tu te décides ? La foule commence à regarder.'
       : 'Toi aussi, ils t’ont fermé la porte du tournoi ? Cartes grises, pas de famille… Alors jouons ici, sur le Quai. Qu’ils voient ce qu’ils ratent.', [
-      { label: 'Relever le défi', key: 'dlg-duel', primary: true, run: () => this.preparer(duelPrologue(this.prochaineGraine())) },
+      { label: 'Relever le défi', key: 'dlg-duel', primary: true, run: () => this.preparer(duelPrologue(this.prochaineGraine(), this.etat.deck)) },
       { label: 'Pas maintenant', key: 'dlg-close', run: () => this.fermerDialogue() },
     ], KAI_PROLOGUE.apparence);
   }
@@ -485,8 +484,7 @@ export class AventureApp {
       h('h3', null, 'Ensuite'),
       h('p', null, `Défier ${c!.nom} (${ROLE_LABEL.cadet}), puis ${b!.nom} (${ROLE_LABEL.brasDroit}), puis ${ch!.nom} (${ROLE_LABEL.chef}) : chaque lieutenant vaincu donne une variante, le chef donne sa Signature ∞.`),
       h('h3', null, 'Ce qui ne change pas'),
-      h('p', null, `Les autres familles restent ouvertes ; une fois reconnu (le chef ${de(f)} vaincu), vous pourrez engager leur défi à la Salle des Bannières. ${changement ? 'Les cartes déjà reçues restent à vous.' : 'Jusqu’à votre premier défi de lieutenant, vous pourrez encore changer de voie (proposition à arbitrer).'}`),
-      h('p', { class: 'av-proto' }, 'Prototype : propositions de docs/m10, à arbitrer (fiche ARB-M10).'),
+      h('p', null, `Les autres familles restent ouvertes ; une fois reconnu (le chef ${de(f)} vaincu), vous pourrez engager leur défi à la Salle des Bannières. ${changement ? 'Les cartes déjà reçues restent à vous.' : 'Jusqu’à votre premier défi de lieutenant, vous pourrez encore changer de voie.'}`),
       h('div', { class: 'ville-choices' },
         h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-confirmer', onclick: () => this.confirmer(f, changement) }, 'Confirmer l’affiliation'),
         h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-revenir', onclick: () => this.fermerModal() }, 'Revenir')));
@@ -641,14 +639,14 @@ export class AventureApp {
     return duelSeed(s.profil.graine, s.compteur);
   }
 
-  /** Préparation (dialogue) : adversaire, lieu, enjeu annoncé, bandeau du deck de prêt ; puis le duel. */
+  /** Préparation (dialogue) : adversaire, lieu, PV, enjeu annoncé, les deux decks ; puis le duel. */
   private preparer(prevu: DuelPrevu): void {
     this.fermerDialogue();
     const panel = h('div', { class: 'av-confirm av-prep', 'data-key': 'av-preparation' },
       h('div', { class: 'av-confirm-head' }, h('img', { class: 'ville-portrait', alt: '', src: portraitUrl(prevu.personnalite, this.params.artSeed) }), h('div', null, h('h2', null, prevu.titre), h('p', { class: 'av-devise' }, `Lieu : ${LIEU[prevu.venue]} · PV ${prevu.config.players.p1.hp} contre ${prevu.config.players.p2.hp}`))),
       prevu.enjeu ? h('div', { class: 'av-enjeu' }, h('span', null, 'En jeu (première victoire) : '), CATALOG[prevu.enjeu] ? cardEl(prevu.enjeu, { artSeed: this.params.artSeed, tag: 'div' }) : null) : h('p', null, 'Aucune récompense en jeu.'),
-      h('p', { class: 'av-proto', 'data-key': 'av-pret' }, `Provisoire — ${prevu.pret}`),
-      h('p', { class: 'av-proto', 'data-key': 'av-deck-reel' }, `Votre deck d’aventure : ${resumeDeck(this.etat.deck)}. En duel (prêt) : 16 identités ${prevu.config.players.p1.variants === 'all' ? 'en variantes' : `dont ${(prevu.config.players.p1.variants as string[]).length} en variante`} et la Signature ${CATALOG[`sig-${prevu.config.players.p1.signature}`]?.name ?? '—'}.`),
+      h('p', { class: 'av-proto', 'data-key': 'av-deck-adverse' }, `Adversaire : ${prevu.note}`),
+      h('p', { class: 'av-proto', 'data-key': 'av-deck-reel' }, `Votre deck : ${resumeDeck(this.etat.deck)} ; Techniques ${this.etat.deck.techniques.join(' et ')}.`),
       h('div', { class: 'ville-choices' },
         h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-duel-go', onclick: () => { this.fermerModal(); this.lancer(prevu); } }, 'Commencer le duel'),
         h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-duel-back', onclick: () => this.fermerModal() }, 'Plus tard')));
@@ -661,7 +659,7 @@ export class AventureApp {
     if (!duel) {
       const n = s.compteur;
       s.compteur = n + 1;
-      duel = { id: `a${n + 1}`, rencontre: prevu.rencontre, seed: prevu.config.seed, startedAt: new Date().toISOString(), rules: 'V3.0+delta-V3.2', catalog: '', config: structuredClone(prevu.config), commands: [], hash: '', turn: 0, pret: true };
+      duel = { id: `a${n + 1}`, rencontre: prevu.rencontre, seed: prevu.config.seed, startedAt: new Date().toISOString(), rules: 'V3.0+delta-V3.2', catalog: '', config: structuredClone(prevu.config), commands: [], hash: '', turn: 0, pret: false };
       duel.catalog = CATALOG_ID;
       if (prevu.rencontre !== 'prologue' && figureOuNull(prevu.rencontre)) this.faire({ type: 'lancerDefi', figure: prevu.rencontre });
       s.duel = duel;
@@ -677,7 +675,7 @@ export class AventureApp {
     arena?.setPaused(false);
     this.d.app.hidden = false;
     const id = duel.id;
-    const banner = h('div', { class: 'av-banner', 'data-key': 'av-banner', title: prevu.pret }, 'Aventure · prototype · deck de prêt (provisoire)');
+    const banner = h('div', { class: 'av-banner', 'data-key': 'av-banner', title: prevu.note }, 'Aventure · prototype M10');
     document.body.append(banner);
     const session = new DuelSession({
       app: this.d.app, arena, config: duel.config, params: this.params, scenario: null, personality: prevu.personnalite, product: { menu: true }, resume: duel.commands,
@@ -699,7 +697,7 @@ export class AventureApp {
   }
 
   private reprendreDuel(d: DuelAventure): void {
-    const check = duelCompatible(d) ? verifyActiveCore(d as unknown as ActiveDuel) : { ok: false as const, reason: 'Version des règles ou du catalogue différente.' };
+    const check = verifierDuel(d);
     const prevu = this.prevuDe(d);
     if (!check.ok || !prevu) {
       this.toast(`Reprise exacte impossible : ${check.ok ? 'rencontre inconnue' : check.reason} Le duel est retiré (non compté).`);
@@ -940,7 +938,7 @@ export class AventureApp {
         cartes,
         h('h3', null, `Signature (${col.signatures.length} possédée${col.signatures.length > 1 ? 's' : ''})`), sigs,
         h('h3', null, 'Techniques (deux)'), techs,
-        issues.length ? h('ul', { class: 'av-issues', 'data-key': 'av-issues' }, ...issues.map((i) => h('li', null, i.text))) : h('p', { class: 'av-ok' }, 'Deck légal (règle R-AV, proposée).'),
+        issues.length ? h('ul', { class: 'av-issues', 'data-key': 'av-issues' }, ...issues.map((i) => h('li', null, i.text))) : h('p', { class: 'av-ok' }, 'Deck légal (règle R-AV, avenant M10-A).'),
         h('h3', null, 'Collection'),
         h('p', null, `Neutres : ${[1, 2, 3, 4].map((r) => `${ROMAIN[r as 1]} ×${col.neutres[r as 1]}`).join(', ')} · Cartes de base : ${col.basics.length ? col.basics.join(', ') : 'aucune'} · Variantes : ${col.variantes.length ? col.variantes.map(nomCarte).join(', ') : 'aucune'} · Techniques : ${col.techniques.join(', ')}`),
         h('h3', null, 'Registre des gains'),
@@ -1005,7 +1003,7 @@ export class AventureApp {
   }
 }
 
-const CATALOG_ID = 'catalogue-initial-V3.0+16v+4s+6t';
+const CATALOG_ID = CATALOG_AVENTURE;
 const LIEU: Record<VenueId, string> = { salle: 'la salle de jeu de cartes', rue: 'la rue, le Quai la nuit', bar: 'le Fanal', arene: 'l’arène' } as Record<VenueId, string>;
 
 const figureOuNull = (id: string) => { try { return figure(id); } catch { return null; } };
@@ -1029,7 +1027,7 @@ function bouton(label: string, run: () => void, key: string, primary = false, so
 function neutreEl(defId: string, note?: string): HTMLElement {
   const r = rangNeutre(defId);
   const n = NEUTRES[r];
-  return h('div', { class: 'card av-neutre', 'aria-label': `${n.name}, Puissance ${n.power} (proposée), sans famille ni effet`, 'data-def': defId },
+  return h('div', { class: 'card av-neutre', 'aria-label': `${n.name}, Puissance ${n.power}, sans famille ni effet`, 'data-def': defId },
     h('span', { class: 'av-n-rank' }, ROMAIN[r]),
     h('span', { class: 'av-n-name' }, 'Neutre'),
     h('span', { class: 'av-n-pow' }, `P${n.power}`),

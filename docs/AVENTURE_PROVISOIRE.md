@@ -2,7 +2,7 @@
 
 Préparé par la session cloud du 2026-10-20 (brief `docs/missions/BRIEF_SESSION_CLOUD_2026-10-20_M10.md`). **Prototype** :
 derrière un paramètre d'URL ; le jeu par défaut (duels, Tournoi du Quai) et la démo `?demo=1` ne changent pas.
-Contrats : `docs/m10/` ; décisions ouvertes : `docs/FICHE_ARBITRAGES_M10.md` ; architecture : ADR 032 (proposé).
+Contrats : `docs/m10/` (avenant M10-A : `docs/m10/AVENANT_M10A_TEXTE_CANONIQUE.md`) ; décisions du responsable : `docs/FICHE_ARBITRAGES_M10.md` ; architecture : ADR 032 (approuvé), ADR 033 (neutres dans le moteur).
 
 ## Lancer
 
@@ -41,9 +41,8 @@ les commandes du jeu standard ; « Menu » met en pause (reprendre, sauvegarder 
    grises** (quatre de chaque Rang, sans famille ni effet, ADR 030). Votre tenue est grise.
 2. **Le Quai, soir de tournoi.** La salle aux quatre bannières est fermée aux sans-famille. **Kaï**, à l'est près des
    braseros, vous provoque : « Relever le défi » ou « Pas maintenant » (rien n'est forcé).
-3. **Préparation** : l'adversaire, le lieu (la rue), les PV, et le bandeau **« provisoire »** : tant que l'avenant M10-A
-   n'est pas ratifié, les deux duellistes jouent **le même deck de prêt** (16 Basics et le Brasier Originel) ; vos
-   cartes grises n'entrent pas encore en duel (ARB-M10-02).
+3. **Préparation** : l'adversaire, le lieu (la rue), les PV et les deux decks : depuis l'avenant M10-A (ARB-M10-02),
+   **vos seize cartes grises jouent en duel**, contre les seize cartes grises de Kaï (la populace).
 4. **Le duel public** (60 PV chacun). Gagner, perdre ou abandonner mène à la même suite (ADR 029 : aucun blocage).
 5. **La foule** s'est formée ; Kaï réagit. **Le premier émissaire** fend la foule (choisi par un fait public du duel :
    Assauts gagnés → Cendre, Gardes gagnées → Ronce, Interférences réussies → Voile, sinon Astre) et dit que les trois
@@ -79,7 +78,6 @@ les commandes du jeu standard ; « Menu » met en pause (reprendre, sauvegarder 
 
 ## Ce que le prototype ne fait pas encore
 
-- Les neutres n'entrent pas en duel (deck de prêt) : ARB-M10-02.
 - Les chefs ont une apparence **provisoire** (gabarits PNJ) ; les cadets n'ont pas d'accent de couleur familial ; les
   bras droits gardent leurs identités V2. Aucune image nouvelle.
 - Championnat, Épreuves et Joutes en squelette (textes et adversaires provisoires, apparences de PNJ) ; pas de Grande
