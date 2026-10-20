@@ -789,7 +789,7 @@ export class AventureApp {
       const [k, a, b] = rencontre.split(':');
       const ev: Evenement = k === 'epreuve' ? { type: 'epreuve', famille: a as Family, issue, duel: live.duel.id }
         : k === 'joute' ? { type: 'joute', famille: a as Family, issue, duel: live.duel.id }
-        : { type: 'championnat', manche: a as 'poule' | 'miroir' | 'finale', chef: b as Family | undefined, signature: live.duel.config.players.p1.signature, issue };
+        : { type: 'championnat', manche: a as 'poule' | 'miroir' | 'finale', chef: b as Family | undefined, signature: live.duel.config.players.p1.signature!, issue }; // le Championnat exige une Signature équipée (statutPoule, statutFinale)
       const r = appliquer(s.etat, ev, at);
       if (r.refus) this.toast(r.refus);
       s.etat = r.etat;

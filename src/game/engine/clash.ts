@@ -107,17 +107,19 @@ export interface ClashOutcome {
 const OPP: Record<PlayerId, PlayerId> = { p1: 'p2', p2: 'p1' };
 const IDS: PlayerId[] = ['p1', 'p2'];
 
-/** Delta V3.2 D-01 : soutien Rang = Rang imprimé + 1 si même famille que la Primaire. */
+/** Delta V3.2 D-01 : soutien Rang = Rang imprimé + 1 si même famille que la Primaire (avenant M10-A, AV-02 : l’affinité
+ *  exige une famille ; jamais pour une carte neutre). */
 export function rankSupport(sec: CardDef, primary: CardDef): number {
   const r = sec.rank ?? 0;
-  return r + (sec.family === primary.family ? 1 : 0);
+  return r + (sec.family !== null && sec.family === primary.family ? 1 : 0);
 }
 
-/** §7.2 + variantes Prisme / Convergence : coefficient de dégâts d’une Secondaire. */
+/** §7.2 + variantes Prisme / Convergence : coefficient de dégâts d’une Secondaire (AV-02 : Prisme garde son +1 et
+ *  Convergence compte une Primaire neutre comme « d’une autre famille »). */
 export function damageCoefficient(sec: CardDef, primary: CardDef): number {
   const r = sec.rank ?? 0;
   if (sec.effect === 'convergence' && sec.family !== primary.family) return 6;
-  const affinity = sec.family === primary.family || sec.effect === 'prisme';
+  const affinity = (sec.family !== null && sec.family === primary.family) || sec.effect === 'prisme';
   return r + (affinity ? 1 : 0);
 }
 

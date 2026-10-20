@@ -38,7 +38,8 @@ export interface SideView {
   insightGained: number;
   techniques: TechniqueId[];
   techniqueUsed: TechniqueId | null;
-  signatureFamily: Family;
+  /** `null` : aucune Signature (deck d'aventure avant le premier chef, avenant M10-A, AV-04). */
+  signatureFamily: Family | null;
   handCount: number;
   /** Uniquement pour soi-même. */
   hand: CardRef[] | null;

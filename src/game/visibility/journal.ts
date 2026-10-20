@@ -68,7 +68,7 @@ export function describeEvent(ev: GameEvent, viewer: PlayerId): JournalLine | nu
       return line(`${verb(d.player, 'engagez', 'engage')} une Primaire face cachée${d.placedSlot !== null ? ` et ${me(d.player) ? 'préparez' : 'prépare'} une Secondaire en ${slotName(d.placedSlot)} (chargement)` : ''}.`);
     case 'replaced':
       if (d.own) return line(`[Privé] Votre Secondaire masquée remplacée (${slotName(d.slot)}) : ${t(d.defId)}.`);
-      if (d.masked) return line(`${verb(d.player, 'remplacez', 'remplace')} la Secondaire en ${slotName(d.slot)} : une Secondaire ${d.family} masquée rejoint la défausse (nommée en fin de tour).`);
+      if (d.masked) return line(`${verb(d.player, 'remplacez', 'remplace')} la Secondaire en ${slotName(d.slot)} : une Secondaire ${d.family ?? 'neutre'} masquée rejoint la défausse (nommée en fin de tour).`);
       return line(`${verb(d.player, 'remplacez', 'remplace')} la Secondaire en ${slotName(d.slot)} : ${t(d.defId)} rejoint la défausse.`);
     case 'lecture':
       return line(`[Privé] Lecture : mode initial adverse ${STANCE[d.opponentInitialStance as Stance]}.`);
@@ -89,7 +89,7 @@ export function describeEvent(ev: GameEvent, viewer: PlayerId): JournalLine | nu
         const list = (d[pid] as Array<RevealedTactic | null>).filter(Boolean) as RevealedTactic[];
         if (!list.length) continue;
         const items = list.map((x) => {
-          const who = x.masked ? `Secondaire ${x.family} masquée (${slotName(x.slot)})` : t(x.defId);
+          const who = x.masked ? `Secondaire ${x.family ?? 'neutre'} masquée (${slotName(x.slot)})` : t(x.defId);
           let extra = '';
           if (x.mode === 'rank') extra = x.value === null ? ' · bonus masqué' : ` · +${x.value} au Rang${x.affinity ? ' (affinité +1)' : ''}`;
           if (x.mode === 'damage') extra = x.value === null ? ' · coefficient masqué' : ` · ×${x.value}${x.affinity ? ' (même famille)' : ''}`;
@@ -111,10 +111,10 @@ export function describeEvent(ev: GameEvent, viewer: PlayerId): JournalLine | nu
     case 'effect': {
       const status = d.status === 'success' ? 'RÉUSSI' : d.status === 'cancelled' ? 'ANNULÉ' : 'CONDITION NON REMPLIE';
       // Origine camouflée (ADR 011) : famille et case seulement, jamais de nom d’effet.
-      if (d.masked) return line(`Effet de ${me(d.player) ? 'votre' : 'la'} Secondaire ${d.family} masquée${me(d.player) ? '' : ' du rival'} (${slotName(d.slot)}) : ${status} — ${d.detail}.`, 'effect');
+      if (d.masked) return line(`Effet de ${me(d.player) ? 'votre' : 'la'} Secondaire ${d.family ?? 'neutre'} masquée${me(d.player) ? '' : ' du rival'} (${slotName(d.slot)}) : ${status} — ${d.detail}.`, 'effect');
       const name = d.technique ? String(d.effect).replace(/^./, (c: string) => c.toUpperCase()) : EFFECTS[d.effect as EffectId]?.name ?? String(d.effect);
       if (d.own) return line(`[Privé] ${name} (votre Secondaire masquée, ${slotName(d.slot)}) : ${status} — ${d.detail}.`);
-      const detail = d.by ? `neutralisation par l’effet de ${me(d.by.player) ? 'votre' : 'la'} Secondaire ${d.by.family} masquée${me(d.by.player) ? '' : ' du rival'} (${slotName(d.by.slot)})` : d.detail;
+      const detail = d.by ? `neutralisation par l’effet de ${me(d.by.player) ? 'votre' : 'la'} Secondaire ${d.by.family ?? 'neutre'} masquée${me(d.by.player) ? '' : ' du rival'} (${slotName(d.by.slot)})` : d.detail;
       return line(`${name} (${me(d.player) ? 'vous' : 'rival'}) : ${status} — ${detail}.`, 'effect');
     }
     case 'damage':

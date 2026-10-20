@@ -94,7 +94,8 @@ export class Controller {
   private toastSeq = 0;
   private renderFn: () => void = () => {};
   private beatFn: (() => void) | null = null;
-  readonly mySignature: Family;
+  /** Famille de la Signature du joueur (tenue du portrait du HUD) ; `null` : sans Signature (avenant M10-A, AV-04). */
+  readonly mySignature: Family | null;
   readonly director = new PresentationDirector();
   viewMode: ViewMode = 'A';
   readonly expr: ExpressionDirector;
@@ -472,7 +473,7 @@ export class Controller {
           this.arena?.fx({ type: 'reveal' });
           for (const pid of ['p1', 'p2']) {
             const def = cardDef(d[pid].defId);
-            if (def.signature) this.arena?.fx({ type: 'signature', family: def.family, side: rel(pid) });
+            if (def.signature && def.family) this.arena?.fx({ type: 'signature', family: def.family, side: rel(pid) });
           }
           break;
         }
@@ -894,8 +895,10 @@ export class Controller {
     if (!s?.card || !prim) return '';
     const sd = cardDef(s.card.defId);
     const pd = cardDef(prim);
-    if (mode === 'rank') return `+${rankSupport(sd, pd)}${sd.family === pd.family ? ' (affinité +1)' : ''}`;
-    return `×${damageCoefficient(sd, pd)}${sd.family === pd.family ? ' (même famille)' : sd.effect === 'prisme' ? ' (Prisme)' : sd.effect === 'convergence' ? ' (Convergence)' : ''}`;
+    // avenant M10-A (AV-02) : l'affinité exige une famille (jamais pour une carte neutre)
+    const affinite = sd.family !== null && sd.family === pd.family;
+    if (mode === 'rank') return `+${rankSupport(sd, pd)}${affinite ? ' (affinité +1)' : ''}`;
+    return `×${damageCoefficient(sd, pd)}${affinite ? ' (même famille)' : sd.effect === 'prisme' ? ' (Prisme)' : sd.effect === 'convergence' ? ' (Convergence)' : ''}`;
   }
 }
 

@@ -57,7 +57,7 @@ function unknownOpponentPool(view: PlayerView): CardDef[] {
   if (view.reveal.primaries) add(view.reveal.primaries.opp.defId);
   const pool: CardDef[] = [];
   for (const f of FAMILIES) for (const r of RANKS) if (!seen.has(`${f}-${r}`)) pool.push(basicDef(f, r));
-  if (!seen.has('Signature') && SIGNATURES[view.opp.signatureFamily]) pool.push(cardDef(`sig-${view.opp.signatureFamily}`));
+  if (!seen.has('Signature') && view.opp.signatureFamily && SIGNATURES[view.opp.signatureFamily]) pool.push(cardDef(`sig-${view.opp.signatureFamily}`));
   return pool;
 }
 

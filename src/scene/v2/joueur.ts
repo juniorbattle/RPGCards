@@ -6,7 +6,7 @@
  * boutonné à patte de couleur, emblème brodé sur la poitrine. La tenue suit la famille de la Signature jouée.
  */
 import { drawEmblem } from '../../art/emblems';
-import { FAMILY_PALETTE } from '../../art/palette';
+import { paletteOf } from '../../art/palette';
 import type { Family } from '../../game/catalog/cards';
 import {
   backCanvasH, canvas, clipped, edgeBand, EYE_CX, fill, mirrored, P, softShade, stroke, taper, torsoCanvasH, translatedPath,
@@ -22,9 +22,12 @@ const C = {
   iris: '#4a6fd6', irisDeep: '#16224e', irisLight: '#a9c6ff', irisAmber: '#a6e4ff', pupil: '#06080f',
 };
 
+/** Tenue : la famille de la Signature, ou `gris` (sans Signature, deck d'aventure, avenant M10-A : sans emblème). */
+export type Tenue = Family | 'gris';
+
 /** Couleurs de tenue dérivées de la palette de la famille (manteau, patte, bandeau). */
-function outfit(family: Family) {
-  const p = FAMILY_PALETTE[family];
+function outfit(family: Tenue) {
+  const p = paletteOf(family === 'gris' ? null : family);
   return {
     coat: p.mid, coatHi: p.light, coatLight: mix(p.mid, p.light, 0.5), coatShade: mix(p.mid, p.deep, 0.45), coatDeep: p.deep,
     undershirt: mix(p.deep, '#000000', 0.35), trim: p.accent, trimDeep: mix(p.accent, p.mid, 0.55), trimHi: mix(p.accent, '#ffffff', 0.55),
@@ -149,7 +152,7 @@ function drawHead(): HTMLCanvasElement {
 // ---------------------------------------------------------------------------------------------------------------
 // Pans du carré, frange balayée et bandeau (couche au-dessus des yeux et des sourcils)
 
-function drawFront(o: Outfit, family: Family): HTMLCanvasElement {
+function drawFront(o: Outfit, family: Tenue): HTMLCanvasElement {
   const { c, ctx } = canvas(256, 312);
   const box: [number, number, number, number] = [0, 0, 256, 312];
   // Pans : gauche dans la lumière, droit dans l’ombre avec un liseré de contre-jour.
@@ -223,7 +226,7 @@ function drawFront(o: Outfit, family: Family): HTMLCanvasElement {
   ctx.lineWidth = 1.6; ctx.strokeStyle = o.coatShade; ctx.globalAlpha = 0.5; ctx.stroke();
   ctx.globalAlpha = 1;
   ctx.fillStyle = o.coat;
-  drawEmblem(ctx, family, 128, 73, 6.4);
+  if (family !== 'gris') drawEmblem(ctx, family, 128, 73, 6.4);
   ctx.restore();
   taper(ctx, [121.6, 67.6, 123.6, 65.6, 126, 64.8, 128.6, 64.6], 0, 1.4, 0, '#ffffff', 0.75);
   return c;
@@ -248,7 +251,7 @@ function drawBack(o: Outfit): HTMLCanvasElement {
   return c;
 }
 
-function drawTorso(o: Outfit, family: Family): HTMLCanvasElement {
+function drawTorso(o: Outfit, family: Tenue): HTMLCanvasElement {
   const { c, ctx } = torsoCanvasH();
   const body = P('M100,284 C62,290 10,302 -30,320 C-56,332 -70,354 -74,386 L-78,610 L334,610 L330,386 C326,354 312,332 286,320 C246,302 194,290 156,284 Z');
   fill(ctx, body, o.coat);
@@ -276,7 +279,7 @@ function drawTorso(o: Outfit, family: Family): HTMLCanvasElement {
     ctx.fillStyle = o.coatShade; ctx.globalAlpha = 0.55; ctx.fill(); ctx.globalAlpha = 1;
     ctx.lineWidth = 1.6; ctx.strokeStyle = o.trimDeep; ctx.stroke();
     ctx.fillStyle = o.trim;
-    drawEmblem(ctx, family, 50, 338, 12.5);
+    if (family !== 'gris') drawEmblem(ctx, family, 50, 338, 12.5);
     ctx.restore();
     // Coutures d’emmanchure et plis.
     for (const s of [[-6, 318, 18, 336, 30, 362, 32, 396], [262, 318, 238, 336, 226, 362, 224, 396]] as Cubic[]) taper(ctx, s, 0.3, 1.4, 0.3, o.coatDeep, 0.7);
@@ -292,10 +295,10 @@ const BROWS_JOUEUR: Record<BrowShape, string> = {
   knit: 'M3,13.4 C16,10.8 30,10.4 43,11.2 C54,12 62,14.2 68.6,17.2 C70.8,18.4 70.6,21.2 68.8,22.2 C60,19.4 51,17.8 41,17.4 C28,17 15,16.6 3,17 Z',
 };
 
-const KITS = new Map<Family, FigureV2Kit>();
+const KITS = new Map<Tenue, FigureV2Kit>();
 
 /** Identité V2 du duelliste joueur pour la famille de sa Signature (id `player-<Famille>`, comme `playerFigure`). */
-export function playerKitV2(family: Family): FigureV2Kit {
+export function playerKitV2(family: Tenue): FigureV2Kit {
   const hit = KITS.get(family);
   if (hit) return hit;
   const o = outfit(family);

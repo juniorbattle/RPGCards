@@ -71,7 +71,8 @@ export interface CardDef {
   defId: string;
   /** Identité de deck (unicité) : `Cendre-3`, `Signature`. */
   identity: string;
-  family: Family;
+  /** Famille, ou `null` pour une carte NEUTRE (avenant M10-A, AV-01, ADR 030) : jamais d'affinité. */
+  family: Family | null;
   /** Rang ordinaire 1..4, ou `null` pour une Signature ∞. */
   rank: OrdinaryRank | null;
   power: number;
@@ -120,10 +121,26 @@ function buildCatalog(): Record<string, CardDef> {
   return out;
 }
 
-export const CATALOG: Readonly<Record<string, CardDef>> = Object.freeze(buildCatalog());
+/** Carte du catalogue du mode Duel standard : toujours une famille. */
+export type StandardCardDef = CardDef & { family: Family };
+
+/** Catalogue du mode Duel standard (16 Basics, 16 variantes, 4 Signatures), inchangé par l'avenant M10-A. */
+export const CATALOG: Readonly<Record<string, StandardCardDef>> = Object.freeze(buildCatalog() as Record<string, StandardCardDef>);
+
+/**
+ * Avenant M10-A (AV-01, ADR 030) : les quatre définitions NEUTRES du mode Aventure (`neutre-1` à `neutre-4`), Puissance
+ * 3 / 6 / 9 / 12, sans famille, effet ni bonus. Catalogue à part : `CATALOG` (et tout ce qui le parcourt : galerie,
+ * illustrations préparées, validation du deck standard) reste celui du mode standard ; `cardDef` connaît les deux.
+ */
+export const NEUTRAL_CATALOG: Readonly<Record<string, CardDef>> = Object.freeze(Object.fromEntries(RANKS.map((rank): [string, CardDef] => [
+  `neutre-${rank}`,
+  { defId: `neutre-${rank}`, identity: `Neutre-${rank}`, family: null, rank, power: BASIC_POWER[rank], rarity: 'Basic', name: `Neutre ${ROMAN[rank]}`, effect: null, signature: false },
+])));
+
+export const isNeutralDef = (defId: string): boolean => Object.prototype.hasOwnProperty.call(NEUTRAL_CATALOG, defId);
 
 export function cardDef(defId: string): CardDef {
-  const def = CATALOG[defId];
+  const def = CATALOG[defId] ?? NEUTRAL_CATALOG[defId];
   if (!def) throw new Error(`Carte inconnue : ${defId}`);
   return def;
 }

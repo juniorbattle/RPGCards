@@ -300,7 +300,7 @@ export class Shell {
     const r = await confirmDialog({ title: 'Abandonner le duel en cours ?', text: `Le duel contre ${personalityOf(enc.rival).name} (tour ${a.turn}) sera compté comme un ABANDON, distinct d’une défaite par K.-O.`, confirm: 'Abandonner', danger: true });
     if (r !== 'confirm') return;
     const rep = replay({ format: 'lqv-replay/1', rules: a.rules as 'V3.0+delta-V3.2', catalog: a.catalog, config: a.config, commands: a.commands });
-    this.recordEnd({ id: a.id, encounter: enc, seed: a.seed }, viewFor(rep.state, 'p1'), rep.events, a.config.players.p1.signature, true);
+    this.recordEnd({ id: a.id, encounter: enc, seed: a.seed }, viewFor(rep.state, 'p1'), rep.events, a.config.players.p1.signature!, true);
   }
 
   /** Quitter un duel en le gardant pour plus tard (reprise exacte). */
@@ -388,7 +388,7 @@ export class Shell {
     if (!live || !this.save) return;
     live.session.dispose();
     this.live = null;
-    this.recordEnd(live, viewFor(c.match.state, 'p1'), c.match.events, c.config.players.p1.signature, abandoned);
+    this.recordEnd(live, viewFor(c.match.state, 'p1'), c.match.events, c.config.players.p1.signature!, abandoned);
   }
 
   private recordEnd(meta: Omit<LiveDuel, 'session'>, view: ReturnType<typeof viewFor>, events: Controller['match']['events'], signature: DeckChoice['signature'], abandoned: boolean): void {

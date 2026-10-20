@@ -20,7 +20,7 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { FAMILIES, type Family } from '../game/catalog/cards';
 import { hashString, makeRng } from '../game/engine/rng';
 import { drawEmblem } from '../art/emblems';
-import { FAMILY_PALETTE } from '../art/palette';
+import { FAMILY_PALETTE, paletteOf } from '../art/palette';
 import { cardBackCanvas } from '../art/cardArt';
 import type { ViewMode } from '../presentation/director';
 import type { Expression, Gesture } from '../presentation/expression';
@@ -113,7 +113,7 @@ export interface ArenaHandle {
   setLayout(l: ArenaLayout): void;
   expression(e: Expression): void;
   setRivalHand(n: number): void;
-  setFamilies(me: Family, opp: Family): void;
+  setFamilies(me: Family | null, opp: Family | null): void;
   setReducedMotion(v: boolean): void;
   /** M04 : change le rival assis à la table (même scène, même contexte WebGL, mêmes réglages). */
   setRival(p: RivalPersonality): void;
@@ -997,9 +997,10 @@ export function createArena(container: HTMLElement, opts: ArenaOptions): ArenaHa
       rival.setHandCount(n);
       if (still()) requestRender();
     },
-    setFamilies(me: Family, opp: Family) {
-      meHex = FAMILY_PALETTE[me].hex;
-      oppHex = FAMILY_PALETTE[opp].hex;
+    setFamilies(me: Family | null, opp: Family | null) {
+      // sans Signature (avenant M10-A, AV-04) : couleur neutre
+      meHex = paletteOf(me).hex;
+      oppHex = paletteOf(opp).hex;
     },
     setReducedMotion(v: boolean) {
       reduced = v;

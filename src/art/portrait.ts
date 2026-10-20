@@ -4,12 +4,12 @@
  * dataURL. Aucune image externe.
  */
 import type { Family } from '../game/catalog/cards';
-import { FAMILY_PALETTE } from './palette';
+import { paletteOf } from './palette';
 import { drawFigureV2Portrait, figureV2PortraitArt, type MouthShape } from '../scene/figureV2';
 import { figureKitV2 } from '../scene/v2';
 
 /** Figure dessinable (rival, PNJ ou duelliste joueur) : son identité V2 est retrouvée par `id` (`figureKitV2`). */
-export interface Figure { id: string; family: Family }
+export interface Figure { id: string; family: Family | null }
 
 const cache = new Map<string, string>();
 
@@ -17,8 +17,9 @@ const cache = new Map<string, string>();
  * Duelliste joueur (cheveux argent, bandeau ; tenue aux couleurs de sa Signature), dessiné par `scene/v2/joueur.ts`
  * (id `player-<Famille>`).
  */
-export function playerFigure(family: Family): Figure {
-  return { id: `player-${family}`, family };
+export function playerFigure(family: Family | null): Figure {
+  // sans Signature (deck d'aventure, avenant M10-A) : tenue grise, sans emblème (`player-gris`)
+  return { id: `player-${family ?? 'gris'}`, family };
 }
 
 /** Portrait carré (buste + visage), à double définition (affiches ≈ 280 px CSS) : au moins 384 px. */
@@ -41,7 +42,7 @@ export function portraitCanvas(f: Figure, artSeed: number, mouth: MouthShape, si
   c.height = size;
   const ctx = c.getContext('2d');
   if (!ctx) return null;
-  const pal = FAMILY_PALETTE[f.family];
+  const pal = paletteOf(f.family);
   // Fond : halo de la famille, vignette chaude.
   const g = ctx.createRadialGradient(size * 0.5, size * 0.42, size * 0.05, size * 0.5, size * 0.5, size * 0.72);
   g.addColorStop(0, `${pal.light}cc`);

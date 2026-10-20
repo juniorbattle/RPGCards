@@ -1,5 +1,7 @@
 # Avenant M10-A — preuve hors dépôt et mesures d'équilibrage (2026-10-20)
 
+> **Appliqué sur `main` le 2026-10-20 (passe 77, ADR 033)**, après la décision du responsable sur l'ARB-M10-02, avec deux écarts : catalogue neutre à part (`CATALOG` inchangé) et forme R-AV contrôlée par le moteur ; les 20 erreurs de typage du §1 sont corrigées (carte neutre et portrait gris dessinés par code).
+
 **Statut : RÉFÉRENCE / PREUVE** (gouvernance : « constate un fait »). Rien de ce qui suit n'est appliqué au moteur de
 `main` : le patch a été appliqué **dans un worktree temporaire détaché**, hors du dépôt poussé, pour répondre par des
 faits à l'arbitrage bloquant **ARB-M10-02** (faut-il toucher au fichier du Clash pour faire jouer les neutres ?) et
