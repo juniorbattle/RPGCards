@@ -16,7 +16,7 @@ import { execSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { launch } from './browser.mjs';
-import { atlasPanels, closeGaps, composeRow, findLanterns, fixBanners, processPlate, splitPanels } from './m09-traitement-images.mjs';
+import { atlasPanels, closeGaps, composeRow, findLanterns, fixBanners, processPlate, shadeSlots, splitPanels } from './m09-traitement-images.mjs';
 
 const LOT = '2026-10-20-v4-rangs';
 const main = dirname(resolve(execSync('git rev-parse --git-common-dir').toString().trim()));
@@ -34,7 +34,10 @@ const r3 = (x) => Math.round(x * 1000) / 1000;
  */
 const K = {
   densA: 72, densB: 62, densFrise: 62,
-  murs: { longueur: 8, hauteur: 12.5, dens: 64 },
+  murs: { longueur: 8, hauteur: 12.5, dens: 64, utile: 9 },
+  // limites des maisons des deux rangées (px de l'image brute, mesurées sur l'image ; bords compris) : les façades
+  // posées commencent et finissent à un mur mitoyen, jamais au milieu d'une maison (passe 67)
+  maisons: { a: [20, 355, 583, 880, 1185, 1500], b: [38, 445, 690, 1150, 1486] },
   mobilier: { dens: 100, noms: [['puits', 'fontaine', 'etal'], ['banc', 'charrette', 'niche']] },
   monuments: ['halle', 'joueurs', 'chapelle'],
   murNoms: ['colombages', 'platre', 'pignon'],
@@ -70,7 +73,20 @@ for (const [id, parts] of Object.entries(frises)) {
   const r = await ev(composeRow, { parts: parts.map((p) => ({ url: ruelle[p.k].url, worldW: r3(ruelle[p.k].worldW * (1 - (p.cropR ?? 0))), flip: !!p.flip, cropR: p.cropR ?? 0 })), density: K.densFrise });
   const file = `rangs-frise-${id}.png`;
   out[file] = fromUrl(r.url);
-  kit.frises[id] = { file, size: r.size, dens: K.densFrise, largeur: r3(r.size[0] / K.densFrise), hauteur: r3(r.size[1] / K.densFrise), parties: parts.map((p, i) => ({ rangee: p.k, miroir: !!p.flip, x0: r3(r.offsets[i].x / K.densFrise), largeur: r3(r.offsets[i].w / K.densFrise) })) };
+  // limites des maisons au long de la frise (m) : celles de chaque rangée, retournées en miroir, sans le bout retiré
+  const maisons = [];
+  parts.forEach((p, i) => {
+    const rg = ruelle[p.k]; const keep = 1 - (p.cropR ?? 0);
+    for (const bx of K.maisons[p.k]) {
+      const f = Math.min(1, Math.max(0, (bx - rg.crop.left) / rg.size[0]));
+      if (f > keep + 1e-6) continue;
+      const fl = p.flip ? keep - f : f;
+      const m = r3(r.offsets[i].x / K.densFrise + (fl / keep) * (r.offsets[i].w / K.densFrise));
+      if (!maisons.some((q) => Math.abs(q - m) < 0.1)) maisons.push(m);
+    }
+  });
+  maisons.sort((u, v) => u - v);
+  kit.frises[id] = { file, size: r.size, dens: K.densFrise, maisons, largeur: r3(r.size[0] / K.densFrise), hauteur: r3(r.size[1] / K.densFrise), parties: parts.map((p, i) => ({ rangee: p.k, miroir: !!p.flip, x0: r3(r.offsets[i].x / K.densFrise), largeur: r3(r.offsets[i].w / K.densFrise) })) };
 }
 
 // murs de côté : trois panneaux ramenés à la même case
@@ -80,8 +96,13 @@ for (const [id, parts] of Object.entries(frises)) {
   const boxes = s.boxes[0];
   if (boxes.length !== 3) throw new Error(`murs : ${boxes.length} panneaux trouvés (3 attendus)`);
   const a = await ev(atlasPanels, { url: p.url, boxes, slotW: K.murs.longueur * K.murs.dens, slotH: K.murs.hauteur * K.murs.dens });
-  out['rangs-murs.png'] = fromUrl(a.url);
-  kit.murs = { file: 'rangs-murs.png', size: a.size, longueur: K.murs.longueur, hauteur: K.murs.hauteur, panneaux: Object.fromEntries(K.murNoms.map((n, i) => [n, { uv: [r3(i / 3), 0, r3((i + 1) / 3), 1], source: boxes[i] }])) };
+  // passe 67 : murs des passages et des places (colombages, plâtre) gardés sur leurs 9 m du bas, dans l'ombre du
+  // passage (ils dépassaient des toits) ; pignon des bouts gardé entier, à peine assombri
+  const cut = r3(1 - K.murs.utile / K.murs.hauteur);
+  const sw = K.murs.longueur * K.murs.dens;
+  const shaded = await ev(shadeSlots, { url: a.url, slots: [{ x0: 0, x1: sw, cut, fade: 26, dark: [0.8, 0.5] }, { x0: sw, x1: 2 * sw, cut, fade: 26, dark: [0.8, 0.5] }, { x0: 2 * sw, x1: 3 * sw, cut: 0, fade: 0, dark: [0.92, 0.72] }] });
+  out['rangs-murs.png'] = fromUrl(shaded);
+  kit.murs = { file: 'rangs-murs.png', size: a.size, longueur: K.murs.longueur, hauteur: K.murs.hauteur, panneaux: Object.fromEntries(K.murNoms.map((n, i) => [n, { uv: [r3(i / 3), n === 'pignon' ? 0 : cut, r3((i + 1) / 3), 1], hauteur: n === 'pignon' ? K.murs.hauteur : K.murs.utile, source: boxes[i] }])) };
   report.murs = { boxes, etirement: boxes.map(([x0, y0, x1, y1]) => r3(((K.murs.longueur * K.murs.dens) / (x1 - x0)) / ((K.murs.hauteur * K.murs.dens) / (y1 - y0)))) };
 }
 
@@ -135,7 +156,7 @@ const CLE = 'fond magenta détouré (alpha tiré de l’écart au magenta, bords
 const fiches = {
   'rangs-frise-a': { sources: ['rangs-ruelle-a', 'rangs-ruelle-b'], etapes: [`${CLE}, recadré sur le pied des murs, pour chaque rangée`, 'rangée A : fente vide entre deux maisons refermée (colonnes vides retirées)', `ramenées à la même hauteur de porte (A : ${K.densA} px/m, B : ${K.densB} px/m) et assemblées pieds alignés à ${K.densFrise} px/m : A, B, A en miroir`] },
   'rangs-frise-b': { sources: ['rangs-ruelle-a', 'rangs-ruelle-b'], etapes: [`${CLE}, recadré sur le pied des murs, pour chaque rangée`, 'rangée A : fente vide entre deux maisons refermée (colonnes vides retirées)', `ramenées à la même hauteur de porte (A : ${K.densA} px/m, B : ${K.densB} px/m) et assemblées pieds alignés à ${K.densFrise} px/m : B en miroir, A en miroir, B sans son bout droit (15 %)`] },
-  'rangs-murs': { sources: ['rangs-murs'], etapes: [`${CLE}, recadré sur le contenu`, 'trois panneaux séparés par les bandes vides', `chacun ramené à la même case (${K.murs.longueur} × ${K.murs.hauteur} m au monde, ${K.murs.dens} px/m), côte à côte`] },
+  'rangs-murs': { sources: ['rangs-murs'], etapes: [`${CLE}, recadré sur le contenu`, 'trois panneaux séparés par les bandes vides', `chacun ramené à la même case (${K.murs.longueur} × ${K.murs.hauteur} m au monde, ${K.murs.dens} px/m), côte à côte`, `murs des passages et des places (colombages, plâtre) gardés sur leurs ${K.murs.utile} m du bas (fondu sous la coupe) et assombris de 20 % au pied à 50 % en haut (l’ombre du passage) ; pignon gardé entier, assombri de 8 à 28 %`] },
   'rangs-monuments': { sources: ['rangs-monuments'], etapes: ['emblème inventé par le modèle (une branche) remplacé sur les deux bannières vertes de la halle par celui de la famille Ronce, brodé en relief (fixBanners, tracés de src/art/emblems.ts), sur le brut, avant tout traitement', `${CLE}, recadré sur le contenu`, 'trois panneaux séparés par les bandes vides (boîtes dans kit-rangs.json)'] },
   'rangs-mobilier': { sources: ['rangs-mobilier'], etapes: [`${CLE}, sans recadrage`, 'six objets séparés par les bandes vides (deux rangées de trois ; boîtes et lanternes peintes dans kit-rangs.json)'] },
 };

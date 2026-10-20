@@ -7,7 +7,7 @@
 import { describe, expect, it } from 'vitest';
 import { behindPlate, farFade, LOIN } from '../src/ville/diorama';
 import { blocked, newWalker, stepWalker, type Vec2, type Walker } from '../src/ville/monde';
-import { PLAN_QUAI, QUAI_PROFOND, QUAI_RANGS } from '../src/ville/quaiProfond';
+import { BALISES_QUAI, PLAN_QUAI, QUAI_PROFOND, QUAI_RANGS } from '../src/ville/quaiProfond';
 import { checkRangs, minus, planRangs, rangAt, type QuartierRangs } from '../src/ville/rangs';
 
 const STEP = 1 / 60;
@@ -130,5 +130,25 @@ describe('quartiers en rangs : fantôme et fondu lointain', () => {
     const mur = { center: [-13.6, 4.5, -7] as [number, number, number], w: 8, h: 9, orient: 'cote' as const };
     expect(farFade(mur, { z: -3 - LOIN[1] })).toBe(1);
     expect(farFade(mur, { z: -14 })).toBe(0);
+  });
+});
+
+describe('quartiers en rangs : balises des passages (passe 67)', () => {
+  it('chaque passage a une balise à chaque bouche : vers le rang suivant, retour au précédent, sur le pavé praticable', () => {
+    const n = QUAI_RANGS.bandes.reduce((s, b) => s + b.passages.length, 0);
+    expect(BALISES_QUAI).toHaveLength(2 * n);
+    expect(BALISES_QUAI.map((b) => b.label)).toEqual([
+      'Vers la rue Haute', 'Retour vers le Quai', 'Vers la rue Haute', 'Retour vers le Quai',
+      'Vers la ruelle des Lanternes', 'Retour vers la rue Haute',
+      'Vers la cour de la Chapelle', 'Retour vers la ruelle des Lanternes',
+    ]);
+    for (const b of BALISES_QUAI) {
+      // la balise « aller » file vers le fond (z négatif), la balise « retour » vers l'avant ; toutes deux sur une rue
+      expect(b.sens).toBe(b.id.endsWith('avant') ? -1 : 1);
+      expect(rangAt(PLAN_QUAI, b)).toBe(b.sens < 0 ? b.vers - 1 : b.vers + 1);
+      expect(blocked(QUAI_PROFOND, b), b.id).toBe(false);
+      // sa zone « info » nomme le rang où l'on va
+      expect(QUAI_PROFOND.zones.find((z) => z.id === b.id)?.label).toBe(b.label);
+    }
   });
 });

@@ -42,7 +42,7 @@
           ],
           "width": 13.401,
           "orient": "face",
-          "order": 47,
+          "order": 49,
           "blend": "decoupe",
           "lit": 0.25,
           "uv": [
@@ -71,7 +71,7 @@
           ],
           "width": 21.801,
           "orient": "face",
-          "order": 48,
+          "order": 50,
           "blend": "decoupe",
           "lit": 0.25,
           "uv": [
@@ -100,7 +100,7 @@
           ],
           "width": 12.798,
           "orient": "face",
-          "order": 49,
+          "order": 51,
           "blend": "decoupe",
           "lit": 0.25,
           "uv": [
@@ -129,7 +129,7 @@
           ],
           "width": 12,
           "orient": "face",
-          "order": 54,
+          "order": 56,
           "blend": "decoupe",
           "lit": 0.3,
           "uv": [
@@ -158,7 +158,7 @@
           ],
           "width": 23.603,
           "orient": "face",
-          "order": 55,
+          "order": 57,
           "blend": "decoupe",
           "lit": 0.3,
           "uv": [
@@ -187,7 +187,7 @@
           ],
           "width": 12.397,
           "orient": "face",
-          "order": 56,
+          "order": 58,
           "blend": "decoupe",
           "lit": 0.3,
           "uv": [
@@ -216,7 +216,7 @@
           ],
           "width": 48,
           "orient": "face",
-          "order": 57,
+          "order": 59,
           "blend": "decoupe",
           "lit": 0.2
         },
@@ -237,7 +237,7 @@
           ],
           "width": 44.17,
           "orient": "face",
-          "order": 58,
+          "order": 60,
           "blend": "decoupe"
         },
         "eau": {
@@ -257,7 +257,7 @@
           ],
           "width": 64,
           "orient": "sol",
-          "order": 59,
+          "order": 61,
           "blend": "decoupe"
         },
         "fond-rang2--31": {
@@ -273,9 +273,9 @@
           "orient": "face",
           "blend": "decoupe",
           "uv": [
-            0.018,
+            0.12,
             0,
-            0.376,
+            0.482,
             1
           ],
           "width": 23,
@@ -288,7 +288,7 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -25.3,
-          "order": 31
+          "order": 33
         },
         "fond-rang2--5": {
           "file": "rangs-frise-a.png",
@@ -303,9 +303,9 @@
           "orient": "face",
           "blend": "decoupe",
           "uv": [
-            0.422,
+            0.597,
             0,
-            0.516,
+            0.681,
             1
           ],
           "width": 6,
@@ -318,7 +318,7 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -25.3,
-          "order": 32
+          "order": 34
         },
         "fond-rang2-13": {
           "file": "rangs-frise-a.png",
@@ -333,9 +333,9 @@
           "orient": "face",
           "blend": "decoupe",
           "uv": [
-            0.702,
+            0.75,
             0,
-            0.982,
+            1,
             1
           ],
           "width": 18,
@@ -348,7 +348,7 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -25.3,
-          "order": 33
+          "order": 35
         },
         "flanc-rang2--31": {
           "file": "rangs-frise-b.png",
@@ -363,9 +363,9 @@
           "orient": "face",
           "blend": "decoupe",
           "uv": [
-            0.014,
+            0.567,
             0,
-            0.233,
+            0.791,
             1
           ],
           "width": 14,
@@ -378,7 +378,7 @@
           "lit": 0.3,
           "coupe": true,
           "coupeZ": -25.3,
-          "order": 43
+          "order": 45
         },
         "flanc-rang2-17": {
           "file": "rangs-frise-b.png",
@@ -393,9 +393,9 @@
           "orient": "face",
           "blend": "decoupe",
           "uv": [
-            0.767,
+            0.202,
             0,
-            0.986,
+            0.435,
             1
           ],
           "width": 14,
@@ -408,7 +408,7 @@
           "lit": 0.3,
           "coupe": true,
           "coupeZ": -25.3,
-          "order": 44
+          "order": 46
         },
         "fond-rang3--31": {
           "file": "rangs-frise-b.png",
@@ -423,9 +423,9 @@
           "orient": "face",
           "blend": "decoupe",
           "uv": [
-            0.014,
             0,
-            0.28,
+            0,
+            0.264,
             1
           ],
           "width": 17,
@@ -439,7 +439,7 @@
           "voile": 0.06,
           "coupe": true,
           "coupeZ": -36.3,
-          "order": 14
+          "order": 16
         },
         "fond-rang3--8": {
           "file": "rangs-frise-b.png",
@@ -454,9 +454,9 @@
           "orient": "face",
           "blend": "decoupe",
           "uv": [
-            0.374,
+            0.791,
             0,
-            0.586,
+            0.97,
             1
           ],
           "width": 13.5,
@@ -470,7 +470,7 @@
           "voile": 0.06,
           "coupe": true,
           "coupeZ": -36.3,
-          "order": 15
+          "order": 17
         },
         "fond-rang3-9": {
           "file": "rangs-frise-b.png",
@@ -485,9 +485,9 @@
           "orient": "face",
           "blend": "decoupe",
           "uv": [
-            0.633,
+            0.264,
             0,
-            0.986,
+            0.616,
             1
           ],
           "width": 22.5,
@@ -501,7 +501,7 @@
           "voile": 0.06,
           "coupe": true,
           "coupeZ": -36.3,
-          "order": 16
+          "order": 18
         },
         "flanc-rang3--31": {
           "file": "rangs-frise-a.png",
@@ -516,9 +516,9 @@
           "orient": "face",
           "blend": "decoupe",
           "uv": [
-            0.018,
+            0.482,
             0,
-            0.282,
+            0.75,
             1
           ],
           "width": 17,
@@ -532,7 +532,7 @@
           "voile": 0.05,
           "coupe": true,
           "coupeZ": -36.3,
-          "order": 23
+          "order": 25
         },
         "flanc-rang3-14": {
           "file": "rangs-frise-a.png",
@@ -547,9 +547,9 @@
           "orient": "face",
           "blend": "decoupe",
           "uv": [
-            0.718,
             0,
-            0.982,
+            0,
+            0.25,
             1
           ],
           "width": 17,
@@ -563,7 +563,65 @@
           "voile": 0.05,
           "coupe": true,
           "coupeZ": -36.3,
-          "order": 24
+          "order": 26
+        },
+        "fond-rang4--31": {
+          "file": "rangs-frise-a.png",
+          "sha256": "0b91326657b8a7923c1dfffbfc48bfeafeaaeb31ca405f8bfc689d390fee02c9",
+          "size": [
+            3989,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-a/fiche.json",
+          "approved": false,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.185,
+            0,
+            0.597,
+            1
+          ],
+          "width": 27,
+          "at": [
+            -17.5,
+            0,
+            -43
+          ],
+          "fog": 0.3,
+          "lit": 0.3,
+          "voile": 0.08,
+          "order": 2
+        },
+        "fond-rang4-4": {
+          "file": "rangs-frise-a.png",
+          "sha256": "0b91326657b8a7923c1dfffbfc48bfeafeaaeb31ca405f8bfc689d390fee02c9",
+          "size": [
+            3989,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-a/fiche.json",
+          "approved": false,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.597,
+            0,
+            1,
+            1
+          ],
+          "width": 27,
+          "at": [
+            17.5,
+            0,
+            -43
+          ],
+          "fog": 0.3,
+          "lit": 0.3,
+          "voile": 0.08,
+          "order": 3
         },
         "flanc-rang4--31": {
           "file": "rangs-frise-b.png",
@@ -578,9 +636,9 @@
           "orient": "face",
           "blend": "decoupe",
           "uv": [
-            0.014,
+            0.616,
             0,
-            0.343,
+            0.97,
             1
           ],
           "width": 21,
@@ -593,7 +651,7 @@
           "lit": 0.3,
           "voile": 0.1,
           "coupe": true,
-          "order": 7
+          "order": 9
         },
         "flanc-rang4-10": {
           "file": "rangs-frise-b.png",
@@ -608,9 +666,9 @@
           "orient": "face",
           "blend": "decoupe",
           "uv": [
-            0.657,
             0,
-            0.986,
+            0,
+            0.367,
             1
           ],
           "width": 21,
@@ -623,7 +681,7 @@
           "lit": 0.3,
           "voile": 0.1,
           "coupe": true,
-          "order": 8
+          "order": 10
         },
         "fond-place-halle": {
           "file": "rangs-monuments.png",
@@ -653,7 +711,7 @@
           "fog": 0.25,
           "coupe": true,
           "coupeZ": -25.3,
-          "order": 27
+          "order": 29
         },
         "fond-placette-puits": {
           "file": "rangs-monuments.png",
@@ -683,9 +741,9 @@
           "fog": 0.25,
           "coupe": true,
           "coupeZ": -36.3,
-          "order": 11
+          "order": 13
         },
-        "fond-cour": {
+        "ville-haute": {
           "file": "quai-troisieme-rang.png",
           "sha256": "c251c22aadc61e4916ecbdd35e890724a8ab6e025503cdae8e7a5ee9325f356f",
           "size": [
@@ -697,22 +755,21 @@
           "approved": false,
           "at": [
             0,
-            0,
-            -43
+            2,
+            -75
           ],
-          "width": 96,
+          "width": 140,
           "orient": "face",
           "order": 1,
           "blend": "decoupe",
-          "fog": 0.5,
-          "voile": 0.3,
+          "fog": 0.8,
+          "voile": 0.5,
           "uv": [
             0,
             0,
             1,
             0.88
-          ],
-          "lit": 0.2
+          ]
         },
         "cour-chapelle": {
           "file": "rangs-monuments.png",
@@ -736,15 +793,15 @@
           "at": [
             0,
             0,
-            -42.95
+            -43
           ],
           "lit": 0.3,
-          "fog": 0.4,
-          "order": 2
+          "fog": 0.3,
+          "order": 4
         },
         "mur-passage-1-1": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -757,7 +814,7 @@
           "vers": "est",
           "uv": [
             0,
-            0,
+            0.28,
             0.333,
             1
           ],
@@ -770,11 +827,11 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -11.3,
-          "order": 50
+          "order": 52
         },
         "mur-passage-1-2": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -787,7 +844,7 @@
           "vers": "ouest",
           "uv": [
             0.333,
-            0,
+            0.28,
             0.667,
             1
           ],
@@ -800,11 +857,11 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -11.3,
-          "order": 51
+          "order": 53
         },
         "mur-passage-1-3": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -817,7 +874,7 @@
           "vers": "est",
           "uv": [
             0,
-            0,
+            0.28,
             0.333,
             1
           ],
@@ -830,11 +887,11 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -11.3,
-          "order": 52
+          "order": 54
         },
         "mur-passage-1-4": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -847,7 +904,7 @@
           "vers": "ouest",
           "uv": [
             0.333,
-            0,
+            0.28,
             0.667,
             1
           ],
@@ -860,11 +917,11 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -11.3,
-          "order": 53
+          "order": 55
         },
         "mur-place-2-1": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -877,7 +934,7 @@
           "vers": "est",
           "uv": [
             0.333,
-            0,
+            0.28,
             0.584,
             1
           ],
@@ -890,11 +947,11 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -25.3,
-          "order": 34
+          "order": 36
         },
         "mur-place-2-2": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -907,7 +964,7 @@
           "vers": "ouest",
           "uv": [
             0.333,
-            0,
+            0.28,
             0.584,
             1
           ],
@@ -920,11 +977,11 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -25.3,
-          "order": 35
+          "order": 37
         },
         "mur-bout-2-1": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -950,11 +1007,11 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -25.3,
-          "order": 45
+          "order": 47
         },
         "mur-bout-2-2": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -980,11 +1037,11 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -25.3,
-          "order": 46
+          "order": 48
         },
         "mur-passage-2-1": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -997,7 +1054,7 @@
           "vers": "est",
           "uv": [
             0,
-            0,
+            0.28,
             0.333,
             1
           ],
@@ -1010,11 +1067,11 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -25.3,
-          "order": 36
+          "order": 38
         },
         "mur-passage-2-2": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -1027,7 +1084,7 @@
           "vers": "ouest",
           "uv": [
             0.333,
-            0,
+            0.28,
             0.667,
             1
           ],
@@ -1040,11 +1097,11 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -25.3,
-          "order": 37
+          "order": 39
         },
         "mur-place-3-1": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -1057,7 +1114,7 @@
           "vers": "est",
           "uv": [
             0.333,
-            0,
+            0.28,
             0.542,
             1
           ],
@@ -1070,11 +1127,11 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -36.3,
-          "order": 17
+          "order": 19
         },
         "mur-place-3-2": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -1087,7 +1144,7 @@
           "vers": "ouest",
           "uv": [
             0.333,
-            0,
+            0.28,
             0.542,
             1
           ],
@@ -1100,11 +1157,11 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -36.3,
-          "order": 18
+          "order": 20
         },
         "mur-bout-3-1": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -1130,11 +1187,11 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -36.3,
-          "order": 25
+          "order": 27
         },
         "mur-bout-3-2": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -1160,11 +1217,11 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -36.3,
-          "order": 26
+          "order": 28
         },
         "mur-passage-3-1": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -1177,7 +1234,7 @@
           "vers": "est",
           "uv": [
             0,
-            0,
+            0.28,
             0.291,
             1
           ],
@@ -1190,11 +1247,11 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -36.3,
-          "order": 19
+          "order": 21
         },
         "mur-passage-3-2": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -1207,7 +1264,7 @@
           "vers": "ouest",
           "uv": [
             0.333,
-            0,
+            0.28,
             0.625,
             1
           ],
@@ -1220,11 +1277,11 @@
           "lit": 0.35,
           "coupe": true,
           "coupeZ": -36.3,
-          "order": 20
+          "order": 22
         },
         "mur-bout-4-1": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -1249,11 +1306,11 @@
           "width": 7,
           "lit": 0.35,
           "coupe": true,
-          "order": 9
+          "order": 11
         },
         "mur-bout-4-2": {
           "file": "rangs-murs.png",
-          "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
           "size": [
             1536,
             800
@@ -1278,7 +1335,7 @@
           "width": 7,
           "lit": 0.35,
           "coupe": true,
-          "order": 10
+          "order": 12
         },
         "rue-haute-caisses": {
           "file": "quai-pied-facades.png",
@@ -1297,7 +1354,7 @@
           ],
           "width": 1.426,
           "orient": "face",
-          "order": 40,
+          "order": 42,
           "blend": "decoupe",
           "lit": 0.3,
           "uv": [
@@ -1324,7 +1381,7 @@
           ],
           "width": 1.191,
           "orient": "face",
-          "order": 39,
+          "order": 41,
           "blend": "decoupe",
           "lit": 0.3,
           "uv": [
@@ -1359,7 +1416,7 @@
             -16
           ],
           "lit": 0.3,
-          "order": 38
+          "order": 40
         },
         "halle-etal": {
           "file": "rangs-mobilier.png",
@@ -1386,7 +1443,7 @@
             -20.8
           ],
           "lit": 0.3,
-          "order": 30
+          "order": 32
         },
         "halle-caisses": {
           "file": "quai-pied-facades.png",
@@ -1405,7 +1462,7 @@
           ],
           "width": 1.426,
           "orient": "face",
-          "order": 28,
+          "order": 30,
           "blend": "decoupe",
           "lit": 0.3,
           "uv": [
@@ -1440,7 +1497,7 @@
             -28.4
           ],
           "lit": 0.3,
-          "order": 21
+          "order": 23
         },
         "puits": {
           "file": "rangs-mobilier.png",
@@ -1467,7 +1524,7 @@
             -31
           ],
           "lit": 0.3,
-          "order": 13
+          "order": 15
         },
         "placette-tonneaux": {
           "file": "quai-pied-facades.png",
@@ -1486,7 +1543,7 @@
           ],
           "width": 1.191,
           "orient": "face",
-          "order": 12,
+          "order": 14,
           "blend": "decoupe",
           "lit": 0.3,
           "uv": [
@@ -1521,7 +1578,7 @@
             -39.6
           ],
           "lit": 0.3,
-          "order": 4
+          "order": 6
         },
         "cour-banc": {
           "file": "rangs-mobilier.png",
@@ -1548,7 +1605,7 @@
             -42.2
           ],
           "lit": 0.3,
-          "order": 3
+          "order": 5
         },
         "lampadaire-1": {
           "file": "quai-rue.png",
@@ -1567,7 +1624,7 @@
           ],
           "width": 1.103,
           "orient": "face",
-          "order": 41,
+          "order": 43,
           "blend": "decoupe",
           "lit": 0.2,
           "uv": [
@@ -1594,7 +1651,7 @@
           ],
           "width": 1.103,
           "orient": "face",
-          "order": 42,
+          "order": 44,
           "blend": "decoupe",
           "lit": 0.2,
           "uv": [
@@ -1621,7 +1678,7 @@
           ],
           "width": 1.103,
           "orient": "face",
-          "order": 29,
+          "order": 31,
           "blend": "decoupe",
           "lit": 0.2,
           "uv": [
@@ -1648,7 +1705,7 @@
           ],
           "width": 1.103,
           "orient": "face",
-          "order": 22,
+          "order": 24,
           "blend": "decoupe",
           "lit": 0.2,
           "uv": [
@@ -1675,7 +1732,7 @@
           ],
           "width": 1.103,
           "orient": "face",
-          "order": 5,
+          "order": 7,
           "blend": "decoupe",
           "lit": 0.2,
           "uv": [
@@ -1702,7 +1759,7 @@
           ],
           "width": 1.103,
           "orient": "face",
-          "order": 6,
+          "order": 8,
           "blend": "decoupe",
           "lit": 0.2,
           "uv": [
@@ -1956,7 +2013,7 @@
           34,
           0,
           26,
-          -80,
+          -70,
           0.36,
           0.004,
           [

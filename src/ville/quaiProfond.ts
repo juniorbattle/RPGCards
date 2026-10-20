@@ -16,7 +16,7 @@
  */
 import type { Disc, Ilot, Rect, Vec2, Zone } from './monde';
 import { BOLLARDS, FACADE_Z, LAMPS, NPC_RADIUS, NPCS, QUAY_Z, STALL, TALK_RADIUS, X_MAX, X_MIN, type IlotNpc } from './quai';
-import { ilotRangs, planRangs, type QuartierRangs } from './rangs';
+import { balisesRangs, ilotRangs, planRangs, type QuartierRangs } from './rangs';
 
 /** Le Quai en rangs (grammaire de `rangs.ts`). Les passages de la bande 1 sont aux raccords des trois images de façades
  *  du diorama (ouest, centre de l'essai, est), écartées de 3 m de part et d'autre. */
@@ -35,6 +35,8 @@ export const QUAI_RANGS: QuartierRangs = {
   ],
 };
 export const PLAN_QUAI = planRangs(QUAI_RANGS);
+/** Balises des passages (passe 67) : aller vers le rang suivant, retour au précédent ; leur nom en zone « info ». */
+export const BALISES_QUAI = balisesRangs(PLAN_QUAI, 'le Quai');
 
 /** Fond des blocs du premier rang (bord de la rue Haute) et fond de la rue Haute. */
 export const BLOCK_BACK_Z = PLAN_QUAI.bandes[0]!.z0;
@@ -117,6 +119,7 @@ export const QUAI_PROFOND: Ilot = ilotRangs(PLAN_QUAI, {
     { id: 'sortie-arene', kind: 'sortie', label: 'Vers le Parvis de l’arène', target: 'arene', area: { x0: X_MAX - 1.1, z0: -1.4, x1: X_MAX, z1: 2.2 } },
     { id: 'sortie-ruelles', kind: 'sortie', label: 'Vers les Ruelles', target: 'ruelles', area: { x0: X_MIN, z0: -1.4, x1: X_MIN + 0.9, z1: 2.2 } },
     ...spots,
+    ...BALISES_QUAI.map((b): Zone => ({ id: b.id, kind: 'info', label: b.label, target: `rang-${b.vers}`, area: { x0: b.x - b.largeur / 2 + 0.2, z0: b.z - 0.7, x1: b.x + b.largeur / 2 - 0.2, z1: b.z + 0.7 } })),
     ...NPCS_PROFOND.map((n): Zone => ({ id: `npc-${n.id}`, kind: 'parler', label: 'Parler', target: n.id, area: { x: n.at.x, z: n.at.z, r: TALK_RADIUS } })),
   ],
   spawns: {

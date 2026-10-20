@@ -200,3 +200,21 @@ export function rangAt(plan: PlanRangs, p: { x: number; z: number }): number {
 export function ilotRangs(plan: PlanRangs, base: Omit<Ilot, 'bounds'>): Ilot {
   return { ...base, bounds: plan.bounds, rects: [...plan.obstacles, ...base.rects] };
 }
+
+/**
+ * Balise d'un passage (passe 67, demande du responsable : « des effets visuels indicatifs pour les chemins ruelles qui
+ * permettent d'aller et revenir vers chaque rang ») : une lueur au sol à chaque bouche d'un passage, des chevrons qui
+ * filent vers le rang où il mène (`sens` −1 : vers le fond, +1 : vers l'avant), et le nom de ce rang (zone « info »).
+ */
+export interface Balise { id: string; x: number; z: number; largeur: number; sens: -1 | 1; vers: number; label: string }
+
+const capital = (s: string) => s[0]!.toUpperCase() + s.slice(1);
+
+/** Balises de tous les passages : à l'avant (vers le rang suivant) et à l'arrière (retour au rang précédent). */
+export function balisesRangs(plan: PlanRangs, nomRang1: string): Balise[] {
+  const nom = (n: number) => (n === 1 ? nomRang1 : plan.rangs[n - 1]!.nom);
+  return plan.bandes.flatMap((b) => b.passages.flatMap(([a, c], i): Balise[] => [
+    { id: `balise-${b.n}-${i + 1}-avant`, x: r3((a + c) / 2), z: r3(b.z1 + 0.9), largeur: r3(c - a), sens: -1, vers: b.n + 1, label: `${capital(`vers ${nom(b.n + 1)}`)}` },
+    { id: `balise-${b.n}-${i + 1}-retour`, x: r3((a + c) / 2), z: r3(b.z0 - 0.9), largeur: r3(c - a), sens: 1, vers: b.n, label: `Retour vers ${nom(b.n)}` },
+  ]));
+}

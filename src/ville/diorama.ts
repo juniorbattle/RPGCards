@@ -17,6 +17,7 @@ import { cobbleRelief, mistTexture, puddleMask } from './quaiMateriaux';
 import { LAYER_NOREFLECT } from './reflets';
 import { finish, type LightDef, type QuaiScene } from './scene';
 import { plateRect, type DecorLight, type PreparedDiorama, type PreparedPlate } from './decors';
+import { baliseMeshes } from './balises';
 
 const PLATE_VERT = /* glsl */ `
 varying vec2 vUv; varying vec3 vWorld; varying vec3 vN;
@@ -49,6 +50,8 @@ void main(){
 #ifdef COUPE
   // vue en section (passe 64) : uFade de 0 (entier) à 1 (coupé) ; sous uCutY, le rez-de-chaussée reste
   float k = uFade * smoothstep(uCutY - 0.3, uCutY + 0.3, vWorld.y);
+  // fantôme assourdi (passe 67) : gris et plus sombre, les détails clairs (emblèmes dorés, vitraux) ne flottent plus
+  c = mix(c, vec3(dot(c, vec3(0.3, 0.59, 0.11)) * 0.55), k * 0.8);
   gl_FragColor = vec4(c * A.a, A.a) * mix(1.0, uCoupe, k);
 #else
   gl_FragColor = vec4(c * A.a, A.a);
@@ -186,6 +189,9 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
     textures.push(tex);
     for (const m of d.mists) { const { mesh, mat } = mistPlane(tex, m); meshes.push(mesh); mistMats.push(mat); }
   }
+  // balises des passages d'un quartier en rangs (passe 67) : lueurs au sol qui montrent le chemin, aller et retour
+  const balises = baliseMeshes(def.balises ?? []);
+  meshes.push(...balises.meshes);
   const base = finish(scene, { build: (into) => { for (const m of meshes) into.add(m); return meshes.length; } }, lights, [], textures);
   // halos des lumières (diorama en rangs, passe 65) : ceux d'un rang dépassé s'atténuent avec leur plan fantôme, ceux
   // loin devant le personnage s'effacent avec le fondu lointain (le maillage des halos est fusionné : couleurs par sommet)
@@ -221,6 +227,6 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
       haloCol.needsUpdate = true;
     }
   };
-  if (!mistMats.length && !cutaways.length) return base;
-  return { ...base, focus: cutaways.length ? focus : undefined, update: (time: number) => { base.update(time); for (const mm of mistMats) mm.uniforms.uT!.value = time; } };
+  if (!mistMats.length && !cutaways.length && !balises.mats.length) return base;
+  return { ...base, focus: cutaways.length ? focus : undefined, update: (time: number) => { base.update(time); for (const mm of [...mistMats, ...balises.mats]) mm.uniforms.uT!.value = time; } };
 }

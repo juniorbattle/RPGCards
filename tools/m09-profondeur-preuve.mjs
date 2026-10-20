@@ -45,9 +45,13 @@ const P = {
   flancs: { 2: { frise: 'b', centre: 0, lit: 0.3, fog: 0.2, voile: 0 }, 3: { frise: 'a', centre: 0, lit: 0.3, fog: 0.25, voile: 0.05 }, 4: { frise: 'b', centre: 0, lit: 0.3, fog: 0.3, voile: 0.1 } },
   // fonds des places (le spot de chaque rang) : monuments du kit ; la chapelle devant la ville haute, au fond de la cour
   monuments: { 'place-halle': 'halle', 'placette-puits': 'joueurs' },
-  chapelle: { largeur: 8, x: 0, devant: 0.05, lit: 0.3, fog: 0.4 },
-  // rang 4 : la ville haute (troisième rang) au fond de la cour
-  fond4: { largeur: 96, y: 0, v1: 0.88, voile: 0.3, fog: 0.5, lit: 0.2 },
+  chapelle: { largeur: 8, x: 0, devant: 0, lit: 0.3, fog: 0.3 },
+  // passe 67 : le fond de la cour est une rangée de maisons continue (frise A) où la chapelle prend place au milieu ;
+  // la ville haute (troisième rang) recule au loin, au-dessus des toits, comme vue du Quai
+  fond4: { frise: 'a', lit: 0.3, fog: 0.3, voile: 0.08 },
+  villeHaute: { z: -75, largeur: 140, y: 2, v1: 0.88, voile: 0.5, fog: 0.8 },
+  // façades posées d'un mur mitoyen à un autre (jamais une maison coupée) : morceau de frise étiré de 0,8 à 1,25 fois
+  etirement: [0.8, 1.25],
   murs: { lit: 0.35 },
   // échelle propre d'un objet du kit (peint à 100 px/m) : la niche votive, peinte à 4 m de haut, ramenée à 2,8 m
   objets: { niche: 0.7 },
@@ -57,7 +61,7 @@ const P = {
   camera: { pitch: 6, distance: 25, fov: 42, aimY: 4.8, minX: -5, maxX: 5, followZ: 0.9, aimZ: 0.3, pitchFond: 16, zFond: -14 },
   // brumes : trois nappes hautes derrière la cour (entre la ville haute et le ciel), l'eau du port, puis une nappe
   // sombre à chaque bout des ruelles des rangs 2 à 4 (la ruelle continue dans la nuit au lieu de buter sur un mur)
-  brumesLoin: [[120, 12, 0, 18, -47, 0.3, 0.006, [6, 1.2], 2.2], [170, 20, 0, 22, -56, 0.36, 0.005, [5, 1.3], 2.2], [270, 34, 0, 26, -80, 0.36, 0.004, [4, 1.4], 2.2], [120, 2, 0, -2.2, 6, 0.22, 0.012, [6, 1]]],
+  brumesLoin: [[120, 12, 0, 18, -47, 0.3, 0.006, [6, 1.2], 2.2], [170, 20, 0, 22, -56, 0.36, 0.005, [5, 1.3], 2.2], [270, 34, 0, 26, -70, 0.36, 0.004, [4, 1.4], 2.2], [120, 2, 0, -2.2, 6, 0.22, 0.012, [6, 1]]],
 };
 
 /** Dans la page : boîte (px) des pixels visibles d'une image entre les colonnes `c0` et `c1`. */
@@ -112,38 +116,57 @@ if (MODE === 'assembler') {
   plans.rue = { ...pl.rue };
   plans['premier-plan'] = { ...pl['premier-plan'] };
   plans.eau = { ...pl.eau };
-  // rangs 2 à 4 : fonds des ruelles et flancs, morceaux des frises du kit à leur place au monde (un calage continu par
-  // frise : la façade est une, coupée aux passages et aux places)
-  for (const f of PLAN_QUAI.facades.filter((u) => !u.place && (u.flanc || u.rang === 2 || u.rang === 3))) {
-    const k = f.flanc ? P.flancs[f.rang] : P.fonds[f.rang];
+  // rangs 2 à 4 : fonds des ruelles, flancs et fond de la cour, morceaux des frises du kit posés d'un mur mitoyen à un
+  // autre (passe 67 : aucune maison coupée au bord d'un passage ou d'une place) ; chaque morceau est choisi parmi les
+  // limites des maisons de sa frise, au plus près de la largeur à couvrir (étirement de 0,8 à 1,25), en évitant de
+  // reprendre les mêmes maisons
+  const usage = { a: [], b: [] };
+  const choisir = (frise, W) => {
+    const B = kit.frises[frise].maisons; let best = null;
+    for (let i = 0; i < B.length; i++) for (let j = i + 1; j < B.length; j++) {
+      const span = B[j] - B[i]; const sc = W / span;
+      if (sc < P.etirement[0] || sc > P.etirement[1]) continue;
+      const ov = usage[frise].reduce((m, [u0, u1]) => m + Math.max(0, Math.min(u1, B[j]) - Math.max(u0, B[i])), 0) / span;
+      const cost = Math.abs(Math.log(sc)) + 0.6 * ov;
+      if (!best || cost < best.cost - 1e-9) best = { s: B[i], e: B[j], sc, cost };
+    }
+    if (!best) throw new Error(`frise ${frise} : aucun morceau de maisons entières pour ${W} m`);
+    usage[frise].push([best.s, best.e]);
+    return best;
+  };
+  report.morceaux = {};
+  const centre4 = [-P.chapelle.largeur / 2, P.chapelle.largeur / 2];
+  const morceaux = PLAN_QUAI.facades.filter((u) => !u.place && (u.flanc || u.rang >= 2)).flatMap((f) => (f.rang === 4 && !f.flanc ? [{ ...f, x1: centre4[0] }, { ...f, x0: centre4[1] }] : [f]));
+  for (const f of morceaux) {
+    const k = f.flanc ? P.flancs[f.rang] : f.rang === 4 ? { ...P.fond4, centre: 0 } : P.fonds[f.rang];
     const fr = kit.frises[k.frise];
-    const pxm = fr.size[0] / fr.largeur;
-    const px = (x) => fr.size[0] / 2 + (x - k.centre) * pxm;
-    const a = Math.max(f.x0, k.centre - fr.largeur / 2); const b = Math.min(f.x1, k.centre + fr.largeur / 2);
-    if (b - a < 0.5) continue;
-    const id = `${f.flanc ? 'flanc' : 'fond'}-rang${f.rang}-${Math.round(a)}`;
-    plans[id] = { ...kitPlate(fr), uv: [r3(Math.max(0, px(a)) / fr.size[0]), 0, r3(Math.min(fr.size[0], px(b)) / fr.size[0]), 1], width: r3(b - a), at: [r3((a + b) / 2), 0, f.z], fog: k.fog, lit: k.lit, ...(k.voile ? { voile: k.voile } : {}), coupe: true, ...cz(f.rang) };
+    const W = f.x1 - f.x0;
+    const m = choisir(k.frise, W);
+    const id = `${f.flanc ? 'flanc' : 'fond'}-rang${f.rang}-${Math.round(f.x0)}`;
+    plans[id] = { ...kitPlate(fr), uv: [r3(m.s / fr.largeur), 0, r3(Math.min(1, m.e / fr.largeur)), 1], width: r3(W), at: [r3((f.x0 + f.x1) / 2), 0, f.z], fog: k.fog, lit: k.lit, ...(k.voile ? { voile: k.voile } : {}), ...(f.rang < 4 || f.flanc ? { coupe: true, ...cz(f.rang) } : {}) };
+    report.morceaux[id] = { frise: k.frise, de: m.s, a: m.e, etirement: r3(m.sc) };
   }
   // fonds des places : les monuments du kit (le spot de chaque rang)
   for (const f of PLAN_QUAI.facades.filter((u) => u.place)) {
     const m = kit.monuments.panneaux[P.monuments[f.place]];
     plans[`fond-${f.place}`] = { ...kitPlate(kit.monuments), uv: m.uv, width: r3(f.x1 - f.x0), at: [r3((f.x0 + f.x1) / 2), 0, f.z], lit: 0.3, fog: 0.25, coupe: true, ...cz(f.rang) };
   }
-  // rang 4 : la ville haute au fond de la cour, la chapelle du kit devant (le cœur du quartier)
+  // rang 4 : la chapelle au milieu de la rangée du fond de la cour (le cœur du quartier) ; la ville haute au loin
   const tr = pl['troisieme-rang'];
   const f4 = PLAN_QUAI.facades.find((u) => u.rang === 4 && !u.flanc);
-  plans['fond-cour'] = { ...tr, uv: [0, 0, 1, P.fond4.v1], width: P.fond4.largeur, at: [0, P.fond4.y, f4.z], voile: P.fond4.voile, fog: P.fond4.fog, lit: P.fond4.lit };
+  plans['ville-haute'] = { ...tr, uv: [0, 0, 1, P.villeHaute.v1], width: P.villeHaute.largeur, at: [0, P.villeHaute.y, P.villeHaute.z], voile: P.villeHaute.voile, fog: P.villeHaute.fog };
   plans['cour-chapelle'] = { ...kitPlate(kit.monuments), uv: kit.monuments.panneaux.chapelle.uv, width: P.chapelle.largeur, at: [P.chapelle.x, 0, r3(f4.z + P.chapelle.devant)], lit: P.chapelle.lit, fog: P.chapelle.fog };
-  // murs de côté : les panneaux du kit coupés à leur longueur (hauteur gardée, 12,5 m) : passages (colombages côté ouest,
+  // murs de côté : les panneaux du kit coupés à leur longueur : passages (colombages côté ouest,
   // plâtre côté est), côtés des places (plâtre), bouts des ruelles (pignon à porte cochère, coupé au milieu)
   const mu = kit.murs;
   const nWall = {};
   for (const m of PLAN_QUAI.murs) {
     const L = m.z1 - m.z0;
     const nom = m.role === 'bout' ? 'pignon' : m.role === 'place' ? 'platre' : m.vers === 'est' ? 'colombages' : 'platre';
-    const [u0, , u1] = mu.panneaux[nom].uv;
+    // passe 67 : hauteur utile du panneau (colombages et plâtre : leurs 9 m du bas, dans l'ombre du passage)
+    const [u0, v0, u1] = mu.panneaux[nom].uv;
     const frac = Math.min(1, L / mu.longueur) * (u1 - u0);
-    const uv = nom === 'pignon' ? [r3((u0 + u1) / 2 - frac / 2), 0, r3((u0 + u1) / 2 + frac / 2), 1] : [r3(u0), 0, r3(Math.min(u1, u0 + frac)), 1];
+    const uv = nom === 'pignon' ? [r3((u0 + u1) / 2 - frac / 2), v0, r3((u0 + u1) / 2 + frac / 2), 1] : [r3(u0), v0, r3(Math.min(u1, u0 + frac)), 1];
     const id = `mur-${m.role}-${m.rang}-${(nWall[`${m.role}-${m.rang}`] = (nWall[`${m.role}-${m.rang}`] ?? 0) + 1)}`;
     plans[id] = { ...kitPlate(mu), orient: 'cote', vers: m.vers, uv, at: [m.x, 0, r3((m.z0 + m.z1) / 2)], width: r3(L), lit: P.murs.lit, coupe: true, ...cz(m.rang) };
   }
@@ -247,7 +270,7 @@ if (MODE === 'verifier') {
       const c = document.createElement('canvas'); c.width = 3 * tw + 4 * pad; c.height = top + 3 * (th + 36) + 16;
       const g = c.getContext('2d'); g.fillStyle = '#10121a'; g.fillRect(0, 0, c.width, c.height);
       g.fillStyle = '#e8dcc0'; g.font = 'bold 17px system-ui';
-      g.fillText('Quartier en rangs : le Quai en quatre rangs habillé du kit des rangs (passe 66 : 5 images générées, traitées par script, non approuvées ; laboratoire seulement)', pad, 26);
+      g.fillText('Quartier en rangs : le Quai en quatre rangs (passe 67 : façades entières, murs sous les toits, cœur intégré, balises des passages ; kit non approuvé ; laboratoire)', pad, 26);
       g.font = '14px system-ui';
       const X = (col) => pad + col * (tw + pad); const Y = (row) => top + row * (th + 36);
       const tile = (k, x, y) => { const i = im[k]; const s2 = Math.min(tw / i.width, th / i.height); g.drawImage(i, x + (tw - i.width * s2) / 2, y + (th - i.height * s2) / 2, i.width * s2, i.height * s2); };
@@ -274,7 +297,8 @@ if (MODE === 'verifier') {
       const qx = X(2); let qy = Y(2) - 2; const qw = tw;
       const wrap = (t, bold = false) => { g.font = `${bold ? 'bold ' : ''}13px system-ui`; const words = t.split(' '); let line = ''; for (const w of words) { const n = line ? `${line} ${w}` : w; if (g.measureText(n).width > qw) { qy += 17; g.fillText(line, qx, qy); line = w; } else line = n; } qy += 17; g.fillText(line, qx, qy); qy += 5; };
       wrap('Grammaire (rangs.ts) : rang 1 = la rue du premier plan ; entre deux rangs, une bande bâtie percée de passages jamais alignés d’une bande à l’autre ; rangs 2 à 4 = des ruelles de plus en plus courtes, fermées par un mur à leurs bouts, qui débordent chacune sur une place (le spot du rang) ; le dernier rang est le cœur du quartier.', true);
-      wrap('Côtés : les façades des bandes continuent au-delà des bouts des ruelles (62 m de large), murs et brume aux bouts. Caméra frontale : elle suit 90 % de la profondeur et s’élève de 6° à 16°. Le bloc juste devant le personnage devient un fantôme (12 %), les rangs dépassés de deux s’effacent.');
+      wrap('Côtés : les façades des bandes continuent au-delà des bouts des ruelles (62 m de large), murs et brume aux bouts. Caméra frontale : elle suit 90 % de la profondeur et s’élève de 6° à 16°. Le bloc juste devant le personnage devient un fantôme assourdi (12 %), les rangs dépassés de deux s’effacent ; le sol des rangs dépassés reste, pour le retour.');
+      wrap('Balises (passe 67) : à chaque bouche d’un passage, une lueur ambrée au sol et des chevrons qui filent vers le rang où il mène, à l’aller (« Vers la rue Haute ») comme au retour (« Retour vers le Quai ») ; leur nom s’affiche en approchant.');
       wrap('Kit des rangs (5 images, 21 sur 30) : deux rangées de maisons de ruelle assemblées en deux frises (fonds et flancs), trois murs (passages, places, bouts), trois monuments (halle, maison des Joueurs, chapelle), six objets (étal, puits, fontaine, banc, charrette, niche). Rien n’est approuvé.');
       return c.toDataURL('image/png');
     }, { imgs: SPOTS.map(([k]) => dataUrl(shots[k])), spots: SPOTS, fig: Object.fromEntries(Object.entries(report.figures).map(([k, v]) => [k, v.figurePx])), ilot: info.ilot, plan: PLAN_QUAI });

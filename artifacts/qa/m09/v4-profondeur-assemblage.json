@@ -1,11 +1,97 @@
 {
-  "date": "2026-10-20T06:03:55.517Z",
-  "commit": "3a7492e",
+  "date": "2026-10-20T06:24:26.621Z",
+  "commit": "9a773a9",
   "mode": "assembler",
   "checks": [
-    "OK manifeste du Quai en rangs : 60 plans découpés dans 12 images (kit des rangs : 39 plans), 16 lumières, 10 brumes"
+    "OK manifeste du Quai en rangs : 62 plans découpés dans 12 images (kit des rangs : 41 plans), 16 lumières, 10 brumes"
   ],
   "console": [],
+  "morceaux": {
+    "fond-rang2--31": {
+      "frise": "a",
+      "de": 7.749,
+      "a": 31,
+      "etirement": 0.989
+    },
+    "fond-rang2--5": {
+      "frise": "a",
+      "de": 38.419,
+      "a": 43.839,
+      "etirement": 1.107
+    },
+    "fond-rang2-13": {
+      "frise": "a",
+      "de": 48.229,
+      "a": 64.339,
+      "etirement": 1.117
+    },
+    "flanc-rang2--31": {
+      "frise": "b",
+      "de": 36.106,
+      "a": 50.421,
+      "etirement": 0.978
+    },
+    "flanc-rang2-17": {
+      "frise": "b",
+      "de": 12.855,
+      "a": 27.745,
+      "etirement": 0.94
+    },
+    "fond-rang3--31": {
+      "frise": "b",
+      "de": 0.016,
+      "a": 16.806,
+      "etirement": 1.013
+    },
+    "fond-rang3--8": {
+      "frise": "b",
+      "de": 50.421,
+      "a": 61.795,
+      "etirement": 1.187
+    },
+    "fond-rang3-9": {
+      "frise": "b",
+      "de": 16.806,
+      "a": 39.272,
+      "etirement": 1.002
+    },
+    "flanc-rang3--31": {
+      "frise": "a",
+      "de": 31,
+      "a": 48.229,
+      "etirement": 0.987
+    },
+    "flanc-rang3-14": {
+      "frise": "a",
+      "de": 0,
+      "a": 16.109,
+      "etirement": 1.055
+    },
+    "fond-rang4--31": {
+      "frise": "a",
+      "de": 11.874,
+      "a": 38.419,
+      "etirement": 1.017
+    },
+    "fond-rang4-4": {
+      "frise": "a",
+      "de": 38.419,
+      "a": 64.339,
+      "etirement": 1.042
+    },
+    "flanc-rang4--31": {
+      "frise": "b",
+      "de": 39.272,
+      "a": 61.795,
+      "etirement": 0.932
+    },
+    "flanc-rang4-10": {
+      "frise": "b",
+      "de": 0.016,
+      "a": 23.371,
+      "etirement": 0.899
+    }
+  },
   "plans": {
     "ciel": {
       "file": "quai-ciel.png",
@@ -156,9 +242,9 @@
     "fond-rang2--31": {
       "file": "rangs-frise-a.png",
       "uv": [
-        0.018,
+        0.12,
         0,
-        0.376,
+        0.482,
         1
       ],
       "at": [
@@ -173,9 +259,9 @@
     "fond-rang2--5": {
       "file": "rangs-frise-a.png",
       "uv": [
-        0.422,
+        0.597,
         0,
-        0.516,
+        0.681,
         1
       ],
       "at": [
@@ -190,9 +276,9 @@
     "fond-rang2-13": {
       "file": "rangs-frise-a.png",
       "uv": [
-        0.702,
+        0.75,
         0,
-        0.982,
+        1,
         1
       ],
       "at": [
@@ -207,9 +293,9 @@
     "flanc-rang2--31": {
       "file": "rangs-frise-b.png",
       "uv": [
-        0.014,
+        0.567,
         0,
-        0.233,
+        0.791,
         1
       ],
       "at": [
@@ -224,9 +310,9 @@
     "flanc-rang2-17": {
       "file": "rangs-frise-b.png",
       "uv": [
-        0.767,
+        0.202,
         0,
-        0.986,
+        0.435,
         1
       ],
       "at": [
@@ -241,9 +327,9 @@
     "fond-rang3--31": {
       "file": "rangs-frise-b.png",
       "uv": [
-        0.014,
         0,
-        0.28,
+        0,
+        0.264,
         1
       ],
       "at": [
@@ -258,9 +344,9 @@
     "fond-rang3--8": {
       "file": "rangs-frise-b.png",
       "uv": [
-        0.374,
+        0.791,
         0,
-        0.586,
+        0.97,
         1
       ],
       "at": [
@@ -275,9 +361,9 @@
     "fond-rang3-9": {
       "file": "rangs-frise-b.png",
       "uv": [
-        0.633,
+        0.264,
         0,
-        0.986,
+        0.616,
         1
       ],
       "at": [
@@ -292,9 +378,9 @@
     "flanc-rang3--31": {
       "file": "rangs-frise-a.png",
       "uv": [
-        0.018,
+        0.482,
         0,
-        0.282,
+        0.75,
         1
       ],
       "at": [
@@ -309,9 +395,9 @@
     "flanc-rang3-14": {
       "file": "rangs-frise-a.png",
       "uv": [
-        0.718,
         0,
-        0.982,
+        0,
+        0.25,
         1
       ],
       "at": [
@@ -323,12 +409,46 @@
       "orient": "face",
       "coupe": true
     },
+    "fond-rang4--31": {
+      "file": "rangs-frise-a.png",
+      "uv": [
+        0.185,
+        0,
+        0.597,
+        1
+      ],
+      "at": [
+        -17.5,
+        0,
+        -43
+      ],
+      "width": 27,
+      "orient": "face",
+      "coupe": false
+    },
+    "fond-rang4-4": {
+      "file": "rangs-frise-a.png",
+      "uv": [
+        0.597,
+        0,
+        1,
+        1
+      ],
+      "at": [
+        17.5,
+        0,
+        -43
+      ],
+      "width": 27,
+      "orient": "face",
+      "coupe": false
+    },
     "flanc-rang4--31": {
       "file": "rangs-frise-b.png",
       "uv": [
-        0.014,
+        0.616,
         0,
-        0.343,
+        0.97,
         1
       ],
       "at": [
@@ -343,9 +463,9 @@
     "flanc-rang4-10": {
       "file": "rangs-frise-b.png",
       "uv": [
-        0.657,
         0,
-        0.986,
+        0,
+        0.367,
         1
       ],
       "at": [
@@ -391,7 +511,7 @@
       "orient": "face",
       "coupe": true
     },
-    "fond-cour": {
+    "ville-haute": {
       "file": "quai-troisieme-rang.png",
       "uv": [
         0,
@@ -401,10 +521,10 @@
       ],
       "at": [
         0,
-        0,
-        -43
+        2,
+        -75
       ],
-      "width": 96,
+      "width": 140,
       "orient": "face",
       "coupe": false
     },
@@ -419,7 +539,7 @@
       "at": [
         0,
         0,
-        -42.95
+        -43
       ],
       "width": 8,
       "orient": "face",
@@ -429,7 +549,7 @@
       "file": "rangs-murs.png",
       "uv": [
         0,
-        0,
+        0.28,
         0.333,
         1
       ],
@@ -447,7 +567,7 @@
       "file": "rangs-murs.png",
       "uv": [
         0.333,
-        0,
+        0.28,
         0.667,
         1
       ],
@@ -465,7 +585,7 @@
       "file": "rangs-murs.png",
       "uv": [
         0,
-        0,
+        0.28,
         0.333,
         1
       ],
@@ -483,7 +603,7 @@
       "file": "rangs-murs.png",
       "uv": [
         0.333,
-        0,
+        0.28,
         0.667,
         1
       ],
@@ -501,7 +621,7 @@
       "file": "rangs-murs.png",
       "uv": [
         0.333,
-        0,
+        0.28,
         0.584,
         1
       ],
@@ -519,7 +639,7 @@
       "file": "rangs-murs.png",
       "uv": [
         0.333,
-        0,
+        0.28,
         0.584,
         1
       ],
@@ -573,7 +693,7 @@
       "file": "rangs-murs.png",
       "uv": [
         0,
-        0,
+        0.28,
         0.333,
         1
       ],
@@ -591,7 +711,7 @@
       "file": "rangs-murs.png",
       "uv": [
         0.333,
-        0,
+        0.28,
         0.667,
         1
       ],
@@ -609,7 +729,7 @@
       "file": "rangs-murs.png",
       "uv": [
         0.333,
-        0,
+        0.28,
         0.542,
         1
       ],
@@ -627,7 +747,7 @@
       "file": "rangs-murs.png",
       "uv": [
         0.333,
-        0,
+        0.28,
         0.542,
         1
       ],
@@ -681,7 +801,7 @@
       "file": "rangs-murs.png",
       "uv": [
         0,
-        0,
+        0.28,
         0.291,
         1
       ],
@@ -699,7 +819,7 @@
       "file": "rangs-murs.png",
       "uv": [
         0.333,
-        0,
+        0.28,
         0.625,
         1
       ],
