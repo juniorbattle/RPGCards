@@ -27,7 +27,8 @@
  * Tout ou rien par îlot : le diorama ne remplace le décor par code que si tous ses plans sont conformes et admis ; un
  * seul plan refusé, et l'îlot garde son décor par code (jamais de mélange des deux). Budgets du contrat v1 (à revoir
  * après l'essai technique) : PNG ≤ 8 Mo, côté ≤ 4096 px, 8 plans au plus, 32 Mo de fichiers et 160 Mo de mémoire GPU
- * (mipmaps comprises) par îlot ; 12 plans au plus depuis la passe 60 (diorama plus profond).
+ * (mipmaps comprises) par îlot ; 12 plans au plus depuis la passe 60 (diorama plus profond) ; 48 Mo de fichiers depuis la
+ * passe 66 (quartier en rangs habillé du kit : 12 images, 38 Mo).
  *
  * Passe 62 (profondeur praticable, preuve ; champs facultatifs, le Quai actuel ne les emploie pas) :
  *   - `uv` : sous-rectangle de l'image [u0, v0, u1, v1] (fractions, origine en haut à gauche) ; plusieurs plans peuvent
@@ -55,7 +56,7 @@ export const DECOR_VERSION = 1;
 export const DECOR_MAX_PLATES = 64;
 export const DECOR_MAX_SIDE = 4096;
 export const DECOR_MAX_BYTES = 8 * 1024 * 1024;
-export const DECOR_MAX_ILOT_BYTES = 32 * 1024 * 1024;
+export const DECOR_MAX_ILOT_BYTES = 48 * 1024 * 1024;
 export const DECOR_MAX_GPU_BYTES = 160 * 1024 * 1024;
 /** Lumières du moteur par îlot (celles des uniformes partagés, `MAX_LIGHTS` de `materiaux.ts`). */
 export const DECOR_MAX_LIGHTS = 16;

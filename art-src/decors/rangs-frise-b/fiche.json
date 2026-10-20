@@ -1,0 +1,136 @@
+{
+  "id": "rangs-frise-b",
+  "statut": "kit des quartiers en rangs (ADR 028, passe 66), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "auteur": "Claude Code (session V4, passe 66), à la demande du responsable : « Oui, génère les 5 images du kit des rangs (tools/m09-lot-quai-3.mjs), traite-les par script et pose-les dans le Quai en quatre rangs. »",
+  "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-quai-3.mjs",
+  "aseprite": "non utilisé : traitement par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-kit-rangs.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production ; aucune analyse juridique faite par l’agent : point à confirmer par le responsable avant tout usage en jeu",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "sources": [
+    {
+      "nom": "rangs-ruelle-a",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-20T05:50:36.344Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1536x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image) and of our harbour facades (second and third images). Do not copy their composition.\n\nPaint ONE isolated background layer for a 2.5D night harbour town, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): a continuous row of five narrow townhouses lining a quiet back street, spanning the full width of the image, three storeys tall plus their roofs, filling about the lower 75% of the image. Scale: a person is about 170 pixels tall in this image; doors are about 200 pixels tall. Street level, from left to right: a cobbler's shopfront with an ivory canvas awning and a lit window display, a plain house door with a hanging lantern, a narrow tavern with a lit bow window, a closed carriage gate, a herbalist's door with bunches of dried plants. Half-timbered upper storeys with warm lit windows and dark ones, one balcony with flower boxes, steep slate roofs with dormers and chimneys, house heights varying by about one storey; wall lanterns glowing warm amber at door height; one plain cloth pennant in veil blue without any mark. The bottom edge of the image is a straight horizontal line at the foot of the walls, with no ground, no steps and no cobbles in front.\n\nEverything around the subjects (above the roofs, between the panels, around the objects) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-20-v4-quai/quai-facades-ouest.png",
+          "sha256": "a98ab2077882538223808f4ff1d24131643a657c1cf8181258acf17a96fe3929"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-20-v4-rangs/rangs-ruelle-a.png (dossier principal, ignoré par git)",
+        "sha256": "03edc3cc328ed147d6118781eef5123cf784a905c2bad9393f1bdda15b18acb7",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 4603,
+        "input_tokens_details": {
+          "image_tokens": 4096,
+          "text_tokens": 507
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10091
+      }
+    },
+    {
+      "nom": "rangs-ruelle-b",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-20T05:51:53.414Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1536x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image) and of our harbour facades (second and third images). Do not copy their composition.\n\nPaint ONE isolated background layer for a 2.5D night harbour town, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): a continuous row of four narrow buildings of a poorer craftsmen's street, spanning the full width of the image, two to three storeys plus their roofs, filling about the lower 70% of the image, different from a merchants' street: rough grey stone and patched pale plaster rather than fine half-timbering. Scale: a person is about 170 pixels tall in this image; doors are about 200 pixels tall. Street level, from left to right: a cooper's workshop with wide-open plank doors and a warm glow inside, an outside stone stair climbing to an upper door, a dark covered porch tunnelling through the ground floor (an opening about 3 metres wide, deep shadow inside), a small gambling den door with a single red lantern. Upper storeys: shuttered windows, a few warm lit ones, a laundry line between two windows, a wooden gallery, crooked chimneys, slate and old tile roofs. Wall lanterns glowing warm amber at door height. The bottom edge of the image is a straight horizontal line at the foot of the walls, with no ground in front.\n\nEverything around the subjects (above the roofs, between the panels, around the objects) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-20-v4-quai/quai-facades-ouest.png",
+          "sha256": "a98ab2077882538223808f4ff1d24131643a657c1cf8181258acf17a96fe3929"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-20-v4-rangs/rangs-ruelle-b.png (dossier principal, ignoré par git)",
+        "sha256": "53f01c2aaba53c41728b89dd40e91c18fafc6572cf51cb963d8c7ffa7ce9e70c",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 4607,
+        "input_tokens_details": {
+          "image_tokens": 4096,
+          "text_tokens": 511
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10095
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs",
+      "tools/m09-kit-rangs.mjs"
+    ],
+    "etapes": [
+      "fond magenta détouré (alpha tiré de l’écart au magenta, bords démêlés du fond), recadré sur le pied des murs, pour chaque rangée",
+      "rangée A : fente vide entre deux maisons refermée (colonnes vides retirées)",
+      "ramenées à la même hauteur de porte (A : 72 px/m, B : 62 px/m) et assemblées pieds alignés à 62 px/m : B en miroir, A en miroir, B sans son bout droit (15 %)"
+    ],
+    "decoupes": "art-src/decors/kit-rangs.json"
+  },
+  "sortie": {
+    "fichier": "public/decors/rangs-frise-b.png",
+    "sha256": "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4",
+    "octets": 6392443,
+    "dimensions": [
+      3951,
+      834
+    ]
+  },
+  "approved": false,
+  "chaine_des_empreintes": [
+    "03edc3cc328ed147d6118781eef5123cf784a905c2bad9393f1bdda15b18acb7 (brut rangs-ruelle-a)",
+    "53f01c2aaba53c41728b89dd40e91c18fafc6572cf51cb963d8c7ffa7ce9e70c (brut rangs-ruelle-b)",
+    "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4 (planche)"
+  ]
+}

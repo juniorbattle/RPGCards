@@ -1,0 +1,309 @@
+{
+  "lot": "2026-10-20-v4-rangs",
+  "frises": {
+    "a": {
+      "file": "rangs-frise-a.png",
+      "size": [
+        3989,
+        834
+      ],
+      "dens": 62,
+      "largeur": 64.339,
+      "hauteur": 13.452,
+      "parties": [
+        {
+          "rangee": "a",
+          "miroir": false,
+          "x0": 0,
+          "largeur": 20.484
+        },
+        {
+          "rangee": "b",
+          "miroir": false,
+          "x0": 20.484,
+          "largeur": 23.371
+        },
+        {
+          "rangee": "a",
+          "miroir": true,
+          "x0": 43.855,
+          "largeur": 20.484
+        }
+      ],
+      "sha256": "0b91326657b8a7923c1dfffbfc48bfeafeaaeb31ca405f8bfc689d390fee02c9",
+      "fiche": "art-src/decors/rangs-frise-a/fiche.json"
+    },
+    "b": {
+      "file": "rangs-frise-b.png",
+      "size": [
+        3951,
+        834
+      ],
+      "dens": 62,
+      "largeur": 63.726,
+      "hauteur": 13.452,
+      "parties": [
+        {
+          "rangee": "b",
+          "miroir": true,
+          "x0": 0,
+          "largeur": 23.371
+        },
+        {
+          "rangee": "a",
+          "miroir": true,
+          "x0": 23.371,
+          "largeur": 20.484
+        },
+        {
+          "rangee": "b",
+          "miroir": false,
+          "x0": 43.855,
+          "largeur": 19.871
+        }
+      ],
+      "sha256": "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4",
+      "fiche": "art-src/decors/rangs-frise-b/fiche.json"
+    }
+  },
+  "murs": {
+    "file": "rangs-murs.png",
+    "size": [
+      1536,
+      800
+    ],
+    "longueur": 8,
+    "hauteur": 12.5,
+    "panneaux": {
+      "colombages": {
+        "uv": [
+          0,
+          0,
+          0.333,
+          1
+        ],
+        "source": [
+          0,
+          38,
+          457,
+          899
+        ]
+      },
+      "platre": {
+        "uv": [
+          0.333,
+          0,
+          0.667,
+          1
+        ],
+        "source": [
+          495,
+          39,
+          936,
+          900
+        ]
+      },
+      "pignon": {
+        "uv": [
+          0.667,
+          0,
+          1,
+          1
+        ],
+        "source": [
+          980,
+          2,
+          1430,
+          899
+        ]
+      }
+    },
+    "sha256": "8d725fdb1909b1555a928b2dd955750e960045bcb9cba3a58421d2bed51f4d1e",
+    "fiche": "art-src/decors/rangs-murs/fiche.json"
+  },
+  "monuments": {
+    "file": "rangs-monuments.png",
+    "size": [
+      1506,
+      915
+    ],
+    "panneaux": {
+      "halle": {
+        "box": [
+          12,
+          2,
+          681,
+          868
+        ],
+        "uv": [
+          0.008,
+          0.002,
+          0.452,
+          0.949
+        ],
+        "rapport": 1.294
+      },
+      "joueurs": {
+        "box": [
+          680,
+          27,
+          1120,
+          868
+        ],
+        "uv": [
+          0.452,
+          0.03,
+          0.744,
+          0.949
+        ],
+        "rapport": 1.911
+      },
+      "chapelle": {
+        "box": [
+          1125,
+          42,
+          1506,
+          868
+        ],
+        "uv": [
+          0.747,
+          0.046,
+          1,
+          0.949
+        ],
+        "rapport": 2.168
+      }
+    },
+    "sha256": "b30a143625240e6acf5a6d29da85af83e36c4d946f58c5634ea1787cb9f13ebb",
+    "fiche": "art-src/decors/rangs-monuments/fiche.json"
+  },
+  "mobilier": {
+    "file": "rangs-mobilier.png",
+    "size": [
+      1536,
+      1024
+    ],
+    "dens": 100,
+    "objets": {
+      "puits": {
+        "box": [
+          93,
+          67,
+          441,
+          457
+        ],
+        "uv": [
+          0.061,
+          0.065,
+          0.287,
+          0.446
+        ],
+        "largeur": 3.48,
+        "hauteur": 3.9,
+        "lanternes": [
+          [
+            -1.263,
+            2.163
+          ]
+        ]
+      },
+      "fontaine": {
+        "box": [
+          574,
+          79,
+          956,
+          461
+        ],
+        "uv": [
+          0.374,
+          0.077,
+          0.622,
+          0.45
+        ],
+        "largeur": 3.82,
+        "hauteur": 3.82,
+        "lanternes": []
+      },
+      "etal": {
+        "box": [
+          1032,
+          91,
+          1472,
+          457
+        ],
+        "uv": [
+          0.672,
+          0.089,
+          0.958,
+          0.446
+        ],
+        "largeur": 4.4,
+        "hauteur": 3.66,
+        "lanternes": [
+          [
+            1.67,
+            1.98
+          ]
+        ]
+      },
+      "banc": {
+        "box": [
+          36,
+          518,
+          473,
+          916
+        ],
+        "uv": [
+          0.023,
+          0.506,
+          0.308,
+          0.895
+        ],
+        "largeur": 4.37,
+        "hauteur": 3.98,
+        "lanternes": []
+      },
+      "charrette": {
+        "box": [
+          574,
+          621,
+          1022,
+          925
+        ],
+        "uv": [
+          0.374,
+          0.606,
+          0.665,
+          0.903
+        ],
+        "largeur": 4.48,
+        "hauteur": 3.04,
+        "lanternes": []
+      },
+      "niche": {
+        "box": [
+          1176,
+          522,
+          1379,
+          923
+        ],
+        "uv": [
+          0.766,
+          0.51,
+          0.898,
+          0.901
+        ],
+        "largeur": 2.03,
+        "hauteur": 4.01,
+        "lanternes": [
+          [
+            -0.195,
+            2.026
+          ]
+        ]
+      }
+    },
+    "sha256": "6c7384d62f3f07fbdfa05299e758162d02d75ce4692d3ea84e00738fc0c4c1c2",
+    "fiche": "art-src/decors/rangs-mobilier/fiche.json"
+  }
+}

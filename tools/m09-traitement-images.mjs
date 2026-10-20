@@ -649,3 +649,99 @@ export async function cutOpening({ url, rect, arc, inset = 2 }) {
   const blob = await c.convertToBlob({ type: 'image/png' });
   return new Promise((r) => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(blob); });
 }
+
+/**
+ * Dans la page (passe 66, kit des quartiers en rangs) : supprime les colonnes vides (alpha nul, `minRun` px au moins)
+ * entre le premier et le dernier pixel visible d'une image détourée : rangée de maisons sans fente entre deux maisons.
+ */
+export async function closeGaps({ url, minRun = 2 }) {
+  const img = new Image(); img.src = url; await img.decode();
+  const W = img.width; const H = img.height;
+  const c = new OffscreenCanvas(W, H); const g = c.getContext('2d', { willReadFrequently: true });
+  g.drawImage(img, 0, 0);
+  const d = g.getImageData(0, 0, W, H).data;
+  const empty = new Uint8Array(W);
+  for (let x = 0; x < W; x++) { let any = false; for (let y = 0; y < H; y++) if (d[(y * W + x) * 4 + 3] > 25) { any = true; break; } empty[x] = any ? 0 : 1; }
+  const keep = [];
+  let x = 0;
+  while (x < W) {
+    if (!empty[x]) { keep.push(x); x++; continue; }
+    let e = x; while (e < W && empty[e]) e++;
+    if (e - x < minRun && x > 0 && e < W) for (let k = x; k < e; k++) keep.push(k);
+    x = e;
+  }
+  const out = new OffscreenCanvas(keep.length, H); const og = out.getContext('2d');
+  keep.forEach((sx, i) => og.drawImage(c, sx, 0, 1, H, i, 0, 1, H));
+  const blob = await out.convertToBlob({ type: 'image/png' });
+  const res = await new Promise((r) => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(blob); });
+  return { url: res, size: [keep.length, H], removed: W - keep.length };
+}
+
+/**
+ * Dans la page (passe 66) : boîtes des panneaux (murs, monuments) ou des objets (mobilier) d'une image détourée,
+ * séparés par des bandes vides : d'abord les rangées (`rows` > 1), puis, dans chacune, les colonnes. Une colonne compte
+ * si un pixel y dépasse `alphaMin` ; des bandes vides de moins de `minGap` px ne séparent pas. La boîte s'étend aux
+ * pixels faiblement visibles (ombres de contact) jusqu'à 12 px de part et d'autre. Boîtes en px [x0, y0, x1, y1).
+ * `count` : nombre de panneaux attendus par rangée ; deux panneaux qui se touchent sont séparés à la colonne la moins
+ * couverte du milieu (60 %) du plus large.
+ */
+export async function splitPanels({ url, rows = 1, minGap = 6, alphaMin = 0.5, count = 0 }) {
+  const img = new Image(); img.src = url; await img.decode();
+  const W = img.width; const H = img.height;
+  const c = new OffscreenCanvas(W, H); const g = c.getContext('2d', { willReadFrequently: true });
+  g.drawImage(img, 0, 0);
+  const d = g.getImageData(0, 0, W, H).data;
+  const A = (x, y) => d[(y * W + x) * 4 + 3] / 255;
+  const runs = (n, has) => {
+    const out = []; let s = -1; let last = -1;
+    for (let i = 0; i < n; i++) {
+      if (!has(i)) continue;
+      if (s < 0) s = i; else if (i - last > minGap) { out.push([s, last + 1]); s = i; }
+      last = i;
+    }
+    if (s >= 0) out.push([s, last + 1]);
+    return out;
+  };
+  let bands = [[0, H]];
+  if (rows > 1) {
+    bands = runs(H, (y) => { for (let x = 0; x < W; x++) if (A(x, y) > alphaMin) return true; return false; });
+    // garder les `rows` bandes les plus hautes, dans l'ordre (les miettes entre deux rangées sont ignorées)
+    bands = bands.sort((a, b) => (b[1] - b[0]) - (a[1] - a[0])).slice(0, rows).sort((a, b) => a[0] - b[0]);
+    bands = bands.map(([y0, y1], i) => [i === 0 ? 0 : Math.round((bands[i - 1][1] + y0) / 2), i === bands.length - 1 ? H : Math.round((y1 + bands[i + 1][0]) / 2)]);
+  }
+  const boxes = bands.map(([y0, y1]) => {
+    const cols = runs(W, (x) => { for (let y = y0; y < y1; y++) if (A(x, y) > alphaMin) return true; return false; });
+    const cover = (x) => { let n = 0; for (let y = y0; y < y1; y++) if (A(x, y) > alphaMin) n++; return n; };
+    while (count && cols.length < count && cols.length) {
+      const i = cols.reduce((m, r, k) => (r[1] - r[0] > cols[m][1] - cols[m][0] ? k : m), 0);
+      const [r0, r1] = cols[i]; const lo = Math.round(r0 + 0.2 * (r1 - r0)); const hi = Math.round(r1 - 0.2 * (r1 - r0));
+      let best = lo; for (let x = lo; x < hi; x++) if (cover(x) < cover(best)) best = x;
+      cols.splice(i, 1, [r0, best], [best + 1, r1]);
+    }
+    return cols.map(([cx0, cx1], i) => {
+      const lo = i === 0 ? 0 : cols[i - 1][1]; const hi = i === cols.length - 1 ? W : cols[i + 1][0];
+      let x0 = cx0; let x1 = cx1;
+      const any = (x) => { for (let y = y0; y < y1; y++) if (A(x, y) > 0.04) return true; return false; };
+      while (x0 > Math.max(lo, cx0 - 12) && any(x0 - 1)) x0--;
+      while (x1 < Math.min(hi, cx1 + 12) && any(x1)) x1++;
+      let by0 = y1; let by1 = y0;
+      for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) if (A(x, y) > 0.04) { if (y < by0) by0 = y; if (y + 1 > by1) by1 = y + 1; }
+      return [x0, by0, x1, by1];
+    });
+  });
+  return { size: [W, H], boxes };
+}
+
+/**
+ * Dans la page (passe 66) : atlas de panneaux ramenés chacun à la même case (`slotW` × `slotH` px), côte à côte : murs
+ * de côté à une longueur et une hauteur au monde communes (léger étirement horizontal assumé).
+ */
+export async function atlasPanels({ url, boxes, slotW, slotH }) {
+  const img = new Image(); img.src = url; await img.decode();
+  const c = new OffscreenCanvas(slotW * boxes.length, slotH); const g = c.getContext('2d');
+  g.imageSmoothingQuality = 'high';
+  boxes.forEach(([x0, y0, x1, y1], i) => g.drawImage(img, x0, y0, x1 - x0, y1 - y0, i * slotW, 0, slotW, slotH));
+  const blob = await c.convertToBlob({ type: 'image/png' });
+  const res = await new Promise((r) => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(blob); });
+  return { url: res, size: [slotW * boxes.length, slotH] };
+}
