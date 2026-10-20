@@ -497,3 +497,87 @@ export async function clearAbove({ url, row, topFrac = 0.15, margin = 14 }) {
   const out = await new Promise((r) => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(blob); });
   return { url: out, size: [W, H], cleared, components: keep.length, kept: keep.filter(Boolean).length };
 }
+
+/**
+ * Dans la page : emblèmes des familles du jeu posés sur des bannières peintes (retour du responsable : les emblèmes
+ * inventés par le modèle ne sont pas ceux du jeu). Pour chaque bannière (boîte intérieure mesurée sur l'image brute,
+ * famille ou 'aucun') : le tissu est refait à partir du sien (couleur médiane des pixels de tissu, plis par colonne,
+ * lumière par rangée, grain tiré de ses propres pixels, bords fondus sur 3 px), puis l'emblème exact du jeu est posé au
+ * centre : mêmes tracés que `emblemSvg` (`src/art/emblems.ts`), or en dégradé, trait sombre, plis et grain du tissu.
+ */
+export async function fixBanners({ url, banners, seed = 7 }) {
+  const PATHS = {
+    Cendre: ['M0,-10 L7.2,0 L0,10 L-7.2,0 Z M0,-5 Q3.2,-0.5 1.2,4.2 Q0,2 -1.2,4.2 Q-3.2,-0.5 0,-5 Z', 'evenodd'],
+    Voile: ['M0,-10 L10,0 L0,10 L-10,0 Z M0,-6.2 L-6.2,0 L0,6.2 L6.2,0 Z M0,-3 L3,0 L0,3 L-3,0 Z', 'evenodd'],
+    Astre: ['M0,-10 Q2.2,-2.2 10,0 Q2.2,2.2 0,10 Q-2.2,2.2 -10,0 Q-2.2,-2.2 0,-10 Z', 'nonzero'],
+  };
+  const ronce = () => { const parts = []; for (let i = 0; i < 5; i++) { const a = -Math.PI / 2 + (i * 2 * Math.PI) / 5; const cx = Math.cos(a) * 5.2; const cy = Math.sin(a) * 5.2; parts.push(`M${(cx + 4.2).toFixed(2)},${cy.toFixed(2)} a4.2,4.2 0 1,0 -8.4,0 a4.2,4.2 0 1,0 8.4,0`); } return parts.join(' '); };
+  PATHS.Ronce = [ronce(), 'nonzero'];
+  const img = new Image(); img.src = url; await img.decode();
+  const W = img.width; const H = img.height;
+  const c = new OffscreenCanvas(W, H); const g = c.getContext('2d', { willReadFrequently: true });
+  g.drawImage(img, 0, 0);
+  let st = seed >>> 0; const rnd = () => { st = (st * 1664525 + 1013904223) >>> 0; return st / 4294967296; };
+  const lumOf = (r, gg, b) => 0.3 * r + 0.59 * gg + 0.11 * b;
+  const done = [];
+  for (const bn of banners) {
+    const [x0, y0, x1, y1] = bn.box; const w = x1 - x0; const h = y1 - y0;
+    const id = g.getImageData(x0, y0, w, h); const d = id.data;
+    const orig = new Uint8ClampedArray(d);
+    // pixels de tissu : ni or ni clair (l'emblème peint est doré ou clair)
+    const lums = []; for (let i = 0; i < w * h; i++) lums.push(lumOf(d[i * 4], d[i * 4 + 1], d[i * 4 + 2]));
+    const sl = [...lums].sort((a, b) => a - b); const med = sl[sl.length >> 1];
+    const cloth = new Uint8Array(w * h);
+    for (let i = 0; i < w * h; i++) { const r = d[i * 4]; const b = d[i * 4 + 2]; cloth[i] = lums[i] < med + 28 && !(r - b > 45 && r > 110 && lums[i] > med + 8) ? 1 : 0; }
+    const ch = [[], [], []]; for (let i = 0; i < w * h; i++) if (cloth[i]) for (let k = 0; k < 3; k++) ch[k].push(d[i * 4 + k]);
+    const base = ch.map((a) => { const t = [...a].sort((u, v) => u - v); return t[t.length >> 1] ?? 60; });
+    const baseL = lumOf(...base) || 1;
+    const colL = Array.from({ length: w }, (_, x) => { let s0 = 0; let n = 0; for (let y = 0; y < h; y++) { const i = y * w + x; if (cloth[i]) { s0 += lums[i]; n++; } } return n ? s0 / n : baseL; });
+    const rowL = Array.from({ length: h }, (_, y) => { let s0 = 0; let n = 0; for (let x = 0; x < w; x++) { const i = y * w + x; if (cloth[i]) { s0 += lums[i]; n++; } } return n ? s0 / n : baseL; });
+    const cl = (v) => Math.max(0.55, Math.min(1.5, v));
+    const samples = []; for (let i = 0; i < w * h; i++) if (cloth[i]) samples.push(i);
+    const shade = new Float32Array(w * h);
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const i = y * w + x;
+      const sh = cl(colL[x] / baseL) * cl(rowL[y] / baseL);
+      shade[i] = sh;
+      const si = samples.length ? samples[Math.floor(rnd() * samples.length)] : i;
+      const sx = si % w; const grain = samples.length ? lums[si] - colL[sx] : 0;
+      for (let k = 0; k < 3; k++) d[i * 4 + k] = base[k] * sh + grain * 0.8;
+    }
+    // emblème du jeu
+    if (bn.family && PATHS[bn.family]) {
+      const size = Math.min(w * 0.78, h * 0.46); const sc = size / 20;
+      const ex = (bn.center ? bn.center[0] - x0 : w / 2); const ey = (bn.center ? bn.center[1] - y0 : h * 0.42);
+      const m = new OffscreenCanvas(w, h); const mg = m.getContext('2d');
+      mg.translate(ex, ey); mg.scale(sc, sc);
+      const path = new Path2D(PATHS[bn.family][0]);
+      // ombre portée sombre, un peu plus grande et décalée vers le bas à droite (pas de contour tracé : les tracés se
+      // recoupent dans la fleur de Ronce)
+      mg.save(); mg.translate(0.5, 0.7); mg.scale(1.12, 1.12); mg.fillStyle = 'rgba(30,18,8,0.85)'; mg.fill(path, PATHS[bn.family][1]); mg.restore();
+      const grd = mg.createLinearGradient(-8, -10, 8, 10); grd.addColorStop(0, '#f3d688'); grd.addColorStop(0.55, '#d4a64e'); grd.addColorStop(1, '#8e6526');
+      mg.fillStyle = grd; mg.fill(path, PATHS[bn.family][1]);
+      if (bn.family === 'Ronce') { mg.fillStyle = 'rgba(0,0,0,0.35)'; mg.beginPath(); mg.arc(0, 0, 2, 0, Math.PI * 2); mg.fill(); }
+      const md = mg.getImageData(0, 0, w, h).data;
+      for (let i = 0; i < w * h; i++) {
+        const a = md[i * 4 + 3] / 255; if (!a) continue;
+        const sh = Math.sqrt(shade[i]);
+        const si = samples.length ? samples[Math.floor(rnd() * samples.length)] : i;
+        const grain = samples.length ? (lums[si] - colL[si % w]) * 0.5 : 0;
+        for (let k = 0; k < 3; k++) d[i * 4 + k] = d[i * 4 + k] * (1 - a) + (md[i * 4 + k] * sh + grain) * a;
+      }
+    }
+    // bords fondus sur 3 px avec l'image d'origine (aucun raccord net)
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+      const e = Math.min(x, y, w - 1 - x, h - 1 - y); if (e >= 3) continue;
+      const t = (e + 0.5) / 3.5; const i = (y * w + x) * 4;
+      for (let k = 0; k < 3; k++) d[i + k] = orig[i + k] * (1 - t) + d[i + k] * t;
+    }
+    for (let i = 0; i < w * h; i++) d[i * 4 + 3] = orig[i * 4 + 3];
+    g.putImageData(id, x0, y0);
+    done.push({ box: bn.box, family: bn.family ?? 'aucun', base });
+  }
+  const blob = await c.convertToBlob({ type: 'image/png' });
+  const out = await new Promise((r) => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(blob); });
+  return { url: out, done };
+}
