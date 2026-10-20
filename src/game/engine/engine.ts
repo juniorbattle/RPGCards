@@ -3,7 +3,7 @@
  * Aucune dépendance DOM/rendu/timer. La RNG gameplay vit dans l’état (champ `rng`).
  * Règlement V3.0 + avenant mandaté V3.2 (affinité de Rang +1).
  */
-import { buildDeck, cardDef, EFFECTS, type CardDef } from '../catalog/cards';
+import { buildDeck, cardDef, EFFECTS, type CardDef, type Family } from '../catalog/cards';
 import { INSIGHT_MAX, INSIGHT_START, TECHNIQUES, type TechniqueId } from '../catalog/techniques';
 import {
   other, PLAYERS, RuleError, SLOTS,
@@ -92,7 +92,9 @@ export function createGame(config: GameConfig = DEFAULT_CONFIG): { state: GameSt
     const pc = config.players[pid];
     const techniques = [...new Set(pc.techniques)];
     if (techniques.length > 2) throw new RuleError('Deux Techniques équipées au maximum.');
-    const defs = buildDeck({ signature: pc.signature, variants: pc.variants });
+    // Avenant M10-A (AV-03) : deck explicite (mode Aventure), contrôlé à la forme R-AV ; sinon le deck standard, inchangé.
+    if (!pc.deck && pc.signature === null) throw new RuleError('Le deck standard exige une Signature.');
+    const defs = pc.deck ? checkedExplicitDeck(pc.deck, pc.signature) : buildDeck({ signature: pc.signature!, variants: pc.variants });
     const ids: string[] = [];
     defs.forEach((defId, i) => {
       const id = `${pid}#${String(i).padStart(2, '0')}`;
@@ -111,6 +113,24 @@ export function createGame(config: GameConfig = DEFAULT_CONFIG): { state: GameSt
   beginTurn(ctx);
   assertInvariants(state);
   return { state, events: ctx.events };
+}
+
+/**
+ * Avenant M10-A (AV-03, règle R-AV) : forme d'un deck explicite du mode Aventure : 16 cartes ordinaires, exactement
+ * quatre de chaque Rang ; chaque identité familiale au plus une fois (les neutres se répètent, ADR 030) ; zéro ou une
+ * Signature, celle annoncée par `signature`. La possession des cartes relève de l'aventure, pas du moteur.
+ */
+function checkedExplicitDeck(deck: readonly string[], signature: Family | null): string[] {
+  const defs = deck.map((id) => cardDef(id));
+  const sigs = defs.filter((d) => d.signature);
+  if (sigs.length > 1) throw new RuleError('Une seule Signature par deck.');
+  if ((sigs[0]?.family ?? null) !== signature) throw new RuleError('La Signature du deck ne correspond pas à celle annoncée.');
+  const ordinary = defs.filter((d) => !d.signature);
+  if (ordinary.length !== 16) throw new RuleError(`Le deck compte ${ordinary.length} cartes ordinaires au lieu de 16.`);
+  for (const r of [1, 2, 3, 4]) if (ordinary.filter((d) => d.rank === r).length !== 4) throw new RuleError(`Il faut exactement quatre cartes de Rang ${r}.`);
+  const familial = ordinary.filter((d) => d.family !== null).map((d) => d.identity);
+  if (new Set(familial).size !== familial.length) throw new RuleError('Une identité familiale en double dans le deck.');
+  return [...deck];
 }
 
 // ---------------------------------------------------------------------------
@@ -635,7 +655,7 @@ function resolveClash(ctx: Ctx): void {
       const def = ctx.def(p.slots[i]!.cardId);
       const prim = input[pid].primary;
       const value = plan.mode === 'rank' ? rankSupport(def, prim) : plan.mode === 'damage' ? damageCoefficient(def, prim) : null;
-      return { slot: i, mode: plan.mode, target: plan.target ?? null, defId: masked ? null : def.defId, family: def.family, masked, value: masked ? null : value, affinity: masked ? null : def.family === prim.family };
+      return { slot: i, mode: plan.mode, target: plan.target ?? null, defId: masked ? null : def.defId, family: def.family, masked, value: masked ? null : value, affinity: masked ? null : def.family !== null && def.family === prim.family };
     });
   }
   s.reveal.tactics = tacticsData as NonNullable<GameState['reveal']['tactics']>;

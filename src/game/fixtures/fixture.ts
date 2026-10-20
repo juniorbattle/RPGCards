@@ -7,9 +7,9 @@ import { createGame } from '../engine/engine';
 import { assertInvariants } from '../engine/invariants';
 import type { GameConfig, GameState, PlayerId, SlotIndex } from '../model/types';
 
-/** Définition courte : `Cendre-3` (Basic), `Cendre-3-ferveur`, `sig-Cendre`. */
+/** Définition courte : `Cendre-3` (Basic), `Cendre-3-ferveur`, `sig-Cendre`, `neutre-3` (avenant M10-A). */
 export function d(short: string): string {
-  if (short.startsWith('sig-')) return short;
+  if (short.startsWith('sig-') || short.startsWith('neutre-')) return short;
   return /-\d$/.test(short) ? `${short}-basic` : short;
 }
 
@@ -39,10 +39,12 @@ export function fixture(cfg: GameConfig, p1: SideSetup, p2: SideSetup, opts: { t
     p.hand = [];
     p.discard = [];
     p.slots = [null, null];
+    // première instance encore libre de cette définition (les neutres ont quatre instances par Rang, avenant M10-A)
     const take = (short: string) => {
-      const id = idOf(s, pid, d(short));
-      const i = all.indexOf(id);
+      idOf(s, pid, d(short));
+      const i = all.findIndex((x) => s.cards[x]!.defId === d(short));
       if (i < 0) throw new Error(`Carte déjà utilisée : ${short}`);
+      const id = all[i]!;
       all.splice(i, 1);
       return id;
     };

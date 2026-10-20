@@ -28,6 +28,8 @@ export function kitV2(id: string): FigureV2Kit | null {
   if (rival) return rival;
   if (id.startsWith('pnj-')) return npcKitV2(id);
   const fam = id.startsWith('player-') ? id.slice('player-'.length) : null;
+  // `player-gris` : duelliste sans Signature (deck d'aventure, avenant M10-A), tenue grise sans emblème
+  if (fam === 'gris') return playerKitV2('gris');
   return fam && (FAMILIES as readonly string[]).includes(fam) ? playerKitV2(fam as Family) : null;
 }
 
@@ -40,6 +42,6 @@ const BY_FAMILY: Record<Family, FigureV2Kit> = { Cendre: KAI_V2, Ronce: MAELLE_V
  * identifiant sans identité, qu’aucune donnée du jeu ne produit : l’identité du rival signature de sa famille, plutôt
  * qu’une scène ou un portrait en échec.
  */
-export function figureKitV2(f: { id: string; family: Family }): FigureV2Kit {
-  return kitV2(f.id) ?? BY_FAMILY[f.family];
+export function figureKitV2(f: { id: string; family: Family | null }): FigureV2Kit {
+  return kitV2(f.id) ?? BY_FAMILY[f.family ?? 'Cendre'];
 }

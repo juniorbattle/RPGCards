@@ -17,8 +17,8 @@ import { insightLabel, type EffectOutcome, type InsightSource } from './clash';
 export interface Concealment {
   /** La case de ce joueur porte une Secondaire camouflée dont l’identité n’était pas publique. */
   hidden(player: PlayerId, slot: SlotIndex): boolean;
-  /** Famille de la carte de cette case (toujours publique, §13.2). */
-  family(player: PlayerId, slot: SlotIndex): Family;
+  /** Famille de la carte de cette case (toujours publique, §13.2) ; `null` : carte neutre (avenant M10-A, AV-01). */
+  family(player: PlayerId, slot: SlotIndex): Family | null;
 }
 
 /** Conséquences observées par le moteur après application (PV réellement soignés, gain d’Insight). */
@@ -28,7 +28,7 @@ export interface Observed {
   insightOnlyHidden: Record<PlayerId, boolean>;
 }
 
-export const maskedOrigin = (family: Family, slot: SlotIndex): string => `Secondaire ${family} masquée (case ${slot + 1})`;
+export const maskedOrigin = (family: Family | null, slot: SlotIndex): string => `Secondaire ${family ?? 'neutre'} masquée (case ${slot + 1})`;
 
 export function hiddenSource(e: EffectOutcome, c: Concealment): boolean {
   return e.source.kind === 'secondary' && c.hidden(e.player, e.source.slot);

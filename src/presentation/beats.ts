@@ -58,7 +58,7 @@ export function buildResolutionBeats(events: readonly GameEvent[], ctx: BeatCont
       const used = list.filter((x) => x.mode !== 'keep');
       if (!list.length) return 'aucune Secondaire active';
       if (!used.length) return 'conserve tout';
-      return used.map((x) => `${x.masked ? `${x.family} masquée` : cardDef(x.defId!).name} → ${MODE[x.mode]}${x.mode === 'interfere' ? ` (case ${(x.target ?? 0) + 1})` : x.value !== null ? ` ${x.mode === 'rank' ? '+' : '×'}${x.value}` : ''}`).join(', ');
+      return used.map((x) => `${x.masked ? `${x.family ?? 'neutre'} masquée` : cardDef(x.defId!).name} → ${MODE[x.mode]}${x.mode === 'interfere' ? ` (case ${(x.target ?? 0) + 1})` : x.value !== null ? ` ${x.mode === 'rank' ? '+' : '×'}${x.value}` : ''}`).join(', ');
     };
     beats.push({ kind: 'tactics', title: 'Choix secrets révélés', detail: `Vous : ${fmt(me)}. Rival : ${fmt(opp)}.`, tone: 'neutral', focus: ['me-slots', 'opp-slots'], events: [tactics] });
   }
@@ -90,7 +90,7 @@ export function buildResolutionBeats(events: readonly GameEvent[], ctx: BeatCont
       for (const t of list) {
         if (t.mode !== 'rank') continue;
         const cancelled = report.cancelled?.[p]?.includes(t.slot);
-        const name = t.masked ? `${t.family} masquée` : cardDef(t.defId!).name;
+        const name = t.masked ? `${t.family ?? 'neutre'} masquée` : cardDef(t.defId!).name;
         parts.push(cancelled ? `${name} (annulé)` : `${name} +${t.value ?? '?'}${t.affinity ? ' (affinité +1)' : ''}`);
       }
       return `${report.publicScores[p]} = ${parts.join(' + ')}`;
@@ -156,7 +156,7 @@ export function buildResolutionBeats(events: readonly GameEvent[], ctx: BeatCont
     const lines = effects.map((e) => {
       const d = e.data as Record<string, any>;
       const st = d.status === 'success' ? 'RÉUSSI' : d.status === 'cancelled' ? 'ANNULÉ' : 'non rempli';
-      if (d.masked) return `Effet masqué (${d.player === me ? 'vous' : 'rival'}, ${d.family}) : ${st}`;
+      if (d.masked) return `Effet masqué (${d.player === me ? 'vous' : 'rival'}, ${d.family ?? 'neutre'}) : ${st}`;
       const name = d.technique ? String(d.effect).replace(/^./, (c: string) => c.toUpperCase()) : EFFECTS[d.effect as EffectId]?.name ?? String(d.effect);
       return `${name} (${d.own ? 'vous, masquée' : d.player === me ? 'vous' : 'rival'}) : ${st}`;
     });

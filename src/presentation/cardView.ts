@@ -24,7 +24,7 @@ export const STATE_WORD: Record<Exclude<CardVisualState, null>, string> = {
 };
 
 export function cardAria(def: CardDef, state: CardVisualState = null): string {
-  const parts = [cardTitle(def), `famille ${def.family}`, def.signature ? 'Signature, priorité infinie' : `Rang ${def.rank}`, `Puissance ${def.power}`, `rareté ${def.rarity}`];
+  const parts = [cardTitle(def), def.family ? `famille ${def.family}` : 'neutre, sans famille', def.signature ? 'Signature, priorité infinie' : `Rang ${def.rank}`, `Puissance ${def.power}`, `rareté ${def.rarity}`];
   if (def.effect) parts.push(`effet ${EFFECTS[def.effect].name} : ${EFFECTS[def.effect].text}`);
   if (state) parts.push(`état ${STATE_TEXT[state]}`);
   return parts.join(', ');
@@ -55,7 +55,8 @@ function cardFace(def: CardDef, artSeed: number): Node {
       h('img', { class: 'art', src: cardArtUrl(def.defId, artSeed), alt: '', draggable: 'false' }),
       h('span', { class: 'frame' }),
       h('span', { class: 'rank', 'aria-hidden': 'true' }, rankLabel(def)),
-      h('span', { class: 'fam', html: emblemSvg(def.family, 24) }),
+      // carte neutre (avenant M10-A, AV-01) : aucun emblème
+      h('span', { class: 'fam', html: def.family ? emblemSvg(def.family, 24) : '' }),
       h('span', { class: 'plate' },
         h('span', { class: 'name' }, def.signature ? def.name : def.name),
         h('span', { class: 'variant' }, def.signature ? `Signature · ${def.effect ? EFFECTS[def.effect].name : ''}` : def.effect ? EFFECTS[def.effect].name : 'Basic'),
@@ -73,7 +74,7 @@ export function cardEl(defId: string, o: CardOpts): HTMLElement {
   const word = o.banner === false ? null : (o.banner ?? (state ? STATE_WORD[state] : null));
   const tag = o.tag ?? 'button';
   const el = h(tag as 'button', {
-    class: cls('card', `fam-${def.family}`, `rar-${def.rarity}`, state && `st-${state}`, ...(o.classes ?? [])),
+    class: cls('card', `fam-${def.family ?? 'neutre'}`, `rar-${def.rarity}`, state && `st-${state}`, ...(o.classes ?? [])),
     'aria-label': cardAria(def, state),
     type: tag === 'button' ? 'button' : null,
     'data-def': defId,

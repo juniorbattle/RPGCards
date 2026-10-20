@@ -52,7 +52,7 @@ function canvas(w: number, h: number): { c: HTMLCanvasElement; ctx: Ctx } {
   return { c, ctx };
 }
 
-function bg(ctx: Ctx, def: CardDef, rng: Rng): void {
+function bg(ctx: Ctx, def: CardDef & { family: Family }, rng: Rng): void {
   const p = FAMILY_PALETTE[def.family];
   const g = ctx.createRadialGradient(ART_W * (0.35 + rng() * 0.3), ART_H * 0.38, 10, ART_W / 2, ART_H / 2, ART_H * 0.75);
   g.addColorStop(0, p.light);
@@ -206,7 +206,7 @@ const MOTIFS: Record<Family, (ctx: Ctx, def: CardDef, rng: Rng, intensity: numbe
   Cendre: motifCendre, Voile: motifVoile, Ronce: motifRonce, Astre: motifAstre,
 };
 
-function centralEmblem(ctx: Ctx, def: CardDef, rng: Rng): void {
+function centralEmblem(ctx: Ctx, def: CardDef & { family: Family }, rng: Rng): void {
   const p = FAMILY_PALETTE[def.family];
   const cx = ART_W / 2;
   const cy = ART_H * 0.42;
@@ -273,14 +273,74 @@ function vignette(ctx: Ctx): void {
   ctx.fillRect(0, 0, ART_W, ART_H);
 }
 
+/**
+ * Avenant M10-A (AV-01, ADR 030) : carte NEUTRE, blanche et grise, Rang lisible, sans emblème ni motif de famille :
+ * pierre claire au grain fin, anneau de Rang (un segment par Rang) et chiffre romain gravé.
+ */
+function neutreArt(ctx: Ctx, def: CardDef, rng: Rng): void {
+  const g = ctx.createRadialGradient(ART_W * (0.4 + rng() * 0.2), ART_H * 0.36, 8, ART_W / 2, ART_H / 2, ART_H * 0.78);
+  g.addColorStop(0, '#f1efe9');
+  g.addColorStop(0.5, '#c4c2bb');
+  g.addColorStop(1, '#55575d');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, ART_W, ART_H);
+  // grain de la pierre et fines veines
+  for (let i = 0; i < 900; i++) {
+    ctx.fillStyle = rng() < 0.5 ? `rgba(40,40,46,${0.03 + rng() * 0.07})` : `rgba(255,255,255,${0.03 + rng() * 0.08})`;
+    ctx.fillRect(rng() * ART_W, rng() * ART_H, 1 + rng() * 1.4, 1 + rng() * 1.4);
+  }
+  ctx.strokeStyle = 'rgba(70,70,78,0.16)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < 5; i++) {
+    const y0 = rng() * ART_H;
+    ctx.beginPath();
+    ctx.moveTo(0, y0);
+    ctx.bezierCurveTo(ART_W * 0.3, y0 + (rng() - 0.5) * 60, ART_W * 0.7, y0 + (rng() - 0.5) * 60, ART_W, y0 + (rng() - 0.5) * 40);
+    ctx.stroke();
+  }
+  const cx = ART_W / 2;
+  const cy = ART_H * 0.42;
+  const r = 34 + (def.rank ?? 1) * 6;
+  const halo = ctx.createRadialGradient(cx, cy, 4, cx, cy, r * 1.9);
+  halo.addColorStop(0, 'rgba(255,255,255,0.55)');
+  halo.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = halo;
+  ctx.fillRect(0, 0, ART_W, ART_H);
+  const segs = def.rank ?? 1;
+  ctx.strokeStyle = '#4a4c53';
+  ctx.lineWidth = 4;
+  for (let i = 0; i < segs; i++) {
+    const a0 = -Math.PI / 2 + (i * 2 * Math.PI) / segs + 0.12;
+    const a1 = -Math.PI / 2 + ((i + 1) * 2 * Math.PI) / segs - 0.12;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 1.32, a0, a1);
+    ctx.stroke();
+  }
+  // chiffre romain gravé : ombre claire puis trait sombre (typographie système)
+  const txt = def.rank ? ['', 'I', 'II', 'III', 'IV'][def.rank]! : '';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = `600 ${Math.round(r * 1.25)}px Georgia, 'Times New Roman', serif`;
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.fillText(txt, cx + 1.5, cy + 2.5);
+  ctx.fillStyle = '#3b3d44';
+  ctx.fillText(txt, cx, cy);
+}
+
 /** Dessine l’illustration sur un contexte NEUF de ART_W × ART_H (page ou worker, même tracé). */
 export function drawCardArt(ctx: Ctx, defId: string, artSeed: number): void {
   const def = cardDef(defId);
   const rng = makeRng(hashString(artKey(defId, artSeed)));
-  bg(ctx, def, rng);
+  if (def.family === null) {
+    neutreArt(ctx, def, rng);
+    vignette(ctx);
+    return;
+  }
+  const fdef = def as CardDef & { family: Family };
+  bg(ctx, fdef, rng);
   const intensity = def.signature ? 1 : 0.35 + ((def.rank ?? 1) - 1) * 0.2 + (def.effect ? 0.05 : 0);
   MOTIFS[def.family](ctx, def, rng, intensity);
-  centralEmblem(ctx, def, rng);
+  centralEmblem(ctx, fdef, rng);
   vignette(ctx);
 }
 

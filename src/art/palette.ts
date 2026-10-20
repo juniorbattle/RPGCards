@@ -22,6 +22,15 @@ export const FAMILY_PALETTE: Record<Family, FamilyPalette> = {
   Astre: { deep: '#070a24', mid: '#1b2a6b', light: '#3a63c9', accent: '#ffe08a', glow: '#ffd36b', ink: '#fff9e6', hex: 0xffcf5a },
 };
 
+/**
+ * Avenant M10-A (AV-01, ADR 030) : cartes NEUTRES et duelliste sans Signature (deck d'aventure avant le premier chef) :
+ * blanc et gris, sans couleur de famille (mêmes tons que la tenue grise des marcheurs, `ville/sprites.ts`).
+ */
+export const NEUTRE_PALETTE: FamilyPalette = { deep: '#141519', mid: '#4f5259', light: '#8a8c93', accent: '#c8c5bd', glow: '#d6d3cb', ink: '#f2f0ea', hex: 0xa8a8a8 };
+
+/** Palette d'une famille, ou la palette neutre (`null`). */
+export const paletteOf = (family: Family | null): FamilyPalette => (family ? FAMILY_PALETTE[family] : NEUTRE_PALETTE);
+
 export const RARITY_FRAME: Record<Rarity, { a: string; b: string; label: string }> = {
   Basic: { a: '#6d6a66', b: '#a9a49c', label: 'Basic' },
   Uncommon: { a: '#3f6b4c', b: '#9fd1a4', label: 'Peu commune' },

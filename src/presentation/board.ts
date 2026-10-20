@@ -222,12 +222,13 @@ function hud(c: Controller, s: SideView, who: 'me' | 'opp'): HTMLElement {
   const awaiting = who === 'me' ? v.awaitingMe : v.awaitingOpponent;
   const focus = c.currentBeat()?.focus ?? [];
   const counts = c.displayCounts(who);
-  const fam: Family = s.signatureFamily;
+  // sans Signature (deck d'aventure avant le premier chef, avenant M10-A) : ni emblème ni couleur de famille
+  const fam: Family | null = s.signatureFamily;
   const status = who === 'opp'
     ? fresh(h('span', { class: cls('lockchip', s.locked && 'locked', awaiting && !s.locked && c.aiThinking && 'thinking') }, s.locked ? 'Verrouillé (secret)' : awaiting ? (c.aiThinking ? 'Réfléchit' : 'En attente') : 'Rival'), awaiting && !s.locked && c.aiThinking)
     : null;
   const body = h('div', { class: 'hud-body' },
-    h('div', { class: 'who' }, h('span', { class: 'name' }, who === 'me' ? 'Vous' : s.name), h('span', { class: 'fam-icon', html: emblemSvg(fam, 15), title: `Signature ${fam}` })),
+    h('div', { class: 'who' }, h('span', { class: 'name' }, who === 'me' ? 'Vous' : s.name), h('span', { class: 'fam-icon', html: fam ? emblemSvg(fam, 15) : '', title: fam ? `Signature ${fam}` : 'Sans Signature' })),
     hpEl(c, s, who),
     h('div', { class: 'insight', title: 'Insight (0 à 2)', 'aria-label': `Insight ${s.insight} sur 2` }, h('span', { class: 'lbl' }, 'Insight'), h('span', { class: cls('pip', s.insight >= 1 && 'on') }), h('span', { class: cls('pip', s.insight >= 2 && 'on') })),
     h('div', { class: 'counts' },
@@ -240,7 +241,7 @@ function hud(c: Controller, s: SideView, who: 'me' | 'opp'): HTMLElement {
     who === 'opp' ? h('div', { class: 'hud-chips' }, status, oppTechChips(c, s)) : null,
   );
   return fresh(h('section', {
-    class: cls('hud', who, `fam-${fam}`, focus.includes(`${who}-hp`) && 'beat-hit', focus.includes(`${who}-insight`) && 'beat-insight'),
+    class: cls('hud', who, `fam-${fam ?? 'neutre'}`, focus.includes(`${who}-hp`) && 'beat-hit', focus.includes(`${who}-insight`) && 'beat-insight'),
     'aria-label': who === 'me' ? 'Votre duelliste' : `Duelliste rival : ${s.name}`,
   },
   who === 'me' ? h('div', { class: 'portrait' }, h('img', { src: portraitUrl(playerFigure(c.mySignature), c.artSeed), alt: 'Votre portrait', draggable: 'false' })) : null,
@@ -762,7 +763,7 @@ function inspector(c: Controller): HTMLElement {
     cardEl(id, { artSeed: c.artSeed, tag: 'div' }),
     h('div', { class: 'insp-text' },
       h('h3', null, cardTitle(def)),
-      h('div', { class: 'meta' }, `${def.family} ${emblemText(def.family)} · ${fr.label} · ${FAMILY_THEME[def.family]}`),
+      h('div', { class: 'meta' }, def.family ? `${def.family} ${emblemText(def.family)} · ${fr.label} · ${FAMILY_THEME[def.family]}` : 'Neutre · sans famille, sans effet, jamais d’affinité (carte grise de la populace)'),
       h('div', { class: 'stats-line' }, 'Rang ', h('b', null, def.signature ? '∞ (priorité absolue)' : `${rankLabel(def)} (${def.rank})`), ' · Puissance ', h('b', null, String(def.power))),
       def.effect ? h('div', { class: 'eff' }, h('em', null, EFFECTS[def.effect].name), ` — ${EFFECTS[def.effect].role}. ${EFFECTS[def.effect].text}`) : h('div', { class: 'eff' }, 'Basic : aucun effet individuel. Primaire Assaut/Garde ; Secondaire Rang, Dégâts, Interférer, Conserver.'),
       def.signature ? h('div', { class: 'eff' }, 'Signature : uniquement Primaire. ∞ domine tout score ordinaire ; Puissance finie, absorbable par une Garde.') : null,

@@ -73,7 +73,7 @@ export interface PlayerState {
   insightGained: number;
   techniqueUsed: TechniqueId | null;
   techniques: TechniqueId[];
-  signatureFamily: Family;
+  signatureFamily: Family | null;
   /** Pioche : index 0 = dessous, dernier = sommet. */
   deck: string[];
   hand: string[];
@@ -105,8 +105,11 @@ export interface GameConfig {
   players: Record<PlayerId, {
     name: string;
     hp: number;
-    signature: Family;
+    /** `null` : aucune Signature (deck Aventure avant le premier chef, avenant M10-A proposé). */
+    signature: Family | null;
     variants: 'all' | 'none' | string[];
+    /** Avenant M10-A (PROPOSÉ) : liste explicite des définitions du deck (mode Aventure) ; absent : deck standard. */
+    deck?: string[];
     techniques: TechniqueId[];
     insightStart?: number;
   }>;
@@ -198,10 +201,10 @@ export interface PublicEffect {
   detail: string;
   technique?: true;
   masked?: true;
-  family?: Family;
+  family?: Family | null;
   slot?: SlotIndex;
   /** Effet de Primaire neutralisé par une Secondaire camouflée : origine générique (famille, case). */
-  by?: { player: PlayerId; family: Family; slot: SlotIndex };
+  by?: { player: PlayerId; family: Family | null; slot: SlotIndex };
 }
 
 export interface RevealedTactic {
@@ -209,8 +212,8 @@ export interface RevealedTactic {
   mode: TacticMode;
   target: SlotIndex | null;
   defId: string | null;
-  /** Famille toujours publique (§13.2), même sous camouflage. */
-  family: Family;
+  /** Famille toujours publique (§13.2), même sous camouflage ; `null` : carte neutre. */
+  family: Family | null;
   masked: boolean;
   value: number | null;
   affinity: boolean | null;
