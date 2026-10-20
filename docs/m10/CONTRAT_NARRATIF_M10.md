@@ -7,6 +7,8 @@
 **Ne couvre pas :** les règles de duel du mode Aventure (`AVENANT_M10A_PROPOSE.md`), les récompenses et le Championnat
 (`PROGRESSION_ET_RECOMPENSES.md`), la ville (`VILLE_RENCONTRES_EVENEMENTS.md`).
 
+> **DÉCISIONS DU RESPONSABLE (2026-10-20, fiche M10 <https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7>) :** Distribution des rôles (ARB-M10-07), noms de travail (S1), maisons par quartier (S2), première émissaire par un fait public (S3) et permanence de l’affiliation (ARB-M10-08) : gardés. **ARB-M10-11 : écriture neutre partout** (aucun accord de genre pour le duelliste) : le §6 et les textes du prototype (« ce duelliste gris »…) sont à reprendre en écriture neutre. Tableau complet : `docs/FICHE_ARBITRAGES_M10.md`, « Décisions du responsable ».
+
 Convention : **[RATIFIÉ]** = décision du responsable ; **[PROPOSÉ]** = proposition de la session, à arbitrer (fiche
 `docs/FICHE_ARBITRAGES_M10.md`) ; **[EXISTANT]** = ce qui est déjà dans le dépôt et que M10 réutilise. Les noms des
 personnages nouveaux sont des noms de travail.

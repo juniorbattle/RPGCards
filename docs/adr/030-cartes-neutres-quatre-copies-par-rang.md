@@ -3,6 +3,8 @@
 Date : 2026-10-20  
 **Statut : APPROUVÉ pour la COMPOSITION du lot neutre initial et ses propriétés intrinsèques ; avenant moteur encore requis.**
 
+> **DÉCISIONS DU RESPONSABLE (2026-10-20, fiche M10 <https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7>) :** Puissances des neutres **3 / 6 / 9 / 12**, Assaut et Garde, Secondaire selon le Rang, jamais d’affinité (ARB-M10-03) ; **garde `family !== null` autorisée dans `clash.ts`**, Prisme et Convergence tels que proposés (ARB-M10-02), avec les preuves de l’avenant (A-11). Tableau complet : `docs/FICHE_ARBITRAGES_M10.md`, « Décisions du responsable ».
+
 ## Décision explicite du responsable
 
 > « les 16 cartes neutres sont 4 cartes de 4 rang dubliques qui n'offre aucun bonus ou effect juste un set de cartes basiques a jouer »

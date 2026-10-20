@@ -3,8 +3,41 @@
 Session cloud autonome du 2026-10-20 (brief `docs/missions/BRIEF_SESSION_CLOUD_2026-10-20_M10.md`). **Seulement les
 décisions réellement indispensables avant l'implémentation**, chacune avec contexte, sources, **option recommandée et
 raison**, alternatives. Rien ici n'est décidé par la session ; les ADR 029, 030 et 031 sont repris comme acquis. La
-session principale en fera une fiche interactive. **Fiche interactive publiée le 2026-10-20** (privée, 16 entrées : les 11
-arbitrages et les 5 décisions prises seules ; choix enregistrés dans sa collection `decisions`) : <https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7>.
+session principale en fera une fiche interactive. **Fiche interactive publiée le 2026-10-20** (privée, 17 entrées : les 11
+arbitrages, ARB-M10-12 ajoutée le même jour et les 5 décisions prises seules ; choix enregistrés dans sa collection `decisions`) : <https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7>.
+
+## Décisions du responsable — 2026-10-20
+
+Relues depuis la fiche d'arbitrages M10 interactive du 2026-10-20 (<https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7>, 17 entrées, choix entre 14:48 et 15:25 UTC, relus par la session principale). **Quinze choix sur dix-sept suivent l'option recommandée** ; ARB-M10-09 et ARB-M10-11 suivent une
+autre option. ARB-M10-12 a été ajoutée à la fiche interactive sur la remarque du responsable (« n'oublions pas que nous
+devons intégrer notre nouvelle direction artistique avec les multi-rangs traversables dans un quartier et un décor visuel
+basé sur des images générées ») ; ARB-M10-09 y a été réécrite d'après sa note.
+
+| Réf. | Décision | Option |
+|---|---|---|
+| ARB-M10-01 | États : « chef » = **chef de cette famille vaincu** | recommandée |
+| ARB-M10-02 | **Garde `family !== null` autorisée dans `clash.ts`**, Prisme (+1) et Convergence (×6) tels que proposés ; preuves à l’application : tests existants inchangés et verts, empreintes des replays standard identiques, jeu par défaut identique au pixel près, tests neutres | recommandée |
+| ARB-M10-03 | Neutres **3 / 6 / 9 / 12**, Assaut et Garde, Secondaire selon le Rang, jamais d’affinité | recommandée |
+| ARB-M10-04 | **Règle R-AV**, remplacement automatique d’une neutre par Rang à chaque lot de Basics ; deck standard de 17 après les quatre lots | recommandée |
+| ARB-M10-05 | **Sondage et Recentrage** au prologue, puis la Technique de chaque famille avec ses Basics (récompense ajoutée à l’ADR 031) | recommandée |
+| ARB-M10-06 | **Deux lieutenants** (cadet : variante III ; bras droit : variante IV) ; **variantes I et II par des compétitions** (Épreuve du quartier, Joute de la maison) | recommandée |
+| ARB-M10-07 | Distribution gardée : Kaï rival qui rejoint la Cendre (bras droit), Maëlle, Sélène, Orin bras droits, quatre chefs nouveaux, cadets sur gabarits PNJ, les quatre émissaires invitent | recommandée |
+| ARB-M10-08 | Changement d’affiliation **jusqu’au premier défi de lieutenant** ; chef d’accueil avant les défis des autres familles | recommandée |
+| ARB-M10-09 | **Paliers de decks adverses + PV du joueur qui montent à chaque combat, sans plafond** (pas de format miroir ni de PV égaux) | **autre que la recommandée** (plafond recommandé) ; note ci-dessous |
+| ARB-M10-10 | **Sauvegarde d’aventure à part** (`lqv.aventure`), sauvegarde standard jamais lue ni écrite | recommandée |
+| ARB-M10-11 | **Écriture neutre partout** (aucun accord de genre pour le duelliste) | **autre que la recommandée** (choix il, elle, neutre recommandé) |
+| ARB-M10-12 | **Brancher le Quai en quatre rangs dès M10-A** (le Quai du laboratoire devient l’îlot de l’aventure, l’ancien en secours) ; le Parvis et les Ruelles en rangs à la reprise de M09 ; A2 puis A1 pour le décor généré hors QA | recommandée |
+| S1 | Noms de travail gardés (Bran, Mère Aubépine, Ilse, Halvard ; Tessa, Gaspard, Lior, Mira) | recommandée |
+| S2 | Maisons gardées : Cendre au Quai, Ronce au Fanal, Voile dans les Ruelles, Astre au Parvis | recommandée |
+| S3 | Première émissaire choisie par un fait public du duel : gardé | recommandée |
+| S4 | Deck de prêt du prologue gardé **jusqu’à l’application de l’avenant** | recommandée |
+| S5 | Module à part derrière `?aventure=1` gardé ; **ADR 032 approuvé** | recommandée |
+
+**Note du responsable sur ARB-M10-09 :** « Selon les pourcentages évoqués, il faut que le format permette des adversaires semi-complets : la plupart des cartes de famille remplacent certaines cartes basiques, voire toutes, selon le niveau du joueur. Les joueurs basiques n’auront que des cartes basiques ; ceux qui font partie d’une famille auront leurs cartes de famille au complet, plus quelques cartes d’autres familles (ce qui signifie qu’ils ont vaincu d’autres membres de familles) ; les joueurs avancés auront les quatre familles, avec ou sans variantes ; et enfin l’élite et les champions. Le joueur gagnera des PV à chaque combat, ce qui permet aussi de monter ses probabilités comme dans un RPG : donc pas de format miroir ni de PV égaux. L’entraînement augmente les PV et les chances de victoire ; par rapport à la simulation établie par l’IA, ce serait plus favorable de manière générale (à consolider). » (orthographe corrigée)
+
+**Lecture consignée :** « cartes basiques » est lu ici comme les cartes grises (neutres) de la populace, « Basics » restant les cartes I à IV d’une famille ; à confirmer en passant. Restent à proposer dans M10-A, mesurés par simulation IA contre IA avant adoption : les PV de départ et le gain par combat (sans plafond, décision du responsable), les PV des adversaires par palier (non tranchés), la composition des decks de chaque palier, et des taux de victoire « plus favorables au joueur de manière générale ». Cette décision précise la mission M10 §IV : la difficulté des adversaires vient de leur palier de deck et des formats du Championnat ; les PV qui montent sont ceux du joueur.
+
+Le texte canonique de l’avenant M10-A (à verser dans `contracts/`) sera rédigé à partir de ces décisions au début du lot M10-A et soumis au responsable avant d’y entrer (gouvernance : validation explicite de la rédaction canonique) ; le code M10-A peut avancer en parallèle derrière `?aventure=1`.
 
 Comment voir le travail : contrats `docs/m10/` (index `docs/m10/README.md`) ; prototype du prologue `/?aventure=1`
 (mode d'emploi : `docs/AVENTURE_PROVISOIRE.md`). Le jeu par défaut et `?demo=1` sont inchangés.

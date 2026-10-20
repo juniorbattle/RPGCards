@@ -149,3 +149,14 @@ transformera en fiche interactive pour le responsable.
 - **Reprise, dans l'ordre que fixera le responsable :** feuille du joueur (J1) ; le Parvis et les Ruelles en rangs ; la Grande Cour (V5) ; planche d’approbation en bloc (A1, après la vérification des conditions d’OpenAI par le responsable, A2) ; 9 images sur 30 restantes.
 - **Brouillons d'images** : `art-gen/` du dossier principal (ignoré par git), y compris l'étude des directions du
   2026-10-19 (`art-gen/2026-10-19-quai-directions/`, recopiée depuis le dossier de la session V4 avant son archivage).
+
+## M10 et la ville — décision du responsable du 2026-10-20 (ARB-M10-12)
+
+Fiche d'arbitrages M10 interactive du 2026-10-20 (<https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7>, 17 entrées, choix entre 14:48 et 15:25 UTC, relus par la session principale) : « Brancher le Quai en rangs dès M10-A, le reste à la reprise de M09 ».
+- Dès le lot M10-A, le mode Aventure se joue dans **le Quai en quatre rangs** du laboratoire (passes 62 à 68), qui devient
+  l'îlot du jeu pour l'aventure ; l'ancien Quai reste en secours. M09 reste en pause : ce branchement réutilise l'îlot tel
+  quel, sans le refaire.
+- **À la reprise de M09** : le Parvis et les Ruelles en rangs, branchés de la même façon ; puis la Grande Cour (V5) et la
+  feuille du joueur (J1).
+- Le décor en images générées ne s'affiche hors QA qu'après les approbations du responsable : **A2** (vérification des
+  conditions d'OpenAI), puis **A1** (approbation en bloc des plans et des feuilles).

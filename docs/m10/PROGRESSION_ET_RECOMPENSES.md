@@ -5,6 +5,8 @@
 progression persistante). Règles de deck et registre des gains : `AVENANT_M10A_PROPOSE.md` (A-4 à A-8). Personnages :
 `CONTRAT_NARRATIF_M10.md` §2 et §4.
 
+> **DÉCISIONS DU RESPONSABLE (2026-10-20, fiche M10 <https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7>) :** ARB-M10-01 (« chef » = chef vaincu), ARB-M10-06 (deux lieutenants, variantes III et IV ; I et II par les compétitions), ARB-M10-08 (changement jusqu’au premier lieutenant ; chef d’accueil d’abord) : ratifiés. **ARB-M10-09 remplace l’équilibrage miroir du §4 et de MESURES_M10A** : paliers de decks adverses (populace, membres de famille, avancés, élite et champions) et **PV du joueur qui montent à chaque combat, sans plafond** ; les PV des adversaires par palier restent à proposer. « cartes basiques » est lu ici comme les cartes grises (neutres) de la populace, « Basics » restant les cartes I à IV d’une famille ; à confirmer en passant. Restent à proposer dans M10-A, mesurés par simulation IA contre IA avant adoption : les PV de départ et le gain par combat (sans plafond, décision du responsable), les PV des adversaires par palier (non tranchés), la composition des decks de chaque palier, et des taux de victoire « plus favorables au joueur de manière générale ». Cette décision précise la mission M10 §IV : la difficulté des adversaires vient de leur palier de deck et des formats du Championnat ; les PV qui montent sont ceux du joueur. Tableau complet : `docs/FICHE_ARBITRAGES_M10.md`, « Décisions du responsable ».
+
 ---
 
 ## 1. Vue d'ensemble du parcours

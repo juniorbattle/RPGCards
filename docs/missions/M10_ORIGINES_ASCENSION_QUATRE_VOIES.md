@@ -3,6 +3,8 @@
 **Date : 2026-10-20. Statut : CADRAGE / conception, PAS une autorisation de modifier le moteur.**  
 **Décisions ratifiées :** (1) **OPTION B** : le joueur choisit sa famille après avoir été remarqué ; (2) **deck neutre initial de 16 cartes physiques** : quatre copies de chaque Rang I, II, III, IV, sans famille, bonus intrinsèque ni effet de carte. Voir ADR 029 et ADR 030. Ces décisions de conception ne valent pas autorisation de modifier le moteur.
 
+> **DÉCISIONS DU RESPONSABLE (2026-10-20, fiche M10 <https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7>) :** Les décisions ouvertes de ce cadrage sont tranchées (avenant M10-A, familles, sauvegarde, textes, ville). Divergences avec les recommandations : **PV du joueur qui montent à chaque combat, sans plafond, et paliers de decks adverses** (ARB-M10-09, précise le §IV de la mission du responsable) ; **écriture neutre partout** (ARB-M10-11). Lot suivant : **M10-A**, avec l’aventure branchée sur le Quai en quatre rangs (ARB-M10-12). Tableau complet : `docs/FICHE_ARBITRAGES_M10.md`, « Décisions du responsable ».
+
 > **2026-10-20, décision du responsable :** la prochaine grosse tâche est la **structuration et la configuration narratives**, menée sur le cloud ; M09 est en pause après la passe 68. Son périmètre est fixé par le brief de la session cloud, validé le 2026-10-20 (`docs/missions/BRIEF_SESSION_CLOUD_2026-10-20_M10.md` : contrats d'abord, puis prologue jouable provisoire derrière `?aventure=1`) ; tant qu'un avenant n'est pas ratifié, les règles de combat restent intouchées et les « Décisions ouvertes » ci-dessous restent au responsable.
 
 
