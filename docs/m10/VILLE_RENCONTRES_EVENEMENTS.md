@@ -6,6 +6,8 @@
 (`docs/M09_QUARTIERS_EN_RANGS.md`). Le directeur **ne construit aucun décor** et ne touche ni au moteur de marche ni
 au moteur de combat.
 
+> **DÉCISIONS DU RESPONSABLE (2026-10-20, fiche M10 <https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7>) :** **ARB-M10-12 : l’aventure se joue dans le Quai en quatre rangs dès M10-A** (rue Haute et place de la Halle, ruelle des Lanternes et placette du Puits, cour de la Chapelle ; aujourd’hui au laboratoire `?ville=1&qa=1&profondeur=1`) ; l’ancien Quai reste en secours ; le Parvis et les Ruelles en rangs à la reprise de M09, branchés de la même façon ; le décor généré s’affiche hors QA après les approbations A2 puis A1 du responsable. Tableau complet : `docs/FICHE_ARBITRAGES_M10.md`, « Décisions du responsable ».
+
 ---
 
 ## 1. Ce que la ville sait déjà faire **[EXISTANT]**

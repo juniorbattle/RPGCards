@@ -1,11 +1,13 @@
 # Avenant M10-A — Règles du mode Aventure et cartes neutres (PROPOSÉ)
 
-**Date :** 2026-10-20 (session cloud autonome). **Statut : PROPOSÉ — rien de ce document n'est en vigueur.** Il entrera
+**Date :** 2026-10-20 (session cloud autonome). **Statut : DÉCISIONS DU RESPONSABLE RENDUES le 2026-10-20** (encadré ci-dessous : A-1 à A-9 ratifiés comme recommandés, **A-10 remplacé** par les paliers de decks et les PV du joueur qui montent) ; à l'origine : proposé, rien n'était en vigueur. Il entrera
 dans `contracts/` seulement après ratification par le responsable (gouvernance, `contracts/00_GOUVERNANCE_AUTORITE.md` :
 « pour un changement de règles, demander validation explicite de la nouvelle rédaction canonique »).
 **Couvre :** §VI de la mission M10 (dix points) et §VII.7.
 **Ne change rien** au mode Duel standard : règles V3.0 + delta V3.2 + D-01 (V3.3), deck de 17 cartes, calculs du
 Clash, conditions d'Amplification, secrets (ADR 011), IA, replays et sauvegardes existants.
+
+> **DÉCISIONS DU RESPONSABLE (2026-10-20, fiche M10 <https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7>) :** A-1 à A-9 et A-11 : ratifiés tels que recommandés (ARB-M10-02 à 06, 08, 10 ; garde de `clash.ts` autorisée, Prisme et Convergence tels quels). **A-10 remplacé** (ARB-M10-09) : paliers de decks adverses et PV du joueur qui montent à chaque combat, sans plafond ; valeurs à proposer et mesurer dans M10-A. Le texte canonique de l’avenant M10-A (à verser dans `contracts/`) sera rédigé à partir de ces décisions au début du lot M10-A et soumis au responsable avant d’y entrer (gouvernance : validation explicite de la rédaction canonique) ; le code M10-A peut avancer en parallèle derrière `?aventure=1`. Tableau complet : `docs/FICHE_ARBITRAGES_M10.md`, « Décisions du responsable ».
 
 Chaque point : **ce qui est ratifié**, **options**, **recommandation** et **raison**, **impact moteur**, **tests**. Les
 identifiants **A-1 … A-10** suivent l'ordre du §VI ; **A-0** (frontière et prototype) et **A-11** (impact technique

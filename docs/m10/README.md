@@ -1,6 +1,6 @@
 # M10 — Origines et ascension des Quatre Voies : contrats (index)
 
-**Statut : PROPOSÉ** (session cloud autonome du 2026-10-20, brief `docs/missions/BRIEF_SESSION_CLOUD_2026-10-20_M10.md`).
+**Statut : DÉCIDÉ par le responsable le 2026-10-20** (fiche M10, tableau dans `docs/FICHE_ARBITRAGES_M10.md`) ; à l'origine : **PROPOSÉ** (session cloud autonome du 2026-10-20, brief `docs/missions/BRIEF_SESSION_CLOUD_2026-10-20_M10.md`).
 Seules les décisions des **ADR 029, 030 et 031** sont ratifiées ; tout le reste attend la fiche
 `docs/FICHE_ARBITRAGES_M10.md`. Aucun de ces documents ne modifie les règles du mode Duel standard.
 

@@ -5,6 +5,8 @@ lots du cadrage (`docs/missions/M10_ORIGINES_ASCENSION_QUATRE_VOIES.md`, « Lots
 conditions de validation, dépendances. Chaque lot se termine par typecheck, tests, build, jeu par défaut identique au
 pixel près (`tools/l5-identique.mjs`), journal ; **QA complète aux jalons** seulement (AGENTS : M10-C, M10-D, M10-F).
 
+> **DÉCISIONS DU RESPONSABLE (2026-10-20, fiche M10 <https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7>) :** **Lot M10-A, contenu décidé :** texte canonique de l’avenant soumis au responsable ; patch des neutres (garde de `clash.ts` autorisée, ARB-M10-02) avec ses preuves ; deck R-AV réel à la place du deck de prêt ; Techniques du prologue et de famille ; sauvegarde à part ; paliers de decks adverses et PV du joueur qui montent, calibrés par simulation (ARB-M10-09) ; écriture neutre des textes (ARB-M10-11) ; **l’aventure branchée sur le Quai en quatre rangs** (ARB-M10-12). Tableau complet : `docs/FICHE_ARBITRAGES_M10.md`, « Décisions du responsable ».
+
 | Lot | Dépend de | Change le moteur ? | Jalon QA |
 |---|---|---|---|
 | M10-A | ratification de l'avenant | **oui** (neutres, deck explicite, Signature optionnelle) derrière le mode Aventure | non (tests ciblés + hashes) |

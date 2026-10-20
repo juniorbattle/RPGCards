@@ -2,6 +2,8 @@
 
 Date : 2026-10-20. **Statut : APPROUVÉ — ordre narratif et catégories des récompenses ; adaptations moteur à cadrer séparément.**
 
+> **DÉCISIONS DU RESPONSABLE (2026-10-20, fiche M10 <https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7>) :** **Amendement 1** : deux lieutenants par famille donnent les variantes III (cadet) et IV (bras droit) ; **les variantes I et II viennent des compétitions facultatives** (Épreuve du quartier, Joute de la maison) : la phrase des tests « variantes aux seules victoires des lieutenants » est amendée en ce sens (ARB-M10-06) ; chaque famille enseigne **sa Technique avec ses Basics** (ARB-M10-05, récompense ajoutée) ; « chef » = chef vaincu (ARB-M10-01) ; changement d’affiliation jusqu’au premier défi de lieutenant (ARB-M10-08). Tableau complet : `docs/FICHE_ARBITRAGES_M10.md`, « Décisions du responsable ».
+
 ## Décisions du responsable
 
 **Prologue :** seize cartes neutres de populace (quatre exemplaires de chaque Rang I, II, III et IV), sans famille, bonus ni effet individuel (ADR 030). Le duel public attire les Quatre Voies ; le joueur conserve la liberté d'affiliation (ADR 029).

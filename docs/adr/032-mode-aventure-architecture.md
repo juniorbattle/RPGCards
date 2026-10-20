@@ -1,6 +1,6 @@
 # ADR 032 — Architecture du mode Aventure (prototype `?aventure=1`) (M10)
 
-**Date :** 2026-10-20 (session cloud autonome, brief M10). **Statut : PROPOSÉ** — prototype provisoire ; à confirmer ou
+**Date :** 2026-10-20 (session cloud autonome, brief M10). **Statut : APPROUVÉ par le responsable le 2026-10-20** (fiche M10, S5 : « Garder (ADR 032 approuvé) » ; l’aventure se branche sur le Quai en quatre rangs dès M10-A, ARB-M10-12) ; à l’origine : PROPOSÉ, prototype provisoire ; à confirmer ou
 défaire par le responsable (fiche `docs/FICHE_ARBITRAGES_M10.md`).
 
 ## Contexte
