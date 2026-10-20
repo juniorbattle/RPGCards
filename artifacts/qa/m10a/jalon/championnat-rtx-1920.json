@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-20T16:57:00.924Z",
+  "commit": "362153a",
+  "viewport": [
+    1920,
+    1080
+  ],
+  "checks": [
+    "OK faits rejoués par la machine d'états sans refus (aucun)",
+    "OK quatre chefs vaincus ; deck au format standard, Signature de la Ronce équipée",
+    "OK objectif : le Championnat",
+    "OK devant le champion de la Joute de la Ronce",
+    "OK Joute gagnée : variante II au registre, équipée à la place de sa Basic",
+    "OK porte de l’arène : la poule des Quatre Bannières, chefs à défier",
+    "OK même Signature : aucun duel de poule possible, raison affichée",
+    "OK poule : trois chefs vaincus, trois Signatures différentes",
+    "OK le Miroir : Kaï",
+    "OK la Finale : la Tenante du titre",
+    "OK Finale : même Signature refusée pour la manche suivante",
+    "OK Finale gagnée : titre, proclamation",
+    "OK objectif : personne en ville ne joue mieux que vous (écriture neutre)"
+  ],
+  "steps": [
+    {
+      "name": "quai-quatre-chefs",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/e2247ef0-ac77-4838-85be-8c99774cc9ff/scratchpad/shots/jalon/championnat-rtx-1920/01-quai-quatre-chefs.png"
+    },
+    {
+      "name": "joute-ronce",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/e2247ef0-ac77-4838-85be-8c99774cc9ff/scratchpad/shots/jalon/championnat-rtx-1920/02-joute-ronce.png"
+    },
+    {
+      "name": "poule",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/e2247ef0-ac77-4838-85be-8c99774cc9ff/scratchpad/shots/jalon/championnat-rtx-1920/03-poule.png"
+    },
+    {
+      "name": "preparation-poule",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/e2247ef0-ac77-4838-85be-8c99774cc9ff/scratchpad/shots/jalon/championnat-rtx-1920/04-preparation-poule.png"
+    },
+    {
+      "name": "poule-signature-deja-utilisee",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/e2247ef0-ac77-4838-85be-8c99774cc9ff/scratchpad/shots/jalon/championnat-rtx-1920/05-poule-signature-deja-utilisee.png"
+    },
+    {
+      "name": "miroir",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/e2247ef0-ac77-4838-85be-8c99774cc9ff/scratchpad/shots/jalon/championnat-rtx-1920/06-miroir.png"
+    },
+    {
+      "name": "finale",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/e2247ef0-ac77-4838-85be-8c99774cc9ff/scratchpad/shots/jalon/championnat-rtx-1920/07-finale.png"
+    },
+    {
+      "name": "titre",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/e2247ef0-ac77-4838-85be-8c99774cc9ff/scratchpad/shots/jalon/championnat-rtx-1920/08-titre.png"
+    }
+  ],
+  "issues": []
+}

@@ -1,0 +1,259 @@
+{
+  "commit": "362153a",
+  "date": "2026-10-20T17:18:37.744Z",
+  "note": "Chromium headless, WebGL logiciel SwiftShader ; rival SCRIPTÉ (scénarios de démonstration), jamais présenté comme l’IA.",
+  "runs": [
+    {
+      "scenario": "rupture",
+      "mode": "souris-1280",
+      "issues": [],
+      "expectLines": [
+        "Vous utilisez la Technique Rupture (−2 Insight).",
+        "Rupture : Vous renvoyez Astre III (case 1) dans la main de son propriétaire.",
+        "Rupture (vous) : RÉUSSI — Secondaire active renvoyée en main adverse."
+      ],
+      "journal": [
+        "Vous engagez une Primaire face cachée.",
+        "[Privé] Engagement : Ronce IV en GARDE.",
+        "Le rival engage une Primaire face cachée.",
+        "Révélation simultanée des Primaires — Vous : Ronce IV · GARDE · Rang 4 · Puissance 12 / Rival : Cendre II · ASSAUT · Rang 2 · Puissance 6.",
+        "Vous utilisez la Technique Rupture (−2 Insight).",
+        "Choix tactiques verrouillés et révélés — Rival : Astre III → CONSERVER.",
+        "Vous gagnez 1 Insight (Garde victorieuse) → 1/2.",
+        "CLASH — Scores : Vous 4 / Rival 2. Vous gagnez en GARDE (priorité 4 ≥ 2) : Assaut bloqué, 0 blessure. PV perdus : Vous 0 / Rival 0.",
+        "Rupture : Vous renvoyez Astre III (case 1) dans la main de son propriétaire.",
+        "Rupture (vous) : RÉUSSI — Secondaire active renvoyée en main adverse.",
+        "Fin du tour 5."
+      ],
+      "console": [],
+      "ms": 9809
+    },
+    {
+      "scenario": "rupture",
+      "mode": "tactile-390",
+      "issues": [],
+      "expectLines": [
+        "Vous utilisez la Technique Rupture (−2 Insight).",
+        "Rupture : Vous renvoyez Astre III (case 1) dans la main de son propriétaire.",
+        "Rupture (vous) : RÉUSSI — Secondaire active renvoyée en main adverse."
+      ],
+      "journal": [
+        "Vous engagez une Primaire face cachée.",
+        "[Privé] Engagement : Ronce IV en GARDE.",
+        "Le rival engage une Primaire face cachée.",
+        "Révélation simultanée des Primaires — Vous : Ronce IV · GARDE · Rang 4 · Puissance 12 / Rival : Cendre II · ASSAUT · Rang 2 · Puissance 6.",
+        "Vous utilisez la Technique Rupture (−2 Insight).",
+        "Choix tactiques verrouillés et révélés — Rival : Astre III → CONSERVER.",
+        "Vous gagnez 1 Insight (Garde victorieuse) → 1/2.",
+        "CLASH — Scores : Vous 4 / Rival 2. Vous gagnez en GARDE (priorité 4 ≥ 2) : Assaut bloqué, 0 blessure. PV perdus : Vous 0 / Rival 0.",
+        "Rupture : Vous renvoyez Astre III (case 1) dans la main de son propriétaire.",
+        "Rupture (vous) : RÉUSSI — Secondaire active renvoyée en main adverse.",
+        "Fin du tour 5."
+      ],
+      "console": [],
+      "ms": 2816
+    },
+    {
+      "scenario": "rupture-cachee",
+      "mode": "souris-1280",
+      "issues": [],
+      "forbidden": [
+        "Voile-4",
+        "Voile IV",
+        "Silence"
+      ],
+      "expectLines": [
+        "Vous utilisez la Technique Rupture (−2 Insight).",
+        "Rupture (vous) : CONDITION NON REMPLIE — une autre cible de Repoussement existe ou la cible n’est plus active.",
+        "Repoussement : Vous renvoyez une Secondaire cachée (case 2) dans la main de son propriétaire."
+      ],
+      "journal": [
+        "Vous engagez une Primaire face cachée.",
+        "[Privé] Engagement : Ronce IV en GARDE.",
+        "Le rival engage une Primaire face cachée.",
+        "Révélation simultanée des Primaires — Vous : Ronce IV · GARDE · Rang 4 · Puissance 12 / Rival : Cendre II · ASSAUT · Rang 2 · Puissance 6.",
+        "Vous utilisez la Technique Rupture (−2 Insight).",
+        "Choix tactiques verrouillés et révélés — Rival : Astre III → CONSERVER.",
+        "Vous gagnez 1 Insight (Garde victorieuse) → 1/2.",
+        "CLASH — Scores : Vous 4 / Rival 2. Vous gagnez en GARDE (priorité 4 ≥ 2) : Assaut bloqué, 0 blessure. PV perdus : Vous 0 / Rival 0.",
+        "Rupture (vous) : CONDITION NON REMPLIE — une autre cible de Repoussement existe ou la cible n’est plus active.",
+        "Repoussement : Vous renvoyez une Secondaire cachée (case 2) dans la main de son propriétaire.",
+        "Fin du tour 5."
+      ],
+      "console": [],
+      "ms": 3157
+    },
+    {
+      "scenario": "rupture-cachee",
+      "mode": "tactile-390",
+      "issues": [],
+      "forbidden": [
+        "Voile-4",
+        "Voile IV",
+        "Silence"
+      ],
+      "expectLines": [
+        "Vous utilisez la Technique Rupture (−2 Insight).",
+        "Rupture (vous) : CONDITION NON REMPLIE — une autre cible de Repoussement existe ou la cible n’est plus active.",
+        "Repoussement : Vous renvoyez une Secondaire cachée (case 2) dans la main de son propriétaire."
+      ],
+      "journal": [
+        "Vous engagez une Primaire face cachée.",
+        "[Privé] Engagement : Ronce IV en GARDE.",
+        "Le rival engage une Primaire face cachée.",
+        "Révélation simultanée des Primaires — Vous : Ronce IV · GARDE · Rang 4 · Puissance 12 / Rival : Cendre II · ASSAUT · Rang 2 · Puissance 6.",
+        "Vous utilisez la Technique Rupture (−2 Insight).",
+        "Choix tactiques verrouillés et révélés — Rival : Astre III → CONSERVER.",
+        "Vous gagnez 1 Insight (Garde victorieuse) → 1/2.",
+        "CLASH — Scores : Vous 4 / Rival 2. Vous gagnez en GARDE (priorité 4 ≥ 2) : Assaut bloqué, 0 blessure. PV perdus : Vous 0 / Rival 0.",
+        "Rupture (vous) : CONDITION NON REMPLIE — une autre cible de Repoussement existe ou la cible n’est plus active.",
+        "Repoussement : Vous renvoyez une Secondaire cachée (case 2) dans la main de son propriétaire.",
+        "Fin du tour 5."
+      ],
+      "console": [],
+      "ms": 2732
+    },
+    {
+      "scenario": "dissipation",
+      "mode": "souris-1280",
+      "issues": [],
+      "expectLines": [
+        "Le rival révèle une Secondaire Voile en case 2 — identité, Rang et Puissance masqués par un effet.",
+        "Vous utilisez la Technique Dissipation (−1 Insight).",
+        "Dissipation neutralise le camouflage : Voile I — Éclaireur (case 2) redevient visible ; ce qui a déjà été observé reste acquis."
+      ],
+      "privateRival": {},
+      "journal": [
+        "Le rival révèle et active Voile III — Dissimulation (case 1).",
+        "Le rival révèle une Secondaire Voile en case 2 — identité, Rang et Puissance masqués par un effet.",
+        "Dissimulation : la Secondaire du rival en case 2 est masquée jusqu’à la fin du tour.",
+        "Dissimulation (rival) : RÉUSSI — l’autre Secondaire est masquée jusqu’à la fin du tour.",
+        "Vous utilisez la Technique Dissipation (−1 Insight).",
+        "Dissipation neutralise le camouflage : Voile I — Éclaireur (case 2) redevient visible ; ce qui a déjà été observé reste acquis.",
+        "Vous engagez une Primaire face cachée.",
+        "[Privé] Engagement : Cendre IV en ASSAUT.",
+        "Le rival engage une Primaire face cachée.",
+        "Révélation simultanée des Primaires — Vous : Cendre IV · ASSAUT · Rang 4 · Puissance 12 / Rival : Ronce III · GARDE · Rang 3 · Puissance 9.",
+        "Choix tactiques verrouillés et révélés — Rival : Voile III — Dissimulation → CONSERVER ; Voile I — Éclaireur → CONSERVER.",
+        "Le rival perd 3 PV → 87 PV.",
+        "CLASH — Scores : Vous 4 / Rival 3. Vous dominez au Rang (4 contre 3) ; la Garde absorbe 9 : (12 − 9) × 1 = 3. PV perdus : Vous 0 / Rival 3.",
+        "Fin du tour 5."
+      ],
+      "console": [],
+      "ms": 13895
+    },
+    {
+      "scenario": "dissipation",
+      "mode": "tactile-390",
+      "issues": [],
+      "expectLines": [
+        "Le rival révèle une Secondaire Voile en case 2 — identité, Rang et Puissance masqués par un effet.",
+        "Vous utilisez la Technique Dissipation (−1 Insight).",
+        "Dissipation neutralise le camouflage : Voile I — Éclaireur (case 2) redevient visible ; ce qui a déjà été observé reste acquis."
+      ],
+      "privateRival": {},
+      "journal": [
+        "Le rival révèle et active Voile III — Dissimulation (case 1).",
+        "Le rival révèle une Secondaire Voile en case 2 — identité, Rang et Puissance masqués par un effet.",
+        "Dissimulation : la Secondaire du rival en case 2 est masquée jusqu’à la fin du tour.",
+        "Dissimulation (rival) : RÉUSSI — l’autre Secondaire est masquée jusqu’à la fin du tour.",
+        "Vous utilisez la Technique Dissipation (−1 Insight).",
+        "Dissipation neutralise le camouflage : Voile I — Éclaireur (case 2) redevient visible ; ce qui a déjà été observé reste acquis.",
+        "Vous engagez une Primaire face cachée.",
+        "[Privé] Engagement : Cendre IV en ASSAUT.",
+        "Le rival engage une Primaire face cachée.",
+        "Révélation simultanée des Primaires — Vous : Cendre IV · ASSAUT · Rang 4 · Puissance 12 / Rival : Ronce III · GARDE · Rang 3 · Puissance 9.",
+        "Choix tactiques verrouillés et révélés — Rival : Voile III — Dissimulation → CONSERVER ; Voile I — Éclaireur → CONSERVER.",
+        "Le rival perd 3 PV → 87 PV.",
+        "CLASH — Scores : Vous 4 / Rival 3. Vous dominez au Rang (4 contre 3) ; la Garde absorbe 9 : (12 − 9) × 1 = 3. PV perdus : Vous 0 / Rival 3.",
+        "Fin du tour 5."
+      ],
+      "console": [],
+      "ms": 7538
+    },
+    {
+      "scenario": "masque",
+      "mode": "souris-1280",
+      "issues": [],
+      "beats": [
+        "tactics",
+        "rank",
+        "outcome",
+        "damage",
+        "effect",
+        "insight",
+        "destination"
+      ],
+      "forbiddenEvents": [
+        "Cendre-3",
+        "Cendre III(?![IV])",
+        "Ferveur",
+        "p2#02"
+      ],
+      "expectLines": [
+        "Le rival gagne 1 Insight (effet de la Secondaire Cendre masquée (case 2)) → 2/2.",
+        "Effet de la Secondaire Cendre masquée du rival (case 2) : RÉUSSI — +1 Insight."
+      ],
+      "journal": [
+        "Le rival révèle une Secondaire Cendre en case 2 — identité, Rang et Puissance masqués par un effet.",
+        "Dissimulation : la Secondaire du rival en case 2 est masquée jusqu’à la fin du tour.",
+        "Dissimulation (rival) : RÉUSSI — l’autre Secondaire est masquée jusqu’à la fin du tour.",
+        "Vous engagez une Primaire face cachée.",
+        "[Privé] Engagement : Ronce II en GARDE.",
+        "Le rival engage une Primaire face cachée.",
+        "Révélation simultanée des Primaires — Vous : Ronce II · GARDE · Rang 2 · Puissance 6 / Rival : Cendre IV · ASSAUT · Rang 4 · Puissance 12.",
+        "Choix tactiques verrouillés et révélés — Rival : Voile III — Dissimulation → CONSERVER ; Secondaire Cendre masquée (case 2) → AMPLIFIER LES DÉGÂTS · coefficient masqué.",
+        "Vous perdez 24 PV → 66 PV.",
+        "Le rival gagne 1 Insight (effet de la Secondaire Cendre masquée (case 2)) → 2/2.",
+        "Effet de la Secondaire Cendre masquée du rival (case 2) : RÉUSSI — +1 Insight.",
+        "CLASH — Scores : Vous 2 / Rival 4. Le rival domine au Rang (4 contre 2) ; la Garde absorbe 6 : (12 − 6) × ? = 24. PV perdus : Vous 24 / Rival 0.",
+        "carte masquée (rival) est consommée → en défausse.",
+        "Fin du tour 5."
+      ],
+      "console": [],
+      "ms": 3672
+    },
+    {
+      "scenario": "masque",
+      "mode": "tactile-390",
+      "issues": [],
+      "beats": [
+        "tactics",
+        "rank",
+        "outcome",
+        "damage",
+        "effect",
+        "insight",
+        "destination"
+      ],
+      "forbiddenEvents": [
+        "Cendre-3",
+        "Cendre III(?![IV])",
+        "Ferveur",
+        "p2#02"
+      ],
+      "expectLines": [
+        "Le rival gagne 1 Insight (effet de la Secondaire Cendre masquée (case 2)) → 2/2.",
+        "Effet de la Secondaire Cendre masquée du rival (case 2) : RÉUSSI — +1 Insight."
+      ],
+      "journal": [
+        "Le rival révèle une Secondaire Cendre en case 2 — identité, Rang et Puissance masqués par un effet.",
+        "Dissimulation : la Secondaire du rival en case 2 est masquée jusqu’à la fin du tour.",
+        "Dissimulation (rival) : RÉUSSI — l’autre Secondaire est masquée jusqu’à la fin du tour.",
+        "Vous engagez une Primaire face cachée.",
+        "[Privé] Engagement : Ronce II en GARDE.",
+        "Le rival engage une Primaire face cachée.",
+        "Révélation simultanée des Primaires — Vous : Ronce II · GARDE · Rang 2 · Puissance 6 / Rival : Cendre IV · ASSAUT · Rang 4 · Puissance 12.",
+        "Choix tactiques verrouillés et révélés — Rival : Voile III — Dissimulation → CONSERVER ; Secondaire Cendre masquée (case 2) → AMPLIFIER LES DÉGÂTS · coefficient masqué.",
+        "Vous perdez 24 PV → 66 PV.",
+        "Le rival gagne 1 Insight (effet de la Secondaire Cendre masquée (case 2)) → 2/2.",
+        "Effet de la Secondaire Cendre masquée du rival (case 2) : RÉUSSI — +1 Insight.",
+        "CLASH — Scores : Vous 2 / Rival 4. Le rival domine au Rang (4 contre 2) ; la Garde absorbe 6 : (12 − 6) × ? = 24. PV perdus : Vous 24 / Rival 0.",
+        "carte masquée (rival) est consommée → en défausse.",
+        "Fin du tour 5."
+      ],
+      "console": [],
+      "ms": 3069
+    }
+  ]
+}
