@@ -31,7 +31,7 @@ void main(){
  */
 const PLATE_FRAG = /* glsl */ `
 ${COMMON_GLSL}
-uniform sampler2D tPlate; uniform float uLit; uniform float uFog; uniform float uCut; uniform float uVoile;
+uniform sampler2D tPlate; uniform float uLit; uniform float uFog; uniform float uCut; uniform float uVoile; uniform float uFade;
 varying vec2 vUv; varying vec3 vWorld; varying vec3 vN;
 void main(){
   vec4 A = texture2D(tPlate, vUv);
@@ -45,7 +45,12 @@ void main(){
   // voile atmosphérique (passe 60) : vers le bleu de nuit clair de l'air, les rangs lointains s'éclaircissent
   c = mix(c, uFogColor * 2.2 + uMoonCol * 0.05, uVoile);
   c = mix(c, applyFog(c, vWorld), uFog);
+  // plans en coupe seulement (passe 62) : les autres gardent exactement le nuanceur d'origine (rendu identique au pixel près)
+#ifdef COUPE
+  gl_FragColor = vec4(c * A.a, A.a) * uFade;
+#else
   gl_FragColor = vec4(c * A.a, A.a);
+#endif
 }`;
 
 /** Matière d'un plan (une par plan : chacun a sa texture). */
@@ -53,7 +58,8 @@ function plateMaterial(p: PreparedPlate): THREE.ShaderMaterial {
   const cut = p.entry.blend === 'decoupe';
   return new THREE.ShaderMaterial({
     name: 'VillePlan',
-    uniforms: { ...U, tPlate: { value: p.texture }, uLit: { value: p.entry.lit ?? 0 }, uFog: { value: p.entry.fog ?? 1 }, uCut: { value: cut ? 0.02 : 0.004 }, uVoile: { value: p.entry.voile ?? 0 } },
+    uniforms: { ...U, tPlate: { value: p.texture }, uLit: { value: p.entry.lit ?? 0 }, uFog: { value: p.entry.fog ?? 1 }, uCut: { value: cut ? 0.02 : 0.004 }, uVoile: { value: p.entry.voile ?? 0 }, uFade: { value: 1 } },
+    defines: p.entry.coupe ? { COUPE: 1 } : {},
     vertexShader: PLATE_VERT,
     fragmentShader: PLATE_FRAG,
     transparent: true,
@@ -61,6 +67,13 @@ function plateMaterial(p: PreparedPlate): THREE.ShaderMaterial {
     depthWrite: cut,
     side: THREE.FrontSide,
   });
+}
+
+/** Opacité d'un plan `coupe` quand le personnage est derrière lui (passe 62). */
+export const COUPE_ALPHA = 0.12;
+/** Le personnage est « derrière » un plan `coupe` : plus loin en z, dans sa largeur (marge de 0,6 m). */
+export function behindPlate(r: { center: [number, number, number]; w: number }, p: { x: number; z: number }): boolean {
+  return p.z < r.center[2] - 0.35 && Math.abs(p.x - r.center[0]) < r.w / 2 + 0.6;
 }
 
 /** Couleur linéaire d'une lumière du diorama : une famille (direction D, `FAM`), l'ambre des lanternes, ou donnée. */
@@ -104,18 +117,36 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
   scene.background = new THREE.Color(0x04060c);
   const textures: THREE.Texture[] = [];
   const meshes: THREE.Object3D[] = [];
+  /** Plans `coupe` (passe 62) : opacité courante, profondeur écrite d'origine. */
+  const cutaways: { rect: ReturnType<typeof plateRect>; mat: THREE.ShaderMaterial; alpha: number; writes: boolean }[] = [];
   if (d.ground) meshes.push(engineGround(def, artSeed, textures));
   // créés dans l'ordre de dessin : à profondeur égale, three.js départage les transparents par ordre de création
   for (const p of d.plates) {
     const r = plateRect(p.entry);
     const g = new THREE.PlaneGeometry(r.w, r.h);
-    const mesh = new THREE.Mesh(g, plateMaterial(p));
+    // sous-rectangle de l'image (passe 62) : uv du plan ramenés au morceau (image retournée à la création : v vers le haut)
+    if (p.entry.uv) {
+      const [u0, v0, u1, v1] = p.entry.uv;
+      const uv = g.attributes.uv as THREE.BufferAttribute;
+      for (let i = 0; i < uv.count; i++) uv.setXY(i, u0 + uv.getX(i) * (u1 - u0), 1 - v1 + uv.getY(i) * (v1 - v0));
+    }
+    // plan de côté tourné vers l'ouest : image retournée, son bord gauche reste vers la caméra
+    if (r.orient === 'cote' && p.entry.vers === 'ouest') {
+      const uv = g.attributes.uv as THREE.BufferAttribute;
+      const [u0, , u1] = p.entry.uv ?? [0, 0, 1, 1];
+      for (let i = 0; i < uv.count; i++) uv.setX(i, u0 + u1 - uv.getX(i));
+    }
+    const mat = plateMaterial(p);
+    const mesh = new THREE.Mesh(g, mat);
     mesh.name = `plan:${d.ilot}/${p.id}`;
     mesh.position.set(...r.center);
     if (r.orient === 'sol') {
       mesh.rotation.x = -Math.PI / 2;
       mesh.layers.set(LAYER_NOREFLECT);
     }
+    // de côté : normale vers +x (est) ou −x (ouest) ; le bord gauche de l'image vers la caméra (z le plus grand)
+    if (r.orient === 'cote') mesh.rotation.y = p.entry.vers === 'ouest' ? -Math.PI / 2 : Math.PI / 2;
+    if (p.entry.coupe) cutaways.push({ rect: r, mat, alpha: 1, writes: mat.depthWrite });
     meshes.push(mesh);
   }
   const lights: LightDef[] = d.lights.map((l) => ({
@@ -129,6 +160,20 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
     for (const m of d.mists) { const { mesh, mat } = mistPlane(tex, m); meshes.push(mesh); mistMats.push(mat); }
   }
   const base = finish(scene, { build: (into) => { for (const m of meshes) into.add(m); return meshes.length; } }, lights, [], textures);
-  if (!mistMats.length) return base;
-  return { ...base, update: (time: number) => { base.update(time); for (const mm of mistMats) mm.uniforms.uT!.value = time; } };
+  let lastFocus = performance.now();
+  // vue en coupe (passe 62) : le plan derrière lequel passe le personnage s'efface (et n'écrit plus la profondeur)
+  const focus = (p: { x: number; z: number }, snap: boolean) => {
+    const now = performance.now();
+    const k = snap ? 1 : Math.min(1, ((now - lastFocus) / 1000) * 7);
+    lastFocus = now;
+    for (const c of cutaways) {
+      const want = behindPlate(c.rect, p) ? COUPE_ALPHA : 1;
+      c.alpha += (want - c.alpha) * k;
+      if (Math.abs(c.alpha - want) < 0.005) c.alpha = want;
+      c.mat.uniforms.uFade!.value = c.alpha;
+      c.mat.depthWrite = c.writes && c.alpha > 0.98;
+    }
+  };
+  if (!mistMats.length && !cutaways.length) return base;
+  return { ...base, focus: cutaways.length ? focus : undefined, update: (time: number) => { base.update(time); for (const mm of mistMats) mm.uniforms.uT!.value = time; } };
 }

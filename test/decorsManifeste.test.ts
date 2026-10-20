@@ -16,36 +16,44 @@ import { afterAll, describe, expect, it } from 'vitest';
 import { checkIlotDecor, DECOR_MAX_BYTES, DECOR_MAX_ILOT_BYTES, DECOR_VERSION, platesInOrder, type DecorManifest, type IlotDecorEntry } from '../src/ville/decors';
 import { isIlotId } from '../src/ville/ilots';
 
-/** Problèmes du dossier de plans `dir` (manifeste, îlots, fichiers, empreintes, dimensions, poids, fiches sous `root`). */
+/**
+ * Problèmes du dossier de plans `dir` (manifeste, îlots, fichiers, empreintes, dimensions, poids, fiches sous `root`).
+ * Passe 62 : les manifestes de laboratoire du même dossier (`manifest-<nom>.json`, preuve de la profondeur praticable)
+ * sont contrôlés de la même façon ; une image découpée par plusieurs plans (`uv`) ne compte qu'une fois par îlot.
+ */
 function verifyDecorDir(dir: string, root: string): string[] {
   const out: string[] = [];
-  const path = join(dir, 'manifest.json');
-  if (!existsSync(path)) return ['manifest.json absent'];
-  let m: DecorManifest;
-  try { m = JSON.parse(readFileSync(path, 'utf8')) as DecorManifest; } catch { return ['manifest.json illisible']; }
-  if (m.version !== DECOR_VERSION || !m.ilots || typeof m.ilots !== 'object' || Array.isArray(m.ilots)) return [`manifeste : version ${DECOR_VERSION} et objet « ilots » attendus`];
+  if (!existsSync(join(dir, 'manifest.json'))) return ['manifest.json absent'];
+  const names = readdirSync(dir).filter((f) => /^manifest(-[\w-]+)?\.json$/.test(f)).sort();
   const listed = new Set<string>();
-  for (const [ilot, e] of Object.entries(m.ilots)) {
-    if (!isIlotId(ilot)) out.push(`${ilot} : îlot inconnu de la ville`);
-    const bad = checkIlotDecor(ilot, e);
-    if (bad.length) { out.push(...bad); continue; }
-    let bytes = 0;
-    for (const [id, p] of platesInOrder(e as IlotDecorEntry)) {
-      listed.add(p.file);
-      const file = join(dir, p.file);
-      if (!existsSync(file)) { out.push(`${ilot}/${id} : ${p.file} absent`); continue; }
-      const buf = readFileSync(file);
-      bytes += buf.length;
-      if (createHash('sha256').update(buf).digest('hex') !== p.sha256) out.push(`${ilot}/${id} : empreinte de ${p.file} différente du manifeste`);
-      if (buf.length > DECOR_MAX_BYTES) out.push(`${ilot}/${id} : ${p.file} pèse ${buf.length} octets (> 8 Mo)`);
-      const png = buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) && buf.toString('latin1', 12, 16) === 'IHDR';
-      if (!png) { out.push(`${ilot}/${id} : ${p.file} n'est pas un PNG`); continue; }
-      if (buf.readUInt32BE(16) !== p.size[0] || buf.readUInt32BE(20) !== p.size[1]) out.push(`${ilot}/${id} : ${buf.readUInt32BE(16)}×${buf.readUInt32BE(20)} au lieu de ${p.size[0]}×${p.size[1]}`);
-      if (!existsSync(join(root, p.fiche))) out.push(`${ilot}/${id} : fiche de provenance ${p.fiche} absente`);
+  for (const name of names) {
+    const tag = name === 'manifest.json' ? '' : `${name} : `;
+    let m: DecorManifest;
+    try { m = JSON.parse(readFileSync(join(dir, name), 'utf8')) as DecorManifest; } catch { out.push(`${name} illisible`); continue; }
+    if (m.version !== DECOR_VERSION || !m.ilots || typeof m.ilots !== 'object' || Array.isArray(m.ilots)) { out.push(`${tag}manifeste : version ${DECOR_VERSION} et objet « ilots » attendus`); continue; }
+    for (const [ilot, e] of Object.entries(m.ilots)) {
+      if (!isIlotId(ilot)) out.push(`${tag}${ilot} : îlot inconnu de la ville`);
+      const bad = checkIlotDecor(ilot, e);
+      if (bad.length) { out.push(...bad.map((x) => tag + x)); continue; }
+      const counted = new Set<string>();
+      let bytes = 0;
+      for (const [id, p] of platesInOrder(e as IlotDecorEntry)) {
+        listed.add(p.file);
+        const file = join(dir, p.file);
+        if (!existsSync(file)) { out.push(`${tag}${ilot}/${id} : ${p.file} absent`); continue; }
+        const buf = readFileSync(file);
+        if (!counted.has(p.file)) { counted.add(p.file); bytes += buf.length; }
+        if (createHash('sha256').update(buf).digest('hex') !== p.sha256) out.push(`${tag}${ilot}/${id} : empreinte de ${p.file} différente du manifeste`);
+        if (buf.length > DECOR_MAX_BYTES) out.push(`${tag}${ilot}/${id} : ${p.file} pèse ${buf.length} octets (> 8 Mo)`);
+        const png = buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) && buf.toString('latin1', 12, 16) === 'IHDR';
+        if (!png) { out.push(`${tag}${ilot}/${id} : ${p.file} n'est pas un PNG`); continue; }
+        if (buf.readUInt32BE(16) !== p.size[0] || buf.readUInt32BE(20) !== p.size[1]) out.push(`${tag}${ilot}/${id} : ${buf.readUInt32BE(16)}×${buf.readUInt32BE(20)} au lieu de ${p.size[0]}×${p.size[1]}`);
+        if (!existsSync(join(root, p.fiche))) out.push(`${tag}${ilot}/${id} : fiche de provenance ${p.fiche} absente`);
+      }
+      if (bytes > DECOR_MAX_ILOT_BYTES) out.push(`${tag}${ilot} : ${bytes} octets de plans (> 32 Mo)`);
     }
-    if (bytes > DECOR_MAX_ILOT_BYTES) out.push(`${ilot} : ${bytes} octets de plans (> 32 Mo)`);
   }
-  for (const f of readdirSync(dir)) if (f !== 'manifest.json' && !listed.has(f) && statSync(join(dir, f)).isFile()) out.push(`${f} : fichier hors du manifeste`);
+  for (const f of readdirSync(dir)) if (!names.includes(f) && !listed.has(f) && statSync(join(dir, f)).isFile()) out.push(`${f} : fichier hors du manifeste`);
   return out;
 }
 

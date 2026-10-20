@@ -32,6 +32,12 @@ export interface RigParams {
   tau: number;
   /** Inclinaison des personnages vers la caméra (radians, autour des pieds), pour corriger le raccourci. */
   spriteTilt: number;
+  /**
+   * Profondeur praticable (passe 62, facultatif) : inclinaison atteinte quand le personnage est en `zFond` (interpolée
+   * depuis `aimZ`) : la caméra s'élève pour regarder dans la rue du fond.
+   */
+  pitchFond?: number;
+  zFond?: number;
 }
 
 export const RIGS: Record<CameraId, RigParams> = {
@@ -42,7 +48,7 @@ export const RIGS: Record<CameraId, RigParams> = {
 };
 
 /** Réglages de cadrage qu'un îlot ou l'URL peut remplacer (fiche B1 : « gardés, ajustés à l'œil »). */
-export type RigTuning = Partial<Pick<RigParams, 'pitch' | 'distance' | 'fov' | 'aimY'>>;
+export type RigTuning = Partial<Pick<RigParams, 'pitch' | 'distance' | 'fov' | 'aimY' | 'followZ' | 'aimZ' | 'pitchFond' | 'zFond'>>;
 
 /**
  * Réglage par l'URL, pour ajuster le cadrage à l'œil sans reconstruire (laboratoire et démo) :
@@ -67,7 +73,9 @@ export function framingFor(p: RigParams, target: { x: number; z: number }): Fram
   const ax = Math.min(p.maxX, Math.max(p.minX, target.x));
   const az = p.aimZ + (target.z - p.aimZ) * p.followZ;
   const aim = new THREE.Vector3(ax, p.aimY, az);
-  const a = THREE.MathUtils.degToRad(p.pitch);
+  // inclinaison selon la profondeur du personnage (passe 62) : `pitch` en `aimZ`, `pitchFond` en `zFond`
+  const deep = p.pitchFond !== undefined && p.zFond !== undefined && p.zFond < p.aimZ ? THREE.MathUtils.clamp((p.aimZ - target.z) / (p.aimZ - p.zFond), 0, 1) : 0;
+  const a = THREE.MathUtils.degToRad(p.pitch + (deep > 0 ? (p.pitchFond! - p.pitch) * deep : 0));
   const pos = new THREE.Vector3(ax, p.aimY + Math.sin(a) * p.distance, az + Math.cos(a) * p.distance);
   return { pos, aim };
 }

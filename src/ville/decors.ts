@@ -28,13 +28,27 @@
  * seul plan refusé, et l'îlot garde son décor par code (jamais de mélange des deux). Budgets du contrat v1 (à revoir
  * après l'essai technique) : PNG ≤ 8 Mo, côté ≤ 4096 px, 8 plans au plus, 32 Mo de fichiers et 160 Mo de mémoire GPU
  * (mipmaps comprises) par îlot ; 12 plans au plus depuis la passe 60 (diorama plus profond).
+ *
+ * Passe 62 (profondeur praticable, preuve ; champs facultatifs, le Quai actuel ne les emploie pas) :
+ *   - `uv` : sous-rectangle de l'image [u0, v0, u1, v1] (fractions, origine en haut à gauche) ; plusieurs plans peuvent
+ *     découper la même image (une seule texture au GPU, comptée une fois) ;
+ *   - `orient: 'cote'` : plan vertical parallèle à z (mur d'un passage), `at` = [x, y du bas, z du milieu], `width` =
+ *     longueur le long de z ; `vers` : côté peint (`est` : tourné vers +x, défaut ; `ouest`), le haut de l'image
+ *     en haut, le bord gauche de l'image vers la caméra (z le plus grand) ; l'autre côté n'est pas dessiné ;
+ *   - `coupe` : le plan s'efface quand le personnage passe derrière lui, dans sa largeur (vue en coupe) ;
+ *   - `camera` : `followZ` (part de la profondeur suivie), `aimZ`, `pitchFond` et `zFond` (inclinaison atteinte
+ *     quand le personnage est en `zFond`) ;
+ *   - un îlot peut lire un autre manifeste du même dossier (`manifest`, laboratoire : `manifest-profondeur.json`).
  */
 import * as THREE from 'three';
 import { admit, type SpritePolicy } from './spritesExternes';
 
 export const DECOR_VERSION = 1;
-/** Plans par îlot : 8 au contrat v1, 12 depuis la passe 60 (profondeur : troisième rang, ruelles, passages). */
-export const DECOR_MAX_PLATES = 12;
+/**
+ * Plans par îlot : 8 au contrat v1, 12 depuis la passe 60 (profondeur : troisième rang), 16 depuis la passe 62 (profondeur
+ * praticable : façades, pied et murs des passages découpés dans les mêmes images, textures partagées).
+ */
+export const DECOR_MAX_PLATES = 16;
 export const DECOR_MAX_SIDE = 4096;
 export const DECOR_MAX_BYTES = 8 * 1024 * 1024;
 export const DECOR_MAX_ILOT_BYTES = 32 * 1024 * 1024;
@@ -51,11 +65,17 @@ export interface PlateEntry {
   sha256: string;
   /** Dimensions de l'image (px), vérifiées au décodage et par le test du manifeste. */
   size: [number, number];
-  /** Position au monde (m) : face [x milieu, y bas, z] ; couché [x milieu, y, z milieu]. */
+  /** Position au monde (m) : face [x milieu, y bas, z] ; couché [x milieu, y, z milieu] ; côté [x, y bas, z milieu]. */
   at: [number, number, number];
-  /** Largeur au monde (m). */
+  /** Largeur au monde (m) ; d'un plan de côté : sa longueur le long de z. */
   width: number;
-  orient: 'face' | 'sol';
+  orient: 'face' | 'sol' | 'cote';
+  /** Sous-rectangle de l'image [u0, v0, u1, v1] (fractions, origine en haut à gauche ; passe 62) ; défaut : l'image entière. */
+  uv?: [number, number, number, number];
+  /** Effacé quand le personnage passe derrière lui (passe 62). */
+  coupe?: boolean;
+  /** Plan de côté : face peinte tournée vers l'est (+x, défaut) ou l'ouest (passe 62). */
+  vers?: 'est' | 'ouest';
   order: number;
   blend: 'decoupe' | 'fondu';
   /** Part de l'éclairage du moteur (0 à 1, défaut 0). */
@@ -87,7 +107,12 @@ export interface DecorLight {
 }
 
 /** Cadrage propre au diorama (mêmes bornes que le réglage par l'URL, `parseRig`) et bornes du point visé en x. */
-export interface DecorCamera { pitch?: number; distance?: number; fov?: number; aimY?: number; minX?: number; maxX?: number }
+export interface DecorCamera {
+  pitch?: number; distance?: number; fov?: number; aimY?: number; minX?: number; maxX?: number;
+  /** Profondeur praticable (passe 62) : part du déplacement en z suivie, z visé au milieu de la rue, inclinaison atteinte
+   *  quand le personnage est en `zFond` (interpolée depuis `aimZ`). */
+  followZ?: number; aimZ?: number; pitchFond?: number; zFond?: number;
+}
 /**
  * Nappe de brume du moteur : largeur, hauteur, x, y, z, opacité, vitesse de dérive, échelle du bruit [x, y], et ton
  * (facultatif, de 0,5 à 4 : clarté de la brume rapportée à la couleur de la brume du moteur ; 1,25 par défaut, celui du
@@ -128,7 +153,14 @@ export function checkPlate(label: string, e: unknown): string[] {
   }
   if (!isVec3(x.at)) out.push(`${label} : position au monde invalide ([x, y, z] en mètres)`);
   if (!isNum(x.width) || x.width <= 0 || x.width > 400) out.push(`${label} : largeur au monde invalide (m, de 0 à 400)`);
-  if (x.orient !== 'face' && x.orient !== 'sol') out.push(`${label} : orientation « face » ou « sol » attendue`);
+  if (x.orient !== 'face' && x.orient !== 'sol' && x.orient !== 'cote') out.push(`${label} : orientation « face », « sol » ou « cote » attendue`);
+  if (x.uv !== undefined) {
+    const u = x.uv as unknown;
+    const ok = Array.isArray(u) && u.length === 4 && u.every(isNum) && (([u0, v0, u1, v1]: [number, number, number, number]) => u0 >= 0 && v0 >= 0 && u1 <= 1 && v1 <= 1 && u0 < u1 && v0 < v1)(u as [number, number, number, number]);
+    if (!ok) out.push(`${label} : sous-rectangle « uv » invalide ([u0, v0, u1, v1], 0 ≤ u0 < u1 ≤ 1, 0 ≤ v0 < v1 ≤ 1)`);
+  }
+  if (x.coupe !== undefined && typeof x.coupe !== 'boolean') out.push(`${label} : champ « coupe » non booléen`);
+  if (x.vers !== undefined && (x.orient !== 'cote' || (x.vers !== 'est' && x.vers !== 'ouest'))) out.push(`${label} : « vers » (est ou ouest) réservé aux plans de côté`);
   if (!isInt(x.order) || x.order < 0 || x.order > 99) out.push(`${label} : ordre de dessin entier de 0 à 99 attendu`);
   if (x.blend !== 'decoupe' && x.blend !== 'fondu') out.push(`${label} : mélange « decoupe » ou « fondu » attendu`);
   if (x.lit !== undefined && (!isNum(x.lit) || x.lit < 0 || x.lit > 1)) out.push(`${label} : part d'éclairage hors de 0 à 1`);
@@ -186,7 +218,7 @@ export function checkIlotDecor(ilot: string, e: unknown): string[] {
       if (pa.at[2] < pb.at[2] && pa.order > pb.order) out.push(`${ilot} : « ${a} » (z ${pa.at[2]}) plus lointain que « ${b} » (z ${pb.at[2]}) mais dessiné après (ordre ${pa.order} > ${pb.order})`);
     }
   }
-  const gpu = valid.reduce((n, [, p]) => n + plateGpuBytes(p.size), 0);
+  const gpu = uniqueImageBytes(valid.map(([, p]) => p));
   if (gpu > DECOR_MAX_GPU_BYTES) out.push(`${ilot} : ${Math.round(gpu / 1048576)} Mo de mémoire GPU (> ${DECOR_MAX_GPU_BYTES / 1048576} Mo)`);
   if (x.lumieres !== undefined) {
     if (!Array.isArray(x.lumieres) || x.lumieres.length > DECOR_MAX_LIGHTS) out.push(`${ilot} : lumières en liste de ${DECOR_MAX_LIGHTS} au plus`);
@@ -196,8 +228,9 @@ export function checkIlotDecor(ilot: string, e: unknown): string[] {
   if (x.camera !== undefined) {
     const c = x.camera as Partial<DecorCamera> | null;
     const bad = (k: keyof DecorCamera, lo: number, hi: number) => c && c[k] !== undefined && (!isNum(c[k]) || c[k]! < lo || c[k]! > hi);
-    if (!c || typeof c !== 'object' || bad('pitch', 0, 30) || bad('distance', 6, 60) || bad('fov', 15, 60) || bad('aimY', 0, 12) || bad('minX', -60, 60) || bad('maxX', -60, 60) || (isNum(c.minX) && isNum(c.maxX) && c.minX > c.maxX)) {
-      out.push(`${ilot} : cadrage invalide (inclinaison 0–30°, distance 6–60 m, champ 15–60°, hauteur visée 0–12 m, minX ≤ maxX)`);
+    if (!c || typeof c !== 'object' || bad('pitch', 0, 30) || bad('distance', 6, 60) || bad('fov', 15, 60) || bad('aimY', 0, 12) || bad('minX', -60, 60) || bad('maxX', -60, 60) || (isNum(c.minX) && isNum(c.maxX) && c.minX > c.maxX)
+      || bad('followZ', 0, 1) || bad('aimZ', -60, 60) || bad('pitchFond', 0, 45) || bad('zFond', -80, 20)) {
+      out.push(`${ilot} : cadrage invalide (inclinaison 0–30°, distance 6–60 m, champ 15–60°, hauteur visée 0–12 m, minX ≤ maxX ; suivi en profondeur 0–1, inclinaison au fond 0–45°)`);
     }
   }
   if (x.brumes !== undefined) {
@@ -214,12 +247,21 @@ export function platesInOrder(e: IlotDecorEntry): [string, PlateEntry][] {
   return Object.entries(e.plans).sort((a, b) => a[1].order - b[1].order);
 }
 
-/** Pose d'un plan au monde : centre, largeur, hauteur (profondeur, couché). */
-export interface PlateRect { center: [number, number, number]; w: number; h: number; orient: 'face' | 'sol' }
-export function plateRect(e: Pick<PlateEntry, 'at' | 'width' | 'size' | 'orient'>): PlateRect {
-  const h = e.width * (e.size[1] / e.size[0]);
+/** Pose d'un plan au monde : centre, largeur (longueur le long de z, de côté), hauteur (profondeur, couché). */
+export interface PlateRect { center: [number, number, number]; w: number; h: number; orient: 'face' | 'sol' | 'cote' }
+export function plateRect(e: Pick<PlateEntry, 'at' | 'width' | 'size' | 'orient' | 'uv'>): PlateRect {
+  const [u0, v0, u1, v1] = e.uv ?? [0, 0, 1, 1];
+  const h = e.width * (((v1 - v0) * e.size[1]) / ((u1 - u0) * e.size[0]));
   const [x, y, z] = e.at;
-  return e.orient === 'face' ? { center: [x, y + h / 2, z], w: e.width, h, orient: 'face' } : { center: [x, y, z], w: e.width, h, orient: 'sol' };
+  if (e.orient === 'sol') return { center: [x, y, z], w: e.width, h, orient: 'sol' };
+  return { center: [x, y + h / 2, z], w: e.width, h, orient: e.orient };
+}
+
+/** Mémoire GPU des images d'un diorama, chaque image comptée une fois (plusieurs plans peuvent découper la même). */
+export function uniqueImageBytes(plates: readonly Pick<PlateEntry, 'file' | 'sha256' | 'size'>[]): number {
+  const seen = new Map<string, number>();
+  for (const p of plates) seen.set(`${p.file}|${p.sha256}`, plateGpuBytes(p.size));
+  return [...seen.values()].reduce((a, b) => a + b, 0);
 }
 
 /**
@@ -246,14 +288,17 @@ const hex = (buf: ArrayBuffer) => [...new Uint8Array(buf)].map((b) => b.toString
 
 export interface DecorManifestRead { manifest: DecorManifest | null; issue: string | null }
 const manifests = new Map<string, Promise<DecorManifestRead>>();
+/** Manifeste par défaut d'un dossier de plans (le laboratoire de la profondeur en lit un autre, passe 62). */
+export const DECOR_MANIFEST = 'manifest.json';
 /** Manifestes déjà lus (accès immédiat : la décision d'un îlot est synchrone une fois le manifeste connu). */
 const manifestsRead = new Map<string, DecorManifestRead>();
 
 /** Manifeste des plans (une seule lecture par emplacement) ; absent : null sans problème ; illisible : la raison. */
-export function readDecorManifest(base = 'decors/'): Promise<DecorManifestRead> {
-  let m = manifests.get(base);
+export function readDecorManifest(base = 'decors/', name = DECOR_MANIFEST): Promise<DecorManifestRead> {
+  const key = `${base}${name}`;
+  let m = manifests.get(key);
   if (!m) {
-    m = fetch(`${base}manifest.json`, { cache: 'no-store' })
+    m = fetch(key, { cache: 'no-store' })
       .then(async (r): Promise<DecorManifestRead> => {
         if (!r.ok) return { manifest: null, issue: null };
         const j = (await r.json()) as Partial<DecorManifest> | null;
@@ -263,8 +308,8 @@ export function readDecorManifest(base = 'decors/'): Promise<DecorManifestRead> 
         return { manifest: j as DecorManifest, issue: null };
       })
       .catch(() => ({ manifest: null, issue: null }))
-      .then((res) => { manifestsRead.set(base, res); return res; });
-    manifests.set(base, m);
+      .then((res) => { manifestsRead.set(key, res); return res; });
+    manifests.set(key, m);
   }
   return m;
 }
@@ -315,9 +360,9 @@ function decodePlate(base: string, p: PlateEntry): Promise<DecodedPlate | string
  * ces îlots : à la création de la ville, la décision de l'îlot de départ est alors immédiate (diorama construit tout de
  * suite, sans détour par le décor par code). Sans effet visible ; jamais rejeté.
  */
-export async function preloadDecors(ilots: readonly string[], policy: SpritePolicy, base = 'decors/'): Promise<void> {
+export async function preloadDecors(ilots: readonly string[], policy: SpritePolicy, base = 'decors/', name = DECOR_MANIFEST): Promise<void> {
   if (policy === 'code') return;
-  const read = await readDecorManifest(base);
+  const read = await readDecorManifest(base, name);
   const all = read.manifest?.ilots;
   if (!all) return;
   await Promise.all(ilots.map(async (id) => {
@@ -361,13 +406,14 @@ export interface DecorResolver {
 }
 
 /** Résolveur d'une ville : applique la politique au manifeste, envoie chaque plan une fois à son GPU, tient le rapport. */
-export function createDecorResolver(policy: SpritePolicy, upload: (t: THREE.Texture) => void, opts: { base?: string } = {}): DecorResolver {
+export function createDecorResolver(policy: SpritePolicy, upload: (t: THREE.Texture) => void, opts: { base?: string; manifest?: string } = {}): DecorResolver {
   const base = opts.base ?? 'decors/';
+  const name = opts.manifest ?? DECOR_MANIFEST;
   const report: DecorReport = { policy, loaded: [], unapproved: [], issues: [], timings: {}, gpuBytes: {} };
   const done = new Map<string, DecorState>();
   const issue = (s: string) => { if (!report.issues.includes(s)) report.issues.push(s); };
   const entryOf = (ilot: string): IlotDecorEntry | null | undefined => {
-    const read = manifestsRead.get(base);
+    const read = manifestsRead.get(`${base}${name}`);
     if (!read) return undefined;
     if (read.issue) issue(read.issue);
     const all = read.manifest?.ilots;
@@ -377,7 +423,7 @@ export function createDecorResolver(policy: SpritePolicy, upload: (t: THREE.Text
     policy,
     async prepare(ilot) {
       if (policy === 'code' || done.has(ilot)) return;
-      const read = await readDecorManifest(base);
+      const read = await readDecorManifest(base, name);
       const e = read.manifest?.ilots?.[ilot];
       if (!e || !decideIlot(policy, ilot, e).ok) return;
       await Promise.all(platesInOrder(e).map(([, p]) => decodePlate(base, p)));
@@ -400,9 +446,15 @@ export function createDecorResolver(policy: SpritePolicy, upload: (t: THREE.Text
       }
       const bad = results.map((r, i) => (typeof r === 'string' ? `${ilot}/${plates[i]![0]} : ${r}` : null)).filter((x): x is string => !!x);
       if (bad.length) { bad.forEach(issue); issue(`${ilot} : diorama refusé, décor par code gardé`); done.set(ilot, { state: 'code' }); return { state: 'code' }; }
+      // une texture par image : les plans qui découpent la même image (`uv`, passe 62) la partagent
+      const shared = new Map<string, THREE.Texture>();
       const prepared: PreparedPlate[] = plates.map(([id, p], i) => {
         const r = results[i] as DecodedPlate;
+        const k = plateKey(base, p);
+        const had = shared.get(k);
+        if (had) return { id, entry: p, texture: had };
         const tex = new THREE.Texture(r.bitmap);
+        shared.set(k, tex);
         tex.name = `plan:${ilot}/${id}`;
         tex.colorSpace = THREE.SRGBColorSpace;
         tex.flipY = false;
@@ -415,7 +467,7 @@ export function createDecorResolver(policy: SpritePolicy, upload: (t: THREE.Text
         report.timings[`${ilot}/${id}`] = { bytes: r.bytes, fetchMs: r.fetchMs, hashMs: r.hashMs, decodeMs: r.decodeMs, uploadMs: Math.round((performance.now() - u0) * 10) / 10 };
         return { id, entry: p, texture: tex };
       });
-      const gpuBytes = plates.reduce((n, [, p]) => n + plateGpuBytes(p.size), 0);
+      const gpuBytes = uniqueImageBytes(plates.map(([, p]) => p));
       report.gpuBytes[ilot] = gpuBytes;
       if (!report.loaded.includes(ilot)) report.loaded.push(ilot);
       for (const u of decision.unapproved) if (!report.unapproved.includes(u)) report.unapproved.push(u);
@@ -429,7 +481,10 @@ export function createDecorResolver(policy: SpritePolicy, upload: (t: THREE.Text
       done.delete(ilot);
       // une image partagée avec un autre îlot encore préparé reste (son plan l'utilise)
       const kept = new Set([...done.values()].flatMap((s) => (s.state === 'diorama' ? s.diorama.plates.map((q) => plateKey(base, q.entry)) : [])));
+      const disposed = new Set<THREE.Texture>();
       for (const p of d.diorama.plates) {
+        if (disposed.has(p.texture)) continue;
+        disposed.add(p.texture);
         p.texture.dispose();
         const k = plateKey(base, p.entry);
         if (kept.has(k)) continue;

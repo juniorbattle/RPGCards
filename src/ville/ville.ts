@@ -58,6 +58,10 @@ export interface TownOptions {
   decors?: SpritePolicy;
   /** Réglages de cadrage pris dans l'URL (`rig=…`, `parseRig`), par-dessus ceux de l'îlot : ajustement à l'œil (fiche B1). */
   rig?: RigTuning | null;
+  /** Îlot de départ remplacé (passe 62, laboratoire : le Quai profond, `?profondeur=1`). */
+  ilotDef?: IlotDef;
+  /** Manifeste des plans lu dans `decors/` (passe 62, laboratoire : `manifest-profondeur.json`). */
+  decorsManifest?: string;
 }
 
 export interface TownStats {
@@ -269,7 +273,8 @@ export function createTown(o: TownOptions): Town {
   renderer.domElement.className = 'ville-canvas';
   o.host.appendChild(renderer.domElement);
 
-  let def: IlotDef = ILOTS[o.ilot ?? 'quai'];
+  // îlot de départ remplacé (passe 62 : Quai profond du laboratoire, `?profondeur=1`) ; les voisins restent ceux du registre
+  let def: IlotDef = o.ilotDef ?? ILOTS[o.ilot ?? 'quai'];
   // Feuilles de personnages (ADR 027) : lecture du manifeste et décodage lancés avant la construction de l'îlot (le
   // réseau et le décodeur avancent pendant qu'elle occupe le fil principal) ; envoi au GPU dès qu'une feuille est prête.
   const sheets = createSheetResolver(o.sprites ?? 'approuvees', (t) => renderer.initTexture(t), {
@@ -283,7 +288,7 @@ export function createTown(o: TownOptions): Town {
   // Plans de décor (ADR 028) : décision immédiate si le manifeste est déjà lu et les plans décodés (`preloadDecors`,
   // laboratoire et démo), sinon décor par code construit tout de suite et image retenue jusqu'à la décision (au plus
   // `HOLD_MS`) : un diorama admis le remplace alors avant la première image.
-  const decors = createDecorResolver(o.decors ?? 'approuvees', (t) => renderer.initTexture(t));
+  const decors = createDecorResolver(o.decors ?? 'approuvees', (t) => renderer.initTexture(t), { manifest: o.decorsManifest });
   void decors.prepare(def.id);
   let worldKind: 'code' | 'diorama' = 'code';
   /** Cadrage déclaré par le diorama monté (passe 60 : cadrage élargi de la porte), null pour le décor par code. */
@@ -529,6 +534,7 @@ export function createTown(o: TownOptions): Town {
   const viewDepth = (y: number, z: number) => -focus.set(camera.position.x, y, z).applyMatrix4(camera.matrixWorldInverse).z;
   const render = () => {
     world.update(time);
+    world.focus?.(walker.pos, !!o.freeze);
     playerSprite.set(walker.pos, walker.facing, walker.phase, walker.moving, time);
     for (const { n, s } of npcSprites) {
       // Les PNJ se tournent vers le joueur quand il approche (à moins de 2,5 m).
@@ -649,7 +655,7 @@ export function createTown(o: TownOptions): Town {
     mountT0 = m0;
     unmountWorld();
     const prev = def.id;
-    def = ILOTS[id];
+    def = o.ilotDef && o.ilotDef.id === id ? o.ilotDef : ILOTS[id];
     // feuilles et diorama de l'îlot d'arrivée : déjà prêts si l'appelant les a préparés derrière le fondu (`prepare`)
     void sheets.prepare(castOf(def));
     const st = decors.peek(def.id);

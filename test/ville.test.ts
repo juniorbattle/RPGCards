@@ -471,9 +471,12 @@ describe('ville : plans de décor (ADR 028, B2 : diorama de plans peints)', () =
     expect(checkIlotDecor('quai', ilot({ a: plate() }, { lumieres: [{ at: [0, 0, 0], color: 'rose', intensity: 1, radius: 5 }] })).join()).toMatch(/couleur/);
     expect(checkIlotDecor('quai', ilot({ a: plate() }, { lumieres: Array.from({ length: 17 }, () => ({ at: [0, 0, 0], color: 'ambre', intensity: 1, radius: 5 })) })).join()).toMatch(/16 au plus/);
     expect(checkIlotDecor('quai', ilot({ a: plate() }, { sol: 'oui' })).join()).toMatch(/sol/);
-    // budget : 3 plans de 4096 × 4096 dépassent les 160 Mo de mémoire GPU
-    const big = Object.fromEntries(Array.from({ length: 3 }, (_, i) => [`p${i}`, plate({ size: [4096, 4096], order: i, at: [0, 0, -50 + i] })]));
+    // budget : 3 images de 4096 × 4096 dépassent les 160 Mo de mémoire GPU ; la même image découpée par 3 plans (uv,
+    // passe 62) ne compte qu'une fois
+    const big = Object.fromEntries(Array.from({ length: 3 }, (_, i) => [`p${i}`, plate({ file: `p${i}.png`, sha256: String(i).repeat(64), size: [4096, 4096], order: i, at: [0, 0, -50 + i] })]));
     expect(checkIlotDecor('quai', ilot(big)).join()).toMatch(/mémoire GPU/);
+    const shared = Object.fromEntries(Array.from({ length: 3 }, (_, i) => [`p${i}`, plate({ size: [4096, 4096], order: i, at: [0, 0, -50 + i], uv: [i / 3, 0, (i + 1) / 3, 1] })]));
+    expect(checkIlotDecor('quai', ilot(shared))).toEqual([]);
     expect(checkIlotDecor('quai', null).join()).toMatch(/illisible/);
     expect(checkIlotDecor('quai', { plans: [] }).join()).toMatch(/plans/);
   });

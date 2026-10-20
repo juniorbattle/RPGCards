@@ -1,0 +1,165 @@
+{
+  "date": "2026-10-20T04:00:55.466Z",
+  "commit": "30f5b28",
+  "mode": "verifier",
+  "checks": [
+    "OK Quai profond dessiné par son diorama de preuve (16 plans découpés dans 9 images, 86.9 Mo de mémoire GPU), aucun refus",
+    "OK quai : personnage posé en (-0.6, 0.6), praticable ; 120 px de haut",
+    "OK passage-bouche : personnage posé en (-12.1, -2.4), praticable ; 113 px de haut",
+    "OK passage : personnage posé en (-12.1, -7.2), praticable ; 104 px de haut",
+    "OK rue-haute : personnage posé en (-0.5, -13.6), praticable ; 93 px de haut",
+    "OK rue-haute-est : personnage posé en (9.5, -14.2), praticable ; 92 px de haut",
+    "OK aucune erreur ni avertissement de console (0)"
+  ],
+  "console": [],
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "decor": {
+    "policy": "qa",
+    "loaded": [
+      "quai"
+    ],
+    "unapproved": [
+      "quai/ciel",
+      "quai/troisieme-rang",
+      "quai/rue-haute",
+      "quai/facades-ouest",
+      "quai/facades-centre",
+      "quai/facades-est",
+      "quai/pied-ouest",
+      "quai/pied-centre",
+      "quai/pied-est",
+      "quai/rue",
+      "quai/premier-plan",
+      "quai/eau",
+      "quai/joue-1",
+      "quai/joue-2",
+      "quai/joue-3",
+      "quai/joue-4"
+    ],
+    "issues": [],
+    "timings": {
+      "quai/ciel": {
+        "bytes": 3067681,
+        "fetchMs": 94.1,
+        "hashMs": 2.2,
+        "decodeMs": 72.3,
+        "uploadMs": 6.3
+      },
+      "quai/troisieme-rang": {
+        "bytes": 3466186,
+        "fetchMs": 115.1,
+        "hashMs": 2.6,
+        "decodeMs": 55,
+        "uploadMs": 4.4
+      },
+      "quai/rue-haute": {
+        "bytes": 4689617,
+        "fetchMs": 119.5,
+        "hashMs": 3.4,
+        "decodeMs": 57.4,
+        "uploadMs": 20.6
+      },
+      "quai/facades-ouest": {
+        "bytes": 5809679,
+        "fetchMs": 99.1,
+        "hashMs": 4.1,
+        "decodeMs": 84,
+        "uploadMs": 8.2
+      },
+      "quai/pied-ouest": {
+        "bytes": 158922,
+        "fetchMs": 14.4,
+        "hashMs": 0.6,
+        "decodeMs": 14.4,
+        "uploadMs": 23
+      },
+      "quai/rue": {
+        "bytes": 79461,
+        "fetchMs": 17.5,
+        "hashMs": 0.3,
+        "decodeMs": 8.8,
+        "uploadMs": 1.3
+      },
+      "quai/premier-plan": {
+        "bytes": 2871612,
+        "fetchMs": 104.1,
+        "hashMs": 3.1,
+        "decodeMs": 54.9,
+        "uploadMs": 5.8
+      },
+      "quai/eau": {
+        "bytes": 3498048,
+        "fetchMs": 110.4,
+        "hashMs": 3,
+        "decodeMs": 51.4,
+        "uploadMs": 12
+      },
+      "quai/joue-1": {
+        "bytes": 304981,
+        "fetchMs": 124.3,
+        "hashMs": 0.3,
+        "decodeMs": 16,
+        "uploadMs": 0.5
+      }
+    },
+    "gpuBytes": {
+      "quai": 91077115
+    },
+    "ilot": "quai",
+    "world": "diorama",
+    "pendingFrames": 0,
+    "late": []
+  },
+  "stats": {
+    "camera": "frontale",
+    "calls": 78,
+    "triangles": 4866,
+    "textures": 36,
+    "geometries": 35,
+    "programs": 20,
+    "lights": 16,
+    "cpuMs": 4.4,
+    "frames": 2,
+    "buildMs": 379,
+    "firstFrameMs": 1164,
+    "mountMs": null,
+    "mountFrameMs": null
+  },
+  "figures": {
+    "quai": {
+      "at": [
+        -0.6,
+        0.6
+      ],
+      "figurePx": 120
+    },
+    "passage-bouche": {
+      "at": [
+        -12.1,
+        -2.4
+      ],
+      "figurePx": 113
+    },
+    "passage": {
+      "at": [
+        -12.1,
+        -7.2
+      ],
+      "figurePx": 104
+    },
+    "rue-haute": {
+      "at": [
+        -0.5,
+        -13.6
+      ],
+      "figurePx": 93
+    },
+    "rue-haute-est": {
+      "at": [
+        9.5,
+        -14.2
+      ],
+      "figurePx": 92
+    }
+  }
+}
