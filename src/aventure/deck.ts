@@ -82,6 +82,42 @@ export function equiperVersion(d: DeckAv, defId: string): DeckAv {
   return { ...d, cartes };
 }
 
+/**
+ * Éditeur (M10-C) : définitions jouables dans la case `i` sans rompre la forme R-AV — même Rang, identité absente des
+ * autres cases, possédée (Basic d'une famille dont on a les cartes de base, variante gagnée), neutre dans la limite de
+ * celles possédées. La carte en place en fait partie.
+ */
+export function choixPourCase(d: DeckAv, col: CollectionAv, i: number): string[] {
+  const actuelle = d.cartes[i];
+  if (actuelle === undefined) return [];
+  const r = rangDe(actuelle);
+  const autres = d.cartes.filter((_, j) => j !== i);
+  const prises = new Set(autres.map(identiteDe));
+  const out: string[] = [];
+  if (autres.filter((c) => c === NEUTRES[r].defId).length < col.neutres[r]) out.push(NEUTRES[r].defId);
+  for (const f of col.basics) {
+    const identity = `${f}-${r}`;
+    if (prises.has(identity)) continue;
+    out.push(`${identity}-basic`, ...col.variantes.filter((v) => CATALOG[v]?.identity === identity));
+  }
+  return out;
+}
+
+/** Met `defId` dans la case `i` s'il fait partie des choix de cette case ; sinon le deck reste tel quel. */
+export function remplacerCase(d: DeckAv, col: CollectionAv, i: number, defId: string): DeckAv {
+  if (!choixPourCase(d, col, i).includes(defId)) return d;
+  const cartes = [...d.cartes];
+  cartes[i] = defId;
+  return { ...d, cartes: trier(cartes) };
+}
+
+/** Équipe ou retire une Technique apprise (deux au plus : la plus ancienne cède sa place). */
+export function basculerTechnique(d: DeckAv, col: CollectionAv, t: TechniqueId): DeckAv {
+  if (d.techniques.includes(t)) return { ...d, techniques: d.techniques.filter((x) => x !== t) };
+  if (!col.techniques.includes(t)) return d;
+  return { ...d, techniques: [...d.techniques, t].slice(-2) };
+}
+
 /** Une Signature possédée (ou aucune) : une seule équipée (A-7). */
 export function equiperSignature(d: DeckAv, f: Family | null): DeckAv {
   return { ...d, signature: f };

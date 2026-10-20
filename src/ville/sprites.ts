@@ -92,6 +92,32 @@ export function walkerLook(id: string): WalkerLook {
       cloth: tone('#3b3214', '#2a230c', '#1a1606', '#b8962f'), shirt: tone('#ffe08a', '#d8b860', '#a88a3a', '#fff2c4'), legs: '#1e2030',
       accessory: 'aucun', long: true, detail: 'revers', iris: '#e0b23a',
     },
+    // M10-C (mode Aventure) : Maëlle, et les quatre chefs de famille aux couleurs de leurs identités V2 (`scene/v2/chefs.ts`).
+    ronce: {
+      skin: tone('#f2cdb4', '#cf9f88', '#a87262', '#fde6d6'), hair: tone('#b4502a', '#8a3a1e', '#5e2412', '#e0884a'), cut: 'queue',
+      cloth: tone('#2f5a32', '#1c3a1f', '#0e2010', '#4f8a4c'), shirt: tone('#e6dcc4', '#c2b89e', '#9a907a', '#f6f0e0'), legs: '#1e2a1e',
+      accessory: 'fichu', long: true, detail: 'chale', iris: '#4a8a3a',
+    },
+    'chef-cendre': {
+      skin: tone('#c88d66', '#9a5e44', '#6c3a28', '#e9b892'), hair: tone('#5a5652', '#363230', '#181614', '#9a958f'), cut: 'rase',
+      cloth: tone('#2c2624', '#181413', '#0c0a09', '#a8301a'), shirt: tone('#4a2e1c', '#2e1a10', '#1a0e08', '#6a4430'), legs: '#1c1816',
+      accessory: 'barbe', long: true, detail: 'bretelles', iris: '#c8641a',
+    },
+    'chef-ronce': {
+      skin: tone('#e9b9a1', '#c28c76', '#946250', '#f8d8c4'), hair: tone('#e8e4de', '#bdb5ac', '#837b74', '#ffffff'), cut: 'chignon',
+      cloth: tone('#2f5a32', '#1c3a1f', '#0e2010', '#4f8a4c'), shirt: tone('#5a2a2a', '#3a1818', '#221010', '#7a4040'), legs: '#2a1818',
+      accessory: 'fleur', long: true, detail: 'chale', iris: '#4a8a3a',
+    },
+    'chef-voile': {
+      skin: tone('#e3c1b2', '#b48f86', '#86635f', '#f6ddd2'), hair: tone('#1c1a3c', '#0e0c24', '#06051a', '#3a3870'), cut: 'milongs',
+      cloth: tone('#141230', '#09081c', '#040310', '#2c2a5c'), shirt: tone('#c4cae0', '#9aa0bc', '#6e7494', '#ffffff'), legs: '#0c0b1e',
+      accessory: 'broche', long: true, detail: 'chale', iris: '#8e9abc',
+    },
+    'chef-astre': {
+      skin: tone('#dcaf95', '#b07e66', '#7e5242', '#f4d3bd'), hair: tone('#ecebe7', '#c4c0ba', '#8a8682', '#ffffff'), cut: 'milongs',
+      cloth: tone('#1a2450', '#0e1430', '#070a1c', '#2e3c7a'), shirt: tone('#e8c46a', '#c4a04a', '#9a7a2a', '#fff0b8'), legs: '#141a34',
+      accessory: 'barbe', long: true, detail: 'revers', iris: '#5a8ac8',
+    },
   };
   return rivals[id] ?? {
     skin: NPC_SKINS[2]!, hair: NPC_HAIRS[1]!, cut: 'courte', cloth: tone('#3e5068', '#2c3a4e', '#1c2636', '#5e7290'),

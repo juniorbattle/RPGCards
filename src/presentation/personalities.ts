@@ -12,8 +12,10 @@ import { NPC_TEMPLATES, npcIdentity, npcLook, type NpcId, type NpcTemplateId } f
 
 /** Les quatre rivaux signatures (personnages uniques). */
 export type SignatureRivalId = 'braise' | 'ronce' | 'voile' | 'astre';
-/** Identifiant d’un adversaire : rival signature ou duelliste PNJ de la ville. */
-export type OpponentId = SignatureRivalId | NpcId;
+/** M10-C : les quatre chefs de famille du mode Aventure (jamais tirés par le jeu standard). */
+export type ChefId = 'chef-cendre' | 'chef-ronce' | 'chef-voile' | 'chef-astre';
+/** Identifiant d’un adversaire : rival signature, chef de famille (mode Aventure) ou duelliste PNJ de la ville. */
+export type OpponentId = SignatureRivalId | ChefId | NpcId;
 export const SIGNATURE_RIVAL_IDS: readonly SignatureRivalId[] = ['braise', 'ronce', 'voile', 'astre'];
 
 export function isSignatureRival(id: string): id is SignatureRivalId {
@@ -62,6 +64,17 @@ export const PERSONALITIES: RivalPersonality[] = [
   },
 ];
 
+/**
+ * M10-C : les quatre chefs de famille du mode Aventure, avec leur identité V2 (`src/scene/v2/chefs.ts`). Hors de
+ * `PERSONALITIES` : le jeu standard (rencontres, `personalityFor`) ne les voit pas ; seul `personalityById` les trouve.
+ */
+export const CHEF_PERSONALITIES: RivalPersonality[] = [
+  { id: 'chef-cendre', name: 'Bran', title: 'le Premier Feu', gender: 'm', family: 'Cendre', aiProfile: 'lecteur', techniques: ['Lecture', 'Sondage'], expressiveness: 0.7, restMood: 'confident' },
+  { id: 'chef-ronce', name: 'Mère Aubépine', title: 'la Gardienne du Fanal', gender: 'f', family: 'Ronce', aiProfile: 'lecteur', techniques: ['Ancrage', 'Rupture'], expressiveness: 0.5, restMood: 'neutral' },
+  { id: 'chef-voile', name: 'Ilse', title: 'la Dame aux Voiles', gender: 'f', family: 'Voile', aiProfile: 'lecteur', techniques: ['Lecture', 'Dissipation'], expressiveness: 0.6, restMood: 'smug' },
+  { id: 'chef-astre', name: 'Halvard', title: 'le Cartographe', gender: 'm', family: 'Astre', aiProfile: 'lecteur', techniques: ['Recentrage', 'Ancrage'], expressiveness: 0.55, restMood: 'thinking' },
+];
+
 const NPC_CACHE = new Map<string, RivalPersonality>();
 
 /**
@@ -87,7 +100,7 @@ export function npcPersonality(id: string): RivalPersonality | null {
 /** Personnalité d’un adversaire quelconque (rival signature ou PNJ), ou null. */
 export function personalityById(id: string | null | undefined): RivalPersonality | null {
   if (!id) return null;
-  return PERSONALITIES.find((p) => p.id === id) ?? npcPersonality(id);
+  return PERSONALITIES.find((p) => p.id === id) ?? CHEF_PERSONALITIES.find((p) => p.id === id) ?? npcPersonality(id);
 }
 
 export function personalityFor(seed: number, forced?: string | null): RivalPersonality {

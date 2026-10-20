@@ -8,6 +8,7 @@ import type { FigureV2Kit } from '../figureV2';
 import { playerKitV2 } from './joueur';
 import { KAI_V2 } from './kai';
 import { MAELLE_V2 } from './maelle';
+import { CHEF_KITS } from './chefs';
 import { ORIN_V2 } from './orin';
 import { npcKitV2 } from './pnj';
 import { SELENE_V2 } from './selene';
@@ -26,6 +27,9 @@ export const V2_IDS: readonly string[] = Object.keys(KITS);
 export function kitV2(id: string): FigureV2Kit | null {
   const rival = KITS[id];
   if (rival) return rival;
+  // M10-C : les quatre chefs de famille du mode Aventure (`chef-<famille>`), hors des rivaux signatures
+  const chef = CHEF_KITS[id];
+  if (chef) return chef;
   if (id.startsWith('pnj-')) return npcKitV2(id);
   const fam = id.startsWith('player-') ? id.slice('player-'.length) : null;
   // `player-gris` : duelliste sans Signature (deck d'aventure, avenant M10-A), tenue grise sans emblème
