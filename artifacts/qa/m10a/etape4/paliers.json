@@ -1,0 +1,1323 @@
+{
+ "commit": "b0f004f",
+ "duelsParFamilleEtEtape": 150,
+ "pv": {
+  "depart": 50,
+  "parCombat": 3
+ },
+ "pvAdverses": {
+  "prologue": [
+   40,
+   40,
+   40,
+   40
+  ],
+  "rue": [
+   40,
+   50,
+   60,
+   70
+  ],
+  "epreuve": [
+   35,
+   45,
+   55,
+   65
+  ],
+  "cadet": [
+   50,
+   65,
+   75,
+   85
+  ],
+  "brasDroit": [
+   55,
+   80,
+   85,
+   95
+  ],
+  "joute": [
+   60,
+   75,
+   85,
+   90
+  ],
+  "chef": [
+   55,
+   80,
+   95,
+   105
+  ],
+  "rival": [
+   60,
+   70,
+   80,
+   90
+  ],
+  "championnat": [
+   110,
+   110,
+   110,
+   110
+  ],
+  "finale": [
+   120,
+   120,
+   120,
+   120
+  ]
+ },
+ "profils": {
+  "prologue": "offensif",
+  "rue": "novice",
+  "epreuve": "novice",
+  "cadet": "novice",
+  "brasDroit": null,
+  "joute": "equilibre",
+  "chef": "lecteur",
+  "rival": "offensif",
+  "championnat": "lecteur",
+  "finale": "lecteur"
+ },
+ "composition": {
+  "rue": [
+   {
+    "autres": 0,
+    "variantes": [],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 2,
+    "variantes": [],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 4,
+    "variantes": [],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 8,
+    "variantes": [],
+    "autresVariantes": 0,
+    "signature": false
+   }
+  ],
+  "epreuve": [
+   {
+    "autres": 0,
+    "variantes": [],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 2,
+    "variantes": [],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 4,
+    "variantes": [],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 8,
+    "variantes": [],
+    "autresVariantes": 0,
+    "signature": false
+   }
+  ],
+  "cadet": [
+   {
+    "autres": 2,
+    "variantes": [
+     3
+    ],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 4,
+    "variantes": [
+     3
+    ],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 8,
+    "variantes": [
+     3,
+     4
+    ],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 12,
+    "variantes": [
+     3,
+     4
+    ],
+    "autresVariantes": 0,
+    "signature": false
+   }
+  ],
+  "brasDroit": [
+   {
+    "autres": 2,
+    "variantes": [
+     4
+    ],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 8,
+    "variantes": [
+     3,
+     4
+    ],
+    "autresVariantes": 2,
+    "signature": false
+   },
+   {
+    "autres": 12,
+    "variantes": [
+     3,
+     4
+    ],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 12,
+    "variantes": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "autresVariantes": 2,
+    "signature": false
+   }
+  ],
+  "joute": [
+   {
+    "autres": 4,
+    "variantes": [
+     3,
+     4
+    ],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 8,
+    "variantes": [
+     3,
+     4
+    ],
+    "autresVariantes": 2,
+    "signature": false
+   },
+   {
+    "autres": 12,
+    "variantes": [
+     3,
+     4
+    ],
+    "autresVariantes": 2,
+    "signature": false
+   },
+   {
+    "autres": 12,
+    "variantes": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "autresVariantes": 4,
+    "signature": false
+   }
+  ],
+  "chef": [
+   {
+    "autres": 0,
+    "variantes": [
+     3,
+     4
+    ],
+    "autresVariantes": 0,
+    "signature": true
+   },
+   {
+    "autres": 8,
+    "variantes": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "autresVariantes": 0,
+    "signature": true
+   },
+   {
+    "autres": 12,
+    "variantes": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "autresVariantes": 2,
+    "signature": true
+   },
+   {
+    "autres": 12,
+    "variantes": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "autresVariantes": 4,
+    "signature": true
+   }
+  ]
+ },
+ "lignes": [
+  {
+   "titre": "Prologue — Kaï",
+   "adv": "les seize cartes grises de la populace, sans Signature",
+   "palier": "populace",
+   "pvAdv": 40,
+   "profil": "offensif",
+   "deck": {
+    "direct": "16 N + 0 fam. (0 var.)",
+    "entraine": "16 N + 0 fam. (0 var.)"
+   },
+   "pv": {
+    "direct": [
+     50,
+     50,
+     50,
+     50
+    ],
+    "entraine": [
+     50,
+     50,
+     50,
+     50
+    ]
+   },
+   "v": {
+    "direct": 415,
+    "entraine": 404
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 4119,
+    "entraine": 4192
+   }
+  },
+  {
+   "titre": "Famille 1 — cadet",
+   "adv": "6 cartes de 3 familles (dont 1 variante), 10 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 50,
+   "profil": "novice",
+   "deck": {
+    "direct": "12 N + 4 fam. (0 var.)",
+    "entraine": "12 N + 4 fam. (1 var.)"
+   },
+   "pv": {
+    "direct": [
+     53,
+     53,
+     53,
+     53
+    ],
+    "entraine": [
+     68,
+     68,
+     68,
+     68
+    ]
+   },
+   "v": {
+    "direct": 374,
+    "entraine": 458
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 4895,
+    "entraine": 5473
+   }
+  },
+  {
+   "titre": "Famille 1 — bras droit",
+   "adv": "6 cartes de 3 familles (dont 1 variante), 10 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 55,
+   "profil": "propre au personnage",
+   "deck": {
+    "direct": "12 N + 4 fam. (1 var.)",
+    "entraine": "12 N + 4 fam. (2 var.)"
+   },
+   "pv": {
+    "direct": [
+     56,
+     56,
+     56,
+     56
+    ],
+    "entraine": [
+     71,
+     71,
+     71,
+     71
+    ]
+   },
+   "v": {
+    "direct": 320,
+    "entraine": 383
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 6088,
+    "entraine": 6853
+   }
+  },
+  {
+   "titre": "Famille 1 — chef",
+   "adv": "4 cartes de sa famille (dont 2 variantes), 12 cartes grises et sa Signature",
+   "palier": "elite",
+   "pvAdv": 55,
+   "profil": "lecteur",
+   "deck": {
+    "direct": "12 N + 4 fam. (2 var.)",
+    "entraine": "12 N + 4 fam. (4 var.)"
+   },
+   "pv": {
+    "direct": [
+     59,
+     59,
+     59,
+     59
+    ],
+    "entraine": [
+     77,
+     77,
+     77,
+     77
+    ]
+   },
+   "v": {
+    "direct": 253,
+    "entraine": 310
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 5751,
+    "entraine": 6915
+   }
+  },
+  {
+   "titre": "Famille 2 — cadet",
+   "adv": "8 cartes de 4 familles (dont 1 variante), 8 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 65,
+   "profil": "novice",
+   "deck": {
+    "direct": "8 N + 8 fam. (2 var.) + Sig.",
+    "entraine": "8 N + 8 fam. (5 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     62,
+     62,
+     62,
+     62
+    ],
+    "entraine": [
+     95,
+     95,
+     95,
+     95
+    ]
+   },
+   "v": {
+    "direct": 452,
+    "entraine": 562
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 5529,
+    "entraine": 6310
+   }
+  },
+  {
+   "titre": "Famille 2 — bras droit",
+   "adv": "12 cartes de 4 familles (dont 4 variantes), 4 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 80,
+   "profil": "propre au personnage",
+   "deck": {
+    "direct": "8 N + 8 fam. (3 var.) + Sig.",
+    "entraine": "8 N + 8 fam. (6 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     65,
+     65,
+     65,
+     65
+    ],
+    "entraine": [
+     98,
+     98,
+     98,
+     98
+    ]
+   },
+   "v": {
+    "direct": 410,
+    "entraine": 536
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 6164,
+    "entraine": 6963
+   }
+  },
+  {
+   "titre": "Famille 2 — chef",
+   "adv": "12 cartes de 4 familles (dont 4 variantes), 4 cartes grises et sa Signature",
+   "palier": "elite",
+   "pvAdv": 80,
+   "profil": "lecteur",
+   "deck": {
+    "direct": "8 N + 8 fam. (4 var.) + Sig.",
+    "entraine": "8 N + 8 fam. (8 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     68,
+     68,
+     68,
+     68
+    ],
+    "entraine": [
+     104,
+     104,
+     104,
+     104
+    ]
+   },
+   "v": {
+    "direct": 291,
+    "entraine": 409
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 6656,
+    "entraine": 8354
+   }
+  },
+  {
+   "titre": "Famille 3 — cadet",
+   "adv": "12 cartes de 4 familles (dont 2 variantes), 4 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 75,
+   "profil": "novice",
+   "deck": {
+    "direct": "4 N + 12 fam. (4 var.) + Sig.",
+    "entraine": "4 N + 12 fam. (9 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     71,
+     71,
+     71,
+     71
+    ],
+    "entraine": [
+     122,
+     122,
+     122,
+     122
+    ]
+   },
+   "v": {
+    "direct": 450,
+    "entraine": 568
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 5953,
+    "entraine": 7095
+   }
+  },
+  {
+   "titre": "Famille 3 — bras droit",
+   "adv": "16 cartes de 4 familles (dont 2 variantes), sans Signature",
+   "palier": "avance",
+   "pvAdv": 85,
+   "profil": "propre au personnage",
+   "deck": {
+    "direct": "4 N + 12 fam. (5 var.) + Sig.",
+    "entraine": "4 N + 12 fam. (10 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     74,
+     74,
+     74,
+     74
+    ],
+    "entraine": [
+     125,
+     125,
+     125,
+     125
+    ]
+   },
+   "v": {
+    "direct": 354,
+    "entraine": 476
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 8061,
+    "entraine": 10449
+   }
+  },
+  {
+   "titre": "Famille 3 — chef",
+   "adv": "16 cartes de 4 familles (dont 6 variantes) et sa Signature",
+   "palier": "elite",
+   "pvAdv": 95,
+   "profil": "lecteur",
+   "deck": {
+    "direct": "4 N + 12 fam. (6 var.) + Sig.",
+    "entraine": "4 N + 12 fam. (12 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     77,
+     77,
+     77,
+     77
+    ],
+    "entraine": [
+     131,
+     131,
+     131,
+     131
+    ]
+   },
+   "v": {
+    "direct": 317,
+    "entraine": 481
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 7354,
+    "entraine": 9337
+   }
+  },
+  {
+   "titre": "Famille 4 — cadet",
+   "adv": "16 cartes de 4 familles (dont 2 variantes), sans Signature",
+   "palier": "avance",
+   "pvAdv": 85,
+   "profil": "novice",
+   "deck": {
+    "direct": "0 N + 16 fam. (6 var.) + Sig.",
+    "entraine": "0 N + 16 fam. (13 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     80,
+     80,
+     80,
+     80
+    ],
+    "entraine": [
+     149,
+     149,
+     149,
+     149
+    ]
+   },
+   "v": {
+    "direct": 472,
+    "entraine": 573
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 6492,
+    "entraine": 7524
+   }
+  },
+  {
+   "titre": "Famille 4 — bras droit",
+   "adv": "16 cartes de 4 familles (dont 6 variantes), sans Signature",
+   "palier": "avance",
+   "pvAdv": 95,
+   "profil": "propre au personnage",
+   "deck": {
+    "direct": "0 N + 16 fam. (7 var.) + Sig.",
+    "entraine": "0 N + 16 fam. (14 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     83,
+     83,
+     83,
+     83
+    ],
+    "entraine": [
+     152,
+     152,
+     152,
+     152
+    ]
+   },
+   "v": {
+    "direct": 375,
+    "entraine": 545
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 8254,
+    "entraine": 10469
+   }
+  },
+  {
+   "titre": "Famille 4 — chef",
+   "adv": "16 cartes de 4 familles (dont 8 variantes) et sa Signature",
+   "palier": "elite",
+   "pvAdv": 105,
+   "profil": "lecteur",
+   "deck": {
+    "direct": "0 N + 16 fam. (8 var.) + Sig.",
+    "entraine": "0 N + 16 fam. (16 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     86,
+     86,
+     86,
+     86
+    ],
+    "entraine": [
+     158,
+     158,
+     158,
+     158
+    ]
+   },
+   "v": {
+    "direct": 286,
+    "entraine": 530
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 8021,
+    "entraine": 9758
+   }
+  },
+  {
+   "titre": "Championnat — poule (chefs)",
+   "adv": "16 cartes de 4 familles (dont 16 variantes) et sa Signature",
+   "palier": "champion",
+   "pvAdv": 110,
+   "profil": "lecteur",
+   "deck": {
+    "direct": "0 N + 16 fam. (8 var.) + Sig.",
+    "entraine": "0 N + 16 fam. (16 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     89,
+     89,
+     89,
+     89
+    ],
+    "entraine": [
+     161,
+     161,
+     161,
+     161
+    ]
+   },
+   "v": {
+    "direct": 320,
+    "entraine": 532
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 8261,
+    "entraine": 9940
+   }
+  },
+  {
+   "titre": "Championnat — Miroir (Kaï)",
+   "adv": "16 cartes de 4 familles (dont 16 variantes) et sa Signature",
+   "palier": "champion",
+   "pvAdv": 110,
+   "profil": "lecteur",
+   "deck": {
+    "direct": "0 N + 16 fam. (8 var.) + Sig.",
+    "entraine": "0 N + 16 fam. (16 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     98,
+     98,
+     98,
+     98
+    ],
+    "entraine": [
+     170,
+     170,
+     170,
+     170
+    ]
+   },
+   "v": {
+    "direct": 316,
+    "entraine": 531
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 8438,
+    "entraine": 9961
+   }
+  },
+  {
+   "titre": "Championnat — Finale (Ysolde)",
+   "adv": "16 cartes de 4 familles (dont 16 variantes) et sa Signature",
+   "palier": "champion",
+   "pvAdv": 120,
+   "profil": "lecteur",
+   "deck": {
+    "direct": "0 N + 16 fam. (8 var.) + Sig.",
+    "entraine": "0 N + 16 fam. (16 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     101,
+     101,
+     101,
+     101
+    ],
+    "entraine": [
+     173,
+     173,
+     173,
+     173
+    ]
+   },
+   "v": {
+    "direct": 322,
+    "entraine": 526
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 9070,
+    "entraine": 10637
+   }
+  },
+  {
+   "titre": "Famille 1 — Épreuve (×3, facultative)",
+   "adv": "4 cartes de sa famille, 12 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 35,
+   "profil": "novice",
+   "deck": {
+    "entraine": "12 N + 4 fam. (0 var.)"
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     53,
+     53,
+     53,
+     53
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 413
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 3962
+   }
+  },
+  {
+   "titre": "Famille 1 — duel de rue (×2, facultatif)",
+   "adv": "les seize cartes grises de la populace, sans Signature",
+   "palier": "populace",
+   "pvAdv": 40,
+   "profil": "novice",
+   "deck": {
+    "entraine": "12 N + 4 fam. (1 var.)"
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     62,
+     62,
+     62,
+     62
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 458
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 4945
+   }
+  },
+  {
+   "titre": "Famille 1 — Joute (facultative)",
+   "adv": "8 cartes de 4 familles (dont 2 variantes), 8 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 60,
+   "profil": "equilibre",
+   "deck": {
+    "entraine": "12 N + 4 fam. (3 var.)"
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     74,
+     74,
+     74,
+     74
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 373
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 6860
+   }
+  },
+  {
+   "titre": "Kaï, défi facultatif (famille 1, non compté dans les PV)",
+   "adv": "6 cartes de 3 familles (dont 1 variante), 10 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 60,
+   "profil": "offensif",
+   "deck": {
+    "entraine": "12 N + 4 fam. (4 var.)"
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     77,
+     77,
+     77,
+     77
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 470
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 5735
+   }
+  },
+  {
+   "titre": "Famille 2 — Épreuve (×3, facultative)",
+   "adv": "6 cartes de 3 familles, 10 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 45,
+   "profil": "novice",
+   "deck": {
+    "entraine": "8 N + 8 fam. (4 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     80,
+     80,
+     80,
+     80
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 554
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 4893
+   }
+  },
+  {
+   "titre": "Famille 2 — duel de rue (×2, facultatif)",
+   "adv": "6 cartes de 3 familles, 10 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 50,
+   "profil": "novice",
+   "deck": {
+    "entraine": "8 N + 8 fam. (5 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     89,
+     89,
+     89,
+     89
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 565
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 5356
+   }
+  },
+  {
+   "titre": "Famille 2 — Joute (facultative)",
+   "adv": "12 cartes de 4 familles (dont 4 variantes), 4 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 75,
+   "profil": "equilibre",
+   "deck": {
+    "entraine": "8 N + 8 fam. (7 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     101,
+     101,
+     101,
+     101
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 501
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 8046
+   }
+  },
+  {
+   "titre": "Famille 3 — Épreuve (×3, facultative)",
+   "adv": "8 cartes de 4 familles, 8 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 55,
+   "profil": "novice",
+   "deck": {
+    "entraine": "4 N + 12 fam. (8 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     107,
+     107,
+     107,
+     107
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 578
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 5745
+   }
+  },
+  {
+   "titre": "Famille 3 — duel de rue (×2, facultatif)",
+   "adv": "8 cartes de 4 familles, 8 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 60,
+   "profil": "novice",
+   "deck": {
+    "entraine": "4 N + 12 fam. (9 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     116,
+     116,
+     116,
+     116
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 580
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 6136
+   }
+  },
+  {
+   "titre": "Famille 3 — Joute (facultative)",
+   "adv": "16 cartes de 4 familles (dont 4 variantes), sans Signature",
+   "palier": "avance",
+   "pvAdv": 85,
+   "profil": "equilibre",
+   "deck": {
+    "entraine": "4 N + 12 fam. (11 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     128,
+     128,
+     128,
+     128
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 523
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 9001
+   }
+  },
+  {
+   "titre": "Kaï, défi facultatif (famille 3, non compté dans les PV)",
+   "adv": "16 cartes de 4 familles (dont 2 variantes), sans Signature",
+   "palier": "avance",
+   "pvAdv": 80,
+   "profil": "offensif",
+   "deck": {
+    "entraine": "4 N + 12 fam. (12 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     131,
+     131,
+     131,
+     131
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 582
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 6595
+   }
+  },
+  {
+   "titre": "Famille 4 — Épreuve (×3, facultative)",
+   "adv": "12 cartes de 4 familles, 4 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 65,
+   "profil": "novice",
+   "deck": {
+    "entraine": "0 N + 16 fam. (12 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     134,
+     134,
+     134,
+     134
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 587
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 6218
+   }
+  },
+  {
+   "titre": "Famille 4 — duel de rue (×2, facultatif)",
+   "adv": "12 cartes de 4 familles, 4 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 70,
+   "profil": "novice",
+   "deck": {
+    "entraine": "0 N + 16 fam. (13 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     143,
+     143,
+     143,
+     143
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 587
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 6755
+   }
+  },
+  {
+   "titre": "Famille 4 — Joute (facultative)",
+   "adv": "16 cartes de 4 familles (dont 8 variantes), sans Signature",
+   "palier": "avance",
+   "pvAdv": 90,
+   "profil": "equilibre",
+   "deck": {
+    "entraine": "0 N + 16 fam. (15 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     155,
+     155,
+     155,
+     155
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 569
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 9059
+   }
+  }
+ ]
+}

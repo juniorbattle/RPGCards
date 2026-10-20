@@ -22,6 +22,7 @@ import { blocked } from '../src/ville/monde';
 import { ilotAventure, ilotNu } from '../src/aventure/ilots';
 import { createGame } from '../src/game/engine/engine';
 import { buildDeck, cardDef } from '../src/game/catalog/cards';
+import { adversaire, pvJoueur, PV_DEPART, PV_PAR_COMBAT, type RoleAdverse } from '../src/aventure/paliers';
 
 const AT = '2026-10-20T12:00:00.000Z';
 const FAITS0 = { assautsGagnes: 0, gardesGagnees: 0, interferencesReussies: 0 };
@@ -352,7 +353,7 @@ describe('M10-B — données (personnages, places, duels)', () => {
 
   it('les duels de l’aventure sont des configurations ordinaires du moteur (deck R-AV explicite), jouables jusqu’au bout', () => {
     const e = run(prologue(), [{ type: 'confirmer', famille: 'Voile' }]).etat;
-    const cfgs = [duelPrologue(11, e.deck).config, duelFigure('cadet-Voile', e.deck, 12, false).config, duelFigure('chef-Astre', e.deck, 13, false).config, duelFacultatif('rival-kai', e.deck, 14).config];
+    const cfgs = [duelPrologue(11, e).config, duelFigure('cadet-Voile', e, 12, false).config, duelFigure('chef-Astre', e, 13, false).config, duelFacultatif('rival-kai', e, 14).config];
     for (const c of cfgs) {
       expect(() => createGame(c)).not.toThrow();
       const m = autoplay(c);
@@ -360,7 +361,10 @@ describe('M10-B — données (personnages, places, duels)', () => {
       const f = faitsPublics(m.events);
       expect(f.assautsGagnes + f.gardesGagnees).toBeGreaterThan(0);
     }
-    expect(duelPrologue(1).config.players.p1).toEqual({ ...duelPrologue(1).config.players.p2, name: 'Vous' });
+    // mêmes cartes grises, mais pas les mêmes PV (AV-08 : pas de PV égaux)
+    const pr = duelPrologue(1).config.players;
+    expect({ ...pr.p1, name: '', hp: 0 }).toEqual({ ...pr.p2, name: '', hp: 0 });
+    expect(pr.p1.hp).not.toBe(pr.p2.hp);
   });
 });
 
@@ -385,12 +389,12 @@ describe('M10-A — deck R-AV réel dans les duels (AV-03 à AV-05, ARB-M10-04 e
     expect(e.deck.cartes.filter(isNeutre)).toHaveLength(12);
     for (const r of [1, 2, 3, 4]) expect(e.deck.cartes).toContain(`Ronce-${r}-basic`);
     expect(e.deck.techniques).toContain('Rupture');
-    const cfg = duelFigure('cadet-Ronce', e.deck, 22, false).config;
+    const cfg = duelFigure('cadet-Ronce', e, 22, false).config;
     expect(cartesMoteur(cfg, 'p1')).toEqual([...deckMoteur(e.deck)].sort());
     expect(cfg.players.p1.signature).toBeNull();
     e = run(e, conquerir('Ronce')).etat;
     expect(e.deck.signature).toBe('Ronce');
-    expect(cartesMoteur(duelFigure('chef-Ronce', e.deck, 23, true).config, 'p1')).toHaveLength(17);
+    expect(cartesMoteur(duelFigure('chef-Ronce', e, 23, true).config, 'p1')).toHaveLength(17);
   });
 
   it('après les quatre lots et une Signature : 17 cartes, format standard, mêmes cartes que le deck standard équivalent', () => {
@@ -497,8 +501,70 @@ describe('M10-D/E en avance — compétitions facultatives et Championnat (propo
 
   it('duels des compétitions et du Championnat : configurations ordinaires du moteur, jouables', () => {
     const e = conquis();
-    for (const c of [duelEpreuve('Voile', 0, e.deck, 1, false).config, duelJoute('Astre', e.deck, 2, false).config, duelChampionnat('poule', e.deck, 3, 'Ronce').config, duelChampionnat('miroir', e.deck, 4).config, duelChampionnat('finale', e.deck, 5).config]) {
+    for (const c of [duelEpreuve('Voile', 0, e, 1, false).config, duelJoute('Astre', e, 2, false).config, duelChampionnat('poule', e, 3, 'Ronce').config, duelChampionnat('miroir', e, 4).config, duelChampionnat('finale', e, 5).config]) {
       expect(autoplay(c).state.phase).toBe('ENDED');
     }
+  });
+});
+
+describe('M10-A — paliers de decks adverses et PV du joueur qui montent (AV-08, ARB-M10-09)', () => {
+  const ROLES_A: RoleAdverse[] = ['prologue', 'rue', 'epreuve', 'cadet', 'brasDroit', 'joute', 'chef', 'rival', 'championnat', 'finale'];
+
+  it('tout deck adverse, à tout niveau, est légal pour le moteur (R-AV) et jouable jusqu’au bout', () => {
+    let n = 0;
+    for (const role of ROLES_A) for (const f of FAMILIES) for (const niveau of [0, 1, 2, 3, 4]) {
+      const adv = adversaire(role, f, niveau);
+      const cfg = { seed: 40 + n++, players: { p1: siegeAventure(deckDepart(), 'Vous', 50), p2: siegeAventure(adv.deck, 'Adv', adv.pv) } };
+      expect(() => createGame(cfg), `${role} ${f} ${niveau}`).not.toThrow();
+      expect(adv.pv).toBeGreaterThan(0);
+    }
+    expect(autoplay({ seed: 7, players: { p1: siegeAventure(deckDepart(), 'Vous', 50), p2: siegeAventure(adversaire('chef', 'Ronce', 1).deck, 'Adv', 55) } }).state.phase).toBe('ENDED');
+  });
+
+  it('paliers : populace au prologue ; membres (cartes de famille et d’autres familles) ; élite avec Signature ; champions en variantes', () => {
+    expect(adversaire('prologue', null, 0).palier).toBe('populace');
+    expect(adversaire('rue', 'Voile', 1).palier).toBe('populace');
+    const cadet = adversaire('cadet', 'Voile', 1);
+    expect(cadet.palier).toBe('membre');
+    expect(cadet.deck.cartes.filter((c) => c.startsWith('Voile-'))).toHaveLength(4);
+    expect(cadet.deck.cartes.some((c) => !c.startsWith('Voile-') && !isNeutre(c))).toBe(true);
+    expect(adversaire('cadet', 'Voile', 4).palier).toBe('avance');
+    expect(adversaire('chef', 'Astre', 1).palier).toBe('elite');
+    expect(adversaire('chef', 'Astre', 1).deck.signature).toBe('Astre');
+    const ch = adversaire('championnat', 'Ronce', 4);
+    expect(ch.palier).toBe('champion');
+    expect(ch.deck.cartes.every((c) => !c.endsWith('-basic') && !isNeutre(c))).toBe(true);
+  });
+
+  it('l’enjeu d’un lieutenant est dans son deck : variante III du cadet, IV du bras droit, Signature du chef', () => {
+    for (const f of FAMILIES) for (const niveau of [1, 2, 3, 4]) {
+      const c = figureDe(f, 'cadet'); const b = figureDe(f, 'brasDroit');
+      expect(adversaire('cadet', f, niveau).deck.cartes).toContain(c.enjeu.kind === 'variante' ? c.enjeu.defId : '');
+      expect(adversaire('brasDroit', f, niveau).deck.cartes).toContain(b.enjeu.kind === 'variante' ? b.enjeu.defId : '');
+      expect(adversaire('chef', f, niveau).deck.signature).toBe(f);
+    }
+  });
+
+  it('PV du joueur : 50 au départ, +3 par combat mené à son terme (victoire ou défaite), rien à l’abandon, sans plafond', () => {
+    expect(pvJoueur(0)).toBe(PV_DEPART);
+    let e = prologue();
+    expect(e.combats).toBe(0);
+    e = run(e, [{ type: 'combat', issue: 'victoire' }, { type: 'combat', issue: 'defaite' }, { type: 'combat', issue: 'abandon' }]).etat;
+    expect(e.combats).toBe(2);
+    expect(pvJoueur(e.combats)).toBe(PV_DEPART + 2 * PV_PAR_COMBAT);
+    expect(pvJoueur(1000)).toBe(PV_DEPART + 1000 * PV_PAR_COMBAT);
+    expect(duelFigure('cadet-Ronce', run(e, [{ type: 'confirmer', famille: 'Ronce' }]).etat, 1, false).config.players.p1.hp).toBe(pvJoueur(2));
+  });
+
+  it('sauvegarde d’avant les PV qui montent : combats retrouvés dans l’historique (abandons exclus)', () => {
+    const s = nouvelleSauvegarde(new Date(AT), 'Ana', 9);
+    s.historique = [{ id: 'a1', rencontre: 'prologue', issue: 'victoire', turns: 8, at: AT }, { id: 'a2', rencontre: 'rue-docker', issue: 'abandon', turns: 2, at: AT }, { id: 'a3', rencontre: 'rue-docker', issue: 'defaite', turns: 9, at: AT }];
+    const ancienne = JSON.parse(JSON.stringify(s)) as Record<string, Record<string, unknown>>;
+    delete ancienne.etat!.combats;
+    const mem = new Map<string, string>([[CLE_AVENTURE, JSON.stringify(ancienne)]]);
+    const store = new MagasinAventure({ getItem: (k) => mem.get(k) ?? null, setItem: (k, v) => void mem.set(k, v), removeItem: (k) => void mem.delete(k) });
+    const c = store.charger();
+    expect(c.status).toBe('ok');
+    if (c.status === 'ok') expect(c.save.etat.combats).toBe(2);
   });
 });

@@ -43,7 +43,10 @@ les commandes du jeu standard ; « Menu » met en pause (reprendre, sauvegarder 
    braseros, vous provoque : « Relever le défi » ou « Pas maintenant » (rien n'est forcé).
 3. **Préparation** : l'adversaire, le lieu (la rue), les PV et les deux decks : depuis l'avenant M10-A (ARB-M10-02),
    **vos seize cartes grises jouent en duel**, contre les seize cartes grises de Kaï (la populace).
-4. **Le duel public** (60 PV chacun). Gagner, perdre ou abandonner mène à la même suite (ADR 029 : aucun blocage).
+4. **Le duel public** (vous : 50 PV ; Kaï : 40). Gagner, perdre ou abandonner mène à la même suite (ADR 029 : aucun
+   blocage). **Vos PV montent de 3 à chaque combat mené à son terme** (victoire ou défaite), sans plafond ; chaque
+   adversaire a un deck de son palier, selon le nombre de familles dont vous avez les cartes (valeurs proposées, à
+   valider : `docs/m10/CALIBRAGE_M10A.md`).
 5. **La foule** s'est formée ; Kaï réagit. **Le premier émissaire** fend la foule (choisi par un fait public du duel :
    Assauts gagnés → Cendre, Gardes gagnées → Ronce, Interférences réussies → Voile, sinon Astre) et dit que les trois
    autres familles vous ont remarqué aussi : **les quatre vous invitent**.
@@ -70,7 +73,7 @@ les commandes du jeu standard ; « Menu » met en pause (reprendre, sauvegarder 
 12. **Le Championnat des Champions** (M10-E en avance), à la porte de l'arène (Parvis) quand les quatre chefs sont
     vaincus : les Quatre Bannières (trois chefs à battre, une Signature différente à chaque victoire : changez-la dans le
     deck), le Miroir (Kaï), la Finale contre Ysolde, la Tenante du titre (deux manches gagnantes, une Signature
-    différente à chaque manche) ; aucune carte en jeu, un titre ; PV 90 pour tous.
+    différente à chaque manche) ; aucune carte en jeu, un titre ; champions à 110 PV (120 en finale).
 13. **Deck** : 16 cartes, quatre par Rang, une seule Signature, deux Techniques ; versions Basic ↔ variante ; **registre
     des gains** visible. **Journal** : quêtes dérivées des faits, états des familles.
 14. **Fermer la page et revenir** : « Continuer l'aventure » ramène au même îlot et au même endroit, ou reprend

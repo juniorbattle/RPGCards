@@ -50,6 +50,17 @@ Clash avant la ratification d'un avenant (M10-A). Le brief du 2026-10-20 demande
 - Coût : un second jeu d'écrans (l'enveloppe de l'aventure) à entretenir ; acceptable tant que le mode Aventure n'est
   pas le jeu par défaut. Une fusion avec l'enveloppe standard est à décider avec M10-F.
 
+## Amendement 1 (2026-10-20, lot M10-A, passes 78 et 79)
+
+- Les duels jouent le **deck d'aventure tel quel** (deck explicite, ADR 033) : le deck de prêt disparaît ; un duel de
+  l'aventure porte le catalogue `…+4n` et se reprend par `verifierDuel` (rejeu et empreinte), le contrôle du mode
+  standard n'acceptant que son catalogue.
+- **Paliers et PV** (avenant M10-A, AV-08) : `paliers.ts` (pur) donne l'adversaire de chaque duel selon son rôle et le
+  **niveau** du joueur (familles reçues) ; l'état de l'aventure compte les **combats** menés à terme (`combats`, champ
+  ajouté au schéma `aventure/1`, retrouvé dans l'historique pour une sauvegarde plus ancienne) ; les PV du joueur en
+  dérivent (`pvJoueur`). Valeurs proposées, à valider (`docs/m10/CALIBRAGE_M10A.md`) ; la simulation
+  (`tools/m10a-paliers.ts`) lit le même module que le jeu.
+
 ## Alternatives écartées
 
 - **Réutiliser l'enveloppe standard (`Shell`)** en lui donnant une autre source de données : refonte du code du mode

@@ -63,8 +63,6 @@ export interface Figure {
   facing: Facing;
   /** Lieu du duel (ADR 022). */
   venue: VenueId;
-  /** PV du personnage (repères 60 / 90 / 125, avenant A-10, non ratifiés). */
-  hp: number;
   techniques: TechniqueId[];
   /** Récompense de sa première défaite (registre) : variante (lieutenants) ou Signature (chef). */
   enjeu: { kind: 'variante'; defId: string } | { kind: 'signature' };
@@ -117,21 +115,21 @@ const v = (fam: Family, rank: OrdinaryRank, effect: string) => ({ kind: 'variant
  */
 export const FIGURES: readonly Figure[] = [
   // Cendre — la Maison du Chantier (le Quai, ouest, façade `chantier`)
-  { id: 'cadet-Cendre', nom: 'Tessa', titre: 'cadette de la Cendre', famille: 'Cendre', role: 'cadet', apparence: 'pnj-marchande-21', gender: 'f', ilot: 'quai', at: { x: -15.2, z: -1.4 }, facing: 'face', venue: 'rue', hp: 80, techniques: ['Sondage', 'Lecture'], enjeu: v('Cendre', 3, 'ferveur') },
-  { id: 'brasDroit-Cendre', nom: 'Kaï', titre: 'la Braise du quai, bras droit de la Cendre', famille: 'Cendre', role: 'brasDroit', apparence: 'braise', gender: 'm', ilot: 'quai', at: { x: -17.6, z: -0.6 }, facing: 'droite', venue: 'rue', hp: 80, techniques: ['Sondage', 'Lecture'], enjeu: v('Cendre', 4, 'contrecoup') },
-  { id: 'chef-Cendre', nom: 'Bran', titre: 'le Premier Feu, chef de la Cendre', famille: 'Cendre', role: 'chef', apparence: 'pnj-docker-33', gender: 'm', ilot: 'quai', at: { x: -13.4, z: -2.3 }, facing: 'face', venue: 'rue', hp: 90, techniques: ['Lecture', 'Sondage'], enjeu: { kind: 'signature' } },
+  { id: 'cadet-Cendre', nom: 'Tessa', titre: 'cadette de la Cendre', famille: 'Cendre', role: 'cadet', apparence: 'pnj-marchande-21', gender: 'f', ilot: 'quai', at: { x: -15.2, z: -1.4 }, facing: 'face', venue: 'rue', techniques: ['Sondage', 'Lecture'], enjeu: v('Cendre', 3, 'ferveur') },
+  { id: 'brasDroit-Cendre', nom: 'Kaï', titre: 'la Braise du quai, bras droit de la Cendre', famille: 'Cendre', role: 'brasDroit', apparence: 'braise', gender: 'm', ilot: 'quai', at: { x: -17.6, z: -0.6 }, facing: 'droite', venue: 'rue', techniques: ['Sondage', 'Lecture'], enjeu: v('Cendre', 4, 'contrecoup') },
+  { id: 'chef-Cendre', nom: 'Bran', titre: 'le Premier Feu, chef de la Cendre', famille: 'Cendre', role: 'chef', apparence: 'pnj-docker-33', gender: 'm', ilot: 'quai', at: { x: -13.4, z: -2.3 }, facing: 'face', venue: 'rue', techniques: ['Lecture', 'Sondage'], enjeu: { kind: 'signature' } },
   // Ronce — le Fanal (le Quai, façade `fanal`)
-  { id: 'cadet-Ronce', nom: 'Gaspard', titre: 'cadet de la Ronce, tavernier du Fanal', famille: 'Ronce', role: 'cadet', apparence: 'pnj-commis-17', gender: 'm', ilot: 'quai', at: { x: 8.8, z: -1.5 }, facing: 'face', venue: 'bar', hp: 80, techniques: ['Ancrage', 'Rupture'], enjeu: v('Ronce', 3, 'entrave') },
-  { id: 'brasDroit-Ronce', nom: 'Maëlle', titre: 'gardienne des Ronces, bras droit de la Ronce', famille: 'Ronce', role: 'brasDroit', apparence: 'ronce', gender: 'f', ilot: 'quai', at: { x: 5.6, z: -1.5 }, facing: 'face', venue: 'bar', hp: 95, techniques: ['Ancrage', 'Rupture'], enjeu: v('Ronce', 4, 'tenacite') },
-  { id: 'chef-Ronce', nom: 'Mère Aubépine', titre: 'la Gardienne du Fanal, cheffe de la Ronce', famille: 'Ronce', role: 'chef', apparence: 'pnj-marchande-45', gender: 'f', ilot: 'quai', at: { x: 10.4, z: -2.3 }, facing: 'face', venue: 'bar', hp: 90, techniques: ['Ancrage', 'Rupture'], enjeu: { kind: 'signature' } },
+  { id: 'cadet-Ronce', nom: 'Gaspard', titre: 'cadet de la Ronce, tavernier du Fanal', famille: 'Ronce', role: 'cadet', apparence: 'pnj-commis-17', gender: 'm', ilot: 'quai', at: { x: 8.8, z: -1.5 }, facing: 'face', venue: 'bar', techniques: ['Ancrage', 'Rupture'], enjeu: v('Ronce', 3, 'entrave') },
+  { id: 'brasDroit-Ronce', nom: 'Maëlle', titre: 'gardienne des Ronces, bras droit de la Ronce', famille: 'Ronce', role: 'brasDroit', apparence: 'ronce', gender: 'f', ilot: 'quai', at: { x: 5.6, z: -1.5 }, facing: 'face', venue: 'bar', techniques: ['Ancrage', 'Rupture'], enjeu: v('Ronce', 4, 'tenacite') },
+  { id: 'chef-Ronce', nom: 'Mère Aubépine', titre: 'la Gardienne du Fanal, cheffe de la Ronce', famille: 'Ronce', role: 'chef', apparence: 'pnj-marchande-45', gender: 'f', ilot: 'quai', at: { x: 10.4, z: -2.3 }, facing: 'face', venue: 'bar', techniques: ['Ancrage', 'Rupture'], enjeu: { kind: 'signature' } },
   // Voile — la maison de la Fontaine (les Ruelles)
-  { id: 'cadet-Voile', nom: 'Lior', titre: 'cadet du Voile, colporteur des Ruelles', famille: 'Voile', role: 'cadet', apparence: 'pnj-commis-23', gender: 'm', ilot: 'ruelles', at: { x: -1.4, z: 1.0 }, facing: 'gauche', venue: 'salle', hp: 80, techniques: ['Lecture', 'Dissipation'], enjeu: v('Voile', 3, 'dissimulation') },
-  { id: 'brasDroit-Voile', nom: 'Sélène', titre: 'liseuse du Voile, bras droit du Voile', famille: 'Voile', role: 'brasDroit', apparence: 'voile', gender: 'f', ilot: 'ruelles', at: { x: 9.6, z: -0.6 }, facing: 'gauche', venue: 'salle', hp: 100, techniques: ['Lecture', 'Dissipation'], enjeu: v('Voile', 4, 'silence') },
-  { id: 'chef-Voile', nom: 'Ilse', titre: 'la Dame aux Voiles, cheffe du Voile', famille: 'Voile', role: 'chef', apparence: 'pnj-joueuse-37', gender: 'f', ilot: 'ruelles', at: { x: 5.2, z: -1.6 }, facing: 'face', venue: 'salle', hp: 90, techniques: ['Lecture', 'Dissipation'], enjeu: { kind: 'signature' } },
+  { id: 'cadet-Voile', nom: 'Lior', titre: 'cadet du Voile, colporteur des Ruelles', famille: 'Voile', role: 'cadet', apparence: 'pnj-commis-23', gender: 'm', ilot: 'ruelles', at: { x: -1.4, z: 1.0 }, facing: 'gauche', venue: 'salle', techniques: ['Lecture', 'Dissipation'], enjeu: v('Voile', 3, 'dissimulation') },
+  { id: 'brasDroit-Voile', nom: 'Sélène', titre: 'liseuse du Voile, bras droit du Voile', famille: 'Voile', role: 'brasDroit', apparence: 'voile', gender: 'f', ilot: 'ruelles', at: { x: 9.6, z: -0.6 }, facing: 'gauche', venue: 'salle', techniques: ['Lecture', 'Dissipation'], enjeu: v('Voile', 4, 'silence') },
+  { id: 'chef-Voile', nom: 'Ilse', titre: 'la Dame aux Voiles, cheffe du Voile', famille: 'Voile', role: 'chef', apparence: 'pnj-joueuse-37', gender: 'f', ilot: 'ruelles', at: { x: 5.2, z: -1.6 }, facing: 'face', venue: 'salle', techniques: ['Lecture', 'Dissipation'], enjeu: { kind: 'signature' } },
   // Astre — l'Observatoire du Parvis
-  { id: 'cadet-Astre', nom: 'Mira', titre: 'cadette de l’Astre, joueuse du Parvis', famille: 'Astre', role: 'cadet', apparence: 'pnj-joueuse-29', gender: 'f', ilot: 'parvis', at: { x: -6.2, z: 0.7 }, facing: 'droite', venue: 'arene', hp: 80, techniques: ['Recentrage', 'Ancrage'], enjeu: v('Astre', 3, 'relance') },
-  { id: 'brasDroit-Astre', nom: 'Orin', titre: 'l’arpenteur des Astres, bras droit de l’Astre', famille: 'Astre', role: 'brasDroit', apparence: 'astre', gender: 'm', ilot: 'parvis', at: { x: 2.9, z: -3.5 }, facing: 'face', venue: 'arene', hp: 110, techniques: ['Recentrage', 'Ancrage'], enjeu: v('Astre', 4, 'convergence') },
-  { id: 'chef-Astre', nom: 'Halvard', titre: 'le Cartographe, chef de l’Astre', famille: 'Astre', role: 'chef', apparence: 'pnj-commis-41', gender: 'm', ilot: 'parvis', at: { x: 6.4, z: -2.2 }, facing: 'gauche', venue: 'arene', hp: 90, techniques: ['Recentrage', 'Ancrage'], enjeu: { kind: 'signature' } },
+  { id: 'cadet-Astre', nom: 'Mira', titre: 'cadette de l’Astre, joueuse du Parvis', famille: 'Astre', role: 'cadet', apparence: 'pnj-joueuse-29', gender: 'f', ilot: 'parvis', at: { x: -6.2, z: 0.7 }, facing: 'droite', venue: 'arene', techniques: ['Recentrage', 'Ancrage'], enjeu: v('Astre', 3, 'relance') },
+  { id: 'brasDroit-Astre', nom: 'Orin', titre: 'l’arpenteur des Astres, bras droit de l’Astre', famille: 'Astre', role: 'brasDroit', apparence: 'astre', gender: 'm', ilot: 'parvis', at: { x: 2.9, z: -3.5 }, facing: 'face', venue: 'arene', techniques: ['Recentrage', 'Ancrage'], enjeu: v('Astre', 4, 'convergence') },
+  { id: 'chef-Astre', nom: 'Halvard', titre: 'le Cartographe, chef de l’Astre', famille: 'Astre', role: 'chef', apparence: 'pnj-commis-41', gender: 'm', ilot: 'parvis', at: { x: 6.4, z: -2.2 }, facing: 'gauche', venue: 'arene', techniques: ['Recentrage', 'Ancrage'], enjeu: { kind: 'signature' } },
 ];
 
 export function figure(id: string): Figure {
@@ -144,7 +142,7 @@ export const figureDe = (famille: Family, role: Role): Figure => figure(`${role}
 export const emissaire = (famille: Family): Figure => figureDe(famille, 'cadet');
 
 /** Kaï au prologue : le gris du Quai (rival récurrent, P-N7), à l'est du Quai, près des braseros. */
-export const KAI_PROLOGUE = { id: 'kai-prologue', apparence: 'braise', nom: 'Kaï', titre: 'le gris du Quai', ilot: 'quai' as IlotId, at: { x: 13.6, z: 0.9 }, facing: 'gauche' as Facing, venue: 'rue' as VenueId, hp: 60 };
+export const KAI_PROLOGUE = { id: 'kai-prologue', apparence: 'braise', nom: 'Kaï', titre: 'le gris du Quai', ilot: 'quai' as IlotId, at: { x: 13.6, z: 0.9 }, facing: 'gauche' as Facing, venue: 'rue' as VenueId };
 
 /** Réplique d'accueil de chaque figure avant son défi (textes de prototype, tirés du credo de sa famille). */
 export const REPLIQUES: Record<string, string> = {
@@ -164,11 +162,6 @@ export const REPLIQUES: Record<string, string> = {
 
 /** La Tenante du titre (finale du Championnat, PROGRESSION §4) : maîtresse du mélange des voies ; apparence provisoire. */
 export const TENANTE = { apparence: 'pnj-joueuse-51', nom: 'Ysolde', titre: 'la Tenante du titre', famille: 'Astre' as const };
-
-/** Duel du prologue (régime du prototype, A-0) : PV du joueur pour ce duel seulement (A-10, proposé). */
-export const PV_PROLOGUE = 60;
-/** PV du joueur dans l'aventure (`PLAYER_HP` du produit, inchangé). */
-export const PV_JOUEUR = 90;
 
 export const familles = (): Family[] => [...FAMILIES];
 

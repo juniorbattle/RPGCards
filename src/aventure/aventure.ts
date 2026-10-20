@@ -42,6 +42,11 @@ export interface AventureEtat {
   changements: Array<{ de: Family; vers: Family; at: string }>;
   /** Compétitions facultatives et Championnat (M10-D/E en avance, `competitions.ts`). */
   competitions: EtatCompetitions;
+  /**
+   * Combats menés à leur terme (victoire ou défaite ; un abandon ne compte pas) : les PV du joueur en dépendent
+   * (avenant M10-A, AV-08 : ils montent à chaque combat, sans plafond ; `paliers.ts`, `pvJoueur`).
+   */
+  combats: number;
 }
 
 export type Evenement =
@@ -56,7 +61,9 @@ export type Evenement =
   | { type: 'joute'; famille: Family; issue: Issue; duel: string }
   | { type: 'championnat'; manche: 'poule' | 'miroir' | 'finale'; chef?: Family; signature: Family; issue: Issue }
   | { type: 'visite'; lieu: string }
-  | { type: 'rencontre'; personne: string };
+  | { type: 'rencontre'; personne: string }
+  /** Un duel de l'aventure s'achève (tout duel : structurant, compétition, rue, rival, Championnat). */
+  | { type: 'combat'; issue: Issue };
 
 export interface Resultat {
   etat: AventureEtat;
@@ -68,7 +75,7 @@ export interface Resultat {
 
 export function nouvelleAventure(at: string): AventureEtat {
   const familles = Object.fromEntries(FAMILIES.map((f) => [f, 'inconnue'])) as Record<Family, EtatFamille>;
-  const base: AventureEtat = { scenes: ['P0'], familles, affiliation: null, premier: null, prologue: null, engages: [], vaincues: [], registre: [], deck: deckDepart(), visites: [], rencontres: [], changements: [], competitions: nouvellesCompetitions() };
+  const base: AventureEtat = { scenes: ['P0'], familles, affiliation: null, premier: null, prologue: null, engages: [], vaincues: [], registre: [], deck: deckDepart(), visites: [], rencontres: [], changements: [], competitions: nouvellesCompetitions(), combats: 0 };
   let reg = accorder(base.registre, gainNeutres(at)).registre;
   for (const t of TECHNIQUES_RUE) reg = accorder(reg, gainTechnique(t, 'P0', at)).registre;
   return { ...base, registre: reg };
@@ -264,6 +271,11 @@ function appliquerBrut(e0: AventureEtat, ev: Evenement, at: string): Resultat {
     case 'rencontre':
       // Parler à quelqu'un (un émissaire compris) n'engage rien (ADR 031 §4) : simple rencontre.
       if (!e.rencontres.includes(ev.personne)) e.rencontres.push(ev.personne);
+      return { etat: e, gains };
+
+    case 'combat':
+      // AV-08 : chaque combat mené à son terme fait monter les PV du joueur ; un abandon ne compte pas.
+      if (ev.issue !== 'abandon') e.combats += 1;
       return { etat: e, gains };
   }
 }
