@@ -207,7 +207,10 @@ try {
   await p.waitForSelector('[data-key="dlg-engager-Ronce"]');
   await shot('salle-des-bannieres');
   await p.click('[data-key="dlg-engager-Ronce"]');
-  await p.click('[data-key="confirm-ok"]');
+  // M10-D : l'écran de confirmation de l'engagement (ce qui est remis, le deck, la suite)
+  await p.waitForSelector('[data-key="av-engagement"]');
+  await shot('engagement-ronce');
+  await p.click('[data-key="av-engager-confirmer"]');
   await p.waitForSelector('[data-key="av-recompense"]');
   e = await etat();
   check(e.familles.Ronce === 'defiee' && e.registre.filter((g) => g.key === 'basics:Ronce').length === 1 && e.deck.cartes.filter((c) => c.startsWith('neutre-')).length === 8, 'Salle des Bannières : défi de la Ronce engagé, ses quatre Basics une fois, 8 neutres restantes');

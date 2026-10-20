@@ -87,6 +87,26 @@ lisibles dans la Collection).
   fermer » écrit la sauvegarde comme avant.
 - Les chefs portent leurs identités V2 (ADR 034).
 
+## Amendement 4 (2026-10-20, lot M10-D, passes 88 et 89) : la Salle des Bannières et l'engagement officiel
+
+**Proposé** (fiche du lot M10-D).
+
+- **Salle des Bannières** (porte de la salle de jeu de cartes, sur le Quai, en rangs comme en secours) : un écran à quatre
+  bannières, une par famille, chacune avec son état lu dans la machine (`bannieres` : famille d'accueil, défi à engager,
+  défi engagé avec le prochain défi, chef vaincu, ou fermé avec sa raison). C'est le seul lieu qui engage un défi : entrer
+  dans un quartier, parler à un membre ou battre l'un d'eux dans la rue n'engage rien (ADR 031 §4).
+- **Écran de confirmation de l'engagement**, sur le modèle de celui de l'affiliation (ADR 029 §3) : ce qui est remis ou
+  **déjà possédé**, ce que devient le deck (cartes grises avant et après, format standard atteint), la suite (lieutenants
+  et leurs enjeux, Épreuve, Joute), ce qui ne change pas. Son contenu vient de `apercuEngagement`, qui applique le fait **à
+  blanc** dans la machine : l'écran ne peut pas annoncer autre chose que ce qui sera fait.
+- **Basics déjà reçues** (affiliation quittée avant le premier lieutenant, AV-07) : l'engagement passe la famille à
+  `défiée` sans rien remettre ni toucher au deck ; l'écran de récompense le dit (aucune carte, la raison).
+- Le format standard (17 cartes, aucune carte grise, une Signature : AV-04) est annoncé à l'engagement qui l'atteint et
+  dans l'éditeur de deck (`standardLegal`).
+- Journal : la quête principale « Les trois voies » (PROGRESSION §6.2), ouverte au chef de la famille d'accueil vaincu ;
+  l'étape « défi officiel engagé » d'une voie se lit dans l'état de la famille, plus dans le registre.
+- Parcours au navigateur jusqu'aux quatre chefs : `npm run qa:voies` (`tools/m10d-voies.mjs`).
+
 ## Alternatives écartées
 
 - **Réutiliser l'enveloppe standard (`Shell`)** en lui donnant une autre source de données : refonte du code du mode

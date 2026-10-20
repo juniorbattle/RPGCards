@@ -17,7 +17,10 @@ Parcours automatique (navigateur headless, 30 contrôles, captures `screenshots/
 `npm run build && npm run qa:aventure` ; en 1920 × 1080 : `LQV_VP=1920x1080 npm run qa:aventure` ; décor et
 personnages par code (comme le jeu hors QA) : `LQV_AV_QS='&decors=code&sprites=code' npm run qa:aventure` ; sur GPU
 réel : `LQV_GPU=1 CHROMIUM_PATH=<Chrome> npm run qa:aventure`. Joute et Championnat (aventure avancée aux quatre
-chefs par des faits rejoués dans la machine d'états, 13 contrôles) : `npm run qa:championnat`.
+chefs par des faits rejoués dans la machine d'états, 13 contrôles) : `npm run qa:championnat`. La maison d'une famille par
+l'interface (M10-C) : `npm run qa:maison`. **Les trois autres voies jusqu'aux quatre chefs** par l'interface (M10-D :
+changement d'affiliation, Salle des Bannières, Basics déjà reçues, format standard, Épreuve et Joute, un duel joué
+jusqu'au bout) : `npm run qa:voies`.
 
 **Le Quai en quatre rangs (ARB-M10-12)** : le Quai de l'aventure est celui du laboratoire M09 (le Quai, la rue Haute et la
 place de la Halle, la ruelle des Lanternes et la placette du Puits, la cour de la Chapelle ; on passe d'un rang à l'autre
@@ -76,25 +79,33 @@ les commandes du jeu standard ; « Menu » met en pause (reprendre, sauvegarder 
    Rang III de la famille). Fin du prologue (M10-B).
 10. **La maison (M10-C)** : bras droit (Kaï, Maëlle, Sélène, Orin : variante IV), chef (Bran, Mère Aubépine, Ilse,
     Halvard, avec leurs identités V2 : la Signature, équipée à son gain) ;
-    revanches sans récompense ; une fois le chef vaincu, la **Salle des Bannières** (porte de la salle de jeu de cartes)
-    engage le défi officiel d'une autre famille (ses quatre Basics) ; duels de rue et défi de Kaï facultatifs, posés par
-    le directeur des rencontres (au plus deux par îlot, jamais d'embuscade).
-11. **Compétitions facultatives** (M10-D en avance, option a d'ARB-M10-06) : dans le quartier de chaque famille dont
+    revanches sans récompense ; duels de rue et défi de Kaï facultatifs, posés par le directeur des rencontres (au plus
+    deux par îlot, jamais d'embuscade).
+11. **Les trois autres voies (M10-D)** : une fois le chef de votre famille vaincu, la **Salle des Bannières** (porte de la
+    salle de jeu de cartes, sur le Quai) montre les quatre bannières (votre famille, les défis à engager, engagés,
+    conquis) ; c'est le seul lieu qui engage un défi (entrer dans un quartier, parler à un membre ou battre l'un d'eux
+    dans la rue n'engagent rien). L'écran de confirmation dit ce qui est remis (quatre Basics et la Technique de la
+    famille ; **rien si elles sont déjà à vous**, après un changement d'affiliation), ce que devient le deck (une carte
+    grise de chaque Rang cède sa place ; au quatrième lot, le **format standard** de 17 cartes) et la suite. Puis le
+    cadet, le bras droit et le chef de la famille, dans son quartier, avec des decks de leur palier ; l'ordre des trois
+    familles est libre, plusieurs défis peuvent être engagés en parallèle ; jusqu'à quatre Signatures possédées, une
+    seule équipée (à changer dans le deck entre deux duels).
+12. **Compétitions facultatives** (M10-D, option a d’ARB-M10-06) : dans le quartier de chaque famille dont
     vous avez les Basics, l'**Épreuve du quartier** (trois membres en série ; une défaite fait repartir la série ; la
     première série gagnée donne la variante de Rang I) ; après le bras droit, la **Joute de la maison** (un duel sous une
     contrainte de construction propre à la famille, vérifiée avant le duel ; variante de Rang II). Les seize variantes
     sont ainsi atteignables, chacune une seule fois.
-12. **Le Championnat des Champions** (M10-E en avance), à la porte de l'arène (Parvis) quand les quatre chefs sont
+13. **Le Championnat des Champions** (M10-E en avance), à la porte de l'arène (Parvis) quand les quatre chefs sont
     vaincus : les Quatre Bannières (trois chefs à battre, une Signature différente à chaque victoire : changez-la dans le
     deck), le Miroir (Kaï), la Finale contre Ysolde, la Tenante du titre (deux manches gagnantes, une Signature
     différente à chaque manche) ; aucune carte en jeu, un titre ; champions à 110 PV (120 en finale).
-13. **Deck et collection** (bouton « Deck », M10-C) : trois onglets. **Deck** : les seize cartes rangées par Rang ;
+14. **Deck et collection** (bouton « Deck », M10-C) : trois onglets. **Deck** : les seize cartes rangées par Rang ;
     choisir une case montre ce qui peut y entrer sans rompre la règle R-AV (une neutre, la Basic ou une variante possédée
     d'une identité absente des autres cases) ; une seule Signature ; deux Techniques ; « Enregistrer et fermer » ou
     « Annuler les changements ». **Collection** : les neutres, puis par famille ses quatre Basics, ses quatre variantes
     et sa Signature, possédées (avec l'origine du gain) ou grisées avec la manière de les gagner. **Registre des gains** :
     chaque gain une fois, avec son origine. **Journal** : quêtes dérivées des faits, états des familles.
-14. **Fermer la page et revenir** : « Continuer l'aventure » ramène au même îlot et au même endroit, ou reprend
+15. **Fermer la page et revenir** : « Continuer l'aventure » ramène au même îlot et au même endroit, ou reprend
     exactement le duel en cours (rejeu et hash).
 
 ## Ce que le prototype ne fait pas encore
