@@ -3,8 +3,8 @@
  * format miroir ni de PV égaux**. La difficulté d'un adversaire vient de son **palier de deck** ; les **PV du joueur
  * montent à chaque combat, sans plafond** (« comme dans un RPG » : l'entraînement augmente les PV et les chances de
  * victoire). Note du responsable : « la plupart des cartes de famille remplacent certaines cartes basiques, voire toutes,
- * selon le niveau du joueur » : la composition d'un adversaire suit le **niveau** du joueur (le nombre de familles dont il
- * a reçu les Basics, 1 à 4). Tous les decks suivent la règle R-AV (AV-03). Module pur, partagé par le jeu
+ * selon le niveau du joueur » : la composition d'un adversaire suit le **niveau** du joueur (le nombre de familles qu'il a
+ * rejointes ou dont il a engagé le défi, 1 à 4 : `niveauDe`, annexe de calibrage, amendement 1). Tous les decks suivent la règle R-AV (AV-03). Module pur, partagé par le jeu
  * (`rencontres.ts`) et la simulation de calibrage (`tools/m10a-paliers.ts`).
  *
  * VALEURS VALIDÉES par le responsable le 2026-10-20 (annexe de calibrage `docs/m10/CALIBRAGE_M10A.md` de l'avenant
@@ -142,7 +142,7 @@ export function palierDe(d: DeckAv): PalierId {
 }
 
 /**
- * L'adversaire d'un duel : rôle, famille (`null` : populace) et niveau du joueur (familles dont il a les Basics). PV et
+ * L'adversaire d'un duel : rôle, famille (`null` : populace) et niveau du joueur (familles rejointes ou engagées). PV et
  * profil d'IA : ceux de son rôle à ce niveau (`PV_ADVERSE`, `PROFIL_ROLE`).
  *   - prologue, duels de rue tant que le joueur n'a qu'une famille : la populace ;
  *   - Épreuve, cadet (variante III en jeu), bras droit (III et IV), rue ensuite : membres de famille, des cartes d'autres

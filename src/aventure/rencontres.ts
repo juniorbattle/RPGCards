@@ -5,7 +5,7 @@
  * M10-A, AV-08 : pas de format miroir ni de PV égaux). Aucune règle de duel n'est touchée : la configuration est un
  * `GameConfig` ordinaire du moteur.
  */
-import type { Family } from '../game/catalog/cards';
+import { FAMILIES, type Family } from '../game/catalog/cards';
 import type { GameConfig } from '../game/model/types';
 import { personalityById, type RivalPersonality } from '../presentation/personalities';
 import type { VenueId } from '../presentation/venues';
@@ -15,7 +15,6 @@ import { rencontreDef } from './directeur';
 import { deF, figure, FIGURES, KAI_PROLOGUE, TECHNIQUES_RUE, TENANTE } from './modele';
 import { ELITE_JOUTE, MEMBRES_EPREUVE, varianteDe } from './competitions';
 import { adversaire, PALIER_NOM, pvJoueur, type Adversaire, type RoleAdverse } from './paliers';
-import { collectionDe } from './registre';
 
 export interface DuelPrevu {
   rencontre: string;
@@ -36,8 +35,12 @@ export function personnalite(apparence: string, o: { nom: string; titre: string;
   return { ...base, name: o.nom, title: o.titre, family: o.famille ?? base.family, techniques: o.techniques ?? base.techniques, gender: o.gender ?? base.gender, aiProfile: o.profil ?? base.aiProfile };
 }
 
-/** Niveau du joueur (AV-08) : familles dont il a reçu les Basics. */
-export const niveauDe = (e: AventureEtat): number => collectionDe(e.registre).basics.length;
+/**
+ * Niveau du joueur (AV-08 ; annexe de calibrage, amendement 1, décision du responsable du 2026-10-20, fiche du lot M10-D,
+ * D1) : les familles **rejointes ou engagées** (états `affilié`, `défiée`, `chef`). Une affiliation quittée garde ses
+ * Basics mais ne compte qu'à l'engagement de son défi : changer de voie ne durcit pas la maison.
+ */
+export const niveauDe = (e: AventureEtat): number => FAMILIES.filter((f) => e.familles[f] === 'affilie' || e.familles[f] === 'defiee' || e.familles[f] === 'chef').length;
 
 /** Configuration d'un duel : le joueur (deck d'aventure, PV de ses combats) contre l'adversaire de son palier. */
 function config(e: AventureEtat, seed: number, adv: Adversaire, nom: string): GameConfig {

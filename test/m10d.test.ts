@@ -390,6 +390,24 @@ describe('M10-D — figures des trois autres familles, quêtes', () => {
     expect(tard.config.players.p2.hp).toBe(105);
   });
 
+  it('niveau du joueur (D1, annexe de calibrage amendement 1) : familles rejointes ou engagées ; changer de voie ne durcit pas la maison', () => {
+    // une affiliation directe et une affiliation après trois changements : même niveau, mêmes adversaires dans la maison
+    const directe = run(prologue(), [{ type: 'confirmer', famille: 'Voile' }]).etat;
+    const trois = run(prologue(), [{ type: 'confirmer', famille: 'Cendre' }, { type: 'changer', famille: 'Ronce' }, { type: 'changer', famille: 'Astre' }, { type: 'changer', famille: 'Voile' }]).etat;
+    expect(collectionDe(trois.registre).basics).toHaveLength(4);
+    expect([niveauDe(directe), niveauDe(trois)]).toEqual([1, 1]);
+    for (const r of ROLES) expect(duelFigure(figureDe('Voile', r).id, trois, 9, false).config.players.p2).toEqual(duelFigure(figureDe('Voile', r).id, directe, 9, false).config.players.p2);
+    // la Cendre, quittée, compte dès l'engagement de son défi (sans Basics nouvelles), comme une famille engagée
+    let e = run(trois, conquerir('Voile', 'v')).etat;
+    expect(niveauDe(e)).toBe(1);
+    e = run(e, [{ type: 'engager', famille: 'Cendre' }]).etat;
+    expect(niveauDe(e)).toBe(2);
+    expect(niveauDe(run(e, [{ type: 'engager', famille: 'Ronce' }, { type: 'engager', famille: 'Astre' }]).etat)).toBe(4);
+    // sans changement d'affiliation, le niveau est celui d'avant l'amendement : les familles dont le joueur a les Basics
+    const { e: fin } = parcours('Ronce', ['Cendre', 'Astre', 'Voile']);
+    expect(niveauDe(fin)).toBe(collectionDe(fin.registre).basics.length);
+  });
+
   it('journal : « Les trois voies » après le chef d’accueil ; objectif vers la Salle des Bannières entre deux voies', () => {
     let e = run(prologue(), [{ type: 'confirmer', famille: 'Voile' }, ...conquerir('Voile', 'v')]).etat;
     expect(quetes(e).find((q) => q.id === 'voies')!.etapes.map((x) => x.faite)).toEqual([false, false, false]);

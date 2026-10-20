@@ -124,3 +124,6 @@ rejointes ou engagées », l'option recommandée.
 - **Mesure de la règle** : chefs de la maison à 41–49 % après un changement, 45–50 % après trois (cadets 59 à 65 %) ; ni
   piège ni avantage excessif.
 - Code : `niveauDe` (`src/aventure/rencontres.ts`) ; aucune règle de duel, aucune autre valeur changée.
+- Mesure reproductible : `artifacts/qa/m10d/changements.json` (lignes `directe`, `un-changement`, `collection` : la règle
+  en vigueur ; lignes `-regle-initiale` : le niveau d'avant l'amendement) ; appliqué à la passe 92 (`test/m10d.test.ts`,
+  `qa:voies` 62/62 sur Radeon 780M).

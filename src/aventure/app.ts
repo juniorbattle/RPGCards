@@ -503,9 +503,7 @@ export class AventureApp {
     this.fermerDialogue();
     const m = MAISONS[f];
     const [c, b, ch] = ROLES.map((r) => figureDe(f, r));
-    // AV-08 : le deck des adversaires suit le nombre de familles dont le joueur a les cartes de base (niveau)
-    const col = collectionDe(this.etat.registre);
-    const niveau = col.basics.length + (col.basics.includes(f) ? 0 : 1);
+    const quittee = this.etat.affiliation;
     const panel = h('div', { class: `av-confirm fam-${f}`, 'data-key': 'av-confirmation' },
       h('div', { class: 'av-confirm-head' }, h('span', { class: `av-emb fam-${f}`, html: emblemSvg(f, 46) }), h('div', null, h('h2', null, `Rejoindre ${la(f)}`), h('p', { class: 'av-devise' }, `${m.nom} · ${m.devise}`))),
       h('p', null, m.credo),
@@ -515,7 +513,7 @@ export class AventureApp {
       h('h3', null, 'Ensuite'),
       h('p', null, `Défier ${c!.nom} (${ROLE_LABEL.cadet}), puis ${b!.nom} (${ROLE_LABEL.brasDroit}), puis ${ch!.nom} (${ROLE_LABEL.chef}) : chaque lieutenant vaincu donne une variante, le chef donne sa Signature ∞.`),
       h('h3', null, 'Ce qui ne change pas'),
-      h('p', null, `Les autres familles restent ouvertes ; quand le chef ${de(f)} sera vaincu, vous pourrez engager leur défi à la Salle des Bannières. ${changement ? `Les cartes déjà reçues restent à vous. Vos adversaires en tiennent compte : leur deck suit le nombre de familles dont vous avez les cartes de base (${niveau} après ce changement).` : 'Jusqu’à votre premier défi de lieutenant, vous pourrez encore changer de voie.'}`),
+      h('p', null, `Les autres familles restent ouvertes ; quand le chef ${de(f)} sera vaincu, vous pourrez engager leur défi à la Salle des Bannières. ${changement && quittee ? `Les cartes déjà reçues restent à vous. Vos adversaires ne comptent que les familles que vous avez rejointes ou dont vous avez engagé le défi : ${la(quittee)} ne comptera qu’à l’engagement de son défi.` : 'Jusqu’à votre premier défi de lieutenant, vous pourrez encore changer de voie.'}`),
       h('div', { class: 'ville-choices' },
         h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-confirmer', onclick: () => this.confirmer(f, changement) }, 'Confirmer l’affiliation'),
         h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-revenir', onclick: () => this.fermerModal() }, 'Revenir')));
