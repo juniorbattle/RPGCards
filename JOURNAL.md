@@ -1931,3 +1931,10 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **[?] Incertitudes / arbitrages (pour le responsable) :** contenu et périmètre de la tâche narrative (brief cloud à écrire) ; décisions ouvertes de M10 (Puissances et Signature du deck neutre, première acquisition, chemin des familles, échelle des récompenses, défaite au prologue, rencontres et rival, migration des sauvegardes).
 - **Tests :** aucun (documentaire) ; `git diff --check`.
 - **À reprendre :** brief de la session cloud pour la tâche narrative ; puis M09 : feuille du joueur (J1) ; le Parvis et les Ruelles en rangs ; la Grande Cour (V5) ; planche d’approbation en bloc (A1, après la vérification des conditions d’OpenAI par le responsable, A2) ; 9 images sur 30 restantes ; C6, tâche distincte.
+
+## Passe documentaire 70 — M10 : acquisition familiale ratifiée (2026-10-20)
+
+- **[OK] ADR 031 approuvé :** réception immédiate des quatre Basics I–IV à l'affiliation choisie ; lieutenants vaincus → variantes ; chef vaincu → Signature. Pour chacune des autres familles : quatre Basics dès le défi officiellement engagé, puis variantes et Signature selon la même hiérarchie. Récompenses de progression uniques, sans bonus de Puissance automatique.
+- **[OK] Compatibilité de conception :** 16 neutres (4 copies de chaque Rang) ADR 030 et choix libre B ADR 029 ; possession des quatre Signatures possible en collection, une seule équipée en duel standard.
+- **[?] À trancher dans M10-A :** Puissances neutres, Actions/Techniques, conversion neutres → Basics, deck sans Signature avant le premier chef, sauvegardes et attribution des variantes individuelles.
+- **[OK] Priorité actuelle :** M09 mise en pause à la passe 69 par décision récente ; structuration et configuration narratives en session cloud en premier. Cette passe est **documentaire**, aucun changement moteur/art, aucun test nouveau revendiqué.

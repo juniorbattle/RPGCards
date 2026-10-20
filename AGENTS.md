@@ -1,5 +1,8 @@
 # AGENTS.md — Les Quatre Voies (nouveau dépôt indépendant)
 
+
+> **M10 — RÉCOMPENSES RATIFIÉES (ADR 031, 2026-10-20) :** après choix B, le joueur reçoit **les quatre Basics I–IV dès la confirmation d'affiliation**. Il défie les lieutenants pour gagner **des variantes**, puis le chef pour **la Signature**. Pour chacune des trois autres familles, **quatre Basics dès l'engagement officiel du défi**, puis variantes des lieutenants et Signature du chef. Aucune Signature au recrutement. Les modalités de conversion des 16 neutres et le deck Aventure sans Signature demeurent **à arbitrer dans M10-A**. **M09 est en pause** : priorité au cadrage/brief narratif cloud, sans changement moteur implicite.
+
 ## Règle de branche — décision du responsable (2026-10-16)
 
 Le développement se fait **directement sur `main`** : commit puis push sur `main` après validation (typecheck, tests, build ; vérification ciblée quand le rendu change). **Campagnes de QA complètes** (`qa:browser`, `qa:product`, `qa:rc`, séries GPU sur les deux cartes, comparaisons au pixel près répétées) **aux jalons seulement** : quand un atout majeur est consolidé ou que la conception a réellement avancé (règle du responsable du 2026-10-19, JOURNAL). **Pas de branche provisoire ni de PR**, sauf demande explicite du responsable. Ne jamais réécrire l’historique de `main` (pas de force-push, pas de rebase de commits publiés). Les branches `claude/*` M01–M03 sont de l’historique, déjà intégré.

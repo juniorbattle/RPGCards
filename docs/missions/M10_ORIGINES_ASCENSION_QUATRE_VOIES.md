@@ -5,11 +5,22 @@
 
 > **2026-10-20, décision du responsable :** la prochaine grosse tâche est la **structuration et la configuration narratives**, menée sur le cloud ; M09 est en pause après la passe 68. Son périmètre (documentaire ou code) sera fixé par le brief de la session cloud ; tant qu'un avenant n'est pas ratifié, les règles de combat restent intouchées et les « Décisions ouvertes » ci-dessous restent au responsable.
 
+
+## DÉCISION PRIORITAIRE — Récompenses familiales ratifiées (ADR 031, 2026-10-20)
+
+**Cette section prime sur toute formulation ancienne du présent cadrage indiquant que les quatre Basics se gagnent progressivement auprès des membres ou lieutenants.**
+
+- **Famille choisie :** après choix libre B et **confirmation explicite** d'affiliation, remise **immédiate et groupée des quatre Basics I, II, III, IV**. Les lieutenants sont ensuite défiés **pour des variantes** ; le **chef vaincu donne la Signature ∞**.
+- **Trois autres familles :** chaque **défi familial officiellement engagé** remet **le lot complet des quatre Basics I–IV** de la famille concernée (la simple visite du quartier n'est pas un défi officiel) ; ses lieutenants donnent des **variantes**, son chef donne **sa Signature ∞**.
+- Les récompenses des **victoires structurantes** sont uniques, garanties à la première victoire et de valeur stratégique croissante, **sans hausse numérique automatique**. Une variante remplace une Basic de même identité dans le deck et ne crée aucune nouvelle identité ; jusqu'à quatre Signatures peuvent être possédées, **une seule équipée** dans le format Duel standard.
+- Les **16 neutres sans famille ni effet** restent le départ ratifié (ADR 030). **Non tranché techniquement** : remplacement des neutres par quatre lots de Basics, duel sans Signature avant premier chef, Puissances neutres, Techniques, et validation/migration du deck Aventure. Proposer un avenant M10-A, **ne pas inventer une règle moteur**.
+- **Nouvel ordre du travail :** M09 est **en pause après la passe 69** ; la prochaine grosse tâche sur le cloud est **la structuration et configuration narratives**. Cet ajout documentaire n'autorise pas la modification du moteur, des assets ou des cartes.
+
 ## Vision narrative
 
 Le joueur est un duelliste de la populace, **sans appartenance familiale initiale**. Il commence avec **16 cartes neutres, blanches/grises, sans famille, composées de 4 exemplaires de chaque Rang I, II, III et IV**, sans bonus intrinsèque ni effet de carte. Un duel **imprévu et public** face à un rival récurrent attire une foule ; les Quatre Voies perçoivent son talent. Une famille peut être la première à manifester son intérêt, mais elle **ne peut pas décider de son affiliation à sa place**. Le joueur peut accepter l'invitation, la différer ou rechercher une autre voie. Toutes les quatre doivent pouvoir être choisies par des parcours jouables et compréhensibles, sans prédiction obligatoire de son style et sans mauvaise réponse cachée.
 
-L'accueil par une famille déclenche une ascension : affronter ses membres et obtenir progressivement ses **quatre identités ordinaires de Rang I–IV** ; défier son chef pour accéder à la reconnaissance de chef ; puis se mesurer aux **lieutenants et chefs des trois autres familles**, acquérir les quatre identités de chacune et enfin accéder au **Championnat des Champions**. En parallèle : ville vivante, déplacements libres, duellistes PNJ rencontrés dans les ruelles ou places, défis ponctuels du rival et duels spéciaux permettant de débloquer des **variantes d'identités déjà possédées**.
+L'accueil confirmé d'une famille remet **immédiatement ses quatre cartes Basic I–IV**. Le joueur affronte ses **lieutenants pour les variantes**, puis le **chef pour sa Signature** ; pour chacune des trois autres familles, l'engagement officiel du défi remet **ses quatre Basics I–IV**, suivi des lieutenants (variantes) et du chef (Signature), avant le Championnat des Champions. En parallèle : ville vivante, déplacements libres, duellistes PNJ rencontrés dans les ruelles ou places, défis ponctuels du rival et duels spéciaux permettant de débloquer des **variantes d'identités déjà possédées**.
 
 **Progression visée :** neutralité → duel public fondateur → offres de recrutement → **choix explicite de la voie** → 4 cartes de la voie d'accueil → chef de la voie → trois autres familles → Championnat des Champions. Cette progression n'impose PAS une exploration linéaire : l'accès aux défis majeurs peut suivre des prérequis narratifs alors que les quartiers restent explorables.
 
@@ -60,8 +71,8 @@ L'accueil par une famille déclenche une ascension : affronter ses membres et ob
 
 ### B. Progression et récompenses — design à ratifier
 
-- Définir précisément le moment de chaque carte I, II, III, IV de la voie d'accueil et le rôle des membres, du lieutenant, du chef. Éviter qu'un seul combat fournisse toutes les cartes si l'ascension demandée est progressive.
-- Les chefs des autres familles octroient les identités de leurs voies à mesure des victoires ; quelle carte s'obtient sur un lieutenant vs chef reste à préciser. Les 16 identités uniques doivent être collectables **sans doublons**.
+- **Décision ADR 031 :** les Basics I–IV sont remises ensemble lors de l'affiliation (pas après chaque combat) ; lieutenants = variantes à victoire ; chef = Signature à victoire. Le nombre des lieutenants et leurs variantes restent à concevoir.
+- **Décision ADR 031 :** à l'engagement officiel du défi d'une famille rivale, ses quatre Basics I–IV sont remises ensemble ; chaque lieutenant vaincu donne une variante ; le chef vaincu donne la Signature. Les 16 identités uniques doivent être collectables **sans doublons**.
 - Définir la **Signature** de l'affiliation et les trois autres Signatures, les Techniques, la propriété des variantes, sans les confondre avec les cartes ordinaires. Une variante **remplace** la version Basic de la même identité dans le deck, elle ne crée pas une identité supplémentaire.
 - Conditions de défaite, revanche, blocage, sauvegarde, reprise, changement d'affiliation après acceptation ; existence éventuelle de défis facultatifs hors prérequis. Ne pas créer de monnaie, XP, raretés ou multiplications de Puissance sans décision.
 - **Rival récurrent** : arc dramatique du prologue au Championnat ; ses défis ne doivent pas devenir fréquents ou aléatoires au point de nuire à l'exploration.
@@ -79,8 +90,8 @@ L'accueil par une famille déclenche une ascension : affronter ses membres et ob
 |---|---|---|
 | **M10-A** | Contrat de règle Aventure + carte(s) neutre(s) + deck/transitions + architecture de sauvegarde | Avenant explicite ratifié ; duel standard inchangé |
 | **M10-B** | Prologue jouable au Quai : deck gris → duel public imprévu → foule → invitations → **choix libre B** | 4 affiliations atteignables, refus sans softlock, QA navigateur |
-| **M10-C** | Une voie complète : 4 identités à gagner, membres/chef, progression | Parcours intégral, défaites/revanche, sauvegardes |
-| **M10-D** | Trois autres voies : lieutenants/chefs, 16 identités, défis de variantes | Récompenses uniques, cohérence des accès |
+| **M10-C** | Famille d'accueil : 4 Basics à l'affiliation, lieutenants → variantes, chef → Signature | Parcours intégral, défaites/revanche, sauvegardes |
+| **M10-D** | Trois autres voies : 4 Basics à l'engagement officiel de chaque défi, lieutenants → variantes, chef → Signature | Récompenses uniques, cohérence des accès |
 | **M10-E** | Duellistes rencontrés en exploration, rival récurrent, championnat | Liberté de déplacement, événements non intrusifs |
 | **M10-F** | QA d'ensemble, équilibrage, migration, release candidate Aventure | Prologue → titre final, reprise, secrets et perf validés |
 
@@ -89,11 +100,11 @@ L'accueil par une famille déclenche une ascension : affronter ses membres et ob
 ## Décisions ouvertes à présenter au responsable
 
 1. Deck neutre : **composition 4 × I + 4 × II + 4 × III + 4 × IV RATIFIÉE**, sans famille/bonus/effet ; **à décider** : Puissances exactes, Signature et Techniques au prologue, transitions et validation du mode Aventure.
-2. Première acquisition : carte familiale offerte à l'adhésion ou gagnée au premier duel d'initiation ?
+2. Première acquisition : **RATIFIÉ : quatre Basics offertes ensemble à l'adhésion confirmée (ADR 031)** ; seul le remplacement de neutres dans le deck reste à arbitrer.
 3. Recrutement : chemin exact pour rencontrer les trois autres familles et modalité de confirmation / éventuel changement après adhésion.
-4. Échelle de récompenses membres → lieutenants → chefs ; Signatures / Techniques.
+4. Échelle **RATIFIÉE** : quatre Basics lors de chaque affiliation/défi officiel ; victoires de lieutenants → variantes ; victoire de chef → Signature. À concevoir : nombre de lieutenants, variante exacte et disponibilité des Techniques.
 5. Effet d'une défaite au duel du prologue et des refus de recruteurs.
 6. Séquençage des rencontres dynamiques et du rival, et verrouillage des grands défis.
 7. Migration des sauvegardes RC ; place des duels libres et du Tournoi du Quai existants.
 
-**Statut explicite :** sont ratifiés **l'option B** et **les 16 cartes neutres (quatre copies par Rang I–IV, sans famille/bonus/effet)**. Les autres choix de gameplay et valeurs chiffrées (Puissances, Signature, Techniques, conversion du deck) restent **non ratifiés**. **M09 reste le chantier d'exécution actif**, jusqu'à son jalon visuel/technique. Aucune règle de combat ni élément de ville en production n'est modifié par ce document.
+**Statut explicite :** sont ratifiés **l'option B** et **les 16 cartes neutres (quatre copies par Rang I–IV, sans famille/bonus/effet)**. Les autres choix de gameplay et valeurs chiffrées (Puissances, Signature, Techniques, conversion du deck) restent **non ratifiés**. **M09 est en pause (passe 69) et la structuration narrative cloud est la tâche suivante**, jusqu'à son jalon visuel/technique. Aucune règle de combat ni élément de ville en production n'est modifié par ce document.
