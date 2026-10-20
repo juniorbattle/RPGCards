@@ -12,11 +12,17 @@
 //               politique du jeu (`decors=approuvees&sprites=approuvees` : doit rester le Quai actuel), porte (`?qa=1`) ;
 //               plusieurs positions, 1920 × 1080 et 1280 × 720, cadrage de l'URL (`LQV_RIG`) ; planche
 //               référence | actuel | porte ; rapports du décor et des feuilles.
+//   planche   : planche de décision (build requis) : référence | Quai actuel (direction D) | porte (cadrage actuel) ;
+//               porte en cadrage élargi | même cadrage avec les lumières du diorama aux couleurs des familles, comme la
+//               direction D (variante A3, copie temporaire du build) | détail des bannières (direction D, porte) ;
+//               les décisions à prendre écrites dessous.
 // Usage : node tools/m09-porte-quai.mjs assembler [rapport.json]
 //         npm run build && node tools/m09-porte-quai.mjs verifier [captures] [rapport.json]
+//         npm run build && node tools/m09-porte-quai.mjs planche [planche.png] [rapport.json]
 import { createHash } from 'node:crypto';
 import { execSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { launch, rendererLabel, startPreview, watchConsole, webglRenderer } from './browser.mjs';
 import { clearAbove, composeRow, composeStrip, extractProps, findLanterns, processPlate, processSheet } from './m09-traitement-images.mjs';
@@ -291,6 +297,90 @@ if (MODE === 'verifier') {
     mkdirSync(dirname(OUT), { recursive: true });
     writeFileSync(OUT, JSON.stringify(report, null, 2));
     srv.stop();
+  }
+}
+if (MODE === 'planche') {
+  const OUT = process.argv[3] ?? 'screenshots/qa/m09/v4-decision/planche-decision-quai.png';
+  const REP = process.argv[4] ?? 'artifacts/qa/m09/v4-decision.json';
+  const DIST = process.env.LQV_DIST || 'dist';
+  const LARGE = '6,25,42,4.8';
+  mkdirSync(dirname(OUT), { recursive: true });
+  // variante A3 : lumières du diorama aux couleurs des familles, comme la direction D (ADR 026) : Voile au passage vers
+  // les Ruelles et chez l'armateur, Cendre au chantier et au Fanal, Astre à la salle de jeu et aux lampadaires, Ronce à
+  // l'étal et à la maison étroite ; copie temporaire du build, rien dans public/
+  const tmp = mkdtempSync(join(tmpdir(), 'lqv-a3-'));
+  cpSync(DIST, tmp, { recursive: true });
+  const man = JSON.parse(readFileSync(join(tmp, 'decors', 'manifest.json'), 'utf8'));
+  const famOf = (x) => (x < -19.5 ? 'Voile' : x < -11 ? 'Cendre' : x < -2.6 ? 'Astre' : x < 3.0 ? 'Ronce' : x < 11.4 ? 'Cendre' : x < 19.5 ? 'Voile' : 'ambre');
+  man.ilots.quai.lumieres = man.ilots.quai.lumieres.map((l) => (l.color === 'Astre' ? l : { ...l, color: famOf(l.at[0]) }));
+  writeFileSync(join(tmp, 'decors', 'manifest.json'), JSON.stringify(man, null, 2));
+  report.variante = { lumieres: man.ilots.quai.lumieres.map((l) => `${l.color} x ${l.at[0]}`) };
+  const srvA = await startPreview(4441, DIST);
+  const srvB = await startPreview(4442, tmp);
+  const hideUi = () => { for (const e of document.querySelectorAll('.ville-panel, .ville-bubble, .ville-toast')) e.style.display = 'none'; };
+  /** Capture 1920 × 1080 au centre du Quai ; détail : 960 × 270 px autour des bannières de la salle de jeu. */
+  const shot = async (base, q) => {
+    const pg = await page(1920, 1080);
+    await pg.goto(`${base}/?ville=1&qa=1&freeze=1${q}`);
+    await pg.waitForFunction(() => !!window.__lqvVille, null, { timeout: 120000 });
+    if (!report.renderer) report.renderer = rendererLabel(await webglRenderer(pg));
+    const pt = await pg.evaluate(() => { const t = window.__lqvVille.town; t.place({ x: -0.6, z: 0.2 }, 'face'); t.renderNow(); return t.project({ x: -6.6, y: 6.6, z: -3 }); });
+    await pg.evaluate(hideUi);
+    await pg.waitForTimeout(250);
+    const full = await pg.screenshot();
+    const cx = Math.max(480, Math.min(1920 - 480, Math.round(pt.x))); const cy = Math.max(135, Math.min(1080 - 135, Math.round(pt.y)));
+    const crop = await pg.screenshot({ clip: { x: cx - 480, y: cy - 135, width: 960, height: 270 } });
+    const dec = await pg.evaluate(() => window.__lqvVille.town.decorReport());
+    await pg.context().close();
+    return { full, crop, world: dec.world };
+  };
+  try {
+    const actuel = await shot(srvA.base, '&decors=code&sprites=code');
+    const porte = await shot(srvA.base, '');
+    const large = await shot(srvA.base, `&rig=${LARGE}`);
+    const familles = await shot(srvB.base, `&rig=${LARGE}`);
+    check(actuel.world === 'code' && porte.world === 'diorama' && large.world === 'diorama' && familles.world === 'diorama', 'planche : Quai actuel par code ; porte, cadrage élargi et variante A3 en diorama');
+    const ref = readFileSync('reference/generated/2026-10-19-quai-nuit-cameras/02.png');
+    const pp = await page(2100, 1000);
+    const planche = await pp.evaluate(async (u) => {
+      const load = async (src) => { const i = new Image(); i.src = src; await i.decode(); return i; };
+      const im = await Promise.all(u.imgs.map(load));
+      const pad = 16; const tw = 640; const th = 360; const top = 40;
+      const c = document.createElement('canvas'); c.width = 3 * tw + 4 * pad; c.height = top + 2 * (th + 36) + 150;
+      const g = c.getContext('2d'); g.fillStyle = '#10121a'; g.fillRect(0, 0, c.width, c.height);
+      g.fillStyle = '#e8dcc0'; g.font = 'bold 17px system-ui';
+      g.fillText('Porte du Quai (ADR 028) — planche de décision', pad, 26);
+      g.font = '14px system-ui';
+      const tile = (k, x, y) => { const i = im[k]; const s2 = Math.min(tw / i.width, th / i.height); g.drawImage(i, x, y, i.width * s2, i.height * s2); };
+      const lab = (t, x, y) => g.fillText(t, x, y);
+      const X = (col) => pad + col * (tw + pad); const Y = (row) => top + row * (th + 36);
+      tile(0, X(0), Y(0)); lab('Référence initiale approuvée (02.png)', X(0), Y(0) + th + 22);
+      tile(1, X(1), Y(0)); lab('Quai actuel : direction D, par code (provisoire)', X(1), Y(0) + th + 22);
+      tile(2, X(2), Y(0)); lab('Quai de la porte : cadrage actuel (joueur ≈ ×2,9)', X(2), Y(0) + th + 22);
+      tile(3, X(0), Y(1)); lab('Quai de la porte : cadrage élargi (rig=6,25,42,4.8 ; joueur ≈ ×1,9)', X(0), Y(1) + th + 22);
+      tile(4, X(1), Y(1)); lab('Variante A3 : même cadrage, lumières aux couleurs des familles (direction D)', X(1), Y(1) + th + 22);
+      g.drawImage(im[5], X(2), Y(1), tw, th / 2); g.drawImage(im[6], X(2), Y(1) + th / 2, tw, th / 2);
+      lab('Détail des bannières : direction D (haut), porte (bas)', X(2), Y(1) + th + 22);
+      g.font = 'bold 15px system-ui';
+      const q0 = Y(2) + 10;
+      lab('Décisions :', pad, q0);
+      g.font = '14px system-ui';
+      lab('1. Approuver les 7 plans du Quai et la feuille du joueur (aujourd’hui approved: false, refusés par le jeu) ?', pad, q0 + 24);
+      lab('2. Cadrage : actuel (façades plein écran, joueur ×2,9) ou élargi (rue entière et profondeur comme la référence, joueur ×1,9) ?', pad, q0 + 46);
+      lab('3. Note A3 (ce qu’on garde de la direction D) : bannières et emblèmes des familles (déjà dans la porte) ; lumières aux couleurs des familles (variante) ;', pad, q0 + 68);
+      lab('    contours à l’encre, hachures et papier : hors de la cible selon l’ADR 028 (non repris).', pad, q0 + 88);
+      return c.toDataURL('image/png');
+    }, { imgs: [dataUrl(ref), dataUrl(actuel.full), dataUrl(porte.full), dataUrl(large.full), dataUrl(familles.full), dataUrl(actuel.crop), dataUrl(porte.crop)] });
+    writeFileSync(OUT, fromUrl(planche));
+    writeFileSync(join(dirname(OUT), 'variante-a3-familles-large-1920.png'), familles.full);
+    writeFileSync(join(dirname(OUT), 'porte-large-1920.png'), large.full);
+  } finally {
+    const bad = report.console.filter((x) => !/GPU stall due to ReadPixels|Automatic fallback to software WebGL/.test(x));
+    check(bad.length === 0, `aucune erreur ni avertissement de console (${bad.length})`);
+    mkdirSync(dirname(REP), { recursive: true });
+    writeFileSync(REP, JSON.stringify(report, null, 2));
+    srvA.stop(); srvB.stop();
+    rmSync(tmp, { recursive: true, force: true });
   }
 }
 await browser.close();

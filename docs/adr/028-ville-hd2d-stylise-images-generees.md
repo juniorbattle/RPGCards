@@ -185,8 +185,13 @@ planche `screenshots/qa/m09/v4-essai/planche-essai-v4.png` ; JOURNAL passe 56. *
 
 ## Porte du Quai : lot de production (passe 57, 2026-10-20)
 
-Décision du responsable : « Je valide la direction de l'essai. Prépare le lot suivant (plans du Quai et feuille complète
-du joueur) et annonce-moi ses images et leurs prompts avant de générer. » Dix images annoncées avec leurs prompts
+**Décision du responsable (2026-10-20) : direction de l'essai validée, production lancée.** Ses mots, à la session V4 :
+« Je valide la direction de l'essai. Prépare le lot suivant (plans du Quai et feuille complète du joueur) et annonce-moi
+ses images et leurs prompts avant de générer. » ; et, relayés par la session principale : « La direction de l'essai me
+convient : lance la production des plans du Quai et de la feuille complète du joueur dans la session V4, en m'annonçant
+chaque génération avant de la lancer. » **Cette décision ne vaut pas approbation des images** : les 2 images de l'essai
+et celles de la production restent en `approved: false` jusqu'à une décision explicite du responsable sur la planche
+finale. Dix images annoncées avec leurs prompts
 (`tools/m09-lot-quai.mjs`), générées (gpt-image-2, qualité `high`, fond uni détouré), la façade centrale de l'essai
 reprise : **12 images sur 30** depuis le début de la porte. Traitement et assemblage par scripts
 (`tools/m09-traitement-images.mjs`, `tools/m09-porte-quai.mjs`) ; **manifestes réels** `public/decors/manifest.json`
