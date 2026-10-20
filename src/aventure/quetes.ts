@@ -18,11 +18,11 @@ export interface Quete {
 /** Objectif affiché dans la ville (première étape non faite de la quête principale ouverte). */
 export function objectif(e: AventureEtat): string {
   if (!e.scenes.includes('P2')) return `Le Quai bruisse du tournoi. Approchez-vous des braseros, à l’est : ${KAI_PROLOGUE.nom} y attend.`;
-  if (e.prologue === null) return `${KAI_PROLOGUE.nom} vous a défié. Retournez le voir pour relever le défi.`;
+  if (e.prologue === null) return `${KAI_PROLOGUE.nom} vous lance un défi. Retournez le voir pour le relever.`;
   if (e.affiliation === null) {
     const p = e.premier ? emissaire(e.premier) : null;
     if (p && !e.scenes.includes('P6')) return `${p.nom}, ${deF(p.famille)}, veut vous parler.`;
-    return 'Quatre familles vous ont invité. Rendez visite à leurs émissaires et choisissez votre voie.';
+    return 'Les quatre familles vous invitent. Rendez visite à leurs émissaires et choisissez votre voie.';
   }
   const f = e.affiliation;
   const ch = chapitre(e);
@@ -38,7 +38,7 @@ export function objectif(e: AventureEtat): string {
       const fig = figureDe(x, r);
       if (!e.vaincues.includes(fig.id) && statutDefi(e, fig).ouvert) return `Défiez ${fig.nom}, ${fig.titre}.`;
     }
-    return 'Duelliste reconnu : engagez le défi d’une autre famille à la Salle des Bannières (salle de jeu de cartes).';
+    return 'Votre chef est vaincu : engagez le défi d’une autre famille à la Salle des Bannières (salle de jeu de cartes).';
   }
   if (ch === 'championnat') {
     const m = manche(e.competitions);
@@ -46,14 +46,14 @@ export function objectif(e: AventureEtat): string {
     if (m === 'miroir') return 'Championnat — le Miroir : Kaï vous attend dans l’arène.';
     return 'Championnat — la Finale : deux manches gagnantes contre la Tenante du titre, une Signature différente à chaque manche.';
   }
-  if (ch === 'champion') return 'Vous êtes le meilleur duelliste de la ville. Revanches, Épreuves et Joutes restent ouvertes.';
+  if (ch === 'champion') return 'Personne en ville ne joue mieux que vous. Revanches, Épreuves et Joutes restent ouvertes.';
   return '';
 }
 
 /** Journal des quêtes (menu). */
 export function quetes(e: AventureEtat): Quete[] {
   const out: Quete[] = [{
-    id: 'prologue', titre: 'Prologue — Le gris du Quai', type: 'principale', etapes: [
+    id: 'prologue', titre: 'Prologue — Les cartes grises du Quai', type: 'principale', etapes: [
       { texte: `Parler à ${KAI_PROLOGUE.nom}`, faite: e.scenes.includes('P2') },
       { texte: 'Le duel public', faite: e.prologue !== null },
       { texte: 'Écouter les émissaires', faite: e.scenes.includes('P5') },

@@ -293,3 +293,11 @@ dans la Grande Cour à la victoire du Championnat ; le jeu continue ensuite (ren
 - Toute scène se rejoue depuis la sauvegarde ; tout dialogue se ferme par Échap sans rien décider (rien n'est choisi
   à la place du joueur, comme le menu de pause du duel).
 - Les textes du prototype restent des **textes de prototype** (signalés) jusqu'à une passe d'écriture.
+- **Écriture neutre partout (décision du responsable, ARB-M10-11 ; avenant M10-A, AV-11)** : aucun accord de genre pour
+  le duelliste joueur, dans tous les textes du mode Aventure (dialogues, foule, journal, quêtes, écrans, aide,
+  récompenses). Moyens : tournures épicènes (« quelqu'un », « la recrue », « personne en ville ne joue mieux que vous »),
+  adresse directe (« tu », « vous »), verbes plutôt que participes accordés (« Kaï vous lance un défi » plutôt que « Kaï
+  vous a défié »), le jeu ou les cartes plutôt que la personne (« des cartes grises ont battu la Braise du quai » plutôt
+  que « un duelliste gris ») ; **ni point médian ni doublets**. Le titre final (« le meilleur duelliste de la ville »,
+  §5) s'écrit à l'écran « personne en ville ne joue mieux que vous ». Les personnages non joueurs gardent leur genre.
+  Contrôle : `test/aventure.test.ts` (aucune forme genrée du joueur dans les textes du mode Aventure).

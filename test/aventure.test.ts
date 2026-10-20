@@ -494,7 +494,7 @@ describe('M10-D/E en avance — compétitions facultatives et Championnat (propo
     e = run(e, [{ type: 'championnat', manche: 'finale', signature: 'Voile', issue: 'victoire' }, { type: 'championnat', manche: 'finale', signature: 'Ronce', issue: 'victoire' }]).etat;
     expect(e.competitions.championnat.titre).toBe(true);
     expect(chapitre(e)).toBe('champion');
-    expect(objectif(e)).toMatch(/meilleur duelliste/);
+    expect(objectif(e)).toMatch(/ne joue mieux que vous/);
     // aucune carte gagnée au Championnat
     expect(collectionDe(e.registre)).toEqual(collectionDe(conquis().registre));
   });
@@ -566,5 +566,22 @@ describe('M10-A — paliers de decks adverses et PV du joueur qui montent (AV-08
     const c = store.charger();
     expect(c.status).toBe('ok');
     if (c.status === 'ok') expect(c.save.etat.combats).toBe(2);
+  });
+});
+
+describe('M10-A — écriture neutre (ARB-M10-11, AV-11)', () => {
+  it('aucune forme genrée du duelliste joueur dans les textes du mode Aventure, ni point médian', async () => {
+    const { readdirSync, readFileSync } = await import('node:fs');
+    const dir = 'src/aventure';
+    const interdits: RegExp[] = [
+      /duelliste gris/i, /\bun duelliste\b/i, /\bce duelliste\b/i, /pour un gris/i, /le gris du tournoi/i, /meilleur duelliste/i,
+      /\breconnue?\b/i, /vous a défié/i, /vous ont invité/i, /vous aura reçu/i, /t’a pris\b/i, /vous ai lu\b/i,
+      /\bseul ou seule\b/i, /[a-zé]·[a-z]/i,
+    ];
+    for (const f of readdirSync(dir).filter((x) => x.endsWith('.ts'))) {
+      // textes seulement : sans les commentaires
+      const code = readFileSync(`${dir}/${f}`, 'utf8').split('\n').filter((l) => !/^\s*(\*|\/\/|\/\*)/.test(l)).map((l) => l.replace(/\/\/.*$/, '')).join('\n');
+      for (const re of interdits) expect(re.test(code), `${f} : ${re}`).toBe(false);
+    }
   });
 });

@@ -147,13 +147,13 @@ export const KAI_PROLOGUE = { id: 'kai-prologue', apparence: 'braise', nom: 'Ka�
 /** Réplique d'accueil de chaque figure avant son défi (textes de prototype, tirés du credo de sa famille). */
 export const REPLIQUES: Record<string, string> = {
   'cadet-Cendre': '« Sur le Quai, tu as porté le premier coup. Ici, on verra si tu portes aussi le dernier. »',
-  'brasDroit-Cendre': '« Le gris du tournoi… Tu te souviens ? Moi aussi. Cette fois, je porte la braise. »',
+  'brasDroit-Cendre': '« Les cartes grises du tournoi… Tu te souviens ? Moi aussi. Cette fois, je porte la braise. »',
   'chef-Cendre': '« Le feu ne recule pas. Si tu veux le Brasier, prends-le. »',
   'cadet-Ronce': '« Au Fanal, on ne gagne pas en criant : on gagne en tenant. Tiens bon, si tu peux. »',
   'brasDroit-Ronce': '« Je garde la porte de Mère Aubépine. Elle ne s’ouvre que pour qui ne cède pas. »',
   'chef-Ronce': '« Ce qui tient, dure. Montre-moi que tu dures, et la Couronne est à toi. »',
   'cadet-Voile': '« J’ai déjà vu ta main, tu sais. Enfin… peut-être. Joue, on verra. »',
-  'brasDroit-Voile': '« Je lis les duellistes avant leurs cartes. Vous, je vous ai lu au Quai. »',
+  'brasDroit-Voile': '« Je lis les duellistes avant leurs cartes. Votre jeu, je l’ai lu au Quai. »',
   'chef-Voile': '« Celui qui voit choisit. Voyons si vous voyez assez pour mériter le Miroir. »',
   'cadet-Astre': '« Tout revient, tout s’assemble. Même tes défaites, si tu sais les ramener. »',
   'brasDroit-Astre': '« Les étoiles tournent ; les duellistes passent. Vous, vous restez. Intéressant. »',
