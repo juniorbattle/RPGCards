@@ -374,7 +374,7 @@ export class AventureApp {
       const sr = this.town.externalReport();
       const txt = dr.world === 'diorama' && dr.unapproved.length ? `QA : décor en images NON APPROUVÉES (${dr.unapproved.length} plans) — hors QA, décor par code` : '';
       const txt2 = sr.unapproved?.length ? ` · personnages : feuilles non approuvées (${sr.unapproved.length})` : '';
-      const all = txt + (txt ? txt2 : txt2.slice(3));
+      const all = txt ? txt + txt2 : txt2 ? `QA : ${txt2.slice(3)}` : '';
       if (qa.textContent !== all) { qa.textContent = all; qa.hidden = !all; }
     }
     const st = this.hud?.querySelector<HTMLElement>('[data-key="av-statut"]');
@@ -593,8 +593,16 @@ export class AventureApp {
   private facultatif(id: string): void {
     const r = rencontreDef(id)!;
     const kai = id === 'rival-kai';
+    // L'arc du rival (contrat narratif §4.1) : ses mots suivent le chapitre et les résultats publics de vos duels.
+    const ch = chapitre(this.etat);
+    const contreKai = this.save!.historique.filter((h) => h.rencontre === 'rival-kai' || h.rencontre === 'prologue' || h.rencontre === 'brasDroit-Cendre');
+    const gagnes = contreKai.filter((h) => h.issue === 'victoire').length;
+    const ligneKai = ch === 'maison'
+      ? `« Alors, ${this.etat.affiliation ? `${la(this.etat.affiliation)} t’a pris` : 'toujours sans famille'} ? Moi, la Cendre m’a pris. Une partie, pour voir qui a le plus appris ? »`
+      : ch === 'voies' ? `« Tu as fait tomber ton chef, à ce qu’on dit. Moi, je monte aussi. ${gagnes > contreKai.length / 2 ? 'Tu mènes, mais pas pour longtemps.' : 'Et je mène, ne l’oublie pas.'} »`
+      : `« Le Championnat approche. On se retrouvera là-bas, j’en suis sûr. En attendant, une dernière pour la route ? »`;
     const texte = kai
-      ? `« Alors, ${this.etat.affiliation ? `${la(this.etat.affiliation)} t’a pris` : 'toujours sans famille'} ? Moi, la Cendre m’a pris. Une partie, pour voir qui a le plus appris ? » (défi facultatif, sans récompense)`
+      ? `${ligneKai} (défi facultatif, sans récompense ; vos duels contre lui : ${gagnes} victoire(s) sur ${contreKai.length})`
       : '« Une partie, pour passer le temps ? » (duel de rue, sans récompense)';
     this.dire(capital(r.nom), texte, [
       { label: 'Accepter', key: 'dlg-duel', primary: true, run: () => this.preparer(duelFacultatif(id, this.etat.deck, this.prochaineGraine())) },
@@ -640,6 +648,7 @@ export class AventureApp {
       h('div', { class: 'av-confirm-head' }, h('img', { class: 'ville-portrait', alt: '', src: portraitUrl(prevu.personnalite, this.params.artSeed) }), h('div', null, h('h2', null, prevu.titre), h('p', { class: 'av-devise' }, `Lieu : ${LIEU[prevu.venue]} · PV ${prevu.config.players.p1.hp} contre ${prevu.config.players.p2.hp}`))),
       prevu.enjeu ? h('div', { class: 'av-enjeu' }, h('span', null, 'En jeu (première victoire) : '), CATALOG[prevu.enjeu] ? cardEl(prevu.enjeu, { artSeed: this.params.artSeed, tag: 'div' }) : null) : h('p', null, 'Aucune récompense en jeu.'),
       h('p', { class: 'av-proto', 'data-key': 'av-pret' }, `Provisoire — ${prevu.pret}`),
+      h('p', { class: 'av-proto', 'data-key': 'av-deck-reel' }, `Votre deck d’aventure : ${resumeDeck(this.etat.deck)}. En duel (prêt) : 16 identités ${prevu.config.players.p1.variants === 'all' ? 'en variantes' : `dont ${(prevu.config.players.p1.variants as string[]).length} en variante`} et la Signature ${CATALOG[`sig-${prevu.config.players.p1.signature}`]?.name ?? '—'}.`),
       h('div', { class: 'ville-choices' },
         h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-duel-go', onclick: () => { this.fermerModal(); this.lancer(prevu); } }, 'Commencer le duel'),
         h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-duel-back', onclick: () => this.fermerModal() }, 'Plus tard')));
@@ -950,6 +959,10 @@ export class AventureApp {
       h('h2', null, 'Journal des quêtes'),
       ...q.map((x) => h('div', { class: 'av-quete' }, h('h3', null, x.titre), h('ul', null, ...x.etapes.map((s) => h('li', { class: s.faite ? 'faite' : '' }, `${s.faite ? '✓ ' : '· '}${s.texte}`))))),
       h('p', { class: 'av-proto' }, `États des familles : ${FAMILIES.map((f) => `${f} ${this.etat.familles[f]}`).join(' · ')}`),
+      h('h3', null, 'Duels de l’aventure (les plus récents d’abord)'),
+      this.save!.historique.length
+        ? h('ol', { class: 'av-registre', 'data-key': 'av-historique' }, ...[...this.save!.historique].reverse().slice(0, 20).map((d) => h('li', null, `${d.id} · ${d.rencontre} · ${d.issue} · ${d.turns} tour(s)`)))
+        : h('p', null, 'Aucun duel joué.'),
       h('div', { class: 'ville-choices' }, h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-journal-close', onclick: () => this.fermerModal() }, 'Fermer'))));
   }
 
@@ -1021,6 +1034,14 @@ function neutreEl(defId: string, note?: string): HTMLElement {
     h('span', { class: 'av-n-name' }, 'Neutre'),
     h('span', { class: 'av-n-pow' }, `P${n.power}`),
     note ? h('span', { class: 'av-n-note' }, note) : null);
+}
+
+/** « 12 neutres + 4 Voile (1 variante), sans Signature ». */
+function resumeDeck(d: DeckAv): string {
+  const n = d.cartes.filter(isNeutre).length;
+  const parFam = FAMILIES.map((f) => [f, d.cartes.filter((c) => CATALOG[c]?.family === f)] as const).filter(([, cs]) => cs.length);
+  const fam = parFam.map(([f, cs]) => { const v = cs.filter((c) => CATALOG[c]!.rarity !== 'Basic').length; return `${cs.length} ${f}${v ? ` (${v} variante${v > 1 ? 's' : ''})` : ''}`; });
+  return `${[n ? `${n} neutre${n > 1 ? 's' : ''}` : '', ...fam].filter(Boolean).join(' + ')}, ${d.signature ? `Signature ${CATALOG[`sig-${d.signature}`]!.name}` : 'sans Signature'}`;
 }
 
 function gainEls(g: Gain, artSeed: number): HTMLElement[] {
