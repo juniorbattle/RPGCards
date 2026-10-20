@@ -156,7 +156,40 @@ export interface FacadeLike { id: string; x0: number; x1: number; door: number |
 /** Crochets d'une façade : au milieu (après les fenêtres des étages) et à la fin (après le toit). */
 export interface FacadeHooks { mid?: (cx: number, w: number, zU: number) => void; end?: (cx: number, w: number, zU: number) => void }
 /** Nappe de brume : largeur, hauteur, centre (x, y, z), opacité, vitesse, échelle du bruit. */
-export type MistPlane = readonly [number, number, number, number, number, number, number, readonly [number, number]];
+export type MistPlane = readonly [number, number, number, number, number, number, number, readonly [number, number]] | readonly [number, number, number, number, number, number, number, readonly [number, number], number];
+
+/**
+ * Nappe de brume animée (largeur, hauteur, x, y, z, opacité, vitesse de dérive, échelle du bruit) : bruit doux qui
+ * dérive, teinte de la brume, éclairée par les lanternes proches ; transparente, sans écriture de profondeur, hors du
+ * reflet. Partagée par les îlots dessinés par code et par le diorama (ADR 028, passe 60 : brume entre les plans).
+ */
+export function mistPlane(tex: THREE.Texture, [w, h, x, y, z, alpha, speed, scale, tone = 1.25]: MistPlane): { mesh: THREE.Mesh; mat: THREE.ShaderMaterial } {
+  const mat = new THREE.ShaderMaterial({
+    name: 'VilleBrume',
+    uniforms: { ...U, tMist: { value: tex }, uT: { value: 0 }, uAlpha: { value: alpha }, uSpeed: { value: speed }, uScale: { value: new THREE.Vector2(...scale) }, uTone: { value: tone } },
+    vertexShader: /* glsl */ `varying vec2 vUv; varying vec3 vWorld; void main(){ vUv = uv; vec4 w = modelMatrix * vec4(position, 1.0); vWorld = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
+    fragmentShader: /* glsl */ `
+uniform vec3 uFogColor; uniform vec3 uMoonCol; uniform vec4 uLightPos[16]; uniform vec3 uLightCol[16]; uniform int uLightCount;
+uniform sampler2D tMist; uniform float uT; uniform float uAlpha; uniform float uSpeed; uniform vec2 uScale; uniform float uTone;
+varying vec2 vUv; varying vec3 vWorld;
+void main(){
+  vec2 q = vUv * uScale;
+  float a = texture2D(tMist, q + vec2(uT * uSpeed, 0.0)).a * 0.6 + texture2D(tMist, q * 1.7 + vec2(-uT * uSpeed * 0.6, 0.31)).a * 0.4;
+  a *= smoothstep(0.0, 0.35, vUv.y) * (1.0 - smoothstep(0.55, 1.0, vUv.y)) * smoothstep(0.0, 0.08, vUv.x) * (1.0 - smoothstep(0.92, 1.0, vUv.x));
+  vec3 lit = vec3(0.0);
+  for (int i = 0; i < 16; i++) { if (i >= uLightCount) break; vec3 L = uLightPos[i].xyz - vWorld; float d2 = dot(L, L); float r = uLightPos[i].w; float x = max(1.0 - d2 / (r * r), 0.0); lit += uLightCol[i] * x * x * 0.08; }
+  vec3 col = uFogColor * uTone + uMoonCol * 0.05 + lit;
+  gl_FragColor = vec4(col, a * uAlpha);
+}`,
+    transparent: true,
+    depthWrite: false,
+  });
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat);
+  mesh.layers.set(LAYER_NOREFLECT);
+  mesh.position.set(x, y, z);
+  mesh.renderOrder = 1;
+  return { mesh, mat };
+}
 
 export interface KitOptions {
   artSeed: number;
@@ -964,35 +997,11 @@ void main(){
    *  brume, éclairée par les lanternes proches. Transparentes, sans écriture de profondeur. */
   function mists(planes: readonly MistPlane[]): THREE.ShaderMaterial[] {
     const tex = T(mistTexture(artSeed));
-    const make = (w: number, h: number, x: number, y: number, z: number, alpha: number, speed: number, scale: readonly [number, number]) => {
-      const mat = new THREE.ShaderMaterial({
-        name: 'VilleBrume',
-        uniforms: { ...U, tMist: { value: tex }, uT: { value: 0 }, uAlpha: { value: alpha }, uSpeed: { value: speed }, uScale: { value: new THREE.Vector2(...scale) } },
-        vertexShader: /* glsl */ `varying vec2 vUv; varying vec3 vWorld; void main(){ vUv = uv; vec4 w = modelMatrix * vec4(position, 1.0); vWorld = w.xyz; gl_Position = projectionMatrix * viewMatrix * w; }`,
-        fragmentShader: /* glsl */ `
-uniform vec3 uFogColor; uniform vec3 uMoonCol; uniform vec4 uLightPos[16]; uniform vec3 uLightCol[16]; uniform int uLightCount;
-uniform sampler2D tMist; uniform float uT; uniform float uAlpha; uniform float uSpeed; uniform vec2 uScale;
-varying vec2 vUv; varying vec3 vWorld;
-void main(){
-  vec2 q = vUv * uScale;
-  float a = texture2D(tMist, q + vec2(uT * uSpeed, 0.0)).a * 0.6 + texture2D(tMist, q * 1.7 + vec2(-uT * uSpeed * 0.6, 0.31)).a * 0.4;
-  a *= smoothstep(0.0, 0.35, vUv.y) * (1.0 - smoothstep(0.55, 1.0, vUv.y)) * smoothstep(0.0, 0.08, vUv.x) * (1.0 - smoothstep(0.92, 1.0, vUv.x));
-  vec3 lit = vec3(0.0);
-  for (int i = 0; i < 16; i++) { if (i >= uLightCount) break; vec3 L = uLightPos[i].xyz - vWorld; float d2 = dot(L, L); float r = uLightPos[i].w; float x = max(1.0 - d2 / (r * r), 0.0); lit += uLightCol[i] * x * x * 0.08; }
-  vec3 col = uFogColor * 1.25 + uMoonCol * 0.05 + lit;
-  gl_FragColor = vec4(col, a * uAlpha);
-}`,
-        transparent: true,
-        depthWrite: false,
-      });
-      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat);
-      mesh.layers.set(LAYER_NOREFLECT);
-      mesh.position.set(x, y, z);
-      mesh.renderOrder = 1;
+    return planes.map((p) => {
+      const { mesh, mat } = mistPlane(tex, p);
       scene.add(mesh);
       return mat;
-    };
-    return planes.map((p) => make(...p));
+    });
   }
 
   /**

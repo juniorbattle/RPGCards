@@ -61,22 +61,24 @@
     "etapes": [
       "emblèmes inventés par le modèle remplacés par ceux du jeu sur les bannières (fixBanners, tracés de src/art/emblems.ts ; tissu refait de son propre grain), sur le brut, avant tout traitement : quai-second-rang",
       "fond magenta détouré (alpha tiré de l’écart au magenta, bords démêlés du fond)",
-      "recadré sur le pied des murs"
+      "recadré sur le pied des murs",
+      "deux copies côte à côte, la seconde en miroir (31 m chacune, échelle réelle)",
+      "posé à z -18 m, voile atmosphérique 0.28"
     ]
   },
   "sortie": {
     "fichier": "public/decors/quai-second-rang.png",
-    "sha256": "b33760448f9b7b76582389f8b0c7f736ebd9efcf1664515ce1ebd93946032bc3",
-    "octets": 2428368,
+    "sha256": "321ad9f66c9e0b42f088a69fb50aa49fb9e1759abf5b56f2be48478078199cde",
+    "octets": 4687217,
     "dimensions": [
-      1536,
+      3072,
       953
     ],
     "pose": {
       "file": "quai-second-rang.png",
-      "sha256": "b33760448f9b7b76582389f8b0c7f736ebd9efcf1664515ce1ebd93946032bc3",
+      "sha256": "321ad9f66c9e0b42f088a69fb50aa49fb9e1759abf5b56f2be48478078199cde",
       "size": [
-        1536,
+        3072,
         953
       ],
       "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
@@ -85,17 +87,18 @@
       "at": [
         0,
         0,
-        -14
+        -18
       ],
-      "width": 56,
+      "width": 62,
       "orient": "face",
-      "order": 1,
+      "order": 2,
       "blend": "decoupe",
-      "fog": 0.6
+      "fog": 0.6,
+      "voile": 0.28
     }
   },
   "chaine_des_empreintes": [
     "a53971fa1746f0deb5e433d75135701d0174579205821f00662b1ee7a975584e (brut quai-second-rang)",
-    "b33760448f9b7b76582389f8b0c7f736ebd9efcf1664515ce1ebd93946032bc3 (plan)"
+    "321ad9f66c9e0b42f088a69fb50aa49fb9e1759abf5b56f2be48478078199cde (plan)"
   ]
 }

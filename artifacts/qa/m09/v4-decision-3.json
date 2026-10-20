@@ -1,0 +1,35 @@
+{
+  "date": "2026-10-20T03:24:02.322Z",
+  "commit": "b35a83a",
+  "mode": "planche",
+  "checks": [
+    "OK planche : Quai actuel par code ; porte (centre, ouest, est) et variante A3 en diorama, cadrage du diorama (joueur 120.17 px de haut)",
+    "OK aucune erreur ni avertissement de console (0)"
+  ],
+  "console": [],
+  "variante": {
+    "lumieres": [
+      "Voile x -21.43",
+      "ambre x 20.24",
+      "ambre x 24.98",
+      "Astre x -13.35",
+      "Astre x -4.35",
+      "Astre x 4.65",
+      "Astre x 13.65",
+      "Ronce x 0.77",
+      "Ronce x 0.9",
+      "Astre x -3.64",
+      "Astre x -9.61",
+      "Cendre x 5.37",
+      "Cendre x 8.4",
+      "Astre x -8.84",
+      "Cendre x -11.99",
+      "Astre x -2.71"
+    ]
+  },
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "figurePx": {
+    "actuel": 177.01,
+    "porte": 120.17
+  }
+}

@@ -6,7 +6,9 @@ Statut : **APPROUVÉ par le responsable** (fiche d'arbitrages interactive du 202
 la porte fait** (passe 55 : plans de décor et feuilles en pixel art, voir « Conséquences faites ») ; **essai technique
 fait** (passe 56 : 2 images sur 30, direction validée par le responsable) ; **lot de production fait** (passe 57 :
 diorama du Quai et feuille complète du joueur, 12 images sur 30, `approved: false`, voir « Porte du Quai : lot de
-production ») ; décision du responsable attendue (approbation, cadrage). **Remplace l'ADR 026** comme direction artistique de la
+production ») ; retours du responsable (passe 59) puis **ses décisions appliquées** (passe 60 : cadrage élargi,
+profondeur, feuille du joueur en 64 × 96 ; 16 images sur 30, voir « Profondeur, cadrage élargi et feuille du joueur en
+64 × 96 ») ; approbation attendue. **Remplace l'ADR 026** comme direction artistique de la
 ville ; **amende l'ADR 027** (D2, D3, D4, D10) et l'exception d'AGENTS (décors de la ville) ; s'inscrit dans l'ADR 024
 (caméra de face ; la Grande Cour la règle plus haute, dans la plage décidée).
 
@@ -253,3 +255,55 @@ integrant notre logique visuel du projet pour rester coherent ».
   gpt-image-2 demande l'autorisation explicite du responsable** (AGENTS limite les entrées aux images du projet).
 - **Toujours ouverts** : cadrage (actuel ou élargi) ; lumières aux couleurs des familles (note A3). Planche
   `screenshots/qa/m09/v4-decision-2/planche-decision-quai.png`. Budget : 12 images sur 30, 18 restantes.
+
+## Profondeur, cadrage élargi et feuille du joueur en 64 × 96 (passe 60, 2026-10-20)
+
+Décision du responsable, dans la session de la porte : « Je retiens tes recommandations : emblèmes posés par script,
+cadrage élargi, profondeur (brume entre les plans et plans espacés d'abord, puis troisième rang et ruelles), feuille du
+joueur refaite en 64 × 96 sans image d'entrée de Cité du Tournoi ; annonce les images avant de générer. » **Rien n'est
+approuvé** : `approved: false` sur tous les plans et sur la feuille.
+
+- **Images** : 4, annoncées avec leurs prompts avant la génération (`tools/m09-lot-quai-2.mjs` ; bruts dans
+  `art-gen/2026-10-20-v4-quai-2/` du dossier principal) : troisième rang de toits et ville haute ; ruelle qui s'enfonce ;
+  escalier vers l'arène (passage du Parvis) ; feuille du joueur en 64 × 96 (entrée : notre feuille du lot 1, aucune
+  image de Cité du Tournoi). **16 images sur 30, 14 restantes.**
+- **Emblèmes** : le modèle en a de nouveau inventé (cinq bannières du troisième rang, deux de la ruelle) ; ceux du jeu y
+  sont posés par script (`fixBanners`, boîtes mesurées sur les bruts).
+- **Cadrage élargi** (`6,25,42,4.8`) porté dans le diorama : champ `camera` du manifeste, point visé borné à ±5 m pour
+  que la vue ne dépasse pas les façades ; le décor par code garde son cadrage. Joueur ≈ 120 px de haut en 1920 × 1080
+  (figure de 86 px d'art : ×1,40, non entier, net grâce au contrat v3) et ≈ 80 px en 1280 × 720 (×0,93 : légèrement
+  réduit).
+- **Profondeur** :
+  - plans espacés : ciel à −90 m, troisième rang à −40 m, second rang à −18 m, façades à −3 m ;
+  - **rangs du fond à leur échelle réelle**. Un premier essai élargissait chaque plan à proportion de son recul ; les
+    rangs gardaient ainsi leur taille à l'écran et se lisaient comme un seul mur de maisons, sans profondeur. Essai
+    abandonné. Désormais, les fenêtres du fond ont la taille de celles des façades, donc paraissent plus petites au loin.
+    Pour couvrir la largeur vue, chaque rang est posé en deux copies côte à côte, la seconde en miroir : second rang
+    2 × 31 m, troisième rang 2 × 44 m relevé de 4 m ;
+  - **voile atmosphérique** : nouveau champ `voile` des plans (0 à 1), qui tire la couleur vers le bleu de nuit clair de
+    l'air ; ciel 0,12, second rang 0,28, troisième rang 0,5 ;
+  - **brume entre les plans** : champ `brumes` du manifeste, nappes du moteur, d'un ton plus clair que celles du décor
+    par code (9e valeur facultative, `ton` 2,2). Trois nappes : entre les façades et le second rang, entre le second et
+    le troisième rang, devant le ciel ; plus celle de l'eau ;
+  - **ruelle et escalier vus par des ouvertures** : l'arche ouest et le portail de l'entrepôt (est) sont découpés dans
+    les bruts (rectangle et arc mesurés, peints en magenta puis détourés). Derrière, la ruelle (recadrée sur son
+    centre) et l'escalier de l'arène sont centrés sur la ligne de vue de la caméra arrêtée à sa borne (parallaxe), le
+    bas sous le sol. L'arche ouest reste en partie cachée par la bannière du mât du premier plan.
+- **Contrat des plans** :
+  - 12 plans au plus par îlot, au lieu de 8 (dix plans au Quai) ;
+  - champs `voile`, `camera` et `brumes` contrôlés (6 nappes au plus, ton facultatif) ;
+  - le diorama dessine les nappes du moteur et applique son cadrage ;
+  - le décor par code est inchangé ;
+  - budget du Quai : 26,7 Mo de fichiers (32 au plus), 93,8 Mo de mémoire GPU (160 au plus).
+- **Feuille du joueur** : 64 × 96 px d'art par case, grille imposée au traitement. Tête plus grande, mèches et yeux
+  lisibles. **Défaut** : l'écharpe (ton clé vert) remonte sur le bas du visage et couvre la bouche, comme un masque.
+  Proposition : 1 image ciblée, annoncée avant la génération (la feuille redessinée à partir de celle-ci, écharpe nouée
+  sous le menton, bouche visible).
+- **Ouverts** :
+  - lecture de la profondeur et force du voile ;
+  - ouvertures ;
+  - écharpe du joueur ;
+  - note A3 ;
+  - approbation.
+
+  Planche : `screenshots/qa/m09/v4-decision-3/planche-decision-quai.png`.

@@ -461,7 +461,7 @@ describe('ville : plans de décor (ADR 028, B2 : diorama de plans peints)', () =
     expect(checkIlotDecor('quai', ok)).toEqual([]);
     expect(checkIlotDecor('quai', ilot({})).join()).toMatch(/0 plans/);
     const many = Object.fromEntries(Array.from({ length: DECOR_MAX_PLATES + 1 }, (_, i) => [`p${i}`, plate({ order: i, at: [0, 0, -50 + i] })]));
-    expect(checkIlotDecor('quai', ilot(many)).join()).toMatch(/9 plans/);
+    expect(checkIlotDecor('quai', ilot(many)).join()).toMatch(new RegExp(`${DECOR_MAX_PLATES + 1} plans`));
     expect(checkIlotDecor('quai', ilot({ a: plate(), b: plate({ at: [0, 0, 4] }) })).join()).toMatch(/ordre 3 partagé/);
     // un plan plus lointain dessiné après un plan plus proche : refusé
     expect(checkIlotDecor('quai', ilot({ loin: plate({ at: [0, 0, -20], order: 4 }), pres: plate({ at: [0, 0, 2], order: 1 }) })).join()).toMatch(/plus lointain.*dessiné après/);
@@ -471,11 +471,31 @@ describe('ville : plans de décor (ADR 028, B2 : diorama de plans peints)', () =
     expect(checkIlotDecor('quai', ilot({ a: plate() }, { lumieres: [{ at: [0, 0, 0], color: 'rose', intensity: 1, radius: 5 }] })).join()).toMatch(/couleur/);
     expect(checkIlotDecor('quai', ilot({ a: plate() }, { lumieres: Array.from({ length: 17 }, () => ({ at: [0, 0, 0], color: 'ambre', intensity: 1, radius: 5 })) })).join()).toMatch(/16 au plus/);
     expect(checkIlotDecor('quai', ilot({ a: plate() }, { sol: 'oui' })).join()).toMatch(/sol/);
-    // budget : 8 plans de 4096 × 4096 dépassent les 160 Mo de mémoire GPU
-    const big = Object.fromEntries(Array.from({ length: 8 }, (_, i) => [`p${i}`, plate({ size: [4096, 4096], order: i, at: [0, 0, -50 + i] })]));
+    // budget : 3 plans de 4096 × 4096 dépassent les 160 Mo de mémoire GPU
+    const big = Object.fromEntries(Array.from({ length: 3 }, (_, i) => [`p${i}`, plate({ size: [4096, 4096], order: i, at: [0, 0, -50 + i] })]));
     expect(checkIlotDecor('quai', ilot(big)).join()).toMatch(/mémoire GPU/);
     expect(checkIlotDecor('quai', null).join()).toMatch(/illisible/);
     expect(checkIlotDecor('quai', { plans: [] }).join()).toMatch(/plans/);
+  });
+
+  it('passe 60 : cadrage propre au diorama et brumes du moteur entre les plans, contrôlés', async () => {
+    const { checkIlotDecor, DECOR_MAX_MISTS } = await import('../src/ville/decors');
+    const base = ilot({ a: plate() });
+    expect(checkIlotDecor('quai', { ...base, camera: { pitch: 6, distance: 25, fov: 42, aimY: 4.8, minX: -6, maxX: 6 } })).toEqual([]);
+    expect(checkIlotDecor('quai', { ...base, camera: { distance: 25 } })).toEqual([]);
+    expect(checkIlotDecor('quai', { ...base, camera: { pitch: 45 } }).join()).toMatch(/cadrage invalide/);
+    expect(checkIlotDecor('quai', { ...base, camera: { minX: 5, maxX: -5 } }).join()).toMatch(/cadrage invalide/);
+    expect(checkIlotDecor('quai', { ...base, camera: null }).join()).toMatch(/cadrage invalide/);
+    const mist = [120, 10, 0, 6, -9, 0.3, 0.008, [5, 1.2]];
+    expect(checkIlotDecor('quai', { ...base, brumes: [mist] })).toEqual([]);
+    expect(checkIlotDecor('quai', { ...base, brumes: [[120, 10, 0, 6, -9, 1.5, 0.008, [5, 1.2]]] }).join()).toMatch(/brumes/);
+    expect(checkIlotDecor('quai', { ...base, brumes: [[120, 10, 0, 6, -9, 0.3, 0.008]] }).join()).toMatch(/brumes/);
+    expect(checkIlotDecor('quai', { ...base, brumes: Array.from({ length: DECOR_MAX_MISTS + 1 }, () => mist) }).join()).toMatch(/brumes/);
+    // ton facultatif des brumes (clarté, de 0,5 à 4) et voile atmosphérique des plans (0 à 1)
+    expect(checkIlotDecor('quai', { ...base, brumes: [[...mist, 2.2]] })).toEqual([]);
+    expect(checkIlotDecor('quai', { ...base, brumes: [[...mist, 9]] }).join()).toMatch(/brumes/);
+    expect(checkIlotDecor('quai', ilot({ a: plate({ voile: 0.5 }) }))).toEqual([]);
+    expect(checkIlotDecor('quai', ilot({ a: plate({ voile: 1.5 }) })).join()).toMatch(/voile atmosphérique/);
   });
 
   it('pose au monde : plan de face posé sur son bas, plan couché centré ; ordre de dessin d’arrière en avant', async () => {

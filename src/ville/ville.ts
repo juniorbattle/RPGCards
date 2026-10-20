@@ -19,7 +19,7 @@ import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import { createRig, RIGS, type CameraId, type CameraRig, type RigTuning } from './cameras';
-import { createDecorResolver, type DecorReport, type DecorState } from './decors';
+import { createDecorResolver, type DecorCamera, type DecorReport, type DecorState } from './decors';
 import { buildDiorama } from './diorama';
 import { ILOTS, type IlotDef, type IlotId, type Passer } from './ilots';
 import { activeZone, nearestFree, newWalker, stepWalker, type Facing, type Ilot, type Vec2, type Walker, type Zone } from './monde';
@@ -286,8 +286,11 @@ export function createTown(o: TownOptions): Town {
   const decors = createDecorResolver(o.decors ?? 'approuvees', (t) => renderer.initTexture(t));
   void decors.prepare(def.id);
   let worldKind: 'code' | 'diorama' = 'code';
+  /** Cadrage déclaré par le diorama monté (passe 60 : cadrage élargi de la porte), null pour le décor par code. */
+  let dioramaCamera: DecorCamera | null = null;
   const buildWorld = (d: IlotDef, st: DecorState): QuaiScene => {
     worldKind = st.state === 'diorama' ? 'diorama' : 'code';
+    dioramaCamera = st.state === 'diorama' ? st.diorama.camera : null;
     return st.state === 'diorama' ? buildDiorama(d, st.diorama, o.artSeed) : d.build(o.artSeed);
   };
   const decorAtStart = decors.peek(def.id);
@@ -297,7 +300,14 @@ export function createTown(o: TownOptions): Town {
   // la caméra principale voit aussi ce que le reflet ne montre pas (sol, eau, brumes)
   camera.layers.enable(LAYER_NOREFLECT);
   const refl = new PlanarReflection();
-  let rig: CameraRig = createRig(o.camera, def.camera, def.rig, o.rig);
+  /** Cadrage de l'îlot : celui du diorama s'il en déclare un (passe 60), sinon celui de l'îlot ; l'URL l'emporte. */
+  const rigOf = (id: CameraId): CameraRig => {
+    const c = worldKind === 'diorama' ? dioramaCamera : null;
+    if (!c) return createRig(id, def.camera, def.rig, o.rig);
+    const { minX, maxX, ...tuning } = c;
+    return createRig(id, { minX: minX ?? def.camera.minX, maxX: maxX ?? def.camera.maxX }, def.rig, tuning, o.rig);
+  };
+  let rig: CameraRig = rigOf(o.camera);
   const walkerH = () => def.walkerH ?? WALKER_H;
   const markerY = () => walkerH() + 0.53;
 
@@ -623,8 +633,10 @@ export function createTown(o: TownOptions): Town {
         if (visitFrames === 0) {
           unmountWorld();
           mountWorld(st);
+          rig = rigOf(rig.params.id);
           applyRig();
           resize();
+          rig.update(camera, walker.pos, 0, true);
         } else decorLate.push(`${id} : diorama prêt après ${Math.round(performance.now() - decorSince)} ms, décor par code gardé pour cette visite`);
       }
       flush();
@@ -651,7 +663,7 @@ export function createTown(o: TownOptions): Town {
     walker = newWalker(sp, sp.face ?? walker.facing);
     target = null;
     keys.clear();
-    rig = createRig(rig.params.id, def.camera, def.rig, o.rig);
+    rig = rigOf(rig.params.id);
     applyRig();
     resize();
     rig.update(camera, walker.pos, 0, true);
@@ -666,7 +678,7 @@ export function createTown(o: TownOptions): Town {
     ilotId: () => def.id,
     goTo: mount,
     setCamera(id) {
-      rig = createRig(id, def.camera, def.rig, o.rig);
+      rig = rigOf(id);
       applyRig();
       resize();
       rig.update(camera, walker.pos, 0, true);
