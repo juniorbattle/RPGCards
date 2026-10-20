@@ -1,0 +1,114 @@
+{
+  "date": "2026-10-20T19:49:03.556Z",
+  "commit": "a3c7d76",
+  "viewport": [
+    1280,
+    720
+  ],
+  "chromeArgs": [
+    "--force_high_performance_gpu"
+  ],
+  "renderer": "Chrome headless, GPU réel : ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11) — arguments : --force_high_performance_gpu",
+  "determinism": {
+    "chef-cendre": [
+      "512x624:f185ddf,512x624:34350d21,672x702:bc560b56,768x640:9a107835,120x89:c8470f4b,87x87:c8cbacda,129x100:74172a9b,129x100:9ca9b97c,129x68:b00f7b8,129x68:741cf32f,129x136:f36c42c2,129x136:80f91fc1,142x45:282f89b1,142x45:26c90b28,142x45:dc014313,160x80:4ac59eab,160x80:f312c20f,160x80:6545c3e7,160x80:b07b559c,160x80:719cfd69,160x80:464fb242,160x80:48f1a0d6,160x80:2300eab2,334x98:52716601",
+      "512x624:c627576,512x624:34350d21,672x702:bc560b56,768x640:9a107835,120x89:c8470f4b,87x87:c8cbacda,129x100:74172a9b,129x100:9ca9b97c,129x68:b00f7b8,129x68:741cf32f,129x136:f36c42c2,129x136:80f91fc1,142x45:282f89b1,142x45:26c90b28,142x45:dc014313,160x80:4ac59eab,160x80:f312c20f,160x80:6545c3e7,160x80:b07b559c,160x80:719cfd69,160x80:464fb242,160x80:48f1a0d6,160x80:2300eab2,334x98:52716601"
+    ],
+    "chef-ronce": [
+      "512x624:17c87f70,512x624:5dfb65d1,672x702:f45a8d58,768x640:84c6eb30,120x89:c8470f4b,87x87:43135512,129x100:df4adccc,129x100:18372a58,129x68:a458eb68,129x68:e858d680,129x136:e936501,129x136:eddfd36a,142x45:982bbcb3,142x45:ce8c1f73,142x45:8a94d5d0,160x80:9ac115e,160x80:f0a73e39,160x80:45563015,160x80:f0fc454d,160x80:be12f5cc,160x80:a5901e1,160x80:fe26afc,160x80:cd2912a8,334x98:52716601",
+      "512x624:17c87f70,512x624:5dfb65d1,672x702:f45a8d58,768x640:84c6eb30,120x89:c8470f4b,87x87:43135512,129x100:df4adccc,129x100:18372a58,129x68:a458eb68,129x68:e858d680,129x136:e936501,129x136:eddfd36a,142x45:982bbcb3,142x45:ce8c1f73,142x45:8a94d5d0,160x80:9ac115e,160x80:f0a73e39,160x80:45563015,160x80:f0fc454d,160x80:be12f5cc,160x80:a5901e1,160x80:fe26afc,160x80:cd2912a8,334x98:52716601"
+    ],
+    "chef-voile": [
+      "512x624:298aec96,512x624:f053fcbf,672x702:b12570b9,768x640:f85e67fc,120x89:c8470f4b,87x87:481a45aa,129x100:8dae91dd,129x100:1785b04d,129x68:b2ff421b,129x68:ec5a083,129x136:91779896,129x136:ced11d59,142x45:19894400,142x45:10ca432c,142x45:3eb63f16,160x80:b7e43c1d,160x80:4373149f,160x80:6c6618d2,160x80:5682cf4,160x80:298c45da,160x80:1dbcd826,160x80:a2888c15,160x80:c9ba9c8a,334x98:52716601",
+      "512x624:298aec96,512x624:f053fcbf,672x702:b12570b9,768x640:f85e67fc,120x89:c8470f4b,87x87:481a45aa,129x100:8dae91dd,129x100:1785b04d,129x68:b2ff421b,129x68:ec5a083,129x136:91779896,129x136:ced11d59,142x45:19894400,142x45:10ca432c,142x45:3eb63f16,160x80:b7e43c1d,160x80:4373149f,160x80:6c6618d2,160x80:5682cf4,160x80:298c45da,160x80:1dbcd826,160x80:a2888c15,160x80:c9ba9c8a,334x98:52716601"
+    ],
+    "chef-astre": [
+      "512x624:210c45fd,512x624:41c212cb,672x702:42e5f934,768x640:8b7945ec,120x89:c8470f4b,87x87:69237c6b,129x100:e9f8b326,129x100:90423d9f,129x68:4dc5b737,129x68:9efe0c22,129x136:770da757,129x136:b6208151,142x45:be8b5a81,142x45:43bc95c1,142x45:ab9de207,160x80:98625e7d,160x80:b56c6971,160x80:7c8e5a2,160x80:da4c3488,160x80:95f4b7f,160x80:f67c9919,160x80:f796c6a,160x80:1bd38e2b,334x98:52716601",
+      "512x624:210c45fd,512x624:41c212cb,672x702:42e5f934,768x640:8b7945ec,120x89:c8470f4b,87x87:69237c6b,129x100:e9f8b326,129x100:90423d9f,129x68:4dc5b737,129x68:9efe0c22,129x136:770da757,129x136:b6208151,142x45:be8b5a81,142x45:43bc95c1,142x45:ab9de207,160x80:98625e7d,160x80:b56c6971,160x80:7c8e5a2,160x80:da4c3488,160x80:95f4b7f,160x80:f67c9919,160x80:f796c6a,160x80:1bd38e2b,334x98:52716601"
+    ]
+  },
+  "ecarts": {
+    "chef-cendre": {
+      "0": {
+        "pixels": 1,
+        "total": 319488,
+        "max": 1
+      }
+    }
+  },
+  "cost": {
+    "chef-cendre": {
+      "medianMs": 66.1,
+      "minMs": 55.6,
+      "maxMs": 91.4,
+      "runs": 9,
+      "textures": 24,
+      "texels": 1853223
+    },
+    "chef-ronce": {
+      "medianMs": 55.6,
+      "minMs": 44,
+      "maxMs": 66.7,
+      "runs": 9,
+      "textures": 24,
+      "texels": 1853223
+    },
+    "chef-voile": {
+      "medianMs": 34.4,
+      "minMs": 31.3,
+      "maxMs": 56.7,
+      "runs": 9,
+      "textures": 24,
+      "texels": 1853223
+    },
+    "chef-astre": {
+      "medianMs": 47.5,
+      "minMs": 39.5,
+      "maxMs": 53.5,
+      "runs": 9,
+      "textures": 24,
+      "texels": 1853223
+    }
+  },
+  "files": [
+    {
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/e2247ef0-ac77-4838-85be-8c99774cc9ff/scratchpad/shots/jalon/chefs-rtx/vueA-chef-cendre-1280.png",
+      "desc": "Vue A complète du duel contre Bran (chef-cendre), 1280×720"
+    },
+    {
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/e2247ef0-ac77-4838-85be-8c99774cc9ff/scratchpad/shots/jalon/chefs-rtx/vueA-chef-ronce-1280.png",
+      "desc": "Vue A complète du duel contre Mère Aubépine (chef-ronce), 1280×720"
+    },
+    {
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/e2247ef0-ac77-4838-85be-8c99774cc9ff/scratchpad/shots/jalon/chefs-rtx/vueA-chef-voile-1280.png",
+      "desc": "Vue A complète du duel contre Ilse (chef-voile), 1280×720"
+    },
+    {
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/e2247ef0-ac77-4838-85be-8c99774cc9ff/scratchpad/shots/jalon/chefs-rtx/vueA-chef-astre-1280.png",
+      "desc": "Vue A complète du duel contre Halvard (chef-astre), 1280×720"
+    },
+    {
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/e2247ef0-ac77-4838-85be-8c99774cc9ff/scratchpad/shots/jalon/chefs-rtx/gros-plan-chef-cendre.png",
+      "desc": "Gros plan du visage de chef-cendre (1920×1080, densité 2)"
+    },
+    {
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/e2247ef0-ac77-4838-85be-8c99774cc9ff/scratchpad/shots/jalon/chefs-rtx/gros-plan-chef-ronce.png",
+      "desc": "Gros plan du visage de chef-ronce (1920×1080, densité 2)"
+    },
+    {
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/e2247ef0-ac77-4838-85be-8c99774cc9ff/scratchpad/shots/jalon/chefs-rtx/gros-plan-chef-voile.png",
+      "desc": "Gros plan du visage de chef-voile (1920×1080, densité 2)"
+    },
+    {
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/e2247ef0-ac77-4838-85be-8c99774cc9ff/scratchpad/shots/jalon/chefs-rtx/gros-plan-chef-astre.png",
+      "desc": "Gros plan du visage de chef-astre (1920×1080, densité 2)"
+    },
+    {
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/e2247ef0-ac77-4838-85be-8c99774cc9ff/scratchpad/shots/jalon/chefs-rtx/planche-chefs-1280.png",
+      "desc": "Planche des quatre chefs (buste, portrait, humeurs) et des quatre bras droits, 1280×720"
+    }
+  ],
+  "issues": [],
+  "deterministic": false,
+  "tramageSeul": true
+}

@@ -133,7 +133,8 @@ try {
   await p.waitForSelector('[data-screen="av-resultat"]', { timeout: 60000 });
   e = await etat();
   const gagne = e.registre.some((g) => g.key === 'variante:Cendre-3-ferveur');
-  duelJoue = { issue: gagne ? 'victoire' : 'defaite', tours: (e.combats ?? null), ms: Date.now() - t0, leaks: [...new Set(stats.leaks)] };
+  const dernier = await av(() => window.__lqvAventure.save.historique.at(-1) ?? null);
+  duelJoue = { issue: gagne ? 'victoire' : 'defaite', tours: dernier?.turns ?? null, combats: e.combats, ms: Date.now() - t0, leaks: [...new Set(stats.leaks)] };
   check(outcome === 'ended', `duel contre Tessa joué jusqu’au bout par l’interface (${duelJoue.issue}, ${Math.round(duelJoue.ms / 1000)} s)`);
   check(!stats.leaks.length, 'duel joué : aucune fuite d’information (vue du joueur)');
   if (gagne) {

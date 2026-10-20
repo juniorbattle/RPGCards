@@ -1,5 +1,7 @@
 # AGENTS.md — Les Quatre Voies (nouveau dépôt indépendant)
 
+> **M10-C — LIVRÉ, À RECEVOIR (2026-10-20, passes 84 à 86) :** chefs en « vectoriel V2 » (ADR 034 proposé ; kits `chef-<famille>` hors de `PERSONALITIES`, le jeu standard ne les tire jamais) ; écran Deck et collection de l'aventure (éditeur case par case : une case n'accepte que ce qui garde la forme R-AV ; Collection dérivée du registre seul) ; `npm run qa:maison` (parcours d'une maison au navigateur). Jalon de QA vert sur les deux GPU. Fiche du lot : <https://claude.ai/artifact/VzdgB2W2wmUw1Bp9MNE5ux>.
+
 
 > **M10-A — LIVRÉ ET REÇU (2026-10-20, passes 76 à 83) :** **avenant M10-A approuvé : `contracts/06_AVENANT_M10A_MODE_AVENTURE.md`** (avenant explicitement approuvé, rang 2 de l'ordre d'autorité ; seulement le mode Aventure) et son annexe de calibrage validée (`docs/m10/CALIBRAGE_M10A.md`) ; neutres en duel (seule exception au Clash : la garde `family !== null`, ADR 033) ; deck R-AV réel ; paliers selon le niveau du joueur et PV du joueur qui montent ; écriture épicène sans point médian ; l'aventure dans le Quai en quatre rangs (ancien Quai en secours hors QA jusqu'à A2 puis A1). Fiche du lot : <https://claude.ai/artifact/B6y9Qow8gbuNhk8ragTvni>.
 
