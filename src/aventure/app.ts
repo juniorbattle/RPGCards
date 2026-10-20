@@ -33,11 +33,12 @@ import { spritePolicy } from '../ville/spritesExternes';
 import { installVilleStyles, promptBubble } from '../ville/ui';
 import { createTown, type Town } from '../ville/ville';
 import { appliquer, chapitre, peutChanger, peutConfirmer, peutEngager, statutDefi, type Evenement, type FaitsPublics, type Issue } from './aventure';
-import { equiperSignature, equiperVersion, validerDeckAv, type DeckAv } from './deck';
+import { basculerTechnique, choixPourCase, equiperSignature, rangDe, remplacerCase, validerDeckAv, type DeckAv } from './deck';
+import { origineGain, vueCollection, type EntreeCollection } from './collection';
 import { battre, conclure, decider, poses, rencontreDef, type Pose } from './directeur';
 import { faitsPublics } from './faits';
 import { ilotAventure, MANIFESTE_QUAI_RANGS } from './ilots';
-import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, rangNeutre, ROLE_LABEL, ROLES, ROMAIN } from './modele';
+import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, RANGS, rangNeutre, ROLE_LABEL, ROLES, ROMAIN, type EtatFamille } from './modele';
 import { objectif, quetes } from './quetes';
 import { collectionDe, type Gain } from './registre';
 import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue, personnalite, type DuelPrevu } from './rencontres';
@@ -946,40 +947,92 @@ export class AventureApp {
     ]);
   }
 
-  /** Deck et collection de l'aventure : 16 cartes (4 par Rang), une Signature au plus, deux Techniques (R-AV). */
-  collection(): void {
+  /**
+   * Écran Deck et collection de l'aventure (M10-C) : l'éditeur du deck (R-AV, case par case : 16 cartes, quatre par
+   * Rang, une identité au plus une fois, une Signature au plus, deux Techniques), la collection (chaque carte possédée
+   * avec l'origine de son gain, ou à gagner avec la manière de l'obtenir) et le registre des gains.
+   */
+  collection(onglet: 'deck' | 'collection' | 'registre' = 'deck'): void {
     const s = this.save!;
     const col = collectionDe(s.etat.registre);
-    let draft: DeckAv = structuredClone(s.etat.deck);
     const art = this.params.artSeed;
+    let draft: DeckAv = structuredClone(s.etat.deck);
+    let caseSel: number | null = null;
     const body = h('div', { class: 'av-deck' });
-    const render = () => {
+    const carte = (defId: string) => (isNeutre(defId) ? neutreEl(defId) : cardEl(defId, { artSeed: art, tag: 'div' }));
+    const version = (defId: string) => (isNeutre(defId) ? 'Neutre' : CATALOG[defId]!.rarity === 'Basic' ? 'Basic' : EFFECTS[CATALOG[defId]!.effect!].name);
+    const modifie = () => JSON.stringify(draft) !== JSON.stringify(s.etat.deck);
+    const onglets = () => h('div', { class: 'av-onglets', role: 'tablist' }, ...([['deck', 'Deck'], ['collection', 'Collection'], ['registre', 'Registre des gains']] as const).map(([k, l]) =>
+      h('button', { class: `ville-btn${onglet === k ? ' primary' : ''}`, type: 'button', role: 'tab', 'aria-selected': onglet === k ? 'true' : 'false', 'data-key': `av-onglet-${k}`, onclick: () => { onglet = k; caseSel = null; render(); } }, l)));
+
+    const vueDeck = (): HTMLElement[] => {
       const issues = validerDeckAv(draft, col);
-      const cartes = h('div', { class: 'av-cards av-deck-cards' }, ...draft.cartes.map((c) => {
-        const el = isNeutre(c) ? neutreEl(c) : cardEl(c, { artSeed: art, tag: 'div' });
-        const d = CATALOG[c];
-        const autre = d ? col.variantes.find((v) => CATALOG[v]?.identity === d.identity && v !== c) ?? (d.rarity !== 'Basic' ? `${d.identity}-basic` : null) : null;
-        return h('div', { class: 'av-slot' }, el, autre ? h('button', { class: 'ville-btn av-mini', type: 'button', 'data-key': `av-version-${d!.identity}`, onclick: () => { draft = equiperVersion(draft, autre); render(); } }, CATALOG[autre]!.rarity === 'Basic' ? 'Basic' : EFFECTS[CATALOG[autre]!.effect!].name) : null);
-      }));
+      // À gauche, les quatre Rangs (2 × 2) ; à droite, la case choisie et ce qui peut y entrer, la Signature, les
+      // Techniques, l'état du deck et les boutons : tout tient dans l'écran à 1280 × 720.
+      const rangs = h('div', { class: 'av-rangs' }, ...RANGS.map((r) => h('div', { class: 'av-rang' },
+        h('span', { class: 'av-rang-nom' }, `Rang ${ROMAIN[r]}`),
+        h('div', { class: 'av-rang-cases' }, ...draft.cartes.map((c, i) => [c, i] as const).filter(([c]) => rangDe(c) === r).map(([c, i]) => h('button', {
+          class: `av-case${caseSel === i ? ' sel' : ''}`, type: 'button', 'data-key': `av-case-${i}`, 'aria-pressed': caseSel === i ? 'true' : 'false',
+          'aria-label': `Case ${i + 1} : ${isNeutre(c) ? 'neutre' : nomCarte(c)} — changer`, onclick: () => { caseSel = caseSel === i ? null : i; render(); },
+        }, carte(c), h('small', null, version(c))))))));
+      const sel = caseSel;
+      const choix = sel === null ? [] : choixPourCase(draft, col, sel);
+      const panneau = sel === null
+        ? h('p', { class: 'av-aide' }, 'Choisissez une case pour voir ce qui peut y entrer : une neutre, ou la Basic ou une variante possédée d’une identité qui n’est pas déjà dans le deck.')
+        : h('div', { class: 'av-choix', 'data-key': 'av-choix' },
+          h('p', null, choix.length > 1 ? `Rang ${ROMAIN[rangDe(draft.cartes[sel]!)]} : mettre dans cette case` : 'Aucune autre carte possédée pour cette case (une identité ne se joue qu’une fois).'),
+          ...choix.map((c) => h('button', {
+            class: `av-case${c === draft.cartes[sel] ? ' actuelle' : ''}`, type: 'button', 'data-key': `av-choix-${c}`,
+            onclick: () => { draft = remplacerCase(draft, col, sel, c); caseSel = null; render(); },
+          }, carte(c), h('small', null, c === draft.cartes[sel] ? `${version(c)} (en place)` : version(c)))));
       const sigs = h('div', { class: 'ville-choices' }, ...[null, ...col.signatures].map((f) => h('button', { class: `ville-btn${draft.signature === f ? ' primary' : ''}`, type: 'button', 'data-key': `av-sig-${f ?? 'aucune'}`, onclick: () => { draft = equiperSignature(draft, f); render(); } }, f ? CATALOG[`sig-${f}`]!.name : 'Aucune')));
-      const techs = h('div', { class: 'ville-choices' }, ...col.techniques.map((t: TechniqueId) => h('button', { class: `ville-btn${draft.techniques.includes(t) ? ' primary' : ''}`, type: 'button', 'data-key': `av-tech-${t}`, title: TECHNIQUES[t].text, onclick: () => { draft = { ...draft, techniques: draft.techniques.includes(t) ? draft.techniques.filter((x) => x !== t) : [...draft.techniques, t].slice(-2) }; render(); } }, t)));
-      body.replaceChildren(
-        h('h2', null, 'Deck de l’aventure'),
-        h('p', null, `16 cartes ordinaires, quatre de chaque Rang ; ${draft.cartes.filter(isNeutre).length} neutre(s). Signature équipée : ${draft.signature ? CATALOG[`sig-${draft.signature}`]!.name : 'aucune (aucun chef vaincu)'} — une seule à la fois.`),
-        cartes,
-        h('h3', null, `Signature (${col.signatures.length} possédée${col.signatures.length > 1 ? 's' : ''})`), sigs,
-        h('h3', null, 'Techniques (deux)'), techs,
-        issues.length ? h('ul', { class: 'av-issues', 'data-key': 'av-issues' }, ...issues.map((i) => h('li', null, i.text))) : h('p', { class: 'av-ok' }, 'Deck légal (règle R-AV, avenant M10-A).'),
-        h('h3', null, 'Collection'),
-        h('p', null, `Neutres : ${[1, 2, 3, 4].map((r) => `${ROMAIN[r as 1]} ×${col.neutres[r as 1]}`).join(', ')} · Cartes de base : ${col.basics.length ? col.basics.join(', ') : 'aucune'} · Variantes : ${col.variantes.length ? col.variantes.map(nomCarte).join(', ') : 'aucune'} · Techniques : ${col.techniques.join(', ')}`),
-        h('h3', null, 'Registre des gains'),
-        h('ol', { class: 'av-registre', 'data-key': 'av-registre' }, ...s.etat.registre.map((g) => h('li', null, `${g.key} — ${g.source}`))),
+      const techs = h('div', { class: 'ville-choices' }, ...col.techniques.map((t: TechniqueId) => h('button', { class: `ville-btn${draft.techniques.includes(t) ? ' primary' : ''}`, type: 'button', 'data-key': `av-tech-${t}`, title: TECHNIQUES[t].text, onclick: () => { draft = basculerTechnique(draft, col, t); render(); } }, t)));
+      const cote = h('div', { class: 'av-deck-cote' },
+        panneau,
+        h('h3', null, `Signature (${col.signatures.length ? `${col.signatures.length} possédée${col.signatures.length > 1 ? 's' : ''}, une seule équipée` : 'aucune : battez un chef'})`),
+        h('div', { class: 'av-sig-ligne' }, draft.signature ? h('div', { class: 'av-cards' }, cardEl(`sig-${draft.signature}`, { artSeed: art, tag: 'div' })) : null, sigs),
+        h('h3', null, `Techniques (${draft.techniques.length} sur 2)`), techs,
+        issues.length ? h('ul', { class: 'av-issues', 'data-key': 'av-issues' }, ...issues.map((i) => h('li', null, i.text))) : h('p', { class: 'av-ok', 'data-key': 'av-deck-ok' }, `Deck légal (règle R-AV, avenant M10-A)${modifie() ? ' — modifications non enregistrées' : ''}.`),
         h('div', { class: 'ville-choices' },
-          h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-deck-save', disabled: issues.length ? true : null, onclick: () => { s.etat = { ...s.etat, deck: draft }; this.persist(); this.fermerModal(); this.toast('Deck enregistré.'); } }, 'Enregistrer'),
-          h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-deck-close', onclick: () => this.fermerModal() }, 'Fermer')));
+          h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-deck-save', disabled: issues.length ? true : null, onclick: () => { s.etat = { ...s.etat, deck: draft }; this.persist(); this.fermerModal(); this.toast('Deck enregistré.'); } }, 'Enregistrer et fermer'),
+          h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-deck-reset', disabled: modifie() ? null : true, onclick: () => { draft = structuredClone(s.etat.deck); caseSel = null; render(); } }, 'Annuler les changements')));
+      return [h('p', { class: 'av-resume' }, `${resumeDeck(draft)}.`), h('div', { class: 'av-deck-grille' }, rangs, cote)];
+    };
+
+    const vueCollectionEl = (): HTMLElement[] => {
+      const v = vueCollection(s.etat);
+      const entree = (x: EntreeCollection, titre: string) => h('div', { class: `av-col-entree${x.possedee ? '' : ' verrou'}`, 'data-key': `av-col-${x.id}`, 'data-possedee': x.possedee ? 'true' : 'false' },
+        h('span', { class: 'av-col-titre' }, titre), cardEl(x.id, { artSeed: art, tag: 'div' }),
+        h('span', { class: 'av-col-texte' }, `${x.possedee ? '' : '🔒 '}${x.texte}`), x.dansDeck ? h('span', { class: 'av-badge' }, 'dans le deck') : null);
+      return [
+        h('p', null, `Cartes familiales et Signatures : ${v.compte.possedees} sur ${v.compte.total}. Rien n’est caché : chaque carte dit comment la gagner.`),
+        h('h3', null, 'Neutres (la populace)'),
+        h('div', { class: 'av-cards' }, ...v.neutres.map((n) => h('div', { class: 'av-col-entree' }, neutreEl(n.id, `×${n.possedees}`), h('span', { class: 'av-col-texte' }, `${n.dansDeck} dans le deck`)))),
+        ...v.familles.map((f) => h('section', { class: `av-col-fam fam-${f.famille}`, 'data-key': `av-col-fam-${f.famille}` },
+          h('h3', null, h('span', { class: `av-emb fam-${f.famille}`, html: emblemSvg(f.famille) }), ` ${capital(leF(f.famille))} — ${ETAT_FAMILLE[f.etat]}`),
+          h('div', { class: 'av-col-cartes' },
+            ...f.basics.map((x, i) => entree(x, `Basic ${ROMAIN[RANGS[i]!]}`)),
+            ...f.variantes.map((x, i) => entree(x, `Variante ${ROMAIN[RANGS[i]!]}`)),
+            entree(f.signature, 'Signature')))),
+        h('h3', null, 'Techniques'),
+        h('ul', { class: 'av-col-techs' }, ...v.techniques.map((t) => h('li', { class: t.possedee ? 'faite' : '', title: TECHNIQUES[t.id as TechniqueId].text }, `${t.possedee ? '✓' : '🔒'} ${t.id} — ${t.texte}${t.dansDeck ? ' (équipée)' : ''}`))),
+      ];
+    };
+
+    const vueRegistre = (): HTMLElement[] => [
+      h('p', null, 'Chaque gain est inscrit une fois, avec son origine : une revanche ou une reprise n’en ajoute jamais.'),
+      h('ol', { class: 'av-registre', 'data-key': 'av-registre' }, ...s.etat.registre.map((g) => h('li', null, `${nomGain(g)} — ${origineGain(g)}`))),
+    ];
+
+    const render = () => {
+      body.replaceChildren(
+        h('div', { class: 'av-ecran-tete' }, h('h2', null, 'Deck et collection'),
+          h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-deck-close', onclick: () => { if (modifie()) this.toast('Modifications du deck abandonnées.'); this.fermerModal(); } }, 'Fermer')),
+        onglets(),
+        ...(onglet === 'deck' ? vueDeck() : onglet === 'collection' ? vueCollectionEl() : vueRegistre()));
     };
     render();
-    this.ouvrirModal(h('div', { class: 'av-confirm av-large', 'data-key': 'av-collection' }, body));
+    this.ouvrirModal(h('div', { class: 'av-confirm av-ecran', 'data-key': 'av-collection' }, body));
   }
 
   journal(): void {
@@ -1040,6 +1093,15 @@ const LIEU: Record<VenueId, string> = { salle: 'la salle de jeu de cartes', rue:
 const figureOuNull = (id: string) => { try { return figure(id); } catch { return null; } };
 const lieuDe = (f: Family) => (f === 'Cendre' ? 'à la Maison du Chantier, à l’ouest du Quai' : f === 'Ronce' ? 'devant le Fanal, sur le Quai' : f === 'Voile' ? 'dans les Ruelles, près de la fontaine' : 'sur le Parvis de l’arène');
 const nomCarte = (defId: string) => (CATALOG[defId] ? cardTitle(CATALOG[defId]!) : defId);
+/** État d'une famille, lu par le joueur (écran Collection). */
+const ETAT_FAMILLE: Record<EtatFamille, string> = { inconnue: 'pas encore rencontrée', remarque: 'a remarqué votre jeu', invite: 'vous invite', affilie: 'votre famille', defiee: 'défi officiel engagé', chef: 'chef vaincu' };
+/** Ce qu'un gain a remis : « Cartes de base de la Cendre », le nom d'une variante ou d'une Signature, « Technique Lecture ». */
+function nomGain(g: Gain): string {
+  if (g.kind === 'neutres') return 'Seize cartes neutres';
+  if (g.kind === 'basics') return `Cartes de base ${deF(g.family!)}`;
+  if (g.kind === 'technique') return `Technique ${g.items[0]}`;
+  return nomCarte(g.items[0]!);
+}
 
 function ligneFigure(role: 'cadet' | 'brasDroit' | 'chef', revanche: boolean): string {
   if (revanche) return '« Encore ? Soit. Mais ce que tu as gagné, tu l’as déjà. »';

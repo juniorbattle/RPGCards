@@ -162,6 +162,8 @@ try {
   await p.click('[data-key="av-deck"]');
   await p.waitForSelector('[data-key="av-collection"]');
   check(!(await p.$('[data-key="av-issues"]')), 'deck de l’aventure légal (R-AV)');
+  await p.click('[data-key="av-onglet-registre"]');
+  await p.waitForSelector('[data-key="av-registre"]');
   await shot('deck-registre');
   await p.click('[data-key="av-deck-close"]');
   await p.click('[data-key="av-journal"]');
