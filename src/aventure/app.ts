@@ -37,7 +37,7 @@ import { equiperSignature, equiperVersion, validerDeckAv, type DeckAv } from './
 import { battre, conclure, decider, poses, rencontreDef, type Pose } from './directeur';
 import { faitsPublics } from './faits';
 import { ilotAventure } from './ilots';
-import { aF, deF, emissaire, figure, figureDe, leF, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, rangNeutre, ROLE_LABEL, ROLES, ROMAIN } from './modele';
+import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, rangNeutre, ROLE_LABEL, ROLES, ROMAIN } from './modele';
 import { objectif, quetes } from './quetes';
 import { collectionDe, type Gain } from './registre';
 import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue, personnalite, type DuelPrevu } from './rencontres';
@@ -462,7 +462,7 @@ export class AventureApp {
     const premier = this.etat.premier === f && !this.etat.scenes.includes('P6');
     const autres = FAMILIES.filter((x) => x !== f).map((x) => `${emissaire(x).nom} ${de(x)}`).join(', ');
     const texte = premier
-      ? `${fig.nom} fend la foule : « ${m.offre} » Puis, plus bas : « Je ne suis pas la seule à t’avoir vu. ${autres} t’ont remarqué aussi. Le choix est à toi. »`
+      ? `${fig.nom} fend la foule : « ${m.offre} » Puis, plus bas : « Je ne suis pas ${fig.gender === 'f' ? 'la seule' : 'le seul'} à avoir vu ton jeu. ${autres} l’ont remarqué aussi. Le choix est à toi. »`
       : `« ${m.offre} » ${m.devise}`;
     this.dire(`${fig.nom}, ${fig.titre}`, texte, [
       { label: `Accepter ${la(f)}…`, key: 'dlg-accepter', primary: true, run: () => this.confirmation(f) },
@@ -516,7 +516,7 @@ export class AventureApp {
     // Cadet d'une autre famille, encore en invitation : changer de voie, si c'est encore possible (P-N6).
     if (fig.role === 'cadet' && e.familles[fig.famille] === 'invite' && e.affiliation) {
       const ok = peutChanger(e) && peutConfirmer({ ...e, affiliation: null }, fig.famille).ok;
-      return this.dire(`${fig.nom}, ${fig.titre}`, `« Tu as choisi ${la(e.affiliation)}. ${ok ? 'Si tu t’es trompé de voie, il est encore temps.' : 'Ta voie est engagée ; viens nous défier quand tu seras reconnu.'} »`, [
+      return this.dire(`${fig.nom}, ${fig.titre}`, `« Tu as choisi ${la(e.affiliation)}. ${ok ? 'Si ce n’était pas la bonne voie, il est encore temps.' : 'Ta voie est engagée ; viens nous défier quand tu seras reconnu.'} »`, [
         ...(ok ? [{ label: `Rejoindre ${la(fig.famille)} à la place…`, key: 'dlg-changer', run: () => this.confirmation(fig.famille, true) }] : []),
         { label: 'Au revoir', key: 'dlg-close', primary: true, run: () => this.fermerDialogue() },
       ], fig.apparence);
@@ -524,7 +524,7 @@ export class AventureApp {
     const st = statutDefi(e, fig);
     const enjeu = st.deja ? 'Revanche, sans récompense : votre victoire est déjà au registre.' : `En jeu : ${fig.enjeu.kind === 'variante' ? nomCarte(fig.enjeu.defId) : `la Signature ∞ ${de(fig.famille)}`}.`;
     if (!st.ouvert) return this.dire(`${fig.nom}, ${fig.titre}`, `« Pas encore. » ${st.raison}`, [fermer(this)], fig.apparence);
-    this.dire(`${fig.nom}, ${fig.titre}`, `${ligneFigure(fig.role, st.deja)} ${enjeu}`, [
+    this.dire(`${fig.nom}, ${fig.titre}`, `${st.deja ? ligneFigure(fig.role, true) : REPLIQUES[fig.id] ?? ligneFigure(fig.role, false)} ${enjeu}`, [
       { label: `${st.deja ? 'Revanche' : 'Défier'} — ${fig.nom}`, key: 'dlg-duel', primary: true, run: () => this.lancerFigure(fig.id) },
       { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
     ], fig.apparence);
@@ -839,7 +839,7 @@ export class AventureApp {
   private scenesFoule(): void {
     const e = this.etat;
     const victoire = e.prologue === 'victoire';
-    this.dire('La foule', victoire ? '« Un inconnu a battu la Braise du quai ! Avec des cartes grises ! »' : '« Il a tenu tête à Kaï jusqu’au bout, avec des cartes de rien. »', [{
+    this.dire('La foule', victoire ? '« Un duelliste gris a battu la Braise du quai ! Avec des cartes de rien ! »' : '« Ce duelliste gris a tenu tête à Kaï jusqu’au bout, avec des cartes de rien. »', [{
       label: 'Suivant', key: 'dlg-next', primary: true, run: () => this.dire('Kaï', victoire ? '« La prochaine fois, je ne te ferai pas de cadeau. »' : '« Pas mal. Pour un gris. »', [{
         label: 'Suivant', key: 'dlg-next', primary: true, run: () => this.emissaireDialog(e.premier ?? 'Astre'),
       }], KAI_PROLOGUE.apparence),
@@ -985,7 +985,7 @@ const nomCarte = (defId: string) => (CATALOG[defId] ? cardTitle(CATALOG[defId]!)
 
 function ligneFigure(role: 'cadet' | 'brasDroit' | 'chef', revanche: boolean): string {
   if (revanche) return '« Encore ? Soit. Mais ce que tu as gagné, tu l’as déjà. »';
-  return role === 'cadet' ? '« Voyons si tu tiens la distance. »' : role === 'brasDroit' ? '« Avant le chef, il y a moi. »' : '« Tu es venu jusqu’à moi. Montre-moi pourquoi. »';
+  return role === 'cadet' ? '« Voyons si tu tiens la distance. »' : role === 'brasDroit' ? '« Avant le chef, il y a moi. »' : '« Tout ce chemin jusqu’à moi. Montre-moi pourquoi. »';
 }
 
 function fermer(a: AventureApp): Choix {

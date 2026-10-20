@@ -101,7 +101,7 @@ export const MAISONS: Record<Family, Maison> = {
   Astre: {
     famille: 'Astre', nom: 'l’Observatoire du Parvis', ilot: 'parvis', devise: '« Tout revient, tout s’assemble. »', technique: 'Ancrage',
     credo: 'Adaptation, recirculation, synergies : on gagne en combinant les voies et en faisant revenir ses meilleures cartes.',
-    offre: 'Les étoiles t’ont remarqué. L’Astre unit ce que les autres séparent : nos quatre cartes de base et l’Ancrage t’attendent.',
+    offre: 'Les étoiles ont remarqué ton jeu. L’Astre unit ce que les autres séparent : nos quatre cartes de base et l’Ancrage t’attendent.',
   },
 };
 
@@ -145,6 +145,22 @@ export const emissaire = (famille: Family): Figure => figureDe(famille, 'cadet')
 
 /** Kaï au prologue : le gris du Quai (rival récurrent, P-N7), à l'est du Quai, près des braseros. */
 export const KAI_PROLOGUE = { id: 'kai-prologue', apparence: 'braise', nom: 'Kaï', titre: 'le gris du Quai', ilot: 'quai' as IlotId, at: { x: 13.6, z: 0.9 }, facing: 'gauche' as Facing, venue: 'rue' as VenueId, hp: 60 };
+
+/** Réplique d'accueil de chaque figure avant son défi (textes de prototype, tirés du credo de sa famille). */
+export const REPLIQUES: Record<string, string> = {
+  'cadet-Cendre': '« Sur le Quai, tu as porté le premier coup. Ici, on verra si tu portes aussi le dernier. »',
+  'brasDroit-Cendre': '« Le gris du tournoi… Tu te souviens ? Moi aussi. Cette fois, je porte la braise. »',
+  'chef-Cendre': '« Le feu ne recule pas. Si tu veux le Brasier, prends-le. »',
+  'cadet-Ronce': '« Au Fanal, on ne gagne pas en criant : on gagne en tenant. Tiens bon, si tu peux. »',
+  'brasDroit-Ronce': '« Je garde la porte de Mère Aubépine. Elle ne s’ouvre que pour qui ne cède pas. »',
+  'chef-Ronce': '« Ce qui tient, dure. Montre-moi que tu dures, et la Couronne est à toi. »',
+  'cadet-Voile': '« J’ai déjà vu ta main, tu sais. Enfin… peut-être. Joue, on verra. »',
+  'brasDroit-Voile': '« Je lis les duellistes avant leurs cartes. Vous, je vous ai lu au Quai. »',
+  'chef-Voile': '« Celui qui voit choisit. Voyons si vous voyez assez pour mériter le Miroir. »',
+  'cadet-Astre': '« Tout revient, tout s’assemble. Même tes défaites, si tu sais les ramener. »',
+  'brasDroit-Astre': '« Les étoiles tournent ; les duellistes passent. Vous, vous restez. Intéressant. »',
+  'chef-Astre': '« J’ai tracé la carte de chaque voie. Il me manque la tienne. »',
+};
 
 /** La Tenante du titre (finale du Championnat, PROGRESSION §4) : maîtresse du mélange des voies ; apparence provisoire. */
 export const TENANTE = { apparence: 'pnj-joueuse-51', nom: 'Ysolde', titre: 'la Tenante du titre', famille: 'Astre' as const };
