@@ -6,6 +6,14 @@ raison**, alternatives. Rien ici n'est décidé par la session ; les ADR 029, 03
 session principale en fera une fiche interactive. **Fiche interactive publiée le 2026-10-20** (privée, 17 entrées : les 11
 arbitrages, ARB-M10-12 ajoutée le même jour et les 5 décisions prises seules ; choix enregistrés dans sa collection `decisions`) : <https://claude.ai/artifact/P6QSq7ACy25pkB6581Cvg7>.
 
+## Lot M10-D — décisions du responsable (2026-10-20, fiche du lot <https://claude.ai/artifact/X2z6EuQJDLHdNGe1Cvps4g>)
+
+Cinq entrées, toutes sur l'option recommandée, sans note (choix entre 22:01 et 22:03 UTC, relus par la session M10-D) :
+**E1** Salle des Bannières et écran d'engagement **reçus** (ADR 032 amendement 4) ; **R1** lot M10-D **reçu** ; **D1** le
+niveau du joueur, qui règle les decks adverses, **ne compte que les familles rejointes ou engagées** (une affiliation
+quittée compte dès que son défi est engagé ; amendement 1 de l'annexe de calibrage, K3) ; **D2** engager une famille dont
+on a déjà les Basics **ne change pas le deck** (comportement actuel) ; **S1** lot suivant : **reprendre M09, puis M10-E**.
+
 ## Lot M10-C — décisions du responsable (2026-10-20, fiche du lot <https://claude.ai/artifact/VzdgB2W2wmUw1Bp9MNE5ux>)
 
 Cinq entrées, toutes sur l'option recommandée, sans note (choix entre 20:23 et 20:24 UTC, relus par la session M10-C) :
