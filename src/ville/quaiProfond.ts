@@ -10,7 +10,7 @@
  * rang (devenu une façade où l'on marche). Mêmes conventions que `quai.ts` (mètres ; x ouest → est, z des façades (−)
  * vers l'eau (+)).
  */
-import type { Disc, Ilot, Rect, Zone } from './monde';
+import type { Disc, Ilot, Rect, Vec2, Zone } from './monde';
 import { BOLLARDS, FACADE_Z, LAMPS, NPC_RADIUS, NPCS, QUAY_Z, STALL, TALK_RADIUS, X_MAX, X_MIN, type IlotNpc } from './quai';
 
 /** Profondeur des blocs de façades (m) : le fond des blocs, bord de la rue haute. */
@@ -45,6 +45,16 @@ export const PROPS_PROFOND: readonly Rect[] = [
 ];
 
 /**
+ * Rue haute meublée (passe 64, « décor isolé » relevé par le responsable) : caisses au bout ouest, tonneaux au bout est,
+ * deux lampadaires au bord de la rue ; mêmes places que dans le manifeste de la preuve (`m09-profondeur-preuve.mjs`).
+ */
+export const RUE_HAUTE_PROPS: readonly Rect[] = [
+  { x0: -14.6, z0: -13.4, x1: -13.4, z1: -12.6 },
+  { x0: 13.5, z0: -16.0, x1: 14.5, z1: -15.2 },
+];
+export const RUE_HAUTE_LAMPS: readonly Vec2[] = [{ x: -7.5, z: -11.6 }, { x: 7.5, z: -11.6 }];
+
+/**
  * Personnages : ceux du Quai ; le commis monté dans la rue haute (il montre l'échelle au loin) ; la marchande, qui
  * barrait l'entrée du passage ouest, écartée de 3,6 m avec son bloc.
  */
@@ -54,10 +64,11 @@ export const QUAI_PROFOND: Ilot = {
   id: 'quai',
   name: 'le Quai (profondeur, preuve)',
   bounds: { x0: X_MIN, z0: LANE_BACK_Z, x1: X_MAX, z1: QUAY_Z },
-  rects: [STALL, ...PROPS_PROFOND, ...BLOCKS],
+  rects: [STALL, ...PROPS_PROFOND, ...BLOCKS, ...RUE_HAUTE_PROPS],
   discs: [
     ...LAMPS.map((p): Disc => ({ ...p, r: 0.16 })),
     ...BOLLARDS.map((p): Disc => ({ ...p, r: 0.2 })),
+    ...RUE_HAUTE_LAMPS.map((p): Disc => ({ ...p, r: 0.16 })),
     ...NPCS_PROFOND.map((n): Disc => ({ ...n.at, r: NPC_RADIUS })),
   ],
   zones: [

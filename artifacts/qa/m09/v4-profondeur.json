@@ -1,9 +1,9 @@
 {
-  "date": "2026-10-20T04:10:08.146Z",
-  "commit": "85d20ab",
+  "date": "2026-10-20T04:53:34.145Z",
+  "commit": "8a22f5f",
   "mode": "verifier",
   "checks": [
-    "OK Quai profond dessiné par son diorama de preuve (19 plans découpés dans 10 images, 89.1 Mo de mémoire GPU), aucun refus",
+    "OK Quai profond dessiné par son diorama de preuve (21 plans découpés dans 10 images, 89.1 Mo de mémoire GPU), aucun refus",
     "OK quai : personnage posé en (-0.6, 0.6), praticable ; 120 px de haut",
     "OK passage-bouche : personnage posé en (-12.1, -2.4), praticable ; 113 px de haut",
     "OK passage : personnage posé en (-12.1, -7.2), praticable ; 104 px de haut",
@@ -22,6 +22,15 @@
       "quai/ciel",
       "quai/troisieme-rang",
       "quai/rue-haute",
+      "quai/rue-haute-tonneaux",
+      "quai/rue-haute-caisses",
+      "quai/rue-haute-lampadaire-1",
+      "quai/rue-haute-lampadaire-2",
+      "quai/joue-1",
+      "quai/joue-2",
+      "quai/joue-3",
+      "quai/joue-4",
+      "quai/emprise",
       "quai/facades-ouest",
       "quai/facades-centre",
       "quai/facades-est",
@@ -30,86 +39,79 @@
       "quai/pied-est",
       "quai/rue",
       "quai/premier-plan",
-      "quai/eau",
-      "quai/joue-1",
-      "quai/joue-2",
-      "quai/joue-3",
-      "quai/joue-4",
-      "quai/emprise",
-      "quai/bout-rue-1",
-      "quai/bout-rue-2"
+      "quai/eau"
     ],
     "issues": [],
     "timings": {
       "quai/ciel": {
         "bytes": 3067681,
-        "fetchMs": 99.1,
+        "fetchMs": 88.7,
         "hashMs": 1.8,
-        "decodeMs": 56.4,
-        "uploadMs": 5.9
+        "decodeMs": 53.2,
+        "uploadMs": 5.7
       },
       "quai/troisieme-rang": {
         "bytes": 3466186,
-        "fetchMs": 85,
-        "hashMs": 2,
-        "decodeMs": 77.6,
-        "uploadMs": 4.8
+        "fetchMs": 81.8,
+        "hashMs": 1.9,
+        "decodeMs": 54.2,
+        "uploadMs": 4.5
       },
       "quai/rue-haute": {
         "bytes": 4689617,
-        "fetchMs": 94.7,
+        "fetchMs": 84.6,
         "hashMs": 2.9,
-        "decodeMs": 73.1,
-        "uploadMs": 20.8
+        "decodeMs": 60.9,
+        "uploadMs": 20.6
       },
-      "quai/facades-ouest": {
-        "bytes": 5809679,
-        "fetchMs": 112.2,
-        "hashMs": 3.5,
-        "decodeMs": 60.6,
-        "uploadMs": 20.8
-      },
-      "quai/pied-ouest": {
+      "quai/rue-haute-tonneaux": {
         "bytes": 158922,
-        "fetchMs": 14.5,
-        "hashMs": 0.4,
-        "decodeMs": 9.9,
-        "uploadMs": 14.3
+        "fetchMs": 18.9,
+        "hashMs": 0.5,
+        "decodeMs": 17,
+        "uploadMs": 2.5
       },
-      "quai/rue": {
+      "quai/rue-haute-lampadaire-1": {
         "bytes": 79461,
-        "fetchMs": 16.4,
-        "hashMs": 0.1,
-        "decodeMs": 10.7,
-        "uploadMs": 1.1
-      },
-      "quai/premier-plan": {
-        "bytes": 2871612,
-        "fetchMs": 91.3,
-        "hashMs": 2,
-        "decodeMs": 57.6,
-        "uploadMs": 6.7
-      },
-      "quai/eau": {
-        "bytes": 3498048,
-        "fetchMs": 87.2,
-        "hashMs": 2.5,
-        "decodeMs": 70,
-        "uploadMs": 7.7
+        "fetchMs": 20.5,
+        "hashMs": 0.2,
+        "decodeMs": 13,
+        "uploadMs": 21.7
       },
       "quai/joue-1": {
-        "bytes": 304981,
-        "fetchMs": 116.2,
-        "hashMs": 0.2,
-        "decodeMs": 9.8,
-        "uploadMs": 0.5
+        "bytes": 286508,
+        "fetchMs": 21.1,
+        "hashMs": 0.1,
+        "decodeMs": 9.5,
+        "uploadMs": 0.4
       },
       "quai/emprise": {
         "bytes": 592603,
-        "fetchMs": 116.6,
-        "hashMs": 0.4,
-        "decodeMs": 13.6,
+        "fetchMs": 40.1,
+        "hashMs": 0.6,
+        "decodeMs": 6.4,
         "uploadMs": 0.7
+      },
+      "quai/facades-ouest": {
+        "bytes": 5809679,
+        "fetchMs": 96.5,
+        "hashMs": 3.4,
+        "decodeMs": 59.6,
+        "uploadMs": 14.1
+      },
+      "quai/premier-plan": {
+        "bytes": 2871612,
+        "fetchMs": 71.1,
+        "hashMs": 1.7,
+        "decodeMs": 60.6,
+        "uploadMs": 24.6
+      },
+      "quai/eau": {
+        "bytes": 3498048,
+        "fetchMs": 101.9,
+        "hashMs": 2.2,
+        "decodeMs": 36.1,
+        "uploadMs": 6.6
       }
     },
     "gpuBytes": {
@@ -122,16 +124,16 @@
   },
   "stats": {
     "camera": "frontale",
-    "calls": 83,
-    "triangles": 4876,
-    "textures": 37,
-    "geometries": 38,
+    "calls": 93,
+    "triangles": 4896,
+    "textures": 38,
+    "geometries": 44,
     "programs": 20,
     "lights": 16,
-    "cpuMs": 4.4,
+    "cpuMs": 4.9,
     "frames": 2,
-    "buildMs": 381,
-    "firstFrameMs": 1239,
+    "buildMs": 412,
+    "firstFrameMs": 1188,
     "mountMs": null,
     "mountFrameMs": null
   },

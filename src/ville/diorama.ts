@@ -31,7 +31,7 @@ void main(){
  */
 const PLATE_FRAG = /* glsl */ `
 ${COMMON_GLSL}
-uniform sampler2D tPlate; uniform float uLit; uniform float uFog; uniform float uCut; uniform float uVoile; uniform float uFade;
+uniform sampler2D tPlate; uniform float uLit; uniform float uFog; uniform float uCut; uniform float uVoile; uniform float uFade; uniform float uCutY; uniform float uCoupe;
 varying vec2 vUv; varying vec3 vWorld; varying vec3 vN;
 void main(){
   vec4 A = texture2D(tPlate, vUv);
@@ -47,7 +47,9 @@ void main(){
   c = mix(c, applyFog(c, vWorld), uFog);
   // plans en coupe seulement (passe 62) : les autres gardent exactement le nuanceur d'origine (rendu identique au pixel près)
 #ifdef COUPE
-  gl_FragColor = vec4(c * A.a, A.a) * uFade;
+  // vue en section (passe 64) : uFade de 0 (entier) à 1 (coupé) ; sous uCutY, le rez-de-chaussée reste
+  float k = uFade * smoothstep(uCutY - 0.3, uCutY + 0.3, vWorld.y);
+  gl_FragColor = vec4(c * A.a, A.a) * mix(1.0, uCoupe, k);
 #else
   gl_FragColor = vec4(c * A.a, A.a);
 #endif
@@ -58,7 +60,7 @@ function plateMaterial(p: PreparedPlate): THREE.ShaderMaterial {
   const cut = p.entry.blend === 'decoupe';
   return new THREE.ShaderMaterial({
     name: 'VillePlan',
-    uniforms: { ...U, tPlate: { value: p.texture }, uLit: { value: p.entry.lit ?? 0 }, uFog: { value: p.entry.fog ?? 1 }, uCut: { value: cut ? 0.02 : 0.004 }, uVoile: { value: p.entry.voile ?? 0 }, uFade: { value: 1 } },
+    uniforms: { ...U, tPlate: { value: p.texture }, uLit: { value: p.entry.lit ?? 0 }, uFog: { value: p.entry.fog ?? 1 }, uCut: { value: cut ? 0.02 : 0.004 }, uVoile: { value: p.entry.voile ?? 0 }, uFade: { value: 0 }, uCutY: { value: p.entry.coupeY ?? -1 }, uCoupe: { value: COUPE_ALPHA } },
     defines: p.entry.coupe ? { COUPE: 1 } : {},
     vertexShader: PLATE_VERT,
     fragmentShader: PLATE_FRAG,
@@ -69,7 +71,10 @@ function plateMaterial(p: PreparedPlate): THREE.ShaderMaterial {
   });
 }
 
-/** Opacité d'un plan `coupe` quand le personnage est derrière lui (passe 62). */
+/**
+ * Opacité d'un plan `coupe` quand le personnage est derrière lui (passe 62 : 22 %, puis 12 %, 8 %). Passe 64 : la vue en
+ * section (étages effacés, `coupeY`) a été essayée ; le responsable garde le bâtiment transparent : 8 %.
+ */
 export const COUPE_ALPHA = 0.08;
 /** Le personnage est « derrière » un plan `coupe` : plus loin en z, dans sa largeur (marge de 0,6 m). */
 export function behindPlate(r: { center: [number, number, number]; w: number }, p: { x: number; z: number }): boolean {
@@ -118,7 +123,7 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
   const textures: THREE.Texture[] = [];
   const meshes: THREE.Object3D[] = [];
   /** Plans `coupe` (passe 62) : opacité courante, profondeur écrite d'origine. */
-  const cutaways: { rect: ReturnType<typeof plateRect>; mat: THREE.ShaderMaterial; alpha: number; writes: boolean }[] = [];
+  const cutaways: { rect: ReturnType<typeof plateRect>; mat: THREE.ShaderMaterial; cut: number; writes: boolean }[] = [];
   if (d.ground) meshes.push(engineGround(def, artSeed, textures));
   // créés dans l'ordre de dessin : à profondeur égale, three.js départage les transparents par ordre de création
   for (const p of d.plates) {
@@ -146,7 +151,7 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
     }
     // de côté : normale vers +x (est) ou −x (ouest) ; le bord gauche de l'image vers la caméra (z le plus grand)
     if (r.orient === 'cote') mesh.rotation.y = p.entry.vers === 'ouest' ? -Math.PI / 2 : Math.PI / 2;
-    if (p.entry.coupe) cutaways.push({ rect: r, mat, alpha: 1, writes: mat.depthWrite });
+    if (p.entry.coupe) cutaways.push({ rect: r, mat, cut: 0, writes: mat.depthWrite });
     meshes.push(mesh);
   }
   const lights: LightDef[] = d.lights.map((l) => ({
@@ -167,11 +172,11 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
     const k = snap ? 1 : Math.min(1, ((now - lastFocus) / 1000) * 7);
     lastFocus = now;
     for (const c of cutaways) {
-      const want = behindPlate(c.rect, p) ? COUPE_ALPHA : 1;
-      c.alpha += (want - c.alpha) * k;
-      if (Math.abs(c.alpha - want) < 0.005) c.alpha = want;
-      c.mat.uniforms.uFade!.value = c.alpha;
-      c.mat.depthWrite = c.writes && c.alpha > 0.98;
+      const want = behindPlate(c.rect, p) ? 1 : 0;
+      c.cut += (want - c.cut) * k;
+      if (Math.abs(c.cut - want) < 0.005) c.cut = want;
+      c.mat.uniforms.uFade!.value = c.cut;
+      c.mat.depthWrite = c.writes && c.cut < 0.02;
     }
   };
   if (!mistMats.length && !cutaways.length) return base;

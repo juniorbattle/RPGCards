@@ -100,4 +100,6 @@ export const QUAI_PROFOND_DEF: IlotDef = {
   ilot: QUAI_PROFOND,
   npcs: NPCS_PROFOND,
   dof: { nearZ: QUAY_Z + 0.5, farZ: LANE_BACK_Z - 1.5, nearSpan: 3.2, farSpan: 45, farAmt: 0.42, maxBlur: 9 },
+  // passe 64 : un passant dans la rue haute (la rue vit aussi au fond)
+  ambient: [...ILOTS.quai.ambient, { id: 'pnj-commis-2', x0: -12, x1: 12, z: LANE_BACK_Z + 1.6, speed: 0.8, phase: 0.4 }],
 };
