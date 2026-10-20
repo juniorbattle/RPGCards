@@ -74,6 +74,10 @@ Puissance ↔ Rang.
 **Raison :** c'est la lecture la plus littérale d'ADR 030 (« sans famille » interdit un bonus *de famille*, pas les
 actions générales) ; aucune règle nouvelle n'est inventée, une seule est précisée : **l'affinité exige une famille**.
 
+**Deux cas révélés par la preuve hors dépôt** (`MESURES_M10A.md` §2) : **Prisme** garde son +1 avec une Primaire
+neutre (il ignore la famille par nature) ; **Convergence** traite une Primaire neutre comme « d'une autre famille »
+(×6). Recommandé : garder les deux textes tels quels ; alternative pour Convergence : ×4.
+
 **Le point délicat** : dans le moteur, l'affinité se teste par `sec.family === primary.family`
 (`src/game/engine/clash.ts`, `rankSupport` et `damageCoefficient`). Avec `family: null` des deux côtés, ce test
 donnerait **+1 entre deux neutres** : faux. Il faut donc écrire `sec.family !== null && sec.family === primary.family`.
@@ -278,13 +282,15 @@ Techniques), ce qui est l'enjeu.
 | **Inaugural** (Kaï) | 16 neutres | Sondage + Recentrage | offensif | 60 (joueur : 60 pour ce duel seulement, duel court de prologue) |
 | **Cadet** de F | neutres du joueur + 4 cartes F dont **la variante mise en jeu** (III) | rue + Technique de F | profil de gabarit (novice / timide) relevé d'un cran | 80 |
 | **Bras droit** de F | idem + **2 variantes F** (III, IV) | celles de la figure (Kaï, Maëlle, Sélène, Orin) | profil de la figure | fiche actuelle (80 / 95 / 100 / 110) |
-| **Chef** de F | idem + **4 variantes F** + **sa Signature** | deux, choisies pour la famille | profil propre (à créer : « maître ») ou le plus fort existant | 110 (sous 125) |
+| **Chef** de F | idem + **4 variantes F** + **sa Signature** | deux, choisies pour la famille | profil propre (à créer : « maître ») ou le plus fort existant | **90** (mesuré : 110 rend le chef trop dur, 23 % ; 90 donne 37 %, `MESURES_M10A.md`) |
 | **Championnat** | decks standard complets, identités soignées | libres | meilleurs profils | `PROGRESSION_ET_RECOMPENSES.md` §4 |
 
 **Mesure avant ratification des chiffres :** l'outil `npm run sim` (`tools/perf-engine.ts`, 200 duels IA contre IA)
 permet, une fois A-2 implémenté derrière un paramètre, de mesurer pour chaque palier le taux de victoire et la durée
 (tours) ; cible proposée : duel inaugural 6 à 10 tours ; lieutenants 45 à 60 % de victoires IA contre IA à deck égal de
-profil ; chefs 35 à 45 %. **Aucun de ces chiffres n'est mesuré à ce jour.**
+profil ; chefs 35 à 45 %. **Mesures faites sur un moteur patché hors dépôt (`MESURES_M10A.md`)** : inaugural 51,7 %
+(≈ 11 tours), cadet 57,3 %, bras droit 46,3 %, chef 23,3 % à 110 PV et 36,7 % à 90 PV (IA contre IA, 300 duels par
+ligne) : d'où la recommandation **PV du chef = 90**.
 
 ---
 
@@ -302,6 +308,11 @@ Audit du code au commit `255820c` : ce qui changerait, et comment garder le stan
 | `src/game/visibility/*` | « neutre » public ; aucune nouvelle information privée | aucune |
 | `src/presentation/*`, `src/art/cardArt.ts` | carte neutre blanche/grise, Rang lisible, sans emblème (ADR 030) | aucun pixel du standard (comparaison `l5-identique`) |
 | `src/product/*` | **inchangés** ; l'Aventure a ses propres modules (`src/aventure/`) | aucun |
+
+**Preuve faite (2026-10-20, hors dépôt)** : patch appliqué dans un worktree détaché (`patch-m10a-neutres.diff`, 7
+fichiers, +133 / −13 ; `invariants.ts` aussi : taille du deck et unicité des seules identités familiales) : **les 305
+tests du dépôt passent sans modification**, 5 tests neutres en plus ; 20 erreurs de typage restent à traiter dans 10
+fichiers d'interface (inventaire dans `MESURES_M10A.md` §1).
 
 **Tests de la porte M10-A** (en plus des 281 actuels, qui doivent passer **sans modification**) : 4 instances par Rang,
 16 au total ; aucune famille, aucun effet, aucune affinité (neutre + neutre, neutre + Basic, Basic + neutre ; Rang et

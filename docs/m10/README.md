@@ -15,6 +15,7 @@ Seules les décisions des **ADR 029, 030 et 031** sont ratifiées ; tout le rest
 | 7. Avenant cartes neutres et mode Aventure | [`AVENANT_M10A_PROPOSE.md`](AVENANT_M10A_PROPOSE.md) |
 | 8. Feuille de route M10-A à M10-F | [`FEUILLE_DE_ROUTE_M10.md`](FEUILLE_DE_ROUTE_M10.md) |
 | Championnat des Champions (§IV) | [`PROGRESSION_ET_RECOMPENSES.md`](PROGRESSION_ET_RECOMPENSES.md) §4 |
+| Preuve hors dépôt du patch M10-A et mesures d'équilibrage | [`MESURES_M10A.md`](MESURES_M10A.md), [`patch-m10a-neutres.diff`](patch-m10a-neutres.diff) |
 | Arbitrages indispensables | [`../FICHE_ARBITRAGES_M10.md`](../FICHE_ARBITRAGES_M10.md) |
 | Prototype jouable du prologue (`?aventure=1`) | [`../AVENTURE_PROVISOIRE.md`](../AVENTURE_PROVISOIRE.md), ADR 032 (proposé) |
 
