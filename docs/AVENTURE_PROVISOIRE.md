@@ -24,11 +24,11 @@ jusqu'au bout) : `npm run qa:voies`.
 
 **Le Quai en quatre rangs (ARB-M10-12)** : le Quai de l'aventure est celui du laboratoire M09 (le Quai, la rue Haute et la
 place de la Halle, la ruelle des Lanternes et la placette du Puits, la cour de la Chapelle ; on passe d'un rang à l'autre
-par les passages, en suivant les chemins lumineux). Il n'existe qu'en images générées : **il s'affiche en QA** (`&qa=1`,
-signalé à l'image par un badge rouge « décor en images NON APPROUVÉES »), **et hors QA seulement quand le responsable aura
-approuvé ses images (A2 puis A1)** ; d'ici là, hors QA (et avec `&decors=code`), l'aventure se joue dans **l'ancien Quai**,
-dessiné par code, en secours, avec les mêmes personnages à des places adaptées. Le Parvis et les Ruelles sont dessinés par
-code (images non approuvées, ADR 027 et 028).
+par les passages, en suivant les chemins lumineux). Il n'existe qu'en images générées, **approuvées par le responsable**
+(A2 puis A1, passe 104) : il s'affiche en QA comme hors QA. Avec `&decors=code` (ou si une image manque ou perd son
+approbation), l'aventure se joue dans **l'ancien Quai**, dessiné par code, en secours, avec les mêmes personnages à des
+places adaptées. Le Parvis, les Ruelles et la Grande Cour suivent : la ville en rangs est d'un seul tenant (ADR 032,
+amendement 5).
 
 | Personnage (Quai en rangs) | Rang | Secours (ancien Quai) |
 |---|---|---|

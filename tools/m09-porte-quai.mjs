@@ -26,6 +26,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { launch, rendererLabel, startPreview, watchConsole, webglRenderer } from './browser.mjs';
 import { clearAbove, composeRow, composeStrip, extractProps, findLanterns, fixBanners, processPlate, processSheet } from './m09-traitement-images.mjs';
+import { approuve } from './m09-approbations.mjs';
 
 const MODE = process.argv[2];
 const main = dirname(resolve(execSync('git rev-parse --git-common-dir').toString().trim()));
@@ -210,7 +211,7 @@ if (MODE === 'assembler') {
   };
   const dim = (b) => [b.readUInt32BE(16), b.readUInt32BE(20)];
   const SRC = 'gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)';
-  const plate = (file, id, o) => ({ file, sha256: sha(files[file]), size: dim(files[file]), source: SRC, fiche: `art-src/decors/${id}/fiche.json`, approved: false, ...o });
+  const plate = (file, id, o) => ({ file, sha256: sha(files[file]), size: dim(files[file]), source: SRC, fiche: `art-src/decors/${id}/fiche.json`, approved: approuve(`public/decors/${file}`, sha(files[file])), ...o });
   const quai = {
     plans: {
       ciel: plate('quai-ciel.png', 'quai-ciel', { at: [0, L.ciel.bottom, L.ciel.z], width: L.ciel.width, orient: 'face', order: 0, blend: 'fondu', fog: 0, voile: L.ciel.voile }),
@@ -235,7 +236,7 @@ if (MODE === 'assembler') {
   const playerEntry = {
     file: 'player.png', sha256: sha(k3), cell: sheet.cell, cols: 5, rows: 3, pixel: true, scale: 3, anchor: sheet.anchor, figureH: sheet.figureH,
     recolor: ['tenue', 'accent'], source: 'gpt-image-2 (porte du Quai, ADR 028), grille d’art, alignement, palette et tons clés par script (tools/m09-porte-quai.mjs)',
-    fiche: 'art-src/sprites/player/fiche.json', approved: false,
+    fiche: 'art-src/sprites/player/fiche.json', approved: approuve('public/sprites/player.png', sha(k3)),
   };
   writeFileSync('public/sprites/manifest.json', `${JSON.stringify({ version: 3, sprites: { player: playerEntry } }, null, 2)}\n`);
   const { K1: _k1, K3: _k3, ...sheetInfo } = sheet;

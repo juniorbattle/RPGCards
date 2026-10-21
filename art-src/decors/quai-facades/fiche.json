@@ -1,6 +1,6 @@
 {
   "id": "quai-facades",
-  "statut": "porte du Quai (ADR 028), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "statut": "APPROUVÉ par le responsable le 2026-10-21 (décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)) : admis hors QA tant que l’empreinte reste 6940c1ecf629…",
   "auteur": "Claude Code (session V4, passe 57), à la demande du responsable : « Je valide la direction de l’essai. Prépare le lot suivant (plans du Quai et feuille complète du joueur) et annonce-moi ses images et leurs prompts avant de générer. »",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-quai.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -190,5 +190,11 @@
     "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec (brut quai-facades-essai)",
     "2a920ffbc7eee1d9f4ddec52e29c90afad8b85d8d376939729a2649d1a2eccdc (brut quai-facades-est)",
     "6940c1ecf629335d062a35d24fd71013a23ce556d6a6fc8ffa7ee3ba38602afa (plan)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-21",
+    "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)",
+    "fichier": "public/decors/quai-facades.png",
+    "sha256": "6940c1ecf629335d062a35d24fd71013a23ce556d6a6fc8ffa7ee3ba38602afa"
+  }
 }

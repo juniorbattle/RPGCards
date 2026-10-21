@@ -5,7 +5,7 @@
 // (`tools/m09-inventaire-images.mjs`) ; écrit `screenshots/qa/m09/a1/planche-a1.png` et `docs/M09_IMAGES_A1_A2.md`.
 // Ne change rien : aucune image, aucun manifeste, aucun statut.
 // Usage : node tools/m09-inventaire-images.mjs && CHROMIUM_PATH=<Chrome> node tools/m09-planche-a1.mjs
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { launch } from './browser.mjs';
 
 const inv = JSON.parse(readFileSync('artifacts/qa/m09/inventaire-images.json', 'utf8'));
@@ -91,8 +91,9 @@ writeFileSync('screenshots/qa/m09/a1/planche-a1.png', Buffer.from(url.split(',')
 
 // document : A1 (planches) et A2 (images générées, dates, prompts, usage)
 const md = [];
+const approuvees = existsSync('art-src/approbations.json') ? JSON.parse(readFileSync('art-src/approbations.json', 'utf8')).images : [];
 md.push('# M09 — images générées : approbation en bloc (A1) et conditions d’OpenAI (A2)', '');
-md.push(`Généré par \`tools/m09-planche-a1.mjs\` depuis \`artifacts/qa/m09/inventaire-images.json\` (\`tools/m09-inventaire-images.mjs\`, ${inv.date.slice(0, 10)}). Aucun statut n’a été changé : toutes les planches sont \`approved: false\`. Seul le responsable approuve (AGENTS, « Images de la ville »).`, '');
+md.push(`Généré par \`tools/m09-planche-a1.mjs\` depuis \`artifacts/qa/m09/inventaire-images.json\` (\`tools/m09-inventaire-images.mjs\`, ${inv.date.slice(0, 10)}). ${approuvees.length ? `**Approuvées par le responsable** : ${approuvees.length} planches au registre \`art-src/approbations.json\` (ordre du ${approuvees[0].date}, JOURNAL passes 103 et 104), appliqué aux manifestes par \`tools/m09-approbations.mjs\` ; une planche retraitée (empreinte nouvelle) perd son approbation.` : 'Aucun statut n’a été changé : toutes les planches sont `approved: false`.'} Seul le responsable approuve (AGENTS, « Images de la ville »).`, '');
 md.push(`Résumé : **${inv.resume.generees} images générées** pour le jeu avec gpt-image-2 (budget de la porte : 30), **${inv.resume.dans_le_jeu} servent dans le jeu**, ${inv.resume.ecartees} ont été écartées (hors du jeu) ; ${inv.resume.references} références de conception, jamais dans le jeu ; **${lignes.length} planches** du jeu.`, '');
 md.push('## A1 — les planches du jeu', '', 'Planche : `screenshots/qa/m09/a1/planche-a1.png`.', '');
 md.push('| # | Planche | Ce qu’elle fait dans le jeu | Où | Tirée de (date UTC) |', '|---|---|---|---|---|');

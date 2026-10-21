@@ -23,6 +23,7 @@ import { R_LAMPS } from '../src/ville/ruelles.ts';
 import { LAMPES_PARVIS, MEUBLES_PARVIS, PLAN_PARVIS } from '../src/ville/parvisRangs.ts';
 import { LAMPES_RUELLES, MEUBLES_RUELLES, PLAN_RUELLES } from '../src/ville/ruellesRangs.ts';
 import { ESCALIER, LAMPES_COUR, MEUBLES_COUR, PLAN_COUR } from '../src/ville/grandeCour.ts';
+import { approuve } from './m09-approbations.mjs';
 
 const MODE = process.argv[2];
 const head = execSync('git rev-parse --short HEAD').toString().trim();
@@ -99,7 +100,7 @@ if (MODE === 'assembler') {
   const plate = (e, source) => {
     const buf = readFileSync(`public/decors/${e.file}`);
     if (sha(buf) !== e.sha256) throw new Error(`${e.file} : empreinte différente de celle du kit (relancer son traitement)`);
-    return { file: e.file, sha256: e.sha256, size: e.size, source, fiche: e.fiche, approved: false, orient: 'face', blend: 'decoupe' };
+    return { file: e.file, sha256: e.sha256, size: e.size, source, fiche: e.fiche, approved: approuve(`public/decors/${e.file}`, e.sha256), orient: 'face', blend: 'decoupe' };
   };
   const kitPlate = (e) => plate(e, SRC_KIT);
   // maisons déjà posées au Quai en rangs (passe 67) : les autres îlots en prennent d'autres d'abord
