@@ -332,6 +332,21 @@ function appliquerBrut(e0: AventureEtat, ev: Evenement, at: string): Resultat {
   }
 }
 
+/**
+ * Chapitre de la trame (contrat narratif §5) : le prologue, I la maison, II à IV les trois autres voies (une par chef
+ * d'une autre famille vaincu : II avant le premier, III après, IV après le deuxième), V le Championnat, puis le titre.
+ * Le directeur des rencontres y compte l'ombre de Kaï (une par chapitre, VILLE_RENCONTRES_EVENEMENTS §7, M10-E).
+ */
+export function chapitreDetaille(e: AventureEtat): 'prologue' | 'I' | 'II' | 'III' | 'IV' | 'V' | 'titre' {
+  const ch = chapitre(e);
+  if (ch === 'prologue') return 'prologue';
+  if (ch === 'maison') return 'I';
+  if (ch === 'championnat') return 'V';
+  if (ch === 'champion') return 'titre';
+  const autres = FAMILIES.filter((f) => f !== e.affiliation && e.familles[f] === 'chef').length;
+  return (['II', 'III', 'IV'] as const)[Math.min(2, autres)]!;
+}
+
 /** Chapitre courant (journal des quêtes, HUD). */
 export function chapitre(e: AventureEtat): 'prologue' | 'maison' | 'voies' | 'championnat' | 'champion' {
   if (e.competitions?.championnat.titre) return 'champion';

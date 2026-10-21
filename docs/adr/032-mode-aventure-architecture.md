@@ -118,6 +118,16 @@ lisibles dans la Collection).
   (test). Les sorties suivent l'îlot affiché (`ilotBase(...).exits`) : le cœur de chaque quartier mène à la Grande Cour
   (« dans la Grande Cour, au cœur de la ville »), où le directeur ne pose encore personne (M10-E).
 
+## Amendement 6 (2026-10-21, lot M10-E, passe 99) : le directeur dans la ville en rangs
+
+- Une place de rencontre peut n'exister que dans la ville en rangs (`PlaceRencontre.rangs` : rangs du fond, Grande Cour) ;
+  le directeur ne la tire et ne la pose que si la ville en rangs est affichée. Les places nouvelles s'ajoutent en fin de
+  liste (l'indice sauvegardé reste valable).
+- Le quota du rival se compte par chapitre de la trame (`chapitreDetaille` : I à V), et l'ombre de Kaï n'est tirée
+  qu'après le premier battement du chapitre (`debuts`) ; aucun personnage n'est tiré dans un îlot où il est déjà posé.
+- Un refus laisse le personnage jusqu'au point de décision suivant, puis il repart (`partants`) ; « Continuer » n'est
+  pas un point de décision (la ville se relit). Champs facultatifs : les sauvegardes antérieures se relisent.
+
 ## Alternatives écartées
 
 - **Réutiliser l'enveloppe standard (`Shell`)** en lui donnant une autre source de données : refonte du code du mode
