@@ -111,6 +111,20 @@ export const deckPopulace = (techniques: TechniqueId[] = [...TECHNIQUES_RUE]): D
 /** Un deck complet en variantes et sa Signature (champions). */
 export const deckChampion = (f: Family, techniques: TechniqueId[] = techniquesDe(f)): DeckAv => completer(FAMILIES.flatMap((g) => RANGS.map((r) => carte(g, r, true))), f, techniques);
 
+/**
+ * Le Miroir (M10-E, PROGRESSION §4) : un deck d'auteur construit sur les familles dominantes du joueur et la famille de
+ * l'adversaire, jouées en variantes ; les autres familles en Basics ; la Signature de l'adversaire. Seize identités, une
+ * par famille et par Rang : le format standard, aucune règle nouvelle.
+ */
+export const deckMiroir = (variantes: readonly Family[], f: Family, techniques: TechniqueId[] = techniquesDe(f)): DeckAv => completer(FAMILIES.flatMap((g) => RANGS.map((r) => carte(g, r, variantes.includes(g)))), f, techniques);
+
+/** L'adversaire du Miroir : PV et profil d'IA d'un champion (rôle `championnat`), deck `deckMiroir`. */
+export function adversaireMiroir(variantes: readonly Family[], f: Family, niveau: number, techniques?: TechniqueId[]): Adversaire {
+  const i = Math.max(1, Math.min(4, niveau)) - 1;
+  const deck = deckMiroir(variantes, f, techniques);
+  return { palier: palierDe(deck), deck, pv: PV_ADVERSE.championnat[i]!, profil: PROFIL_ROLE.championnat, texte: texteDeck(deck) };
+}
+
 export interface Adversaire {
   palier: PalierId;
   deck: DeckAv;

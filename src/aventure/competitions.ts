@@ -10,6 +10,11 @@
  *   autres), le Miroir (Kaï), la Finale en deux manches gagnantes avec une Signature différente à chaque manche. Aucune
  *   carte : un titre. Aucune statistique gonflée : toutes les contraintes portent sur le deck (PROGRESSION §4).
  * Toutes les récompenses passent par le registre (clés uniques) : une revanche ne duplique rien.
+ *
+ * M10-E : dans la poule, la Signature équipée **change à chaque duel** (victoire ou défaite : différente du duel
+ * précédent, `dernier`) et reste différente pour chaque victoire ; le Miroir lit les deux familles dominantes du
+ * joueur sur ses cinq derniers duels (Primaires révélées, données publiques) ; la Tenante suit un **plan public annoncé**
+ * de Signatures pour les trois manches de la Finale.
  */
 import { CATALOG, FAMILIES, type Family } from '../game/catalog/cards';
 import type { TechniqueId } from '../game/catalog/techniques';
@@ -24,6 +29,8 @@ export interface EtatCompetitions {
   championnat: {
     /** Poule : Signature équipée lors de chaque victoire contre un chef (une différente par victoire). */
     poule: Partial<Record<Family, Family>>;
+    /** Poule (M10-E) : Signature du dernier duel de poule, gagné ou perdu (la suivante doit en changer). */
+    dernier?: Family;
     miroir: boolean;
     /** Finale : Signatures des manches gagnées et perdues, dans l'ordre. */
     finale: Array<{ signature: Family; gagnee: boolean }>;
@@ -115,12 +122,16 @@ export function ouvertChampionnat(familles: Record<Family, string>): boolean {
   return FAMILIES.every((f) => familles[f] === 'chef');
 }
 
-/** Peut-on défier ce chef dans la poule avec la Signature équipée ? (une Signature différente par victoire). */
+/**
+ * Peut-on défier ce chef dans la poule avec la Signature équipée ? Une Signature différente à chaque duel (M10-E : de
+ * celle du duel précédent, gagné ou perdu) et pour chaque victoire.
+ */
 export function statutPoule(c: EtatCompetitions, chef: Family, signature: Family | null): Statut {
   const p = c.championnat.poule;
   if (p[chef]) return { ouvert: false, texte: `Déjà vaincu dans la poule (avec ${CATALOG[`sig-${p[chef]}`]!.name}).` };
   if (!signature) return { ouvert: false, texte: 'Équipez une Signature.' };
   if (Object.values(p).includes(signature)) return { ouvert: false, texte: `Le ${CATALOG[`sig-${signature}`]!.name} a déjà servi dans la poule : équipez une autre Signature.` };
+  if (c.championnat.dernier === signature) return { ouvert: false, texte: `La Signature change à chaque duel de la poule (le précédent : ${CATALOG[`sig-${signature}`]!.name}) : équipez-en une autre.` };
   return { ouvert: true, texte: `Avec ${CATALOG[`sig-${signature}`]!.name}.` };
 }
 
@@ -131,13 +142,33 @@ export function statutFinale(c: EtatCompetitions, signature: Family | null): Sta
   if (prev && prev.signature === signature) return { ouvert: false, texte: `Changez de Signature entre deux manches (la précédente : ${CATALOG[`sig-${signature}`]!.name}).` };
   const g = c.championnat.finale.filter((m) => m.gagnee).length;
   const p = c.championnat.finale.length - g;
-  return { ouvert: true, texte: `Manche ${c.championnat.finale.length + 1} — ${g} gagnée(s), ${p} perdue(s) ; deux manches gagnantes.` };
+  return { ouvert: true, texte: `Manche ${c.championnat.finale.length + 1} — ${g} gagnée(s), ${p} perdue(s) ; deux manches gagnantes. La Tenante annonce son plan : ${PLAN_TENANTE.map((f, i) => `manche ${i + 1}, ${CATALOG[`sig-${f}`]!.name}`).join(' ; ')}.` };
 }
 
 export function finPoule(c0: EtatCompetitions, chef: Family, signature: Family, victoire: boolean): EtatCompetitions {
   const c = structuredClone(c0);
   if (victoire && !c.championnat.poule[chef] && !Object.values(c.championnat.poule).includes(signature)) c.championnat.poule[chef] = signature;
+  c.championnat.dernier = signature;
   return c;
+}
+
+/**
+ * Plan public de la Tenante pour la Finale (PROGRESSION §4 : « le tenant fait de même selon un plan public annoncé ») :
+ * la Signature qu'elle équipe à chaque manche, annoncée avant la première ; son deck d'auteur reste celui d'une
+ * championne (seize variantes), seule sa Signature change.
+ */
+export const PLAN_TENANTE: readonly [Family, Family, Family] = ['Astre', 'Voile', 'Cendre'];
+export const signatureTenante = (c: EtatCompetitions): Family => PLAN_TENANTE[Math.min(2, c.championnat.finale.length)]!;
+
+/**
+ * Le Miroir (PROGRESSION §4) : les deux familles les plus jouées par le joueur sur ses cinq derniers duels (Primaires
+ * révélées, publiques), à égalité dans l'ordre des familles ; sans donnée, sa famille d'accueil puis l'ordre des familles.
+ */
+export function famillesDominantes(derniers: readonly { familles?: Partial<Record<Family, number>> }[], accueil: Family | null): [Family, Family] {
+  const n = Object.fromEntries(FAMILIES.map((f) => [f, 0])) as Record<Family, number>;
+  for (const d of derniers.slice(-5)) for (const f of FAMILIES) n[f] += d.familles?.[f] ?? 0;
+  const ordre = [...FAMILIES].sort((a, b) => n[b] - n[a] || (b === accueil ? 1 : 0) - (a === accueil ? 1 : 0) || FAMILIES.indexOf(a) - FAMILIES.indexOf(b));
+  return [ordre[0]!, ordre[1]!];
 }
 
 export function finMiroir(c0: EtatCompetitions, victoire: boolean): EtatCompetitions {
