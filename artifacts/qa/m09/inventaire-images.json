@@ -1,0 +1,2115 @@
+{
+  "date": "2026-10-21T04:42:45.991Z",
+  "resume": {
+    "generees": 28,
+    "dans_le_jeu": 23,
+    "ecartees": 5,
+    "references": 7,
+    "planches": 22,
+    "approuvees": 0
+  },
+  "images": [
+    {
+      "lot": "2026-10-19-v4-essai",
+      "nom": "quai-facades-essai",
+      "date": "2026-10-19T23:52:26.453Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached image only as the style reference: match its painterly HD-2D look, fine grain, detailed cold stone masonry, dark timber, night palette and warm amber lantern light. Do not copy its composition.\n\nPaint ONE isolated background layer for a side-scrolling 2.5D night harbour street, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): three attached harbour buildings standing side by side and filling the full width of the image. From left to right: (1) the card-duel hall, the tallest, built of large stone blocks, with a tall arched double door at ground level, four vertical cloth banners hanging above the door, one per family colour (ember orange, veil blue with silver, bramble green, star gold), each banner showing a single simple abstract emblem (a flame, a crescent veil, a thorned branch, an eight-pointed star), and a round stained-glass window high on the gable; (2) a narrow half-timbered house with an overhanging upper floor, a small shop window with a desaturated ivory canvas awning at ground level, and a plain wooden door; (3) the harbour tavern: stone ground floor with a warm glowing arched entrance, timber upper floor with a small wooden balcony, warm lit windows, and an iron bracket holding a lantern-shaped sign with no lettering. Clusters of amber lanterns on wall brackets beside the doors. Slate roofs with chimneys and dormers along the top. The bottom edge of the image is the straight horizontal line where the walls meet the street; the street itself is not shown. The buildings fill about 85% of the image height; everything above the roofs is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading and no texture: no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no street paving, no water, no boats, no foreground objects, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        }
+      ],
+      "brut": {
+        "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 2075,
+        "input_tokens_details": {
+          "image_tokens": 1536,
+          "text_tokens": 539
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 7563
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/quai-facades.png",
+          "fiche": "art-src/decors/quai-facades/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 3,
+          "exemples": [
+            "facades-ouest",
+            "facades-centre",
+            "facades-est"
+          ]
+        },
+        {
+          "manifeste": "manifest.json",
+          "ilot": "quai",
+          "plans": 1,
+          "exemples": [
+            "facades"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-19-v4-essai",
+      "nom": "player-pixel-essai",
+      "date": "2026-10-19T23:54:12.182Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1024x1024",
+      "qualite": "high",
+      "prompt": "Use the attached image only as a palette and mood reference (night harbour, cold slate tones, warm amber accents); do not copy its composition and do not paint any scenery.\n\nA pixel-art character sprite sheet for a side-scrolling 2.5D game: an exact grid of 5 columns and 3 rows of equal cells, with nothing between the cells, on a perfectly flat, uniform pure cyan (#00FFFF) background with no shading and no texture. The same character in every cell, same size, feet resting on the same baseline near the bottom of each cell, the figure centred horizontally. Row 1: facing the viewer. Row 2: seen from the back. Row 3: right profile, walking to the right. Column 1: standing still; columns 2 to 5: four frames of a walking cycle (alternating legs, slight arm swing).\n\nThe character: a young card duellist with moderate chibi proportions (head about one third of the height), silver-white hair cut in a straight bob with a fringe, blue eyes, a cloth headband, a hood lowered onto the shoulders, a long travel coat with ivory trims and a belt, dark trousers and boots, a brown leather satchel worn across the body, no weapon. Placeholder colours for in-game recolouring: paint the coat and the lowered hood in flat shades of pure magenta (from dark #400040 to light #FF00FF, no other hue mixed in) and the headband and scarf in flat shades of pure green (from #004000 to #00FF00); everything else in natural colours, with no other magenta or green anywhere.\n\nTrue low-resolution pixel art: each cell is about 48 pixels wide and 80 pixels tall in art pixels, enlarged with nearest-neighbour so every art pixel is a crisp square of the same size; a one-pixel dark outline around the figure; flat colour areas with at most three shades each; no anti-aliasing, no gradients, no blur, no soft shadows, no drop shadow on the ground.\n\nNo text, no letters, no numbers, no grid lines, no labels, no watermark, no logos, no playing-card suit symbols.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        }
+      ],
+      "brut": {
+        "sha256": "f9779778276dc19d94cf2c6743e50bff2fc0add4d7582afce6fd207c68c45f9f",
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 1993,
+        "input_tokens_details": {
+          "image_tokens": 1536,
+          "text_tokens": 457
+        },
+        "output_tokens": 7024,
+        "output_tokens_details": {
+          "image_tokens": 7024,
+          "text_tokens": 0
+        },
+        "total_tokens": 9017
+      },
+      "planches": [],
+      "dans_le_jeu": []
+    },
+    {
+      "lot": "2026-10-20-v4-quai",
+      "nom": "quai-ciel-ville-haute",
+      "date": "2026-10-20T00:51:21.612Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached image only as the style reference: match its painterly HD-2D look, fine grain, night palette and the distant upper city of its background. Do not copy its composition.\n\nPaint ONE isolated far background layer for a side-scrolling 2.5D night harbour scene, seen from the front at eye level: the night sky and, on a hill, the upper city seen from far away. The lower half: the upper city climbing a hill, dense rooftops, spires, bell towers and a large cathedral with a rose window, many small warm windows and a few cold blue ones, softened by a thin layer of night mist; the city is darkest and most hazy at the bottom edge. The upper half: a deep indigo night sky with a bright moon to the upper right, a soft halo, thin silvery clouds and a few stars. No harbour, no water, no boats, no near houses, no foreground.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        }
+      ],
+      "brut": {
+        "sha256": "457a83a19dac15c5849ba2c53f29582f87e041d3044ac1a0e4b84bf4a02da8a0",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 1861,
+        "input_tokens_details": {
+          "image_tokens": 1536,
+          "text_tokens": 325
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 7349
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/quai-ciel.png",
+          "fiche": "art-src/decors/quai-ciel/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 1,
+          "exemples": [
+            "ciel"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "parvis",
+          "plans": 1,
+          "exemples": [
+            "ciel"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "ruelles",
+          "plans": 1,
+          "exemples": [
+            "ciel"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "cour",
+          "plans": 1,
+          "exemples": [
+            "ciel"
+          ]
+        },
+        {
+          "manifeste": "manifest.json",
+          "ilot": "quai",
+          "plans": 1,
+          "exemples": [
+            "ciel"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-quai",
+      "nom": "quai-second-rang",
+      "date": "2026-10-20T00:52:34.234Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, detailed cold stone masonry, dark timber, night palette and warm amber lantern light of the harbour scene (first image) and of the harbour facade layer (second image). Do not copy their composition.\n\nPaint ONE isolated background layer for a side-scrolling 2.5D night harbour street, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): the rooftops of the houses one street behind the harbour front, a continuous dense row filling the full width: slate and tile roofs of varied heights, gables, chimneys with faint smoke, dormers and attic windows, two small towers, a few warm lit windows and one veil-blue lit window; the top floors and roofs are detailed, the walls below fade into dark shadow toward the bottom edge, which is a straight horizontal line. The buildings fill about the lower 70% of the image.\n\nEverything above the roofs is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading and no texture: no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        }
+      ],
+      "brut": {
+        "sha256": "a53971fa1746f0deb5e433d75135701d0174579205821f00662b1ee7a975584e",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 3442,
+        "input_tokens_details": {
+          "image_tokens": 3072,
+          "text_tokens": 370
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 8930
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/quai-second-rang.png",
+          "fiche": "art-src/decors/quai-second-rang/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest.json",
+          "ilot": "quai",
+          "plans": 1,
+          "exemples": [
+            "second-rang"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-quai",
+      "nom": "quai-facades-ouest",
+      "date": "2026-10-20T00:54:16.635Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1024x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, detailed cold stone masonry, dark timber, night palette and warm amber lantern light of the harbour scene (first image) and of the harbour facade layer (second image). Do not copy their composition.\n\nPaint ONE isolated layer that continues the harbour facade row of the second image to its LEFT, at exactly the same scale, storey heights, lighting and fine grain, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines); the bottom edge of the image is the straight line where the walls meet the street, the street itself is not shown. From left to right: (1) a tall stone archway opening onto a narrow dark alley that leads to the lanes, with a small lantern glowing veil blue beside it; (2) the shipwright's workshop: stone ground floor with a wide arched timber workshop door glowing warm orange from a forge inside, a half-timbered upper floor with two lit windows, a timber hoisting beam with a pulley and rope above the door, an iron bracket holding a pulley-shaped sign with no lettering, two dormers in a slate roof with a chimney. The buildings fill the full width and about 85% of the image height.\n\nEverything above the roofs is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading and no texture: no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols. No street paving, no water, no boats, no foreground objects.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        }
+      ],
+      "brut": {
+        "sha256": "a98ab2077882538223808f4ff1d24131643a657c1cf8181258acf17a96fe3929",
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 3521,
+        "input_tokens_details": {
+          "image_tokens": 3072,
+          "text_tokens": 449
+        },
+        "output_tokens": 7024,
+        "output_tokens_details": {
+          "image_tokens": 7024,
+          "text_tokens": 0
+        },
+        "total_tokens": 10545
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/quai-facades.png",
+          "fiche": "art-src/decors/quai-facades/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 3,
+          "exemples": [
+            "facades-ouest",
+            "facades-centre",
+            "facades-est"
+          ]
+        },
+        {
+          "manifeste": "manifest.json",
+          "ilot": "quai",
+          "plans": 1,
+          "exemples": [
+            "facades"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-quai",
+      "nom": "quai-facades-est",
+      "date": "2026-10-20T00:55:53.591Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1024x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, detailed cold stone masonry, dark timber, night palette and warm amber lantern light of the harbour scene (first image) and of the two harbour facade layers (second and third images). Do not copy their composition.\n\nPaint ONE isolated layer that continues the harbour facade row of the second image to its RIGHT, at exactly the same scale, storey heights, lighting and fine grain, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines); the bottom edge of the image is the straight line where the walls meet the street, the street itself is not shown. From left to right: (1) the shipowner's house, the tallest of the row: stone ground floor with a shop window under a slate-grey canvas awning and a plain door, plastered upper floors with stone corner quoins, small wrought-iron balconies at the first-floor windows, a cross gable facing the street with a round stained-glass window glowing veil blue, an iron bracket holding an anchor-shaped sign with no lettering, a small veil-blue pennant on a pole; (2) at the far right, a lower stone warehouse with large timber double doors and a stone ramp rising toward the right edge (the way up to the arena square), with a lantern at the ramp. The buildings fill the full width and about 85% of the image height.\n\nEverything above the roofs is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading and no texture: no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols. No street paving, no water, no boats, no foreground objects.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-quai/quai-facades-ouest.png",
+          "sha256": "a98ab2077882538223808f4ff1d24131643a657c1cf8181258acf17a96fe3929"
+        }
+      ],
+      "brut": {
+        "sha256": "2a920ffbc7eee1d9f4ddec52e29c90afad8b85d8d376939729a2649d1a2eccdc",
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 4578,
+        "input_tokens_details": {
+          "image_tokens": 4096,
+          "text_tokens": 482
+        },
+        "output_tokens": 7024,
+        "output_tokens_details": {
+          "image_tokens": 7024,
+          "text_tokens": 0
+        },
+        "total_tokens": 11602
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/quai-facades.png",
+          "fiche": "art-src/decors/quai-facades/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 3,
+          "exemples": [
+            "facades-ouest",
+            "facades-centre",
+            "facades-est"
+          ]
+        },
+        {
+          "manifeste": "manifest.json",
+          "ilot": "quai",
+          "plans": 1,
+          "exemples": [
+            "facades"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-quai",
+      "nom": "quai-etal",
+      "date": "2026-10-20T00:57:32.022Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1024x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, detailed cold stone masonry, dark timber, night palette and warm amber lantern light of the harbour scene (first image) and of the harbour facade layer (second image). Do not copy their composition.\n\nPaint ONE isolated object seen straight from the front at eye level, centred and filling about 80% of the image width, standing on an invisible ground line near the bottom edge: a harbour merchant stall, the focal point of the street: a wooden trestle table covered with a cloth, displaying small wooden boxes, stacked card packs with plain backs, folded cloths in the four family colours and a few trinkets; a large desaturated ivory canvas awning stretched on wooden poles above it; a cluster of two hanging amber lanterns casting warm light on the goods; a small crate and a barrel beside the table.\n\nEverything that is not the stall is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture and no cast shadow.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        }
+      ],
+      "brut": {
+        "sha256": "4f7f3916eb9c0a5e94d4810900544eee8a99e481b4f1f20f706e4ab9ea6ff553",
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 3417,
+        "input_tokens_details": {
+          "image_tokens": 3072,
+          "text_tokens": 345
+        },
+        "output_tokens": 7024,
+        "output_tokens_details": {
+          "image_tokens": 7024,
+          "text_tokens": 0
+        },
+        "total_tokens": 10441
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/quai-pied-facades.png",
+          "fiche": "art-src/decors/quai-pied-facades/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 7,
+          "exemples": [
+            "pied-ouest",
+            "pied-centre",
+            "pied-est",
+            "rue-haute-caisses"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "parvis",
+          "plans": 2,
+          "exemples": [
+            "parvis-tonneaux",
+            "paris-caisses"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "ruelles",
+          "plans": 2,
+          "exemples": [
+            "tanneurs-tonneaux",
+            "voile-caisses"
+          ]
+        },
+        {
+          "manifeste": "manifest.json",
+          "ilot": "quai",
+          "plans": 1,
+          "exemples": [
+            "pied-facades"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-quai",
+      "nom": "quai-accessoires",
+      "date": "2026-10-20T00:58:33.918Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, detailed cold stone masonry, dark timber, night palette and warm amber lantern light of the harbour scene (first image) and of the harbour facade layer (second image). Do not copy their composition.\n\nA prop sheet of separate street objects for the same night harbour, each seen straight from the front at eye level, all at the same scale, standing on invisible ground lines, spaced well apart with nothing overlapping or touching: (1) a tall ornate cast-iron street lamp post with a cluster of three glowing amber lanterns at the top (about three times as tall as the barrels); (2) a short stone mooring bollard with an iron cap and a coil of rope; (3) a stack of three wooden crates; (4) a group of three barrels; (5) a pile of fishing nets with cork floats and a coiled rope.\n\nEverything that is not an object is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture and no cast shadows.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        }
+      ],
+      "brut": {
+        "sha256": "c060e183401d0f805857e39b5174b86a973a3fa2d601d3d3fa5cb48b80791010",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 3425,
+        "input_tokens_details": {
+          "image_tokens": 3072,
+          "text_tokens": 353
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 8913
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/quai-pied-facades.png",
+          "fiche": "art-src/decors/quai-pied-facades/fiche.json",
+          "approved": false
+        },
+        {
+          "fichier": "public/decors/quai-rue.png",
+          "fiche": "art-src/decors/quai-rue/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 7,
+          "exemples": [
+            "pied-ouest",
+            "pied-centre",
+            "pied-est",
+            "rue-haute-caisses"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "parvis",
+          "plans": 2,
+          "exemples": [
+            "parvis-tonneaux",
+            "paris-caisses"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "ruelles",
+          "plans": 2,
+          "exemples": [
+            "tanneurs-tonneaux",
+            "voile-caisses"
+          ]
+        },
+        {
+          "manifeste": "manifest.json",
+          "ilot": "quai",
+          "plans": 1,
+          "exemples": [
+            "pied-facades"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 7,
+          "exemples": [
+            "rue",
+            "lampadaire-1",
+            "lampadaire-2",
+            "lampadaire-3"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "parvis",
+          "plans": 7,
+          "exemples": [
+            "lampadaire-1",
+            "lampadaire-2",
+            "lampadaire-3",
+            "lampadaire-4"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "ruelles",
+          "plans": 7,
+          "exemples": [
+            "lampadaire-1",
+            "lampadaire-2",
+            "lampadaire-3",
+            "lampadaire-4"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "cour",
+          "plans": 4,
+          "exemples": [
+            "lampadaire-1",
+            "lampadaire-2",
+            "lampadaire-3",
+            "lampadaire-4"
+          ]
+        },
+        {
+          "manifeste": "manifest.json",
+          "ilot": "quai",
+          "plans": 1,
+          "exemples": [
+            "rue"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-quai",
+      "nom": "quai-premier-plan-ouest",
+      "date": "2026-10-20T00:59:40.775Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, detailed cold stone masonry, dark timber, night palette and warm amber lantern light of the harbour scene (first image) and of the harbour facade layer (second image). Do not copy their composition.\n\nPaint ONE isolated foreground layer for a side-scrolling 2.5D night harbour scene, seen from the front at eye level. The bottom edge of the image is the water line. Along the whole bottom of the image rises the top part of a massive stone quay wall seen from the water side (large cut blocks, iron mooring rings, a small drainage arch, an iron ladder), its top edge a straight horizontal line at about one fifth of the image height. In front of the wall, in the lower left, the dark wooden hull and bow of a moored fishing boat; its mast and rigging lines rise to the top edge of the image; a few tall wooden mooring posts stand in front of the wall.\n\nEverything else is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading and no texture: the street and the houses behind are not shown, no sky, no water surface.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        }
+      ],
+      "brut": {
+        "sha256": "39161f9c35c45f2a306c8d4e1724710b8d07e071210e6c62998c4a05c8fcdef4",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 3448,
+        "input_tokens_details": {
+          "image_tokens": 3072,
+          "text_tokens": 376
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 8936
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/quai-premier-plan.png",
+          "fiche": "art-src/decors/quai-premier-plan/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 1,
+          "exemples": [
+            "premier-plan"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "ruelles",
+          "plans": 1,
+          "exemples": [
+            "premier-plan"
+          ]
+        },
+        {
+          "manifeste": "manifest.json",
+          "ilot": "quai",
+          "plans": 1,
+          "exemples": [
+            "premier-plan"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-quai",
+      "nom": "quai-premier-plan-est",
+      "date": "2026-10-20T01:00:47.734Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, detailed cold stone masonry, dark timber, night palette and warm amber lantern light of the harbour scene (first image), of the harbour facade layer (second image) and of the foreground layer (third image). Do not copy their composition.\n\nPaint ONE isolated foreground layer that continues the foreground layer of the third image to its RIGHT, seen from the front at eye level, with the same quay wall at exactly the same height and scale. The bottom edge of the image is the water line; the top edge of the quay wall is a straight horizontal line at about one fifth of the image height. In front of the wall: on the right, the stern of a larger moored boat with a small amber lantern at its stern, its mast and rigging rising to the top edge; a small rowing boat tied alongside; a few tall wooden mooring posts.\n\nEverything else is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading and no texture: the street and the houses behind are not shown, no sky, no water surface.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-quai/quai-premier-plan-ouest.png",
+          "sha256": "39161f9c35c45f2a306c8d4e1724710b8d07e071210e6c62998c4a05c8fcdef4"
+        }
+      ],
+      "brut": {
+        "sha256": "d0dd8fcaf65b9dd4ba1f212b5b070757a53ff9b4ecabc26b3813213f9d8b8719",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 4968,
+        "input_tokens_details": {
+          "image_tokens": 4608,
+          "text_tokens": 360
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10456
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/quai-premier-plan.png",
+          "fiche": "art-src/decors/quai-premier-plan/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 1,
+          "exemples": [
+            "premier-plan"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "ruelles",
+          "plans": 1,
+          "exemples": [
+            "premier-plan"
+          ]
+        },
+        {
+          "manifeste": "manifest.json",
+          "ilot": "quai",
+          "plans": 1,
+          "exemples": [
+            "premier-plan"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-quai",
+      "nom": "quai-eau",
+      "date": "2026-10-20T01:02:08.534Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached image only as the style reference for its dark harbour water. Do not copy its composition.\n\nPaint a texture of calm dark harbour water at night seen from directly above, filling the whole image: near-black indigo water with gentle irregular ripples, long soft streaks of warm amber lantern reflections running from the top edge toward the bottom, a few cold silvery moonlight glints, painterly fine grain; even enough to be laid flat as the water surface of a game scene.\n\nNo boats, no objects, no shore, no people, no text, no letters, no numbers, no signature, no watermark, no logos.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        }
+      ],
+      "brut": {
+        "sha256": "5b87005a4f9d244e48386aa74770342ce51f8d09741c6588c706ced5da2f20ce",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 1672,
+        "input_tokens_details": {
+          "image_tokens": 1536,
+          "text_tokens": 136
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 7160
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/quai-eau.png",
+          "fiche": "art-src/decors/quai-eau/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 1,
+          "exemples": [
+            "eau"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "ruelles",
+          "plans": 1,
+          "exemples": [
+            "eau"
+          ]
+        },
+        {
+          "manifeste": "manifest.json",
+          "ilot": "quai",
+          "plans": 1,
+          "exemples": [
+            "eau"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-quai",
+      "nom": "player-pixel",
+      "date": "2026-10-20T01:03:46.822Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1024x1024",
+      "qualite": "high",
+      "prompt": "The attached image is our own pixel-art sprite sheet of the player character. Redraw it as a clean final sprite sheet: keep exactly the same character design, proportions, colours (coat and lowered hood in flat shades of pure magenta from #400040 to #FF00FF, headband and scarf in flat shades of pure green from #004000 to #00FF00, as placeholders for in-game recolouring; everything else in natural colours, no other magenta or green), the same pixel size and the same layout: an exact grid of 5 columns and 3 rows of equal cells, nothing between the cells.\n\nRow 1: facing the viewer; row 2: seen from the back; row 3: right profile walking to the right. Column 1: standing still; columns 2 to 5: a clear four-frame walking cycle in every row (contact, passing, contact with the other leg forward, passing), legs visibly alternating and arms swinging, the head steady. Same size in every cell, feet on the same baseline near the bottom of each cell, figure centred.\n\nTrue low-resolution pixel art: every art pixel a crisp square of the same size, a one-pixel dark outline, flat colour areas with at most three shades each, no anti-aliasing, no gradients, no blur, no shadows on the ground. A perfectly flat, uniform pure cyan (#00FFFF) background with no shading and no texture.\n\nNo text, no letters, no numbers, no grid lines, no labels, no watermark, no logos, no playing-card suit symbols.",
+      "entrees": [
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/player-pixel-essai.png",
+          "sha256": "f9779778276dc19d94cf2c6743e50bff2fc0add4d7582afce6fd207c68c45f9f"
+        }
+      ],
+      "brut": {
+        "sha256": "b29fd076e4e9cd30ba31e804d54f297d1fb5d0dc7209005c7688e8e9a1c2c7db",
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 1353,
+        "input_tokens_details": {
+          "image_tokens": 1024,
+          "text_tokens": 329
+        },
+        "output_tokens": 7024,
+        "output_tokens_details": {
+          "image_tokens": 7024,
+          "text_tokens": 0
+        },
+        "total_tokens": 8377
+      },
+      "planches": [],
+      "dans_le_jeu": []
+    },
+    {
+      "lot": "2026-10-20-v4-quai-2",
+      "nom": "quai-troisieme-rang",
+      "date": "2026-10-20T02:48:43.811Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, night palette and warm amber lantern light of the harbour scene (first image), of the harbour facade layer (second image) and of the row of rooftops just behind the harbour front (third image). Do not copy their composition.\n\nPaint ONE isolated background layer for a side-scrolling 2.5D night harbour town, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): the rooftops of the town further back, a third and more distant row behind the rooftops of the third image: smaller-looking roofs, gables and chimneys, a bell tower and two slender spires, sparse warm windows, softened by thin night haze, slightly bluer and paler than the nearer row; the bottom of the layer fades into dark haze and its bottom edge is a straight horizontal line. The buildings fill about the lower 65% of the image.\n\nEverything above the roofs is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading and no texture: no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-quai/quai-second-rang.png",
+          "sha256": "a53971fa1746f0deb5e433d75135701d0174579205821f00662b1ee7a975584e"
+        }
+      ],
+      "brut": {
+        "sha256": "3315b2d6402992356c3f6c34db3fa8038ce163aeb44bdb7147e4ea75f4546812",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 4980,
+        "input_tokens_details": {
+          "image_tokens": 4608,
+          "text_tokens": 372
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10468
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/quai-troisieme-rang.png",
+          "fiche": "art-src/decors/quai-troisieme-rang/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 1,
+          "exemples": [
+            "ville-haute"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "parvis",
+          "plans": 1,
+          "exemples": [
+            "ville-haute"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "ruelles",
+          "plans": 1,
+          "exemples": [
+            "ville-haute"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "cour",
+          "plans": 1,
+          "exemples": [
+            "ville-haute"
+          ]
+        },
+        {
+          "manifeste": "manifest.json",
+          "ilot": "quai",
+          "plans": 1,
+          "exemples": [
+            "troisieme-rang"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-quai-2",
+      "nom": "quai-ruelle",
+      "date": "2026-10-20T02:50:49.793Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1024x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, night palette and warm amber lantern light of the harbour scene (first image); the second image shows, on its left, the stone archway that opens onto the lane to paint. Do not copy their composition.\n\nPaint ONE layer filling the whole image: a narrow cobbled lane seen straight on from its entrance, receding far into the distance in central perspective, its vanishing point slightly above the centre: tall stone and half-timbered houses on both sides leaning slightly inward, laundry lines across the lane, hanging lanterns glowing warm amber, one lantern glowing veil blue, a few lit windows, a small flight of steps going up at the far end, night mist deepening with distance.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-quai/quai-facades-ouest.png",
+          "sha256": "a98ab2077882538223808f4ff1d24131643a657c1cf8181258acf17a96fe3929"
+        }
+      ],
+      "brut": {
+        "sha256": "6494ced83c3cc43add5b3b8f5b22f3dbd44a3ece54722288e31df345533a853e",
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 2847,
+        "input_tokens_details": {
+          "image_tokens": 2560,
+          "text_tokens": 287
+        },
+        "output_tokens": 7024,
+        "output_tokens_details": {
+          "image_tokens": 7024,
+          "text_tokens": 0
+        },
+        "total_tokens": 9871
+      },
+      "planches": [],
+      "dans_le_jeu": []
+    },
+    {
+      "lot": "2026-10-20-v4-quai-2",
+      "nom": "quai-passage-parvis",
+      "date": "2026-10-20T02:52:34.381Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1024x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, detailed cold stone masonry, night palette and warm amber lantern light of the harbour scene (first image) and of the harbour facade layer (second image, whose stone ramp on the right leads up to this passage). Do not copy their composition.\n\nPaint ONE isolated background layer seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): a broad stone stair-street rising from the lower left toward the upper right between high stone walls, lanterns along the steps, leading up to the curved outer wall of an arena with tall arches glowing warm from inside, a few pennants in the four family colours (ember orange, veil blue, bramble green, star gold), plain cloth without any emblem or mark; the bottom edge of the image is the street level.\n\nEverything above the walls and the arena is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading and no texture: no sky, no clouds, no moon.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-quai/quai-facades-est.png",
+          "sha256": "2a920ffbc7eee1d9f4ddec52e29c90afad8b85d8d376939729a2649d1a2eccdc"
+        }
+      ],
+      "brut": {
+        "sha256": "be1e64874a3079b5168ab4ac30b5ce7f9ec534970c07851bb73cbe9d63efe9a4",
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 2909,
+        "input_tokens_details": {
+          "image_tokens": 2560,
+          "text_tokens": 349
+        },
+        "output_tokens": 7024,
+        "output_tokens_details": {
+          "image_tokens": 7024,
+          "text_tokens": 0
+        },
+        "total_tokens": 9933
+      },
+      "planches": [],
+      "dans_le_jeu": []
+    },
+    {
+      "lot": "2026-10-20-v4-quai-2",
+      "nom": "player-pixel-64",
+      "date": "2026-10-20T02:54:13.868Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1024x1024",
+      "qualite": "high",
+      "prompt": "The attached image is our own pixel-art sprite sheet of the player character. Redraw it as a finer final sprite sheet with exactly the same character, layout and placeholder colours: an exact grid of 5 columns and 3 rows of equal cells, nothing between the cells; row 1 facing the viewer, row 2 seen from the back, row 3 right profile walking to the right; column 1 standing still, columns 2 to 5 a clear four-frame walking cycle (legs alternating, arms swinging, head steady); same size in every cell, feet on the same baseline, figure centred.\n\nHigher resolution pixel art: each cell is 64 art pixels wide and 96 art pixels tall, the character about 88 art pixels tall with a large readable head (about one third of the height). Give the head and face real care: silver-white bob with a straight fringe drawn as distinct locks with two highlight tones, clearly drawn eyes with dark outline, blue iris and a white catchlight, short eyebrows, a hint of nose shading and a small mouth, soft cheek shading; the cloth headband across the forehead and the lowered hood framing the neck.\n\nColour ramps of five tones per material, cool and saturated in the shadows and warm in the highlights. Placeholder colours for in-game recolouring: coat and lowered hood in flat shades of pure magenta only (from #400040 to #FF00FF), headband and scarf in flat shades of pure green only (from #004000 to #00FF00); everything else in natural colours, no other magenta or green.\n\nTrue pixel art: every art pixel a crisp square of the same size, a one-pixel dark outline, no anti-aliasing, no gradients, no blur, no shadow on the ground. A perfectly flat, uniform pure cyan (#00FFFF) background with no shading and no texture.\n\nNo text, no letters, no numbers, no grid lines, no labels, no watermark, no logos, no playing-card suit symbols.",
+      "entrees": [
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-quai/player-pixel.png",
+          "sha256": "b29fd076e4e9cd30ba31e804d54f297d1fb5d0dc7209005c7688e8e9a1c2c7db"
+        }
+      ],
+      "brut": {
+        "sha256": "ddaac8592b896cc8d16e141d8d24d809c9ed0e5a31b606c1843e3945e97aa6f9",
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 1438,
+        "input_tokens_details": {
+          "image_tokens": 1024,
+          "text_tokens": 414
+        },
+        "output_tokens": 7024,
+        "output_tokens_details": {
+          "image_tokens": 7024,
+          "text_tokens": 0
+        },
+        "total_tokens": 8462
+      },
+      "planches": [],
+      "dans_le_jeu": []
+    },
+    {
+      "lot": "2026-10-20-v4-rangs",
+      "nom": "rangs-ruelle-a",
+      "date": "2026-10-20T05:50:36.344Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image) and of our harbour facades (second and third images). Do not copy their composition.\n\nPaint ONE isolated background layer for a 2.5D night harbour town, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): a continuous row of five narrow townhouses lining a quiet back street, spanning the full width of the image, three storeys tall plus their roofs, filling about the lower 75% of the image. Scale: a person is about 170 pixels tall in this image; doors are about 200 pixels tall. Street level, from left to right: a cobbler's shopfront with an ivory canvas awning and a lit window display, a plain house door with a hanging lantern, a narrow tavern with a lit bow window, a closed carriage gate, a herbalist's door with bunches of dried plants. Half-timbered upper storeys with warm lit windows and dark ones, one balcony with flower boxes, steep slate roofs with dormers and chimneys, house heights varying by about one storey; wall lanterns glowing warm amber at door height; one plain cloth pennant in veil blue without any mark. The bottom edge of the image is a straight horizontal line at the foot of the walls, with no ground, no steps and no cobbles in front.\n\nEverything around the subjects (above the roofs, between the panels, around the objects) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-quai/quai-facades-ouest.png",
+          "sha256": "a98ab2077882538223808f4ff1d24131643a657c1cf8181258acf17a96fe3929"
+        }
+      ],
+      "brut": {
+        "sha256": "03edc3cc328ed147d6118781eef5123cf784a905c2bad9393f1bdda15b18acb7",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 4603,
+        "input_tokens_details": {
+          "image_tokens": 4096,
+          "text_tokens": 507
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10091
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/rangs-frise-a.png",
+          "fiche": "art-src/decors/rangs-frise-a/fiche.json",
+          "approved": false
+        },
+        {
+          "fichier": "public/decors/rangs-frise-b.png",
+          "fiche": "art-src/decors/rangs-frise-b/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 7,
+          "exemples": [
+            "fond-rang2--31",
+            "fond-rang2--5",
+            "fond-rang2-13",
+            "flanc-rang3--31"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "parvis",
+          "plans": 10,
+          "exemples": [
+            "fond-rang1--31-1",
+            "fond-rang1-13-1",
+            "flanc-rang2--31",
+            "flanc-rang2-14"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "ruelles",
+          "plans": 8,
+          "exemples": [
+            "fond-rang1--31-1",
+            "fond-rang1--7-2",
+            "flanc-rang2--31",
+            "flanc-rang2-13"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "cour",
+          "plans": 4,
+          "exemples": [
+            "fond-rang1--34-1",
+            "fond-rang1-15-1",
+            "flanc-rang2--34",
+            "flanc-rang2-16"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 7,
+          "exemples": [
+            "flanc-rang2--31",
+            "flanc-rang2-17",
+            "fond-rang3--31",
+            "fond-rang3--8"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "parvis",
+          "plans": 8,
+          "exemples": [
+            "fond-rang2--31",
+            "fond-rang2--5",
+            "fond-rang2-13",
+            "fond-place-paris-rang2-2"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "ruelles",
+          "plans": 8,
+          "exemples": [
+            "fond-rang2--31",
+            "fond-rang2-4",
+            "fond-rang2-13",
+            "fond-placette-olivier-rang2-7"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-rangs",
+      "nom": "rangs-ruelle-b",
+      "date": "2026-10-20T05:51:53.414Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image) and of our harbour facades (second and third images). Do not copy their composition.\n\nPaint ONE isolated background layer for a 2.5D night harbour town, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): a continuous row of four narrow buildings of a poorer craftsmen's street, spanning the full width of the image, two to three storeys plus their roofs, filling about the lower 70% of the image, different from a merchants' street: rough grey stone and patched pale plaster rather than fine half-timbering. Scale: a person is about 170 pixels tall in this image; doors are about 200 pixels tall. Street level, from left to right: a cooper's workshop with wide-open plank doors and a warm glow inside, an outside stone stair climbing to an upper door, a dark covered porch tunnelling through the ground floor (an opening about 3 metres wide, deep shadow inside), a small gambling den door with a single red lantern. Upper storeys: shuttered windows, a few warm lit ones, a laundry line between two windows, a wooden gallery, crooked chimneys, slate and old tile roofs. Wall lanterns glowing warm amber at door height. The bottom edge of the image is a straight horizontal line at the foot of the walls, with no ground in front.\n\nEverything around the subjects (above the roofs, between the panels, around the objects) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-quai/quai-facades-ouest.png",
+          "sha256": "a98ab2077882538223808f4ff1d24131643a657c1cf8181258acf17a96fe3929"
+        }
+      ],
+      "brut": {
+        "sha256": "53f01c2aaba53c41728b89dd40e91c18fafc6572cf51cb963d8c7ffa7ce9e70c",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 4607,
+        "input_tokens_details": {
+          "image_tokens": 4096,
+          "text_tokens": 511
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10095
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/rangs-frise-a.png",
+          "fiche": "art-src/decors/rangs-frise-a/fiche.json",
+          "approved": false
+        },
+        {
+          "fichier": "public/decors/rangs-frise-b.png",
+          "fiche": "art-src/decors/rangs-frise-b/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 7,
+          "exemples": [
+            "fond-rang2--31",
+            "fond-rang2--5",
+            "fond-rang2-13",
+            "flanc-rang3--31"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "parvis",
+          "plans": 10,
+          "exemples": [
+            "fond-rang1--31-1",
+            "fond-rang1-13-1",
+            "flanc-rang2--31",
+            "flanc-rang2-14"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "ruelles",
+          "plans": 8,
+          "exemples": [
+            "fond-rang1--31-1",
+            "fond-rang1--7-2",
+            "flanc-rang2--31",
+            "flanc-rang2-13"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "cour",
+          "plans": 4,
+          "exemples": [
+            "fond-rang1--34-1",
+            "fond-rang1-15-1",
+            "flanc-rang2--34",
+            "flanc-rang2-16"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 7,
+          "exemples": [
+            "flanc-rang2--31",
+            "flanc-rang2-17",
+            "fond-rang3--31",
+            "fond-rang3--8"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "parvis",
+          "plans": 8,
+          "exemples": [
+            "fond-rang2--31",
+            "fond-rang2--5",
+            "fond-rang2-13",
+            "fond-place-paris-rang2-2"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "ruelles",
+          "plans": 8,
+          "exemples": [
+            "fond-rang2--31",
+            "fond-rang2-4",
+            "fond-rang2-13",
+            "fond-placette-olivier-rang2-7"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-rangs",
+      "nom": "rangs-murs",
+      "date": "2026-10-20T05:53:07.618Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image) and of our harbour facades (second and third images). Do not copy their composition.\n\nPaint ONE isolated layer with THREE different side walls of townhouses, side by side, each filling one third of the image, separated by narrow vertical magenta gaps; each wall seen straight on like an architectural elevation (no perspective, no vanishing lines), rising from the bottom edge of the image to about 90% of its height; these are the long side walls that border narrow passages and the end of a street, about 8 metres long and 10 metres tall. Scale: a person is about 170 pixels tall in this image; doors are about 200 pixels tall. Left wall: rough cold grey stone ground floor, half-timbered upper storeys, two small warm lit windows, a wooden drainpipe, a wall lantern glowing warm amber at head height. Middle wall: plain stone with patched plaster, one shuttered window, iron tie plates, an empty iron sign bracket, stacked crates at its foot. Right wall: the gable end of a tall house closing a street, with a closed arched wooden gate in the middle (the street seems to continue behind it), a small lit window above the gate and a lantern beside it. The roof of each wall is seen edge-on as a thin eave line along its top. The bottom edge of each wall is a straight horizontal line with no ground in front.\n\nEverything around the subjects (above the roofs, between the panels, around the objects) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-quai/quai-facades-ouest.png",
+          "sha256": "a98ab2077882538223808f4ff1d24131643a657c1cf8181258acf17a96fe3929"
+        }
+      ],
+      "brut": {
+        "sha256": "8301053764cb85e2685f4b1c2eb2289e6bd597d6205eccd097dd0c4750c526b7",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 4615,
+        "input_tokens_details": {
+          "image_tokens": 4096,
+          "text_tokens": 519
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10103
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/rangs-murs.png",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 18,
+          "exemples": [
+            "mur-passage-1-1",
+            "mur-passage-1-2",
+            "mur-passage-1-3",
+            "mur-passage-1-4"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "parvis",
+          "plans": 18,
+          "exemples": [
+            "mur-passage-1-1",
+            "mur-passage-1-2",
+            "mur-passage-1-3",
+            "mur-passage-1-4"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "ruelles",
+          "plans": 14,
+          "exemples": [
+            "mur-passage-1-1",
+            "mur-passage-1-2",
+            "mur-place-2-1",
+            "mur-place-2-2"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "cour",
+          "plans": 6,
+          "exemples": [
+            "mur-passage-1-1",
+            "mur-passage-1-2",
+            "mur-passage-1-3",
+            "mur-passage-1-4"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-rangs",
+      "nom": "rangs-monuments",
+      "date": "2026-10-20T05:54:22.720Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image) and of our harbour facades (second and third images). Do not copy their composition.\n\nPaint ONE isolated layer with THREE different landmark buildings side by side, each filling one third of the image, separated by narrow vertical magenta gaps, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines), each rising from the bottom edge of the image to between 80% and 95% of its height. Scale: a person is about 170 pixels tall in this image; doors are about 200 pixels tall. Left: a covered market hall, an open ground floor of three wide stone arcades with market tables and baskets in the warm lantern light, a heavy timber upper floor and a big slate roof with a small bell turret. Middle: a players' guild house on a small square, a carved wooden door up three steps, a large lit bay window showing card tables inside, a balcony with an ivory awning, a plain cloth banner in star gold without any mark. Right: a small seamen's chapel, grey stone, a round rose window glowing amber, a bell gable with one bell, a carved portal with candles at its foot, and an iron anchor sculpted above the door. The bottom edge of each building is a straight horizontal line with no ground in front.\n\nEverything around the subjects (above the roofs, between the panels, around the objects) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-quai/quai-facades-ouest.png",
+          "sha256": "a98ab2077882538223808f4ff1d24131643a657c1cf8181258acf17a96fe3929"
+        }
+      ],
+      "brut": {
+        "sha256": "03262678ee9f4187ea5c70d6a4b9a08cd45bb85f262753339d2cd47c4e129610",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 4598,
+        "input_tokens_details": {
+          "image_tokens": 4096,
+          "text_tokens": 502
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10086
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/rangs-monuments.png",
+          "fiche": "art-src/decors/rangs-monuments/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 3,
+          "exemples": [
+            "fond-place-halle",
+            "fond-placette-puits",
+            "cour-chapelle"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-rangs",
+      "nom": "rangs-mobilier",
+      "date": "2026-10-20T05:55:37.777Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image) and of our harbour facades (second and third images). Do not copy their composition.\n\nPaint ONE isolated layer with SIX separate street objects arranged in a 3 × 2 grid with wide magenta gaps between them, each seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines) with a slight view from above, each standing on its own straight horizontal base line with a soft contact shadow and no ground around it. Scale: a person is about 170 pixels tall in this image; doors are about 200 pixels tall. Top row: a stone well with a small wooden roof, a winch, a rope and a bucket; a small round fountain with a carved stone basin and a thin stream of water catching the lamplight; a market stall with an ivory canvas awning and crates of fish and fruit. Bottom row: a wooden bench beside a potted olive tree; a handcart loaded with barrels and crates; a street shrine niche on a short stone post with candles and flowers glowing warm amber.\n\nEverything around the subjects (above the roofs, between the panels, around the objects) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-quai/quai-facades-ouest.png",
+          "sha256": "a98ab2077882538223808f4ff1d24131643a657c1cf8181258acf17a96fe3929"
+        }
+      ],
+      "brut": {
+        "sha256": "5c5da01160f58c41372b3378369cd807d74ff6168e5c8fe4aefe3b8f406338d8",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 4543,
+        "input_tokens_details": {
+          "image_tokens": 4096,
+          "text_tokens": 447
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10031
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/rangs-mobilier.png",
+          "fiche": "art-src/decors/rangs-mobilier/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "quai",
+          "plans": 6,
+          "exemples": [
+            "rue-haute-charrette",
+            "halle-etal",
+            "lanternes-niche",
+            "puits"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "parvis",
+          "plans": 3,
+          "exemples": [
+            "parvis-inscriptions",
+            "gradins-charrette",
+            "lices-banc"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "ruelles",
+          "plans": 6,
+          "exemples": [
+            "fontaine-voile",
+            "etal-liseuse",
+            "tanneurs-niche",
+            "olivier-banc"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "cour",
+          "plans": 4,
+          "exemples": [
+            "cour-banc",
+            "etal-ouest",
+            "etal-est",
+            "belvedere-banc"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-villes",
+      "nom": "parvis-porte",
+      "date": "2026-10-21T04:16:57.299Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image), of our harbour facades (second image) and of our back-street houses (third image). Do not copy their composition.\n\nPaint ONE isolated background layer for a 2.5D night harbour town, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): the monumental gate pavilion of the city's card-duel arena (the Tournament gate), about 21 metres wide and 15 metres tall to its ridge, spanning the full width of the image and filling about the lower 85% of it. Scale: a person is about 125 pixels tall in this image. In the centre, a great round-arched gate about 4.6 metres wide and 6 metres tall, its heavy wooden doors open inwards, a warm orange glow of torches inside and a glimpse of a sandy floor; on each side, two smaller round arcades closed by dark iron grilles; rusticated cold grey stone; above the gate, a stone gallery of small columns and a deep balcony; four long hanging cloth banners on the upper storey, one in each family colour (ember orange, veil blue and silver, bramble green, star gold), plain; a crenellated parapet and two corner turrets with pointed slate roofs; iron wall lanterns glowing warm amber beside the gate.\n\nThe bottom edge of the image is a straight horizontal line at the foot of the walls, with no ground, no steps and no cobbles in front.\n\nEverything around the subjects (above the roofs, between the panels, around the objects) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-rangs/rangs-ruelle-a.png",
+          "sha256": "03edc3cc328ed147d6118781eef5123cf784a905c2bad9393f1bdda15b18acb7"
+        }
+      ],
+      "brut": {
+        "sha256": "100c1679c5f5436909935aa27f87c3cce6af49dee3457c104947dc2326595e75",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 5143,
+        "input_tokens_details": {
+          "image_tokens": 4608,
+          "text_tokens": 535
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10631
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/villes-parvis-porte.png",
+          "fiche": "art-src/decors/villes-parvis-porte/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "parvis",
+          "plans": 1,
+          "exemples": [
+            "fond-rang1--11-1"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-villes",
+      "nom": "parvis-arene",
+      "date": "2026-10-21T04:18:12.052Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image), of our harbour facades (second image) and of our back-street houses (third image). Do not copy their composition.\n\nPaint ONE isolated background layer for a 2.5D night harbour town, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines) (only the roofline may curve very slightly): the great outer wall of the city's card-duel arena, a vast round stone amphitheatre about 30 metres wide in view and 22 metres tall, spanning the full width of the image and filling about 92% of its height. Scale: a person is about 90 pixels tall in this image. Two tiers of tall round arches between heavy buttresses: the lower tier closed by dark wooden doors and iron grilles, the upper tier open, showing darkness and the faint warm flicker of torches inside; a cornice with tall flagpoles carrying long pennants in the four family colours, plain; at street level in the centre, a heavy arched gate (the Champions' gate) with two iron lanterns glowing warm amber and a pair of stone braziers; weathered cold grey stone, darker at the foot.\n\nThe bottom edge of the image is a straight horizontal line at the foot of the walls, with no ground, no steps and no cobbles in front.\n\nEverything around the subjects (above the roofs, between the panels, around the objects) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-rangs/rangs-ruelle-a.png",
+          "sha256": "03edc3cc328ed147d6118781eef5123cf784a905c2bad9393f1bdda15b18acb7"
+        }
+      ],
+      "brut": {
+        "sha256": "af893fa20ef1e3add911cfd386455209eab8cd0cc5fc89c8bfe0e4e8fae3085e",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 5117,
+        "input_tokens_details": {
+          "image_tokens": 4608,
+          "text_tokens": 509
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10605
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/villes-parvis-arene.png",
+          "fiche": "art-src/decors/villes-parvis-arene/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "parvis",
+          "plans": 1,
+          "exemples": [
+            "coeur-parvis-arene"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-villes",
+      "nom": "ruelles-canal",
+      "date": "2026-10-21T04:19:28.280Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image), of our harbour facades (second image) and of our back-street houses (third image). Do not copy their composition.\n\nPaint ONE isolated background layer for a 2.5D night harbour town, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): a continuous row of six tall, narrow townhouses of the seers' quarter lining a canal, spanning the full width of the image, four storeys tall plus their roofs, filling about the lower 85% of the image. Scale: a person is about 100 pixels tall in this image; doors are about 130 pixels tall. Each house is narrow and tall, its half-timbered upper storeys jettied out over the street, steep slate roofs with pointed gables and thin chimneys, heights varying by about one storey; clear vertical party walls between the houses. Street level, from left to right: a narrow door with a hanging lantern, a seer's little shop with a veil-blue awning and a window full of candles and crystal globes, a closed shutter shop, the tallest house with a carved door and two long veil-blue and silver cloth banners (plain), a bow window glowing warm amber, a plain door with a pale silver-blue lamp. Upper storeys: warm lit windows and dark ones, one small balcony, laundry on a pole. Light mixes warm amber lanterns with a few cold silver-blue lamps.\n\nThe bottom edge of the image is a straight horizontal line at the foot of the walls, with no ground, no steps and no cobbles in front.\n\nEverything around the subjects (above the roofs, between the panels, around the objects) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-rangs/rangs-ruelle-a.png",
+          "sha256": "03edc3cc328ed147d6118781eef5123cf784a905c2bad9393f1bdda15b18acb7"
+        }
+      ],
+      "brut": {
+        "sha256": "ed1222fb446679d465afc15752d4e991268a7ce19aa810101c078758a33b4c4b",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 5169,
+        "input_tokens_details": {
+          "image_tokens": 4608,
+          "text_tokens": 561
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10657
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/villes-ruelles-canal.png",
+          "fiche": "art-src/decors/villes-ruelles-canal/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "ruelles",
+          "plans": 1,
+          "exemples": [
+            "fond-rang1--7-1"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-villes",
+      "nom": "ruelles-guilde",
+      "date": "2026-10-21T04:20:45.412Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image), of our harbour facades (second image) and of our back-street houses (third image). Do not copy their composition.\n\nPaint ONE isolated background layer for a 2.5D night harbour town, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): the hall of the players' guild at the heart of the old seers' quarter, a wide and stately three-storey building about 14 metres wide, spanning the full width of the image and filling about the lower 90% of it. Scale: a person is about 180 pixels tall in this image. Ground floor: four open round stone arcades, warmly lit inside, showing long wooden card tables, benches and hanging lanterns (no people); first floor: a carved timber gallery with a balustrade and tall lit windows; a large steep slate roof with two dormers and a small lantern turret glowing amber on the ridge; two long veil-blue and silver cloth banners (plain) between the arcades; old cold grey stone and dark timber.\n\nThe bottom edge of the image is a straight horizontal line at the foot of the walls, with no ground, no steps and no cobbles in front.\n\nEverything around the subjects (above the roofs, between the panels, around the objects) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-rangs/rangs-ruelle-a.png",
+          "sha256": "03edc3cc328ed147d6118781eef5123cf784a905c2bad9393f1bdda15b18acb7"
+        }
+      ],
+      "brut": {
+        "sha256": "ac87123e2ce4beaecead6077678c882461724eb2205bc8f30c2d1917c753f907",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 5091,
+        "input_tokens_details": {
+          "image_tokens": 4608,
+          "text_tokens": 483
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10579
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/villes-ruelles-guilde.png",
+          "fiche": "art-src/decors/villes-ruelles-guilde/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "ruelles",
+          "plans": 1,
+          "exemples": [
+            "coeur-ruelles-guilde"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-villes",
+      "nom": "villes-objets",
+      "date": "2026-10-21T04:21:54.672Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image), of our harbour facades (second image) and of our back-street houses (third image). Do not copy their composition.\n\nPaint ONE isolated layer with SIX separate objects arranged in a 3 × 2 grid with wide magenta gaps between them, each seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines) with a slight view from above, each standing on its own straight horizontal base line with a soft contact shadow and no ground around it. Scale: a person would be about 110 pixels tall in this image. Top row: the monument of the Four Ways, an octagonal stone fountain basin with a tall carved column in its centre, crowned by a bronze sphere ringed by four arms pointing four ways, four small hanging cloth pennants in the four family colours (plain), thin streams of water catching the lamplight; a public duel stage, a square wooden platform about one metre high with three steps in front, a small square card table and two stools in its centre, a lantern on a post at each corner, an ivory canvas canopy; a straight segment of stone balustrade standing on top of a tall terrace retaining wall (the edge of a raised square), with an iron lantern post at its right end. Bottom row: a tall iron brazier burning with a warm fire on a short stone plinth; a small wooden betting kiosk with an ivory awning, a counter with small purses and wooden tokens, and a blank dark slate board with small coloured pins only; a tall wooden notice board under a little shingled roof, covered with blank parchment slips held by coloured pins, with nothing written on them.\n\nEverything around the subjects (above the roofs, between the panels, around the objects) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-rangs/rangs-ruelle-a.png",
+          "sha256": "03edc3cc328ed147d6118781eef5123cf784a905c2bad9393f1bdda15b18acb7"
+        }
+      ],
+      "brut": {
+        "sha256": "f3919fba70b467e48e75803438122e2b087f2d2ddd0649701d8b7df00df1f4df",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 5182,
+        "input_tokens_details": {
+          "image_tokens": 4608,
+          "text_tokens": 574
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10670
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/villes-objets.png",
+          "fiche": "art-src/decors/villes-objets/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "parvis",
+          "plans": 12,
+          "exemples": [
+            "parvis-brasero-1",
+            "parvis-brasero-2",
+            "paris-kiosque",
+            "tableau-annonces"
+          ]
+        },
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "cour",
+          "plans": 21,
+          "exemples": [
+            "belvedere-balustrade-1",
+            "belvedere-balustrade-2",
+            "belvedere-balustrade-3",
+            "belvedere-balustrade-4"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-20-v4-villes",
+      "nom": "cour-facades",
+      "date": "2026-10-21T04:23:09.747Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1536x1024",
+      "qualite": "high",
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image), of our harbour facades (second image) and of our back-street houses (third image). Do not copy their composition.\n\nPaint ONE isolated background layer for a 2.5D night harbour town, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): the grand buildings that close the back of the city's central square, about 26 metres wide, spanning the full width of the image and filling about the lower 88% of it. Scale: a person is about 95 pixels tall in this image. In the centre, the Tournament house: a stately three-storey civic hall of cold grey stone, a high round-arched portal with open doors and warm light inside, above it a stone balcony for proclamations with four long cloth banners hanging from it, one in each family colour (ember orange, veil blue and silver, bramble green, star gold), plain; tall lit windows, a steep slate roof with a small belfry. On each side, a tall merchant house joined to it, with an arcaded ground floor sheltering lit shop counters, half-timbered upper storeys and steep roofs; clear vertical party walls between the three buildings; iron wall lanterns glowing warm amber.\n\nThe bottom edge of the image is a straight horizontal line at the foot of the walls, with no ground, no steps and no cobbles in front.\n\nEverything around the subjects (above the roofs, between the panels, around the objects) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-rangs/rangs-ruelle-a.png",
+          "sha256": "03edc3cc328ed147d6118781eef5123cf784a905c2bad9393f1bdda15b18acb7"
+        }
+      ],
+      "brut": {
+        "sha256": "11925353ab27581918d1976783af49c850b1d9e53b4d5d837eae73b7597a906a",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 5129,
+        "input_tokens_details": {
+          "image_tokens": 4608,
+          "text_tokens": 521
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10617
+      },
+      "planches": [
+        {
+          "fichier": "public/decors/villes-cour-facades.png",
+          "fiche": "art-src/decors/villes-cour-facades/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "manifest-profondeur.json",
+          "ilot": "cour",
+          "plans": 1,
+          "exemples": [
+            "fond-rang1--13-1"
+          ]
+        }
+      ]
+    },
+    {
+      "lot": "2026-10-21-j1-joueur",
+      "nom": "player-pixel-j1",
+      "date": "2026-10-21T04:24:47.375Z",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "taille": "1024x1024",
+      "qualite": "high",
+      "prompt": "The attached image is our own pixel-art sprite sheet of the player character, a young card duellist of a night harbour city. Redraw it as the final sprite sheet with the same character, the same outfit and the same placeholder colours, and fix what is wrong: an exact grid of 5 columns and 3 rows of equal cells, nothing between the cells; row 1 facing the viewer, row 2 seen from the back, row 3 right profile walking to the right; column 1 standing still, columns 2 to 5 a clear four-frame walking cycle (legs alternating, arms swinging, head steady); same size in every cell, both boots fully visible and both feet on the same baseline, figure centred.\n\nEach cell is 64 art pixels wide and 96 art pixels tall; the character is about 88 art pixels tall. Stylised RPG proportions, sturdy and not slender, not chibi: about 3 heads tall, the head (hair included) one third of the total height and about 0.35 of the height wide, with big readable eyes; shoulders with the sleeves about 0.40 of the height wide; short sturdy legs and boots; large readable hands.\n\nThe face must stay fully visible: the scarf is knotted loosely UNDER the chin around the neck and never covers the mouth or the nose; a small mouth, a hint of nose shading, short eyebrows, clearly drawn eyes with a dark outline, blue iris and a white catchlight, soft cheek shading. Silver-white bob with a straight fringe drawn as distinct locks with two highlight tones; the cloth headband across the forehead; the lowered hood framing the neck; a leather satchel on a strap across the chest.\n\nPremium illustrative pixel art: crisp square pixels of one uniform size across the whole sheet; colour ramps of five tones per material, cool and saturated in the shadows and warm in the highlights; selective dark outlines; soft directional shading with readable fabric folds; one small warm amber accent only (the belt buckle); clean pixel clusters, no dithering, no scattered noise, no mechanical stripes, no pillow shading, no anti-aliasing, no gradients, no blur.\n\nPlaceholder colours for in-game recolouring: coat and lowered hood in flat shades of pure magenta only (from #400040 to #FF00FF), headband and scarf in flat shades of pure green only (from #004000 to #00FF00); everything else in natural muted colours (skin, silver hair, dark blue trousers, brown leather), no other magenta or green anywhere.\n\nA perfectly flat, uniform pure cyan (#00FFFF) background with no shading, no texture, no floor and no cast shadow.\n\nNo text, no letters, no numbers, no grid lines, no labels, no watermark, no logos, no playing-card suit symbols.",
+      "entrees": [
+        {
+          "chemin": "<dossier principal>/art-gen/2026-10-20-v4-quai-2/player-pixel-64.png",
+          "sha256": "ddaac8592b896cc8d16e141d8d24d809c9ed0e5a31b606c1843e3945e97aa6f9"
+        }
+      ],
+      "brut": {
+        "sha256": "611e219dc7501eac659087dd3c3c3e91ac4178c39c3cd8bf2c1b6950fa7b371c",
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 1605,
+        "input_tokens_details": {
+          "image_tokens": 1024,
+          "text_tokens": 581
+        },
+        "output_tokens": 7024,
+        "output_tokens_details": {
+          "image_tokens": 7024,
+          "text_tokens": 0
+        },
+        "total_tokens": 8629
+      },
+      "planches": [
+        {
+          "fichier": "public/sprites/player.png",
+          "fiche": "art-src/sprites/player/fiche.json",
+          "approved": false
+        }
+      ],
+      "dans_le_jeu": [
+        {
+          "manifeste": "sprites/manifest.json",
+          "feuille": "player"
+        }
+      ]
+    }
+  ],
+  "references": [
+    {
+      "demande": "2026-10-19-0805-quai-marcheur-facades",
+      "fichier": "reference/generated/2026-10-19-0805-quai-marcheur-facades/01.png",
+      "date": "2026-10-19T07:13:32.537Z",
+      "modele": "gpt-image-2",
+      "statut": "référence de travail, non approuvée",
+      "usage": "référence de conception, jamais dans le jeu",
+      "prompt": "Character turnaround sheet on a plain neutral dark slate background: a generic town card-duellist, full body, shown from the front, from the back and in profile, plus a 4-pose walk cycle in a row. Flat illustration style with clean flat colour areas and a thin outline, simple expressive face, slightly large head with moderate chibi proportions, clear silhouette readable at small size. Hooded travel coat, satchel with a card case, no weapon. Consistent design across all views.\n\nStyle bible: HD-2D theatrical look, polished illustrated rendering, staged like a theatre play; night scene, near-monochrome indigo and slate dominant, cool grey stone as secondary, warm amber lantern light as the ONLY warm accent, desaturated ivory for canvas and highlights; props concentrated at focal points (lantern clusters, quay edge, stalls, a few banners), never uniform clutter; world of \"Les Quatre Voies\": a harbour city where people challenge each other at card duels; four families: Ember (embers, orange), Veil (blue and silver), Bramble (green, thorns), Star (gold, stars). No readable text, no logos, no watermark, no modern objects."
+    },
+    {
+      "demande": "2026-10-19-0805-quai-marcheur-facades",
+      "fichier": "reference/generated/2026-10-19-0805-quai-marcheur-facades/02.png",
+      "date": "2026-10-19T07:13:32.537Z",
+      "modele": "gpt-image-2",
+      "statut": "référence de travail, non approuvée",
+      "usage": "référence de conception, jamais dans le jeu",
+      "prompt": "Character turnaround sheet on a plain neutral dark slate background: two generic harbour townsfolk side by side, a female market merchant (apron, headscarf, small coin pouch) and a male dockworker (rolled sleeves, cap, rope over shoulder), each full body seen from the front, from the back and in profile, plus a 4-pose walk cycle. Same flat illustration style with clean flat colour areas and thin outline, simple expressive faces, slightly large heads with moderate chibi proportions, subtle colour variations between them, no weapons.\n\nStyle bible: HD-2D theatrical look, polished illustrated rendering, staged like a theatre play; night scene, near-monochrome indigo and slate dominant, cool grey stone as secondary, warm amber lantern light as the ONLY warm accent, desaturated ivory for canvas and highlights; props concentrated at focal points (lantern clusters, quay edge, stalls, a few banners), never uniform clutter; world of \"Les Quatre Voies\": a harbour city where people challenge each other at card duels; four families: Ember (embers, orange), Veil (blue and silver), Bramble (green, thorns), Star (gold, stars). No readable text, no logos, no watermark, no modern objects."
+    },
+    {
+      "demande": "2026-10-19-0805-quai-marcheur-facades",
+      "fichier": "reference/generated/2026-10-19-0805-quai-marcheur-facades/03.png",
+      "date": "2026-10-19T07:13:32.537Z",
+      "modele": "gpt-image-2",
+      "statut": "référence de travail, non approuvée",
+      "usage": "référence de conception, jamais dans le jeu",
+      "prompt": "Concept art, TILTED TOP-DOWN perspective camera at about 45 degrees: the entrance facade of the Fanal, a harbour tavern on the night quay. Timber and stone front, a hanging signboard with a painted lantern emblem and no text, a warm amber lantern by the door, the door open with warm light spilling onto wet cobblestones, a couple of barrels and a bench, dark water at the quay edge in the foreground.\n\nStyle bible: HD-2D theatrical look, polished illustrated rendering, staged like a theatre play; night scene, near-monochrome indigo and slate dominant, cool grey stone as secondary, warm amber lantern light as the ONLY warm accent, desaturated ivory for canvas and highlights; props concentrated at focal points (lantern clusters, quay edge, stalls, a few banners), never uniform clutter; world of \"Les Quatre Voies\": a harbour city where people challenge each other at card duels; four families: Ember (embers, orange), Veil (blue and silver), Bramble (green, thorns), Star (gold, stars). No readable text, no logos, no watermark, no modern objects."
+    },
+    {
+      "demande": "2026-10-19-0805-quai-marcheur-facades",
+      "fichier": "reference/generated/2026-10-19-0805-quai-marcheur-facades/04.png",
+      "date": "2026-10-19T07:13:32.537Z",
+      "modele": "gpt-image-2",
+      "statut": "référence de travail, non approuvée",
+      "usage": "référence de conception, jamais dans le jeu",
+      "prompt": "Concept art, TILTED TOP-DOWN perspective camera at about 45 degrees: the entrance of the card hall on the night quay, a vaulted stone archway with a heavy wooden door, four tall family banners hanging beside it (ember orange, veil blue-silver, bramble green, star gold, emblems only, no text), two amber lanterns flanking the door, a few steps and cobblestones.\n\nStyle bible: HD-2D theatrical look, polished illustrated rendering, staged like a theatre play; night scene, near-monochrome indigo and slate dominant, cool grey stone as secondary, warm amber lantern light as the ONLY warm accent, desaturated ivory for canvas and highlights; props concentrated at focal points (lantern clusters, quay edge, stalls, a few banners), never uniform clutter; world of \"Les Quatre Voies\": a harbour city where people challenge each other at card duels; four families: Ember (embers, orange), Veil (blue and silver), Bramble (green, thorns), Star (gold, stars). No readable text, no logos, no watermark, no modern objects."
+    },
+    {
+      "demande": "2026-10-19-quai-direction-d",
+      "fichier": "reference/generated/2026-10-19-quai-direction-d/01.png",
+      "date": "2026-10-19T17:28:47.128Z",
+      "modele": "gpt-image-2",
+      "statut": "référence de travail ; direction D retenue par le responsable le 2026-10-19 (« Je retiens la direction D : décor encré comme une illustration de carte, avec les couleurs des quatre familles. »)",
+      "usage": "référence de conception de la direction artistique du décor de la ville (M09 V3), jamais dans le jeu ni dans le build",
+      "prompt": "Concept art in a FRONTAL 2.5D side-on view with a gentle 8-degree downward tilt (the camera faces the building fronts like a stage seen from the stalls; NOT top-down, NOT isometric): a night harbour quay in a port city where people challenge each other to card duels. Bottom of the image: dark water with long lantern reflections and two moored boats with masts and rigging. Then the stone quay wall with iron mooring rings and a small water stair. Middle: a wet cobbled quay street where a small chibi-proportioned hooded card duellist in a long coat walks, a market stall with an ivory canvas awning and a cluster of hanging lanterns, iron lamp posts. Behind: a row of varied facades: a stone card hall with four tall family banners and arched doors, a narrow half-timbered house with its gable facing the street, the Fanal tavern with a wooden balcony, an open glowing door and a hanging lantern sign, a shipowner's house; slate roofs, chimneys, dormers. Far behind: an upper town climbing a hill with a cathedral, and a low moon. Four card families: Ember (orange embers), Veil (blue and silver), Bramble (green thorns), Star (gold stars). No readable text, no letters, no logos, no watermark, no modern objects.\n\nArt style: the inked illustration of a collectible playing card combined with the colour identity of the four card families: hand-inked contour lines on every edge, flat colour shapes with one or two shading bands, fine hatching in the shadows, a subtle paper grain; deep ink-blue night; each family brings its jewel colour to lights and glass (ember-orange braziers and lanterns at the tavern, bramble-green lamps at the stall, a blue-silver Veil moonlight on the hill town, star-gold gilding on emblems, sign frames and ironwork); softly glowing card-suit glyphs on the quay wall and lamp posts; stained glass with the family emblems in the card hall. Graphic, elegant, readable, theatrical."
+    },
+    {
+      "demande": "2026-10-19-quai-nuit-cameras",
+      "fichier": "reference/generated/2026-10-19-quai-nuit-cameras/01.png",
+      "date": "2026-10-19T06:26:54.068Z",
+      "modele": "gpt-image-2",
+      "statut": "02.png (vue de face) : référence APPROUVÉE de la ville par le responsable le 2026-10-19 (« Le Quai de face (première image) », fiche HD-2D stylisé et grande cour, ADR 028) ; 01.png (vue inclinée) : référence de travail, non approuvée",
+      "usage": "référence de conception, jamais dans le jeu",
+      "prompt": "Concept art for an exploration game, TILTED TOP-DOWN perspective camera at about 45 degrees (like Octopath Traveler HD-2D): a small night harbour block called the Quay. Cobblestone quay edge along dark water with moored boats, two or three stone-and-timber houses with lit windows, a merchant stall with a canvas awning, clusters of hanging lanterns, a few family banners, crates and ropes at focal points. A small hooded card-duellist character walking in the centre of the street, readable silhouette. Shallow tilt-shift depth of field at top and bottom edges.\n\nStyle bible: HD-2D theatrical look, polished illustrated rendering, staged like a theatre play; night scene, near-monochrome indigo and slate dominant, cool grey stone as secondary, warm amber lantern light as the ONLY warm accent, desaturated ivory for canvas and highlights; props concentrated at focal points (lantern clusters, quay edge, stalls, a few banners), never uniform clutter; world of \"Les Quatre Voies\": a harbour city where people challenge each other at card duels; four families: Ember (embers, orange), Veil (blue and silver), Bramble (green, thorns), Star (gold, stars). No readable text, no logos, no watermark, no modern objects."
+    },
+    {
+      "demande": "2026-10-19-quai-nuit-cameras",
+      "fichier": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+      "date": "2026-10-19T06:26:54.068Z",
+      "modele": "gpt-image-2",
+      "statut": "02.png (vue de face) : référence APPROUVÉE de la ville par le responsable le 2026-10-19 (« Le Quai de face (première image) », fiche HD-2D stylisé et grande cour, ADR 028) ; 01.png (vue inclinée) : référence de travail, non approuvée",
+      "usage": "référence de conception, jamais dans le jeu",
+      "prompt": "Concept art for an exploration game, FRONTAL 2.5D camera, almost eye-level at about 15 degrees, side-scrolling depth layers (foreground silhouettes, play street, background facades, far skyline): the same small night harbour block called the Quay. Cobblestone street running left to right, a quay edge with dark water and boat masts in front, stone-and-timber facades with lit windows behind, a merchant stall with canvas awning, hanging lantern clusters, a few family banners. A small hooded card-duellist character walking along the street, readable silhouette. Gentle atmospheric haze between layers.\n\nStyle bible: HD-2D theatrical look, polished illustrated rendering, staged like a theatre play; night scene, near-monochrome indigo and slate dominant, cool grey stone as secondary, warm amber lantern light as the ONLY warm accent, desaturated ivory for canvas and highlights; props concentrated at focal points (lantern clusters, quay edge, stalls, a few banners), never uniform clutter; world of \"Les Quatre Voies\": a harbour city where people challenge each other at card duels; four families: Ember (embers, orange), Veil (blue and silver), Bramble (green, thorns), Star (gold, stars). No readable text, no logos, no watermark, no modern objects."
+    }
+  ]
+}
