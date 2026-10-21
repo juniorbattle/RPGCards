@@ -107,7 +107,7 @@ lisibles dans la Collection).
   l'étape « défi officiel engagé » d'une voie se lit dans l'état de la famille, plus dans le registre.
 - Parcours au navigateur jusqu'aux quatre chefs : `npm run qa:voies` (`tools/m10d-voies.mjs`).
 
-## Amendement 5 (2026-10-21, reprise de M09, passe 93) : la ville en rangs
+## Amendement 5 (2026-10-21, reprise de M09, passe 93 ; ratifié par le responsable, fiche de la reprise, R5, passe 97) : la ville en rangs
 
 - La décision de l'amendement 2 s'étend à **toute la ville en rangs** (ADR 028, passe 93) : le Quai, le Parvis et les
   Ruelles en quatre rangs, et la Grande Cour. `villeEnRangs` (au lieu de `quaiEnRangs`) : les dioramas des quatre îlots

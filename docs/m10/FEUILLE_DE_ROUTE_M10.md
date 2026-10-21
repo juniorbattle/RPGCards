@@ -110,6 +110,11 @@ collection reconstruite depuis le registre identique à la collection stockée.
 
 ## M10-E — Ville vivante, rival, Championnat
 
+> **Lot suivant (décision S1 de la fiche de la reprise de M09, 2026-10-21, <https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1>)** : la reprise de M09 est livrée et
+> reçue (passes 93 à 97) : la ville en rangs (Quai, Parvis, Ruelles en quatre rangs, la Grande Cour) est celle de
+> l'aventure ; la Grande Cour existe : les scènes de M10-E s'y jouent. Les feuilles des PNJ de la ville viendront après
+> M10-E (P2).
+
 **Contenu :** directeur des rencontres branché sur les îlots (et les rangs à la reprise de M09) ; duels de rue ; défis
 de Kaï (un par chapitre) ; Championnat (Quatre Bannières, Miroir, Finale en deux manches gagnantes avec changement de
 Signature entre les manches) ; scènes de la Grande Cour si elle existe (sinon, Parvis).
