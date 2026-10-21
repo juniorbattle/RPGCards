@@ -16,7 +16,7 @@ import type { Facing } from '../ville/monde';
 import type { IlotId } from '../ville/ilots';
 import { chapitreDetaille, statutDefi, type AventureEtat } from './aventure';
 import { deF, emissaire, FIGURES, KAI_PROLOGUE } from './modele';
-import { ELITE_JOUTE, MEMBRES_EPREUVE } from './competitions';
+import { ELITE_JOUTE, manche, MEMBRES_EPREUVE, ouvertChampionnat } from './competitions';
 import { aGain } from './registre';
 import { personalityById } from '../presentation/personalities';
 
@@ -150,6 +150,14 @@ export const RENCONTRES: readonly RencontreDef[] = [
       repere: (e) => (e.competitions.joutes[f]?.gagnee ? null : '!'),
     },
   ]),
+  // M10-E : le héraut du Tournoi, devant l'estrade de la Grande Cour, dès que le Championnat est ouvert : il en ouvre les
+  // duels et en proclame le titre (ouverture et clôture dans la Grande Cour, PROGRESSION §4) ; ville en rangs seulement.
+  {
+    id: 'heraut', genre: 'structurante', apparence: 'pnj-commis-40', nom: 'le héraut du Tournoi',
+    lieux: [{ ilot: 'cour', at: { x: -7.5, z: -6.9 }, facing: 'face', rangs: true }],
+    dispo: (e) => ouvertChampionnat(e.familles), delai: 0, poids: 1,
+    repere: (e) => (manche(e.competitions) === 'titre' ? null : '!'),
+  },
   // Le rival : un défi facultatif par chapitre au plus, après le prologue (P-N8) ; M10-E : aussi dans la cour des
   // Champions, sur la placette de l'Olivier et dans la Grande Cour (ville en rangs).
   {
@@ -220,7 +228,7 @@ export function poses(d: EtatDirecteur, e: AventureEtat, ilot: IlotId, quaiRangs
   for (const r of RENCONTRES) {
     if ((r.genre !== 'structurante' && r.genre !== 'competition') || !r.dispo(e)) continue;
     const l = r.lieux.find((x) => x.ilot === ilot);
-    if (!l) continue;
+    if (!l || (!quaiRangs && l.rangs)) continue;
     // Un même personnage n'est posé qu'une fois (l'émissaire et le cadet sont la même figure).
     if (out.some((p) => p.apparence === r.apparence)) continue;
     out.push({ id: r.id, apparence: r.apparence, nom: r.nom, ...ou(l), repere: r.repere(e), genre: r.genre });

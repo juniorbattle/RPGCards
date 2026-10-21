@@ -8,13 +8,15 @@ import { FAMILIES, type Family } from '../game/catalog/cards';
 import { deF, figure, figureDe, FIGURES, isNeutre, leF, MAISONS, ORDRE_ETAT, ROLE_LABEL, TECHNIQUES_RUE, type EtatFamille, type Figure, type SceneId } from './modele';
 import { accorder, aGain, collectionDe, gainBasics, gainNeutres, gainSignature, gainTechnique, gainVariante, type Gain } from './registre';
 import { deckDepart, equiperTechnique, equiperVersion, integrerBasics, standardLegal, type DeckAv } from './deck';
-import { finEpreuve, finFinale, finJoute, finMiroir, finPoule, nouvellesCompetitions, ouvertChampionnat, statutEpreuve, statutJoute, type EtatCompetitions } from './competitions';
+import { finEpreuve, finFinale, finJoute, finMiroir, finPoule, manche, nouvellesCompetitions, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, type EtatCompetitions } from './competitions';
 
 /** Faits PUBLICS d'un duel (journal public du joueur) : aucun secret (ADR 011, ADR 029 §5). */
 export interface FaitsPublics {
   assautsGagnes: number;
   gardesGagnees: number;
   interferencesReussies: number;
+  /** Familles des Primaires révélées par le joueur (publiques ; M10-E, le Miroir). */
+  familles?: Partial<Record<Family, number>>;
 }
 
 export type Issue = 'victoire' | 'defaite' | 'abandon';
@@ -309,6 +311,12 @@ function appliquerBrut(e0: AventureEtat, ev: Evenement, at: string): Resultat {
 
     case 'championnat': {
       if (!ouvertChampionnat(e.familles)) return refuse('Le Championnat s’ouvre quand les quatre chefs sont vaincus.');
+      // M10-E : les contraintes de la manche se vérifient ici, dans la logique pure (l'écran ne fait que les montrer)
+      const m = manche(e.competitions);
+      if (m !== ev.manche) return refuse(m === 'titre' ? 'Le Championnat est remporté.' : `Le Championnat en est à la manche « ${m} ».`);
+      const st = ev.manche === 'poule' ? (ev.chef ? statutPoule(e.competitions, ev.chef, ev.signature) : { ouvert: false, texte: 'Un duel de poule se joue contre un chef.' })
+        : ev.manche === 'finale' ? statutFinale(e.competitions, ev.signature) : { ouvert: true, texte: '' };
+      if (!st.ouvert) return refuse(st.texte);
       const v = ev.issue === 'victoire';
       if (ev.manche === 'poule' && ev.chef) e.competitions = finPoule(e.competitions, ev.chef, ev.signature, v);
       else if (ev.manche === 'miroir') e.competitions = finMiroir(e.competitions, v);

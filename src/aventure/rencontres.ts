@@ -13,8 +13,8 @@ import { nouvelleAventure, type AventureEtat } from './aventure';
 import { siegeAventure } from './deck';
 import { rencontreDef } from './directeur';
 import { deF, figure, FIGURES, KAI_PROLOGUE, TECHNIQUES_RUE, TENANTE } from './modele';
-import { ELITE_JOUTE, MEMBRES_EPREUVE, varianteDe } from './competitions';
-import { adversaire, PALIER_NOM, pvJoueur, type Adversaire, type RoleAdverse } from './paliers';
+import { ELITE_JOUTE, famillesDominantes, MEMBRES_EPREUVE, signatureTenante, varianteDe } from './competitions';
+import { adversaire, adversaireMiroir, PALIER_NOM, pvJoueur, type Adversaire, type RoleAdverse } from './paliers';
 
 export interface DuelPrevu {
   rencontre: string;
@@ -107,8 +107,13 @@ export function duelJoute(f: Family, e: AventureEtat, seed: number, rejouee: boo
   };
 }
 
-/** Duels du Championnat : champions (seize variantes et Signature) ; la Signature du joueur suit les contraintes. */
-export function duelChampionnat(m: 'poule' | 'miroir' | 'finale', e: AventureEtat, seed: number, chef?: Family): DuelPrevu {
+/**
+ * Duels du Championnat : champions (seize variantes et Signature) ; la Signature du joueur suit les contraintes.
+ * M10-E : le Miroir est construit sur les deux familles dominantes du joueur (ses cinq derniers duels, `historique`) ;
+ * contre Kaï, ou, si le joueur est de la Cendre (la maison de Kaï), contre le bras droit de sa première famille
+ * dominante d'une autre maison ; la Tenante équipe à chaque manche la Signature de son plan public (`PLAN_TENANTE`).
+ */
+export function duelChampionnat(m: 'poule' | 'miroir' | 'finale', e: AventureEtat, seed: number, chef?: Family, historique: readonly { familles?: Partial<Record<Family, number>> }[] = []): DuelPrevu {
   let p: RivalPersonality;
   let titre: string;
   let adv: Adversaire;
@@ -118,11 +123,19 @@ export function duelChampionnat(m: 'poule' | 'miroir' | 'finale', e: AventureEta
     p = personnalite(fig.apparence, { nom: fig.nom, titre: fig.titre, famille: fig.famille, techniques: fig.techniques, gender: fig.gender, profil: adv.profil });
     titre = `Championnat — les Quatre Bannières — ${fig.nom}`;
   } else if (m === 'miroir') {
-    adv = adversaire('championnat', 'Cendre', niveauDe(e), ['Sondage', 'Lecture']);
-    p = personnalite('braise', { nom: 'Kaï', titre: 'la Braise du quai, finaliste', profil: adv.profil });
-    titre = 'Championnat — le Miroir — Kaï';
+    const dom = famillesDominantes(historique, e.affiliation);
+    if (e.affiliation !== 'Cendre') {
+      adv = adversaireMiroir([...dom, 'Cendre'], 'Cendre', niveauDe(e), ['Sondage', 'Lecture']);
+      p = personnalite('braise', { nom: 'Kaï', titre: 'la Braise du quai, finaliste', profil: adv.profil });
+      titre = 'Championnat — le Miroir — Kaï';
+    } else {
+      const fig = figure(`brasDroit-${dom.find((f) => f !== 'Cendre') ?? 'Ronce'}`);
+      adv = adversaireMiroir([...dom, fig.famille], fig.famille, niveauDe(e), [...fig.techniques]);
+      p = personnalite(fig.apparence, { nom: fig.nom, titre: `${fig.titre}, finaliste`, famille: fig.famille, techniques: fig.techniques, gender: fig.gender, profil: adv.profil });
+      titre = `Championnat — le Miroir — ${fig.nom}`;
+    }
   } else {
-    adv = adversaire('finale', TENANTE.famille, niveauDe(e), ['Lecture', 'Ancrage']);
+    adv = adversaire('finale', signatureTenante(e.competitions), niveauDe(e), ['Lecture', 'Ancrage']);
     p = personnalite(TENANTE.apparence, { nom: TENANTE.nom, titre: TENANTE.titre, famille: TENANTE.famille, techniques: ['Lecture', 'Ancrage'], profil: adv.profil });
     titre = `Championnat — la Finale — ${TENANTE.nom}, ${TENANTE.titre}`;
   }
@@ -135,4 +148,4 @@ export function duelChampionnat(m: 'poule' | 'miroir' | 'finale', e: AventureEta
 const VENUE_DE: Record<Family, VenueId> = { Cendre: 'rue', Ronce: 'bar', Voile: 'salle', Astre: 'arene' };
 
 /** Tous les adversaires possibles (préparation des personnages aux temps morts, contrôles). */
-export const APPARENCES = [...new Set([KAI_PROLOGUE.apparence, ...FIGURES.map((f) => f.apparence), 'pnj-docker-1', 'pnj-joueuse-5', 'pnj-commis-5', 'pnj-joueuse-31', TENANTE.apparence, ...Object.values(MEMBRES_EPREUVE).flat(), ...Object.values(ELITE_JOUTE)])];
+export const APPARENCES = [...new Set([KAI_PROLOGUE.apparence, ...FIGURES.map((f) => f.apparence), 'pnj-docker-1', 'pnj-joueuse-5', 'pnj-commis-5', 'pnj-joueuse-31', 'pnj-commis-40', TENANTE.apparence, ...Object.values(MEMBRES_EPREUVE).flat(), ...Object.values(ELITE_JOUTE)])];

@@ -128,6 +128,16 @@ lisibles dans la Collection).
 - Un refus laisse le personnage jusqu'au point de décision suivant, puis il repart (`partants`) ; « Continuer » n'est
   pas un point de décision (la ville se relit). Champs facultatifs : les sauvegardes antérieures se relisent.
 
+## Amendement 7 (2026-10-21, lot M10-E, passe 100) : le Championnat dans la logique pure et la Grande Cour
+
+- Les contraintes d'une manche du Championnat (la manche en cours, la Signature changée à chaque duel de poule et
+  différente pour chaque victoire, la Signature changée entre deux manches de la Finale) sont vérifiées par
+  `appliquer` : un fait qui les enfreint est refusé et l'état ne change pas ; l'écran ne fait que les montrer.
+- Le Miroir lit les familles des Primaires révélées par le joueur (publiques, rangées dans l'historique des duels) ; la
+  Tenante équipe la Signature de son plan public à chaque manche ; aucun PV ni aucune Puissance ne change.
+- Dans la ville en rangs, le héraut du Tournoi (Grande Cour) ouvre le Championnat, en mène les duels et en proclame le
+  titre ; la porte de l'arène reste une entrée (et la seule dans la ville d'aujourd'hui).
+
 ## Alternatives écartées
 
 - **Réutiliser l'enveloppe standard (`Shell`)** en lui donnant une autre source de données : refonte du code du mode

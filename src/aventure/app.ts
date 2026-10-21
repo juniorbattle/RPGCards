@@ -42,7 +42,7 @@ import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre
 import { objectif, quetes } from './quetes';
 import { aGain, collectionDe, type Gain } from './registre';
 import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue, personnalite, type DuelPrevu } from './rencontres';
-import { CONTRAINTE_JOUTE, manche, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, varianteDe } from './competitions';
+import { CONTRAINTE_JOUTE, famillesDominantes, manche, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, varianteDe } from './competitions';
 import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave, type DuelAventure } from './sauvegarde';
 import { installAventureStyles } from './styles';
 import { pvJoueur } from './paliers';
@@ -483,8 +483,24 @@ export class AventureApp {
     if (/^(cadet|brasDroit|chef)-/.test(id)) return this.figureDialog(id);
     if (id.startsWith('epreuve-')) return this.epreuveDialog(id.slice(8) as Family);
     if (id.startsWith('joute-')) return this.jouteDialog(id.slice(6) as Family);
+    if (id === 'heraut') return this.heraut();
     const r = rencontreDef(id);
     if (r) return this.facultatif(id);
+  }
+
+  /**
+   * Le héraut du Tournoi, dans la Grande Cour (M10-E) : à la première rencontre, l'ouverture du Championnat devant
+   * l'estrade ; ensuite, il en mène les duels comme la porte de l'arène ; après le titre, il proclame.
+   */
+  private heraut(): void {
+    const c = this.etat.competitions.championnat;
+    if (manche(this.etat.competitions) === 'titre') return this.dire('Le héraut du Tournoi', '« Personne en ville ne joue mieux que vous. La Grande Cour l’a proclamé, et elle s’en souviendra. » Les revanches restent ouvertes, sans enjeu.', [fermer(this)], 'pnj-commis-40');
+    const ouverture = !Object.keys(c.poule).length && !c.dernier && !c.miroir && !c.finale.length;
+    if (ouverture) return this.dire('Le Championnat des Champions', '« Duellistes de la ville ! » Sur l’estrade, les quatre chefs lèvent leur bannière. « Quiconque a vaincu les quatre maisons peut prétendre au titre : quatre bannières, un miroir, une finale. » La foule de la Grande Cour se tourne vers vous.', [
+      { label: 'S’inscrire', key: 'dlg-next', primary: true, run: () => this.championnatDialog() },
+      { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
+    ], 'pnj-commis-40');
+    this.championnatDialog();
   }
 
   private kaiPrologue(): void {
@@ -626,10 +642,17 @@ export class AventureApp {
       const vaincus = Object.keys(c.championnat.poule).length;
       return this.dire('Les Quatre Bannières', `Battez trois des quatre chefs, avec une Signature différente à chaque victoire (${vaincus}/3). Signature équipée : ${sig ? CATALOG[`sig-${sig}`]!.name : 'aucune'}.${choix.length ? '' : ' Aucun duel possible avec cette Signature : changez-la dans le deck.'}`, [...choix, { label: 'Ouvrir le deck', key: 'dlg-deck', run: () => { this.fermerDialogue(); this.collection(); } }, { label: 'Plus tard', key: 'dlg-close', primary: !choix.length, run: () => this.fermerDialogue() }]);
     }
-    if (m === 'miroir') return this.dire('Le Miroir', '« On a commencé ensemble, le soir du tournoi. On finit ensemble. » Kaï a gagné sa place en demi-finale.', [
-      { label: 'Affronter Kaï', key: 'dlg-duel', primary: true, run: () => this.preparer(duelChampionnat('miroir', this.etat, this.prochaineGraine())) },
-      { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
-    ], 'braise');
+    if (m === 'miroir') {
+      // M10-E : le Miroir est construit sur vos deux familles les plus jouées (vos cinq derniers duels, données publiques)
+      const prevu = (): DuelPrevu => duelChampionnat('miroir', this.etat, this.prochaineGraine(), undefined, this.save!.historique);
+      const dom = famillesDominantes(this.save!.historique, e.affiliation);
+      const kai = e.affiliation !== 'Cendre';
+      const qui = kai ? 'Kaï' : figure(`brasDroit-${dom.find((f) => f !== 'Cendre') ?? 'Ronce'}`).nom;
+      return this.dire('Le Miroir', `${kai ? '« On a commencé ensemble, le soir du tournoi. On finit ensemble. » Kaï a gagné sa place en demi-finale.' : `${qui} a gagné sa place en demi-finale.`} Son deck est construit sur vos deux familles les plus jouées : ${la(dom[0])} et ${la(dom[1])}.`, [
+        { label: `Affronter ${qui}`, key: 'dlg-duel', primary: true, run: () => this.preparer(prevu()) },
+        { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
+      ], kai ? 'braise' : figure(`brasDroit-${dom.find((f) => f !== 'Cendre') ?? 'Ronce'}`).apparence);
+    }
     const st = statutFinale(c, sig);
     this.dire('La Finale', `${TENANTE.nom}, ${TENANTE.titre}, vous attend. Deux manches gagnantes ; changez de Signature entre deux manches. ${st.texte}`, st.ouvert ? [
       { label: 'Jouer la manche', key: 'dlg-duel', primary: true, run: () => this.preparer(duelChampionnat('finale', this.etat, this.prochaineGraine())) },
@@ -871,13 +894,15 @@ export class AventureApp {
     let gains: Gain[] = [];
     const s = this.save;
     s.duel = null;
-    s.historique = [...s.historique, { id: live.duel.id, rencontre, issue, turns: v.turn, at }].slice(-60);
+    // familles des Primaires révélées par le joueur (publiques) : le Miroir du Championnat les lit (M10-E)
+    const faits = faitsPublics(c.match.events);
+    const familles = faits.familles;
+    s.historique = [...s.historique, { id: live.duel.id, rencontre, issue, turns: v.turn, at, ...(familles ? { familles } : {}) }].slice(-60);
     s.directeur = battre(s.directeur);
     // AV-08 : les PV du joueur montent à chaque combat mené à son terme (pas à l'abandon)
     const pvAvant = pvJoueur(s.etat.combats);
     s.etat = appliquer(s.etat, { type: 'combat', issue }, at).etat;
     const pvApres = pvJoueur(s.etat.combats);
-    const faits = faitsPublics(c.match.events);
     if (rencontre === 'prologue') s.etat = appliquer(s.etat, { type: 'duelPrologue', issue, faits }, at).etat;
     else if (figureOuNull(rencontre)) {
       const r = appliquer(s.etat, { type: 'duelStructurant', figure: rencontre, issue, duel: live.duel.id }, at);
@@ -934,9 +959,13 @@ export class AventureApp {
       return;
     }
     if (rencontre.startsWith('champ:')) {
-      this.entrerVille(false, 'porte-arene');
+      // M10-E : on revient devant le héraut si l'on venait de la Grande Cour, sinon à la porte de l'arène
+      const cour = this.town?.ilotId() === 'cour';
+      this.entrerVille(false, cour ? 'npc-heraut' : 'porte-arene');
       if (rencontre === 'champ:finale' && this.etat.competitions.championnat.titre && r.issue === 'victoire') {
-        this.dire('Le Championnat des Champions', 'La foule envahit le Parvis. Les quatre chefs se lèvent ; Kaï vous tend la main : « Personne en ville ne joue mieux que toi. Je le savais depuis le premier soir. » (La cérémonie aura lieu dans la Grande Cour quand elle sera construite.)', [fermer(this)]);
+        this.dire('Le Championnat des Champions', cour
+          ? 'La Grande Cour déborde jusqu’au Belvédère. Sur l’estrade, les quatre chefs lèvent leur bannière, et le héraut proclame : « Le titre de la ville vous revient : personne ne joue mieux ! » Kaï vous tend la main : « Personne en ville ne joue mieux que toi. Je le savais depuis le premier soir. »'
+          : `La foule envahit le Parvis. Les quatre chefs se lèvent ; Kaï vous tend la main : « Personne en ville ne joue mieux que toi. Je le savais depuis le premier soir. »${this.quaiRangs ? ' Le héraut vous attend dans la Grande Cour pour la proclamation.' : ''}`, [fermer(this)]);
       }
       return;
     }

@@ -9,7 +9,11 @@ import { describe, expect, it } from 'vitest';
 import type { Family } from '../src/game/catalog/cards';
 import { appliquer, chapitreDetaille, nouvelleAventure, type AventureEtat, type Evenement } from '../src/aventure/aventure';
 import { battre, conclure, decider, nouveauDirecteur, poses, RENCONTRES, type EtatDirecteur } from '../src/aventure/directeur';
+import { famillesDominantes, PLAN_TENANTE } from '../src/aventure/competitions';
+import { faitsPublics } from '../src/aventure/faits';
 import { figureDe, ROLES } from '../src/aventure/modele';
+import { PV_ADVERSE } from '../src/aventure/paliers';
+import { duelChampionnat } from '../src/aventure/rencontres';
 import type { IlotId } from '../src/ville/ilots';
 
 const AT = '2026-10-21T08:00:00.000Z';
@@ -137,5 +141,90 @@ describe('M10-E — le directeur dans la ville en rangs', () => {
     const ancien = { ...nouveauDirecteur(8) } as Partial<EtatDirecteur>;
     delete ancien.debuts; delete ancien.partants;
     expect(() => decider(ancien as EtatDirecteur, e, 'cour', true)).not.toThrow();
+  });
+});
+
+describe('M10-E — le Championnat des Champions (PROGRESSION §4)', () => {
+  const v = (): AventureEtat => trame()[4]!;
+  const champ = (e: AventureEtat, manche: 'poule' | 'miroir' | 'finale', signature: Family, issue: 'victoire' | 'defaite', chef?: Family) => appliquer(e, { type: 'championnat', manche, chef, signature, issue }, AT);
+
+  it('poule : la Signature change à chaque duel, gagné ou perdu ; une différente pour chaque victoire ; vérifié dans la logique pure', () => {
+    let e = v();
+    let r = champ(e, 'poule', 'Voile', 'defaite', 'Cendre');
+    expect(r.refus).toBeUndefined();
+    e = r.etat;
+    // le même chef rejoué avec la même Signature : refusé (elle doit changer) ; avec une autre : accepté
+    expect(champ(e, 'poule', 'Voile', 'victoire', 'Cendre').refus).toMatch(/change à chaque duel/);
+    r = champ(e, 'poule', 'Astre', 'victoire', 'Cendre');
+    expect(r.refus).toBeUndefined();
+    e = r.etat;
+    expect(champ(e, 'poule', 'Astre', 'victoire', 'Ronce').refus).toMatch(/déjà servi|change à chaque duel/);
+    e = champ(e, 'poule', 'Voile', 'victoire', 'Ronce').etat;
+    e = champ(e, 'poule', 'Cendre', 'victoire', 'Astre').etat;
+    expect(Object.keys(e.competitions.championnat.poule).sort()).toEqual(['Astre', 'Cendre', 'Ronce']);
+    // la poule est close : un duel de poule de plus est refusé, la manche est le Miroir
+    expect(champ(e, 'poule', 'Ronce', 'victoire', 'Voile').refus).toMatch(/manche « miroir »/);
+  });
+
+  it('Finale : la Signature change entre deux manches (refus sinon) ; deux manches gagnantes donnent le titre ; aucune statistique modifiée', () => {
+    let e = v();
+    for (const [s, c] of [['Voile', 'Cendre'], ['Astre', 'Ronce'], ['Cendre', 'Voile']] as const) e = champ(e, 'poule', s, 'victoire', c).etat;
+    e = champ(e, 'miroir', 'Ronce', 'victoire').etat;
+    e = champ(e, 'finale', 'Ronce', 'victoire').etat;
+    expect(champ(e, 'finale', 'Ronce', 'victoire').refus).toMatch(/Changez de Signature/);
+    const avant = e.combats;
+    e = champ(e, 'finale', 'Astre', 'victoire').etat;
+    expect(e.competitions.championnat.titre).toBe(true);
+    expect(chapitreDetaille(e)).toBe('titre');
+    expect(e.combats).toBe(avant);
+  });
+
+  it('le Miroir : construit sur les deux familles les plus jouées des cinq derniers duels ; contre Kaï, ou un bras droit d’une autre maison pour la Cendre', () => {
+    const h = [{ familles: { Voile: 9, Astre: 2 } }, { familles: { Astre: 8, Ronce: 1 } }, { familles: { Ronce: 3 } }];
+    expect(famillesDominantes(h, 'Ronce')).toEqual(['Astre', 'Voile']);
+    expect(famillesDominantes([], 'Ronce')).toEqual(['Ronce', 'Cendre']);
+    // seuls les cinq derniers comptent
+    expect(famillesDominantes([{ familles: { Cendre: 99 } }, ...Array(5).fill({ familles: { Voile: 1, Ronce: 1 } })], 'Astre')).toEqual(['Voile', 'Ronce']);
+    const e = v();
+    const kai = duelChampionnat('miroir', e, 1, undefined, h);
+    expect(kai.personnalite.name).toBe('Kaï');
+    const fam = (d: string) => d.split('-')[0];
+    const vars = new Set(kai.config.players.p2.deck!.filter((d) => !d.endsWith('-basic') && !d.startsWith('neutre-') && !d.startsWith('sig-')).map(fam));
+    expect([...vars].sort()).toEqual(['Astre', 'Cendre', 'Voile']);
+    expect(kai.config.players.p2.signature).toBe('Cendre');
+    expect(kai.config.players.p2.hp).toBe(PV_ADVERSE.championnat[3]);
+    const cendre = { ...e, affiliation: 'Cendre' as const };
+    const autre = duelChampionnat('miroir', cendre, 1, undefined, [{ familles: { Cendre: 9, Ronce: 4 } }]);
+    expect(autre.personnalite.name).toBe(figureDe('Ronce', 'brasDroit').nom);
+    expect(autre.config.players.p2.signature).toBe('Ronce');
+  });
+
+  it('la Tenante suit son plan public : une Signature annoncée par manche', () => {
+    let e = v();
+    for (const [s, c] of [['Voile', 'Cendre'], ['Astre', 'Ronce'], ['Cendre', 'Voile']] as const) e = champ(e, 'poule', s, 'victoire', c).etat;
+    e = champ(e, 'miroir', 'Ronce', 'victoire').etat;
+    const sigs: (Family | null)[] = [];
+    for (const s of ['Ronce', 'Cendre'] as const) {
+      sigs.push(duelChampionnat('finale', e, 1).config.players.p2.signature ?? null);
+      e = champ(e, 'finale', s, 'defaite').etat;
+    }
+    // deux manches perdues : la finale recommence, le plan aussi
+    expect(e.competitions.championnat.finale).toEqual([]);
+    expect(sigs).toEqual([PLAN_TENANTE[0], PLAN_TENANTE[1]]);
+    expect(duelChampionnat('finale', e, 1).config.players.p2.signature).toBe(PLAN_TENANTE[0]);
+  });
+
+  it('les familles des Primaires révélées par le joueur sont lues dans le journal public', () => {
+    const ev = (p1: string, seq: number) => ({ seq, turn: seq, phase: 'TACTICS', vis: 'public', kind: 'primariesRevealed', data: { p1: { defId: p1, stance: 'assault' }, p2: { defId: 'Cendre-1-basic', stance: 'guard' } } });
+    const f = faitsPublics([ev('Voile-2-basic', 1), ev('Voile-3-dissimulation', 2), ev('Astre-1-basic', 3)] as never);
+    expect(f.familles).toEqual({ Voile: 2, Astre: 1 });
+  });
+
+  it('le héraut du Tournoi se tient dans la Grande Cour dès l’ouverture du Championnat (ville en rangs seulement)', () => {
+    const d = nouveauDirecteur(1);
+    expect(poses(d, trame()[3]!, 'cour', true).some((p) => p.id === 'heraut')).toBe(false);
+    const p = poses(d, v(), 'cour', true).find((x) => x.id === 'heraut');
+    expect(p?.repere).toBe('!');
+    expect(poses(d, v(), 'parvis', true).some((x) => x.id === 'heraut')).toBe(false);
   });
 });

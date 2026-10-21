@@ -5,7 +5,7 @@
  * (`lqv.save`, `src/product/save.ts`) n'est JAMAIS lue ni écrite ici : les profils et parties de la RC 0.8 restent
  * intacts. Pur hormis l'accès au stockage passé en paramètre.
  */
-import { FAMILIES } from '../game/catalog/cards';
+import { FAMILIES, type Family } from '../game/catalog/cards';
 import type { Command, GameConfig } from '../game/model/types';
 import { CATALOG_VERSION, replay } from '../game/replay/replay';
 import { RULES } from '../product/resume';
@@ -41,7 +41,8 @@ export interface DuelAventure {
   pret: boolean;
 }
 
-export interface DuelResume { id: string; rencontre: string; issue: Issue; turns: number; at: string }
+/** Un duel joué ; `familles` : familles des Primaires révélées par le joueur (publiques ; M10-E, le Miroir). */
+export interface DuelResume { id: string; rencontre: string; issue: Issue; turns: number; at: string; familles?: Partial<Record<Family, number>> }
 
 export interface AventureSave {
   schema: typeof SCHEMA_AVENTURE;
