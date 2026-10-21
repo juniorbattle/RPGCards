@@ -120,6 +120,8 @@ collection reconstruite depuis le registre identique à la collection stockée.
 > **Étape 2 faite (passe 100)** : le Championnat (contraintes dans la logique pure, le Miroir, le plan de la Tenante, le
 > héraut, l'ouverture et la proclamation dans la Grande Cour).
 > **Étape 3 faite (passe 101)** : membres des familles, rumeurs, l'ombre de Kaï et sa quête.
+> **Étape 4 faite (passe 102)** : la ville vivante au navigateur (`npm run qa:vivante`) et les vérifications du lot ;
+> **fiche du lot M10-E** au responsable : <https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w> (réception en attente).
 
 **Contenu :** directeur des rencontres branché sur les îlots (et les rangs à la reprise de M09) ; duels de rue ; défis
 de Kaï (un par chapitre) ; Championnat (Quatre Bannières, Miroir, Finale en deux manches gagnantes avec changement de

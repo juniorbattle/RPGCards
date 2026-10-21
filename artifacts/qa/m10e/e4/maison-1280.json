@@ -1,0 +1,113 @@
+{
+  "date": "2026-10-21T07:31:46.777Z",
+  "commit": "ce75011",
+  "viewport": [
+    1280,
+    720
+  ],
+  "qs": "",
+  "chromeArgs": [],
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "duelJoue": {
+    "issue": "defaite",
+    "tours": 4,
+    "combats": 2,
+    "ms": 10982,
+    "leaks": []
+  },
+  "checks": [
+    "OK devant kai-prologue",
+    "OK devant emissaire-Cendre",
+    "OK confirmation : affiliation à la Cendre, quatre Basics et la Lecture",
+    "OK éditeur : deck légal (R-AV)",
+    "OK case de Cendre III : neutre-3, Cendre-3-basic",
+    "OK Basic rendue à une neutre : deck légal, modifications non enregistrées",
+    "OK Collection : 4 cartes familiales possédées (les Basics de la Cendre)",
+    "OK Collection : la variante III dit comment la gagner (Battre Tessa)",
+    "OK Registre : origines lisibles",
+    "OK devant cadet-Cendre",
+    "OK duel contre Tessa joué jusqu’au bout par l’interface (defaite, 11 s)",
+    "OK duel joué : aucune fuite d’information (vue du joueur)",
+    "OK défaite contre Tessa : rien de gagné",
+    "OK devant cadet-Cendre",
+    "OK défaite : le défi de Tessa reste ouvert (pas une revanche)",
+    "OK victoire (imposée) contre Tessa : variante III",
+    "OK la variante III remplace la Basic de son identité dans le deck",
+    "OK devant cadet-Cendre",
+    "OK Tessa battue : revanche proposée",
+    "OK revanche gagnée : registre inchangé",
+    "OK devant brasDroit-Cendre",
+    "OK Kaï vaincu : variante IV (Contrecoup)",
+    "OK devant chef-Cendre",
+    "OK duel contre Bran : identité V2 du chef à la table (chef-cendre)",
+    "OK Bran vaincu : Signature de la Cendre au registre et équipée ; état « chef »",
+    "OK deck légal après chaque gain (fin de la maison)",
+    "OK Collection : 7 cartes de la Cendre possédées (4 Basics, 2 variantes, la Signature) — 7",
+    "OK rechargement : état de l’aventure identique",
+    "OK sauvegarde du jeu standard jamais créée"
+  ],
+  "steps": [
+    {
+      "name": "recompense-basics-cendre",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/059f279f-9cf4-45d9-8aec-39bad3188007/scratchpad/v-ma/01-recompense-basics-cendre.png"
+    },
+    {
+      "name": "deck-editeur",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/059f279f-9cf4-45d9-8aec-39bad3188007/scratchpad/v-ma/02-deck-editeur.png"
+    },
+    {
+      "name": "deck-choix-case",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/059f279f-9cf4-45d9-8aec-39bad3188007/scratchpad/v-ma/03-deck-choix-case.png"
+    },
+    {
+      "name": "collection-depart",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/059f279f-9cf4-45d9-8aec-39bad3188007/scratchpad/v-ma/04-collection-depart.png"
+    },
+    {
+      "name": "registre-depart",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/059f279f-9cf4-45d9-8aec-39bad3188007/scratchpad/v-ma/05-registre-depart.png"
+    },
+    {
+      "name": "preparation-tessa",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/059f279f-9cf4-45d9-8aec-39bad3188007/scratchpad/v-ma/06-preparation-tessa.png"
+    },
+    {
+      "name": "defaite-tessa",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/059f279f-9cf4-45d9-8aec-39bad3188007/scratchpad/v-ma/07-defaite-tessa.png"
+    },
+    {
+      "name": "victoire-tessa-variante-III",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/059f279f-9cf4-45d9-8aec-39bad3188007/scratchpad/v-ma/08-victoire-tessa-variante-III.png"
+    },
+    {
+      "name": "victoire-kai-variante-IV",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/059f279f-9cf4-45d9-8aec-39bad3188007/scratchpad/v-ma/09-victoire-kai-variante-IV.png"
+    },
+    {
+      "name": "preparation-bran",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/059f279f-9cf4-45d9-8aec-39bad3188007/scratchpad/v-ma/10-preparation-bran.png"
+    },
+    {
+      "name": "duel-bran",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/059f279f-9cf4-45d9-8aec-39bad3188007/scratchpad/v-ma/11-duel-bran.png"
+    },
+    {
+      "name": "victoire-bran-signature",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/059f279f-9cf4-45d9-8aec-39bad3188007/scratchpad/v-ma/12-victoire-bran-signature.png"
+    },
+    {
+      "name": "deck-fin-maison",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/059f279f-9cf4-45d9-8aec-39bad3188007/scratchpad/v-ma/13-deck-fin-maison.png"
+    },
+    {
+      "name": "collection-fin-maison",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/059f279f-9cf4-45d9-8aec-39bad3188007/scratchpad/v-ma/14-collection-fin-maison.png"
+    },
+    {
+      "name": "planche-recompenses",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/059f279f-9cf4-45d9-8aec-39bad3188007/scratchpad/v-ma/planche-recompenses-1280.png"
+    }
+  ],
+  "issues": [],
+  "ok": true
+}
