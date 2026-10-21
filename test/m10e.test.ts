@@ -13,7 +13,8 @@ import { famillesDominantes, PLAN_TENANTE } from '../src/aventure/competitions';
 import { faitsPublics } from '../src/aventure/faits';
 import { figureDe, ROLES } from '../src/aventure/modele';
 import { PV_ADVERSE } from '../src/aventure/paliers';
-import { duelChampionnat } from '../src/aventure/rencontres';
+import { duelChampionnat, duelFacultatif } from '../src/aventure/rencontres';
+import { quetes } from '../src/aventure/quetes';
 import type { IlotId } from '../src/ville/ilots';
 
 const AT = '2026-10-21T08:00:00.000Z';
@@ -226,5 +227,67 @@ describe('M10-E — le Championnat des Champions (PROGRESSION §4)', () => {
     const p = poses(d, v(), 'cour', true).find((x) => x.id === 'heraut');
     expect(p?.repere).toBe('!');
     expect(poses(d, v(), 'parvis', true).some((x) => x.id === 'heraut')).toBe(false);
+  });
+});
+
+describe('M10-E — la ville vivante : membres des familles, rumeurs, l’ombre de Kaï (VILLE_RENCONTRES §7, PROGRESSION §6.2)', () => {
+  const QUARTIER: Record<Family, IlotId> = { Cendre: 'quai', Ronce: 'quai', Voile: 'ruelles', Astre: 'parvis' };
+
+  it('un membre de chaque famille, dans les rangs de son quartier, dès que le joueur a ses Basics ; un duel de rue de sa maison', () => {
+    const [i, ii, iii] = trame();
+    for (const f of ['Cendre', 'Ronce', 'Voile', 'Astre'] as const) {
+      const r = RENCONTRES.find((x) => x.id === `membre-${f}`)!;
+      expect(r.genre).toBe('facultative');
+      expect(r.lieux.every((l) => l.ilot === QUARTIER[f] && l.rangs)).toBe(true);
+      expect(r.dispo(prologue())).toBe(false);
+    }
+    expect(RENCONTRES.find((x) => x.id === 'membre-Ronce')!.dispo(i!)).toBe(true);
+    expect(RENCONTRES.find((x) => x.id === 'membre-Cendre')!.dispo(ii!)).toBe(false);
+    expect(RENCONTRES.find((x) => x.id === 'membre-Cendre')!.dispo(iii!)).toBe(true);
+    const d = duelFacultatif('membre-Voile', trame()[4]!, 3);
+    expect(d.enjeu).toBeNull();
+    expect(d.venue).toBe('rue');
+  });
+
+  it('les rumeurs : une par îlot, un « ? », sans duel ; elles comptent dans la limite de deux rencontres par îlot', () => {
+    const rs = RENCONTRES.filter((r) => r.genre === 'ambiance');
+    expect(rs.map((r) => r.lieux[0]!.ilot).sort()).toEqual(['cour', 'parvis', 'quai', 'ruelles']);
+    const e = trame()[1]!;
+    let d = nouveauDirecteur(6);
+    let vues = 0;
+    for (let i = 0; i < 40; i++) {
+      for (const il of ILOTS_RANGS) {
+        const r = decider(d, e, il, true);
+        d = r.directeur;
+        expect((d.actives[il] ?? []).length).toBeLessThanOrEqual(2);
+        for (const p of r.poses.filter((x) => x.genre === 'ambiance')) { vues++; expect(p.repere).toBe('?'); }
+        for (const a of [...(d.actives[il] ?? [])]) d = conclure(d, a.id, true);
+      }
+      d = battre(d);
+    }
+    expect(vues).toBeGreaterThan(0);
+  });
+
+  it('l’ombre de Kaï : un défi mené à son terme compte une fois pour son chapitre ; un abandon ne compte pas ; la quête du rival le suit', () => {
+    const t = trame();
+    let e = appliquer(t[0]!, { type: 'ombre', issue: 'abandon' }, AT).etat;
+    expect(e.ombres ?? []).toEqual([]);
+    e = appliquer(e, { type: 'ombre', issue: 'defaite' }, AT).etat;
+    e = appliquer(e, { type: 'ombre', issue: 'victoire' }, AT).etat;
+    expect(e.ombres).toEqual(['I']);
+    const v = appliquer({ ...t[4]!, ombres: e.ombres }, { type: 'ombre', issue: 'victoire' }, AT).etat;
+    expect(v.ombres).toEqual(['I', 'V']);
+    const q = quetes(v).find((x) => x.id === 'ombre')!;
+    expect(q.type).toBe('rival');
+    expect(q.etapes.map((s) => s.faite)).toEqual([true, false, false, false, true]);
+    expect(quetes(prologue()).some((x) => x.id === 'ombre')).toBe(false);
+  });
+
+  it('toutes les places d’un même îlot sont à plus de 1,4 m l’une de l’autre (deux rencontres ne se tiennent jamais au même endroit)', () => {
+    const pts = RENCONTRES.flatMap((r) => r.lieux.map((l) => ({ id: r.id, ap: r.apparence, ...l })));
+    for (const a of pts) for (const b of pts) {
+      if (a.id >= b.id || a.ilot !== b.ilot || a.ap === b.ap) continue;
+      expect(Math.hypot(a.at.x - b.at.x, a.at.z - b.at.z), `${a.id} / ${b.id} @ ${a.ilot}`).toBeGreaterThan(1.4);
+    }
   });
 });

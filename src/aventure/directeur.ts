@@ -130,6 +130,28 @@ export const RENCONTRES: readonly RencontreDef[] = [
     lieux: [{ ilot: 'ruelles', at: { x: -8.4, z: 0.9 }, facing: 'droite' }, { ilot: 'ruelles', at: { x: -0.6, z: -22.8 }, facing: 'droite', rangs: true }],
     dispo: (e) => e.prologue !== null, delai: 2, poids: 1, repere: () => '!',
   },
+  // M10-E : un membre de chaque famille, dans les rangs de son quartier, dès que le joueur a les Basics de cette famille
+  // (VILLE_RENCONTRES §7 : duel de rue, répliques de la maison ; aucune carte) ; ville en rangs seulement.
+  ...(([
+    ['Cendre', { ilot: 'quai', at: { x: -5.0, z: -14.4 }, facing: 'face', rangs: true }],
+    ['Ronce', { ilot: 'quai', at: { x: 3.0, z: -26.2 }, facing: 'droite', rangs: true }],
+    ['Voile', { ilot: 'ruelles', at: { x: -2.0, z: -35.6 }, facing: 'face', rangs: true }],
+    ['Astre', { ilot: 'parvis', at: { x: -5.6, z: -33.0 }, facing: 'gauche', rangs: true }],
+  ] as const).map(([f, l]): RencontreDef => ({
+    id: `membre-${f}`, genre: 'facultative', apparence: MEMBRES_EPREUVE[f][1]!, nom: `${personalityById(MEMBRES_EPREUVE[f][1]!)?.gender === 'f' ? 'une membre' : 'un membre'} ${deF(f)}`,
+    lieux: [l], dispo: (e) => aGain(e.registre, `basics:${f}`), delai: 2, poids: 1, repere: () => '!',
+  }))),
+  // M10-E : les rumeurs (ambiance, VILLE_RENCONTRES §7) : un passant par îlot, une réplique « ? » qui suit l'aventure,
+  // sans duel ; il repart quand on l'a écouté (ville en rangs seulement).
+  ...(([
+    ['quai', 'pnj-marchande-12', { x: -12.0, z: -26.0 }, 'droite'],
+    ['parvis', 'pnj-commis-14', { x: -9.5, z: -16.5 }, 'droite'],
+    ['ruelles', 'pnj-marchande-17', { x: 7.0, z: -12.0 }, 'gauche'],
+    ['cour', 'pnj-marchande-25', { x: 11.4, z: -2.6 }, 'gauche'],
+  ] as const).map(([il, ap, at, facing]): RencontreDef => ({
+    id: `rumeur-${il}`, genre: 'ambiance', apparence: ap, nom: `${personalityById(ap)?.gender === 'f' ? 'une passante' : 'un passant'}`,
+    lieux: [{ ilot: il, at, facing, rangs: true }], dispo: (e) => e.prologue !== null, delai: 1, poids: 1, repere: () => '?',
+  }))),
   // M10-E : une joueuse de la Grande Cour (la place n'existe que dans la ville en rangs)
   {
     id: 'rue-cour', genre: 'facultative', apparence: 'pnj-joueuse-31', nom: 'une joueuse de la Grande Cour',
@@ -193,7 +215,7 @@ export function decider(d0: EtatDirecteur, e: AventureEtat, ilot: IlotId, quaiRa
     const presentes = new Set(Object.values(d.actives).flatMap((xs) => (xs ?? []).map((a) => a.id)));
     // un personnage déjà posé dans l'îlot (Kaï, bras droit de la Cendre) n'y est jamais tiré une seconde fois
     const posees = new Set(poses(d, e, ilot, quaiRangs).filter((p) => p.genre === 'structurante' || p.genre === 'competition').map((p) => p.apparence));
-    const cand = RENCONTRES.filter((r) => (r.genre === 'facultative' || r.genre === 'rival')
+    const cand = RENCONTRES.filter((r) => (r.genre === 'facultative' || r.genre === 'rival' || r.genre === 'ambiance')
       && !presentes.has(r.id)
       && !posees.has(r.apparence)
       && r.lieux.some(placeOk)

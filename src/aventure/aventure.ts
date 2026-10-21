@@ -49,6 +49,8 @@ export interface AventureEtat {
    * (avenant M10-A, AV-08 : ils montent à chaque combat, sans plafond ; `paliers.ts`, `pvJoueur`).
    */
   combats: number;
+  /** M10-E : chapitres de la trame où le défi de Kaï (l'ombre) a été mené à son terme (quête « L'ombre de Kaï »). */
+  ombres?: string[];
 }
 
 export type Evenement =
@@ -65,7 +67,9 @@ export type Evenement =
   | { type: 'visite'; lieu: string }
   | { type: 'rencontre'; personne: string }
   /** Un duel de l'aventure s'achève (tout duel : structurant, compétition, rue, rival, Championnat). */
-  | { type: 'combat'; issue: Issue };
+  | { type: 'combat'; issue: Issue }
+  /** M10-E : le défi de Kaï (l'ombre) mené à son terme, dans le chapitre en cours. */
+  | { type: 'ombre'; issue: Issue };
 
 export interface Resultat {
   etat: AventureEtat;
@@ -337,6 +341,13 @@ function appliquerBrut(e0: AventureEtat, ev: Evenement, at: string): Resultat {
       // AV-08 : chaque combat mené à son terme fait monter les PV du joueur ; un abandon ne compte pas.
       if (ev.issue !== 'abandon') e.combats += 1;
       return { etat: e, gains };
+
+    case 'ombre': {
+      // M10-E : le défi de Kaï, une fois par chapitre au plus (le directeur le garantit) ; aucune carte, aucune statistique
+      const ch = chapitreDetaille(e);
+      if (ev.issue !== 'abandon' && ch !== 'prologue' && !(e.ombres ?? []).includes(ch)) e.ombres = [...(e.ombres ?? []), ch];
+      return { etat: e, gains };
+    }
   }
 }
 

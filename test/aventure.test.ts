@@ -373,7 +373,8 @@ describe('M10-B — données (personnages, places, duels)', () => {
 
   it('îlot de l’aventure : décor M09 intact, personnages de la démo retirés, ceux du directeur posés et abordables', () => {
     const e = prologue();
-    const p = decider(nouveauDirecteur(5), e, 'quai').poses;
+    // le directeur et l'îlot dans la même ville (ici celle d'aujourd'hui : M10-E pose aussi des places propres aux rangs)
+    const p = decider(nouveauDirecteur(5), e, 'quai', false).poses;
     const d = ilotAventure('quai', p);
     expect(d.npcs.map((n) => n.id).sort()).toEqual([...new Set(p.map((x) => x.apparence))].sort());
     for (const x of p) {
