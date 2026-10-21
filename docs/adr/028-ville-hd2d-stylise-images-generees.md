@@ -521,7 +521,7 @@ Retours du responsable sur la passe 67 : « non pas des fleches de direction soy
 - **Fantômes** : seul le rang juste devant le personnage reste en fantôme (12 %, passe 64). Les rangs déjà traversés ont
   d'abord été gardés à 7 %, puis effacés sur la dernière décision : ce sont les chemins qui guident le retour.
 
-### Reprise de M09 : le Parvis et les Ruelles en rangs, la Grande Cour (passe 93, 2026-10-21) — proposé
+### Reprise de M09 : le Parvis et les Ruelles en rangs, la Grande Cour (passe 93, 2026-10-21) — RATIFIÉ (fiche de la reprise, R5, passe 97)
 
 Décision S1 du responsable (fiche du lot M10-D) : reprendre M09 dans l'ordre (1) le Parvis et les Ruelles en rangs,
 (2) la Grande Cour (V5), (3) la feuille du joueur (J1), (4) A2 puis A1.
@@ -555,3 +555,19 @@ Décision S1 du responsable (fiche du lot M10-D) : reprendre M09 dans l'ordre (1
 - **Feuille du joueur refaite (J1, passe 95)** : 1 image (28 sur 30 ; la réserve n'a pas servi), redessinée depuis notre
   feuille de la passe 60 (seule entrée), le style des PNJ de Cité du Tournoi décrit en mots (J2) ; écharpe sous le menton ;
   traitée par script (`tools/m09-joueur-j1.mjs`, contrat v3) ; `approved: false`.
+
+### Décisions du responsable sur la reprise de M09 (fiche du 2026-10-21, passe 97)
+
+Décisions (collection `decisions` de la fiche <https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1>, 11 documents, choix entre 06:15 et 06:20 UTC le 2026-10-21, aucune note) : **R1** « Reçu » (le Parvis en rangs) ; **R2** « Reçu » (les Ruelles en rangs) ; **R3** « Reçue » (la Grande Cour) ; **R4** « Reçue » (la feuille du joueur J1) ; **R5** « Ratifier tels quels » (la ville en rangs d'un seul tenant : ADR 028 « Reprise de M09 », ADR 032 amendement 5) ; **A2** « Vérifié : usage en jeu permis » (conditions d'OpenAI) ; **A1** « Approuver en bloc » (les 20 planches du jeu) ; **B1** « Garder en réserve pour A1 » (les 2 images restantes) ; **P1** « Passer la démo à la ville en rangs » (contre la recommandation, qui était de la laisser) ; **P2** « Après M10-E » (feuilles des PNJ de la ville) ; **S1** « M10-E : la ville vivante ».
+
+- **Reçus** : le Parvis et les Ruelles en quatre rangs, la Grande Cour (V5 : C1 à C3 réalisés), la feuille du joueur J1.
+  La section « Reprise de M09 » ci-dessus est **ratifiée** telle quelle.
+- **A2 fait** : le responsable a vérifié les conditions d'OpenAI ; l'usage en jeu des images générées est permis.
+- **A1 décidé** : **approbation en bloc des 20 planches du jeu** (liste : `docs/M09_IMAGES_A1_A2.md`, planche
+  `screenshots/qa/m09/a1/planche-a1.png`). C'est la décision explicite que demande AGENTS (« Images de la ville ») ; elle
+  est citée au JOURNAL (passe 97). **Les drapeaux des manifestes ne sont pas changés dans cette passe** : la consigne de la
+  session de reprise interdit à l'agent de changer un drapeau `approved`, et la fiche annonçait le passage à
+  `approved: true` sur ordre explicite du responsable, dans une passe à part.
+- **B1** : les 2 images restantes sur 30 restent en réserve pour d'éventuelles retouches après A1.
+- **P1** : la démo `?demo=1` passe à la ville en rangs (à faire, passe suivante).
+- **P2, S1** : les feuilles des PNJ de la ville viendront après M10-E ; le lot suivant est M10-E (la ville vivante).
