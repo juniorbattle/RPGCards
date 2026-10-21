@@ -1,0 +1,127 @@
+{
+  "description": "Images de la ville approuvées par le responsable (AGENTS, « Images de la ville »). Une entrée de manifeste est approved: true si et seulement si son image figure ici avec la même empreinte ; appliqué par tools/m09-approbations.mjs.",
+  "planche": "screenshots/qa/m09/a1/planche-a1.png",
+  "inventaire": "docs/M09_IMAGES_A1_A2.md",
+  "images": [
+    {
+      "fichier": "public/decors/quai-ciel.png",
+      "sha256": "83fa4a309a28b3c790061e1e9614fcf02ef11444f87c72dfd0a8e7e4e114c9b2",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/quai-eau.png",
+      "sha256": "6c3726da2fd24730711da268d94ab3f405e720e8f43fc06958c34a430eba313e",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/quai-facades.png",
+      "sha256": "6940c1ecf629335d062a35d24fd71013a23ce556d6a6fc8ffa7ee3ba38602afa",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/quai-pied-facades.png",
+      "sha256": "2469063c799562e7f9bc0fbd1920bffd369b7fbf71b6a31066c0db014a95650f",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/quai-premier-plan.png",
+      "sha256": "6888176a752f64a5d6f1ac8844b06f4b80fa15c67bad6c8f655ad782ce1fc951",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/quai-rue.png",
+      "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/quai-second-rang.png",
+      "sha256": "bfd43db48e386cf1dbae2f9aaaa4fbe1195a2cef705fc1c76dc58c6d8e9e077f",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/quai-troisieme-rang.png",
+      "sha256": "c251c22aadc61e4916ecbdd35e890724a8ab6e025503cdae8e7a5ee9325f356f",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/rangs-frise-a.png",
+      "sha256": "0b91326657b8a7923c1dfffbfc48bfeafeaaeb31ca405f8bfc689d390fee02c9",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/rangs-frise-b.png",
+      "sha256": "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/rangs-mobilier.png",
+      "sha256": "6c7384d62f3f07fbdfa05299e758162d02d75ce4692d3ea84e00738fc0c4c1c2",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/rangs-monuments.png",
+      "sha256": "b30a143625240e6acf5a6d29da85af83e36c4d946f58c5634ea1787cb9f13ebb",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/rangs-murs.png",
+      "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/villes-cour-facades.png",
+      "sha256": "c77bdb5e35b0132f2b3a7001174a91e3e77588b34f5e5646ef7b733dc029e490",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/villes-objets.png",
+      "sha256": "afaa520ad09c81ae2f1a5269ddb562deb30daa01d6e8dae5e268eaeac973f9ee",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/villes-parvis-arene.png",
+      "sha256": "9a07b902a06b24e7673dca43135370435e8019481db213338cf75f44f5624ca9",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/villes-parvis-porte.png",
+      "sha256": "dd07306b6684f39a6cfd7f516ebfc1b56e0eab1d5e08df0ca90d7a048ac7a218",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/villes-ruelles-canal.png",
+      "sha256": "6567c1a95a7534eb7e7a843ddc0b656ec6c5e19c778a303093440fdfc114d2dd",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/decors/villes-ruelles-guilde.png",
+      "sha256": "d87467affb156934f9ab403708b2cb56ad008f3761cabe7d9c13fcba8ab9eba2",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    },
+    {
+      "fichier": "public/sprites/player.png",
+      "sha256": "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50",
+      "date": "2026-10-21",
+      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+    }
+  ]
+}

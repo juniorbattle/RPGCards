@@ -12,7 +12,7 @@
           ],
           "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
           "fiche": "art-src/decors/quai-ciel/fiche.json",
-          "approved": false,
+          "approved": true,
           "at": [
             0,
             -54,
@@ -34,7 +34,7 @@
           ],
           "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
           "fiche": "art-src/decors/quai-troisieme-rang/fiche.json",
-          "approved": false,
+          "approved": true,
           "at": [
             0,
             4,
@@ -56,7 +56,7 @@
           ],
           "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
           "fiche": "art-src/decors/quai-second-rang/fiche.json",
-          "approved": false,
+          "approved": true,
           "at": [
             0,
             0,
@@ -78,7 +78,7 @@
           ],
           "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
           "fiche": "art-src/decors/quai-facades/fiche.json",
-          "approved": false,
+          "approved": true,
           "at": [
             0,
             0,
@@ -99,7 +99,7 @@
           ],
           "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
           "fiche": "art-src/decors/quai-pied-facades/fiche.json",
-          "approved": false,
+          "approved": true,
           "at": [
             0,
             0,
@@ -120,7 +120,7 @@
           ],
           "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
           "fiche": "art-src/decors/quai-rue/fiche.json",
-          "approved": false,
+          "approved": true,
           "at": [
             0,
             0,
@@ -141,7 +141,7 @@
           ],
           "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
           "fiche": "art-src/decors/quai-premier-plan/fiche.json",
-          "approved": false,
+          "approved": true,
           "at": [
             0,
             -5.68,
@@ -161,7 +161,7 @@
           ],
           "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
           "fiche": "art-src/decors/quai-eau/fiche.json",
-          "approved": false,
+          "approved": true,
           "at": [
             0,
             -2.6,

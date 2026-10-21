@@ -4,7 +4,7 @@
 // réserve seulement si besoin, tools/m09-lot-joueur-j1.mjs), traite-les par script et pose-les. »
 // Même chaîne que la feuille de la passe 60 (`processSheet` de `tools/m09-traitement-images.mjs` : fond cyan retiré, grille
 // d'art de 64 × 96 imposée, pieds alignés, tons clés exacts, palette réduite, agrandissement ×3), écrite dans
-// `public/sprites/player.png` et son manifeste (contrat v3, `approved: false`), fiche `art-src/sprites/player/fiche.json` ;
+// `public/sprites/player.png` et son manifeste (contrat v3 ; `approved` selon le registre des approbations, `tools/m09-approbations.mjs`), fiche `art-src/sprites/player/fiche.json` ;
 // planche avant / après (`screenshots/qa/m09/j1/planche-j1.png`).
 // Usage : node tools/m09-joueur-j1.mjs [nom du brut, défaut player-pixel-j1]
 import { createHash } from 'node:crypto';
@@ -13,6 +13,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { launch } from './browser.mjs';
 import { processSheet } from './m09-traitement-images.mjs';
+import { approuve } from './m09-approbations.mjs';
 
 const LOT = '2026-10-21-j1-joueur';
 const NAME = process.argv[2] ?? 'player-pixel-j1';
@@ -62,7 +63,7 @@ const man = JSON.parse(readFileSync('public/sprites/manifest.json', 'utf8'));
 const playerEntry = {
   ...man.sprites.player, sha256: sha(k3), cell: sheet.cell, anchor: sheet.anchor, figureH: sheet.figureH,
   source: 'gpt-image-2 (feuille du joueur refaite, J1, reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-joueur-j1.mjs)',
-  approved: false,
+  approved: approuve('public/sprites/player.png', sha(k3)),
 };
 writeFileSync('public/sprites/manifest.json', `${JSON.stringify({ ...man, sprites: { ...man.sprites, player: playerEntry } }, null, 2)}\n`);
 const ps = { nom: NAME, modele: g.model, point_d_acces: g.endpoint, date: g.date, parametres: g.params, prompt: g.prompt, entrees: g.inputs.map((x) => ({ chemin: x.path, sha256: x.sha256 })), brut: { fichier: `art-gen/${LOT}/${g.file} (dossier principal, ignoré par git)`, sha256: g.output.sha256, dimensions: [g.output.width, g.output.height] }, usage_api: g.usage };
@@ -82,4 +83,4 @@ writeFileSync('art-src/sprites/player/fiche.json', `${JSON.stringify({
 }, null, 2)}\n`);
 mkdirSync('artifacts/qa/m09', { recursive: true });
 writeFileSync('artifacts/qa/m09/joueur-j1.json', `${JSON.stringify({ date: new Date().toISOString(), brut: NAME, checks, pitch: sheet.pitch, anchor: sheet.anchor, figureH: sheet.figureH, colors: sheet.colors, counts: sheet.counts }, null, 2)}\n`);
-console.log('feuille posée : public/sprites/player.png (approved: false)');
+console.log(`feuille posée : public/sprites/player.png (approved: ${playerEntry.approved})`);

@@ -1,6 +1,6 @@
 {
   "id": "rangs-frise-b",
-  "statut": "kit des quartiers en rangs (ADR 028, passe 66), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "statut": "APPROUVÉ par le responsable le 2026-10-21 (décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)) : admis hors QA tant que l’empreinte reste 41749f65c01e…",
   "auteur": "Claude Code (session V4, passe 66), à la demande du responsable : « Oui, génère les 5 images du kit des rangs (tools/m09-lot-quai-3.mjs), traite-les par script et pose-les dans le Quai en quatre rangs. »",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-quai-3.mjs",
   "aseprite": "non utilisé : traitement par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-kit-rangs.mjs)",
@@ -132,5 +132,11 @@
     "03edc3cc328ed147d6118781eef5123cf784a905c2bad9393f1bdda15b18acb7 (brut rangs-ruelle-a)",
     "53f01c2aaba53c41728b89dd40e91c18fafc6572cf51cb963d8c7ffa7ce9e70c (brut rangs-ruelle-b)",
     "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4 (planche)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-21",
+    "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)",
+    "fichier": "public/decors/rangs-frise-b.png",
+    "sha256": "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4"
+  }
 }

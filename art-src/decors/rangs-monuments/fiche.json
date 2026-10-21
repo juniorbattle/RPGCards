@@ -1,6 +1,6 @@
 {
   "id": "rangs-monuments",
-  "statut": "kit des quartiers en rangs (ADR 028, passe 66), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "statut": "APPROUVÉ par le responsable le 2026-10-21 (décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)) : admis hors QA tant que l’empreinte reste b30a14362524…",
   "auteur": "Claude Code (session V4, passe 66), à la demande du responsable : « Oui, génère les 5 images du kit des rangs (tools/m09-lot-quai-3.mjs), traite-les par script et pose-les dans le Quai en quatre rangs. »",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-quai-3.mjs",
   "aseprite": "non utilisé : traitement par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-kit-rangs.mjs)",
@@ -82,5 +82,11 @@
   "chaine_des_empreintes": [
     "03262678ee9f4187ea5c70d6a4b9a08cd45bb85f262753339d2cd47c4e129610 (brut rangs-monuments)",
     "b30a143625240e6acf5a6d29da85af83e36c4d946f58c5634ea1787cb9f13ebb (planche)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-21",
+    "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)",
+    "fichier": "public/decors/rangs-monuments.png",
+    "sha256": "b30a143625240e6acf5a6d29da85af83e36c4d946f58c5634ea1787cb9f13ebb"
+  }
 }

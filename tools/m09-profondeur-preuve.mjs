@@ -21,6 +21,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { launch, rendererLabel, startPreview, watchConsole, webglRenderer } from './browser.mjs';
 import { LAMPES_RANGS, MEUBLES_RANGS, PLAN_QUAI } from '../src/ville/quaiProfond.ts';
+import { approuve } from './m09-approbations.mjs';
 
 const MODE = process.argv[2];
 const head = execSync('git rev-parse --short HEAD').toString().trim();
@@ -84,7 +85,7 @@ if (MODE === 'assembler') {
   const kitPlate = (e) => {
     const buf = readFileSync(`public/decors/${e.file}`);
     if (sha(buf) !== e.sha256) throw new Error(`${e.file} : empreinte différente de celle du kit (relancer tools/m09-kit-rangs.mjs)`);
-    return { file: e.file, sha256: e.sha256, size: e.size, source: SRC_KIT, fiche: e.fiche, approved: false, orient: 'face', blend: 'decoupe' };
+    return { file: e.file, sha256: e.sha256, size: e.size, source: SRC_KIT, fiche: e.fiche, approved: approuve(`public/decors/${e.file}`, e.sha256), orient: 'face', blend: 'decoupe' };
   };
   const browser = await launch();
   const pg = await (await browser.newContext()).newPage();

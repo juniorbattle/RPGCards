@@ -568,6 +568,12 @@ Décisions (collection `decisions` de la fiche <https://claude.ai/artifact/MBMoN
   est citée au JOURNAL (passe 97). **Les drapeaux des manifestes ne sont pas changés dans cette passe** : la consigne de la
   session de reprise interdit à l'agent de changer un drapeau `approved`, et la fiche annonçait le passage à
   `approved: true` sur ordre explicite du responsable, dans une passe à part.
+- **A1 fait (passe 104, ordre explicite du responsable, fiche du lot M10-E, A1 : « Passer les 20 planches à « approved:
+  true » »)** : les 20 planches sont `approved: true` (228 entrées des trois manifestes, 20 fiches de provenance). Le
+  registre `art-src/approbations.json` (image et empreinte, décision citée) fait foi ; `tools/m09-approbations.mjs` l'applique et les scripts
+  qui écrivent les manifestes le lisent ; `test/approbations.test.ts` vérifie qu'aucun drapeau ne s'en écarte. Une image
+  retraitée (empreinte nouvelle) perd son approbation et ne s'affiche plus qu'en QA. Hors QA, l'aventure et la démo se
+  jouent désormais dans la ville en rangs, avec la feuille du joueur ; la ville d'aujourd'hui reste le secours.
 - **B1** : les 2 images restantes sur 30 restent en réserve pour d'éventuelles retouches après A1.
 - **P1** : la démo `?demo=1` passe à la ville en rangs (**fait en passe 98** : décision commune `villeEnRangs`, la ville
   d'aujourd'hui en secours).

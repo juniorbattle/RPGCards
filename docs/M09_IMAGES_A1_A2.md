@@ -1,6 +1,6 @@
 # M09 — images générées : approbation en bloc (A1) et conditions d’OpenAI (A2)
 
-Généré par `tools/m09-planche-a1.mjs` depuis `artifacts/qa/m09/inventaire-images.json` (`tools/m09-inventaire-images.mjs`, 2026-10-21). Aucun statut n’a été changé : toutes les planches sont `approved: false`. Seul le responsable approuve (AGENTS, « Images de la ville »).
+Généré par `tools/m09-planche-a1.mjs` depuis `artifacts/qa/m09/inventaire-images.json` (`tools/m09-inventaire-images.mjs`, 2026-10-21). **Approuvées par le responsable** : 20 planches au registre `art-src/approbations.json` (ordre du 2026-10-21, JOURNAL passes 103 et 104), appliqué aux manifestes par `tools/m09-approbations.mjs` ; une planche retraitée (empreinte nouvelle) perd son approbation. Seul le responsable approuve (AGENTS, « Images de la ville »).
 
 Résumé : **28 images générées** pour le jeu avec gpt-image-2 (budget de la porte : 30), **23 servent dans le jeu**, 5 ont été écartées (hors du jeu) ; 7 références de conception, jamais dans le jeu ; **20 planches** du jeu.
 

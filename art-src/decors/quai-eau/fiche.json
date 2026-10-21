@@ -1,6 +1,6 @@
 {
   "id": "quai-eau",
-  "statut": "porte du Quai (ADR 028), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "statut": "APPROUVÉ par le responsable le 2026-10-21 (décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)) : admis hors QA tant que l’empreinte reste 6c3726da2fd2…",
   "auteur": "Claude Code (session V4, passe 57), à la demande du responsable : « Je valide la direction de l’essai. Prépare le lot suivant (plans du Quai et feuille complète du joueur) et annonce-moi ses images et leurs prompts avant de générer. »",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-quai.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -90,5 +90,11 @@
   "chaine_des_empreintes": [
     "5b87005a4f9d244e48386aa74770342ce51f8d09741c6588c706ced5da2f20ce (brut quai-eau)",
     "6c3726da2fd24730711da268d94ab3f405e720e8f43fc06958c34a430eba313e (plan)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-21",
+    "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)",
+    "fichier": "public/decors/quai-eau.png",
+    "sha256": "6c3726da2fd24730711da268d94ab3f405e720e8f43fc06958c34a430eba313e"
+  }
 }

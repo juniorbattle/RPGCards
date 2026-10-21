@@ -197,3 +197,6 @@ Ville vivante « reçue avec retours » (<https://claude.ai/artifact/RF1NNces82o
 de façon générale, **aucune cassure de l'immersion** (pas d'image collée sur la scène : des accessoires intégrés) ; le
 **chemin lumineux jamais caché** par ces accessoires. **A1** : ordre donné de passer les 20 planches à `approved: true`
 (passe à part).
+
+**A1 fait (passe 104)** : les 20 planches sont `approved: true` (registre `art-src/approbations.json`, ADR 028) ; hors QA,
+la ville en rangs et la feuille du joueur s'affichent. Les retours R1 attendent le signal du responsable (pause demandée).
