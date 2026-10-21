@@ -45,9 +45,9 @@ export function objectif(e: AventureEtat): string {
   }
   if (ch === 'championnat') {
     const m = manche(e.competitions);
-    if (m === 'poule') return `Championnat (porte de l’arène, Parvis) — les Quatre Bannières : battez trois chefs, une Signature différente à chaque victoire (${Object.keys(e.competitions.championnat.poule).length}/3).`;
-    if (m === 'miroir') return 'Championnat — le Miroir : Kaï vous attend dans l’arène.';
-    return 'Championnat — la Finale : deux manches gagnantes contre la Tenante du titre, une Signature différente à chaque manche.';
+    if (m === 'poule') return `Championnat (le héraut, dans la Grande Cour, ou la porte de l’arène) — les Quatre Bannières : battez trois chefs ; la Signature change à chaque duel (${Object.keys(e.competitions.championnat.poule).length}/3).`;
+    if (m === 'miroir') return 'Championnat — le Miroir : un deck construit sur vos familles les plus jouées vous attend.';
+    return 'Championnat — la Finale : deux manches gagnantes contre la Tenante du titre, une Signature différente à chaque manche ; elle a annoncé son plan.';
   }
   if (ch === 'champion') return 'Personne en ville ne joue mieux que vous. Revanches, Épreuves et Joutes restent ouvertes.';
   return '';
@@ -80,10 +80,15 @@ export function quetes(e: AventureEtat): Quete[] {
   if (ouvertChampionnat(e.familles)) {
     const c = e.competitions.championnat;
     out.push({ id: 'championnat', titre: 'Le Championnat des Champions', type: 'principale', etapes: [
-      { texte: `Les Quatre Bannières (${Object.keys(c.poule).length}/3 chefs, une Signature différente par victoire)`, faite: Object.keys(c.poule).length >= 3 },
-      { texte: 'Le Miroir (Kaï)', faite: c.miroir },
+      { texte: `Les Quatre Bannières (${Object.keys(c.poule).length}/3 chefs, la Signature change à chaque duel)`, faite: Object.keys(c.poule).length >= 3 },
+      { texte: 'Le Miroir (vos familles les plus jouées)', faite: c.miroir },
       { texte: `La Finale (${c.finale.filter((m) => m.gagnee).length}/2 manches)`, faite: c.titre },
     ] });
+  }
+  // M10-E : l'ombre de Kaï (PROGRESSION §6.2, quête du rival) : un défi par chapitre, facultatif, jamais échoué
+  if (f) {
+    const faits = e.ombres ?? [];
+    out.push({ id: 'ombre', titre: 'L’ombre de Kaï', type: 'rival', etapes: (['I', 'II', 'III', 'IV', 'V'] as const).map((ch) => ({ texte: `Chapitre ${ch} : relever le défi de Kaï (facultatif)`, faite: faits.includes(ch) })) });
   }
   for (const x of FAMILIES) {
     if (!aGain(e.registre, `basics:${x}`)) continue;

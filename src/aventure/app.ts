@@ -32,7 +32,7 @@ import { spritePolicy } from '../ville/spritesExternes';
 import { installVilleStyles, promptBubble } from '../ville/ui';
 import { createTown, type Town } from '../ville/ville';
 import { villeEnRangs } from '../ville/villeRangs';
-import { apercuEngagement, appliquer, bannieres, chapitre, peutChanger, peutConfirmer, statutDefi, type EtatBanniere, type Evenement, type FaitsPublics, type Issue } from './aventure';
+import { apercuEngagement, appliquer, bannieres, chapitre, chapitreDetaille, peutChanger, peutConfirmer, statutDefi, type EtatBanniere, type Evenement, type FaitsPublics, type Issue } from './aventure';
 import { basculerTechnique, choixPourCase, equiperSignature, rangDe, remplacerCase, standardLegal, validerDeckAv, type DeckAv } from './deck';
 import { origineGain, vueCollection, type EntreeCollection } from './collection';
 import { battre, conclure, decider, poses, rencontreDef, type Pose } from './directeur';
@@ -485,7 +485,23 @@ export class AventureApp {
     if (id.startsWith('joute-')) return this.jouteDialog(id.slice(6) as Family);
     if (id === 'heraut') return this.heraut();
     const r = rencontreDef(id);
+    if (r?.genre === 'ambiance') return this.rumeur(id);
     if (r) return this.facultatif(id);
+  }
+
+  /** Les rumeurs de la ville (M10-E, ambiance) : une réplique qui suit l'aventure (faits publics), sans duel ; le passant repart. */
+  private rumeur(id: string): void {
+    const r = rencontreDef(id)!;
+    const e = this.etat;
+    const ch = chapitreDetaille(e);
+    const chefs = FAMILIES.filter((f) => e.familles[f] === 'chef').length;
+    const ligne = ch === 'I' ? `« On raconte qu’une recrue ${e.affiliation ? de(e.affiliation) : 'du Quai'} a fait parler d’elle au duel public. Ce soir, toute la ville joue aux cartes. »`
+      : ch === 'V' ? '« Le Championnat des Champions s’ouvre : le héraut l’annonce dans la Grande Cour, et les paris montent sur la place du Parvis. »'
+      : ch === 'titre' ? '« Toute la ville parle de vous : personne ne joue mieux, dit-on. »'
+      : `« On dit que ${chefs} chef${chefs > 1 ? 's sont tombés' : ' est tombé'} cette saison, et que la Salle des Bannières ne désemplit pas. »`;
+    this.save!.directeur = conclure(this.save!.directeur, id, true);
+    this.persist();
+    this.dire(capital(r.nom), ligne, [fermer(this)], r.apparence);
   }
 
   /**
@@ -671,9 +687,17 @@ export class AventureApp {
       ? `« Alors, ${this.etat.affiliation ? `tu as rejoint ${la(this.etat.affiliation)}` : 'toujours sans famille'} ? Moi, la Cendre m’a pris. Une partie, pour voir qui a le plus appris ? »`
       : ch === 'voies' ? `« Tu as fait tomber ton chef, à ce qu’on dit. Moi, je monte aussi. ${gagnes > contreKai.length / 2 ? 'Tu mènes, mais pas pour longtemps.' : 'Et je mène, ne l’oublie pas.'} »`
       : `« Le Championnat approche. On se retrouvera là-bas, j’en suis sûr. En attendant, une dernière pour la route ? »`;
+    // M10-E : les membres des familles ont la réplique de leur maison
+    const MAISON: Record<Family, string> = {
+      Cendre: '« Ici, on joue vite et on frappe fort. Une partie, pour voir ce que vaut ta braise ? »',
+      Ronce: '« Une partie lente, comme on les aime à la Ronce ? Prends ton temps, la nuit est longue. »',
+      Voile: '« Je lis déjà ton jeu… Une partie pour me prouver le contraire ? »',
+      Astre: '« Les astres disaient qu’on jouerait ce soir. Une partie ? »',
+    };
+    const membre = id.startsWith('membre-') ? MAISON[id.slice(7) as Family] : null;
     const texte = kai
       ? `${ligneKai} (défi facultatif, sans récompense ; vos duels contre lui : ${gagnes} victoire(s) sur ${contreKai.length})`
-      : '« Une partie, pour passer le temps ? » (duel de rue, sans récompense)';
+      : `${membre ?? '« Une partie, pour passer le temps ? »'} (duel de rue, sans récompense)`;
     this.dire(capital(r.nom), texte, [
       { label: 'Accepter', key: 'dlg-duel', primary: true, run: () => this.preparer(duelFacultatif(id, this.etat, this.prochaineGraine())) },
       { label: 'Refuser', key: 'dlg-close', run: () => { this.save!.directeur = conclure(this.save!.directeur, id, false); this.persist(); this.fermerDialogue(); } },
@@ -918,7 +942,11 @@ export class AventureApp {
       if (r.refus) this.toast(r.refus);
       s.etat = r.etat;
       gains = r.gains;
-    } else s.directeur = conclure(s.directeur, rencontre, true);
+    } else {
+      s.directeur = conclure(s.directeur, rencontre, true);
+      // M10-E : l'ombre de Kaï menée à son terme compte pour la quête du rival (chapitre en cours)
+      if (rencontre === 'rival-kai') s.etat = appliquer(s.etat, { type: 'ombre', issue }, at).etat;
+    }
     this.persist();
     this.dernierResultat = { prevu: live.prevu, issue, gains, turns: v.turn, faits, pv: [pvAvant, pvApres] };
     this.resultat();

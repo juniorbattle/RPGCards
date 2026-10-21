@@ -119,6 +119,7 @@ collection reconstruite depuis le registre identique à la collection stockée.
 > Kaï une fois par chapitre de I à V, refus puis départ, reprise sans tirage ; ADR 032 amendement 6 ; `test/m10e.test.ts`).
 > **Étape 2 faite (passe 100)** : le Championnat (contraintes dans la logique pure, le Miroir, le plan de la Tenante, le
 > héraut, l'ouverture et la proclamation dans la Grande Cour).
+> **Étape 3 faite (passe 101)** : membres des familles, rumeurs, l'ombre de Kaï et sa quête.
 
 **Contenu :** directeur des rencontres branché sur les îlots (et les rangs à la reprise de M09) ; duels de rue ; défis
 de Kaï (un par chapitre) ; Championnat (Quatre Bannières, Miroir, Finale en deux manches gagnantes avec changement de
