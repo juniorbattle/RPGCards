@@ -1,0 +1,33 @@
+{
+  "console": [],
+  "familles": {
+    "Cendre": {
+      "hauteurPx": 120,
+      "feuilles": [
+        "player-Cendre"
+      ],
+      "refus": []
+    },
+    "Voile": {
+      "hauteurPx": 120,
+      "feuilles": [
+        "player-Voile"
+      ],
+      "refus": []
+    },
+    "Ronce": {
+      "hauteurPx": 120,
+      "feuilles": [
+        "player-Ronce"
+      ],
+      "refus": []
+    },
+    "Astre": {
+      "hauteurPx": 120,
+      "feuilles": [
+        "player-Astre"
+      ],
+      "refus": []
+    }
+  }
+}

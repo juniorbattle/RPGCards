@@ -178,3 +178,5 @@ A1, dans une fiche d'arbitrages avec la réception des quartiers et la suite (M1
   généré seulement après son accord.
 - **Passe 94** : lot des villes généré après l'accord du responsable (6 images, 27 sur 30), traité par script
   (`tools/m09-kit-villes.mjs`) et posé : plus aucune pièce provisoire dans les trois îlots.
+- **Passe 95** : feuille du joueur refaite (J1, 1 image, 28 sur 30 ; réserve non générée), traitée par script
+  (`tools/m09-joueur-j1.mjs`) et posée ; 2 images restent sur 30.
