@@ -25,9 +25,9 @@ import { duelSeed, SaveStore } from '../product/save';
 import { webglAvailable, type ArenaHandle } from '../scene/arena';
 import { confirmDialog, h } from '../shell/ui';
 import { parseRig } from '../ville/cameras';
-import { createDecorResolver, decorPolicy, preloadDecors } from '../ville/decors';
+import { createDecorResolver, decideIlot, decorPolicy, preloadDecors, readDecorManifest } from '../ville/decors';
 import type { SpritePolicy } from '../ville/spritesExternes';
-import { ILOTS, type IlotId } from '../ville/ilots';
+import { ILOTS_RANGS, isIlotId, MANIFESTE_RANGS, type IlotId } from '../ville/ilots';
 import { blocked, type Zone } from '../ville/monde';
 import { spritePolicy } from '../ville/spritesExternes';
 import { installVilleStyles, promptBubble } from '../ville/ui';
@@ -37,7 +37,7 @@ import { basculerTechnique, choixPourCase, equiperSignature, rangDe, remplacerCa
 import { origineGain, vueCollection, type EntreeCollection } from './collection';
 import { battre, conclure, decider, poses, rencontreDef, type Pose } from './directeur';
 import { faitsPublics } from './faits';
-import { ilotAventure, MANIFESTE_QUAI_RANGS } from './ilots';
+import { ilotAventure, ilotBase } from './ilots';
 import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, RANGS, rangNeutre, ROLE_LABEL, ROLES, ROMAIN, type EtatFamille } from './modele';
 import { objectif, quetes } from './quetes';
 import { aGain, collectionDe, type Gain } from './registre';
@@ -92,8 +92,9 @@ export class AventureApp {
   ecran: 'titre' | 'nouveau' | 'ville' | 'preparation' | 'duel' | 'resultat' = 'titre';
   private posesAffichees = '';
   /**
-   * ARB-M10-12 : le Quai de l'aventure est le Quai en quatre rangs, s'il peut s'afficher (son diorama admis : en QA, ou
-   * hors QA une fois ses images approuvées, A2 puis A1) ; sinon l'ancien Quai, dessiné par code, en secours.
+   * ARB-M10-12 : le Quai de l'aventure est le Quai en quatre rangs ; depuis la reprise de M09, toute la ville est en rangs
+   * (le Parvis et les Ruelles en rangs, la Grande Cour), si elle peut s'afficher (tous ses dioramas admis : en QA, ou hors
+   * QA une fois les images approuvées, A2 puis A1) ; sinon la ville d'aujourd'hui, dessinée par code, en secours.
    */
   quaiRangs = false;
   private quaiDecide = false;
@@ -106,7 +107,7 @@ export class AventureApp {
     document.title = 'Les Quatre Voies — Aventure (prototype)';
     window.addEventListener('pagehide', () => this.memoriser());
     const politique = decorPolicy(d.params.qa, new URLSearchParams(location.search).get('decors'));
-    this.decisionQuai = quaiEnRangs(politique).then((oui) => {
+    this.decisionQuai = villeEnRangs(politique).then((oui) => {
       this.quaiRangs = oui;
       this.quaiDecide = true;
       // l'ancien Quai en secours : ses plans éventuels (approuvés) préparés comme avant
@@ -275,7 +276,7 @@ export class AventureApp {
       freeze: this.params.freeze, reducedMotion: this.params.reducedMotion,
       sprites: spritePolicy(this.params.qa, q.get('sprites')), decors: decorPolicy(this.params.qa, q.get('decors')), rig: parseRig(q.get('rig')),
       ilotDefOf: (id) => ilotAventure(id, this.posesDe(id), this.quaiRangs),
-      ...(this.quaiRangs ? { decorsManifest: MANIFESTE_QUAI_RANGS } : {}),
+      ...(this.quaiRangs ? { decorsManifest: MANIFESTE_RANGS } : {}),
       onInteract: (z) => this.interagir(z),
       onMenu: () => this.menu(),
     });
@@ -440,7 +441,7 @@ export class AventureApp {
     if (this.dialog || this.modal) return;
     if (z.kind === 'parler' && z.target) return this.parler(z.target);
     if (z.kind === 'sortie') {
-      const exit = ILOTS[this.town!.ilotId()].exits[z.id];
+      const exit = ilotBase(this.town!.ilotId(), this.quaiRangs).exits[z.id];
       if (exit) return this.voyager(exit.to, exit.spawn);
     }
     if (z.kind === 'porte' && z.target === 'salle') return this.salleDesBannieres();
@@ -1152,7 +1153,7 @@ const nomCarte = (defId: string) => (CATALOG[defId] ? cardTitle(CATALOG[defId]!)
 const STANDARD = 'Format standard : 17 cartes, sans carte grise ; le validateur du mode Duel l’accepte tel quel.';
 /** État d'une bannière, lu par le joueur (Salle des Bannières). */
 const ETAT_BANNIERE: Record<EtatBanniere, string> = { accueil: 'votre famille', engageable: 'défi à engager', engagee: 'défi engagé', conquise: 'chef vaincu', fermee: 'pas encore' };
-const OU_ILOT: Record<IlotId, string> = { quai: 'sur le Quai', ruelles: 'dans les Ruelles (sortie ouest du Quai)', parvis: 'sur le Parvis de l’arène (sortie est du Quai)' };
+const OU_ILOT: Record<IlotId, string> = { quai: 'sur le Quai', ruelles: 'dans les Ruelles (sortie ouest du Quai)', parvis: 'sur le Parvis de l’arène (sortie est du Quai)', cour: 'dans la Grande Cour, au cœur de la ville' };
 /** État d'une famille, lu par le joueur (écran Collection). */
 const ETAT_FAMILLE: Record<EtatFamille, string> = { inconnue: 'pas encore rencontrée', remarque: 'a remarqué votre jeu', invite: 'vous invite', affilie: 'votre famille', defiee: 'défi officiel engagé', chef: 'chef vaincu' };
 /** Ce qu'un gain a remis : « Cartes de base de la Cendre », le nom d'une variante ou d'une Signature, « Technique Lecture ». */
@@ -1202,14 +1203,19 @@ function gainEls(g: Gain, artSeed: number): HTMLElement[] {
 }
 
 /**
- * Le Quai en quatre rangs n'existe qu'en diorama d'images générées (ARB-M10-12) : il est l'îlot du Quai de l'aventure
- * seulement si tous ses plans sont admis par la politique (hors QA : approuvés par le responsable) et lisibles ; sinon,
- * l'ancien Quai en bande, dessiné par code. Décidé avant de construire la ville (le décor n'est jamais mélangé). Les plans
- * décodés ici sont ceux que la ville reprend (même cache).
+ * La ville en rangs (le Quai en quatre rangs, ARB-M10-12 ; le Parvis, les Ruelles et la Grande Cour depuis la reprise de
+ * M09) n'existe qu'en dioramas d'images générées : elle est la ville de l'aventure seulement si les dioramas de ses quatre
+ * îlots sont admis par la politique (hors QA : approuvés par le responsable), et ceux du Quai lisibles ; sinon, la ville
+ * d'aujourd'hui, dessinée par code. Décidé avant de construire la ville (jamais de mélange, ni dans un îlot ni d'un îlot à
+ * l'autre). Seuls les plans du Quai sont décodés ici (ceux que la ville reprend, même cache) : les autres îlots le sont
+ * derrière le fondu, en y allant.
  */
-async function quaiEnRangs(politique: SpritePolicy): Promise<boolean> {
+async function villeEnRangs(politique: SpritePolicy): Promise<boolean> {
   if (politique === 'code') return false;
-  const r = createDecorResolver(politique, () => {}, { manifest: MANIFESTE_QUAI_RANGS });
+  const all = (await readDecorManifest('decors/', MANIFESTE_RANGS)).manifest?.ilots;
+  const ids = Object.keys(ILOTS_RANGS).filter(isIlotId);
+  if (!all || !ids.every((id) => Object.prototype.hasOwnProperty.call(all, id) && decideIlot(politique, id, all[id]).ok)) return false;
+  const r = createDecorResolver(politique, () => {}, { manifest: MANIFESTE_RANGS });
   await r.prepare('quai');
   return r.peek('quai').state === 'diorama';
 }

@@ -9,7 +9,7 @@
  * responsable, A2 puis A1), l'ancien Quai en bande, dessiné par code, sert de secours (`quaiRangs` faux).
  */
 import type { Disc, Ilot, Zone } from '../ville/monde';
-import { ILOTS, QUAI_PROFOND_DEF, type IlotDef, type IlotId } from '../ville/ilots';
+import { ilotDef, type IlotDef, type IlotId } from '../ville/ilots';
 import type { IlotNpc } from '../ville/quai';
 import type { Pose } from './directeur';
 
@@ -17,11 +17,8 @@ import type { Pose } from './directeur';
 const NPC_R = 0.32;
 const TALK = 1.35;
 
-/** Manifeste des plans du Quai en quatre rangs (laboratoire M09, passes 62 à 68). */
-export const MANIFESTE_QUAI_RANGS = 'manifest-profondeur.json';
-
-/** L'îlot M09 d'origine : au Quai, le Quai en quatre rangs (`quaiRangs`) ou l'ancien Quai en bande (secours). */
-export const ilotBase = (id: IlotId, quaiRangs = false): IlotDef => (id === 'quai' && quaiRangs ? QUAI_PROFOND_DEF : ILOTS[id]);
+/** L'îlot M09 d'origine : dans la ville en rangs (`quaiRangs`), l'îlot en rangs ; sinon celui d'aujourd'hui (secours). */
+export const ilotBase = (id: IlotId, quaiRangs = false): IlotDef => ilotDef(id, quaiRangs);
 
 /** L'îlot M09 sans ses personnages de démo (obstacles, zones « parler », points d'apparition devant eux). */
 export function ilotNu(id: IlotId, quaiRangs = false): Ilot {

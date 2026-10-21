@@ -18,7 +18,7 @@
  *     maisons qui bordent les bouts d'une ruelle, de face, sur sa ligne avant) en font une rue fermée : jamais de vide.
  * Mêmes conventions que les îlots (mètres ; x de l'ouest à l'est ; z vers la caméra, le fond en z négatif).
  */
-import type { Ilot, Rect } from './monde';
+import type { Ilot, Rect, Zone } from './monde';
 
 /** Place d'un rang : la ruelle déborde dans la bande suivante, qui recule de `recul` m sur la largeur [x0, x1]. */
 export interface PlaceRang { id: string; nom: string; x0: number; x1: number; recul: number }
@@ -202,6 +202,28 @@ export function ilotRangs(plan: PlanRangs, base: Omit<Ilot, 'bounds'>): Ilot {
 }
 
 /**
+ * Zones « info » des spots d'un quartier en rangs : chaque place (son recul) et le cœur (le dernier rang, dans `coeur`) ;
+ * leur cible est l'identifiant de la place ou du rang.
+ */
+export function spotsRangs(plan: PlanRangs, coeur: Rect): Zone[] {
+  return plan.rangs.flatMap((r): Zone[] => {
+    if (r.place) return [{ id: r.place.id, kind: 'info', label: capital(r.place.nom), target: r.place.id, area: { x0: r.place.x0, z0: r.place.z0, x1: r.place.x1, z1: r.place.z1 } }];
+    if (r.n === plan.rangs.length) return [{ id: r.id, kind: 'info', label: capital(r.nom), target: r.id, area: coeur }];
+    return [];
+  });
+}
+
+/**
+ * Mobilier d'un quartier en rangs (même place au monde et dans le manifeste de son diorama, que l'outil d'assemblage lit
+ * dans le code du jeu) : objet d'une planche (`source: 'kit'`, `objet` : son nom dans la planche, `echelle` : sa taille
+ * propre), ou morceau de la bande du pied des façades du Quai (`source: 'pied'`, x de la source au monde, avant écart).
+ * `x`, `z` : pied du meuble au monde ; `rect` : obstacle (null : l'îlot pose le sien, un disque par exemple).
+ */
+export interface MeubleRang { id: string; source: 'pied' | 'kit'; src?: readonly [number, number]; objet?: string; echelle?: number; x: number; z: number; rect: Rect | null }
+export const meuble = (id: string, src: readonly [number, number], x: number, z: number, w: number, d: number): MeubleRang => ({ id, source: 'pied', src, x, z, rect: { x0: x - w / 2, z0: z - d, x1: x + w / 2, z1: z } });
+export const objet = (id: string, nom: string, x: number, z: number, w: number, d: number): MeubleRang => ({ id, source: 'kit', objet: nom, x, z, rect: { x0: x - w / 2, z0: z - d, x1: x + w / 2, z1: z } });
+
+/**
  * Balise d'un passage (passe 67, demande du responsable : « des effets visuels indicatifs pour les chemins ruelles qui
  * permettent d'aller et revenir vers chaque rang ») : une lueur au sol à chaque bouche d'un passage, des chevrons qui
  * filent vers le rang où il mène (`sens` −1 : vers le fond, +1 : vers l'avant), et le nom de ce rang (zone « info »).
@@ -218,6 +240,9 @@ export function balisesRangs(plan: PlanRangs, nomRang1: string): Balise[] {
     { id: `balise-${b.n}-${i + 1}-retour`, x: r3((a + c) / 2), z: r3(b.z0 - 0.9), largeur: r3(c - a), sens: 1, vers: b.n, label: `Retour vers ${nom(b.n)}` },
   ]));
 }
+
+/** Zones « info » des bouches des passages : le nom du rang où l'on va (bulle en approchant ; aucun dialogue). */
+export const zonesBalises = (balises: readonly Balise[]): Zone[] => balises.map((b): Zone => ({ id: b.id, kind: 'info', label: b.label, target: `rang-${b.vers}`, area: { x0: b.x - b.largeur / 2 + 0.2, z0: b.z - 0.7, x1: b.x + b.largeur / 2 - 0.2, z1: b.z + 0.7 } }));
 
 /**
  * Chemin lumineux (passe 68 ; le responsable : « non pas des flèches de direction, soyons plus optimistes : des chemins

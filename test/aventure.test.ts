@@ -343,6 +343,10 @@ describe('M10-B — données (personnages, places, duels)', () => {
       for (const rangs of [true, false]) expect(blocked(ilotNu('quai', rangs), p, 0.32), `${p.x},${p.z} ${rangs}`).toBe(false);
     }
     for (const f of FIGURES) expect(f.enjeu.kind === 'signature' || f.enjeu.defId.startsWith(`${f.famille}-`)).toBe(true);
+    // reprise de M09 : les figures du Parvis et des Ruelles gardent leur place au rang 1 de leur quartier en rangs
+    for (const f of FIGURES.filter((x) => x.ilot !== 'quai')) {
+      for (const rangs of [true, false]) expect(blocked(ilotNu(f.ilot, rangs), f.at, 0.32), `${f.id} @ ${f.ilot} ${rangs}`).toBe(false);
+    }
   });
 
   it('le Quai de l’aventure est le Quai en quatre rangs (ARB-M10-12) : figures dans les rangs, abordables ; l’ancien Quai en secours', () => {
@@ -361,7 +365,8 @@ describe('M10-B — données (personnages, places, duels)', () => {
       const bran = p.find((x) => x.id === 'chef-Cendre')!;
       // en rangs, le chef de la Cendre attend au cœur du Quai (la cour de la Chapelle) ; en secours, devant le Chantier
       expect(rangs ? bran.at.z < -36 : bran.at.z > -3).toBe(true);
-      expect(d.ilot.zones.filter((z) => z.kind === 'sortie').length).toBe(2);
+      // en rangs, le cœur du Quai s'ouvre aussi sur la Grande Cour (reprise de M09)
+      expect(d.ilot.zones.filter((z) => z.kind === 'sortie').map((z) => z.target).sort()).toEqual(rangs ? ['arene', 'cour', 'ruelles'] : ['arene', 'ruelles']);
     }
   });
 

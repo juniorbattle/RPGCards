@@ -255,18 +255,20 @@ describe('ville : îlots et liaisons', () => {
     for (const n of P_NPCS) expect(encounterById(n.encounter!)?.rival).toBe(n.id);
   });
 
-  it('chaque sortie mène à un îlot existant, sur un point d’apparition praticable, et réciproquement', async () => {
-    const { ILOTS } = await import('../src/ville/ilots');
-    for (const def of Object.values(ILOTS)) {
+  it('chaque sortie mène à un îlot existant, sur un point d’apparition praticable, et réciproquement (ville d’aujourd’hui et ville en rangs)', async () => {
+    const { ILOTS, ILOTS_RANGS } = await import('../src/ville/ilots');
+    const villes: Record<string, (typeof ILOTS_RANGS)['cour']>[] = [ILOTS, ILOTS_RANGS];
+    for (const reg of villes) for (const def of Object.values(reg)) {
       for (const [zone, exit] of Object.entries(def.exits)) {
         const z = def.ilot.zones.find((x) => x.id === zone);
         expect(z?.kind, `${def.id}/${zone}`).toBe('sortie');
-        const to = ILOTS[exit.to];
+        const to = reg[exit.to]!;
+        expect(to, `${def.id}/${zone} → ${exit.to}`).toBeTruthy();
         const sp = to.ilot.spawns[exit.spawn];
         expect(sp, `${exit.to}/${exit.spawn}`).toBeTruthy();
         expect(blocked(to.ilot, sp!)).toBe(false);
         // retour possible
-        expect(Object.values(to.exits).some((e) => e.to === def.id)).toBe(true);
+        expect(Object.values(to.exits).some((e) => e.to === def.id), `${def.id} ← ${exit.to}`).toBe(true);
       }
       for (const a of def.ambient) {
         expect(a.x0).toBeLessThan(a.x1);

@@ -214,7 +214,9 @@ if (MODE === 'assembler') {
   // ordre de dessin d'arrière en avant (contrat : un plan plus lointain n'est jamais dessiné après un plus proche)
   const zKey = (p) => p.at[2] + (p.orient === 'cote' ? p.width / 2 : 0);
   Object.entries(plans).sort((u, v) => zKey(u[1]) - zKey(v[1])).forEach(([k], i) => { plans[k].order = i; });
-  const out = { version: 1, ilots: { quai: { plans, lumieres, camera: P.camera, brumes } } };
+  // reprise de M09 : le manifeste porte aussi le Parvis, les Ruelles et la Grande Cour en rangs (`tools/m09-quartiers-rangs.mjs`), gardés
+  const prev = JSON.parse(readFileSync('public/decors/manifest-profondeur.json', 'utf8')).ilots ?? {};
+  const out = { version: 1, ilots: { ...prev, quai: { plans, lumieres, camera: P.camera, brumes } } };
   writeFileSync('public/decors/manifest-profondeur.json', `${JSON.stringify(out, null, 2)}\n`);
   const n = Object.keys(plans).length;
   check(n <= 64 && lumieres.length <= 16 && brumes.length <= 10, `manifeste du Quai en rangs : ${n} plans découpés dans ${new Set(Object.values(plans).map((p) => p.file)).size} images (kit des rangs : ${Object.values(plans).filter((p) => p.source === SRC_KIT).length} plans), ${lumieres.length} lumières, ${brumes.length} brumes`);

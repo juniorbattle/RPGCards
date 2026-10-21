@@ -11,12 +11,15 @@
  *   rang 3 : la ruelle des Lanternes (4 m), qui déborde à l'ouest sur la **placette du Puits** (devant la maison des
  *            Joueurs) ;
  *   bande 3 (7 m) : un passage à l'est ;
- *   rang 4 : la **cour de la Chapelle** (7 m), le cœur du quartier, au pied de la ville haute.
+ *   rang 4 : la **cour de la Chapelle** (7 m), le cœur du quartier, au pied de la ville haute ; par son bout est, on
+ *            monte vers la Grande Cour (reprise de M09, V5).
  * Mêmes conventions que `quai.ts` (mètres ; x ouest → est, z des façades (−) vers l'eau (+)).
  */
 import type { Disc, Ilot, Rect, Vec2, Zone } from './monde';
 import { BOLLARDS, FACADE_Z, LAMPS, NPC_RADIUS, NPCS, QUAY_Z, STALL, TALK_RADIUS, X_MAX, X_MIN, type IlotNpc } from './quai';
-import { balisesRangs, cheminsRangs, ilotRangs, planRangs, type QuartierRangs } from './rangs';
+import { balisesRangs, cheminsRangs, ilotRangs, meuble, objet, planRangs, spotsRangs, zonesBalises, type MeubleRang, type QuartierRangs } from './rangs';
+
+export type { MeubleRang } from './rangs';
 
 /** Le Quai en rangs (grammaire de `rangs.ts`). Les passages de la bande 1 sont aux raccords des trois images de façades
  *  du diorama (ouest, centre de l'essai, est), écartées de 3 m de part et d'autre. */
@@ -59,13 +62,9 @@ export const PROPS_PROFOND: readonly Rect[] = [
 
 /**
  * Mobilier des rangs 2 à 4 (mêmes places dans le manifeste de la preuve, `m09-profondeur-preuve.mjs`, qui les lit ici) :
- * objets du kit des rangs (passe 66, `source: 'kit'`, `objet` : son nom dans `art-src/decors/kit-rangs.json`), ou
- * morceaux des bandes du pied du diorama (`source: 'pied'`, x de la source au monde, avant écart). `x`, `z` : pied du
- * meuble au monde ; `rect` : obstacle.
+ * objets du kit des rangs (passe 66, `objet` : son nom dans `art-src/decors/kit-rangs.json`), ou morceaux des bandes du
+ * pied du diorama (`MeubleRang`, `rangs.ts`).
  */
-export interface MeubleRang { id: string; source: 'pied' | 'kit'; src?: readonly [number, number]; objet?: string; x: number; z: number; rect: Rect }
-const meuble = (id: string, src: readonly [number, number], x: number, z: number, w: number, d: number): MeubleRang => ({ id, source: 'pied', src, x, z, rect: { x0: x - w / 2, z0: z - d, x1: x + w / 2, z1: z } });
-const objet = (id: string, nom: string, x: number, z: number, w: number, d: number): MeubleRang => ({ id, source: 'kit', objet: nom, x, z, rect: { x0: x - w / 2, z0: z - d, x1: x + w / 2, z1: z } });
 export const MEUBLES_RANGS: readonly MeubleRang[] = [
   meuble('rue-haute-caisses', [-18.95, -17.05], -14.0, -12.6, 1.2, 0.8),
   meuble('rue-haute-tonneaux', [-11.3, -9.7], 15.0, -15.2, 1.0, 0.8),
@@ -99,16 +98,13 @@ export const NPCS_PROFOND: readonly IlotNpc[] = [
 ];
 
 /** Zones des spots : chaque place (son recul) et la cour du fond ; points d'apparition de chaque rang et de chaque spot. */
-const spots: Zone[] = PLAN_QUAI.rangs.flatMap((r): Zone[] => {
-  if (r.place) return [{ id: r.place.id, kind: 'info', label: r.place.nom[0]!.toUpperCase() + r.place.nom.slice(1), target: r.place.id, area: { x0: r.place.x0, z0: r.place.z0, x1: r.place.x1, z1: r.place.z1 } }];
-  if (r.n === PLAN_QUAI.rangs.length) return [{ id: r.id, kind: 'info', label: r.nom[0]!.toUpperCase() + r.nom.slice(1), target: r.id, area: { x0: -4, z0: r.z0, x1: 4, z1: r.z0 + 2.5 } }];
-  return [];
-});
+const COUR = PLAN_QUAI.rangs[PLAN_QUAI.rangs.length - 1]!;
+const spots: Zone[] = spotsRangs(PLAN_QUAI, { x0: -4, z0: COUR.z0, x1: 4, z1: COUR.z0 + 2.5 });
 
 export const QUAI_PROFOND: Ilot = ilotRangs(PLAN_QUAI, {
   id: 'quai',
   name: 'le Quai (en rangs, preuve)',
-  rects: [STALL, ...PROPS_PROFOND, ...MEUBLES_RANGS.map((m) => m.rect)],
+  rects: [STALL, ...PROPS_PROFOND, ...MEUBLES_RANGS.flatMap((m) => (m.rect ? [m.rect] : []))],
   discs: [
     ...LAMPS.map((p): Disc => ({ ...p, r: 0.16 })),
     ...BOLLARDS.map((p): Disc => ({ ...p, r: 0.2 })),
@@ -120,8 +116,10 @@ export const QUAI_PROFOND: Ilot = ilotRangs(PLAN_QUAI, {
     { id: 'porte-fanal', kind: 'porte', label: 'Entrer au Fanal', target: 'fanal', area: { x0: 6.35, z0: FACADE_Z, x1: 8.05, z1: FACADE_Z + 1.1 } },
     { id: 'sortie-arene', kind: 'sortie', label: 'Vers le Parvis de l’arène', target: 'arene', area: { x0: X_MAX - 1.1, z0: -1.4, x1: X_MAX, z1: 2.2 } },
     { id: 'sortie-ruelles', kind: 'sortie', label: 'Vers les Ruelles', target: 'ruelles', area: { x0: X_MIN, z0: -1.4, x1: X_MIN + 0.9, z1: 2.2 } },
+    // le cœur s'ouvre sur la Grande Cour (proposition C1 de la passe 65) : par la porte cochère du bout est de la cour
+    { id: 'sortie-cour', kind: 'sortie', label: 'Monter vers la Grande Cour', target: 'cour', area: { x0: COUR.x1 - 0.9, z0: -41, x1: COUR.x1, z1: -38 } },
     ...spots,
-    ...BALISES_QUAI.map((b): Zone => ({ id: b.id, kind: 'info', label: b.label, target: `rang-${b.vers}`, area: { x0: b.x - b.largeur / 2 + 0.2, z0: b.z - 0.7, x1: b.x + b.largeur / 2 - 0.2, z1: b.z + 0.7 } })),
+    ...zonesBalises(BALISES_QUAI),
     ...NPCS_PROFOND.map((n): Zone => ({ id: `npc-${n.id}`, kind: 'parler', label: 'Parler', target: n.id, area: { x: n.at.x, z: n.at.z, r: TALK_RADIUS } })),
   ],
   spawns: {
@@ -136,6 +134,11 @@ export const QUAI_PROFOND: Ilot = ilotRangs(PLAN_QUAI, {
     'ruelle-lanternes': { x: -1, z: -27, face: 'face' },
     'placette-puits': { x: -9.6, z: -28.4, face: 'gauche' },
     'cour-chapelle': { x: 0, z: -38.5, face: 'dos' },
-    ...Object.fromEntries(NPCS_PROFOND.map((n) => [`npc-${n.id}`, { x: n.at.x + (n.facing === 'gauche' ? -1.0 : 1.0), z: n.at.z + 0.2, face: n.facing === 'gauche' ? 'droite' as const : 'gauche' as const }])),
+    'sortie-cour': { x: COUR.x1 - 1.6, z: -39.5, face: 'gauche' },
+    // devant chaque personnage, dans sa zone de dialogue (en face de lui s'il regarde la rue : le docker de la cour, contre
+    // la fontaine sinon)
+    ...Object.fromEntries(NPCS_PROFOND.map((n) => [`npc-${n.id}`, n.facing === 'face'
+      ? { x: n.at.x, z: n.at.z + 1.0, face: 'dos' as const }
+      : { x: n.at.x + (n.facing === 'gauche' ? -1.0 : 1.0), z: n.at.z + 0.2, face: n.facing === 'gauche' ? 'droite' as const : 'gauche' as const }])),
   },
 });

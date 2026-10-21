@@ -1,0 +1,287 @@
+{
+  "date": "2026-10-21T03:58:19.159Z",
+  "commit": "d6acb36",
+  "mode": "assembler",
+  "checks": [
+    "OK parvis en rangs : 59 plans découpés dans 10 images, 14 lumières, 10 brumes",
+    "OK ruelles en rangs : 52 plans découpés dans 11 images, 10 lumières, 10 brumes",
+    "OK cour en rangs : 27 plans découpés dans 7 images, 10 lumières, 6 brumes"
+  ],
+  "console": [],
+  "provisoire": [
+    "parvis : fond-rang1--11-1 : façade du rang 1 en frise du kit, en attendant « parvis-porte »",
+    "parvis : cœur : « chapelle » du kit en attendant « parvis-arene »",
+    "parvis : parvis-brasero-1 : « niche » du kit en attendant « brasero »",
+    "parvis : parvis-brasero-2 : « niche » du kit en attendant « brasero »",
+    "parvis : paris-kiosque : « etal » du kit en attendant « kiosque »",
+    "parvis : tableau-annonces : « niche » du kit en attendant « tableau »",
+    "parvis : champions-brasero-o : « niche » du kit en attendant « brasero »",
+    "parvis : champions-brasero-e : « niche » du kit en attendant « brasero »",
+    "parvis : premier plan : le mur du Quai, en attendant la balustrade de « villes-objets »",
+    "ruelles : fond-rang1--31-2 : façade du rang 1 en frise du kit, en attendant « ruelles-canal »",
+    "ruelles : fond-rang1--7-1 : façade du rang 1 en frise du kit, en attendant « ruelles-canal »",
+    "ruelles : cœur : « joueurs » du kit en attendant « ruelles-guilde »",
+    "cour : fond-rang1--13-1 : façade du rang 1 en frise du kit, en attendant « cour-facades »",
+    "cour : Belvédère : sans balustrade, en attendant « villes-objets »",
+    "cour : monument : « fontaine » du kit en attendant « monument »",
+    "cour : estrade : « etal » du kit en attendant « estrade »",
+    "cour : estrade-brasero-o : « niche » du kit en attendant « brasero »",
+    "cour : estrade-brasero-e : « niche » du kit en attendant « brasero »",
+    "cour : tableau : « niche » du kit en attendant « tableau »",
+    "cour : premier plan : le mur du Quai, en attendant la balustrade de « villes-objets »"
+  ],
+  "morceaux": {
+    "parvis/fond-rang1--31-1": {
+      "frise": "a",
+      "de": 0,
+      "a": 16.109,
+      "etirement": 1.105
+    },
+    "parvis/fond-rang1--11-1": {
+      "frise": "a",
+      "de": 43.839,
+      "a": 64.339,
+      "etirement": 1.034
+    },
+    "parvis/fond-rang1-13-1": {
+      "frise": "a",
+      "de": 20.484,
+      "a": 38.419,
+      "etirement": 0.992
+    },
+    "parvis/fond-rang2--31": {
+      "frise": "b",
+      "de": 27.745,
+      "a": 50.421,
+      "etirement": 1.032
+    },
+    "parvis/fond-rang2--5": {
+      "frise": "b",
+      "de": 0.016,
+      "a": 5.435,
+      "etirement": 1.126
+    },
+    "parvis/fond-rang2-13": {
+      "frise": "b",
+      "de": 16.806,
+      "a": 36.106,
+      "etirement": 0.959
+    },
+    "parvis/fond-place-paris-rang2-2": {
+      "frise": "b",
+      "de": 50.421,
+      "a": 61.795,
+      "etirement": 0.967
+    },
+    "parvis/flanc-rang2--31": {
+      "frise": "a",
+      "de": 0,
+      "a": 20.484,
+      "etirement": 0.845
+    },
+    "parvis/flanc-rang2-14": {
+      "frise": "a",
+      "de": 31,
+      "a": 48.229,
+      "etirement": 1.004
+    },
+    "parvis/fond-rang3--31": {
+      "frise": "a",
+      "de": 43.839,
+      "a": 64.339,
+      "etirement": 0.976
+    },
+    "parvis/fond-rang3--5": {
+      "frise": "a",
+      "de": 20.484,
+      "a": 31,
+      "etirement": 0.913
+    },
+    "parvis/fond-rang3-8": {
+      "frise": "a",
+      "de": 0,
+      "a": 20.484,
+      "etirement": 1.142
+    },
+    "parvis/fond-placette-tableau-rang3--11": {
+      "frise": "a",
+      "de": 20.484,
+      "a": 27.048,
+      "etirement": 0.914
+    },
+    "parvis/flanc-rang3--31": {
+      "frise": "b",
+      "de": 0.016,
+      "a": 16.806,
+      "etirement": 1.191
+    },
+    "parvis/flanc-rang3-11": {
+      "frise": "b",
+      "de": 23.371,
+      "a": 43.855,
+      "etirement": 0.976
+    },
+    "parvis/fond-rang4--31-o": {
+      "frise": "b",
+      "de": 36.106,
+      "a": 61.795,
+      "etirement": 1.051
+    },
+    "parvis/fond-rang4--31-e": {
+      "frise": "b",
+      "de": 5.435,
+      "a": 31.981,
+      "etirement": 1.017
+    },
+    "parvis/flanc-rang4--31": {
+      "frise": "a",
+      "de": 31,
+      "a": 52.465,
+      "etirement": 1.025
+    },
+    "parvis/flanc-rang4-9": {
+      "frise": "a",
+      "de": 16.109,
+      "a": 38.419,
+      "etirement": 0.986
+    },
+    "ruelles/fond-rang1--31-1": {
+      "frise": "a",
+      "de": 0,
+      "a": 16.109,
+      "etirement": 1.055
+    },
+    "ruelles/fond-rang1--31-2": {
+      "frise": "a",
+      "de": 0,
+      "a": 4.583,
+      "etirement": 1.004
+    },
+    "ruelles/fond-rang1--7-1": {
+      "frise": "a",
+      "de": 43.839,
+      "a": 64.339,
+      "etirement": 1.015
+    },
+    "ruelles/fond-rang1--7-2": {
+      "frise": "a",
+      "de": 20.484,
+      "a": 38.419,
+      "etirement": 0.948
+    },
+    "ruelles/fond-rang2--31": {
+      "frise": "b",
+      "de": 23.371,
+      "a": 54.374,
+      "etirement": 1.032
+    },
+    "ruelles/fond-rang2-4": {
+      "frise": "b",
+      "de": 36.106,
+      "a": 39.272,
+      "etirement": 0.853
+    },
+    "ruelles/fond-rang2-13": {
+      "frise": "b",
+      "de": 0.016,
+      "a": 16.806,
+      "etirement": 1.102
+    },
+    "ruelles/fond-placette-olivier-rang2-7": {
+      "frise": "b",
+      "de": 54.374,
+      "a": 61.795,
+      "etirement": 0.809
+    },
+    "ruelles/flanc-rang2--31": {
+      "frise": "a",
+      "de": 0,
+      "a": 20.484,
+      "etirement": 0.903
+    },
+    "ruelles/flanc-rang2-13": {
+      "frise": "a",
+      "de": 38.419,
+      "a": 56.59,
+      "etirement": 1.018
+    },
+    "ruelles/fond-rang3--31": {
+      "frise": "a",
+      "de": 16.109,
+      "a": 38.419,
+      "etirement": 1.103
+    },
+    "ruelles/fond-rang3--4": {
+      "frise": "a",
+      "de": 31,
+      "a": 64.339,
+      "etirement": 1.038
+    },
+    "ruelles/flanc-rang3--31": {
+      "frise": "b",
+      "de": 16.806,
+      "a": 36.106,
+      "etirement": 1.036
+    },
+    "ruelles/flanc-rang3-11": {
+      "frise": "b",
+      "de": 43.855,
+      "a": 61.795,
+      "etirement": 1.115
+    },
+    "ruelles/fond-rang4--31-o": {
+      "frise": "b",
+      "de": 23.371,
+      "a": 50.421,
+      "etirement": 1.017
+    },
+    "ruelles/fond-rang4--31-e": {
+      "frise": "b",
+      "de": 0.016,
+      "a": 27.745,
+      "etirement": 0.992
+    },
+    "ruelles/flanc-rang4--31": {
+      "frise": "a",
+      "de": 4.583,
+      "a": 27.048,
+      "etirement": 0.979
+    },
+    "ruelles/flanc-rang4-9": {
+      "frise": "a",
+      "de": 43.839,
+      "a": 64.339,
+      "etirement": 1.073
+    },
+    "cour/fond-rang1--34-1": {
+      "frise": "a",
+      "de": 0,
+      "a": 20.484,
+      "etirement": 0.908
+    },
+    "cour/fond-rang1--13-1": {
+      "frise": "a",
+      "de": 31,
+      "a": 56.59,
+      "etirement": 1
+    },
+    "cour/fond-rang1-15-1": {
+      "frise": "a",
+      "de": 20.484,
+      "a": 38.419,
+      "etirement": 1.037
+    },
+    "cour/flanc-rang2--34": {
+      "frise": "a",
+      "de": 48.229,
+      "a": 64.339,
+      "etirement": 1.124
+    },
+    "cour/flanc-rang2-16": {
+      "frise": "a",
+      "de": 0,
+      "a": 16.109,
+      "etirement": 1.124
+    }
+  }
+}
