@@ -569,5 +569,6 @@ Décisions (collection `decisions` de la fiche <https://claude.ai/artifact/MBMoN
   session de reprise interdit à l'agent de changer un drapeau `approved`, et la fiche annonçait le passage à
   `approved: true` sur ordre explicite du responsable, dans une passe à part.
 - **B1** : les 2 images restantes sur 30 restent en réserve pour d'éventuelles retouches après A1.
-- **P1** : la démo `?demo=1` passe à la ville en rangs (à faire, passe suivante).
+- **P1** : la démo `?demo=1` passe à la ville en rangs (**fait en passe 98** : décision commune `villeEnRangs`, la ville
+  d'aujourd'hui en secours).
 - **P2, S1** : les feuilles des PNJ de la ville viendront après M10-E ; le lot suivant est M10-E (la ville vivante).
