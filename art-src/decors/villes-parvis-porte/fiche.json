@@ -1,0 +1,86 @@
+{
+  "id": "villes-parvis-porte",
+  "statut": "lot des villes (ADR 028, reprise de M09, passe 94), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "auteur": "Claude Code (session de reprise de M09, passe 94), à la demande du responsable : « Oui, génère le lot des villes (6 images, tools/m09-lot-villes-4.mjs) et la feuille J1 (1 image, la réserve seulement si besoin, tools/m09-lot-joueur-j1.mjs), traite-les par script et pose-les. »",
+  "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-villes-4.mjs",
+  "aseprite": "non utilisé : traitement par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-kit-villes.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production ; aucune analyse juridique faite par l’agent : point à confirmer par le responsable (A2) avant tout usage en jeu",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "sources": [
+    {
+      "nom": "parvis-porte",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-21T04:16:57.299Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1536x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image), of our harbour facades (second image) and of our back-street houses (third image). Do not copy their composition.\n\nPaint ONE isolated background layer for a 2.5D night harbour town, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): the monumental gate pavilion of the city's card-duel arena (the Tournament gate), about 21 metres wide and 15 metres tall to its ridge, spanning the full width of the image and filling about the lower 85% of it. Scale: a person is about 125 pixels tall in this image. In the centre, a great round-arched gate about 4.6 metres wide and 6 metres tall, its heavy wooden doors open inwards, a warm orange glow of torches inside and a glimpse of a sandy floor; on each side, two smaller round arcades closed by dark iron grilles; rusticated cold grey stone; above the gate, a stone gallery of small columns and a deep balcony; four long hanging cloth banners on the upper storey, one in each family colour (ember orange, veil blue and silver, bramble green, star gold), plain; a crenellated parapet and two corner turrets with pointed slate roofs; iron wall lanterns glowing warm amber beside the gate.\n\nThe bottom edge of the image is a straight horizontal line at the foot of the walls, with no ground, no steps and no cobbles in front.\n\nEverything around the subjects (above the roofs, between the panels, around the objects) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-20-v4-rangs/rangs-ruelle-a.png",
+          "sha256": "03edc3cc328ed147d6118781eef5123cf784a905c2bad9393f1bdda15b18acb7"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-20-v4-villes/parvis-porte.png (dossier principal, ignoré par git)",
+        "sha256": "100c1679c5f5436909935aa27f87c3cce6af49dee3457c104947dc2326595e75",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 5143,
+        "input_tokens_details": {
+          "image_tokens": 4608,
+          "text_tokens": 535
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10631
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs",
+      "tools/m09-kit-villes.mjs"
+    ],
+    "etapes": [
+      "emblèmes des familles du jeu brodés en relief sur 4 bannière(s) unie(s) (fixBanners, tracés de src/art/emblems.ts), sur le brut, avant tout traitement",
+      "fond magenta détouré (alpha tiré de l’écart au magenta, bords démêlés du fond), recadré sur le pied des murs",
+      "largeur au monde 21.2 m (lanternes peintes repérées : kit-villes.json)"
+    ],
+    "decoupes": "art-src/decors/kit-villes.json"
+  },
+  "sortie": {
+    "fichier": "public/decors/villes-parvis-porte.png",
+    "sha256": "dd07306b6684f39a6cfd7f516ebfc1b56e0eab1d5e08df0ca90d7a048ac7a218",
+    "octets": 2732746,
+    "dimensions": [
+      1440,
+      931
+    ]
+  },
+  "approved": false,
+  "chaine_des_empreintes": [
+    "100c1679c5f5436909935aa27f87c3cce6af49dee3457c104947dc2326595e75 (brut parvis-porte)",
+    "dd07306b6684f39a6cfd7f516ebfc1b56e0eab1d5e08df0ca90d7a048ac7a218 (planche)"
+  ]
+}

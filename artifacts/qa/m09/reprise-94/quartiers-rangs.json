@@ -1,0 +1,162 @@
+{
+  "date": "2026-10-21T04:31:02.927Z",
+  "commit": "9f6f452",
+  "mode": "verifier",
+  "checks": [
+    "OK parvis : dessiné par son diorama (11 images, 101.1 Mo de mémoire GPU), aucun refus",
+    "OK parvis/parvis : personnage en (0, -2.4), praticable ; 118 px",
+    "OK parvis/rue-gradins : personnage en (-2, -16), praticable ; 105 px",
+    "OK parvis/place-paris : personnage en (5, -21), praticable ; 103 px",
+    "OK parvis/rue-lices : personnage en (0, -29.2), praticable ; 101 px",
+    "OK parvis/placette-tableau : personnage en (-8, -32.6), praticable ; 100 px",
+    "OK parvis/cour-champions : personnage en (0, -41), praticable ; 97 px",
+    "OK ruelles : dessiné par son diorama (12 images, 116.5 Mo de mémoire GPU), aucun refus",
+    "OK ruelles/ruelles : personnage en (-1.2, 0.8), praticable ; 120 px",
+    "OK ruelles/ruelle-tanneurs : personnage en (0, -12.2), praticable ; 106 px",
+    "OK ruelles/placette-olivier : personnage en (8.6, -15), praticable ; 105 px",
+    "OK ruelles/ruelle-voile : personnage en (0, -23.2), praticable ; 102 px",
+    "OK ruelles/cour-guilde : personnage en (0, -35), praticable ; 99 px",
+    "OK cour : dessiné par son diorama (8 images, 72.6 Mo de mémoire GPU), aucun refus",
+    "OK cour/cour : personnage en (0, 1.8), praticable ; 111 px",
+    "OK cour/monument : personnage en (0, -1.2), praticable ; 110 px",
+    "OK cour/estrade : personnage en (-7.5, -6.2), praticable ; 108 px",
+    "OK cour/belvedere : personnage en (0, -22), praticable ; 101 px",
+    "OK aucune erreur ni avertissement de console (0)"
+  ],
+  "console": [],
+  "provisoire": [],
+  "figures": {
+    "parvis/parvis": {
+      "at": [
+        0,
+        -2.4
+      ],
+      "figurePx": 118
+    },
+    "parvis/rue-gradins": {
+      "at": [
+        -2,
+        -16
+      ],
+      "figurePx": 105
+    },
+    "parvis/place-paris": {
+      "at": [
+        5,
+        -21
+      ],
+      "figurePx": 103
+    },
+    "parvis/rue-lices": {
+      "at": [
+        0,
+        -29.2
+      ],
+      "figurePx": 101
+    },
+    "parvis/placette-tableau": {
+      "at": [
+        -8,
+        -32.6
+      ],
+      "figurePx": 100
+    },
+    "parvis/cour-champions": {
+      "at": [
+        0,
+        -41
+      ],
+      "figurePx": 97
+    },
+    "ruelles/ruelles": {
+      "at": [
+        -1.2,
+        0.8
+      ],
+      "figurePx": 120
+    },
+    "ruelles/ruelle-tanneurs": {
+      "at": [
+        0,
+        -12.2
+      ],
+      "figurePx": 106
+    },
+    "ruelles/placette-olivier": {
+      "at": [
+        8.6,
+        -15
+      ],
+      "figurePx": 105
+    },
+    "ruelles/ruelle-voile": {
+      "at": [
+        0,
+        -23.2
+      ],
+      "figurePx": 102
+    },
+    "ruelles/cour-guilde": {
+      "at": [
+        0,
+        -35
+      ],
+      "figurePx": 99
+    },
+    "cour/cour": {
+      "at": [
+        0,
+        1.8
+      ],
+      "figurePx": 111
+    },
+    "cour/monument": {
+      "at": [
+        0,
+        -1.2
+      ],
+      "figurePx": 110
+    },
+    "cour/estrade": {
+      "at": [
+        -7.5,
+        -6.2
+      ],
+      "figurePx": 108
+    },
+    "cour/belvedere": {
+      "at": [
+        0,
+        -22
+      ],
+      "figurePx": 101
+    }
+  },
+  "decor": {
+    "parvis": {
+      "loaded": [
+        "parvis"
+      ],
+      "issues": [],
+      "gpuMo": 101.1,
+      "images": 11
+    },
+    "ruelles": {
+      "loaded": [
+        "ruelles"
+      ],
+      "issues": [],
+      "gpuMo": 116.5,
+      "images": 12
+    },
+    "cour": {
+      "loaded": [
+        "cour"
+      ],
+      "issues": [],
+      "gpuMo": 72.6,
+      "images": 8
+    }
+  },
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+}

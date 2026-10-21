@@ -35,8 +35,9 @@ const check = (ok, what) => { report.checks.push(`${ok ? 'OK' : 'ÉCHEC'} ${what
 const MANIFESTE = 'public/decors/manifest-profondeur.json';
 
 /**
- * Habillage de chaque îlot (m). `rang1` : la façade d'identité au fond du rang 1 (entre `x`, ou coupée à ses murs
- * mitoyens pour ouvrir les passages, `coupee`) ; `coeur` : la façade d'identité au milieu du fond du dernier rang ;
+ * Habillage de chaque îlot (m). `rang1` : la façade d'identité au fond du rang 1 (entre `x`, ou de `depuis` sur sa
+ * largeur au monde : les maisons du canal partent du bord est du passage, sans maison coupée) ; `coeur` : la façade
+ * d'identité au milieu du fond du dernier rang ;
  * `avant` : le premier plan (balustrade de terrasse, ou le canal : le mur et l'eau du Quai) ; `fonds`, `flancs` : frises
  * du kit par rang, en alternance ; `camera` : cadrage du diorama (celui du Quai en rangs, recentré ; la Grande Cour plus
  * haute, ADR 028 C3).
@@ -55,21 +56,21 @@ const COMMUN = {
 const QUARTIERS = {
   parvis: {
     plan: PLAN_PARVIS, meubles: MEUBLES_PARVIS, lampes: [...P_LAMPS, ...LAMPES_PARVIS],
-    rang1: { identite: 'parvis-porte', x: [-10.6, 10.6], remplacant: { monument: 'halle' } },
+    rang1: { identite: 'parvis-porte', x: [-10.6, 10.6] },
     coeur: { identite: 'parvis-arene', largeur: 30, remplacant: { monument: 'chapelle', largeur: 8 } },
     avant: 'balustrade',
     camera: { pitch: 6, distance: 25, fov: 42, aimY: 4.8, minX: -3, maxX: 3, followZ: 0.9, aimZ: -0.9, pitchFond: 16, zFond: -16 },
   },
   ruelles: {
     plan: PLAN_RUELLES, meubles: MEUBLES_RUELLES, lampes: [...R_LAMPS, ...LAMPES_RUELLES],
-    rang1: { identite: 'ruelles-canal', coupee: true, x: [-14, 14] },
+    rang1: { identite: 'ruelles-canal', depuis: -6.8, x: [-6.8, 14] },
     coeur: { identite: 'ruelles-guilde', largeur: 14, remplacant: { monument: 'joueurs', largeur: 7 } },
     avant: 'canal',
     camera: { pitch: 6, distance: 25, fov: 42, aimY: 4.8, minX: -3, maxX: 3, followZ: 0.9, aimZ: 0.2, pitchFond: 16, zFond: -12 },
   },
   cour: {
     plan: PLAN_COUR, meubles: MEUBLES_COUR, lampes: LAMPES_COUR,
-    rang1: { identite: 'cour-facades', x: [-12.8, 12.8], remplacant: { monument: 'halle' } },
+    rang1: { identite: 'cour-facades', x: [-12.8, 12.8] },
     coeur: { belvedere: true },
     avant: 'balustrade', escalier: ESCALIER,
     camera: { pitch: 15, distance: 26, fov: 42, aimY: 3.6, minX: -6, maxX: 6, followZ: 0.9, aimZ: -3, pitchFond: 18, zFond: -16 },
@@ -151,10 +152,11 @@ if (MODE === 'assembler') {
     // façade d'identité du lot des villes, ou son remplaçant du kit (provisoire)
     const identite = (nom) => villes?.facades?.[nom] ?? null;
     plans.ciel = { ...quai.plans.ciel };
+    const facadeLights = [];
     const last = plan.rangs[plan.rangs.length - 1];
     // fonds et flancs de chaque rang, découpés aux passages et aux places
     const coeurX = Q.coeur.belvedere ? null : (() => {
-      const f = identite(Q.coeur.identite); const L = f ? Q.coeur.largeur : Q.coeur.remplacant.largeur;
+      const f = identite(Q.coeur.identite); const L = f ? f.largeur : Q.coeur.remplacant.largeur;
       return [-L / 2, L / 2];
     })();
     for (const f of plan.facades) {
@@ -166,7 +168,9 @@ if (MODE === 'assembler') {
         // fond du rang 1 : la façade d'identité entre ses x (ou coupée à ses murs mitoyens) ; frises au-delà
         const R = Q.rang1;
         const parts = [];
-        const inner = R.coupee ? [f.x0, f.x1].map((x) => Math.min(R.x[1], Math.max(R.x[0], x))) : [Math.max(f.x0, R.x[0]), Math.min(f.x1, R.x[1])];
+        const eR = identite(R.identite);
+        const rx = R.depuis !== undefined && eR ? [R.depuis, R.depuis + eR.largeur] : R.x;
+        const inner = [Math.max(f.x0, rx[0]), Math.min(f.x1, rx[1])];
         const hasInner = inner[1] - inner[0] > 0.5;
         if (f.x0 < inner[0] - 0.01 || !hasInner) parts.push({ x0: f.x0, x1: hasInner ? inner[0] : f.x1, frise: true });
         if (hasInner) parts.push({ x0: inner[0], x1: inner[1], frise: false });
@@ -177,11 +181,12 @@ if (MODE === 'assembler') {
             if (!p.frise) provisoire(`${k2} : façade du rang 1 en frise du kit, en attendant « ${R.identite} »`);
             enFrise({ ...p, z: f.z }, COMMUN.rang1, k2);
           } else {
-            const e = identite(R.identite);
-            // coupée aux murs mitoyens : le morceau de la rangée qui couvre [x0, x1] (limites mesurées sur le brut)
-            const span = R.coupee ? e.largeur : (R.x[1] - R.x[0]);
-            const u0 = R.coupee ? (p.x0 - R.x[0]) / span : 0; const u1 = R.coupee ? (p.x1 - R.x[0]) / span : 1;
-            plans[k2] = { ...plate(e, SRC_VILLES), uv: [r3(e.uv[0] + u0 * (e.uv[2] - e.uv[0])), e.uv[1], r3(e.uv[0] + u1 * (e.uv[2] - e.uv[0])), e.uv[3]], width: r3(p.x1 - p.x0), at: [r3((p.x0 + p.x1) / 2), 0, f.z], lit: 0.35, fog: 0.15 };
+            // la façade d'identité entière sur [x0, x1] (son morceau, si le décor la coupe sur un bord)
+            const span = rx[1] - rx[0];
+            const u0 = (p.x0 - rx[0]) / span; const u1 = (p.x1 - rx[0]) / span;
+            plans[k2] = { ...plate(eR, SRC_VILLES), uv: [r3(eR.uv[0] + u0 * (eR.uv[2] - eR.uv[0])), eR.uv[1], r3(eR.uv[0] + u1 * (eR.uv[2] - eR.uv[0])), eR.uv[3]], width: r3(p.x1 - p.x0), at: [r3((p.x0 + p.x1) / 2), 0, f.z], lit: 0.35, fog: 0.15 };
+            // lanternes peintes de la façade (rang 1 : leur halo suit le fantôme du rang)
+            for (const [lx, ly] of eR.lanternes ?? []) { const x = (rx[0] + rx[1]) / 2 + lx; if (x > p.x0 && x < p.x1) facadeLights.push({ at: [r3(x), r3(ly), r3(f.z + 0.1)], color: 'ambre', intensity: 2.6, radius: 7, halo: 1.0, flicker: 'lantern', ...cz(1) }); }
           }
           Object.assign(plans[k2], coupe);
         });
@@ -191,7 +196,10 @@ if (MODE === 'assembler') {
         // fond du cœur : rangée de maisons de part et d'autre du monument d'identité, au milieu
         for (const [a, c, s] of [[f.x0, coeurX[0], 'o'], [coeurX[1], f.x1, 'e']]) if (c - a > 0.5) enFrise({ x0: a, x1: c, z: f.z }, COMMUN.fonds[f.rang] ?? COMMUN.fonds[4], `${key}-${s}`);
         const e = identite(Q.coeur.identite);
-        if (e) plans[`coeur-${Q.coeur.identite}`] = { ...plate(e, SRC_VILLES), uv: e.uv, width: Q.coeur.largeur, at: [0, 0, r3(f.z + 0.05)], lit: 0.3, fog: 0.3 };
+        if (e) {
+          plans[`coeur-${Q.coeur.identite}`] = { ...plate(e, SRC_VILLES), uv: e.uv, width: e.largeur, at: [0, 0, r3(f.z + 0.05)], lit: 0.3, fog: 0.3 };
+          for (const [lx, ly] of (e.lanternes ?? []).slice(0, 2)) facadeLights.push({ at: [r3(lx), r3(ly), r3(f.z + 0.15)], color: 'ambre', intensity: 2.6, radius: 8, halo: 1.0, flicker: 'lantern' });
+        }
         else {
           provisoire(`cœur : « ${Q.coeur.remplacant.monument} » du kit en attendant « ${Q.coeur.identite} »`);
           plans[`coeur-${Q.coeur.remplacant.monument}`] = { ...monument(Q.coeur.remplacant.monument), width: Q.coeur.remplacant.largeur, at: [0, 0, r3(f.z + 0.05)], lit: 0.3, fog: 0.3 };
@@ -202,10 +210,10 @@ if (MODE === 'assembler') {
         // le Belvédère : une balustrade au bord de la terrasse, la ville haute au-delà
         const b = villes?.objets?.balustrade;
         if (!b) { provisoire('Belvédère : sans balustrade, en attendant « villes-objets »'); continue; }
-        const n = Math.ceil((f.x1 - f.x0) / b.largeur);
+        const n = Math.max(1, Math.round((f.x1 - f.x0) / (b.largeur * 1.15)));
         for (let i = 0; i < n; i++) {
           const x0 = f.x0 + (i * (f.x1 - f.x0)) / n; const x1 = f.x0 + ((i + 1) * (f.x1 - f.x0)) / n;
-          plans[`belvedere-balustrade-${i + 1}`] = { ...plate(villes.objets, SRC_VILLES), uv: b.uv, width: r3(x1 - x0), at: [r3((x0 + x1) / 2), -b.sous, f.z], lit: 0.3, fog: 0.3 };
+          plans[`belvedere-balustrade-${i + 1}`] = { ...plate(villes.objets, SRC_VILLES), uv: b.uv, width: r3(x1 - x0), at: [r3((x0 + x1) / 2), r3(-b.sous * ((x1 - x0) / b.largeur)), f.z], lit: 0.3, fog: 0.3 };
         }
         continue;
       }
@@ -264,19 +272,26 @@ if (MODE === 'assembler') {
       } else {
         const trous = Q.escalier ? [Q.escalier] : [];
         let n = 0;
-        for (const [a, c] of [[-34, trous[0]?.[0] ?? 34], ...(trous.length ? [[trous[0][1], 34]] : [])]) {
-          const k = Math.max(1, Math.round((c - a) / b.largeur));
+        // de 8 m au-delà des bornes de l’îlot (la caméra ne voit pas plus loin au premier plan) ; ouverte sur l'escalier
+        const L = Math.max(-r1.x0, r1.x1) + 8;
+        for (const [a, c] of [[-L, trous[0]?.[0] ?? L], ...(trous.length ? [[trous[0][1], L]] : [])]) {
+          // segments étirés jusqu'à 1,2 fois (64 plans au plus par îlot)
+          const k = Math.max(1, Math.round((c - a) / (b.largeur * 1.15)));
           for (let i = 0; i < k; i++) {
             const x0 = a + (i * (c - a)) / k; const x1 = a + ((i + 1) * (c - a)) / k;
-            plans[`balustrade-${++n}`] = { ...plate(villes.objets, SRC_VILLES), uv: b.uv, width: r3(x1 - x0), at: [r3((x0 + x1) / 2), -b.sous, r3(r1.z1 + 0.35)], lit: 0.3 };
+            // le sol de la terrasse (pied des balustres) à fleur du sol de l'îlot : la part sous le sol suit l'étirement
+            plans[`balustrade-${++n}`] = { ...plate(villes.objets, SRC_VILLES), uv: b.uv, width: r3(x1 - x0), at: [r3((x0 + x1) / 2), r3(-b.sous * ((x1 - x0) / b.largeur)), r3(r1.z1 + 0.35)], lit: 0.3 };
           }
         }
       }
-      brumes.push([120, 3, 0, -3, r3(r1.z1 + 4), 0.4, 0.01, [6, 1]]);
+      // sous la terrasse, la ville basse dans la nuit : une nappe sombre et dense juste devant le mur (la caméra haute de
+      // la Grande Cour voit sous lui : sans elle, le bas du ciel du fond y faisait une bande claire)
+      brumes.push([140, 12, 0, -8, r3(r1.z1 + 0.6), 0.92, 0.003, [4, 1], 0.5]);
     }
     // lumières (16 au plus) : lampadaires, lanternes et feux des objets (debout dans la rue : aucun ne devient fantôme)
     const lumieres = [
       ...Q.lampes.map((p) => ({ at: [p.x, COMMUN.lampes.lanternY, r3(p.z + 0.1)], color: 'ambre', intensity: 3.0, radius: 9, halo: 1.6, flicker: 'lantern' })),
+      ...facadeLights.slice(0, 3),
       ...lanternes,
     ].slice(0, 16);
     for (const r of plan.rangs.filter((x) => x.n > 1)) for (const sgn of [-1, 1]) brumes.push([10, 9, r3(sgn > 0 ? r.x1 + 1.5 : r.x0 - 1.5), 3.8, r3((r.z0 + r.z1) / 2), 0.6, 0.004, [2, 1], 1.0]);

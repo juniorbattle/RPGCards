@@ -1,0 +1,85 @@
+{
+  "id": "villes-objets",
+  "statut": "lot des villes (ADR 028, reprise de M09, passe 94), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "auteur": "Claude Code (session de reprise de M09, passe 94), à la demande du responsable : « Oui, génère le lot des villes (6 images, tools/m09-lot-villes-4.mjs) et la feuille J1 (1 image, la réserve seulement si besoin, tools/m09-lot-joueur-j1.mjs), traite-les par script et pose-les. »",
+  "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-villes-4.mjs",
+  "aseprite": "non utilisé : traitement par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-kit-villes.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production ; aucune analyse juridique faite par l’agent : point à confirmer par le responsable (A2) avant tout usage en jeu",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "sources": [
+    {
+      "nom": "villes-objets",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-21T04:21:54.672Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1536x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image), of our harbour facades (second image) and of our back-street houses (third image). Do not copy their composition.\n\nPaint ONE isolated layer with SIX separate objects arranged in a 3 × 2 grid with wide magenta gaps between them, each seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines) with a slight view from above, each standing on its own straight horizontal base line with a soft contact shadow and no ground around it. Scale: a person would be about 110 pixels tall in this image. Top row: the monument of the Four Ways, an octagonal stone fountain basin with a tall carved column in its centre, crowned by a bronze sphere ringed by four arms pointing four ways, four small hanging cloth pennants in the four family colours (plain), thin streams of water catching the lamplight; a public duel stage, a square wooden platform about one metre high with three steps in front, a small square card table and two stools in its centre, a lantern on a post at each corner, an ivory canvas canopy; a straight segment of stone balustrade standing on top of a tall terrace retaining wall (the edge of a raised square), with an iron lantern post at its right end. Bottom row: a tall iron brazier burning with a warm fire on a short stone plinth; a small wooden betting kiosk with an ivory awning, a counter with small purses and wooden tokens, and a blank dark slate board with small coloured pins only; a tall wooden notice board under a little shingled roof, covered with blank parchment slips held by coloured pins, with nothing written on them.\n\nEverything around the subjects (above the roofs, between the panels, around the objects) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-20-v4-rangs/rangs-ruelle-a.png",
+          "sha256": "03edc3cc328ed147d6118781eef5123cf784a905c2bad9393f1bdda15b18acb7"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-20-v4-villes/villes-objets.png (dossier principal, ignoré par git)",
+        "sha256": "f3919fba70b467e48e75803438122e2b087f2d2ddd0649701d8b7df00df1f4df",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 5182,
+        "input_tokens_details": {
+          "image_tokens": 4608,
+          "text_tokens": 574
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10670
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs",
+      "tools/m09-kit-villes.mjs"
+    ],
+    "etapes": [
+      "fond magenta détouré (alpha tiré de l’écart au magenta, bords démêlés du fond), sans recadrage",
+      "six objets séparés par les bandes vides (deux rangées de trois ; boîtes, lanternes et feux dans kit-villes.json), à 65 px/m"
+    ],
+    "decoupes": "art-src/decors/kit-villes.json"
+  },
+  "sortie": {
+    "fichier": "public/decors/villes-objets.png",
+    "sha256": "afaa520ad09c81ae2f1a5269ddb562deb30daa01d6e8dae5e268eaeac973f9ee",
+    "octets": 1693760,
+    "dimensions": [
+      1536,
+      1024
+    ]
+  },
+  "approved": false,
+  "chaine_des_empreintes": [
+    "f3919fba70b467e48e75803438122e2b087f2d2ddd0649701d8b7df00df1f4df (brut villes-objets)",
+    "afaa520ad09c81ae2f1a5269ddb562deb30daa01d6e8dae5e268eaeac973f9ee (planche)"
+  ]
+}

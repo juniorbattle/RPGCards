@@ -43,19 +43,20 @@ const COUR = PLAN_PARVIS.rangs[3]!;
 /**
  * Mobilier (mêmes places dans le manifeste, `tools/m09-quartiers-rangs.mjs`, qui les lit ici). Au rang 1, à la place des
  * obstacles du Parvis d'aujourd'hui : braseros (disques), table des inscriptions et tonneaux. Objets du kit des rangs
- * (`rangs-mobilier`) ou du lot des villes (`villes-objets` : brasero, kiosque, tableau).
+ * (`rangs-mobilier`) ou du lot des villes (`villes-objets` : brasero, kiosque, tableau ; peints plus grands que nature,
+ * ramenés à leur taille par `echelle`).
  */
 export const MEUBLES_PARVIS: readonly MeubleRang[] = [
-  ...BRAZIERS.map((b, i) => ({ ...objet(`parvis-brasero-${i + 1}`, 'brasero', b.x, b.z + 0.6, 1.2, 1.2), rect: null })),
+  ...BRAZIERS.map((b, i) => ({ ...objet(`parvis-brasero-${i + 1}`, 'brasero', b.x, b.z + 0.6, 1.2, 1.2), echelle: 0.4, rect: null })),
   { ...objet('parvis-inscriptions', 'etal', (BOOTH.x0 + BOOTH.x1) / 2, BOOTH.z1, BOOTH.x1 - BOOTH.x0, BOOTH.z1 - BOOTH.z0), echelle: 0.55, rect: BOOTH },
   { ...meuble('parvis-tonneaux', [-11.3, -9.7], (P_PROPS[0]!.x0 + P_PROPS[0]!.x1) / 2, P_PROPS[0]!.z1, 1.2, 0.9), rect: P_PROPS[0]! },
   objet('gradins-charrette', 'charrette', -10.2, -18.2, 4.0, 1.0),
-  objet('paris-kiosque', 'kiosque', 7.6, -23.0, 3.0, 1.2),
+  { ...objet('paris-kiosque', 'kiosque', 7.6, -23.0, 3.0, 1.2), echelle: 0.5 },
   meuble('paris-caisses', [11.6, 13.7], 11.2, -23.6, 1.2, 0.8),
-  objet('tableau-annonces', 'tableau', -8.4, -35.4, 2.6, 0.6),
+  { ...objet('tableau-annonces', 'tableau', -8.4, -35.4, 2.6, 0.6), echelle: 0.5 },
   objet('lices-banc', 'banc', 3.2, -30.4, 3.2, 0.8),
-  { ...objet('champions-brasero-o', 'brasero', -3.6, -44.8, 1.2, 1.2), rect: null },
-  { ...objet('champions-brasero-e', 'brasero', 3.6, -44.8, 1.2, 1.2), rect: null },
+  { ...objet('champions-brasero-o', 'brasero', -3.6, -44.8, 1.2, 1.2), echelle: 0.4, rect: null },
+  { ...objet('champions-brasero-e', 'brasero', 3.6, -44.8, 1.2, 1.2), echelle: 0.4, rect: null },
 ];
 /** Braseros de la cour des Champions (disques, comme ceux du Parvis). */
 const BRASEROS_COUR: readonly Vec2[] = [{ x: -3.6, z: -45.4 }, { x: 3.6, z: -45.4 }];
