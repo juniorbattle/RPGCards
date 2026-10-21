@@ -1,0 +1,248 @@
+{
+  "date": "2026-10-21T04:44:13.706Z",
+  "commit": "a2a2892",
+  "mode": "verifier",
+  "checks": [
+    "OK Quai en rangs dessiné par son diorama de preuve (62 plans découpés dans 12 images, 125.4 Mo de mémoire GPU), aucun refus",
+    "OK quai : personnage posé en (-0.6, 0.6), praticable ; 120 px de haut",
+    "OK rue-haute : personnage posé en (-3, -14), praticable ; 105 px de haut",
+    "OK place-halle : personnage posé en (5.2, -18.4), praticable ; 104 px de haut",
+    "OK passage : personnage posé en (-6.5, -21), praticable ; 103 px de haut",
+    "OK ruelle-lanternes : personnage posé en (-1, -27), praticable ; 101 px de haut",
+    "OK placette-puits : personnage posé en (-12.4, -29.8), praticable ; 100 px de haut",
+    "OK cour-chapelle : personnage posé en (1.5, -38.5), praticable ; 98 px de haut",
+    "OK aucune erreur ni avertissement de console (0)"
+  ],
+  "console": [],
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "decor": {
+    "policy": "qa",
+    "loaded": [
+      "quai"
+    ],
+    "unapproved": [
+      "quai/ciel",
+      "quai/ville-haute",
+      "quai/fond-rang4--31",
+      "quai/fond-rang4-4",
+      "quai/cour-chapelle",
+      "quai/cour-banc",
+      "quai/cour-fontaine",
+      "quai/lampadaire-5",
+      "quai/lampadaire-6",
+      "quai/flanc-rang4--31",
+      "quai/flanc-rang4-10",
+      "quai/mur-bout-4-1",
+      "quai/mur-bout-4-2",
+      "quai/fond-placette-puits",
+      "quai/placette-tonneaux",
+      "quai/puits",
+      "quai/fond-rang3--31",
+      "quai/fond-rang3--8",
+      "quai/fond-rang3-9",
+      "quai/mur-place-3-1",
+      "quai/mur-place-3-2",
+      "quai/mur-passage-3-1",
+      "quai/mur-passage-3-2",
+      "quai/lanternes-niche",
+      "quai/lampadaire-4",
+      "quai/flanc-rang3--31",
+      "quai/flanc-rang3-14",
+      "quai/mur-bout-3-1",
+      "quai/mur-bout-3-2",
+      "quai/fond-place-halle",
+      "quai/halle-caisses",
+      "quai/lampadaire-3",
+      "quai/halle-etal",
+      "quai/fond-rang2--31",
+      "quai/fond-rang2--5",
+      "quai/fond-rang2-13",
+      "quai/mur-place-2-1",
+      "quai/mur-place-2-2",
+      "quai/mur-passage-2-1",
+      "quai/mur-passage-2-2",
+      "quai/rue-haute-charrette",
+      "quai/rue-haute-tonneaux",
+      "quai/rue-haute-caisses",
+      "quai/lampadaire-1",
+      "quai/lampadaire-2",
+      "quai/flanc-rang2--31",
+      "quai/flanc-rang2-17",
+      "quai/mur-bout-2-1",
+      "quai/mur-bout-2-2",
+      "quai/facades-ouest",
+      "quai/facades-centre",
+      "quai/facades-est",
+      "quai/mur-passage-1-1",
+      "quai/mur-passage-1-2",
+      "quai/mur-passage-1-3",
+      "quai/mur-passage-1-4",
+      "quai/pied-ouest",
+      "quai/pied-centre",
+      "quai/pied-est",
+      "quai/rue",
+      "quai/premier-plan",
+      "quai/eau"
+    ],
+    "issues": [],
+    "timings": {
+      "quai/ciel": {
+        "bytes": 3067681,
+        "fetchMs": 70.9,
+        "hashMs": 2.1,
+        "decodeMs": 93.4,
+        "uploadMs": 5.9
+      },
+      "quai/ville-haute": {
+        "bytes": 3466186,
+        "fetchMs": 80.1,
+        "hashMs": 2.1,
+        "decodeMs": 89.7,
+        "uploadMs": 4.5
+      },
+      "quai/fond-rang4--31": {
+        "bytes": 6183450,
+        "fetchMs": 96.9,
+        "hashMs": 3.7,
+        "decodeMs": 98,
+        "uploadMs": 20.8
+      },
+      "quai/cour-chapelle": {
+        "bytes": 2533132,
+        "fetchMs": 66.5,
+        "hashMs": 1.6,
+        "decodeMs": 88.7,
+        "uploadMs": 19.8
+      },
+      "quai/cour-banc": {
+        "bytes": 1383305,
+        "fetchMs": 33.5,
+        "hashMs": 1,
+        "decodeMs": 14.4,
+        "uploadMs": 1.6
+      },
+      "quai/lampadaire-5": {
+        "bytes": 79461,
+        "fetchMs": 15.3,
+        "hashMs": 0.3,
+        "decodeMs": 5.8,
+        "uploadMs": 1.4
+      },
+      "quai/flanc-rang4--31": {
+        "bytes": 6392443,
+        "fetchMs": 110.1,
+        "hashMs": 3.9,
+        "decodeMs": 92.3,
+        "uploadMs": 29.5
+      },
+      "quai/mur-bout-4-1": {
+        "bytes": 1967375,
+        "fetchMs": 101.5,
+        "hashMs": 1.8,
+        "decodeMs": 57.5,
+        "uploadMs": 4.9
+      },
+      "quai/placette-tonneaux": {
+        "bytes": 158922,
+        "fetchMs": 106.5,
+        "hashMs": 0.2,
+        "decodeMs": 45.1,
+        "uploadMs": 1.2
+      },
+      "quai/facades-ouest": {
+        "bytes": 5809679,
+        "fetchMs": 142.2,
+        "hashMs": 3.7,
+        "decodeMs": 65.3,
+        "uploadMs": 10.6
+      },
+      "quai/premier-plan": {
+        "bytes": 2871612,
+        "fetchMs": 131.3,
+        "hashMs": 1.8,
+        "decodeMs": 54.4,
+        "uploadMs": 8.5
+      },
+      "quai/eau": {
+        "bytes": 3498048,
+        "fetchMs": 133.9,
+        "hashMs": 2.6,
+        "decodeMs": 44.7,
+        "uploadMs": 4.1
+      }
+    },
+    "gpuBytes": {
+      "quai": 131498907
+    },
+    "ilot": "quai",
+    "world": "diorama",
+    "pendingFrames": 0,
+    "late": []
+  },
+  "stats": {
+    "camera": "frontale",
+    "calls": 251,
+    "triangles": 5212,
+    "textures": 44,
+    "geometries": 152,
+    "programs": 21,
+    "lights": 16,
+    "cpuMs": 4.3,
+    "frames": 2,
+    "buildMs": 435,
+    "firstFrameMs": 1231,
+    "mountMs": null,
+    "mountFrameMs": null
+  },
+  "figures": {
+    "quai": {
+      "at": [
+        -0.6,
+        0.6
+      ],
+      "figurePx": 120
+    },
+    "rue-haute": {
+      "at": [
+        -3,
+        -14
+      ],
+      "figurePx": 105
+    },
+    "place-halle": {
+      "at": [
+        5.2,
+        -18.4
+      ],
+      "figurePx": 104
+    },
+    "passage": {
+      "at": [
+        -6.5,
+        -21
+      ],
+      "figurePx": 103
+    },
+    "ruelle-lanternes": {
+      "at": [
+        -1,
+        -27
+      ],
+      "figurePx": 101
+    },
+    "placette-puits": {
+      "at": [
+        -12.4,
+        -29.8
+      ],
+      "figurePx": 100
+    },
+    "cour-chapelle": {
+      "at": [
+        1.5,
+        -38.5
+      ],
+      "figurePx": 98
+    }
+  }
+}

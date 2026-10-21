@@ -180,3 +180,6 @@ A1, dans une fiche d'arbitrages avec la réception des quartiers et la suite (M1
   (`tools/m09-kit-villes.mjs`) et posé : plus aucune pièce provisoire dans les trois îlots.
 - **Passe 95** : feuille du joueur refaite (J1, 1 image, 28 sur 30 ; réserve non générée), traitée par script
   (`tools/m09-joueur-j1.mjs`) et posée ; 2 images restent sur 30.
+- **Passe 96** : jalon de QA vert sur les deux GPU et campagne complète ; A2 (inventaire `docs/M09_IMAGES_A1_A2.md`) et A1
+  (planche `screenshots/qa/m09/a1/planche-a1.png`) préparés ; **fiche d'arbitrages** (réception, A2, A1, points ouverts,
+  suite) : <https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1>.
