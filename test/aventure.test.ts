@@ -333,10 +333,11 @@ describe('M10-B — directeur des rencontres', () => {
 describe('M10-B — données (personnages, places, duels)', () => {
   it('chaque apparence a une personnalité ; chaque personnage se tient sur un sol praticable', () => {
     for (const a of APPARENCES) expect(personalityById(a), a).not.toBeNull();
-    // ARB-M10-12 : chaque place tient dans le Quai en quatre rangs, et sa place de secours dans l'ancien Quai
+    // ARB-M10-12 : chaque place tient dans le Quai en quatre rangs, et sa place de secours dans l'ancien Quai ; M10-E :
+    // les places des rangs du fond et de la Grande Cour (`rangs`) n'existent que dans la ville en rangs
     for (const r of RENCONTRES) for (const l of r.lieux) {
       expect(blocked(ilotNu(l.ilot, true), l.at, 0.32), `${r.id} @ ${l.ilot} (rangs)`).toBe(false);
-      expect(blocked(ilotNu(l.ilot, false), l.bande?.at ?? l.at, 0.32), `${r.id} @ ${l.ilot} (secours)`).toBe(false);
+      if (!l.rangs) expect(blocked(ilotNu(l.ilot, false), l.bande?.at ?? l.at, 0.32), `${r.id} @ ${l.ilot} (secours)`).toBe(false);
     }
     // la foule et l'émissaire du prologue, le retour du duel public (rang 1, mêmes places dans les deux Quai)
     for (const p of [{ x: 10.6, z: 1.8 }, { x: 16.4, z: 1.6 }, { x: 12.2, z: -1.4 }, { x: 15.2, z: -1.2 }, { x: 13.6, z: 0.9 }, { x: 12.4, z: 1.3 }]) {

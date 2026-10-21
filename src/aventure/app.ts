@@ -224,7 +224,8 @@ export class AventureApp {
     const s = this.save;
     if (!s) return;
     if (s.duel) { this.reprendreDuel(s.duel); return; }
-    void this.decisionQuai.then(() => this.entrerVille(false));
+    // reprise : la ville se relit telle qu'elle était, sans point de décision (un rechargement ne fait pas re-tirer)
+    void this.decisionQuai.then(() => this.entrerVille(false, undefined, true));
   }
 
   // ------------------------------------------------------------------ la ville
@@ -258,14 +259,16 @@ export class AventureApp {
     this.persist();
   }
 
-  private creerVille(): void {
+  private creerVille(reprise = false): void {
     const q = new URLSearchParams(location.search);
     this.host = document.createElement('div');
     this.host.className = 'ville-host demo';
     document.body.insertBefore(this.host, this.d.shellHost);
     this.look = this.lookJoueur();
+    // la Grande Cour n'existe que dans la ville en rangs : dans la ville d'aujourd'hui, on repart du Quai
+    if (!this.quaiRangs && this.save!.ville.ilot === 'cour') this.save!.ville = { ilot: 'quai', pos: null };
     const at = this.save!.ville.ilot;
-    this.decider(at);
+    if (!reprise) this.decider(at);
     if (!webglAvailable()) {
       this.host.remove();
       this.host = null;
@@ -307,16 +310,19 @@ export class AventureApp {
     if (this.bubble) this.bubble.el.hidden = true;
   }
 
-  /** Entrée (ou retour) dans la ville ; `spawn` : point d'apparition (devant un personnage) au retour d'un duel. */
-  entrerVille(arrivee: boolean, spawn?: string): void {
+  /**
+   * Entrée (ou retour) dans la ville ; `spawn` : point d'apparition (devant un personnage) au retour d'un duel ;
+   * `reprise` : « Continuer » (la ville se relit sans point de décision, M10-E).
+   */
+  entrerVille(arrivee: boolean, spawn?: string, reprise = false): void {
     // le Quai (en rangs ou en secours) se décide avant de construire la ville : quelques instants au lancement
-    if (!this.quaiDecide) { void this.decisionQuai.then(() => this.entrerVille(arrivee, spawn)); return; }
+    if (!this.quaiDecide) { void this.decisionQuai.then(() => this.entrerVille(arrivee, spawn, reprise)); return; }
     this.ecran = 'ville';
     this.d.app.hidden = true;
     this.d.arena()?.setPaused(true);
     if (this.town && this.look !== this.lookJoueur()) this.detruireVille();
     if (!this.town) {
-      try { this.creerVille(); } catch (err) {
+      try { this.creerVille(reprise); } catch (err) {
         // Sans WebGL (navigateur ou poste qui le refuse), pas de ville : le prototype le dit au lieu de rester bloqué.
         console.warn('Ville indisponible', err);
         this.titre();
@@ -325,7 +331,7 @@ export class AventureApp {
       }
     }
     else {
-      this.decider(this.town.ilotId());
+      if (!reprise) this.decider(this.town.ilotId());
       this.town.setPaused(false);
       this.host!.hidden = false;
       this.rafraichir(spawn);
@@ -453,7 +459,17 @@ export class AventureApp {
       fontaine: 'La fontaine du Voile : les duellistes y jettent une carte usée avant un grand duel. Lior, l’émissaire du Voile, n’est jamais loin.',
       'place-halle': 'La place de la Halle : on y joue aux cartes entre deux livraisons. Quand la Cendre ouvre son Épreuve, c’est ici.',
       'placette-puits': 'La placette du Puits : on y tire l’eau et les défis. La Ronce y tient sa Joute.',
-      'cour-chapelle': 'La cour de la Chapelle, le cœur du Quai. Bran, le Premier Feu, y attend ceux qui montent jusqu’à lui.',
+      'cour-chapelle': 'La cour de la Chapelle, le cœur du Quai. Bran, le Premier Feu, y attend les duellistes qui montent jusqu’à lui. Par la porte cochère, on monte vers la Grande Cour.',
+      // M10-E : les places du Parvis et des Ruelles en rangs, et la Grande Cour
+      'place-paris': 'La place des Paris : on y mise sur les duels de l’arène, et les rumeurs y vont plus vite que les cartes.',
+      'placette-tableau': 'La placette du Tableau : les annonces du Tournoi y sont épinglées, les défis aussi.',
+      'cour-champions': 'La cour des Champions, au pied de l’arène : les duellistes y attendent leur tour. Par la porte cochère, on monte vers la Grande Cour.',
+      'placette-olivier': 'La placette de l’Olivier : un banc, un vieil arbre, et le calme des Ruelles entre deux lectures.',
+      'cour-guilde': 'La cour de la Guilde des joueurs : on y joue toute la nuit sous les arcades. Par la porte cochère, on monte vers la Grande Cour.',
+      monument: 'Le monument des Quatre Voies : quatre bras, quatre familles, une seule fontaine. On y donne rendez-vous avant les grands duels.',
+      estrade: 'L’estrade des duels publics : la ville entière vient y voir les grands duels, et c’est ici que le Championnat proclame son vainqueur.',
+      tableau: 'Le tableau des annonces : le Championnat des Champions s’ouvre aux duellistes qui ont vaincu les quatre chefs.',
+      belvedere: 'Le Belvédère : la ville haute, au-delà de la balustrade. Toutes les ruelles finissent par monter jusqu’ici.',
     };
     this.dire(z.label, INFO[z.id] ?? 'Rien de plus ici pour l’instant (prototype).', [fermer(this)]);
   }

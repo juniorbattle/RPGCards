@@ -135,4 +135,4 @@ export function duelChampionnat(m: 'poule' | 'miroir' | 'finale', e: AventureEta
 const VENUE_DE: Record<Family, VenueId> = { Cendre: 'rue', Ronce: 'bar', Voile: 'salle', Astre: 'arene' };
 
 /** Tous les adversaires possibles (préparation des personnages aux temps morts, contrôles). */
-export const APPARENCES = [...new Set([KAI_PROLOGUE.apparence, ...FIGURES.map((f) => f.apparence), 'pnj-docker-1', 'pnj-joueuse-5', 'pnj-commis-5', TENANTE.apparence, ...Object.values(MEMBRES_EPREUVE).flat(), ...Object.values(ELITE_JOUTE)])];
+export const APPARENCES = [...new Set([KAI_PROLOGUE.apparence, ...FIGURES.map((f) => f.apparence), 'pnj-docker-1', 'pnj-joueuse-5', 'pnj-commis-5', 'pnj-joueuse-31', TENANTE.apparence, ...Object.values(MEMBRES_EPREUVE).flat(), ...Object.values(ELITE_JOUTE)])];

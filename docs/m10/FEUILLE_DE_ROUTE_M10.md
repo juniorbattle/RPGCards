@@ -114,6 +114,9 @@ collection reconstruite depuis le registre identique à la collection stockée.
 > reçue (passes 93 à 97) : la ville en rangs (Quai, Parvis, Ruelles en quatre rangs, la Grande Cour) est celle de
 > l'aventure ; la Grande Cour existe : les scènes de M10-E s'y jouent. Les feuilles des PNJ de la ville viendront après
 > M10-E (P2).
+>
+> **Étape 1 faite (passe 99)** : le directeur dans la ville en rangs (places du fond et de la Grande Cour, l'ombre de
+> Kaï une fois par chapitre de I à V, refus puis départ, reprise sans tirage ; ADR 032 amendement 6 ; `test/m10e.test.ts`).
 
 **Contenu :** directeur des rencontres branché sur les îlots (et les rangs à la reprise de M09) ; duels de rue ; défis
 de Kaï (un par chapitre) ; Championnat (Quatre Bannières, Miroir, Finale en deux manches gagnantes avec changement de
