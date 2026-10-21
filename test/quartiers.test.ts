@@ -133,3 +133,20 @@ describe('la Grande Cour (V5) : au cœur de la ville', () => {
     }
   });
 });
+
+describe('la ville en rangs dans la démo (décision P1 du responsable)', () => {
+  it('chaque personnage et chaque passant de la ville en rangs a une personnalité (la démo les fait parler)', async () => {
+    const { personalityOf } = await import('../src/product/encounters');
+    for (const d of Object.values(ILOTS_RANGS)) {
+      for (const n of [...d.npcs, ...d.ambient]) expect(() => personalityOf(n.id), `${d.id}/${n.id}`).not.toThrow();
+    }
+  });
+});
+
+describe('la ville en rangs dans l’aventure : noms des lieux', () => {
+  it('chaque îlot porte son nom seul (sans la mention de laboratoire « en rangs »)', async () => {
+    const { ilotAventure } = await import('../src/aventure/ilots');
+    const noms = (['quai', 'parvis', 'ruelles', 'cour'] as const).map((id) => ilotAventure(id, [], true).ilot.name);
+    expect(noms).toEqual(['le Quai', 'le Parvis de l’arène', 'les Ruelles', 'la Grande Cour']);
+  });
+});

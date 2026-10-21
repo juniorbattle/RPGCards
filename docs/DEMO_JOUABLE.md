@@ -3,6 +3,11 @@
 Préparée par la session cloud du 2026-10-19 pour valider la démo : de l'écran d'accueil à la ville, aux tutoriels et
 aux duels. **Prototype** : la ville est derrière un paramètre d'URL, le jeu par défaut ne change pas.
 
+> **Reprise de M09 (décision P1 du responsable, 2026-10-21, passe 98) :** la démo se joue dans **la ville en rangs** (le Quai,
+> le Parvis et les Ruelles en quatre rangs, la Grande Cour) quand ses dioramas sont admis (en QA ; hors QA, une fois les
+> images approuvées), comme l'aventure ; sinon dans la ville d'aujourd'hui. Le rang 1 de chaque quartier est celui
+> d'aujourd'hui : le parcours ci-dessous ne change pas.
+
 ## Lancer
 
 ```bash

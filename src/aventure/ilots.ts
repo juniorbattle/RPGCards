@@ -45,8 +45,8 @@ export function ilotAventure(id: IlotId, poses: readonly Pose[], quaiRangs = fal
   const npcs: IlotNpc[] = poses.map((p) => ({ id: p.apparence, at: p.at, facing: p.facing, role: p.genre === 'structurante' ? 'rival' : 'duel' }));
   const ilot: Ilot = {
     ...nu,
-    // le Quai en rangs du laboratoire s'appelle « le Quai (en rangs, preuve) » : dans l'aventure, le Quai
-    name: d.ilot.name.startsWith('le Quai') ? 'le Quai' : nu.name,
+    // les îlots en rangs du laboratoire portent une mention (« le Quai (en rangs, preuve) ») : dans l'aventure, leur nom seul
+    name: d.ilot.name.replace(/ \([^)]*\)$/, ''),
     discs: [...nu.discs, ...poses.map((p): Disc => ({ ...p.at, r: NPC_R }))],
     // la cible d'une zone « parler » est l'identifiant de la RENCONTRE (le produit décide, la ville ne lit rien)
     zones: [...nu.zones, ...poses.map((p): Zone => ({ id: `npc-${p.id}`, kind: 'parler', label: `Parler à ${p.nom}`, target: p.id, area: { x: p.at.x, z: p.at.z, r: TALK } }))],

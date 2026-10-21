@@ -7,6 +7,11 @@
  *
  * Tutoriel de déplacement en bulles non bloquantes ; guide (marchande) ; défis des PNJ (ADR 023) et de Kaï ; porte de
  * la salle de jeu de cartes (Tournoi du Quai), le Fanal (Maëlle), sortie vers l'arène (Orin). Textes de prototype.
+ *
+ * Reprise de M09 (décision P1 du responsable, fiche de la reprise, 2026-10-21) : la démo se joue dans la ville en rangs
+ * (le Quai, le Parvis et les Ruelles en quatre rangs, la Grande Cour) quand ses dioramas sont admis (`villeEnRangs`), comme
+ * l'aventure ; sinon dans la ville d'aujourd'hui. Le rang 1 de chaque quartier est celui d'aujourd'hui : portes, sorties,
+ * défis et guide y gardent leur place ; les passants des rangs du fond ont une réplique de passage.
  */
 import { portraitUrl } from '../art/portrait';
 import { encounterById, ENCOUNTERS, personalityOf, SERIES } from '../product/encounters';
@@ -15,12 +20,13 @@ import { NPC_TEMPLATES } from '../presentation/npcs';
 import type { Shell } from '../shell/shell';
 import { parseRig } from './cameras';
 import { blocked, type Zone } from './monde';
-import { ILOTS, ilotDef, isIlotId, type IlotId } from './ilots';
+import { ILOTS, ILOTS_RANGS, ilotDef, isIlotId, MANIFESTE_RANGS, type IlotId } from './ilots';
 import { demoObjective, doorEncounter } from './objectifs';
 import { spritePolicy } from './spritesExternes';
 import { decorPolicy, preloadDecors } from './decors';
 import { installVilleStyles, promptBubble } from './ui';
 import { createTown, type Town } from './ville';
+import { villeEnRangs } from './villeRangs';
 
 const STORE = 'lqv.demo';
 /** État propre à la démo, lié au profil (date de création de la sauvegarde) : une nouvelle partie repart du début. */
@@ -52,14 +58,27 @@ export class DemoHub {
   private state = loadState();
   private returnTo: { ilot: IlotId; spawn: string } | null = null;
   private startX = 0;
+  /** La ville en rangs (décidée avant de construire la ville, `villeEnRangs`), ou la ville d'aujourd'hui ; null : en cours. */
+  private rangs: boolean | null = null;
+  private decision: Promise<boolean>;
 
   constructor() {
-    // Plans de décor de l'îlot d'arrivée lus et décodés dès le chargement de la démo, bien avant l'entrée en ville
-    // (ADR 028) : la ville construit alors son diorama tout de suite ; sans diorama, simple lecture du manifeste.
+    // Ville en rangs ou ville d'aujourd'hui, puis plans de décor de l'îlot d'arrivée lus et décodés dès le chargement de
+    // la démo, bien avant l'entrée en ville (ADR 028) : la ville construit alors son diorama tout de suite.
     const q = new URLSearchParams(location.search);
-    const at: IlotId = isIlotId(this.state.ilot) ? this.state.ilot : 'quai';
-    void preloadDecors(at === 'quai' ? ['quai'] : ['quai', at], decorPolicy(q.get('qa') === '1', q.get('decors')));
+    const politique = decorPolicy(q.get('qa') === '1', q.get('decors'));
+    this.decision = villeEnRangs(politique).then((oui) => {
+      this.rangs = oui;
+      // la Grande Cour n'existe que dans la ville en rangs : sans elle, la démo repart du Quai
+      if (!oui && this.state.ilot === 'cour') { this.state.ilot = undefined; this.state.pos = undefined; }
+      const at: IlotId = isIlotId(this.state.ilot) ? this.state.ilot : 'quai';
+      void preloadDecors(at === 'quai' ? ['quai'] : ['quai', at], politique, 'decors/', oui ? MANIFESTE_RANGS : undefined);
+      return oui;
+    });
   }
+
+  /** L'îlot affiché par la démo : en rangs ou d'aujourd'hui. */
+  private def(id: IlotId) { return ilotDef(id, this.rangs === true); }
 
   /** L'enveloppe est au hub : la ville apparaît (créée au premier passage), le HUD prend place dans l'enveloppe. */
   show(sh: Shell): HTMLElement {
@@ -72,7 +91,13 @@ export class DemoHub {
       // Nouveau profil (autre Signature, donc autre manteau) : la ville est reconstruite.
       if (this.town) { cancelAnimationFrame(this.raf); this.town.dispose(); this.host?.remove(); this.bubble?.el.remove(); this.town = null; }
     }
+    if (!this.town && this.rangs === null) {
+      // ville en rangs pas encore décidée (lecture du manifeste) : l'enveloppe rappelle la démo dès qu'elle l'est
+      void this.decision.then(() => { if (this.sh === sh && !this.town) sh.render(); });
+      return document.createElement('div');
+    }
     if (!this.town) {
+      const rangs = this.rangs === true;
       this.host = document.createElement('div');
       this.host.className = 'ville-host demo';
       document.body.insertBefore(this.host, document.getElementById('shell'));
@@ -83,6 +108,8 @@ export class DemoHub {
         sprites: spritePolicy(sh.params.qa, new URLSearchParams(location.search).get('sprites')),
         decors: decorPolicy(sh.params.qa, new URLSearchParams(location.search).get('decors')),
         rig: parseRig(new URLSearchParams(location.search).get('rig')),
+        ilotDefOf: (id) => ilotDef(id, rangs),
+        ...(rangs ? { decorsManifest: MANIFESTE_RANGS } : {}),
         onInteract: (z) => this.interact(z),
         onMenu: () => this.menu(),
       });
@@ -220,8 +247,8 @@ export class DemoHub {
     // Repères : « ? » sur la guide tant qu'elle n'a pas été écoutée, « ! » sur les défis jamais gagnés (et ouverts).
     const save = this.sh?.save;
     const marks: Record<string, '!' | '?' | null> = {};
-    for (const n of ilotDef(this.town.ilotId(), false).npcs) {
-      if (n.role === 'guide') marks[n.id] = this.state.guide ? null : '?';
+    for (const n of this.def(this.town.ilotId()).npcs) {
+      if (n.role === 'guide') marks[n.id] = n.id === GUIDE && !this.state.guide ? '?' : null;
       else if (n.encounter && save) {
         const enc = encounterById(n.encounter);
         const won = save.history.some((h) => h.encounterId === n.encounter && h.outcome === 'victory');
@@ -246,12 +273,26 @@ export class DemoHub {
     }
     if (enc && z.target === 'fanal') return this.offer(enc, 'Le Fanal', 'La taverne du port est pleine. Maëlle joue à la table du fond.', 'porte-fanal');
     if (z.kind === 'sortie') {
-      const exit = ilotDef(this.town!.ilotId(), false).exits[z.id];
+      const exit = this.def(this.town!.ilotId()).exits[z.id];
       if (exit) return this.travel(exit.to, exit.spawn);
     }
     if (enc && z.target === 'arene') return this.offer(enc, 'L’arène', 'La grande scène s’illumine : Orin, l’arpenteur des Astres, y attend les duellistes qui ont remporté le Tournoi.', 'porte-arene');
+    // ville en rangs : les bouches des passages ne sont que des repères (leur nom s'affiche en approchant)
+    if (z.kind === 'info' && z.target?.startsWith('rang-')) return;
     const INFO: Record<string, string> = {
       fontaine: 'On dit que son eau porte chance aux liseuses du Voile : les duellistes y jettent une carte usée avant un grand duel.',
+      'place-halle': 'La place de la Halle : on y joue aux cartes entre deux livraisons.',
+      'placette-puits': 'La placette du Puits : on y tire l’eau et les défis.',
+      'cour-chapelle': 'La cour de la Chapelle, le cœur du Quai. Par la porte cochère, on monte vers la Grande Cour.',
+      'place-paris': 'La place des Paris : on y mise sur les duels de l’arène.',
+      'placette-tableau': 'La placette du Tableau : les annonces du Tournoi y sont épinglées.',
+      'cour-champions': 'La cour des Champions, au pied de l’arène. Par la porte cochère, on monte vers la Grande Cour.',
+      'placette-olivier': 'La placette de l’Olivier : un banc, un vieil arbre, le calme des Ruelles.',
+      'cour-guilde': 'La cour de la Guilde des joueurs. Par la porte cochère, on monte vers la Grande Cour.',
+      monument: 'Le monument des Quatre Voies : quatre bras, quatre familles, une seule fontaine.',
+      estrade: 'L’estrade des duels publics : la ville vient y voir les grands duels.',
+      tableau: 'Le tableau des annonces du Tournoi.',
+      belvedere: 'Le Belvédère : la ville haute, au-delà de la balustrade.',
     };
     this.say(z.label, INFO[z.id] ?? 'Rien de plus ici pour l’instant (prototype).', [{ label: 'Fermer', key: 'dlg-close', primary: true, run: () => this.closeDialog() }]);
   }
@@ -260,6 +301,11 @@ export class DemoHub {
     const n = ALL_NPCS.find((x) => x.id === id)!;
     const p = personalityOf(id);
     const who = p.npc ? `${p.name}, ${NPC_TEMPLATES[p.npc].label.toLowerCase()}` : `${p.name}, ${p.title}`;
+    // ville en rangs : les passants des rangs du fond ont une réplique de passage (seule la marchande du Quai guide)
+    if (n.role === 'guide' && id !== GUIDE) {
+      this.say(who, 'Belle soirée pour un duel. Les ruelles du fond mènent à d’autres places, et toutes finissent par monter vers la Grande Cour.', [{ label: 'Fermer', key: 'dlg-close', primary: true, run: () => this.closeDialog() }], id);
+      return;
+    }
     if (n.role === 'guide') {
       const pages = [
         `Bienvenue sur le Quai ! Ici, on se défie aux cartes à chaque coin de rue, et le soir, tout le port vient voir les duels.`,
@@ -400,9 +446,11 @@ export class DemoHub {
   }
 }
 
-const ALL_NPCS = Object.values(ILOTS).flatMap((d) => d.npcs);
-/** « le Quai » → « Le Quai » (nom d'îlot en titre). */
-const placeName = (n: string) => n.charAt(0).toUpperCase() + n.slice(1);
+/** La guide de la démo (la marchande du Quai). */
+const GUIDE = 'pnj-marchande-9';
+const ALL_NPCS = [...Object.values(ILOTS), ...Object.values(ILOTS_RANGS)].flatMap((d) => d.npcs);
+/** « le Quai » → « Le Quai » (nom d'îlot en titre ; sans la mention de laboratoire « (en rangs) »). */
+const placeName = (n: string) => { const s = n.replace(/ \([^)]*\)$/, ''); return s.charAt(0).toUpperCase() + s.slice(1); };
 
 /** Rencontres atteignables depuis le Quai (QA : chaque rencontre de la démo existe dans le produit). */
 export const DEMO_ENCOUNTERS = [...new Set([...ALL_NPCS.map((n) => n.encounter).filter((e): e is string => !!e), ...SERIES.steps.map((_, i) => `quai-${i + 1}`), 'libre-voile', 'libre-ronce', 'libre-astre'])]

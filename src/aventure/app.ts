@@ -25,13 +25,13 @@ import { duelSeed, SaveStore } from '../product/save';
 import { webglAvailable, type ArenaHandle } from '../scene/arena';
 import { confirmDialog, h } from '../shell/ui';
 import { parseRig } from '../ville/cameras';
-import { createDecorResolver, decideIlot, decorPolicy, preloadDecors, readDecorManifest } from '../ville/decors';
-import type { SpritePolicy } from '../ville/spritesExternes';
-import { ILOTS_RANGS, isIlotId, MANIFESTE_RANGS, type IlotId } from '../ville/ilots';
+import { decorPolicy, preloadDecors } from '../ville/decors';
+import { MANIFESTE_RANGS, type IlotId } from '../ville/ilots';
 import { blocked, type Zone } from '../ville/monde';
 import { spritePolicy } from '../ville/spritesExternes';
 import { installVilleStyles, promptBubble } from '../ville/ui';
 import { createTown, type Town } from '../ville/ville';
+import { villeEnRangs } from '../ville/villeRangs';
 import { apercuEngagement, appliquer, bannieres, chapitre, peutChanger, peutConfirmer, statutDefi, type EtatBanniere, type Evenement, type FaitsPublics, type Issue } from './aventure';
 import { basculerTechnique, choixPourCase, equiperSignature, rangDe, remplacerCase, standardLegal, validerDeckAv, type DeckAv } from './deck';
 import { origineGain, vueCollection, type EntreeCollection } from './collection';
@@ -1200,22 +1200,4 @@ function gainEls(g: Gain, artSeed: number): HTMLElement[] {
   if (g.kind === 'technique') return [h('div', { class: 'av-tech', title: TECHNIQUES[g.items[0] as TechniqueId].text }, h('b', null, 'Technique'), h('span', null, g.items[0]!))];
   if (g.kind === 'neutres') return [1, 2, 3, 4].map((r) => neutreEl(`neutre-${r}`, '×4'));
   return g.items.map((d) => cardEl(d, { artSeed, tag: 'div' }));
-}
-
-/**
- * La ville en rangs (le Quai en quatre rangs, ARB-M10-12 ; le Parvis, les Ruelles et la Grande Cour depuis la reprise de
- * M09) n'existe qu'en dioramas d'images générées : elle est la ville de l'aventure seulement si les dioramas de ses quatre
- * îlots sont admis par la politique (hors QA : approuvés par le responsable), et ceux du Quai lisibles ; sinon, la ville
- * d'aujourd'hui, dessinée par code. Décidé avant de construire la ville (jamais de mélange, ni dans un îlot ni d'un îlot à
- * l'autre). Seuls les plans du Quai sont décodés ici (ceux que la ville reprend, même cache) : les autres îlots le sont
- * derrière le fondu, en y allant.
- */
-async function villeEnRangs(politique: SpritePolicy): Promise<boolean> {
-  if (politique === 'code') return false;
-  const all = (await readDecorManifest('decors/', MANIFESTE_RANGS)).manifest?.ilots;
-  const ids = Object.keys(ILOTS_RANGS).filter(isIlotId);
-  if (!all || !ids.every((id) => Object.prototype.hasOwnProperty.call(all, id) && decideIlot(politique, id, all[id]).ok)) return false;
-  const r = createDecorResolver(politique, () => {}, { manifest: MANIFESTE_RANGS });
-  await r.prepare('quai');
-  return r.peek('quai').state === 'diorama';
 }
