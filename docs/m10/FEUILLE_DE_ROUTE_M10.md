@@ -121,7 +121,14 @@ collection reconstruite depuis le registre identique à la collection stockée.
 > héraut, l'ouverture et la proclamation dans la Grande Cour).
 > **Étape 3 faite (passe 101)** : membres des familles, rumeurs, l'ombre de Kaï et sa quête.
 > **Étape 4 faite (passe 102)** : la ville vivante au navigateur (`npm run qa:vivante`) et les vérifications du lot ;
-> **fiche du lot M10-E** au responsable : <https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w> (réception en attente).
+> **fiche du lot M10-E** au responsable : <https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w>.
+>
+> **Reçu par le responsable (2026-10-21, passe 103 ; 12 choix)** : la ville vivante reçue **avec retours** (R1 : des
+> ombres sous les accessoires du décor, comme les étals, des accessoires intégrés à la scène plutôt qu'une image collée,
+> et le chemin lumineux jamais caché par eux) ; le Championnat, le héraut et la Grande Cour reçus (R2) ; les sept
+> lectures du contrat sur l'option recommandée (D1 à D7, ADR 032) ; **validation de l'heure de ville en attente** (V1 :
+> pas encore jouée) ; A1 : ordre donné de passer les 20 planches à `approved: true` ; **lot suivant retenu : M10-F,
+> à ne pas lancer avant l'ordre du responsable** (S1 : « mais ne lance pas encore »).
 
 **Contenu :** directeur des rencontres branché sur les îlots (et les rangs à la reprise de M09) ; duels de rue ; défis
 de Kaï (un par chapitre) ; Championnat (Quatre Bannières, Miroir, Finale en deux manches gagnantes avec changement de

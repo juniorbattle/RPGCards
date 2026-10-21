@@ -190,3 +190,10 @@ Décisions du responsable (collection `decisions` de la fiche <https://claude.ai
 la feuille du joueur J1. **A2** fait, **A1** décidé (approbation en bloc des 20 planches ; drapeaux à passer sur ordre
 explicite, dans une passe à part). Suite : la démo dans la ville en rangs (P1), puis M10-E ; les feuilles des PNJ de la
 ville après M10-E (P2) ; 2 images restent en réserve (B1).
+
+## Retours du responsable sur la ville en rangs (fiche du lot M10-E, R1, 2026-10-21, passe 103)
+
+Ville vivante « reçue avec retours » (<https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w>) : des **ombres sous les accessoires du décor** (les étals, par exemple) ;
+de façon générale, **aucune cassure de l'immersion** (pas d'image collée sur la scène : des accessoires intégrés) ; le
+**chemin lumineux jamais caché** par ces accessoires. **A1** : ordre donné de passer les 20 planches à `approved: true`
+(passe à part).

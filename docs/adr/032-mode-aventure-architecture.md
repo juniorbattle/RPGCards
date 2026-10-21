@@ -118,7 +118,7 @@ lisibles dans la Collection).
   (test). Les sorties suivent l'îlot affiché (`ilotBase(...).exits`) : le cœur de chaque quartier mène à la Grande Cour
   (« dans la Grande Cour, au cœur de la ville »), où le directeur ne pose encore personne (M10-E).
 
-## Amendement 6 (2026-10-21, lot M10-E, passe 99) : le directeur dans la ville en rangs
+## Amendement 6 (2026-10-21, lot M10-E, passe 99 ; ratifié par le responsable, fiche du lot M10-E, R1, passe 103) : le directeur dans la ville en rangs
 
 - Une place de rencontre peut n'exister que dans la ville en rangs (`PlaceRencontre.rangs` : rangs du fond, Grande Cour) ;
   le directeur ne la tire et ne la pose que si la ville en rangs est affichée. Les places nouvelles s'ajoutent en fin de
@@ -128,7 +128,7 @@ lisibles dans la Collection).
 - Un refus laisse le personnage jusqu'au point de décision suivant, puis il repart (`partants`) ; « Continuer » n'est
   pas un point de décision (la ville se relit). Champs facultatifs : les sauvegardes antérieures se relisent.
 
-## Amendement 7 (2026-10-21, lot M10-E, passe 100) : le Championnat dans la logique pure et la Grande Cour
+## Amendement 7 (2026-10-21, lot M10-E, passe 100 ; ratifié par le responsable, fiche du lot M10-E, R2, passe 103) : le Championnat dans la logique pure et la Grande Cour
 
 - Les contraintes d'une manche du Championnat (la manche en cours, la Signature changée à chaque duel de poule et
   différente pour chaque victoire, la Signature changée entre deux manches de la Finale) sont vérifiées par
@@ -137,6 +137,23 @@ lisibles dans la Collection).
   Tenante équipe la Signature de son plan public à chaque manche ; aucun PV ni aucune Puissance ne change.
 - Dans la ville en rangs, le héraut du Tournoi (Grande Cour) ouvre le Championnat, en mène les duels et en proclame le
   titre ; la porte de l'arène reste une entrée (et la seule dans la ville d'aujourd'hui).
+
+### Lectures du contrat ratifiées (fiche du lot M10-E, 2026-10-21, passe 103)
+
+Le responsable a retenu l'option recommandée pour chacune (<https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w>) ; le code les suivait déjà, rien ne change :
+
+- **D1, la poule** : « la Signature équipée doit changer à chaque duel » se lit « différente de celle du duel précédent,
+  gagné ou perdu, et différente pour chaque victoire » (`statutPoule`).
+- **D2, le Miroir** : seize identités au format standard ; les deux familles dominantes du joueur et celle de l'adversaire
+  en variantes, les autres en Basics, sa Signature (`deckMiroir`) ; Kaï, ou pour la Cendre le bras droit de la première
+  famille dominante d'une autre maison.
+- **D3, la Finale** : le plan public de la Tenante est l'Astre, puis le Voile, puis la Cendre (`PLAN_TENANTE`).
+- **D4, la Finale** : l'éditeur de deck reste libre entre deux manches (seul le changement de Signature est vérifié).
+- **D5, les PV** : les champions gardent 110 (poule et Miroir) et 120 (Finale), selon le calibrage validé.
+- **D6, l'ombre de Kaï** : jamais tirée dans l'îlot où Kaï est posé, permise dans un autre (un ou une duelliste de la
+  Cendre a donc aussi l'ombre de son rival).
+- **D7, la cérémonie** : l'ouverture et la proclamation restent en texte ; les chefs se poseront sur l'estrade avec les
+  feuilles des PNJ de la ville (P2).
 
 ## Alternatives écartées
 
