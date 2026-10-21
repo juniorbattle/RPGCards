@@ -31,13 +31,13 @@ const BELVEDERE = PLAN_COUR.rangs[1]!;
 /** Escalier vers le Quai : ouverture de la balustrade du premier plan (m, en x). */
 export const ESCALIER: readonly [number, number] = [-1.6, 1.6];
 
-/** Mobilier de la place (objets du lot des villes, `villes-objets`, et du kit des rangs). */
+/** Mobilier de la place (objets du lot des villes, `villes-objets`, ramenés à leur taille par `echelle`, et du kit des rangs). */
 export const MEUBLES_COUR: readonly MeubleRang[] = [
-  objet('monument', 'monument', 0, -3.0, 4.2, 3.0),
-  objet('estrade', 'estrade', -7.5, -8.0, 6.4, 3.0),
-  { ...objet('estrade-brasero-o', 'brasero', -11.6, -8.2, 1.2, 1.2), rect: null },
-  { ...objet('estrade-brasero-e', 'brasero', -3.4, -8.2, 1.2, 1.2), rect: null },
-  objet('tableau', 'tableau', 9.0, -11.4, 2.6, 0.6),
+  { ...objet('monument', 'monument', 0, -3.0, 5.0, 3.2), echelle: 0.8 },
+  { ...objet('estrade', 'estrade', -7.5, -8.0, 6.2, 3.0), echelle: 0.9 },
+  { ...objet('estrade-brasero-o', 'brasero', -11.6, -8.2, 1.2, 1.2), echelle: 0.4, rect: null },
+  { ...objet('estrade-brasero-e', 'brasero', -3.4, -8.2, 1.2, 1.2), echelle: 0.4, rect: null },
+  { ...objet('tableau', 'tableau', 9.0, -11.4, 2.6, 0.6), echelle: 0.5 },
   objet('cour-banc', 'banc', 4.2, -11.2, 3.6, 0.8),
   objet('etal-ouest', 'etal', -10.5, -3.6, 4.0, 1.4),
   objet('etal-est', 'etal', 11.0, -4.6, 4.0, 1.4),

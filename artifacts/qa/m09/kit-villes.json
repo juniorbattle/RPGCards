@@ -1,0 +1,289 @@
+{
+  "date": "2026-10-21T04:29:47.331Z",
+  "lot": "2026-10-20-v4-villes",
+  "facades": {
+    "parvis-porte": {
+      "recadrage": {
+        "left": 48,
+        "top": 32,
+        "right": 1487,
+        "bottom": 962
+      },
+      "debordMagenta": 664,
+      "bannieres": [
+        {
+          "box": [
+            372,
+            330,
+            442,
+            575
+          ],
+          "family": "Cendre",
+          "base": [
+            96,
+            40,
+            20
+          ]
+        },
+        {
+          "box": [
+            584,
+            330,
+            652,
+            565
+          ],
+          "family": "Voile",
+          "base": [
+            18,
+            31,
+            58
+          ]
+        },
+        {
+          "box": [
+            870,
+            330,
+            938,
+            585
+          ],
+          "family": "Ronce",
+          "base": [
+            33,
+            45,
+            39
+          ]
+        },
+        {
+          "box": [
+            1088,
+            330,
+            1158,
+            595
+          ],
+          "family": "Astre",
+          "base": [
+            118,
+            69,
+            30
+          ]
+        }
+      ],
+      "lanternes": 6,
+      "densite": 67.925
+    },
+    "parvis-arene": {
+      "recadrage": {
+        "left": 18,
+        "top": 56,
+        "right": 1519,
+        "bottom": 935
+      },
+      "debordMagenta": 1671,
+      "bannieres": [],
+      "lanternes": 4,
+      "densite": 50.067
+    },
+    "ruelles-canal": {
+      "recadrage": {
+        "left": 24,
+        "top": 8,
+        "right": 1509,
+        "bottom": 992
+      },
+      "debordMagenta": 1053,
+      "bannieres": [
+        {
+          "box": [
+            806,
+            360,
+            842,
+            650
+          ],
+          "family": "Voile",
+          "base": [
+            25,
+            35,
+            55
+          ]
+        },
+        {
+          "box": [
+            974,
+            360,
+            1010,
+            650
+          ],
+          "family": "Voile",
+          "base": [
+            24,
+            35,
+            58
+          ]
+        }
+      ],
+      "lanternes": 6,
+      "densite": 64.999
+    },
+    "ruelles-guilde": {
+      "recadrage": {
+        "left": 46,
+        "top": 17,
+        "right": 1488,
+        "bottom": 988
+      },
+      "debordMagenta": 944,
+      "bannieres": [
+        {
+          "box": [
+            424,
+            485,
+            490,
+            800
+          ],
+          "family": "Voile",
+          "base": [
+            25,
+            36,
+            63
+          ]
+        },
+        {
+          "box": [
+            1071,
+            485,
+            1131,
+            800
+          ],
+          "family": "Voile",
+          "base": [
+            25,
+            35,
+            62
+          ]
+        }
+      ],
+      "lanternes": 6,
+      "densite": 103.071
+    },
+    "cour-facades": {
+      "recadrage": {
+        "left": 41,
+        "top": 4,
+        "right": 1493,
+        "bottom": 1006
+      },
+      "debordMagenta": 1383,
+      "bannieres": [
+        {
+          "box": [
+            594,
+            615,
+            650,
+            745
+          ],
+          "family": "Cendre",
+          "base": [
+            78,
+            34,
+            29
+          ]
+        },
+        {
+          "box": [
+            692,
+            615,
+            746,
+            745
+          ],
+          "family": "Voile",
+          "base": [
+            25,
+            37,
+            61
+          ]
+        },
+        {
+          "box": [
+            787,
+            615,
+            840,
+            745
+          ],
+          "family": "Ronce",
+          "base": [
+            34,
+            46,
+            42
+          ]
+        },
+        {
+          "box": [
+            884,
+            615,
+            940,
+            745
+          ],
+          "family": "Astre",
+          "base": [
+            111,
+            70,
+            33
+          ]
+        }
+      ],
+      "lanternes": 6,
+      "densite": 56.758
+    }
+  },
+  "balustrade": {
+    "mur": [
+      1070,
+      1472
+    ]
+  },
+  "objets": {
+    "boxes": [
+      [
+        [
+          86,
+          26,
+          511,
+          537
+        ],
+        [
+          560,
+          82,
+          1004,
+          536
+        ],
+        [
+          1057,
+          54,
+          1499,
+          532
+        ]
+      ],
+      [
+        [
+          200,
+          554,
+          378,
+          984
+        ],
+        [
+          561,
+          586,
+          979,
+          973
+        ],
+        [
+          1063,
+          586,
+          1430,
+          972
+        ]
+      ]
+    ],
+    "lanternes": 6
+  }
+}

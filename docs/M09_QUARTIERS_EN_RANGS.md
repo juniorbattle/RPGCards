@@ -105,6 +105,11 @@ Chaque quartier garde son rang 1 d'aujourd'hui, inchangé (bornes, portes, sorti
 | **Ruelles** (rang 1 : z −2,2 à 2,6) | la ruelle des Tanneurs ; **placette de l'Olivier** (banc et olivier) | la ruelle du Voile (étroite, sans place) | la **cour de la Guilde**, devant la halle de la Guilde des joueurs ; bout est vers la Grande Cour |
 | **Grande Cour (V5)** | rang 1 : la place elle-même (32 × 16 m : monument des Quatre Voies, estrade de duels, tableau, étals) ; la Maison du Tournoi au fond, deux passages | rang 2 : le **Belvédère**, une terrasse sur la ville haute | sorties : les Ruelles à l'ouest, le Parvis à l'est, le Quai par l'escalier du premier plan |
 
+Leur identité vient du **lot des villes** (passe 94, 6 images, `tools/m09-kit-villes.mjs`, `art-src/decors/kit-villes.json`) :
+le pavillon de la porte du Tournoi et le mur de l'arène (Parvis), les maisons du canal et la halle de la Guilde (Ruelles),
+la Maison du Tournoi (Grande Cour), et six objets (monument des Quatre Voies, estrade, balustrade de terrasse, brasero,
+kiosque des paris, tableau des annonces) ; le reste vient du kit des rangs.
+
 Le cœur du Quai (la cour de la Chapelle) s'ouvre aussi sur la Grande Cour, par la porte cochère de son bout est. La ville
 en rangs est un tout (`ILOTS_RANGS`, manifeste `manifest-profondeur.json`) : elle s'affiche si les dioramas de ses
 quatre îlots sont admis, sinon la ville d'aujourd'hui (jamais de mélange d'un îlot à l'autre).

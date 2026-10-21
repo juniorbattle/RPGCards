@@ -548,3 +548,7 @@ Décision S1 du responsable (fiche du lot M10-D) : reprendre M09 dans l'ordre (1
   `tools/m09-lot-villes-4.mjs`, 27 sur 30 après le lot), **à générer après l'accord du responsable**. En attendant, des
   pièces du kit tiennent leur place, nommées « provisoire » dans le rapport de l'assemblage
   (`tools/m09-quartiers-rangs.mjs`). Rien n'est approuvé.
+- **Lot des villes généré (passe 94)**, après l'accord du responsable : 6 images (27 sur 30), traitées par script
+  (`tools/m09-kit-villes.mjs` : détourage, emblèmes du jeu brodés sur les bannières unies, balustrade recadrée sur son mur,
+  découpes dans `art-src/decors/kit-villes.json`) et posées : plus aucune pièce provisoire. Parvis 64 plans dans 11 images
+  (101 Mo de mémoire GPU), Ruelles 51 dans 12 (117 Mo), Grande Cour 42 dans 8 (73 Mo). `approved: false`.

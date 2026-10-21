@@ -1,0 +1,85 @@
+{
+  "id": "villes-parvis-arene",
+  "statut": "lot des villes (ADR 028, reprise de M09, passe 94), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "auteur": "Claude Code (session de reprise de M09, passe 94), à la demande du responsable : « Oui, génère le lot des villes (6 images, tools/m09-lot-villes-4.mjs) et la feuille J1 (1 image, la réserve seulement si besoin, tools/m09-lot-joueur-j1.mjs), traite-les par script et pose-les. »",
+  "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-villes-4.mjs",
+  "aseprite": "non utilisé : traitement par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-kit-villes.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production ; aucune analyse juridique faite par l’agent : point à confirmer par le responsable (A2) avant tout usage en jeu",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "sources": [
+    {
+      "nom": "parvis-arene",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-21T04:18:12.052Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1536x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image), of our harbour facades (second image) and of our back-street houses (third image). Do not copy their composition.\n\nPaint ONE isolated background layer for a 2.5D night harbour town, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines) (only the roofline may curve very slightly): the great outer wall of the city's card-duel arena, a vast round stone amphitheatre about 30 metres wide in view and 22 metres tall, spanning the full width of the image and filling about 92% of its height. Scale: a person is about 90 pixels tall in this image. Two tiers of tall round arches between heavy buttresses: the lower tier closed by dark wooden doors and iron grilles, the upper tier open, showing darkness and the faint warm flicker of torches inside; a cornice with tall flagpoles carrying long pennants in the four family colours, plain; at street level in the centre, a heavy arched gate (the Champions' gate) with two iron lanterns glowing warm amber and a pair of stone braziers; weathered cold grey stone, darker at the foot.\n\nThe bottom edge of the image is a straight horizontal line at the foot of the walls, with no ground, no steps and no cobbles in front.\n\nEverything around the subjects (above the roofs, between the panels, around the objects) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-20-v4-rangs/rangs-ruelle-a.png",
+          "sha256": "03edc3cc328ed147d6118781eef5123cf784a905c2bad9393f1bdda15b18acb7"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-20-v4-villes/parvis-arene.png (dossier principal, ignoré par git)",
+        "sha256": "af893fa20ef1e3add911cfd386455209eab8cd0cc5fc89c8bfe0e4e8fae3085e",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 5117,
+        "input_tokens_details": {
+          "image_tokens": 4608,
+          "text_tokens": 509
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10605
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs",
+      "tools/m09-kit-villes.mjs"
+    ],
+    "etapes": [
+      "fond magenta détouré (alpha tiré de l’écart au magenta, bords démêlés du fond), recadré sur le pied des murs",
+      "largeur au monde 30 m (lanternes peintes repérées : kit-villes.json)"
+    ],
+    "decoupes": "art-src/decors/kit-villes.json"
+  },
+  "sortie": {
+    "fichier": "public/decors/villes-parvis-arene.png",
+    "sha256": "9a07b902a06b24e7673dca43135370435e8019481db213338cf75f44f5624ca9",
+    "octets": 2380287,
+    "dimensions": [
+      1502,
+      880
+    ]
+  },
+  "approved": false,
+  "chaine_des_empreintes": [
+    "af893fa20ef1e3add911cfd386455209eab8cd0cc5fc89c8bfe0e4e8fae3085e (brut parvis-arene)",
+    "9a07b902a06b24e7673dca43135370435e8019481db213338cf75f44f5624ca9 (planche)"
+  ]
+}
