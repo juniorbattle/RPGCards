@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-21T04:31:14.330Z",
+  "brut": "player-pixel-j1",
+  "checks": [
+    "OK grille d’art 64 × 96, pas 2.915 × 2.595, 39 couleurs, ancrage 32,93, figure 91 px d’art, rien de rogné",
+    "OK tons clés : tenue [2832,1814,5655,0], accent [175,220,253,151]",
+    "OK feuille ≤ 1 Mo : 97 Ko, 960 × 864"
+  ],
+  "pitch": {
+    "x": 2.915,
+    "y": 2.595,
+    "rx": 0.069,
+    "ry": 0.118,
+    "phaseX": 2.71,
+    "phaseY": 2.45
+  },
+  "anchor": [
+    32,
+    93
+  ],
+  "figureH": 91,
+  "colors": 39,
+  "counts": {
+    "tenue": [
+      2832,
+      1814,
+      5655,
+      0
+    ],
+    "accent": [
+      175,
+      220,
+      253,
+      151
+    ]
+  }
+}

@@ -552,3 +552,6 @@ Décision S1 du responsable (fiche du lot M10-D) : reprendre M09 dans l'ordre (1
   (`tools/m09-kit-villes.mjs` : détourage, emblèmes du jeu brodés sur les bannières unies, balustrade recadrée sur son mur,
   découpes dans `art-src/decors/kit-villes.json`) et posées : plus aucune pièce provisoire. Parvis 64 plans dans 11 images
   (101 Mo de mémoire GPU), Ruelles 51 dans 12 (117 Mo), Grande Cour 42 dans 8 (73 Mo). `approved: false`.
+- **Feuille du joueur refaite (J1, passe 95)** : 1 image (28 sur 30 ; la réserve n'a pas servi), redessinée depuis notre
+  feuille de la passe 60 (seule entrée), le style des PNJ de Cité du Tournoi décrit en mots (J2) ; écharpe sous le menton ;
+  traitée par script (`tools/m09-joueur-j1.mjs`, contrat v3) ; `approved: false`.

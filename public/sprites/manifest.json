@@ -3,7 +3,7 @@
   "sprites": {
     "player": {
       "file": "player.png",
-      "sha256": "8dca354976c0e2bd3ff334d6dbef6c2ab4d4823599501d1f3a1418354d57e032",
+      "sha256": "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50",
       "cell": [
         64,
         96
@@ -16,12 +16,12 @@
         32,
         93
       ],
-      "figureH": 86,
+      "figureH": 91,
       "recolor": [
         "tenue",
         "accent"
       ],
-      "source": "gpt-image-2 (porte du Quai, ADR 028), grille d’art, alignement, palette et tons clés par script (tools/m09-porte-quai.mjs)",
+      "source": "gpt-image-2 (feuille du joueur refaite, J1, reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-joueur-j1.mjs)",
       "fiche": "art-src/sprites/player/fiche.json",
       "approved": false
     }
