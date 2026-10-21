@@ -15,7 +15,7 @@ import { NPC_TEMPLATES } from '../presentation/npcs';
 import type { Shell } from '../shell/shell';
 import { parseRig } from './cameras';
 import { blocked, type Zone } from './monde';
-import { ILOTS, isIlotId, type IlotId } from './ilots';
+import { ILOTS, ilotDef, isIlotId, type IlotId } from './ilots';
 import { demoObjective, doorEncounter } from './objectifs';
 import { spritePolicy } from './spritesExternes';
 import { decorPolicy, preloadDecors } from './decors';
@@ -220,7 +220,7 @@ export class DemoHub {
     // Repères : « ? » sur la guide tant qu'elle n'a pas été écoutée, « ! » sur les défis jamais gagnés (et ouverts).
     const save = this.sh?.save;
     const marks: Record<string, '!' | '?' | null> = {};
-    for (const n of ILOTS[this.town.ilotId()].npcs) {
+    for (const n of ilotDef(this.town.ilotId(), false).npcs) {
       if (n.role === 'guide') marks[n.id] = this.state.guide ? null : '?';
       else if (n.encounter && save) {
         const enc = encounterById(n.encounter);
@@ -246,7 +246,7 @@ export class DemoHub {
     }
     if (enc && z.target === 'fanal') return this.offer(enc, 'Le Fanal', 'La taverne du port est pleine. Maëlle joue à la table du fond.', 'porte-fanal');
     if (z.kind === 'sortie') {
-      const exit = ILOTS[this.town!.ilotId()].exits[z.id];
+      const exit = ilotDef(this.town!.ilotId(), false).exits[z.id];
       if (exit) return this.travel(exit.to, exit.spawn);
     }
     if (enc && z.target === 'arene') return this.offer(enc, 'L’arène', 'La grande scène s’illumine : Orin, l’arpenteur des Astres, y attend les duellistes qui ont remporté le Tournoi.', 'porte-arene');

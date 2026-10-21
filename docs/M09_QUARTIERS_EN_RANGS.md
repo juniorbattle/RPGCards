@@ -93,15 +93,21 @@ Bandes de 8, 8 et 7 m. On ne traverse pas tout droit : par l'ouest, on passe le 
 du rang 2, la ruelle des Lanternes (vers l'est), puis le passage du rang 3 et la cour. C'est 56 plans découpés dans
 10 images, pour 87,4 Mo de mémoire GPU, avec 16 lumières et 10 brumes.
 
-## 4. Les autres quartiers (même grammaire)
+## 4. Les autres quartiers (même grammaire ; faits en passe 93, reprise de M09)
 
-Propositions, à valider ; chaque quartier garde son rang 1 actuel.
+Chaque quartier garde son rang 1 d'aujourd'hui, inchangé (bornes, portes, sorties, points d'apparition, obstacles : test
+`test/quartiers.test.ts`). Plans : `src/ville/parvisRangs.ts`, `ruellesRangs.ts`, `grandeCour.ts` ; habillage :
+`tools/m09-quartiers-rangs.mjs`.
 
 | Quartier | Rang 2 et sa place | Rang 3 et sa place | Rang 4 (le cœur) |
 |---|---|---|---|
-| **Parvis de l'arène** | la rue des Gradins ; place des Paris (bookmakers, tableau des duels) | l'escalier des Champions (rampe vue de face) ; placette des Armes | la cour des Champions, au pied de l'arène |
-| **Ruelles** | la ruelle des Tanneurs ; la fontaine du Voile (déjà dans l'îlot) | le passage couvert ; placette des Joueurs (tables de cartes) | la cour de la Guilde des joueurs |
-| **Grande Cour (V5)** | elle-même est le cœur commun ; ses côtés ouvrent sur le rang 4 de chaque quartier | — | — |
+| **Parvis de l'arène** (rang 1 : z −5,2 à 3,4) | la rue des Gradins ; **place des Paris** (kiosque des paris) | la rue des Lices ; **placette du Tableau** (tableau des annonces) | la **cour des Champions**, au pied du grand mur de l'arène ; bout ouest vers la Grande Cour |
+| **Ruelles** (rang 1 : z −2,2 à 2,6) | la ruelle des Tanneurs ; **placette de l'Olivier** (banc et olivier) | la ruelle du Voile (étroite, sans place) | la **cour de la Guilde**, devant la halle de la Guilde des joueurs ; bout est vers la Grande Cour |
+| **Grande Cour (V5)** | rang 1 : la place elle-même (32 × 16 m : monument des Quatre Voies, estrade de duels, tableau, étals) ; la Maison du Tournoi au fond, deux passages | rang 2 : le **Belvédère**, une terrasse sur la ville haute | sorties : les Ruelles à l'ouest, le Parvis à l'est, le Quai par l'escalier du premier plan |
+
+Le cœur du Quai (la cour de la Chapelle) s'ouvre aussi sur la Grande Cour, par la porte cochère de son bout est. La ville
+en rangs est un tout (`ILOTS_RANGS`, manifeste `manifest-profondeur.json`) : elle s'affiche si les dioramas de ses
+quatre îlots sont admis, sinon la ville d'aujourd'hui (jamais de mélange d'un îlot à l'autre).
 
 ## 5. Les images : un kit, pas des décors (5 images, 21 sur 30)
 

@@ -7,15 +7,21 @@ import type { RigTuning } from './cameras';
 import type { Ilot } from './monde';
 import { P_FACADE_Z, P_FRONT_Z, P_NPCS, PARVIS } from './parvis';
 import { FACADE_Z, NPCS, QUAI, QUAY_Z, type IlotNpc } from './quai';
+import { CHEMINS_COUR, GRANDE_COUR, NPCS_COUR, PLAN_COUR } from './grandeCour';
+import { CHEMINS_PARVIS, NPCS_PARVIS, PARVIS_PROFOND, PLAN_PARVIS } from './parvisRangs';
 import { CHEMINS_QUAI, FOND_Z, LANE_BACK_Z, NPCS_PROFOND, PLAN_QUAI, QUAI_PROFOND } from './quaiProfond';
 import type { CheminSegment } from './rangs';
 import { RUELLES, R_EDGE_Z, R_FACADE_Z, R_NPCS } from './ruelles';
+import { CHEMINS_RUELLES, NPCS_RUELLES, PLAN_RUELLES, RUELLES_PROFOND } from './ruellesRangs';
 import { buildRuellesD } from './ruellesScene';
 import { buildParvisD } from './parvisScene';
 import { buildQuai } from './quaiScene';
 import type { QuaiScene } from './scene';
 
-export type IlotId = 'quai' | 'parvis' | 'ruelles';
+/** Îlots de la ville ; la Grande Cour (V5) n'existe que dans la ville en rangs (`ILOTS_RANGS`). */
+export type IlotId = 'quai' | 'parvis' | 'ruelles' | 'cour';
+/** Îlots de la ville d'aujourd'hui, en bande (décor par code ou diorama du manifeste par défaut). */
+export type IlotBande = Exclude<IlotId, 'cour'>;
 
 export interface Passer { id: string; x0: number; x1: number; z: number; speed: number; phase?: number }
 
@@ -53,7 +59,7 @@ export interface IlotDef {
   exits: Readonly<Record<string, { to: IlotId; spawn: string }>>;
 }
 
-export const ILOTS: Record<IlotId, IlotDef> = {
+export const ILOTS: Record<IlotBande, IlotDef> = {
   quai: {
     id: 'quai', ilot: QUAI, npcs: NPCS, camera: { minX: -11, maxX: 11 }, build: buildQuai,
     // M09 V3 (passe de qualité du Quai) : cadrage plus large et plus bas (eau au premier plan, toits, ville haute et ciel
@@ -90,7 +96,8 @@ export const ILOTS: Record<IlotId, IlotDef> = {
   },
 };
 
-export const isIlotId = (x: unknown): x is IlotId => x === 'quai' || x === 'parvis' || x === 'ruelles';
+export const isIlotId = (x: unknown): x is IlotId => x === 'quai' || x === 'parvis' || x === 'ruelles' || x === 'cour';
+export const isIlotBande = (x: unknown): x is IlotBande => x === 'quai' || x === 'parvis' || x === 'ruelles';
 
 /**
  * Preuve de la profondeur praticable (passe 62, laboratoire seulement : `?ville=1&qa=1&profondeur=1`, manifeste
@@ -111,4 +118,68 @@ export const QUAI_PROFOND_DEF: IlotDef = {
     { id: 'pnj-commis-2', x0: -12, x1: 12, z: LANE_BACK_Z + 1.6, speed: 0.8, phase: 0.4 },
     { id: 'pnj-joueuse-4', x0: -6, x1: 12, z: PLAN_QUAI.rangs[2]!.z0 + 1.8, speed: 0.75, phase: 0.6 },
   ],
+  // reprise de M09 : le cœur s'ouvre sur la Grande Cour
+  exits: { ...ILOTS.quai.exits, 'sortie-cour': { to: 'cour', spawn: 'sortie-quai' } },
 };
+
+/**
+ * Reprise de M09 (2026-10-20) : **le Parvis et les Ruelles en rangs** (`parvisRangs.ts`, `ruellesRangs.ts`), même
+ * grammaire et même principe que le Quai en rangs : leur rang 1 est l'îlot d'aujourd'hui, le quartier s'enfonce derrière
+ * lui ; net du bord jusqu'au fond du cœur ; un passant par ruelle. Comme le Quai en rangs, ils ne se lisent que par leur
+ * diorama (manifeste `MANIFESTE_RANGS`).
+ */
+export const PARVIS_PROFOND_DEF: IlotDef = {
+  ...ILOTS.parvis,
+  ilot: PARVIS_PROFOND,
+  npcs: NPCS_PARVIS,
+  chemins: CHEMINS_PARVIS,
+  dof: { nearZ: P_FRONT_Z + 0.6, farZ: PLAN_PARVIS.bounds.z0 - 1.5, nearSpan: 3.2, farSpan: 45, farAmt: 0.42, maxBlur: 9 },
+  ambient: [
+    ...ILOTS.parvis.ambient,
+    { id: 'pnj-marchande-6', x0: -12, x1: 12, z: PLAN_PARVIS.rangs[1]!.z1 - 1.6, speed: 0.8, phase: 0.35 },
+    { id: 'pnj-docker-8', x0: -9, x1: 9, z: PLAN_PARVIS.rangs[2]!.z1 - 1.4, speed: 0.75, phase: 0.65 },
+  ],
+  exits: { ...ILOTS.parvis.exits, 'sortie-cour': { to: 'cour', spawn: 'sortie-parvis' } },
+};
+export const RUELLES_PROFOND_DEF: IlotDef = {
+  ...ILOTS.ruelles,
+  ilot: RUELLES_PROFOND,
+  npcs: NPCS_RUELLES,
+  chemins: CHEMINS_RUELLES,
+  dof: { nearZ: R_EDGE_Z + 0.5, farZ: PLAN_RUELLES.bounds.z0 - 1.5, nearSpan: 3.2, farSpan: 45, farAmt: 0.42, maxBlur: 9 },
+  ambient: [
+    ...ILOTS.ruelles.ambient,
+    { id: 'pnj-joueuse-10', x0: -10, x1: 5, z: PLAN_RUELLES.rangs[1]!.z1 - 1.4, speed: 0.75, phase: 0.45 },
+    { id: 'pnj-commis-12', x0: -9, x1: 9, z: PLAN_RUELLES.rangs[2]!.z1 - 1.2, speed: 0.8, phase: 0.15 },
+  ],
+  exits: { ...ILOTS.ruelles.exits, 'sortie-cour': { to: 'cour', spawn: 'sortie-ruelles' } },
+};
+/**
+ * La Grande Cour (V5, ADR 028 : C1 à C3, `grandeCour.ts`) : caméra de face plus haute, qui suit en profondeur (celle de
+ * son diorama). Elle n'a pas de décor par code : on n'y entre que dans la ville en rangs, dont tous les dioramas sont
+ * admis ; `build` ne dessine que le sol et la nuit du Quai, en dernier secours (jamais montré hors du laboratoire).
+ */
+export const COUR_DEF: IlotDef = {
+  ...ILOTS.parvis,
+  id: 'cour',
+  ilot: GRANDE_COUR,
+  npcs: NPCS_COUR,
+  chemins: CHEMINS_COUR,
+  camera: { minX: -8, maxX: 8 },
+  build: buildQuai,
+  dof: { nearZ: 4.5, farZ: PLAN_COUR.bounds.z0 - 1.5, nearSpan: 3.2, farSpan: 45, farAmt: 0.42, maxBlur: 9 },
+  reflets: { proxyZ: -12, proxyY: 12 },
+  ambient: [
+    { id: 'pnj-joueuse-15', x0: -13, x1: 13, z: 1.4, speed: 0.9, phase: 0.25 },
+    { id: 'pnj-docker-18', x0: -12, x1: 12, z: -1.6, speed: 0.8, phase: 0.75 },
+    { id: 'pnj-commis-22', x0: -12, x1: 12, z: PLAN_COUR.rangs[1]!.z1 - 1.2, speed: 0.7, phase: 0.5 },
+  ],
+  exits: { 'sortie-quai': { to: 'quai', spawn: 'sortie-cour' }, 'sortie-ruelles': { to: 'ruelles', spawn: 'sortie-cour' }, 'sortie-parvis': { to: 'parvis', spawn: 'sortie-cour' } },
+};
+
+/** Manifeste des plans de la ville en rangs (les quatre îlots ; laboratoire `?profondeur=1`, aventure). */
+export const MANIFESTE_RANGS = 'manifest-profondeur.json';
+/** La ville en rangs : le Quai, le Parvis et les Ruelles en quatre rangs, et la Grande Cour. */
+export const ILOTS_RANGS: Record<IlotId, IlotDef> = { quai: QUAI_PROFOND_DEF, parvis: PARVIS_PROFOND_DEF, ruelles: RUELLES_PROFOND_DEF, cour: COUR_DEF };
+/** Définition d'un îlot dans la ville en rangs ou dans la ville d'aujourd'hui (la Grande Cour n'existe qu'en rangs). */
+export const ilotDef = (id: IlotId, rangs: boolean): IlotDef => (rangs || id === 'cour' ? ILOTS_RANGS[id] : ILOTS[id]);

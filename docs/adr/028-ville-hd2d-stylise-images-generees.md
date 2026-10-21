@@ -520,3 +520,31 @@ Retours du responsable sur la passe 67 : « non pas des fleches de direction soy
   des passages dans l'ombre, pied de chaque plan assombri.
 - **Fantômes** : seul le rang juste devant le personnage reste en fantôme (12 %, passe 64). Les rangs déjà traversés ont
   d'abord été gardés à 7 %, puis effacés sur la dernière décision : ce sont les chemins qui guident le retour.
+
+### Reprise de M09 : le Parvis et les Ruelles en rangs, la Grande Cour (passe 93, 2026-10-21) — proposé
+
+Décision S1 du responsable (fiche du lot M10-D) : reprendre M09 dans l'ordre (1) le Parvis et les Ruelles en rangs,
+(2) la Grande Cour (V5), (3) la feuille du joueur (J1), (4) A2 puis A1.
+
+- **Même grammaire, même principe** que le Quai en quatre rangs (`rangs.ts`) : le **rang 1 de chaque quartier est
+  l'îlot d'aujourd'hui, inchangé** (bornes, portes, sorties, points d'apparition, obstacles ; test) ; le quartier
+  s'enfonce derrière lui. Le Parvis : rue des Gradins et **place des Paris**, rue des Lices et **placette du Tableau**,
+  **cour des Champions** au pied du grand mur de l'arène (`parvisRangs.ts`). Les Ruelles : ruelle des Tanneurs et
+  **placette de l'Olivier**, ruelle du Voile, **cour de la Guilde** devant la halle de la Guilde des joueurs
+  (`ruellesRangs.ts`).
+- **La Grande Cour (C1 à C3)** suit la même grammaire : son rang 1 est la place elle-même, profonde (32 × 16 m :
+  monument des Quatre Voies, estrade de duels, tableau des annonces, étals, foule), fermée au fond par la Maison du
+  Tournoi, percée de deux passages vers le **Belvédère** (rang 2), d'où l'on voit la ville haute ; caméra de face plus
+  haute (15° à 18°) qui suit en profondeur (`grandeCour.ts`).
+- **Le cœur de chaque quartier s'ouvre sur la Grande Cour** (la proposition C1 de la passe 65) : par la porte cochère
+  d'un bout de son dernier rang (le Quai et les Ruelles à l'est, le Parvis à l'ouest) ; dans la Grande Cour, les Ruelles à
+  l'ouest, le Parvis à l'est, le Quai par l'escalier du premier plan. La ville d'aujourd'hui n'y mène pas.
+- **La ville en rangs est un tout** (`ILOTS_RANGS`, manifeste `manifest-profondeur.json`) : elle s'affiche si les
+  dioramas de ses quatre îlots sont admis (en QA ; hors QA après A2 puis A1), sinon la ville d'aujourd'hui (jamais de
+  mélange d'un îlot à l'autre). La Grande Cour n'existe qu'en rangs.
+- **Images** : les rangs 2 à 4 gardent le kit des rangs (frises posées d'un mur mitoyen à un autre, en prenant d'abord
+  les maisons que le Quai n'a pas) ; l'identité de chaque îlot vient d'un **lot de 6 images annoncé** (pavillon de la
+  porte du Tournoi, mur de l'arène, maisons du canal, halle de la Guilde, six objets, Maison du Tournoi ;
+  `tools/m09-lot-villes-4.mjs`, 27 sur 30 après le lot), **à générer après l'accord du responsable**. En attendant, des
+  pièces du kit tiennent leur place, nommées « provisoire » dans le rapport de l'assemblage
+  (`tools/m09-quartiers-rangs.mjs`). Rien n'est approuvé.

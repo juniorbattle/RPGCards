@@ -21,7 +21,7 @@ import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js'
 import { createRig, RIGS, type CameraId, type CameraRig, type RigTuning } from './cameras';
 import { createDecorResolver, type DecorCamera, type DecorReport, type DecorState } from './decors';
 import { buildDiorama } from './diorama';
-import { ILOTS, type IlotDef, type IlotId, type Passer } from './ilots';
+import { ilotDef, type IlotDef, type IlotId, type Passer } from './ilots';
 import { activeZone, nearestFree, newWalker, stepWalker, type Facing, type Ilot, type Vec2, type Walker, type Zone } from './monde';
 import type { IlotNpc } from './quai';
 import { U } from './materiaux';
@@ -279,7 +279,7 @@ export function createTown(o: TownOptions): Town {
   o.host.appendChild(renderer.domElement);
 
   // îlot de départ remplacé (passe 62 : Quai profond du laboratoire, `?profondeur=1`) ; les voisins restent ceux du registre
-  const defOf = (id: IlotId): IlotDef => o.ilotDefOf?.(id) ?? (o.ilotDef && o.ilotDef.id === id ? o.ilotDef : ILOTS[id]);
+  const defOf = (id: IlotId): IlotDef => o.ilotDefOf?.(id) ?? (o.ilotDef && o.ilotDef.id === id ? o.ilotDef : ilotDef(id, false));
   let def: IlotDef = o.ilotDef ?? defOf(o.ilot ?? 'quai');
   // Feuilles de personnages (ADR 027) : lecture du manifeste et décodage lancés avant la construction de l'îlot (le
   // réseau et le décodeur avancent pendant qu'elle occupe le fil principal) ; envoi au GPU dès qu'une feuille est prête.
@@ -718,8 +718,8 @@ export function createTown(o: TownOptions): Town {
     externalReport: () => ({ ...sheets.report(), hiddenFrames }),
     decorReport: () => ({ ...decors.report(), ilot: def.id, world: worldKind, pendingFrames: decorPendingFrames, late: [...decorLate] }),
     // plans décodés puis envoyés au GPU dès qu'ils sont prêts (`peek`), pendant le fondu : `goTo` n'a plus qu'à construire
-    prepare: (id) => Promise.all([sheets.prepare(castOf(o.ilotDefOf?.(id) ?? ILOTS[id])), decors.prepare(id).then(() => { decors.peek(id); })]).then(() => undefined),
-    isPrepared: (id) => castOf(o.ilotDefOf?.(id) ?? ILOTS[id]).every((x) => sheets.peek(x).state !== 'attente') && decors.peek(id).state !== 'attente',
+    prepare: (id) => Promise.all([sheets.prepare(castOf(o.ilotDefOf?.(id) ?? ilotDef(id, false))), decors.prepare(id).then(() => { decors.peek(id); })]).then(() => undefined),
+    isPrepared: (id) => castOf(o.ilotDefOf?.(id) ?? ilotDef(id, false)).every((x) => sheets.peek(x).state !== 'attente') && decors.peek(id).state !== 'attente',
     ready: () => (pending.size || decorPending ? new Promise<void>((res) => waiters.push(res)) : Promise.resolve()),
     renderNow() { rig.update(camera, walker.pos, 0, true); render(); },
     walkerH,

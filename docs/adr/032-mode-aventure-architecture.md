@@ -107,6 +107,17 @@ lisibles dans la Collection).
   l'étape « défi officiel engagé » d'une voie se lit dans l'état de la famille, plus dans le registre.
 - Parcours au navigateur jusqu'aux quatre chefs : `npm run qa:voies` (`tools/m10d-voies.mjs`).
 
+## Amendement 5 (2026-10-21, reprise de M09, passe 93) : la ville en rangs
+
+- La décision de l'amendement 2 s'étend à **toute la ville en rangs** (ADR 028, passe 93) : le Quai, le Parvis et les
+  Ruelles en quatre rangs, et la Grande Cour. `villeEnRangs` (au lieu de `quaiEnRangs`) : les dioramas des quatre îlots
+  admis par la politique (contrôle pur du manifeste `MANIFESTE_RANGS`), ceux du Quai lisibles ; sinon la ville
+  d'aujourd'hui, dessinée par code, **en secours, d'un seul tenant** (jamais un îlot en rangs à côté d'un îlot en bande).
+  Le champ public `quaiRangs` garde son nom (crochets de QA).
+- Les places des rencontres du Parvis et des Ruelles sont au rang 1, inchangé : elles tiennent dans les deux villes
+  (test). Les sorties suivent l'îlot affiché (`ilotBase(...).exits`) : le cœur de chaque quartier mène à la Grande Cour
+  (« dans la Grande Cour, au cœur de la ville »), où le directeur ne pose encore personne (M10-E).
+
 ## Alternatives écartées
 
 - **Réutiliser l'enveloppe standard (`Shell`)** en lui donnant une autre source de données : refonte du code du mode

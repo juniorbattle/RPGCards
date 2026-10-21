@@ -1,5 +1,7 @@
 # AGENTS.md — Les Quatre Voies (nouveau dépôt indépendant)
 
+> **M09 — REPRISE (2026-10-20, décision S1 de la fiche du lot M10-D) :** ordre fixé par le responsable : (1) le Parvis de l'arène et les Ruelles en rangs (`src/ville/rangs.ts` ; modèle : le Quai en quatre rangs, passes 65 à 68 ; branchés dans l'aventure comme le Quai, ancien quartier en secours hors QA) ; (2) la Grande Cour (V5), même grammaire ; (3) la feuille du joueur (J1, pixel art, contrat v3, 64 × 96) ; (4) préparation de A2 (conditions d'OpenAI) puis de A1 (planche d'approbation en bloc), dans une fiche d'arbitrages avec la réception des quartiers et la suite (M10-E). 9 images sur 30 restantes : chaque lot présenté au responsable et généré après son accord explicite ; aucun agent ne change un drapeau `approved`. Mode Duel standard, jeu par défaut (identique au pixel près), `?demo=1` et parcours de l'aventure inchangés.
+
 > **M10-D — LIVRÉ ET REÇU (2026-10-20, passes 88 à 91) :** Salle des Bannières (quatre bannières, `bannieres`) et écran d'engagement (`apercuEngagement`, fait appliqué à blanc : l'écran n'annonce jamais autre chose que ce que la machine fera ; Basics déjà reçues jamais remises) ; tests `test/m10d.test.ts` ; `npm run qa:voies` (parcours jusqu'aux quatre chefs). Jalon de QA vert sur les deux GPU. Fiche du lot : <https://claude.ai/artifact/X2z6EuQJDLHdNGe1Cvps4g> (5 choix sur l'option recommandée ; D1 : le niveau du joueur ne compte que les familles rejointes ou engagées, amendement 1 de l'annexe de calibrage). **Lot suivant : reprise de M09, puis M10-E.**
 
 

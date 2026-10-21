@@ -164,3 +164,15 @@ Fiche d'arbitrages M10 interactive du 2026-10-20 (<https://claude.ai/artifact/P6
   feuille du joueur (J1).
 - Le décor en images générées ne s'affiche hors QA qu'après les approbations du responsable : **A2** (vérification des
   conditions d'OpenAI), puis **A1** (approbation en bloc des plans et des feuilles).
+
+## Reprise du 2026-10-21 (décision S1 du responsable)
+
+Ordre fixé : (1) le Parvis et les Ruelles en rangs ; (2) la Grande Cour (V5) ; (3) la feuille du joueur (J1) ; (4) A2 puis
+A1, dans une fiche d'arbitrages avec la réception des quartiers et la suite (M10-E).
+
+- **Passe 93** : plans en rangs du Parvis, des Ruelles et de la Grande Cour (même grammaire ; rang 1 de chaque quartier
+  inchangé ; cœurs ouverts sur la Grande Cour), habillés du kit des rangs avec des pièces provisoires ; laboratoire
+  `?ville=1&qa=1&profondeur=1&ilot=parvis|ruelles|cour` ; dans l'aventure, la ville en rangs d'un seul tenant (ADR 032
+  amendement 5). **Lot de 6 images annoncé** au responsable (`tools/m09-lot-villes-4.mjs` : pavillon de la porte du
+  Tournoi, mur de l'arène, maisons du canal, halle de la Guilde, six objets, Maison du Tournoi ; 27 sur 30 après le lot),
+  généré seulement après son accord.
