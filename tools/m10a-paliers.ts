@@ -21,6 +21,7 @@ import { adversaire, COMPOSITION, PROFIL_ROLE, pvJoueur, PV_ADVERSE, PV_DEPART, 
 import { personalityById } from '../src/presentation/personalities';
 import { figureDe, ROLES } from '../src/aventure/modele';
 import { collectionDe } from '../src/aventure/registre';
+import { ajouter, resume, statsVides, type StatsClash } from './v33-stats';
 
 const N = Number(process.argv[2] ?? 60);
 /** `LQV_ETAPES=cadet-1,chef-1` : ne simule que ces étapes (les autres sont seulement traversées). */
@@ -59,7 +60,7 @@ const ligne = (d: DeckAv) => {
 };
 
 /** Duels de série : `n` duels du joueur contre l'adversaire ; victoires et tours. */
-function serie(deckJ: DeckAv, pvJ: number, role: RoleAdverse, famille: Family | null, niveau: number, graine: number): { w: number; tours: number; adv: ReturnType<typeof adversaire> } {
+function serie(deckJ: DeckAv, pvJ: number, role: RoleAdverse, famille: Family | null, niveau: number, graine: number, stats: StatsClash): { w: number; tours: number; adv: ReturnType<typeof adversaire> } {
   const adv = adversaire(role, famille, niveau);
   // profil propre du personnage (bras droits) : celui de sa personnalité, comme en jeu
   const profil = adv.profil ?? personalityById(figureDe(famille!, 'brasDroit').apparence)!.aiProfile;
@@ -69,18 +70,20 @@ function serie(deckJ: DeckAv, pvJ: number, role: RoleAdverse, famille: Family | 
     const m = autoplay(cfg, 200, [PROFILES.equilibre!, PROFILES[profil]!]);
     if (m.state.winner === 'p1') w++;
     tours += m.state.turn;
+    ajouter(stats, m);
   }
   return { w, tours, adv: { ...adv, profil } };
 }
 
 type Voie = 'direct' | 'entraine';
-interface Ligne { titre: string; adv: string; palier: string; pvAdv: number; profil: string; deck: Partial<Record<Voie, string>>; pv: Record<Voie, number[]>; v: Record<Voie, number>; d: Record<Voie, number>; t: Record<Voie, number> }
+interface Ligne { stats: Record<Voie, StatsClash>; titre: string; adv: string; palier: string; pvAdv: number; profil: string; deck: Partial<Record<Voie, string>>; pv: Record<Voie, number[]>; v: Record<Voie, number>; d: Record<Voie, number>; t: Record<Voie, number> }
 const lignes = new Map<string, Ligne>();
 function mesurer(cle: string, titre: string, voie: Voie, e: AventureEtat, combats: number, role: RoleAdverse, famille: Family | null, f1: Family): void {
   const niveau = collectionDe(e.registre).basics.length;
   const pvJ = pvJoueur(combats);
-  const r = serie(e.deck, pvJ, role, famille, niveau, 9000 + FAMILIES.indexOf(f1) * 7 + (voie === 'entraine' ? 3 : 0));
-  const l: Ligne = lignes.get(cle) ?? ({ titre, adv: r.adv.texte, palier: r.adv.palier, pvAdv: r.adv.pv, profil: role === 'brasDroit' ? 'propre au personnage' : r.adv.profil, deck: {}, pv: { direct: [], entraine: [] }, v: { direct: 0, entraine: 0 }, d: { direct: 0, entraine: 0 }, t: { direct: 0, entraine: 0 } } as Ligne);
+  const stats = lignes.get(cle)?.stats ?? { direct: statsVides(), entraine: statsVides() };
+  const r = serie(e.deck, pvJ, role, famille, niveau, 9000 + FAMILIES.indexOf(f1) * 7 + (voie === 'entraine' ? 3 : 0), stats[voie]);
+  const l: Ligne = lignes.get(cle) ?? ({ stats, titre, adv: r.adv.texte, palier: r.adv.palier, pvAdv: r.adv.pv, profil: role === 'brasDroit' ? 'propre au personnage' : r.adv.profil, deck: {}, pv: { direct: [], entraine: [] }, v: { direct: 0, entraine: 0 }, d: { direct: 0, entraine: 0 }, t: { direct: 0, entraine: 0 } } as Ligne);
   l.deck[voie] = ligne(e.deck); l.pv[voie].push(pvJ); l.v[voie] += r.w; l.d[voie] += N; l.t[voie] += r.tours;
   lignes.set(cle, l);
 }
@@ -124,5 +127,5 @@ for (const l of lignes.values()) console.log(`| ${l.titre} | ${l.palier} : ${l.a
 if (OUT) {
   mkdirSync(dirname(OUT), { recursive: true });
   const head = execSync('git rev-parse --short HEAD').toString().trim();
-  writeFileSync(OUT, JSON.stringify({ commit: head, duelsParFamilleEtEtape: N, pv: { depart: PV_DEPART, parCombat: PV_PAR_COMBAT }, pvAdverses: PV_ADVERSE, profils: PROFIL_ROLE, composition: COMPOSITION, lignes: [...lignes.values()] }, null, 1) + '\n');
+  writeFileSync(OUT, JSON.stringify({ commit: head, duelsParFamilleEtEtape: N, pv: { depart: PV_DEPART, parCombat: PV_PAR_COMBAT }, pvAdverses: PV_ADVERSE, profils: PROFIL_ROLE, composition: COMPOSITION, lignes: [...lignes.values()].map(({ stats, ...l }) => ({ ...l, statsClash: { direct: stats.direct.duels ? resume(stats.direct) : null, entraine: stats.entraine.duels ? resume(stats.entraine) : null } })) }, null, 1) + '\n');
 }
