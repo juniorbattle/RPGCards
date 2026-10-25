@@ -1,0 +1,5 @@
+pilote T1 (IA « équilibré » du joueur) ; 300 duels par manche
+  Kaï : 70.7 %
+  Maëlle : 43.0 %
+  Sélène : 57.7 %
+  série gagnée en 16 duels au plus : 99.88 %

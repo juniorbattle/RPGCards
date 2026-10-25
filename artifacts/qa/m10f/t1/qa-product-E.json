@@ -1,0 +1,106 @@
+{
+  "commit": "377f7cc",
+  "date": "2026-10-25T05:27:01.226Z",
+  "chromium": "155.0.8059.80",
+  "runs": {
+    "E-serie-complete-1280": {
+      "consoleIssues": [],
+      "checks": [
+        "OK manche 1 (braise) : duel 1 terminé, victory",
+        "OK série à la manche 1",
+        "OK manche 2 (ronce) : duel 2 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "OK manche 2 (ronce) : duel 3 terminé, victory",
+        "OK série à la manche 2",
+        "OK manche 3 (voile) : duel 4 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "OK manche 3 (voile) : duel 5 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "OK manche 3 (voile) : duel 6 terminé, victory",
+        "OK série à la manche 3",
+        "OK série remportée (6 duels joués)",
+        "OK récapitulatif de série affiché",
+        "OK déblocages : 9 variantes + Rupture + Dissipation",
+        "OK Orin débloqué en duel libre",
+        "OK deck enrichi : variante débloquée et Technique apprise équipées",
+        "OK après rechargement : série, collection, deck et historique intacts"
+      ],
+      "fails": [],
+      "duels": [
+        {
+          "manche": 1,
+          "rival": "braise",
+          "winner": "me",
+          "turns": 6,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "victory",
+          "unlocked": 7
+        },
+        {
+          "manche": 2,
+          "rival": "ronce",
+          "winner": "opp",
+          "turns": 11,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 7
+        },
+        {
+          "manche": 2,
+          "rival": "ronce",
+          "winner": "me",
+          "turns": 10,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "victory",
+          "unlocked": 10
+        },
+        {
+          "manche": 3,
+          "rival": "voile",
+          "winner": "opp",
+          "turns": 13,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 10
+        },
+        {
+          "manche": 3,
+          "rival": "voile",
+          "winner": "opp",
+          "turns": 6,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 10
+        },
+        {
+          "manche": 3,
+          "rival": "voile",
+          "winner": "me",
+          "turns": 11,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "victory",
+          "unlocked": 13
+        }
+      ],
+      "ms": 93471
+    }
+  }
+}
