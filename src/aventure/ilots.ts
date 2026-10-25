@@ -13,6 +13,9 @@ import { ilotDef, type IlotDef, type IlotId } from '../ville/ilots';
 import type { IlotNpc } from '../ville/quai';
 import type { Pose } from './directeur';
 
+/** « Parler à » avec la contraction de l'article (« au héraut », « aux joueurs ») ; un nom propre reste tel quel. */
+export const parlerA = (nom: string): string => `Parler ${nom.startsWith('le ') ? `au ${nom.slice(3)}` : nom.startsWith('les ') ? `aux ${nom.slice(4)}` : `à ${nom}`}`;
+
 /** Rayon d'un personnage (obstacle) et de sa zone « parler » (mêmes valeurs que les îlots M09). */
 const NPC_R = 0.32;
 const TALK = 1.35;
@@ -49,7 +52,7 @@ export function ilotAventure(id: IlotId, poses: readonly Pose[], quaiRangs = fal
     name: d.ilot.name.replace(/ \([^)]*\)$/, ''),
     discs: [...nu.discs, ...poses.map((p): Disc => ({ ...p.at, r: NPC_R }))],
     // la cible d'une zone « parler » est l'identifiant de la RENCONTRE (le produit décide, la ville ne lit rien)
-    zones: [...nu.zones, ...poses.map((p): Zone => ({ id: `npc-${p.id}`, kind: 'parler', label: `Parler à ${p.nom}`, target: p.id, area: { x: p.at.x, z: p.at.z, r: TALK } }))],
+    zones: [...nu.zones, ...poses.map((p): Zone => ({ id: `npc-${p.id}`, kind: 'parler', label: parlerA(p.nom), target: p.id, area: { x: p.at.x, z: p.at.z, r: TALK } }))],
     spawns: { ...nu.spawns, ...Object.fromEntries(poses.map((p) => [`npc-${p.id}`, devant(p)])) },
   };
   return { ...d, ilot, npcs };

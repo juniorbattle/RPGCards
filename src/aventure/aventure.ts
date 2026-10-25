@@ -5,7 +5,7 @@
  * publics, choix du joueur). Propositions : `docs/m10/` ; rien n'est ratifié hors ADR 029 à 031.
  */
 import { FAMILIES, type Family } from '../game/catalog/cards';
-import { deF, figure, figureDe, FIGURES, isNeutre, leF, MAISONS, ORDRE_ETAT, ROLE_LABEL, TECHNIQUES_RUE, type EtatFamille, type Figure, type SceneId } from './modele';
+import { deF, figure, figureDe, FIGURES, isNeutre, leF, MAISONS, ORDRE_ETAT, roleDe, TECHNIQUES_RUE, type EtatFamille, type Figure, type SceneId } from './modele';
 import { accorder, aGain, collectionDe, gainBasics, gainNeutres, gainSignature, gainTechnique, gainVariante, type Gain } from './registre';
 import { deckDepart, equiperTechnique, equiperVersion, integrerBasics, standardLegal, type DeckAv } from './deck';
 import { finEpreuve, finFinale, finJoute, finMiroir, finPoule, manche, nouvellesCompetitions, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, type EtatCompetitions } from './competitions';
@@ -130,8 +130,8 @@ export function statutDefi(e: AventureEtat, fig: Figure): { ouvert: boolean; rai
       : `Engagez d’abord le défi officiel ${deF(fam)} à la Salle des Bannières.`;
     return { ouvert: false, deja, raison };
   }
-  if (fig.role === 'brasDroit' && !e.vaincues.includes(figureDe(fam, 'cadet').id)) return { ouvert: false, deja, raison: `Battez d’abord ${figureDe(fam, 'cadet').nom}, ${ROLE_LABEL.cadet} ${deF(fam)}.` };
-  if (fig.role === 'chef' && !e.vaincues.includes(figureDe(fam, 'brasDroit').id)) return { ouvert: false, deja, raison: `Battez d’abord ${figureDe(fam, 'brasDroit').nom}, ${ROLE_LABEL.brasDroit} ${deF(fam)}.` };
+  if (fig.role === 'brasDroit' && !e.vaincues.includes(figureDe(fam, 'cadet').id)) return { ouvert: false, deja, raison: `Battez d’abord ${figureDe(fam, 'cadet').nom}, ${roleDe(figureDe(fam, 'cadet'))} ${deF(fam)}.` };
+  if (fig.role === 'chef' && !e.vaincues.includes(figureDe(fam, 'brasDroit').id)) return { ouvert: false, deja, raison: `Battez d’abord ${figureDe(fam, 'brasDroit').nom}, ${roleDe(figureDe(fam, 'brasDroit'))} ${deF(fam)}.` };
   return { ouvert: true, deja, raison: deja ? 'Revanche (sans récompense)' : 'Défi de progression' };
 }
 
