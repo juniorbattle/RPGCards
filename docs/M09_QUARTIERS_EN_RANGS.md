@@ -155,3 +155,11 @@ Depuis la passe 66, le Quai en quatre rangs est habillé du kit. Restent proviso
 - le sol des blocs passés en fantôme, qui montre les pavés comme sur l'image jointe par le responsable.
 
 Rien n'est approuvé (`approved: false`) ; l'approbation en bloc vient après la vérification des conditions d'OpenAI.
+
+## 8. Accessoires intégrés et chemin jamais caché (retours R1, passe 116)
+
+Deux règles s'ajoutent au contrat des quartiers en rangs, vérifiées par `test/accessoires.test.ts` : **aucun accessoire ne
+cache le chemin lumineux** quand le personnage le suit (caméra de l'îlot, silhouette des images, plans effacés) ; **aucun
+accessoire ne cache un personnage ni un repère** quand on s'en approche. Un objet posé dans un quartier se place donc le
+long des murs ou de part et d'autre des repères, jamais devant un passage ni devant un tableau. Ombres : contact de la
+silhouette, ombre portée par la lanterne la plus proche, pied assombri, liseré magenta neutralisé (ADR 028, passe 116).

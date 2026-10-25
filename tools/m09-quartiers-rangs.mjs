@@ -248,12 +248,12 @@ if (MODE === 'assembler') {
             provisoire(`${mb.id} : « ${nom} » du kit en attendant « ${mb.objet} »`);
           }
         }
-        plans[mb.id] = { ...plate(src, SRC), uv: o.uv, width: r3(o.largeur * s), at: [mb.x, 0, mb.z], lit: 0.3 };
+        plans[mb.id] = { ...plate(src, SRC), uv: o.uv, width: r3(o.largeur * s), at: [r3(mb.x), 0, r3(mb.z)], lit: 0.3 };
         for (const [dx, y, couleur] of o.lanternes ?? []) lanternes.push({ at: [r3(mb.x + dx * s), r3(y * s), r3(mb.z + 0.1)], color: couleur ?? 'ambre', intensity: couleur ? 3.2 : 2.4, radius: 7, halo: 0.9, flicker: couleur ? 'candle' : 'lantern' });
         continue;
       }
       const pcx = await piece(mb.source === 'pied' ? 'pied' : 'rue', mb.src);
-      plans[mb.id] = { ...pcx.e, uv: pcx.uv, width: pcx.width, at: [mb.x, 0, mb.z] };
+      plans[mb.id] = { ...pcx.e, uv: pcx.uv, width: pcx.width, at: [r3(mb.x), 0, r3(mb.z)] };
     }
     Q.lampes.forEach((p, i) => { plans[`lampadaire-${i + 1}`] = { ...lamp.e, uv: lamp.uv, width: lamp.width, at: [p.x, 0, p.z] }; });
     // premier plan : le canal (mur et eau du Quai), ou une balustrade de terrasse (ouverte sur l'escalier de la Grande Cour)

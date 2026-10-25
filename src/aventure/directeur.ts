@@ -147,7 +147,7 @@ export const RENCONTRES: readonly RencontreDef[] = [
     ['quai', 'pnj-marchande-12', { x: -12.0, z: -26.0 }, 'droite'],
     ['parvis', 'pnj-commis-14', { x: -9.5, z: -16.5 }, 'droite'],
     ['ruelles', 'pnj-marchande-17', { x: 7.0, z: -12.0 }, 'gauche'],
-    ['cour', 'pnj-marchande-25', { x: 11.4, z: -2.6 }, 'gauche'],
+    ['cour', 'pnj-marchande-25', { x: 11.2, z: 0.2 }, 'gauche'],
   ] as const).map(([il, ap, at, facing]): RencontreDef => ({
     id: `rumeur-${il}`, genre: 'ambiance', apparence: ap, nom: `${personalityById(ap)?.gender === 'f' ? 'une passante' : 'un passant'}`,
     lieux: [{ ilot: il, at, facing, rangs: true }], dispo: (e) => e.prologue !== null, delai: 1, poids: 1, repere: () => '?',
