@@ -1,10 +1,12 @@
 # 08 — Avenant V3.3 : visibilité des Signatures (annonce immédiate)
 
-**Ratification : EN ATTENTE.** Texte soumis au responsable le 2026-10-24, avec ses points à trancher (S-07). Il ne fait
-foi qu'après sa validation explicite de cette rédaction (`contracts/00_GOUVERNANCE_AUTORITE.md`, point 1). **Aucun code
-n'est changé avant.**
+**Ratification (2026-10-24) :** rédaction canonique **validée par le responsable** dans la session de la règle V3.3 :
+« Avenant 08 validé tel quel, avec les quatre recommandations de S-07 : à verser et appliquer. » Les quatre points de
+S-07 sont donc tranchés sur l'option recommandée : (1) annonce **au verrouillage de son propriétaire** ; (2) **rythme
+actuel du rival** (il verrouille ≈ 0,65 s après l'ouverture de l'engagement) ; (3) mesures d'équilibre avec
+**l'adversaire qui verrouille en premier** ; (4) étiquette des règles **`V3.0+delta-V3.3.1`**.
 
-**Statut : PROPOSÉ.** Avenant au règlement V3.0 + delta V3.2, **distinct de l'avenant 07** (la Garde réduit sans
+**Statut : FIGÉ / APPROUVÉ.** Avenant au règlement V3.0 + delta V3.2, **distinct de l'avenant 07** (la Garde réduit sans
 annuler) : il ne touche ni la formule des dégâts ni la résolution du Clash, seulement **ce qui est public pendant la phase
 d'engagement**. Pour tout le jeu (Duel standard, Aventure, rivaux, Championnat).
 
@@ -101,7 +103,7 @@ contraintes 1 à 9 et vérifications obligatoires reprises en S-02 et S-08. Déc
   mouvement réduit, apparition sans animation. Le rival peut réagir (expression) à une annonce publique, jamais à une
   information secrète.
 
-## S-07 — Points à trancher par le responsable
+## S-07 — Points tranchés par le responsable (2026-10-24 : option recommandée partout)
 
 1. **Moment de l'annonce.** (a) **Au verrouillage de son propriétaire**, même si l'adversaire n'a pas encore verrouillé :
    l'adversaire peut alors **changer sa propre Primaire avant de verrouiller** (lecture littérale de la règle et de la
@@ -117,7 +119,7 @@ contraintes 1 à 9 et vérifications obligatoires reprises en S-02 et S-08. Déc
 4. **Étiquette des règles** : `V3.0+delta-V3.3` devient `V3.0+delta-V3.3.1` (un duel sauvegardé sous la règle de
    l'avenant 07 seul est refusé avec sa raison, comme en G-08). *Recommandé.*
 
-## S-08 — Tests prévus (aucun n'est écrit avant la validation)
+## S-08 — Tests prévus
 
 | # | Vérification | Attendu |
 |---|---|---|
