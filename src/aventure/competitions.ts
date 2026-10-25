@@ -128,9 +128,9 @@ export function ouvertChampionnat(familles: Record<Family, string>): boolean {
  */
 export function statutPoule(c: EtatCompetitions, chef: Family, signature: Family | null): Statut {
   const p = c.championnat.poule;
-  if (p[chef]) return { ouvert: false, texte: `Déjà vaincu dans la poule (avec ${CATALOG[`sig-${p[chef]}`]!.name}).` };
+  if (p[chef]) return { ouvert: false, texte: `Victoire déjà acquise dans la poule contre ce chef (avec ${CATALOG[`sig-${p[chef]}`]!.name}).` };
   if (!signature) return { ouvert: false, texte: 'Équipez une Signature.' };
-  if (Object.values(p).includes(signature)) return { ouvert: false, texte: `Le ${CATALOG[`sig-${signature}`]!.name} a déjà servi dans la poule : équipez une autre Signature.` };
+  if (Object.values(p).includes(signature)) return { ouvert: false, texte: `${CATALOG[`sig-${signature}`]!.name} a déjà servi dans la poule : équipez une autre Signature.` };
   if (c.championnat.dernier === signature) return { ouvert: false, texte: `La Signature change à chaque duel de la poule (le précédent : ${CATALOG[`sig-${signature}`]!.name}) : équipez-en une autre.` };
   return { ouvert: true, texte: `Avec ${CATALOG[`sig-${signature}`]!.name}.` };
 }

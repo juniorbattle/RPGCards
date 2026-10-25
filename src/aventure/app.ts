@@ -35,17 +35,16 @@ import { villeEnRangs } from '../ville/villeRangs';
 import { apercuEngagement, appliquer, bannieres, chapitre, chapitreDetaille, peutChanger, peutConfirmer, statutDefi, type EtatBanniere, type Evenement, type FaitsPublics, type Issue } from './aventure';
 import { basculerTechnique, choixPourCase, equiperSignature, rangDe, remplacerCase, standardLegal, validerDeckAv, type DeckAv } from './deck';
 import { origineGain, vueCollection, type EntreeCollection } from './collection';
-import { battre, conclure, decider, poses, rencontreDef, type Pose } from './directeur';
-import { faitsPublics } from './faits';
+import { conclure, decider, poses, rencontreDef, type Pose } from './directeur';
 import { ilotAventure, ilotBase } from './ilots';
-import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, RANGS, rangNeutre, ROLE_LABEL, ROLES, ROMAIN, type EtatFamille } from './modele';
+import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, RANGS, rangNeutre, roleDe, ROLES, ROMAIN, type EtatFamille } from './modele';
 import { objectif, quetes } from './quetes';
 import { aGain, collectionDe, type Gain } from './registre';
 import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue, personnalite, type DuelPrevu } from './rencontres';
 import { CONTRAINTE_JOUTE, famillesDominantes, manche, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, varianteDe } from './competitions';
-import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave, type DuelAventure } from './sauvegarde';
+import { MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave, type DuelAventure } from './sauvegarde';
 import { installAventureStyles } from './styles';
-import { pvJoueur } from './paliers';
+import { conclureDuel, figureOuNull, ouvrirDuel } from './fin';
 
 export interface DepsAventure {
   app: HTMLElement;
@@ -104,7 +103,7 @@ export class AventureApp {
   constructor(readonly d: DepsAventure) {
     installVilleStyles();
     installAventureStyles();
-    document.title = 'Les Quatre Voies — Aventure (prototype)';
+    document.title = 'Les Quatre Voies — Aventure';
     window.addEventListener('pagehide', () => this.memoriser());
     const politique = decorPolicy(d.params.qa, new URLSearchParams(location.search).get('decors'));
     this.decisionQuai = villeEnRangs(politique).then((oui) => {
@@ -172,19 +171,18 @@ export class AventureApp {
       const col = collectionDe(s.etat.registre);
       const sous = s.duel ? 'Reprendre le duel en cours' : objectif(s.etat);
       items.push(bouton('Continuer l’aventure', () => this.continuer(), 'av-continue', true, sous));
-      items.push(h('p', { class: 'av-profil' }, h('b', null, s.profil.nom), ` · ${capital(chapitre(s.etat))} · ${s.etat.affiliation ? `voie ${de(s.etat.affiliation)}` : 'sans famille'} · ${col.basics.length * 4} cartes familiales, ${col.variantes.length} variante(s), ${col.signatures.length} Signature(s)`));
+      items.push(h('p', { class: 'av-profil' }, h('b', null, s.profil.nom), ` · ${CHAPITRE[chapitreDetaille(s.etat)]} · ${s.etat.affiliation ? `voie ${de(s.etat.affiliation)}` : 'sans famille'} · ${col.basics.length * 4} cartes familiales, ${col.variantes.length} variante(s), ${col.signatures.length} Signature(s)`));
     }
     items.push(bouton('Nouvelle aventure', () => void this.nouveau(), 'av-new', !s, 'Seize cartes grises, aucune famille : tout commence sur le Quai'));
     if (this.charge.status === 'illisible') items.push(h('p', { class: 'warn' }, `${this.charge.raison} « Nouvelle aventure » la mettra à l’écart (sans l’effacer).`));
     if (this.charge.status === 'future') items.push(h('p', { class: 'warn' }, this.charge.raison));
     if (this.charge.status === 'indisponible') items.push(h('p', { class: 'warn' }, 'Stockage local indisponible : l’aventure ne pourra pas être conservée.'));
-    items.push(h('a', { class: 'av-link', href: location.pathname, 'data-key': 'av-standard' }, 'Jeu standard (duels, Tournoi du Quai) — sans le paramètre'));
+    items.push(h('a', { class: 'av-link', href: location.pathname, 'data-key': 'av-standard' }, 'Jeu standard (duels, Tournoi du Quai)'));
     this.ecranShell('scr-home av-scr',
       h('section', { class: 'av-titre', 'data-screen': 'av-titre', 'aria-labelledby': 'av-t' },
         h('div', { class: 'av-emblems', 'aria-hidden': 'true', html: FAMILIES.map((f) => `<span class="fam-${f}">${emblemSvg(f, 30)}</span>`).join('') }),
         h('h1', { id: 'av-t', class: 'av-h1' }, 'Les Quatre Voies'),
-        h('p', { class: 'av-sous' }, 'Aventure — prologue jouable'),
-        h('p', { class: 'av-proto' }, 'Prototype M10 : règles de l’avenant M10-A (décisions du responsable du 2026-10-20) ; textes et apparences provisoires.'),
+        h('p', { class: 'av-sous' }, 'Aventure'),
         h('div', { class: 'av-items' }, ...items)));
   }
 
@@ -194,7 +192,7 @@ export class AventureApp {
       if (r !== 'confirm') return;
     }
     this.ecran = 'nouveau';
-    const input = h('input', { class: 'av-input', type: 'text', maxlength: '24', value: 'Duelliste', 'data-key': 'av-name', 'aria-label': 'Nom du duelliste' }) as HTMLInputElement;
+    const input = h('input', { class: 'av-input', type: 'text', maxlength: '24', value: 'Duelliste', 'data-key': 'av-name', 'aria-label': 'Votre nom' }) as HTMLInputElement;
     const go = () => this.commencer(input.value.trim() || 'Duelliste');
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
     this.ecranShell('scr-home av-scr',
@@ -326,7 +324,7 @@ export class AventureApp {
         // Sans WebGL (navigateur ou poste qui le refuse), pas de ville : le prototype le dit au lieu de rester bloqué.
         console.warn('Ville indisponible', err);
         this.titre();
-        this.toast('Le prototype du mode Aventure demande WebGL (la ville ne peut pas s’afficher sur ce poste).');
+        this.toast('Le mode Aventure demande WebGL (la ville ne peut pas s’afficher sur ce poste).');
         return;
       }
     }
@@ -380,7 +378,7 @@ export class AventureApp {
     const t = this.town!;
     const b = (label: string, key: string, run: () => void) => h('button', { class: 'ville-btn', type: 'button', 'data-key': key, onclick: (e: Event) => { (e.currentTarget as HTMLElement).blur(); run(); } }, label);
     return h('div', { class: 'ville-hud' },
-      h('div', { class: 'ville-place' }, h('b', { 'data-key': 'ville-place' }, capital(t.ilot.name)), h('small', null, 'la nuit · aventure (prototype M10)')),
+      h('div', { class: 'ville-place' }, h('b', { 'data-key': 'ville-place' }, capital(t.ilot.name)), h('small', null, 'la nuit · aventure')),
       h('div', { class: 'ville-objective', 'data-key': 'ville-objective' }, objectif(this.etat)),
       h('div', { class: 'ville-tools' }, b('Menu (Échap)', 'av-menu', () => this.menu()), b('Deck', 'av-deck', () => this.collection()), b('Journal', 'av-journal', () => this.journal())),
       h('div', { class: 'av-statut', 'data-key': 'av-statut' }),
@@ -471,7 +469,7 @@ export class AventureApp {
       tableau: 'Le tableau des annonces : le Championnat des Champions s’ouvre aux duellistes qui ont vaincu les quatre chefs.',
       belvedere: 'Le Belvédère : la ville haute, au-delà de la balustrade. Toutes les ruelles finissent par monter jusqu’ici.',
     };
-    this.dire(z.label, INFO[z.id] ?? 'Rien de plus ici pour l’instant (prototype).', [fermer(this)]);
+    this.dire(z.label, INFO[z.id] ?? 'Rien de plus ici.', [fermer(this)]);
   }
 
   parler(id: string): void {
@@ -560,7 +558,7 @@ export class AventureApp {
       h('div', { class: 'av-cards' }, ...[1, 2, 3, 4].map((r) => cardEl(`${f}-${r}-basic`, { artSeed: this.params.artSeed, tag: 'div' }))),
       h('p', null, `Les quatre cartes de base ${de(f)} (I à IV) : une carte grise de chaque Rang leur cède sa place dans votre deck. Et la Technique ${m.technique} (${TECHNIQUES[m.technique].text})`),
       h('h3', null, 'Ensuite'),
-      h('p', null, `Défier ${c!.nom} (${ROLE_LABEL.cadet}), puis ${b!.nom} (${ROLE_LABEL.brasDroit}), puis ${ch!.nom} (${ROLE_LABEL.chef}) : chaque lieutenant vaincu donne une variante, le chef donne sa Signature ∞.`),
+      h('p', null, `Défier ${c!.nom} (${roleDe(c!)}), puis ${b!.nom} (${roleDe(b!)}), puis ${ch!.nom} (${roleDe(ch!)}) : chaque lieutenant vaincu donne une variante, le chef donne sa Signature ∞.`),
       h('h3', null, 'Ce qui ne change pas'),
       h('p', null, `Les autres familles restent ouvertes ; quand le chef ${de(f)} sera vaincu, vous pourrez engager leur défi à la Salle des Bannières. ${changement && quittee ? `Les cartes déjà reçues restent à vous. Vos adversaires ne comptent que les familles que vous avez rejointes ou dont vous avez engagé le défi : ${la(quittee)} ne comptera qu’à l’engagement de son défi.` : 'Jusqu’à votre premier défi de lieutenant, vous pourrez encore changer de voie.'}`),
       h('div', { class: 'ville-choices' },
@@ -656,7 +654,7 @@ export class AventureApp {
         return st.ouvert ? [{ label: `${figureDe(f, 'chef').nom} (${f})`, key: `dlg-poule-${f}`, run: () => this.preparer(duelChampionnat('poule', this.etat, this.prochaineGraine(), f)) }] : [];
       });
       const vaincus = Object.keys(c.championnat.poule).length;
-      return this.dire('Les Quatre Bannières', `Battez trois des quatre chefs, avec une Signature différente à chaque victoire (${vaincus}/3). Signature équipée : ${sig ? CATALOG[`sig-${sig}`]!.name : 'aucune'}.${choix.length ? '' : ' Aucun duel possible avec cette Signature : changez-la dans le deck.'}`, [...choix, { label: 'Ouvrir le deck', key: 'dlg-deck', run: () => { this.fermerDialogue(); this.collection(); } }, { label: 'Plus tard', key: 'dlg-close', primary: !choix.length, run: () => this.fermerDialogue() }]);
+      return this.dire('Les Quatre Bannières', `Battez trois des quatre chefs, avec une Signature différente à chaque victoire, et qui change à chaque duel (${vaincus}/3). Signature équipée : ${sig ? CATALOG[`sig-${sig}`]!.name : 'aucune'}.${choix.length ? '' : ' Aucun duel possible avec cette Signature : changez-la dans le deck.'}`, [...choix, { label: 'Ouvrir le deck', key: 'dlg-deck', run: () => { this.fermerDialogue(); this.collection(); } }, { label: 'Plus tard', key: 'dlg-close', primary: !choix.length, run: () => this.fermerDialogue() }]);
     }
     if (m === 'miroir') {
       // M10-E : le Miroir est construit sur vos deux familles les plus jouées (vos cinq derniers duels, données publiques)
@@ -801,12 +799,9 @@ export class AventureApp {
     const s = this.save!;
     let duel = resume;
     if (!duel) {
-      const n = s.compteur;
-      s.compteur = n + 1;
-      duel = { id: `a${n + 1}`, rencontre: prevu.rencontre, seed: prevu.config.seed, startedAt: new Date().toISOString(), rules: 'V3.0+delta-V3.3.2', catalog: '', config: structuredClone(prevu.config), commands: [], hash: '', turn: 0, pret: false };
-      duel.catalog = CATALOG_ID;
-      if (prevu.rencontre !== 'prologue' && figureOuNull(prevu.rencontre)) this.faire({ type: 'lancerDefi', figure: prevu.rencontre });
-      s.duel = duel;
+      const o = ouvrirDuel(s, prevu, new Date().toISOString());
+      if (o.refus) this.toast(o.refus);
+      duel = o.duel;
       this.persist();
     }
     this.cacherVille();
@@ -819,7 +814,7 @@ export class AventureApp {
     arena?.setPaused(false);
     this.d.app.hidden = false;
     const id = duel.id;
-    const banner = h('div', { class: 'av-banner', 'data-key': 'av-banner', title: prevu.note }, 'Aventure · prototype M10');
+    const banner = h('div', { class: 'av-banner', 'data-key': 'av-banner', title: prevu.note }, 'Aventure');
     document.body.append(banner);
     const session = new DuelSession({
       app: this.d.app, arena, config: duel.config, params: this.params, scenario: null, personality: prevu.personnalite, product: { menu: true }, resume: duel.commands,
@@ -844,7 +839,7 @@ export class AventureApp {
     const check = verifierDuel(d);
     const prevu = this.prevuDe(d);
     if (!check.ok || !prevu) {
-      this.toast(`Reprise exacte impossible : ${check.ok ? 'rencontre inconnue' : check.reason} Le duel est retiré (non compté).`);
+      this.toast(`Reprise exacte impossible : ${check.ok ? 'rencontre inconnue.' : check.reason} Le duel est retiré (non compté).`);
       this.save!.duel = null;
       this.persist();
       this.entrerVille(false);
@@ -913,42 +908,10 @@ export class AventureApp {
     this.d.app.hidden = true;
     const v = viewFor(c.match.state, 'p1');
     const issue: Issue = forcee ?? (abandon ? 'abandon' : v.winner === 'me' ? 'victoire' : 'defaite');
-    const rencontre = live.duel.rencontre;
-    const at = new Date().toISOString();
-    let gains: Gain[] = [];
-    const s = this.save;
-    s.duel = null;
-    // familles des Primaires révélées par le joueur (publiques) : le Miroir du Championnat les lit (M10-E)
-    const faits = faitsPublics(c.match.events);
-    const familles = faits.familles;
-    s.historique = [...s.historique, { id: live.duel.id, rencontre, issue, turns: v.turn, at, ...(familles ? { familles } : {}) }].slice(-60);
-    s.directeur = battre(s.directeur);
-    // AV-08 : les PV du joueur montent à chaque combat mené à son terme (pas à l'abandon)
-    const pvAvant = pvJoueur(s.etat.combats);
-    s.etat = appliquer(s.etat, { type: 'combat', issue }, at).etat;
-    const pvApres = pvJoueur(s.etat.combats);
-    if (rencontre === 'prologue') s.etat = appliquer(s.etat, { type: 'duelPrologue', issue, faits }, at).etat;
-    else if (figureOuNull(rencontre)) {
-      const r = appliquer(s.etat, { type: 'duelStructurant', figure: rencontre, issue, duel: live.duel.id }, at);
-      if (r.refus) this.toast(r.refus);
-      s.etat = r.etat;
-      gains = r.gains;
-    } else if (/^(epreuve|joute|champ):/.test(rencontre)) {
-      const [k, a, b] = rencontre.split(':');
-      const ev: Evenement = k === 'epreuve' ? { type: 'epreuve', famille: a as Family, issue, duel: live.duel.id }
-        : k === 'joute' ? { type: 'joute', famille: a as Family, issue, duel: live.duel.id }
-        : { type: 'championnat', manche: a as 'poule' | 'miroir' | 'finale', chef: b as Family | undefined, signature: live.duel.config.players.p1.signature!, issue }; // le Championnat exige une Signature équipée (statutPoule, statutFinale)
-      const r = appliquer(s.etat, ev, at);
-      if (r.refus) this.toast(r.refus);
-      s.etat = r.etat;
-      gains = r.gains;
-    } else {
-      s.directeur = conclure(s.directeur, rencontre, true);
-      // M10-E : l'ombre de Kaï menée à son terme compte pour la quête du rival (chapitre en cours)
-      if (rencontre === 'rival-kai') s.etat = appliquer(s.etat, { type: 'ombre', issue }, at).etat;
-    }
+    const fin = conclureDuel(this.save, live.duel, c.match.events, issue, v.turn, new Date().toISOString());
+    if (fin.refus) this.toast(fin.refus);
     this.persist();
-    this.dernierResultat = { prevu: live.prevu, issue, gains, turns: v.turn, faits, pv: [pvAvant, pvApres] };
+    this.dernierResultat = { prevu: live.prevu, issue, gains: fin.gains, turns: v.turn, faits: fin.faits, pv: fin.pv };
     this.resultat();
   }
 
@@ -1056,7 +1019,7 @@ export class AventureApp {
   private recompense(titre: string, gains: Gain[], suite: () => void, notes: string[] = []): void {
     const panel = h('div', { class: 'av-confirm av-recompense', 'data-key': 'av-recompense' },
       h('h2', null, titre),
-      gains.length ? h('p', null, 'Inscrit au registre des gains (une seule fois : un rechargement, une reprise ou une revanche ne le dupliquent pas).') : null,
+      gains.length ? h('p', null, 'Inscription au registre des gains (une seule fois : un rechargement, une reprise ou une revanche ne le dupliquent pas).') : null,
       gains.length ? h('div', { class: 'av-cards' }, ...gains.flatMap((g) => gainEls(g, this.params.artSeed))) : null,
       ...notes.map((n, i) => h('p', { class: 'av-transition', 'data-key': `av-recompense-note-${i}` }, n)),
       h('div', { class: 'ville-choices' }, h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-continuer', onclick: () => { this.fermerModal(); suite(); } }, 'Continuer')));
@@ -1070,7 +1033,7 @@ export class AventureApp {
       { label: 'Reprendre', key: 'dlg-close', primary: true, run: () => this.fermerDialogue() },
       { label: 'Deck et collection', key: 'menu-deck', run: () => { this.fermerDialogue(); this.collection(); } },
       { label: 'Journal des quêtes', key: 'menu-journal', run: () => { this.fermerDialogue(); this.journal(); } },
-      { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. Repères : « ! » un défi, « ? » quelqu’un à écouter. Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? »).', [fermer(this)]) },
+      { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? »).', [fermer(this)]) },
       { label: 'Écran titre', key: 'menu-home', run: () => { this.fermerDialogue(); this.titre(); } },
     ]);
   }
@@ -1120,7 +1083,7 @@ export class AventureApp {
         h('h3', null, `Signature (${col.signatures.length ? `${col.signatures.length} possédée${col.signatures.length > 1 ? 's' : ''}, une seule équipée` : 'aucune : battez un chef'})`),
         h('div', { class: 'av-sig-ligne' }, draft.signature ? h('div', { class: 'av-cards' }, cardEl(`sig-${draft.signature}`, { artSeed: art, tag: 'div' })) : null, sigs),
         h('h3', null, `Techniques (${draft.techniques.length} sur 2)`), techs,
-        issues.length ? h('ul', { class: 'av-issues', 'data-key': 'av-issues' }, ...issues.map((i) => h('li', null, i.text))) : h('p', { class: 'av-ok', 'data-key': 'av-deck-ok' }, `Deck légal (règle R-AV, avenant M10-A)${modifie() ? ' — modifications non enregistrées' : ''}.`),
+        issues.length ? h('ul', { class: 'av-issues', 'data-key': 'av-issues' }, ...issues.map((i) => h('li', null, i.text))) : h('p', { class: 'av-ok', 'data-key': 'av-deck-ok' }, `Deck valide (seize cartes, quatre par Rang)${modifie() ? ' — modifications non enregistrées' : ''}.`),
         !issues.length && standardLegal(draft, col) ? h('p', { class: 'av-standard', 'data-key': 'av-deck-standard' }, STANDARD) : null,
         h('div', { class: 'ville-choices' },
           h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-deck-save', disabled: issues.length ? true : null, onclick: () => { s.etat = { ...s.etat, deck: draft }; this.persist(); this.fermerModal(); this.toast('Deck enregistré.'); } }, 'Enregistrer et fermer'),
@@ -1169,10 +1132,10 @@ export class AventureApp {
     this.ouvrirModal(h('div', { class: 'av-confirm av-large', 'data-key': 'av-journal-panel' },
       h('h2', null, 'Journal des quêtes'),
       ...q.map((x) => h('div', { class: 'av-quete' }, h('h3', null, x.titre), h('ul', null, ...x.etapes.map((s) => h('li', { class: s.faite ? 'faite' : '' }, `${s.faite ? '✓ ' : '· '}${s.texte}`))))),
-      h('p', { class: 'av-proto' }, `États des familles : ${FAMILIES.map((f) => `${f} ${this.etat.familles[f]}`).join(' · ')}`),
+      h('p', { class: 'av-proto' }, `Les familles : ${FAMILIES.map((f) => `${capital(leF(f))}, ${ETAT_FAMILLE[this.etat.familles[f]]}`).join(' · ')}`),
       h('h3', null, 'Duels de l’aventure (les plus récents d’abord)'),
       this.save!.historique.length
-        ? h('ol', { class: 'av-registre', 'data-key': 'av-historique' }, ...[...this.save!.historique].reverse().slice(0, 20).map((d) => h('li', null, `${d.id} · ${d.rencontre} · ${d.issue} · ${d.turns} tour(s)`)))
+        ? h('ol', { class: 'av-registre', 'data-key': 'av-historique' }, ...[...this.save!.historique].reverse().slice(0, 20).map((d) => h('li', null, `${titreRencontre(d.rencontre)} · ${ISSUE[d.issue]} · ${d.turns} tour${d.turns > 1 ? 's' : ''}`)))
         : h('p', null, 'Aucun duel joué.'),
       h('div', { class: 'ville-choices' }, h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-journal-close', onclick: () => this.fermerModal() }, 'Fermer'))));
   }
@@ -1216,10 +1179,8 @@ export class AventureApp {
   }
 }
 
-const CATALOG_ID = CATALOG_AVENTURE;
 const LIEU: Record<VenueId, string> = { salle: 'la salle de jeu de cartes', rue: 'la rue, le Quai la nuit', bar: 'le Fanal', arene: 'l’arène' } as Record<VenueId, string>;
 
-const figureOuNull = (id: string) => { try { return figure(id); } catch { return null; } };
 const lieuDe = (f: Family) => (f === 'Cendre' ? 'à la Maison du Chantier, à l’ouest du Quai' : f === 'Ronce' ? 'devant le Fanal, sur le Quai' : f === 'Voile' ? 'dans les Ruelles, près de la fontaine' : 'sur le Parvis de l’arène');
 const nomCarte = (defId: string) => (CATALOG[defId] ? cardTitle(CATALOG[defId]!) : defId);
 /** Le deck au format standard (avenant M10-A, AV-04 ; A-6). */
@@ -1228,6 +1189,21 @@ const STANDARD = 'Format standard : 17 cartes, sans carte grise ; le validateur 
 const ETAT_BANNIERE: Record<EtatBanniere, string> = { accueil: 'votre famille', engageable: 'défi à engager', engagee: 'défi engagé', conquise: 'chef vaincu', fermee: 'pas encore' };
 const OU_ILOT: Record<IlotId, string> = { quai: 'sur le Quai', ruelles: 'dans les Ruelles (sortie ouest du Quai)', parvis: 'sur le Parvis de l’arène (sortie est du Quai)', cour: 'dans la Grande Cour, au cœur de la ville' };
 /** État d'une famille, lu par le joueur (écran Collection). */
+/** Chapitre de la trame en clair (écran titre) ; épicène. */
+const CHAPITRE: Record<ReturnType<typeof chapitreDetaille>, string> = { prologue: 'Prologue', I: 'Chapitre I, la maison', II: 'Chapitre II, les trois voies', III: 'Chapitre III, les trois voies', IV: 'Chapitre IV, les trois voies', V: 'Chapitre V, le Championnat', titre: 'Titre remporté' };
+const ISSUE: Record<Issue, string> = { victoire: 'Victoire', defaite: 'Défaite', abandon: 'Abandon' };
+/** Nom lisible d'une rencontre de l'historique (identifiant de `DuelAventure.rencontre`). */
+function titreRencontre(id: string): string {
+  const [k, a, b] = id.split(':');
+  if (id === 'prologue') return `Duel public contre ${KAI_PROLOGUE.nom}`;
+  const fig = figureOuNull(id);
+  if (fig) return `${fig.nom}, ${fig.titre}`;
+  if (k === 'epreuve') return `Épreuve du quartier ${deF(a as Family)}`;
+  if (k === 'joute') return `Joute de la maison ${deF(a as Family)}`;
+  if (k === 'champ') return a === 'poule' ? `Championnat, poule : ${figureDe(b as Family, 'chef').nom}` : a === 'miroir' ? 'Championnat, le Miroir' : 'Championnat, la Finale';
+  const r = rencontreDef(id);
+  return r ? capital(r.nom) : id;
+}
 const ETAT_FAMILLE: Record<EtatFamille, string> = { inconnue: 'pas encore rencontrée', remarque: 'a remarqué votre jeu', invite: 'vous invite', affilie: 'votre famille', defiee: 'défi officiel engagé', chef: 'chef vaincu' };
 /** Ce qu'un gain a remis : « Cartes de base de la Cendre », le nom d'une variante ou d'une Signature, « Technique Lecture ». */
 function nomGain(g: Gain): string {

@@ -47,7 +47,7 @@ export function objectif(e: AventureEtat): string {
     const m = manche(e.competitions);
     if (m === 'poule') return `Championnat (le héraut, dans la Grande Cour, ou la porte de l’arène) — les Quatre Bannières : battez trois chefs ; la Signature change à chaque duel (${Object.keys(e.competitions.championnat.poule).length}/3).`;
     if (m === 'miroir') return 'Championnat — le Miroir : un deck construit sur vos familles les plus jouées vous attend.';
-    return 'Championnat — la Finale : deux manches gagnantes contre la Tenante du titre, une Signature différente à chaque manche ; elle a annoncé son plan.';
+    return 'Championnat — la Finale : deux manches gagnantes contre la Tenante du titre, en changeant de Signature entre deux manches ; elle a annoncé son plan.';
   }
   if (ch === 'champion') return 'Personne en ville ne joue mieux que vous. Revanches, Épreuves et Joutes restent ouvertes.';
   return '';

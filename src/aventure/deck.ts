@@ -49,7 +49,7 @@ export function validerDeckAv(d: DeckAv, col: CollectionAv): ProblemeDeck[] {
   }
   for (const r of RANGS) {
     if (parRang[r] !== 4) out.push({ code: 'rang', text: `Il faut exactement quatre cartes de Rang ${['', 'I', 'II', 'III', 'IV'][r]} (${parRang[r]}).` });
-    if (neutres[r]! > col.neutres[r]) out.push({ code: 'neutres', text: `Plus de neutres de Rang ${r} que possédées.` });
+    if (neutres[r]! > col.neutres[r]) out.push({ code: 'neutres', text: `Plus de neutres de Rang ${['', 'I', 'II', 'III', 'IV'][r]} que possédées.` });
   }
   if (d.signature !== null && !col.signatures.includes(d.signature)) out.push({ code: 'signature', text: `Signature ${d.signature} non possédée.` });
   if (d.techniques.length !== 2 || new Set(d.techniques).size !== 2) out.push({ code: 'techniques', text: 'Équipez exactement deux Techniques distinctes.' });

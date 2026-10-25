@@ -19,7 +19,7 @@ import { MAISONS, NEUTRES, RANGS, TECHNIQUES_RUE } from './modele';
 
 /** Paliers de la note du responsable : populace, membres de famille, duellistes avancés, élite, champions. */
 export type PalierId = 'populace' | 'membre' | 'avance' | 'elite' | 'champion';
-export const PALIER_NOM: Record<PalierId, string> = { populace: 'populace', membre: 'membre de famille', avance: 'duelliste avancé', elite: 'élite', champion: 'champion' };
+export const PALIER_NOM: Record<PalierId, string> = { populace: 'populace', membre: 'membre de famille', avance: 'duelliste avancé', elite: 'élite', champion: 'champions' };
 
 
 /** PV du joueur : départ, puis gain par combat mené à son terme (victoire ou défaite ; un abandon ne compte pas). */

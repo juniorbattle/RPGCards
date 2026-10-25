@@ -46,7 +46,7 @@ export const niveauDe = (e: AventureEtat): number => FAMILIES.filter((f) => e.fa
 function config(e: AventureEtat, seed: number, adv: Adversaire, nom: string): GameConfig {
   return { seed, players: { p1: siegeAventure(e.deck, 'Vous', pvJoueur(e.combats)), p2: siegeAventure(adv.deck, nom, adv.pv) } };
 }
-const note = (nom: string, adv: Adversaire): string => `${nom} (${PALIER_NOM[adv.palier]}) joue ${adv.texte}.`;
+const note = (nom: string, adv: Adversaire): string => `${nom} (palier : ${PALIER_NOM[adv.palier]}) joue ${adv.texte}.`;
 
 /** Duel public du prologue : le deck du joueur (les seize cartes grises) contre les seize cartes grises de Kaï. */
 export function duelPrologue(seed: number, e: AventureEtat = nouvelleAventure('')): DuelPrevu {
