@@ -1,6 +1,6 @@
 {
   "id": "voile",
-  "statut": "feuille des PNJ de la ville (Sélène, liseuse du Voile (couleurs propres)), suite de la deuxième reprise de M09 (passe 127), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas décidé",
+  "statut": "APPROUVÉ par le responsable le 2026-10-25 (ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128) : admis hors QA tant que l’empreinte reste 96b20ecd3fcc…",
   "auteur": "Claude Code (session de reprise de M09, passe 127), à la demande du responsable : « Oui : génère les 10 autres feuilles des PNJ (gabarits marchande, commis, joueuse ; Maëlle, Sélène, Orin ; les quatre chefs), traite-les et pose-les. »",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-pnj-suite.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -102,5 +102,11 @@
     "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50 (entrée : public/sprites/player.png)",
     "b866a1aead1da6d3b3860013329b132ed8209576322900232b84d31a4e9b5716 (brut)",
     "96b20ecd3fcc764d1e6c704e75d3945f9bb1e41fb3ba2ac98201ecc0382ff2c8 (feuille ×3)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-25",
+    "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128",
+    "fichier": "public/sprites/voile.png",
+    "sha256": "96b20ecd3fcc764d1e6c704e75d3945f9bb1e41fb3ba2ac98201ecc0382ff2c8"
+  }
 }

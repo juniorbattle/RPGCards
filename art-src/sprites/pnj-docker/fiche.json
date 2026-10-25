@@ -1,6 +1,6 @@
 {
   "id": "pnj-docker",
-  "statut": "feuille des PNJ de la ville (gabarit docker (dockers, membres, passants), recoloré par graine), porte de la reprise de M09 (passe 125), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas décidé",
+  "statut": "APPROUVÉ par le responsable le 2026-10-25 (ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128) : admis hors QA tant que l’empreinte reste 5212a942a0da…",
   "auteur": "Claude Code (session de reprise de M09, passe 125), à la demande du responsable : budget « 16, avec une porte » (d’abord 2 feuilles posées in situ sur une planche, puis les 10 autres ; 4 images pour régénérer une feuille ratée)",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-pnj-porte.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -132,5 +132,11 @@
     "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50 (entrée : public/sprites/player.png)",
     "f765d9421d86a9f67c8c6c3def2f7b0a8410f3d0191334e9e1d4ef0c6944addb (brut)",
     "5212a942a0dad19bb5d4ad9dce20de2bbf506c1dcd91933b0076a5019e4e823e (feuille ×3)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-25",
+    "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128",
+    "fichier": "public/sprites/pnj-docker.png",
+    "sha256": "5212a942a0dad19bb5d4ad9dce20de2bbf506c1dcd91933b0076a5019e4e823e"
+  }
 }
