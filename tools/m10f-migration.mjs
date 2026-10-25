@@ -145,18 +145,34 @@ try {
     const profil = (await p.textContent('.av-profil')) ?? '';
     check(/QA Avant V3\.3/.test(profil), `aventure : sauvegarde d'avant V3.3 chargée (« ${profil.replace(/\s+/g, ' ').trim()} »)`);
     await shot(p, '04-aventure-titre');
+    // fiche de la RC, T1 : comme le jeu standard, recommencer, retirer ou plus tard
     await p.click('[data-key="av-continue"]');
-    const toast = await p.waitForSelector('.ville-toast', { timeout: 60000 }).then((t) => t.textContent());
-    check(/Reprise exacte impossible : Version des règles ou du catalogue différente\. Le duel est retiré \(non compté\)\./.test(toast ?? ''), `aventure : duel d'avant V3.3 refusé, raison affichée : « ${toast} »`);
-    report.raisonAventure = toast;
+    await p.waitForSelector('.sh-confirm', { timeout: 60000 });
+    const why2 = ((await p.textContent('.sh-confirm')) ?? '').replace(/\s+/g, ' ').trim();
+    check(/Version des règles ou du catalogue différente\./.test(why2) && !!(await p.$('[data-key="confirm-ok"]')) && !!(await p.$('[data-key="confirm-drop"]')), `aventure : duel d'avant V3.3 refusé, raison affichée, recommencer ou retirer proposés : « ${why2.slice(0, 200)} »`);
+    check(!(await p.evaluate(() => !!window.__lqv)), 'aventure : aucun duel ouvert sur un état non vérifié');
+    report.raisonAventure = why2;
     await shot(p, '05-aventure-reprise-refusee');
-    await p.waitForFunction(() => { const t = window.__lqvAventure?.town; return !!t && t.stats().frames > 1; }, null, { timeout: 120000 });
-    const av = await p.evaluate(() => JSON.parse(localStorage.getItem('lqv.aventure')));
     const a0 = JSON.parse(aventure);
-    check(av.duel === null && JSON.stringify(av.etat) === JSON.stringify(a0.etat) && av.historique.length === a0.historique.length && av.compteur === a0.compteur && av.profil.nom === a0.profil.nom, 'aventure : état, registre, deck, historique et compteur gardés ; seul le duel non vérifiable est retiré (non compté)');
-    await shot(p, '06-aventure-ville');
+    await p.click('[data-key="confirm-ok"]');
+    await p.waitForFunction(() => !!window.__lqv?.controller?.view, null, { timeout: 120000 });
+    const re = await p.evaluate(() => ({ rules: window.__lqv.state().rules, turn: window.__lqv.view().turn, saved: JSON.parse(localStorage.getItem('lqv.aventure')) }));
+    check(re.rules === 'V3.0+delta-V3.3.2' && re.turn === 1 && re.saved.duel?.id === a0.duel.id && re.saved.duel.rules === 'V3.0+delta-V3.3.2' && JSON.stringify(re.saved.duel.config) === JSON.stringify(a0.duel.config) && JSON.stringify(re.saved.etat) === JSON.stringify(a0.etat) && re.saved.compteur === a0.compteur, `aventure : « Recommencer » relance le même duel (même rencontre, même configuration) au tour 1 sous ${re.rules} ; état, historique et compteur gardés`);
+    await shot(p, '06-aventure-duel-recommence');
     check((await p.evaluate(() => localStorage.getItem('lqv.save'))) === saveAvant, 'aventure : la sauvegarde du jeu standard n’est ni lue ni écrite (octet pour octet)');
     await ctx.close();
+    // l'autre voie, sur la même sauvegarde d'avant V3.3 : « Retirer ce duel »
+    const second = await ctxPage(undefined, init);
+    await second.p.goto(`${server.base}/?aventure=1&qa=1&aiDelay=0&reducedMotion=1`, { timeout: Number(process.env.LQV_QA_NAV_TIMEOUT) || 90000 });
+    await second.p.click('[data-key="av-continue"]');
+    await second.p.waitForSelector('.sh-confirm', { timeout: 60000 });
+    await second.p.click('[data-key="confirm-drop"]');
+    const toast = await second.p.waitForSelector('.ville-toast', { timeout: 60000 }).then((t) => t.textContent());
+    await second.p.waitForFunction(() => { const t = window.__lqvAventure?.town; return !!t && t.stats().frames > 1; }, null, { timeout: 120000 });
+    const av = await second.p.evaluate(() => JSON.parse(localStorage.getItem('lqv.aventure')));
+    check(/Duel en cours retiré \(non compté\)\./.test(toast ?? '') && av.duel === null && JSON.stringify(av.etat) === JSON.stringify(a0.etat) && av.historique.length === a0.historique.length && av.compteur === a0.compteur && av.profil.nom === a0.profil.nom, `aventure : « Retirer ce duel » (« ${toast} ») : état, registre, deck, historique et compteur gardés, seul le duel est retiré`);
+    await shot(second.p, '07-aventure-duel-retire');
+    await second.ctx.close();
   } finally { server.stop(); }
 } finally {
   await browser.close();

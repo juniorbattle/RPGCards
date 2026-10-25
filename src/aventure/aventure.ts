@@ -5,7 +5,7 @@
  * publics, choix du joueur). Propositions : `docs/m10/` ; rien n'est ratifié hors ADR 029 à 031.
  */
 import { FAMILIES, type Family } from '../game/catalog/cards';
-import { deF, figure, figureDe, FIGURES, isNeutre, leF, MAISONS, ORDRE_ETAT, roleDe, TECHNIQUES_RUE, type EtatFamille, type Figure, type SceneId } from './modele';
+import { deF, figure, figureDe, FIGURES, isNeutre, leF, MAISONS, ORDRE_ETAT, roleDe, chefVaincu, leChef, TECHNIQUES_RUE, type EtatFamille, type Figure, type SceneId } from './modele';
 import { accorder, aGain, collectionDe, gainBasics, gainNeutres, gainSignature, gainTechnique, gainVariante, type Gain } from './registre';
 import { deckDepart, equiperTechnique, equiperVersion, integrerBasics, standardLegal, type DeckAv } from './deck';
 import { finEpreuve, finFinale, finJoute, finMiroir, finPoule, manche, nouvellesCompetitions, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, type EtatCompetitions } from './competitions';
@@ -126,7 +126,7 @@ export function statutDefi(e: AventureEtat, fig: Figure): { ouvert: boolean; rai
   const fam = fig.famille;
   if (!aGain(e.registre, `basics:${fam}`) || (e.familles[fam] !== 'affilie' && e.familles[fam] !== 'defiee' && e.familles[fam] !== 'chef')) {
     const raison = e.affiliation === null ? 'Choisissez d’abord votre voie.'
-      : !aGain(e.registre, `signature:${e.affiliation}`) ? `Battez d’abord le chef ${deF(e.affiliation)} ; ensuite, engagez le défi officiel ${deF(fam)} à la Salle des Bannières.`
+      : !aGain(e.registre, `signature:${e.affiliation}`) ? `Battez d’abord ${leChef(e.affiliation)} ${deF(e.affiliation)} ; ensuite, engagez le défi officiel ${deF(fam)} à la Salle des Bannières.`
       : `Engagez d’abord le défi officiel ${deF(fam)} à la Salle des Bannières.`;
     return { ouvert: false, deja, raison };
   }
@@ -140,7 +140,7 @@ export function peutEngager(e: AventureEtat, f: Family): { ok: true } | { ok: fa
   if (e.affiliation === null) return { ok: false, raison: 'Choisissez d’abord votre voie.' };
   if (f === e.affiliation) return { ok: false, raison: `${capitale(leF(f))} est votre famille.` };
   if (e.familles[f] === 'defiee' || e.familles[f] === 'chef') return { ok: false, raison: `Le défi ${deF(f)} est déjà engagé.` };
-  if (!aGain(e.registre, `signature:${e.affiliation}`)) return { ok: false, raison: `Battez d’abord le chef ${deF(e.affiliation)} : on n’engage les autres familles qu’après avoir fait ses preuves dans la sienne.` };
+  if (!aGain(e.registre, `signature:${e.affiliation}`)) return { ok: false, raison: `Battez d’abord ${leChef(e.affiliation)} ${deF(e.affiliation)} : on n’engage les autres familles qu’après avoir fait ses preuves dans la sienne.` };
   return { ok: true };
 }
 
@@ -154,9 +154,9 @@ export interface Banniere { famille: Family; etat: EtatBanniere; texte: string }
 export function bannieres(e: AventureEtat): Banniere[] {
   return FAMILIES.map((f): Banniere => {
     const prochain = ROLES_ORDRE.map((r) => figureDe(f, r)).find((x) => !e.vaincues.includes(x.id));
-    if (f === e.affiliation) return { famille: f, etat: 'accueil', texte: e.familles[f] === 'chef' ? 'Votre famille : chef vaincu.' : `Votre famille : ${prochain ? `défiez ${prochain.nom}` : 'chef vaincu'}.` };
-    if (e.familles[f] === 'chef') return { famille: f, etat: 'conquise', texte: 'Chef vaincu : sa Signature est à vous.' };
-    if (e.familles[f] === 'defiee') return { famille: f, etat: 'engagee', texte: `Défi engagé : ${prochain ? `défiez ${prochain.nom}, ${prochain.titre}` : 'chef vaincu'}.` };
+    if (f === e.affiliation) return { famille: f, etat: 'accueil', texte: e.familles[f] === 'chef' ? `Votre famille : ${chefVaincu(f)}.` : `Votre famille : ${prochain ? `défiez ${prochain.nom}` : chefVaincu(f)}.` };
+    if (e.familles[f] === 'chef') return { famille: f, etat: 'conquise', texte: `${capitale(chefVaincu(f))} : sa Signature est à vous.` };
+    if (e.familles[f] === 'defiee') return { famille: f, etat: 'engagee', texte: `Défi engagé : ${prochain ? `défiez ${prochain.nom}, ${prochain.titre}` : chefVaincu(f)}.` };
     const ok = peutEngager(e, f);
     return ok.ok ? { famille: f, etat: 'engageable', texte: `Défi officiel à engager (${MAISONS[f].nom}).` } : { famille: f, etat: 'fermee', texte: ok.raison };
   });

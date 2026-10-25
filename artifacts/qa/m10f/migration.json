@@ -1,13 +1,13 @@
 {
- "commit": "43a62d9",
+ "commit": "bc3234f",
  "rc08": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/build-b128bd9/dist",
  "avant": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/build-f7339ad",
  "anciennes": {
   "save": {
    "schemaVersion": 2,
    "gameVersion": "0.8.0-rc.1",
-   "createdAt": "2026-10-25T06:11:44.131Z",
-   "updatedAt": "2026-10-25T06:11:56.942Z",
+   "createdAt": "2026-10-25T08:06:00.562Z",
+   "updatedAt": "2026-10-25T08:06:14.295Z",
    "profile": {
     "name": "QA RC 0.8",
     "seed": 8080
@@ -49,7 +49,7 @@
      },
      "seed": 3261367166,
      "signature": "Voile",
-     "at": "2026-10-25T06:11:56.069Z"
+     "at": "2026-10-25T08:06:13.495Z"
     }
    ],
    "duelCounter": 2,
@@ -90,7 +90,7 @@
     ],
     "unlockLog": [
      {
-      "at": "2026-10-25T06:11:56.069Z",
+      "at": "2026-10-25T08:06:13.495Z",
       "duel": "d1",
       "rival": "braise",
       "items": [
@@ -105,7 +105,7 @@
     "id": "d2",
     "encounterId": "quai-2",
     "seed": 3384483477,
-    "startedAt": "2026-10-25T06:11:56.404Z",
+    "startedAt": "2026-10-25T08:06:13.896Z",
     "rules": "V3.0+delta-V3.2",
     "catalog": "catalogue-initial-V3.0+16v+4s+6t",
     "config": {
@@ -577,20 +577,22 @@
   }
  },
  "raisonStandard": "Reprise exacte impossibleRègles différentes (V3.0+delta-V3.2). Vous pouvez recommencer ce duel depuis le début (même rival, même seed) ou le retirer sans qu’il soit compté.Plus tardRetirer ce duelRecommencer depuis le début",
- "raisonAventure": "Reprise exacte impossible : Version des règles ou du catalogue différente. Le duel est retiré (non compté).",
+ "raisonAventure": "Reprise exacte impossibleVersion des règles ou du catalogue différente. Vous pouvez recommencer ce duel depuis le début (même adversaire, même configuration) ou le retirer sans qu’il soit compté.Plus tardRetirer ce duelRecommencer depuis le début",
  "checks": [
   "OK RC 0.8 : premier duel joué jusqu'au bout par l'interface (tour 7, gagnant me)",
   "OK RC 0.8 : sauvegarde relevée (schéma 2, version 0.8.0-rc.1, 1 duel à l'historique, duel en cours sous V3.0+delta-V3.2 au tour 3)",
   "OK aventure d'avant V3.3 écrite par le code de f7339ad (règles V3.0+delta-V3.2, duel du cadet en cours au tour 4, 0 erreur)",
-  "OK standard : profil de la RC 0.8 chargé (nom, deck, collection, progression, historique gardés ; « QA RC 0.8117/164/6sauvegardé le 25/10 02:11 »)",
+  "OK standard : profil de la RC 0.8 chargé (nom, deck, collection, progression, historique gardés ; « QA RC 0.8117/164/6sauvegardé le 25/10 04:06 »)",
   "OK standard : duel en cours de la RC 0.8 refusé, raison affichée : « Reprise exacte impossibleRègles différentes (V3.0+delta-V3.2). Vous pouvez recommencer ce duel depuis le début (même rival, même seed) ou le retirer sans qu’il soit compté.Plus tardRetirer ce duelReco »",
   "OK standard : aucun duel ouvert sur un état non vérifié",
   "OK standard : le duel recommence au tour 1 sous V3.0+delta-V3.3.2, configuration et historique gardés",
   "OK standard : la sauvegarde de l’aventure n’est ni lue ni écrite (octet pour octet)",
   "OK aventure : sauvegarde d'avant V3.3 chargée (« QA Avant V3.3 · Chapitre I, la maison · voie de la Ronce · 4 cartes familiales, 0 variante(s), 0 Signature(s) »)",
-  "OK aventure : duel d'avant V3.3 refusé, raison affichée : « Reprise exacte impossible : Version des règles ou du catalogue différente. Le duel est retiré (non compté). »",
-  "OK aventure : état, registre, deck, historique et compteur gardés ; seul le duel non vérifiable est retiré (non compté)",
+  "OK aventure : duel d'avant V3.3 refusé, raison affichée, recommencer ou retirer proposés : « Reprise exacte impossibleVersion des règles ou du catalogue différente. Vous pouvez recommencer ce duel depuis le début (même adversaire, même configuration) ou le retirer sans qu’il soit compté.Plus  »",
+  "OK aventure : aucun duel ouvert sur un état non vérifié",
+  "OK aventure : « Recommencer » relance le même duel (même rencontre, même configuration) au tour 1 sous V3.0+delta-V3.3.2 ; état, historique et compteur gardés",
   "OK aventure : la sauvegarde du jeu standard n’est ni lue ni écrite (octet pour octet)",
+  "OK aventure : « Retirer ce duel » (« Duel en cours retiré (non compté). ») : état, registre, deck, historique et compteur gardés, seul le duel est retiré",
   "OK console sans erreur (0)"
  ],
  "console": []

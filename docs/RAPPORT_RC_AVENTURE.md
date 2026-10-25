@@ -1,4 +1,4 @@
-# Rapport de la release candidate du mode Aventure (M10-F) : `0.10.0-rc.1` proposée
+# Rapport de la release candidate du mode Aventure (M10-F) : `0.10.0-rc.1` (reçue le 2026-10-25)
 
 Mission : `docs/m10/FEUILLE_DE_ROUTE_M10.md`, section M10-F (QA d'ensemble, équilibrage, migration, RC Aventure), lancée
 par le responsable le 2026-10-25 (fiche de la Garde, S1), en commençant par T1 (fiche de l'avenant 08). Exécution : session
@@ -8,9 +8,10 @@ locale du 2026-10-25, développement directement sur `main`, mesures sur le post
 Règles : **V3.0 + delta V3.2 + avenants 07 et 08 et amendement 1 (`V3.0+delta-V3.3.2`), inchangées pendant M10-F** :
 aucun fichier de `src/game/` n'a changé (`git diff 377f7cc -- src/game` vide) ; l'annexe de calibrage n'a pas changé
 (`src/aventure/paliers.ts` : seul un libellé d'affichage, « champions »). Secrets : aucune surface publique modifiée (ADR 011).
-Version : **`0.10.0-rc.1` proposée, pas posée** : `package.json` et `src/product/version.ts` portent encore `0.8.0-rc.1` ;
-le numéro est une décision du responsable (fiche, V1). Le poser change deux lignes et l'étiquette `gameVersion` des
-sauvegardes ; aucune migration (schémas inchangés : `lqv.save` 2, `aventure/1`).
+Version : **`0.10.0-rc.1`**, choisie par le responsable (fiche, V1) et **posée en passe 124** (`package.json`,
+`package-lock.json`, `src/product/version.ts`) ; la campagne du §7 a tourné sur le build de `d05e525`, encore étiqueté
+`0.8.0-rc.1` : seule l'étiquette `gameVersion` des sauvegardes change ; aucune migration (schémas inchangés : `lqv.save` 2,
+`aventure/1`) ; jeu par défaut reprouvé identique au pixel près après la pose (§ Réception).
 
 ## 1. Le lot M10-F — fait
 
@@ -134,7 +135,10 @@ Sur la fiche d'arbitrages de la RC (9 décisions, toutes sur l'option recommand�
 `docs/FICHE_ARBITRAGES_M10F.md`) : **RC du mode Aventure reçue** (R1), numérotée **`0.10.0-rc.1`** (V1) ; T1 reçu (R2) ;
 **annexe de calibrage gardée telle quelle** (E1) ; textes et aide reçus (X3) ; « cheffe » accordée dans les phrases
 génériques (X1) ; « la Braise du quai » gardé (X2) ; un duel d'aventure non vérifiable propose désormais de le recommencer,
-comme le jeu standard (T1) ; **M10 clos, suite : reprise de M09** (S1). Version, X1 et T1 appliqués en passe 124.
+comme le jeu standard (T1) ; **M10 clos, suite : reprise de M09** (S1). Version, X1 et T1 appliqués en passe 124 et
+vérifiés : `npm test` 456/456, migration **15/15** (le duel d'avant V3.3 de l'aventure : « Recommencer » le relance au tour
+1 sous `V3.0+delta-V3.3.2`, « Retirer » le retire sans qu'il compte), `qa:aventure` 48/48, `qa:maison` 29/29, `qa:voies`
+62/62, jeu par défaut identique au pixel près contre `377f7cc` (Radeon 780M ; `artifacts/qa/m10f/application/`).
 
 ## 9. Fiche d'arbitrages
 

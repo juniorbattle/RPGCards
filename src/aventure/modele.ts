@@ -47,6 +47,10 @@ export const ROLES: readonly Role[] = ['cadet', 'brasDroit', 'chef'];
 export const ROLE_LABEL: Record<Role, string> = { cadet: 'cadet', brasDroit: 'bras droit', chef: 'chef' };
 /** Rôle accordé au genre du personnage (« Tessa, cadette », « Mère Aubépine, cheffe ») ; « bras droit » est invariable. */
 export const roleDe = (f: { role: Role; gender: 'f' | 'm' }): string => (f.gender === 'f' ? { cadet: 'cadette', brasDroit: 'bras droit', chef: 'cheffe' }[f.role] : ROLE_LABEL[f.role]);
+/** Le chef d'une famille accordé au genre de la personne (fiche de la RC, X1) : « la cheffe », « cheffe vaincue ». */
+export const cheffe = (f: Family): boolean => figureDe(f, 'chef').gender === 'f';
+export const leChef = (f: Family): string => (cheffe(f) ? 'la cheffe' : 'le chef');
+export const chefVaincu = (f: Family): string => (cheffe(f) ? 'cheffe vaincue' : 'chef vaincu');
 
 /** Personnage structurant d'une famille (noms de travail, ARB-M10-07). */
 export interface Figure {

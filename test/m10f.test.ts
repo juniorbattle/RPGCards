@@ -9,14 +9,14 @@ import { describe, expect, it } from 'vitest';
 import { FAMILIES, type Family } from '../src/game/catalog/cards';
 import { PROFILES } from '../src/game/ai/policy';
 import { Match } from '../src/game/match';
-import { appliquer, chapitre, type AventureEtat, type Evenement } from '../src/aventure/aventure';
+import { appliquer, bannieres, chapitre, nouvelleAventure, type AventureEtat, type Evenement } from '../src/aventure/aventure';
 import { equiperSignature } from '../src/aventure/deck';
 import { conclureDuel, ouvrirDuel, REGLES_DUEL } from '../src/aventure/fin';
 import { figureDe, ROLES } from '../src/aventure/modele';
 import { manche, statutFinale, statutPoule } from '../src/aventure/competitions';
 import { collectionDe } from '../src/aventure/registre';
 import { pvJoueur } from '../src/aventure/paliers';
-import { quetes } from '../src/aventure/quetes';
+import { objectif, quetes } from '../src/aventure/quetes';
 import { duelChampionnat, duelFigure, duelPrologue, type DuelPrevu } from '../src/aventure/rencontres';
 import { CLE_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave } from '../src/aventure/sauvegarde';
 import { RULES } from '../src/product/resume';
@@ -198,6 +198,18 @@ describe('M10-F — textes du mode Aventure relus', () => {
     expect(parlerA('le héraut du Tournoi')).toBe('Parler au héraut du Tournoi');
     expect(parlerA('Kaï')).toBe('Parler à Kaï');
     expect(parlerA('une joueuse du Parvis')).toBe('Parler à une joueuse du Parvis');
+    // fiche de la RC, X1 : « cheffe » accordée dans les phrases génériques
+    const { chefVaincu, leChef } = await import('../src/aventure/modele');
+    expect([leChef('Ronce'), chefVaincu('Ronce'), leChef('Voile'), chefVaincu('Cendre'), leChef('Astre')]).toEqual(['la cheffe', 'cheffe vaincue', 'la cheffe', 'chef vaincu', 'le chef']);
+    let e = nouvelleAventure(AT);
+    for (const ev of [{ type: 'scene', id: 'P1' }, { type: 'scene', id: 'P2' }, { type: 'duelPrologue', issue: 'victoire', faits: { assautsGagnes: 0, gardesGagnees: 0, interferencesReussies: 0 } }, { type: 'confirmer', famille: 'Ronce' }] as Evenement[]) e = appliquer(e, ev, AT).etat;
+    expect(bannieres(e).find((b) => b.famille === 'Voile')!.texte).toBe('Battez d’abord la cheffe de la Ronce : on n’engage les autres familles qu’après avoir fait ses preuves dans la sienne.');
+    for (const r of ROLES) {
+      const id = figureDe('Ronce', r).id;
+      e = appliquer(appliquer(e, { type: 'lancerDefi', figure: id }, AT).etat, { type: 'duelStructurant', figure: id, issue: 'victoire', duel: id }, AT).etat;
+    }
+    expect(bannieres(e).find((b) => b.famille === 'Ronce')!.texte).toBe('Votre famille : cheffe vaincue.');
+    expect(objectif(e)).toMatch(/^Votre cheffe est vaincue : engagez le défi/);
     const { readdirSync, readFileSync } = await import('node:fs');
     for (const f of readdirSync('src/aventure').filter((x) => x.endsWith('.ts'))) {
       const code = readFileSync(`src/aventure/${f}`, 'utf8').split('\n').filter((l) => !/^\s*(\*|\/\/|\/\*)/.test(l)).map((l) => l.replace(/\/\/.*$/, '')).join('\n');
