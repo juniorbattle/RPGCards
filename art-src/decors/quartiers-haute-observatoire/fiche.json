@@ -1,6 +1,6 @@
 {
   "id": "quartiers-haute-observatoire",
-  "statut": "lot des quartiers ajoutés (ADR 028, deuxième reprise de M09, passe 129), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "statut": "APPROUVÉ par le responsable le 2026-10-25 (ordre explicite du responsable (2026-10-25, après les planches de la passe 129 : screenshots/qa/m09/quartiers-ajoutes/) : « J’approuve les 4 façades des quartiers (vieux phare, maison de la Ronce, hôtels à arcades, Observatoire) : passe-les à approved: true par le registre, dans une passe à part, pour ouvrir la Place du Fanal et la Ville haute. » ; passe 130) : admis hors QA tant que l’empreinte reste 90e822a631bd…",
   "auteur": "Claude Code (session de la deuxième reprise de M09, passe 129), à la demande du responsable : « Fanal et Ville haute » (4 images au plus) ; « attaque la Place du Fanal et la Ville haute »",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-quartiers.mjs",
   "aseprite": "non utilisé : traitement par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-kit-quartiers.mjs)",
@@ -81,5 +81,11 @@
   "chaine_des_empreintes": [
     "c5ec37d9ce3b846d4f071c0c1edacdee398b8da0b7d8754f05c941d19a11388f (brut haute-observatoire)",
     "90e822a631bd3072bfb124907387b01005612b9e60c1d69051c62c650264432b (planche)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-25",
+    "decision": "ordre explicite du responsable (2026-10-25, après les planches de la passe 129 : screenshots/qa/m09/quartiers-ajoutes/) : « J’approuve les 4 façades des quartiers (vieux phare, maison de la Ronce, hôtels à arcades, Observatoire) : passe-les à approved: true par le registre, dans une passe à part, pour ouvrir la Place du Fanal et la Ville haute. » ; passe 130",
+    "fichier": "public/decors/quartiers-haute-observatoire.png",
+    "sha256": "90e822a631bd3072bfb124907387b01005612b9e60c1d69051c62c650264432b"
+  }
 }

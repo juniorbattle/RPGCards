@@ -1,6 +1,6 @@
 {
   "id": "quartiers-haute-hotels",
-  "statut": "lot des quartiers ajoutés (ADR 028, deuxième reprise de M09, passe 129), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "statut": "APPROUVÉ par le responsable le 2026-10-25 (ordre explicite du responsable (2026-10-25, après les planches de la passe 129 : screenshots/qa/m09/quartiers-ajoutes/) : « J’approuve les 4 façades des quartiers (vieux phare, maison de la Ronce, hôtels à arcades, Observatoire) : passe-les à approved: true par le registre, dans une passe à part, pour ouvrir la Place du Fanal et la Ville haute. » ; passe 130) : admis hors QA tant que l’empreinte reste 8d090fb0e714…",
   "auteur": "Claude Code (session de la deuxième reprise de M09, passe 129), à la demande du responsable : « Fanal et Ville haute » (4 images au plus) ; « attaque la Place du Fanal et la Ville haute »",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-quartiers.mjs",
   "aseprite": "non utilisé : traitement par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-kit-quartiers.mjs)",
@@ -82,5 +82,11 @@
   "chaine_des_empreintes": [
     "6db4abbc813b444aac2360b2d72bbb768754e0a1f17546f1d54f9bdbf1e87083 (brut haute-hotels)",
     "8d090fb0e7147b591d2e348754bcebaebe1d31f0043a320165bad401cd295d7b (planche)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-25",
+    "decision": "ordre explicite du responsable (2026-10-25, après les planches de la passe 129 : screenshots/qa/m09/quartiers-ajoutes/) : « J’approuve les 4 façades des quartiers (vieux phare, maison de la Ronce, hôtels à arcades, Observatoire) : passe-les à approved: true par le registre, dans une passe à part, pour ouvrir la Place du Fanal et la Ville haute. » ; passe 130",
+    "fichier": "public/decors/quartiers-haute-hotels.png",
+    "sha256": "8d090fb0e7147b591d2e348754bcebaebe1d31f0043a320165bad401cd295d7b"
+  }
 }
