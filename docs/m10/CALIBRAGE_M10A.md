@@ -127,3 +127,10 @@ rejointes ou engagées », l'option recommandée.
 - Mesure reproductible : `artifacts/qa/m10d/changements.json` (lignes `directe`, `un-changement`, `collection` : la règle
   en vigueur ; lignes `-regle-initiale` : le niveau d'avant l'amendement) ; appliqué à la passe 92 (`test/m10d.test.ts`,
   `qa:voies` 62/62 sur Radeon 780M).
+
+## 6. Règles V3.3 — annexe gardée (décision du responsable, 2026-10-25)
+
+Après les avenants 07 (la Garde réduit sans annuler) et 08 (annonce des Signatures, révision), la voie directe sans
+entraînement passe sous 50 % aux chefs et au Championnat (`artifacts/qa/v33/apres/paliers.md`,
+`artifacts/qa/v33/a1/comparaison.md`), la voie entraînée reste nettement favorable. Le responsable **garde l'annexe
+telle quelle** (fiche de la Garde, E3 ; fiche de l'avenant 08, E1 ; tableau `docs/FICHE_ARBITRAGES_V33.md`) : aucune valeur ne change.

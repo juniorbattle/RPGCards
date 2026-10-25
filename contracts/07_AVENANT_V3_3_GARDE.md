@@ -206,3 +206,9 @@ Demandés par le responsable ; la colonne « Cartes » donne une main qui les pr
   rapport, le journal, les temps forts et l'animation.
 - **Mesures d'équilibre avant et après, sur les mêmes graines** (Duel standard, rivaux, Championnat, aventure) : taux de
   victoire, longueur des duels, part des Gardes jouées ; jalon de QA sur les deux GPU.
+
+## Réception par le responsable (2026-10-25)
+
+Fiche d'arbitrages de la règle <https://claude.ai/artifact/5tm8aNVPVKzg9NYFr3m5Xs>, consignée à la passe 118 (tableau : `docs/FICHE_ARBITRAGES_V33.md`) : avenant **reçu** ; écarts mesurés
+**gardés** (duels plus courts, Kaï à 61 % en Duel standard, annexe de calibrage de l'aventure inchangée) ; `simulator_ref/`
+laissé tel quel (G-09) ; `zeroDamageRankWin` gardé comme invariant testé. Aucun recalibrage.
