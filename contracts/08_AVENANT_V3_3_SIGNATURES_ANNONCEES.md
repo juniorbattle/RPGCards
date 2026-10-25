@@ -209,3 +209,10 @@ Signature : une fenêtre « réviser ou garder » s'ouvre alors pour lui aussi. 
 | 10 | Replay, reprise | reprise d'un duel sauvegardé pendant la fenêtre de révision ; étiquette précédente refusée |
 | 11 | Présentation et navigateur | fenêtre de réaction du rival, fenêtre « Garder / Réviser » du joueur ; deux GPU, 1280 et 1920 |
 | 12 | Équilibre | mesures avant et après, mêmes graines, adversaire en premier |
+
+## Réception par le responsable (2026-10-25)
+
+Fiche d'arbitrages de l'avenant 08 et de son amendement <https://claude.ai/artifact/CBP1sg6GMTABwg7FyatS7r>, consignée à la passe 118 (tableau : `docs/FICHE_ARBITRAGES_V33.md`) : annonce
+(S-01 à S-08) et révision (amendement 1) **reçues** ; aucun recalibrage (la voie directe de l'aventure est tranchée avec E3
+de la fiche de la Garde : annexe gardée) ; le rival qui révise presque toujours est **gardé**. Côté QA seulement (T1) : le
+pilote de `qa:product` E devient moins naïf ; la règle ne change pas.

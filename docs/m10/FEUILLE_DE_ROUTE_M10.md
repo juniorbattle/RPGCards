@@ -143,6 +143,11 @@ contraintes vérifiées avant chaque duel (Signature différente à chaque duel 
 
 ## M10-F — QA d'ensemble, équilibrage, migration, RC Aventure
 
+> **Lancement décidé par le responsable le 2026-10-25** (fiche de la règle de la Garde, S1 : « Lancer M10-F » ; tableau
+> `docs/FICHE_ARBITRAGES_V33.md`). Les règles V3.3 (avenants 07 et 08, amendement 1, étiquette `V3.0+delta-V3.3.2`) sont reçues sans
+> recalibrage ; l'annexe de calibrage est gardée. **À faire en premier :** T1 de la fiche de l'avenant 08, un pilote de
+> QA moins naïf (`tools/duel-driver.mjs`, outil seulement) pour que le parcours E de `qa:product` repasse.
+
 **Contenu :** équilibrage mesuré (`npm run sim` par palier ; objectifs d'A-10) ; textes relus ; aide du mode Aventure ;
 release candidate (`0.10.0-rc.1` proposé) ; rapport `docs/RAPPORT_RC_AVENTURE.md`.
 

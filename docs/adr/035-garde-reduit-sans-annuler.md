@@ -1,6 +1,6 @@
 # ADR 035 — La Garde réduit sans annuler (règle V3.3, avenant 07)
 
-**Date :** 2026-10-24. **Statut : APPLIQUÉ** (passe 107). Texte de règle : `contracts/07_AVENANT_V3_3_GARDE.md`, révision 2
+**Date :** 2026-10-24. **Statut : APPLIQUÉ** (passe 107) **et REÇU** (2026-10-25, passe 118). Texte de règle : `contracts/07_AVENANT_V3_3_GARDE.md`, révision 2
 **validée par le responsable** le 2026-10-24 (« Révision 2 de l'avenant 07 validée telle quelle, à verser et appliquer. »).
 
 ## Contexte
@@ -48,3 +48,7 @@ tactique du Rang, des Secondaires et de la Garde.
   Garde ne changent pas d'issue.
 - L'équilibre bouge (profils prudents et Ronce affaiblis, duels plus courts, attendu) : mesuré avant et après sur les
   mêmes graines (`tools/v33-equilibre.ts`, `tools/m10a-paliers.ts`) ; tout recalibrage reste une décision du responsable.
+
+## Réception (2026-10-25)
+
+Le responsable a reçu la règle et gardé ses effets mesurés, sans recalibrage (fiche <https://claude.ai/artifact/5tm8aNVPVKzg9NYFr3m5Xs> ; tableau `docs/FICHE_ARBITRAGES_V33.md`).
