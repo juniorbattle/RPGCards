@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-20T10:26:34.711Z",
-  "commit": "fc28822",
+  "date": "2026-10-25T17:55:48.897Z",
+  "commit": "df96638",
   "viewport": [
     1280,
     720
@@ -14,8 +14,10 @@
     "OK devant kai-prologue",
     "OK « Pas maintenant » : aucun duel forcé, objectif mis à jour",
     "OK devant kai-prologue",
-    "OK préparation : bandeau « provisoire » du deck de prêt",
+    "OK préparation : les deux decks annoncés (seize cartes grises de chaque côté)",
     "OK duel : bandeau du prototype visible",
+    "OK duel du prologue : seize cartes grises de chaque côté dans le moteur (avenant M10-A)",
+    "OK duel du prologue : cartes neutres dessinées en main (blanches et grises, sans emblème)",
     "OK rechargement pendant le duel : « Reprendre le duel en cours »",
     "OK reprise exacte du duel (même hash)",
     "OK retour au Quai : la foule",
@@ -45,6 +47,12 @@
     "OK devant epreuve-Ronce",
     "OK devant epreuve-Ronce",
     "OK Épreuve du quartier de la Ronce : trois victoires, variante I au registre",
+    "OK Quai de l’aventure : le Quai en quatre rangs (ARB-M10-12)",
+    "OK HUD : « Le Quai »",
+    "OK Quai en rangs : diorama des rangs affiché (0 plans non approuvés, QA seulement)",
+    "OK marche au clavier au travers du passage ouest jusqu’à la rue Haute (z -15.1)",
+    "OK devant chef-Ronce",
+    "OK Mère Aubépine dans la ruelle des Lanternes (rang 3, z -26.6) ; défi pas encore ouvert",
     "OK jeu par défaut : accueil habituel, sans le mode Aventure ni sa sauvegarde"
   ],
   "steps": [
@@ -137,16 +145,36 @@
       "file": "screenshots/qa/m10/aventure-1280/22-salle-des-bannieres.png"
     },
     {
+      "name": "engagement-ronce",
+      "file": "screenshots/qa/m10/aventure-1280/23-engagement-ronce.png"
+    },
+    {
       "name": "defi-ronce-engage",
-      "file": "screenshots/qa/m10/aventure-1280/23-defi-ronce-engage.png"
+      "file": "screenshots/qa/m10/aventure-1280/24-defi-ronce-engage.png"
     },
     {
       "name": "quai-apres-engagement",
-      "file": "screenshots/qa/m10/aventure-1280/24-quai-apres-engagement.png"
+      "file": "screenshots/qa/m10/aventure-1280/25-quai-apres-engagement.png"
     },
     {
       "name": "epreuve-ronce",
-      "file": "screenshots/qa/m10/aventure-1280/25-epreuve-ronce.png"
+      "file": "screenshots/qa/m10/aventure-1280/26-epreuve-ronce.png"
+    },
+    {
+      "name": "rang-2-rue-haute",
+      "file": "screenshots/qa/m10/aventure-1280/27-rang-2-rue-haute.png"
+    },
+    {
+      "name": "rang-3-aubepine",
+      "file": "screenshots/qa/m10/aventure-1280/28-rang-3-aubepine.png"
+    },
+    {
+      "name": "rang-3-placette-puits",
+      "file": "screenshots/qa/m10/aventure-1280/29-rang-3-placette-puits.png"
+    },
+    {
+      "name": "rang-4-cour-chapelle",
+      "file": "screenshots/qa/m10/aventure-1280/30-rang-4-cour-chapelle.png"
     }
   ],
   "issues": []

@@ -17,8 +17,29 @@ import { approuve } from './m09-approbations.mjs';
 export const FEUILLES = {
   'pnj-docker': { lot: '2026-10-25-pnj-porte', brut: 'pnj-docker-p1', bg: 'bleu', slots: ['peau', 'cheveux', 'tenue', 'chemise'], qui: 'gabarit docker (dockers, membres, passants), recoloré par graine' },
   braise: { lot: '2026-10-25-pnj-porte', brut: 'braise-p2', bg: 'cyan', slots: [], pitchMin: 3.2, qui: 'Kaï, la Braise du quai (couleurs propres)' },
+  // suite (passe 127, `tools/m09-lot-pnj-suite.mjs`)
+  ...Object.fromEntries([
+    ['pnj-marchande', 'bleu', true, 'gabarit marchande (marchandes, cadette de la Cendre, passantes), recoloré par graine'],
+    ['pnj-commis', 'bleu', true, 'gabarit commis (commis, cadets de la Ronce et du Voile, passants), recoloré par graine'],
+    ['pnj-joueuse', 'bleu', true, 'gabarit joueuse (joueuses, cadette de l’Astre, Tenante), recoloré par graine'],
+    ['ronce', 'cyan', false, 'Maëlle, gardienne des Ronces (couleurs propres)'],
+    ['voile', 'magenta', false, 'Sélène, liseuse du Voile (couleurs propres)'],
+    ['astre', 'cyan', false, 'Orin, l’arpenteur des Astres (couleurs propres)'],
+    ['chef-cendre', 'cyan', false, 'Bran, le Premier Feu, chef de la Cendre (couleurs propres)'],
+    ['chef-ronce', 'cyan', false, 'Mère Aubépine, cheffe de la Ronce (couleurs propres)'],
+    ['chef-voile', 'cyan', false, 'Ilse, la Dame aux Voiles, cheffe du Voile (couleurs propres)'],
+    ['chef-astre', 'cyan', false, 'Halvard, le Cartographe, chef de l’Astre (couleurs propres)'],
+  ].map(([id, bg, cles, qui]) => [id, { lot: '2026-10-25-pnj-suite', brut: `${id}-s1`, bg, slots: cles ? ['peau', 'cheveux', 'tenue', 'chemise'] : [], qui }])),
 };
-const AUTEUR = 'Claude Code (session de reprise de M09, passe 125), à la demande du responsable : budget « 16, avec une porte » (d’abord 2 feuilles posées in situ sur une planche, puis les 10 autres ; 4 images pour régénérer une feuille ratée)';
+// pas des pixels d'art borné quand la mesure tombe sur un sous-multiple ou un multiple (contrôles en échec ou axes
+// très inégaux au premier traitement, passe 127)
+Object.assign(FEUILLES.astre, { pitchMin: 3.2, pitchMax: 4.6 });
+Object.assign(FEUILLES.voile, { pitchMin: 3.2, pitchMax: 4.6 });
+/** Lot de génération : passe, spécification et ordre du responsable. */
+const LOTS = {
+  '2026-10-25-pnj-porte': { passe: 125, etape: 'porte', spec: 'tools/m09-lot-pnj-porte.mjs', ordre: 'budget « 16, avec une porte » (d’abord 2 feuilles posées in situ sur une planche, puis les 10 autres ; 4 images pour régénérer une feuille ratée)' },
+  '2026-10-25-pnj-suite': { passe: 127, etape: 'suite', spec: 'tools/m09-lot-pnj-suite.mjs', ordre: '« Oui : génère les 10 autres feuilles des PNJ (gabarits marchande, commis, joueuse ; Maëlle, Sélène, Orin ; les quatre chefs), traite-les et pose-les. »' },
+};
 
 const main = dirname(resolve(execSync('git rev-parse --git-common-dir').toString().trim()));
 const sha = (b) => createHash('sha256').update(b).digest('hex');
@@ -47,6 +68,7 @@ try {
     const F = FEUILLES[id];
     if (!F) throw new Error(`feuille inconnue : ${id}`);
     const brut = brutArg ?? F.brut;
+    const L = LOTS[F.lot];
     const RAW = join(main, 'art-gen', F.lot);
     const prov = JSON.parse(readFileSync(join(RAW, 'provenance.json'), 'utf8'));
     const g = prov.images.find((i) => i.name === brut);
@@ -55,7 +77,7 @@ try {
     const check = (ok, what) => { checks.push(`${ok ? 'OK' : 'ÉCHEC'} ${what}`); console.log(`${id} : ${ok ? 'OK' : 'ÉCHEC'} ${what}`); };
     let sheet;
     try {
-      sheet = await pg.evaluate(processSheet, { url: dataUrl(readFileSync(join(RAW, `${brut}.png`))), figures: true, levels: 'kmeans', cell: [64, 96], bg: F.bg, slots: F.slots, pitchMin: F.pitchMin });
+      sheet = await pg.evaluate(processSheet, { url: dataUrl(readFileSync(join(RAW, `${brut}.png`))), figures: true, levels: 'kmeans', cell: [64, 96], bg: F.bg, slots: F.slots, pitchMin: F.pitchMin, pitchMax: F.pitchMax });
     } catch (e) {
       check(false, `traitement : ${String(e.message ?? e).slice(0, 200)}`);
       report.feuilles[id] = { brut, checks }; echecs++; continue;
@@ -85,9 +107,9 @@ try {
     mkdirSync(`art-src/sprites/${id}`, { recursive: true });
     writeFileSync(`art-src/sprites/${id}/fiche.json`, `${JSON.stringify({
       id,
-      statut: `feuille des PNJ de la ville (${F.qui}), porte de la reprise de M09 (passe 125), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas décidé`,
-      auteur: AUTEUR,
-      generation: 'tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-pnj-porte.mjs',
+      statut: `feuille des PNJ de la ville (${F.qui}), ${L.etape} de la deuxième reprise de M09 (passe ${L.passe}), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas décidé`,
+      auteur: `Claude Code (session de reprise de M09, passe ${L.passe}), à la demande du responsable : ${L.ordre}`,
+      generation: `tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification ${L.spec}`,
       aseprite: joueur.aseprite, licences: joueur.licences, contenu: joueur.contenu,
       style: 'style, échelle et proportions de la feuille du joueur approuvée (en entrée) ; identité tirée de notre atlas dessiné par code (en entrée)',
       sources: [ps],

@@ -226,3 +226,10 @@ quartiers ») et ses deux choix du même jour (questions de la session, passe 12
   gabarit porte quatre tons clés (peau rouge, cheveux jaune, tenue magenta, chemise cyan) sur un **fond bleu pur** (le
   cyan est pris par la chemise) ; les rivaux et les chefs gardent leurs couleurs propres, sur fond cyan. Entrées : notre
   atlas dessiné par code du personnage et la feuille du joueur approuvée (style, échelle, proportions).
+- **Porte (passes 125 et 126)** : le gabarit docker et Kaï (2 images) ; retour du responsable : aucun contour clair
+  autour des personnages (liserés de lumière retirés du nuanceur, contour noir du dessin).
+- **Suite (passe 127)**, ordre du responsable : « Oui : génère les 10 autres feuilles des PNJ (gabarits marchande, commis,
+  joueuse ; Maëlle, Sélène, Orin ; les quatre chefs), traite-les et pose-les. » 10 images (`tools/m09-lot-pnj-suite.mjs`),
+  traitées par script (`tools/m09-pnj-feuilles.mjs`) et posées, `approved: false` ; planche des douze feuilles
+  `screenshots/qa/m09/pnj/planche-pnj.png` (`tools/m09-pnj-planche.mjs`). **12 images sur 16 pour les PNJ** (aucune
+  reprise utilisée) ; restent 4 images de reprise et les 4 images des quartiers (Place du Fanal, Ville haute).
