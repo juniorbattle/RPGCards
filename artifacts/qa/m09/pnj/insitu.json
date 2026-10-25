@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-25T08:57:06.638Z",
-  "commit": "a785f39+arbre de travail",
+  "date": "2026-10-25T09:48:06.269Z",
+  "commit": "a2675b2+arbre de travail",
   "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
   "checks": [
     "OK feuilles pnj-docker et braise admises en QA (rapport des feuilles externes)",
@@ -19,9 +19,9 @@
     "apres-1280": {
       "policy": "qa",
       "loaded": [
+        "player-Cendre",
         "pnj-docker-1",
         "pnj-docker-9",
-        "player-Cendre",
         "braise"
       ],
       "unapproved": [
@@ -31,26 +31,26 @@
       ],
       "issues": [],
       "timings": {
-        "pnj-docker": {
-          "bytes": 78262,
-          "fetchMs": 8,
-          "hashMs": 0.1,
-          "decodeMs": 5.4,
-          "uploadMs": 1.2
-        },
         "player": {
           "bytes": 98894,
-          "fetchMs": 7.3,
-          "hashMs": 0.3,
-          "decodeMs": 9.2,
+          "fetchMs": 6.2,
+          "hashMs": 0.1,
+          "decodeMs": 5.2,
           "uploadMs": 1.1
+        },
+        "pnj-docker": {
+          "bytes": 78262,
+          "fetchMs": 6.7,
+          "hashMs": 0,
+          "decodeMs": 7.3,
+          "uploadMs": 0.9
         },
         "braise": {
           "bytes": 80065,
-          "fetchMs": 8.3,
+          "fetchMs": 6.8,
           "hashMs": 0.1,
-          "decodeMs": 10.5,
-          "uploadMs": 0.7
+          "decodeMs": 9.5,
+          "uploadMs": 0.8
         }
       },
       "hiddenFrames": 0
@@ -66,38 +66,38 @@
     "apres-1920": {
       "policy": "qa",
       "loaded": [
-        "player-Cendre",
+        "braise",
         "pnj-docker-1",
         "pnj-docker-9",
-        "braise"
+        "player-Cendre"
       ],
       "unapproved": [
+        "braise",
         "pnj-docker-1",
-        "pnj-docker-9",
-        "braise"
+        "pnj-docker-9"
       ],
       "issues": [],
       "timings": {
-        "player": {
-          "bytes": 98894,
-          "fetchMs": 6.8,
-          "hashMs": 0.2,
-          "decodeMs": 10.3,
-          "uploadMs": 1.3
+        "braise": {
+          "bytes": 80065,
+          "fetchMs": 6.2,
+          "hashMs": 0.1,
+          "decodeMs": 5.8,
+          "uploadMs": 0.8
         },
         "pnj-docker": {
           "bytes": 78262,
-          "fetchMs": 7.7,
+          "fetchMs": 5.4,
           "hashMs": 0.1,
-          "decodeMs": 12.8,
-          "uploadMs": 1.4
+          "decodeMs": 9.2,
+          "uploadMs": 0.8
         },
-        "braise": {
-          "bytes": 80065,
-          "fetchMs": 9.6,
-          "hashMs": 0.1,
-          "decodeMs": 14.9,
-          "uploadMs": 1.1
+        "player": {
+          "bytes": 98894,
+          "fetchMs": 6.1,
+          "hashMs": 0.2,
+          "decodeMs": 11,
+          "uploadMs": 0.6
         }
       },
       "hiddenFrames": 0
