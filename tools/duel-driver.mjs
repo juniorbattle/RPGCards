@@ -1,10 +1,14 @@
 // Pilote de duel PAR L’INTERFACE partagé (QA M03 historique et parcours produit M04+) : un tour joué
 // comme un joueur (glisser souris, clic, clavier, glisser tactile), avec audits de vue, de composition,
 // de posture et de secrets à chaque décision. Extrait de qa-browser.mjs sans changement de logique.
+// T1 (M10-F) : l'engagement, la révision et les choix tactiques suivent l'IA « équilibré » du jeu sur la vue autorisée du
+// joueur (`pilote-qa.mjs`), puis sont joués par l'interface ; les gestes (souris, clavier, glisser, tactile) ne changent pas.
 import { dragTo, secretAudit, touchDrag, view, waitDecision } from './browser.mjs';
+import { aDefausser, aRecentrer, decisionIa } from './pilote-qa.mjs';
 
 export const pres = (page) => page.evaluate(() => window.__lqv.presentation());
-const rankOf = (defId) => (defId.startsWith('sig-') ? 5 : Number(defId.split('-')[1]));
+const iaPour = async (page, v) => decisionIa(v, await page.evaluate(() => window.__lqv.events()));
+const draftOf = (page) => page.evaluate(() => JSON.parse(JSON.stringify(window.__lqv.controller.ui.draft)));
 
 /**
  * Attente SANS sondage (mode `run.lean`, mesures de fluidité, passe 12) : une seule évaluation par
@@ -158,6 +162,8 @@ export async function stageAudit(page) {
 export async function playTurn(page, run, stats) {
   const { mode } = run;
   const lean = !!run.lean;
+  // compteurs du pilote T1, absents des statistiques créées par d’autres outils (qa-browser)
+  stats.signatures ??= 0; stats.stances ??= { assault: 0, guard: 0 }; stats.plans ??= {}; stats.revisions ??= 0; stats.revised ??= 0;
   for (let guard = 0; guard < (run.maxDecisions ?? 24); guard++) {
     const v = lean ? await waitLean(page, 'decision', 8000) : await waitDecision(page);
     if (process.env.QA_TRACE) console.log(`  [${run.name}] tour ${v.turn} ${v.phase} awaiting=${v.awaitingMe}`);
@@ -208,14 +214,15 @@ export async function playTurn(page, run, stats) {
       return 'next';
     }
     if (v.phase === 'START') {
-      const excess = Math.max(0, v.me.handCount - 4);
-      for (let i = 0; i < excess; i++) await page.locator('.hand .card').nth(i).click();
+      // Les cartes les plus faibles partent (défausse, Recentrage) : la Signature reste en main.
+      const trim = aDefausser(v);
+      for (const id of trim) await page.click(`[data-key="hand-${id}"]`);
       const sond = page.locator('[data-key="tech-me-Sondage"]:not([disabled])');
       const rec = page.locator('[data-key="tech-me-Recentrage"]:not([disabled])');
-      if (!excess && await sond.count()) { await sond.click(); stats.tech.Sondage = (stats.tech.Sondage ?? 0) + 1; }
-      else if (!excess && await rec.count()) {
+      if (!trim.length && await sond.count()) { await sond.click(); stats.tech.Sondage = (stats.tech.Sondage ?? 0) + 1; }
+      else if (!trim.length && await rec.count()) {
         await rec.click();
-        await page.locator('.hand .card').first().click();
+        await page.click(`[data-key="hand-${aRecentrer(v)}"]`);
         stats.tech.Recentrage = (stats.tech.Recentrage ?? 0) + 1;
       }
       await page.click('[data-key="act-start"]');
@@ -232,10 +239,11 @@ export async function playTurn(page, run, stats) {
         stats.tech.Dissipation = (stats.tech.Dissipation ?? 0) + 1;
       } else await page.click('[data-key="act-dissip-pass"]');
     } else if (v.phase === 'COMMIT') {
-      const order = [...v.me.hand].sort((a, b) => rankOf(b.defId) - rankOf(a.defId));
-      const prim = order[0];
-      const sec = order.find((c) => c.cardId !== prim.cardId && !c.defId.startsWith('sig-'));
-      const freeSlot = v.me.slots.findIndex((s) => s === null);
+      const ia = await iaPour(page, v);
+      const prim = { cardId: ia.primaryId };
+      const sec = ia.secondaryId ? { cardId: ia.secondaryId } : null;
+      const freeSlot = ia.replaceSlot ?? v.me.slots.findIndex((s) => s === null);
+      stats.signatures += v.me.hand.some((c) => c.cardId === ia.primaryId && c.defId.startsWith('sig-')) ? 1 : 0;
       if (mode === 'drag') { await dragTo(page, `[data-key="hand-${prim.cardId}"]`, '[data-drop="primary"]'); stats.drags++; }
       else if (mode === 'touch') { await touchDrag(page, `[data-key="hand-${prim.cardId}"]`, '[data-drop="primary"]'); stats.drags++; }
       else if (mode === 'keyboard') {
@@ -245,7 +253,8 @@ export async function playTurn(page, run, stats) {
         await page.keyboard.press('Enter');
         stats.keyboard++;
       } else { await page.click(`[data-key="hand-${prim.cardId}"]`); await page.click('[data-drop="primary"]'); stats.clicks++; }
-      const stance = stats.turns % 3 === 2 ? 'guard' : 'assault';
+      const stance = ia.stance;
+      stats.stances[stance]++;
       if (mode === 'keyboard') await page.keyboard.press(stance === 'guard' ? 'g' : 'a');
       else await page.click(`[data-key="stance-${stance}"]`);
       // M03.2 — rotation de l’écran EN PLEIN engagement : l’état du tour et le brouillon survivent.
@@ -273,6 +282,26 @@ export async function playTurn(page, run, stats) {
       // Aucun clic perdu : le verrouillage doit avoir été pris en compte malgré la transition B → A.
       const after = lean ? null : await view(page);
       if (after && after.phase === 'COMMIT' && after.turn === turnBefore && after.awaitingMe) stats.lostClicks.push(`tour ${v.turn} : verrouillage d’engagement non pris en compte`);
+    } else if (v.phase === 'REVISION') {
+      // Avenant 08, amendement 1 : le rival a verrouillé sa Signature après moi ; garder, ou réviser une fois (brouillon
+      // prérempli avec l’engagement verrouillé : un clic sur une case du brouillon rend sa carte à la main, puis le nouvel
+      // engagement est posé).
+      const ia = await iaPour(page, v);
+      stats.revisions++;
+      if (!ia.commit) await page.click('[data-key="act-revision-keep"]');
+      else {
+        const c = ia.commit;
+        const dr = await draftOf(page);
+        if (dr.secondaryId) await page.click(`[data-drop="slot${dr.slot}"]`);
+        if (dr.primaryId) await page.click('[data-drop="primary"]');
+        await page.click(`[data-key="hand-${c.primaryId}"]`);
+        await page.click('[data-drop="primary"]');
+        await page.click(`[data-key="stance-${c.stance}"]`);
+        const slot = c.replaceSlot ?? c.slot ?? v.me.slots.findIndex((s) => s === null);
+        if (c.secondaryId && slot >= 0) { await page.click(`[data-key="hand-${c.secondaryId}"]`); await page.click(`[data-drop="slot${slot}"]`); }
+        await page.click('[data-key="act-revision"]');
+        stats.revised++;
+      }
     } else if (v.phase === 'LECTURE') {
       if (run.useLecture) { await page.click('[data-key="act-lecture"]'); stats.tech.Lecture = (stats.tech.Lecture ?? 0) + 1; }
       else await page.click('[data-key="act-lecture-pass"]');
@@ -290,25 +319,25 @@ export async function playTurn(page, run, stats) {
         const pA = await pres(page);
         stats.manualToggleChecked = pB.view === 'B' && pA.view === 'A' ? 'ok' : `échec (${pB.view}/${pA.view})`;
       }
-      const engaged = [];
+      // Choix de l’IA du joueur, joués par le menu de chaque Secondaire active (Conserver : rien à cliquer).
+      const ia = await iaPour(page, v);
       for (const s of v.me.slots) {
-        if (!s || s.state !== 'active') continue;
+        const plan = s && ia.plans[s.slot];
+        if (!plan || plan.mode === 'keep') continue;
         await page.click(`[data-key="zone-me-${s.slot}"]`);
-        const mode2 = v.reveal.primaries.me.stance === 'assault' && s.slot === 0 ? 'damage' : 'rank';
-        await page.click(`[data-key="menu-${s.slot}-${mode2}"]`);
-        engaged.push(s.slot);
+        await page.click(`[data-key="menu-${s.slot}-${plan.mode}"]`);
+        if (plan.mode === 'interfere') await page.click(`[data-key="zone-opp-${plan.target}"]`);
         stats.tactics++;
+        stats.plans[plan.mode] = (stats.plans[plan.mode] ?? 0) + 1;
       }
-      const oppActive = v.opp.slots.filter((s) => s?.state === 'active');
-      const anc = page.locator('[data-key="tech-me-Ancrage"]:not([disabled])');
-      const rup = page.locator('[data-key="tech-me-Rupture"]:not([disabled])');
-      if (engaged.length && oppActive.length && await anc.count()) {
-        await anc.click();
-        await page.click(`[data-key="zone-me-${engaged[0]}"]`);
+      const tech = ia.technique;
+      if (tech?.id === 'Ancrage') {
+        await page.click('[data-key="tech-me-Ancrage"]');
+        await page.click(`[data-key="zone-me-${tech.slot}"]`);
         stats.tech.Ancrage = (stats.tech.Ancrage ?? 0) + 1;
-      } else if (oppActive.length && v.reveal.primaries.me.stance === 'guard' && await rup.count()) {
-        await rup.click();
-        await page.click(`[data-key="zone-opp-${oppActive[0].slot}"]`);
+      } else if (tech?.id === 'Rupture') {
+        await page.click('[data-key="tech-me-Rupture"]');
+        await page.click(`[data-key="zone-opp-${tech.targetSlot}"]`);
         stats.tech.Rupture = (stats.tech.Rupture ?? 0) + 1;
       }
       await page.click('[data-key="act-tactics"]');
@@ -324,5 +353,5 @@ export async function playTurn(page, run, stats) {
 
 /** Statistiques vierges d’un duel piloté (même forme que qa-browser). */
 export function newStats() {
-  return { turns: 0, drags: 0, clicks: 0, keyboard: 0, tactics: 0, repels: 0, leaks: [], viewChecks: 0, viewErrors: [], lostClicks: [], tech: {}, moods: new Set(), sequencesWatched: 0, sequencesSkipped: 0, manualToggleChecked: null, holds: 0, layoutChecked: [], layoutIssues: [], stanceChecks: 0, stanceIssues: [], stageGhosts: [], stageFades: [], stagesSeen: 0, rotations: [] };
+  return { turns: 0, drags: 0, clicks: 0, keyboard: 0, tactics: 0, repels: 0, leaks: [], viewChecks: 0, viewErrors: [], lostClicks: [], tech: {}, moods: new Set(), sequencesWatched: 0, sequencesSkipped: 0, manualToggleChecked: null, holds: 0, layoutChecked: [], layoutIssues: [], stanceChecks: 0, stanceIssues: [], stageGhosts: [], stageFades: [], stagesSeen: 0, rotations: [], signatures: 0, stances: { assault: 0, guard: 0 }, plans: {}, revisions: 0, revised: 0 };
 }

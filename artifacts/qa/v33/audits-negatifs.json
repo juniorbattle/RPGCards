@@ -1,0 +1,10 @@
+{
+ "commit": "377f7cc",
+ "ok": true,
+ "checks": [
+  "OK Signature annoncée du rival (sig-Ronce) admise par l’audit des fuites",
+  "OK pastille « Mode : ? » admise par l’audit des postures",
+  "OK mode du rival injecté : détecté",
+  "OK carte adverse non publique injectée : détectée"
+ ]
+}
