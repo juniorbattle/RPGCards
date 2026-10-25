@@ -97,15 +97,18 @@ export async function processSheet(arg) {
   g.drawImage(img, 0, 0);
   const d = g.getImageData(0, 0, W, H).data;
   // fond : écart au cyan pur m = min(G, B) − R ; liseré : pixel teinté de cyan (teinte 165–200°, saturé) au bord, mélange
-  // du fond et du trait (le personnage n'a aucun cyan ; les yeux bleus, vers 220°, restent)
+  // du fond et du trait (le personnage n'a aucun cyan ; les yeux bleus, vers 220°, restent). Option `bg: 'bleu'` (feuille
+  // d'un PNJ dont la chemise est en ton clé cyan, reprise de M09) : fond bleu pur, m = B − max(R, G), liseré teinté de bleu
+  // (220–260°) ; le personnage n'a alors aucun bleu.
+  const bleu = o.bg === 'bleu';
   const op = new Uint8Array(W * H);
   for (let i = 0; i < W * H; i++) {
     const r = d[i * 4]; const g2 = d[i * 4 + 1]; const b = d[i * 4 + 2];
     const mx = Math.max(r, g2, b); const mn = Math.min(r, g2, b); const dd = mx - mn;
     let hh = 0; if (dd) { if (mx === r) hh = ((g2 - b) / dd) % 6; else if (mx === g2) hh = (b - r) / dd + 2; else hh = (r - g2) / dd + 4; }
     hh = (hh * 60 + 360) % 360;
-    const cyanCast = dd / Math.max(mx, 1) > 0.35 && mx > 38 && hh >= 165 && hh <= 200;
-    op[i] = Math.min(g2, b) - r < 120 && !cyanCast ? 1 : 0;
+    const cast = dd / Math.max(mx, 1) > 0.35 && mx > 38 && (bleu ? hh >= 220 && hh <= 260 : hh >= 165 && hh <= 200);
+    op[i] = (bleu ? b - Math.max(r, g2) : Math.min(g2, b) - r) < 120 && !cast ? 1 : 0;
   }
   // arêtes de couleur à l'intérieur de la figure
   const ex = []; const ey = [];
@@ -114,7 +117,8 @@ export async function processSheet(arg) {
   for (let x = 0; x < W; x += 2) for (let y = 1; y < H; y++) { const i = y * W + x; if ((op[i] || op[i - W]) && (op[i] !== op[i - W] || diff(i, i - W) > 90)) ey.push(y); }
   const pitch = (es) => {
     let best = { p: 0, r: 0 }; const all = [];
-    for (let pp = 2.5; pp <= 8; pp += 0.005) {
+    // option `pitchMin` : borne basse du pas (une feuille où le pas réel a un sous-multiple fort ; défaut 2,5)
+    for (let pp = o.pitchMin ?? 2.5; pp <= 8; pp += 0.005) {
       let sc = 0; let ss = 0; const k = (2 * Math.PI) / pp;
       for (const e of es) { sc += Math.cos(k * e); ss += Math.sin(k * e); }
       const r = Math.hypot(sc, ss) / es.length; all.push({ p: pp, r, ph: ((Math.atan2(ss, sc) / k) % pp + pp) % pp });
@@ -235,8 +239,29 @@ export async function processSheet(arg) {
   // tons clés : tenue (magenta, teinte 280–345°) et accent (vert, 85–165°) ramenés sur quatre niveaux exacts
   const LV = [64, 128, 191, 255];
   const hsv = (r, g2, b) => { const mx = Math.max(r, g2, b); const mn = Math.min(r, g2, b); const dd = mx - mn; let hh = 0; if (dd) { if (mx === r) hh = ((g2 - b) / dd) % 6; else if (mx === g2) hh = (b - r) / dd + 2; else hh = (r - g2) / dd + 4; } return [(hh * 60 + 360) % 360, mx ? dd / mx : 0, mx / 255]; };
+  // option `slots` (reprise de M09, feuilles des PNJ) : emplacements en tons clés à reconnaître, parmi peau (rouge,
+  // 345–15°), cheveux (jaune, 45–75°), tenue, chemise (cyan, 165–200°, fond bleu seulement) et accent ; défaut : tenue et
+  // accent (feuille du joueur, inchangée)
+  const SLOTS = o.slots ?? ['tenue', 'accent'];
+  const MASK = { peau: [1, 0, 0], cheveux: [1, 1, 0], tenue: [1, 0, 1], chemise: [0, 1, 1], accent: [0, 1, 0] };
   const cls = new Uint8Array(aligned.length / 4);
-  const vs = { 1: [], 2: [] };
+  const vs = Object.fromEntries(SLOTS.map((_, k) => [k + 1, []]));
+  // feuilles des PNJ (`slots` donné) : les ombres très saturées (s > 0,8) d'un ton clé dérivent (tenue vers le violet,
+  // chemise vers le bleu, cheveux vers l'orange : porte de la passe 125) ; fenêtres élargies pour elles seulement
+  const large = !!o.slots;
+  const slotOf = (hh, s, v, i) => {
+    if (v <= 0.12) return 0;
+    const sat = large && s > 0.8;
+    for (let k = 0; k < SLOTS.length; k++) {
+      const n = SLOTS[k];
+      if (n === 'tenue' && s > 0.45 && hh >= (sat ? 262 : 280) && hh <= 345) return k + 1;
+      if (n === 'accent' && s > 0.35 && hh >= 85 && hh <= 165 && accentOk(i)) return k + 1;
+      if (n === 'peau' && s > 0.45 && (hh > 345 || hh <= 15)) return k + 1;
+      if (n === 'cheveux' && s > 0.45 && hh >= (sat ? 20 : 45) && hh <= 75) return k + 1;
+      if (n === 'chemise' && s > 0.45 && hh >= 165 && hh <= (sat ? 218 : 200)) return k + 1;
+    }
+    return 0;
+  };
   // option figures : l'accent (bandeau, écharpe) n'existe que dans le haut de la figure (sous 45 % de sa hauteur)
   const accentOk = (i) => {
     if (!o.figures) return true;
@@ -246,11 +271,11 @@ export async function processSheet(arg) {
   for (let i = 0; i < cls.length; i++) {
     if (!aligned[i * 4 + 3]) continue;
     const [hh, s, v] = hsv(aligned[i * 4], aligned[i * 4 + 1], aligned[i * 4 + 2]);
-    if (s > 0.45 && v > 0.12 && hh >= 280 && hh <= 345) { cls[i] = 1; vs[1].push(v); }
-    else if (s > 0.35 && v > 0.12 && hh >= 85 && hh <= 165 && accentOk(i)) { cls[i] = 2; vs[2].push(v); }
+    const k = slotOf(hh, s, v, i);
+    if (k) { cls[i] = k; vs[k].push(v); }
   }
   const vmax = (a) => { const s = [...a].sort((x, y) => x - y); return s[Math.floor(s.length * 0.98)] ?? 1; };
-  const VM = { 1: vmax(vs[1]), 2: vmax(vs[2]) };
+  const VM = Object.fromEntries(SLOTS.map((_, k) => [k + 1, vmax(vs[k + 1])]));
   // niveaux par groupes (option `levels: 'kmeans'`) : quatre groupes de valeurs (k-moyennes à une dimension), rangés ;
   // le groupe le plus peuplé est l'aplat (niveau 191), les plus clairs le rehaut, les plus sombres l'ombre et l'ombre
   // profonde
@@ -263,15 +288,15 @@ export async function processSheet(arg) {
     const m = n.indexOf(Math.max(...n));
     return cs.map((c0, k) => ({ c: c0, level: Math.max(0, Math.min(3, 2 + k - m)) }));
   };
-  const GC = o.levels === 'kmeans' ? { 1: groups(vs[1]), 2: groups(vs[2]) } : null;
-  const counts = { tenue: [0, 0, 0, 0], accent: [0, 0, 0, 0] };
+  const GC = o.levels === 'kmeans' ? Object.fromEntries(SLOTS.map((_, k) => [k + 1, groups(vs[k + 1])])) : null;
+  const counts = Object.fromEntries(SLOTS.map((n) => [n, [0, 0, 0, 0]]));
   for (let i = 0; i < cls.length; i++) {
     if (!cls[i]) continue;
     const vv = Math.max(aligned[i * 4], aligned[i * 4 + 1], aligned[i * 4 + 2]) / 255;
     const v = vv / VM[cls[i]] * 255;
     const l = GC ? GC[cls[i]].reduce((bi, x) => (Math.abs(x.c - vv) < Math.abs(bi.c - vv) ? x : bi)).level : LV.reduce((bi, x, k) => (Math.abs(x - v) < Math.abs(LV[bi] - v) ? k : bi), 0);
-    if (cls[i] === 1) { aligned[i * 4] = LV[l]; aligned[i * 4 + 1] = 0; aligned[i * 4 + 2] = LV[l]; counts.tenue[l]++; }
-    else { aligned[i * 4] = 0; aligned[i * 4 + 1] = LV[l]; aligned[i * 4 + 2] = 0; counts.accent[l]++; }
+    const n = SLOTS[cls[i] - 1]; const m = MASK[n];
+    aligned[i * 4] = m[0] * LV[l]; aligned[i * 4 + 1] = m[1] * LV[l]; aligned[i * 4 + 2] = m[2] * LV[l]; counts[n][l]++;
   }
   // palette : couleurs naturelles réduites à 32 (k-moyennes, départ sur les couleurs les plus fréquentes, 16 tours)
   const nat = []; for (let i = 0; i < cls.length; i++) if (!cls[i] && aligned[i * 4 + 3]) nat.push(i);

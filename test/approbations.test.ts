@@ -10,5 +10,6 @@ describe('approbations des images de la ville', () => {
     expect(r.ecarts).toEqual([]);
     expect(r.images).toBe(20);
     expect(r.approuvees).toBeGreaterThan(0);
-  });
+    // hache toutes les images de la ville : délai large sous la charge du passage complet (passe 125)
+  }, 30000);
 });

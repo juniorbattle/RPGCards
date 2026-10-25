@@ -24,6 +24,53 @@
       "source": "gpt-image-2 (feuille du joueur refaite, J1, reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-joueur-j1.mjs)",
       "fiche": "art-src/sprites/player/fiche.json",
       "approved": true
+    },
+    "pnj-docker": {
+      "file": "pnj-docker.png",
+      "sha256": "5212a942a0dad19bb5d4ad9dce20de2bbf506c1dcd91933b0076a5019e4e823e",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 71,
+      "recolor": [
+        "peau",
+        "cheveux",
+        "tenue",
+        "chemise"
+      ],
+      "source": "gpt-image-2 (feuille des PNJ de la ville, gabarit docker (dockers, membres, passants), recoloré par graine, reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
+      "fiche": "art-src/sprites/pnj-docker/fiche.json",
+      "approved": false
+    },
+    "braise": {
+      "file": "braise.png",
+      "sha256": "77d7c465e7e05dfb513520feaba2b9466ce65c9543c2772a8cc7d5c5c840f07c",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 74,
+      "recolor": [],
+      "source": "gpt-image-2 (feuille des PNJ de la ville, Kaï, la Braise du quai (couleurs propres), reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
+      "fiche": "art-src/sprites/braise/fiche.json",
+      "approved": false
     }
   }
 }

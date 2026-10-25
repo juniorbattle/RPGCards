@@ -1,0 +1,119 @@
+{
+  "date": "2026-10-25T08:56:37.260Z",
+  "feuilles": {
+    "pnj-docker": {
+      "brut": "pnj-docker-p1",
+      "checks": [
+        "OK grille d’art 64 × 96, pas 3.58 × 3.92, 46 couleurs, ancrage 32,93, figure 71 px d’art, rien de rogné",
+        "OK hauteurs des 15 figures régulières (71 à 73 px d’art)",
+        "OK ton clé peau présent sur au moins deux niveaux : [1025,658,2098,0]",
+        "OK ton clé cheveux présent sur au moins deux niveaux : [278,838,1193,1026]",
+        "OK ton clé tenue présent sur au moins deux niveaux : [899,1673,1731,502]",
+        "OK ton clé chemise présent sur au moins deux niveaux : [282,110,622,0]",
+        "OK feuille ≤ 1 Mo : 76 Ko, 960 × 864"
+      ],
+      "pitch": {
+        "x": 3.58,
+        "y": 3.92,
+        "rx": 0.092,
+        "ry": 0.088,
+        "phaseX": 0.95,
+        "phaseY": 3.62
+      },
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 71,
+      "colors": 46,
+      "counts": {
+        "peau": [
+          1025,
+          658,
+          2098,
+          0
+        ],
+        "cheveux": [
+          278,
+          838,
+          1193,
+          1026
+        ],
+        "tenue": [
+          899,
+          1673,
+          1731,
+          502
+        ],
+        "chemise": [
+          282,
+          110,
+          622,
+          0
+        ]
+      },
+      "hauteurs": [
+        71,
+        72,
+        72,
+        71,
+        71,
+        71,
+        72,
+        71,
+        71,
+        71,
+        71,
+        72,
+        72,
+        72,
+        73
+      ]
+    },
+    "braise": {
+      "brut": "braise-p2",
+      "checks": [
+        "OK grille d’art 64 × 96, pas 3.865 × 3.305, 32 couleurs, ancrage 32,93, figure 74 px d’art, rien de rogné",
+        "OK hauteurs des 15 figures régulières (70 à 74 px d’art)",
+        "OK feuille ≤ 1 Mo : 78 Ko, 960 × 864"
+      ],
+      "pitch": {
+        "x": 3.865,
+        "y": 3.305,
+        "rx": 0.049,
+        "ry": 0.087,
+        "phaseX": 3.47,
+        "phaseY": 1.2
+      },
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 74,
+      "colors": 32,
+      "counts": {},
+      "hauteurs": [
+        71,
+        70,
+        71,
+        71,
+        71,
+        71,
+        71,
+        71,
+        71,
+        71,
+        74,
+        74,
+        74,
+        74,
+        73
+      ]
+    }
+  },
+  "regression": {
+    "ok": true,
+    "shaJ1": "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50",
+    "shaPlayer": "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50"
+  }
+}

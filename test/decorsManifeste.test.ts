@@ -100,7 +100,8 @@ describe('manifeste des plans de décor (ADR 028, B2)', () => {
   it('public/decors/manifest.json : valable, chaque plan présent à l’empreinte, aux dimensions et au poids déclarés, fiche commitée', () => {
     const root = process.cwd();
     expect(verifyDecorDir(join(root, 'public', 'decors'), root)).toEqual([]);
-  });
+    // hache toutes les images des îlots : délai large sous la charge du passage complet (passe 125)
+  }, 30000);
 
   it('le vérificateur accepte un diorama conforme', () => {
     const a = fixture({ quai: quai() }, { 'ciel.png': sky, 'facades.png': front }, FICHE);

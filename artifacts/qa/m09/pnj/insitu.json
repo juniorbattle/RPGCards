@@ -1,0 +1,290 @@
+{
+  "date": "2026-10-25T08:57:06.638Z",
+  "commit": "a785f39+arbre de travail",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "checks": [
+    "OK feuilles pnj-docker et braise admises en QA (rapport des feuilles externes)",
+    "OK console sans erreur (0 messages)"
+  ],
+  "console": [],
+  "vues": {
+    "avant-1280": {
+      "policy": "code",
+      "loaded": [],
+      "unapproved": [],
+      "issues": [],
+      "timings": {},
+      "hiddenFrames": 0
+    },
+    "apres-1280": {
+      "policy": "qa",
+      "loaded": [
+        "pnj-docker-1",
+        "pnj-docker-9",
+        "player-Cendre",
+        "braise"
+      ],
+      "unapproved": [
+        "pnj-docker-1",
+        "pnj-docker-9",
+        "braise"
+      ],
+      "issues": [],
+      "timings": {
+        "pnj-docker": {
+          "bytes": 78262,
+          "fetchMs": 8,
+          "hashMs": 0.1,
+          "decodeMs": 5.4,
+          "uploadMs": 1.2
+        },
+        "player": {
+          "bytes": 98894,
+          "fetchMs": 7.3,
+          "hashMs": 0.3,
+          "decodeMs": 9.2,
+          "uploadMs": 1.1
+        },
+        "braise": {
+          "bytes": 80065,
+          "fetchMs": 8.3,
+          "hashMs": 0.1,
+          "decodeMs": 10.5,
+          "uploadMs": 0.7
+        }
+      },
+      "hiddenFrames": 0
+    },
+    "avant-1920": {
+      "policy": "code",
+      "loaded": [],
+      "unapproved": [],
+      "issues": [],
+      "timings": {},
+      "hiddenFrames": 0
+    },
+    "apres-1920": {
+      "policy": "qa",
+      "loaded": [
+        "player-Cendre",
+        "pnj-docker-1",
+        "pnj-docker-9",
+        "braise"
+      ],
+      "unapproved": [
+        "pnj-docker-1",
+        "pnj-docker-9",
+        "braise"
+      ],
+      "issues": [],
+      "timings": {
+        "player": {
+          "bytes": 98894,
+          "fetchMs": 6.8,
+          "hashMs": 0.2,
+          "decodeMs": 10.3,
+          "uploadMs": 1.3
+        },
+        "pnj-docker": {
+          "bytes": 78262,
+          "fetchMs": 7.7,
+          "hashMs": 0.1,
+          "decodeMs": 12.8,
+          "uploadMs": 1.4
+        },
+        "braise": {
+          "bytes": 80065,
+          "fetchMs": 9.6,
+          "hashMs": 0.1,
+          "decodeMs": 14.9,
+          "uploadMs": 1.1
+        }
+      },
+      "hiddenFrames": 0
+    }
+  },
+  "targets": {
+    "pnj-docker-1": {
+      "peau": {
+        "base": "#f4d4be",
+        "shade": "#d4a68e",
+        "deep": "#ad7a66",
+        "hi": "#fde8da"
+      },
+      "cheveux": {
+        "base": "#3e2c22",
+        "shade": "#291c15",
+        "deep": "#160e0a",
+        "hi": "#64483a"
+      },
+      "tenue": {
+        "base": "#2e5a58",
+        "shade": "#204240",
+        "deep": "#122a28",
+        "hi": "#467a76"
+      },
+      "chemise": {
+        "base": "#9a9890",
+        "shade": "#7a7870",
+        "deep": "#58564f",
+        "hi": "#b8b6ae"
+      }
+    },
+    "pnj-docker-9": {
+      "peau": {
+        "base": "#eac2a2",
+        "shade": "#c99478",
+        "deep": "#a26a54",
+        "hi": "#f8dcc4"
+      },
+      "cheveux": {
+        "base": "#3e2c22",
+        "shade": "#291c15",
+        "deep": "#160e0a",
+        "hi": "#64483a"
+      },
+      "tenue": {
+        "base": "#7a3e2e",
+        "shade": "#5a2c20",
+        "deep": "#3a1a12",
+        "hi": "#9e5a46"
+      },
+      "chemise": {
+        "base": "#9a9890",
+        "shade": "#7a7870",
+        "deep": "#58564f",
+        "hi": "#b8b6ae"
+      }
+    },
+    "pnj-docker-12": {
+      "peau": {
+        "base": "#9a6a4a",
+        "shade": "#764a32",
+        "deep": "#563424",
+        "hi": "#b88a68"
+      },
+      "cheveux": {
+        "base": "#2a2422",
+        "shade": "#191514",
+        "deep": "#0c0a09",
+        "hi": "#4e4440"
+      },
+      "tenue": {
+        "base": "#5a4432",
+        "shade": "#423224",
+        "deep": "#2a1f16",
+        "hi": "#7a604a"
+      },
+      "chemise": {
+        "base": "#e6e0d2",
+        "shade": "#c2bcae",
+        "deep": "#98928a",
+        "hi": "#f6f2ea"
+      }
+    },
+    "pnj-docker-61": {
+      "peau": {
+        "base": "#c08a64",
+        "shade": "#9a6444",
+        "deep": "#744632",
+        "hi": "#d8a882"
+      },
+      "cheveux": {
+        "base": "#2a2422",
+        "shade": "#191514",
+        "deep": "#0c0a09",
+        "hi": "#4e4440"
+      },
+      "tenue": {
+        "base": "#8a6a2a",
+        "shade": "#68501e",
+        "deep": "#463412",
+        "hi": "#ae8c44"
+      },
+      "chemise": {
+        "base": "#e6e0d2",
+        "shade": "#c2bcae",
+        "deep": "#98928a",
+        "hi": "#f6f2ea"
+      }
+    },
+    "pnj-docker-63": {
+      "peau": {
+        "base": "#eac2a2",
+        "shade": "#c99478",
+        "deep": "#a26a54",
+        "hi": "#f8dcc4"
+      },
+      "cheveux": {
+        "base": "#5c3c26",
+        "shade": "#432a19",
+        "deep": "#28180e",
+        "hi": "#86603e"
+      },
+      "tenue": {
+        "base": "#55603a",
+        "shade": "#3e4628",
+        "deep": "#283018",
+        "hi": "#768250"
+      },
+      "chemise": {
+        "base": "#e6e0d2",
+        "shade": "#c2bcae",
+        "deep": "#98928a",
+        "hi": "#f6f2ea"
+      }
+    },
+    "pnj-docker-71": {
+      "peau": {
+        "base": "#c08a64",
+        "shade": "#9a6444",
+        "deep": "#744632",
+        "hi": "#d8a882"
+      },
+      "cheveux": {
+        "base": "#7a3e24",
+        "shade": "#5a2a16",
+        "deep": "#36170b",
+        "hi": "#a8603a"
+      },
+      "tenue": {
+        "base": "#55603a",
+        "shade": "#3e4628",
+        "deep": "#283018",
+        "hi": "#768250"
+      },
+      "chemise": {
+        "base": "#9a9890",
+        "shade": "#7a7870",
+        "deep": "#58564f",
+        "hi": "#b8b6ae"
+      }
+    },
+    "pnj-docker-73": {
+      "peau": {
+        "base": "#74503a",
+        "shade": "#583828",
+        "deep": "#3c261a",
+        "hi": "#946c52"
+      },
+      "cheveux": {
+        "base": "#5c3c26",
+        "shade": "#432a19",
+        "deep": "#28180e",
+        "hi": "#86603e"
+      },
+      "tenue": {
+        "base": "#3e5068",
+        "shade": "#2c3a4e",
+        "deep": "#1c2636",
+        "hi": "#5e7290"
+      },
+      "chemise": {
+        "base": "#e6e0d2",
+        "shade": "#c2bcae",
+        "deep": "#98928a",
+        "hi": "#f6f2ea"
+      }
+    }
+  }
+}

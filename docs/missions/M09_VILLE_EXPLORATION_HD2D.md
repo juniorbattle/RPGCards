@@ -205,3 +205,24 @@ la ville en rangs et la feuille du joueur s'affichent. Les retours R1 attendent 
 pied des objets assombri et liseré magenta neutralisé au rendu ; plus aucun accessoire ne cache le chemin lumineux, un
 personnage ni un repère (test ; accessoires déplacés au Quai, au Parvis et dans la Grande Cour, estrade réduite) ; aucune
 image changée, les approbations tiennent (ADR 028).
+
+## Deuxième reprise (2026-10-25, après M10 ; passe 125)
+
+Ordre du responsable (« go », après la clôture de M10 : « reprise de M09, feuilles des personnages de la ville, autres
+quartiers ») et ses deux choix du même jour (questions de la session, passe 125) :
+
+- **Feuilles des PNJ de la ville : « 16, avec une porte ».** Douze feuilles, une image chacune : les quatre gabarits
+  recolorés par graine (docker, marchande, commis, joueuse : cadets, membres, passants, héraut, Tenante), les quatre
+  rivaux (Kaï, Maëlle, Sélène, Orin) et les quatre chefs (Bran, Mère Aubépine, Ilse, Halvard) ; quatre images pour
+  régénérer une feuille qui ne tient pas ; **16 images au plus**. D'abord une **porte de 2 feuilles** (le gabarit docker
+  et Kaï) posées in situ sur une planche que le responsable regarde, puis les dix autres.
+- **Autres quartiers : « Fanal et Ville haute ».** La Place du Fanal, sur le Port (maison de la Ronce, entrée du bar), et
+  la Ville haute (l'Observatoire de l'Astre), au-dessus du Belvédère de la Grande Cour ; en rangs, avec le kit actuel et
+  une ou deux images propres chacun, **4 images au plus**. Les figures de l'aventure ne bougent pas sans décision du
+  responsable.
+- Budget de la deuxième reprise : 20 images au plus (16 + 4), hors des 30 de la porte du Quai (28 utilisées, 2 en
+  réserve, B1).
+- Contrat des feuilles des PNJ : celui du joueur (v3, pixel art, cases de 64 × 96 px d'art, agrandissement ×3) ; le
+  gabarit porte quatre tons clés (peau rouge, cheveux jaune, tenue magenta, chemise cyan) sur un **fond bleu pur** (le
+  cyan est pris par la chemise) ; les rivaux et les chefs gardent leurs couleurs propres, sur fond cyan. Entrées : notre
+  atlas dessiné par code du personnage et la feuille du joueur approuvée (style, échelle, proportions).
