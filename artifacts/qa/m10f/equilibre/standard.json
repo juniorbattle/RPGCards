@@ -1,0 +1,249 @@
+{
+ "commit": "43a62d9",
+ "ordre": [
+  "p2",
+  "p1"
+ ],
+ "duelsParLigne": 300,
+ "secondes": 75,
+ "lignes": [
+  {
+   "ligne": "Défaut : Cendre contre Ronce, équilibré contre offensif",
+   "victoiresP1": "67.0 %",
+   "stats": {
+    "duels": 300,
+    "toursMoyens": 8.52,
+    "prolongations": 26,
+    "partGardes": "13.6 %",
+    "partAG": "27.0 %",
+    "agGardeGagne": "16.8 %",
+    "agAssautBlesse": "83.2 %",
+    "agAbsorptionTotale": "0.0 %",
+    "degatsBaseParAssautVainqueur": 13.59,
+    "fenetresParDuel": 1.15,
+    "partRevisees": "84.9 %"
+   }
+  },
+  {
+   "ligne": "Corpus varié (16 paires de Signatures, profils tournants)",
+   "victoiresP1": "50.0 %",
+   "stats": {
+    "duels": 1200,
+    "toursMoyens": 10.05,
+    "prolongations": 132,
+    "partGardes": "26.8 %",
+    "partAG": "45.7 %",
+    "agGardeGagne": "12.2 %",
+    "agAssautBlesse": "87.8 %",
+    "agAbsorptionTotale": "0.0 %",
+    "degatsBaseParAssautVainqueur": 14.39,
+    "fenetresParDuel": 1.26,
+    "partRevisees": "88.0 %"
+   }
+  },
+  {
+   "ligne": "Corpus varié — p1 en Cendre",
+   "victoiresP1": "57.3 %",
+   "stats": {
+    "duels": 300,
+    "toursMoyens": 10.2,
+    "prolongations": 32,
+    "partGardes": "27.1 %",
+    "partAG": "45.9 %",
+    "agGardeGagne": "13.5 %",
+    "agAssautBlesse": "86.5 %",
+    "agAbsorptionTotale": "0.0 %",
+    "degatsBaseParAssautVainqueur": 14.54,
+    "fenetresParDuel": 1.23,
+    "partRevisees": "89.5 %"
+   }
+  },
+  {
+   "ligne": "Corpus varié — p1 en Voile",
+   "victoiresP1": "47.0 %",
+   "stats": {
+    "duels": 300,
+    "toursMoyens": 10.06,
+    "prolongations": 26,
+    "partGardes": "26.4 %",
+    "partAG": "45.8 %",
+    "agGardeGagne": "10.8 %",
+    "agAssautBlesse": "89.2 %",
+    "agAbsorptionTotale": "0.0 %",
+    "degatsBaseParAssautVainqueur": 14.04,
+    "fenetresParDuel": 1.33,
+    "partRevisees": "88.2 %"
+   }
+  },
+  {
+   "ligne": "Corpus varié — p1 en Ronce",
+   "victoiresP1": "48.7 %",
+   "stats": {
+    "duels": 300,
+    "toursMoyens": 10.39,
+    "prolongations": 35,
+    "partGardes": "26.8 %",
+    "partAG": "45.2 %",
+    "agGardeGagne": "13.3 %",
+    "agAssautBlesse": "86.7 %",
+    "agAbsorptionTotale": "0.0 %",
+    "degatsBaseParAssautVainqueur": 13.83,
+    "fenetresParDuel": 1.26,
+    "partRevisees": "87.8 %"
+   }
+  },
+  {
+   "ligne": "Corpus varié — p1 en Astre",
+   "victoiresP1": "47.0 %",
+   "stats": {
+    "duels": 300,
+    "toursMoyens": 9.53,
+    "prolongations": 39,
+    "partGardes": "26.8 %",
+    "partAG": "46.1 %",
+    "agGardeGagne": "11.2 %",
+    "agAssautBlesse": "88.8 %",
+    "agAbsorptionTotale": "0.0 %",
+    "degatsBaseParAssautVainqueur": 15.18,
+    "fenetresParDuel": 1.24,
+    "partRevisees": "86.6 %"
+   }
+  },
+  {
+   "ligne": "Kaï (rival, offensif)",
+   "victoiresP1": "64.0 %",
+   "stats": {
+    "duels": 300,
+    "toursMoyens": 8.73,
+    "prolongations": 31,
+    "partGardes": "14.1 %",
+    "partAG": "27.3 %",
+    "agGardeGagne": "14.9 %",
+    "agAssautBlesse": "85.1 %",
+    "agAbsorptionTotale": "0.0 %",
+    "degatsBaseParAssautVainqueur": 13.83,
+    "fenetresParDuel": 1.13,
+    "partRevisees": "85.6 %"
+   }
+  },
+  {
+   "ligne": "Maëlle (rival, prudent)",
+   "victoiresP1": "35.3 %",
+   "stats": {
+    "duels": 300,
+    "toursMoyens": 12.24,
+    "prolongations": 20,
+    "partGardes": "32.4 %",
+    "partAG": "58.9 %",
+    "agGardeGagne": "19.7 %",
+    "agAssautBlesse": "80.3 %",
+    "agAbsorptionTotale": "0.0 %",
+    "degatsBaseParAssautVainqueur": 12.73,
+    "fenetresParDuel": 1.52,
+    "partRevisees": "87.3 %"
+   }
+  },
+  {
+   "ligne": "Sélène (rival, lecteur)",
+   "victoiresP1": "49.7 %",
+   "stats": {
+    "duels": 300,
+    "toursMoyens": 10.67,
+    "prolongations": 26,
+    "partGardes": "22.7 %",
+    "partAG": "43.1 %",
+    "agGardeGagne": "10.4 %",
+    "agAssautBlesse": "89.6 %",
+    "agAbsorptionTotale": "0.0 %",
+    "degatsBaseParAssautVainqueur": 14.23,
+    "fenetresParDuel": 1.39,
+    "partRevisees": "91.8 %"
+   }
+  },
+  {
+   "ligne": "Orin (rival, equilibre)",
+   "victoiresP1": "34.3 %",
+   "stats": {
+    "duels": 300,
+    "toursMoyens": 11.22,
+    "prolongations": 36,
+    "partGardes": "21.0 %",
+    "partAG": "39.6 %",
+    "agGardeGagne": "10.4 %",
+    "agAssautBlesse": "89.6 %",
+    "agAbsorptionTotale": "0.0 %",
+    "degatsBaseParAssautVainqueur": 13.45,
+    "fenetresParDuel": 1.53,
+    "partRevisees": "89.7 %"
+   }
+  },
+  {
+   "ligne": "Théo (duel de la ville, novice)",
+   "victoiresP1": "76.7 %",
+   "stats": {
+    "duels": 300,
+    "toursMoyens": 7.96,
+    "prolongations": 26,
+    "partGardes": "16.4 %",
+    "partAG": "31.6 %",
+    "agGardeGagne": "16.4 %",
+    "agAssautBlesse": "83.6 %",
+    "agAbsorptionTotale": "0.0 %",
+    "degatsBaseParAssautVainqueur": 13.4,
+    "fenetresParDuel": 1.06,
+    "partRevisees": "88.7 %"
+   }
+  },
+  {
+   "ligne": "Céleste (duel de la ville, timide)",
+   "victoiresP1": "64.3 %",
+   "stats": {
+    "duels": 300,
+    "toursMoyens": 9.45,
+    "prolongations": 35,
+    "partGardes": "27.9 %",
+    "partAG": "50.9 %",
+    "agGardeGagne": "16.2 %",
+    "agAssautBlesse": "83.8 %",
+    "agAbsorptionTotale": "0.0 %",
+    "degatsBaseParAssautVainqueur": 12.77,
+    "fenetresParDuel": 1.22,
+    "partRevisees": "92.6 %"
+   }
+  },
+  {
+   "ligne": "Victor (duel de la ville, timide)",
+   "victoiresP1": "65.0 %",
+   "stats": {
+    "duels": 300,
+    "toursMoyens": 9.08,
+    "prolongations": 45,
+    "partGardes": "28.2 %",
+    "partAG": "52.0 %",
+    "agGardeGagne": "15.5 %",
+    "agAssautBlesse": "84.5 %",
+    "agAbsorptionTotale": "0.0 %",
+    "degatsBaseParAssautVainqueur": 13.42,
+    "fenetresParDuel": 1.18,
+    "partRevisees": "93.0 %"
+   }
+  },
+  {
+   "ligne": "Agathe (duel de la ville, novice)",
+   "victoiresP1": "76.7 %",
+   "stats": {
+    "duels": 300,
+    "toursMoyens": 7.75,
+    "prolongations": 22,
+    "partGardes": "16.1 %",
+    "partAG": "30.9 %",
+    "agGardeGagne": "13.6 %",
+    "agAssautBlesse": "86.4 %",
+    "agAbsorptionTotale": "0.0 %",
+    "degatsBaseParAssautVainqueur": 12.69,
+    "fenetresParDuel": 1,
+    "partRevisees": "89.3 %"
+   }
+  }
+ ]
+}
