@@ -1,0 +1,97 @@
+{
+  "date": "2026-10-25T18:23:29.918Z",
+  "commit": "2917690",
+  "mode": "verifier",
+  "checks": [
+    "OK port : dessiné par son diorama (12 images, 115.6 Mo de mémoire GPU), aucun refus",
+    "OK port/place : personnage en (0, -1.2), praticable ; 118 px",
+    "OK port/rue-cordiers : personnage en (0, -17), praticable ; 104 px",
+    "OK port/placette-filets : personnage en (5, -21.6), praticable ; 103 px",
+    "OK port/cour-ronce : personnage en (0, -30.2), praticable ; 100 px",
+    "OK haute : dessiné par son diorama (10 images, 95.1 Mo de mémoire GPU), aucun refus",
+    "OK haute/esplanade : personnage en (0, -1.2), praticable ; 119 px",
+    "OK haute/rue-astronomes : personnage en (0, -17), praticable ; 104 px",
+    "OK haute/jardin-spheres : personnage en (-4, -21.6), praticable ; 103 px",
+    "OK haute/parvis-observatoire : personnage en (0, -30.6), praticable ; 100 px",
+    "OK aucune erreur ni avertissement de console (0)"
+  ],
+  "console": [],
+  "provisoire": [],
+  "figures": {
+    "port/place": {
+      "at": [
+        0,
+        -1.2
+      ],
+      "figurePx": 118
+    },
+    "port/rue-cordiers": {
+      "at": [
+        0,
+        -17
+      ],
+      "figurePx": 104
+    },
+    "port/placette-filets": {
+      "at": [
+        5,
+        -21.6
+      ],
+      "figurePx": 103
+    },
+    "port/cour-ronce": {
+      "at": [
+        0,
+        -30.2
+      ],
+      "figurePx": 100
+    },
+    "haute/esplanade": {
+      "at": [
+        0,
+        -1.2
+      ],
+      "figurePx": 119
+    },
+    "haute/rue-astronomes": {
+      "at": [
+        0,
+        -17
+      ],
+      "figurePx": 104
+    },
+    "haute/jardin-spheres": {
+      "at": [
+        -4,
+        -21.6
+      ],
+      "figurePx": 103
+    },
+    "haute/parvis-observatoire": {
+      "at": [
+        0,
+        -30.6
+      ],
+      "figurePx": 100
+    }
+  },
+  "decor": {
+    "port": {
+      "loaded": [
+        "port"
+      ],
+      "issues": [],
+      "gpuMo": 115.6,
+      "images": 12
+    },
+    "haute": {
+      "loaded": [
+        "haute"
+      ],
+      "issues": [],
+      "gpuMo": 95.1,
+      "images": 10
+    }
+  },
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+}

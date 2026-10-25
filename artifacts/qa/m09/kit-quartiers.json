@@ -1,0 +1,145 @@
+{
+  "date": "2026-10-25T18:22:56.243Z",
+  "lot": "2026-10-25-quartiers",
+  "facades": {
+    "port-fanal": {
+      "recadrage": {
+        "left": 59,
+        "top": 28,
+        "right": 1474,
+        "bottom": 989
+      },
+      "debordMagenta": 928,
+      "bannieres": [
+        {
+          "box": [
+            102,
+            642,
+            160,
+            840
+          ],
+          "family": "Ronce",
+          "base": [
+            30,
+            38,
+            38
+          ]
+        },
+        {
+          "box": [
+            1378,
+            642,
+            1438,
+            840
+          ],
+          "family": "Ronce",
+          "base": [
+            27,
+            36,
+            38
+          ]
+        }
+      ],
+      "lanternes": 5,
+      "densite": 72.245,
+      "hauteur": 13.316
+    },
+    "port-ronce": {
+      "recadrage": {
+        "left": 82,
+        "top": 27,
+        "right": 1465,
+        "bottom": 991
+      },
+      "debordMagenta": 1968,
+      "bannieres": [
+        {
+          "box": [
+            552,
+            612,
+            604,
+            900
+          ],
+          "family": "Ronce",
+          "base": [
+            25,
+            37,
+            40
+          ]
+        },
+        {
+          "box": [
+            932,
+            612,
+            986,
+            900
+          ],
+          "family": "Ronce",
+          "base": [
+            27,
+            38,
+            40
+          ]
+        }
+      ],
+      "lanternes": 6,
+      "densite": 98.857,
+      "hauteur": 9.762
+    },
+    "haute-hotels": {
+      "recadrage": {
+        "left": 25,
+        "top": 34,
+        "right": 1511,
+        "bottom": 984
+      },
+      "debordMagenta": 969,
+      "bannieres": [
+        {
+          "box": [
+            604,
+            400,
+            652,
+            660
+          ],
+          "family": "Astre",
+          "base": [
+            127,
+            84,
+            52
+          ]
+        },
+        {
+          "box": [
+            902,
+            400,
+            950,
+            660
+          ],
+          "family": "Astre",
+          "base": [
+            125,
+            83,
+            53
+          ]
+        }
+      ],
+      "lanternes": 6,
+      "densite": 75.867,
+      "hauteur": 12.535
+    },
+    "haute-observatoire": {
+      "recadrage": {
+        "left": 132,
+        "top": 43,
+        "right": 1391,
+        "bottom": 981
+      },
+      "debordMagenta": 1788,
+      "bannieres": [],
+      "lanternes": 6,
+      "densite": 78.75,
+      "hauteur": 11.924
+    }
+  }
+}

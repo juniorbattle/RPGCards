@@ -20,13 +20,13 @@ import { NPC_TEMPLATES } from '../presentation/npcs';
 import type { Shell } from '../shell/shell';
 import { parseRig } from './cameras';
 import { blocked, type Zone } from './monde';
-import { ILOTS, ILOTS_RANGS, ilotDef, isIlotId, MANIFESTE_RANGS, type IlotId } from './ilots';
+import { ILOTS, ILOTS_RANGS, ilotDef, isIlotId, MANIFESTE_RANGS, QUARTIERS_AJOUTES, type IlotId } from './ilots';
 import { demoObjective, doorEncounter } from './objectifs';
 import { spritePolicy } from './spritesExternes';
 import { decorPolicy, preloadDecors } from './decors';
 import { installVilleStyles, promptBubble } from './ui';
 import { createTown, type Town } from './ville';
-import { villeEnRangs } from './villeRangs';
+import { decideVille } from './villeRangs';
 
 const STORE = 'lqv.demo';
 /** État propre à la démo, lié au profil (date de création de la sauvegarde) : une nouvelle partie repart du début. */
@@ -61,16 +61,21 @@ export class DemoHub {
   /** La ville en rangs (décidée avant de construire la ville, `villeEnRangs`), ou la ville d'aujourd'hui ; null : en cours. */
   private rangs: boolean | null = null;
   private decision: Promise<boolean>;
+  /** Les quartiers ajoutés ouverts (deuxième reprise de M09, ADR 028). */
+  private ouverts: ReadonlySet<IlotId> = new Set();
 
   constructor() {
     // Ville en rangs ou ville d'aujourd'hui, puis plans de décor de l'îlot d'arrivée lus et décodés dès le chargement de
     // la démo, bien avant l'entrée en ville (ADR 028) : la ville construit alors son diorama tout de suite.
     const q = new URLSearchParams(location.search);
     const politique = decorPolicy(q.get('qa') === '1', q.get('decors'));
-    this.decision = villeEnRangs(politique).then((oui) => {
+    this.decision = decideVille(politique).then(({ rangs: oui, ouverts }) => {
       this.rangs = oui;
-      // la Grande Cour n'existe que dans la ville en rangs : sans elle, la démo repart du Quai
-      if (!oui && this.state.ilot === 'cour') { this.state.ilot = undefined; this.state.pos = undefined; }
+      this.ouverts = ouverts;
+      // la Grande Cour n'existe que dans la ville en rangs : sans elle, la démo repart du Quai ; de même d'un quartier
+      // ajouté qui n'est pas ouvert (ADR 028, « Deuxième reprise »)
+      const ici = this.state.ilot;
+      if ((!oui && ici === 'cour') || (isIlotId(ici) && QUARTIERS_AJOUTES.includes(ici) && !ouverts.has(ici))) { this.state.ilot = undefined; this.state.pos = undefined; }
       const at: IlotId = isIlotId(this.state.ilot) ? this.state.ilot : 'quai';
       void preloadDecors(at === 'quai' ? ['quai'] : ['quai', at], politique, 'decors/', oui ? MANIFESTE_RANGS : undefined);
       return oui;
@@ -78,7 +83,7 @@ export class DemoHub {
   }
 
   /** L'îlot affiché par la démo : en rangs ou d'aujourd'hui. */
-  private def(id: IlotId) { return ilotDef(id, this.rangs === true); }
+  private def(id: IlotId) { return ilotDef(id, this.rangs === true, this.ouverts); }
 
   /** L'enveloppe est au hub : la ville apparaît (créée au premier passage), le HUD prend place dans l'enveloppe. */
   show(sh: Shell): HTMLElement {
@@ -108,7 +113,7 @@ export class DemoHub {
         sprites: spritePolicy(sh.params.qa, new URLSearchParams(location.search).get('sprites')),
         decors: decorPolicy(sh.params.qa, new URLSearchParams(location.search).get('decors')),
         rig: parseRig(new URLSearchParams(location.search).get('rig')),
-        ilotDefOf: (id) => ilotDef(id, rangs),
+        ilotDefOf: (id) => ilotDef(id, rangs, this.ouverts),
         ...(rangs ? { decorsManifest: MANIFESTE_RANGS } : {}),
         onInteract: (z) => this.interact(z),
         onMenu: () => this.menu(),

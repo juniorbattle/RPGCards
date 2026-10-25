@@ -7522,6 +7522,3003 @@
           1
         ]
       ]
+    },
+    "port": {
+      "plans": {
+        "ciel": {
+          "file": "quai-ciel.png",
+          "sha256": "83fa4a309a28b3c790061e1e9614fcf02ef11444f87c72dfd0a8e7e4e114c9b2",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-ciel/fiche.json",
+          "approved": true,
+          "at": [
+            0,
+            -54,
+            -90
+          ],
+          "width": 176,
+          "orient": "face",
+          "order": 0,
+          "blend": "fondu",
+          "fog": 0,
+          "voile": 0.12
+        },
+        "fond-rang1--31-1": {
+          "file": "rangs-frise-a.png",
+          "sha256": "0b91326657b8a7923c1dfffbfc48bfeafeaaeb31ca405f8bfc689d390fee02c9",
+          "size": [
+            3989,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-a/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0,
+            0,
+            0.25,
+            1
+          ],
+          "width": 18.4,
+          "at": [
+            -21.8,
+            0,
+            -6
+          ],
+          "fog": 0.15,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -14.3,
+          "order": 27
+        },
+        "fond-rang1--10-1": {
+          "file": "quartiers-port-fanal.png",
+          "sha256": "fcc5d924310e55b600470b21d376784cfc9c2b180aea55a2babc0b8fcd661101",
+          "size": [
+            1416,
+            962
+          ],
+          "source": "gpt-image-2 (lot des quartiers ajoutés : la Place du Fanal, la Ville haute ; ADR 028, deuxième reprise de M09), traité par script (tools/m09-kit-quartiers.mjs)",
+          "fiche": "art-src/decors/quartiers-port-fanal/fiche.json",
+          "approved": false,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "width": 19.6,
+          "at": [
+            -0.2,
+            0,
+            -6
+          ],
+          "lit": 0.35,
+          "fog": 0.15,
+          "coupe": true,
+          "coupeZ": -14.3,
+          "order": 28
+        },
+        "fond-rang1-12-1": {
+          "file": "rangs-frise-a.png",
+          "sha256": "0b91326657b8a7923c1dfffbfc48bfeafeaaeb31ca405f8bfc689d390fee02c9",
+          "size": [
+            3989,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-a/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.318,
+            0,
+            0.597,
+            1
+          ],
+          "width": 18.8,
+          "at": [
+            21.6,
+            0,
+            -6
+          ],
+          "fog": 0.15,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -14.3,
+          "order": 29
+        },
+        "fond-rang2--31": {
+          "file": "rangs-frise-b.png",
+          "sha256": "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4",
+          "size": [
+            3951,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-b/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.435,
+            0,
+            0.791,
+            1
+          ],
+          "width": 24.4,
+          "at": [
+            -18.8,
+            0,
+            -20
+          ],
+          "fog": 0.2,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 14
+        },
+        "fond-rang2--4": {
+          "file": "rangs-frise-b.png",
+          "sha256": "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4",
+          "size": [
+            3951,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-b/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0,
+            0,
+            0.085,
+            1
+          ],
+          "width": 6,
+          "at": [
+            -1,
+            0,
+            -20
+          ],
+          "fog": 0.2,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 15
+        },
+        "fond-rang2-12": {
+          "file": "rangs-frise-b.png",
+          "sha256": "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4",
+          "size": [
+            3951,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-b/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.264,
+            0,
+            0.567,
+            1
+          ],
+          "width": 19,
+          "at": [
+            21.5,
+            0,
+            -20
+          ],
+          "fog": 0.2,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 16
+        },
+        "fond-placette-filets-rang2-2": {
+          "file": "rangs-frise-b.png",
+          "sha256": "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4",
+          "size": [
+            3951,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-b/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.791,
+            0,
+            0.97,
+            1
+          ],
+          "width": 10,
+          "at": [
+            7,
+            0,
+            -25
+          ],
+          "fog": 0.2,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 12
+        },
+        "flanc-rang2--31": {
+          "file": "rangs-frise-a.png",
+          "sha256": "0b91326657b8a7923c1dfffbfc48bfeafeaaeb31ca405f8bfc689d390fee02c9",
+          "size": [
+            3989,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-a/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.75,
+            0,
+            1,
+            1
+          ],
+          "width": 17,
+          "at": [
+            -22.5,
+            0,
+            -14
+          ],
+          "fog": 0.2,
+          "lit": 0.3,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 23
+        },
+        "flanc-rang2-14": {
+          "file": "rangs-frise-a.png",
+          "sha256": "0b91326657b8a7923c1dfffbfc48bfeafeaaeb31ca405f8bfc689d390fee02c9",
+          "size": [
+            3989,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-a/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.482,
+            0,
+            0.75,
+            1
+          ],
+          "width": 17,
+          "at": [
+            22.5,
+            0,
+            -14
+          ],
+          "fog": 0.2,
+          "lit": 0.3,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 24
+        },
+        "fond-rang3--31-o": {
+          "file": "rangs-frise-a.png",
+          "sha256": "0b91326657b8a7923c1dfffbfc48bfeafeaaeb31ca405f8bfc689d390fee02c9",
+          "size": [
+            3989,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-a/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0,
+            0,
+            0.318,
+            1
+          ],
+          "width": 24,
+          "at": [
+            -19,
+            0,
+            -34
+          ],
+          "fog": 0.25,
+          "lit": 0.3,
+          "voile": 0.06,
+          "order": 2
+        },
+        "fond-rang3--31-e": {
+          "file": "rangs-frise-a.png",
+          "sha256": "0b91326657b8a7923c1dfffbfc48bfeafeaaeb31ca405f8bfc689d390fee02c9",
+          "size": [
+            3989,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-a/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.681,
+            0,
+            1,
+            1
+          ],
+          "width": 24,
+          "at": [
+            19,
+            0,
+            -34
+          ],
+          "fog": 0.25,
+          "lit": 0.3,
+          "voile": 0.06,
+          "order": 3
+        },
+        "coeur-port-ronce": {
+          "file": "quartiers-port-ronce.png",
+          "sha256": "27ddbcd1718086de5fdf628a2553af0b507d25fe35db4909c847330b226b3abd",
+          "size": [
+            1384,
+            965
+          ],
+          "source": "gpt-image-2 (lot des quartiers ajoutés : la Place du Fanal, la Ville haute ; ADR 028, deuxième reprise de M09), traité par script (tools/m09-kit-quartiers.mjs)",
+          "fiche": "art-src/decors/quartiers-port-ronce/fiche.json",
+          "approved": false,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "width": 14,
+          "at": [
+            0,
+            0,
+            -33.95
+          ],
+          "lit": 0.3,
+          "fog": 0.3,
+          "order": 4
+        },
+        "flanc-rang3--31": {
+          "file": "rangs-frise-b.png",
+          "sha256": "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4",
+          "size": [
+            3951,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-b/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.367,
+            0,
+            0.688,
+            1
+          ],
+          "width": 21,
+          "at": [
+            -20.5,
+            0,
+            -27
+          ],
+          "fog": 0.25,
+          "lit": 0.3,
+          "voile": 0.05,
+          "coupe": true,
+          "order": 8
+        },
+        "flanc-rang3-10": {
+          "file": "rangs-frise-b.png",
+          "sha256": "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4",
+          "size": [
+            3951,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-b/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0,
+            0,
+            0.367,
+            1
+          ],
+          "width": 21,
+          "at": [
+            20.5,
+            0,
+            -27
+          ],
+          "fog": 0.25,
+          "lit": 0.3,
+          "voile": 0.05,
+          "coupe": true,
+          "order": 9
+        },
+        "ville-haute": {
+          "file": "quai-troisieme-rang.png",
+          "sha256": "c251c22aadc61e4916ecbdd35e890724a8ab6e025503cdae8e7a5ee9325f356f",
+          "size": [
+            3072,
+            789
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-troisieme-rang/fiche.json",
+          "approved": true,
+          "at": [
+            0,
+            2,
+            -80
+          ],
+          "width": 150,
+          "orient": "face",
+          "order": 1,
+          "blend": "decoupe",
+          "fog": 0.8,
+          "voile": 0.5,
+          "uv": [
+            0,
+            0,
+            1,
+            0.88
+          ]
+        },
+        "mur-passage-1-1": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "est",
+          "uv": [
+            0,
+            0.28,
+            0.333,
+            1
+          ],
+          "at": [
+            -12.6,
+            0,
+            -10
+          ],
+          "width": 8,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -14.3,
+          "order": 30
+        },
+        "mur-passage-1-2": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "ouest",
+          "uv": [
+            0.333,
+            0.28,
+            0.667,
+            1
+          ],
+          "at": [
+            -10,
+            0,
+            -10
+          ],
+          "width": 8,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -14.3,
+          "order": 31
+        },
+        "mur-passage-1-3": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "est",
+          "uv": [
+            0,
+            0.28,
+            0.333,
+            1
+          ],
+          "at": [
+            9.6,
+            0,
+            -10
+          ],
+          "width": 8,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -14.3,
+          "order": 32
+        },
+        "mur-passage-1-4": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "ouest",
+          "uv": [
+            0.333,
+            0.28,
+            0.667,
+            1
+          ],
+          "at": [
+            12.2,
+            0,
+            -10
+          ],
+          "width": 8,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -14.3,
+          "order": 33
+        },
+        "mur-place-2-1": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "est",
+          "uv": [
+            0.333,
+            0.28,
+            0.542,
+            1
+          ],
+          "at": [
+            2,
+            0,
+            -22.5
+          ],
+          "width": 5,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 17
+        },
+        "mur-place-2-2": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "ouest",
+          "uv": [
+            0.333,
+            0.28,
+            0.542,
+            1
+          ],
+          "at": [
+            12,
+            0,
+            -22.5
+          ],
+          "width": 5,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 18
+        },
+        "mur-bout-2-1": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "est",
+          "uv": [
+            0.709,
+            0,
+            0.958,
+            1
+          ],
+          "at": [
+            -14,
+            0,
+            -17
+          ],
+          "width": 6,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 25
+        },
+        "mur-bout-2-2": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "ouest",
+          "uv": [
+            0.709,
+            0,
+            0.958,
+            1
+          ],
+          "at": [
+            14,
+            0,
+            -17
+          ],
+          "width": 6,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 26
+        },
+        "mur-passage-2-1": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "est",
+          "uv": [
+            0,
+            0.28,
+            0.291,
+            1
+          ],
+          "at": [
+            -6.6,
+            0,
+            -23.5
+          ],
+          "width": 7,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 19
+        },
+        "mur-passage-2-2": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "ouest",
+          "uv": [
+            0.333,
+            0.28,
+            0.625,
+            1
+          ],
+          "at": [
+            -4,
+            0,
+            -23.5
+          ],
+          "width": 7,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 20
+        },
+        "mur-bout-3-1": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "est",
+          "uv": [
+            0.688,
+            0,
+            0.979,
+            1
+          ],
+          "at": [
+            -10,
+            0,
+            -30.5
+          ],
+          "width": 7,
+          "lit": 0.35,
+          "order": 10
+        },
+        "mur-bout-3-2": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "ouest",
+          "uv": [
+            0.688,
+            0,
+            0.979,
+            1
+          ],
+          "at": [
+            10,
+            0,
+            -30.5
+          ],
+          "width": 7,
+          "lit": 0.35,
+          "order": 11
+        },
+        "fanal-etal": {
+          "file": "rangs-mobilier.png",
+          "sha256": "6c7384d62f3f07fbdfa05299e758162d02d75ce4692d3ea84e00738fc0c4c1c2",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-mobilier/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.672,
+            0.089,
+            0.958,
+            0.446
+          ],
+          "width": 4.4,
+          "at": [
+            -6,
+            0,
+            -4.6
+          ],
+          "lit": 0.3,
+          "order": 38
+        },
+        "fanal-tonneaux": {
+          "file": "quai-pied-facades.png",
+          "sha256": "2469063c799562e7f9bc0fbd1920bffd369b7fbf71b6a31066c0db014a95650f",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-pied-facades/fiche.json",
+          "approved": true,
+          "at": [
+            5.6,
+            0,
+            -5
+          ],
+          "width": 1.191,
+          "orient": "face",
+          "order": 37,
+          "blend": "decoupe",
+          "lit": 0.3,
+          "uv": [
+            0.269,
+            0.741,
+            0.294,
+            1
+          ]
+        },
+        "fanal-caisses": {
+          "file": "quai-pied-facades.png",
+          "sha256": "2469063c799562e7f9bc0fbd1920bffd369b7fbf71b6a31066c0db014a95650f",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-pied-facades/fiche.json",
+          "approved": true,
+          "at": [
+            -15,
+            0,
+            -5.1
+          ],
+          "width": 1.426,
+          "orient": "face",
+          "order": 36,
+          "blend": "decoupe",
+          "lit": 0.3,
+          "uv": [
+            0.75,
+            0.688,
+            0.779,
+            1
+          ]
+        },
+        "cordiers-niche": {
+          "file": "rangs-mobilier.png",
+          "sha256": "6c7384d62f3f07fbdfa05299e758162d02d75ce4692d3ea84e00738fc0c4c1c2",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-mobilier/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.766,
+            0.51,
+            0.898,
+            0.901
+          ],
+          "width": 1.421,
+          "at": [
+            -1.5,
+            0,
+            -19.6
+          ],
+          "lit": 0.3,
+          "order": 21
+        },
+        "filets-puits": {
+          "file": "rangs-mobilier.png",
+          "sha256": "6c7384d62f3f07fbdfa05299e758162d02d75ce4692d3ea84e00738fc0c4c1c2",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-mobilier/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.061,
+            0.065,
+            0.287,
+            0.446
+          ],
+          "width": 3.48,
+          "at": [
+            9,
+            0,
+            -23.6
+          ],
+          "lit": 0.3,
+          "order": 13
+        },
+        "ronce-banc": {
+          "file": "rangs-mobilier.png",
+          "sha256": "6c7384d62f3f07fbdfa05299e758162d02d75ce4692d3ea84e00738fc0c4c1c2",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-mobilier/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.023,
+            0.506,
+            0.308,
+            0.895
+          ],
+          "width": 4.37,
+          "at": [
+            -6.4,
+            0,
+            -32.8
+          ],
+          "lit": 0.3,
+          "order": 5
+        },
+        "lampadaire-1": {
+          "file": "quai-rue.png",
+          "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-rue/fiche.json",
+          "approved": true,
+          "at": [
+            -3,
+            0,
+            -5.4
+          ],
+          "width": 1.103,
+          "orient": "face",
+          "order": 34,
+          "blend": "decoupe",
+          "lit": 0.2,
+          "uv": [
+            0.405,
+            0.141,
+            0.428,
+            1
+          ]
+        },
+        "lampadaire-2": {
+          "file": "quai-rue.png",
+          "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-rue/fiche.json",
+          "approved": true,
+          "at": [
+            8.4,
+            0,
+            -5.4
+          ],
+          "width": 1.103,
+          "orient": "face",
+          "order": 35,
+          "blend": "decoupe",
+          "lit": 0.2,
+          "uv": [
+            0.405,
+            0.141,
+            0.428,
+            1
+          ]
+        },
+        "lampadaire-3": {
+          "file": "quai-rue.png",
+          "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-rue/fiche.json",
+          "approved": true,
+          "at": [
+            6,
+            0,
+            -19.4
+          ],
+          "width": 1.103,
+          "orient": "face",
+          "order": 22,
+          "blend": "decoupe",
+          "lit": 0.2,
+          "uv": [
+            0.405,
+            0.141,
+            0.428,
+            1
+          ]
+        },
+        "lampadaire-4": {
+          "file": "quai-rue.png",
+          "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-rue/fiche.json",
+          "approved": true,
+          "at": [
+            -5,
+            0,
+            -28.6
+          ],
+          "width": 1.103,
+          "orient": "face",
+          "order": 6,
+          "blend": "decoupe",
+          "lit": 0.2,
+          "uv": [
+            0.405,
+            0.141,
+            0.428,
+            1
+          ]
+        },
+        "lampadaire-5": {
+          "file": "quai-rue.png",
+          "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-rue/fiche.json",
+          "approved": true,
+          "at": [
+            5,
+            0,
+            -28.6
+          ],
+          "width": 1.103,
+          "orient": "face",
+          "order": 7,
+          "blend": "decoupe",
+          "lit": 0.2,
+          "uv": [
+            0.405,
+            0.141,
+            0.428,
+            1
+          ]
+        },
+        "premier-plan": {
+          "file": "quai-premier-plan.png",
+          "sha256": "6888176a752f64a5d6f1ac8844b06f4b80fa15c67bad6c8f655ad782ce1fc951",
+          "size": [
+            2759,
+            1024
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-premier-plan/fiche.json",
+          "approved": true,
+          "at": [
+            0,
+            -5.68,
+            3.8
+          ],
+          "width": 44.17,
+          "orient": "face",
+          "order": 39,
+          "blend": "decoupe"
+        },
+        "eau": {
+          "file": "quai-eau.png",
+          "sha256": "6c3726da2fd24730711da268d94ab3f405e720e8f43fc06958c34a430eba313e",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-eau/fiche.json",
+          "approved": true,
+          "at": [
+            0,
+            -2.6,
+            20
+          ],
+          "width": 64,
+          "orient": "sol",
+          "order": 40,
+          "blend": "decoupe"
+        }
+      },
+      "lumieres": [
+        {
+          "at": [
+            -3,
+            3.9,
+            -5.3
+          ],
+          "color": "ambre",
+          "intensity": 3,
+          "radius": 9,
+          "halo": 1.6,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            8.4,
+            3.9,
+            -5.3
+          ],
+          "color": "ambre",
+          "intensity": 3,
+          "radius": 9,
+          "halo": 1.6,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            6,
+            3.9,
+            -19.3
+          ],
+          "color": "ambre",
+          "intensity": 3,
+          "radius": 9,
+          "halo": 1.6,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            -5,
+            3.9,
+            -28.5
+          ],
+          "color": "ambre",
+          "intensity": 3,
+          "radius": 9,
+          "halo": 1.6,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            5,
+            3.9,
+            -28.5
+          ],
+          "color": "ambre",
+          "intensity": 3,
+          "radius": 9,
+          "halo": 1.6,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            -9.037,
+            3.337,
+            -5.9
+          ],
+          "color": "ambre",
+          "intensity": 2.6,
+          "radius": 7,
+          "halo": 1,
+          "flicker": "lantern",
+          "coupeZ": -14.3
+        },
+        {
+          "at": [
+            8.632,
+            3.328,
+            -5.9
+          ],
+          "color": "ambre",
+          "intensity": 2.6,
+          "radius": 7,
+          "halo": 1,
+          "flicker": "lantern",
+          "coupeZ": -14.3
+        },
+        {
+          "at": [
+            -1.516,
+            2.084,
+            -5.9
+          ],
+          "color": "ambre",
+          "intensity": 2.6,
+          "radius": 7,
+          "halo": 1,
+          "flicker": "lantern",
+          "coupeZ": -14.3
+        },
+        {
+          "at": [
+            -4.33,
+            1.98,
+            -4.5
+          ],
+          "color": "ambre",
+          "intensity": 2.4,
+          "radius": 7,
+          "halo": 0.9,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            -1.636,
+            1.418,
+            -19.5
+          ],
+          "color": "ambre",
+          "intensity": 2.4,
+          "radius": 7,
+          "halo": 0.9,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            7.737,
+            2.163,
+            -23.5
+          ],
+          "color": "ambre",
+          "intensity": 2.4,
+          "radius": 7,
+          "halo": 0.9,
+          "flicker": "lantern"
+        }
+      ],
+      "camera": {
+        "pitch": 6,
+        "distance": 25,
+        "fov": 42,
+        "aimY": 4.8,
+        "minX": -3,
+        "maxX": 3,
+        "followZ": 0.9,
+        "aimZ": 0.2,
+        "pitchFond": 16,
+        "zFond": -12
+      },
+      "brumes": [
+        [
+          120,
+          12,
+          0,
+          18,
+          -52,
+          0.3,
+          0.006,
+          [
+            6,
+            1.2
+          ],
+          2.2
+        ],
+        [
+          170,
+          20,
+          0,
+          22,
+          -60,
+          0.36,
+          0.005,
+          [
+            5,
+            1.3
+          ],
+          2.2
+        ],
+        [
+          270,
+          34,
+          0,
+          26,
+          -74,
+          0.36,
+          0.004,
+          [
+            4,
+            1.4
+          ],
+          2.2
+        ],
+        [
+          120,
+          2,
+          0,
+          -2.2,
+          6,
+          0.22,
+          0.012,
+          [
+            6,
+            1
+          ]
+        ],
+        [
+          10,
+          9,
+          -15.5,
+          3.8,
+          -17,
+          0.6,
+          0.004,
+          [
+            2,
+            1
+          ],
+          1
+        ],
+        [
+          10,
+          9,
+          15.5,
+          3.8,
+          -17,
+          0.6,
+          0.004,
+          [
+            2,
+            1
+          ],
+          1
+        ],
+        [
+          10,
+          9,
+          -11.5,
+          3.8,
+          -30.5,
+          0.6,
+          0.004,
+          [
+            2,
+            1
+          ],
+          1
+        ],
+        [
+          10,
+          9,
+          11.5,
+          3.8,
+          -30.5,
+          0.6,
+          0.004,
+          [
+            2,
+            1
+          ],
+          1
+        ]
+      ]
+    },
+    "haute": {
+      "plans": {
+        "ciel": {
+          "file": "quai-ciel.png",
+          "sha256": "83fa4a309a28b3c790061e1e9614fcf02ef11444f87c72dfd0a8e7e4e114c9b2",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-ciel/fiche.json",
+          "approved": true,
+          "at": [
+            0,
+            -54,
+            -90
+          ],
+          "width": 176,
+          "orient": "face",
+          "order": 0,
+          "blend": "fondu",
+          "fog": 0,
+          "voile": 0.12
+        },
+        "fond-rang1--31-1": {
+          "file": "rangs-frise-a.png",
+          "sha256": "0b91326657b8a7923c1dfffbfc48bfeafeaaeb31ca405f8bfc689d390fee02c9",
+          "size": [
+            3989,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-a/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0,
+            0,
+            0.318,
+            1
+          ],
+          "width": 18.6,
+          "at": [
+            -21.7,
+            0,
+            -6
+          ],
+          "fog": 0.15,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -14.3,
+          "order": 28
+        },
+        "fond-rang1--10-1": {
+          "file": "quartiers-haute-hotels.png",
+          "sha256": "8d090fb0e7147b591d2e348754bcebaebe1d31f0043a320165bad401cd295d7b",
+          "size": [
+            1487,
+            951
+          ],
+          "source": "gpt-image-2 (lot des quartiers ajoutés : la Place du Fanal, la Ville haute ; ADR 028, deuxième reprise de M09), traité par script (tools/m09-kit-quartiers.mjs)",
+          "fiche": "art-src/decors/quartiers-haute-hotels/fiche.json",
+          "approved": false,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "width": 19.6,
+          "at": [
+            0,
+            0,
+            -6
+          ],
+          "lit": 0.35,
+          "fog": 0.15,
+          "coupe": true,
+          "coupeZ": -14.3,
+          "order": 29
+        },
+        "fond-rang1-12-1": {
+          "file": "rangs-frise-a.png",
+          "sha256": "0b91326657b8a7923c1dfffbfc48bfeafeaaeb31ca405f8bfc689d390fee02c9",
+          "size": [
+            3989,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-a/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.318,
+            0,
+            0.597,
+            1
+          ],
+          "width": 18.6,
+          "at": [
+            21.7,
+            0,
+            -6
+          ],
+          "fog": 0.15,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -14.3,
+          "order": 30
+        },
+        "fond-rang2--31": {
+          "file": "rangs-frise-b.png",
+          "sha256": "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4",
+          "size": [
+            3951,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-b/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.367,
+            0,
+            0.688,
+            1
+          ],
+          "width": 19,
+          "at": [
+            -21.5,
+            0,
+            -20
+          ],
+          "fog": 0.2,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 15
+        },
+        "fond-rang2--2": {
+          "file": "rangs-frise-b.png",
+          "sha256": "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4",
+          "size": [
+            3951,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-b/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0,
+            0,
+            0.085,
+            1
+          ],
+          "width": 5.6,
+          "at": [
+            0.8,
+            0,
+            -20
+          ],
+          "fog": 0.2,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 16
+        },
+        "fond-rang2-6": {
+          "file": "rangs-frise-b.png",
+          "sha256": "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4",
+          "size": [
+            3951,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-b/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.567,
+            0,
+            0.97,
+            1
+          ],
+          "width": 24.8,
+          "at": [
+            18.6,
+            0,
+            -20
+          ],
+          "fog": 0.2,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 17
+        },
+        "fond-jardin-spheres-rang2--12": {
+          "file": "rangs-frise-b.png",
+          "sha256": "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4",
+          "size": [
+            3951,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-b/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.435,
+            0,
+            0.567,
+            1
+          ],
+          "width": 10,
+          "at": [
+            -7,
+            0,
+            -25
+          ],
+          "fog": 0.2,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 13
+        },
+        "flanc-rang2--31": {
+          "file": "rangs-frise-a.png",
+          "sha256": "0b91326657b8a7923c1dfffbfc48bfeafeaaeb31ca405f8bfc689d390fee02c9",
+          "size": [
+            3989,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-a/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.75,
+            0,
+            1,
+            1
+          ],
+          "width": 18,
+          "at": [
+            -22,
+            0,
+            -14
+          ],
+          "fog": 0.2,
+          "lit": 0.3,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 24
+        },
+        "flanc-rang2-13": {
+          "file": "rangs-frise-a.png",
+          "sha256": "0b91326657b8a7923c1dfffbfc48bfeafeaaeb31ca405f8bfc689d390fee02c9",
+          "size": [
+            3989,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-a/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.597,
+            0,
+            0.88,
+            1
+          ],
+          "width": 18,
+          "at": [
+            22,
+            0,
+            -14
+          ],
+          "fog": 0.2,
+          "lit": 0.3,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 25
+        },
+        "fond-rang3--31-o": {
+          "file": "rangs-frise-a.png",
+          "sha256": "0b91326657b8a7923c1dfffbfc48bfeafeaaeb31ca405f8bfc689d390fee02c9",
+          "size": [
+            3989,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-a/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0,
+            0,
+            0.318,
+            1
+          ],
+          "width": 23,
+          "at": [
+            -19.5,
+            0,
+            -35
+          ],
+          "fog": 0.25,
+          "lit": 0.3,
+          "voile": 0.06,
+          "order": 2
+        },
+        "fond-rang3--31-e": {
+          "file": "rangs-frise-a.png",
+          "sha256": "0b91326657b8a7923c1dfffbfc48bfeafeaaeb31ca405f8bfc689d390fee02c9",
+          "size": [
+            3989,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-a/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.25,
+            0,
+            0.597,
+            1
+          ],
+          "width": 23,
+          "at": [
+            19.5,
+            0,
+            -35
+          ],
+          "fog": 0.25,
+          "lit": 0.3,
+          "voile": 0.06,
+          "order": 3
+        },
+        "coeur-haute-observatoire": {
+          "file": "quartiers-haute-observatoire.png",
+          "sha256": "90e822a631bd3072bfb124907387b01005612b9e60c1d69051c62c650264432b",
+          "size": [
+            1260,
+            939
+          ],
+          "source": "gpt-image-2 (lot des quartiers ajoutés : la Place du Fanal, la Ville haute ; ADR 028, deuxième reprise de M09), traité par script (tools/m09-kit-quartiers.mjs)",
+          "fiche": "art-src/decors/quartiers-haute-observatoire/fiche.json",
+          "approved": false,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "width": 16,
+          "at": [
+            0,
+            0,
+            -34.95
+          ],
+          "lit": 0.3,
+          "fog": 0.3,
+          "order": 4
+        },
+        "flanc-rang3--31": {
+          "file": "rangs-frise-b.png",
+          "sha256": "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4",
+          "size": [
+            3951,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-b/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.085,
+            0,
+            0.435,
+            1
+          ],
+          "width": 21,
+          "at": [
+            -20.5,
+            0,
+            -27
+          ],
+          "fog": 0.25,
+          "lit": 0.3,
+          "voile": 0.05,
+          "coupe": true,
+          "order": 9
+        },
+        "flanc-rang3-10": {
+          "file": "rangs-frise-b.png",
+          "sha256": "41749f65c01ef924dbae740857a917296d97a01ab39568528a16d82c07b889c4",
+          "size": [
+            3951,
+            834
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-frise-b/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.688,
+            0,
+            0.97,
+            1
+          ],
+          "width": 21,
+          "at": [
+            20.5,
+            0,
+            -27
+          ],
+          "fog": 0.25,
+          "lit": 0.3,
+          "voile": 0.05,
+          "coupe": true,
+          "order": 10
+        },
+        "ville-haute": {
+          "file": "quai-troisieme-rang.png",
+          "sha256": "c251c22aadc61e4916ecbdd35e890724a8ab6e025503cdae8e7a5ee9325f356f",
+          "size": [
+            3072,
+            789
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-troisieme-rang/fiche.json",
+          "approved": true,
+          "at": [
+            0,
+            2,
+            -80
+          ],
+          "width": 150,
+          "orient": "face",
+          "order": 1,
+          "blend": "decoupe",
+          "fog": 0.8,
+          "voile": 0.5,
+          "uv": [
+            0,
+            0,
+            1,
+            0.88
+          ]
+        },
+        "mur-passage-1-1": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "est",
+          "uv": [
+            0,
+            0.28,
+            0.333,
+            1
+          ],
+          "at": [
+            -12.4,
+            0,
+            -10
+          ],
+          "width": 8,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -14.3,
+          "order": 31
+        },
+        "mur-passage-1-2": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "ouest",
+          "uv": [
+            0.333,
+            0.28,
+            0.667,
+            1
+          ],
+          "at": [
+            -9.8,
+            0,
+            -10
+          ],
+          "width": 8,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -14.3,
+          "order": 32
+        },
+        "mur-passage-1-3": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "est",
+          "uv": [
+            0,
+            0.28,
+            0.333,
+            1
+          ],
+          "at": [
+            9.8,
+            0,
+            -10
+          ],
+          "width": 8,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -14.3,
+          "order": 33
+        },
+        "mur-passage-1-4": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "ouest",
+          "uv": [
+            0.333,
+            0.28,
+            0.667,
+            1
+          ],
+          "at": [
+            12.4,
+            0,
+            -10
+          ],
+          "width": 8,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -14.3,
+          "order": 34
+        },
+        "mur-place-2-1": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "est",
+          "uv": [
+            0.333,
+            0.28,
+            0.542,
+            1
+          ],
+          "at": [
+            -12,
+            0,
+            -22.5
+          ],
+          "width": 5,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 18
+        },
+        "mur-place-2-2": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "ouest",
+          "uv": [
+            0.333,
+            0.28,
+            0.542,
+            1
+          ],
+          "at": [
+            -2,
+            0,
+            -22.5
+          ],
+          "width": 5,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 19
+        },
+        "mur-bout-2-1": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "est",
+          "uv": [
+            0.709,
+            0,
+            0.958,
+            1
+          ],
+          "at": [
+            -13,
+            0,
+            -17
+          ],
+          "width": 6,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 26
+        },
+        "mur-bout-2-2": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "ouest",
+          "uv": [
+            0.709,
+            0,
+            0.958,
+            1
+          ],
+          "at": [
+            13,
+            0,
+            -17
+          ],
+          "width": 6,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 27
+        },
+        "mur-passage-2-1": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "est",
+          "uv": [
+            0,
+            0.28,
+            0.291,
+            1
+          ],
+          "at": [
+            3.6,
+            0,
+            -23.5
+          ],
+          "width": 7,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 20
+        },
+        "mur-passage-2-2": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "ouest",
+          "uv": [
+            0.333,
+            0.28,
+            0.625,
+            1
+          ],
+          "at": [
+            6.2,
+            0,
+            -23.5
+          ],
+          "width": 7,
+          "lit": 0.35,
+          "coupe": true,
+          "coupeZ": -27.3,
+          "order": 21
+        },
+        "mur-bout-3-1": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "est",
+          "uv": [
+            0.667,
+            0,
+            1,
+            1
+          ],
+          "at": [
+            -10,
+            0,
+            -31
+          ],
+          "width": 8,
+          "lit": 0.35,
+          "order": 11
+        },
+        "mur-bout-3-2": {
+          "file": "rangs-murs.png",
+          "sha256": "b48baf21c746b7d8d8ac1566fb3bceabdbaa793d3c1d93878552e3a896627b01",
+          "size": [
+            1536,
+            800
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-murs/fiche.json",
+          "approved": true,
+          "orient": "cote",
+          "blend": "decoupe",
+          "vers": "ouest",
+          "uv": [
+            0.667,
+            0,
+            1,
+            1
+          ],
+          "at": [
+            10,
+            0,
+            -31
+          ],
+          "width": 8,
+          "lit": 0.35,
+          "order": 12
+        },
+        "esplanade-brasero-o": {
+          "file": "villes-objets.png",
+          "sha256": "afaa520ad09c81ae2f1a5269ddb562deb30daa01d6e8dae5e268eaeac973f9ee",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (lot des villes : Parvis, Ruelles, Grande Cour ; ADR 028, reprise de M09), traité par script (tools/m09-kit-villes.mjs)",
+          "fiche": "art-src/decors/villes-objets/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.13,
+            0.541,
+            0.246,
+            0.961
+          ],
+          "width": 1.095,
+          "at": [
+            -2.4,
+            0,
+            -4.8
+          ],
+          "lit": 0.3,
+          "order": 37
+        },
+        "esplanade-brasero-e": {
+          "file": "villes-objets.png",
+          "sha256": "afaa520ad09c81ae2f1a5269ddb562deb30daa01d6e8dae5e268eaeac973f9ee",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (lot des villes : Parvis, Ruelles, Grande Cour ; ADR 028, reprise de M09), traité par script (tools/m09-kit-villes.mjs)",
+          "fiche": "art-src/decors/villes-objets/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.13,
+            0.541,
+            0.246,
+            0.961
+          ],
+          "width": 1.095,
+          "at": [
+            2.4,
+            0,
+            -4.8
+          ],
+          "lit": 0.3,
+          "order": 38
+        },
+        "astronomes-niche": {
+          "file": "rangs-mobilier.png",
+          "sha256": "6c7384d62f3f07fbdfa05299e758162d02d75ce4692d3ea84e00738fc0c4c1c2",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-mobilier/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.766,
+            0.51,
+            0.898,
+            0.901
+          ],
+          "width": 1.421,
+          "at": [
+            0,
+            0,
+            -19.6
+          ],
+          "lit": 0.3,
+          "order": 22
+        },
+        "spheres-fontaine": {
+          "file": "rangs-mobilier.png",
+          "sha256": "6c7384d62f3f07fbdfa05299e758162d02d75ce4692d3ea84e00738fc0c4c1c2",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)",
+          "fiche": "art-src/decors/rangs-mobilier/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.374,
+            0.077,
+            0.622,
+            0.45
+          ],
+          "width": 3.82,
+          "at": [
+            -7,
+            0,
+            -23.6
+          ],
+          "lit": 0.3,
+          "order": 14
+        },
+        "observatoire-brasero-o": {
+          "file": "villes-objets.png",
+          "sha256": "afaa520ad09c81ae2f1a5269ddb562deb30daa01d6e8dae5e268eaeac973f9ee",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (lot des villes : Parvis, Ruelles, Grande Cour ; ADR 028, reprise de M09), traité par script (tools/m09-kit-villes.mjs)",
+          "fiche": "art-src/decors/villes-objets/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.13,
+            0.541,
+            0.246,
+            0.961
+          ],
+          "width": 1.095,
+          "at": [
+            -3.6,
+            0,
+            -33.8
+          ],
+          "lit": 0.3,
+          "order": 5
+        },
+        "observatoire-brasero-e": {
+          "file": "villes-objets.png",
+          "sha256": "afaa520ad09c81ae2f1a5269ddb562deb30daa01d6e8dae5e268eaeac973f9ee",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (lot des villes : Parvis, Ruelles, Grande Cour ; ADR 028, reprise de M09), traité par script (tools/m09-kit-villes.mjs)",
+          "fiche": "art-src/decors/villes-objets/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.13,
+            0.541,
+            0.246,
+            0.961
+          ],
+          "width": 1.095,
+          "at": [
+            3.6,
+            0,
+            -33.8
+          ],
+          "lit": 0.3,
+          "order": 6
+        },
+        "lampadaire-1": {
+          "file": "quai-rue.png",
+          "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-rue/fiche.json",
+          "approved": true,
+          "at": [
+            -5.6,
+            0,
+            -5.4
+          ],
+          "width": 1.103,
+          "orient": "face",
+          "order": 35,
+          "blend": "decoupe",
+          "lit": 0.2,
+          "uv": [
+            0.405,
+            0.141,
+            0.428,
+            1
+          ]
+        },
+        "lampadaire-2": {
+          "file": "quai-rue.png",
+          "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-rue/fiche.json",
+          "approved": true,
+          "at": [
+            5.6,
+            0,
+            -5.4
+          ],
+          "width": 1.103,
+          "orient": "face",
+          "order": 36,
+          "blend": "decoupe",
+          "lit": 0.2,
+          "uv": [
+            0.405,
+            0.141,
+            0.428,
+            1
+          ]
+        },
+        "lampadaire-3": {
+          "file": "quai-rue.png",
+          "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-rue/fiche.json",
+          "approved": true,
+          "at": [
+            -4,
+            0,
+            -19.4
+          ],
+          "width": 1.103,
+          "orient": "face",
+          "order": 23,
+          "blend": "decoupe",
+          "lit": 0.2,
+          "uv": [
+            0.405,
+            0.141,
+            0.428,
+            1
+          ]
+        },
+        "lampadaire-4": {
+          "file": "quai-rue.png",
+          "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-rue/fiche.json",
+          "approved": true,
+          "at": [
+            -6.5,
+            0,
+            -29
+          ],
+          "width": 1.103,
+          "orient": "face",
+          "order": 7,
+          "blend": "decoupe",
+          "lit": 0.2,
+          "uv": [
+            0.405,
+            0.141,
+            0.428,
+            1
+          ]
+        },
+        "lampadaire-5": {
+          "file": "quai-rue.png",
+          "sha256": "38a516bf6e1df85d7bbae69c91cd19cddff4cff8eac710eeee840c8ea0549523",
+          "size": [
+            3264,
+            340
+          ],
+          "source": "gpt-image-2 (porte du Quai, ADR 028), traité et assemblé par script (tools/m09-porte-quai.mjs)",
+          "fiche": "art-src/decors/quai-rue/fiche.json",
+          "approved": true,
+          "at": [
+            6.5,
+            0,
+            -29
+          ],
+          "width": 1.103,
+          "orient": "face",
+          "order": 8,
+          "blend": "decoupe",
+          "lit": 0.2,
+          "uv": [
+            0.405,
+            0.141,
+            0.428,
+            1
+          ]
+        },
+        "balustrade-1": {
+          "file": "villes-objets.png",
+          "sha256": "afaa520ad09c81ae2f1a5269ddb562deb30daa01d6e8dae5e268eaeac973f9ee",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (lot des villes : Parvis, Ruelles, Grande Cour ; ADR 028, reprise de M09), traité par script (tools/m09-kit-villes.mjs)",
+          "fiche": "art-src/decors/villes-objets/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.697,
+            0.053,
+            0.958,
+            0.52
+          ],
+          "width": 7.667,
+          "at": [
+            -19.167,
+            -3.052,
+            3.75
+          ],
+          "lit": 0.3,
+          "order": 39
+        },
+        "balustrade-2": {
+          "file": "villes-objets.png",
+          "sha256": "afaa520ad09c81ae2f1a5269ddb562deb30daa01d6e8dae5e268eaeac973f9ee",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (lot des villes : Parvis, Ruelles, Grande Cour ; ADR 028, reprise de M09), traité par script (tools/m09-kit-villes.mjs)",
+          "fiche": "art-src/decors/villes-objets/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.697,
+            0.053,
+            0.958,
+            0.52
+          ],
+          "width": 7.667,
+          "at": [
+            -11.5,
+            -3.052,
+            3.75
+          ],
+          "lit": 0.3,
+          "order": 40
+        },
+        "balustrade-3": {
+          "file": "villes-objets.png",
+          "sha256": "afaa520ad09c81ae2f1a5269ddb562deb30daa01d6e8dae5e268eaeac973f9ee",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (lot des villes : Parvis, Ruelles, Grande Cour ; ADR 028, reprise de M09), traité par script (tools/m09-kit-villes.mjs)",
+          "fiche": "art-src/decors/villes-objets/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.697,
+            0.053,
+            0.958,
+            0.52
+          ],
+          "width": 7.667,
+          "at": [
+            -3.833,
+            -3.052,
+            3.75
+          ],
+          "lit": 0.3,
+          "order": 41
+        },
+        "balustrade-4": {
+          "file": "villes-objets.png",
+          "sha256": "afaa520ad09c81ae2f1a5269ddb562deb30daa01d6e8dae5e268eaeac973f9ee",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (lot des villes : Parvis, Ruelles, Grande Cour ; ADR 028, reprise de M09), traité par script (tools/m09-kit-villes.mjs)",
+          "fiche": "art-src/decors/villes-objets/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.697,
+            0.053,
+            0.958,
+            0.52
+          ],
+          "width": 7.667,
+          "at": [
+            3.833,
+            -3.052,
+            3.75
+          ],
+          "lit": 0.3,
+          "order": 42
+        },
+        "balustrade-5": {
+          "file": "villes-objets.png",
+          "sha256": "afaa520ad09c81ae2f1a5269ddb562deb30daa01d6e8dae5e268eaeac973f9ee",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (lot des villes : Parvis, Ruelles, Grande Cour ; ADR 028, reprise de M09), traité par script (tools/m09-kit-villes.mjs)",
+          "fiche": "art-src/decors/villes-objets/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.697,
+            0.053,
+            0.958,
+            0.52
+          ],
+          "width": 7.667,
+          "at": [
+            11.5,
+            -3.052,
+            3.75
+          ],
+          "lit": 0.3,
+          "order": 43
+        },
+        "balustrade-6": {
+          "file": "villes-objets.png",
+          "sha256": "afaa520ad09c81ae2f1a5269ddb562deb30daa01d6e8dae5e268eaeac973f9ee",
+          "size": [
+            1536,
+            1024
+          ],
+          "source": "gpt-image-2 (lot des villes : Parvis, Ruelles, Grande Cour ; ADR 028, reprise de M09), traité par script (tools/m09-kit-villes.mjs)",
+          "fiche": "art-src/decors/villes-objets/fiche.json",
+          "approved": true,
+          "orient": "face",
+          "blend": "decoupe",
+          "uv": [
+            0.697,
+            0.053,
+            0.958,
+            0.52
+          ],
+          "width": 7.667,
+          "at": [
+            19.167,
+            -3.052,
+            3.75
+          ],
+          "lit": 0.3,
+          "order": 44
+        }
+      },
+      "lumieres": [
+        {
+          "at": [
+            -5.6,
+            3.9,
+            -5.3
+          ],
+          "color": "ambre",
+          "intensity": 3,
+          "radius": 9,
+          "halo": 1.6,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            5.6,
+            3.9,
+            -5.3
+          ],
+          "color": "ambre",
+          "intensity": 3,
+          "radius": 9,
+          "halo": 1.6,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            -4,
+            3.9,
+            -19.3
+          ],
+          "color": "ambre",
+          "intensity": 3,
+          "radius": 9,
+          "halo": 1.6,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            -6.5,
+            3.9,
+            -28.9
+          ],
+          "color": "ambre",
+          "intensity": 3,
+          "radius": 9,
+          "halo": 1.6,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            6.5,
+            3.9,
+            -28.9
+          ],
+          "color": "ambre",
+          "intensity": 3,
+          "radius": 9,
+          "halo": 1.6,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            2.05,
+            5.858,
+            -5.9
+          ],
+          "color": "ambre",
+          "intensity": 2.6,
+          "radius": 7,
+          "halo": 1,
+          "flicker": "lantern",
+          "coupeZ": -14.3
+        },
+        {
+          "at": [
+            -1.895,
+            5.852,
+            -5.9
+          ],
+          "color": "ambre",
+          "intensity": 2.6,
+          "radius": 7,
+          "halo": 1,
+          "flicker": "lantern",
+          "coupeZ": -14.3
+        },
+        {
+          "at": [
+            -6.006,
+            5.707,
+            -5.9
+          ],
+          "color": "ambre",
+          "intensity": 2.6,
+          "radius": 7,
+          "halo": 1,
+          "flicker": "lantern",
+          "coupeZ": -14.3
+        },
+        {
+          "at": [
+            -2.394,
+            2.142,
+            -4.7
+          ],
+          "color": "Cendre",
+          "intensity": 3.2,
+          "radius": 7,
+          "halo": 0.9,
+          "flicker": "candle"
+        },
+        {
+          "at": [
+            2.406,
+            2.142,
+            -4.7
+          ],
+          "color": "Cendre",
+          "intensity": 3.2,
+          "radius": 7,
+          "halo": 0.9,
+          "flicker": "candle"
+        },
+        {
+          "at": [
+            -0.136,
+            1.418,
+            -19.5
+          ],
+          "color": "ambre",
+          "intensity": 2.4,
+          "radius": 7,
+          "halo": 0.9,
+          "flicker": "lantern"
+        },
+        {
+          "at": [
+            -3.594,
+            2.142,
+            -33.7
+          ],
+          "color": "Cendre",
+          "intensity": 3.2,
+          "radius": 7,
+          "halo": 0.9,
+          "flicker": "candle"
+        },
+        {
+          "at": [
+            3.606,
+            2.142,
+            -33.7
+          ],
+          "color": "Cendre",
+          "intensity": 3.2,
+          "radius": 7,
+          "halo": 0.9,
+          "flicker": "candle"
+        }
+      ],
+      "camera": {
+        "pitch": 6,
+        "distance": 25,
+        "fov": 42,
+        "aimY": 4.8,
+        "minX": -3,
+        "maxX": 3,
+        "followZ": 0.9,
+        "aimZ": -0.9,
+        "pitchFond": 16,
+        "zFond": -16
+      },
+      "brumes": [
+        [
+          120,
+          12,
+          0,
+          18,
+          -52,
+          0.3,
+          0.006,
+          [
+            6,
+            1.2
+          ],
+          2.2
+        ],
+        [
+          170,
+          20,
+          0,
+          22,
+          -60,
+          0.36,
+          0.005,
+          [
+            5,
+            1.3
+          ],
+          2.2
+        ],
+        [
+          270,
+          34,
+          0,
+          26,
+          -74,
+          0.36,
+          0.004,
+          [
+            4,
+            1.4
+          ],
+          2.2
+        ],
+        [
+          140,
+          12,
+          0,
+          -8,
+          4,
+          0.92,
+          0.003,
+          [
+            4,
+            1
+          ],
+          0.5
+        ],
+        [
+          10,
+          9,
+          -14.5,
+          3.8,
+          -17,
+          0.6,
+          0.004,
+          [
+            2,
+            1
+          ],
+          1
+        ],
+        [
+          10,
+          9,
+          14.5,
+          3.8,
+          -17,
+          0.6,
+          0.004,
+          [
+            2,
+            1
+          ],
+          1
+        ],
+        [
+          10,
+          9,
+          -11.5,
+          3.8,
+          -31,
+          0.6,
+          0.004,
+          [
+            2,
+            1
+          ],
+          1
+        ],
+        [
+          10,
+          9,
+          11.5,
+          3.8,
+          -31,
+          0.6,
+          0.004,
+          [
+            2,
+            1
+          ],
+          1
+        ]
+      ]
     }
   }
 }

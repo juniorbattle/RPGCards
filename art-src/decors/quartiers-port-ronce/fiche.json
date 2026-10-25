@@ -1,0 +1,86 @@
+{
+  "id": "quartiers-port-ronce",
+  "statut": "lot des quartiers ajoutés (ADR 028, deuxième reprise de M09, passe 129), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "auteur": "Claude Code (session de la deuxième reprise de M09, passe 129), à la demande du responsable : « Fanal et Ville haute » (4 images au plus) ; « attaque la Place du Fanal et la Ville haute »",
+  "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-quartiers.mjs",
+  "aseprite": "non utilisé : traitement par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-kit-quartiers.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production (usage en jeu permis : décision A2 du responsable, passe 97)",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "sources": [
+    {
+      "nom": "port-ronce",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-25T18:20:13.591Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1536x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image), of our harbour facades (second image) and of our back-street houses (third image). Do not copy their composition.\n\nPaint ONE isolated background layer for a 2.5D night harbour town, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): the house of the Bramble family at the heart of the harbour quarter, an old fortified merchant house about 14 metres wide, spanning the full width of the image and filling about the lower 90% of it. Scale: a person is about 180 pixels tall in this image. Thick cold grey stone walls overgrown with dark ivy and flowering hawthorn branches, a deep round-arched gate with heavy studded doors and a warm glow inside, a small balcony above the gate, tall lit windows with dark green shutters, a steep slate roof with two chimneys and a little lantern turret; two long plain bramble-green cloth banners hanging on each side of the gate; two iron wall lanterns glowing warm amber.\n\nThe bottom edge of the image is a straight horizontal line at the foot of the walls, with no ground, no steps and no cobbles in front.\n\nEverything around the subjects (above the roofs, around the tower, between the buildings) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-20-v4-rangs/rangs-ruelle-a.png",
+          "sha256": "03edc3cc328ed147d6118781eef5123cf784a905c2bad9393f1bdda15b18acb7"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-25-quartiers/port-ronce.png (dossier principal, ignoré par git)",
+        "sha256": "96c17ff2c704d1570624c763b60ae640f76f9850c7b85514bd59694034062c5c",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 5081,
+        "input_tokens_details": {
+          "image_tokens": 4608,
+          "text_tokens": 473
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10569
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs",
+      "tools/m09-kit-quartiers.mjs"
+    ],
+    "etapes": [
+      "emblèmes des familles du jeu brodés en relief sur 2 bannière(s) unie(s) (fixBanners, tracés de src/art/emblems.ts), sur le brut, avant tout traitement",
+      "fond magenta détouré (alpha tiré de l’écart au magenta, bords démêlés du fond), recadré sur le pied des murs",
+      "largeur au monde 14 m (lanternes peintes repérées : kit-quartiers.json)"
+    ],
+    "decoupes": "art-src/decors/kit-quartiers.json"
+  },
+  "sortie": {
+    "fichier": "public/decors/quartiers-port-ronce.png",
+    "sha256": "27ddbcd1718086de5fdf628a2553af0b507d25fe35db4909c847330b226b3abd",
+    "octets": 2804525,
+    "dimensions": [
+      1384,
+      965
+    ]
+  },
+  "approved": false,
+  "chaine_des_empreintes": [
+    "96c17ff2c704d1570624c763b60ae640f76f9850c7b85514bd59694034062c5c (brut port-ronce)",
+    "27ddbcd1718086de5fdf628a2553af0b507d25fe35db4909c847330b226b3abd (planche)"
+  ]
+}

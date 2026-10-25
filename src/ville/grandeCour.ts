@@ -71,6 +71,8 @@ export const GRANDE_COUR: Ilot = ilotRangs(PLAN_COUR, {
     { id: 'sortie-ruelles', kind: 'sortie', label: 'Descendre vers les Ruelles', target: 'ruelles', area: { x0: -16, z0: -7, x1: -15.1, z1: -3 } },
     { id: 'sortie-parvis', kind: 'sortie', label: 'Descendre vers le Parvis de l’arène', target: 'parvis', area: { x0: 15.1, z0: -7, x1: 16, z1: -3 } },
     { id: 'sortie-quai', kind: 'sortie', label: 'Descendre vers le Quai', target: 'quai', area: { x0: ESCALIER[0] + 0.2, z0: 3.1, x1: ESCALIER[1] - 0.2, z1: 4 } },
+    // deuxième reprise de M09 : par la porte cochère du bout ouest du Belvédère, la Ville haute (quartier ajouté)
+    { id: 'sortie-haute', kind: 'sortie', label: 'Monter vers la Ville haute', target: 'haute', area: { x0: BELVEDERE.x0, z0: BELVEDERE.z0 + 1, x1: BELVEDERE.x0 + 0.9, z1: BELVEDERE.z1 - 1 } },
     { id: 'monument', kind: 'info', label: 'Le monument des Quatre Voies', area: { x0: -3.2, z0: -6.4, x1: 3.2, z1: -1.8 } },
     { id: 'estrade', kind: 'info', label: 'L’estrade des duels', area: { x0: -10.8, z0: -8.2, x1: -4.2, z1: -6.6 } },
     { id: 'tableau', kind: 'info', label: 'Le tableau des annonces', area: { x0: 7.6, z0: -11.4, x1: 10.4, z1: -10.2 } },
@@ -85,6 +87,7 @@ export const GRANDE_COUR: Ilot = ilotRangs(PLAN_COUR, {
     'sortie-parvis': { x: 14.4, z: -5, face: 'gauche' },
     monument: { x: 0, z: -1.2, face: 'dos' },
     belvedere: { x: 0, z: -22, face: 'dos' },
+    'sortie-haute': { x: BELVEDERE.x0 + 1.4, z: (BELVEDERE.z0 + BELVEDERE.z1) / 2, face: 'droite' },
     ...Object.fromEntries(NPCS_COUR.map((n) => [`npc-${n.id}`, n.facing === 'face'
       ? { x: n.at.x, z: n.at.z + 1.0, face: 'dos' as const }
       : { x: n.at.x + (n.facing === 'gauche' ? -1.0 : 1.0), z: n.at.z + 0.2, face: n.facing === 'gauche' ? 'droite' as const : 'gauche' as const }])),
