@@ -252,6 +252,12 @@ button { font: inherit; color: inherit; }
 .card.consumed { opacity: 0.45; }
 .card.flip-in { animation: flip 0.55s ease-out; }
 @keyframes flip { 0% { filter: brightness(2.2); opacity: 0.2; } 100% { filter: none; opacity: 1; } }
+/* Avenant 08 : Signature annoncée dès son verrouillage — face visible, lueur de sa famille, une seule fois (coupée en mouvement réduit). */
+.card.sig-announced { box-shadow: 0 0 0 calc(var(--card-w) * 0.03) var(--famc, var(--gold)), 0 0 calc(var(--card-w) * 0.32) color-mix(in srgb, var(--famc, var(--gold)) 80%, transparent), 0 6px 16px rgba(0, 0, 0, 0.65); }
+.card.sig-announced .state-banner { background: rgba(40, 30, 10, 0.92); color: var(--gold-hi); border-block: 1px solid var(--gold-hi); }
+.card.sig-announce-in { animation: sig-announce 0.9s ease-out 1; }
+@keyframes sig-announce { 0% { filter: brightness(2); opacity: 0.25; transform: scale(0.94); } 60% { filter: brightness(1.25); opacity: 1; } 100% { filter: none; opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .card.sig-announce-in { animation: none; } }
 
 /* Badges de tactique (révélée) et ANNULÉ */
 .plan-badge { position: absolute; left: 50%; transform: translateX(-50%); top: calc(100% + 3px); z-index: 4; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 6px; white-space: nowrap; background: #2b2140; border: 1px solid #b48cff; color: #e4d6ff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6); pointer-events: none; }

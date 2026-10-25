@@ -24,6 +24,8 @@ const hashes: Record<string, string> = {};
 const agAssaut: Record<string, boolean> = {};
 /** Enregistrements des duels SANS Clash « Assaut vainqueur contre une Garde » : rejoués tels quels sur le moteur d'après. */
 const sansAG: Record<string, ReplayRecord> = {};
+/** `LQV_RECORDS=<fichier>` : écrit les enregistrements de tout le corpus (preuve de l'avenant 08 : rejeu sur le moteur d'après). */
+const records: Record<string, ReplayRecord> = {};
 const aAgAssaut = (evs: readonly { kind: string; vis: string; data: unknown }[]) => evs.some((e) => {
   if (e.kind !== 'clash' || e.vis !== 'public') return false;
   const r = e.data as { stances: { p1: string; p2: string }; guardWin: boolean };
@@ -50,6 +52,7 @@ for (let i = 0; i < 240; i++) {
   hashes[cle] = m.hash();
   agAssaut[cle] = aAgAssaut(m.events);
   if (!agAssaut[cle]) sansAG[cle] = m.record();
+  if (process.env.LQV_RECORDS) records[cle] = m.record();
   n++;
 }
 for (const f of ['artifacts/qa/tmp/rc-record.json']) {
@@ -64,6 +67,7 @@ const head = execSync('git rev-parse --short HEAD').toString().trim();
 const dirty = execSync('git status --porcelain src').toString().trim() ? '+arbre de travail' : '';
 const res = { commit: `${head}${dirty}`, duels: n, ms: Date.now() - t0, hashes, agAssaut, sansAG };
 mkdirSync(dirname(out), { recursive: true });
+if (process.env.LQV_RECORDS) { mkdirSync(dirname(process.env.LQV_RECORDS), { recursive: true }); writeFileSync(process.env.LQV_RECORDS, JSON.stringify(records)); }
 writeFileSync(out, JSON.stringify(res, null, 1) + '\n');
 console.log(`${n} empreintes (${res.ms} ms) → ${out}`);
 if (ref) {

@@ -20,7 +20,7 @@ const SECTIONS: Array<[string, string[]]> = [
     '6. Résolution du Clash, puis les deux Primaires partent à la défausse ; « Tour suivant ».',
   ]],
   ['Rang et Puissance : deux mesures distinctes', [
-    'RANG = priorité : le plus haut score de Rang gagne le Clash. Une Signature ∞ bat toute Primaire ordinaire ; deux Signatures sont à égalité.',
+    'RANG = priorité : le plus haut score de Rang gagne le Clash. Une Signature ∞ bat toute Primaire ordinaire ; deux Signatures sont à égalité. Une Signature engagée est annoncée face visible dès son verrouillage ; son mode (Assaut ou Garde) reste secret jusqu’à la révélation.',
     'PUISSANCE = dégâts et absorption. Assaut gagnant contre Assaut : Puissance × multiplicateur. Assaut gagnant contre Garde : la Garde dominée absorbe la moitié de sa Puissance (arrondie au supérieur : 2, 3, 5 ou 6), mais au moins 1 dégât passe ; (Puissance − absorption) × multiplicateur.',
     'Garde gagnante contre Assaut (elle l’emporte à égalité de Rang) : l’Assaut est bloqué (0 blessure) et la Garde gagne 1 Insight. Deux Gardes : aucune blessure.',
     'Égalité de Rang entre deux Assauts : impacts simultanés. Double K.-O. : prolongation, 1 PV chacun.',

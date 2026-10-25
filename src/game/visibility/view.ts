@@ -64,6 +64,8 @@ export interface PlayerView {
   reveal: {
     primaries: Record<'me' | 'opp', { defId: string; stance: Stance }> | null;
     tactics: Record<'me' | 'opp', Array<RevealedTactic | null>> | null;
+    /** Avenant 08 : Signature annoncée de chaque camp ce tour (identité seule, son mode reste secret). */
+    signatures: Record<'me' | 'opp', string | null>;
   };
   lastClash: ClashReport | null;
   repel: null | { mine: boolean; kind: string; choices: SlotIndex[] };
@@ -147,6 +149,7 @@ export function viewFor(state: GameState, viewer: PlayerId): PlayerView {
     reveal: {
       primaries: prim ? { me: { ...prim[viewer] }, opp: { ...prim[o] } } : null,
       tactics: tac ? { me: structuredClone(tac[viewer]), opp: structuredClone(tac[o]) } : null,
+      signatures: { me: state.reveal.signatures[viewer], opp: state.reveal.signatures[o] },
     },
     // Rapport public par construction (valeurs camouflées à null dès le moteur) : simple copie.
     lastClash: state.lastClash ? structuredClone(state.lastClash) : null,

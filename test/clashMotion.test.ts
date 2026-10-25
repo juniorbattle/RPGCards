@@ -4,6 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_CONFIG } from '../src/game/engine/engine';
+import { PROFILES } from '../src/game/ai/policy';
 import { autoplay } from '../src/game/match';
 import type { ClashReport, GameEvent, PlayerId, Stance } from '../src/game/model/types';
 import { buildClashScript, stepForBeat, type ClashScript } from '../src/presentation/clashMotion';
@@ -140,11 +141,14 @@ describe('ClashMotionDirector — six chorégraphies pilotées par le moteur', (
     expect(stepForBeat('tactics')).toBeNull();
   });
 
-  it('propriété : sur 40 duels IA/IA, chaque Clash est classé conformément au rapport du moteur', () => {
+  it('propriété : sur 80 duels IA/IA, chaque Clash est classé conformément au rapport du moteur', () => {
+    // 80 duels (40 jusqu’à l’avenant 08) : l’avenant 07 a retiré l’issue « guard-absorbs » et, avec l’avenant 08, l’IA de la
+    // configuration par défaut ne joue plus de Garde contre Garde sur ces graines : la seconde moitié oppose deux profils
+    // prudents (« prudent » contre « timide ») pour voir les cinq issues restantes.
     let n = 0;
     const seen = new Set<string>();
-    for (let seed = 1; seed <= 40; seed++) {
-      const m = autoplay({ ...DEFAULT_CONFIG, seed });
+    for (let seed = 1; seed <= 80; seed++) {
+      const m = seed <= 40 ? autoplay({ ...DEFAULT_CONFIG, seed }) : autoplay({ ...DEFAULT_CONFIG, seed }, 200, [PROFILES.prudent!, PROFILES.timide!]);
       let prim: Record<PlayerId, { defId: string; stance: Stance }> | null = null;
       for (const e of m.events) {
         if (e.vis !== 'public') continue;
@@ -167,5 +171,6 @@ describe('ClashMotionDirector — six chorégraphies pilotées par le moteur', (
     }
     expect(n).toBeGreaterThan(200);
     expect(seen.size).toBeGreaterThanOrEqual(5);
+    expect(seen.has('guard-absorbs')).toBe(false); // avenant 07 : plus de victoire au Rang sans blessure
   }, 30_000); // test de propriété long : délai propre (dépassait 5 s sous charge, retour de la session cloud du 2026-10-19)
 });

@@ -117,7 +117,7 @@ export interface GameConfig {
 
 export interface GameState {
   schema: 1;
-  rules: 'V3.0+delta-V3.3';
+  rules: 'V3.0+delta-V3.3.1';
   seed: number;
   rng: number;
   turn: number;
@@ -135,6 +135,9 @@ export interface GameState {
   reveal: {
     primaries: Record<PlayerId, { defId: string; stance: Stance }> | null;
     tactics: Record<PlayerId, Array<RevealedTactic | null>> | null;
+    /** Avenant 08 : Signature engagée en Primaire, annoncée (identité seule, jamais le mode) dès le verrouillage de son
+     *  propriétaire ; publique jusqu’au tour suivant. */
+    signatures: Record<PlayerId, string | null>;
   };
   winner: PlayerId | null;
   overtime: number;
@@ -155,7 +158,7 @@ export interface GameEvent {
 export type EventKind =
   | 'turnStart' | 'draw' | 'shuffle' | 'trim' | 'technique' | 'peek' | 'recentrage'
   | 'secondaryRevealed' | 'masking' | 'dissipation' | 'locked'
-  | 'committed' | 'replaced' | 'lecture' | 'primariesRevealed' | 'effectArmed'
+  | 'committed' | 'replaced' | 'signatureAnnounced' | 'lecture' | 'primariesRevealed' | 'effectArmed'
   | 'tacticsRevealed' | 'interference' | 'clash' | 'effect' | 'damage' | 'heal'
   | 'insight' | 'destination' | 'repel' | 'repelSkipped' | 'overtime' | 'victory' | 'turnEnd';
 

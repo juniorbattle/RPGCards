@@ -71,7 +71,7 @@ export function secondaryState(state: GameState, slot: SecondarySlot): Secondary
 export function createGame(config: GameConfig = DEFAULT_CONFIG): { state: GameState; events: GameEvent[] } {
   const state: GameState = {
     schema: 1,
-    rules: 'V3.0+delta-V3.3',
+    rules: 'V3.0+delta-V3.3.1',
     seed: config.seed,
     rng: seedToState(config.seed),
     turn: 0,
@@ -83,7 +83,7 @@ export function createGame(config: GameConfig = DEFAULT_CONFIG): { state: GameSt
     lectureUsers: [],
     repel: null,
     lastClash: null,
-    reveal: { primaries: null, tactics: null },
+    reveal: { primaries: null, tactics: null, signatures: { p1: null, p2: null } },
     winner: null,
     overtime: 0,
     eventSeq: 0,
@@ -210,7 +210,7 @@ function beginTurn(ctx: Ctx): void {
   const s = ctx.s;
   s.turn += 1;
   s.lastClash = null;
-  s.reveal = { primaries: null, tactics: null };
+  s.reveal = { primaries: null, tactics: null, signatures: { p1: null, p2: null } };
   s.repel = null;
   s.lectureUsers = [];
   ctx.s.phase = 'START';
@@ -363,6 +363,13 @@ export function applyCommand(state: GameState, cmd: Command): TransitionResult {
     validate(s, cmd);
     s.pending[cmd.player] = clone(cmd);
     ctx.emit('public', 'locked', { player: cmd.player, phase: s.phase });
+    // Avenant 08 : une Signature engagée en Primaire est annoncée aux deux joueurs dès le verrouillage de son propriétaire,
+    // par liste blanche (identité seule : ni mode, ni Secondaire, ni remplacement).
+    if (cmd.type === 'commit' && defOf(s, cmd.primaryId).signature) {
+      const defId = s.cards[cmd.primaryId]!.defId;
+      s.reveal.signatures[cmd.player] = defId;
+      ctx.emit('public', 'signatureAnnounced', { player: cmd.player, defId });
+    }
     advanceIfReady(ctx);
   }
   assertInvariants(s);
@@ -562,7 +569,8 @@ function applyCommit(ctx: Ctx): void {
       p.hand.splice(p.hand.indexOf(c.secondaryId), 1);
       p.slots[placedSlot] = { cardId: c.secondaryId, placedTurn: s.turn, active: false, revealedTurn: null };
     }
-    ctx.emit('public', 'committed', { player: pid, placedSlot });
+    // Avenant 08 : une Signature annoncée n’est pas « face cachée » ; le drapeau public ne dit que ce qui est déjà annoncé.
+    ctx.emit('public', 'committed', { player: pid, placedSlot, ...(s.reveal.signatures[pid] ? { signature: true } : {}) });
     ctx.emit(pid, 'committed', { player: pid, own: true, primaryDefId: ctx.def(c.primaryId).defId, stance: c.stance, secondaryDefId: c.secondaryId ? ctx.def(c.secondaryId).defId : null, placedSlot });
   }
   openPhase(ctx, 'LECTURE');

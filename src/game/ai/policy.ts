@@ -208,6 +208,9 @@ function decideCommit(view: PlayerView, profile: AiProfile, rng: () => number, m
     const fromMemory = known.length && rng() < profile.memoryWeight;
     samples.push(fromMemory ? known[Math.floor(rng() * known.length)]! : pool[Math.floor(rng() * pool.length)]!);
   }
+  // Avenant 08 : une Signature adverse annoncée (vue publique) est la seule Primaire adverse possible ; son mode reste tiré.
+  const announced = view.reveal.signatures.opp;
+  if (announced) samples.splice(0, samples.length, cardDef(announced));
   const pAssault = assaultPrior(memory);
   if (!samples.length) samples.push(basicDef('Cendre', 2));
 
