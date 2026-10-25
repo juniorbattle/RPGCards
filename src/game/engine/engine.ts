@@ -7,7 +7,7 @@ import { buildDeck, cardDef, EFFECTS, type CardDef, type Family } from '../catal
 import { INSIGHT_MAX, INSIGHT_START, TECHNIQUES, type TechniqueId } from '../catalog/techniques';
 import {
   other, PLAYERS, RuleError, SLOTS,
-  type ClashReport, type Command, type GameConfig, type GameEvent, type GameState, type Phase, type PublicEffect,
+  type ClashReport, type Command, type CommitChoice, type GameConfig, type GameEvent, type GameState, type Phase, type PublicEffect,
   type PlayerCommand, type PlayerId, type PlayerState, type SecondarySlot, type SecondaryState,
   type SlotIndex, type Stance, type TacticPlan, type Visibility,
 } from '../model/types';
@@ -71,7 +71,7 @@ export function secondaryState(state: GameState, slot: SecondarySlot): Secondary
 export function createGame(config: GameConfig = DEFAULT_CONFIG): { state: GameState; events: GameEvent[] } {
   const state: GameState = {
     schema: 1,
-    rules: 'V3.0+delta-V3.3.1',
+    rules: 'V3.0+delta-V3.3.2',
     seed: config.seed,
     rng: seedToState(config.seed),
     turn: 0,
@@ -81,6 +81,9 @@ export function createGame(config: GameConfig = DEFAULT_CONFIG): { state: GameSt
     pending: {},
     awaiting: [],
     lectureUsers: [],
+    commitOrder: [],
+    commitHeld: null,
+    revision: null,
     repel: null,
     lastClash: null,
     reveal: { primaries: null, tactics: null, signatures: { p1: null, p2: null } },
@@ -184,6 +187,8 @@ function needs(state: GameState, phase: Phase, pid: PlayerId): boolean {
       return !!o.mask && canUseTechnique(p, 'Dissipation');
     case 'COMMIT':
       return true;
+    case 'REVISION':
+      return state.revision === pid;
     case 'LECTURE':
       return canUseTechnique(p, 'Lecture');
     case 'LECTURE_CHANGE':
@@ -213,6 +218,9 @@ function beginTurn(ctx: Ctx): void {
   s.reveal = { primaries: null, tactics: null, signatures: { p1: null, p2: null } };
   s.repel = null;
   s.lectureUsers = [];
+  s.commitOrder = [];
+  s.commitHeld = null;
+  s.revision = null;
   ctx.s.phase = 'START';
   ctx.emit('public', 'turnStart', { turn: s.turn });
   for (const pid of PLAYERS) {
@@ -235,6 +243,21 @@ function inHand(p: PlayerState, id: string): boolean {
   return p.hand.includes(id);
 }
 
+/** Contrôles d’un engagement : commande `commit`, ou nouvel engagement d’une révision (avenant 08, amendement 1). */
+function validateCommit(state: GameState, p: PlayerState, c: CommitChoice): void {
+  if (!inHand(p, c.primaryId)) throw new RuleError('La Primaire doit venir de votre main.');
+  if (c.stance !== 'assault' && c.stance !== 'guard') throw new RuleError('Mode Assaut ou Garde requis.');
+  if (c.secondaryId !== null) {
+    if (c.secondaryId === c.primaryId) throw new RuleError('Primaire et Secondaire doivent être distinctes.');
+    if (!inHand(p, c.secondaryId)) throw new RuleError('La Secondaire doit venir de votre main.');
+    if (defOf(state, c.secondaryId).signature) throw new RuleError('Une Signature ne peut jamais être Secondaire.');
+    const full = p.slots.every((x) => x !== null);
+    if (full && c.replaceSlot === null) throw new RuleError('Deux emplacements occupés : choisissez la Secondaire à remplacer.');
+    if (!full && c.replaceSlot !== null) throw new RuleError('Remplacement possible uniquement si les deux emplacements sont occupés.');
+    if (c.slot !== undefined && c.replaceSlot === null && p.slots[c.slot] !== null) throw new RuleError('Emplacement occupé : utilisez l’emplacement libre.');
+  } else if (c.replaceSlot !== null) throw new RuleError('Remplacement sans nouvelle Secondaire.');
+}
+
 function validate(state: GameState, cmd: PlayerCommand): void {
   const pid = cmd.player;
   const p = state.players[pid];
@@ -243,7 +266,7 @@ function validate(state: GameState, cmd: PlayerCommand): void {
   if (!state.awaiting.includes(pid)) throw new RuleError('Aucune décision attendue de ce joueur dans cette phase.');
   if (state.pending[pid]) throw new RuleError('Décision déjà verrouillée pour cette phase.');
   const expect: Record<PlayerCommand['type'], Phase> = {
-    start: 'START', prepare: 'PREPARE', dissipate: 'DISSIPATION', commit: 'COMMIT', lecture: 'LECTURE',
+    start: 'START', prepare: 'PREPARE', dissipate: 'DISSIPATION', commit: 'COMMIT', revise: 'REVISION', lecture: 'LECTURE',
     lectureStance: 'LECTURE_CHANGE', tactics: 'TACTICS', repel: 'REPEL',
   };
   if (expect[cmd.type] !== state.phase) throw new RuleError(`Commande « ${cmd.type} » invalide en phase ${state.phase}.`);
@@ -282,20 +305,13 @@ function validate(state: GameState, cmd: PlayerCommand): void {
       if (!o.mask || o.mask.source !== cmd.targetSlot) throw new RuleError('Dissipation : la cible doit maintenir un effet de préparation actif.');
       return;
     }
-    case 'commit': {
-      if (!inHand(p, cmd.primaryId)) throw new RuleError('La Primaire doit venir de votre main.');
-      if (cmd.stance !== 'assault' && cmd.stance !== 'guard') throw new RuleError('Mode Assaut ou Garde requis.');
-      if (cmd.secondaryId !== null) {
-        if (cmd.secondaryId === cmd.primaryId) throw new RuleError('Primaire et Secondaire doivent être distinctes.');
-        if (!inHand(p, cmd.secondaryId)) throw new RuleError('La Secondaire doit venir de votre main.');
-        if (defOf(state, cmd.secondaryId).signature) throw new RuleError('Une Signature ne peut jamais être Secondaire.');
-        const full = p.slots.every((x) => x !== null);
-        if (full && cmd.replaceSlot === null) throw new RuleError('Deux emplacements occupés : choisissez la Secondaire à remplacer.');
-        if (!full && cmd.replaceSlot !== null) throw new RuleError('Remplacement possible uniquement si les deux emplacements sont occupés.');
-        if (cmd.slot !== undefined && cmd.replaceSlot === null && p.slots[cmd.slot] !== null) throw new RuleError('Emplacement occupé : utilisez l’emplacement libre.');
-      } else if (cmd.replaceSlot !== null) throw new RuleError('Remplacement sans nouvelle Secondaire.');
+    case 'commit':
+      validateCommit(state, p, cmd);
       return;
-    }
+    case 'revise':
+      // Avenant 08, amendement 1 : garder, ou un nouvel engagement complet soumis aux mêmes contrôles.
+      if (cmd.commit) validateCommit(state, p, cmd.commit);
+      return;
     case 'lecture':
       if (cmd.use && !canUseTechnique(p, 'Lecture')) throw new RuleError('Lecture indisponible.');
       return;
@@ -363,6 +379,7 @@ export function applyCommand(state: GameState, cmd: Command): TransitionResult {
     validate(s, cmd);
     s.pending[cmd.player] = clone(cmd);
     ctx.emit('public', 'locked', { player: cmd.player, phase: s.phase });
+    if (cmd.type === 'commit') s.commitOrder.push(cmd.player);
     // Avenant 08 : une Signature engagée en Primaire est annoncée aux deux joueurs dès le verrouillage de son propriétaire,
     // par liste blanche (identité seule : ni mode, ni Secondaire, ni remplacement).
     if (cmd.type === 'commit' && defOf(s, cmd.primaryId).signature) {
@@ -402,7 +419,8 @@ function applyPhase(ctx: Ctx): void {
     case 'START': return applyStart(ctx);
     case 'PREPARE': return applyPrepare(ctx);
     case 'DISSIPATION': return applyDissipation(ctx);
-    case 'COMMIT': return applyCommit(ctx);
+    case 'COMMIT': return closeCommit(ctx);
+    case 'REVISION': return applyRevision(ctx);
     case 'LECTURE': return applyLecture(ctx);
     case 'LECTURE_CHANGE': return applyLectureChange(ctx);
     case 'TACTICS': return resolveClash(ctx);
@@ -542,10 +560,55 @@ function applyDissipation(ctx: Ctx): void {
 }
 
 // --- COMMIT : Primaire + nouvelle Secondaire facultative ---------------------
-function applyCommit(ctx: Ctx): void {
+/** Fin du verrouillage de l’engagement : révision unique (avenant 08, amendement 1) si le SECOND engagement verrouillé
+ *  porte une Signature (annoncée) ; sinon, application immédiate. */
+function closeCommit(ctx: Ctx): void {
+  const s = ctx.s;
+  const choices = { p1: choiceOf(pend(ctx, 'p1', 'commit')!), p2: choiceOf(pend(ctx, 'p2', 'commit')!) };
+  const [first, second] = s.commitOrder;
+  if (s.revision === null && first && second && ctx.def(choices[second].primaryId).signature) {
+    s.commitHeld = choices;
+    s.revision = first;
+    ctx.emit('public', 'revisionOpened', { player: first });
+    openPhase(ctx, 'REVISION');
+    return;
+  }
+  applyCommit(ctx, choices);
+}
+
+const choiceOf = (c: Extract<PlayerCommand, { type: 'commit' }>): CommitChoice => {
+  const { type: _t, player: _p, ...choice } = c;
+  return choice;
+};
+
+/** Avenant 08, amendement 1 : le premier verrouillé garde son engagement ou le remplace, une seule fois ; une Signature
+ *  nouvellement engagée est annoncée, une Signature abandonnée est dite (son identité était déjà publique). */
+function applyRevision(ctx: Ctx): void {
+  const s = ctx.s;
+  const pid = s.revision!;
+  const r = pend(ctx, pid, 'revise')!;
+  const choices = s.commitHeld as Record<PlayerId, CommitChoice>;
+  s.commitHeld = null;
+  if (r.commit) {
+    choices[pid] = r.commit;
+    ctx.emit('public', 'revised', { player: pid, kept: false });
+    const before = s.reveal.signatures[pid];
+    const def = ctx.def(r.commit.primaryId);
+    if (def.signature && before !== def.defId) {
+      s.reveal.signatures[pid] = def.defId;
+      ctx.emit('public', 'signatureAnnounced', { player: pid, defId: def.defId });
+    } else if (!def.signature && before) {
+      s.reveal.signatures[pid] = null;
+      ctx.emit('public', 'signatureWithdrawn', { player: pid, defId: before });
+    }
+  } else ctx.emit('public', 'revised', { player: pid, kept: true });
+  applyCommit(ctx, choices);
+}
+
+function applyCommit(ctx: Ctx, choices: Record<PlayerId, CommitChoice>): void {
   const s = ctx.s;
   for (const pid of PLAYERS) {
-    const c = pend(ctx, pid, 'commit')!;
+    const c = choices[pid];
     const p = s.players[pid];
     p.hand.splice(p.hand.indexOf(c.primaryId), 1);
     p.primary = { cardId: c.primaryId, stance: c.stance, initialStance: c.stance };

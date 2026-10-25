@@ -52,7 +52,8 @@ describe('Séquenceur de résolution', () => {
 
   it('PV mis en scène : avant la séquence = PV d’avant impact ; prolongation à 1 PV appliquée au bon temps', () => {
     const s = fixture(config({ v1: ['Cendre-4'] }), { hand: ['Cendre-4-contrecoup', 'Voile-1'], hp: 3, slots: [{ def: 'Astre-2', active: true }, null] }, { hand: ['sig-Ronce', 'Astre-1'], hp: 3 });
-    const r = new Runner(s).commit('p1', 'Cendre-4-contrecoup', 'assault').commit('p2', 'sig-Ronce', 'assault');
+    // Avenant 08, amendement 1 : la Signature verrouille la première, pour ne pas ouvrir de révision (hors sujet ici).
+    const r = new Runner(s).commit('p2', 'sig-Ronce', 'assault').commit('p1', 'Cendre-4-contrecoup', 'assault');
     const before = r.events.length;
     r.tactics('p1', [{ mode: 'keep' }, null]);
     const batch = r.events.slice(before);

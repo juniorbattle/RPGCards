@@ -58,7 +58,7 @@ export class DragManager {
     if (!this.dragging) {
       if (Math.hypot(dx, dy) < 6) return;
       window.clearTimeout(this.longPress);
-      if (!(this.c.view.phase === 'COMMIT' && this.c.view.awaitingMe)) {
+      if (!this.c.editingCommit()) {
         this.c.toast('Les cartes se posent pendant la phase d’Engagement.');
         this.start = null;
         return;

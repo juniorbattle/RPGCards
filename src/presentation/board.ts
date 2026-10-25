@@ -27,7 +27,7 @@ export { STANCE_ICON, stanceBanner };
 const PHASES: Array<{ id: string; label: string; match: string[] }> = [
   { id: 'start', label: 'Début', match: ['START'] },
   { id: 'prep', label: 'Préparation', match: ['PREPARE', 'DISSIPATION'] },
-  { id: 'commit', label: 'Engagement', match: ['COMMIT'] },
+  { id: 'commit', label: 'Engagement', match: ['COMMIT', 'REVISION'] },
   { id: 'lecture', label: 'Lecture', match: ['LECTURE', 'LECTURE_CHANGE'] },
   { id: 'tactics', label: 'Révélation · Tactique', match: ['TACTICS'] },
   { id: 'resolve', label: 'Résolution', match: ['REPEL', 'RESOLVED', 'ENDED'] },
@@ -366,10 +366,11 @@ function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
     if (annoncee) zone.append(...announcedSignature(c, 'opp', annoncee));
     else if (s.primary) zone.append(backEl(c.artSeed, { banner: 'SECRÈTE', label: 'Primaire adverse engagée, face cachée', classes: ['on-board'] }));
     else if (v.phase === 'COMMIT') zone.append(h('span', { class: 'empty-hint' }, 'Le rival engage…'));
+    else if (v.phase === 'REVISION' && v.revision?.player === 'opp') zone.append(h('span', { class: 'empty-hint' }, 'Le rival réagit…'));
     return zone;
   }
   // Moi : brouillon (non verrouillé) ou engagement verrouillé (mon mode reste SECRET pour le rival).
-  if (v.reveal.signatures.me && !v.me.primary?.card) {
+  if (v.reveal.signatures.me && !v.me.primary?.card && !c.editingCommit()) {
     // Avenant 08 : verrouillée, annoncée au rival ; l’engagement ne s’applique qu’au verrouillage du rival.
     zone.append(...announcedSignature(c, 'me', v.reveal.signatures.me));
     return zone;
@@ -382,7 +383,7 @@ function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
     return zone;
   }
   const dr = c.ui.draft;
-  const committing = v.phase === 'COMMIT' && v.awaitingMe;
+  const committing = c.editingCommit();
   if (committing) {
     zone.classList.toggle('legal', !!c.ui.selected);
     zone.setAttribute('role', 'button');
@@ -454,7 +455,7 @@ function slotZone(c: Controller, who: 'me' | 'opp', slot: SlotIndex, s: SlotView
 
   // Brouillon de pose (moi, phase Engagement)
   const dr = c.ui.draft;
-  const committing = who === 'me' && v.phase === 'COMMIT' && v.awaitingMe;
+  const committing = who === 'me' && c.editingCommit();
   if (committing) {
     interactive = true;
     if (c.ui.selected) zone.classList.add(c.dropCheck(c.ui.selected, key as 'slot0') ? 'illegal' : 'legal');
@@ -620,6 +621,16 @@ function command(c: Controller): HTMLElement {
         actions.append(btn('Verrouiller l’engagement', () => c.lockCommit(), { key: 'act-commit', disabled: !dr.primaryId || !dr.stance, next: true }));
       } else waitOpp();
       break;
+    case 'REVISION':
+      // Avenant 08, amendement 1 : une seule révision, définitive, après la Signature annoncée de l’adversaire.
+      if (v.awaitingMe) {
+        msg.append(title('Le rival a engagé sa Signature'), sub('Vous pouvez réviser votre engagement une fois : gardez-le, ou modifiez-le puis verrouillez. Ce choix est définitif.'));
+        actions.append(
+          btn('Garder mon engagement', () => c.keepRevision(), { key: 'act-revision-keep', next: true }),
+          btn('Verrouiller la révision', () => c.lockCommit(), { key: 'act-revision', disabled: !c.ui.draft.primaryId || !c.ui.draft.stance, ghost: true }),
+        );
+      } else msg.append(title('Le rival réagit à votre Signature…'), sub('Il peut garder ou réviser son engagement, une seule fois ; son choix reste secret jusqu’à la révélation.'));
+      break;
     case 'LECTURE':
       if (v.awaitingMe) {
         msg.append(title('Lecture (2 Insight)'), sub('Observer le mode initial adverse, puis éventuellement changer le vôtre.'));
@@ -742,7 +753,7 @@ function hand(c: Controller): HTMLElement {
   const dr = c.ui.draft;
   // Engagement verrouillé en attente du rival (avenant 08 : la Signature annoncée est déjà sur le plateau) : les cartes engagées
   // ne reviennent pas dans la main.
-  const cards = (v.me.hand ?? []).filter((x) => !(v.phase === 'COMMIT' && (v.awaitingMe || v.me.locked) && (x.cardId === dr.primaryId || x.cardId === dr.secondaryId)));
+  const cards = (v.me.hand ?? []).filter((x) => !((v.phase === 'COMMIT' || v.phase === 'REVISION') && (v.awaitingMe || v.me.locked || v.revision?.player === 'opp') && (x.cardId === dr.primaryId || x.cardId === dr.secondaryId)));
   const wrap = h('section', { class: 'hand', 'aria-label': 'Votre main', 'data-drop': 'hand', style: `--n:${Math.max(4, cards.length)}` });
   if (!cards.length) wrap.append(h('span', { class: 'hand-empty' }, (v.me.hand ?? []).length ? 'Cartes posées (non verrouillées)' : 'Main vide'));
   cards.forEach((x, i) => {
@@ -754,7 +765,7 @@ function hand(c: Controller): HTMLElement {
     if (c.ui.startTech?.id === 'Recentrage' && c.ui.startTech.cardId === x.cardId) el.append(h('span', { class: 'state-banner' }, 'RECENTRAGE'));
     wrap.append(el);
   });
-  if (v.phase === 'COMMIT' && v.awaitingMe && c.ui.selected && cards.some((x) => x.cardId === c.ui.selected)) wrap.append(placeBar(c, c.ui.selected));
+  if (c.editingCommit() && c.ui.selected && cards.some((x) => x.cardId === c.ui.selected)) wrap.append(placeBar(c, c.ui.selected));
   return wrap;
 }
 

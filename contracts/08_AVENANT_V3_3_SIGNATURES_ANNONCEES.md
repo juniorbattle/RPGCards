@@ -137,9 +137,10 @@ contraintes 1 à 9 et vérifications obligatoires reprises en S-02 et S-08. Déc
 | 12 | Navigateur | scénario de QA `?scenario=signature-annonce` (Signature du rival annoncée, réponse du joueur) capturé en 1280 et 1920 sur les deux GPU ; parcours du jalon (aventure, Championnat) |
 | 13 | Équilibre | mesures avant et après, mêmes graines (rivaux, aventure, Championnat), ordre de verrouillage selon le point 3 |
 
-## Amendement 1 — Révision après une Signature annoncée (PROPOSÉ, 2026-10-24)
+## Amendement 1 — Révision après une Signature annoncée (APPROUVÉ, 2026-10-24)
 
-**Statut : PROPOSÉ**, soumis au responsable ; **aucun code avant sa validation explicite de ce texte.** Source : ses
+**Statut : FIGÉ / APPROUVÉ.** Validé par le responsable le 2026-10-24 : « Amendement 1 de l'avenant 08 validé tel quel,
+règle pour les deux camps : à appliquer. » (A1-2 tranché : **pour les deux camps**). Appliqué en passe 114. Source : ses
 messages du 2026-10-24 dans la session de la règle V3.3 : « ce serait mieux qu'ils réagissent définitivement après mon
 verrouillage, ou réaction, celle de base puis une autre après mon verrouillage en cas de signature utilisée » ; puis :
 « l'option B est surtout utile si l'adversaire ordi a connaissance de l'utilisation d'une signature du joueur et donc si
@@ -161,7 +162,7 @@ plus y réagir (contrainte 6).
   réagit (garde ou corrige) dans une courte fenêtre, à son rythme habituel.
 - La contrainte 6 devient : « un joueur verrouillé ne modifie plus son engagement, **sauf** cette révision unique ».
 
-### A1-2 — Pour les deux camps (point à trancher)
+### A1-2 — Pour les deux camps (tranché : pour les deux camps)
 
 C'est une règle du duel ; elle vaut **pour les deux joueurs**. En jeu, c'est presque toujours le rival qui révise ; le
 joueur n'en bénéficie que s'il a verrouillé **avant** le rival (moins de 0,65 s) et que le rival annonce ensuite sa
