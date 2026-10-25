@@ -1,0 +1,106 @@
+{
+  "id": "braise",
+  "statut": "feuille des PNJ de la ville (Kaï, la Braise du quai (couleurs propres)), porte de la reprise de M09 (passe 125), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas décidé",
+  "auteur": "Claude Code (session de reprise de M09, passe 125), à la demande du responsable : budget « 16, avec une porte » (d’abord 2 feuilles posées in situ sur une planche, puis les 10 autres ; 4 images pour régénérer une feuille ratée)",
+  "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-pnj-porte.mjs",
+  "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production ; aucune analyse juridique faite par l’agent : point à confirmer par le responsable avant tout usage en jeu",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "style": "style, échelle et proportions de la feuille du joueur approuvée (en entrée) ; identité tirée de notre atlas dessiné par code (en entrée)",
+  "sources": [
+    {
+      "nom": "braise-p2",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-25T08:54:18.498Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1024x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "The first attached image is our own code-drawn sprite sheet of Kaï, a rival card duellist of a night harbour city, nicknamed the Ember of the quay. The second attached image is the approved pixel-art sprite sheet of the player character of the same game. Redraw Kaï as a final sprite sheet in exactly the style, pixel size, proportions, figure height and cell layout of the second image, so that both characters stand side by side in the same scene, keeping Kaï’s own colours from the first image.\n\nEach cell is 64 art pixels wide and 96 art pixels tall; the character is about 88 art pixels tall. Stylised RPG proportions like the player: sturdy, about 3 heads tall, lean and confident; large readable hands.\n\nExact grid of 5 columns and 3 rows of equal cells, nothing between the cells; row 1 facing the viewer, row 2 seen from the back, row 3 right profile walking to the right; column 1 standing still, columns 2 to 5 a clear four-frame walking cycle (legs alternating, arms swinging, head steady); same size in every cell, both boots fully visible and both feet on the same baseline, figure centred.\n\nPremium illustrative pixel art exactly like the second attached image: crisp square pixels of one uniform size across the whole sheet; colour ramps of four to five tones per material; selective dark outlines; soft directional shading with readable fabric folds; clean pixel clusters, no dithering, no scattered noise, no anti-aliasing, no gradients, no blur. The face stays fully visible, with clearly drawn eyes, a small mouth and a hint of nose shading.\n\nKaï: a young man with a cocky, confident stance; spiky black hair with glowing ember-red tips; an ember-red cloth headband knotted at the back of the head; amber eyes; a short dark ember-red jacket open over a dark charcoal shirt, dark trousers, dark boots; warm light skin. Kaï’s colours: ember reds and oranges, charcoal and black, one small warm amber accent; no magenta, no green, no cyan and no blue anywhere.\n\nA perfectly flat, uniform pure cyan (#00FFFF) background with no shading, no texture, no floor and no cast shadow.\n\nNo text, no letters, no numbers, no grid lines, no labels, no watermark, no logos, no playing-card suit symbols.",
+      "entrees": [
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-25-pnj-porte/braise-entree.png",
+          "sha256": "1b053c3fc0e36d13418d9d8975dcfffcce2dd9a6d838d415884206ede4594e05"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/.claude/worktrees/wizardly-nightingale-a37d0f/public/sprites/player.png",
+          "sha256": "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-25-pnj-porte/braise-p2.png (dossier principal, ignoré par git)",
+        "sha256": "df365a17bda13a345ac00fcd7eda0b40708b2c3ade5c80a88303f5f0b158826c",
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 2452,
+        "input_tokens_details": {
+          "image_tokens": 1952,
+          "text_tokens": 500
+        },
+        "output_tokens": 7024,
+        "output_tokens_details": {
+          "image_tokens": 7024,
+          "text_tokens": 0
+        },
+        "total_tokens": 9476
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs (processSheet)",
+      "tools/m09-pnj-feuilles.mjs"
+    ],
+    "etapes": [
+      "fond cyan et liseré teinté retirés ; alpha binaire",
+      "pas des pixels d’art mesuré sur les arêtes (3.865 × 3.305 px)",
+      "figures repérées par les bandes vides ; grille d’art 64 × 96 px d’art par case imposée, couleur majoritaire du cœur de chaque bloc",
+      "pieds alignés sur une même ligne, tête centrée",
+      "aucun ton clé (couleurs propres)",
+      "palette : couleurs naturelles réduites (k-moyennes)",
+      "agrandissement ×3 au plus proche"
+    ]
+  },
+  "sortie": {
+    "fichier": "public/sprites/braise.png",
+    "sha256": "77d7c465e7e05dfb513520feaba2b9466ce65c9543c2772a8cc7d5c5c840f07c",
+    "octets": 80065,
+    "entree_du_manifeste": {
+      "file": "braise.png",
+      "sha256": "77d7c465e7e05dfb513520feaba2b9466ce65c9543c2772a8cc7d5c5c840f07c",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 74,
+      "recolor": [],
+      "source": "gpt-image-2 (feuille des PNJ de la ville, Kaï, la Braise du quai (couleurs propres), reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
+      "fiche": "art-src/sprites/braise/fiche.json",
+      "approved": false
+    },
+    "tons_cles": {},
+    "couleurs": 32
+  },
+  "chaine_des_empreintes": [
+    "1b053c3fc0e36d13418d9d8975dcfffcce2dd9a6d838d415884206ede4594e05 (entrée : art-gen/2026-10-25-pnj-porte/braise-entree.png)",
+    "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50 (entrée : public/sprites/player.png)",
+    "df365a17bda13a345ac00fcd7eda0b40708b2c3ade5c80a88303f5f0b158826c (brut)",
+    "77d7c465e7e05dfb513520feaba2b9466ce65c9543c2772a8cc7d5c5c840f07c (feuille ×3)"
+  ]
+}
