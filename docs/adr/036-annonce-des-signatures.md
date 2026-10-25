@@ -31,3 +31,11 @@ l'engagement qu'une fois les deux verrouillés ; le rival du jeu verrouille ≈ 
 - L'engagement n'est plus entièrement secret : l'identité d'une Signature devient une information publique et
   stratégique ; l'ordre de verrouillage compte (qui voit qui), d'où le point S-07.2.
 - Aucune règle de résolution ne change ; les mesures d'équilibre (rivaux, aventure, Championnat) diront l'effet réel.
+
+## Amendement 1 (PROPOSÉ, 2026-10-24) — révision après une Signature annoncée
+
+Demande du responsable : que le rival, qui verrouille presque toujours en premier, puisse réagir à la Signature du
+joueur. Proposition : avenant 08, « Amendement 1 » (A1-1 à A1-5) : fenêtre de révision unique et définitive pour le
+joueur déjà verrouillé quand l'adversaire verrouille ensuite une Signature ; phase moteur `REVISION`, commande `revise`
+(garder ou nouvel engagement complet), ordre des verrouillages retenu dans l'état ; étiquette `V3.0+delta-V3.3.2`.
+Point à trancher : la règle pour les deux camps (recommandé) ou réservée au rival.

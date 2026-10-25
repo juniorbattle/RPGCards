@@ -136,3 +136,75 @@ contraintes 1 à 9 et vérifications obligatoires reprises en S-02 et S-08. Déc
 | 11 | Présentation | plateau (face visible, mode « ? »), journal public et privé, animation sobre et mouvement réduit ; test d'expressions du rival : engagements secrets **ordinaires** différents → mêmes expressions |
 | 12 | Navigateur | scénario de QA `?scenario=signature-annonce` (Signature du rival annoncée, réponse du joueur) capturé en 1280 et 1920 sur les deux GPU ; parcours du jalon (aventure, Championnat) |
 | 13 | Équilibre | mesures avant et après, mêmes graines (rivaux, aventure, Championnat), ordre de verrouillage selon le point 3 |
+
+## Amendement 1 — Révision après une Signature annoncée (PROPOSÉ, 2026-10-24)
+
+**Statut : PROPOSÉ**, soumis au responsable ; **aucun code avant sa validation explicite de ce texte.** Source : ses
+messages du 2026-10-24 dans la session de la règle V3.3 : « ce serait mieux qu'ils réagissent définitivement après mon
+verrouillage, ou réaction, celle de base puis une autre après mon verrouillage en cas de signature utilisée » ; puis :
+« l'option B est surtout utile si l'adversaire ordi a connaissance de l'utilisation d'une signature du joueur et donc si
+[le] joueur valide son choix de cartes durant ce tour, on ouvre à nouveau une courte fenêtre de réflexion/réaction de
+l'adversaire afin qu'il corrige si besoin son choix avec cette validation faite par le joueur ».
+
+**Constat** (S-00, mesures de la passe 112) : le rival verrouille ≈ 0,65 s après l'ouverture de l'engagement, presque
+toujours avant le joueur ; l'annonce d'une Signature du joueur arrive donc après le verrouillage du rival, qui ne peut
+plus y réagir (contrainte 6).
+
+### A1-1 — La règle
+
+> Quand un joueur a déjà verrouillé son engagement et que l'adversaire verrouille **ensuite** un engagement dont la
+> Primaire est une **Signature** (annoncée, S-01), le premier joueur reçoit **une fenêtre de révision unique** : il
+> **garde** son engagement, ou le **remplace entièrement** (Primaire, mode, nouvelle Secondaire, remplacement). Ce choix
+> est **définitif** : pas de seconde révision, et le joueur qui a annoncé sa Signature ne peut plus rien changer.
+
+- **Le cas visé** : le rival a verrouillé son choix de base ; le joueur verrouille ensuite une Signature ; le rival
+  réagit (garde ou corrige) dans une courte fenêtre, à son rythme habituel.
+- La contrainte 6 devient : « un joueur verrouillé ne modifie plus son engagement, **sauf** cette révision unique ».
+
+### A1-2 — Pour les deux camps (point à trancher)
+
+C'est une règle du duel ; elle vaut **pour les deux joueurs**. En jeu, c'est presque toujours le rival qui révise ; le
+joueur n'en bénéficie que s'il a verrouillé **avant** le rival (moins de 0,65 s) et que le rival annonce ensuite sa
+Signature : une fenêtre « réviser ou garder » s'ouvre alors pour lui aussi. *Recommandé : la règle pour les deux camps*
+(l'IA ne reçoit aucun privilège : ADR 011, « IA non omnisciente ») ; alternative : réservée au rival.
+
+### A1-3 — Cas limites
+
+- **Rien de l'engagement initial du réviseur ne devient public** : il n'a jamais été appliqué ; s'il est remplacé, il
+  disparaît sans trace publique (sa Primaire et sa Secondaire restent en main).
+- **Le réviseur avait lui-même annoncé une Signature** (deux Signatures) : il peut la garder ou y renoncer ; s'il y
+  renonce, elle retourne en main et le journal le dit (« le rival renonce à sa Signature ») : son identité a déjà été vue.
+- **La révision engage une Signature** : elle est annoncée au verrouillage de la révision ; l'autre joueur ne réagit
+  plus (définitif).
+- **Garder** est toujours possible et ne révèle rien. Lecture, révélation et Clash : inchangés, après la révision.
+
+### A1-4 — Moteur, IA, présentation
+
+- **Moteur** : l'état retient l'ordre des verrouillages de l'engagement ; si le second verrouillage porte une Signature,
+  une courte phase **`REVISION`** attend le seul premier joueur (commande `revise` : garder, ou nouvel engagement complet,
+  mêmes contrôles que `commit`) ; puis l'engagement s'applique comme aujourd'hui. Événements publics : « révision
+  ouverte », puis « engagement gardé » ou « engagement révisé » (sans contenu), et l'annonce éventuelle.
+- **IA** : en `REVISION`, elle décide avec la même évaluation que pour l'engagement (`decideCommit`), qui voit désormais la
+  Signature annoncée ; elle garde si son choix de base reste le meilleur.
+- **Présentation** : pour le joueur qui annonce, « Le rival réagit à votre Signature… » pendant la fenêtre, puis
+  « garde son engagement » ou « révise son engagement » ; pour un joueur qui révise : bandeau « Le rival engage sa
+  Signature : vous pouvez réviser votre engagement une fois », brouillon prérempli avec son choix, boutons **Garder** et
+  **Réviser**. Journal public et privé.
+- **Étiquette des règles** `V3.0+delta-V3.3.2` ; replays par commandes, preuve par rejeu comme en passe 111.
+
+### A1-5 — Tests prévus
+
+| # | Vérification | Attendu |
+|---|---|---|
+| 1 | Rival verrouillé, puis Signature du joueur | phase `REVISION` pour le rival seul ; il garde ou corrige ; puis engagement appliqué |
+| 2 | Joueur verrouillé (ordinaire), puis Signature du rival | même fenêtre pour le joueur (si A1-2 retenu pour les deux camps) |
+| 3 | Second verrouillage ordinaire | aucune révision (comportement d'aujourd'hui) |
+| 4 | Révision unique | une seconde révision est refusée ; le joueur qui a annoncé ne peut rien changer |
+| 5 | Garder | aucun contenu révélé ; état identique à un engagement sans révision |
+| 6 | Réviser | engagement initial jamais publié (événements et vues) ; nouvel engagement appliqué ; Secondaire et main cohérentes |
+| 7 | Deux Signatures | renoncer : la Signature retourne en main, journal ; garder : ∞ contre ∞ inchangé |
+| 8 | Révision vers une Signature | annoncée à la révision ; aucune réaction de l'autre |
+| 9 | IA | elle ne lit que sa vue ; même révision quel que soit le mode secret de la Signature annoncée |
+| 10 | Replay, reprise | reprise d'un duel sauvegardé pendant la fenêtre de révision ; étiquette précédente refusée |
+| 11 | Présentation et navigateur | fenêtre de réaction du rival, fenêtre « Garder / Réviser » du joueur ; deux GPU, 1280 et 1920 |
+| 12 | Équilibre | mesures avant et après, mêmes graines, adversaire en premier |
