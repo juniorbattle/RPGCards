@@ -608,7 +608,7 @@ tout se fait dans le moteur et dans le plan des îlots :
 - Vérification : `npx tsx tools/m09-accessoires.mjs` (chaque accessoire vu de près, planche par îlot,
   `screenshots/qa/m09/accessoires/`).
 
-### Deuxième reprise de M09 : la Place du Fanal et la Ville haute, quartiers ajoutés (passe 129, 2026-10-25) — PROPOSÉ
+### Deuxième reprise de M09 : la Place du Fanal et la Ville haute, quartiers ajoutés (passe 129, 2026-10-25) — RATIFIÉ (passe 131)
 
 Décision du responsable du 2026-10-25 (« Fanal et Ville haute », 4 images au plus ; « attaque la Place du Fanal et la Ville
 haute ») ; les figures de l'aventure ne bougent pas sans sa décision.
@@ -627,3 +627,5 @@ haute ») ; les figures de l'aventure ne bougent pas sans sa décision.
 - **Images** : deux façades d'identité par quartier (le vieux phare et ses entrepôts, la maison de la Ronce ; les hôtels
   à arcades de la Ville haute, l'Observatoire), générées et traitées par script comme le lot des villes ; le reste vient
   du kit des rangs et du lot des villes.
+
+**Ratification (2026-10-25, passe 131).** Ordre du responsable : « Ratifie l’amendement de l’ADR 028 (« Deuxième reprise » : quartiers ajoutés et facultatifs) tel quel, et consigne-le. » L'amendement vaut tel quel : deux quartiers ajoutés (`port`, `haute`) dans la ville en rangs, liés par les bouts ouest du cœur du Quai et du Belvédère ; la ville en rangs décidée sur ses quatre îlots d'origine (`ILOTS_COEUR`) ; un quartier ajouté ouvert seulement si son diorama est admis (hors QA : ses images approuvées), fermé sinon (sorties retirées, sauvegarde ramenée au Quai). Les 4 façades ont été approuvées en passe 130 : les deux quartiers sont ouverts dans le jeu.
