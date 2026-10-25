@@ -128,6 +128,14 @@ Porte de démarrage : `npm run typecheck` 0 erreur · `npm test` **456/456** · 
 | Heure de ville (V1 de la fiche M10-E) | pas encore jouée par le responsable | quand il le souhaite, sur ce build |
 | Pilote de QA | joue avec l'IA « équilibré » du joueur : mesure de l'interface, pas du plaisir de jeu | — |
 
+## Réception — 2026-10-25
+
+Sur la fiche d'arbitrages de la RC (9 décisions, toutes sur l'option recommandée, sans note ; tableau
+`docs/FICHE_ARBITRAGES_M10F.md`) : **RC du mode Aventure reçue** (R1), numérotée **`0.10.0-rc.1`** (V1) ; T1 reçu (R2) ;
+**annexe de calibrage gardée telle quelle** (E1) ; textes et aide reçus (X3) ; « cheffe » accordée dans les phrases
+génériques (X1) ; « la Braise du quai » gardé (X2) ; un duel d'aventure non vérifiable propose désormais de le recommencer,
+comme le jeu standard (T1) ; **M10 clos, suite : reprise de M09** (S1). Version, X1 et T1 appliqués en passe 124.
+
 ## 9. Fiche d'arbitrages
 
 <https://claude.ai/artifact/UfZ5K4GnfarDa1vhLFUua5> (privée ; collection `decisions`, vide à la publication, lecture

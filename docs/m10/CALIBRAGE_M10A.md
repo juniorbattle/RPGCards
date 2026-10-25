@@ -134,3 +134,7 @@ Après les avenants 07 (la Garde réduit sans annuler) et 08 (annonce des Signat
 entraînement passe sous 50 % aux chefs et au Championnat (`artifacts/qa/v33/apres/paliers.md`,
 `artifacts/qa/v33/a1/comparaison.md`), la voie entraînée reste nettement favorable. Le responsable **garde l'annexe
 telle quelle** (fiche de la Garde, E3 ; fiche de l'avenant 08, E1 ; tableau `docs/FICHE_ARBITRAGES_V33.md`) : aucune valeur ne change.
+
+**Confirmé à la RC de l'aventure (2026-10-25, fiche M10-F, E1 « Garder l'annexe telle quelle »)** : mesure de la RC
+`artifacts/qa/m10f/equilibre/ecarts-annexe.md` (voie directe : cadets et bras droits des familles 2 à 4 −6 à −10 points,
+chefs 45 à 48 %, Championnat 48 à 49 % ; voie entraînée égale ou plus favorable) ; tableau `docs/FICHE_ARBITRAGES_M10F.md`.
