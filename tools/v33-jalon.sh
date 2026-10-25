@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 # Avenant 07 (règle V3.3) — jalon de QA sur GPU réel, en série (une campagne navigateur à la fois) : pour la Radeon 780M
 # (adaptateur par défaut) et la RTX 4060 (`--force_high_performance_gpu`), le jeu par défaut au pixel près contre le build
-# du `main` de départ, puis la démo, l'aventure, la maison, les voies et le Championnat en 1280 × 720 et 1920 × 1080.
+# du `main` de départ, puis la démo, l'aventure, la maison, les voies, le Championnat et l'annonce des Signatures (avenant 08)
+# en 1280 × 720 et 1920 × 1080.
 # Usage : npm run build && LQV_BEFORE=<dist de départ> LQV_BEFORE_SHA=<sha> CHROMIUM_PATH=<Chrome> bash tools/v33-jalon.sh [sortie]
 set -u
 export LQV_GPU=1
 OUT=${1:-artifacts/qa/v33/jalon}
-SHOTS=screenshots/qa/v33/jalon
+SHOTS=${LQV_SHOTS:-screenshots/qa/v33/jalon}
 mkdir -p "$OUT" "$SHOTS"
 run() { # nom, commande…
   local name=$1; shift
@@ -28,6 +29,8 @@ for gpu in 780m rtx; do
     run "maison-$gpu-$w" node tools/m10c-parcours.mjs "$SHOTS/maison-$gpu-$w" "$OUT/maison-$gpu-$w.json"
     run "voies-$gpu-$w" node tools/m10d-voies.mjs "$SHOTS/voies-$gpu-$w" "$OUT/voies-$gpu-$w.json"
     run "championnat-$gpu-$w" node tools/m10-championnat.mjs "$SHOTS/championnat-$gpu-$w" "$OUT/championnat-$gpu-$w.json"
+    # avenant 08 : le scénario de l’annonce des Signatures
+    run "annonce-$gpu-$w" node tools/v33-annonce.mjs "$SHOTS/annonce-$gpu-$w" "$OUT/annonce-$gpu-$w.json"
   done
   unset LQV_VP
 done
