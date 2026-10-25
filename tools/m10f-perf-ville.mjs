@@ -31,7 +31,7 @@ try {
     await pret(id);
     const pretMs = Date.now() - t0;
     await p.waitForTimeout(1500);
-    await p.evaluate(() => { window.__m10fIv = []; let last = performance.now(); const tick = (t) => { window.__m10fIv.push(t - last); last = t; if (window.__m10fIv) requestAnimationFrame(tick); }; requestAnimationFrame(tick); });
+    await p.evaluate(() => { const iv = []; window.__m10fIv = iv; let last = performance.now(); const tick = (t) => { if (window.__m10fIv !== iv) return; iv.push(t - last); last = t; requestAnimationFrame(tick); }; requestAnimationFrame(tick); });
     await p.keyboard.down('KeyD'); await p.waitForTimeout(2000); await p.keyboard.up('KeyD');
     await p.keyboard.down('KeyA'); await p.waitForTimeout(2000); await p.keyboard.up('KeyA');
     const r = await p.evaluate(() => {
