@@ -803,7 +803,7 @@ export class AventureApp {
     if (!duel) {
       const n = s.compteur;
       s.compteur = n + 1;
-      duel = { id: `a${n + 1}`, rencontre: prevu.rencontre, seed: prevu.config.seed, startedAt: new Date().toISOString(), rules: 'V3.0+delta-V3.2', catalog: '', config: structuredClone(prevu.config), commands: [], hash: '', turn: 0, pret: false };
+      duel = { id: `a${n + 1}`, rencontre: prevu.rencontre, seed: prevu.config.seed, startedAt: new Date().toISOString(), rules: 'V3.0+delta-V3.3', catalog: '', config: structuredClone(prevu.config), commands: [], hash: '', turn: 0, pret: false };
       duel.catalog = CATALOG_ID;
       if (prevu.rencontre !== 'prologue' && figureOuNull(prevu.rencontre)) this.faire({ type: 'lancerDefi', figure: prevu.rencontre });
       s.duel = duel;

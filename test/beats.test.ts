@@ -16,7 +16,7 @@ function t2() {
 }
 
 describe('Séquenceur de résolution', () => {
-  it('T2 lisible sans le journal : Rang 5 contre 4 (affinité) puis « 0 blessure : la Garde absorbe »', () => {
+  it('T2 lisible sans le journal : Rang 5 contre 4 (affinité) puis « la Garde absorbe 6 » et 3 PV (avenant 07)', () => {
     const { r, batch } = t2();
     expect(resolutionStart(batch)).toBeGreaterThanOrEqual(0);
     const beats = buildResolutionBeats(batch.slice(resolutionStart(batch)), { viewer: 'p1', primaries: r.state.reveal.primaries });
@@ -27,10 +27,10 @@ describe('Séquenceur de résolution', () => {
     expect(rank.title).toBe('Rang : Vous 5 contre 4');
     expect(rank.detail).toMatch(/5 = Cendre III 3 \+ Cendre I \+2 \(affinité \+1\)/);
     const out = beats.find((b) => b.kind === 'outcome')!;
-    expect(out.title).toBe('Vous gagnez au Rang… mais 0 blessure');
-    expect(out.detail).toMatch(/La Garde absorbe : Puissance 9 contre Garde 12/);
-    expect(out.tone).toBe('warn');
-    expect(beats.some((b) => b.kind === 'damage')).toBe(false);
+    expect(out.title).toBe('Vous dominez le Clash');
+    expect(out.detail).toMatch(/la Garde absorbe 6 \(moitié de sa Puissance 12\) : \(9 − 6\) × 1 = 3/);
+    expect(out.tone).toBe('good');
+    expect(beats.find((b) => b.kind === 'damage')!.title).toBe('Le rival perd 3 PV');
   });
 
   it('ordre pédagogique : Interférences avant Rang, dégâts après l’issue ; soutien annulé signalé', () => {
@@ -47,7 +47,7 @@ describe('Séquenceur de résolution', () => {
     expect(kinds.slice(0, 4)).toEqual(['tactics', 'interference', 'interference', 'rank']);
     expect(kinds.indexOf('damage')).toBeGreaterThan(kinds.indexOf('outcome'));
     expect(beats.filter((b) => b.kind === 'interference').every((b) => /RÉUSSIE/.test(b.title))).toBe(true);
-    expect(beats.find((b) => b.kind === 'damage')!.title).toBe('Le rival perd 3 PV');
+    expect(beats.find((b) => b.kind === 'damage')!.title).toBe('Le rival perd 7 PV'); // avenant 07 : 12 − 5
   });
 
   it('PV mis en scène : avant la séquence = PV d’avant impact ; prolongation à 1 PV appliquée au bon temps', () => {

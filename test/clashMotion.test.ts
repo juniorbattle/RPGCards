@@ -72,25 +72,25 @@ describe('ClashMotionDirector — six chorégraphies pilotées par le moteur', (
     expect(script.verdict).toBe('LA GARDE CÈDE');
   });
 
-  it('ASSAUT contre GARDE, victoire au Rang SANS blessure (T2) : absorption, jamais une victoire défensive', () => {
+  it('ASSAUT contre GARDE, victoire au Rang (T2, avenant 07) : la Garde absorbe 6 et cède, jamais une victoire défensive', () => {
     const { script } = clash(
       { prim: 'Cendre-3', stance: 'assault', slots: [{ def: 'Cendre-1', active: true }, null], plans: [{ mode: 'rank' }, null] },
       { prim: 'Cendre-4', stance: 'guard' });
-    expect(script.outcome).toBe('guard-absorbs');
+    expect(script.outcome).toBe('guard-breaks');
     expect(script.winner).toBe('me'); // l’Assaut gagne bien au Rang
     expect(script.actors.me.role).toBe('winner');
-    expect(script.actors.opp.damageTaken).toBe(0);
-    expect(script.verdict).toBe('VICTOIRE AU RANG · 0 BLESSURE · ABSORPTION');
+    expect(script.actors.opp.damageTaken).toBe(3);
+    expect(script.verdict).toBe('LA GARDE CÈDE');
     expect(script.verdict).not.toMatch(/GARDE VICTORIEUSE/);
-    expect(script.absorption).toEqual({ assault: 9, guard: 12, absorbed: 9 });
+    expect(script.absorption).toEqual({ assault: 9, guard: 12, absorbed: 6 });
     expect(script.actors.me.score).toBe('5');
     expect(script.actors.opp.score).toBe('4');
     // Conséquences essentielles (panneau « Résolution » de la preview, M03.2 : trois au plus), toutes
     // issues du rapport moteur ; le départ des deux Primaires en défausse est montré par la scène.
     expect(script.bullets).toEqual([
       'Vous gagnez au Rang (5 contre 4).',
-      'La Garde absorbe toute la Puissance (9 ≤ 12).',
-      'Aucune blessure infligée.',
+      'La Garde absorbe 6 sur 9 : 3 de Puissance passe.',
+      'Le rival perd 3 PV.',
     ]);
   });
 

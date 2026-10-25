@@ -117,7 +117,7 @@ export interface GameConfig {
 
 export interface GameState {
   schema: 1;
-  rules: 'V3.0+delta-V3.2';
+  rules: 'V3.0+delta-V3.3';
   seed: number;
   rng: number;
   turn: number;

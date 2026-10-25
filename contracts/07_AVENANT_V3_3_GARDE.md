@@ -1,14 +1,14 @@
 # 07 — Avenant V3.3 : la Garde réduit sans annuler
 
-**Ratification : EN ATTENTE.** Texte canonique **révisé** soumis au responsable le 2026-10-24 (révision 2, après sa
-correction du même jour : option A confirmée, plancher d'un dégât de base). Il ne fait foi qu'après sa validation
-explicite de cette rédaction (`contracts/00_GOUVERNANCE_AUTORITE.md`, point 1). Aucun code n'est changé avant.
+**Ratification (2026-10-24) :** rédaction canonique **validée par le responsable** dans la session de la règle V3.3 :
+« Révision 2 de l'avenant 07 validée telle quelle, à verser et appliquer. » (révision 2, après sa correction du même
+jour : option A confirmée, plancher d'un dégât de base ; la révision 1 n'a pas été retenue).
 
-**Statut : PROPOSÉ.** Avenant au règlement V3.0 + delta V3.2 (D-01 déjà ratifié comme règle V3.3, ADR 004). Il complète
+**Statut : FIGÉ / APPROUVÉ.** Avenant au règlement V3.0 + delta V3.2 (D-01 déjà ratifié comme règle V3.3, ADR 004). Il complète
 la V3.3 d'une seconde règle, **pour tout le jeu** : mode Duel standard (configuration par défaut, rencontres, rivaux,
 duels de la ville), mode Aventure (populace, membres, lieutenants, chefs) et Championnat, **Signatures et cartes neutres
-comprises**. Une fois validé, c'est un avenant explicitement approuvé (ordre d'autorité, point 2) ; le texte historique
-V3.0 reste intact.
+comprises**. C'est un avenant explicitement approuvé (ordre d'autorité, point 2) ; le texte historique V3.0 reste
+intact.
 
 **Sources :** décisions du responsable du 2026-10-24 : (1) « la garde réduit les dégâts sans les annuler si son rang
 n'est pas supérieur à l'assaut » ; moitié de la Puissance de la Garde **arrondie au supérieur**, pour tout le jeu,

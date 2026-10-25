@@ -28,7 +28,7 @@ const CASES = [
   { id: '03-tactique-1280', vp: [1280, 720], url: `?scenario=interference&${Q}`, act: 'tactics', panel: 5, desc: 'Phase tactique (vue A) : Primaires révélées, Secondaires actives' },
   { id: '04-clash-aa', vp: [1280, 720], url: `?scenario=clash-aa&${Q}`, ...CLASH('Cendre-4', 'assault', null), panel: 3, desc: 'Choc ASSAUT contre ASSAUT (vous dominez), temps « issue »' },
   { id: '05-clash-ag-garde', vp: [1280, 720], url: `?scenario=clash-ag&${Q}`, ...CLASH('Cendre-3', 'assault', null), desc: 'ASSAUT contre GARDE : Garde victorieuse, temps « issue »' },
-  { id: '06-clash-ag-absorption', vp: [1280, 720], url: `?scenario=clash-ag&${Q}`, ...CLASH('Cendre-3', 'assault', 'rank'), panel: 4, desc: 'Victoire au Rang, 0 blessure (absorption), temps « issue »' },
+  { id: '06-clash-ag-absorption', vp: [1280, 720], url: `?scenario=clash-ag&${Q}`, ...CLASH('Cendre-3', 'assault', 'rank'), panel: 4, desc: 'Victoire au Rang, la Garde absorbe 6, 3 blessures (avenant 07), temps « issue »' },
   { id: '07-clash-gg', vp: [1280, 720], url: `?scenario=clash-ag&${Q}`, ...CLASH('Ronce-4', 'guard', null), desc: 'GARDE contre GARDE (neutre), temps « issue »' },
   { id: '08-mobile-portrait', vp: [390, 844], mobile: true, url: `?seed=404&autostart=1&rival=ronce&${Q}&intro=1`, desc: 'Mobile portrait 390×844, vue A' },
   { id: '09-mobile-paysage', vp: [844, 390], mobile: true, url: `?seed=404&autostart=1&rival=ronce&${Q}&intro=1`, panel: 6, desc: 'Mobile paysage 844×390, vue A' },

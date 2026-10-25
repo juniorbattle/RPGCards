@@ -54,7 +54,7 @@ export const SCENARIOS: Record<string, Scenario> = {
   signature: {
     id: 'signature',
     title: 'Signature ∞ contre Garde IV',
-    description: 'Brasier Originel (∞, P14) contre une Garde Ronce IV renforcée : priorité ∞, absorption selon Puissance.',
+    description: 'Brasier Originel (∞, P14) contre une Garde Ronce IV renforcée : priorité ∞, la Garde dominée absorbe la moitié de sa Puissance.',
     config: base({ signature: 'Cendre' }),
     build: (cfg) => fixture(cfg,
       { hand: ['sig-Cendre', 'Voile-2', 'Astre-1', 'Ronce-1'], slots: [{ def: 'Cendre-4', active: true }, { def: 'Cendre-3', active: true }] },
@@ -79,7 +79,7 @@ export const SCENARIOS: Record<string, Scenario> = {
   'clash-ag': {
     id: 'clash-ag',
     title: 'Clash — le rival se met en GARDE',
-    description: 'Le rival engage Cendre IV en GARDE (Puissance 12). Cendre III + Cendre I en Rang : victoire au Rang SANS blessure (absorption) ; Cendre III seule : la Garde tient ; Brasier Originel ∞ : la Garde cède ; votre propre Garde : Garde contre Garde.',
+    description: 'Le rival engage Cendre IV en GARDE (Puissance 12). Cendre III + Cendre I en Rang : victoire au Rang, la Garde absorbe 6 (la moitié de sa Puissance, avenant 07), 3 blessures ; Cendre III seule : la Garde tient ; Brasier Originel ∞ : la Garde cède ; votre propre Garde : Garde contre Garde.',
     config: base({ signature: 'Cendre' }),
     build: (cfg) => fixture(cfg,
       { hand: ['Cendre-3', 'sig-Cendre', 'Ronce-4', 'Astre-2'], slots: [{ def: 'Cendre-1', active: true }, null] },

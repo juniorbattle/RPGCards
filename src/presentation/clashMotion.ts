@@ -8,6 +8,7 @@
  * Ne modifie ni PV, ni RNG, ni cartes, ni le temps d’un vrai tour.
  */
 import { cardDef } from '../game/catalog/cards';
+import { guardAbsorption, guardHalf } from '../game/engine/clash';
 import type { ClashReport, GameEvent, PlayerId, SlotIndex, Stance } from '../game/model/types';
 import type { BeatKind } from './beats';
 
@@ -19,7 +20,7 @@ export type ClashOutcome =
   | 'aa-tie' // Assaut contre Assaut, égalité : impacts simultanés, aucun vainqueur
   | 'guard-holds' // Assaut contre Garde, la Garde gagne au Rang (égalité incluse) : Assaut repoussé
   | 'guard-breaks' // Assaut contre Garde, l’Assaut gagne ET blesse : la défense cède
-  | 'guard-absorbs' // Assaut contre Garde, l’Assaut gagne au Rang MAIS 0 blessure : absorption totale
+  | 'guard-absorbs' // Assaut contre Garde, l’Assaut gagne au Rang MAIS 0 blessure : sans cas depuis l’avenant 07 (V3.3), gardé par prudence
   | 'gg-neutral'; // Garde contre Garde : neutralité
 
 export interface ClashActor {
@@ -157,13 +158,13 @@ export function scriptFromReport(
       verdict = 'LA GARDE CÈDE';
       detail = `${you(attacker)} ${attacker === 'me' ? 'gagnez' : 'gagne'} au Rang (${actors[attacker!].score} contre ${g.score}) : Puissance ${actors[attacker!].power} contre Garde ${g.power} → ${g.damageTaken} blessure${g.damageTaken > 1 ? 's' : ''}.`;
       tone = attacker === 'me' ? 'good' : 'bad';
-      absorption = { assault: actors[attacker!].power, guard: g.power, absorbed: r.absorbed ?? Math.min(actors[attacker!].power, g.power) };
+      absorption = { assault: actors[attacker!].power, guard: g.power, absorbed: r.absorbed ?? guardAbsorption(actors[attacker!].power, g.power) };
       break;
     }
     case 'guard-absorbs': {
       const g = actors[attacker === 'me' ? 'opp' : 'me'];
       verdict = 'VICTOIRE AU RANG · 0 BLESSURE · ABSORPTION';
-      detail = `${you(attacker)} ${attacker === 'me' ? 'gagnez' : 'gagne'} au Rang (${actors[attacker!].score} contre ${g.score}), mais la Garde absorbe tout : Puissance ${actors[attacker!].power} ≤ Garde ${g.power}.`;
+      detail = `${you(attacker)} ${attacker === 'me' ? 'gagnez' : 'gagne'} au Rang (${actors[attacker!].score} contre ${g.score}), mais la Garde absorbe tout : Puissance ${actors[attacker!].power} − ${r.absorbed} = 0.`;
       tone = 'warn';
       absorption = { assault: actors[attacker!].power, guard: g.power, absorbed: r.absorbed ?? actors[attacker!].power };
       break;
@@ -182,8 +183,8 @@ export function scriptFromReport(
   else if (outcome === 'aa-tie') bullets.push(`Égalité de Rang (${actors.me.score} contre ${actors.opp.score}) : aucun vainqueur.`);
   else if (outcome === 'guard-holds') bullets.push(`${winner === 'me' ? 'Votre Garde gagne' : 'La Garde du rival gagne'} au Rang (${actors[winner!].score} contre ${actors[attacker!].score}${actors[winner!].score === actors[attacker!].score ? ', égalité pour la Garde' : ''}).`);
   else bullets.push(`${winner === 'me' ? 'Vous gagnez' : 'Le rival gagne'} au Rang (${actors[winner!].score} contre ${actors[winner === 'me' ? 'opp' : 'me'].score}).`);
-  if (absorption && outcome === 'guard-absorbs') bullets.push(`La Garde absorbe toute la Puissance (${absorption.assault} ≤ ${absorption.guard}).`);
-  if (absorption && outcome === 'guard-breaks') bullets.push(`La Garde absorbe ${absorption.absorbed} : la Puissance ${absorption.assault} passe (${absorption.assault} > ${absorption.guard}).`);
+  if (absorption && outcome === 'guard-absorbs') bullets.push(`La Garde absorbe toute la Puissance (${absorption.assault}).`);
+  if (absorption && outcome === 'guard-breaks') bullets.push(`La Garde absorbe ${absorption.absorbed} sur ${absorption.assault} : ${absorption.assault - absorption.absorbed} de Puissance passe${absorption.absorbed < guardHalf(absorption.guard) ? ' (au moins 1)' : ''}.`);
   if (outcome === 'guard-holds') bullets.push('Assaut repoussé : aucune blessure.');
   const hurt = (side: Side) => actors[side].damageTaken;
   if (outcome !== 'guard-holds') {

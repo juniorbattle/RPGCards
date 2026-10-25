@@ -1,7 +1,7 @@
 /**
  * Aide intégrée (M04) : prise en main en une page — déroulé d’un tour, Rang ≠ Puissance, états des
- * Secondaires, choix tactiques, Insight et Techniques, « pourquoi 0 dégât », vues et raccourcis.
- * Texte fidèle au règlement V3.0 + avenant V3.2 (aucune règle nouvelle).
+ * Secondaires, choix tactiques, Insight et Techniques, « pourquoi si peu de dégâts », vues et raccourcis.
+ * Texte fidèle au règlement V3.0 + avenants V3.2 et V3.3 (avenant 07 : la Garde réduit sans annuler ; aucune règle nouvelle).
  */
 import type { Shell } from './shell';
 import { btn, h, screen } from './ui';
@@ -21,12 +21,12 @@ const SECTIONS: Array<[string, string[]]> = [
   ]],
   ['Rang et Puissance : deux mesures distinctes', [
     'RANG = priorité : le plus haut score de Rang gagne le Clash. Une Signature ∞ bat toute Primaire ordinaire ; deux Signatures sont à égalité.',
-    'PUISSANCE = dégâts et absorption. Assaut gagnant contre Assaut : Puissance × multiplicateur. Assaut gagnant contre Garde : (Puissance − Puissance de la Garde) × multiplicateur.',
+    'PUISSANCE = dégâts et absorption. Assaut gagnant contre Assaut : Puissance × multiplicateur. Assaut gagnant contre Garde : la Garde dominée absorbe la moitié de sa Puissance (arrondie au supérieur : 2, 3, 5 ou 6), mais au moins 1 dégât passe ; (Puissance − absorption) × multiplicateur.',
     'Garde gagnante contre Assaut (elle l’emporte à égalité de Rang) : l’Assaut est bloqué (0 blessure) et la Garde gagne 1 Insight. Deux Gardes : aucune blessure.',
     'Égalité de Rang entre deux Assauts : impacts simultanés. Double K.-O. : prolongation, 1 PV chacun.',
   ]],
-  ['Pourquoi 0 dégât ?', [
-    'Vous avez gagné au Rang, mais la Garde adverse absorbe : si votre Puissance ne dépasse pas la sienne, il ne reste rien. Une Garde victorieuse, elle, bloque tout. Pour percer : un Assaut plus puissant, ou une Secondaire en Amplifier les dégâts (multiplicateurs additionnés, jamais multipliés entre eux).',
+  ['Pourquoi si peu de dégâts ?', [
+    'Vous avez gagné au Rang contre une Garde : elle absorbe la moitié de sa Puissance, et il reste au moins 1 dégât de base. Une Garde victorieuse, elle, bloque tout (0 blessure). Pour frapper plus fort : un Assaut plus puissant, ou une Secondaire en Amplifier les dégâts (multiplicateurs additionnés, jamais multipliés entre eux).',
   ]],
   ['Secondaires : trois états', [
     'CHARGEMENT : posée ce tour, inutilisable. RÉSERVE CACHÉE : prête mais inactive, invisible pour le rival. ACTIVE : révélée, utilisable après la révélation des Primaires.',
@@ -55,7 +55,7 @@ const TOWN: [string, string[]] = ['La ville (démo)', [
 
 export function renderHelp(sh: Shell, inDuel: boolean): HTMLElement {
   const sections = sh.d.hub ? [TOWN, ...SECTIONS] : SECTIONS;
-  return screen('help', 'Aide et règles', 'Règlement V3.0 + avenant V3.2. Mise en scène, rivaux et progression sont des prototypes.',
+  return screen('help', 'Aide et règles', 'Règlement V3.0 + avenants V3.2 et V3.3. Mise en scène, rivaux et progression sont des prototypes.',
     h('div', { class: 'sh-help' }, sections.map(([t, ps]) => h('section', null, h('h2', null, t), ps.map((p) => h('p', null, p))))),
     h('div', { class: 'sh-actions' }, inDuel
       ? btn('Retour au menu du duel', () => sh.setOverlay('menu'), { key: 'help-back', primary: true })

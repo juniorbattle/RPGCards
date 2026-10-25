@@ -3,6 +3,7 @@
  * Ne consulte jamais l’état brut : impossible d’y faire fuiter un secret absent de l’événement.
  */
 import { cardDef, cardTitle, EFFECTS, type EffectId } from '../catalog/cards';
+import { guardHalf } from '../engine/clash';
 import type { ClashReport, GameEvent, PlayerId, RevealedTactic, SlotIndex, Stance } from '../model/types';
 
 export interface JournalLine {
@@ -161,6 +162,14 @@ export function buildJournal(events: readonly GameEvent[], viewer: PlayerId): Jo
 }
 
 /** Verdict grammatical selon le point de vue (D-04) ; distingue les trois cas exigés. */
+/** Avenant 07 (V3.3, G-02) : « la Garde absorbe a », la moitié de sa Puissance ou, si le plancher d’un dégât la plafonne,
+ *  ce qu’il en reste. `absorbed` vient du rapport du moteur (`guardAbsorption`), jamais recalculé ici. */
+export function guardAbsorbedText(absorbed: number, guardPower: number): string {
+  return absorbed < guardHalf(guardPower)
+    ? `la Garde absorbe ${absorbed} (plafonnée : au moins 1 dégât passe)`
+    : `la Garde absorbe ${absorbed} (moitié de sa Puissance ${guardPower})`;
+}
+
 export function verdictText(r: ClashReport, viewer: PlayerId): string {
   const o: PlayerId = viewer === 'p1' ? 'p2' : 'p1';
   const sc = r.publicScores;
@@ -173,8 +182,9 @@ export function verdictText(r: ClashReport, viewer: PlayerId): string {
   const dom = W ? 'Vous dominez' : 'Le rival domine';
   const m = r.publicMultipliers[w];
   if (r.stances[l] === 'guard') {
-    if (r.zeroDamageRankWin) return `${dom} au Rang (${sc[w]} contre ${sc[l]}), mais 0 blessure : la Garde absorbe (Puissance ${r.powers[w]} − ${r.powers[l]} ≤ 0).`;
-    return `${dom} au Rang (${sc[w]} contre ${sc[l]}) ; la Garde absorbe ${r.absorbed} : (${r.powers[w]} − ${r.powers[l]}) × ${m} = ${r.baseDamage[l]}.`;
+    // Avenant 07 (V3.3) : plus de victoire au Rang sans blessure ; cas gardé par prudence (invariant testé).
+    if (r.zeroDamageRankWin) return `${dom} au Rang (${sc[w]} contre ${sc[l]}), mais 0 blessure : la Garde absorbe tout (Puissance ${r.powers[w]} − ${r.absorbed} = 0).`;
+    return `${dom} au Rang (${sc[w]} contre ${sc[l]}) ; ${guardAbsorbedText(r.absorbed, r.powers[l])} : (${r.powers[w]} − ${r.absorbed}) × ${m} = ${r.baseDamage[l]}.`;
   }
   return `${W ? 'Vous remportez' : 'Le rival remporte'} la confrontation des Assauts au Rang (${sc[w]} contre ${sc[l]}) : ${r.powers[w]} × ${m} = ${r.baseDamage[l]}.`;
 }

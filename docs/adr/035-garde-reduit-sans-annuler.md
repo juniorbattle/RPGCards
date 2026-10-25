@@ -1,8 +1,7 @@
 # ADR 035 — La Garde réduit sans annuler (règle V3.3, avenant 07)
 
-**Date :** 2026-10-24. **Statut : PROPOSÉ (révision 2).** Texte de règle : `contracts/07_AVENANT_V3_3_GARDE.md`, révisé
-le 2026-10-24 après la correction du responsable (option A confirmée, plancher d'un dégât de base) ; rien n'est codé
-avant sa validation explicite.
+**Date :** 2026-10-24. **Statut : APPLIQUÉ** (passe 107). Texte de règle : `contracts/07_AVENANT_V3_3_GARDE.md`, révision 2
+**validée par le responsable** le 2026-10-24 (« Révision 2 de l'avenant 07 validée telle quelle, à verser et appliquer. »).
 
 ## Contexte
 
@@ -19,7 +18,7 @@ tactique du Rang, des Secondaires et de la Garde.
 
 1. **Règle** : seulement quand l'Assaut gagne la priorité, `absorptionEffective = min(⌈P_Garde / 2⌉, P_Assaut − 1)` et
    `dégâts de base = (P_Assaut − absorptionEffective) × M`. Plus de victoire au Rang sans blessure.
-2. **Une seule arithmétique** : `guardAbsorption(pAssaut, pGarde)` exportée de `clash.ts`, utilisée par `computeClash`
+2. **Une seule arithmétique** : `guardAbsorption(pAssaut, pGarde)` et `guardHalf(pGarde)` exportées de `clash.ts` ; `guardAbsorption` est utilisée par `computeClash`
    (dégâts de base et champ `absorbed`) ; le rapport, le journal, les temps forts et l'animation lisent `absorbed`, jamais
    une formule recopiée (principe « une seule arithmétique », JOURNAL). L'aide du tour guidé, qui annonce l'absorption
    avant de connaître l'Assaut adverse, appelle la même fonction pour la moitié (« absorbe jusqu'à ⌈P/2⌉, au moins 1
@@ -32,9 +31,11 @@ tactique du Rang, des Secondaires et de la Garde.
    raison ; le reste de la sauvegarde est gardé. Pas de double formule dans le moteur.
 5. **Preuve des empreintes en deux temps** (formule seule, puis étiquette) : on ne régénère que ce que la règle explique.
 6. **Textes** : journal du Clash, temps forts, mise en scène (`clashMotion`, « ABSORBE n »), tour guidé et boutons du
-   plateau, aide, conseils (le conseil « Pourquoi 0 dégât ? » n'a plus de cas), scénario de QA `clash-ag` (sa
-   démonstration « victoire au Rang, 0 blessure » devient « victoire au Rang, la Garde absorbe 5, 1 blessure » : Cendre
-   II + Cendre III en Rang contre Garde IV) et outils de captures qui l'utilisent.
+   plateau, aide, conseils (le conseil « Pourquoi 0 dégât ? » n'a plus de cas), scénario de QA `clash-ag` (main gardée : sa
+   démonstration « victoire au Rang, 0 blessure » devient « la Garde absorbe 6, 3 blessures » ; les outils de captures
+   `clash-shots`, `shots-m03-2` et `perf` le disent ; le cas plafonné, « absorbe 5, 1 blessure », est couvert par
+   `test/v33.test.ts`). Les outils de captures historiques de M02 et M03 (`shots-m02`, `shots-m03`) gardent leurs
+   libellés d'époque.
 7. **Simulateur de référence** (`simulator_ref/`, V3.2) : laissé tel quel (source de référence, non modifiée sans
    autorisation) ; il diverge désormais sur l'Assaut contre Garde (l. 162 et 218-220 de
    `SIMULATEUR_LES_QUATRE_VOIES_V3_2.html`). Aucun test ne l'utilise.

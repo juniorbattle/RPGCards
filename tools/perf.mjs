@@ -93,7 +93,7 @@ try {
     }));
     const sorted = deltas.slice(1).sort((a, b) => a - b);
     const q = (k) => Math.round(sorted[Math.min(sorted.length - 1, Math.floor(k * sorted.length))] * 10) / 10;
-    scene.clashRealtime = { scenario: 'clash-ag (absorption)', window: '2,5 s depuis l’apparition de la scène de Clash', frames: sorted.length, medianMs: q(0.5), p95Ms: q(0.95), maxMs: Math.round(sorted[sorted.length - 1] * 10) / 10, over50ms: sorted.filter((d) => d > 50).length, arena: await page.evaluate(() => window.__lqv.arenaStats()) };
+    scene.clashRealtime = { scenario: 'clash-ag (Assaut contre Garde)', window: '2,5 s depuis l’apparition de la scène de Clash', frames: sorted.length, medianMs: q(0.5), p95Ms: q(0.95), maxMs: Math.round(sorted[sorted.length - 1] * 10) / 10, over50ms: sorted.filter((d) => d > 50).length, arena: await page.evaluate(() => window.__lqv.arenaStats()) };
     await page.close();
   }
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });

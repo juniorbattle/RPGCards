@@ -133,7 +133,7 @@ describe('Scénarios QA des Techniques — résultats, Insight, cibles, informat
     expect(p.state.phase).toBe('COMMIT');
     commit(p, 'Ronce-2', 'guard');
     expect(p.state.phase).toBe('RESOLVED');
-    expect(p.state.players.p1.hp).toBe(90 - (12 - 6) * 4);
+    expect(p.state.players.p1.hp).toBe(90 - (12 - 3) * 4); // avenant 07 : la Garde II absorbe 3
     expect(p.state.players.p2.insight).toBe(2);
     const j = p.journal();
     expect(j).toContain('Le rival gagne 1 Insight (effet de la Secondaire Cendre masquée (case 2)) → 2/2.');
