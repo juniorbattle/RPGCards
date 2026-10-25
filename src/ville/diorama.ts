@@ -18,7 +18,7 @@ import { LAYER_NOREFLECT } from './reflets';
 import { finish, type LightDef, type QuaiScene } from './scene';
 import { plateRect, type DecorLight, type PreparedDiorama, type PreparedPlate } from './decors';
 import { cheminMesh } from './chemins';
-import { ombreMesh, ombresDuPlan } from './ombres';
+import { ombreMesh, ombresDuPlan, profilPied } from './ombres';
 
 const PLATE_VERT = /* glsl */ `
 varying vec2 vUv; varying vec3 vWorld; varying vec3 vN;
@@ -33,7 +33,7 @@ void main(){
  */
 const PLATE_FRAG = /* glsl */ `
 ${COMMON_GLSL}
-uniform sampler2D tPlate; uniform float uLit; uniform float uFog; uniform float uCut; uniform float uVoile; uniform float uFade; uniform float uCutY; uniform float uCoupe; uniform float uAO; uniform float uBase;
+uniform sampler2D tPlate; uniform float uLit; uniform float uFog; uniform float uCut; uniform float uVoile; uniform float uFade; uniform float uCutY; uniform float uCoupe; uniform float uAO; uniform float uBase; uniform vec2 uAOk; uniform float uSpill;
 varying vec2 vUv; varying vec3 vWorld; varying vec3 vN;
 void main(){
   vec4 A = texture2D(tPlate, vUv);
@@ -49,8 +49,19 @@ void main(){
   c = mix(c, applyFog(c, vWorld), uFog);
   // plans en coupe seulement (passe 62) : les autres gardent exactement le nuanceur d'origine (rendu identique au pixel près)
 #ifdef COUPE
-  // pied assombri (passe 68, diorama en rangs) : le bas d'un objet ou d'un mur posé au sol prend l'ombre du sol
-  c *= mix(1.0, mix(0.62, 1.0, smoothstep(uBase, uBase + 0.9, vWorld.y)), uAO);
+  // passe 116 (retours R1) : liseré du fond magenta de la génération au pied d'un objet (teinte violette, frange verte
+  // dessous) ramené à la nuit, sur ses 45 derniers centimètres seulement (les violets peints plus haut restent)
+  float sp = uSpill * (1.0 - smoothstep(uBase + 0.2, uBase + 0.45, vWorld.y));
+  if (sp > 0.0) {
+    float m = min(c.r, c.b);
+    vec3 d = c;
+    if (m > d.g) { float e = m - d.g; d.r -= e; d.b -= e * 0.6; }
+    d.g = min(d.g, max(d.r, d.b));
+    c = mix(c, d, sp);
+  }
+  // pied assombri (passe 68, diorama en rangs) : le bas d'un objet ou d'un mur posé au sol prend l'ombre du sol ;
+  // passe 116 (retours R1) : plus marqué au pied d'un objet (uAOk : assombrissement au sol, hauteur du fondu)
+  c *= mix(1.0, mix(uAOk.x, 1.0, smoothstep(uBase, uBase + uAOk.y, vWorld.y)), uAO);
   // vue en section (passe 64) : uFade de 0 (entier) à 1 (coupé) ; sous uCutY, le rez-de-chaussée reste
   float k = uFade * smoothstep(uCutY - 0.3, uCutY + 0.3, vWorld.y);
   // fantôme assourdi (passe 67) : gris et plus sombre, les détails clairs (emblèmes dorés, vitraux) ne flottent plus
@@ -61,13 +72,21 @@ void main(){
 #endif
 }`;
 
+/**
+ * Pied assombri d'un plan posé au sol (passe 68) : 0,62 au sol, fondu sur 0,9 m ; passe 116 (retours R1 : « pas de
+ * sensation d'image collée ») : un objet debout (moins de 6 m, de face) plus marqué, 0,5 au sol, fondu sur 0,7 m.
+ */
+export function aoDuPlan(e: Pick<PreparedPlate['entry'], 'at' | 'width' | 'size' | 'orient' | 'uv'>): [number, number] {
+  return e.orient === 'face' && plateRect(e).h < 6 ? [0.5, 0.7] : [0.62, 0.9];
+}
+
 /** Matière d'un plan (une par plan : chacun a sa texture). `profond` : diorama en rangs (passe 65), chaque plan peut
  *  s'effacer (fondu lointain) ; sinon seuls les plans `coupe` ont le nuanceur d'effacement. */
 function plateMaterial(p: PreparedPlate, profond = false): THREE.ShaderMaterial {
   const cut = p.entry.blend === 'decoupe';
   return new THREE.ShaderMaterial({
     name: 'VillePlan',
-    uniforms: { ...U, tPlate: { value: p.texture }, uLit: { value: p.entry.lit ?? 0 }, uFog: { value: p.entry.fog ?? 1 }, uCut: { value: cut ? 0.02 : 0.004 }, uVoile: { value: p.entry.voile ?? 0 }, uFade: { value: 0 }, uCutY: { value: p.entry.coupeY ?? -1000 }, uCoupe: { value: COUPE_ALPHA }, uAO: { value: profond && p.entry.orient !== 'sol' && Math.abs(p.entry.at[1]) <= 0.25 ? 1 : 0 }, uBase: { value: p.entry.at[1] } },
+    uniforms: { ...U, tPlate: { value: p.texture }, uLit: { value: p.entry.lit ?? 0 }, uFog: { value: p.entry.fog ?? 1 }, uCut: { value: cut ? 0.02 : 0.004 }, uVoile: { value: p.entry.voile ?? 0 }, uFade: { value: 0 }, uCutY: { value: p.entry.coupeY ?? -1000 }, uCoupe: { value: COUPE_ALPHA }, uAO: { value: profond && p.entry.orient !== 'sol' && Math.abs(p.entry.at[1]) <= 0.25 ? 1 : 0 }, uBase: { value: p.entry.at[1] }, uAOk: { value: new THREE.Vector2(...aoDuPlan(p.entry)) }, uSpill: { value: profond && p.entry.orient === 'face' && Math.abs(p.entry.at[1]) <= 0.25 && plateRect(p.entry).h < 6 ? 1 : 0 } },
     defines: p.entry.coupe || profond ? { COUPE: 1 } : {},
     vertexShader: PLATE_VERT,
     fragmentShader: PLATE_FRAG,
@@ -165,6 +184,36 @@ function engineGround(def: IlotDef, artSeed: number, textures: THREE.Texture[]):
   return mesh;
 }
 
+/**
+ * Contact au sol de la silhouette d'un plan (passe 116, retours R1) : les lignes du bas de son morceau d'image, lues une
+ * fois (canevas 2D) ; null hors du navigateur ou si l'image n'est pas lisible (l'ombre garde alors son ellipse).
+ */
+function piedDuPlan(p: PreparedPlate, cache: Map<string, number[] | null>): number[] | null {
+  const [u0, v0, u1, v1] = p.entry.uv ?? [0, 0, 1, 1];
+  const key = `${p.entry.file}|${u0}|${v0}|${u1}|${v1}`;
+  if (cache.has(key)) return cache.get(key)!;
+  let out: number[] | null = null;
+  const img = p.texture.image as CanvasImageSource & { width: number; height: number } | undefined;
+  if (img && typeof document !== 'undefined' && img.width > 0 && img.height > 0) {
+    try {
+      const W = img.width; const H = img.height;
+      const sx = Math.round(u0 * W); const sw = Math.max(1, Math.round((u1 - u0) * W));
+      const k = Math.max(3, Math.round((v1 - v0) * H * 0.05));
+      // image retournée à la création : le bas du morceau (v1, compté depuis le haut) est à la ligne (1 − v1) · H
+      const sy = Math.round((1 - v1) * H);
+      const cw = Math.min(sw, 1024);
+      const c = document.createElement('canvas'); c.width = cw; c.height = k;
+      const g = c.getContext('2d', { willReadFrequently: true });
+      if (g) {
+        g.drawImage(img, sx, sy, sw, k, 0, 0, cw, k);
+        out = profilPied(g.getImageData(0, 0, cw, k).data, cw, k, THREE.MathUtils.clamp(Math.round(p.entry.width * 24), 16, 512));
+      }
+    } catch { out = null; }
+  }
+  cache.set(key, out);
+  return out;
+}
+
 /** Scène d'un îlot en diorama : sol du moteur, plans peints dans l'ordre, lumières et halos, ciel du moteur au fond. */
 export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number): QuaiScene {
   const scene = new THREE.Scene();
@@ -177,6 +226,7 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
   const cutaways: { rect: ReturnType<typeof plateRect>; mat: THREE.ShaderMaterial; cut: number; writes: boolean; ghost: boolean; vers: 'est' | 'ouest' | undefined; coupeZ: number | undefined; ombres: { mat: THREE.ShaderMaterial; alpha: number }[] }[] = [];
   /** Ombres au sol (passe 68), créées avant les plans : sous eux dans l'ordre de dessin. */
   const ombreMeshes: THREE.Mesh[] = [];
+  const pieds = new Map<string, number[] | null>();
   const ground = d.ground ? engineGround(def, artSeed, textures) : null;
   if (ground) meshes.push(ground);
   // créés dans l'ordre de dessin : à profondeur égale, three.js départage les transparents par ordre de création
@@ -207,7 +257,15 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
     if (r.orient === 'cote') mesh.rotation.y = p.entry.vers === 'ouest' ? -Math.PI / 2 : Math.PI / 2;
     if (profond) {
       // ombres du plan (passe 68) : contact sous un objet, pied d'une façade, pied d'un mur de passage
-      const ombres = ombresDuPlan(r, p.entry.at, p.entry.vers).map((o) => { const { mesh: m, mat: om } = ombreMesh(o); ombreMeshes.push(m); return { mat: om, alpha: o.alpha }; });
+      // passe 116 (retours R1) : contact de la silhouette au sol et ombre portée par la lanterne la plus proche
+      const sol = r.orient === 'face' && r.h < 6 && Math.abs(p.entry.at[1]) <= 0.25;
+      const ombres = ombresDuPlan(r, p.entry.at, p.entry.vers, { profil: sol ? piedDuPlan(p, pieds) ?? undefined : undefined, lumieres: d.lights }).map((o) => {
+        const { mesh: m, mat: om } = ombreMesh(o);
+        ombreMeshes.push(m);
+        const t = om.uniforms.tProfil!.value as THREE.Texture | null;
+        if (t) textures.push(t);
+        return { mat: om, alpha: o.alpha };
+      });
       cutaways.push({ rect: r, mat, cut: 0, writes: mat.depthWrite, ghost: !!p.entry.coupe, vers: r.orient === 'cote' ? p.entry.vers ?? 'est' : undefined, coupeZ: p.entry.coupeZ, ombres });
     }
     meshes.push(mesh);

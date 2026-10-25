@@ -34,22 +34,25 @@ export const ESCALIER: readonly [number, number] = [-1.6, 1.6];
 /** Mobilier de la place (objets du lot des villes, `villes-objets`, ramenés à leur taille par `echelle`, et du kit des rangs). */
 export const MEUBLES_COUR: readonly MeubleRang[] = [
   { ...objet('monument', 'monument', 0, -3.0, 5.0, 3.2), echelle: 0.8 },
-  { ...objet('estrade', 'estrade', -7.5, -8.0, 6.2, 3.0), echelle: 0.9 },
-  { ...objet('estrade-brasero-o', 'brasero', -11.6, -8.2, 1.2, 1.2), echelle: 0.4, rect: null },
-  { ...objet('estrade-brasero-e', 'brasero', -3.4, -8.2, 1.2, 1.2), echelle: 0.4, rect: null },
+  // passe 116 (retours R1) : l'estrade ramenée de 6,3 à 4,6 m de haut (elle cachait le Belvédère et le passage ouest),
+  // ses braseros resserrés contre elle ; les deux étals avancés de part et d'autre du monument, loin des passages vers le
+  // Belvédère et sans cacher le tableau ni la joueuse
+  { ...objet('estrade', 'estrade', -7.5, -8.0, 4.6, 2.2), echelle: 0.66 },
+  { ...objet('estrade-brasero-o', 'brasero', -10.4, -8.2, 1.2, 1.2), echelle: 0.4, rect: null },
+  { ...objet('estrade-brasero-e', 'brasero', -4.6, -8.2, 1.2, 1.2), echelle: 0.4, rect: null },
   { ...objet('tableau', 'tableau', 9.0, -11.4, 2.6, 0.6), echelle: 0.5 },
   objet('cour-banc', 'banc', 4.2, -11.2, 3.6, 0.8),
-  objet('etal-ouest', 'etal', -10.5, -3.6, 4.0, 1.4),
-  objet('etal-est', 'etal', 11.0, -4.6, 4.0, 1.4),
+  objet('etal-ouest', 'etal', -10.5, -1.0, 4.0, 1.4),
+  objet('etal-est', 'etal', 10.5, -1.0, 4.0, 1.4),
   objet('belvedere-banc', 'banc', -7.0, -24.2, 3.6, 0.8),
 ];
-const BRASEROS: readonly Vec2[] = [{ x: -11.6, z: -8.8 }, { x: -3.4, z: -8.8 }];
+const BRASEROS: readonly Vec2[] = [{ x: -10.4, z: -8.8 }, { x: -4.6, z: -8.8 }];
 /** Lampadaires : deux au bord de la terrasse, deux au Belvédère. */
 export const LAMPES_COUR: readonly Vec2[] = [{ x: -6.5, z: 3.6 }, { x: 6.5, z: 3.6 }, { x: -3.5, z: -20.4 }, { x: 3.5, z: -20.4 }];
 
 /** La foule de la place (gabarits validés, ADR 023) ; M10-E y posera la guide et les défis de la ville. */
 export const NPCS_COUR: readonly IlotNpc[] = [
-  { id: 'pnj-marchande-25', at: { x: 11.4, z: -2.6 }, facing: 'gauche', role: 'guide' },
+  { id: 'pnj-marchande-25', at: { x: 11.2, z: 0.2 }, facing: 'gauche', role: 'guide' },
   { id: 'pnj-docker-27', at: { x: -5.0, z: -6.2 }, facing: 'gauche', role: 'guide' },
   { id: 'pnj-joueuse-31', at: { x: 7.6, z: -9.8 }, facing: 'droite', role: 'guide' },
   { id: 'pnj-commis-33', at: { x: 3.2, z: 0.8 }, facing: 'gauche', role: 'guide' },
