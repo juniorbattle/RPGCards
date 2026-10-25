@@ -162,6 +162,10 @@ complète, comparaisons au pixel près) ; profils RC 0.8 chargés.
 > (`artifacts/qa/m10f/equilibre/ecarts-annexe.md`) ; migration 13/13 ; campagne de la RC verte sur les deux GPU ; rapport
 > `docs/RAPPORT_RC_AVENTURE.md` ; `0.10.0-rc.1` proposée, non posée ; fiche
 > <https://claude.ai/artifact/UfZ5K4GnfarDa1vhLFUua5>.
+>
+> **Reçu le 2026-10-25** (fiche remplie, 9 choix sur l'option recommandée, `docs/FICHE_ARBITRAGES_M10F.md`) : RC
+> `0.10.0-rc.1` reçue ; annexe de calibrage gardée ; « cheffe » accordée ; un duel d'aventure non vérifiable propose de le
+> recommencer. **M10 est clos** ; suite : reprise de M09 (personnages de la ville, autres quartiers).
 
 ---
 
