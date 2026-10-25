@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-20T06:24:26.621Z",
-  "commit": "9a773a9",
+  "date": "2026-10-25T03:32:45.866Z",
+  "commit": "12537a6",
   "mode": "assembler",
   "checks": [
     "OK manifeste du Quai en rangs : 62 plans découpés dans 12 images (kit des rangs : 41 plans), 16 lumières, 10 brumes"
@@ -929,7 +929,7 @@
         0.446
       ],
       "at": [
-        7.4,
+        9.4,
         0,
         -20.8
       ],
@@ -946,7 +946,7 @@
         1
       ],
       "at": [
-        11.8,
+        12.9,
         0,
         -21.9
       ],

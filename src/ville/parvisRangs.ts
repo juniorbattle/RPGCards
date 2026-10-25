@@ -54,7 +54,8 @@ export const MEUBLES_PARVIS: readonly MeubleRang[] = [
   { ...objet('paris-kiosque', 'kiosque', 7.6, -23.0, 3.0, 1.2), echelle: 0.5 },
   meuble('paris-caisses', [11.6, 13.7], 11.2, -23.6, 1.2, 0.8),
   { ...objet('tableau-annonces', 'tableau', -8.4, -35.4, 2.6, 0.6), echelle: 0.5 },
-  objet('lices-banc', 'banc', 3.2, -30.4, 3.2, 0.8),
+  // passe 116 (retours R1) : le banc et son olivier, écartés du passage vers la cour des Champions qu'ils cachaient
+  objet('lices-banc', 'banc', -1.6, -30.4, 3.2, 0.8),
   { ...objet('champions-brasero-o', 'brasero', -3.6, -44.8, 1.2, 1.2), echelle: 0.4, rect: null },
   { ...objet('champions-brasero-e', 'brasero', 3.6, -44.8, 1.2, 1.2), echelle: 0.4, rect: null },
 ];
