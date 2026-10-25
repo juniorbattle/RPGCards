@@ -1,5 +1,5 @@
 {
-  "date": "2026-10-25T08:56:37.260Z",
+  "date": "2026-10-25T17:50:22.781Z",
   "feuilles": {
     "pnj-docker": {
       "brut": "pnj-docker-p1",
@@ -108,6 +108,493 @@
         74,
         74,
         73
+      ]
+    },
+    "pnj-marchande": {
+      "brut": "pnj-marchande-s1",
+      "checks": [
+        "OK grille d’art 64 × 96, pas 3.37 × 2.985, 45 couleurs, ancrage 32,93, figure 89 px d’art, rien de rogné",
+        "OK hauteurs des 15 figures régulières (84 à 91 px d’art)",
+        "OK ton clé peau présent sur au moins deux niveaux : [803,625,1501,0]",
+        "OK ton clé cheveux présent sur au moins deux niveaux : [1480,1489,2302,0]",
+        "OK ton clé tenue présent sur au moins deux niveaux : [1709,2300,5549,1227]",
+        "OK ton clé chemise présent sur au moins deux niveaux : [91,60,80,0]",
+        "OK feuille ≤ 1 Mo : 93 Ko, 960 × 864"
+      ],
+      "pitch": {
+        "x": 3.37,
+        "y": 2.985,
+        "rx": 0.101,
+        "ry": 0.106,
+        "phaseX": 2.83,
+        "phaseY": 2.13
+      },
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 89,
+      "colors": 45,
+      "counts": {
+        "peau": [
+          803,
+          625,
+          1501,
+          0
+        ],
+        "cheveux": [
+          1480,
+          1489,
+          2302,
+          0
+        ],
+        "tenue": [
+          1709,
+          2300,
+          5549,
+          1227
+        ],
+        "chemise": [
+          91,
+          60,
+          80,
+          0
+        ]
+      },
+      "hauteurs": [
+        88,
+        88,
+        88,
+        87,
+        88,
+        84,
+        86,
+        85,
+        86,
+        85,
+        89,
+        90,
+        90,
+        91,
+        91
+      ]
+    },
+    "pnj-commis": {
+      "brut": "pnj-commis-s1",
+      "checks": [
+        "OK grille d’art 64 × 96, pas 3.2 × 3.39, 46 couleurs, ancrage 32,93, figure 85 px d’art, rien de rogné",
+        "OK hauteurs des 15 figures régulières (84 à 85 px d’art)",
+        "OK ton clé peau présent sur au moins deux niveaux : [942,439,1804,0]",
+        "OK ton clé cheveux présent sur au moins deux niveaux : [728,1714,2050,573]",
+        "OK ton clé tenue présent sur au moins deux niveaux : [1279,1985,3995,620]",
+        "OK ton clé chemise présent sur au moins deux niveaux : [139,79,238,0]",
+        "OK feuille ≤ 1 Mo : 86 Ko, 960 × 864"
+      ],
+      "pitch": {
+        "x": 3.2,
+        "y": 3.39,
+        "rx": 0.136,
+        "ry": 0.155,
+        "phaseX": 1.29,
+        "phaseY": 2.34
+      },
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 85,
+      "colors": 46,
+      "counts": {
+        "peau": [
+          942,
+          439,
+          1804,
+          0
+        ],
+        "cheveux": [
+          728,
+          1714,
+          2050,
+          573
+        ],
+        "tenue": [
+          1279,
+          1985,
+          3995,
+          620
+        ],
+        "chemise": [
+          139,
+          79,
+          238,
+          0
+        ]
+      },
+      "hauteurs": [
+        85,
+        85,
+        84,
+        84,
+        84,
+        84,
+        84,
+        84,
+        84,
+        84,
+        85,
+        85,
+        85,
+        85,
+        85
+      ]
+    },
+    "pnj-joueuse": {
+      "brut": "pnj-joueuse-s1",
+      "checks": [
+        "OK grille d’art 64 × 96, pas 3.635 × 3.74, 46 couleurs, ancrage 32,93, figure 80 px d’art, rien de rogné",
+        "OK hauteurs des 15 figures régulières (76 à 81 px d’art)",
+        "OK ton clé peau présent sur au moins deux niveaux : [542,384,847,0]",
+        "OK ton clé cheveux présent sur au moins deux niveaux : [773,1329,2782,838]",
+        "OK ton clé tenue présent sur au moins deux niveaux : [1617,3002,6070,1025]",
+        "OK ton clé chemise présent sur au moins deux niveaux : [144,108,143,0]",
+        "OK feuille ≤ 1 Mo : 80 Ko, 960 × 864"
+      ],
+      "pitch": {
+        "x": 3.635,
+        "y": 3.74,
+        "rx": 0.117,
+        "ry": 0.176,
+        "phaseX": 0.51,
+        "phaseY": 2.92
+      },
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 80,
+      "colors": 46,
+      "counts": {
+        "peau": [
+          542,
+          384,
+          847,
+          0
+        ],
+        "cheveux": [
+          773,
+          1329,
+          2782,
+          838
+        ],
+        "tenue": [
+          1617,
+          3002,
+          6070,
+          1025
+        ],
+        "chemise": [
+          144,
+          108,
+          143,
+          0
+        ]
+      },
+      "hauteurs": [
+        76,
+        77,
+        77,
+        77,
+        77,
+        77,
+        78,
+        78,
+        78,
+        78,
+        80,
+        80,
+        81,
+        81,
+        81
+      ]
+    },
+    "ronce": {
+      "brut": "ronce-s1",
+      "checks": [
+        "OK grille d’art 64 × 96, pas 3.775 × 3.785, 32 couleurs, ancrage 32,93, figure 67 px d’art, rien de rogné",
+        "OK hauteurs des 15 figures régulières (65 à 68 px d’art)",
+        "OK feuille ≤ 1 Mo : 80 Ko, 960 × 864"
+      ],
+      "pitch": {
+        "x": 3.775,
+        "y": 3.785,
+        "rx": 0.124,
+        "ry": 0.172,
+        "phaseX": 3.22,
+        "phaseY": 1.93
+      },
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 67,
+      "colors": 32,
+      "counts": {},
+      "hauteurs": [
+        67,
+        67,
+        67,
+        67,
+        67,
+        66,
+        67,
+        67,
+        68,
+        67,
+        65,
+        66,
+        66,
+        66,
+        66
+      ]
+    },
+    "voile": {
+      "brut": "voile-s1",
+      "checks": [
+        "OK grille d’art 64 × 96, pas 3.86 × 3.465, 32 couleurs, ancrage 32,93, figure 76 px d’art, rien de rogné",
+        "OK hauteurs des 15 figures régulières (73 à 77 px d’art)",
+        "OK feuille ≤ 1 Mo : 83 Ko, 960 × 864"
+      ],
+      "pitch": {
+        "x": 3.86,
+        "y": 3.465,
+        "rx": 0.041,
+        "ry": 0.055,
+        "phaseX": 1.78,
+        "phaseY": 1.31
+      },
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 76,
+      "colors": 32,
+      "counts": {},
+      "hauteurs": [
+        74,
+        75,
+        75,
+        75,
+        74,
+        73,
+        74,
+        74,
+        74,
+        74,
+        76,
+        76,
+        77,
+        76,
+        77
+      ]
+    },
+    "astre": {
+      "brut": "astre-s1",
+      "checks": [
+        "OK grille d’art 64 × 96, pas 3.355 × 3.81, 32 couleurs, ancrage 32,93, figure 80 px d’art, rien de rogné",
+        "OK hauteurs des 15 figures régulières (78 à 80 px d’art)",
+        "OK feuille ≤ 1 Mo : 81 Ko, 960 × 864"
+      ],
+      "pitch": {
+        "x": 3.355,
+        "y": 3.81,
+        "rx": 0.046,
+        "ry": 0.062,
+        "phaseX": 0.07,
+        "phaseY": 0.27
+      },
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 80,
+      "colors": 32,
+      "counts": {},
+      "hauteurs": [
+        79,
+        79,
+        79,
+        79,
+        79,
+        80,
+        79,
+        79,
+        79,
+        79,
+        78,
+        78,
+        78,
+        78,
+        78
+      ]
+    },
+    "chef-cendre": {
+      "brut": "chef-cendre-s1",
+      "checks": [
+        "OK grille d’art 64 × 96, pas 3.435 × 3.445, 32 couleurs, ancrage 32,93, figure 84 px d’art, rien de rogné",
+        "OK hauteurs des 15 figures régulières (76 à 84 px d’art)",
+        "OK feuille ≤ 1 Mo : 86 Ko, 960 × 864"
+      ],
+      "pitch": {
+        "x": 3.435,
+        "y": 3.445,
+        "rx": 0.171,
+        "ry": 0.124,
+        "phaseX": 0.27,
+        "phaseY": 2.41
+      },
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 84,
+      "colors": 32,
+      "counts": {},
+      "hauteurs": [
+        77,
+        77,
+        76,
+        77,
+        77,
+        78,
+        78,
+        77,
+        77,
+        78,
+        84,
+        83,
+        84,
+        83,
+        83
+      ]
+    },
+    "chef-ronce": {
+      "brut": "chef-ronce-s1",
+      "checks": [
+        "OK grille d’art 64 × 96, pas 3.87 × 3.745, 32 couleurs, ancrage 32,93, figure 77 px d’art, rien de rogné",
+        "OK hauteurs des 15 figures régulières (70 à 77 px d’art)",
+        "OK feuille ≤ 1 Mo : 85 Ko, 960 × 864"
+      ],
+      "pitch": {
+        "x": 3.87,
+        "y": 3.745,
+        "rx": 0.146,
+        "ry": 0.118,
+        "phaseX": 2.44,
+        "phaseY": 1.59
+      },
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 77,
+      "colors": 32,
+      "counts": {},
+      "hauteurs": [
+        75,
+        74,
+        73,
+        74,
+        73,
+        74,
+        73,
+        72,
+        72,
+        70,
+        77,
+        77,
+        77,
+        76,
+        77
+      ]
+    },
+    "chef-voile": {
+      "brut": "chef-voile-s1",
+      "checks": [
+        "OK grille d’art 64 × 96, pas 3.585 × 3.595, 32 couleurs, ancrage 32,93, figure 83 px d’art, rien de rogné",
+        "OK hauteurs des 15 figures régulières (81 à 83 px d’art)",
+        "OK feuille ≤ 1 Mo : 98 Ko, 960 × 864"
+      ],
+      "pitch": {
+        "x": 3.585,
+        "y": 3.595,
+        "rx": 0.209,
+        "ry": 0.181,
+        "phaseX": 2.22,
+        "phaseY": 0.98
+      },
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 83,
+      "colors": 32,
+      "counts": {},
+      "hauteurs": [
+        82,
+        82,
+        82,
+        82,
+        82,
+        83,
+        83,
+        82,
+        83,
+        82,
+        82,
+        81,
+        81,
+        82,
+        81
+      ]
+    },
+    "chef-astre": {
+      "brut": "chef-astre-s1",
+      "checks": [
+        "OK grille d’art 64 × 96, pas 3.42 × 3.44, 32 couleurs, ancrage 32,93, figure 83 px d’art, rien de rogné",
+        "OK hauteurs des 15 figures régulières (81 à 84 px d’art)",
+        "OK feuille ≤ 1 Mo : 95 Ko, 960 × 864"
+      ],
+      "pitch": {
+        "x": 3.42,
+        "y": 3.44,
+        "rx": 0.282,
+        "ry": 0.295,
+        "phaseX": 0.44,
+        "phaseY": 1.35
+      },
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 83,
+      "colors": 32,
+      "counts": {},
+      "hauteurs": [
+        81,
+        81,
+        81,
+        81,
+        81,
+        81,
+        82,
+        82,
+        82,
+        82,
+        83,
+        84,
+        83,
+        84,
+        83
       ]
     }
   },

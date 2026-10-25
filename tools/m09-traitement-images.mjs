@@ -99,16 +99,17 @@ export async function processSheet(arg) {
   // fond : écart au cyan pur m = min(G, B) − R ; liseré : pixel teinté de cyan (teinte 165–200°, saturé) au bord, mélange
   // du fond et du trait (le personnage n'a aucun cyan ; les yeux bleus, vers 220°, restent). Option `bg: 'bleu'` (feuille
   // d'un PNJ dont la chemise est en ton clé cyan, reprise de M09) : fond bleu pur, m = B − max(R, G), liseré teinté de bleu
-  // (220–260°) ; le personnage n'a alors aucun bleu.
-  const bleu = o.bg === 'bleu';
+  // (220–260°) ; le personnage n'a alors aucun bleu. Option `bg: 'magenta'` (Sélène, chemise bleu ciel, passe 127) : fond
+  // magenta pur, m = min(R, B) − G, liseré teinté de magenta (285–325°).
+  const bleu = o.bg === 'bleu'; const magenta = o.bg === 'magenta';
   const op = new Uint8Array(W * H);
   for (let i = 0; i < W * H; i++) {
     const r = d[i * 4]; const g2 = d[i * 4 + 1]; const b = d[i * 4 + 2];
     const mx = Math.max(r, g2, b); const mn = Math.min(r, g2, b); const dd = mx - mn;
     let hh = 0; if (dd) { if (mx === r) hh = ((g2 - b) / dd) % 6; else if (mx === g2) hh = (b - r) / dd + 2; else hh = (r - g2) / dd + 4; }
     hh = (hh * 60 + 360) % 360;
-    const cast = dd / Math.max(mx, 1) > 0.35 && mx > 38 && (bleu ? hh >= 220 && hh <= 260 : hh >= 165 && hh <= 200);
-    op[i] = (bleu ? b - Math.max(r, g2) : Math.min(g2, b) - r) < 120 && !cast ? 1 : 0;
+    const cast = dd / Math.max(mx, 1) > 0.35 && mx > 38 && (bleu ? hh >= 220 && hh <= 260 : magenta ? hh >= 285 && hh <= 325 : hh >= 165 && hh <= 200);
+    op[i] = (bleu ? b - Math.max(r, g2) : magenta ? Math.min(r, b) - g2 : Math.min(g2, b) - r) < 120 && !cast ? 1 : 0;
   }
   // arêtes de couleur à l'intérieur de la figure
   const ex = []; const ey = [];
@@ -117,8 +118,9 @@ export async function processSheet(arg) {
   for (let x = 0; x < W; x += 2) for (let y = 1; y < H; y++) { const i = y * W + x; if ((op[i] || op[i - W]) && (op[i] !== op[i - W] || diff(i, i - W) > 90)) ey.push(y); }
   const pitch = (es) => {
     let best = { p: 0, r: 0 }; const all = [];
-    // option `pitchMin` : borne basse du pas (une feuille où le pas réel a un sous-multiple fort ; défaut 2,5)
-    for (let pp = o.pitchMin ?? 2.5; pp <= 8; pp += 0.005) {
+    // options `pitchMin` et `pitchMax` : bornes du pas (une feuille où le pas réel a un sous-multiple ou un multiple fort ;
+    // défaut 2,5 à 8)
+    for (let pp = o.pitchMin ?? 2.5; pp <= (o.pitchMax ?? 8); pp += 0.005) {
       let sc = 0; let ss = 0; const k = (2 * Math.PI) / pp;
       for (const e of es) { sc += Math.cos(k * e); ss += Math.sin(k * e); }
       const r = Math.hypot(sc, ss) / es.length; all.push({ p: pp, r, ph: ((Math.atan2(ss, sc) / k) % pp + pp) % pp });
