@@ -5,7 +5,7 @@
 import { CATALOG, cardTitle, FAMILIES } from '../game/catalog/cards';
 import { CONTRAINTE_JOUTE, manche, ouvertChampionnat, varianteDe } from './competitions';
 import { chapitre, statutDefi, type AventureEtat } from './aventure';
-import { deF, emissaire, figureDe, KAI_PROLOGUE, MAISONS, ROLES } from './modele';
+import { cheffe, chefVaincu, deF, emissaire, figureDe, KAI_PROLOGUE, MAISONS, ROLES } from './modele';
 import { aGain } from './registre';
 
 export interface Quete {
@@ -41,7 +41,7 @@ export function objectif(e: AventureEtat): string {
     const conquises = FAMILIES.filter((x) => x !== f && e.familles[x] === 'chef').length;
     return conquises
       ? `${conquises} voie${conquises > 1 ? 's' : ''} sur 3 conquise${conquises > 1 ? 's' : ''} : engagez le défi d’une autre famille à la Salle des Bannières (salle de jeu de cartes, sur le Quai).`
-      : 'Votre chef est vaincu : engagez le défi d’une autre famille à la Salle des Bannières (salle de jeu de cartes).';
+      : `${cheffe(e.affiliation!) ? 'Votre cheffe est vaincue' : 'Votre chef est vaincu'} : engagez le défi d’une autre famille à la Salle des Bannières (salle de jeu de cartes).`;
   }
   if (ch === 'championnat') {
     const m = manche(e.competitions);
@@ -68,7 +68,7 @@ export function quetes(e: AventureEtat): Quete[] {
   // Les trois voies (PROGRESSION §6.2) : ouvertes quand le chef de la famille d'accueil est vaincu, dans l'ordre choisi.
   if (f && aGain(e.registre, `signature:${f}`)) {
     out.push({ id: 'voies', titre: 'Les trois voies', type: 'principale', etapes: FAMILIES.filter((x) => x !== f).map((x) => ({
-      texte: `La voie ${deF(x)} : ${e.familles[x] === 'chef' ? 'chef vaincu' : e.familles[x] === 'defiee' ? 'défi engagé' : 'défi à engager à la Salle des Bannières'}`,
+      texte: `La voie ${deF(x)} : ${e.familles[x] === 'chef' ? chefVaincu(x) : e.familles[x] === 'defiee' ? 'défi engagé' : 'défi à engager à la Salle des Bannières'}`,
       faite: e.familles[x] === 'chef',
     })) });
   }

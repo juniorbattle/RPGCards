@@ -37,14 +37,14 @@ import { basculerTechnique, choixPourCase, equiperSignature, rangDe, remplacerCa
 import { origineGain, vueCollection, type EntreeCollection } from './collection';
 import { conclure, decider, poses, rencontreDef, type Pose } from './directeur';
 import { ilotAventure, ilotBase } from './ilots';
-import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, RANGS, rangNeutre, roleDe, ROLES, ROMAIN, type EtatFamille } from './modele';
+import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, RANGS, rangNeutre, roleDe, cheffe, chefVaincu, leChef, ROLES, ROMAIN, type EtatFamille } from './modele';
 import { objectif, quetes } from './quetes';
 import { aGain, collectionDe, type Gain } from './registre';
 import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue, personnalite, type DuelPrevu } from './rencontres';
 import { CONTRAINTE_JOUTE, famillesDominantes, manche, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, varianteDe } from './competitions';
-import { MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave, type DuelAventure } from './sauvegarde';
+import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave, type DuelAventure } from './sauvegarde';
 import { installAventureStyles } from './styles';
-import { conclureDuel, figureOuNull, ouvrirDuel } from './fin';
+import { conclureDuel, figureOuNull, ouvrirDuel, REGLES_DUEL } from './fin';
 
 export interface DepsAventure {
   app: HTMLElement;
@@ -558,9 +558,9 @@ export class AventureApp {
       h('div', { class: 'av-cards' }, ...[1, 2, 3, 4].map((r) => cardEl(`${f}-${r}-basic`, { artSeed: this.params.artSeed, tag: 'div' }))),
       h('p', null, `Les quatre cartes de base ${de(f)} (I à IV) : une carte grise de chaque Rang leur cède sa place dans votre deck. Et la Technique ${m.technique} (${TECHNIQUES[m.technique].text})`),
       h('h3', null, 'Ensuite'),
-      h('p', null, `Défier ${c!.nom} (${roleDe(c!)}), puis ${b!.nom} (${roleDe(b!)}), puis ${ch!.nom} (${roleDe(ch!)}) : chaque lieutenant vaincu donne une variante, le chef donne sa Signature ∞.`),
+      h('p', null, `Défier ${c!.nom} (${roleDe(c!)}), puis ${b!.nom} (${roleDe(b!)}), puis ${ch!.nom} (${roleDe(ch!)}) : chaque lieutenant vaincu donne une variante, ${leChef(f)} donne sa Signature ∞.`),
       h('h3', null, 'Ce qui ne change pas'),
-      h('p', null, `Les autres familles restent ouvertes ; quand le chef ${de(f)} sera vaincu, vous pourrez engager leur défi à la Salle des Bannières. ${changement && quittee ? `Les cartes déjà reçues restent à vous. Vos adversaires ne comptent que les familles que vous avez rejointes ou dont vous avez engagé le défi : ${la(quittee)} ne comptera qu’à l’engagement de son défi.` : 'Jusqu’à votre premier défi de lieutenant, vous pourrez encore changer de voie.'}`),
+      h('p', null, `Les autres familles restent ouvertes ; quand ${leChef(f)} ${de(f)} sera ${cheffe(f) ? 'vaincue' : 'vaincu'}, vous pourrez engager leur défi à la Salle des Bannières. ${changement && quittee ? `Les cartes déjà reçues restent à vous. Vos adversaires ne comptent que les familles que vous avez rejointes ou dont vous avez engagé le défi : ${la(quittee)} ne comptera qu’à l’engagement de son défi.` : 'Jusqu’à votre premier défi de lieutenant, vous pourrez encore changer de voie.'}`),
       h('div', { class: 'ville-choices' },
         h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-confirmer', onclick: () => this.confirmer(f, changement) }, 'Confirmer l’affiliation'),
         h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-revenir', onclick: () => this.fermerModal() }, 'Revenir')));
@@ -591,8 +591,8 @@ export class AventureApp {
     if (fig.role === 'cadet' && e.familles[fig.famille] === 'invite' && e.affiliation) {
       const ok = peutChanger(e) && peutConfirmer({ ...e, affiliation: null }, fig.famille).ok;
       const plusTard = aGain(e.registre, `signature:${e.affiliation}`)
-        ? 'Ton chef est tombé : si tu veux nous défier, engage le défi de notre famille à la Salle des Bannières, sur le Quai.'
-        : 'Ta voie est engagée ; viens nous défier quand ton chef sera tombé.';
+        ? `${cheffe(e.affiliation) ? 'Ta cheffe est tombée' : 'Ton chef est tombé'} : si tu veux nous défier, engage le défi de notre famille à la Salle des Bannières, sur le Quai.`
+        : `Ta voie est engagée ; viens nous défier quand ${cheffe(e.affiliation) ? 'ta cheffe sera tombée' : 'ton chef sera tombé'}.`;
       return this.dire(`${fig.nom}, ${fig.titre}`, `« Tu as choisi ${la(e.affiliation)}. ${ok ? 'Si ce n’était pas la bonne voie, il est encore temps.' : plusTard} »`, [
         ...(ok ? [{ label: `Rejoindre ${la(fig.famille)} à la place…`, key: 'dlg-changer', run: () => this.confirmation(fig.famille, true) }] : []),
         { label: 'Au revoir', key: 'dlg-close', primary: true, run: () => this.fermerDialogue() },
@@ -601,7 +601,7 @@ export class AventureApp {
     const st = statutDefi(e, fig);
     const enjeu = st.deja ? 'Revanche, sans récompense : votre victoire est déjà au registre.' : `En jeu : ${fig.enjeu.kind === 'variante' ? nomCarte(fig.enjeu.defId) : `la Signature ∞ ${de(fig.famille)}`}.`;
     if (!st.ouvert) return this.dire(`${fig.nom}, ${fig.titre}`, `« Pas encore. » ${st.raison}`, [fermer(this)], fig.apparence);
-    this.dire(`${fig.nom}, ${fig.titre}`, `${st.deja ? ligneFigure(fig.role, true) : REPLIQUES[fig.id] ?? ligneFigure(fig.role, false)} ${enjeu}`, [
+    this.dire(`${fig.nom}, ${fig.titre}`, `${st.deja ? ligneFigure(fig, true) : REPLIQUES[fig.id] ?? ligneFigure(fig, false)} ${enjeu}`, [
       { label: `${st.deja ? 'Revanche' : 'Défier'} — ${fig.nom}`, key: 'dlg-duel', primary: true, run: () => this.lancerFigure(fig.id) },
       { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
     ], fig.apparence);
@@ -683,7 +683,7 @@ export class AventureApp {
     const gagnes = contreKai.filter((h) => h.issue === 'victoire').length;
     const ligneKai = ch === 'maison'
       ? `« Alors, ${this.etat.affiliation ? `tu as rejoint ${la(this.etat.affiliation)}` : 'toujours sans famille'} ? Moi, la Cendre m’a pris. Une partie, pour voir qui a le plus appris ? »`
-      : ch === 'voies' ? `« Tu as fait tomber ton chef, à ce qu’on dit. Moi, je monte aussi. ${gagnes > contreKai.length / 2 ? 'Tu mènes, mais pas pour longtemps.' : 'Et je mène, ne l’oublie pas.'} »`
+      : ch === 'voies' ? `« Tu as fait tomber ${this.etat.affiliation && cheffe(this.etat.affiliation) ? 'ta cheffe' : 'ton chef'}, à ce qu’on dit. Moi, je monte aussi. ${gagnes > contreKai.length / 2 ? 'Tu mènes, mais pas pour longtemps.' : 'Et je mène, ne l’oublie pas.'} »`
       : `« Le Championnat approche. On se retrouvera là-bas, j’en suis sûr. En attendant, une dernière pour la route ? »`;
     // M10-E : les membres des familles ont la réplique de leur maison
     const MAISON: Record<Family, string> = {
@@ -714,7 +714,7 @@ export class AventureApp {
     const cartes = bannieres(e).map((b) => h('div', { class: `av-banniere fam-${b.famille} etat-${b.etat}`, 'data-key': `av-banniere-${b.famille}`, 'data-etat': b.etat },
       h('span', { class: `av-emb fam-${b.famille}`, html: emblemSvg(b.famille, 40) }),
       h('b', null, capital(la(b.famille))),
-      h('span', { class: 'av-banniere-etat' }, ETAT_BANNIERE[b.etat]),
+      h('span', { class: 'av-banniere-etat' }, b.etat === 'conquise' ? chefVaincu(b.famille) : ETAT_BANNIERE[b.etat]),
       h('small', null, b.texte),
       b.etat === 'engageable' ? h('button', { class: 'ville-btn primary', type: 'button', 'data-key': `dlg-engager-${b.famille}`, onclick: () => this.confirmationEngagement(b.famille) }, 'Engager le défi…') : null));
     this.ouvrirModal(h('div', { class: 'av-confirm av-large', 'data-key': 'av-bannieres' },
@@ -839,13 +839,33 @@ export class AventureApp {
     const check = verifierDuel(d);
     const prevu = this.prevuDe(d);
     if (!check.ok || !prevu) {
-      this.toast(`Reprise exacte impossible : ${check.ok ? 'rencontre inconnue.' : check.reason} Le duel est retiré (non compté).`);
-      this.save!.duel = null;
-      this.persist();
-      this.entrerVille(false);
+      void this.repriseImpossible(d, check.ok ? 'Rencontre inconnue.' : check.reason, prevu);
       return;
     }
     this.lancer(prevu, d);
+  }
+
+  /**
+   * Duel qui ne peut pas être repris exactement (règles d'une autre version, données altérées) : comme le jeu standard
+   * (fiche de la RC, T1), le recommencer depuis le début (même rencontre, même configuration), le retirer sans qu'il
+   * compte, ou plus tard. Une rencontre inconnue ne peut qu’être retirée.
+   */
+  private async repriseImpossible(d: DuelAventure, raison: string, prevu: DuelPrevu | null): Promise<void> {
+    const r = prevu
+      ? await confirmDialog({ title: 'Reprise exacte impossible', text: `${raison} Vous pouvez recommencer ce duel depuis le début (même adversaire, même configuration) ou le retirer sans qu’il soit compté.`, confirm: 'Recommencer depuis le début', alt: { label: 'Retirer ce duel', key: 'drop' }, cancel: 'Plus tard' })
+      : 'drop';
+    const s = this.save;
+    if (!s || s.duel?.id !== d.id) return;
+    if (r === 'confirm' && prevu) {
+      s.duel = { ...d, commands: [], hash: '', turn: 0, rules: REGLES_DUEL, catalog: CATALOG_AVENTURE };
+      this.persist();
+      this.lancer(prevu, s.duel);
+    } else if (r === 'drop') {
+      s.duel = null;
+      this.persist();
+      this.toast(`${prevu ? '' : `Reprise exacte impossible : ${raison} `}Duel en cours retiré (non compté).`);
+      this.entrerVille(false);
+    }
   }
 
   private prevuDe(d: DuelAventure): DuelPrevu | null {
@@ -1101,7 +1121,7 @@ export class AventureApp {
         h('h3', null, 'Neutres (la populace)'),
         h('div', { class: 'av-cards' }, ...v.neutres.map((n) => h('div', { class: 'av-col-entree' }, neutreEl(n.id, `×${n.possedees}`), h('span', { class: 'av-col-texte' }, `${n.dansDeck} dans le deck`)))),
         ...v.familles.map((f) => h('section', { class: `av-col-fam fam-${f.famille}`, 'data-key': `av-col-fam-${f.famille}` },
-          h('h3', null, h('span', { class: `av-emb fam-${f.famille}`, html: emblemSvg(f.famille) }), ` ${capital(leF(f.famille))} — ${ETAT_FAMILLE[f.etat]}`),
+          h('h3', null, h('span', { class: `av-emb fam-${f.famille}`, html: emblemSvg(f.famille) }), ` ${capital(leF(f.famille))} — ${f.etat === 'chef' ? chefVaincu(f.famille) : ETAT_FAMILLE[f.etat]}`),
           h('div', { class: 'av-col-cartes' },
             ...f.basics.map((x, i) => entree(x, `Basic ${ROMAIN[RANGS[i]!]}`)),
             ...f.variantes.map((x, i) => entree(x, `Variante ${ROMAIN[RANGS[i]!]}`)),
@@ -1132,7 +1152,7 @@ export class AventureApp {
     this.ouvrirModal(h('div', { class: 'av-confirm av-large', 'data-key': 'av-journal-panel' },
       h('h2', null, 'Journal des quêtes'),
       ...q.map((x) => h('div', { class: 'av-quete' }, h('h3', null, x.titre), h('ul', null, ...x.etapes.map((s) => h('li', { class: s.faite ? 'faite' : '' }, `${s.faite ? '✓ ' : '· '}${s.texte}`))))),
-      h('p', { class: 'av-proto' }, `Les familles : ${FAMILIES.map((f) => `${capital(leF(f))}, ${ETAT_FAMILLE[this.etat.familles[f]]}`).join(' · ')}`),
+      h('p', { class: 'av-proto' }, `Les familles : ${FAMILIES.map((f) => `${capital(leF(f))}, ${this.etat.familles[f] === 'chef' ? chefVaincu(f) : ETAT_FAMILLE[this.etat.familles[f]]}`).join(' · ')}`),
       h('h3', null, 'Duels de l’aventure (les plus récents d’abord)'),
       this.save!.historique.length
         ? h('ol', { class: 'av-registre', 'data-key': 'av-historique' }, ...[...this.save!.historique].reverse().slice(0, 20).map((d) => h('li', null, `${titreRencontre(d.rencontre)} · ${ISSUE[d.issue]} · ${d.turns} tour${d.turns > 1 ? 's' : ''}`)))
@@ -1213,9 +1233,9 @@ function nomGain(g: Gain): string {
   return nomCarte(g.items[0]!);
 }
 
-function ligneFigure(role: 'cadet' | 'brasDroit' | 'chef', revanche: boolean): string {
+function ligneFigure({ role, famille }: { role: 'cadet' | 'brasDroit' | 'chef'; famille: Family }, revanche: boolean): string {
   if (revanche) return '« Encore ? Soit. Mais ce que tu as gagné, tu l’as déjà. »';
-  return role === 'cadet' ? '« Voyons si tu tiens la distance. »' : role === 'brasDroit' ? '« Avant le chef, il y a moi. »' : '« Tout ce chemin jusqu’à moi. Montre-moi pourquoi. »';
+  return role === 'cadet' ? '« Voyons si tu tiens la distance. »' : role === 'brasDroit' ? `« Avant ${leChef(famille)}, il y a moi. »` : '« Tout ce chemin jusqu’à moi. Montre-moi pourquoi. »';
 }
 
 function fermer(a: AventureApp): Choix {
