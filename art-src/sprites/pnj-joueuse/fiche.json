@@ -1,6 +1,6 @@
 {
   "id": "pnj-joueuse",
-  "statut": "feuille des PNJ de la ville (gabarit joueuse (joueuses, cadette de l’Astre, Tenante), recoloré par graine), suite de la deuxième reprise de M09 (passe 127), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas décidé",
+  "statut": "APPROUVÉ par le responsable le 2026-10-25 (ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128) : admis hors QA tant que l’empreinte reste be9b826d7a73…",
   "auteur": "Claude Code (session de reprise de M09, passe 127), à la demande du responsable : « Oui : génère les 10 autres feuilles des PNJ (gabarits marchande, commis, joueuse ; Maëlle, Sélène, Orin ; les quatre chefs), traite-les et pose-les. »",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-pnj-suite.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -132,5 +132,11 @@
     "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50 (entrée : public/sprites/player.png)",
     "ca4420cf60f02ef3f88be302a6476c9a3e6048daffa51cf0596db0b5e26fba82 (brut)",
     "be9b826d7a734788cddd9cb689d93f2d4b62f4d681fef8c0aee2493ae5fb023c (feuille ×3)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-25",
+    "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128",
+    "fichier": "public/sprites/pnj-joueuse.png",
+    "sha256": "be9b826d7a734788cddd9cb689d93f2d4b62f4d681fef8c0aee2493ae5fb023c"
+  }
 }

@@ -8,7 +8,8 @@ describe('approbations des images de la ville', () => {
   it('les manifestes et les fiches suivent le registre (aucun écart)', () => {
     const r = appliquer({ verifier: true });
     expect(r.ecarts).toEqual([]);
-    expect(r.images).toBe(20);
+    // 20 planches (A1, passe 104) et les 12 feuilles des PNJ (passe 128)
+    expect(r.images).toBe(32);
     expect(r.approuvees).toBeGreaterThan(0);
     // hache toutes les images de la ville : délai large sous la charge du passage complet (passe 125)
   }, 30000);

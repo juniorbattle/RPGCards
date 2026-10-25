@@ -1,6 +1,6 @@
 {
   "id": "ronce",
-  "statut": "feuille des PNJ de la ville (Maëlle, gardienne des Ronces (couleurs propres)), suite de la deuxième reprise de M09 (passe 127), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas décidé",
+  "statut": "APPROUVÉ par le responsable le 2026-10-25 (ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128) : admis hors QA tant que l’empreinte reste a4dd0136e00a…",
   "auteur": "Claude Code (session de reprise de M09, passe 127), à la demande du responsable : « Oui : génère les 10 autres feuilles des PNJ (gabarits marchande, commis, joueuse ; Maëlle, Sélène, Orin ; les quatre chefs), traite-les et pose-les. »",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-pnj-suite.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -102,5 +102,11 @@
     "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50 (entrée : public/sprites/player.png)",
     "1511f1c977c46242b049280e733b5fe89d255dd9b4d61b1c28260530dc346de3 (brut)",
     "a4dd0136e00a7c1f6fbcc289b834dc1620d51c73753ba444514876c68be81312 (feuille ×3)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-25",
+    "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128",
+    "fichier": "public/sprites/ronce.png",
+    "sha256": "a4dd0136e00a7c1f6fbcc289b834dc1620d51c73753ba444514876c68be81312"
+  }
 }

@@ -233,3 +233,5 @@ quartiers ») et ses deux choix du même jour (questions de la session, passe 12
   traitées par script (`tools/m09-pnj-feuilles.mjs`) et posées, `approved: false` ; planche des douze feuilles
   `screenshots/qa/m09/pnj/planche-pnj.png` (`tools/m09-pnj-planche.mjs`). **12 images sur 16 pour les PNJ** (aucune
   reprise utilisée) ; restent 4 images de reprise et les 4 images des quartiers (Place du Fanal, Ville haute).
+- **Approbation (passe 128)**, ordre du responsable : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par
+  le registre, dans une passe à part ». Registre `art-src/approbations.json` : 32 images (20 planches, 12 feuilles).
