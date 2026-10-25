@@ -448,8 +448,10 @@ describe('M10-A — deck R-AV réel dans les duels (AV-03 à AV-05, ARB-M10-04 e
   it('reprise exacte d’un duel à cartes grises : rejeu et empreinte (catalogue de l’aventure) ; données modifiées refusées', () => {
     const cfg = duelPrologue(31).config;
     const m = autoplay(cfg, 3);
-    const d: DuelAventure = { id: 'a1', rencontre: 'prologue', seed: 31, startedAt: AT, rules: 'V3.0+delta-V3.2', catalog: CATALOG_AVENTURE, config: cfg, commands: m.commands, hash: m.hash(), turn: m.state.turn, pret: false };
+    const d: DuelAventure = { id: 'a1', rencontre: 'prologue', seed: 31, startedAt: AT, rules: 'V3.0+delta-V3.3', catalog: CATALOG_AVENTURE, config: cfg, commands: m.commands, hash: m.hash(), turn: m.state.turn, pret: false };
     expect(verifierDuel(d)).toEqual({ ok: true });
+    // Avenant 07 (G-08) : un duel sauvegardé sous l’ancienne règle est refusé avec sa raison.
+    expect(verifierDuel({ ...d, rules: 'V3.0+delta-V3.2' as DuelAventure['rules'] })).toEqual({ ok: false, reason: 'Version des règles ou du catalogue différente.' });
     expect(verifierDuel({ ...d, hash: '0'.repeat(16) }).ok).toBe(false);
     expect(verifierDuel({ ...d, catalog: 'autre' }).ok).toBe(false);
   });

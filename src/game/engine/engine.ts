@@ -71,7 +71,7 @@ export function secondaryState(state: GameState, slot: SecondarySlot): Secondary
 export function createGame(config: GameConfig = DEFAULT_CONFIG): { state: GameState; events: GameEvent[] } {
   const state: GameState = {
     schema: 1,
-    rules: 'V3.0+delta-V3.2',
+    rules: 'V3.0+delta-V3.3',
     seed: config.seed,
     rng: seedToState(config.seed),
     turn: 0,

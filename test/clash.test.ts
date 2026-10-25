@@ -31,11 +31,11 @@ describe('Delta V3.2 D-01 — affinité de Rang', () => {
     expect(a.guardWin).toBe(true);
     expect(a.winner).toBe('p2');
     expect(a.damage.p2).toBe(0);
-    // Avec Astre I : score 3, la Garde perd et subit 12 − 6 = 6.
+    // Avec Astre I : score 3, la Garde perd et subit 12 − 3 = 9 (avenant 07 : la Garde II n’absorbe que 3).
     const b = computeClash({ p1: side('Cendre-4', 'assault'), p2: side('Ronce-2', 'guard', [['Astre-1', 'rank']]) });
     expect(b.scores.p2).toBe(3);
     expect(b.winner).toBe('p1');
-    expect(b.damage.p2).toBe(6);
+    expect(b.damage.p2).toBe(9);
   });
   it('le bonus de Rang n’augmente jamais la Puissance ni les coefficients', () => {
     // §14.1 : Astre III + Voile II Rang (+2) = 5 contre Cendre IV : inflige 9, pas 11 ni 12.
@@ -44,14 +44,16 @@ describe('Delta V3.2 D-01 — affinité de Rang', () => {
     expect(o.damage.p2).toBe(9);
     expect(o.multipliers.p1).toBe(1);
   });
-  it('G08 / D-05 : Cendre III P9 + Cendre I Rang vs Garde Cendre IV P12 → 5 contre 4, victoire au Rang, 0 dégât', () => {
+  it('G08 / D-05 (avenant 07, cas 3) : Cendre III P9 + Cendre I Rang vs Garde Cendre IV P12 → 5 contre 4, victoire au Rang, la Garde absorbe 6 : 3 dégâts', () => {
     const o = computeClash({ p1: side('Cendre-3', 'assault', [['Cendre-1', 'rank']]), p2: side('Cendre-4', 'guard') });
     expect(o.scores).toEqual({ p1: 5, p2: 4 });
     expect(o.winner).toBe('p1');
     expect(o.guardWin).toBe(false);
-    expect(o.damage).toEqual({ p1: 0, p2: 0 });
-    expect(o.zeroDamageRankWin).toBe(true);
+    expect(o.absorbed).toBe(6);
+    expect(o.damage).toEqual({ p1: 0, p2: 3 });
+    expect(o.zeroDamageRankWin).toBe(false);
     expect(o.repelRight).toBeNull();
+    expect(o.insightReasons.p2).toEqual([]);
   });
   it('G09 : sans soutien la Garde IV gagne, 0 dégât, droit de Repoussement', () => {
     const o = computeClash({ p1: side('Cendre-3', 'assault'), p2: side('Cendre-4', 'guard') });
@@ -68,22 +70,22 @@ describe('Puissance, M additif, issues (§6-7, §14, §16.4)', () => {
     expect([1, 2, 3, 4].map((r) => damageCoefficient(c(`Voile-${r}`), c('Cendre-4')))).toEqual([1, 2, 3, 4]);
     expect([1, 2, 3, 4].map((r) => damageCoefficient(c(`Cendre-${r}`), c('Cendre-4')))).toEqual([2, 3, 4, 5]);
   });
-  it('§14.3 : ultime additif 12 × (4+3) = 84 contre Assaut, 21 contre Garde III — jamais ×12', () => {
+  it('§14.3 : ultime additif 12 × (4+3) = 84 contre Assaut, (12 − 5) × 7 = 49 contre Garde III (avenant 07) — jamais ×12', () => {
     const vsA = computeClash({ p1: side('Cendre-4', 'assault', [['Cendre-3', 'damage'], ['Cendre-2', 'damage']]), p2: side('Voile-1', 'assault') });
     expect(vsA.multipliers.p1).toBe(7);
     expect(vsA.damage.p2).toBe(84);
     const vsG = computeClash({ p1: side('Cendre-4', 'assault', [['Cendre-3', 'damage'], ['Cendre-2', 'damage']]), p2: side('Ronce-3', 'guard') });
-    expect(vsG.damage.p2).toBe(21);
+    expect(vsG.damage.p2).toBe(49);
   });
-  it('§14.2 : Assaut IV P12 vs Garde III P9 → 3 ; vs Garde IV → bloqué', () => {
-    expect(computeClash({ p1: side('Cendre-4', 'assault'), p2: side('Ronce-3', 'guard') }).damage.p2).toBe(3);
+  it('§14.2 : Assaut IV P12 vs Garde III P9 → 12 − 5 = 7 (avenant 07) ; vs Garde IV → bloqué', () => {
+    expect(computeClash({ p1: side('Cendre-4', 'assault'), p2: side('Ronce-3', 'guard') }).damage.p2).toBe(7);
     const g4 = computeClash({ p1: side('Cendre-4', 'assault'), p2: side('Ronce-4', 'guard') });
     expect(g4.guardWin).toBe(true);
   });
-  it('G10 : Signature P14 ×5+×4 vs Garde IV → 18 ; vs Assaut ordinaire → 126', () => {
+  it('G10 : Signature P14 ×5+×4 vs Garde IV → (14 − 6) × 9 = 72 (avenant 07) ; vs Assaut ordinaire → 126', () => {
     const g = computeClash({ p1: side('sig-Cendre', 'assault', [['Cendre-4', 'damage'], ['Cendre-3', 'damage']]), p2: side('Ronce-4', 'guard') });
     expect(g.multipliers.p1).toBe(9);
-    expect(g.damage.p2).toBe(18);
+    expect(g.damage.p2).toBe(72);
     const a = computeClash({ p1: side('sig-Cendre', 'assault', [['Cendre-4', 'damage'], ['Cendre-3', 'damage']]), p2: side('Ronce-4', 'assault') });
     expect(a.damage.p2).toBe(126);
   });
@@ -93,11 +95,11 @@ describe('Puissance, M additif, issues (§6-7, §14, §16.4)', () => {
     expect(o.winner).toBeNull();
     expect(o.damage).toEqual({ p1: 12, p2: 84 });
   });
-  it('G12 : ∞ domine un score ordinaire renforcé mais la Garde absorbe selon P', () => {
+  it('G12 : ∞ domine un score ordinaire renforcé ; la Garde dominée absorbe la moitié de sa Puissance (avenant 07)', () => {
     const o = computeClash({ p1: side('sig-Voile', 'assault'), p2: side('Ronce-4', 'guard', [['Ronce-3', 'rank'], ['Ronce-2', 'rank']]) });
     expect(o.scores.p2).toBe(4 + 4 + 3);
     expect(o.winner).toBe('p1');
-    expect(o.damage.p2).toBe(0); // P12 − P12
+    expect(o.damage.p2).toBe(6); // P12 − ⌈12 / 2⌉
     expect(o.guardWin).toBe(false);
     expect(o.repelRight).toBeNull(); // pas de Repoussement pour la Garde perdante
     expect(o.insightReasons.p2).toEqual([]); // pas d’Insight naturel de Garde
@@ -157,12 +159,12 @@ describe('Interférences (§7.3, G07, G14, G15)', () => {
 });
 
 describe('Variantes et Signatures (§8, §11)', () => {
-  it('Convergence (Astre IV) soutenant Cendre IV : ×6 + ×3 = ×9 → 108 / 27', () => {
+  it('Convergence (Astre IV) soutenant Cendre IV : ×6 + ×3 = ×9 → 108 / (12 − 5) × 9 = 63 (avenant 07)', () => {
     const a = computeClash({ p1: side('Cendre-4', 'assault', [['Astre-4-convergence', 'damage'], ['Cendre-2', 'damage']]), p2: side('Voile-1', 'assault') });
     expect(a.multipliers.p1).toBe(9);
     expect(a.damage.p2).toBe(108);
     const g = computeClash({ p1: side('Cendre-4', 'assault', [['Astre-4-convergence', 'damage'], ['Cendre-2', 'damage']]), p2: side('Ronce-3', 'guard') });
-    expect(g.damage.p2).toBe(27);
+    expect(g.damage.p2).toBe(63);
     expect(damageCoefficient(c('Astre-4-convergence'), c('Astre-3'))).toBe(5);
   });
   it('Prisme : +1 hors famille, sans double +1 en Astre', () => {
@@ -218,10 +220,10 @@ describe('Variantes et Signatures (§8, §11)', () => {
   });
   it('Flamme conquérante : victoire en Assaut, blessure et soutien Dégâts non annulé → droit de Repousser', () => {
     const o = computeClash({ p1: side('sig-Cendre', 'assault', [['Cendre-1', 'damage']]), p2: side('Ronce-3', 'guard') });
-    expect(o.damage.p2).toBe((14 - 9) * 2);
+    expect(o.damage.p2).toBe((14 - 5) * 2); // avenant 07 : la Garde III absorbe 5
     expect(o.repelRight?.kind).toBe('flamme');
     const none = computeClash({ p1: side('sig-Cendre', 'assault'), p2: side('Ronce-4', 'guard') });
-    expect(none.damage.p2).toBe(2);
+    expect(none.damage.p2).toBe(8); // 14 − 6 ; Flamme échoue toujours sans soutien Dégâts
     expect(none.repelRight).toBeNull();
   });
   it('Cycle astral : exactement un soutien valide → sommet ; deux soutiens → rien ; Rang seul → rien', () => {

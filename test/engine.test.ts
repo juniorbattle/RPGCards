@@ -90,17 +90,18 @@ describe('Scénario T2 (D-05, G08, G09, G24) — via le moteur complet et le jou
     if (withSupport) r.tactics('p1', [{ mode: 'rank' }, null]);
     return r;
   }
-  it('avec Cendre I en Rang : 5 contre 4, Assaut domine, 0 PV, journal explicite', () => {
+  it('avec Cendre I en Rang : 5 contre 4, Assaut domine, la Garde absorbe 6 : 3 PV (avenant 07), journal explicite', () => {
     const r = t2(true);
     const rep = r.state.lastClash!;
     expect(rep.scores).toEqual({ p1: 5, p2: 4 });
     expect(rep.winner).toBe('p1');
-    expect(rep.zeroDamageRankWin).toBe(true);
-    expect(rep.damage).toEqual({ p1: 0, p2: 0 });
+    expect(rep.zeroDamageRankWin).toBe(false);
+    expect(rep.absorbed).toBe(6);
+    expect(rep.damage).toEqual({ p1: 0, p2: 3 });
     const j = buildJournal(r.events, 'p1').map((l) => l.text).join('\n');
     expect(j).toMatch(/Vous révélez et activez Cendre I/);
     expect(j).toMatch(/Cendre I → AMPLIFIER LE RANG · \+2 au Rang \(affinité \+1\)/);
-    expect(j).toMatch(/Vous dominez au Rang \(5 contre 4\), mais 0 blessure : la Garde absorbe \(Puissance 9 − 12 ≤ 0\)/);
+    expect(j).toMatch(/Vous dominez au Rang \(5 contre 4\) ; la Garde absorbe 6 \(moitié de sa Puissance 12\) : \(9 − 6\) × 1 = 3\./);
     const jr = buildJournal(r.events, 'p2').map((l) => l.text).join('\n');
     expect(jr).toMatch(/Le rival domine au Rang \(5 contre 4\)/);
     // La Secondaire posée pendant ce tour (Voile IV) n’a pas contribué.
@@ -169,7 +170,7 @@ describe('Insight et Techniques (G16-G19)', () => {
     r.tactics('p2', [{ mode: 'interfere', target: 0 }, null]);
     expect(r.state.players.p1.slots[0]?.active).toBe(true);
     expect(r.state.lastClash!.multipliers.p1).toBe(1);
-    expect(r.state.lastClash!.damage.p2).toBe(12 - 3);
+    expect(r.state.lastClash!.damage.p2).toBe(12 - 2); // avenant 07 : la Garde I absorbe 2
     expect(r.state.players.p1.insight).toBe(0);
   });
 
@@ -253,7 +254,7 @@ describe('Signatures et contrôle (G20, G21)', () => {
       { hand: ['Ronce-3'], slots: [{ def: 'Astre-2' }, null] });
     const r = new Runner(s).commit('p1', 'sig-Cendre', 'assault').commit('p2', 'Ronce-3', 'guard');
     r.tactics('p1', [{ mode: 'damage' }, null]);
-    expect(r.state.lastClash!.damage.p2).toBe(10);
+    expect(r.state.lastClash!.damage.p2).toBe((14 - 5) * 2); // avenant 07 : la Garde III absorbe 5
     expect(r.state.repel?.kind).toBe('flamme');
     r.apply({ type: 'repel', player: 'p1', targetSlot: 0 });
     expect(r.state.players.p2.slots[0]).toBeNull();
@@ -464,7 +465,7 @@ describe('Dissimulation — le rapport public du Clash ne publie aucune valeur m
     expect(numbers(rep)).not.toContain(7);
     // Issue inchangée ; l’état et la vue adverse portent ce même rapport public.
     expect(rep.winner).toBe('p1');
-    expect(rep.damage).toEqual({ p1: 0, p2: 6 });
+    expect(rep.damage).toEqual({ p1: 0, p2: 12 - 3 }); // avenant 07 : la Garde II absorbe 3
     expect(r.state.lastClash).toEqual(rep);
     expect(viewFor(r.state, 'p2').lastClash).toEqual(rep);
   });
@@ -475,10 +476,13 @@ describe('Dissimulation — le rapport public du Clash ne publie aucune valeur m
     const rep = publicReport(r);
     expect(rep.publicMultipliers).toEqual({ p1: '?', p2: '1' });
     expect(rep.multipliers).toEqual({ p1: null, p2: 1 });
-    expect(numbers(rep)).not.toContain(3);
+    // Avenant 07 : l’absorption publique de la Garde II vaut aussi 3 (moitié de sa Puissance 6, publique) ; elle n’est pas
+    // tirée du multiplicateur : on la vérifie à part et on cherche le 3 caché partout ailleurs.
+    expect(rep.absorbed).toBe(3);
+    expect(numbers({ ...rep, absorbed: null })).not.toContain(3);
     // Le score n’est pas camouflé (soutien en Dégâts) ; les PV perdus restent publics.
     expect(rep.scores).toEqual({ p1: 4, p2: 2 });
-    expect(rep.damage).toEqual({ p1: 0, p2: (12 - 6) * 3 });
+    expect(rep.damage).toEqual({ p1: 0, p2: (12 - 3) * 3 });
     expect(viewFor(r.state, 'p2').lastClash).toEqual(rep);
   });
 });

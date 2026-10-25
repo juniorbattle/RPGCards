@@ -10,6 +10,7 @@
 import { cardDef, cardTitle, EFFECTS, FAMILY_THEME, rankLabel, type Family } from '../game/catalog/cards';
 import { TECHNIQUES, type TechniqueId } from '../game/catalog/techniques';
 import type { SlotIndex, Stance } from '../game/model/types';
+import { guardHalf } from '../game/engine/clash';
 import { verdictText } from '../game/visibility/journal';
 import type { SideView, SlotView } from '../game/visibility/view';
 import { emblemSvg } from '../art/emblems';
@@ -388,7 +389,7 @@ function stanceChips(c: Controller, current: Stance | null, next = false): HTMLE
       h('span', { class: 'sb-icon', html: STANCE_ICON[st] }), st === 'assault' ? 'ASSAUT' : 'GARDE');
   return h('div', { class: cls('stance', next && 'next'), role: 'group', 'aria-label': 'Mode de la Primaire' },
     chip('assault', 'stance-assault', 'Assaut (touche A) : inflige des dégâts si vous dominez'),
-    chip('guard', 'stance-guard', 'Garde (touche G) : absorbe, gagne les égalités'),
+    chip('guard', 'stance-guard', 'Garde (touche G) : gagne les égalités ; dominée, absorbe la moitié de sa Puissance'),
   );
 }
 
@@ -586,8 +587,8 @@ function command(c: Controller): HTMLElement {
         msg.append(title('Engagement secret'));
         // M07 : une consigne, celle de l’étape en cours ; les étapes du tour sont listées dessous.
         if (!prim) msg.append(sub('Glissez une carte de votre main sur la case PRIMAIRE (ou cliquez la carte, puis la case).'));
-        else if (!dr.stance) msg.append(sub(`${cardTitle(prim)} · choisissez ASSAUT (dégâts si vous dominez) ou GARDE (absorbe, gagne les égalités).`));
-        else msg.append(sub(`${cardTitle(prim)} en ${dr.stance === 'assault' ? `ASSAUT : ${prim.power} dégâts de base si vous dominez` : `GARDE : absorbe jusqu’à ${prim.power}, gagne les égalités`}. Secondaire facultative, puis verrouillez.`));
+        else if (!dr.stance) msg.append(sub(`${cardTitle(prim)} · choisissez ASSAUT (dégâts si vous dominez) ou GARDE (gagne les égalités ; dominée, réduit les dégâts).`));
+        else msg.append(sub(`${cardTitle(prim)} en ${dr.stance === 'assault' ? `ASSAUT : ${prim.power} dégâts de base si vous dominez` : `GARDE : gagne les égalités ; dominée, absorbe jusqu’à ${guardHalf(prim.power)} (au moins 1 dégât passe)`}. Secondaire facultative, puis verrouillez.`));
         steps = stepList([
           { label: 'Primaire', icon: STEP_ICON.primary, done: !!prim },
           { label: 'Mode', icon: STEP_ICON.mode, done: !!dr.stance },
@@ -746,7 +747,7 @@ function placeBar(c: Controller, cardId: string): HTMLElement {
       h('span', { class: 'place-icon', 'aria-hidden': 'true', html: icon }), h('span', { class: 'place-label', 'aria-hidden': 'true' }, label));
   return h('div', { class: 'place-bar', role: 'group', 'aria-label': 'Poser la carte choisie' },
     b('place-assault', 'assault', STANCE_ICON.assault, 'ASSAUT', 'Primaire en ASSAUT : inflige sa Puissance si vous dominez au Rang', () => c.placeSelected('assault')),
-    b('place-guard', 'guard', STANCE_ICON.guard, 'GARDE', 'Primaire en GARDE : absorbe jusqu’à sa Puissance, gagne les égalités', () => c.placeSelected('guard')),
+    b('place-guard', 'guard', STANCE_ICON.guard, 'GARDE', 'Primaire en GARDE : gagne les égalités ; dominée, absorbe la moitié de sa Puissance', () => c.placeSelected('guard')),
     b('place-secondary', 'hidden', STEP_ICON.secondary, 'SECONDAIRE', sig ? 'Une Signature ne peut être que Primaire' : 'Secondaire, posée face cachée (en chargement ce tour)', () => c.placeSelected('secondary'), sig),
   );
 }
@@ -766,7 +767,7 @@ function inspector(c: Controller): HTMLElement {
       h('div', { class: 'meta' }, def.family ? `${def.family} ${emblemText(def.family)} · ${fr.label} · ${FAMILY_THEME[def.family]}` : 'Neutre · sans famille, sans effet, jamais d’affinité (carte grise de la populace)'),
       h('div', { class: 'stats-line' }, 'Rang ', h('b', null, def.signature ? '∞ (priorité absolue)' : `${rankLabel(def)} (${def.rank})`), ' · Puissance ', h('b', null, String(def.power))),
       def.effect ? h('div', { class: 'eff' }, h('em', null, EFFECTS[def.effect].name), ` — ${EFFECTS[def.effect].role}. ${EFFECTS[def.effect].text}`) : h('div', { class: 'eff' }, 'Basic : aucun effet individuel. Primaire Assaut/Garde ; Secondaire Rang, Dégâts, Interférer, Conserver.'),
-      def.signature ? h('div', { class: 'eff' }, 'Signature : uniquement Primaire. ∞ domine tout score ordinaire ; Puissance finie, absorbable par une Garde.') : null,
+      def.signature ? h('div', { class: 'eff' }, 'Signature : uniquement Primaire. ∞ domine tout score ordinaire ; Puissance finie, réduite par une Garde dominée.') : null,
     ),
   );
 }

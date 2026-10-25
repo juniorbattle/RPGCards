@@ -92,7 +92,7 @@ function showHelp(): void {
       h('p', null, 'Vues : tout le duel se joue face au rival (vue Rival), pose des cartes comprise. V ou le bouton de vue incline la caméra vers la table (vue Plateau) à la demande ; la vue revient face au rival à la phase suivante. Les réactions et répliques du rival ne réagissent qu’à ce qui est public : ce ne sont pas des indices sur ses choix secrets.'),
       h('p', null, 'Résolution : le Clash est présenté par étapes (Interférences, Rang, issue, blessures, conséquences). Les deux Primaires se font face (bandeau rouge ASSAUT, bleu GARDE), s’affrontent selon le résultat du moteur, puis partent toutes deux à la défausse. « Passer » saute la mise en scène ; « Tour suivant » reste toujours disponible ; « Rythme » accélère sans rien changer aux règles ; « Mvt réduit » supprime les déplacements.'),
       h('p', null, 'Clavier : Tab pour naviguer, Entrée/Espace pour sélectionner et poser, 1-4 cartes de main, A/G mode, V vue, Échap annuler, N action principale. Tactile : glisser, ou toucher puis toucher la case ; appui long = inspection.'),
-      h('p', null, 'Règlement : V3.0 + avenant mandaté V3.2 (+1 d’affinité de famille en Amplifier le Rang). Mise en scène, caméra et palette sont PROVISOIRES.'),
+      h('p', null, 'Règlement : V3.0 + avenant mandaté V3.2 (+1 d’affinité de famille en Amplifier le Rang) + avenant V3.3 (la Garde dominée absorbe la moitié de sa Puissance, au moins 1 dégât passe). Mise en scène, caméra et palette sont PROVISOIRES.'),
       h('button', { class: 'btn', type: 'button', onclick: () => o.remove() }, 'Fermer'),
     ));
   document.body.append(o);

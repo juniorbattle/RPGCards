@@ -104,7 +104,7 @@ export function buildResolutionBeats(events: readonly GameEvent[], ctx: BeatCont
       events: [],
     });
 
-    // 4. Issue et absorption
+    // 4. Issue et absorption (avenant 07 : `zero` n’a plus de cas, un Assaut vainqueur blesse toujours ; gardé par prudence)
     const zero = report.zeroDamageRankWin;
     const w = report.winner;
     let title: string;
@@ -117,7 +117,7 @@ export function buildResolutionBeats(events: readonly GameEvent[], ctx: BeatCont
       kind: 'outcome',
       title,
       detail: zero
-        ? `La Garde absorbe : Puissance ${report.powers[w!]} contre Garde ${report.powers[otherOf(w!)]} → (${report.powers[w!]} − ${report.powers[otherOf(w!)]}) ≤ 0. Victoire au Rang, aucune blessure.`
+        ? `La Garde absorbe tout : Puissance ${report.powers[w!]} − ${report.absorbed} = 0. Victoire au Rang, aucune blessure.`
         : verdictText(report, me),
       tone: zero ? 'warn' : w === me ? 'good' : w === null ? 'neutral' : 'bad',
       focus: zero || report.guardWin ? ['me-primary', 'opp-primary'] : [w === me ? 'opp-hp' : 'me-hp'],

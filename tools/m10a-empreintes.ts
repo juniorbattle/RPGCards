@@ -20,6 +20,15 @@ const ref = process.argv[3];
 const PROFILS = Object.keys(PROFILES);
 const VARIANTES: GameConfig['players']['p1']['variants'][] = ['all', 'none', ['Cendre-3', 'Voile-4', 'Ronce-1', 'Astre-2'], ['Astre-4', 'Astre-2', 'Voile-3', 'Cendre-4']];
 const hashes: Record<string, string> = {};
+/** Avenant 07 (V3.3, G-08) : le duel contient-il un Clash où l'Assaut gagne contre une Garde ? (journal public) */
+const agAssaut: Record<string, boolean> = {};
+/** Enregistrements des duels SANS Clash « Assaut vainqueur contre une Garde » : rejoués tels quels sur le moteur d'après. */
+const sansAG: Record<string, ReplayRecord> = {};
+const aAgAssaut = (evs: readonly { kind: string; vis: string; data: unknown }[]) => evs.some((e) => {
+  if (e.kind !== 'clash' || e.vis !== 'public') return false;
+  const r = e.data as { stances: { p1: string; p2: string }; guardWin: boolean };
+  return r.stances.p1 !== r.stances.p2 && !r.guardWin;
+});
 const t0 = Date.now();
 let n = 0;
 for (let i = 0; i < 240; i++) {
@@ -37,25 +46,44 @@ for (let i = 0; i < 240; i++) {
   // l'enregistrement rejoué doit redonner la même empreinte que la partie (contrôle croisé)
   const r = replay(m.record());
   if (r.hash !== m.hash()) throw new Error(`duel ${i} : rejeu ≠ partie`);
-  hashes[`duel-${String(i).padStart(3, '0')} ${s1}/${s2} ${pr.join('/')}`] = m.hash();
+  const cle = `duel-${String(i).padStart(3, '0')} ${s1}/${s2} ${pr.join('/')}`;
+  hashes[cle] = m.hash();
+  agAssaut[cle] = aAgAssaut(m.events);
+  if (!agAssaut[cle]) sansAG[cle] = m.record();
   n++;
 }
 for (const f of ['artifacts/qa/tmp/rc-record.json']) {
   if (!existsSync(f)) continue;
   const rec = JSON.parse(readFileSync(f, 'utf8')) as ReplayRecord;
-  hashes[`enregistrement ${f}`] = replay(rec).hash;
+  const rr = replay(rec);
+  hashes[`enregistrement ${f}`] = rr.hash;
+  agAssaut[`enregistrement ${f}`] = aAgAssaut(rr.events);
   n++;
 }
 const head = execSync('git rev-parse --short HEAD').toString().trim();
 const dirty = execSync('git status --porcelain src').toString().trim() ? '+arbre de travail' : '';
-const res = { commit: `${head}${dirty}`, duels: n, ms: Date.now() - t0, hashes };
+const res = { commit: `${head}${dirty}`, duels: n, ms: Date.now() - t0, hashes, agAssaut, sansAG };
 mkdirSync(dirname(out), { recursive: true });
 writeFileSync(out, JSON.stringify(res, null, 1) + '\n');
 console.log(`${n} empreintes (${res.ms} ms) → ${out}`);
 if (ref) {
-  const a = JSON.parse(readFileSync(ref, 'utf8')) as typeof res;
+  const a = JSON.parse(readFileSync(ref, 'utf8')) as Omit<typeof res, 'agAssaut' | 'sansAG'> & { agAssaut?: Record<string, boolean>; sansAG?: Record<string, ReplayRecord> };
   const keys = new Set([...Object.keys(a.hashes), ...Object.keys(hashes)]);
   const diff = [...keys].filter((k) => a.hashes[k] !== hashes[k]);
-  console.log(diff.length ? `ÉCARTS : ${diff.length}\n${diff.slice(0, 20).join('\n')}` : `IDENTIQUES : ${keys.size} empreintes (référence ${a.commit}, ici ${res.commit})`);
-  if (diff.length) process.exit(1);
+  if (process.env.LQV_EXPLIQUE === 'garde-v33') {
+    // Preuve de l'avenant 07 (G-08) : changent exactement les duels de la référence qui contiennent un Clash où l'Assaut
+    // gagne contre une Garde ; les autres gardent leur empreinte.
+    const attendus = Object.keys(a.agAssaut ?? {}).filter((k) => a.agAssaut![k]);
+    const inexpliques = diff.filter((k) => !a.agAssaut?.[k]);
+    const inchanges = attendus.filter((k) => !diff.includes(k));
+    console.log(`ÉCARTS : ${diff.length} ; attendus : ${attendus.length} ; inexpliqués : ${inexpliques.length} ; attendus inchangés : ${inchanges.length} ; identiques : ${keys.size - diff.length}`);
+    // Un duel sans tel Clash peut changer par les choix de l'IA (elle estime les Clashes possibles avec `computeClash`) :
+    // ses commandes d'avant, rejouées sur le moteur d'après, doivent redonner exactement son empreinte d'avant.
+    const moteurIdentique = Object.entries(a.sansAG ?? {}).filter(([k, rec]) => replay(rec).hash === a.hashes[k]).length;
+    console.log(`Duels sans Assaut vainqueur contre une Garde : ${Object.keys(a.sansAG ?? {}).length} ; leurs commandes rejouées sur le moteur d'après redonnent l'empreinte d'avant : ${moteurIdentique} ; changés par les choix de l'IA : ${inexpliques.length}`);
+    if (moteurIdentique !== Object.keys(a.sansAG ?? {}).length || inchanges.length) { console.log([...inexpliques, ...inchanges].slice(0, 20).join(', ')); process.exit(1); }
+  } else {
+    console.log(diff.length ? `ÉCARTS : ${diff.length}\n${diff.slice(0, 20).join('\n')}` : `IDENTIQUES : ${keys.size} empreintes (référence ${a.commit}, ici ${res.commit})`);
+    if (diff.length) process.exit(1);
+  }
 }

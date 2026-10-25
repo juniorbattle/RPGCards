@@ -111,8 +111,8 @@ describe('ADR 011 — effets d’une Secondaire camouflée : conséquences publi
     const r = masked('p1', 'Cendre-3-ferveur', { variants: ['Cendre-3'], hand: ['Cendre-4', 'Astre-1'], other: { hand: ['Ronce-2', 'Astre-3'] } });
     engage(r, { pid: 'p1', prim: 'Cendre-4', stance: 'assault' }, { pid: 'p2', prim: 'Ronce-2', stance: 'guard' });
     r.tactics('p1', [{ mode: 'keep' }, { mode: 'damage' }]);
-    // Résultats identiques : Cendre IV gagne et blesse ×4, Ferveur rapporte +1 Insight.
-    expect(r.state.players.p2.hp).toBe(90 - (12 - 6) * 4);
+    // Résultats identiques : Cendre IV gagne et blesse ×4 (avenant 07 : la Garde II absorbe 3), Ferveur rapporte +1 Insight.
+    expect(r.state.players.p2.hp).toBe(90 - (12 - 3) * 4);
     expect(r.state.players.p1.insight).toBe(2);
     expectNoLeak(r, 'p2', 'Cendre-3-ferveur');
     // Le gain est public (Insight), son motif générique : seule explication publique possible.

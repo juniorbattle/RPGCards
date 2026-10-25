@@ -88,7 +88,7 @@ export interface ClashOutcome {
   /** Dégâts fixes reçus (Braise, Étincelle, Contrecoup). */
   fixedDamage: Record<PlayerId, number>;
   damage: Record<PlayerId, number>;
-  /** Puissance absorbée par la Garde perdante (A/G), sinon 0. */
+  /** Absorption effective de la Garde perdante (A/G, avenant 07 : `guardAbsorption`), sinon 0. */
   absorbed: number;
   zeroDamageRankWin: boolean;
   heal: Record<PlayerId, number>;
@@ -121,6 +121,17 @@ export function damageCoefficient(sec: CardDef, primary: CardDef): number {
   if (sec.effect === 'convergence' && sec.family !== primary.family) return 6;
   const affinity = (sec.family !== null && sec.family === primary.family) || sec.effect === 'prisme';
   return r + (affinity ? 1 : 0);
+}
+
+/** Avenant 07 (V3.3) : une Garde dominée absorbe la moitié de sa Puissance imprimée, arrondie au supérieur. */
+export function guardHalf(guardPower: number): number {
+  return Math.ceil(guardPower / 2);
+}
+
+/** Avenant 07 (V3.3, G-02) : absorption effective d’une Garde dominée par un Assaut, plafonnée à `P_Assaut − 1` (tout
+ *  Assaut victorieux inflige au moins 1 dégât de base avant le multiplicateur). Puissances imprimées seulement. */
+export function guardAbsorption(assaultPower: number, guardPower: number): number {
+  return Math.min(guardHalf(guardPower), assaultPower - 1);
 }
 
 export function primaryScore(primary: CardDef, rankSupports: number[]): number {
@@ -199,8 +210,8 @@ export function computeClash(input: ClashInput): ClashOutcome {
       winner = attacker;
       const pa = input[attacker].primary.power;
       const pg = input[defender].primary.power;
-      absorbed = Math.min(pa, pg);
-      baseDamage[defender] = Math.max(0, pa - pg) * multipliers[attacker];
+      absorbed = guardAbsorption(pa, pg);
+      baseDamage[defender] = (pa - absorbed) * multipliers[attacker];
     } else {
       winner = defender;
       guardWin = true;
