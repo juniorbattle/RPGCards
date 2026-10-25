@@ -161,6 +161,17 @@ export function decide(view: PlayerView, profile: AiProfile = PROFILES.equilibre
     }
     case 'COMMIT':
       return decideCommit(view, profile, rng, memory);
+    case 'REVISION': {
+      // Avenant 08, amendement 1 : même évaluation, même tirage qu’à l’engagement (seule l’annonce a changé) ; garder si le
+      // choix ne change pas, sinon réviser.
+      const commitRng = makeRng(hashString(`${aiSeed}|${view.seed}|${view.turn}|COMMIT|${view.me.handCount}|${view.me.insight}`));
+      const c = decideCommit(view, profile, commitRng, memory);
+      const held = view.revision?.held ?? null;
+      if (c.type !== 'commit') return { type: 'revise', player: pid, commit: null };
+      const keep = !!held && held.primaryId === c.primaryId && held.stance === c.stance;
+      const { type: _t, player: _p, ...choice } = c;
+      return { type: 'revise', player: pid, commit: keep ? null : choice };
+    }
     case 'LECTURE':
       return { type: 'lecture', player: pid, use: canTech(view, 'Lecture') && rng() < profile.techniqueRate * 0.6 };
     case 'LECTURE_CHANGE': {

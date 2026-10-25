@@ -18,6 +18,8 @@ export type Phase =
   | 'PREPARE'
   | 'DISSIPATION'
   | 'COMMIT'
+  /** Avenant 08, amendement 1 : révision unique du premier verrouillé après la Signature annoncée de l’adversaire. */
+  | 'REVISION'
   | 'LECTURE'
   | 'LECTURE_CHANGE'
   | 'TACTICS'
@@ -56,6 +58,8 @@ export type Command =
   | { type: 'prepare'; player: PlayerId; reveal: SlotIndex[] }
   | { type: 'dissipate'; player: PlayerId; targetSlot: SlotIndex | null }
   | { type: 'commit'; player: PlayerId; primaryId: string; stance: Stance; secondaryId: string | null; replaceSlot: SlotIndex | null; slot?: SlotIndex }
+  /** Avenant 08, amendement 1 : `commit` null = garder l’engagement verrouillé ; sinon, nouvel engagement complet. */
+  | { type: 'revise'; player: PlayerId; commit: CommitChoice | null }
   | { type: 'lecture'; player: PlayerId; use: boolean }
   | { type: 'lectureStance'; player: PlayerId; stance: Stance }
   | { type: 'tactics'; player: PlayerId; plans: [TacticPlan | null, TacticPlan | null]; technique: TacticsTechnique | null }
@@ -63,6 +67,9 @@ export type Command =
   | { type: 'nextTurn' };
 
 export type PlayerCommand = Exclude<Command, { type: 'nextTurn' }>;
+
+/** Contenu d’un engagement : Primaire, mode, nouvelle Secondaire facultative, remplacement. */
+export interface CommitChoice { primaryId: string; stance: Stance; secondaryId: string | null; replaceSlot: SlotIndex | null; slot?: SlotIndex }
 
 export interface PlayerState {
   id: PlayerId;
@@ -117,7 +124,7 @@ export interface GameConfig {
 
 export interface GameState {
   schema: 1;
-  rules: 'V3.0+delta-V3.3.1';
+  rules: 'V3.0+delta-V3.3.2';
   seed: number;
   rng: number;
   turn: number;
@@ -129,6 +136,12 @@ export interface GameState {
   /** Joueurs dont une décision est attendue dans la phase courante. */
   awaiting: PlayerId[];
   lectureUsers: PlayerId[];
+  /** Avenant 08, amendement 1 : ordre des verrouillages de l’engagement (public : événements `locked`). */
+  commitOrder: PlayerId[];
+  /** Avenant 08, amendement 1 : engagements verrouillés gardés pendant la révision (privé, jamais projeté). */
+  commitHeld: Partial<Record<PlayerId, CommitChoice>> | null;
+  /** Avenant 08, amendement 1 : joueur à qui une révision est ouverte ce tour (une seule par tour). */
+  revision: PlayerId | null;
   repel: PendingRepel | null;
   lastClash: ClashReport | null;
   /** Informations publiques du Clash courant (après révélations), conservées jusqu’au tour suivant. */
@@ -158,7 +171,7 @@ export interface GameEvent {
 export type EventKind =
   | 'turnStart' | 'draw' | 'shuffle' | 'trim' | 'technique' | 'peek' | 'recentrage'
   | 'secondaryRevealed' | 'masking' | 'dissipation' | 'locked'
-  | 'committed' | 'replaced' | 'signatureAnnounced' | 'lecture' | 'primariesRevealed' | 'effectArmed'
+  | 'committed' | 'replaced' | 'signatureAnnounced' | 'signatureWithdrawn' | 'revisionOpened' | 'revised' | 'lecture' | 'primariesRevealed' | 'effectArmed'
   | 'tacticsRevealed' | 'interference' | 'clash' | 'effect' | 'damage' | 'heal'
   | 'insight' | 'destination' | 'repel' | 'repelSkipped' | 'overtime' | 'victory' | 'turnEnd';
 

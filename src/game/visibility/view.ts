@@ -7,7 +7,7 @@ import { cardDef } from '../catalog/cards';
 import type { TechniqueId } from '../catalog/techniques';
 import {
   other, PLAYERS, SLOTS,
-  type ClashReport, type GameEvent, type GameState, type Phase, type PlayerId,
+  type ClashReport, type CommitChoice, type GameEvent, type GameState, type Phase, type PlayerId,
   type RevealedTactic, type SecondaryState, type SlotIndex, type Stance,
 } from '../model/types';
 import type { Family } from '../catalog/cards';
@@ -67,6 +67,8 @@ export interface PlayerView {
     /** Avenant 08 : Signature annoncée de chaque camp ce tour (identité seule, son mode reste secret). */
     signatures: Record<'me' | 'opp', string | null>;
   };
+  /** Avenant 08, amendement 1 : révision ouverte ce tour (à qui) ; `held` = mon engagement verrouillé, pour moi seul. */
+  revision: null | { player: 'me' | 'opp'; open: boolean; held: CommitChoice | null };
   lastClash: ClashReport | null;
   repel: null | { mine: boolean; kind: string; choices: SlotIndex[] };
   lectureUsers: Array<'me' | 'opp'>;
@@ -151,6 +153,11 @@ export function viewFor(state: GameState, viewer: PlayerId): PlayerView {
       tactics: tac ? { me: structuredClone(tac[viewer]), opp: structuredClone(tac[o]) } : null,
       signatures: { me: state.reveal.signatures[viewer], opp: state.reveal.signatures[o] },
     },
+    revision: state.revision ? {
+      player: rel(state.revision),
+      open: state.phase === 'REVISION',
+      held: state.phase === 'REVISION' && state.revision === viewer ? structuredClone(state.commitHeld?.[viewer] ?? null) : null,
+    } : null,
     // Rapport public par construction (valeurs camouflées à null dès le moteur) : simple copie.
     lastClash: state.lastClash ? structuredClone(state.lastClash) : null,
     repel: state.repel ? { mine: state.repel.owner === viewer, kind: state.repel.kind, choices: state.repel.owner === viewer ? [...state.repel.choices] : [] } : null,

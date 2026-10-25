@@ -76,6 +76,18 @@ export const SCENARIOS: Record<string, Scenario> = {
       '5:COMMIT': (s) => ({ type: 'commit', player: 'p2', primaryId: idOf(s, 'p2', d('sig-Ronce')), stance: 'guard', secondaryId: null, replaceSlot: null }),
     },
   },
+  'signature-revision': {
+    id: 'signature-revision',
+    title: 'Révision du rival après votre Signature (avenant 08, amendement 1)',
+    description: 'Le rival verrouille Ronce IV en Assaut ; engagez ensuite votre Signature, Brasier Originel : elle est annoncée et le rival peut réviser son engagement une fois (ici, l’IA décide sur sa seule vue).',
+    config: base({ signature: 'Cendre' }, { signature: 'Ronce' }),
+    build: (cfg) => fixture(cfg,
+      { hand: ['sig-Cendre', 'Cendre-2', 'Voile-1', 'Astre-2'] },
+      { hand: ['Ronce-4', 'Ronce-1', 'Astre-1', 'Voile-2'] }),
+    rival: {
+      '5:COMMIT': (s) => ({ type: 'commit', player: 'p2', primaryId: idOf(s, 'p2', d('Ronce-4')), stance: 'assault', secondaryId: null, replaceSlot: null }),
+    },
+  },
   'clash-aa': {
     id: 'clash-aa',
     title: 'Clash — le rival attaque (ASSAUT)',

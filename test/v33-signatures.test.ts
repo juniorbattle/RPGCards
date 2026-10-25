@@ -37,15 +37,19 @@ describe('Avenant 08 — annonce au verrouillage (S-08, 1 à 4)', () => {
       expect(checkCommand(r.state, { type: 'commit', player: 'p2', primaryId: idOf(r.state, 'p2', d(c)), stance: st, secondaryId: null, replaceSlot: null })).toBeNull();
     }
   });
-  it('2 : Signature verrouillée en second → annoncée à son verrouillage, avant l’application de l’engagement ; plus de retour possible', () => {
+  it('2 : Signature verrouillée en second → annoncée à son verrouillage ; révision du premier (amendement 1), qui garde ici', () => {
     const s = fixture(config(), { hand: ['sig-Cendre', 'Voile-1'] }, { hand: ['Ronce-4', 'Astre-1'] });
     const r = new Runner(s).commit('p2', 'Ronce-4', 'guard');
     expect(annonces(r.events)).toHaveLength(0);
     const before = r.events.length;
     r.commit('p1', 'sig-Cendre', 'assault');
-    const kinds = r.events.slice(before).map((e) => e.kind);
-    expect(kinds.indexOf('signatureAnnounced')).toBeLessThan(kinds.indexOf('committed'));
+    expect(r.events.slice(before).map((e) => e.kind)).toEqual(['locked', 'signatureAnnounced', 'revisionOpened']);
+    expect(r.state.phase).toBe('REVISION');
+    expect(r.state.awaiting).toEqual(['p2']);
     expect(checkCommand(r.state, { type: 'commit', player: 'p2', primaryId: idOf(r.state, 'p2', d('Astre-1')), stance: 'assault', secondaryId: null, replaceSlot: null })).not.toBeNull();
+    r.apply({ type: 'revise', player: 'p2', commit: null });
+    const kinds = r.events.slice(before).map((e) => e.kind);
+    expect(kinds.indexOf('revised')).toBeLessThan(kinds.indexOf('committed'));
     // Clash inchangé : Brasier (∞, P14) domine la Garde IV, qui absorbe 6 (avenant 07)
     expect(r.state.lastClash!.damage.p2).toBe(8);
   });
@@ -55,6 +59,7 @@ describe('Avenant 08 — annonce au verrouillage (S-08, 1 à 4)', () => {
     expect(annonces(r.events).map((e) => e.data.player)).toEqual(['p2']);
     r.commit('p1', 'sig-Cendre', 'assault');
     expect(annonces(r.events).map((e) => e.data.player)).toEqual(['p2', 'p1']);
+    r.apply({ type: 'revise', player: 'p2', commit: null }); // amendement 1 : p2 garde sa Signature
     expect(r.state.lastClash!.guardWin).toBe(true);
     expect(r.state.lastClash!.damage).toEqual({ p1: 0, p2: 0 });
   });
@@ -122,7 +127,7 @@ describe('Avenant 08 — secrets, IA, Lecture (S-08, 5 à 8)', () => {
 
 describe('Avenant 08 — résolution, replay, reprise, journal (S-08, 9 à 11)', () => {
   it('9 et 10 : replay déterministe avec annonces ; reprise d’un duel sauvegardé pendant l’engagement ; étiquette', () => {
-    expect(RULES).toBe('V3.0+delta-V3.3.1');
+    expect(RULES).toBe('V3.0+delta-V3.3.2');
     const m = autoplay({ ...DEFAULT_CONFIG, seed: 808 }, 200, undefined, ['p2', 'p1']);
     expect(annonces(m.events).length).toBeGreaterThan(0);
     expect(replay(m.record()).hash).toBe(m.hash());
@@ -134,7 +139,7 @@ describe('Avenant 08 — résolution, replay, reprise, journal (S-08, 9 à 11)',
     const rec = m.record();
     const active = { id: 'x', encounterId: 'libre-braise', seed: 808, startedAt: '2026-10-24T00:00:00.000Z', rules: RULES, catalog: rec.catalog, config: m.config, commands: m.commands, hash: m.hash(), turn: m.state.turn };
     expect(verifyActiveCore(active)).toEqual({ ok: true });
-    expect(verifyActiveCore({ ...active, rules: 'V3.0+delta-V3.3' })).toEqual({ ok: false, reason: 'Règles différentes (V3.0+delta-V3.3).' });
+    expect(verifyActiveCore({ ...active, rules: 'V3.0+delta-V3.3.1' })).toEqual({ ok: false, reason: 'Règles différentes (V3.0+delta-V3.3.1).' });
   });
   it('9 bis : mi-engagement rejoué → même annonce retrouvée', () => {
     const m = autoplay({ ...DEFAULT_CONFIG, seed: 808 }, 200, undefined, ['p2', 'p1']);

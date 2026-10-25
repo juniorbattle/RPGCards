@@ -206,7 +206,8 @@ describe('Signatures et contrôle (G20, G21)', () => {
     const s = fixture(config({ sig2: 'Ronce', t2: ['Rupture'] }),
       { hand: ['Cendre-4'], slots: [{ def: 'Voile-3', active: true }, { def: 'Astre-2' }] },
       { hand: ['sig-Ronce'], insight: 2 });
-    const r = new Runner(s).commit('p1', 'Cendre-4', 'assault').commit('p2', 'sig-Ronce', 'guard');
+    // Avenant 08, amendement 1 : la Signature verrouille la première, pour ne pas ouvrir de révision (hors sujet ici).
+    const r = new Runner(s).commit('p2', 'sig-Ronce', 'guard').commit('p1', 'Cendre-4', 'assault');
     r.tactics('p1', [{ mode: 'keep' }, null]);
     r.tactics('p2', [null, null], { id: 'Rupture', targetSlot: 0 });
     expect(r.state.repel?.kind).toBe('emprise');
@@ -329,7 +330,8 @@ describe('Camouflage et secrets (G24, G25)', () => {
 describe('Fin de partie (G22)', () => {
   it('G22 : Contrecoup → double K.-O. → prolongation, 1 PV chacun, cartes conservées', () => {
     const s = fixture(config({ v1: ['Cendre-4'] }), { hand: ['Cendre-4-contrecoup', 'Voile-1'], hp: 3, slots: [{ def: 'Astre-2', active: true }, null] }, { hand: ['sig-Ronce', 'Astre-1'], hp: 3 });
-    const r = new Runner(s).commit('p1', 'Cendre-4-contrecoup', 'assault').commit('p2', 'sig-Ronce', 'assault');
+    // Avenant 08, amendement 1 : la Signature verrouille la première, pour ne pas ouvrir de révision (hors sujet ici).
+    const r = new Runner(s).commit('p2', 'sig-Ronce', 'assault').commit('p1', 'Cendre-4-contrecoup', 'assault');
     r.tactics('p1', [{ mode: 'keep' }, null]);
     expect(r.state.phase).toBe('RESOLVED');
     expect(r.state.overtime).toBe(1);

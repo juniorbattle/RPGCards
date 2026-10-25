@@ -74,6 +74,17 @@ export function describeEvent(ev: GameEvent, viewer: PlayerId): JournalLine | nu
         ? line(`Vous engagez votre Signature : ${cardTitle(c)} (∞, Puissance ${c.power}) ; le rival la voit, pas votre mode.`, 'effect')
         : line(`SIGNATURE ANNONCÉE — le rival engage ${cardTitle(c)} (∞, Puissance ${c.power}) ; son mode reste secret.`, 'effect');
     }
+    case 'revisionOpened':
+      // Avenant 08, amendement 1.
+      return me(d.player)
+        ? line('Le rival a engagé sa Signature après vous : vous pouvez réviser votre engagement une fois.', 'effect')
+        : line('Vous avez engagé votre Signature après le rival : il peut réviser son engagement une fois.', 'effect');
+    case 'revised':
+      return line(d.kept ? `${verb(d.player, 'gardez votre engagement', 'garde son engagement')}.` : `${verb(d.player, 'révisez votre engagement', 'révise son engagement')} (son contenu reste secret).`);
+    case 'signatureWithdrawn': {
+      const c = cardDef(d.defId as string);
+      return line(`${verb(d.player, 'renoncez à votre Signature', 'renonce à sa Signature')} : ${cardTitle(c)} retourne dans ${me(d.player) ? 'votre' : 'sa'} main.`, 'effect');
+    }
     case 'replaced':
       if (d.own) return line(`[Privé] Votre Secondaire masquée remplacée (${slotName(d.slot)}) : ${t(d.defId)}.`);
       if (d.masked) return line(`${verb(d.player, 'remplacez', 'remplace')} la Secondaire en ${slotName(d.slot)} : une Secondaire ${d.family ?? 'neutre'} masquée rejoint la défausse (nommée en fin de tour).`);

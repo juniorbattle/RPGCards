@@ -208,10 +208,10 @@ describe('Avenant 07 — invariants, sauvegardes et replays (G-07 7d, 7e ; G-08)
     }
     expect(ag).toBeGreaterThan(20);
   });
-  it('7e : étiquette V3.0+delta-V3.3.1 (avenants 07 et 08) ; un duel sauvegardé sous V3.2 est refusé avec sa raison ; un replay V3.3 rejoue à l’identique', () => {
-    expect(RULES).toBe('V3.0+delta-V3.3.1');
+  it('7e : étiquette V3.0+delta-V3.3.2 (avenants 07 et 08, amendement 1) ; un duel sauvegardé sous V3.2 est refusé avec sa raison ; un replay V3.3 rejoue à l’identique', () => {
+    expect(RULES).toBe('V3.0+delta-V3.3.2');
     const m = autoplay({ ...DEFAULT_CONFIG, seed: 33101 }, 4);
-    expect(m.state.rules).toBe('V3.0+delta-V3.3.1');
+    expect(m.state.rules).toBe('V3.0+delta-V3.3.2');
     expect(replay(m.record()).hash).toBe(m.hash());
     const active = { id: 'x', encounterId: 'libre-braise', seed: 33101, startedAt: '2026-10-24T00:00:00.000Z', rules: RULES, catalog: m.record().catalog, config: m.config, commands: m.commands, hash: m.hash(), turn: m.state.turn };
     expect(verifyActiveCore(active)).toEqual({ ok: true });

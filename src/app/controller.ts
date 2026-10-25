@@ -187,9 +187,18 @@ export class Controller {
     this.rebuildJournal();
     const key = `${this.view.turn}:${this.view.phase}`;
     if (key !== this.ui.phaseKey) {
+      const draftBefore = this.ui.draft;
       this.ui = freshUi(key, this.ui);
       // Préremplissages ergonomiques (jamais de choix caché imposé) :
       if (this.view.phase === 'LECTURE_CHANGE') this.ui.lectureStance = this.view.me.primary?.stance ?? null;
+      // Avenant 08, amendement 1 : pendant la révision du rival, mon engagement verrouillé reste affiché ; pour la mienne,
+      // le brouillon reprend mon engagement verrouillé (je le garde ou je le modifie).
+      const rev = this.view.revision;
+      if (this.view.phase === 'REVISION' && rev?.player === 'opp') this.ui.draft = draftBefore;
+      if (this.view.phase === 'REVISION' && rev?.player === 'me' && rev.held) {
+        const held = rev.held;
+        this.ui.draft = { primaryId: held.primaryId, stance: held.stance, secondaryId: held.secondaryId, slot: held.secondaryId ? (held.replaceSlot ?? held.slot ?? null) : null };
+      }
     }
     this.playFx(immediate);
     this.updateView();
@@ -582,7 +591,7 @@ export class Controller {
   dropCheck(cardId: string, key: DropKey): string | null {
     const v = this.view;
     if (key === 'hand') return null;
-    if (v.phase !== 'COMMIT' || !v.awaitingMe) return 'Les cartes se posent pendant la phase d’Engagement.';
+    if (!this.editingCommit()) return 'Les cartes se posent pendant la phase d’Engagement.';
     if (key === 'primary') return null;
     const def = cardDef(this.defIdOf(cardId));
     if (def.signature) return 'Une Signature ne peut jamais être Secondaire (Primaire uniquement).';
@@ -625,7 +634,7 @@ export class Controller {
       this.renderFn();
       return;
     }
-    if (v.phase !== 'COMMIT' || !v.awaitingMe) { this.ui.inspect = this.defIdOf(cardId); this.renderFn(); return; }
+    if (!this.editingCommit()) { this.ui.inspect = this.defIdOf(cardId); this.renderFn(); return; }
     this.ui.selected = this.ui.selected === cardId ? null : cardId;
     this.ui.inspect = this.defIdOf(cardId);
     this.renderFn();
@@ -634,7 +643,7 @@ export class Controller {
   clickZone(key: DropKey | 'opp0' | 'opp1'): void {
     const v = this.view;
     if (key === 'opp0' || key === 'opp1') return this.clickOppSlot(key === 'opp0' ? 0 : 1);
-    if (v.phase === 'COMMIT' && v.awaitingMe) {
+    if (this.editingCommit()) {
       if (this.ui.selected) return this.dropCard(this.ui.selected, key);
       // Clic sur une carte de brouillon : retour en main.
       const dr = this.ui.draft;
@@ -664,9 +673,15 @@ export class Controller {
 
   setStance(st: Stance): void {
     if (this.view.phase === 'LECTURE_CHANGE') { this.ui.lectureStance = st; this.renderFn(); return; }
-    if (this.view.phase !== 'COMMIT' || !this.ui.draft.primaryId) { this.toast('Posez d’abord une Primaire.'); return; }
+    if (!this.editingCommit() || !this.ui.draft.primaryId) { this.toast('Posez d’abord une Primaire.'); return; }
     this.ui.draft.stance = st;
     this.renderFn();
+  }
+
+  /** Engagement en cours d’édition : phase d’engagement, ou ma révision (avenant 08, amendement 1). */
+  editingCommit(): boolean {
+    const v = this.view;
+    return v.awaitingMe && (v.phase === 'COMMIT' || v.phase === 'REVISION');
   }
 
   lockCommit(): void {
@@ -674,12 +689,24 @@ export class Controller {
     if (!dr.primaryId) return this.toast('Une Primaire est obligatoire.');
     if (!dr.stance) return this.toast('Choisissez le mode de la Primaire : ASSAUT ou GARDE.');
     const full = this.view.me.slots.every((s) => s !== null);
-    const cmd: PlayerCommand = {
-      type: 'commit', player: 'p1', primaryId: dr.primaryId, stance: dr.stance,
+    const choice = {
+      primaryId: dr.primaryId, stance: dr.stance,
       secondaryId: dr.secondaryId, replaceSlot: dr.secondaryId && full ? dr.slot : null,
       ...(dr.secondaryId && !full && dr.slot !== null ? { slot: dr.slot } : {}),
     };
+    if (this.view.phase === 'REVISION') {
+      const held = this.view.revision?.held;
+      const same = !!held && held.primaryId === choice.primaryId && held.stance === choice.stance && held.secondaryId === choice.secondaryId && (held.replaceSlot ?? held.slot ?? null) === (choice.replaceSlot ?? choice.slot ?? null);
+      this.apply({ type: 'revise', player: 'p1', commit: same ? null : choice });
+      return;
+    }
+    const cmd: PlayerCommand = { type: 'commit', player: 'p1', ...choice };
     this.apply(cmd);
+  }
+
+  /** Avenant 08, amendement 1 : garder l’engagement verrouillé. */
+  keepRevision(): void {
+    this.apply({ type: 'revise', player: 'p1', commit: null });
   }
 
   // ------------------------------------------------------------------------
