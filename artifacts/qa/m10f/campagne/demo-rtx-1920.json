@@ -1,0 +1,111 @@
+{
+  "date": "2026-10-25T07:00:01.032Z",
+  "commit": "d05e525",
+  "checks": [
+    "OK après « Créer » : la ville remplace le tableau des rencontres",
+    "OK tutoriel de déplacement affiché à l’arrivée",
+    "OK après 2 m de marche : le tutoriel passe à « parler »",
+    "OK devant la guide : zone « parler » active",
+    "OK dialogue de la guide terminé",
+    "OK objectif suivant : défier le docker",
+    "OK préparation du duel du docker, dans la rue",
+    "OK résultat : bouton « Retour au Quai »",
+    "OK retour au Quai devant le docker (-3.40, 1.60)",
+    "OK devant la porte de la salle de jeu de cartes",
+    "OK la porte ouvre la manche 1 du Tournoi du Quai",
+    "OK retour de la préparation : le Quai",
+    "OK le Fanal : Maëlle verrouillée, raison affichée",
+    "OK au bout du Quai : sortie vers le Parvis",
+    "OK passage au Parvis de l’arène (fondu, îlot remplacé)",
+    "OK Orin : verrouillé tant que le Tournoi n’est pas remporté, raison affichée",
+    "OK Parvis : défi de la joueuse → préparation",
+    "OK retour de la préparation : on reste sur le Parvis",
+    "OK retour au Quai, au bout est (point d’arrivée de la liaison)",
+    "OK au bout ouest du Quai : sortie vers les Ruelles",
+    "OK Ruelles : Sélène verrouillée tant qu’on ne l’a pas rencontrée au Tournoi, raison affichée",
+    "OK Ruelles : la fontaine (information)",
+    "OK retour au Quai, au bout ouest",
+    "OK Échap hors de la ville (deck) : aucun menu de la ville par-dessus",
+    "OK menu → deck → retour au Quai",
+    "OK aide : commandes de la ville en tête",
+    "OK menu → tableau classique des rencontres, bouton « Retour au Quai »",
+    "OK tableau → retour au Quai",
+    "OK rechargement → Continuer : retour au Parvis, au même endroit (parvis, 5.50, 1.20)",
+    "OK tutoriel déjà fait : pas de bulle de tutoriel à la reprise"
+  ],
+  "steps": [
+    {
+      "name": "accueil",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/01-accueil.png"
+    },
+    {
+      "name": "arrivee-tutoriel",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/02-arrivee-tutoriel.png"
+    },
+    {
+      "name": "bulle-guide",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/03-bulle-guide.png"
+    },
+    {
+      "name": "dialogue-guide",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/04-dialogue-guide.png"
+    },
+    {
+      "name": "defi-docker",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/05-defi-docker.png"
+    },
+    {
+      "name": "preparation",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/06-preparation.png"
+    },
+    {
+      "name": "duel",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/07-duel.png"
+    },
+    {
+      "name": "resultat",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/08-resultat.png"
+    },
+    {
+      "name": "retour-quai",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/09-retour-quai.png"
+    },
+    {
+      "name": "porte-salle",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/10-porte-salle.png"
+    },
+    {
+      "name": "fanal-verrouille",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/11-fanal-verrouille.png"
+    },
+    {
+      "name": "parvis-arrivee",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/12-parvis-arrivee.png"
+    },
+    {
+      "name": "parvis-orin",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/13-parvis-orin.png"
+    },
+    {
+      "name": "ruelles-arrivee",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/14-ruelles-arrivee.png"
+    },
+    {
+      "name": "ruelles-selene",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/15-ruelles-selene.png"
+    },
+    {
+      "name": "menu",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/16-menu.png"
+    },
+    {
+      "name": "tableau-classique",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/17-tableau-classique.png"
+    },
+    {
+      "name": "reprise-parvis",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/demo-rtx-1920/18-reprise-parvis.png"
+    }
+  ],
+  "issues": []
+}

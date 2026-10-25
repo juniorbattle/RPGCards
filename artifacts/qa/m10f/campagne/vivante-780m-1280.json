@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-25T06:19:40.150Z",
+  "commit": "d05e525",
+  "viewport": [
+    1280,
+    720
+  ],
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "checks": [
+    "OK la ville en rangs est affichée (QA : dioramas admis)",
+    "OK faits rejoués jusqu'au chapitre V sans refus (aucun)",
+    "OK la cour de la Chapelle : la porte cochère du bout est mène à la Grande Cour",
+    "OK arrivée dans la Grande Cour (par l’escalier du premier plan)",
+    "OK le héraut du Tournoi, devant l’estrade, avec un « ! » (heraut, rue-cour)",
+    "OK le héraut : l’ouverture du Championnat devant l’estrade",
+    "OK S’inscrire : les Quatre Bannières, le choix des chefs",
+    "OK après le duel : retour dans la Grande Cour, devant le héraut (cour, 0.00 m)",
+    "OK la Signature du duel de poule est retenue (Voile) : la suivante devra en changer",
+    "OK même Signature : aucun chef proposé tant qu’elle n’a pas changé",
+    "OK la raison est affichée (changer de Signature)",
+    "OK une rumeur (« ? ») : rumeur-cour @ cour, réplique lue, le passant repart",
+    "OK un refus : rue-cour @ cour reste, sans redemander, puis repart au point de décision suivant",
+    "OK « Continuer » : même îlot (cour) et même directeur (aucun tirage au rechargement)",
+    "OK console : aucune erreur"
+  ],
+  "steps": [
+    {
+      "name": "cour-chapelle-porte",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/vivante-780m-1280/01-cour-chapelle-porte.png"
+    },
+    {
+      "name": "grande-cour-arrivee",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/vivante-780m-1280/02-grande-cour-arrivee.png"
+    },
+    {
+      "name": "heraut-ouverture",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/vivante-780m-1280/03-heraut-ouverture.png"
+    },
+    {
+      "name": "heraut-poule",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/vivante-780m-1280/04-heraut-poule.png"
+    },
+    {
+      "name": "heraut-meme-signature",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/vivante-780m-1280/05-heraut-meme-signature.png"
+    },
+    {
+      "name": "rumeur-cour",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/vivante-780m-1280/06-rumeur-cour.png"
+    },
+    {
+      "name": "facultative-cour",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/vivante-780m-1280/07-facultative-cour.png"
+    },
+    {
+      "name": "reprise",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/vivante-780m-1280/08-reprise.png"
+    }
+  ],
+  "console": []
+}

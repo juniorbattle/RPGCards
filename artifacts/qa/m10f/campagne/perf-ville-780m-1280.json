@@ -1,0 +1,111 @@
+{
+ "commit": "d05e525",
+ "viewport": [
+  1280,
+  720
+ ],
+ "ilots": {
+  "quai": {
+   "pretMs": 610,
+   "images": 660,
+   "medianeMs": 6.1,
+   "p95Ms": 6.2,
+   "p99Ms": 6.2,
+   "maxMs": 6.3,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 236,
+    "triangles": 5182,
+    "textures": 58,
+    "geometries": 149,
+    "programs": 21,
+    "lights": 16,
+    "cpuMs": 2.3,
+    "frames": 915,
+    "buildMs": 278,
+    "firstFrameMs": 894,
+    "mountMs": null,
+    "mountFrameMs": null
+   },
+   "decors": "diorama"
+  },
+  "parvis": {
+   "pretMs": 1171,
+   "images": 661,
+   "medianeMs": 6.1,
+   "p95Ms": 6.2,
+   "p99Ms": 6.3,
+   "maxMs": 6.5,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 242,
+    "triangles": 5190,
+    "textures": 57,
+    "geometries": 153,
+    "programs": 21,
+    "lights": 15,
+    "cpuMs": 3,
+    "frames": 1883,
+    "buildMs": 278,
+    "firstFrameMs": 894,
+    "mountMs": 435,
+    "mountFrameMs": 859
+   },
+   "decors": "diorama"
+  },
+  "ruelles": {
+   "pretMs": 916,
+   "images": 661,
+   "medianeMs": 6.1,
+   "p95Ms": 6.2,
+   "p99Ms": 6.2,
+   "maxMs": 6.3,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 202,
+    "triangles": 5102,
+    "textures": 58,
+    "geometries": 127,
+    "programs": 21,
+    "lights": 13,
+    "cpuMs": 2.7,
+    "frames": 2849,
+    "buildMs": 278,
+    "firstFrameMs": 894,
+    "mountMs": 133,
+    "mountFrameMs": 604
+   },
+   "decors": "diorama"
+  },
+  "cour": {
+   "pretMs": 890,
+   "images": 660,
+   "medianeMs": 6.1,
+   "p95Ms": 6.2,
+   "p99Ms": 6.3,
+   "maxMs": 6.5,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 161,
+    "triangles": 5028,
+    "textures": 54,
+    "geometries": 94,
+    "programs": 21,
+    "lights": 15,
+    "cpuMs": 1.2,
+    "frames": 3824,
+    "buildMs": 278,
+    "firstFrameMs": 894,
+    "mountMs": 154,
+    "mountFrameMs": 517
+   },
+   "decors": "diorama"
+  }
+ },
+ "renderer": "ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "console": []
+}

@@ -1,0 +1,111 @@
+{
+ "commit": "d05e525",
+ "viewport": [
+  1280,
+  720
+ ],
+ "ilots": {
+  "quai": {
+   "pretMs": 647,
+   "images": 661,
+   "medianeMs": 6.1,
+   "p95Ms": 6.1,
+   "p99Ms": 6.2,
+   "maxMs": 6.4,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 236,
+    "triangles": 5182,
+    "textures": 58,
+    "geometries": 149,
+    "programs": 21,
+    "lights": 16,
+    "cpuMs": 3,
+    "frames": 917,
+    "buildMs": 264,
+    "firstFrameMs": 913,
+    "mountMs": null,
+    "mountFrameMs": null
+   },
+   "decors": "diorama"
+  },
+  "parvis": {
+   "pretMs": 1362,
+   "images": 661,
+   "medianeMs": 6.1,
+   "p95Ms": 6.2,
+   "p99Ms": 6.2,
+   "maxMs": 6.3,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 242,
+    "triangles": 5190,
+    "textures": 57,
+    "geometries": 153,
+    "programs": 21,
+    "lights": 15,
+    "cpuMs": 2.5,
+    "frames": 1886,
+    "buildMs": 264,
+    "firstFrameMs": 913,
+    "mountMs": 569,
+    "mountFrameMs": 1044
+   },
+   "decors": "diorama"
+  },
+  "ruelles": {
+   "pretMs": 991,
+   "images": 660,
+   "medianeMs": 6.1,
+   "p95Ms": 6.2,
+   "p99Ms": 6.2,
+   "maxMs": 12,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 202,
+    "triangles": 5102,
+    "textures": 58,
+    "geometries": 127,
+    "programs": 21,
+    "lights": 13,
+    "cpuMs": 1.7,
+    "frames": 2852,
+    "buildMs": 264,
+    "firstFrameMs": 913,
+    "mountMs": 149,
+    "mountFrameMs": 679
+   },
+   "decors": "diorama"
+  },
+  "cour": {
+   "pretMs": 893,
+   "images": 660,
+   "medianeMs": 6.1,
+   "p95Ms": 6.2,
+   "p99Ms": 6.2,
+   "maxMs": 6.4,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 161,
+    "triangles": 5028,
+    "textures": 54,
+    "geometries": 94,
+    "programs": 21,
+    "lights": 15,
+    "cpuMs": 1.2,
+    "frames": 3826,
+    "buildMs": 264,
+    "firstFrameMs": 913,
+    "mountMs": 157,
+    "mountFrameMs": 524
+   },
+   "decors": "diorama"
+  }
+ },
+ "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "console": []
+}

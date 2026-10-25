@@ -20,8 +20,8 @@ sauvegardes ; aucune migration (schémas inchangés : `lqv.save` 2, `aventure/1`
 | Textes relus, aide du mode Aventure | **OK** (`43a62d9`, passe 120) | §3 |
 | Parcours complet du prologue au titre, reprise à chaque scène | **OK** (`43a62d9`) | `test/m10f.test.ts`, §4 |
 | Équilibrage mesuré par palier (objectifs de l'annexe, ex-A-10) | **OK, écarts signalés, rien recalibré** | §5, `artifacts/qa/m10f/equilibre/` |
-| Contrôles : migration, secrets, pixel près, performances | à compléter | §6 |
-| Campagne de QA complète sur les deux GPU | à compléter | §7 |
+| Contrôles : migration, secrets, pixel près, performances | **OK** (`d05e525`, passe 121 ; campagne, passe 122) | §6 |
+| Campagne de QA complète sur les deux GPU | **OK, verte au premier passage** (passe 122) | §7 |
 | Version `0.10.0-rc.1` | **préparée, décision au responsable** | ci-dessus |
 
 ## 2. T1 — le pilote de QA
@@ -83,12 +83,53 @@ confirmation. **Aucune valeur n'a été changée.**
 
 ## 6. Contrôles
 
-À compléter.
+| Contrôle | Résultat | Preuve |
+|---|---|---|
+| Mode standard intact : jeu par défaut au pixel près contre le build de départ `377f7cc` (scène des quatre rivaux, duel complet contre Maëlle, écran Rencontres ; 1280 et 1920) | **identique au pixel près sur la 780M et sur la RTX 4060** (0 pixel), témoins détectés | `artifacts/qa/m10f/campagne/l5-identique-{780m,rtx}.json` |
+| Secrets (ADR 011) | tests de non-fuite dans `npm test` ; `qa:browser` 5/5 sur chaque GPU avec 0 fuite ; contre-épreuve des audits **4/4** (annonce admise, mode du rival et carte cachée injectés détectés) | `artifacts/qa/v33/audits-negatifs.json` |
+| Profils de la RC 0.8 et sauvegardes d'avant V3.3 | **13/13** : profil réel de la RC 0.8 (build `b128bd9`) gardé, son duel en cours refusé avec sa raison puis recommencé sous `V3.0+delta-V3.3.2` ; aventure écrite par le code de `f7339ad` gardée, son duel refusé et retiré ; aucun mode ne touche la sauvegarde de l'autre | `tools/m10f-migration.mjs`, `artifacts/qa/m10f/migration.json`, `screenshots/qa/m10f/migration/` |
+| Performances de la ville (ville en rangs, images approuvées, chaque îlot parcouru 4 s) | médiane **6,1 ms** partout (165 images/s, plafond de l'écran) ; p95 6,2 ms, sauf la 780M en 1920 : 12,2 ms au Quai, au Parvis et aux Ruelles ; pire image 24,2 ms (780M, Ruelles, 1920) ; 161 à 242 appels de dessin, ≈ 5 k triangles, 54 à 58 textures, îlot prêt en 0,8 à 1 s | `artifacts/qa/m10f/campagne/perf-ville-*.json` |
+| Performances du duel (`perf:play`, 1280 et 1920) | médiane **6,1 ms** sur les deux GPU ; p95 6,2 ms (780M), 10,1 et 7,7 ms (RTX) | `artifacts/qa/m10f/campagne/perf-play-*.json` |
 
-## 7. Campagne de validation
+## 7. Campagne de validation (build de `d05e525`, `tools/m10f-campagne.sh`)
 
-À compléter.
+Campagne complète du jalon, **en série et seule sur la machine**, 2026-10-25 de 06:13 à 07:29 UTC, Chrome avec
+`LQV_GPU=1`, Radeon 780M puis RTX 4060 (`--force_high_performance_gpu`), 1280 × 720 et 1920 × 1080. **53 étapes, toutes
+vertes au premier passage, console sans erreur.** Synthèse : `artifacts/qa/m10f/campagne/synthese.md`
+(`node tools/m10f-synthese.mjs`) ; captures hors du dépôt (comme aux jalons précédents).
+
+| Parcours | Radeon 780M (1280 / 1920) | RTX 4060 (1280 / 1920) |
+|---|---|---|
+| Jeu par défaut au pixel près | identique | identique |
+| `qa:demo` | 30/30 · 30/30 | 30/30 · 30/30 |
+| `qa:aventure` | 48/48 · 48/48 | 48/48 · 48/48 |
+| `qa:maison` | 29/29 · 29/29 | 29/29 · 29/29 |
+| `qa:voies` | 62/62 · 62/62 | 62/62 · 62/62 |
+| `qa:vivante` | 15/15 · 15/15 | 15/15 · 15/15 |
+| `qa:championnat` | 13/13 · 13/13 | 13/13 · 13/13 |
+| Annonce V3.3 (`v33-annonce`) | 10/10 · 10/10 | 10/10 · 10/10 |
+| Révision V3.3 (`v33-revision`) | 8/8 · 8/8 | 8/8 · 8/8 |
+| `qa:accessoires` | OK | OK |
+| `qa:browser` | 5/5 duels, 0 fuite | 5/5 duels, 0 fuite |
+| `qa:product` | 9/9 (A 11, B 4, C 5, D 6, **E 18**, F 10, G 4, H 3, I 6) | 9/9 (idem) |
+| `qa:rc` salle, bar, arène | 9/9 · 9/9 · 9/9 | 9/9 · 9/9 · 9/9 |
+| `qa:techniques` | 8/8 | 8/8 |
+
+Porte de démarrage : `npm run typecheck` 0 erreur · `npm test` **456/456** · `npm run build` OK.
 
 ## 8. Connu / à faire
 
-À compléter.
+| Sujet | État | Suite |
+|---|---|---|
+| Numéro de version | `0.10.0-rc.1` proposé, non posé | fiche, V1 |
+| Voie directe plus dure que l'annexe (familles 2 à 4) | mesuré, gardé deux fois | fiche, E1 |
+| « chef » générique pour les cheffes ; « la Braise du quai » | relevés, non changés | fiche, X1 et X2 |
+| Aventure : un duel non vérifiable est retiré sans proposer de le recommencer (le standard le propose) | constaté au contrôle de migration | fiche, T1 |
+| Heure de ville (V1 de la fiche M10-E) | pas encore jouée par le responsable | quand il le souhaite, sur ce build |
+| Pilote de QA | joue avec l'IA « équilibré » du joueur : mesure de l'interface, pas du plaisir de jeu | — |
+
+## 9. Fiche d'arbitrages
+
+<https://claude.ai/artifact/UfZ5K4GnfarDa1vhLFUua5> (privée ; collection `decisions`, vide à la publication, lecture
+vérifiée) : R1 réception de la RC, R2 T1, V1 numéro de version, E1 équilibre de la voie directe, X1 à X3 textes, T1
+reprise d'un duel refusé dans l'aventure, S1 suite.

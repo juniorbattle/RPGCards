@@ -1,0 +1,38 @@
+{
+ "commit": "d05e525",
+ "viewport": [
+  1920,
+  1080
+ ],
+ "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "ok": true,
+ "checks": [
+  "OK fenêtre de réaction du rival affichée",
+  "OK le rival a gardé ou révisé (révisé)",
+  "OK engagement initial du rival jamais publié avant la révélation",
+  "OK fenêtre « Garder / Réviser » du joueur",
+  "OK brouillon prérempli avec l’engagement verrouillé",
+  "OK révision du joueur : nouvel engagement",
+  "OK Signature du joueur annoncée à la révision",
+  "OK console : aucune erreur"
+ ],
+ "steps": [
+  {
+   "name": "le-rival-reagit",
+   "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/revision-780m-1920/01-le-rival-reagit.png"
+  },
+  {
+   "name": "revelation-apres-reaction",
+   "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/revision-780m-1920/02-revelation-apres-reaction.png"
+  },
+  {
+   "name": "fenetre-de-revision",
+   "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/revision-780m-1920/03-fenetre-de-revision.png"
+  },
+  {
+   "name": "revision-du-joueur",
+   "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/campagne/revision-780m-1920/04-revision-du-joueur.png"
+  }
+ ],
+ "issues": []
+}

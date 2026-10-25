@@ -157,6 +157,12 @@ complète, comparaisons au pixel près) ; profils RC 0.8 chargés.
 
 **Validation :** réception par le responsable.
 
+> **Livré le 2026-10-25 (passes 119 à 122), réception en attente :** T1 fait (pilote de QA, outil seulement) ; textes et
+> aide relus ; parcours complet du prologue au titre (`test/m10f.test.ts`) ; équilibrage mesuré, rien recalibré
+> (`artifacts/qa/m10f/equilibre/ecarts-annexe.md`) ; migration 13/13 ; campagne de la RC verte sur les deux GPU ; rapport
+> `docs/RAPPORT_RC_AVENTURE.md` ; `0.10.0-rc.1` proposée, non posée ; fiche
+> <https://claude.ai/artifact/UfZ5K4GnfarDa1vhLFUua5>.
+
 ---
 
 ## Où en est-on (2026-10-20, fin de la session cloud)
