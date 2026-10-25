@@ -180,7 +180,7 @@ Leur identité vient du **lot des quartiers** (4 images, `tools/m09-lot-quartier
 `tools/m09-kit-quartiers.mjs`, découpes `art-src/decors/kit-quartiers.json`) : le vieux phare et ses entrepôts, la maison
 de la Ronce, les hôtels à arcades, l'Observatoire ; le reste vient du kit des rangs et du lot des villes.
 
-**Quartiers facultatifs** (ADR 028, « Deuxième reprise ») : la ville en rangs reste décidée sur ses quatre îlots d'origine
+**Quartiers facultatifs** (ADR 028, « Deuxième reprise », ratifié par le responsable en passe 131) : la ville en rangs reste décidée sur ses quatre îlots d'origine
 (`ILOTS_COEUR`) ; un quartier ajouté n'est ouvert que si son diorama est admis (hors QA : ses images approuvées). Fermé,
 ses sorties sont retirées (`ouvrirQuartiers`) et le pignon du bout de la ruelle n'est qu'un mur ; une sauvegarde qui s'y
 trouverait revient au Quai. Les bouts de ruelle portaient déjà un pignon à porte cochère : aucune planche approuvée n'est
