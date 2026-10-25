@@ -16,7 +16,7 @@ import * as THREE from 'three';
 import { FAMILY_PALETTE } from '../art/palette';
 import type { Family } from '../game/catalog/cards';
 import { NPC_HAIRS, NPC_SKINS, npcLook, type Accessory, type HairCut, type Tone } from '../presentation/npcs';
-import { COMMON_GLSL, MAX_LIGHTS, U } from './materiaux';
+import { COMMON_GLSL, U } from './materiaux';
 import type { Facing } from './monde';
 import { DEFAULT_ANCHOR, DEFAULT_FIGURE_H, RAMP_STEPS, RECOLOR_SLOTS, keyColor, type RecolorSlot, type SheetSpec } from './spritesExternes';
 
@@ -585,8 +585,8 @@ export const CODE_SPEC: SheetSpec = { scale: ATLAS_SCALE, anchor: DEFAULT_ANCHOR
 /**
  * Éclairage du personnage, plat comme une figurine peinte, au centre du corps : ambiante, lune, lanternes proches
  * (compressées). M09 V3, d'après Cité du Tournoi (`SpriteRenderer.ts` L. 77-202) : dégradé vertical (pieds plus
- * sombres), liseré de lumière sur le bord tourné vers la lanterne la plus forte (bord détecté dans l'alpha de l'atlas),
- * liseré froid de lune sur le haut, ombre légèrement refroidie, compression douce des hautes lumières.
+ * sombres), compression douce des hautes lumières. Les liserés de lanterne et de lune sur le bord de la silhouette sont
+ * retirés depuis la passe 126 (ils faisaient un contour clair ; le contour reste le trait noir du dessin).
  *
  * Recoloration des feuilles (C5, ADR 027 ; `uRecolor`, inactive pour l'atlas par code) : un texel proche d'un ton clé
  * réservé (`RECOLOR_KEYS`) prend la rampe du personnage (`uRamp`, quatre tons par emplacement, linéaires) à son niveau.
@@ -598,7 +598,6 @@ ${COMMON_GLSL}
 uniform sampler2D tAtlas; uniform vec2 uCell; uniform vec2 uOff; uniform float uFlip; uniform vec3 uWorld; uniform vec2 uTexel;
 uniform float uRecolor; uniform vec3 uRamp[20]; uniform float uSlots[5]; uniform vec3 uInkLin;
 varying vec2 vUv; varying vec3 vWorld;
-float alphaAt(vec2 uv){ uv = clamp(uv, vec2(0.0), vec2(1.0)); return texture2D(tAtlas, (uOff + vec2(uFlip > 0.5 ? 1.0 - uv.x : uv.x, uv.y)) * uCell).a; }
 // niveaux des tons clés (sRGB 64, 128, 191, 255), en linéaire
 const vec4 KEY_LV = vec4(0.05127, 0.21586, 0.52099, 1.0);
 vec3 keyMask(int s){ return s == 0 ? vec3(1.0, 0.0, 0.0) : s == 1 ? vec3(1.0, 1.0, 0.0) : s == 2 ? vec3(1.0, 0.0, 1.0) : s == 3 ? vec3(0.0, 1.0, 1.0) : vec3(0.0, 1.0, 0.0); }
@@ -670,30 +669,12 @@ void main(){
   vec3 P = uWorld + vec3(0.0, 0.9, 0.0);
   vec3 N = normalize(cameraPosition - P); N.y = 0.25; N = normalize(N);
   vec3 diff, spec; lightSum(P, N, N, 1.0, 8.0, diff, spec);
-  // lanterne dominante : côté (écran) d'où vient la lumière
-  vec3 key = vec3(0.0); float kx = 0.0;
-  for (int i = 0; i < ${MAX_LIGHTS}; i++) {
-    if (i >= uLightCount) break;
-    vec3 Lv = uLightPos[i].xyz - P; float d2 = dot(Lv, Lv); float r = uLightPos[i].w;
-    float x = max(1.0 - d2 / (r * r), 0.0); float att = x * x / (1.0 + 0.22 * d2);
-    vec3 c = uLightCol[i] * att; key += c; kx += dot(c, vec3(0.3, 0.5, 0.2)) * sign(Lv.x);
-  }
   diff = diff / (1.0 + 0.6 * diff);
   vec3 col = A.rgb * (mix(uGroundAmb, uSkyAmb, 0.7) * 1.3 + uMoonCol * 0.42 + diff * 1.15);
   col *= mix(0.74, 1.04, smoothstep(0.0, 0.45, vUv.y));
-  // liserés : bord de la silhouette tourné vers la lumière dominante (chaud), haut de la silhouette (froid, lune) ;
-  // en pixel art, un pixel d'art de large (C6 : liserés en unités logiques)
-  float sx = kx >= 0.0 ? 1.0 : -1.0;
-#ifdef PIXEL
-  float edgeKey = 1.0 - alphaAt(vUv + vec2(sx * uTexel.x, 0.0));
-  float edgeTop = 1.0 - alphaAt(vUv + vec2(0.0, uTexel.y));
-#else
-  float edgeKey = 1.0 - alphaAt(vUv + vec2(sx * 2.5 * uTexel.x, 0.0));
-  float edgeTop = 1.0 - alphaAt(vUv + vec2(0.0, 2.5 * uTexel.y));
-#endif
-  float keyLum = dot(key, vec3(0.3, 0.5, 0.2));
-  col += A.rgb * key * edgeKey * 0.9 + vec3(1.0, 0.72, 0.42) * edgeKey * min(keyLum, 1.2) * 0.22;
-  col += uMoonCol * edgeTop * 0.35;
+  // Plus de liserés de lumière (lanterne sur le bord, lune sur le haut) : ils dessinaient un contour clair autour des
+  // personnages ; le contour reste celui du dessin, noir (retour du responsable, passe 126 : « pas de contour blanc
+  // autour, sinon mets-les en noir »). Les lanternes n'éclairent plus que par la diffuse.
   col /= 1.0 + 0.12 * col;
   gl_FragColor = vec4(applyFog(col, vWorld), 1.0);
 }`;
