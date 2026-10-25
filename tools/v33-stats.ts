@@ -18,15 +18,20 @@ export interface StatsClash {
   agAbsorptionTotale: number;
   /** Dégâts de base infligés par les Assauts vainqueurs contre une Garde (somme). */
   agDegatsBase: number;
+  /** Avenant 08, amendement 1 : fenêtres de révision ouvertes et, parmi elles, engagements révisés (non gardés). */
+  fenetres?: number;
+  revisees?: number;
 }
 
-export const statsVides = (): StatsClash => ({ duels: 0, tours: 0, prolongations: 0, primaires: 0, gardes: 0, clashes: 0, ag: 0, agGardeGagne: 0, agAssautBlesse: 0, agAbsorptionTotale: 0, agDegatsBase: 0 });
+export const statsVides = (): StatsClash => ({ duels: 0, tours: 0, prolongations: 0, primaires: 0, gardes: 0, clashes: 0, ag: 0, agGardeGagne: 0, agAssautBlesse: 0, agAbsorptionTotale: 0, agDegatsBase: 0, fenetres: 0, revisees: 0 });
 
 export function ajouter(s: StatsClash, m: Match): StatsClash {
   s.duels += 1;
   s.tours += m.state.turn;
   s.prolongations += m.state.overtime ? 1 : 0;
   for (const e of m.events) {
+    if (e.vis === 'public' && e.kind === 'revisionOpened') s.fenetres = (s.fenetres ?? 0) + 1;
+    if (e.vis === 'public' && e.kind === 'revised' && !(e.data as { kept?: boolean }).kept) s.revisees = (s.revisees ?? 0) + 1;
     if (e.kind !== 'clash' || e.vis !== 'public') continue;
     const r = e.data as unknown as ClashReport;
     s.clashes += 1;
@@ -55,5 +60,7 @@ export function resume(s: StatsClash): Record<string, string | number> {
     agAssautBlesse: pc(s.agAssautBlesse, s.ag),
     agAbsorptionTotale: pc(s.agAbsorptionTotale, s.ag),
     degatsBaseParAssautVainqueur: +(s.agDegatsBase / Math.max(1, s.agAssautBlesse + s.agAbsorptionTotale)).toFixed(2),
+    fenetresParDuel: +((s.fenetres ?? 0) / Math.max(1, s.duels)).toFixed(2),
+    partRevisees: pc(s.revisees ?? 0, s.fenetres ?? 0),
   };
 }

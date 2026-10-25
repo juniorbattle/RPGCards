@@ -1,0 +1,36 @@
+{
+ "commit": "f5de4dc",
+ "viewport": [
+  1280,
+  720
+ ],
+ "renderer": "Chrome headless, GPU réel : ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11) — arguments : --force_high_performance_gpu",
+ "ok": true,
+ "checks": [
+  "OK Signature du rival face visible sur le plateau dès son verrouillage",
+  "OK bandeau « SIGNATURE ANNONCÉE » et « Mode : ? »",
+  "OK HUD du rival : « Verrouillé · Signature annoncée »",
+  "OK aucun mode du rival dans sa case Primaire",
+  "OK vue du joueur : identité annoncée, aucune Primaire ni mode du rival",
+  "OK deux annonces au journal (rival puis joueur)",
+  "OK annonces avant la révélation simultanée",
+  "OK ma Signature « ANNONCÉE AU RIVAL » sur le plateau en attendant le rival",
+  "OK la Signature engagée ne revient pas dans la main",
+  "OK console : aucune erreur"
+ ],
+ "steps": [
+  {
+   "name": "annonce-du-rival",
+   "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/57c772e0-6ef5-4b3e-ae70-9ee51e418600/scratchpad/jalon-a1/annonce-rtx-1280/01-annonce-du-rival.png"
+  },
+  {
+   "name": "deux-signatures-revelees",
+   "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/57c772e0-6ef5-4b3e-ae70-9ee51e418600/scratchpad/jalon-a1/annonce-rtx-1280/02-deux-signatures-revelees.png"
+  },
+  {
+   "name": "annonce-au-rival",
+   "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/57c772e0-6ef5-4b3e-ae70-9ee51e418600/scratchpad/jalon-a1/annonce-rtx-1280/03-annonce-au-rival.png"
+  }
+ ],
+ "issues": []
+}
