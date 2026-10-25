@@ -1,11 +1,13 @@
 {
-  "date": "2026-10-25T04:00:44.776Z",
-  "commit": "12537a6",
+  "date": "2026-10-25T18:24:24.214Z",
+  "commit": "2917690",
   "mode": "assembler",
   "checks": [
     "OK parvis en rangs : 64 plans découpés dans 11 images, 15 lumières, 10 brumes",
     "OK ruelles en rangs : 51 plans découpés dans 12 images, 13 lumières, 10 brumes",
-    "OK cour en rangs : 42 plans découpés dans 8 images, 15 lumières, 6 brumes"
+    "OK cour en rangs : 42 plans découpés dans 8 images, 15 lumières, 6 brumes",
+    "OK port en rangs : 41 plans découpés dans 12 images, 11 lumières, 8 brumes",
+    "OK haute en rangs : 45 plans découpés dans 10 images, 13 lumières, 8 brumes"
   ],
   "console": [],
   "provisoire": [],
@@ -237,6 +239,150 @@
       "de": 38.419,
       "a": 56.59,
       "etirement": 0.996
+    },
+    "port/fond-rang1--31-1": {
+      "frise": "a",
+      "de": 0,
+      "a": 16.109,
+      "etirement": 1.142
+    },
+    "port/fond-rang1-12-1": {
+      "frise": "a",
+      "de": 20.484,
+      "a": 38.419,
+      "etirement": 1.048
+    },
+    "port/fond-rang2--31": {
+      "frise": "b",
+      "de": 27.745,
+      "a": 50.421,
+      "etirement": 1.076
+    },
+    "port/fond-rang2--4": {
+      "frise": "b",
+      "de": 0.016,
+      "a": 5.435,
+      "etirement": 1.107
+    },
+    "port/fond-rang2-12": {
+      "frise": "b",
+      "de": 16.806,
+      "a": 36.106,
+      "etirement": 0.984
+    },
+    "port/fond-placette-filets-rang2-2": {
+      "frise": "b",
+      "de": 50.421,
+      "a": 61.795,
+      "etirement": 0.879
+    },
+    "port/flanc-rang2--31": {
+      "frise": "a",
+      "de": 48.229,
+      "a": 64.339,
+      "etirement": 1.055
+    },
+    "port/flanc-rang2-14": {
+      "frise": "a",
+      "de": 31,
+      "a": 48.229,
+      "etirement": 0.987
+    },
+    "port/fond-rang3--31-o": {
+      "frise": "a",
+      "de": 0,
+      "a": 20.484,
+      "etirement": 1.172
+    },
+    "port/fond-rang3--31-e": {
+      "frise": "a",
+      "de": 43.839,
+      "a": 64.339,
+      "etirement": 1.171
+    },
+    "port/flanc-rang3--31": {
+      "frise": "b",
+      "de": 23.371,
+      "a": 43.855,
+      "etirement": 1.025
+    },
+    "port/flanc-rang3-10": {
+      "frise": "b",
+      "de": 0.016,
+      "a": 23.371,
+      "etirement": 0.899
+    },
+    "haute/fond-rang1--31-1": {
+      "frise": "a",
+      "de": 0,
+      "a": 20.484,
+      "etirement": 0.908
+    },
+    "haute/fond-rang1-12-1": {
+      "frise": "a",
+      "de": 20.484,
+      "a": 38.419,
+      "etirement": 1.037
+    },
+    "haute/fond-rang2--31": {
+      "frise": "b",
+      "de": 23.371,
+      "a": 43.855,
+      "etirement": 0.928
+    },
+    "haute/fond-rang2--2": {
+      "frise": "b",
+      "de": 0.016,
+      "a": 5.435,
+      "etirement": 1.033
+    },
+    "haute/fond-rang2-6": {
+      "frise": "b",
+      "de": 36.106,
+      "a": 61.795,
+      "etirement": 0.965
+    },
+    "haute/fond-jardin-spheres-rang2--12": {
+      "frise": "b",
+      "de": 27.745,
+      "a": 36.106,
+      "etirement": 1.196
+    },
+    "haute/flanc-rang2--31": {
+      "frise": "a",
+      "de": 48.229,
+      "a": 64.339,
+      "etirement": 1.117
+    },
+    "haute/flanc-rang2-13": {
+      "frise": "a",
+      "de": 38.419,
+      "a": 56.59,
+      "etirement": 0.991
+    },
+    "haute/fond-rang3--31-o": {
+      "frise": "a",
+      "de": 0,
+      "a": 20.484,
+      "etirement": 1.123
+    },
+    "haute/fond-rang3--31-e": {
+      "frise": "a",
+      "de": 16.109,
+      "a": 38.419,
+      "etirement": 1.031
+    },
+    "haute/flanc-rang3--31": {
+      "frise": "b",
+      "de": 5.435,
+      "a": 27.745,
+      "etirement": 0.941
+    },
+    "haute/flanc-rang3-10": {
+      "frise": "b",
+      "de": 43.855,
+      "a": 61.795,
+      "etirement": 1.171
     }
   }
 }

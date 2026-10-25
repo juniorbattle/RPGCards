@@ -1,0 +1,173 @@
+{
+  "lot": "2026-10-25-quartiers",
+  "facades": {
+    "port-fanal": {
+      "file": "quartiers-port-fanal.png",
+      "size": [
+        1416,
+        962
+      ],
+      "uv": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "largeur": 19.6,
+      "hauteur": 13.316,
+      "lanternes": [
+        [
+          -8.837,
+          3.337
+        ],
+        [
+          8.832,
+          3.328
+        ],
+        [
+          -1.316,
+          2.084
+        ],
+        [
+          1.295,
+          2.049
+        ],
+        [
+          -5.557,
+          2.163
+        ]
+      ],
+      "sha256": "fcc5d924310e55b600470b21d376784cfc9c2b180aea55a2babc0b8fcd661101",
+      "fiche": "art-src/decors/quartiers-port-fanal/fiche.json"
+    },
+    "port-ronce": {
+      "file": "quartiers-port-ronce.png",
+      "size": [
+        1384,
+        965
+      ],
+      "uv": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "largeur": 14,
+      "hauteur": 9.762,
+      "lanternes": [
+        [
+          1.864,
+          2.264
+        ],
+        [
+          -1.994,
+          2.264
+        ],
+        [
+          2.801,
+          2.296
+        ],
+        [
+          -2.972,
+          2.31
+        ],
+        [
+          -5.128,
+          4.858
+        ],
+        [
+          3.263,
+          4.848
+        ]
+      ],
+      "sha256": "27ddbcd1718086de5fdf628a2553af0b507d25fe35db4909c847330b226b3abd",
+      "fiche": "art-src/decors/quartiers-port-ronce/fiche.json"
+    },
+    "haute-hotels": {
+      "file": "quartiers-haute-hotels.png",
+      "size": [
+        1487,
+        951
+      ],
+      "uv": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "largeur": 19.6,
+      "hauteur": 12.535,
+      "lanternes": [
+        [
+          2.05,
+          5.858
+        ],
+        [
+          -1.895,
+          5.852
+        ],
+        [
+          -6.006,
+          5.707
+        ],
+        [
+          -3.848,
+          2.866
+        ],
+        [
+          -8.45,
+          2.919
+        ],
+        [
+          -1.66,
+          1.525
+        ]
+      ],
+      "sha256": "8d090fb0e7147b591d2e348754bcebaebe1d31f0043a320165bad401cd295d7b",
+      "fiche": "art-src/decors/quartiers-haute-hotels/fiche.json"
+    },
+    "haute-observatoire": {
+      "file": "quartiers-haute-observatoire.png",
+      "size": [
+        1260,
+        939
+      ],
+      "uv": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "largeur": 16,
+      "hauteur": 11.924,
+      "lanternes": [
+        [
+          0.142,
+          6.099
+        ],
+        [
+          -0.928,
+          6.06
+        ],
+        [
+          2.677,
+          2.092
+        ],
+        [
+          1.197,
+          6.271
+        ],
+        [
+          -2.572,
+          2.081
+        ],
+        [
+          2.207,
+          6.043
+        ]
+      ],
+      "sha256": "90e822a631bd3072bfb124907387b01005612b9e60c1d69051c62c650264432b",
+      "fiche": "art-src/decors/quartiers-haute-observatoire/fiche.json"
+    }
+  }
+}

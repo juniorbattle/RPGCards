@@ -607,3 +607,23 @@ tout se fait dans le moteur et dans le plan des îlots :
   de l'étal est devant lui.
 - Vérification : `npx tsx tools/m09-accessoires.mjs` (chaque accessoire vu de près, planche par îlot,
   `screenshots/qa/m09/accessoires/`).
+
+### Deuxième reprise de M09 : la Place du Fanal et la Ville haute, quartiers ajoutés (passe 129, 2026-10-25) — PROPOSÉ
+
+Décision du responsable du 2026-10-25 (« Fanal et Ville haute », 4 images au plus ; « attaque la Place du Fanal et la Ville
+haute ») ; les figures de l'aventure ne bougent pas sans sa décision.
+
+- **Deux îlots de plus dans la ville en rangs**, même grammaire (`rangs.ts`) : `port`, la **Place du Fanal** (quartier du
+  Port ; `placeFanal.ts`), au bord de l'eau, au pied du vieux phare, avec la maison de la Ronce en son cœur ; `haute`, la
+  **Ville haute** (`villeHaute.ts`), une esplanade en terrasse au-dessus de la ville, avec l'Observatoire de l'Astre en son
+  cœur. Identifiants `port` et `haute` (`fanal` est déjà le nom du lieu de duel du bar).
+- **Liaisons** : la Place du Fanal par le bout ouest de la cour de la Chapelle (le cœur du Quai), la Ville haute par le bout
+  ouest du Belvédère (Grande Cour). Ces bouts de ruelle portent déjà, dans le décor approuvé, un pignon à porte cochère :
+  aucune planche approuvée n'est touchée.
+- **Quartiers facultatifs** : la ville en rangs reste décidée sur ses quatre îlots d'origine (`ILOTS_COEUR`) ; un quartier
+  ajouté n'est **ouvert** que si son diorama est admis par la politique (hors QA : ses images approuvées). Fermé, ses
+  sorties sont retirées des îlots qui y mènent (le pignon reste un mur) et une sauvegarde qui s'y trouverait revient au
+  Quai. Ainsi les quartiers se construisent et se montrent en QA sans jamais retirer au jeu la ville en rangs approuvée.
+- **Images** : deux façades d'identité par quartier (le vieux phare et ses entrepôts, la maison de la Ronce ; les hôtels
+  à arcades de la Ville haute, l'Observatoire), générées et traitées par script comme le lot des villes ; le reste vient
+  du kit des rangs et du lot des villes.

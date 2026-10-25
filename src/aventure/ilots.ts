@@ -20,12 +20,13 @@ export const parlerA = (nom: string): string => `Parler ${nom.startsWith('le ') 
 const NPC_R = 0.32;
 const TALK = 1.35;
 
-/** L'îlot M09 d'origine : dans la ville en rangs (`quaiRangs`), l'îlot en rangs ; sinon celui d'aujourd'hui (secours). */
-export const ilotBase = (id: IlotId, quaiRangs = false): IlotDef => ilotDef(id, quaiRangs);
+/** L'îlot M09 d'origine : dans la ville en rangs (`quaiRangs`), l'îlot en rangs ; sinon celui d'aujourd'hui (secours) ;
+ *  `ouverts` : les quartiers ajoutés ouverts (deuxième reprise de M09, ADR 028). */
+export const ilotBase = (id: IlotId, quaiRangs = false, ouverts: ReadonlySet<IlotId> = new Set()): IlotDef => ilotDef(id, quaiRangs, ouverts);
 
 /** L'îlot M09 sans ses personnages de démo (obstacles, zones « parler », points d'apparition devant eux). */
-export function ilotNu(id: IlotId, quaiRangs = false): Ilot {
-  const d = ilotBase(id, quaiRangs);
+export function ilotNu(id: IlotId, quaiRangs = false, ouverts: ReadonlySet<IlotId> = new Set()): Ilot {
+  const d = ilotBase(id, quaiRangs, ouverts);
   const at = new Set(d.npcs.map((n) => `${n.at.x},${n.at.z}`));
   return {
     ...d.ilot,
@@ -42,9 +43,9 @@ function devant(p: Pose): { x: number; z: number; face: 'dos' | 'gauche' | 'droi
 }
 
 /** Définition d'îlot de l'aventure : l'îlot M09 nu + les personnages posés par le directeur. */
-export function ilotAventure(id: IlotId, poses: readonly Pose[], quaiRangs = false): IlotDef {
-  const d = ilotBase(id, quaiRangs);
-  const nu = ilotNu(id, quaiRangs);
+export function ilotAventure(id: IlotId, poses: readonly Pose[], quaiRangs = false, ouverts: ReadonlySet<IlotId> = new Set()): IlotDef {
+  const d = ilotBase(id, quaiRangs, ouverts);
+  const nu = ilotNu(id, quaiRangs, ouverts);
   const npcs: IlotNpc[] = poses.map((p) => ({ id: p.apparence, at: p.at, facing: p.facing, role: p.genre === 'structurante' ? 'rival' : 'duel' }));
   const ilot: Ilot = {
     ...nu,

@@ -119,6 +119,8 @@ export const QUAI_PROFOND: Ilot = ilotRangs(PLAN_QUAI, {
     { id: 'sortie-ruelles', kind: 'sortie', label: 'Vers les Ruelles', target: 'ruelles', area: { x0: X_MIN, z0: -1.4, x1: X_MIN + 0.9, z1: 2.2 } },
     // le cœur s'ouvre sur la Grande Cour (proposition C1 de la passe 65) : par la porte cochère du bout est de la cour
     { id: 'sortie-cour', kind: 'sortie', label: 'Monter vers la Grande Cour', target: 'cour', area: { x0: COUR.x1 - 0.9, z0: -41, x1: COUR.x1, z1: -38 } },
+    // deuxième reprise de M09 : par la porte cochère du bout ouest, la Place du Fanal (quartier ajouté, ouvert si admis)
+    { id: 'sortie-port', kind: 'sortie', label: 'Passer à la Place du Fanal', target: 'port', area: { x0: COUR.x0, z0: -41, x1: COUR.x0 + 0.9, z1: -38 } },
     ...spots,
     ...zonesBalises(BALISES_QUAI),
     ...NPCS_PROFOND.map((n): Zone => ({ id: `npc-${n.id}`, kind: 'parler', label: 'Parler', target: n.id, area: { x: n.at.x, z: n.at.z, r: TALK_RADIUS } })),
@@ -136,6 +138,7 @@ export const QUAI_PROFOND: Ilot = ilotRangs(PLAN_QUAI, {
     'placette-puits': { x: -9.6, z: -28.4, face: 'gauche' },
     'cour-chapelle': { x: 0, z: -38.5, face: 'dos' },
     'sortie-cour': { x: COUR.x1 - 1.6, z: -39.5, face: 'gauche' },
+    'sortie-port': { x: COUR.x0 + 1.6, z: -39.5, face: 'droite' },
     // devant chaque personnage, dans sa zone de dialogue (en face de lui s'il regarde la rue : le docker de la cour, contre
     // la fontaine sinon)
     ...Object.fromEntries(NPCS_PROFOND.map((n) => [`npc-${n.id}`, n.facing === 'face'

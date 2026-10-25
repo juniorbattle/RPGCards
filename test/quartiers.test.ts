@@ -7,7 +7,9 @@
  */
 import { describe, expect, it } from 'vitest';
 import { COUR_RANGS, GRANDE_COUR, PLAN_COUR } from '../src/ville/grandeCour';
-import { ILOTS, ILOTS_RANGS, type IlotId } from '../src/ville/ilots';
+import { ILOTS, ILOTS_RANGS, ilotDef, QUARTIERS_AJOUTES, type IlotId } from '../src/ville/ilots';
+import { PLACE_FANAL, PLAN_PORT, PORT_RANGS } from '../src/ville/placeFanal';
+import { HAUTE_RANGS, PLAN_HAUTE, VILLE_HAUTE } from '../src/ville/villeHaute';
 import { blocked, type Ilot, type Vec2 } from '../src/ville/monde';
 import { PARVIS } from '../src/ville/parvis';
 import { PARVIS_PROFOND, PARVIS_RANGS, PLAN_PARVIS } from '../src/ville/parvisRangs';
@@ -42,6 +44,7 @@ function reach(ilot: Ilot, from: Vec2): (p: Vec2) => boolean {
 
 const QUARTIERS: readonly [IlotId, QuartierRangs, PlanRangs][] = [
   ['quai', QUAI_RANGS, PLAN_QUAI], ['parvis', PARVIS_RANGS, PLAN_PARVIS], ['ruelles', RUELLES_RANGS, PLAN_RUELLES], ['cour', COUR_RANGS, PLAN_COUR],
+  ['port', PORT_RANGS, PLAN_PORT], ['haute', HAUTE_RANGS, PLAN_HAUTE],
 ];
 
 describe('la ville en rangs : grammaire et parcours', () => {
@@ -131,6 +134,43 @@ describe('la Grande Cour (V5) : au cœur de la ville', () => {
       expect(Object.values(ILOTS_RANGS.cour.exits)).toContainEqual({ to: id, spawn: 'sortie-cour' });
       expect(Object.values(ILOTS[id].exits).some((e) => (e.to as string) === 'cour')).toBe(false);
     }
+  });
+});
+
+describe('les quartiers ajoutés (deuxième reprise de M09, ADR 028) : la Place du Fanal et la Ville haute', () => {
+  it('fermés par défaut : aucune sortie vers eux, la ville en rangs d’origine telle quelle', () => {
+    expect(QUARTIERS_AJOUTES).toEqual(['port', 'haute']);
+    for (const id of ['quai', 'parvis', 'ruelles', 'cour'] as const) {
+      const d = ilotDef(id, true);
+      const vers = Object.values(d.exits).map((e) => e.to);
+      expect(vers.some((t) => QUARTIERS_AJOUTES.includes(t)), id).toBe(false);
+      expect(d.ilot.zones.some((z) => z.id === 'sortie-port' || z.id === 'sortie-haute'), id).toBe(false);
+    }
+    // la ville d'aujourd'hui n'y mène jamais, ouverts ou non
+    for (const id of ['quai', 'parvis', 'ruelles'] as const) expect(Object.values(ilotDef(id, false, new Set(QUARTIERS_AJOUTES)).exits).some((e) => QUARTIERS_AJOUTES.includes(e.to))).toBe(false);
+  });
+
+  it('ouverts : le bout ouest de la cour de la Chapelle mène à la Place du Fanal, celui du Belvédère à la Ville haute, et retour', () => {
+    const ouverts = new Set<IlotId>(QUARTIERS_AJOUTES);
+    const quai = ilotDef('quai', true, ouverts);
+    const cour = ilotDef('cour', true, ouverts);
+    expect(quai.exits['sortie-port']).toEqual({ to: 'port', spawn: 'sortie-quai' });
+    expect(cour.exits['sortie-haute']).toEqual({ to: 'haute', spawn: 'sortie-cour' });
+    // la sortie est au bout ouest du dernier rang (cœur du Quai) et du Belvédère
+    const zq = quai.ilot.zones.find((z) => z.id === 'sortie-port')!.area as { x0: number; z0: number; x1: number; z1: number };
+    expect(rangAt(PLAN_QUAI, { x: (zq.x0 + zq.x1) / 2, z: (zq.z0 + zq.z1) / 2 })).toBe(PLAN_QUAI.rangs.length);
+    expect(zq.x0).toBe(PLAN_QUAI.rangs[PLAN_QUAI.rangs.length - 1]!.x0);
+    const zc = cour.ilot.zones.find((z) => z.id === 'sortie-haute')!.area as { x0: number; z0: number; x1: number; z1: number };
+    expect(rangAt(PLAN_COUR, { x: (zc.x0 + zc.x1) / 2, z: (zc.z0 + zc.z1) / 2 })).toBe(2);
+    // retours, et leurs points d'apparition praticables et reliés à l'arrivée de l'îlot d'origine
+    expect(ILOTS_RANGS.port.exits['sortie-quai']).toEqual({ to: 'quai', spawn: 'sortie-port' });
+    expect(ILOTS_RANGS.haute.exits['sortie-cour']).toEqual({ to: 'cour', spawn: 'sortie-haute' });
+    for (const [d, k] of [[quai, 'sortie-port'], [cour, 'sortie-haute']] as const) {
+      const sp = d.ilot.spawns[k]!;
+      expect(blocked(d.ilot, sp), k).toBe(false);
+      expect(reach(d.ilot, d.ilot.spawns.arrivee!)(sp), k).toBe(true);
+    }
+    expect([PLACE_FANAL.name, VILLE_HAUTE.name]).toEqual(['la Place du Fanal', 'la Ville haute']);
   });
 });
 

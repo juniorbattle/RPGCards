@@ -163,3 +163,25 @@ cache le chemin lumineux** quand le personnage le suit (caméra de l'îlot, silh
 accessoire ne cache un personnage ni un repère** quand on s'en approche. Un objet posé dans un quartier se place donc le
 long des murs ou de part et d'autre des repères, jamais devant un passage ni devant un tableau. Ombres : contact de la
 silhouette, ombre portée par la lanterne la plus proche, pied assombri, liseré magenta neutralisé (ADR 028, passe 116).
+
+## 9. Les quartiers ajoutés : la Place du Fanal et la Ville haute (deuxième reprise de M09, passe 129)
+
+Décision du responsable du 2026-10-25 : « Fanal et Ville haute » (4 images au plus), puis « attaque la Place du Fanal et
+la Ville haute ». Même grammaire ; plans `src/ville/placeFanal.ts` et `villeHaute.ts` ; habillage
+`tools/m09-quartiers-rangs.mjs` ; tests `test/quartiers.test.ts` et `test/accessoires.test.ts`. Les quatre îlots d'origine
+gardent leur diorama à l'octet près.
+
+| Quartier | Rang 1 | Rang 2 et sa place | Rang 3 (le cœur) | Liaison |
+|---|---|---|---|---|
+| **la Place du Fanal** (`port`, quartier du Port) | la place au bord de l'eau, au pied du vieux phare et de ses entrepôts | la rue des Cordiers ; **placette des Filets** (le puits) | la **cour de la Ronce**, devant la maison de la Ronce | bout ouest de la cour de la Chapelle (cœur du Quai) ; retour par le bout est de la place |
+| **la Ville haute** (`haute`) | l'esplanade des Hôtels, en terrasse, fermée par une balustrade | la rue des Astronomes ; **jardin des Sphères** (la fontaine) | le **parvis de l'Observatoire** | bout ouest du Belvédère (Grande Cour) ; retour par le bout ouest de l'esplanade |
+
+Leur identité vient du **lot des quartiers** (4 images, `tools/m09-lot-quartiers.mjs`, traitées par
+`tools/m09-kit-quartiers.mjs`, découpes `art-src/decors/kit-quartiers.json`) : le vieux phare et ses entrepôts, la maison
+de la Ronce, les hôtels à arcades, l'Observatoire ; le reste vient du kit des rangs et du lot des villes.
+
+**Quartiers facultatifs** (ADR 028, « Deuxième reprise ») : la ville en rangs reste décidée sur ses quatre îlots d'origine
+(`ILOTS_COEUR`) ; un quartier ajouté n'est ouvert que si son diorama est admis (hors QA : ses images approuvées). Fermé,
+ses sorties sont retirées (`ouvrirQuartiers`) et le pignon du bout de la ruelle n'est qu'un mur ; une sauvegarde qui s'y
+trouverait revient au Quai. Les bouts de ruelle portaient déjà un pignon à porte cochère : aucune planche approuvée n'est
+touchée.

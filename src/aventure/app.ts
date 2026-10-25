@@ -26,12 +26,12 @@ import { webglAvailable, type ArenaHandle } from '../scene/arena';
 import { confirmDialog, h } from '../shell/ui';
 import { parseRig } from '../ville/cameras';
 import { decorPolicy, preloadDecors } from '../ville/decors';
-import { MANIFESTE_RANGS, type IlotId } from '../ville/ilots';
+import { MANIFESTE_RANGS, QUARTIERS_AJOUTES, type IlotId } from '../ville/ilots';
 import { blocked, type Zone } from '../ville/monde';
 import { spritePolicy } from '../ville/spritesExternes';
 import { installVilleStyles, promptBubble } from '../ville/ui';
 import { createTown, type Town } from '../ville/ville';
-import { villeEnRangs } from '../ville/villeRangs';
+import { decideVille } from '../ville/villeRangs';
 import { apercuEngagement, appliquer, bannieres, chapitre, chapitreDetaille, peutChanger, peutConfirmer, statutDefi, type EtatBanniere, type Evenement, type FaitsPublics, type Issue } from './aventure';
 import { basculerTechnique, choixPourCase, equiperSignature, rangDe, remplacerCase, standardLegal, validerDeckAv, type DeckAv } from './deck';
 import { origineGain, vueCollection, type EntreeCollection } from './collection';
@@ -98,6 +98,8 @@ export class AventureApp {
   quaiRangs = false;
   private quaiDecide = false;
   private decisionQuai: Promise<boolean>;
+  /** Les quartiers ajoutés ouverts (deuxième reprise de M09, ADR 028). */
+  private ouverts: ReadonlySet<IlotId> = new Set();
   private dernierResultat: { prevu: DuelPrevu; issue: Issue; gains: Gain[]; turns: number; faits: FaitsPublics; pv: [number, number] } | null = null;
 
   constructor(readonly d: DepsAventure) {
@@ -106,8 +108,9 @@ export class AventureApp {
     document.title = 'Les Quatre Voies — Aventure';
     window.addEventListener('pagehide', () => this.memoriser());
     const politique = decorPolicy(d.params.qa, new URLSearchParams(location.search).get('decors'));
-    this.decisionQuai = villeEnRangs(politique).then((oui) => {
+    this.decisionQuai = decideVille(politique).then(({ rangs: oui, ouverts }) => {
       this.quaiRangs = oui;
+      this.ouverts = ouverts;
       this.quaiDecide = true;
       // l'ancien Quai en secours : ses plans éventuels (approuvés) préparés comme avant
       if (!oui) void preloadDecors(['quai'], politique);
@@ -263,8 +266,10 @@ export class AventureApp {
     this.host.className = 'ville-host demo';
     document.body.insertBefore(this.host, this.d.shellHost);
     this.look = this.lookJoueur();
-    // la Grande Cour n'existe que dans la ville en rangs : dans la ville d'aujourd'hui, on repart du Quai
-    if (!this.quaiRangs && this.save!.ville.ilot === 'cour') this.save!.ville = { ilot: 'quai', pos: null };
+    // la Grande Cour n'existe que dans la ville en rangs : dans la ville d'aujourd'hui, on repart du Quai ; de même d'un
+    // quartier ajouté qui n'est pas (ou plus) ouvert (ADR 028, « Deuxième reprise »)
+    const ici = this.save!.ville.ilot;
+    if ((!this.quaiRangs && ici === 'cour') || (QUARTIERS_AJOUTES.includes(ici) && !this.ouverts.has(ici))) this.save!.ville = { ilot: 'quai', pos: null };
     const at = this.save!.ville.ilot;
     if (!reprise) this.decider(at);
     if (!webglAvailable()) {
@@ -276,7 +281,7 @@ export class AventureApp {
       host: this.host, artSeed: this.params.artSeed, camera: 'frontale', player: this.look, ilot: at, spawn: 'arrivee',
       freeze: this.params.freeze, reducedMotion: this.params.reducedMotion,
       sprites: spritePolicy(this.params.qa, q.get('sprites')), decors: decorPolicy(this.params.qa, q.get('decors')), rig: parseRig(q.get('rig')),
-      ilotDefOf: (id) => ilotAventure(id, this.posesDe(id), this.quaiRangs),
+      ilotDefOf: (id) => ilotAventure(id, this.posesDe(id), this.quaiRangs, this.ouverts),
       ...(this.quaiRangs ? { decorsManifest: MANIFESTE_RANGS } : {}),
       onInteract: (z) => this.interagir(z),
       onMenu: () => this.menu(),
@@ -445,7 +450,7 @@ export class AventureApp {
     if (this.dialog || this.modal) return;
     if (z.kind === 'parler' && z.target) return this.parler(z.target);
     if (z.kind === 'sortie') {
-      const exit = ilotBase(this.town!.ilotId(), this.quaiRangs).exits[z.id];
+      const exit = ilotBase(this.town!.ilotId(), this.quaiRangs, this.ouverts).exits[z.id];
       if (exit) return this.voyager(exit.to, exit.spawn);
     }
     if (z.kind === 'porte' && z.target === 'salle') return this.salleDesBannieres();
@@ -1207,7 +1212,7 @@ const nomCarte = (defId: string) => (CATALOG[defId] ? cardTitle(CATALOG[defId]!)
 const STANDARD = 'Format standard : 17 cartes, sans carte grise ; le validateur du mode Duel l’accepte tel quel.';
 /** État d'une bannière, lu par le joueur (Salle des Bannières). */
 const ETAT_BANNIERE: Record<EtatBanniere, string> = { accueil: 'votre famille', engageable: 'défi à engager', engagee: 'défi engagé', conquise: 'chef vaincu', fermee: 'pas encore' };
-const OU_ILOT: Record<IlotId, string> = { quai: 'sur le Quai', ruelles: 'dans les Ruelles (sortie ouest du Quai)', parvis: 'sur le Parvis de l’arène (sortie est du Quai)', cour: 'dans la Grande Cour, au cœur de la ville' };
+const OU_ILOT: Record<IlotId, string> = { quai: 'sur le Quai', ruelles: 'dans les Ruelles (sortie ouest du Quai)', parvis: 'sur le Parvis de l’arène (sortie est du Quai)', cour: 'dans la Grande Cour, au cœur de la ville', port: 'sur la Place du Fanal (au bout ouest de la cour de la Chapelle)', haute: 'dans la Ville haute (au bout ouest du Belvédère)' };
 /** État d'une famille, lu par le joueur (écran Collection). */
 /** Chapitre de la trame en clair (écran titre) ; épicène. */
 const CHAPITRE: Record<ReturnType<typeof chapitreDetaille>, string> = { prologue: 'Prologue', I: 'Chapitre I, la maison', II: 'Chapitre II, les trois voies', III: 'Chapitre III, les trois voies', IV: 'Chapitre IV, les trois voies', V: 'Chapitre V, le Championnat', titre: 'Titre remporté' };

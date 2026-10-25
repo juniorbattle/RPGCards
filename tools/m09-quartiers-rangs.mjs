@@ -1,7 +1,9 @@
 // M09 (reprise, 2026-10-20) — **la ville en rangs** : le Parvis et les Ruelles en quatre rangs, la Grande Cour (V5), sur le
 // modèle du Quai en quatre rangs (`tools/m09-profondeur-preuve.mjs`, passes 65 à 68). Les plans (rangs, bandes, passages,
 // places, murs, mobilier, lampadaires) sont LUS dans le code du jeu (tsx) : `src/ville/parvisRangs.ts`, `ruellesRangs.ts`,
-// `grandeCour.ts` ; une seule source.
+// `grandeCour.ts` ; une seule source. Deuxième reprise de M09 (passe 129) : les quartiers ajoutés, la Place du Fanal
+// (`placeFanal.ts`) et la Ville haute (`villeHaute.ts`), habillés de même ; leur identité vient du lot des quartiers
+// (`art-src/decors/kit-quartiers.json`, traité par `tools/m09-kit-quartiers.mjs`), sinon de pièces provisoires du kit.
 //   assembler : écrit les dioramas `parvis`, `ruelles` et `cour` dans `public/decors/manifest-profondeur.json` (le Quai y
 //               reste tel quel) : rangs 2 à 4 habillés du kit des rangs (frises posées d'un mur mitoyen à un autre, en
 //               évitant les maisons déjà posées au Quai ; murs ; mobilier) ; ce qui fait l'identité de chaque îlot vient du
@@ -12,7 +14,7 @@
 //   verifier  : sur le build (`npm run build` avant) : captures 1920 × 1080 à chaque rang et à chaque spot des trois îlots
 //               (`?ville=1&qa=1&freeze=1&profondeur=1&ilot=<îlot>`), hauteur du personnage, planche par îlot.
 // Usage : npx tsx tools/m09-quartiers-rangs.mjs assembler
-//         npm run build && LQV_GPU=1 CHROMIUM_PATH=<Chrome> npx tsx tools/m09-quartiers-rangs.mjs verifier [dossier] [rapport.json]
+//         npm run build && LQV_GPU=1 CHROMIUM_PATH=<Chrome> [LQV_ILOTS=port,haute] npx tsx tools/m09-quartiers-rangs.mjs verifier [dossier] [rapport.json]
 import { createHash } from 'node:crypto';
 import { execSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -23,6 +25,8 @@ import { R_LAMPS } from '../src/ville/ruelles.ts';
 import { LAMPES_PARVIS, MEUBLES_PARVIS, PLAN_PARVIS } from '../src/ville/parvisRangs.ts';
 import { LAMPES_RUELLES, MEUBLES_RUELLES, PLAN_RUELLES } from '../src/ville/ruellesRangs.ts';
 import { ESCALIER, LAMPES_COUR, MEUBLES_COUR, PLAN_COUR } from '../src/ville/grandeCour.ts';
+import { LAMPES_PORT, MEUBLES_PORT, PLAN_PORT } from '../src/ville/placeFanal.ts';
+import { LAMPES_HAUTE, MEUBLES_HAUTE, PLAN_HAUTE } from '../src/ville/villeHaute.ts';
 import { approuve } from './m09-approbations.mjs';
 
 const MODE = process.argv[2];
@@ -76,6 +80,21 @@ const QUARTIERS = {
     avant: 'balustrade', escalier: ESCALIER,
     camera: { pitch: 15, distance: 26, fov: 42, aimY: 3.6, minX: -6, maxX: 6, followZ: 0.9, aimZ: -3, pitchFond: 18, zFond: -16 },
   },
+  // deuxième reprise de M09 : la Place du Fanal (au bord de l'eau, comme les Ruelles) et la Ville haute (en terrasse)
+  port: {
+    plan: PLAN_PORT, meubles: MEUBLES_PORT, lampes: LAMPES_PORT,
+    rang1: { identite: 'port-fanal', x: [-10, 9.6] },
+    coeur: { identite: 'port-ronce', largeur: 14, remplacant: { monument: 'halle', largeur: 9 } },
+    avant: 'canal',
+    camera: { pitch: 6, distance: 25, fov: 42, aimY: 4.8, minX: -3, maxX: 3, followZ: 0.9, aimZ: 0.2, pitchFond: 16, zFond: -12 },
+  },
+  haute: {
+    plan: PLAN_HAUTE, meubles: MEUBLES_HAUTE, lampes: LAMPES_HAUTE,
+    rang1: { identite: 'haute-hotels', x: [-9.8, 9.8] },
+    coeur: { identite: 'haute-observatoire', largeur: 16, remplacant: { monument: 'joueurs', largeur: 8 } },
+    avant: 'balustrade',
+    camera: { pitch: 6, distance: 25, fov: 42, aimY: 4.8, minX: -3, maxX: 3, followZ: 0.9, aimZ: -0.9, pitchFond: 16, zFond: -16 },
+  },
 };
 /** Objets du lot des villes et leur remplaçant du kit des rangs tant que le lot n'existe pas (échelle). */
 const REMPLACANTS = { brasero: ['niche', 0.6], kiosque: ['etal', 0.7], tableau: ['niche', 0.8], monument: ['fontaine', 1.1], estrade: ['etal', 1.45] };
@@ -95,8 +114,10 @@ if (MODE === 'assembler') {
   const quai = prof.ilots.quai;
   const kit = JSON.parse(readFileSync('art-src/decors/kit-rangs.json', 'utf8'));
   const villes = existsSync('art-src/decors/kit-villes.json') ? JSON.parse(readFileSync('art-src/decors/kit-villes.json', 'utf8')) : null;
+  const quartiers = existsSync('art-src/decors/kit-quartiers.json') ? JSON.parse(readFileSync('art-src/decors/kit-quartiers.json', 'utf8')) : null;
   const SRC_KIT = 'gpt-image-2 (kit des quartiers en rangs, ADR 028, passe 66), traité par script (tools/m09-kit-rangs.mjs)';
   const SRC_VILLES = 'gpt-image-2 (lot des villes : Parvis, Ruelles, Grande Cour ; ADR 028, reprise de M09), traité par script (tools/m09-kit-villes.mjs)';
+  const SRC_QUARTIERS = 'gpt-image-2 (lot des quartiers ajoutés : la Place du Fanal, la Ville haute ; ADR 028, deuxième reprise de M09), traité par script (tools/m09-kit-quartiers.mjs)';
   const plate = (e, source) => {
     const buf = readFileSync(`public/decors/${e.file}`);
     if (sha(buf) !== e.sha256) throw new Error(`${e.file} : empreinte différente de celle du kit (relancer son traitement)`);
@@ -151,7 +172,7 @@ if (MODE === 'assembler') {
     };
     const monument = (nom) => ({ ...kitPlate(kit.monuments), uv: kit.monuments.panneaux[nom].uv });
     // façade d'identité du lot des villes, ou son remplaçant du kit (provisoire)
-    const identite = (nom) => villes?.facades?.[nom] ?? null;
+    const identite = (nom) => (villes?.facades?.[nom] ? { ...villes.facades[nom], src: SRC_VILLES } : quartiers?.facades?.[nom] ? { ...quartiers.facades[nom], src: SRC_QUARTIERS } : null);
     plans.ciel = { ...quai.plans.ciel };
     const facadeLights = [];
     const last = plan.rangs[plan.rangs.length - 1];
@@ -185,7 +206,7 @@ if (MODE === 'assembler') {
             // la façade d'identité entière sur [x0, x1] (son morceau, si le décor la coupe sur un bord)
             const span = rx[1] - rx[0];
             const u0 = (p.x0 - rx[0]) / span; const u1 = (p.x1 - rx[0]) / span;
-            plans[k2] = { ...plate(eR, SRC_VILLES), uv: [r3(eR.uv[0] + u0 * (eR.uv[2] - eR.uv[0])), eR.uv[1], r3(eR.uv[0] + u1 * (eR.uv[2] - eR.uv[0])), eR.uv[3]], width: r3(p.x1 - p.x0), at: [r3((p.x0 + p.x1) / 2), 0, f.z], lit: 0.35, fog: 0.15 };
+            plans[k2] = { ...plate(eR, eR.src), uv: [r3(eR.uv[0] + u0 * (eR.uv[2] - eR.uv[0])), eR.uv[1], r3(eR.uv[0] + u1 * (eR.uv[2] - eR.uv[0])), eR.uv[3]], width: r3(p.x1 - p.x0), at: [r3((p.x0 + p.x1) / 2), 0, f.z], lit: 0.35, fog: 0.15 };
             // lanternes peintes de la façade (rang 1 : leur halo suit le fantôme du rang)
             for (const [lx, ly] of eR.lanternes ?? []) { const x = (rx[0] + rx[1]) / 2 + lx; if (x > p.x0 && x < p.x1) facadeLights.push({ at: [r3(x), r3(ly), r3(f.z + 0.1)], color: 'ambre', intensity: 2.6, radius: 7, halo: 1.0, flicker: 'lantern', ...cz(1) }); }
           }
@@ -198,7 +219,7 @@ if (MODE === 'assembler') {
         for (const [a, c, s] of [[f.x0, coeurX[0], 'o'], [coeurX[1], f.x1, 'e']]) if (c - a > 0.5) enFrise({ x0: a, x1: c, z: f.z }, COMMUN.fonds[f.rang] ?? COMMUN.fonds[4], `${key}-${s}`);
         const e = identite(Q.coeur.identite);
         if (e) {
-          plans[`coeur-${Q.coeur.identite}`] = { ...plate(e, SRC_VILLES), uv: e.uv, width: e.largeur, at: [0, 0, r3(f.z + 0.05)], lit: 0.3, fog: 0.3 };
+          plans[`coeur-${Q.coeur.identite}`] = { ...plate(e, e.src), uv: e.uv, width: e.largeur, at: [0, 0, r3(f.z + 0.05)], lit: 0.3, fog: 0.3 };
           for (const [lx, ly] of (e.lanternes ?? []).slice(0, 2)) facadeLights.push({ at: [r3(lx), r3(ly), r3(f.z + 0.15)], color: 'ambre', intensity: 2.6, radius: 8, halo: 1.0, flicker: 'lantern' });
         }
         else {
@@ -335,6 +356,18 @@ const VUES = {
     ['estrade', -7.5, -6.2, 'dos', 'Devant l’estrade des duels'],
     ['belvedere', 0, -22, 'dos', 'Le Belvédère, la ville haute au-delà'],
   ],
+  port: [
+    ['place', 0, -1.2, 'face', 'Rang 1 : la Place du Fanal, au pied du vieux phare'],
+    ['rue-cordiers', 0, -17, 'face', 'Rang 2 : la rue des Cordiers'],
+    ['placette-filets', 5, -21.6, 'face', 'Rang 2 : la placette des Filets (spot)'],
+    ['cour-ronce', 0, -30.2, 'face', 'Rang 3 : la cour de la Ronce (cœur)'],
+  ],
+  haute: [
+    ['esplanade', 0, -1.2, 'face', 'Rang 1 : l’esplanade des Hôtels'],
+    ['rue-astronomes', 0, -17, 'face', 'Rang 2 : la rue des Astronomes'],
+    ['jardin-spheres', -4, -21.6, 'face', 'Rang 2 : le jardin des Sphères (spot)'],
+    ['parvis-observatoire', 0, -30.6, 'face', 'Rang 3 : le parvis de l’Observatoire (cœur)'],
+  ],
 };
 
 if (MODE === 'verifier') {
@@ -346,7 +379,8 @@ if (MODE === 'verifier') {
   report.figures = {};
   report.decor = {};
   try {
-    for (const [id, vues] of Object.entries(VUES)) {
+    // LQV_ILOTS : îlots à vérifier, séparés par des virgules (défaut : tous)
+    for (const [id, vues] of Object.entries(VUES).filter(([k]) => !process.env.LQV_ILOTS || process.env.LQV_ILOTS.split(',').includes(k))) {
       const pg = await (await browser.newContext({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 })).newPage();
       pg.setDefaultTimeout(120000);
       watchConsole(pg, report.console);

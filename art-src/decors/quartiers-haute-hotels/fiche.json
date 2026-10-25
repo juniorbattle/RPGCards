@@ -1,0 +1,86 @@
+{
+  "id": "quartiers-haute-hotels",
+  "statut": "lot des quartiers ajoutés (ADR 028, deuxième reprise de M09, passe 129), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "auteur": "Claude Code (session de la deuxième reprise de M09, passe 129), à la demande du responsable : « Fanal et Ville haute » (4 images au plus) ; « attaque la Place du Fanal et la Ville haute »",
+  "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-quartiers.mjs",
+  "aseprite": "non utilisé : traitement par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-kit-quartiers.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production (usage en jeu permis : décision A2 du responsable, passe 97)",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "sources": [
+    {
+      "nom": "haute-hotels",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-25T18:21:29.007Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1536x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image), of our harbour facades (second image) and of our back-street houses (third image). Do not copy their composition.\n\nPaint ONE isolated background layer for a 2.5D night town, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): a continuous row of three stately townhouses of the upper town, about 20 metres wide, spanning the full width of the image and filling about the lower 88% of it. Scale: a person is about 110 pixels tall in this image. Pale cold grey dressed stone, more refined than the harbour houses: a ground floor of round arcades sheltering lit doors and a bookseller's window full of rolled maps and brass instruments; tall first-floor windows with small wrought-iron balconies; carved cornices; steep slate roofs with dormers and slender chimneys; clear vertical party walls between the three houses; two long plain star-gold cloth banners hanging from the middle house; iron wall lanterns glowing warm amber.\n\nThe bottom edge of the image is a straight horizontal line at the foot of the walls, with no ground, no steps and no cobbles in front.\n\nEverything around the subjects (above the roofs, around the tower, between the buildings) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-20-v4-rangs/rangs-ruelle-a.png",
+          "sha256": "03edc3cc328ed147d6118781eef5123cf784a905c2bad9393f1bdda15b18acb7"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-25-quartiers/haute-hotels.png (dossier principal, ignoré par git)",
+        "sha256": "6db4abbc813b444aac2360b2d72bbb768754e0a1f17546f1d54f9bdbf1e87083",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 5082,
+        "input_tokens_details": {
+          "image_tokens": 4608,
+          "text_tokens": 474
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10570
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs",
+      "tools/m09-kit-quartiers.mjs"
+    ],
+    "etapes": [
+      "emblèmes des familles du jeu brodés en relief sur 2 bannière(s) unie(s) (fixBanners, tracés de src/art/emblems.ts), sur le brut, avant tout traitement",
+      "fond magenta détouré (alpha tiré de l’écart au magenta, bords démêlés du fond), recadré sur le pied des murs",
+      "largeur au monde 19.6 m (lanternes peintes repérées : kit-quartiers.json)"
+    ],
+    "decoupes": "art-src/decors/kit-quartiers.json"
+  },
+  "sortie": {
+    "fichier": "public/decors/quartiers-haute-hotels.png",
+    "sha256": "8d090fb0e7147b591d2e348754bcebaebe1d31f0043a320165bad401cd295d7b",
+    "octets": 2893638,
+    "dimensions": [
+      1487,
+      951
+    ]
+  },
+  "approved": false,
+  "chaine_des_empreintes": [
+    "6db4abbc813b444aac2360b2d72bbb768754e0a1f17546f1d54f9bdbf1e87083 (brut haute-hotels)",
+    "8d090fb0e7147b591d2e348754bcebaebe1d31f0043a320165bad401cd295d7b (planche)"
+  ]
+}

@@ -8,6 +8,8 @@ import type { Ilot } from './monde';
 import { P_FACADE_Z, P_FRONT_Z, P_NPCS, PARVIS } from './parvis';
 import { FACADE_Z, NPCS, QUAI, QUAY_Z, type IlotNpc } from './quai';
 import { CHEMINS_COUR, GRANDE_COUR, NPCS_COUR, PLAN_COUR } from './grandeCour';
+import { CHEMINS_PORT, NPCS_PORT, PLACE_FANAL, PLAN_PORT, PORT_FRONT_Z } from './placeFanal';
+import { CHEMINS_HAUTE, NPCS_HAUTE, PLAN_HAUTE, VILLE_HAUTE } from './villeHaute';
 import { CHEMINS_PARVIS, NPCS_PARVIS, PARVIS_PROFOND, PLAN_PARVIS } from './parvisRangs';
 import { CHEMINS_QUAI, FOND_Z, LANE_BACK_Z, NPCS_PROFOND, PLAN_QUAI, QUAI_PROFOND } from './quaiProfond';
 import type { CheminSegment } from './rangs';
@@ -18,10 +20,11 @@ import { buildParvisD } from './parvisScene';
 import { buildQuai } from './quaiScene';
 import type { QuaiScene } from './scene';
 
-/** Îlots de la ville ; la Grande Cour (V5) n'existe que dans la ville en rangs (`ILOTS_RANGS`). */
-export type IlotId = 'quai' | 'parvis' | 'ruelles' | 'cour';
+/** Îlots de la ville ; la Grande Cour (V5) et les quartiers ajoutés (la Place du Fanal, la Ville haute ; deuxième reprise
+ *  de M09) n'existent que dans la ville en rangs (`ILOTS_RANGS`). */
+export type IlotId = 'quai' | 'parvis' | 'ruelles' | 'cour' | 'port' | 'haute';
 /** Îlots de la ville d'aujourd'hui, en bande (décor par code ou diorama du manifeste par défaut). */
-export type IlotBande = Exclude<IlotId, 'cour'>;
+export type IlotBande = Exclude<IlotId, 'cour' | 'port' | 'haute'>;
 
 export interface Passer { id: string; x0: number; x1: number; z: number; speed: number; phase?: number }
 
@@ -96,7 +99,7 @@ export const ILOTS: Record<IlotBande, IlotDef> = {
   },
 };
 
-export const isIlotId = (x: unknown): x is IlotId => x === 'quai' || x === 'parvis' || x === 'ruelles' || x === 'cour';
+export const isIlotId = (x: unknown): x is IlotId => x === 'quai' || x === 'parvis' || x === 'ruelles' || x === 'cour' || x === 'port' || x === 'haute';
 export const isIlotBande = (x: unknown): x is IlotBande => x === 'quai' || x === 'parvis' || x === 'ruelles';
 
 /**
@@ -119,7 +122,7 @@ export const QUAI_PROFOND_DEF: IlotDef = {
     { id: 'pnj-joueuse-4', x0: -6, x1: 12, z: PLAN_QUAI.rangs[2]!.z0 + 1.8, speed: 0.75, phase: 0.6 },
   ],
   // reprise de M09 : le cœur s'ouvre sur la Grande Cour
-  exits: { ...ILOTS.quai.exits, 'sortie-cour': { to: 'cour', spawn: 'sortie-quai' } },
+  exits: { ...ILOTS.quai.exits, 'sortie-cour': { to: 'cour', spawn: 'sortie-quai' }, 'sortie-port': { to: 'port', spawn: 'sortie-quai' } },
 };
 
 /**
@@ -174,12 +177,73 @@ export const COUR_DEF: IlotDef = {
     { id: 'pnj-docker-18', x0: -12, x1: 12, z: -1.6, speed: 0.8, phase: 0.75 },
     { id: 'pnj-commis-22', x0: -12, x1: 12, z: PLAN_COUR.rangs[1]!.z1 - 1.2, speed: 0.7, phase: 0.5 },
   ],
-  exits: { 'sortie-quai': { to: 'quai', spawn: 'sortie-cour' }, 'sortie-ruelles': { to: 'ruelles', spawn: 'sortie-cour' }, 'sortie-parvis': { to: 'parvis', spawn: 'sortie-cour' } },
+  exits: { 'sortie-quai': { to: 'quai', spawn: 'sortie-cour' }, 'sortie-ruelles': { to: 'ruelles', spawn: 'sortie-cour' }, 'sortie-parvis': { to: 'parvis', spawn: 'sortie-cour' }, 'sortie-haute': { to: 'haute', spawn: 'sortie-cour' } },
+};
+
+/**
+ * Deuxième reprise de M09 (2026-10-25, ADR 028) : **les quartiers ajoutés**, la Place du Fanal (`placeFanal.ts`) et la
+ * Ville haute (`villeHaute.ts`), sur le modèle de la Grande Cour (diorama seulement ; `build` ne dessine que le sol et la
+ * nuit du Quai, en dernier secours). Facultatifs : ouverts seulement si leur diorama est admis (`ouvrirQuartiers`).
+ */
+export const PORT_DEF: IlotDef = {
+  ...ILOTS.ruelles,
+  id: 'port',
+  ilot: PLACE_FANAL,
+  npcs: NPCS_PORT,
+  chemins: CHEMINS_PORT,
+  camera: { minX: -6, maxX: 6 },
+  build: buildQuai,
+  dof: { nearZ: PORT_FRONT_Z + 0.5, farZ: PLAN_PORT.bounds.z0 - 1.5, nearSpan: 3.2, farSpan: 45, farAmt: 0.42, maxBlur: 9 },
+  ambient: [
+    { id: 'pnj-docker-84', x0: -13, x1: 13, z: 1.6, speed: 0.9, phase: 0.3 },
+    { id: 'pnj-marchande-85', x0: -12, x1: 12, z: PLAN_PORT.rangs[1]!.z1 - 1.4, speed: 0.75, phase: 0.6 },
+  ],
+  exits: { 'sortie-quai': { to: 'quai', spawn: 'sortie-port' } },
+};
+export const HAUTE_DEF: IlotDef = {
+  ...ILOTS.parvis,
+  id: 'haute',
+  ilot: VILLE_HAUTE,
+  npcs: NPCS_HAUTE,
+  chemins: CHEMINS_HAUTE,
+  camera: { minX: -6, maxX: 6 },
+  build: buildQuai,
+  dof: { nearZ: 4.0, farZ: PLAN_HAUTE.bounds.z0 - 1.5, nearSpan: 3.2, farSpan: 45, farAmt: 0.42, maxBlur: 9 },
+  reflets: { proxyZ: -6, proxyY: 12 },
+  ambient: [
+    { id: 'pnj-joueuse-90', x0: -12, x1: 12, z: 1.4, speed: 0.85, phase: 0.2 },
+    { id: 'pnj-commis-91', x0: -11, x1: 11, z: PLAN_HAUTE.rangs[1]!.z0 + 1.4, speed: 0.7, phase: 0.55 },
+  ],
+  exits: { 'sortie-cour': { to: 'cour', spawn: 'sortie-haute' } },
 };
 
 /** Manifeste des plans de la ville en rangs (les quatre îlots ; laboratoire `?profondeur=1`, aventure). */
 export const MANIFESTE_RANGS = 'manifest-profondeur.json';
-/** La ville en rangs : le Quai, le Parvis et les Ruelles en quatre rangs, et la Grande Cour. */
-export const ILOTS_RANGS: Record<IlotId, IlotDef> = { quai: QUAI_PROFOND_DEF, parvis: PARVIS_PROFOND_DEF, ruelles: RUELLES_PROFOND_DEF, cour: COUR_DEF };
-/** Définition d'un îlot dans la ville en rangs ou dans la ville d'aujourd'hui (la Grande Cour n'existe qu'en rangs). */
-export const ilotDef = (id: IlotId, rangs: boolean): IlotDef => (rangs || id === 'cour' ? ILOTS_RANGS[id] : ILOTS[id]);
+/** La ville en rangs : le Quai, le Parvis et les Ruelles en quatre rangs, la Grande Cour, et les quartiers ajoutés. */
+export const ILOTS_RANGS: Record<IlotId, IlotDef> = { quai: QUAI_PROFOND_DEF, parvis: PARVIS_PROFOND_DEF, ruelles: RUELLES_PROFOND_DEF, cour: COUR_DEF, port: PORT_DEF, haute: HAUTE_DEF };
+/** Les quatre îlots d'origine de la ville en rangs : elle n'est la ville du jeu que si leurs dioramas sont admis. */
+export const ILOTS_COEUR: readonly IlotId[] = ['quai', 'parvis', 'ruelles', 'cour'];
+/** Les quartiers ajoutés (deuxième reprise de M09) : facultatifs, ouverts seulement si leur diorama est admis. */
+export const QUARTIERS_AJOUTES: readonly IlotId[] = ['port', 'haute'];
+/** Îlots qui n'existent qu'en rangs. */
+const EN_RANGS_SEULEMENT: readonly IlotId[] = ['cour', ...QUARTIERS_AJOUTES];
+
+/**
+ * Ferme les liaisons vers les quartiers ajoutés qui ne sont pas ouverts (ADR 028, « Deuxième reprise ») : leurs sorties
+ * sont retirées (zone et liaison) ; le décor garde le pignon du bout de la ruelle, qui n'est plus qu'un mur.
+ */
+export function ouvrirQuartiers(def: IlotDef, ouverts: ReadonlySet<IlotId>): IlotDef {
+  const fermees = Object.entries(def.exits).filter(([, e]) => QUARTIERS_AJOUTES.includes(e.to) && !ouverts.has(e.to)).map(([k]) => k);
+  if (!fermees.length) return def;
+  return {
+    ...def,
+    exits: Object.fromEntries(Object.entries(def.exits).filter(([k]) => !fermees.includes(k))),
+    ilot: { ...def.ilot, zones: def.ilot.zones.filter((z) => !fermees.includes(z.id)) },
+  };
+}
+/**
+ * Définition d'un îlot dans la ville en rangs ou dans la ville d'aujourd'hui (la Grande Cour et les quartiers ajoutés
+ * n'existent qu'en rangs) ; `ouverts` : les quartiers ajoutés ouverts (aucun par défaut).
+ */
+export const ilotDef = (id: IlotId, rangs: boolean, ouverts: ReadonlySet<IlotId> = new Set()): IlotDef =>
+  ouvrirQuartiers(rangs || EN_RANGS_SEULEMENT.includes(id) ? ILOTS_RANGS[id] : ILOTS[id as IlotBande], ouverts);

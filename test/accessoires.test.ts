@@ -9,6 +9,8 @@ import { MEUBLES_RANGS } from '../src/ville/quaiProfond';
 import { MEUBLES_PARVIS } from '../src/ville/parvisRangs';
 import { MEUBLES_RUELLES } from '../src/ville/ruellesRangs';
 import { MEUBLES_COUR } from '../src/ville/grandeCour';
+import { MEUBLES_PORT } from '../src/ville/placeFanal';
+import { MEUBLES_HAUTE } from '../src/ville/villeHaute';
 import type { MeubleRang } from '../src/ville/rangs';
 import { ombrePortee, ombresDuPlan, profilPied, SILHOUETTE } from '../src/ville/ombres';
 import { lirePng, profilColonnes, type PngRgba } from './png';
@@ -17,7 +19,7 @@ import { lirePng, profilColonnes, type PngRgba } from './png';
 const MAN = JSON.parse(readFileSync('public/decors/manifest-profondeur.json', 'utf8'));
 const IMAGES = new Map<string, PngRgba>();
 const image = (f: string): PngRgba => { if (!IMAGES.has(f)) IMAGES.set(f, lirePng(`public/decors/${f}`)); return IMAGES.get(f)!; };
-const MEUBLES: Record<string, readonly MeubleRang[]> = { quai: MEUBLES_RANGS, parvis: MEUBLES_PARVIS, ruelles: MEUBLES_RUELLES, cour: MEUBLES_COUR };
+const MEUBLES: Record<string, readonly MeubleRang[]> = { quai: MEUBLES_RANGS, parvis: MEUBLES_PARVIS, ruelles: MEUBLES_RUELLES, cour: MEUBLES_COUR, port: MEUBLES_PORT, haute: MEUBLES_HAUTE };
 
 function accessoires(id: string): AccessoireDebout[] {
   return MEUBLES[id]!.map((m) => {
@@ -44,7 +46,7 @@ describe('accessoires de la ville en rangs', () => {
     expect(solCache({ x: 0, z: -23 }, etal, cam)).toBe(false);
   });
 
-  for (const id of ['quai', 'parvis', 'ruelles', 'cour']) {
+  for (const id of ['quai', 'parvis', 'ruelles', 'cour', 'port', 'haute']) {
     it(`${id} : aucun accessoire ne cache le chemin lumineux quand le personnage le suit`, () => {
       const caches = cheminsCaches(ILOTS_RANGS[id as keyof typeof ILOTS_RANGS]!.chemins ?? [], accessoires(id), rig(id), { opacite: (a, p, c) => ghostOpacity(0, farFade({ center: [a.x, a.h / 2, a.z], w: a.w, h: a.h, orient: 'face' }, p), nearFade(a.z, c.z)).o });
       const parAccessoire = [...new Set(caches.map((c) => c.accessoire))].map((a) => `${a} (${caches.filter((c) => c.accessoire === a).length} points)`);

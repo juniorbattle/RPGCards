@@ -1,0 +1,86 @@
+{
+  "id": "quartiers-port-fanal",
+  "statut": "lot des quartiers ajoutés (ADR 028, deuxième reprise de M09, passe 129), NON APPROUVÉ par le responsable : refusé hors QA (approved: false) tant qu’il n’a pas décidé",
+  "auteur": "Claude Code (session de la deuxième reprise de M09, passe 129), à la demande du responsable : « Fanal et Ville haute » (4 images au plus) ; « attaque la Place du Fanal et la Ville haute »",
+  "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-quartiers.mjs",
+  "aseprite": "non utilisé : traitement par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-kit-quartiers.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production (usage en jeu permis : décision A2 du responsable, passe 97)",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "sources": [
+    {
+      "nom": "port-fanal",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-25T18:18:53.229Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1536x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "Use the attached images only as style references: match the painterly look, fine grain, cold stone masonry, half-timbering, night palette and warm amber lantern light of the harbour scene (first image), of our harbour facades (second image) and of our back-street houses (third image). Do not copy their composition.\n\nPaint ONE isolated background layer for a 2.5D night harbour town, seen straight from the front like an architectural elevation (camera at eye level, no perspective tilt, no vanishing lines): the old harbour lighthouse of the city (the Lantern) and its warehouses, about 20 metres wide, spanning the full width of the image and filling about the lower 95% of it. Scale: a person is about 120 pixels tall in this image. In the centre, a tall, slender round stone lighthouse tower rising almost to the top of the image, weathered cold grey stone with a few narrow slit windows, an iron gallery near its top and a glazed lantern room glowing warm amber, a small conical slate cap; at its foot, a heavy arched wooden door with two iron wall lanterns. On each side, a two-storey stone harbour warehouse joined to the tower, with large arched loading doors (one open, showing coils of rope and stacked crates in warm light), hoist beams with ropes and pulleys under the gables, small lit windows, steep slate roofs; one long plain bramble-green cloth banner hanging on each warehouse.\n\nThe bottom edge of the image is a straight horizontal line at the foot of the walls, with no ground, no steps and no cobbles in front.\n\nEverything around the subjects (above the roofs, around the tower, between the buildings) is a perfectly flat, uniform pure magenta (#FF00FF) background with no shading, no texture, no sky, no clouds, no moon, no distant city.\n\nStrictly no people, no text, no letters, no numbers, no signature, no watermark, no logos, no playing-card suit symbols, no emblems on any cloth.\n\nStyle bible: stylized HD-2D, theatrical; night with near-monochrome indigo and slate dominant, cold grey stone as secondary, warm amber lantern light, desaturated ivory for canvas and highlights; the four family colours (ember orange, veil blue and silver, bramble green, star gold) only on banners and small accents; props concentrated at focal points, never uniform clutter; world of a harbour city where people challenge each other at card duels.",
+      "entrees": [
+        {
+          "chemin": "reference/generated/2026-10-19-quai-nuit-cameras/02.png",
+          "sha256": "640b6c828c56879ef1cca1c037b2fe160d916419a5811562191b797fa6a9c633"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-19-v4-essai/quai-facades-essai.png",
+          "sha256": "b86eaa7a9da01a837ae5df745182a19052ca59365f0f56587f01f662b4eebaec"
+        },
+        {
+          "chemin": "C:/Users/miche/Documents/Projects/RPGCards/art-gen/2026-10-20-v4-rangs/rangs-ruelle-a.png",
+          "sha256": "03edc3cc328ed147d6118781eef5123cf784a905c2bad9393f1bdda15b18acb7"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-25-quartiers/port-fanal.png (dossier principal, ignoré par git)",
+        "sha256": "1f39cd1a31109e2150a184592be661cbf9c358f2df076c44380dbd72b58ef8d7",
+        "dimensions": [
+          1536,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 5132,
+        "input_tokens_details": {
+          "image_tokens": 4608,
+          "text_tokens": 524
+        },
+        "output_tokens": 5488,
+        "output_tokens_details": {
+          "image_tokens": 5488,
+          "text_tokens": 0
+        },
+        "total_tokens": 10620
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs",
+      "tools/m09-kit-quartiers.mjs"
+    ],
+    "etapes": [
+      "emblèmes des familles du jeu brodés en relief sur 2 bannière(s) unie(s) (fixBanners, tracés de src/art/emblems.ts), sur le brut, avant tout traitement",
+      "fond magenta détouré (alpha tiré de l’écart au magenta, bords démêlés du fond), recadré sur le pied des murs",
+      "largeur au monde 19.6 m (lanternes peintes repérées : kit-quartiers.json)"
+    ],
+    "decoupes": "art-src/decors/kit-quartiers.json"
+  },
+  "sortie": {
+    "fichier": "public/decors/quartiers-port-fanal.png",
+    "sha256": "fcc5d924310e55b600470b21d376784cfc9c2b180aea55a2babc0b8fcd661101",
+    "octets": 2092224,
+    "dimensions": [
+      1416,
+      962
+    ]
+  },
+  "approved": false,
+  "chaine_des_empreintes": [
+    "1f39cd1a31109e2150a184592be661cbf9c358f2df076c44380dbd72b58ef8d7 (brut port-fanal)",
+    "fcc5d924310e55b600470b21d376784cfc9c2b180aea55a2babc0b8fcd661101 (planche)"
+  ]
+}

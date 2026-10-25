@@ -235,3 +235,6 @@ quartiers ») et ses deux choix du même jour (questions de la session, passe 12
   reprise utilisée) ; restent 4 images de reprise et les 4 images des quartiers (Place du Fanal, Ville haute).
 - **Approbation (passe 128)**, ordre du responsable : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par
   le registre, dans une passe à part ». Registre `art-src/approbations.json` : 32 images (20 planches, 12 feuilles).
+- **Quartiers (passe 129)** : la Place du Fanal (`port`) et la Ville haute (`haute`) en rangs, quartiers ajoutés et
+  facultatifs (ADR 028, « Deuxième reprise », proposé ; `docs/M09_QUARTIERS_EN_RANGS.md` §9) ; 4 façades d'identité
+  générées et traitées par script, `approved: false` : fermés hors QA jusqu'à leur approbation ; 16 images sur 20.
