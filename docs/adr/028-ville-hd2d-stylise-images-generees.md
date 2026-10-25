@@ -578,3 +578,32 @@ Décisions (collection `decisions` de la fiche <https://claude.ai/artifact/MBMoN
 - **P1** : la démo `?demo=1` passe à la ville en rangs (**fait en passe 98** : décision commune `villeEnRangs`, la ville
   d'aujourd'hui en secours).
 - **P2, S1** : les feuilles des PNJ de la ville viendront après M10-E ; le lot suivant est M10-E (la ville vivante).
+
+### Retours R1 du responsable : accessoires intégrés, chemin jamais caché (passe 116, 2026-10-25)
+
+Fiche du lot M10-E (<https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w>), R1 « reçu avec retours » : « ajouter des ombres aux props décoratifs comme les stands »,
+« pas de sensation d'image collée sur la scène mais bien des props intégrés », « le chemin lumineux ne doit pas être
+caché par ces props ». Aucune image ne change (les 20 planches restent approuvées : registre `art-src/approbations.json`) ;
+tout se fait dans le moteur et dans le plan des îlots :
+
+- **Ombre de contact de la silhouette** (`ombres.ts`) : sous chaque objet debout et chaque bande d'accessoires, l'ombre
+  suit les colonnes de l'image qui touchent le sol (pieds d'un étal, roues d'une charrette), lues une fois dans les lignes
+  du bas de l'image ; sombre contre le pied, floutée vers les côtés, fondue sur 1 à 2 m vers l'avant (la caméra rasante
+  raccourcit le sol : une ombre de 75 cm ne faisait que quelques pixels). À défaut d'image lisible, l'ellipse de la passe 68.
+- **Ombre portée** : chaque objet (6,5 m de large au plus) porte au sol une ombre douce à l'opposé de la lanterne du moteur
+  la plus forte qui l'éclaire (jamais la sienne, jamais vers le fond, où l'objet la cache) ; 0,6 à 2,6 m.
+- **Pied des objets** : le bas d'un objet debout est plus assombri (0,5 au sol, fondu sur 0,7 m ; 0,62 sur 0,9 m pour les
+  façades et les murs, comme avant), et le **liseré du fond magenta** de la génération (teinte violette au pied, frange verte
+  dessous, relevée dans les lignes du bas des images du kit et du lot des villes) est ramené à la nuit au rendu, sur les
+  45 derniers centimètres seulement : c'était lui, le trait violet sous chaque accessoire.
+- **Chemin jamais caché** (`accessoires.ts`, `test/accessoires.test.ts`) : vu de la caméra de l'îlot, un objet debout
+  cache le sol derrière lui sur (c.z − a.z) · h / (c.y − h) ; le test suit chaque chemin lumineux pas à pas (la caméra suit
+  le personnage, les plans effacés comptent comme tels, silhouette de chaque image) et refuse tout point caché à moins de
+  8 m du personnage ; il refuse aussi un personnage ou un repère (monument, estrade, tableau, fontaine) caché quand on
+  s'en approche. Accessoires déplacés en conséquence : au Quai, l'étal de la Halle (7,4 → 9,4) et ses caisses ; au Parvis,
+  la table des inscriptions (−0,4 m) et les tonneaux (+0,6 m) du rang 1, **dans les deux villes** (le rang 1 reste identique),
+  le banc des Lices (3,2 → −1,6, hors de l'ombre d'un lampadaire) ; dans la Grande Cour, l'estrade ramenée de 6,3 à 4,6 m de haut (échelle 0,9 → 0,66, elle
+  cachait le Belvédère), ses braseros resserrés, les deux étals avancés de part et d'autre du monument (z −1,0), la marchande
+  de l'étal est devant lui.
+- Vérification : `npx tsx tools/m09-accessoires.mjs` (chaque accessoire vu de près, planche par îlot,
+  `screenshots/qa/m09/accessoires/`).

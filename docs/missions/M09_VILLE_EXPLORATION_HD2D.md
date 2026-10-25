@@ -200,3 +200,8 @@ de façon générale, **aucune cassure de l'immersion** (pas d'image collée sur
 
 **A1 fait (passe 104)** : les 20 planches sont `approved: true` (registre `art-src/approbations.json`, ADR 028) ; hors QA,
 la ville en rangs et la feuille du joueur s'affichent. Les retours R1 attendent le signal du responsable (pause demandée).
+
+**Retours R1 faits (passe 116)** : ombres de contact tirées de la silhouette des images, ombres portées par les lanternes,
+pied des objets assombri et liseré magenta neutralisé au rendu ; plus aucun accessoire ne cache le chemin lumineux, un
+personnage ni un repère (test ; accessoires déplacés au Quai, au Parvis et dans la Grande Cour, estrade réduite) ; aucune
+image changée, les approbations tiennent (ADR 028).

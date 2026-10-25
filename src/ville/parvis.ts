@@ -16,8 +16,10 @@ export const BRAZIERS: readonly Vec2[] = [{ x: -4.4, z: -4.3 }, { x: 4.4, z: -4.
 /** Lampadaires sur les côtés seulement : au centre, un lampadaire masquait le joueur devant la grande porte. */
 export const P_LAMPS: readonly Vec2[] = [-10.5, 10.5].map((x) => ({ x, z: 3.0 }));
 /** Table des inscriptions (point focal secondaire) et tonneaux. */
-export const BOOTH: Rect = { x0: 7.2, z0: -5.1, x1: 9.6, z1: -4.0 };
-export const P_PROPS: readonly Rect[] = [{ x0: -10.4, z0: -5.1, x1: -9.2, z1: -4.2 }];
+// passe 116 (retours R1 sur la ville en rangs) : la table et les tonneaux écartés des passages du rang 1 (0,4 et 0,6 m),
+// qu'ils cachaient au chemin lumineux ; le rang 1 reste identique dans les deux villes
+export const BOOTH: Rect = { x0: 6.8, z0: -5.1, x1: 9.2, z1: -4.0 };
+export const P_PROPS: readonly Rect[] = [{ x0: -9.8, z0: -5.1, x1: -8.6, z1: -4.2 }];
 
 export const P_NPCS: readonly IlotNpc[] = [
   { id: 'astre', at: { x: 2.9, z: -3.5 }, facing: 'face', role: 'rival', encounter: 'libre-astre' },

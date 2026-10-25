@@ -69,8 +69,9 @@ export const MEUBLES_RANGS: readonly MeubleRang[] = [
   meuble('rue-haute-caisses', [-18.95, -17.05], -14.0, -12.6, 1.2, 0.8),
   meuble('rue-haute-tonneaux', [-11.3, -9.7], 15.0, -15.2, 1.0, 0.8),
   objet('rue-haute-charrette', 'charrette', -2.6, -16.0, 4.0, 1.0),
-  objet('halle-etal', 'etal', 7.4, -20.8, 4.0, 1.4),
-  meuble('halle-caisses', [11.6, 13.7], 11.8, -21.9, 1.2, 0.8),
+  // passe 116 (retours R1) : l'étal de la Halle, écarté du passage vers la ruelle des Lanternes qu'il cachait
+  objet('halle-etal', 'etal', 9.4, -20.8, 4.0, 1.4),
+  meuble('halle-caisses', [11.6, 13.7], 12.9, -21.9, 1.2, 0.8),
   objet('lanternes-niche', 'niche', -3.0, -28.4, 1.0, 0.6),
   objet('puits', 'puits', -11.2, -31.0, 2.6, 1.6),
   meuble('placette-tonneaux', [-11.3, -9.7], -13.3, -33.4, 1.0, 0.6),

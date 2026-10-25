@@ -30,7 +30,8 @@
     "qa:championnat": "node tools/m10-championnat.mjs",
     "qa:maison": "node tools/m10c-parcours.mjs",
     "qa:voies": "node tools/m10d-voies.mjs",
-    "qa:vivante": "node tools/m10e-ville.mjs"
+    "qa:vivante": "node tools/m10e-ville.mjs",
+    "qa:accessoires": "tsx tools/m09-accessoires.mjs"
   },
   "engines": {
     "node": ">=20"
