@@ -1,0 +1,597 @@
+{
+ "commit": "43a62d9",
+ "rc08": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/build-b128bd9/dist",
+ "avant": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/32cb7de1-5b94-4370-bbad-6b82c66ae88a/scratchpad/build-f7339ad",
+ "anciennes": {
+  "save": {
+   "schemaVersion": 2,
+   "gameVersion": "0.8.0-rc.1",
+   "createdAt": "2026-10-25T06:11:44.131Z",
+   "updatedAt": "2026-10-25T06:11:56.942Z",
+   "profile": {
+    "name": "QA RC 0.8",
+    "seed": 8080
+   },
+   "deck": {
+    "signature": "Voile",
+    "variants": [
+     "Cendre-1-etincelle",
+     "Voile-1-eclaireur",
+     "Ronce-1-racine",
+     "Astre-1-repere"
+    ],
+    "techniques": [
+     "Lecture",
+     "Ancrage"
+    ]
+   },
+   "options": {
+    "pace": "normal",
+    "reducedMotion": null,
+    "scale": 1,
+    "tips": true,
+    "fullCollection": false,
+    "artSeed": 7
+   },
+   "history": [
+    {
+     "id": "d1",
+     "encounterId": "quai-1",
+     "rival": "braise",
+     "outcome": "victory",
+     "turns": 7,
+     "overtime": 0,
+     "dealt": 90,
+     "taken": 53,
+     "hp": {
+      "me": 37,
+      "opp": 0
+     },
+     "seed": 3261367166,
+     "signature": "Voile",
+     "at": "2026-10-25T06:11:56.069Z"
+    }
+   ],
+   "duelCounter": 2,
+   "tipsSeen": [],
+   "collection": {
+    "variants": [
+     "Cendre-1-etincelle",
+     "Voile-1-eclaireur",
+     "Ronce-1-racine",
+     "Astre-1-repere",
+     "Cendre-2-braise",
+     "Cendre-3-ferveur",
+     "Cendre-4-contrecoup"
+    ],
+    "signatures": [
+     "Cendre",
+     "Voile",
+     "Ronce",
+     "Astre"
+    ],
+    "techniques": [
+     "Sondage",
+     "Recentrage",
+     "Lecture",
+     "Ancrage"
+    ]
+   },
+   "progress": {
+    "series": {
+     "step": 1,
+     "completed": 0
+    },
+    "met": [
+     "braise"
+    ],
+    "defeated": [
+     "braise"
+    ],
+    "unlockLog": [
+     {
+      "at": "2026-10-25T06:11:56.069Z",
+      "duel": "d1",
+      "rival": "braise",
+      "items": [
+       "Cendre-2-braise",
+       "Cendre-3-ferveur",
+       "Cendre-4-contrecoup"
+      ]
+     }
+    ]
+   },
+   "activeDuel": {
+    "id": "d2",
+    "encounterId": "quai-2",
+    "seed": 3384483477,
+    "startedAt": "2026-10-25T06:11:56.404Z",
+    "rules": "V3.0+delta-V3.2",
+    "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+    "config": {
+     "seed": 3384483477,
+     "players": {
+      "p1": {
+       "name": "Vous",
+       "hp": 90,
+       "signature": "Voile",
+       "variants": [
+        "Cendre-1",
+        "Voile-1",
+        "Ronce-1",
+        "Astre-1"
+       ],
+       "techniques": [
+        "Lecture",
+        "Ancrage"
+       ]
+      },
+      "p2": {
+       "name": "Maëlle",
+       "hp": 95,
+       "signature": "Ronce",
+       "variants": [
+        "Ronce-1",
+        "Ronce-2",
+        "Ronce-3",
+        "Ronce-4",
+        "Cendre-1",
+        "Voile-1",
+        "Astre-1",
+        "Astre-2"
+       ],
+       "techniques": [
+        "Ancrage",
+        "Rupture"
+       ]
+      }
+     }
+    },
+    "commands": [
+     {
+      "type": "commit",
+      "player": "p2",
+      "primaryId": "p2#05",
+      "stance": "guard",
+      "secondaryId": "p2#13",
+      "replaceSlot": null
+     },
+     {
+      "type": "commit",
+      "player": "p1",
+      "primaryId": "p1#03",
+      "stance": "assault",
+      "secondaryId": null,
+      "replaceSlot": null
+     },
+     {
+      "type": "nextTurn"
+     },
+     {
+      "type": "prepare",
+      "player": "p2",
+      "reveal": []
+     },
+     {
+      "type": "commit",
+      "player": "p2",
+      "primaryId": "p2#07",
+      "stance": "assault",
+      "secondaryId": "p2#12",
+      "replaceSlot": null
+     },
+     {
+      "type": "commit",
+      "player": "p1",
+      "primaryId": "p1#02",
+      "stance": "assault",
+      "secondaryId": "p1#05",
+      "replaceSlot": null,
+      "slot": 0
+     },
+     {
+      "type": "nextTurn"
+     },
+     {
+      "type": "prepare",
+      "player": "p2",
+      "reveal": [
+       1
+      ]
+     }
+    ],
+    "hash": "a1ae4e71b55a8baf",
+    "turn": 3
+   }
+  },
+  "aventure": {
+   "schema": "aventure/1",
+   "gameVersion": "0.8.0-rc.1",
+   "createdAt": "2026-10-23T20:00:00.000Z",
+   "updatedAt": "2026-10-23T20:00:00.000Z",
+   "profil": {
+    "nom": "QA Avant V3.3",
+    "graine": 4242
+   },
+   "etat": {
+    "scenes": [
+     "P0",
+     "P1",
+     "P2",
+     "P3",
+     "P4",
+     "P5",
+     "P6",
+     "P7",
+     "P8"
+    ],
+    "familles": {
+     "Cendre": "invite",
+     "Voile": "invite",
+     "Ronce": "affilie",
+     "Astre": "invite"
+    },
+    "affiliation": "Ronce",
+    "premier": "Astre",
+    "prologue": "victoire",
+    "engages": [
+     "cadet-Ronce"
+    ],
+    "vaincues": [],
+    "registre": [
+     {
+      "key": "neutres:depart",
+      "kind": "neutres",
+      "family": null,
+      "items": [
+       "neutre-1",
+       "neutre-1",
+       "neutre-1",
+       "neutre-1",
+       "neutre-2",
+       "neutre-2",
+       "neutre-2",
+       "neutre-2",
+       "neutre-3",
+       "neutre-3",
+       "neutre-3",
+       "neutre-3",
+       "neutre-4",
+       "neutre-4",
+       "neutre-4",
+       "neutre-4"
+      ],
+      "source": "P0",
+      "at": "2026-10-23T20:00:00.000Z"
+     },
+     {
+      "key": "technique:Sondage",
+      "kind": "technique",
+      "family": null,
+      "items": [
+       "Sondage"
+      ],
+      "source": "P0",
+      "at": "2026-10-23T20:00:00.000Z"
+     },
+     {
+      "key": "technique:Recentrage",
+      "kind": "technique",
+      "family": null,
+      "items": [
+       "Recentrage"
+      ],
+      "source": "P0",
+      "at": "2026-10-23T20:00:00.000Z"
+     },
+     {
+      "key": "basics:Ronce",
+      "kind": "basics",
+      "family": "Ronce",
+      "items": [
+       "Ronce-1-basic",
+       "Ronce-2-basic",
+       "Ronce-3-basic",
+       "Ronce-4-basic"
+      ],
+      "source": "P7:Ronce",
+      "at": "2026-10-23T20:00:00.000Z"
+     },
+     {
+      "key": "technique:Rupture",
+      "kind": "technique",
+      "family": null,
+      "items": [
+       "Rupture"
+      ],
+      "source": "P7:Ronce",
+      "at": "2026-10-23T20:00:00.000Z"
+     }
+    ],
+    "deck": {
+     "cartes": [
+      "Ronce-1-basic",
+      "neutre-1",
+      "neutre-1",
+      "neutre-1",
+      "Ronce-2-basic",
+      "neutre-2",
+      "neutre-2",
+      "neutre-2",
+      "Ronce-3-basic",
+      "neutre-3",
+      "neutre-3",
+      "neutre-3",
+      "Ronce-4-basic",
+      "neutre-4",
+      "neutre-4",
+      "neutre-4"
+     ],
+     "signature": null,
+     "techniques": [
+      "Recentrage",
+      "Rupture"
+     ]
+    },
+    "visites": [],
+    "rencontres": [],
+    "changements": [],
+    "competitions": {
+     "epreuves": {},
+     "joutes": {},
+     "championnat": {
+      "poule": {},
+      "miroir": false,
+      "finale": [],
+      "titre": false
+     }
+    },
+    "combats": 1
+   },
+   "directeur": {
+    "graine": 718632766,
+    "battement": 0,
+    "actives": {},
+    "derniere": {},
+    "parChapitre": {},
+    "joues": {},
+    "refuses": {}
+   },
+   "ville": {
+    "ilot": "quai",
+    "pos": null
+   },
+   "duel": {
+    "id": "a2",
+    "rencontre": "cadet-Ronce",
+    "seed": 3019351440,
+    "startedAt": "2026-10-23T20:00:00.000Z",
+    "rules": "V3.0+delta-V3.2",
+    "catalog": "catalogue-initial-V3.0+16v+4s+6t+4n",
+    "config": {
+     "seed": 3019351440,
+     "players": {
+      "p1": {
+       "name": "Vous",
+       "hp": 53,
+       "signature": null,
+       "variants": [],
+       "techniques": [
+        "Recentrage",
+        "Rupture"
+       ],
+       "deck": [
+        "Ronce-1-basic",
+        "neutre-1",
+        "neutre-1",
+        "neutre-1",
+        "Ronce-2-basic",
+        "neutre-2",
+        "neutre-2",
+        "neutre-2",
+        "Ronce-3-basic",
+        "neutre-3",
+        "neutre-3",
+        "neutre-3",
+        "Ronce-4-basic",
+        "neutre-4",
+        "neutre-4",
+        "neutre-4"
+       ]
+      },
+      "p2": {
+       "name": "Gaspard",
+       "hp": 50,
+       "signature": null,
+       "variants": [],
+       "techniques": [
+        "Ancrage",
+        "Rupture"
+       ],
+       "deck": [
+        "Ronce-1-basic",
+        "Ronce-2-basic",
+        "Ronce-3-entrave",
+        "Ronce-4-basic",
+        "Astre-1-basic",
+        "Cendre-2-basic",
+        "neutre-1",
+        "neutre-1",
+        "neutre-2",
+        "neutre-2",
+        "neutre-3",
+        "neutre-3",
+        "neutre-3",
+        "neutre-4",
+        "neutre-4",
+        "neutre-4"
+       ]
+      }
+     }
+    },
+    "commands": [
+     {
+      "type": "start",
+      "player": "p1",
+      "discard": [],
+      "technique": null
+     },
+     {
+      "type": "commit",
+      "player": "p2",
+      "primaryId": "p2#12",
+      "stance": "assault",
+      "secondaryId": "p2#11",
+      "replaceSlot": null
+     },
+     {
+      "type": "commit",
+      "player": "p1",
+      "primaryId": "p1#14",
+      "stance": "assault",
+      "secondaryId": null,
+      "replaceSlot": null
+     },
+     {
+      "type": "nextTurn"
+     },
+     {
+      "type": "start",
+      "player": "p1",
+      "discard": [],
+      "technique": null
+     },
+     {
+      "type": "prepare",
+      "player": "p2",
+      "reveal": [
+       0
+      ]
+     },
+     {
+      "type": "commit",
+      "player": "p1",
+      "primaryId": "p1#11",
+      "stance": "guard",
+      "secondaryId": "p1#09",
+      "replaceSlot": null
+     },
+     {
+      "type": "commit",
+      "player": "p2",
+      "primaryId": "p2#10",
+      "stance": "assault",
+      "secondaryId": "p2#05",
+      "replaceSlot": null
+     },
+     {
+      "type": "tactics",
+      "player": "p2",
+      "plans": [
+       {
+        "mode": "rank"
+       },
+       null
+      ],
+      "technique": null
+     },
+     {
+      "type": "nextTurn"
+     },
+     {
+      "type": "start",
+      "player": "p1",
+      "discard": [],
+      "technique": null
+     },
+     {
+      "type": "prepare",
+      "player": "p2",
+      "reveal": [
+       1
+      ]
+     },
+     {
+      "type": "prepare",
+      "player": "p1",
+      "reveal": [
+       0
+      ]
+     },
+     {
+      "type": "commit",
+      "player": "p2",
+      "primaryId": "p2#03",
+      "stance": "assault",
+      "secondaryId": "p2#09",
+      "replaceSlot": null
+     },
+     {
+      "type": "commit",
+      "player": "p1",
+      "primaryId": "p1#12",
+      "stance": "assault",
+      "secondaryId": null,
+      "replaceSlot": null
+     },
+     {
+      "type": "tactics",
+      "player": "p2",
+      "plans": [
+       null,
+       {
+        "mode": "rank"
+       }
+      ],
+      "technique": null
+     },
+     {
+      "type": "tactics",
+      "player": "p1",
+      "plans": [
+       {
+        "mode": "rank"
+       },
+       null
+      ],
+      "technique": null
+     },
+     {
+      "type": "nextTurn"
+     }
+    ],
+    "hash": "66ff4dc3b0cde37a",
+    "turn": 4,
+    "pret": false
+   },
+   "historique": [
+    {
+     "id": "a1",
+     "rencontre": "prologue",
+     "issue": "victoire",
+     "turns": 9,
+     "at": "2026-10-23T20:00:00.000Z"
+    }
+   ],
+   "compteur": 2
+  }
+ },
+ "raisonStandard": "Reprise exacte impossibleRègles différentes (V3.0+delta-V3.2). Vous pouvez recommencer ce duel depuis le début (même rival, même seed) ou le retirer sans qu’il soit compté.Plus tardRetirer ce duelRecommencer depuis le début",
+ "raisonAventure": "Reprise exacte impossible : Version des règles ou du catalogue différente. Le duel est retiré (non compté).",
+ "checks": [
+  "OK RC 0.8 : premier duel joué jusqu'au bout par l'interface (tour 7, gagnant me)",
+  "OK RC 0.8 : sauvegarde relevée (schéma 2, version 0.8.0-rc.1, 1 duel à l'historique, duel en cours sous V3.0+delta-V3.2 au tour 3)",
+  "OK aventure d'avant V3.3 écrite par le code de f7339ad (règles V3.0+delta-V3.2, duel du cadet en cours au tour 4, 0 erreur)",
+  "OK standard : profil de la RC 0.8 chargé (nom, deck, collection, progression, historique gardés ; « QA RC 0.8117/164/6sauvegardé le 25/10 02:11 »)",
+  "OK standard : duel en cours de la RC 0.8 refusé, raison affichée : « Reprise exacte impossibleRègles différentes (V3.0+delta-V3.2). Vous pouvez recommencer ce duel depuis le début (même rival, même seed) ou le retirer sans qu’il soit compté.Plus tardRetirer ce duelReco »",
+  "OK standard : aucun duel ouvert sur un état non vérifié",
+  "OK standard : le duel recommence au tour 1 sous V3.0+delta-V3.3.2, configuration et historique gardés",
+  "OK standard : la sauvegarde de l’aventure n’est ni lue ni écrite (octet pour octet)",
+  "OK aventure : sauvegarde d'avant V3.3 chargée (« QA Avant V3.3 · Chapitre I, la maison · voie de la Ronce · 4 cartes familiales, 0 variante(s), 0 Signature(s) »)",
+  "OK aventure : duel d'avant V3.3 refusé, raison affichée : « Reprise exacte impossible : Version des règles ou du catalogue différente. Le duel est retiré (non compté). »",
+  "OK aventure : état, registre, deck, historique et compteur gardés ; seul le duel non vérifiable est retiré (non compté)",
+  "OK aventure : la sauvegarde du jeu standard n’est ni lue ni écrite (octet pour octet)",
+  "OK console sans erreur (0)"
+ ],
+ "console": []
+}
