@@ -299,7 +299,7 @@ export class Shell {
     const enc = encounterById(a.encounterId)!;
     const r = await confirmDialog({ title: 'Abandonner le duel en cours ?', text: `Le duel contre ${personalityOf(enc.rival).name} (tour ${a.turn}) sera compté comme un ABANDON, distinct d’une défaite par K.-O.`, confirm: 'Abandonner', danger: true });
     if (r !== 'confirm') return;
-    const rep = replay({ format: 'lqv-replay/1', rules: a.rules as 'V3.0+delta-V3.3', catalog: a.catalog, config: a.config, commands: a.commands });
+    const rep = replay({ format: 'lqv-replay/1', rules: a.rules as 'V3.0+delta-V3.3.1', catalog: a.catalog, config: a.config, commands: a.commands });
     this.recordEnd({ id: a.id, encounter: enc, seed: a.seed }, viewFor(rep.state, 'p1'), rep.events, a.config.players.p1.signature!, true);
   }
 

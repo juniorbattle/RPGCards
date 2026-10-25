@@ -66,7 +66,14 @@ export function describeEvent(ev: GameEvent, viewer: PlayerId): JournalLine | nu
       return null;
     case 'committed':
       if (d.own) return line(`[Privé] Engagement : ${t(d.primaryDefId)} en ${STANCE[d.stance as Stance]}${d.secondaryDefId ? ` + ${t(d.secondaryDefId)} en Secondaire (${slotName(d.placedSlot)}, CHARGEMENT)` : ''}.`);
-      return line(`${verb(d.player, 'engagez', 'engage')} une Primaire face cachée${d.placedSlot !== null ? ` et ${me(d.player) ? 'préparez' : 'prépare'} une Secondaire en ${slotName(d.placedSlot)} (chargement)` : ''}.`);
+      return line(`${verb(d.player, 'engagez', 'engage')} ${d.signature ? (me(d.player) ? 'votre Signature annoncée (mode secret)' : 'sa Signature annoncée (mode secret)') : 'une Primaire face cachée'}${d.placedSlot !== null ? ` et ${me(d.player) ? 'préparez' : 'prépare'} une Secondaire en ${slotName(d.placedSlot)} (chargement)` : ''}.`);
+    case 'signatureAnnounced': {
+      // Avenant 08 : annonce publique dès le verrouillage ; jamais le mode.
+      const c = cardDef(d.defId as string);
+      return me(d.player)
+        ? line(`Vous engagez votre Signature : ${cardTitle(c)} (∞, Puissance ${c.power}) ; le rival la voit, pas votre mode.`, 'effect')
+        : line(`SIGNATURE ANNONCÉE — le rival engage ${cardTitle(c)} (∞, Puissance ${c.power}) ; son mode reste secret.`, 'effect');
+    }
     case 'replaced':
       if (d.own) return line(`[Privé] Votre Secondaire masquée remplacée (${slotName(d.slot)}) : ${t(d.defId)}.`);
       if (d.masked) return line(`${verb(d.player, 'remplacez', 'remplace')} la Secondaire en ${slotName(d.slot)} : une Secondaire ${d.family ?? 'neutre'} masquée rejoint la défausse (nommée en fin de tour).`);

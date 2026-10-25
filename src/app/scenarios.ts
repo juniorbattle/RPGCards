@@ -64,6 +64,18 @@ export const SCENARIOS: Record<string, Scenario> = {
       '5:TACTICS': () => ({ type: 'tactics', player: 'p2', plans: [{ mode: 'rank' }, null], technique: null }),
     },
   },
+  'signature-annonce': {
+    id: 'signature-annonce',
+    title: 'Signature annoncée (avenant 08)',
+    description: 'Le rival engage sa Signature, Couronne de Ronce : elle est annoncée face visible dès son verrouillage, son mode reste secret. Répondez en connaissance de cause : votre Signature (égalité ∞), ou une carte de faible coût.',
+    config: base({ signature: 'Cendre' }, { signature: 'Ronce' }),
+    build: (cfg) => fixture(cfg,
+      { hand: ['sig-Cendre', 'Cendre-4', 'Voile-2', 'Astre-1'] },
+      { hand: ['sig-Ronce', 'Astre-2', 'Voile-1', 'Cendre-1'] }),
+    rival: {
+      '5:COMMIT': (s) => ({ type: 'commit', player: 'p2', primaryId: idOf(s, 'p2', d('sig-Ronce')), stance: 'guard', secondaryId: null, replaceSlot: null }),
+    },
+  },
   'clash-aa': {
     id: 'clash-aa',
     title: 'Clash — le rival attaque (ASSAUT)',

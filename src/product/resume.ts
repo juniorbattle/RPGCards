@@ -5,7 +5,7 @@
 import { CATALOG_VERSION, replay } from '../game/replay/replay';
 import type { ActiveDuel } from './save';
 
-export const RULES = 'V3.0+delta-V3.3';
+export const RULES = 'V3.0+delta-V3.3.1';
 
 export function verifyActiveCore(a: ActiveDuel): { ok: true } | { ok: false; reason: string } {
   if (a.catalog !== CATALOG_VERSION) return { ok: false, reason: `Catalogue différent (${a.catalog}).` };

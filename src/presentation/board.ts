@@ -226,7 +226,7 @@ function hud(c: Controller, s: SideView, who: 'me' | 'opp'): HTMLElement {
   // sans Signature (deck d'aventure avant le premier chef, avenant M10-A) : ni emblème ni couleur de famille
   const fam: Family | null = s.signatureFamily;
   const status = who === 'opp'
-    ? fresh(h('span', { class: cls('lockchip', s.locked && 'locked', awaiting && !s.locked && c.aiThinking && 'thinking') }, s.locked ? 'Verrouillé (secret)' : awaiting ? (c.aiThinking ? 'Réfléchit' : 'En attente') : 'Rival'), awaiting && !s.locked && c.aiThinking)
+    ? fresh(h('span', { class: cls('lockchip', s.locked && 'locked', awaiting && !s.locked && c.aiThinking && 'thinking') }, s.locked ? (v.phase === 'COMMIT' && v.reveal.signatures.opp ? 'Verrouillé · Signature annoncée' : 'Verrouillé (secret)') : awaiting ? (c.aiThinking ? 'Réfléchit' : 'En attente') : 'Rival'), awaiting && !s.locked && c.aiThinking)
     : null;
   const body = h('div', { class: 'hud-body' },
     h('div', { class: 'who' }, h('span', { class: 'name' }, who === 'me' ? 'Vous' : s.name), h('span', { class: 'fam-icon', html: fam ? emblemSvg(fam, 15) : '', title: fam ? `Signature ${fam}` : 'Sans Signature' })),
@@ -325,6 +325,21 @@ function zoneShell(classes: Array<string | false | null | undefined>, label: str
   );
 }
 
+/** Avenant 08 : annonces déjà montrées (« tour:camp ») ; la lueur d’annonce ne joue qu’une fois par annonce. */
+const announcedSeen = new Set<string>();
+
+/** Avenant 08 : Signature annoncée dès son verrouillage, face visible, mode « ? » (secret jusqu’à la révélation). */
+function announcedSignature(c: Controller, who: 'me' | 'opp', defId: string): HTMLElement[] {
+  const key = `${c.view.seed}:${c.view.turn}:${who}`;
+  const first = !announcedSeen.has(key);
+  announcedSeen.add(key);
+  const label = who === 'opp' ? 'Signature adverse annoncée, mode secret' : 'Votre Signature, annoncée au rival ; votre mode reste secret';
+  return [
+    cardEl(defId, { artSeed: c.artSeed, tag: 'div', banner: who === 'opp' ? 'SIGNATURE ANNONCÉE' : 'ANNONCÉE AU RIVAL', classes: ['on-board', 'sig-announced', first && 'sig-announce-in'], attrs: { tabindex: '0', 'data-key': `prim-${who}-annoncee`, 'aria-label': label, ...inspectHooks(c, defId, true) } }),
+    h('span', { class: 'secret-stance', title: who === 'opp' ? 'Mode secret jusqu’à la révélation' : 'Votre mode, encore secret pour le rival' }, who === 'opp' ? 'Mode : ?' : 'Mode secret'),
+  ];
+}
+
 function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
   const v = c.view;
   const s = who === 'me' ? v.me : v.opp;
@@ -347,14 +362,21 @@ function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
     return zone;
   }
   if (who === 'opp') {
-    if (s.primary) zone.append(backEl(c.artSeed, { banner: 'SECRÈTE', label: 'Primaire adverse engagée, face cachée', classes: ['on-board'] }));
+    const annoncee = v.reveal.signatures.opp;
+    if (annoncee) zone.append(...announcedSignature(c, 'opp', annoncee));
+    else if (s.primary) zone.append(backEl(c.artSeed, { banner: 'SECRÈTE', label: 'Primaire adverse engagée, face cachée', classes: ['on-board'] }));
     else if (v.phase === 'COMMIT') zone.append(h('span', { class: 'empty-hint' }, 'Le rival engage…'));
     return zone;
   }
   // Moi : brouillon (non verrouillé) ou engagement verrouillé (mon mode reste SECRET pour le rival).
+  if (v.reveal.signatures.me && !v.me.primary?.card) {
+    // Avenant 08 : verrouillée, annoncée au rival ; l’engagement ne s’applique qu’au verrouillage du rival.
+    zone.append(...announcedSignature(c, 'me', v.reveal.signatures.me));
+    return zone;
+  }
   if (v.me.primary?.card) {
     const st = v.me.primary.stance!;
-    zone.append(cardEl(v.me.primary.card.defId, { artSeed: c.artSeed, tag: 'div', banner: 'VERROUILLÉE', classes: ['on-board'], attrs: { tabindex: '0', 'data-key': 'prim-me-locked' } }));
+    zone.append(cardEl(v.me.primary.card.defId, { artSeed: c.artSeed, tag: 'div', banner: v.reveal.signatures.me ? 'ANNONCÉE AU RIVAL' : 'VERROUILLÉE', classes: ['on-board'], attrs: { tabindex: '0', 'data-key': 'prim-me-locked' } }));
     zone.append(h('span', { class: cls('secret-stance', st), title: 'Votre mode, encore secret pour le rival' }, h('span', { class: 'sb-icon', html: STANCE_ICON[st] }), st === 'assault' ? 'Assaut (secret)' : 'Garde (secret)'));
     if (v.phase === 'LECTURE_CHANGE' && v.awaitingMe) zone.append(stanceChips(c, c.ui.lectureStance));
     return zone;
@@ -718,7 +740,9 @@ export function patchBeat(root: HTMLElement, c: Controller): void {
 function hand(c: Controller): HTMLElement {
   const v = c.view;
   const dr = c.ui.draft;
-  const cards = (v.me.hand ?? []).filter((x) => !(v.phase === 'COMMIT' && v.awaitingMe && (x.cardId === dr.primaryId || x.cardId === dr.secondaryId)));
+  // Engagement verrouillé en attente du rival (avenant 08 : la Signature annoncée est déjà sur le plateau) : les cartes engagées
+  // ne reviennent pas dans la main.
+  const cards = (v.me.hand ?? []).filter((x) => !(v.phase === 'COMMIT' && (v.awaitingMe || v.me.locked) && (x.cardId === dr.primaryId || x.cardId === dr.secondaryId)));
   const wrap = h('section', { class: 'hand', 'aria-label': 'Votre main', 'data-drop': 'hand', style: `--n:${Math.max(4, cards.length)}` });
   if (!cards.length) wrap.append(h('span', { class: 'hand-empty' }, (v.me.hand ?? []).length ? 'Cartes posées (non verrouillées)' : 'Main vide'));
   cards.forEach((x, i) => {
