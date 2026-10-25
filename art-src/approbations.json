@@ -194,6 +194,30 @@
       "sha256": "111ae4c9e29e87145273b4802f723aaec00ea10245b31da785d3397eac98fbe1",
       "date": "2026-10-25",
       "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128"
+    },
+    {
+      "fichier": "public/decors/quartiers-port-fanal.png",
+      "sha256": "fcc5d924310e55b600470b21d376784cfc9c2b180aea55a2babc0b8fcd661101",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après les planches de la passe 129 : screenshots/qa/m09/quartiers-ajoutes/) : « J’approuve les 4 façades des quartiers (vieux phare, maison de la Ronce, hôtels à arcades, Observatoire) : passe-les à approved: true par le registre, dans une passe à part, pour ouvrir la Place du Fanal et la Ville haute. » ; passe 130"
+    },
+    {
+      "fichier": "public/decors/quartiers-port-ronce.png",
+      "sha256": "27ddbcd1718086de5fdf628a2553af0b507d25fe35db4909c847330b226b3abd",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après les planches de la passe 129 : screenshots/qa/m09/quartiers-ajoutes/) : « J’approuve les 4 façades des quartiers (vieux phare, maison de la Ronce, hôtels à arcades, Observatoire) : passe-les à approved: true par le registre, dans une passe à part, pour ouvrir la Place du Fanal et la Ville haute. » ; passe 130"
+    },
+    {
+      "fichier": "public/decors/quartiers-haute-hotels.png",
+      "sha256": "8d090fb0e7147b591d2e348754bcebaebe1d31f0043a320165bad401cd295d7b",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après les planches de la passe 129 : screenshots/qa/m09/quartiers-ajoutes/) : « J’approuve les 4 façades des quartiers (vieux phare, maison de la Ronce, hôtels à arcades, Observatoire) : passe-les à approved: true par le registre, dans une passe à part, pour ouvrir la Place du Fanal et la Ville haute. » ; passe 130"
+    },
+    {
+      "fichier": "public/decors/quartiers-haute-observatoire.png",
+      "sha256": "90e822a631bd3072bfb124907387b01005612b9e60c1d69051c62c650264432b",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après les planches de la passe 129 : screenshots/qa/m09/quartiers-ajoutes/) : « J’approuve les 4 façades des quartiers (vieux phare, maison de la Ronce, hôtels à arcades, Observatoire) : passe-les à approved: true par le registre, dans une passe à part, pour ouvrir la Place du Fanal et la Ville haute. » ; passe 130"
     }
   ]
 }

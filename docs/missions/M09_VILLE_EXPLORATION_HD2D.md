@@ -238,3 +238,5 @@ quartiers ») et ses deux choix du même jour (questions de la session, passe 12
 - **Quartiers (passe 129)** : la Place du Fanal (`port`) et la Ville haute (`haute`) en rangs, quartiers ajoutés et
   facultatifs (ADR 028, « Deuxième reprise », proposé ; `docs/M09_QUARTIERS_EN_RANGS.md` §9) ; 4 façades d'identité
   générées et traitées par script, `approved: false` : fermés hors QA jusqu'à leur approbation ; 16 images sur 20.
+- **Approbation des façades (passe 130)**, ordre du responsable : « J’approuve les 4 façades des quartiers […] pour ouvrir
+  la Place du Fanal et la Ville haute. » Registre : 36 images ; les deux quartiers sont ouverts dans le jeu.
