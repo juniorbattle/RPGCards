@@ -14,7 +14,7 @@ import { execSync } from 'node:child_process';
 import { FAMILIES, type Family } from '../src/game/catalog/cards';
 import { PROFILES } from '../src/game/ai/policy';
 import { autoplay } from '../src/game/match';
-import type { GameConfig } from '../src/game/model/types';
+import type { GameConfig, PlayerId } from '../src/game/model/types';
 import { appliquer, nouvelleAventure, type AventureEtat, type Evenement } from '../src/aventure/aventure';
 import { siegeAventure, type DeckAv } from '../src/aventure/deck';
 import { adversaire, COMPOSITION, PROFIL_ROLE, pvJoueur, PV_ADVERSE, PV_DEPART, PV_PAR_COMBAT, type RoleAdverse } from '../src/aventure/paliers';
@@ -27,6 +27,8 @@ const N = Number(process.argv[2] ?? 60);
 /** `LQV_ETAPES=cadet-1,chef-1` : ne simule que ces étapes (les autres sont seulement traversées). */
 const SEULES = (process.env.LQV_ETAPES ?? '').split(',').filter(Boolean);
 const OUT = process.argv[3];
+/** `LQV_ORDRE=adversaire` : l’adversaire (p2) verrouille en premier, comme le rival du jeu (avenant 08, S-07.3). */
+const ORDRE: PlayerId[] = process.env.LQV_ORDRE === 'adversaire' ? ['p2', 'p1'] : ['p1', 'p2'];
 const AT = '2026-10-20T12:00:00.000Z';
 const F0 = { assautsGagnes: 0, gardesGagnees: 0, interferencesReussies: 0 };
 const apply = (e: AventureEtat, evs: Evenement[]): AventureEtat => evs.reduce((x, ev) => { const r = appliquer(x, ev, AT); if (r.refus) throw new Error(`${ev.type} : ${r.refus}`); return r.etat; }, e);
@@ -67,7 +69,7 @@ function serie(deckJ: DeckAv, pvJ: number, role: RoleAdverse, famille: Family | 
   let w = 0; let tours = 0;
   for (let s = 1; s <= N; s++) {
     const cfg: GameConfig = { seed: graine + 97 * s, players: { p1: siegeAventure(deckJ, 'p1', pvJ), p2: siegeAventure(adv.deck, 'p2', adv.pv) } };
-    const m = autoplay(cfg, 200, [PROFILES.equilibre!, PROFILES[profil]!]);
+    const m = autoplay(cfg, 200, [PROFILES.equilibre!, PROFILES[profil]!], ORDRE);
     if (m.state.winner === 'p1') w++;
     tours += m.state.turn;
     ajouter(stats, m);
@@ -127,5 +129,5 @@ for (const l of lignes.values()) console.log(`| ${l.titre} | ${l.palier} : ${l.a
 if (OUT) {
   mkdirSync(dirname(OUT), { recursive: true });
   const head = execSync('git rev-parse --short HEAD').toString().trim();
-  writeFileSync(OUT, JSON.stringify({ commit: head, duelsParFamilleEtEtape: N, pv: { depart: PV_DEPART, parCombat: PV_PAR_COMBAT }, pvAdverses: PV_ADVERSE, profils: PROFIL_ROLE, composition: COMPOSITION, lignes: [...lignes.values()].map(({ stats, ...l }) => ({ ...l, statsClash: { direct: stats.direct.duels ? resume(stats.direct) : null, entraine: stats.entraine.duels ? resume(stats.entraine) : null } })) }, null, 1) + '\n');
+  writeFileSync(OUT, JSON.stringify({ commit: head, ordre: ORDRE, duelsParFamilleEtEtape: N, pv: { depart: PV_DEPART, parCombat: PV_PAR_COMBAT }, pvAdverses: PV_ADVERSE, profils: PROFIL_ROLE, composition: COMPOSITION, lignes: [...lignes.values()].map(({ stats, ...l }) => ({ ...l, statsClash: { direct: stats.direct.duels ? resume(stats.direct) : null, entraine: stats.entraine.duels ? resume(stats.entraine) : null } })) }, null, 1) + '\n');
 }

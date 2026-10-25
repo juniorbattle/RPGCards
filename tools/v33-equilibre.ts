@@ -12,12 +12,14 @@ import { FAMILIES } from '../src/game/catalog/cards';
 import { PROFILES } from '../src/game/ai/policy';
 import { DEFAULT_CONFIG } from '../src/game/engine/engine';
 import { autoplay } from '../src/game/match';
-import type { GameConfig } from '../src/game/model/types';
+import type { GameConfig, PlayerId } from '../src/game/model/types';
 import { ENCOUNTERS, encounterConfig, personalityOf } from '../src/product/encounters';
 import { STARTER_DECK } from '../src/product/collection';
 import { ajouter, resume, statsVides, type StatsClash } from './v33-stats';
 
 const N = Number(process.argv[2] ?? 200);
+/** `LQV_ORDRE=adversaire` : l’adversaire (p2) verrouille en premier, comme le rival du jeu (avenant 08, S-07.3). */
+const ORDRE: PlayerId[] = process.env.LQV_ORDRE === 'adversaire' ? ['p2', 'p1'] : ['p1', 'p2'];
 const OUT = process.argv[3];
 const t0 = Date.now();
 const lignes: Array<{ ligne: string; victoiresP1: string; stats: Record<string, string | number> }> = [];
@@ -28,7 +30,7 @@ const noter = (ligne: string, s: StatsClash, w: number) => {
 // 1. Configuration par défaut (Cendre « toutes variantes » contre Ronce « toutes variantes », équilibré contre offensif).
 {
   const s = statsVides(); let w = 0;
-  for (let seed = 1; seed <= N; seed++) { const m = autoplay({ ...DEFAULT_CONFIG, seed }); ajouter(s, m); if (m.state.winner === 'p1') w++; }
+  for (let seed = 1; seed <= N; seed++) { const m = autoplay({ ...DEFAULT_CONFIG, seed }, 200, undefined, ORDRE); ajouter(s, m); if (m.state.winner === 'p1') w++; }
   noter('Défaut : Cendre contre Ronce, équilibré contre offensif', s, w);
 }
 
@@ -42,7 +44,7 @@ const noter = (ligne: string, s: StatsClash, w: number) => {
     const cfg: GameConfig = { seed: 31001 + i, players: {
       p1: { name: 'A', hp: 90, signature: f1, variants: i % 2 ? 'all' : 'none', techniques: ['Lecture', 'Ancrage'] },
       p2: { name: 'B', hp: 90, signature: f2, variants: Math.floor(i / 2) % 2 ? 'all' : 'none', techniques: ['Sondage', 'Rupture'] } } };
-    const m = autoplay(cfg, 200, [PROFILES[PROFILS[i % PROFILS.length]!]!, PROFILES[PROFILS[(i * 7 + 3) % PROFILS.length]!]!]);
+    const m = autoplay(cfg, 200, [PROFILES[PROFILS[i % PROFILS.length]!]!, PROFILES[PROFILS[(i * 7 + 3) % PROFILS.length]!]!], ORDRE);
     ajouter(s, m); ajouter(parFamille[f1]!.s, m);
     if (m.state.winner === 'p1') { w++; parFamille[f1]!.w++; }
   }
@@ -59,7 +61,7 @@ for (const enc of ENCOUNTERS) {
   const prof = personalityOf(enc.rival).aiProfile;
   const s = statsVides(); let w = 0;
   for (let k = 1; k <= N; k++) {
-    const m = autoplay(encounterConfig(enc, STARTER_DECK, 52001 + 31 * k), 200, [PROFILES.equilibre!, PROFILES[prof]!]);
+    const m = autoplay(encounterConfig(enc, STARTER_DECK, 52001 + 31 * k), 200, [PROFILES.equilibre!, PROFILES[prof]!], ORDRE);
     ajouter(s, m); if (m.state.winner === 'p1') w++;
   }
   noter(`${personalityOf(enc.rival).name} (${enc.kind === 'town' ? 'duel de la ville' : 'rival'}, ${prof})`, s, w);
@@ -76,5 +78,5 @@ for (const l of lignes) {
 if (OUT) {
   mkdirSync(dirname(OUT), { recursive: true });
   const head = execSync('git rev-parse --short HEAD').toString().trim();
-  writeFileSync(OUT, JSON.stringify({ commit: head, duelsParLigne: N, secondes: sec, lignes }, null, 1) + '\n');
+  writeFileSync(OUT, JSON.stringify({ commit: head, ordre: ORDRE, duelsParLigne: N, secondes: sec, lignes }, null, 1) + '\n');
 }

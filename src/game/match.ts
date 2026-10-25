@@ -17,6 +17,11 @@ export class Match {
   commands: Command[] = [];
   readonly config: GameConfig;
 
+  /** Ordre dans lequel les IA décident (et donc verrouillent) : il compte depuis l’avenant 08 (annonce d’une Signature
+   *  au verrouillage). Par défaut p1 puis p2 ; les mesures d’équilibre font décider l’adversaire (p2) en premier, comme le
+   *  rival du jeu (≈ 0,65 s après l’ouverture d’une phase). */
+  order: PlayerId[] = ['p1', 'p2'];
+
   constructor(config: GameConfig, public ai: Partial<Record<PlayerId, { profile: AiProfile; seed: number }>> = {}) {
     this.config = structuredClone(config);
     const { state, events } = createGame(config);
@@ -42,7 +47,7 @@ export class Match {
     const produced: GameEvent[] = [];
     for (let guard = 0; guard < 8; guard++) {
       let acted = false;
-      for (const pid of ['p1', 'p2'] as PlayerId[]) {
+      for (const pid of this.order) {
         const ai = this.ai[pid];
         if (!ai) continue;
         const v = this.view(pid);
@@ -72,8 +77,9 @@ export class Match {
 }
 
 /** Partie IA contre IA jusqu’à l’issue (ou plafond de sécurité de test, non règlementaire). */
-export function autoplay(config: GameConfig, maxTurns = 200, profiles: [AiProfile, AiProfile] = [PROFILES.equilibre!, PROFILES.offensif!]): Match {
+export function autoplay(config: GameConfig, maxTurns = 200, profiles: [AiProfile, AiProfile] = [PROFILES.equilibre!, PROFILES.offensif!], order: PlayerId[] = ['p1', 'p2']): Match {
   const m = new Match(config, { p1: { profile: profiles[0], seed: config.seed ^ 0x51 }, p2: { profile: profiles[1], seed: config.seed ^ 0xa7 } });
+  m.order = [...order];
   while (m.state.phase !== 'ENDED' && m.state.turn <= maxTurns) {
     m.stepAi();
     const phase: string = m.state.phase;
