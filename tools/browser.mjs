@@ -130,6 +130,8 @@ export async function secretAudit(page) {
     const allowed = new Set();
     for (const s of v.opp.slots) if (s?.card) allowed.add(s.card.defId);
     if (v.reveal.primaries) allowed.add(v.reveal.primaries.opp.defId);
+    // Avenant 08 : une Signature engagée en Primaire est annoncée au verrouillage ; son identité est PUBLIQUE.
+    if (v.reveal.signatures?.opp) allowed.add(v.reveal.signatures.opp);
     // M03 : pendant la séquence de résolution, le plateau montre l’instantané d’avant résolution
     // (Secondaires engagées encore visibles) — ces identités sont PUBLIQUES (choix tactiques révélés).
     for (const t of v.reveal.tactics?.opp ?? []) if (t?.defId) allowed.add(t.defId);

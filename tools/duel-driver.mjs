@@ -100,7 +100,9 @@ export async function stanceAudit(page) {
   return page.evaluate(() => {
     const v = window.__lqv.view();
     const issues = [];
-    const oppBanners = document.querySelectorAll('.side.opp .stance-banner, .side.opp .secret-stance');
+    // Avenant 08 : la Signature annoncée du rival porte la seule pastille neutre « Mode : ? » (aucun mode, aucune classe).
+    const neutral = (el) => el.matches('.secret-stance') && !!v.reveal.signatures?.opp && !el.matches('.assault, .guard') && el.textContent.trim() === 'Mode : ?';
+    const oppBanners = [...document.querySelectorAll('.side.opp .stance-banner, .side.opp .secret-stance')].filter((el) => !neutral(el));
     if (!v.reveal.primaries) {
       if (oppBanners.length) issues.push('mode de la Primaire adverse affiché avant sa révélation');
       return issues;
