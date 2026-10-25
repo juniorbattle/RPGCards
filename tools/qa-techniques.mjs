@@ -194,7 +194,8 @@ const CASES = {
     r.beats = [...seen];
     check(r.issues, seen.has('effect') && seen.has('insight'), `temps effet / Insight non montrés : ${[...seen]}`);
     v = await view(page);
-    check(r.issues, v.me.hp === 90 - 24 && v.opp.insight === 2, `résultat : PV ${v.me.hp}, Insight rival ${v.opp.insight}`);
+    check(r.issues, v.me.hp === 90 - (12 - 3) * 4 && v.opp.insight === 2, // avenant 07 : la Garde II absorbe 3
+      `résultat : PV ${v.me.hp}, Insight rival ${v.opp.insight}`);
     // Fin du tour : seule la défausse publique (infobulle du HUD) peut désormais nommer la carte (ARB-005).
     const leaksEnd = await lqv(page, (pats) => {
       const app = document.getElementById('app').cloneNode(true);
