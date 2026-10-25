@@ -1,0 +1,1903 @@
+{
+ "commit": "55ab7eb",
+ "duelsParFamilleEtEtape": 150,
+ "pv": {
+  "depart": 50,
+  "parCombat": 3
+ },
+ "pvAdverses": {
+  "prologue": [
+   40,
+   40,
+   40,
+   40
+  ],
+  "rue": [
+   40,
+   50,
+   60,
+   70
+  ],
+  "epreuve": [
+   35,
+   45,
+   55,
+   65
+  ],
+  "cadet": [
+   50,
+   65,
+   75,
+   85
+  ],
+  "brasDroit": [
+   55,
+   80,
+   85,
+   95
+  ],
+  "joute": [
+   60,
+   75,
+   85,
+   90
+  ],
+  "chef": [
+   55,
+   80,
+   95,
+   105
+  ],
+  "rival": [
+   60,
+   70,
+   80,
+   90
+  ],
+  "championnat": [
+   110,
+   110,
+   110,
+   110
+  ],
+  "finale": [
+   120,
+   120,
+   120,
+   120
+  ]
+ },
+ "profils": {
+  "prologue": "offensif",
+  "rue": "novice",
+  "epreuve": "novice",
+  "cadet": "novice",
+  "brasDroit": null,
+  "joute": "equilibre",
+  "chef": "lecteur",
+  "rival": "offensif",
+  "championnat": "lecteur",
+  "finale": "lecteur"
+ },
+ "composition": {
+  "rue": [
+   {
+    "autres": 0,
+    "variantes": [],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 2,
+    "variantes": [],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 4,
+    "variantes": [],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 8,
+    "variantes": [],
+    "autresVariantes": 0,
+    "signature": false
+   }
+  ],
+  "epreuve": [
+   {
+    "autres": 0,
+    "variantes": [],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 2,
+    "variantes": [],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 4,
+    "variantes": [],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 8,
+    "variantes": [],
+    "autresVariantes": 0,
+    "signature": false
+   }
+  ],
+  "cadet": [
+   {
+    "autres": 2,
+    "variantes": [
+     3
+    ],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 4,
+    "variantes": [
+     3
+    ],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 8,
+    "variantes": [
+     3,
+     4
+    ],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 12,
+    "variantes": [
+     3,
+     4
+    ],
+    "autresVariantes": 0,
+    "signature": false
+   }
+  ],
+  "brasDroit": [
+   {
+    "autres": 2,
+    "variantes": [
+     4
+    ],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 8,
+    "variantes": [
+     3,
+     4
+    ],
+    "autresVariantes": 2,
+    "signature": false
+   },
+   {
+    "autres": 12,
+    "variantes": [
+     3,
+     4
+    ],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 12,
+    "variantes": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "autresVariantes": 2,
+    "signature": false
+   }
+  ],
+  "joute": [
+   {
+    "autres": 4,
+    "variantes": [
+     3,
+     4
+    ],
+    "autresVariantes": 0,
+    "signature": false
+   },
+   {
+    "autres": 8,
+    "variantes": [
+     3,
+     4
+    ],
+    "autresVariantes": 2,
+    "signature": false
+   },
+   {
+    "autres": 12,
+    "variantes": [
+     3,
+     4
+    ],
+    "autresVariantes": 2,
+    "signature": false
+   },
+   {
+    "autres": 12,
+    "variantes": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "autresVariantes": 4,
+    "signature": false
+   }
+  ],
+  "chef": [
+   {
+    "autres": 0,
+    "variantes": [
+     3,
+     4
+    ],
+    "autresVariantes": 0,
+    "signature": true
+   },
+   {
+    "autres": 8,
+    "variantes": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "autresVariantes": 0,
+    "signature": true
+   },
+   {
+    "autres": 12,
+    "variantes": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "autresVariantes": 2,
+    "signature": true
+   },
+   {
+    "autres": 12,
+    "variantes": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "autresVariantes": 4,
+    "signature": true
+   }
+  ]
+ },
+ "lignes": [
+  {
+   "titre": "Prologue — Kaï",
+   "adv": "les seize cartes grises de la populace, sans Signature",
+   "palier": "populace",
+   "pvAdv": 40,
+   "profil": "offensif",
+   "deck": {
+    "direct": "16 N + 0 fam. (0 var.)",
+    "entraine": "16 N + 0 fam. (0 var.)"
+   },
+   "pv": {
+    "direct": [
+     50,
+     50,
+     50,
+     50
+    ],
+    "entraine": [
+     50,
+     50,
+     50,
+     50
+    ]
+   },
+   "v": {
+    "direct": 415,
+    "entraine": 404
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 4119,
+    "entraine": 4192
+   },
+   "statsClash": {
+    "direct": {
+     "duels": 600,
+     "toursMoyens": 6.87,
+     "prolongations": 115,
+     "partGardes": "17.5 %",
+     "partAG": "32.8 %",
+     "agGardeGagne": "26.2 %",
+     "agAssautBlesse": "46.9 %",
+     "agAbsorptionTotale": "26.8 %",
+     "degatsBaseParAssautVainqueur": 4.97
+    },
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 6.99,
+     "prolongations": 114,
+     "partGardes": "17.4 %",
+     "partAG": "32.6 %",
+     "agGardeGagne": "25.9 %",
+     "agAssautBlesse": "48.6 %",
+     "agAbsorptionTotale": "25.5 %",
+     "degatsBaseParAssautVainqueur": 4.88
+    }
+   }
+  },
+  {
+   "titre": "Famille 1 — cadet",
+   "adv": "6 cartes de 3 familles (dont 1 variante), 10 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 50,
+   "profil": "novice",
+   "deck": {
+    "direct": "12 N + 4 fam. (0 var.)",
+    "entraine": "12 N + 4 fam. (1 var.)"
+   },
+   "pv": {
+    "direct": [
+     53,
+     53,
+     53,
+     53
+    ],
+    "entraine": [
+     68,
+     68,
+     68,
+     68
+    ]
+   },
+   "v": {
+    "direct": 374,
+    "entraine": 458
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 4895,
+    "entraine": 5473
+   },
+   "statsClash": {
+    "direct": {
+     "duels": 600,
+     "toursMoyens": 8.16,
+     "prolongations": 114,
+     "partGardes": "18.7 %",
+     "partAG": "35.4 %",
+     "agGardeGagne": "23.3 %",
+     "agAssautBlesse": "49.6 %",
+     "agAbsorptionTotale": "27.2 %",
+     "degatsBaseParAssautVainqueur": 5.18
+    },
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 9.12,
+     "prolongations": 96,
+     "partGardes": "19.5 %",
+     "partAG": "36.6 %",
+     "agGardeGagne": "24.2 %",
+     "agAssautBlesse": "49.6 %",
+     "agAbsorptionTotale": "26.2 %",
+     "degatsBaseParAssautVainqueur": 5.11
+    }
+   }
+  },
+  {
+   "titre": "Famille 1 — bras droit",
+   "adv": "6 cartes de 3 familles (dont 1 variante), 10 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 55,
+   "profil": "propre au personnage",
+   "deck": {
+    "direct": "12 N + 4 fam. (1 var.)",
+    "entraine": "12 N + 4 fam. (2 var.)"
+   },
+   "pv": {
+    "direct": [
+     56,
+     56,
+     56,
+     56
+    ],
+    "entraine": [
+     71,
+     71,
+     71,
+     71
+    ]
+   },
+   "v": {
+    "direct": 320,
+    "entraine": 383
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 6088,
+    "entraine": 6853
+   },
+   "statsClash": {
+    "direct": {
+     "duels": 600,
+     "toursMoyens": 10.15,
+     "prolongations": 107,
+     "partGardes": "28.2 %",
+     "partAG": "47.3 %",
+     "agGardeGagne": "25.8 %",
+     "agAssautBlesse": "53.7 %",
+     "agAbsorptionTotale": "20.5 %",
+     "degatsBaseParAssautVainqueur": 6.23
+    },
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 11.42,
+     "prolongations": 106,
+     "partGardes": "28.9 %",
+     "partAG": "49.6 %",
+     "agGardeGagne": "25.4 %",
+     "agAssautBlesse": "53.9 %",
+     "agAbsorptionTotale": "20.7 %",
+     "degatsBaseParAssautVainqueur": 6.26
+    }
+   }
+  },
+  {
+   "titre": "Famille 1 — chef",
+   "adv": "4 cartes de sa famille (dont 2 variantes), 12 cartes grises et sa Signature",
+   "palier": "elite",
+   "pvAdv": 55,
+   "profil": "lecteur",
+   "deck": {
+    "direct": "12 N + 4 fam. (2 var.)",
+    "entraine": "12 N + 4 fam. (4 var.)"
+   },
+   "pv": {
+    "direct": [
+     59,
+     59,
+     59,
+     59
+    ],
+    "entraine": [
+     77,
+     77,
+     77,
+     77
+    ]
+   },
+   "v": {
+    "direct": 253,
+    "entraine": 310
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 5751,
+    "entraine": 6915
+   },
+   "statsClash": {
+    "direct": {
+     "duels": 600,
+     "toursMoyens": 9.59,
+     "prolongations": 122,
+     "partGardes": "25.5 %",
+     "partAG": "44.5 %",
+     "agGardeGagne": "21.8 %",
+     "agAssautBlesse": "58.8 %",
+     "agAbsorptionTotale": "19.4 %",
+     "degatsBaseParAssautVainqueur": 7.06
+    },
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 11.53,
+     "prolongations": 110,
+     "partGardes": "26.8 %",
+     "partAG": "47.2 %",
+     "agGardeGagne": "20.8 %",
+     "agAssautBlesse": "57.2 %",
+     "agAbsorptionTotale": "22.0 %",
+     "degatsBaseParAssautVainqueur": 6.48
+    }
+   }
+  },
+  {
+   "titre": "Famille 2 — cadet",
+   "adv": "8 cartes de 4 familles (dont 1 variante), 8 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 65,
+   "profil": "novice",
+   "deck": {
+    "direct": "8 N + 8 fam. (2 var.) + Sig.",
+    "entraine": "8 N + 8 fam. (5 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     62,
+     62,
+     62,
+     62
+    ],
+    "entraine": [
+     95,
+     95,
+     95,
+     95
+    ]
+   },
+   "v": {
+    "direct": 452,
+    "entraine": 562
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 5529,
+    "entraine": 6310
+   },
+   "statsClash": {
+    "direct": {
+     "duels": 600,
+     "toursMoyens": 9.21,
+     "prolongations": 99,
+     "partGardes": "17.4 %",
+     "partAG": "33.5 %",
+     "agGardeGagne": "22.6 %",
+     "agAssautBlesse": "49.9 %",
+     "agAbsorptionTotale": "27.5 %",
+     "degatsBaseParAssautVainqueur": 5.74
+    },
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 10.52,
+     "prolongations": 40,
+     "partGardes": "20.2 %",
+     "partAG": "38.6 %",
+     "agGardeGagne": "27.1 %",
+     "agAssautBlesse": "47.7 %",
+     "agAbsorptionTotale": "25.2 %",
+     "degatsBaseParAssautVainqueur": 5.37
+    }
+   }
+  },
+  {
+   "titre": "Famille 2 — bras droit",
+   "adv": "12 cartes de 4 familles (dont 4 variantes), 4 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 80,
+   "profil": "propre au personnage",
+   "deck": {
+    "direct": "8 N + 8 fam. (3 var.) + Sig.",
+    "entraine": "8 N + 8 fam. (6 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     65,
+     65,
+     65,
+     65
+    ],
+    "entraine": [
+     98,
+     98,
+     98,
+     98
+    ]
+   },
+   "v": {
+    "direct": 410,
+    "entraine": 536
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 6164,
+    "entraine": 6963
+   },
+   "statsClash": {
+    "direct": {
+     "duels": 600,
+     "toursMoyens": 10.27,
+     "prolongations": 76,
+     "partGardes": "18.6 %",
+     "partAG": "35.3 %",
+     "agGardeGagne": "21.2 %",
+     "agAssautBlesse": "53.3 %",
+     "agAbsorptionTotale": "25.5 %",
+     "degatsBaseParAssautVainqueur": 6.26
+    },
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 11.61,
+     "prolongations": 50,
+     "partGardes": "20.2 %",
+     "partAG": "38.1 %",
+     "agGardeGagne": "23.0 %",
+     "agAssautBlesse": "52.7 %",
+     "agAbsorptionTotale": "24.3 %",
+     "degatsBaseParAssautVainqueur": 6.01
+    }
+   }
+  },
+  {
+   "titre": "Famille 2 — chef",
+   "adv": "12 cartes de 4 familles (dont 4 variantes), 4 cartes grises et sa Signature",
+   "palier": "elite",
+   "pvAdv": 80,
+   "profil": "lecteur",
+   "deck": {
+    "direct": "8 N + 8 fam. (4 var.) + Sig.",
+    "entraine": "8 N + 8 fam. (8 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     68,
+     68,
+     68,
+     68
+    ],
+    "entraine": [
+     104,
+     104,
+     104,
+     104
+    ]
+   },
+   "v": {
+    "direct": 291,
+    "entraine": 409
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 6656,
+    "entraine": 8354
+   },
+   "statsClash": {
+    "direct": {
+     "duels": 600,
+     "toursMoyens": 11.09,
+     "prolongations": 96,
+     "partGardes": "23.8 %",
+     "partAG": "43.3 %",
+     "agGardeGagne": "21.2 %",
+     "agAssautBlesse": "60.1 %",
+     "agAbsorptionTotale": "18.7 %",
+     "degatsBaseParAssautVainqueur": 7.64
+    },
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 13.92,
+     "prolongations": 55,
+     "partGardes": "25.2 %",
+     "partAG": "45.7 %",
+     "agGardeGagne": "19.9 %",
+     "agAssautBlesse": "58.2 %",
+     "agAbsorptionTotale": "21.9 %",
+     "degatsBaseParAssautVainqueur": 6.93
+    }
+   }
+  },
+  {
+   "titre": "Famille 3 — cadet",
+   "adv": "12 cartes de 4 familles (dont 2 variantes), 4 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 75,
+   "profil": "novice",
+   "deck": {
+    "direct": "4 N + 12 fam. (4 var.) + Sig.",
+    "entraine": "4 N + 12 fam. (9 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     71,
+     71,
+     71,
+     71
+    ],
+    "entraine": [
+     122,
+     122,
+     122,
+     122
+    ]
+   },
+   "v": {
+    "direct": 450,
+    "entraine": 568
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 5953,
+    "entraine": 7095
+   },
+   "statsClash": {
+    "direct": {
+     "duels": 600,
+     "toursMoyens": 9.92,
+     "prolongations": 79,
+     "partGardes": "16.8 %",
+     "partAG": "31.8 %",
+     "agGardeGagne": "19.4 %",
+     "agAssautBlesse": "55.2 %",
+     "agAbsorptionTotale": "25.4 %",
+     "degatsBaseParAssautVainqueur": 6.29
+    },
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 11.82,
+     "prolongations": 21,
+     "partGardes": "19.8 %",
+     "partAG": "37.9 %",
+     "agGardeGagne": "27.5 %",
+     "agAssautBlesse": "46.8 %",
+     "agAbsorptionTotale": "25.7 %",
+     "degatsBaseParAssautVainqueur": 5.88
+    }
+   }
+  },
+  {
+   "titre": "Famille 3 — bras droit",
+   "adv": "16 cartes de 4 familles (dont 2 variantes), sans Signature",
+   "palier": "avance",
+   "pvAdv": 85,
+   "profil": "propre au personnage",
+   "deck": {
+    "direct": "4 N + 12 fam. (5 var.) + Sig.",
+    "entraine": "4 N + 12 fam. (10 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     74,
+     74,
+     74,
+     74
+    ],
+    "entraine": [
+     125,
+     125,
+     125,
+     125
+    ]
+   },
+   "v": {
+    "direct": 354,
+    "entraine": 476
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 8061,
+    "entraine": 10449
+   },
+   "statsClash": {
+    "direct": {
+     "duels": 600,
+     "toursMoyens": 13.44,
+     "prolongations": 89,
+     "partGardes": "30.2 %",
+     "partAG": "53.1 %",
+     "agGardeGagne": "23.0 %",
+     "agAssautBlesse": "58.5 %",
+     "agAbsorptionTotale": "18.5 %",
+     "degatsBaseParAssautVainqueur": 7.87
+    },
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 17.41,
+     "prolongations": 65,
+     "partGardes": "31.7 %",
+     "partAG": "57.2 %",
+     "agGardeGagne": "24.5 %",
+     "agAssautBlesse": "56.1 %",
+     "agAbsorptionTotale": "19.4 %",
+     "degatsBaseParAssautVainqueur": 7.72
+    }
+   }
+  },
+  {
+   "titre": "Famille 3 — chef",
+   "adv": "16 cartes de 4 familles (dont 6 variantes) et sa Signature",
+   "palier": "elite",
+   "pvAdv": 95,
+   "profil": "lecteur",
+   "deck": {
+    "direct": "4 N + 12 fam. (6 var.) + Sig.",
+    "entraine": "4 N + 12 fam. (12 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     77,
+     77,
+     77,
+     77
+    ],
+    "entraine": [
+     131,
+     131,
+     131,
+     131
+    ]
+   },
+   "v": {
+    "direct": 317,
+    "entraine": 481
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 7354,
+    "entraine": 9337
+   },
+   "statsClash": {
+    "direct": {
+     "duels": 600,
+     "toursMoyens": 12.26,
+     "prolongations": 90,
+     "partGardes": "22.5 %",
+     "partAG": "41.9 %",
+     "agGardeGagne": "19.6 %",
+     "agAssautBlesse": "60.7 %",
+     "agAbsorptionTotale": "19.7 %",
+     "degatsBaseParAssautVainqueur": 8.14
+    },
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 15.56,
+     "prolongations": 53,
+     "partGardes": "22.6 %",
+     "partAG": "42.2 %",
+     "agGardeGagne": "17.7 %",
+     "agAssautBlesse": "58.9 %",
+     "agAbsorptionTotale": "23.4 %",
+     "degatsBaseParAssautVainqueur": 7.5
+    }
+   }
+  },
+  {
+   "titre": "Famille 4 — cadet",
+   "adv": "16 cartes de 4 familles (dont 2 variantes), sans Signature",
+   "palier": "avance",
+   "pvAdv": 85,
+   "profil": "novice",
+   "deck": {
+    "direct": "0 N + 16 fam. (6 var.) + Sig.",
+    "entraine": "0 N + 16 fam. (13 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     80,
+     80,
+     80,
+     80
+    ],
+    "entraine": [
+     149,
+     149,
+     149,
+     149
+    ]
+   },
+   "v": {
+    "direct": 472,
+    "entraine": 573
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 6492,
+    "entraine": 7524
+   },
+   "statsClash": {
+    "direct": {
+     "duels": 600,
+     "toursMoyens": 10.82,
+     "prolongations": 75,
+     "partGardes": "16.0 %",
+     "partAG": "30.9 %",
+     "agGardeGagne": "18.3 %",
+     "agAssautBlesse": "54.7 %",
+     "agAbsorptionTotale": "27.0 %",
+     "degatsBaseParAssautVainqueur": 6.62
+    },
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 12.54,
+     "prolongations": 13,
+     "partGardes": "18.0 %",
+     "partAG": "34.8 %",
+     "agGardeGagne": "22.6 %",
+     "agAssautBlesse": "52.6 %",
+     "agAbsorptionTotale": "24.9 %",
+     "degatsBaseParAssautVainqueur": 6.47
+    }
+   }
+  },
+  {
+   "titre": "Famille 4 — bras droit",
+   "adv": "16 cartes de 4 familles (dont 6 variantes), sans Signature",
+   "palier": "avance",
+   "pvAdv": 95,
+   "profil": "propre au personnage",
+   "deck": {
+    "direct": "0 N + 16 fam. (7 var.) + Sig.",
+    "entraine": "0 N + 16 fam. (14 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     83,
+     83,
+     83,
+     83
+    ],
+    "entraine": [
+     152,
+     152,
+     152,
+     152
+    ]
+   },
+   "v": {
+    "direct": 375,
+    "entraine": 545
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 8254,
+    "entraine": 10469
+   },
+   "statsClash": {
+    "direct": {
+     "duels": 600,
+     "toursMoyens": 13.76,
+     "prolongations": 102,
+     "partGardes": "25.8 %",
+     "partAG": "46.6 %",
+     "agGardeGagne": "19.9 %",
+     "agAssautBlesse": "60.3 %",
+     "agAbsorptionTotale": "19.8 %",
+     "degatsBaseParAssautVainqueur": 7.99
+    },
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 17.45,
+     "prolongations": 31,
+     "partGardes": "26.6 %",
+     "partAG": "48.8 %",
+     "agGardeGagne": "22.2 %",
+     "agAssautBlesse": "56.6 %",
+     "agAbsorptionTotale": "21.2 %",
+     "degatsBaseParAssautVainqueur": 7.26
+    }
+   }
+  },
+  {
+   "titre": "Famille 4 — chef",
+   "adv": "16 cartes de 4 familles (dont 8 variantes) et sa Signature",
+   "palier": "elite",
+   "pvAdv": 105,
+   "profil": "lecteur",
+   "deck": {
+    "direct": "0 N + 16 fam. (8 var.) + Sig.",
+    "entraine": "0 N + 16 fam. (16 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     86,
+     86,
+     86,
+     86
+    ],
+    "entraine": [
+     158,
+     158,
+     158,
+     158
+    ]
+   },
+   "v": {
+    "direct": 286,
+    "entraine": 530
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 8021,
+    "entraine": 9758
+   },
+   "statsClash": {
+    "direct": {
+     "duels": 600,
+     "toursMoyens": 13.37,
+     "prolongations": 74,
+     "partGardes": "22.9 %",
+     "partAG": "42.7 %",
+     "agGardeGagne": "18.6 %",
+     "agAssautBlesse": "62.2 %",
+     "agAbsorptionTotale": "19.2 %",
+     "degatsBaseParAssautVainqueur": 8.66
+    },
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 16.26,
+     "prolongations": 32,
+     "partGardes": "22.6 %",
+     "partAG": "42.6 %",
+     "agGardeGagne": "17.1 %",
+     "agAssautBlesse": "61.2 %",
+     "agAbsorptionTotale": "21.7 %",
+     "degatsBaseParAssautVainqueur": 8.14
+    }
+   }
+  },
+  {
+   "titre": "Championnat — poule (chefs)",
+   "adv": "16 cartes de 4 familles (dont 16 variantes) et sa Signature",
+   "palier": "champion",
+   "pvAdv": 110,
+   "profil": "lecteur",
+   "deck": {
+    "direct": "0 N + 16 fam. (8 var.) + Sig.",
+    "entraine": "0 N + 16 fam. (16 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     89,
+     89,
+     89,
+     89
+    ],
+    "entraine": [
+     161,
+     161,
+     161,
+     161
+    ]
+   },
+   "v": {
+    "direct": 320,
+    "entraine": 532
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 8261,
+    "entraine": 9940
+   },
+   "statsClash": {
+    "direct": {
+     "duels": 600,
+     "toursMoyens": 13.77,
+     "prolongations": 81,
+     "partGardes": "22.4 %",
+     "partAG": "42.3 %",
+     "agGardeGagne": "19.1 %",
+     "agAssautBlesse": "61.4 %",
+     "agAbsorptionTotale": "19.5 %",
+     "degatsBaseParAssautVainqueur": 8.9
+    },
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 16.57,
+     "prolongations": 34,
+     "partGardes": "21.2 %",
+     "partAG": "40.4 %",
+     "agGardeGagne": "17.6 %",
+     "agAssautBlesse": "60.5 %",
+     "agAbsorptionTotale": "21.8 %",
+     "degatsBaseParAssautVainqueur": 8
+    }
+   }
+  },
+  {
+   "titre": "Championnat — Miroir (Kaï)",
+   "adv": "16 cartes de 4 familles (dont 16 variantes) et sa Signature",
+   "palier": "champion",
+   "pvAdv": 110,
+   "profil": "lecteur",
+   "deck": {
+    "direct": "0 N + 16 fam. (8 var.) + Sig.",
+    "entraine": "0 N + 16 fam. (16 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     98,
+     98,
+     98,
+     98
+    ],
+    "entraine": [
+     170,
+     170,
+     170,
+     170
+    ]
+   },
+   "v": {
+    "direct": 316,
+    "entraine": 531
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 8438,
+    "entraine": 9961
+   },
+   "statsClash": {
+    "direct": {
+     "duels": 600,
+     "toursMoyens": 14.06,
+     "prolongations": 75,
+     "partGardes": "22.4 %",
+     "partAG": "42.6 %",
+     "agGardeGagne": "18.7 %",
+     "agAssautBlesse": "63.0 %",
+     "agAbsorptionTotale": "18.3 %",
+     "degatsBaseParAssautVainqueur": 9.07
+    },
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 16.6,
+     "prolongations": 20,
+     "partGardes": "21.6 %",
+     "partAG": "40.9 %",
+     "agGardeGagne": "18.1 %",
+     "agAssautBlesse": "61.7 %",
+     "agAbsorptionTotale": "20.1 %",
+     "degatsBaseParAssautVainqueur": 8.49
+    }
+   }
+  },
+  {
+   "titre": "Championnat — Finale (Ysolde)",
+   "adv": "16 cartes de 4 familles (dont 16 variantes) et sa Signature",
+   "palier": "champion",
+   "pvAdv": 120,
+   "profil": "lecteur",
+   "deck": {
+    "direct": "0 N + 16 fam. (8 var.) + Sig.",
+    "entraine": "0 N + 16 fam. (16 var.) + Sig."
+   },
+   "pv": {
+    "direct": [
+     101,
+     101,
+     101,
+     101
+    ],
+    "entraine": [
+     173,
+     173,
+     173,
+     173
+    ]
+   },
+   "v": {
+    "direct": 322,
+    "entraine": 526
+   },
+   "d": {
+    "direct": 600,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 9070,
+    "entraine": 10637
+   },
+   "statsClash": {
+    "direct": {
+     "duels": 600,
+     "toursMoyens": 15.12,
+     "prolongations": 77,
+     "partGardes": "22.4 %",
+     "partAG": "42.4 %",
+     "agGardeGagne": "18.3 %",
+     "agAssautBlesse": "63.5 %",
+     "agAbsorptionTotale": "18.1 %",
+     "degatsBaseParAssautVainqueur": 9.16
+    },
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 17.73,
+     "prolongations": 28,
+     "partGardes": "21.5 %",
+     "partAG": "40.9 %",
+     "agGardeGagne": "17.4 %",
+     "agAssautBlesse": "61.9 %",
+     "agAbsorptionTotale": "20.7 %",
+     "degatsBaseParAssautVainqueur": 8.46
+    }
+   }
+  },
+  {
+   "titre": "Famille 1 — Épreuve (×3, facultative)",
+   "adv": "4 cartes de sa famille, 12 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 35,
+   "profil": "novice",
+   "deck": {
+    "entraine": "12 N + 4 fam. (0 var.)"
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     53,
+     53,
+     53,
+     53
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 413
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 3962
+   },
+   "statsClash": {
+    "direct": null,
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 6.6,
+     "prolongations": 119,
+     "partGardes": "18.4 %",
+     "partAG": "35.1 %",
+     "agGardeGagne": "23.7 %",
+     "agAssautBlesse": "49.6 %",
+     "agAbsorptionTotale": "26.7 %",
+     "degatsBaseParAssautVainqueur": 5.26
+    }
+   }
+  },
+  {
+   "titre": "Famille 1 — duel de rue (×2, facultatif)",
+   "adv": "les seize cartes grises de la populace, sans Signature",
+   "palier": "populace",
+   "pvAdv": 40,
+   "profil": "novice",
+   "deck": {
+    "entraine": "12 N + 4 fam. (1 var.)"
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     62,
+     62,
+     62,
+     62
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 458
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 4945
+   },
+   "statsClash": {
+    "direct": null,
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 8.24,
+     "prolongations": 107,
+     "partGardes": "20.2 %",
+     "partAG": "37.8 %",
+     "agGardeGagne": "27.1 %",
+     "agAssautBlesse": "47.0 %",
+     "agAbsorptionTotale": "25.9 %",
+     "degatsBaseParAssautVainqueur": 4.86
+    }
+   }
+  },
+  {
+   "titre": "Famille 1 — Joute (facultative)",
+   "adv": "8 cartes de 4 familles (dont 2 variantes), 8 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 60,
+   "profil": "equilibre",
+   "deck": {
+    "entraine": "12 N + 4 fam. (3 var.)"
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     74,
+     74,
+     74,
+     74
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 373
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 6860
+   },
+   "statsClash": {
+    "direct": null,
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 11.43,
+     "prolongations": 124,
+     "partGardes": "25.2 %",
+     "partAG": "44.5 %",
+     "agGardeGagne": "18.8 %",
+     "agAssautBlesse": "57.9 %",
+     "agAbsorptionTotale": "23.3 %",
+     "degatsBaseParAssautVainqueur": 5.87
+    }
+   }
+  },
+  {
+   "titre": "Kaï, défi facultatif (famille 1, non compté dans les PV)",
+   "adv": "6 cartes de 3 familles (dont 1 variante), 10 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 60,
+   "profil": "offensif",
+   "deck": {
+    "entraine": "12 N + 4 fam. (4 var.)"
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     77,
+     77,
+     77,
+     77
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 470
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 5735
+   },
+   "statsClash": {
+    "direct": null,
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 9.56,
+     "prolongations": 76,
+     "partGardes": "17.9 %",
+     "partAG": "34.8 %",
+     "agGardeGagne": "27.0 %",
+     "agAssautBlesse": "46.4 %",
+     "agAbsorptionTotale": "26.5 %",
+     "degatsBaseParAssautVainqueur": 5.16
+    }
+   }
+  },
+  {
+   "titre": "Famille 2 — Épreuve (×3, facultative)",
+   "adv": "6 cartes de 3 familles, 10 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 45,
+   "profil": "novice",
+   "deck": {
+    "entraine": "8 N + 8 fam. (4 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     80,
+     80,
+     80,
+     80
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 554
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 4893
+   },
+   "statsClash": {
+    "direct": null,
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 8.15,
+     "prolongations": 34,
+     "partGardes": "21.9 %",
+     "partAG": "41.3 %",
+     "agGardeGagne": "28.8 %",
+     "agAssautBlesse": "46.5 %",
+     "agAbsorptionTotale": "24.7 %",
+     "degatsBaseParAssautVainqueur": 5.58
+    }
+   }
+  },
+  {
+   "titre": "Famille 2 — duel de rue (×2, facultatif)",
+   "adv": "6 cartes de 3 familles, 10 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 50,
+   "profil": "novice",
+   "deck": {
+    "entraine": "8 N + 8 fam. (5 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     89,
+     89,
+     89,
+     89
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 565
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 5356
+   },
+   "statsClash": {
+    "direct": null,
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 8.93,
+     "prolongations": 27,
+     "partGardes": "21.3 %",
+     "partAG": "40.6 %",
+     "agGardeGagne": "30.6 %",
+     "agAssautBlesse": "45.4 %",
+     "agAbsorptionTotale": "24.0 %",
+     "degatsBaseParAssautVainqueur": 5.46
+    }
+   }
+  },
+  {
+   "titre": "Famille 2 — Joute (facultative)",
+   "adv": "12 cartes de 4 familles (dont 4 variantes), 4 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 75,
+   "profil": "equilibre",
+   "deck": {
+    "entraine": "8 N + 8 fam. (7 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     101,
+     101,
+     101,
+     101
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 501
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 8046
+   },
+   "statsClash": {
+    "direct": null,
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 13.41,
+     "prolongations": 54,
+     "partGardes": "25.0 %",
+     "partAG": "46.1 %",
+     "agGardeGagne": "19.9 %",
+     "agAssautBlesse": "56.9 %",
+     "agAbsorptionTotale": "23.2 %",
+     "degatsBaseParAssautVainqueur": 6.23
+    }
+   }
+  },
+  {
+   "titre": "Famille 3 — Épreuve (×3, facultative)",
+   "adv": "8 cartes de 4 familles, 8 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 55,
+   "profil": "novice",
+   "deck": {
+    "entraine": "4 N + 12 fam. (8 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     107,
+     107,
+     107,
+     107
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 578
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 5745
+   },
+   "statsClash": {
+    "direct": null,
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 9.57,
+     "prolongations": 18,
+     "partGardes": "21.5 %",
+     "partAG": "40.6 %",
+     "agGardeGagne": "29.6 %",
+     "agAssautBlesse": "45.4 %",
+     "agAbsorptionTotale": "25.0 %",
+     "degatsBaseParAssautVainqueur": 5.51
+    }
+   }
+  },
+  {
+   "titre": "Famille 3 — duel de rue (×2, facultatif)",
+   "adv": "8 cartes de 4 familles, 8 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 60,
+   "profil": "novice",
+   "deck": {
+    "entraine": "4 N + 12 fam. (9 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     116,
+     116,
+     116,
+     116
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 580
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 6136
+   },
+   "statsClash": {
+    "direct": null,
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 10.23,
+     "prolongations": 16,
+     "partGardes": "21.2 %",
+     "partAG": "40.4 %",
+     "agGardeGagne": "29.3 %",
+     "agAssautBlesse": "45.9 %",
+     "agAbsorptionTotale": "24.8 %",
+     "degatsBaseParAssautVainqueur": 5.68
+    }
+   }
+  },
+  {
+   "titre": "Famille 3 — Joute (facultative)",
+   "adv": "16 cartes de 4 familles (dont 4 variantes), sans Signature",
+   "palier": "avance",
+   "pvAdv": 85,
+   "profil": "equilibre",
+   "deck": {
+    "entraine": "4 N + 12 fam. (11 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     128,
+     128,
+     128,
+     128
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 523
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 9001
+   },
+   "statsClash": {
+    "direct": null,
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 15,
+     "prolongations": 57,
+     "partGardes": "23.5 %",
+     "partAG": "44.0 %",
+     "agGardeGagne": "18.3 %",
+     "agAssautBlesse": "56.5 %",
+     "agAbsorptionTotale": "25.2 %",
+     "degatsBaseParAssautVainqueur": 6.74
+    }
+   }
+  },
+  {
+   "titre": "Kaï, défi facultatif (famille 3, non compté dans les PV)",
+   "adv": "16 cartes de 4 familles (dont 2 variantes), sans Signature",
+   "palier": "avance",
+   "pvAdv": 80,
+   "profil": "offensif",
+   "deck": {
+    "entraine": "4 N + 12 fam. (12 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     131,
+     131,
+     131,
+     131
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 582
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 6595
+   },
+   "statsClash": {
+    "direct": null,
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 10.99,
+     "prolongations": 17,
+     "partGardes": "16.5 %",
+     "partAG": "32.2 %",
+     "agGardeGagne": "24.9 %",
+     "agAssautBlesse": "49.9 %",
+     "agAbsorptionTotale": "25.2 %",
+     "degatsBaseParAssautVainqueur": 5.96
+    }
+   }
+  },
+  {
+   "titre": "Famille 4 — Épreuve (×3, facultative)",
+   "adv": "12 cartes de 4 familles, 4 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 65,
+   "profil": "novice",
+   "deck": {
+    "entraine": "0 N + 16 fam. (12 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     134,
+     134,
+     134,
+     134
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 587
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 6218
+   },
+   "statsClash": {
+    "direct": null,
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 10.36,
+     "prolongations": 10,
+     "partGardes": "19.6 %",
+     "partAG": "37.7 %",
+     "agGardeGagne": "26.9 %",
+     "agAssautBlesse": "49.2 %",
+     "agAbsorptionTotale": "23.9 %",
+     "degatsBaseParAssautVainqueur": 6.2
+    }
+   }
+  },
+  {
+   "titre": "Famille 4 — duel de rue (×2, facultatif)",
+   "adv": "12 cartes de 4 familles, 4 cartes grises, sans Signature",
+   "palier": "membre",
+   "pvAdv": 70,
+   "profil": "novice",
+   "deck": {
+    "entraine": "0 N + 16 fam. (13 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     143,
+     143,
+     143,
+     143
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 587
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 6755
+   },
+   "statsClash": {
+    "direct": null,
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 11.26,
+     "prolongations": 7,
+     "partGardes": "19.7 %",
+     "partAG": "37.7 %",
+     "agGardeGagne": "26.6 %",
+     "agAssautBlesse": "47.1 %",
+     "agAbsorptionTotale": "26.3 %",
+     "degatsBaseParAssautVainqueur": 5.86
+    }
+   }
+  },
+  {
+   "titre": "Famille 4 — Joute (facultative)",
+   "adv": "16 cartes de 4 familles (dont 8 variantes), sans Signature",
+   "palier": "avance",
+   "pvAdv": 90,
+   "profil": "equilibre",
+   "deck": {
+    "entraine": "0 N + 16 fam. (15 var.) + Sig."
+   },
+   "pv": {
+    "direct": [],
+    "entraine": [
+     155,
+     155,
+     155,
+     155
+    ]
+   },
+   "v": {
+    "direct": 0,
+    "entraine": 569
+   },
+   "d": {
+    "direct": 0,
+    "entraine": 600
+   },
+   "t": {
+    "direct": 0,
+    "entraine": 9059
+   },
+   "statsClash": {
+    "direct": null,
+    "entraine": {
+     "duels": 600,
+     "toursMoyens": 15.1,
+     "prolongations": 19,
+     "partGardes": "23.3 %",
+     "partAG": "43.9 %",
+     "agGardeGagne": "19.1 %",
+     "agAssautBlesse": "57.1 %",
+     "agAbsorptionTotale": "23.8 %",
+     "degatsBaseParAssautVainqueur": 7.5
+    }
+   }
+  }
+ ]
+}
