@@ -1,0 +1,543 @@
+{
+  "commit": "ee9c6a5",
+  "date": "2026-10-25T04:47:11.843Z",
+  "chromium": "155.0.8059.80",
+  "runs": {
+    "A-nouveau-joueur-1280-clic": {
+      "consoleIssues": [],
+      "checks": [
+        "OK profil créé avec Signature et Techniques choisies",
+        "OK deck modifié : enregistrement possible",
+        "OK variante retirée enregistrée (Basic à la place)",
+        "OK aucune génération ni préparation de personnage pendant le duel (compteurs 74/0/4/1/0/50 → 74/0/4/1/0/50)",
+        "OK duel joué jusqu’au K.-O. (tour 16)",
+        "OK résultat enregistré (defeat) = vainqueur moteur (opp)",
+        "OK tours du résumé = tours du moteur",
+        "OK session de duel retirée (crochets, plateau, scène)",
+        "OK bilan du rival mis à jour sur le tableau",
+        "OK après rechargement : bouton Continuer",
+        "OK après rechargement : profil, deck et historique intacts"
+      ],
+      "fails": [],
+      "prepDuringDuel": {
+        "start": {
+          "held": true,
+          "n": [
+            74,
+            0,
+            4,
+            1,
+            0,
+            50
+          ]
+        },
+        "end": {
+          "held": true,
+          "n": [
+            74,
+            0,
+            4,
+            1,
+            0,
+            50
+          ]
+        }
+      },
+      "duel": {
+        "outcome": "ended",
+        "winner": "opp",
+        "turn": 16,
+        "hp": [
+          0,
+          23
+        ],
+        "personality": "braise",
+        "turns": 15,
+        "drags": 0,
+        "clicks": 16,
+        "keyboard": 0,
+        "tactics": 14,
+        "repels": 4,
+        "leaks": [],
+        "viewChecks": 69,
+        "viewErrors": [],
+        "lostClicks": [],
+        "tech": {
+          "Sondage": 6
+        },
+        "moods": [
+          "confident",
+          "focused",
+          "pleased"
+        ],
+        "sequencesWatched": 0,
+        "sequencesSkipped": 10,
+        "manualToggleChecked": "ok",
+        "holds": 0,
+        "layoutChecked": [
+          "COMMIT",
+          "TACTICS"
+        ],
+        "layoutIssues": [],
+        "stanceChecks": 30,
+        "stanceIssues": [],
+        "stageGhosts": [],
+        "stageFades": [],
+        "stagesSeen": 0,
+        "rotations": []
+      },
+      "ms": 25165
+    },
+    "B-1920-glisser-abandon": {
+      "consoleIssues": [],
+      "checks": [
+        "OK duel glisser joué jusqu’au K.-O. (tour 8)",
+        "OK abandon annulé : le duel continue",
+        "OK abandon classé à part (ni victoire ni défaite)",
+        "OK écran Résultat : « Abandon »"
+      ],
+      "fails": [],
+      "duel": {
+        "outcome": "ended",
+        "winner": "me",
+        "turn": 8,
+        "hp": [
+          44,
+          0
+        ],
+        "personality": "braise",
+        "turns": 7,
+        "drags": 16,
+        "clicks": 0,
+        "keyboard": 0,
+        "tactics": 7,
+        "repels": 2,
+        "leaks": [],
+        "viewChecks": 31,
+        "viewErrors": [],
+        "lostClicks": [],
+        "tech": {
+          "Ancrage": 2
+        },
+        "moods": [
+          "focused",
+          "confident",
+          "smug"
+        ],
+        "sequencesWatched": 0,
+        "sequencesSkipped": 5,
+        "manualToggleChecked": "ok",
+        "holds": 0,
+        "layoutChecked": [
+          "COMMIT",
+          "TACTICS"
+        ],
+        "layoutIssues": [],
+        "stanceChecks": 15,
+        "stanceIssues": [],
+        "stageGhosts": [],
+        "stageFades": [],
+        "stagesSeen": 0,
+        "rotations": []
+      },
+      "keyboardTurns": 2,
+      "ms": 23502
+    },
+    "C-deck-illegal-refuse": {
+      "consoleIssues": [],
+      "checks": [
+        "OK accueil : deck enregistré signalé illégal",
+        "OK préparation : « Commencer » désactivé",
+        "OK lancement forcé refusé par le flux (aucun duel créé)",
+        "OK éditeur : raison affichée",
+        "OK deck corrigé : duel possible"
+      ],
+      "fails": [],
+      "ms": 2201
+    },
+    "D-sauvegarde-illisible": {
+      "consoleIssues": [],
+      "checks": [
+        "OK illisible : diagnostic + restauration proposée",
+        "OK illisible conservée tant que le joueur n’a rien choisi",
+        "OK copie de secours restaurée",
+        "OK fichier illisible mis à l’écart (lqv.save.corrupt)",
+        "OK schéma futur refusé explicitement",
+        "OK nouvelle partie : la sauvegarde future est conservée à part"
+      ],
+      "fails": [],
+      "ms": 2488
+    },
+    "E-serie-complete-1280": {
+      "consoleIssues": [],
+      "checks": [
+        "OK manche 1 (braise) : duel 1 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "OK manche 1 (braise) : duel 2 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "OK manche 1 (braise) : duel 3 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "OK manche 1 (braise) : duel 4 terminé, victory",
+        "OK série à la manche 1",
+        "OK manche 2 (ronce) : duel 5 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "OK manche 2 (ronce) : duel 6 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "OK manche 2 (ronce) : duel 7 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "OK manche 2 (ronce) : duel 8 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "OK manche 2 (ronce) : duel 9 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "OK manche 2 (ronce) : duel 10 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "OK manche 2 (ronce) : duel 11 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "OK manche 2 (ronce) : duel 12 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "OK manche 2 (ronce) : duel 13 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "OK manche 2 (ronce) : duel 14 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "OK manche 2 (ronce) : duel 15 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "OK manche 2 (ronce) : duel 16 terminé, defeat",
+        "OK défaite : la série n’avance pas",
+        "ÉCHEC série remportée (16 duels joués)"
+      ],
+      "fails": [
+        "série remportée (16 duels joués)"
+      ],
+      "duels": [
+        {
+          "manche": 1,
+          "rival": "braise",
+          "winner": "opp",
+          "turns": 7,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 4
+        },
+        {
+          "manche": 1,
+          "rival": "braise",
+          "winner": "opp",
+          "turns": 7,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 4
+        },
+        {
+          "manche": 1,
+          "rival": "braise",
+          "winner": "opp",
+          "turns": 20,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 4
+        },
+        {
+          "manche": 1,
+          "rival": "braise",
+          "winner": "me",
+          "turns": 8,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "victory",
+          "unlocked": 7
+        },
+        {
+          "manche": 2,
+          "rival": "ronce",
+          "winner": "opp",
+          "turns": 16,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 7
+        },
+        {
+          "manche": 2,
+          "rival": "ronce",
+          "winner": "opp",
+          "turns": 7,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 7
+        },
+        {
+          "manche": 2,
+          "rival": "ronce",
+          "winner": "opp",
+          "turns": 14,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 7
+        },
+        {
+          "manche": 2,
+          "rival": "ronce",
+          "winner": "opp",
+          "turns": 7,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 7
+        },
+        {
+          "manche": 2,
+          "rival": "ronce",
+          "winner": "opp",
+          "turns": 8,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 7
+        },
+        {
+          "manche": 2,
+          "rival": "ronce",
+          "winner": "opp",
+          "turns": 11,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 7
+        },
+        {
+          "manche": 2,
+          "rival": "ronce",
+          "winner": "opp",
+          "turns": 13,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 7
+        },
+        {
+          "manche": 2,
+          "rival": "ronce",
+          "winner": "opp",
+          "turns": 11,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 7
+        },
+        {
+          "manche": 2,
+          "rival": "ronce",
+          "winner": "opp",
+          "turns": 4,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 7
+        },
+        {
+          "manche": 2,
+          "rival": "ronce",
+          "winner": "opp",
+          "turns": 12,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 7
+        },
+        {
+          "manche": 2,
+          "rival": "ronce",
+          "winner": "opp",
+          "turns": 13,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 7
+        },
+        {
+          "manche": 2,
+          "rival": "ronce",
+          "winner": "opp",
+          "turns": 12,
+          "leaks": 0,
+          "viewErrors": 0,
+          "layout": 0,
+          "lost": 0,
+          "outcome": "defeat",
+          "unlocked": 7
+        }
+      ],
+      "ms": 435820
+    },
+    "F-reprise-en-plein-duel": {
+      "consoleIssues": [],
+      "checks": [
+        "OK duel sauvegardé à chaque commande (tour 4, 26 commandes)",
+        "OK accueil : « Reprendre le duel contre Kaï »",
+        "OK reprise exacte : même hash (état, zones, RNG, journal)",
+        "OK reprise exacte : vue du joueur identique (main, cases, PV, Insight, phase)",
+        "OK brouillon non verrouillé non conservé (annoncé dans le menu)",
+        "OK tableau : duel en cours signalé, autres rencontres bloquées",
+        "OK Sauvegarder et quitter → Reprendre : même état",
+        "OK duel repris terminé : compté une seule fois, plus de duel en cours",
+        "OK rechargement pendant la résolution : état résolu retrouvé",
+        "OK abandon depuis le tableau : classé à part, duel retiré"
+      ],
+      "fails": [],
+      "duel": {
+        "outcome": "ended",
+        "winner": "opp",
+        "turn": 14,
+        "hp": [
+          0,
+          5
+        ],
+        "personality": "braise",
+        "turns": 10,
+        "drags": 0,
+        "clicks": 11,
+        "keyboard": 0,
+        "tactics": 10,
+        "repels": 2,
+        "leaks": [],
+        "viewChecks": 44,
+        "viewErrors": [],
+        "lostClicks": [],
+        "tech": {
+          "Sondage": 2
+        },
+        "moods": [
+          "confident",
+          "triumphant",
+          "annoyed"
+        ],
+        "sequencesWatched": 0,
+        "sequencesSkipped": 7,
+        "manualToggleChecked": "ok",
+        "holds": 0,
+        "layoutChecked": [
+          "COMMIT",
+          "TACTICS"
+        ],
+        "layoutIssues": [],
+        "stanceChecks": 21,
+        "stanceIssues": [],
+        "stageGhosts": [],
+        "stageFades": [],
+        "stagesSeen": 0,
+        "rotations": []
+      },
+      "ms": 25921
+    },
+    "G-migration-v1-reelle": {
+      "consoleIssues": [],
+      "checks": [
+        "OK accueil : migration depuis le schéma 1 annoncée",
+        "OK profil, deck et historique conservés",
+        "OK rivaux vaincus reconstitués depuis l’historique (braise)",
+        "OK réécrite au schéma 2 dès la première écriture"
+      ],
+      "fails": [],
+      "ms": 1625
+    },
+    "H-reprise-alteree-refusee": {
+      "consoleIssues": [],
+      "checks": [
+        "OK reprise refusée, raison affichée : « Le rejeu du duel a échoué (Le Clash doit être résolu avant le tour suivant. »",
+        "OK aucun duel ouvert sur un état non vérifié",
+        "OK recommencé depuis le début avec la configuration enregistrée (tour 1)"
+      ],
+      "fails": [],
+      "ms": 3286
+    },
+    "I-duel-de-la-ville-1280": {
+      "consoleIssues": [],
+      "checks": [
+        "OK rubrique « Duels de la ville » : 4 rencontres de PNJ ouvertes d’emblée",
+        "OK duel joué jusqu’au K.-O. (tour 10)",
+        "OK adversaire : duelliste PNJ (pnj-docker-1)",
+        "OK résultat enregistré dans l’historique contre le PNJ",
+        "OK aucune progression ni déblocage (entraînement)",
+        "OK sauvegarde valide après un duel de la ville (rechargement)"
+      ],
+      "fails": [],
+      "duel": {
+        "outcome": "ended",
+        "winner": "me",
+        "turn": 10,
+        "hp": [
+          18,
+          0
+        ],
+        "personality": "pnj-docker-1",
+        "turns": 9,
+        "drags": 0,
+        "clicks": 10,
+        "keyboard": 0,
+        "tactics": 9,
+        "repels": 2,
+        "leaks": [],
+        "viewChecks": 39,
+        "viewErrors": [],
+        "lostClicks": [],
+        "tech": {
+          "Ancrage": 2
+        },
+        "moods": [
+          "focused"
+        ],
+        "sequencesWatched": 0,
+        "sequencesSkipped": 7,
+        "manualToggleChecked": "ok",
+        "holds": 0,
+        "layoutChecked": [
+          "COMMIT",
+          "TACTICS"
+        ],
+        "layoutIssues": [],
+        "stanceChecks": 19,
+        "stanceIssues": [],
+        "stageGhosts": [],
+        "stageFades": [],
+        "stagesSeen": 0,
+        "rotations": []
+      },
+      "ms": 14487
+    }
+  }
+}
