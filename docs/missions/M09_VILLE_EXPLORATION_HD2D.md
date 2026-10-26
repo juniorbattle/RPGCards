@@ -295,3 +295,13 @@ Radeon 780M et la RTX 4060** (140 : 54 étapes sur 54, jeu par défaut identique
 <https://claude.ai/artifact/WtuBiKyjVKVrkNEXb1rFpX> (réception R1 et R2, heure de ville V1, images I1, clôture de M09 C1,
 les deux Observatoires O1, suite S1 : la structure narrative de bout en bout, contrat d'abord), en attente du
 responsable ; ses choix sont consignés ici avant d'agir.
+
+## Fiche de la finalisation remplie : M09 clos (2026-10-26, passe 141)
+
+Fiche <https://claude.ai/artifact/WtuBiKyjVKVrkNEXb1rFpX>, remplie par le responsable (aucune note ; tableau :
+`docs/FICHE_ARBITRAGES_M09_FINALISATION.md`) : **R1** vie des deux quartiers reçue ; **R2** jalon reçu ; **V1** heure de
+ville : rencontres **non intrusives : gardées** (densité du directeur inchangée ; V1 de la fiche M10-E clos) ;
+**I1** les 4 images restantes **en réserve** pour la structure narrative (16 sur 20 utilisées, rien sans accord
+explicite) ; **C1** **M09 clos** ; **O1** les deux Observatoires et la géographie des maisons **à trancher dans la
+structure narrative** (rien renommé ni déplacé d'ici là) ; **S1** suite : **la structure narrative de bout en bout,
+contrat d'abord** (soumis au responsable avant tout code), puis des lots jouables avec leur fiche.
