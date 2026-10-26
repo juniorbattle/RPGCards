@@ -17,7 +17,7 @@ const ILOTS: IlotId[] = ['quai', 'parvis', 'ruelles', 'cour', 'port', 'haute'];
 
 describe('M11-C — forme du catalogue', () => {
   it('chaque réplique tient dans une bulle (240 caractères), sans point médian ni forme genrée du joueur, quel que soit le contexte', () => {
-    const interdits = [/[a-zé]·[a-z]/i, /\bun duelliste\b/i, /\bce duelliste\b/i, /\breconnue?\b/i, /meilleur duelliste/i, /\bseul ou seule\b/i, /\b(tu es|vous êtes|t’es)\s+(prêt|battu|fatigué|seul|perdu)\b/i];
+    const interdits = [/[a-zé]·[a-z]/i, /\b(\p{L}+)\s*(…|,)?\s*(et|ou)\s+\1e\b/iu, /\bun duelliste\b/i, /\bce duelliste\b/i, /\breconnue?\b/i, /meilleur duelliste/i, /\bseul ou seule\b/i, /\b(tu es|vous êtes|t’es)\s+(prêt|battu|fatigué|seul|perdu)\b/i];
     let n = 0;
     for (const lignes of Object.values(CATALOGUE)) for (const r of lignes) for (const ch of CHAPITRES) for (const voie of VOIES) for (const chefs of [0, 1, 3]) {
       const t = texteDe(r, ctx({ chapitre: ch, voie, chefs, cheffe: chefs === 1 }));

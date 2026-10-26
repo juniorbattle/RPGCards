@@ -605,7 +605,9 @@ export class AventureApp {
     const s = this.save!;
     const e = this.etat;
     const kai = locuteur === 'kai';
-    const histo = s.historique.filter((h) => (kai ? h.rencontre === 'rival-kai' || h.rencontre.startsWith('rival:') || h.rencontre === 'prologue' || h.rencontre === 'brasDroit-Cendre' : h.rencontre === locuteur));
+    // les compétitions sont notées `epreuve:<Famille>` dans l'historique ; leur locuteur, `epreuve-<Famille>`
+    const rencontreId = locuteur.replace(/^(epreuve|joute)-/, '$1:');
+    const histo = s.historique.filter((h) => (kai ? h.rencontre === 'rival-kai' || h.rencontre.startsWith('rival:') || h.rencontre === 'prologue' || h.rencontre === 'brasDroit-Cendre' : h.rencontre === rencontreId));
     const vus = s.directeur.vus?.[locuteur];
     const c: Contexte = {
       moment, chapitre: chapitreDetaille(e), voie: e.affiliation,
@@ -843,7 +845,7 @@ export class AventureApp {
     const r = rencontreDef(`epreuve-${f}`)!;
     const etape = e.competitions.epreuves[f]?.etape ?? 0;
     const gagnee = !!e.competitions.epreuves[f]?.gagnee;
-    this.dire(capital(r.nom), `« L’Épreuve du quartier : trois de nos membres, l’un après l’autre. Une défaite, et l’on recommence. » ${st.texte} ${gagnee ? '' : `Récompense : ${nomCarte(varianteDe(f, 1))}.`}`, st.ouvert ? [
+    this.dire(capital(r.nom), `${this.replique(`epreuve-${f}`, 'parole')} « L’Épreuve du quartier : trois de nos membres, l’un après l’autre. Une défaite, et l’on recommence. » ${st.texte} ${gagnee ? '' : `Récompense : ${nomCarte(varianteDe(f, 1))}.`}`, st.ouvert ? [
       { label: `Duel ${etape + 1} sur 3`, key: 'dlg-duel', primary: true, run: () => this.preparer(duelEpreuve(f, etape, this.etat, this.prochaineGraine(), gagnee)) },
       { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
     ] : [fermer(this)], r.apparence);
@@ -855,7 +857,7 @@ export class AventureApp {
     const st = statutJoute(e.competitions, e.vaincues, f, e.deck);
     const r = rencontreDef(`joute-${f}`)!;
     const gagnee = !!e.competitions.joutes[f]?.gagnee;
-    this.dire(capital(r.nom), `« La Joute de la maison se joue avec ${CONTRAINTE_JOUTE[f].texte}. » ${st.texte} ${gagnee ? '' : `Récompense : ${nomCarte(varianteDe(f, 2))}.`}`, st.ouvert ? [
+    this.dire(capital(r.nom), `${this.replique(`joute-${f}`, 'parole')} « La Joute de la maison se joue avec ${CONTRAINTE_JOUTE[f].texte}. » ${st.texte} ${gagnee ? '' : `Récompense : ${nomCarte(varianteDe(f, 2))}.`}`, st.ouvert ? [
       { label: gagnee ? 'Rejouer la Joute' : 'Jouter', key: 'dlg-duel', primary: true, run: () => this.preparer(duelJoute(f, this.etat, this.prochaineGraine(), gagnee)) },
       { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
     ] : [{ label: 'Ouvrir le deck', key: 'dlg-deck', run: () => { this.fermerDialogue(); this.collection(); } }, fermer(this)], r.apparence);
