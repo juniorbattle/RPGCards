@@ -538,6 +538,12 @@ export class AventureApp {
    */
   private get mondeActif(): boolean { return !this.params.qa || new URLSearchParams(location.search).get('vue') === '1'; }
 
+  /** Pause de la bulle « ! » ; en QA, `?vuePause=<ms>` la prolonge (captures de la bulle en rendu logiciel). */
+  private pauseAlerte(ms: number): number {
+    const q = this.params.qa ? Number(new URLSearchParams(location.search).get('vuePause')) : NaN;
+    return Number.isFinite(q) && q > 0 ? q : ms;
+  }
+
   private attendre(ms: number): Promise<void> {
     // une pause, pas une animation : gardée avec le mouvement réduit (la bulle « ! » reste lisible), pas en temps figé
     return this.params.freeze || ms <= 0 ? Promise.resolve() : new Promise((res) => setTimeout(res, ms));
@@ -551,7 +557,7 @@ export class AventureApp {
     this.alerte = p.apparence;
     this.marquer();
     son().jouer('repere');
-    await this.attendre(450);
+    await this.attendre(this.pauseAlerte(450));
     if (this.town !== t || this.force?.id !== p.id) return;
     const joueur = { ...t.walker().pos };
     const to = pointApproche(t.ilot, p.at, joueur);
@@ -580,7 +586,7 @@ export class AventureApp {
     this.alerte = 'braise';
     this.marquer();
     son().jouer('rival');
-    await this.attendre(500);
+    await this.attendre(this.pauseAlerte(500));
     if (this.town !== t || this.force?.id !== k.id) return;
     const to = pointApproche(t.ilot, at, joueur);
     await t.walkNpc('braise', to, 3.2, regardVers(to, joueur));
