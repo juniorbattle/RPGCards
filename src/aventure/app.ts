@@ -32,10 +32,11 @@ import { spritePolicy } from '../ville/spritesExternes';
 import { installVilleStyles, promptBubble } from '../ville/ui';
 import { createTown, type Town } from '../ville/ville';
 import { decideVille } from '../ville/villeRangs';
-import { apercuEngagement, appliquer, bannieres, chapitre, chapitreDetaille, peutChanger, peutConfirmer, statutDefi, type EtatBanniere, type Evenement, type FaitsPublics, type Issue } from './aventure';
+import { apercuEngagement, appliquer, bannieres, chapitre, chapitreDetaille, peutChanger, peutConfirmer, statutDefi, type AventureEtat, type EtatBanniere, type Evenement, type FaitsPublics, type Issue } from './aventure';
 import { basculerTechnique, choixPourCase, equiperSignature, rangDe, remplacerCase, standardLegal, validerDeckAv, type DeckAv } from './deck';
 import { origineGain, vueCollection, type EntreeCollection } from './collection';
 import { conclure, decider, poses, rencontreDef, type Pose } from './directeur';
+import { estDepart, estFamille, etatDepart, type Depart } from './departs';
 import { ilotAventure, ilotBase } from './ilots';
 import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, RANGS, rangNeutre, roleDe, cheffe, chefVaincu, leChef, ROLES, ROMAIN, type EtatFamille } from './modele';
 import { objectif, quetes } from './quetes';
@@ -177,6 +178,14 @@ export class AventureApp {
       items.push(h('p', { class: 'av-profil' }, h('b', null, s.profil.nom), ` · ${CHAPITRE[chapitreDetaille(s.etat)]} · ${s.etat.affiliation ? `voie ${de(s.etat.affiliation)}` : 'sans famille'} · ${col.basics.length * 4} cartes familiales, ${col.variantes.length} variante(s), ${col.signatures.length} Signature(s)`));
     }
     items.push(bouton('Nouvelle aventure', () => void this.nouveau(), 'av-new', !s, 'Seize cartes grises, aucune famille : tout commence sur le Quai'));
+    // heure de ville (finalisation de la ville, passe 137) : `?aventure=1&depart=III[&famille=Ronce]`, une aventure d'essai
+    // au début d'un chapitre (faits appliqués par la machine) ; sans ce paramètre, rien ne change
+    const q = new URLSearchParams(location.search);
+    const dep = q.get('depart');
+    if (estDepart(dep)) {
+      const fam = estFamille(q.get('famille')) ? q.get('famille') as Family : 'Cendre';
+      items.push(bouton(`Commencer au chapitre ${dep} (heure de ville)`, () => void this.commencerDepart(dep, fam), 'av-depart', false, `Aventure d’essai : voie ${de(fam)}, ${dep === 'I' ? 'famille rejointe' : 'chefs vaincus jusqu’à ce chapitre'} ; elle remplace l’aventure en cours`));
+    }
     if (this.charge.status === 'illisible') items.push(h('p', { class: 'warn' }, `${this.charge.raison} « Nouvelle aventure » la mettra à l’écart (sans l’effacer).`));
     if (this.charge.status === 'future') items.push(h('p', { class: 'warn' }, this.charge.raison));
     if (this.charge.status === 'indisponible') items.push(h('p', { class: 'warn' }, 'Stockage local indisponible : l’aventure ne pourra pas être conservée.'));
@@ -209,13 +218,23 @@ export class AventureApp {
     input.select();
   }
 
-  private commencer(nom: string): void {
+  /** Heure de ville : une aventure d'essai au début du chapitre `dep` ; elle remplace l'aventure en cours, après confirmation. */
+  private async commencerDepart(dep: Depart, fam: Family): Promise<void> {
+    if (this.save) {
+      const r = await confirmDialog({ title: `Commencer au chapitre ${dep} ?`, text: 'L’aventure en cours sera remplacée par une aventure d’essai (le jeu standard n’est pas touché).', confirm: 'Remplacer', danger: true });
+      if (r !== 'confirm') return;
+    }
+    this.commencer('Duelliste', (e) => etatDepart(e, dep, fam, new Date().toISOString()));
+  }
+
+  private commencer(nom: string, depart?: (e: AventureEtat) => AventureEtat): void {
     const forced = this.params.qa ? Number(new URLSearchParams(location.search).get('profileSeed')) : NaN;
     const graine = Number.isInteger(forced) && forced > 0 ? forced >>> 0 : (crypto.getRandomValues(new Uint32Array(1))[0] ?? Date.now()) >>> 0;
     if (this.charge.status === 'illisible') this.store.ecarter();
     this.save = nouvelleSauvegarde(new Date(), nom, graine);
     this.charge = { status: 'ok', save: this.save };
     this.save.etat = appliquer(this.save.etat, { type: 'scene', id: 'P1' }, new Date().toISOString()).etat;
+    if (depart) this.save.etat = depart(this.save.etat);
     this.persist();
     this.detruireVille();
     void this.decisionQuai.then(() => this.entrerVille(true));
