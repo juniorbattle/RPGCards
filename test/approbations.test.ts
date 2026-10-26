@@ -10,8 +10,8 @@ describe('approbations des images de la ville', () => {
     expect(r.ecarts).toEqual([]);
     // 20 planches (A1, passe 104), les 12 feuilles des PNJ (passe 128) et les 4 façades des quartiers ajoutés (passe 130 ;
     // l’Observatoire, retraité en passe 134 (Astre brodé), approuvé de nouveau en passe 135) ; 7 feuilles des PNJ retraitées
-    // en passe 138 (yeux) attendent une nouvelle approbation
-    expect(r.images).toBe(29);
+    // en passe 138 (yeux), approuvées de nouveau en passe 139
+    expect(r.images).toBe(36);
     expect(r.approuvees).toBeGreaterThan(0);
     // hache toutes les images de la ville : délai large sous la charge du passage complet (passe 125)
   }, 30000);

@@ -1,6 +1,6 @@
 {
   "id": "chef-cendre",
-  "statut": "feuille des PNJ de la ville (Bran, le Premier Feu, chef de la Cendre (couleurs propres)), suite de la deuxième reprise de M09 (passe 127), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas décidé",
+  "statut": "APPROUVÉ par le responsable le 2026-10-25 (ordre explicite du responsable (2026-10-25, après les planches screenshots/qa/m09/finalisation/yeux/ : réponse « J’approuve les 7 » à la question « Approuves-tu les 7 feuilles retraitées (docker, marchande, commis, joueuse, Kaï, Bran, Ilse) ? ») ; passe 139) : admis hors QA tant que l’empreinte reste 405de40faf58…",
   "auteur": "Claude Code (session de reprise de M09, passe 127), à la demande du responsable : « Oui : génère les 10 autres feuilles des PNJ (gabarits marchande, commis, joueuse ; Maëlle, Sélène, Orin ; les quatre chefs), traite-les et pose-les. »",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-pnj-suite.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -103,5 +103,11 @@
     "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50 (entrée : public/sprites/player.png)",
     "0fbe0fd1d9eec9195d2e3466659a2e758322ba1327d012a8a110acafac9d0a6a (brut)",
     "405de40faf58a6ccfcae8a8c4b1e3df2f7d360b6745967d2936319c2e04f8037 (feuille ×3)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-25",
+    "decision": "ordre explicite du responsable (2026-10-25, après les planches screenshots/qa/m09/finalisation/yeux/ : réponse « J’approuve les 7 » à la question « Approuves-tu les 7 feuilles retraitées (docker, marchande, commis, joueuse, Kaï, Bran, Ilse) ? ») ; passe 139",
+    "fichier": "public/sprites/chef-cendre.png",
+    "sha256": "405de40faf58a6ccfcae8a8c4b1e3df2f7d360b6745967d2936319c2e04f8037"
+  }
 }

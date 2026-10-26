@@ -176,6 +176,48 @@
       "sha256": "e119ba9ae4ac7ceadd1b54288d15e2e354e874edf9c8b00dbfcbf2f6c4d1caa7",
       "date": "2026-10-25",
       "decision": "ordre explicite du responsable (2026-10-25, après la planche screenshots/qa/m09/finalisation/bannieres/avant-apres.png ; réponse « J’approuve » à la question « Approuves-tu la planche retraitée de l’Observatoire (Astre brodé), pour rouvrir la Ville haute dans le jeu ? ») ; passe 135"
+    },
+    {
+      "fichier": "public/sprites/pnj-docker.png",
+      "sha256": "1236986ad7cb3e1363ef62b4bf10dcb588e500621dc49576c012d93cdbbd38f8",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après les planches screenshots/qa/m09/finalisation/yeux/ : réponse « J’approuve les 7 » à la question « Approuves-tu les 7 feuilles retraitées (docker, marchande, commis, joueuse, Kaï, Bran, Ilse) ? ») ; passe 139"
+    },
+    {
+      "fichier": "public/sprites/pnj-marchande.png",
+      "sha256": "2893fd2f60a3646013d1010ed27467eefccfc81f2a1b936d8ed130058f16c81d",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après les planches screenshots/qa/m09/finalisation/yeux/ : réponse « J’approuve les 7 » à la question « Approuves-tu les 7 feuilles retraitées (docker, marchande, commis, joueuse, Kaï, Bran, Ilse) ? ») ; passe 139"
+    },
+    {
+      "fichier": "public/sprites/pnj-commis.png",
+      "sha256": "ab12e3b51f6af9e608690f563361f3ee9cd20af0453206b6908bc58ee0a13f06",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après les planches screenshots/qa/m09/finalisation/yeux/ : réponse « J’approuve les 7 » à la question « Approuves-tu les 7 feuilles retraitées (docker, marchande, commis, joueuse, Kaï, Bran, Ilse) ? ») ; passe 139"
+    },
+    {
+      "fichier": "public/sprites/pnj-joueuse.png",
+      "sha256": "b41b66c4d1baa3645a577fbe76fd87844f662c697c0d8e32ce05ced470a8fb7b",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après les planches screenshots/qa/m09/finalisation/yeux/ : réponse « J’approuve les 7 » à la question « Approuves-tu les 7 feuilles retraitées (docker, marchande, commis, joueuse, Kaï, Bran, Ilse) ? ») ; passe 139"
+    },
+    {
+      "fichier": "public/sprites/braise.png",
+      "sha256": "a9bcf56470b75bd4a75b5dd7621f2b9b588abf84a59066a0c68f17666128687c",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après les planches screenshots/qa/m09/finalisation/yeux/ : réponse « J’approuve les 7 » à la question « Approuves-tu les 7 feuilles retraitées (docker, marchande, commis, joueuse, Kaï, Bran, Ilse) ? ») ; passe 139"
+    },
+    {
+      "fichier": "public/sprites/chef-cendre.png",
+      "sha256": "405de40faf58a6ccfcae8a8c4b1e3df2f7d360b6745967d2936319c2e04f8037",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après les planches screenshots/qa/m09/finalisation/yeux/ : réponse « J’approuve les 7 » à la question « Approuves-tu les 7 feuilles retraitées (docker, marchande, commis, joueuse, Kaï, Bran, Ilse) ? ») ; passe 139"
+    },
+    {
+      "fichier": "public/sprites/chef-voile.png",
+      "sha256": "22c93ecf24c312ab0c4ff58bcb65078947053489855fc663c82b2586f96aae5f",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après les planches screenshots/qa/m09/finalisation/yeux/ : réponse « J’approuve les 7 » à la question « Approuves-tu les 7 feuilles retraitées (docker, marchande, commis, joueuse, Kaï, Bran, Ilse) ? ») ; passe 139"
     }
   ],
   "caduques": [
