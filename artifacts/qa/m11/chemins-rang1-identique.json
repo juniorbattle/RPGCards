@@ -1,0 +1,124 @@
+{
+  "date": "2026-10-26T16:24:23.476Z",
+  "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU",
+  "builds": {
+    "avant": "4762707",
+    "apres": "4762707+arbre de travail"
+  },
+  "identical": true,
+  "results": [
+    {
+      "viewport": "1280x720",
+      "kind": "scene",
+      "rival": "braise",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "scene",
+      "rival": "ronce",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "scene",
+      "rival": "voile",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "scene",
+      "rival": "astre",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "complet",
+      "rival": "ronce",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "rencontres",
+      "rival": null,
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "scene",
+      "rival": "braise",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "scene",
+      "rival": "ronce",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "scene",
+      "rival": "voile",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "scene",
+      "rival": "astre",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "complet",
+      "rival": "ronce",
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "rencontres",
+      "rival": null,
+      "meanAbs": 0,
+      "max": 0,
+      "pixels": 0
+    }
+  ],
+  "control": [
+    {
+      "viewport": "1280x720",
+      "kind": "scene ronce, pose=surprised",
+      "meanAbs": 0.573,
+      "max": 208,
+      "pixels": 53463
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "scene ronce, pose=surprised",
+      "meanAbs": 0.659,
+      "max": 221,
+      "pixels": 118001
+    }
+  ],
+  "issues": []
+}

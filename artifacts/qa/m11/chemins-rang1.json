@@ -1,0 +1,154 @@
+{
+  "date": "2026-10-26T16:08:35.127Z",
+  "checks": [
+    "OK quai : vue du rang 1 à x -13",
+    "OK quai : vue du rang 1 à x 0",
+    "OK quai : vue du rang 1 à x 13",
+    "OK parvis : vue du rang 1 à x -10",
+    "OK parvis : vue du rang 1 à x 0",
+    "OK parvis : vue du rang 1 à x 10",
+    "OK ruelles : vue du rang 1 à x -8",
+    "OK ruelles : vue du rang 1 à x 0",
+    "OK ruelles : vue du rang 1 à x 8",
+    "OK cour : vue du rang 1 à x -10",
+    "OK cour : vue du rang 1 à x 0",
+    "OK cour : vue du rang 1 à x 10",
+    "OK port : vue du rang 1 à x -10",
+    "OK port : vue du rang 1 à x 0",
+    "OK port : vue du rang 1 à x 10",
+    "OK haute : vue du rang 1 à x -10",
+    "OK haute : vue du rang 1 à x 0",
+    "OK haute : vue du rang 1 à x 10",
+    "OK console sans erreur (0 lignes)"
+  ],
+  "console": [],
+  "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU",
+  "vues": {
+    "quai/x-13": {
+      "at": [
+        -13,
+        1.2
+      ],
+      "ilot": "quai"
+    },
+    "quai/x0": {
+      "at": [
+        0,
+        1.2
+      ],
+      "ilot": "quai"
+    },
+    "quai/x13": {
+      "at": [
+        13,
+        1.2
+      ],
+      "ilot": "quai"
+    },
+    "parvis/x-10": {
+      "at": [
+        -10,
+        0.8
+      ],
+      "ilot": "parvis"
+    },
+    "parvis/x0": {
+      "at": [
+        0,
+        0.2
+      ],
+      "ilot": "parvis"
+    },
+    "parvis/x10": {
+      "at": [
+        10,
+        0.8
+      ],
+      "ilot": "parvis"
+    },
+    "ruelles/x-8": {
+      "at": [
+        -8,
+        1.6
+      ],
+      "ilot": "ruelles"
+    },
+    "ruelles/x0": {
+      "at": [
+        0,
+        1.6
+      ],
+      "ilot": "ruelles"
+    },
+    "ruelles/x8": {
+      "at": [
+        8,
+        1.6
+      ],
+      "ilot": "ruelles"
+    },
+    "cour/x-10": {
+      "at": [
+        -10,
+        1.2
+      ],
+      "ilot": "cour"
+    },
+    "cour/x0": {
+      "at": [
+        0,
+        1.2
+      ],
+      "ilot": "cour"
+    },
+    "cour/x10": {
+      "at": [
+        10,
+        1.2
+      ],
+      "ilot": "cour"
+    },
+    "port/x-10": {
+      "at": [
+        -10,
+        0.6
+      ],
+      "ilot": "port"
+    },
+    "port/x0": {
+      "at": [
+        0,
+        0.6
+      ],
+      "ilot": "port"
+    },
+    "port/x10": {
+      "at": [
+        10,
+        0.6
+      ],
+      "ilot": "port"
+    },
+    "haute/x-10": {
+      "at": [
+        -10,
+        0.6
+      ],
+      "ilot": "haute"
+    },
+    "haute/x0": {
+      "at": [
+        0,
+        0.6
+      ],
+      "ilot": "haute"
+    },
+    "haute/x10": {
+      "at": [
+        10,
+        0.6
+      ],
+      "ilot": "haute"
+    }
+  }
+}

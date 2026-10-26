@@ -655,3 +655,21 @@ tous dans les visages** (rien de dos, rien sous la tête) ; feuille du joueur re
 `screenshots/qa/m09/finalisation/yeux/` (`tools/m09-pnj-yeux.ts`, avant / après recolorés ; en jeu : `en-jeu/`). Les 7
 approbations de la passe 128 sont **caduques** (registre : `caduques`, 29 images) ; hors QA, ces 7 personnages reviennent au
 dessin par code jusqu'à une nouvelle approbation, sur ordre explicite du responsable, dans une passe à part.
+
+### Chemins lumineux des premiers rangs (passe 149, 2026-10-26)
+
+Demande du responsable (après la session M11) : « on devrait aussi ajouter des chemins lumineux pour les premiers rangs de
+scènes afin qu'ils soient cohérents à nos autres rangs ». Le premier rang de chacun des six îlots en rangs reçoit son
+chemin, dans la même lueur et le même nuanceur (`chemins.ts`, 24 segments au plus par quartier au lieu de 16) :
+
+- **Tracé commun** (`cheminsRang1`, `rangs.ts`) : il relie, de gauche à droite, les sorties, les portes, l'arrivée et la
+  bouche de chaque passage vers le rang 2 ; il garde la rue droite quand c'est possible, prend un coude du côté de la
+  caméra sinon, et contourne les obstacles permanents du rang (fontaine, étals, bancs) par un détour pris d'abord devant
+  eux ; les personnages posés ne sont pas contournés (ils bougent avec l'aventure).
+- **La Grande Cour** a un tracé à la main (`CHEMINS_RANG1_COUR`) : l'allée entre la balustrade et le monument, reliée au
+  pied de l'escalier du Quai, qui remonte le long des bords jusqu'à la hauteur des étals. Le tracé commun passait derrière
+  les étals, qui le cachaient (règle de la passe 116) ; entre les étals et les passages vers le Belvédère, le chemin des
+  passages reprend plus loin. Si le responsable veut un chemin continu jusqu'aux passages, il faudra reculer les étals.
+- **Aucune image** ni approbation touchée ; tests : `test/rangs.test.ts` (chemin du premier rang sur le pavé praticable,
+  près de l'arrivée, dans la limite du nuanceur) et `test/accessoires.test.ts` (jamais caché par un accessoire, inchangé) ;
+  vérification au navigateur `tools/m11-chemins-rang1.mjs` (planches `screenshots/qa/m11/chemins-rang1/`).

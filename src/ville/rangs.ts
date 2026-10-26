@@ -265,3 +265,59 @@ export function cheminsRangs(plan: PlanRangs, coeur?: { x: number; z: number }):
   });
   return out;
 }
+
+/**
+ * Chemin lumineux du rang 1 (demande du responsable, 2026-10-26 : « des chemins lumineux pour les premiers rangs de
+ * scènes afin qu'ils soient cohérents à nos autres rangs ») : comme dans les ruelles, de chaque arrivée à chaque départ :
+ * une ligne qui relie, d'ouest en est, les points du rang 1 où l'on arrive ou d'où l'on part (devant les sorties et les
+ * portes : leurs points d'apparition) et les bouches des passages de la première bande (là où commencent les chemins des
+ * rangs, `cheminsRangs`). Deux points à moins de 1,5 m n'en font qu'un.
+ */
+export function cheminsRang1(plan: PlanRangs, ilot: Pick<Ilot, 'zones' | 'spawns' | 'rects' | 'discs'>): CheminSegment[] {
+  const b = plan.bandes[0];
+  if (!b) return [];
+  const r1 = plan.rangs[0]!;
+  const dedans = (p: { x: number; z: number }) => p.x >= r1.x0 && p.x <= r1.x1 && p.z >= r1.z0 && p.z <= r1.z1;
+  const pts: { x: number; z: number }[] = [];
+  const ajouter = (p: { x: number; z: number }) => { if (dedans(p) && !pts.some((q) => Math.hypot(q.x - p.x, q.z - p.z) < 1.5)) pts.push({ x: r3(p.x), z: r3(p.z) }); };
+  for (const [a, c] of b.passages) ajouter({ x: (a + c) / 2, z: b.z1 + 2.2 });
+  for (const z of ilot.zones) if (z.kind === 'sortie' || z.kind === 'porte') { const s = ilot.spawns[z.id]; if (s) ajouter(s); }
+  const sp = ilot.spawns.arrivee;
+  if (sp) ajouter(sp);
+  pts.sort((p, q) => p.x - q.x);
+  const libre = (a: { x: number; z: number }, c: { x: number; z: number }) => {
+    const L = Math.hypot(c.x - a.x, c.z - a.z);
+    for (let t = 0; t <= L; t += 0.2) {
+      const p = L ? { x: a.x + ((c.x - a.x) * t) / L, z: a.z + ((c.z - a.z) * t) / L } : a;
+      if (ilot.rects.some((q) => p.x > q.x0 - 0.15 && p.x < q.x1 + 0.15 && p.z > q.z0 - 0.15 && p.z < q.z1 + 0.15)) return false;
+      if (ilot.discs.some((d) => Math.hypot(p.x - d.x, p.z - d.z) < d.r + 0.15)) return false;
+    }
+    return true;
+  };
+  const out: CheminSegment[] = [];
+  // un tronçon droit ; s'il traverserait un obstacle (fontaine, étal, borne), un point de détour à hauteur de l'obstacle,
+  // de préférence devant lui (côté caméra : un accessoire ne cache jamais le sol qui est devant lui)
+  const troncon = (a: { x: number; z: number }, c: { x: number; z: number }) => {
+    if (Math.hypot(c.x - a.x, c.z - a.z) < 0.05) return;
+    if (libre(a, c)) { out.push({ x0: a.x, z0: a.z, x1: c.x, z1: c.z }); return; }
+    const L = Math.hypot(c.x - a.x, c.z - a.z);
+    let tm = L / 2;
+    for (let t = 0; t <= L; t += 0.2) if (!libre(a, { x: a.x + ((c.x - a.x) * Math.min(L, t + 0.2)) / L, z: a.z + ((c.z - a.z) * Math.min(L, t + 0.2)) / L })) { tm = Math.min(L, t + 1); break; }
+    const xm = a.x + ((c.x - a.x) * tm) / L;
+    const zm = a.z + ((c.z - a.z) * tm) / L;
+    const w = [1, 1.5, 2, 2.5, 3, -1, -1.5, -2, -2.5, -3].map((d) => ({ x: r3(xm), z: r3(zm + d) })).find((q) => dedans(q) && libre(a, q) && libre(q, c));
+    if (w) out.push({ x0: a.x, z0: a.z, x1: w.x, z1: w.z }, { x0: w.x, z0: w.z, x1: c.x, z1: c.z });
+    else out.push({ x0: a.x, z0: a.z, x1: c.x, z1: c.z });
+  };
+  // d'un point au suivant : tout droit s'ils sont presque alignés ; sinon un coude pris du côté de la caméra (le devant
+  // de la rue, où l'on marche, puis la montée vers le passage ou la porte), jamais une diagonale derrière le décor
+  for (let i = 1; i < pts.length; i++) {
+    const a = pts[i - 1]!;
+    const c = pts[i]!;
+    if (Math.abs(c.z - a.z) < 0.8 || Math.abs(c.x - a.x) < 0.8) { troncon(a, c); continue; }
+    const coude = a.z > c.z ? { x: c.x, z: a.z } : { x: a.x, z: c.z };
+    troncon(a, coude);
+    troncon(coude, c);
+  }
+  return out;
+}
