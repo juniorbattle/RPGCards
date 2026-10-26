@@ -15,7 +15,7 @@ import { rencontreDef } from './directeur';
 import { deF, figure, FIGURES, KAI_PROLOGUE, TECHNIQUES_RUE, TENANTE } from './modele';
 import { ELITE_JOUTE, famillesDominantes, MEMBRES_EPREUVE, signatureTenante, varianteDe } from './competitions';
 import { evenementDef, type KId } from './rival';
-import { profilTemperament } from './temperaments';
+import { NOM_TEMPERAMENT, profilTemperament, temperamentDe } from './temperaments';
 import { adversaire, adversaireMiroir, PALIER_NOM, pvJoueur, type Adversaire, type RoleAdverse } from './paliers';
 
 export interface DuelPrevu {
@@ -88,7 +88,8 @@ export function duelFacultatif(id: string, e: AventureEtat, seed: number, histor
   const p = kai ? personnalite('braise', { nom: 'Kaï', titre: 'la Braise du quai', profil: adv.profil }) : personnalite(r.apparence, { nom: base.name, titre: base.title, profil: adv.profil });
   return {
     rencontre: id, titre: kai ? 'Kaï vous défie' : `Duel de rue — ${base.name}`, personnalite: p, venue: 'rue', enjeu: null,
-    config: config(e, seed, adv, p.name), note: note(p.name, adv),
+    // M11-B : le tempérament du chapitre se dit dans la préparation (il règle le jeu de l'adversaire)
+    config: config(e, seed, adv, p.name), note: `${note(p.name, adv)}${temperamentDe(id, e, historique) ? ` Tempérament : ${NOM_TEMPERAMENT[temperamentDe(id, e, historique)!]}.` : ''}`,
   };
 }
 
