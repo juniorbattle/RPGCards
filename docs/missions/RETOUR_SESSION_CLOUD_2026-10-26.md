@@ -31,8 +31,8 @@ d'approbation changé ; son coupé en QA ; sauvegardes : `aventure/1` migrée sa
 
 - **Écouter le son** : Options du jeu standard (Son, Volume), menu « Son » de l'aventure ; un duel (pose, révélation,
   Clash, Garde, dégâts, Signature annoncée, victoire, défaite), la ville (pas, bulle « ! », Kaï qui surgit, changement
-  d'îlot, ambiance de chaque îlot), le bourdon du duel ; juger timbres, niveaux, fatigue, et l'écart entre les sons du
-  Clash et sa chorégraphie (fiche S2).
+  d'îlot, ambiance de chaque îlot), le bourdon du duel ; juger timbres, niveaux, fatigue, et le calage des sons sur la
+  chorégraphie du Clash (fiche S2).
 - **La marche des guetteurs et de Kaï à pied** (sans mouvement réduit, à la fréquence de l'écran) : en rendu logiciel,
   `qa:vue` place l'approche directement (`reducedMotion=1`).
 - **Jalon GPU** sur la Radeon 780M et la RTX 4060 : `qa:vue` aux deux tailles, puis la campagne habituelle
@@ -46,7 +46,7 @@ Voir la fiche. En bref : valeurs de la vue (4,5 m, 32°, 0,95 m, repos) ; liste 
 maintenant » ; rencontres forcées désactivées en QA sans `?vue=1` ; six moments du rival, événement manqué non rattrapé,
 défaite qui accomplit ; ombre de Kaï retirée ; tempéraments au jeu pour les seuls PNJ facultatifs (chapitre I = annexe),
 figures et Kaï au profil de l'annexe ; « rusé » et « vicieux » réglés sur une base prudente de niveau 2 après mesure ;
-schéma `aventure/2` ; son activé par défaut à 70 % ; sons du duel à l'arrivée des événements ; Observatoire unique
+schéma `aventure/2` ; son activé par défaut à 70 % ; sons du Clash calés sur les temps de sa chorégraphie ; Observatoire unique
 proposé, aucun texte changé.
 
 ## 4. Retour sur le brief et l'environnement cloud

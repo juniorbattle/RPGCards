@@ -67,7 +67,7 @@ Preuves : `artifacts/qa/m11/` (mesures, `qa:vue`, comparaison au pixel près), `
 | Entrée | Objet | Recommandation | Alternatives |
 |---|---|---|---|
 | **S1** | Volume par défaut 70 %, son activé par défaut (après un geste) | **Garder** | Coupé par défaut, activé dans les Options |
-| **S2** | Sons du duel joués à l'arrivée des événements (pas calés sur chaque temps de la chorégraphie du Clash) | **Garder pour l'instant**, à juger à l'écoute | Les caler sur la mise en scène (un lot de plus) |
+| **S2** | Sons du duel calés sur les temps de la chorégraphie du Clash (Interférence, issue, dégâts, fin) ; « Passer » ne rejoue que la fin | **Garder**, à juger à l'écoute | Sons plus courts ; seulement l'issue et la fin |
 | **S3** | Les ambiances (une par îlot, bourdon du duel) | **À écouter** | Ambiances plus discrètes ; seulement les effets |
 
 ## Suite

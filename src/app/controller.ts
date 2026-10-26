@@ -181,13 +181,14 @@ export class Controller {
   // ------------------------------------------------------------------------
   refresh(newEvents: GameEvent[]): void {
     const before = (this.view as PlayerView | undefined) ?? null;
-    // M11-E : sons des événements publics et des événements privés du joueur (jamais ceux de l'adversaire) ; aucun son
-    // pour un rejeu en bloc (reprise d'un duel) ; sans geste ni en QA, le moteur du son ne joue rien.
-    if (newEvents.length < 60) for (const x of sonsDuDuel(newEvents, 'p1')) son().jouer(x);
     this.view = viewFor(this.match.state, 'p1');
     // Une résolution de Clash est présentée par temps successifs ; le reste est immédiat.
     const start = resolutionStart(newEvents);
     const immediate = start >= 0 ? newEvents.slice(0, start) : newEvents;
+    // M11-E : sons des événements publics et des événements privés du joueur (jamais ceux de l'adversaire) : tout de suite
+    // pour ce qui est immédiat, au temps de la chorégraphie pour la résolution (`advanceBeat`) ; aucun son pour un rejeu
+    // en bloc (reprise d'un duel) ; sans geste ni en QA, le moteur du son ne joue rien.
+    if (newEvents.length < 60) this.jouerSons(immediate);
     if (start >= 0) this.startSequence(newEvents.slice(start), before);
     this.rebuildJournal();
     const key = `${this.view.turn}:${this.view.phase}`;
@@ -299,6 +300,7 @@ export class Controller {
       q.hp = hpAfterBeat(q.hp, b);
       for (const e of b.events) q.hidden.delete(e.seq);
       this.playFx(b.events);
+      this.jouerSons(b.events);
       this.pushReactions(this.expr.observe(b.events));
       // Chorégraphie du Clash : émise AVANT la mise à jour du plateau (les cartes quittent leurs cases).
       const step = stepForBeat(b.kind);
@@ -313,6 +315,11 @@ export class Controller {
     if (!q.rendered || !this.beatFn) { q.rendered = true; this.renderFn(); }
     else this.beatFn();
     if (!this.params.freeze && this.params.pace !== 'instant') this.seqTimer = window.setTimeout(() => this.advanceBeat(), this.beatDelay(q.beats[q.index]!));
+  }
+
+  /** M11-E : les sons de ces événements (publics, ou privés du joueur). */
+  private jouerSons(events: readonly GameEvent[]): void {
+    for (const x of sonsDuDuel(events, 'p1')) son().jouer(x);
   }
 
   /** QA uniquement (`?qa=1`) : fige la séquence sur le temps courant (pellicules déterministes). */
@@ -333,6 +340,8 @@ export class Controller {
       last = b;
     }
     if (last) this.pushReactions(this.expr.observe(last.events));
+    // M11-E : « Passer » ne rejoue pas les sons sautés, sauf la fin du duel
+    if (last) this.jouerSons(last.events.filter((e) => e.kind === 'victory'));
     this.motionFn?.({ type: 'stop' });
     this.finishSequence();
   }

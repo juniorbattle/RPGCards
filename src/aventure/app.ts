@@ -823,7 +823,9 @@ export class AventureApp {
     const st = statutDefi(e, fig);
     const enjeu = st.deja ? 'Revanche, sans récompense : votre victoire est déjà au registre.' : `En jeu : ${fig.enjeu.kind === 'variante' ? nomCarte(fig.enjeu.defId) : `la Signature ∞ ${de(fig.famille)}`}.`;
     if (!st.ouvert) return this.dire(`${fig.nom}, ${fig.titre}`, `« Pas encore. » ${st.raison}`, [fermer(this)], fig.apparence);
-    this.dire(`${fig.nom}, ${fig.titre}`, `${st.deja ? this.replique(fig.id, 'revanche', ligneFigure(fig, true)) : REPLIQUES[fig.id] ?? ligneFigure(fig, false)} ${enjeu}`, [
+    // M11-C : au premier défi d'une figure d'une autre famille, elle a entendu parler de votre parcours
+    const contexte = !st.deja && fig.famille !== e.affiliation ? this.replique(`defi-${fig.famille}`, 'defi') : '';
+    this.dire(`${fig.nom}, ${fig.titre}`, `${st.deja ? this.replique(fig.id, 'revanche', ligneFigure(fig, true)) : REPLIQUES[fig.id] ?? ligneFigure(fig, false)}${contexte ? ` ${contexte}` : ''} ${enjeu}`, [
       { label: `${st.deja ? 'Revanche' : 'Défier'} — ${fig.nom}`, key: 'dlg-duel', primary: true, run: () => this.lancerFigure(fig.id) },
       { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
     ], fig.apparence);

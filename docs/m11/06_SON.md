@@ -47,7 +47,11 @@ ADR 042.
 | | `amb-haute` | dans la Ville haute | vent léger, carillon rare |
 | | `amb-duel` | pendant un duel | bourdon grave, très bas |
 
-## 3. Mixage
+## 3. Mixage et calage
+
+Les sons de la résolution d'un Clash (Interférence, issue, Garde, dégâts, fin) suivent les **temps de sa chorégraphie**
+(séquenceur `beats.ts`), pas l'arrivée des événements ; « Passer » ne rejoue que la fin du duel.
+
 
 Un bus général (volume, coupure) → trois bus : **effets** (1,0), **ambiance** (0,35), **interface** (0,6). Les ambiances
 se croisent en 0,8 s au changement d'îlot et se coupent pendant un duel (le bourdon du duel les remplace). Un limiteur

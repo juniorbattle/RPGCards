@@ -11,7 +11,7 @@ import type { IlotId } from '../ville/ilots';
 import type { Issue } from './aventure';
 import type { Temperament } from './temperaments';
 
-export type Moment = 'vue' | 'parole' | 'rival' | 'rumeur' | 'revanche';
+export type Moment = 'vue' | 'parole' | 'rival' | 'rumeur' | 'revanche' | 'defi';
 export type Chapitre = 'prologue' | 'I' | 'II' | 'III' | 'IV' | 'V' | 'titre';
 
 /** Contexte d'une réplique : uniquement des faits publics de l'aventure et des duels (ADR 011). */
@@ -98,6 +98,7 @@ export function voixDe(locuteur: string): string {
   if (locuteur === 'rue-joueuse' || locuteur === 'rue-cour' || locuteur === 'rue-haute') return 'joueuse';
   if (locuteur === 'rue-commis') return 'commis';
   if (locuteur.startsWith('rumeur-')) return 'rumeur';
+  if (locuteur.startsWith('defi-')) return 'defi';
   if (/^(cadet|brasDroit|chef)-/.test(locuteur)) return `figure-${locuteur.split('-')[0]}`;
   return locuteur;
 }
@@ -263,6 +264,15 @@ export const CATALOGUE: Readonly<Record<string, readonly Replique[]>> = {
     V('chef-rev-2', '« Ma Signature est à vous. Mon jeu, lui, est toujours le mien. Revanche ? »', { moment: ['revanche'] }),
     V('chef-rev-3', '« Revenir me défier, quand on n’a plus rien à gagner : voilà qui me plaît. »', { moment: ['revanche'] }),
   ],
+  // --------------------------------------------------------------------- premier défi d'une figure d'une autre famille
+  // (chapitres II à IV) : elle a entendu parler du parcours du joueur ; s'ajoute à sa réplique propre
+  defi: [
+    V('defi-1', '« On parle de toi dans toute la ville. Ici, ta réputation ne jouera pas à ta place. »', { moment: ['defi'], chapitre: ['II', 'III', 'IV'] }),
+    V('defi-2', (c) => `« ${c.voie ? cap(LE[c.voie]) : 'Ta maison'}, puis la Salle des Bannières… Tu as de l’ambition. Voyons si tes cartes suivent. »`, { moment: ['defi'], chapitre: ['II', 'III', 'IV'] }),
+    V('defi-3', '« Une autre maison t’a déjà ouvert ses portes. La nôtre ne s’ouvre pas aussi facilement. »', { moment: ['defi'], chapitre: ['II', 'III', 'IV'] }),
+    V('defi-4', (c) => `« ${c.chefs} chef${c.chefs > 1 ? 's sont tombés' : ' est tombé'} devant toi. Je ne compte pas allonger la liste. »`, { moment: ['defi'], chapitre: ['III', 'IV'] }),
+    V('defi-5', '« Plus qu’une voie avant le Championnat, à ce qu’on dit. Tu ne la prendras pas sans te battre. »', { moment: ['defi'], chapitre: ['IV'] }),
+  ],
   // --------------------------------------------------------------------- le héraut du Tournoi
   heraut: [
     V('heraut-1', '« Personne en ville ne joue mieux que vous. La Grande Cour l’a proclamé, et elle s’en souviendra. » Les revanches restent ouvertes, sans enjeu.', { moment: ['parole'], chapitre: ['titre'] }),
@@ -273,4 +283,5 @@ export const CATALOGUE: Readonly<Record<string, readonly Replique[]>> = {
 
 const LE: Record<Family, string> = { Cendre: 'la Cendre', Voile: 'le Voile', Ronce: 'la Ronce', Astre: 'l’Astre' };
 const DE: Record<Family, string> = { Cendre: 'de la Cendre', Voile: 'du Voile', Ronce: 'de la Ronce', Astre: 'de l’Astre' };
+const cap = (x: string): string => x.charAt(0).toUpperCase() + x.slice(1);
 const tombes = (n: number): string => (n ? `${n} chef${n > 1 ? 's sont tombés' : ' est tombé'}` : 'aucun chef n’est encore tombé');
