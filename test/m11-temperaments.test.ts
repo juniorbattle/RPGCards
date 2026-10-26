@@ -72,7 +72,7 @@ describe('M11-B — trajectoires des PNJ récurrents (contrat 3, §3)', () => {
   });
   it('chaque tempérament a un profil d’IA qui existe ; les nouveaux sont de niveau 2, les anciens sans niveau', () => {
     for (const t of TEMPERAMENTS) expect(PROFILES[PROFIL_TEMPERAMENT[t]], t).toBeDefined();
-    for (const k of ['tacticien', 'agressif', 'vicieux']) expect(PROFILES[k]!.niveau).toBe(2);
+    for (const k of ['tacticien', 'agressif', 'ruse', 'vicieux']) expect(PROFILES[k]!.niveau).toBe(2);
     for (const k of ['equilibre', 'offensif', 'prudent', 'lecteur', 'novice', 'timide']) expect(PROFILES[k]!.niveau).toBeUndefined();
   });
 });

@@ -12,9 +12,9 @@ export type Temperament = 'passif' | 'franc' | 'ruse' | 'agressif' | 'calculateu
 export const TEMPERAMENTS: readonly Temperament[] = ['passif', 'franc', 'ruse', 'agressif', 'calculateur', 'vicieux'];
 export const NOM_TEMPERAMENT: Record<Temperament, string> = { passif: 'passif', franc: 'franc', ruse: 'rusé', agressif: 'agressif', calculateur: 'calculateur', vicieux: 'vicieux' };
 
-/** Le jeu d'un tempérament : un profil d'IA (`PROFILES`) ; `agressif`, `tacticien` et `vicieux` sont de niveau 2 (ADR 041). */
+/** Le jeu d'un tempérament : un profil d'IA (`PROFILES`) ; `ruse`, `agressif`, `tacticien` et `vicieux` sont de niveau 2 (ADR 041). */
 export const PROFIL_TEMPERAMENT: Record<Temperament, RivalPersonality['aiProfile']> = {
-  passif: 'timide', franc: 'novice', ruse: 'lecteur', agressif: 'agressif', calculateur: 'tacticien', vicieux: 'vicieux',
+  passif: 'timide', franc: 'novice', ruse: 'ruse', agressif: 'agressif', calculateur: 'tacticien', vicieux: 'vicieux',
 };
 
 /** Un cran de plus (« il a appris ») : passif → franc → agressif → vicieux ; rusé → vicieux ; calculateur et vicieux restent. */

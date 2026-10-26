@@ -30,7 +30,7 @@ export interface RivalPersonality {
   gender: 'f' | 'm';
   family: Family;
   /** Profil de l’IA ; `novice` et `timide` : profils génériques des PNJ (difficulté basse, M08 C3). */
-  aiProfile: 'offensif' | 'prudent' | 'lecteur' | 'equilibre' | 'novice' | 'timide' | 'tacticien' | 'agressif' | 'vicieux';
+  aiProfile: 'offensif' | 'prudent' | 'lecteur' | 'equilibre' | 'novice' | 'timide' | 'tacticien' | 'agressif' | 'ruse' | 'vicieux';
   techniques: TechniqueId[];
   /** Tempérament : amplitude des réactions (0..1), humeur de repos. */
   expressiveness: number;

@@ -12,7 +12,7 @@ import { siegeAventure } from '../src/aventure/deck';
 import { adversaire, deckPopulace } from '../src/aventure/paliers';
 import { config } from './helpers';
 
-const N2 = ['tacticien', 'agressif', 'vicieux'] as const;
+const N2 = ['tacticien', 'agressif', 'ruse', 'vicieux'] as const;
 const VIEUX = ['equilibre', 'offensif', 'prudent', 'lecteur', 'novice', 'timide'] as const;
 
 describe('M11-D — niveau 2 : des duels complets, déterministes', () => {
