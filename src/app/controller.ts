@@ -4,6 +4,8 @@
  * L’UI ne lit que `PlayerView` de p1 ; seuls le moteur et l’IA (via `viewFor('p2')`) touchent l’état.
  */
 import { cardDef, type Family } from '../game/catalog/cards';
+import { son } from '../son/moteur';
+import { sonsDuDuel } from '../son/evenements';
 import { TECHNIQUES, type TechniqueId } from '../game/catalog/techniques';
 import { decide, PROFILES } from '../game/ai/policy';
 import { buildMemory } from '../game/ai/memory';
@@ -179,6 +181,9 @@ export class Controller {
   // ------------------------------------------------------------------------
   refresh(newEvents: GameEvent[]): void {
     const before = (this.view as PlayerView | undefined) ?? null;
+    // M11-E : sons des événements publics et des événements privés du joueur (jamais ceux de l'adversaire) ; aucun son
+    // pour un rejeu en bloc (reprise d'un duel) ; sans geste ni en QA, le moteur du son ne joue rien.
+    if (newEvents.length < 60) for (const x of sonsDuDuel(newEvents, 'p1')) son().jouer(x);
     this.view = viewFor(this.match.state, 'p1');
     // Une résolution de Clash est présentée par temps successifs ; le reste est immédiat.
     const start = resolutionStart(newEvents);

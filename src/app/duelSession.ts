@@ -5,6 +5,7 @@
  * de M03.2, inchangé ; seule l’enveloppe change.
  */
 import { cardDef, cardTitle, EFFECTS } from '../game/catalog/cards';
+import { son } from '../son/moteur';
 import type { Command, GameConfig } from '../game/model/types';
 import { artCacheSize } from '../art/cardArt';
 import { artWarmStats, warmCardArt } from '../art/artWarmup';
@@ -56,6 +57,8 @@ export class DuelSession {
     warmCardArt(params.artSeed, params.artCheck);
     const c = new Controller(o.config, params, o.arena, o.scenario, o.personality, o.resume ?? []);
     this.controller = c;
+    // M11-E : le bourdon du duel remplace l'ambiance de la ville
+    son().ambiance('amb-duel');
     let pointerHeld = false;
     let pendingRender = false;
     let drag: DragManager | null = null;
@@ -215,6 +218,7 @@ export class DuelSession {
 
   /** Retire tout : minuteries du contrôleur, écouteurs, scène du Clash, contenu du plateau. */
   dispose(): void {
+    son().ambiance(null);
     this.controller.dispose();
     this.abort.abort();
     this.drag.dispose();

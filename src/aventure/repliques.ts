@@ -152,13 +152,13 @@ const RUE: Replique[] = [
   V('rue-vicieux-parole-2', '« Viens donc. Mes Secondaires ont des dents, ce soir. »', { moment: ['parole'], temperament: ['vicieux'] }),
   V('rue-vicieux-parole-3', '« Assieds-toi. Ne te fie à rien de ce que je montre. »', { moment: ['parole'], temperament: ['vicieux'] }),
   // revanches (déjà joué contre lui) : selon l'issue du dernier duel
-  V('rue-revanche-v-1', '« Toi ! La dernière fois, tu m’as eu. J’ai travaillé depuis : on remet ça, tout de suite. »', { moment: ['vue', 'parole'], dernier: ['victoire'] }),
-  V('rue-revanche-v-2', '« Je n’ai pas digéré notre dernière partie. Revanche, et sans pitié. »', { moment: ['vue', 'parole'], dernier: ['victoire'] }),
-  V('rue-revanche-v-3', '« Te revoilà. J’ai changé ma façon de jouer : tu ne vas pas la reconnaître. »', { moment: ['vue', 'parole'], dernier: ['victoire'] }),
-  V('rue-revanche-d-1', '« Encore toi ? Tu as vu ce qui s’est passé la dernière fois. Allez, une autre. »', { moment: ['vue', 'parole'], dernier: ['defaite', 'abandon'] }),
-  V('rue-revanche-d-2', '« Tu reviens chercher une deuxième leçon ? Je suis bon prince. »', { moment: ['vue', 'parole'], dernier: ['defaite', 'abandon'] }),
-  V('rue-revanche-d-3', '« On recommence ? La dernière, je l’ai gagnée sans forcer. »', { moment: ['vue', 'parole'], dernier: ['defaite', 'abandon'] }),
-  V('rue-revanche-vv', '« Encore une fois, et tu m’auras battu trop souvent. Je ne joue plus comme avant, tu sais. »', { moment: ['vue', 'parole'], dernier: ['victoire'], jouesMin: 2, temperament: ['agressif', 'vicieux', 'calculateur'] }),
+  V('rue-revanche-v-1', '« Toi ! La dernière fois, tu m’as eu. J’ai travaillé depuis : on remet ça, tout de suite. »', { moment: ['vue', 'parole'], dernier: ['victoire'], jouesMin: 1 }),
+  V('rue-revanche-v-2', '« Je n’ai pas digéré notre dernière partie. Revanche, et sans pitié. »', { moment: ['vue', 'parole'], dernier: ['victoire'], jouesMin: 1 }),
+  V('rue-revanche-v-3', '« Te revoilà. J’ai changé ma façon de jouer : tu ne vas pas la reconnaître. »', { moment: ['vue', 'parole'], dernier: ['victoire'], jouesMin: 1 }),
+  V('rue-revanche-d-1', '« Encore toi ? Tu as vu ce qui s’est passé la dernière fois. Allez, une autre. »', { moment: ['vue', 'parole'], dernier: ['defaite', 'abandon'], jouesMin: 1 }),
+  V('rue-revanche-d-2', '« Tu reviens chercher une deuxième leçon ? Je suis de bonne humeur. »', { moment: ['vue', 'parole'], dernier: ['defaite', 'abandon'], jouesMin: 1 }),
+  V('rue-revanche-d-3', '« On recommence ? La dernière, je l’ai gagnée sans forcer. »', { moment: ['vue', 'parole'], dernier: ['defaite', 'abandon'], jouesMin: 1 }),
+  V('rue-revanche-vv', '« Encore une victoire, et ce sera une de trop. Je ne joue plus comme avant, tu sais. »', { moment: ['vue', 'parole'], dernier: ['victoire'], jouesMin: 2, temperament: ['agressif', 'vicieux', 'calculateur'] }),
 ];
 const rue = (extra: Replique[]): Replique[] => [...RUE, ...extra];
 
@@ -212,7 +212,7 @@ export const CATALOGUE: Readonly<Record<string, readonly Replique[]>> = {
     V('kai-K2-mene', '« Tu mènes entre nous, je sais. Mais une Signature ne fait pas tout : prouve-le encore. »', { moment: ['rival'], chapitre: ['II'], mene: true, jouesMin: 2 }),
     V('kai-K3', '« Une deuxième maison qui t’ouvre ses portes… Je monte aussi, tu sais. Un duel, pour garder le compte juste. »', { moment: ['rival'], chapitre: ['III'] }),
     V('kai-K3-perdu', '« La dernière fois, tu as plié. Pas de quoi rougir : je joue de mieux en mieux. Encore une ? »', { moment: ['rival'], chapitre: ['III'], dernier: ['defaite'] }),
-    V('kai-K3-gagne', '« Tu m’as battu, la dernière fois. Je n’ai pensé qu’à ça. Cette fois, je lis tes Gardes. »', { moment: ['rival'], chapitre: ['III'], dernier: ['victoire'] }),
+    V('kai-K3-gagne', '« Tu as gagné la dernière fois. Je n’ai pensé qu’à ça. Cette fois, je lis tes Gardes. »', { moment: ['rival'], chapitre: ['III'], dernier: ['victoire'] }),
     V('kai-K4', '« Plus qu’une voie et tu touches au Championnat. Moi, j’y serai. Prouve-moi que toi aussi. »', { moment: ['rival'], chapitre: ['IV'] }),
     V('kai-K4-mene', '« Je compte nos duels, tu sais. Tu mènes. Ce soir, je calcule chaque Clash. »', { moment: ['rival'], chapitre: ['IV'], mene: true, jouesMin: 3 }),
     V('kai-K5', '« Le Championnat est ouvert. On a commencé ensemble, sur le Quai. Un dernier duel avant l’arène, pour le plaisir. »', { moment: ['rival'], chapitre: ['V'] }),

@@ -44,6 +44,10 @@ import { aGain, collectionDe, type Gain } from './registre';
 import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue, duelRival, personnalite, type DuelPrevu } from './rencontres';
 import { detecter, guetteursActifs, pointApproche, pointSurgissement, regardVers } from './vue';
 import { evenementDef, evenementRival, isKId, type EvenementRival, type KId } from './rival';
+import { choisir, memoireVide, type Contexte, type Moment } from './repliques';
+import { temperamentDe, temperamentParole } from './temperaments';
+import { son } from '../son/moteur';
+import { ambianceIlot } from '../son/evenements';
 import { CONTRAINTE_JOUTE, famillesDominantes, manche, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, varianteDe } from './competitions';
 import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave, type DuelAventure } from './sauvegarde';
 import { installAventureStyles } from './styles';
@@ -181,6 +185,7 @@ export class AventureApp {
 
   titre(): void {
     this.cacherVille();
+    son().ambiance(null);
     this.ecran = 'titre';
     this.backdrop();
     const s = this.save;
@@ -386,8 +391,14 @@ export class AventureApp {
     this.ecranShell('scr-ville av-ville', this.hud);
     this.bubble!.el.hidden = false;
     cancelAnimationFrame(this.raf);
+    son().ambiance(ambianceIlot(this.town?.ilotId() ?? 'quai'));
+    let phase = 0;
     const loop = () => {
       this.raf = requestAnimationFrame(loop);
+      // M11-E : un pas à chaque demi-foulée du joueur qui marche
+      const w = this.town?.walker();
+      if (w?.moving && Math.floor(w.phase * 2) !== Math.floor(phase * 2)) son().jouer('pas');
+      phase = w?.phase ?? 0;
       if (!this.dialog && !this.modal) this.bubble?.update(); else this.bubble!.el.hidden = true;
       this.majHud();
       this.tickMonde();
@@ -469,6 +480,7 @@ export class AventureApp {
     const town = this.town!;
     town.setInputLocked(true);
     this.enVoyage = true;
+    son().jouer('voyage');
     const veil = h('div', { class: 'ville-fade' });
     document.body.append(veil);
     const still = this.params.reducedMotion || this.params.freeze;
@@ -481,6 +493,7 @@ export class AventureApp {
       this.faire({ type: 'visite', lieu: to });
       town.setInputLocked(false);
       this.enVoyage = false;
+      son().ambiance(ambianceIlot(to));
       this.vue.armee = false;
       this.pointDecision = { retourKai: false };
       if (still) { veil.remove(); return; }
@@ -533,6 +546,7 @@ export class AventureApp {
     t.setInputLocked(true);
     this.alerte = p.apparence;
     this.marquer();
+    son().jouer('repere');
     await this.attendre(450);
     if (this.town !== t || this.force?.id !== p.id) return;
     const joueur = { ...t.walker().pos };
@@ -561,6 +575,7 @@ export class AventureApp {
     t.setInputLocked(true);
     this.alerte = 'braise';
     this.marquer();
+    son().jouer('rival');
     await this.attendre(500);
     if (this.town !== t || this.force?.id !== k.id) return;
     const to = pointApproche(t.ilot, at, joueur);
@@ -582,26 +597,42 @@ export class AventureApp {
     ], 'braise', true);
   }
 
-  /** Réplique d'ouverture d'un duel forcé par un guetteur (provisoire, réécrite en M11-C). */
-  private ligneVue(id: string): string {
-    const v = this.save!.directeur.vus?.[id];
-    if (v?.issue === 'victoire') return '« Toi ! La dernière fois, tu m’as eu. J’ai travaillé depuis : on remet ça, tout de suite. »';
-    if (v) return '« Encore toi ? Tu as vu ce qui s’est passé la dernière fois. Allez, une autre. »';
-    return id.startsWith('membre-') ? '« Hé ! Tu passes dans notre quartier sans saluer ? On se mesure, ici et maintenant. »' : '« Hé, toi ! Nos regards se sont croisés : chez nous, ça veut dire une partie. »';
+  /**
+   * M11-C : une réplique du catalogue (`repliques.ts`) pour ce locuteur et ce moment, selon les faits publics (chapitre,
+   * voie, tempérament, duels joués contre lui) ; jamais deux fois de suite la même (mémoire `dialogues` de la sauvegarde).
+   */
+  replique(locuteur: string, moment: Moment, secours = ''): string {
+    const s = this.save!;
+    const e = this.etat;
+    const kai = locuteur === 'kai';
+    const histo = s.historique.filter((h) => (kai ? h.rencontre === 'rival-kai' || h.rencontre.startsWith('rival:') || h.rencontre === 'prologue' || h.rencontre === 'brasDroit-Cendre' : h.rencontre === locuteur));
+    const vus = s.directeur.vus?.[locuteur];
+    const c: Contexte = {
+      moment, chapitre: chapitreDetaille(e), voie: e.affiliation,
+      temperament: temperamentDe(locuteur, e, s.historique) ?? (locuteur.startsWith('rumeur') || locuteur === 'heraut' ? null : temperamentParole(locuteur, e, s.historique)),
+      joues: histo.filter((h) => h.issue !== 'abandon').length,
+      victoires: histo.filter((h) => h.issue === 'victoire').length,
+      defaites: histo.filter((h) => h.issue === 'defaite').length,
+      dernier: vus?.issue ?? histo[histo.length - 1]?.issue ?? null,
+      chefs: FAMILIES.filter((f) => e.familles[f] === 'chef').length,
+      cheffe: !!e.affiliation && cheffe(e.affiliation),
+      ...(this.town ? { ilot: this.town.ilotId() } : {}),
+    };
+    const r = choisir(locuteur, c, s.dialogues ?? memoireVide(), s.profil.graine);
+    if (!r) return secours;
+    s.dialogues = r.memo;
+    this.persist();
+    return r.texte;
   }
 
-  /** Réplique d'un événement fixe du rival (provisoire, réécrite en M11-C). */
-  private ligneRival(id: KId): string {
-    const f = this.etat.affiliation;
-    const L: Record<KId, string> = {
-      K1: f === 'Cendre' ? '« Tessa est tombée ? Pas mal, pour une recrue. Mais à la Cendre, c’est moi qu’on regarde. Montre-moi. »' : `« Alors comme ça, tu as choisi ${f ? leF(f) : 'une famille'}. Moi, la Cendre m’a pris. Voyons qui a le plus appris. »`,
-      K2: `« Tu as fait tomber ${f && cheffe(f) ? 'ta cheffe' : 'ton chef'}. Toute la ville en parle. Avant d’aller frapper aux autres portes, passe par moi. »`,
-      K3: '« Une deuxième maison qui t’ouvre ses portes… Je monte aussi, tu sais. Un duel, pour garder le compte juste. »',
-      K4: '« Plus qu’une voie et tu touches au Championnat. Moi, j’y serai. Prouve-moi que toi aussi. »',
-      K5: '« Le Championnat est ouvert. On a commencé ensemble, sur le Quai. Un dernier duel avant l’arène, pour le plaisir. »',
-      K6: '« Personne en ville ne joue mieux que toi. Je le savais depuis le premier soir. » Kaï vous tend la main. « La prochaine partie, c’est quand tu veux. »',
-    };
-    return L[id];
+  /** Réplique d'ouverture d'un duel forcé par un guetteur (catalogue, moment « vue »). */
+  private ligneVue(id: string): string {
+    return this.replique(id, 'vue', '« Hé, toi ! Nos regards se sont croisés : chez nous, ça veut dire une partie. »');
+  }
+
+  /** Réplique d'un événement fixe du rival (catalogue, moment « rival »). */
+  private ligneRival(_id: KId): string {
+    return this.replique('kai', 'rival', '« On se retrouve. Un duel ? »');
   }
 
   /** QA : pose un PNJ facultatif dans l'îlot courant, à sa première place de cet îlot (parcours déterministe). */
@@ -685,30 +716,9 @@ export class AventureApp {
   private rumeur(id: string): void {
     const r = rencontreDef(id)!;
     const e = this.etat;
-    const ch = chapitreDetaille(e);
-    const chefs = FAMILIES.filter((f) => e.familles[f] === 'chef').length;
-    // finalisation de la ville (passe 136) : les rumeurs du Port et de la Ville haute ont leurs propres mots
-    const tombes = chefs ? `${chefs} chef${chefs > 1 ? 's sont tombés' : ' est tombé'}` : 'aucun chef n’est encore tombé';
-    const LOCALES: Partial<Record<string, Record<'debut' | 'milieu' | 'V' | 'titre', string>>> = {
-      'rumeur-port': {
-        debut: '« Au Port, on regarde comment vous tenez une partie, pas comment vous la commencez. La Ronce a de vieilles racines ici, au fond de la cour. »',
-        milieu: `« Les dockers parient sur la Salle des Bannières : ${tombes} cette saison, et le vieux phare n’a jamais vu autant de monde. »`,
-        V: '« Le Championnat s’ouvre dans la Grande Cour : au Port, on fermera les entrepôts plus tôt pour aller voir. »',
-        titre: '« Les marins racontent votre finale d’un quai à l’autre. »',
-      },
-      'rumeur-haute': {
-        debut: '« Là-haut, à l’Observatoire, l’Astre note tout : les duels, les mains jouées, et même les vôtres, paraît-il. »',
-        milieu: `« Les astronomes tiennent le compte des maisons : ${tombes}. Les étoiles changent moins vite que la Salle des Bannières. »`,
-        V: '« Depuis l’esplanade, on voit l’estrade de la Grande Cour : le Championnat des Champions s’y joue, et l’Astre a déjà ses favoris. »',
-        titre: '« L’Observatoire a inscrit votre titre dans ses registres : cela ne s’efface pas. »',
-      },
-    };
-    const locale = LOCALES[id];
-    const ligne = locale ? locale[ch === 'I' || ch === 'prologue' ? 'debut' : ch === 'V' ? 'V' : ch === 'titre' ? 'titre' : 'milieu']
-      : ch === 'I' ? `« On raconte qu’une recrue ${e.affiliation ? de(e.affiliation) : 'du Quai'} a fait parler d’elle au duel public. Ce soir, toute la ville joue aux cartes. »`
-      : ch === 'V' ? '« Le Championnat des Champions s’ouvre : le héraut l’annonce dans la Grande Cour, et les paris montent sur la place du Parvis. »'
-      : ch === 'titre' ? '« Toute la ville parle de vous : personne ne joue mieux, dit-on. »'
-      : `« On dit que ${chefs} chef${chefs > 1 ? 's sont tombés' : ' est tombé'} cette saison, et que la Salle des Bannières ne désemplit pas. »`;
+    // M11-C : les rumeurs viennent du catalogue (chapitre, îlot ; jamais deux fois de suite la même)
+    void e;
+    const ligne = this.replique(id, 'rumeur', '« Ce soir, toute la ville joue aux cartes. »');
     // le passant reste pendant qu'il parle (la ville se relit à la fermeture du dialogue), puis repart (passe 136 : il
     // disparaissait dès l'ouverture, `dire` relisant la ville avant d'ouvrir)
     this.dire(capital(r.nom), ligne, [fermer(this)], r.apparence);
@@ -722,7 +732,7 @@ export class AventureApp {
    */
   private heraut(): void {
     const c = this.etat.competitions.championnat;
-    if (manche(this.etat.competitions) === 'titre') return this.dire('Le héraut du Tournoi', '« Personne en ville ne joue mieux que vous. La Grande Cour l’a proclamé, et elle s’en souviendra. » Les revanches restent ouvertes, sans enjeu.', [fermer(this)], 'pnj-commis-40');
+    if (manche(this.etat.competitions) === 'titre') return this.dire('Le héraut du Tournoi', this.replique('heraut', 'parole', '« Personne en ville ne joue mieux que vous. »'), [fermer(this)], 'pnj-commis-40');
     const ouverture = !Object.keys(c.poule).length && !c.dernier && !c.miroir && !c.finale.length;
     if (ouverture) return this.dire('Le Championnat des Champions', '« Duellistes de la ville ! » Sur l’estrade, les quatre chefs lèvent leur bannière. « Quiconque a vaincu les quatre maisons peut prétendre au titre : quatre bannières, un miroir, une finale. » La foule de la Grande Cour se tourne vers vous.', [
       { label: 'S’inscrire', key: 'dlg-next', primary: true, run: () => this.championnatDialog() },
@@ -815,7 +825,7 @@ export class AventureApp {
     const st = statutDefi(e, fig);
     const enjeu = st.deja ? 'Revanche, sans récompense : votre victoire est déjà au registre.' : `En jeu : ${fig.enjeu.kind === 'variante' ? nomCarte(fig.enjeu.defId) : `la Signature ∞ ${de(fig.famille)}`}.`;
     if (!st.ouvert) return this.dire(`${fig.nom}, ${fig.titre}`, `« Pas encore. » ${st.raison}`, [fermer(this)], fig.apparence);
-    this.dire(`${fig.nom}, ${fig.titre}`, `${st.deja ? ligneFigure(fig, true) : REPLIQUES[fig.id] ?? ligneFigure(fig, false)} ${enjeu}`, [
+    this.dire(`${fig.nom}, ${fig.titre}`, `${st.deja ? this.replique(fig.id, 'revanche', ligneFigure(fig, true)) : REPLIQUES[fig.id] ?? ligneFigure(fig, false)} ${enjeu}`, [
       { label: `${st.deja ? 'Revanche' : 'Défier'} — ${fig.nom}`, key: 'dlg-duel', primary: true, run: () => this.lancerFigure(fig.id) },
       { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
     ], fig.apparence);
@@ -912,9 +922,10 @@ export class AventureApp {
       'rue-port': '« Au Port, une partie se joue entre deux marées. Une main, pour voir si tu tiens ? »',
       'rue-haute': '« Ici, on joue sous les étoiles, et on compte chaque carte. Une partie ? »',
     };
+    // M11-C : les joueurs de la rue et les membres parlent selon leur tempérament et vos duels passés (catalogue)
     const texte = kai
       ? `${ligneKai} (défi facultatif, sans récompense ; vos duels contre lui : ${gagnes} victoire(s) sur ${contreKai.length})`
-      : `${membre ?? RUE[id] ?? '« Une partie, pour passer le temps ? »'} (duel de rue, sans récompense)`;
+      : `${this.replique(id, 'parole', membre ?? RUE[id] ?? '« Une partie, pour passer le temps ? »')} (duel de rue, sans récompense)`;
     this.dire(capital(r.nom), texte, [
       { label: 'Accepter', key: 'dlg-duel', primary: true, run: () => this.preparer(duelFacultatif(id, this.etat, this.prochaineGraine(), this.save!.historique)) },
       { label: 'Refuser', key: 'dlg-close', run: () => { this.save!.directeur = conclure(this.save!.directeur, id, false); this.persist(); this.fermerDialogue(); } },
@@ -1284,8 +1295,20 @@ export class AventureApp {
       { label: 'Reprendre', key: 'dlg-close', primary: true, run: () => this.fermerDialogue() },
       { label: 'Deck et collection', key: 'menu-deck', run: () => { this.fermerDialogue(); this.collection(); } },
       { label: 'Journal des quêtes', key: 'menu-journal', run: () => { this.fermerDialogue(); this.journal(); } },
+      { label: `Son : ${son().reglages().coupe ? 'coupé' : `${Math.round(son().reglages().volume * 100)} %`}`, key: 'menu-son', run: () => this.reglageSon() },
       { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? »).', [fermer(this)]) },
       { label: 'Écran titre', key: 'menu-home', run: () => { this.fermerDialogue(); this.titre(); } },
+    ]);
+  }
+
+  /** M11-E : réglage du son (coupure, volume), mémorisé dans ce navigateur ; même réglage que les Options du jeu standard. */
+  private reglageSon(): void {
+    const r = son().reglages();
+    this.dire('Son', `Effets et ambiances, synthétisés par le jeu. Volume : ${Math.round(r.volume * 100)} %${r.coupe ? ' (coupé)' : ''}.${son().permis ? '' : ' Le son est désactivé par l’adresse de la page.'}`, [
+      { label: r.coupe ? 'Activer le son' : 'Couper le son', key: 'son-coupe', primary: true, run: () => { son().regler({ coupe: !r.coupe }); this.reglageSon(); } },
+      { label: 'Volume −', key: 'son-moins', run: () => { son().regler({ volume: r.volume - 0.1 }); this.reglageSon(); } },
+      { label: 'Volume +', key: 'son-plus', run: () => { son().regler({ volume: r.volume + 0.1 }); this.reglageSon(); } },
+      { label: 'Fermer', key: 'dlg-close', run: () => this.fermerDialogue() },
     ]);
   }
 
