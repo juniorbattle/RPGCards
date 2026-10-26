@@ -241,3 +241,36 @@ quartiers ») et ses deux choix du même jour (questions de la session, passe 12
 - **Approbation des façades (passe 130)**, ordre du responsable : « J’approuve les 4 façades des quartiers […] pour ouvrir
   la Place du Fanal et la Ville haute. » Registre : 36 images ; les deux quartiers sont ouverts dans le jeu.
 - **Ratification (passe 131)** : « Ratifie l’amendement de l’ADR 028 (« Deuxième reprise » : quartiers ajoutés et facultatifs) tel quel, et consigne-le. » L'amendement de l'ADR 028 (quartiers ajoutés et facultatifs) est ratifié.
+
+## Finalisation de la ville (2026-10-25, passe 132) : cadrage soumis au responsable
+
+Ordre du responsable : finaliser l'intégration de la ville et de ses figures, pour passer ensuite à la structure narrative
+de bout en bout. Quatre points ouverts, soumis avant d'agir (rien n'est déplacé, généré ni approuvé avant ses réponses).
+
+**État constaté (passe 132).** Dans l'aventure, la Place du Fanal et la Ville haute se parcourent, mais n'ont que leurs
+passants : leurs quatre personnages de démo sont retirés comme partout (`ilotNu`), le directeur des rencontres n'y pose
+personne, et leurs places et balises répondent « Rien de plus ici ». Les bannières de l'Observatoire sont peintes d'étoiles
+par le modèle (`tools/m09-kit-quartiers.mjs`, aucune broderie). Budget de la deuxième reprise : 16 images sur 20 ; les 4
+restantes étaient prévues comme reprises des feuilles des PNJ, aucune n'a servi. L'heure de ville (V1 de la fiche M10-E)
+n'a pas été jouée ; elle attend « une heure de ville jouée sur GPU réel, rencontres jugées non intrusives » (feuille de
+route M10-E).
+
+1. **Vie des deux quartiers dans l'aventure.** Recommandé, sans déplacer aucune figure : les textes de leurs places ; une
+   rumeur par quartier (répliques propres : la Ronce au Port, l'Astre et le Championnat en haut) ; un duel de rue
+   facultatif par quartier (gabarits approuvés, graines nouvelles) ; une seconde place pour le membre de la Ronce (cour
+   de la Ronce) et celui de l'Astre (parvis de l'Observatoire) ; une place de l'ombre de Kaï dans chacun ; toujours
+   deux facultatives au plus par îlot, aux seuls points de décision. Et la suite de la lecture D7 (fiche M10-E) : les
+   quatre chefs posés sur l'estrade de la Grande Cour à l'ouverture et à la proclamation du Championnat, avec leurs
+   feuilles approuvées. À décider à part : déplacer Mère Aubépine et Halvard (ou les Joutes de la Ronce et de l'Astre)
+   vers les deux nouveaux cœurs ; recommandation : laisser ce choix à la structure narrative de bout en bout.
+2. **Bannières de l'Observatoire.** Recommandé : l'emblème de l'Astre brodé par script (`fixBanners`, comme les hôtels à
+   arcades), sans génération. Conséquence : la planche retraitée change d'empreinte et perd son approbation ; la Ville
+   haute se ferme hors QA jusqu'à ce que le responsable l'approuve de nouveau, dans une passe à part. Aperçu montré au
+   responsable. Autres options : garder les étoiles ; régénérer l'Observatoire avec des bannières unies (1 image).
+3. **Les 4 images restantes.** Recommandé : les garder en réserve (reprises après le jalon ou la fiche). Autres options :
+   feuilles propres pour les quatre cadets (4 images) ; un héraut et deux passants de quartier (3 images). Rien n'est
+   généré sans accord explicite.
+4. **L'heure de ville.** Recommandé : une heure simulée par script (le directeur sur une heure type, chiffres de présence
+   des rencontres) ; `qa:vivante` étendu aux deux quartiers ; une page « heure de ville » (lancer le build hors QA,
+   parcours, quoi juger) ; des points de départ par chapitre pour juger les chapitres avancés sans tout rejouer ; le
+   verdict du responsable dans la fiche finale.
