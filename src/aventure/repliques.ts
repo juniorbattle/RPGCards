@@ -103,8 +103,6 @@ export function voixDe(locuteur: string): string {
 }
 
 const V = (ids: string, t: Replique['texte'], quand?: Quand): Replique => ({ id: ids, texte: t, ...(quand ? { quand } : {}) });
-const tous: Temperament[] = ['passif', 'franc', 'ruse', 'agressif', 'calculateur', 'vicieux'];
-void tous;
 
 // --------------------------------------------------------------------- la rue : ce qui est commun aux joueurs de cartes
 /** Répliques de la rue par tempérament (vue : duel forcé ; parole : le joueur vient lui parler ; revanche : déjà joué). */
@@ -217,7 +215,8 @@ export const CATALOGUE: Readonly<Record<string, readonly Replique[]>> = {
     V('kai-K4-mene', '« Je compte nos duels, tu sais. Tu mènes. Ce soir, je calcule chaque Clash. »', { moment: ['rival'], chapitre: ['IV'], mene: true, jouesMin: 3 }),
     V('kai-K5', '« Le Championnat est ouvert. On a commencé ensemble, sur le Quai. Un dernier duel avant l’arène, pour le plaisir. »', { moment: ['rival'], chapitre: ['V'] }),
     V('kai-K5-mene', '« Tu mènes depuis trop longtemps. Avant l’arène, je veux une dernière chance de te faire douter. »', { moment: ['rival'], chapitre: ['V'], mene: true, jouesMin: 3 }),
-    V('kai-K6', '« Personne en ville ne joue mieux que toi. Je le savais depuis le premier soir. » Kaï vous tend la main. « La prochaine partie, c’est quand tu veux. »', { moment: ['rival'], chapitre: ['titre'] }),
+    V('kai-K6', '« Le titre te va bien. » Kaï sourit. « Moi, je continue à m’entraîner. La prochaine partie, c’est quand tu veux, et je ne te ferai pas de cadeau. »', { moment: ['rival'], chapitre: ['titre'] }),
+    V('kai-K6-mene', '« Tu as gagné presque tous nos duels, et le titre avec. » Kaï vous tend la main. « On recommence à zéro ? Cette fois, c’est moi qui te poursuis. »', { moment: ['rival'], chapitre: ['titre'], mene: true, jouesMin: 3 }),
   ],
   // --------------------------------------------------------------------- les rumeurs
   rumeur: [

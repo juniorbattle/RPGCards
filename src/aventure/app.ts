@@ -715,9 +715,7 @@ export class AventureApp {
   /** Les rumeurs de la ville (M10-E, ambiance) : une réplique qui suit l'aventure (faits publics), sans duel ; le passant repart. */
   private rumeur(id: string): void {
     const r = rencontreDef(id)!;
-    const e = this.etat;
     // M11-C : les rumeurs viennent du catalogue (chapitre, îlot ; jamais deux fois de suite la même)
-    void e;
     const ligne = this.replique(id, 'rumeur', '« Ce soir, toute la ville joue aux cartes. »');
     // le passant reste pendant qu'il parle (la ville se relit à la fermeture du dialogue), puis repart (passe 136 : il
     // disparaissait dès l'ouverture, `dire` relisant la ville avant d'ouvrir)
