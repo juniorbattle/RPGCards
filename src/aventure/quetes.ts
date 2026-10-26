@@ -7,6 +7,7 @@ import { CONTRAINTE_JOUTE, manche, ouvertChampionnat, varianteDe } from './compe
 import { chapitre, statutDefi, type AventureEtat } from './aventure';
 import { cheffe, chefVaincu, deF, emissaire, figureDe, KAI_PROLOGUE, MAISONS, ROLES } from './modele';
 import { aGain } from './registre';
+import { EVENEMENTS_RIVAL } from './rival';
 
 export interface Quete {
   id: string;
@@ -85,8 +86,12 @@ export function quetes(e: AventureEtat): Quete[] {
       { texte: `La Finale (${c.finale.filter((m) => m.gagnee).length}/2 manches)`, faite: c.titre },
     ] });
   }
-  // M10-E : l'ombre de Kaï (PROGRESSION §6.2, quête du rival) : un défi par chapitre, facultatif, jamais échoué
+  // M11-A : Kaï en événements fixes (contrat 2) : une étape par moment écrit, faite à l'issue du duel (gagné ou perdu)
   if (f) {
+    out.push({ id: 'rival', titre: 'Kaï, la Braise du quai', type: 'rival', etapes: EVENEMENTS_RIVAL.filter((k) => k.duel).map((k) => ({ texte: `${k.chapitre === 'V' ? 'Le Championnat' : `Chapitre ${k.chapitre}`} : ${k.titre}`, faite: !!e.rival?.faits[k.id] })) });
+  }
+  // M10-E : l'ombre de Kaï (PROGRESSION §6.2) : gardée pour une aventure d'avant M11 qui en a relevé (sinon remplacée)
+  if (f && e.ombres?.length) {
     const faits = e.ombres ?? [];
     out.push({ id: 'ombre', titre: 'L’ombre de Kaï', type: 'rival', etapes: (['I', 'II', 'III', 'IV', 'V'] as const).map((ch) => ({ texte: `Chapitre ${ch} : relever le défi de Kaï (facultatif)`, faite: faits.includes(ch) })) });
   }

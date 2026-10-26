@@ -19,6 +19,7 @@ import { deF, emissaire, FIGURES, KAI_PROLOGUE } from './modele';
 import { ELITE_JOUTE, manche, MEMBRES_EPREUVE, ouvertChampionnat } from './competitions';
 import { aGain } from './registre';
 import { personalityById } from '../presentation/personalities';
+import type { Vu } from './vue';
 
 /** Place d'une rencontre ; au Quai, dans le Quai en quatre rangs (ARB-M10-12), avec sa place dans l'ancien Quai en
  *  bande (`bande`, le secours tant que le Quai en rangs n'est pas affiché ; absente : la même) ; `rangs` : une place des
@@ -57,6 +58,8 @@ export interface EtatDirecteur {
   debuts?: Record<string, number>;
   /** Refusés (M10-E) : ils restent jusqu'au point de décision suivant, sans redemander, puis repartent. */
   partants?: string[];
+  /** M11-A : issue du dernier duel contre chaque PNJ facultatif (rencontres en vue : repos, revanches). */
+  vus?: Record<string, Vu>;
 }
 
 export interface Pose { id: string; apparence: string; nom: string; at: { x: number; z: number }; facing: Facing; repere: '!' | '?' | null; genre: RencontreDef['genre'] }
@@ -223,7 +226,12 @@ export const rencontreDef = (id: string): RencontreDef | undefined => RENCONTRES
  * état et les personnages à poser. `quaiRangs` : la ville en rangs est-elle affichée (ses places du fond et la Grande Cour
  * n'existent que là) ?
  */
-export function decider(d0: EtatDirecteur, e: AventureEtat, ilot: IlotId, quaiRangs = true): { directeur: EtatDirecteur; poses: Pose[] } {
+export interface OptionsDirecteur {
+  /** M11-A (contrat 2) : le rival vient en événements fixes ; l'ombre de Kaï n'est plus tirée (ni gardée à un point de décision). */
+  rivalFixe?: boolean;
+}
+
+export function decider(d0: EtatDirecteur, e: AventureEtat, ilot: IlotId, quaiRangs = true, opts: OptionsDirecteur = {}): { directeur: EtatDirecteur; poses: Pose[] } {
   const d: EtatDirecteur = structuredClone(d0);
   const ch = chapitreDetaille(e);
   const cle = (id: string) => `${id}@${ch}`;
@@ -234,7 +242,7 @@ export function decider(d0: EtatDirecteur, e: AventureEtat, ilot: IlotId, quaiRa
   // un refusé repart au premier point de décision qui suit son refus, dans l'îlot où il se tenait
   const partants = new Set(d.partants ?? []);
   const ici = d.actives[ilot] ?? [];
-  let actives = ici.filter((a) => { const r = rencontreDef(a.id); return !!r && !partants.has(a.id) && r.dispo(e) && placeOk(r.lieux[a.place]); });
+  let actives = ici.filter((a) => { const r = rencontreDef(a.id); return !!r && !partants.has(a.id) && r.dispo(e) && placeOk(r.lieux[a.place]) && !(opts.rivalFixe && r.genre === 'rival'); });
   if (d.partants?.length) d.partants = d.partants.filter((id) => !ici.some((a) => a.id === id) && Object.values(d.actives).some((xs) => (xs ?? []).some((a) => a.id === id)));
   if (actives.length < MAX_FACULTATIVES) {
     const presentes = new Set(Object.values(d.actives).flatMap((xs) => (xs ?? []).map((a) => a.id)));
@@ -244,6 +252,7 @@ export function decider(d0: EtatDirecteur, e: AventureEtat, ilot: IlotId, quaiRa
       && !presentes.has(r.id)
       && !posees.has(r.apparence)
       && r.lieux.some(placeOk)
+      && !(opts.rivalFixe && r.genre === 'rival')
       && r.dispo(e)
       && (d.derniere[r.id] === undefined || d.battement >= d.derniere[r.id]! + r.delai)
       && (r.maxParChapitre === undefined || (d.parChapitre[cle(r.id)] ?? 0) < r.maxParChapitre)
@@ -301,5 +310,12 @@ export function conclure(d0: EtatDirecteur, id: string, accord: boolean): EtatDi
     d.refuses[id] = (d.refuses[id] ?? 0) + 1;
     if (!(d.partants ?? []).includes(id)) d.partants = [...(d.partants ?? []), id];
   }
+  return d;
+}
+
+/** M11-A : note l'issue d'un duel contre un PNJ facultatif (au battement courant, dans le chapitre de la trame). */
+export function noterVu(d0: EtatDirecteur, id: string, issue: Vu['issue'], chapitre: string): EtatDirecteur {
+  const d: EtatDirecteur = structuredClone(d0);
+  d.vus = { ...(d.vus ?? {}), [id]: { issue, battement: d.battement, chapitre } };
   return d;
 }

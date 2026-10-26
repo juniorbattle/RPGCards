@@ -22,7 +22,15 @@ import { collectionDe, controlerRegistre } from './registre';
 export const CLE_AVENTURE = 'lqv.aventure';
 export const CLE_SECOURS = 'lqv.aventure.backup';
 export const CLE_ECART = 'lqv.aventure.corrupt';
-export const SCHEMA_AVENTURE = 'aventure/1';
+export const CLE_V1 = 'lqv.aventure.v1';
+/**
+ * M11-A : schéma `aventure/2` (rival en événements fixes, rencontres en vue, mémoire des dialogues : champs facultatifs).
+ * Une sauvegarde `aventure/1` se lit et se migre sans perte ; à la première écriture, son texte d'origine est gardé à part
+ * (`lqv.aventure.v1`), jamais effacé. Une RC `0.10.0-rc.1` qui relirait une sauvegarde `aventure/2` la refuserait comme
+ * « version plus récente » sans la modifier.
+ */
+export const SCHEMA_AVENTURE = 'aventure/2';
+export const SCHEMAS_LUS: readonly string[] = ['aventure/1', SCHEMA_AVENTURE];
 
 /** Duel de l'aventure en cours : repris EXACTEMENT par rejeu des commandes (contrôle par hash), comme `ActiveDuel`. */
 export interface DuelAventure {
@@ -56,6 +64,8 @@ export interface AventureSave {
   duel: DuelAventure | null;
   historique: DuelResume[];
   compteur: number;
+  /** M11-C : mémoire des dialogues (dernière réplique et nombre de répliques par locuteur : pas de répétition immédiate). */
+  dialogues?: { dernier: Record<string, string>; n: Record<string, number> };
 }
 
 export function nouvelleSauvegarde(now: Date, nom: string, graine: number): AventureSave {
@@ -102,9 +112,11 @@ export type ChargeAventure =
 function lire(text: string): { ok: true; save: AventureSave } | { ok: false; future: boolean; raison: string } {
   let x: unknown;
   try { x = JSON.parse(text); } catch { return { ok: false, future: false, raison: 'Sauvegarde illisible (JSON).' }; }
-  if (isObj(x) && typeof x.schema === 'string' && x.schema.startsWith('aventure/') && x.schema !== SCHEMA_AVENTURE) {
+  if (isObj(x) && typeof x.schema === 'string' && x.schema.startsWith('aventure/') && !SCHEMAS_LUS.includes(x.schema)) {
     return { ok: false, future: true, raison: `Sauvegarde d’une version plus récente (${x.schema}) : elle n’est pas modifiée.` };
   }
+  // M11-A : aventure/1 → aventure/2 (champs ajoutés facultatifs : rien à convertir)
+  if (isObj(x) && x.schema === 'aventure/1') x.schema = SCHEMA_AVENTURE;
   // aventure/1 d'avant les compétitions (même schéma, champ ajouté) : état par défaut, sans perte.
   if (isObj(x) && isObj(x.etat) && !('competitions' in x.etat)) (x.etat as Record<string, unknown>).competitions = nouvellesCompetitions();
   // aventure/1 d'avant les PV qui montent (avenant M10-A, AV-08) : combats menés à terme retrouvés dans l'historique.
@@ -140,6 +152,8 @@ export class MagasinAventure {
     try {
       const prev = this.storage.getItem(CLE_AVENTURE);
       if (prev !== null && prev !== text && lire(prev).ok) this.storage.setItem(CLE_SECOURS, prev);
+      // M11-A : la sauvegarde d'origine d'avant la migration est gardée telle quelle, une fois
+      if (prev !== null && prev.includes('"schema":"aventure/1"') && this.storage.getItem(CLE_V1) === null) this.storage.setItem(CLE_V1, prev);
       this.storage.setItem(CLE_AVENTURE, text);
       if (this.storage.getItem(CLE_AVENTURE) !== text) return { ok: false, raison: 'Relecture différente de l’écriture.' };
       save.updatedAt = next.updatedAt;

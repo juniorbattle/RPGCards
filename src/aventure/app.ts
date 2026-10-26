@@ -27,7 +27,7 @@ import { confirmDialog, h } from '../shell/ui';
 import { parseRig } from '../ville/cameras';
 import { decorPolicy, preloadDecors } from '../ville/decors';
 import { MANIFESTE_RANGS, QUARTIERS_AJOUTES, type IlotId } from '../ville/ilots';
-import { blocked, type Zone } from '../ville/monde';
+import { blocked, type Facing, type Vec2, type Zone } from '../ville/monde';
 import { spritePolicy } from '../ville/spritesExternes';
 import { installVilleStyles, promptBubble } from '../ville/ui';
 import { createTown, type Town } from '../ville/ville';
@@ -41,7 +41,9 @@ import { ilotAventure, ilotBase } from './ilots';
 import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, RANGS, rangNeutre, roleDe, cheffe, chefVaincu, leChef, ROLES, ROMAIN, type EtatFamille } from './modele';
 import { objectif, quetes } from './quetes';
 import { aGain, collectionDe, type Gain } from './registre';
-import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue, personnalite, type DuelPrevu } from './rencontres';
+import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue, duelRival, personnalite, type DuelPrevu } from './rencontres';
+import { detecter, guetteursActifs, pointApproche, pointSurgissement, regardVers } from './vue';
+import { evenementDef, evenementRival, isKId, type EvenementRival, type KId } from './rival';
 import { CONTRAINTE_JOUTE, famillesDominantes, manche, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, varianteDe } from './competitions';
 import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave, type DuelAventure } from './sauvegarde';
 import { installAventureStyles } from './styles';
@@ -102,6 +104,18 @@ export class AventureApp {
   /** Les quartiers ajoutés ouverts (deuxième reprise de M09, ADR 028). */
   private ouverts: ReadonlySet<IlotId> = new Set();
   private dernierResultat: { prevu: DuelPrevu; issue: Issue; gains: Gain[]; turns: number; faits: FaitsPublics; pv: [number, number] } | null = null;
+  /** M11-A : rencontres en vue (front montant : guetteurs qui voyaient déjà le joueur ; armée après une image calme). */
+  private vue = { armee: false, dedans: new Set<string>() as ReadonlySet<string> };
+  /** M11-A : une rencontre forcée en cours (guetteur qui vient, Kaï qui surgit) : ni menu, ni Échap, ni autre déclenchement. */
+  force: { kind: 'vue' | 'rival'; id: string; apparence: string } | null = null;
+  /** M11-A : point de décision en attente (le rival se décide quand aucune fenêtre n'est ouverte). */
+  private pointDecision: { retourKai: boolean } | null = null;
+  private retourKai = false;
+  private enVoyage = false;
+  /** M11-A : Kaï posé dans l'îlot pendant un événement fixe (il surgit, vient, défie). */
+  private rivalScene: { id: KId; at: Vec2; facing: Facing } | null = null;
+  /** M11-A : bulle « ! » d'alerte (identifiant de personnalité). */
+  private alerte: string | null = null;
 
   constructor(readonly d: DepsAventure) {
     installVilleStyles();
@@ -265,6 +279,11 @@ export class AventureApp {
         out.push({ id: `emissaire-${e.premier}`, apparence: em.apparence, nom: em.nom, at: { x: 13.6, z: 0.9 }, facing: 'gauche', repere: '!', genre: 'structurante' });
       } else if (id === em.ilot) out = out.filter((p) => p.apparence !== em.apparence);
     }
+    // M11-A : Kaï surgit (événement fixe) : il quitte sa place de bras droit le temps de la scène
+    if (this.rivalScene && this.town?.ilotId() === id) {
+      out = out.filter((p) => p.apparence !== 'braise');
+      out.push({ id: `rival:${this.rivalScene.id}`, apparence: 'braise', nom: 'Kaï', at: this.rivalScene.at, facing: this.rivalScene.facing, repere: null, genre: 'rival' });
+    }
     // La foule du prologue (P4, P5) : passants arrêtés autour du lieu du duel, jusqu'au choix de la voie.
     if (id === 'quai' && this.etat.prologue !== null && this.etat.affiliation === null) {
       for (const f of FOULE) if (!out.some((p) => p.apparence === f.apparence)) out.push({ id: f.id, apparence: f.apparence, nom: f.nom, at: f.at, facing: f.facing, repere: null, genre: 'ambiance' });
@@ -274,7 +293,7 @@ export class AventureApp {
 
   /** Point de décision du directeur des rencontres (entrée dans un îlot, retour d'un duel). */
   private decider(id: IlotId): void {
-    const r = decider(this.save!.directeur, this.etat, id, this.quaiRangs);
+    const r = decider(this.save!.directeur, this.etat, id, this.quaiRangs, { rivalFixe: true });
     this.save!.directeur = r.directeur;
     this.persist();
   }
@@ -359,6 +378,10 @@ export class AventureApp {
       this.rafraichir(spawn);
     }
     if (spawn && this.town) { const sp = this.town.ilot.spawns[spawn]; if (sp) this.town.place(sp, sp.face); }
+    // M11-A : point de décision du rival (pas à la reprise) ; la vue se réarme sur une image calme
+    this.vue.armee = false;
+    if (!reprise) this.pointDecision = { retourKai: this.retourKai };
+    this.retourKai = false;
     this.hud = this.renderHud();
     this.ecranShell('scr-ville av-ville', this.hud);
     this.bubble!.el.hidden = false;
@@ -367,6 +390,7 @@ export class AventureApp {
       this.raf = requestAnimationFrame(loop);
       if (!this.dialog && !this.modal) this.bubble?.update(); else this.bubble!.el.hidden = true;
       this.majHud();
+      this.tickMonde();
     };
     loop();
     if (arrivee) this.carton('Le Quai', 'soir de tournoi');
@@ -393,8 +417,9 @@ export class AventureApp {
 
   private marquer(): void {
     if (!this.town) return;
-    const m: Record<string, '!' | '?' | null> = {};
+    const m: Record<string, '!' | '?' | 'vu' | null> = {};
     for (const p of this.posesDe(this.town.ilotId())) m[p.apparence] = p.repere;
+    if (this.alerte) m[this.alerte] = 'vu';
     this.town.setMarkers(m);
   }
 
@@ -443,6 +468,7 @@ export class AventureApp {
   private voyager(to: IlotId, spawn: string): void {
     const town = this.town!;
     town.setInputLocked(true);
+    this.enVoyage = true;
     const veil = h('div', { class: 'ville-fade' });
     document.body.append(veil);
     const still = this.params.reducedMotion || this.params.freeze;
@@ -454,6 +480,9 @@ export class AventureApp {
       this.save!.ville = { ilot: to, pos: { ...town.walker().pos } };
       this.faire({ type: 'visite', lieu: to });
       town.setInputLocked(false);
+      this.enVoyage = false;
+      this.vue.armee = false;
+      this.pointDecision = { retourKai: false };
       if (still) { veil.remove(); return; }
       veil.classList.add('out');
       setTimeout(() => veil.remove(), 420);
@@ -463,10 +492,121 @@ export class AventureApp {
     setTimeout(swap, 300);
   }
 
+  // ------------------------------------------------------------------ M11-A : rencontres en vue, rival en événements fixes
+
+  /**
+   * À chaque image de la ville : le point de décision du rival (s'il en attend un), puis la vue des guetteurs (front
+   * montant). Rien pendant un dialogue, une fenêtre, un fondu ou une rencontre forcée (contrats 1 et 2).
+   */
+  private tickMonde(): void {
+    const t = this.town;
+    if (this.ecran !== 'ville' || !t || !this.save || this.dialog || this.modal || this.force || this.enVoyage) { this.vue.armee = false; return; }
+    if (this.pointDecision) {
+      const pd = this.pointDecision;
+      this.pointDecision = null;
+      const k = evenementRival(this.etat, t.ilotId(), this.quaiRangs, pd.retourKai);
+      if (k) { void this.surgirRival(k); return; }
+      this.vue.armee = false;
+    }
+    const gs = guetteursActifs(this.save.directeur, this.etat, this.posesDe(t.ilotId()));
+    const r = detecter(t.ilot, gs, t.walker().pos, this.vue.armee ? this.vue.dedans : new Set(gs.map((g) => g.id)));
+    this.vue = { armee: true, dedans: r.dedans };
+    if (r.repere) void this.repere(r.repere);
+  }
+
+  private attendre(ms: number): Promise<void> {
+    return this.params.freeze || this.params.reducedMotion || ms <= 0 ? Promise.resolve() : new Promise((res) => setTimeout(res, ms));
+  }
+
+  /** Un guetteur repère le joueur : « ! », il vient, il défie (duel forcé ; contrat 1, §4). */
+  private async repere(p: Pose): Promise<void> {
+    const t = this.town!;
+    this.force = { kind: 'vue', id: p.id, apparence: p.apparence };
+    t.setInputLocked(true);
+    this.alerte = p.apparence;
+    this.marquer();
+    await this.attendre(450);
+    if (this.town !== t || this.force?.id !== p.id) return;
+    const joueur = { ...t.walker().pos };
+    const to = pointApproche(t.ilot, p.at, joueur);
+    t.place(joueur, regardVers(joueur, to));
+    await t.walkNpc(p.apparence, to, 1.6, regardVers(to, joueur));
+    if (this.town !== t || this.force?.id !== p.id) return;
+    this.alerte = null;
+    this.marquer();
+    const r = rencontreDef(p.id)!;
+    this.dire(capital(r.nom), this.ligneVue(p.id), [
+      { label: 'Relever le défi', key: 'dlg-duel', primary: true, run: () => this.preparer(duelFacultatif(p.id, this.etat, this.prochaineGraine()), true) },
+    ], r.apparence, true);
+  }
+
+  /** Kaï surgit (événement fixe, contrat 2, §3) : il apparaît à 3,5 m, court au joueur, défie (ou, K6, tend la main). */
+  private async surgirRival(k: EvenementRival): Promise<void> {
+    const t = this.town!;
+    const joueur = { ...t.walker().pos };
+    const sp = t.ilot.spawns.arrivee!;
+    const at = pointSurgissement(t.ilot, joueur) ?? { x: sp.x, z: sp.z };
+    this.force = { kind: 'rival', id: k.id, apparence: 'braise' };
+    this.rivalScene = { id: k.id, at, facing: regardVers(at, joueur) };
+    this.rafraichir();
+    t.place(joueur, regardVers(joueur, at));
+    t.setInputLocked(true);
+    this.alerte = 'braise';
+    this.marquer();
+    await this.attendre(500);
+    if (this.town !== t || this.force?.id !== k.id) return;
+    const to = pointApproche(t.ilot, at, joueur);
+    await t.walkNpc('braise', to, 3.2, regardVers(to, joueur));
+    if (this.town !== t || this.force?.id !== k.id) return;
+    this.alerte = null;
+    this.marquer();
+    if (!k.duel) {
+      this.dire('Kaï, la Braise du quai', this.ligneRival(k.id), [{ label: 'Fermer', key: 'dlg-close', primary: true, run: () => {
+        this.faire({ type: 'rival', id: k.id, issue: 'scene' });
+        this.force = null;
+        this.rivalScene = null;
+        this.fermerDialogue();
+      } }], 'braise', true);
+      return;
+    }
+    this.dire(`Kaï — ${k.titre}`, this.ligneRival(k.id), [
+      { label: 'Relever le défi', key: 'dlg-duel', primary: true, run: () => this.preparer(duelRival(k.id, this.etat, this.prochaineGraine()), true) },
+    ], 'braise', true);
+  }
+
+  /** Réplique d'ouverture d'un duel forcé par un guetteur (provisoire, réécrite en M11-C). */
+  private ligneVue(id: string): string {
+    const v = this.save!.directeur.vus?.[id];
+    if (v?.issue === 'victoire') return '« Toi ! La dernière fois, tu m’as eu. J’ai travaillé depuis : on remet ça, tout de suite. »';
+    if (v) return '« Encore toi ? Tu as vu ce qui s’est passé la dernière fois. Allez, une autre. »';
+    return id.startsWith('membre-') ? '« Hé ! Tu passes dans notre quartier sans saluer ? On se mesure, ici et maintenant. »' : '« Hé, toi ! Nos regards se sont croisés : chez nous, ça veut dire une partie. »';
+  }
+
+  /** Réplique d'un événement fixe du rival (provisoire, réécrite en M11-C). */
+  private ligneRival(id: KId): string {
+    const f = this.etat.affiliation;
+    const L: Record<KId, string> = {
+      K1: f === 'Cendre' ? '« Tessa est tombée ? Pas mal, pour une recrue. Mais à la Cendre, c’est moi qu’on regarde. Montre-moi. »' : `« Alors comme ça, tu as choisi ${f ? leF(f) : 'une famille'}. Moi, la Cendre m’a pris. Voyons qui a le plus appris. »`,
+      K2: `« Tu as fait tomber ${f && cheffe(f) ? 'ta cheffe' : 'ton chef'}. Toute la ville en parle. Avant d’aller frapper aux autres portes, passe par moi. »`,
+      K3: '« Une deuxième maison qui t’ouvre ses portes… Je monte aussi, tu sais. Un duel, pour garder le compte juste. »',
+      K4: '« Plus qu’une voie et tu touches au Championnat. Moi, j’y serai. Prouve-moi que toi aussi. »',
+      K5: '« Le Championnat est ouvert. On a commencé ensemble, sur le Quai. Un dernier duel avant l’arène, pour le plaisir. »',
+      K6: '« Personne en ville ne joue mieux que toi. Je le savais depuis le premier soir. » Kaï vous tend la main. « La prochaine partie, c’est quand tu veux. »',
+    };
+    return L[id];
+  }
+
+  /** QA : état de la vue (guetteurs, ceux qui voient le joueur, rencontre forcée). */
+  qaVue(): { guetteurs: Array<{ id: string; at: Vec2; facing: Facing }>; dedans: string[]; armee: boolean; force: AventureApp['force']; rival: string | null } {
+    const t = this.town;
+    const gs = t && this.save ? guetteursActifs(this.save.directeur, this.etat, this.posesDe(t.ilotId())) : [];
+    return { guetteurs: gs.map((g) => ({ id: g.id, at: g.at, facing: g.facing })), dedans: [...this.vue.dedans], armee: this.vue.armee, force: this.force, rival: this.rivalScene?.id ?? null };
+  }
+
   // ------------------------------------------------------------------ interactions
 
   interagir(z: Zone): void {
-    if (this.dialog || this.modal) return;
+    if (this.dialog || this.modal || this.force) return;
     if (z.kind === 'parler' && z.target) return this.parler(z.target);
     if (z.kind === 'sortie') {
       const exit = ilotBase(this.town!.ilotId(), this.quaiRangs, this.ouverts).exits[z.id];
@@ -729,7 +869,7 @@ export class AventureApp {
     const kai = id === 'rival-kai';
     // L'arc du rival (contrat narratif §4.1) : ses mots suivent le chapitre et les résultats publics de vos duels.
     const ch = chapitre(this.etat);
-    const contreKai = this.save!.historique.filter((h) => h.rencontre === 'rival-kai' || h.rencontre === 'prologue' || h.rencontre === 'brasDroit-Cendre');
+    const contreKai = this.save!.historique.filter((h) => h.rencontre === 'rival-kai' || h.rencontre.startsWith('rival:') || h.rencontre === 'prologue' || h.rencontre === 'brasDroit-Cendre');
     const gagnes = contreKai.filter((h) => h.issue === 'victoire').length;
     const ligneKai = ch === 'maison'
       ? `« Alors, ${this.etat.affiliation ? `tu as rejoint ${la(this.etat.affiliation)}` : 'toujours sans famille'} ? Moi, la Cendre m’a pris. Une partie, pour voir qui a le plus appris ? »`
@@ -837,7 +977,7 @@ export class AventureApp {
   }
 
   /** Préparation (dialogue) : adversaire, lieu, PV, enjeu annoncé, les deux decks ; puis le duel. */
-  private preparer(prevu: DuelPrevu): void {
+  private preparer(prevu: DuelPrevu, forcee = false): void {
     this.fermerDialogue();
     const panel = h('div', { class: 'av-confirm av-prep', 'data-key': 'av-preparation' },
       h('div', { class: 'av-confirm-head' }, h('img', { class: 'ville-portrait', alt: '', src: portraitUrl(prevu.personnalite, this.params.artSeed) }), h('div', null, h('h2', null, prevu.titre), h('p', { class: 'av-devise' }, `Lieu : ${LIEU[prevu.venue]} · PV ${prevu.config.players.p1.hp} contre ${prevu.config.players.p2.hp}`))),
@@ -846,8 +986,9 @@ export class AventureApp {
       h('p', { class: 'av-proto', 'data-key': 'av-deck-reel' }, `Votre deck : ${resumeDeck(this.etat.deck)} ; Techniques ${this.etat.deck.techniques.join(' et ')}.`),
       h('div', { class: 'ville-choices' },
         h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-duel-go', onclick: () => { this.fermerModal(); this.lancer(prevu); } }, 'Commencer le duel'),
-        h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-duel-back', onclick: () => this.fermerModal() }, 'Plus tard')));
-    this.ouvrirModal(panel);
+        forcee ? null : h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-duel-back', onclick: () => this.fermerModal() }, 'Plus tard')),
+      forcee ? h('p', { class: 'av-proto', 'data-key': 'av-duel-force' }, 'Ce duel ne se refuse pas. Vous pourrez l’abandonner depuis le menu du duel, sans rien perdre.') : null);
+    this.ouvrirModal(panel, forcee);
   }
 
   private lancer(prevu: DuelPrevu, resume?: DuelAventure): void {
@@ -859,6 +1000,10 @@ export class AventureApp {
       duel = o.duel;
       this.persist();
     }
+    // M11-A : la rencontre forcée devient un duel (le personnage reprendra sa place au retour)
+    this.force = null;
+    this.rivalScene = null;
+    this.alerte = null;
     this.cacherVille();
     this.ecran = 'duel';
     this.d.shellHost.hidden = true;
@@ -931,6 +1076,7 @@ export class AventureApp {
       : k === 'epreuve' ? duelEpreuve(a as Family, e.competitions.epreuves[a as Family]?.etape ?? 0, e, d.seed, !!e.competitions.epreuves[a as Family]?.gagnee)
       : k === 'joute' ? duelJoute(a as Family, e, d.seed, !!e.competitions.joutes[a as Family]?.gagnee)
       : k === 'champ' ? duelChampionnat(a as 'poule' | 'miroir' | 'finale', e, d.seed, b as Family | undefined)
+      : k === 'rival' && a && isKId(a) ? duelRival(a, e, d.seed)
       : rencontreDef(d.rencontre) ? duelFacultatif(d.rencontre, e, d.seed) : null;
     return base ? { ...base, config: d.config } : null;
   }
@@ -1036,7 +1182,11 @@ export class AventureApp {
       return;
     }
     const comp = rencontre.match(/^(epreuve|joute):(\w+)$/);
-    this.entrerVille(false, comp ? `npc-${comp[1]}-${comp[2]}` : `npc-${rencontre}`);
+    // M11-A : pas de second duel de Kaï au retour d'un duel contre lui ; devant le personnage seulement s'il est encore là
+    this.retourKai = rencontre.startsWith('rival:') || rencontre === 'brasDroit-Cendre' || rencontre === 'rival-kai';
+    const cible = comp ? `${comp[1]}-${comp[2]}` : rencontre;
+    const ici = this.town?.ilotId();
+    this.entrerVille(false, ici && this.posesDe(ici).some((p) => p.id === cible) ? `npc-${cible}` : undefined);
   }
 
   /** P4 et P5 : la foule, Kaï, puis le premier émissaire s'avance (les quatre ont invité). */
@@ -1052,7 +1202,7 @@ export class AventureApp {
 
   // ------------------------------------------------------------------ fenêtres
 
-  dire(titre: string, texte: string, choix: Choix[], apparence?: string): void {
+  dire(titre: string, texte: string, choix: Choix[], apparence?: string, forcee = false): void {
     this.fermerDialogue();
     this.town?.setInputLocked(true);
     const box = h('div', { class: 'ville-dialog', role: 'dialog', 'aria-label': titre });
@@ -1062,7 +1212,7 @@ export class AventureApp {
     }
     const row = h('div', { class: 'ville-choices' }, ...choix.map((c) => h('button', { class: `ville-btn${c.primary ? ' primary' : ''}`, type: 'button', 'data-key': c.key, onclick: () => c.run() }, c.label)));
     box.append(h('div', { class: 'ville-dialog-body' }, h('b', null, titre), h('p', null, texte), row));
-    box.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); this.fermerDialogue(); } });
+    box.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); if (!forcee) this.fermerDialogue(); } });
     document.body.append(box);
     this.dialog = box;
     (row.querySelector<HTMLButtonElement>('.primary') ?? row.querySelector('button'))?.focus({ preventScroll: true });
@@ -1075,11 +1225,11 @@ export class AventureApp {
     this.rafraichir();
   }
 
-  private ouvrirModal(panel: HTMLElement): void {
+  private ouvrirModal(panel: HTMLElement, forcee = false): void {
     this.fermerModal();
     this.town?.setInputLocked(true);
     const m = h('div', { class: 'av-modal', role: 'dialog', 'aria-modal': 'true' }, panel);
-    m.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); this.fermerModal(); } });
+    m.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); if (!forcee) this.fermerModal(); } });
     document.body.append(m);
     this.modal = m;
     m.querySelector<HTMLElement>('.primary, button')?.focus({ preventScroll: true });
@@ -1102,6 +1252,8 @@ export class AventureApp {
   }
 
   private menu(): void {
+    // M11-A : une rencontre forcée ne s'esquive pas par le menu (on peut abandonner le duel, sans perte)
+    if (this.force) return;
     if (this.modal) { this.fermerModal(); return; }
     if (this.dialog) { this.fermerDialogue(); return; }
     this.dire('Menu', 'L’aventure est sauvegardée à chaque étape.', [
@@ -1275,6 +1427,7 @@ function titreRencontre(id: string): string {
   if (fig) return `${fig.nom}, ${fig.titre}`;
   if (k === 'epreuve') return `Épreuve du quartier ${deF(a as Family)}`;
   if (k === 'joute') return `Joute de la maison ${deF(a as Family)}`;
+  if (k === 'rival' && a && isKId(a)) return `Kaï — ${evenementDef(a).titre}`;
   if (k === 'champ') return a === 'poule' ? `Championnat, poule : ${figureDe(b as Family, 'chef').nom}` : a === 'miroir' ? 'Championnat, le Miroir' : 'Championnat, la Finale';
   const r = rencontreDef(id);
   return r ? capital(r.nom) : id;
