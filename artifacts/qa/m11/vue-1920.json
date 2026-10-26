@@ -1,0 +1,91 @@
+{
+  "date": "2026-10-26T06:39:02.020Z",
+  "commit": "19763e9",
+  "viewport": [
+    1920,
+    1080
+  ],
+  "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU",
+  "checks": [
+    "OK la ville en rangs est affichée (QA : dioramas admis)",
+    "OK chapitre I (la Ronce rejointe) par des faits, sans refus (aucun)",
+    "OK aucune rencontre forcée à l’entrée (aucun événement du rival dû avant le premier lieutenant)",
+    "OK un docker du Quai posé (guetteur)",
+    "OK le docker guette ({\"id\":\"rue-docker\",\"at\":{\"x\":-2.4,\"z\":1.4},\"facing\":\"gauche\"})",
+    "OK derrière le guetteur : pas repéré",
+    "OK sur le côté, hors de l’angle : pas repéré",
+    "OK dans le cône : repéré (rencontre forcée « vue »)",
+    "OK la marche du joueur est suspendue pendant l’approche",
+    "OK le docker est venu au joueur (0.95 m)",
+    "OK un seul choix : relever le défi",
+    "OK Échap ne ferme pas le dialogue d’un duel forcé",
+    "OK préparation d’un duel forcé : pas de « Plus tard », la mention de l’abandon possible",
+    "OK Échap ne ferme pas la préparation forcée",
+    "OK issue notée pour le repos ({\"rue-docker\":{\"issue\":\"victoire\",\"battement\":1,\"chapitre\":\"I\"}})",
+    "OK retour : le docker est parti, plus de rencontre forcée",
+    "OK le cadet de la Ronce vaincu (fait)",
+    "OK au point de décision suivant sur le Quai, Kaï surgit (K1)",
+    "OK réplique de l’événement (Kaï — La Braise)",
+    "OK Kaï est venu au joueur (0.95 m)",
+    "OK préparation d’un duel forcé : pas de « Plus tard », la mention de l’abandon possible",
+    "OK Échap ne ferme pas la préparation forcée",
+    "OK défaite : K1 accompli (l’histoire continue)",
+    "OK au retour : pas de second Kaï",
+    "OK sons demandés : « repère » et « rival » (ui, repere, ui-retour, rival)",
+    "OK coupé en QA : aucun contexte audio créé",
+    "OK accueil au repos : aucun réglage du son affiché",
+    "OK Options : son coupé et volume à 60 %, mémorisés ({\"volume\":0.6,\"coupe\":true})",
+    "OK console : aucune erreur"
+  ],
+  "steps": [
+    {
+      "name": "hors-de-vue",
+      "file": "screenshots/qa/m11/vue-1920/01-hors-de-vue.png"
+    },
+    {
+      "name": "repere",
+      "file": "screenshots/qa/m11/vue-1920/02-repere.png"
+    },
+    {
+      "name": "dialogue-ouverture",
+      "file": "screenshots/qa/m11/vue-1920/03-dialogue-ouverture.png"
+    },
+    {
+      "name": "preparation-forcee",
+      "file": "screenshots/qa/m11/vue-1920/04-preparation-forcee.png"
+    },
+    {
+      "name": "duel",
+      "file": "screenshots/qa/m11/vue-1920/05-duel.png"
+    },
+    {
+      "name": "retour",
+      "file": "screenshots/qa/m11/vue-1920/06-retour.png"
+    },
+    {
+      "name": "kai-surgit",
+      "file": "screenshots/qa/m11/vue-1920/07-kai-surgit.png"
+    },
+    {
+      "name": "kai-defi",
+      "file": "screenshots/qa/m11/vue-1920/08-kai-defi.png"
+    },
+    {
+      "name": "preparation-forcee",
+      "file": "screenshots/qa/m11/vue-1920/09-preparation-forcee.png"
+    },
+    {
+      "name": "duel",
+      "file": "screenshots/qa/m11/vue-1920/10-duel.png"
+    },
+    {
+      "name": "apres-kai",
+      "file": "screenshots/qa/m11/vue-1920/11-apres-kai.png"
+    },
+    {
+      "name": "options-son",
+      "file": "screenshots/qa/m11/vue-1920/12-options-son.png"
+    }
+  ],
+  "console": []
+}

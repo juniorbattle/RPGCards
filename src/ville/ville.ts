@@ -567,7 +567,7 @@ export function createTown(o: TownOptions): Town {
     }
     for (const e of npcSprites) if (e.marker.visible) {
       const at = npcState.get(e.n.id)?.pos ?? e.n.at;
-      e.marker.position.set(at.x, markerY() + (o.freeze || e.kind === 'vu' ? 0 : Math.sin(time * 2.4 + e.n.at.x) * 0.05), at.z + 0.02);
+      e.marker.position.set(at.x, markerY() + (e.kind === 'vu' ? 0.3 : o.freeze ? 0 : Math.sin(time * 2.4 + e.n.at.x) * 0.05), at.z + 0.02);
     }
     for (const p of passers) p.s.set({ x: p.x, z: p.a.z }, p.dir > 0 ? 'droite' : 'gauche', p.phase, !o.freeze && !p.blocked, time);
     focus.set(walker.pos.x, 0.9, walker.pos.z).project(camera);
@@ -763,6 +763,8 @@ export function createTown(o: TownOptions): Town {
         if (k !== e.kind) {
           e.kind = k;
           e.marker.visible = !!k;
+          // M11-A : la bulle d'alerte d'un guetteur, plus grande que les repères
+          e.marker.scale.setScalar(k === 'vu' ? 1.7 : 1);
           if (k) (e.marker.material as THREE.MeshBasicMaterial).map = markerTexture(k);
         }
       }

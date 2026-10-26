@@ -1,9 +1,9 @@
 {
-  "date": "2026-10-26T05:24:53.868Z",
+  "date": "2026-10-26T08:13:12.855Z",
   "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU",
   "builds": {
     "avant": "bd93beb",
-    "apres": "be4e941+arbre de travail"
+    "apres": "3a52eab+arbre de travail"
   },
   "identical": true,
   "results": [
