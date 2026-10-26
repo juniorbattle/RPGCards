@@ -1,17 +1,68 @@
 {
-  "date": "2026-10-25T17:50:22.781Z",
+  "date": "2026-10-26T02:19:36.051Z",
   "feuilles": {
     "pnj-docker": {
       "brut": "pnj-docker-p1",
       "checks": [
-        "OK grille d’art 64 × 96, pas 3.58 × 3.92, 46 couleurs, ancrage 32,93, figure 71 px d’art, rien de rogné",
+        "OK grille d’art 64 × 96, pas 3.58 × 3.92, 45 couleurs, ancrage 32,93, figure 71 px d’art, rien de rogné",
         "OK hauteurs des 15 figures régulières (71 à 73 px d’art)",
         "OK ton clé peau présent sur au moins deux niveaux : [1025,658,2098,0]",
         "OK ton clé cheveux présent sur au moins deux niveaux : [278,838,1193,1026]",
-        "OK ton clé tenue présent sur au moins deux niveaux : [899,1673,1731,502]",
+        "OK ton clé tenue présent sur au moins deux niveaux : [889,1673,1731,502]",
         "OK ton clé chemise présent sur au moins deux niveaux : [282,110,622,0]",
-        "OK feuille ≤ 1 Mo : 76 Ko, 960 × 864"
+        "OK feuille ≤ 1 Mo : 76 Ko, 960 × 864",
+        "OK yeux de face rendus pareils sur les 5 cadres (0, 1 miroir, 2, 3, 4) ; yeux de profil repérés : 5 sur 5"
       ],
+      "yeux": {
+        "poses": [
+          {
+            "figure": 0,
+            "miroir": false,
+            "recalage": [
+              -4,
+              0
+            ],
+            "ecart": 8701
+          },
+          {
+            "figure": 1,
+            "miroir": true,
+            "recalage": [
+              -1,
+              0
+            ],
+            "ecart": 6958
+          },
+          {
+            "figure": 2,
+            "miroir": false,
+            "recalage": [
+              0,
+              0
+            ],
+            "ecart": 6369
+          },
+          {
+            "figure": 3,
+            "miroir": false,
+            "recalage": [
+              1,
+              0
+            ],
+            "ecart": 8788
+          },
+          {
+            "figure": 4,
+            "miroir": false,
+            "recalage": [
+              -2,
+              1
+            ],
+            "ecart": 5919
+          }
+        ],
+        "manques": []
+      },
       "pitch": {
         "x": 3.58,
         "y": 3.92,
@@ -25,7 +76,7 @@
         93
       ],
       "figureH": 71,
-      "colors": 46,
+      "colors": 45,
       "counts": {
         "peau": [
           1025,
@@ -40,7 +91,7 @@
           1026
         ],
         "tenue": [
-          899,
+          889,
           1673,
           1731,
           502
@@ -75,8 +126,59 @@
       "checks": [
         "OK grille d’art 64 × 96, pas 3.865 × 3.305, 32 couleurs, ancrage 32,93, figure 74 px d’art, rien de rogné",
         "OK hauteurs des 15 figures régulières (70 à 74 px d’art)",
-        "OK feuille ≤ 1 Mo : 78 Ko, 960 × 864"
+        "OK feuille ≤ 1 Mo : 78 Ko, 960 × 864",
+        "OK yeux de face rendus pareils sur les 5 cadres (0, 1, 2, 3, 4) ; yeux de profil repérés : 5 sur 5"
       ],
+      "yeux": {
+        "poses": [
+          {
+            "figure": 0,
+            "miroir": false,
+            "recalage": [
+              0,
+              0
+            ],
+            "ecart": 10484
+          },
+          {
+            "figure": 1,
+            "miroir": false,
+            "recalage": [
+              -3,
+              1
+            ],
+            "ecart": 6715
+          },
+          {
+            "figure": 2,
+            "miroir": false,
+            "recalage": [
+              0,
+              0
+            ],
+            "ecart": 10311
+          },
+          {
+            "figure": 3,
+            "miroir": false,
+            "recalage": [
+              1,
+              0
+            ],
+            "ecart": 10348
+          },
+          {
+            "figure": 4,
+            "miroir": false,
+            "recalage": [
+              0,
+              0
+            ],
+            "ecart": 10174
+          }
+        ],
+        "manques": []
+      },
       "pitch": {
         "x": 3.865,
         "y": 3.305,
@@ -117,10 +219,61 @@
         "OK hauteurs des 15 figures régulières (84 à 91 px d’art)",
         "OK ton clé peau présent sur au moins deux niveaux : [803,625,1501,0]",
         "OK ton clé cheveux présent sur au moins deux niveaux : [1480,1489,2302,0]",
-        "OK ton clé tenue présent sur au moins deux niveaux : [1709,2300,5549,1227]",
+        "OK ton clé tenue présent sur au moins deux niveaux : [1708,2300,5549,1227]",
         "OK ton clé chemise présent sur au moins deux niveaux : [91,60,80,0]",
-        "OK feuille ≤ 1 Mo : 93 Ko, 960 × 864"
+        "OK feuille ≤ 1 Mo : 93 Ko, 960 × 864",
+        "OK yeux de face rendus pareils sur les 5 cadres (0 miroir, 1 miroir, 2 miroir, 3 miroir, 4 miroir) ; yeux de profil repérés : 5 sur 5"
       ],
+      "yeux": {
+        "poses": [
+          {
+            "figure": 0,
+            "miroir": true,
+            "recalage": [
+              1,
+              0
+            ],
+            "ecart": 6510
+          },
+          {
+            "figure": 1,
+            "miroir": true,
+            "recalage": [
+              0,
+              -1
+            ],
+            "ecart": 6519
+          },
+          {
+            "figure": 2,
+            "miroir": true,
+            "recalage": [
+              2,
+              0
+            ],
+            "ecart": 4575
+          },
+          {
+            "figure": 3,
+            "miroir": true,
+            "recalage": [
+              1,
+              0
+            ],
+            "ecart": 7312
+          },
+          {
+            "figure": 4,
+            "miroir": true,
+            "recalage": [
+              0,
+              0
+            ],
+            "ecart": 4650
+          }
+        ],
+        "manques": []
+      },
       "pitch": {
         "x": 3.37,
         "y": 2.985,
@@ -149,7 +302,7 @@
           0
         ],
         "tenue": [
-          1709,
+          1708,
           2300,
           5549,
           1227
@@ -186,10 +339,61 @@
         "OK hauteurs des 15 figures régulières (84 à 85 px d’art)",
         "OK ton clé peau présent sur au moins deux niveaux : [942,439,1804,0]",
         "OK ton clé cheveux présent sur au moins deux niveaux : [728,1714,2050,573]",
-        "OK ton clé tenue présent sur au moins deux niveaux : [1279,1985,3995,620]",
+        "OK ton clé tenue présent sur au moins deux niveaux : [1266,1985,3995,620]",
         "OK ton clé chemise présent sur au moins deux niveaux : [139,79,238,0]",
-        "OK feuille ≤ 1 Mo : 86 Ko, 960 × 864"
+        "OK feuille ≤ 1 Mo : 86 Ko, 960 × 864",
+        "OK yeux de face rendus pareils sur les 5 cadres (0 miroir, 1 miroir, 2 miroir, 3 miroir, 4 miroir) ; yeux de profil repérés : 5 sur 5"
       ],
+      "yeux": {
+        "poses": [
+          {
+            "figure": 0,
+            "miroir": true,
+            "recalage": [
+              1,
+              0
+            ],
+            "ecart": 4873
+          },
+          {
+            "figure": 1,
+            "miroir": true,
+            "recalage": [
+              0,
+              0
+            ],
+            "ecart": 4580
+          },
+          {
+            "figure": 2,
+            "miroir": true,
+            "recalage": [
+              0,
+              0
+            ],
+            "ecart": 3840
+          },
+          {
+            "figure": 3,
+            "miroir": true,
+            "recalage": [
+              0,
+              -1
+            ],
+            "ecart": 6520
+          },
+          {
+            "figure": 4,
+            "miroir": true,
+            "recalage": [
+              0,
+              0
+            ],
+            "ecart": 5347
+          }
+        ],
+        "manques": []
+      },
       "pitch": {
         "x": 3.2,
         "y": 3.39,
@@ -218,7 +422,7 @@
           573
         ],
         "tenue": [
-          1279,
+          1266,
           1985,
           3995,
           620
@@ -255,10 +459,61 @@
         "OK hauteurs des 15 figures régulières (76 à 81 px d’art)",
         "OK ton clé peau présent sur au moins deux niveaux : [542,384,847,0]",
         "OK ton clé cheveux présent sur au moins deux niveaux : [773,1329,2782,838]",
-        "OK ton clé tenue présent sur au moins deux niveaux : [1617,3002,6070,1025]",
+        "OK ton clé tenue présent sur au moins deux niveaux : [1612,3001,6070,1025]",
         "OK ton clé chemise présent sur au moins deux niveaux : [144,108,143,0]",
-        "OK feuille ≤ 1 Mo : 80 Ko, 960 × 864"
+        "OK feuille ≤ 1 Mo : 80 Ko, 960 × 864",
+        "OK yeux de face rendus pareils sur les 5 cadres (0, 1, 2, 3, 4) ; yeux de profil repérés : 5 sur 5"
       ],
+      "yeux": {
+        "poses": [
+          {
+            "figure": 0,
+            "miroir": false,
+            "recalage": [
+              -2,
+              1
+            ],
+            "ecart": 5581
+          },
+          {
+            "figure": 1,
+            "miroir": false,
+            "recalage": [
+              -1,
+              1
+            ],
+            "ecart": 7602
+          },
+          {
+            "figure": 2,
+            "miroir": false,
+            "recalage": [
+              -1,
+              0
+            ],
+            "ecart": 7688
+          },
+          {
+            "figure": 3,
+            "miroir": false,
+            "recalage": [
+              -4,
+              1
+            ],
+            "ecart": 6848
+          },
+          {
+            "figure": 4,
+            "miroir": false,
+            "recalage": [
+              -1,
+              1
+            ],
+            "ecart": 7735
+          }
+        ],
+        "manques": []
+      },
       "pitch": {
         "x": 3.635,
         "y": 3.74,
@@ -287,8 +542,8 @@
           838
         ],
         "tenue": [
-          1617,
-          3002,
+          1612,
+          3001,
           6070,
           1025
         ],
@@ -442,8 +697,59 @@
       "checks": [
         "OK grille d’art 64 × 96, pas 3.435 × 3.445, 32 couleurs, ancrage 32,93, figure 84 px d’art, rien de rogné",
         "OK hauteurs des 15 figures régulières (76 à 84 px d’art)",
-        "OK feuille ≤ 1 Mo : 86 Ko, 960 × 864"
+        "OK feuille ≤ 1 Mo : 86 Ko, 960 × 864",
+        "OK yeux de face rendus pareils sur les 5 cadres (0, 1 miroir, 2, 3 miroir, 4) ; yeux de profil repérés : 5 sur 5"
       ],
+      "yeux": {
+        "poses": [
+          {
+            "figure": 0,
+            "miroir": false,
+            "recalage": [
+              -1,
+              0
+            ],
+            "ecart": 6105
+          },
+          {
+            "figure": 1,
+            "miroir": true,
+            "recalage": [
+              -1,
+              -1
+            ],
+            "ecart": 6802
+          },
+          {
+            "figure": 2,
+            "miroir": false,
+            "recalage": [
+              -2,
+              1
+            ],
+            "ecart": 5499
+          },
+          {
+            "figure": 3,
+            "miroir": true,
+            "recalage": [
+              -2,
+              -1
+            ],
+            "ecart": 5979
+          },
+          {
+            "figure": 4,
+            "miroir": false,
+            "recalage": [
+              -1,
+              0
+            ],
+            "ecart": 5894
+          }
+        ],
+        "manques": []
+      },
       "pitch": {
         "x": 3.435,
         "y": 3.445,
@@ -522,8 +828,59 @@
       "checks": [
         "OK grille d’art 64 × 96, pas 3.585 × 3.595, 32 couleurs, ancrage 32,93, figure 83 px d’art, rien de rogné",
         "OK hauteurs des 15 figures régulières (81 à 83 px d’art)",
-        "OK feuille ≤ 1 Mo : 98 Ko, 960 × 864"
+        "OK feuille ≤ 1 Mo : 98 Ko, 960 × 864",
+        "OK yeux de face rendus pareils sur les 5 cadres (0, 1, 2, 3, 4) ; yeux de profil repérés : 5 sur 5"
       ],
+      "yeux": {
+        "poses": [
+          {
+            "figure": 0,
+            "miroir": false,
+            "recalage": [
+              0,
+              0
+            ],
+            "ecart": 7285
+          },
+          {
+            "figure": 1,
+            "miroir": false,
+            "recalage": [
+              0,
+              0
+            ],
+            "ecart": 7385
+          },
+          {
+            "figure": 2,
+            "miroir": false,
+            "recalage": [
+              0,
+              0
+            ],
+            "ecart": 7723
+          },
+          {
+            "figure": 3,
+            "miroir": false,
+            "recalage": [
+              0,
+              0
+            ],
+            "ecart": 7669
+          },
+          {
+            "figure": 4,
+            "miroir": false,
+            "recalage": [
+              3,
+              0
+            ],
+            "ecart": 5621
+          }
+        ],
+        "manques": []
+      },
       "pitch": {
         "x": 3.585,
         "y": 3.595,

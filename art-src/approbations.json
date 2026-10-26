@@ -124,36 +124,6 @@
       "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
     },
     {
-      "fichier": "public/sprites/pnj-docker.png",
-      "sha256": "5212a942a0dad19bb5d4ad9dce20de2bbf506c1dcd91933b0076a5019e4e823e",
-      "date": "2026-10-25",
-      "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128"
-    },
-    {
-      "fichier": "public/sprites/braise.png",
-      "sha256": "77d7c465e7e05dfb513520feaba2b9466ce65c9543c2772a8cc7d5c5c840f07c",
-      "date": "2026-10-25",
-      "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128"
-    },
-    {
-      "fichier": "public/sprites/pnj-marchande.png",
-      "sha256": "0cf5f11331527822f9d77b344fc5729b6c10f96df8dc70713813d4e42af7a06a",
-      "date": "2026-10-25",
-      "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128"
-    },
-    {
-      "fichier": "public/sprites/pnj-commis.png",
-      "sha256": "342f0053abd6b58fd801ed59489dc6a1ebaa2121d56ba48411da319736702a8a",
-      "date": "2026-10-25",
-      "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128"
-    },
-    {
-      "fichier": "public/sprites/pnj-joueuse.png",
-      "sha256": "be9b826d7a734788cddd9cb689d93f2d4b62f4d681fef8c0aee2493ae5fb023c",
-      "date": "2026-10-25",
-      "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128"
-    },
-    {
       "fichier": "public/sprites/ronce.png",
       "sha256": "a4dd0136e00a7c1f6fbcc289b834dc1620d51c73753ba444514876c68be81312",
       "date": "2026-10-25",
@@ -172,20 +142,8 @@
       "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128"
     },
     {
-      "fichier": "public/sprites/chef-cendre.png",
-      "sha256": "dfbf1b605f14f2520a4683e6e31b65f6953218fe46c7629c6a798811e6b46917",
-      "date": "2026-10-25",
-      "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128"
-    },
-    {
       "fichier": "public/sprites/chef-ronce.png",
       "sha256": "c736ebbe22e2a4bd3386af2326b80782371a4ba2c5f7da66e6a0dabee21f0f7a",
-      "date": "2026-10-25",
-      "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128"
-    },
-    {
-      "fichier": "public/sprites/chef-voile.png",
-      "sha256": "23efe92894529540a957d780a1a5451bd628010d448906a02ddedb2eb61e048d",
       "date": "2026-10-25",
       "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128"
     },
@@ -228,6 +186,62 @@
       "decision": "ordre explicite du responsable (2026-10-25, après les planches de la passe 129 : screenshots/qa/m09/quartiers-ajoutes/) : « J’approuve les 4 façades des quartiers (vieux phare, maison de la Ronce, hôtels à arcades, Observatoire) : passe-les à approved: true par le registre, dans une passe à part, pour ouvrir la Place du Fanal et la Ville haute. » ; passe 130",
       "caduque": "2026-10-25",
       "raison": "planche retraitée par script sur décision du responsable (passe 133, « Broder l’Astre » : emblème de l’Astre brodé sur les bannières de l’Observatoire, passe 134) ; empreinte nouvelle : approbation caduque (AGENTS, « Images de la ville »), nouvelle approbation sur ordre explicite, dans une passe à part"
+    },
+    {
+      "fichier": "public/sprites/pnj-docker.png",
+      "sha256": "5212a942a0dad19bb5d4ad9dce20de2bbf506c1dcd91933b0076a5019e4e823e",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128",
+      "caduque": "2026-10-25",
+      "raison": "feuille retraitée par script (passe 138, retour du responsable : yeux dissemblables) : yeux de face rendus pareils, aucun ton clé de vêtement dans les yeux et les sourcils ; empreinte nouvelle : approbation caduque (AGENTS, « Images de la ville »), nouvelle approbation sur ordre explicite, dans une passe à part"
+    },
+    {
+      "fichier": "public/sprites/braise.png",
+      "sha256": "77d7c465e7e05dfb513520feaba2b9466ce65c9543c2772a8cc7d5c5c840f07c",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128",
+      "caduque": "2026-10-25",
+      "raison": "feuille retraitée par script (passe 138, retour du responsable : yeux dissemblables) : yeux de face rendus pareils, aucun ton clé de vêtement dans les yeux et les sourcils ; empreinte nouvelle : approbation caduque (AGENTS, « Images de la ville »), nouvelle approbation sur ordre explicite, dans une passe à part"
+    },
+    {
+      "fichier": "public/sprites/pnj-marchande.png",
+      "sha256": "0cf5f11331527822f9d77b344fc5729b6c10f96df8dc70713813d4e42af7a06a",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128",
+      "caduque": "2026-10-25",
+      "raison": "feuille retraitée par script (passe 138, retour du responsable : yeux dissemblables) : yeux de face rendus pareils, aucun ton clé de vêtement dans les yeux et les sourcils ; empreinte nouvelle : approbation caduque (AGENTS, « Images de la ville »), nouvelle approbation sur ordre explicite, dans une passe à part"
+    },
+    {
+      "fichier": "public/sprites/pnj-commis.png",
+      "sha256": "342f0053abd6b58fd801ed59489dc6a1ebaa2121d56ba48411da319736702a8a",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128",
+      "caduque": "2026-10-25",
+      "raison": "feuille retraitée par script (passe 138, retour du responsable : yeux dissemblables) : yeux de face rendus pareils, aucun ton clé de vêtement dans les yeux et les sourcils ; empreinte nouvelle : approbation caduque (AGENTS, « Images de la ville »), nouvelle approbation sur ordre explicite, dans une passe à part"
+    },
+    {
+      "fichier": "public/sprites/pnj-joueuse.png",
+      "sha256": "be9b826d7a734788cddd9cb689d93f2d4b62f4d681fef8c0aee2493ae5fb023c",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128",
+      "caduque": "2026-10-25",
+      "raison": "feuille retraitée par script (passe 138, retour du responsable : yeux dissemblables) : yeux de face rendus pareils, aucun ton clé de vêtement dans les yeux et les sourcils ; empreinte nouvelle : approbation caduque (AGENTS, « Images de la ville »), nouvelle approbation sur ordre explicite, dans une passe à part"
+    },
+    {
+      "fichier": "public/sprites/chef-cendre.png",
+      "sha256": "dfbf1b605f14f2520a4683e6e31b65f6953218fe46c7629c6a798811e6b46917",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128",
+      "caduque": "2026-10-25",
+      "raison": "feuille retraitée par script (passe 138, retour du responsable : yeux dissemblables) : yeux de face rendus pareils, aucun ton clé de vêtement dans les yeux et les sourcils ; empreinte nouvelle : approbation caduque (AGENTS, « Images de la ville »), nouvelle approbation sur ordre explicite, dans une passe à part"
+    },
+    {
+      "fichier": "public/sprites/chef-voile.png",
+      "sha256": "23efe92894529540a957d780a1a5451bd628010d448906a02ddedb2eb61e048d",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128",
+      "caduque": "2026-10-25",
+      "raison": "feuille retraitée par script (passe 138, retour du responsable : yeux dissemblables) : yeux de face rendus pareils, aucun ton clé de vêtement dans les yeux et les sourcils ; empreinte nouvelle : approbation caduque (AGENTS, « Images de la ville »), nouvelle approbation sur ordre explicite, dans une passe à part"
     }
   ]
 }

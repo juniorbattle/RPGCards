@@ -638,3 +638,20 @@ dans le manifeste (les deux lanternes murales de la porte sont désormais repér
 dorés des bannières). La planche retraitée a une empreinte nouvelle : son approbation de la passe 130 est **caduque**
 (registre : `caduques`), la Ville haute est **fermée hors QA** jusqu'à une nouvelle approbation, sur ordre explicite du
 responsable, dans une passe à part. Planche avant / après : `screenshots/qa/m09/finalisation/bannieres/avant-apres.png`.
+
+**Yeux des feuilles des PNJ (passe 138, 2026-10-25).** Retour du responsable (capture du docker en jeu) : « les yeux ne sont
+pas pareils ». Cause, dans notre traitement et non dans la source (les bruts dessinent deux yeux semblables) : la grille d'art
+mesure un pas par axe (docker : 3,58 × 3,92 px) mais échantillonne avec leur moyenne et une phase unique pour toute l'image ;
+le cœur des blocs tombe à cheval sur deux pixels du dessin, et les deux yeux (détails d'un pixel) sont lus à deux phases
+différentes ; en plus, des pixels de l'iris pris pour des tons clés de la tenue ou de la chemise étaient recolorés en jeu (le
+bleu dans un œil). Audit des 13 feuilles : yeux dissemblables chez les quatre gabarits, Kaï, Bran et Ilse ; les cinq autres
+et le joueur corrects. Correctif **par script** (`processSheet`, option `yeux`, `tools/m09-traitement-images.mjs`), appliqué à
+ces 7 feuilles seulement (aucune image générée) : les yeux sont repérés dans le brut par leur blanc entouré de peau, l'œil
+entier par les pixels qui ne sont pas de la peau ; de face, les deux yeux du brut, recalés tels quels ou en miroir (selon la
+feuille), sont moyennés en un seul dessin, échantillonné à la phase qui le rend le mieux et posé aux deux places après la
+palette ; dans les yeux, les sourcils et les joues, aucun ton clé de vêtement ni d'accent, et les ombres orange des sourcils
+rattachées aux cheveux. Palette et niveaux des tons clés calculés comme avant : **150 à 275 pixels d'art changés par feuille,
+tous dans les visages** (rien de dos, rien sous la tête) ; feuille du joueur retraitée identique à son empreinte. Planches :
+`screenshots/qa/m09/finalisation/yeux/` (`tools/m09-pnj-yeux.ts`, avant / après recolorés ; en jeu : `en-jeu/`). Les 7
+approbations de la passe 128 sont **caduques** (registre : `caduques`, 29 images) ; hors QA, ces 7 personnages reviennent au
+dessin par code jusqu'à une nouvelle approbation, sur ordre explicite du responsable, dans une passe à part.

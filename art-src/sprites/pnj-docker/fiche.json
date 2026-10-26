@@ -1,6 +1,6 @@
 {
   "id": "pnj-docker",
-  "statut": "APPROUVÉ par le responsable le 2026-10-25 (ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128) : admis hors QA tant que l’empreinte reste 5212a942a0da…",
+  "statut": "feuille des PNJ de la ville (gabarit docker (dockers, membres, passants), recoloré par graine), porte de la deuxième reprise de M09 (passe 125), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas décidé",
   "auteur": "Claude Code (session de reprise de M09, passe 125), à la demande du responsable : budget « 16, avec une porte » (d’abord 2 feuilles posées in situ sur une planche, puis les 10 autres ; 4 images pour régénérer une feuille ratée)",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-pnj-porte.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -66,16 +66,17 @@
       "pieds alignés sur une même ligne, tête centrée",
       "tons clés (peau, cheveux, tenue, chemise) ramenés exactement sur 64, 128, 191, 255",
       "palette : couleurs naturelles réduites (k-moyennes)",
+      "yeux (passe 138) : de face, les deux yeux du brut recalés (tels quels ou en miroir) et moyennés en un seul dessin, échantillonné à la phase qui le rend le mieux et posé aux deux places après la palette ; aucun ton clé de vêtement ni d’accent dans les yeux et les sourcils (face et profil)",
       "agrandissement ×3 au plus proche"
     ]
   },
   "sortie": {
     "fichier": "public/sprites/pnj-docker.png",
-    "sha256": "5212a942a0dad19bb5d4ad9dce20de2bbf506c1dcd91933b0076a5019e4e823e",
-    "octets": 78262,
+    "sha256": "1236986ad7cb3e1363ef62b4bf10dcb588e500621dc49576c012d93cdbbd38f8",
+    "octets": 77995,
     "entree_du_manifeste": {
       "file": "pnj-docker.png",
-      "sha256": "5212a942a0dad19bb5d4ad9dce20de2bbf506c1dcd91933b0076a5019e4e823e",
+      "sha256": "1236986ad7cb3e1363ef62b4bf10dcb588e500621dc49576c012d93cdbbd38f8",
       "cell": [
         64,
         96
@@ -113,7 +114,7 @@
         1026
       ],
       "tenue": [
-        899,
+        889,
         1673,
         1731,
         502
@@ -125,18 +126,12 @@
         0
       ]
     },
-    "couleurs": 46
+    "couleurs": 45
   },
   "chaine_des_empreintes": [
     "e7dd6ceedec3b8218514e56eb6af8af1b21526d804c3914703bef0472233454c (entrée : art-gen/2026-10-25-pnj-porte/pnj-docker-entree.png)",
     "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50 (entrée : public/sprites/player.png)",
     "f765d9421d86a9f67c8c6c3def2f7b0a8410f3d0191334e9e1d4ef0c6944addb (brut)",
-    "5212a942a0dad19bb5d4ad9dce20de2bbf506c1dcd91933b0076a5019e4e823e (feuille ×3)"
-  ],
-  "approbation": {
-    "date": "2026-10-25",
-    "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128",
-    "fichier": "public/sprites/pnj-docker.png",
-    "sha256": "5212a942a0dad19bb5d4ad9dce20de2bbf506c1dcd91933b0076a5019e4e823e"
-  }
+    "1236986ad7cb3e1363ef62b4bf10dcb588e500621dc49576c012d93cdbbd38f8 (feuille ×3)"
+  ]
 }
