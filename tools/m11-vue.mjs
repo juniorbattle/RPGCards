@@ -62,7 +62,7 @@ try {
     await frames(4);
   };
 
-  await p.goto(`${server.base}/?aventure=1&qa=1&vue=1&aiDelay=0&reducedMotion=1&profileSeed=31`, { timeout: Number(process.env.LQV_QA_NAV_TIMEOUT) || 90000 });
+  await p.goto(`${server.base}/?aventure=1&qa=1&vue=1&aiDelay=0&reducedMotion=1&vuePause=5000&profileSeed=31`, { timeout: Number(process.env.LQV_QA_NAV_TIMEOUT) || 90000 });
   renderer = rendererLabel(await webglRenderer(p).catch(() => null));
   await p.click('[data-key="av-new"]');
   await p.fill('[data-key="av-name"]', 'Lou');
@@ -99,7 +99,7 @@ try {
   await placer(at(3), 'dos');
   await p.waitForFunction(() => window.__lqvAventure.qaVue().force?.kind === 'vue', null, { timeout: 30000 });
   check(true, 'dans le cône : repéré (rencontre forcée « vue »)');
-  await shot('repere', 200);
+  await shot('repere', 2500);
   await p.waitForSelector('.ville-dialog [data-key="dlg-duel"]', { timeout: 60000 });
   const npc = await av(() => { const t = window.__lqvAventure.town; return { j: t.walker().pos, d: t.npcAt('pnj-docker-1') }; });
   check(Math.hypot(npc.j.x - at(3).x, npc.j.z - at(3).z) < 0.05, 'la marche du joueur est suspendue pendant l’approche');
@@ -122,7 +122,7 @@ try {
   // la ville se relit (`qaFaits` : un point de décision sur le Quai) : Kaï surgit
   await p.waitForFunction(() => window.__lqvAventure.qaVue().force?.kind === 'rival', null, { timeout: 60000 });
   check((await vue()).rival === 'K1', 'au point de décision suivant sur le Quai, Kaï surgit (K1)');
-  await shot('kai-surgit', 200);
+  await shot('kai-surgit', 2500);
   await p.waitForSelector('.ville-dialog [data-key="dlg-duel"]', { timeout: 60000 });
   const titre = await p.textContent('.ville-dialog b');
   check(/Kaï — La Braise/.test(titre ?? ''), `réplique de l’événement (${titre})`);

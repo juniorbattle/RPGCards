@@ -51,6 +51,21 @@ d'approbation changé ; son coupé en QA ; sauvegardes : `aventure/1` migrée sa
   attendu négligeable : quelques segments échantillonnés par image).
 - Lire la fiche et y répondre.
 
+### 2 bis. Essayer M11 en local (mode d'emploi)
+
+- **Rencontres en vue** : `?aventure=1`, nouvelle aventure, rejoindre une famille ; sur le Quai, les joueurs de cartes
+  (« ! » au-dessus de la tête) regardent devant eux : entrer dans leur regard, à moins de 4,5 m, déclenche la bulle, leur
+  approche et le duel. Passer derrière eux ou à l'abri d'un étal les évite. Plus vite : `?aventure=1&depart=II` (heure de
+  ville : une aventure d'essai au chapitre II).
+- **Kaï** : battre le cadet de sa famille, puis revenir au Quai (K1) ; les autres moments viennent avec les chefs
+  vaincus (K2 à K4), le Championnat (K5) et le titre (K6). Journal : « Kaï, la Braise du quai ».
+- **Tempéraments** : la préparation d'un duel de rue dit le tempérament de l'adversaire (« Tempérament : vicieux. ») ;
+  aux chapitres III à V, les mêmes PNJ jouent plus dur.
+- **Son** : jeu standard, Options (Son, Volume) ; aventure, menu « Son ». Coupé avec `?son=0` ; en QA (`?qa=1`),
+  seulement avec `?son=1`.
+- **QA** : `npm run build && npm run qa:vue` (ajouter `LQV_VP=1920x1080` pour l'autre taille ; en local, retirer
+  `reducedMotion=1` de l'adresse du script pour voir la marche à pied).
+
 ## 3. Ce que la session a choisi seule (à confirmer ou défaire)
 
 Voir la fiche. En bref : valeurs de la vue (4,5 m, 32°, 0,95 m, repos) ; liste des guetteurs ; duel forcé sans « Pas
