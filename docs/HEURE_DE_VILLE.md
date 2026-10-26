@@ -4,6 +4,10 @@
 GPU réel, et dire si les rencontres sont **non intrusives**. Préparée en passe 137 (finalisation de la ville, décision du
 responsable « Tout préparer ») ; le verdict va dans la fiche d'arbitrages de la finalisation.
 
+> **Verdict du responsable (2026-10-26, passe 141 ; fiche <https://claude.ai/artifact/WtuBiKyjVKVrkNEXb1rFpX>, V1) :**
+> rencontres **non intrusives : garder**. Le directeur garde sa densité ; la page reste le mode d'emploi
+> pour rejouer une heure (points de départ, heure simulée).
+
 ## Lancer le jeu, hors QA (comme un joueur)
 
 Construire puis servir le jeu :

@@ -157,3 +157,6 @@ grammaire des rangs.
 > (quartiers ajoutés, ville en rangs seulement) : `rue-port` et `rue-haute` (duels de rue, délai 2), `rumeur-port` et
 > `rumeur-haute` (répliques propres, délai 1), membre de la Ronce aussi dans la cour de la Ronce, membre de l'Astre aussi
 > sur le parvis de l'Observatoire, l'ombre de Kaï aussi dans chacun ; aucune figure structurante déplacée.
+>
+> **Heure de ville jugée (2026-10-26, passe 141 ; fiche de la finalisation, V1) :** verdict du responsable : les
+> rencontres sont **non intrusives**, le directeur garde sa densité (aucun délai ajouté) ; `docs/HEURE_DE_VILLE.md`.
