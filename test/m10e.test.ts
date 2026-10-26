@@ -231,14 +231,15 @@ describe('M10-E — le Championnat des Champions (PROGRESSION §4)', () => {
 });
 
 describe('M10-E — la ville vivante : membres des familles, rumeurs, l’ombre de Kaï (VILLE_RENCONTRES §7, PROGRESSION §6.2)', () => {
-  const QUARTIER: Record<Family, IlotId> = { Cendre: 'quai', Ronce: 'quai', Voile: 'ruelles', Astre: 'parvis' };
+  // finalisation de la ville (passe 136) : la Ronce aussi au Port, l'Astre aussi dans la Ville haute
+  const QUARTIER: Record<Family, readonly IlotId[]> = { Cendre: ['quai'], Ronce: ['quai', 'port'], Voile: ['ruelles'], Astre: ['parvis', 'haute'] };
 
   it('un membre de chaque famille, dans les rangs de son quartier, dès que le joueur a ses Basics ; un duel de rue de sa maison', () => {
     const [i, ii, iii] = trame();
     for (const f of ['Cendre', 'Ronce', 'Voile', 'Astre'] as const) {
       const r = RENCONTRES.find((x) => x.id === `membre-${f}`)!;
       expect(r.genre).toBe('facultative');
-      expect(r.lieux.every((l) => l.ilot === QUARTIER[f] && l.rangs)).toBe(true);
+      expect(r.lieux.every((l) => QUARTIER[f].includes(l.ilot) && l.rangs)).toBe(true);
       expect(r.dispo(prologue())).toBe(false);
     }
     expect(RENCONTRES.find((x) => x.id === 'membre-Ronce')!.dispo(i!)).toBe(true);
@@ -251,7 +252,7 @@ describe('M10-E — la ville vivante : membres des familles, rumeurs, l’ombre 
 
   it('les rumeurs : une par îlot, un « ? », sans duel ; elles comptent dans la limite de deux rencontres par îlot', () => {
     const rs = RENCONTRES.filter((r) => r.genre === 'ambiance');
-    expect(rs.map((r) => r.lieux[0]!.ilot).sort()).toEqual(['cour', 'parvis', 'quai', 'ruelles']);
+    expect(rs.map((r) => r.lieux[0]!.ilot).sort()).toEqual(['cour', 'haute', 'parvis', 'port', 'quai', 'ruelles']);
     const e = trame()[1]!;
     let d = nouveauDirecteur(6);
     let vues = 0;

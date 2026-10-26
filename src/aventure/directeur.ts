@@ -131,15 +131,17 @@ export const RENCONTRES: readonly RencontreDef[] = [
     dispo: (e) => e.prologue !== null, delai: 2, poids: 1, repere: () => '!',
   },
   // M10-E : un membre de chaque famille, dans les rangs de son quartier, dès que le joueur a les Basics de cette famille
-  // (VILLE_RENCONTRES §7 : duel de rue, répliques de la maison ; aucune carte) ; ville en rangs seulement.
+  // (VILLE_RENCONTRES §7 : duel de rue, répliques de la maison ; aucune carte) ; ville en rangs seulement. Finalisation de
+  // la ville (passe 136) : la Ronce aussi dans la cour de la Ronce (Place du Fanal), l'Astre sur le parvis de
+  // l'Observatoire (Ville haute) ; places ajoutées en fin de liste (l'indice sauvegardé reste valable).
   ...(([
-    ['Cendre', { ilot: 'quai', at: { x: -5.0, z: -14.4 }, facing: 'face', rangs: true }],
-    ['Ronce', { ilot: 'quai', at: { x: 3.0, z: -26.2 }, facing: 'droite', rangs: true }],
-    ['Voile', { ilot: 'ruelles', at: { x: -2.0, z: -35.6 }, facing: 'face', rangs: true }],
-    ['Astre', { ilot: 'parvis', at: { x: -5.6, z: -33.0 }, facing: 'gauche', rangs: true }],
-  ] as const).map(([f, l]): RencontreDef => ({
+    ['Cendre', [{ ilot: 'quai', at: { x: -5.0, z: -14.4 }, facing: 'face', rangs: true }]],
+    ['Ronce', [{ ilot: 'quai', at: { x: 3.0, z: -26.2 }, facing: 'droite', rangs: true }, { ilot: 'port', at: { x: -2.6, z: -31.6 }, facing: 'face', rangs: true }]],
+    ['Voile', [{ ilot: 'ruelles', at: { x: -2.0, z: -35.6 }, facing: 'face', rangs: true }]],
+    ['Astre', [{ ilot: 'parvis', at: { x: -5.6, z: -33.0 }, facing: 'gauche', rangs: true }, { ilot: 'haute', at: { x: -3.0, z: -32.6 }, facing: 'face', rangs: true }]],
+  ] as const).map(([f, ls]): RencontreDef => ({
     id: `membre-${f}`, genre: 'facultative', apparence: MEMBRES_EPREUVE[f][1]!, nom: `${personalityById(MEMBRES_EPREUVE[f][1]!)?.gender === 'f' ? 'une membre' : 'un membre'} ${deF(f)}`,
-    lieux: [l], dispo: (e) => aGain(e.registre, `basics:${f}`), delai: 2, poids: 1, repere: () => '!',
+    lieux: [...ls], dispo: (e) => aGain(e.registre, `basics:${f}`), delai: 2, poids: 1, repere: () => '!',
   }))),
   // M10-E : les rumeurs (ambiance, VILLE_RENCONTRES §7) : un passant par îlot, une réplique « ? » qui suit l'aventure,
   // sans duel ; il repart quand on l'a écouté (ville en rangs seulement).
@@ -185,9 +187,32 @@ export const RENCONTRES: readonly RencontreDef[] = [
   {
     id: 'rival-kai', genre: 'rival', apparence: 'braise', nom: 'Kaï',
     lieux: [{ ilot: 'quai', at: { x: 12.0, z: -13.0 }, facing: 'gauche', bande: { at: { x: 11.8, z: 1.2 }, facing: 'gauche' } }, { ilot: 'parvis', at: { x: 9.2, z: 0.8 }, facing: 'gauche' }, { ilot: 'ruelles', at: { x: -4.8, z: 1.4 }, facing: 'droite' },
-      { ilot: 'parvis', at: { x: 2.6, z: -41.2 }, facing: 'face', rangs: true }, { ilot: 'ruelles', at: { x: 8.0, z: -16.2 }, facing: 'face', rangs: true }, { ilot: 'cour', at: { x: -5.0, z: -6.2 }, facing: 'gauche', rangs: true }],
+      { ilot: 'parvis', at: { x: 2.6, z: -41.2 }, facing: 'face', rangs: true }, { ilot: 'ruelles', at: { x: 8.0, z: -16.2 }, facing: 'face', rangs: true }, { ilot: 'cour', at: { x: -5.0, z: -6.2 }, facing: 'gauche', rangs: true },
+      // finalisation de la ville (passe 136) : sur la Place du Fanal, près de l'étal, et dans la rue des Astronomes
+      { ilot: 'port', at: { x: -6.0, z: -3.4 }, facing: 'face', rangs: true }, { ilot: 'haute', at: { x: -3.0, z: -16.0 }, facing: 'face', rangs: true }],
     dispo: (e) => e.affiliation !== null, delai: 4, poids: 1, maxParChapitre: 1, repere: () => '!',
   },
+  // Finalisation de la ville (passe 136, décision du responsable : « vie facultative » des quartiers ajoutés, aucune
+  // figure déplacée) : dans la Place du Fanal et la Ville haute, un duel de rue et une rumeur chacune (ville en rangs
+  // seulement ; un quartier fermé n'est jamais visité). Places des personnages de démo de ces quartiers (passe 129), sauf
+  // les rumeurs, écartées des lampadaires de la placette des Filets et du jardin des Sphères (vues au navigateur).
+  {
+    id: 'rue-port', genre: 'facultative', apparence: 'pnj-docker-91', nom: 'un docker du Port',
+    lieux: [{ ilot: 'port', at: { x: 4.0, z: -1.0 }, facing: 'gauche', rangs: true }],
+    dispo: (e) => e.prologue !== null, delai: 2, poids: 2, repere: () => '!',
+  },
+  {
+    id: 'rue-haute', genre: 'facultative', apparence: 'pnj-joueuse-92', nom: 'une joueuse de la Ville haute',
+    lieux: [{ ilot: 'haute', at: { x: 3.0, z: -2.2 }, facing: 'gauche', rangs: true }],
+    dispo: (e) => e.prologue !== null, delai: 2, poids: 2, repere: () => '!',
+  },
+  ...(([
+    ['port', 'pnj-commis-93', { x: 11.0, z: -22.2 }, 'gauche'],
+    ['haute', 'pnj-marchande-94', { x: -6.6, z: -22.2 }, 'droite'],
+  ] as const).map(([il, ap, at, facing]): RencontreDef => ({
+    id: `rumeur-${il}`, genre: 'ambiance', apparence: ap, nom: `${personalityById(ap)?.gender === 'f' ? 'une passante' : 'un passant'}`,
+    lieux: [{ ilot: il, at, facing, rangs: true }], dispo: (e) => e.prologue !== null, delai: 1, poids: 1, repere: () => '?',
+  }))),
 ];
 
 export const rencontreDef = (id: string): RencontreDef | undefined => RENCONTRES.find((r) => r.id === id);
