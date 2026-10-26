@@ -286,3 +286,12 @@ recommandée) :**
 3. **Images : « Réserve »** : les 4 images restantes ne sont pas générées (16 sur 20 utilisées).
 4. **Heure de ville : « Tout préparer »** : heure simulée chiffrée, `qa:vivante` étendu aux deux quartiers, page de jeu,
    points de départ par chapitre ; le responsable joue, son verdict va dans la fiche finale.
+
+**Fait (passes 134 à 140) :** Astre brodé et Observatoire réapprouvé (134, 135) ; vie facultative des deux quartiers,
+ADR 032 amendement 8 (136) ; heure de ville préparée, `docs/HEURE_DE_VILLE.md` (137) ; yeux dissemblables des PNJ
+corrigés par script sur 7 feuilles et réapprouvés (138, 139 ; registre : 36 images) ; **jalon de QA complet vert sur la
+Radeon 780M et la RTX 4060** (140 : 54 étapes sur 54, jeu par défaut identique au pixel près au build de la RC, les six
+îlots de la ville mesurés ; `artifacts/qa/m09/finalisation/jalon/synthese.md`). **Fiche d'arbitrages finale :**
+<https://claude.ai/artifact/WtuBiKyjVKVrkNEXb1rFpX> (réception R1 et R2, heure de ville V1, images I1, clôture de M09 C1,
+les deux Observatoires O1, suite S1 : la structure narrative de bout en bout, contrat d'abord), en attente du
+responsable ; ses choix sont consignés ici avant d'agir.

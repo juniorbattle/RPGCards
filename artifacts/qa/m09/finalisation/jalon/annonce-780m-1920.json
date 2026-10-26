@@ -1,0 +1,36 @@
+{
+ "commit": "52c44b5",
+ "viewport": [
+  1920,
+  1080
+ ],
+ "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "ok": true,
+ "checks": [
+  "OK Signature du rival face visible sur le plateau dès son verrouillage",
+  "OK bandeau « SIGNATURE ANNONCÉE » et « Mode : ? »",
+  "OK HUD du rival : « Verrouillé · Signature annoncée »",
+  "OK aucun mode du rival dans sa case Primaire",
+  "OK vue du joueur : identité annoncée, aucune Primaire ni mode du rival",
+  "OK deux annonces au journal (rival puis joueur)",
+  "OK annonces avant la révélation simultanée",
+  "OK ma Signature « ANNONCÉE AU RIVAL » sur le plateau en attendant le rival",
+  "OK la Signature engagée ne revient pas dans la main",
+  "OK console : aucune erreur"
+ ],
+ "steps": [
+  {
+   "name": "annonce-du-rival",
+   "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/0a01192d-adda-4704-b511-ff99260f36dc/scratchpad/jalon-captures/annonce-780m-1920/01-annonce-du-rival.png"
+  },
+  {
+   "name": "deux-signatures-revelees",
+   "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/0a01192d-adda-4704-b511-ff99260f36dc/scratchpad/jalon-captures/annonce-780m-1920/02-deux-signatures-revelees.png"
+  },
+  {
+   "name": "annonce-au-rival",
+   "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/0a01192d-adda-4704-b511-ff99260f36dc/scratchpad/jalon-captures/annonce-780m-1920/03-annonce-au-rival.png"
+  }
+ ],
+ "issues": []
+}
