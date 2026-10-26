@@ -1176,6 +1176,8 @@ export class AventureApp {
   private resultat(): void {
     const r = this.dernierResultat!;
     this.ecran = 'resultat';
+    // M11-E : une carte gagnée s'entend (après le son de fin du duel)
+    if (r.gains.length) setTimeout(() => son().jouer('gain'), 900);
     this.d.arena()?.setStaging('portrait');
     this.d.arena()?.setPaused(false);
     const titre = r.issue === 'victoire' ? 'Victoire' : r.issue === 'defaite' ? 'Défaite' : 'Abandon';
@@ -1212,6 +1214,7 @@ export class AventureApp {
       const cour = this.town?.ilotId() === 'cour';
       this.entrerVille(false, cour ? 'npc-heraut' : 'porte-arene');
       if (rencontre === 'champ:finale' && this.etat.competitions.championnat.titre && r.issue === 'victoire') {
+        son().jouer('titre');
         this.dire('Le Championnat des Champions', cour
           ? 'La Grande Cour déborde jusqu’au Belvédère. Sur l’estrade, les quatre chefs lèvent leur bannière, et le héraut proclame : « Le titre de la ville vous revient : personne ne joue mieux ! » Kaï vous tend la main : « Personne en ville ne joue mieux que toi. Je le savais depuis le premier soir. »'
           : `La foule envahit le Parvis. Les quatre chefs se lèvent ; Kaï vous tend la main : « Personne en ville ne joue mieux que toi. Je le savais depuis le premier soir. »${this.quaiRangs ? ' Le héraut vous attend dans la Grande Cour pour la proclamation.' : ''}`, [fermer(this)]);
@@ -1279,6 +1282,7 @@ export class AventureApp {
   }
 
   private recompense(titre: string, gains: Gain[], suite: () => void, notes: string[] = []): void {
+    if (gains.length) son().jouer('gain');
     const panel = h('div', { class: 'av-confirm av-recompense', 'data-key': 'av-recompense' },
       h('h2', null, titre),
       gains.length ? h('p', null, 'Inscription au registre des gains (une seule fois : un rechargement, une reprise ou une revanche ne le dupliquent pas).') : null,

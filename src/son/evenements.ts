@@ -6,7 +6,7 @@ import type { GameEvent, PlayerId } from '../game/model/types';
 
 export type SonId =
   | 'ui' | 'ui-retour' | 'carte-pose' | 'revelation' | 'clash' | 'degats' | 'degats-adverse' | 'garde' | 'interference'
-  | 'signature' | 'victoire' | 'defaite' | 'pas' | 'repere' | 'rival' | 'voyage';
+  | 'signature' | 'victoire' | 'defaite' | 'pas' | 'repere' | 'rival' | 'voyage' | 'gain' | 'titre';
 export type AmbianceId = 'amb-quai' | 'amb-ruelles' | 'amb-parvis' | 'amb-cour' | 'amb-port' | 'amb-haute' | 'amb-duel';
 
 export function sonsDuDuel(events: readonly GameEvent[], viewer: PlayerId = 'p1'): SonId[] {
