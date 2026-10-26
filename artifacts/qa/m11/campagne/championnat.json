@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-26T06:28:14.536Z",
+  "commit": "94bf117",
+  "viewport": [
+    1280,
+    720
+  ],
+  "checks": [
+    "OK faits rejoués par la machine d'états sans refus (aucun)",
+    "OK quatre chefs vaincus ; deck au format standard, Signature de la Ronce équipée",
+    "OK objectif : le Championnat",
+    "OK devant le champion de la Joute de la Ronce",
+    "OK Joute gagnée : variante II au registre, équipée à la place de sa Basic",
+    "OK porte de l’arène : la poule des Quatre Bannières, chefs à défier",
+    "OK même Signature : aucun duel de poule possible, raison affichée",
+    "OK poule : trois chefs vaincus, trois Signatures différentes",
+    "OK le Miroir : Kaï",
+    "OK la Finale : la Tenante du titre",
+    "OK Finale : même Signature refusée pour la manche suivante",
+    "OK Finale gagnée : titre, proclamation",
+    "OK objectif : personne en ville ne joue mieux que vous (écriture neutre)"
+  ],
+  "steps": [
+    {
+      "name": "quai-quatre-chefs",
+      "file": "/tmp/claude-0/shots/championnat/01-quai-quatre-chefs.png"
+    },
+    {
+      "name": "joute-ronce",
+      "file": "/tmp/claude-0/shots/championnat/02-joute-ronce.png"
+    },
+    {
+      "name": "poule",
+      "file": "/tmp/claude-0/shots/championnat/03-poule.png"
+    },
+    {
+      "name": "preparation-poule",
+      "file": "/tmp/claude-0/shots/championnat/04-preparation-poule.png"
+    },
+    {
+      "name": "poule-signature-deja-utilisee",
+      "file": "/tmp/claude-0/shots/championnat/05-poule-signature-deja-utilisee.png"
+    },
+    {
+      "name": "miroir",
+      "file": "/tmp/claude-0/shots/championnat/06-miroir.png"
+    },
+    {
+      "name": "finale",
+      "file": "/tmp/claude-0/shots/championnat/07-finale.png"
+    },
+    {
+      "name": "titre",
+      "file": "/tmp/claude-0/shots/championnat/08-titre.png"
+    }
+  ],
+  "issues": []
+}
