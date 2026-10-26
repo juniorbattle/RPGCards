@@ -1,6 +1,6 @@
 {
-  "commit": "bf5682e",
-  "date": "2026-10-26T17:21:17.914Z",
+  "commit": "6e4be0c",
+  "date": "2026-10-26T21:42:01.289Z",
   "viewport": [
     1280,
     720
@@ -13,7 +13,7 @@
     "OK l’interface de la ville s’efface pendant la cinématique",
     "OK pas de carton plein écran par-dessus (la cinématique le remplace)",
     "OK arrivée mémorisée dans la sauvegarde",
-    "OK travelling : le joueur traverse le cadre vers sa place, sans retour en arrière (-0.03 → -0.03 → -0.02 → -0.02 → -0.02 → 0.02 → 0.04 → 0.04 → 0.04 → 0.05 → 0.05 → 0.07 → 0.07 → 0.09 → 0.09 → 0.09 → 0.10 → 0.10 → 0.12 → 0.12 → 0.12 → 0.13 → 0.13 → 0.15 → 0.15 → 0.16 → 0.16 → 0.16 → 0.17 → 0.17 → 0.18 → 0.18 → 0.19 → 0.19 → 0.19 → 0.20 → 0.20 → 0.20 → 0.20 → 0.20 ; cadrage ordinaire : 0.14)",
+    "ÉCHEC travelling : le joueur traverse le cadre vers sa place, sans retour en arrière (0.06 → 0.06 → 0.06 → 0.06 → 0.06 → 0.06 → 0.06 → 0.06 → 0.06 → 0.07 → 0.07 → 0.08 → 0.08 → 0.10 → 0.10 → 0.11 → 0.11 → 0.12 → 0.12 → 0.12 → 0.12 → 0.12 → 0.12 → 0.12 → 0.12 → 0.12 → 0.12 → 0.12 → 0.12 → 0.12 → 0.12 → 0.12 → 0.12 → 0.12 → 0.12 → 0.12 → 0.12 ; cadrage ordinaire : 0.14)",
     "OK fin : bandes retirées, interface revenue",
     "OK les entrées sont rendues au joueur (x -17.40 → -16.35)",
     "OK Échap passe la cinématique sans ouvrir le menu",
@@ -27,12 +27,29 @@
     "OK le cadet de la Ronce vaincu (fait)",
     "OK Kaï surgit (K1) : cinématique en bandes",
     "OK la caméra se porte sur Kaï pendant la bulle (Kaï à 0.53 de la largeur)",
-    "OK dialogue ouvert sur les deux personnages (milieu à 0.49, 0.95 m)",
+    "OK dialogue ouvert sur les deux personnages (milieu à 0.48, 0.95 m)",
     "OK les bandes se retirent quand le dialogue s’ouvre",
     "OK retour du duel contre Kaï : caméra rendue au joueur (0.49)",
     "OK menu : « Cinématiques : oui »",
     "OK menu : coupées, mémorisé dans le navigateur",
-    "OK QA sans `?cine=1` : le carton d’avant, aucune cinématique"
+    "OK QA sans `?cine=1` : le carton d’avant, aucune cinématique",
+    "OK prologue : la caméra se porte sur Kaï aux braseros, en bandes (Kaï à 0.70)",
+    "OK prologue : le dialogue de Kaï cadré sur les deux, bandes gardées (milieu à 0.63)",
+    "OK retour du prologue : « La foule », dialogue de scène en bandes",
+    "OK l’émissaire de la famille Astre est venu au joueur ; son dialogue est cadré, en bandes (1.26 m, milieu à 0.61)",
+    "OK écran de confirmation : bandes repliées",
+    "OK affiliation : carton de la voie (Voie de l’AstreTout revient, tout s’assemble.)",
+    "OK les deux lieutenants de la famille Astre vaincus (faits)",
+    "OK chef vaincu : carton (Halvard s’inclineSignature de l’Astre gagnée)",
+    "OK puis le carton du chapitre II (Chapitre IIles trois voies · trois maisons à défier)",
+    "OK les quatre chefs vaincus (faits) (aucun refus)",
+    "OK carton du chapitre V (Chapitre Vle Championnat des Champions)",
+    "OK le héraut : ouverture du Championnat en cinématique (Le Championnat des Championsquatre bannières, un miroir, une finale)",
+    "OK ouverture : dialogue cadré sur le héraut et le joueur (milieu à 0.50)",
+    "OK titre remporté (QA : finale imposée)",
+    "OK le titre : carton et plan large de la Grande Cour (Le titre de la villepersonne ne joue mieux)",
+    "OK proclamation cadrée sur le héraut et le joueur, en bandes (milieu à 0.50)",
+    "OK fin de la scène : bandes repliées"
   ],
   "steps": [
     {
@@ -78,6 +95,66 @@
     {
       "name": "menu-cinematiques",
       "file": "screenshots/qa/m11/cinematiques-1280/11-menu-cinematiques.png"
+    },
+    {
+      "name": "prologue-kai",
+      "file": "screenshots/qa/m11/cinematiques-1280/12-prologue-kai.png"
+    },
+    {
+      "name": "prologue-kai-dialogue",
+      "file": "screenshots/qa/m11/cinematiques-1280/13-prologue-kai-dialogue.png"
+    },
+    {
+      "name": "prologue-foule",
+      "file": "screenshots/qa/m11/cinematiques-1280/14-prologue-foule.png"
+    },
+    {
+      "name": "prologue-foule-kai",
+      "file": "screenshots/qa/m11/cinematiques-1280/15-prologue-foule-kai.png"
+    },
+    {
+      "name": "prologue-emissaire-fend-la-foule",
+      "file": "screenshots/qa/m11/cinematiques-1280/16-prologue-emissaire-fend-la-foule.png"
+    },
+    {
+      "name": "prologue-emissaire-dialogue",
+      "file": "screenshots/qa/m11/cinematiques-1280/17-prologue-emissaire-dialogue.png"
+    },
+    {
+      "name": "affiliation",
+      "file": "screenshots/qa/m11/cinematiques-1280/18-affiliation.png"
+    },
+    {
+      "name": "affiliation-cadet",
+      "file": "screenshots/qa/m11/cinematiques-1280/19-affiliation-cadet.png"
+    },
+    {
+      "name": "chef-vaincu",
+      "file": "screenshots/qa/m11/cinematiques-1280/20-chef-vaincu.png"
+    },
+    {
+      "name": "chapitre-II",
+      "file": "screenshots/qa/m11/cinematiques-1280/21-chapitre-II.png"
+    },
+    {
+      "name": "chapitre-V",
+      "file": "screenshots/qa/m11/cinematiques-1280/22-chapitre-V.png"
+    },
+    {
+      "name": "championnat-ouverture",
+      "file": "screenshots/qa/m11/cinematiques-1280/23-championnat-ouverture.png"
+    },
+    {
+      "name": "championnat-ouverture-dialogue",
+      "file": "screenshots/qa/m11/cinematiques-1280/24-championnat-ouverture-dialogue.png"
+    },
+    {
+      "name": "titre",
+      "file": "screenshots/qa/m11/cinematiques-1280/25-titre.png"
+    },
+    {
+      "name": "titre-proclamation",
+      "file": "screenshots/qa/m11/cinematiques-1280/26-titre-proclamation.png"
     }
   ],
   "console": []
