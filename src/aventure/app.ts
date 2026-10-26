@@ -336,6 +336,10 @@ export class AventureApp {
   }
 
   private detruireVille(): void {
+    // M11-A : une rencontre forcée ne survit pas à sa ville (jamais de menu bloqué)
+    this.force = null;
+    this.rivalScene = null;
+    this.alerte = null;
     cancelAnimationFrame(this.raf);
     this.town?.dispose();
     this.host?.remove();
