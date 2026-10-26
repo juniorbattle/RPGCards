@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-26T05:05:04.000Z",
-  "commit": "08d3b6d",
+  "date": "2026-10-26T05:28:35.459Z",
+  "commit": "3cf00c7",
   "viewport": [
     1280,
     720
@@ -31,6 +31,10 @@
     "OK Échap ne ferme pas la préparation forcée",
     "OK défaite : K1 accompli (l’histoire continue)",
     "OK au retour : pas de second Kaï",
+    "OK sons demandés : « repère » et « rival » (ui, repere, ui-retour, rival)",
+    "OK coupé en QA : aucun contexte audio créé",
+    "OK accueil au repos : aucun réglage du son affiché",
+    "OK Options : son coupé et volume à 60 %, mémorisés ({\"volume\":0.6,\"coupe\":true})",
     "OK console : aucune erreur"
   ],
   "steps": [
@@ -77,6 +81,10 @@
     {
       "name": "apres-kai",
       "file": "screenshots/qa/m11/vue-1280/11-apres-kai.png"
+    },
+    {
+      "name": "options-son",
+      "file": "screenshots/qa/m11/vue-1280/12-options-son.png"
     }
   ],
   "console": []

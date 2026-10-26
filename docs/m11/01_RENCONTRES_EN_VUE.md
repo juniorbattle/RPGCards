@@ -84,7 +84,13 @@ Le directeur garde ses délais d'apparition (2 battements pour les duels de rue)
 - Les guetteurs regardent dans une direction fixe (celle de leur place) : on apprend où ils regardent.
 - Un guetteur n'agit jamais pendant un dialogue, une scène, un fondu, ni dans un îlot où un événement du rival attend.
 
-## 7. Garanties testées (`test/m11-vue.test.ts`, `npm run qa:vue`)
+## 7. QA
+
+En QA (`?qa=1`), les rencontres forcées (guetteurs et rival) ne jouent qu'avec `?vue=1` : les parcours automatisés d'avant
+M11 (`qa:aventure`, `qa:maison`, `qa:voies`, `qa:vivante`, `qa:championnat`) restent déterministes. En rendu logiciel,
+`qa:vue` passe `reducedMotion=1` : l'approche est placée directement (la marche à pied se juge en local).
+
+## 8. Garanties testées (`test/m11-vue.test.ts`, `npm run qa:vue`)
 
 - le cône : dedans, hors portée, hors angle, derrière un obstacle, derrière un autre personnage ;
 - front montant : apparition dans le champ sans déclenchement ; sortie puis entrée : déclenchement ;

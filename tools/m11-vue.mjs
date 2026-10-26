@@ -135,6 +135,22 @@ try {
   check(k.rival?.faits?.K1 === 'defaite', 'défaite : K1 accompli (l’histoire continue)');
   check(k.force.force === null && k.force.rival === null, 'au retour : pas de second Kaï');
   await shot('apres-kai', 600);
+
+  // le son (M11-E) : demandé aux bons moments, jamais joué en QA (aucun contexte audio)
+  const sn = await av(() => ({ j: window.__lqvSon?.journal() ?? [], actif: window.__lqvSon?.actif(), permis: window.__lqvSon?.permis }));
+  check(['repere', 'rival', 'voyage'].every((x) => sn.j.includes(x)) || (sn.j.includes('repere') && sn.j.includes('rival')), `sons demandés : « repère » et « rival » (${[...new Set(sn.j)].join(', ')})`);
+  check(sn.actif === false && sn.permis === false, 'coupé en QA : aucun contexte audio créé');
+  // le réglage du son dans les Options du jeu standard (pas sur l'accueil au repos)
+  await p.goto(`${server.base}/?qa=1`, { timeout: Number(process.env.LQV_QA_NAV_TIMEOUT) || 90000 });
+  await p.waitForSelector('[data-key="home-options"]');
+  check(!(await p.$('[data-key^="opt-son"]')), 'accueil au repos : aucun réglage du son affiché');
+  await p.click('[data-key="home-options"]');
+  await p.waitForSelector('[data-key="opt-son-off"]');
+  await p.click('[data-key="opt-son-off"]');
+  await p.click('[data-key="opt-son-moins"]');
+  const st = await av(() => JSON.parse(localStorage.getItem('lqv.son') ?? 'null'));
+  check(st?.coupe === true && st?.volume === 0.6, `Options : son coupé et volume à 60 %, mémorisés (${JSON.stringify(st)})`);
+  await shot('options-son', 300);
 } catch (err) {
   check(false, `exception : ${err instanceof Error ? err.message : err}`);
 } finally {
