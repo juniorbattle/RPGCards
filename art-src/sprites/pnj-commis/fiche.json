@@ -1,6 +1,6 @@
 {
   "id": "pnj-commis",
-  "statut": "APPROUVÉ par le responsable le 2026-10-25 (ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128) : admis hors QA tant que l’empreinte reste 342f0053abd6…",
+  "statut": "feuille des PNJ de la ville (gabarit commis (commis, cadets de la Ronce et du Voile, passants), recoloré par graine), suite de la deuxième reprise de M09 (passe 127), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas décidé",
   "auteur": "Claude Code (session de reprise de M09, passe 127), à la demande du responsable : « Oui : génère les 10 autres feuilles des PNJ (gabarits marchande, commis, joueuse ; Maëlle, Sélène, Orin ; les quatre chefs), traite-les et pose-les. »",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-pnj-suite.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -66,16 +66,17 @@
       "pieds alignés sur une même ligne, tête centrée",
       "tons clés (peau, cheveux, tenue, chemise) ramenés exactement sur 64, 128, 191, 255",
       "palette : couleurs naturelles réduites (k-moyennes)",
+      "yeux (passe 138) : de face, les deux yeux du brut recalés (tels quels ou en miroir) et moyennés en un seul dessin, échantillonné à la phase qui le rend le mieux et posé aux deux places après la palette ; aucun ton clé de vêtement ni d’accent dans les yeux et les sourcils (face et profil)",
       "agrandissement ×3 au plus proche"
     ]
   },
   "sortie": {
     "fichier": "public/sprites/pnj-commis.png",
-    "sha256": "342f0053abd6b58fd801ed59489dc6a1ebaa2121d56ba48411da319736702a8a",
-    "octets": 87747,
+    "sha256": "ab12e3b51f6af9e608690f563361f3ee9cd20af0453206b6908bc58ee0a13f06",
+    "octets": 87654,
     "entree_du_manifeste": {
       "file": "pnj-commis.png",
-      "sha256": "342f0053abd6b58fd801ed59489dc6a1ebaa2121d56ba48411da319736702a8a",
+      "sha256": "ab12e3b51f6af9e608690f563361f3ee9cd20af0453206b6908bc58ee0a13f06",
       "cell": [
         64,
         96
@@ -113,7 +114,7 @@
         573
       ],
       "tenue": [
-        1279,
+        1266,
         1985,
         3995,
         620
@@ -131,12 +132,6 @@
     "16e43f08c4bd065672c27df893c6b42b9e1e5f013d60474a82336020a26075d5 (entrée : art-gen/2026-10-25-pnj-suite/pnj-commis-entree.png)",
     "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50 (entrée : public/sprites/player.png)",
     "d77caa09132a6efba565eb36204be5e601363a497331932e783f14a57d8320b8 (brut)",
-    "342f0053abd6b58fd801ed59489dc6a1ebaa2121d56ba48411da319736702a8a (feuille ×3)"
-  ],
-  "approbation": {
-    "date": "2026-10-25",
-    "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128",
-    "fichier": "public/sprites/pnj-commis.png",
-    "sha256": "342f0053abd6b58fd801ed59489dc6a1ebaa2121d56ba48411da319736702a8a"
-  }
+    "ab12e3b51f6af9e608690f563361f3ee9cd20af0453206b6908bc58ee0a13f06 (feuille ×3)"
+  ]
 }

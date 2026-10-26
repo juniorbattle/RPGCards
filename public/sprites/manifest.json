@@ -27,7 +27,7 @@
     },
     "pnj-docker": {
       "file": "pnj-docker.png",
-      "sha256": "5212a942a0dad19bb5d4ad9dce20de2bbf506c1dcd91933b0076a5019e4e823e",
+      "sha256": "1236986ad7cb3e1363ef62b4bf10dcb588e500621dc49576c012d93cdbbd38f8",
       "cell": [
         64,
         96
@@ -49,11 +49,11 @@
       ],
       "source": "gpt-image-2 (feuille des PNJ de la ville, gabarit docker (dockers, membres, passants), recoloré par graine, reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
       "fiche": "art-src/sprites/pnj-docker/fiche.json",
-      "approved": true
+      "approved": false
     },
     "braise": {
       "file": "braise.png",
-      "sha256": "77d7c465e7e05dfb513520feaba2b9466ce65c9543c2772a8cc7d5c5c840f07c",
+      "sha256": "a9bcf56470b75bd4a75b5dd7621f2b9b588abf84a59066a0c68f17666128687c",
       "cell": [
         64,
         96
@@ -70,11 +70,11 @@
       "recolor": [],
       "source": "gpt-image-2 (feuille des PNJ de la ville, Kaï, la Braise du quai (couleurs propres), reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
       "fiche": "art-src/sprites/braise/fiche.json",
-      "approved": true
+      "approved": false
     },
     "pnj-marchande": {
       "file": "pnj-marchande.png",
-      "sha256": "0cf5f11331527822f9d77b344fc5729b6c10f96df8dc70713813d4e42af7a06a",
+      "sha256": "2893fd2f60a3646013d1010ed27467eefccfc81f2a1b936d8ed130058f16c81d",
       "cell": [
         64,
         96
@@ -96,11 +96,11 @@
       ],
       "source": "gpt-image-2 (feuille des PNJ de la ville, gabarit marchande (marchandes, cadette de la Cendre, passantes), recoloré par graine, reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
       "fiche": "art-src/sprites/pnj-marchande/fiche.json",
-      "approved": true
+      "approved": false
     },
     "pnj-commis": {
       "file": "pnj-commis.png",
-      "sha256": "342f0053abd6b58fd801ed59489dc6a1ebaa2121d56ba48411da319736702a8a",
+      "sha256": "ab12e3b51f6af9e608690f563361f3ee9cd20af0453206b6908bc58ee0a13f06",
       "cell": [
         64,
         96
@@ -122,11 +122,11 @@
       ],
       "source": "gpt-image-2 (feuille des PNJ de la ville, gabarit commis (commis, cadets de la Ronce et du Voile, passants), recoloré par graine, reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
       "fiche": "art-src/sprites/pnj-commis/fiche.json",
-      "approved": true
+      "approved": false
     },
     "pnj-joueuse": {
       "file": "pnj-joueuse.png",
-      "sha256": "be9b826d7a734788cddd9cb689d93f2d4b62f4d681fef8c0aee2493ae5fb023c",
+      "sha256": "b41b66c4d1baa3645a577fbe76fd87844f662c697c0d8e32ce05ced470a8fb7b",
       "cell": [
         64,
         96
@@ -148,7 +148,7 @@
       ],
       "source": "gpt-image-2 (feuille des PNJ de la ville, gabarit joueuse (joueuses, cadette de l’Astre, Tenante), recoloré par graine, reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
       "fiche": "art-src/sprites/pnj-joueuse/fiche.json",
-      "approved": true
+      "approved": false
     },
     "ronce": {
       "file": "ronce.png",
@@ -215,7 +215,7 @@
     },
     "chef-cendre": {
       "file": "chef-cendre.png",
-      "sha256": "dfbf1b605f14f2520a4683e6e31b65f6953218fe46c7629c6a798811e6b46917",
+      "sha256": "405de40faf58a6ccfcae8a8c4b1e3df2f7d360b6745967d2936319c2e04f8037",
       "cell": [
         64,
         96
@@ -232,7 +232,7 @@
       "recolor": [],
       "source": "gpt-image-2 (feuille des PNJ de la ville, Bran, le Premier Feu, chef de la Cendre (couleurs propres), reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
       "fiche": "art-src/sprites/chef-cendre/fiche.json",
-      "approved": true
+      "approved": false
     },
     "chef-ronce": {
       "file": "chef-ronce.png",
@@ -257,7 +257,7 @@
     },
     "chef-voile": {
       "file": "chef-voile.png",
-      "sha256": "23efe92894529540a957d780a1a5451bd628010d448906a02ddedb2eb61e048d",
+      "sha256": "22c93ecf24c312ab0c4ff58bcb65078947053489855fc663c82b2586f96aae5f",
       "cell": [
         64,
         96
@@ -274,7 +274,7 @@
       "recolor": [],
       "source": "gpt-image-2 (feuille des PNJ de la ville, Ilse, la Dame aux Voiles, cheffe du Voile (couleurs propres), reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
       "fiche": "art-src/sprites/chef-voile/fiche.json",
-      "approved": true
+      "approved": false
     },
     "chef-astre": {
       "file": "chef-astre.png",

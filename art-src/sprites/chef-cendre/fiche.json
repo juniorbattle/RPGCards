@@ -1,6 +1,6 @@
 {
   "id": "chef-cendre",
-  "statut": "APPROUVÉ par le responsable le 2026-10-25 (ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128) : admis hors QA tant que l’empreinte reste dfbf1b605f14…",
+  "statut": "feuille des PNJ de la ville (Bran, le Premier Feu, chef de la Cendre (couleurs propres)), suite de la deuxième reprise de M09 (passe 127), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas décidé",
   "auteur": "Claude Code (session de reprise de M09, passe 127), à la demande du responsable : « Oui : génère les 10 autres feuilles des PNJ (gabarits marchande, commis, joueuse ; Maëlle, Sélène, Orin ; les quatre chefs), traite-les et pose-les. »",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-pnj-suite.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -66,16 +66,17 @@
       "pieds alignés sur une même ligne, tête centrée",
       "aucun ton clé (couleurs propres)",
       "palette : couleurs naturelles réduites (k-moyennes)",
+      "yeux (passe 138) : de face, les deux yeux du brut recalés (tels quels ou en miroir) et moyennés en un seul dessin, échantillonné à la phase qui le rend le mieux et posé aux deux places après la palette ; aucun ton clé de vêtement ni d’accent dans les yeux et les sourcils (face et profil)",
       "agrandissement ×3 au plus proche"
     ]
   },
   "sortie": {
     "fichier": "public/sprites/chef-cendre.png",
-    "sha256": "dfbf1b605f14f2520a4683e6e31b65f6953218fe46c7629c6a798811e6b46917",
-    "octets": 88465,
+    "sha256": "405de40faf58a6ccfcae8a8c4b1e3df2f7d360b6745967d2936319c2e04f8037",
+    "octets": 88157,
     "entree_du_manifeste": {
       "file": "chef-cendre.png",
-      "sha256": "dfbf1b605f14f2520a4683e6e31b65f6953218fe46c7629c6a798811e6b46917",
+      "sha256": "405de40faf58a6ccfcae8a8c4b1e3df2f7d360b6745967d2936319c2e04f8037",
       "cell": [
         64,
         96
@@ -101,12 +102,6 @@
     "71b8159b999f0f0be827cdff1c3a3a33dc25dddcdc4f2e1782dd14098089f2e9 (entrée : art-gen/2026-10-25-pnj-suite/chef-cendre-entree.png)",
     "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50 (entrée : public/sprites/player.png)",
     "0fbe0fd1d9eec9195d2e3466659a2e758322ba1327d012a8a110acafac9d0a6a (brut)",
-    "dfbf1b605f14f2520a4683e6e31b65f6953218fe46c7629c6a798811e6b46917 (feuille ×3)"
-  ],
-  "approbation": {
-    "date": "2026-10-25",
-    "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128",
-    "fichier": "public/sprites/chef-cendre.png",
-    "sha256": "dfbf1b605f14f2520a4683e6e31b65f6953218fe46c7629c6a798811e6b46917"
-  }
+    "405de40faf58a6ccfcae8a8c4b1e3df2f7d360b6745967d2936319c2e04f8037 (feuille ×3)"
+  ]
 }

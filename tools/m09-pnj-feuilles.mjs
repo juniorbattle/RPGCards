@@ -35,6 +35,10 @@ export const FEUILLES = {
 // très inégaux au premier traitement, passe 127)
 Object.assign(FEUILLES.astre, { pitchMin: 3.2, pitchMax: 4.6 });
 Object.assign(FEUILLES.voile, { pitchMin: 3.2, pitchMax: 4.6 });
+// yeux dissemblables relevés par le responsable (passe 138) : les deux yeux de face rendus pareils (dessin moyen des deux
+// yeux du brut, à la phase qui le rend le mieux, posé aux deux places) et aucun ton clé dans les yeux ; seulement les
+// feuilles où l'audit les a trouvés dissemblables (les autres gardent leur image approuvée)
+for (const id of ['pnj-docker', 'pnj-marchande', 'pnj-commis', 'pnj-joueuse', 'braise', 'chef-cendre', 'chef-voile']) FEUILLES[id].yeux = true;
 /** Lot de génération : passe, spécification et ordre du responsable. */
 const LOTS = {
   '2026-10-25-pnj-porte': { passe: 125, etape: 'porte', spec: 'tools/m09-lot-pnj-porte.mjs', ordre: 'budget « 16, avec une porte » (d’abord 2 feuilles posées in situ sur une planche, puis les 10 autres ; 4 images pour régénérer une feuille ratée)' },
@@ -77,7 +81,7 @@ try {
     const check = (ok, what) => { checks.push(`${ok ? 'OK' : 'ÉCHEC'} ${what}`); console.log(`${id} : ${ok ? 'OK' : 'ÉCHEC'} ${what}`); };
     let sheet;
     try {
-      sheet = await pg.evaluate(processSheet, { url: dataUrl(readFileSync(join(RAW, `${brut}.png`))), figures: true, levels: 'kmeans', cell: [64, 96], bg: F.bg, slots: F.slots, pitchMin: F.pitchMin, pitchMax: F.pitchMax });
+      sheet = await pg.evaluate(processSheet, { url: dataUrl(readFileSync(join(RAW, `${brut}.png`))), figures: true, levels: 'kmeans', cell: [64, 96], bg: F.bg, slots: F.slots, pitchMin: F.pitchMin, pitchMax: F.pitchMax, yeux: F.yeux });
     } catch (e) {
       check(false, `traitement : ${String(e.message ?? e).slice(0, 200)}`);
       report.feuilles[id] = { brut, checks }; echecs++; continue;
@@ -89,7 +93,11 @@ try {
     for (const s of F.slots) check(Object.values(sheet.counts[s] ?? []).filter((n) => n > 0).length >= 2, `ton clé ${s} présent sur au moins deux niveaux : ${JSON.stringify(sheet.counts[s])}`);
     check(k3.length <= 1048576, `feuille ≤ 1 Mo : ${Math.round(k3.length / 1024)} Ko, ${dim(k3).join(' × ')}`);
     mkdirSync(`artifacts/qa/m09/pnj`, { recursive: true });
-    report.feuilles[id] = { brut, checks, pitch: sheet.pitch, anchor: sheet.anchor, figureH: sheet.figureH, colors: sheet.colors, counts: sheet.counts, hauteurs };
+    report.feuilles[id] = { brut, checks, yeux: F.yeux ? { poses: sheet.yeux.poses.map((p) => ({ figure: p.k, miroir: p.miroir, recalage: p.recalage, ecart: p.ecart })), manques: sheet.yeux.manques } : undefined, pitch: sheet.pitch, anchor: sheet.anchor, figureH: sheet.figureH, colors: sheet.colors, counts: sheet.counts, hauteurs };
+    if (F.yeux) {
+      const face = sheet.yeux.poses.map((p) => p.k).sort((a, b) => a - b);
+      check(face.join() === '0,1,2,3,4', `yeux de face rendus pareils sur les 5 cadres (${sheet.yeux.poses.map((p) => `${p.k}${p.miroir ? ' miroir' : ''}`).join(', ') || 'aucun'}) ; yeux de profil repérés : ${sheet.yeux.zones.length - 2 * face.length} sur 5`);
+    }
     if (!checks.every((c) => c.startsWith('OK'))) { echecs++; console.log(`${id} : feuille non posée (contrôles en échec) ; régénérer la réserve si besoin`); continue; }
 
     const file = `${id}.png`;
@@ -113,7 +121,7 @@ try {
       aseprite: joueur.aseprite, licences: joueur.licences, contenu: joueur.contenu,
       style: 'style, échelle et proportions de la feuille du joueur approuvée (en entrée) ; identité tirée de notre atlas dessiné par code (en entrée)',
       sources: [ps],
-      traitement: { scripts: ['tools/m09-traitement-images.mjs (processSheet)', 'tools/m09-pnj-feuilles.mjs'], etapes: [`fond ${F.bg} et liseré teinté retirés ; alpha binaire`, `pas des pixels d’art mesuré sur les arêtes (${sheet.pitch.x} × ${sheet.pitch.y} px)`, `figures repérées par les bandes vides ; grille d’art ${sheet.cell.join(' × ')} px d’art par case imposée, couleur majoritaire du cœur de chaque bloc`, 'pieds alignés sur une même ligne, tête centrée', F.slots.length ? `tons clés (${F.slots.join(', ')}) ramenés exactement sur 64, 128, 191, 255` : 'aucun ton clé (couleurs propres)', 'palette : couleurs naturelles réduites (k-moyennes)', 'agrandissement ×3 au plus proche'] },
+      traitement: { scripts: ['tools/m09-traitement-images.mjs (processSheet)', 'tools/m09-pnj-feuilles.mjs'], etapes: [`fond ${F.bg} et liseré teinté retirés ; alpha binaire`, `pas des pixels d’art mesuré sur les arêtes (${sheet.pitch.x} × ${sheet.pitch.y} px)`, `figures repérées par les bandes vides ; grille d’art ${sheet.cell.join(' × ')} px d’art par case imposée, couleur majoritaire du cœur de chaque bloc`, 'pieds alignés sur une même ligne, tête centrée', F.slots.length ? `tons clés (${F.slots.join(', ')}) ramenés exactement sur 64, 128, 191, 255` : 'aucun ton clé (couleurs propres)', 'palette : couleurs naturelles réduites (k-moyennes)', ...(F.yeux ? ['yeux (passe 138) : de face, les deux yeux du brut recalés (tels quels ou en miroir) et moyennés en un seul dessin, échantillonné à la phase qui le rend le mieux et posé aux deux places après la palette ; aucun ton clé de vêtement ni d’accent dans les yeux et les sourcils (face et profil)'] : []), 'agrandissement ×3 au plus proche'] },
       sortie: { fichier: `public/sprites/${file}`, sha256: sha(k3), octets: k3.length, entree_du_manifeste: entry, tons_cles: sheet.counts, couleurs: sheet.colors },
       chaine_des_empreintes: [...ps.entrees.map((e) => `${e.sha256} (entrée : ${e.chemin.replace(/^.*\/(art-gen|public)\//, '$1/')})`), `${ps.brut.sha256} (brut)`, `${sha(k3)} (feuille ×3)`],
     }, null, 2)}\n`);

@@ -1,6 +1,6 @@
 {
   "id": "braise",
-  "statut": "APPROUVÉ par le responsable le 2026-10-25 (ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128) : admis hors QA tant que l’empreinte reste 77d7c465e7e0…",
+  "statut": "feuille des PNJ de la ville (Kaï, la Braise du quai (couleurs propres)), porte de la deuxième reprise de M09 (passe 125), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas décidé",
   "auteur": "Claude Code (session de reprise de M09, passe 125), à la demande du responsable : budget « 16, avec une porte » (d’abord 2 feuilles posées in situ sur une planche, puis les 10 autres ; 4 images pour régénérer une feuille ratée)",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-pnj-porte.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -66,16 +66,17 @@
       "pieds alignés sur une même ligne, tête centrée",
       "aucun ton clé (couleurs propres)",
       "palette : couleurs naturelles réduites (k-moyennes)",
+      "yeux (passe 138) : de face, les deux yeux du brut recalés (tels quels ou en miroir) et moyennés en un seul dessin, échantillonné à la phase qui le rend le mieux et posé aux deux places après la palette ; aucun ton clé de vêtement ni d’accent dans les yeux et les sourcils (face et profil)",
       "agrandissement ×3 au plus proche"
     ]
   },
   "sortie": {
     "fichier": "public/sprites/braise.png",
-    "sha256": "77d7c465e7e05dfb513520feaba2b9466ce65c9543c2772a8cc7d5c5c840f07c",
-    "octets": 80065,
+    "sha256": "a9bcf56470b75bd4a75b5dd7621f2b9b588abf84a59066a0c68f17666128687c",
+    "octets": 79892,
     "entree_du_manifeste": {
       "file": "braise.png",
-      "sha256": "77d7c465e7e05dfb513520feaba2b9466ce65c9543c2772a8cc7d5c5c840f07c",
+      "sha256": "a9bcf56470b75bd4a75b5dd7621f2b9b588abf84a59066a0c68f17666128687c",
       "cell": [
         64,
         96
@@ -101,12 +102,6 @@
     "1b053c3fc0e36d13418d9d8975dcfffcce2dd9a6d838d415884206ede4594e05 (entrée : art-gen/2026-10-25-pnj-porte/braise-entree.png)",
     "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50 (entrée : public/sprites/player.png)",
     "df365a17bda13a345ac00fcd7eda0b40708b2c3ade5c80a88303f5f0b158826c (brut)",
-    "77d7c465e7e05dfb513520feaba2b9466ce65c9543c2772a8cc7d5c5c840f07c (feuille ×3)"
-  ],
-  "approbation": {
-    "date": "2026-10-25",
-    "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128",
-    "fichier": "public/sprites/braise.png",
-    "sha256": "77d7c465e7e05dfb513520feaba2b9466ce65c9543c2772a8cc7d5c5c840f07c"
-  }
+    "a9bcf56470b75bd4a75b5dd7621f2b9b588abf84a59066a0c68f17666128687c (feuille ×3)"
+  ]
 }

@@ -1,0 +1,20 @@
+{
+  "date": "2026-10-26T02:22:16.335Z",
+  "commit": "d7c41f0+arbre de travail",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "checks": [
+    "OK docker 1 : feuille pnj-docker admise en QA (quai)",
+    "OK marchande (guide) : feuille pnj-marchande admise en QA (quai)",
+    "OK commis 5 : feuille pnj-commis admise en QA (quai)",
+    "OK Kaï : feuille braise admise en QA (quai)",
+    "OK Orin : feuille astre admise en QA (parvis)",
+    "OK Sélène : feuille voile admise en QA (ruelles)",
+    "OK console sans erreur (0 messages)"
+  ],
+  "console": [],
+  "admises": {
+    "quai": "{\"policy\":\"qa\",\"loaded\":[\"pnj-docker-1\",\"pnj-docker-9\",\"player-Cendre\",\"pnj-marchande-9\",\"pnj-commis-5\",\"braise\",\"pnj-joueuse-1\"],\"unapproved\":[\"pnj-docker-1\",\"pnj-docker-9\",\"pnj-marchande-9\",\"pnj-commis-5\",\"braise\",\"pnj-joueuse-1\"],\"issues\":[],\"timings\":{\"pnj-docker\":{\"bytes\":77995,\"fetchMs\":15.6,\"hashMs\":0.1,\"decodeMs\":9.6,\"uploadMs\":0.9},\"player\":{\"bytes\":98894,\"fetchMs\":14.2,\"hashMs\":0.2,\"decodeMs\":14.5,\"uploadMs\":0.8},\"pnj-marchande\":{\"bytes\":94813,\"fetchMs\":14.9,\"hashMs\":0.1,\"decodeMs\":15.8,\"uploadMs\":0.8},\"pnj-commis\":{\"bytes\":87654,\"fetchMs\":15.9,\"hashMs\":0.1,\"decodeMs\":16.7,\"uploadMs\":0.7},\"braise\":{\"bytes\":79892,\"fetchMs\":16.8,\"hashMs\":0.1,\"decodeMs\":18.7,\"uploadMs\":1.5},\"pnj-joueuse\":{\"bytes\":82049,\"fetchMs\":17.3,\"hashMs\":0,\"decodeMs\":21.4,\"uploadMs\":6.2}},\"hiddenFrames\":0}",
+    "parvis": "{\"policy\":\"qa\",\"loaded\":[\"astre\",\"pnj-commis-2\",\"player-Cendre\",\"pnj-joueuse-5\"],\"unapproved\":[\"pnj-commis-2\",\"pnj-joueuse-5\"],\"issues\":[],\"timings\":{\"astre\":{\"bytes\":83329,\"fetchMs\":11,\"hashMs\":0.2,\"decodeMs\":6.2,\"uploadMs\":4.7},\"pnj-commis\":{\"bytes\":87654,\"fetchMs\":12.1,\"hashMs\":0.1,\"decodeMs\":11.4,\"uploadMs\":1.7},\"player\":{\"bytes\":98894,\"fetchMs\":10.1,\"hashMs\":0.2,\"decodeMs\":16.9,\"uploadMs\":1.8},\"pnj-joueuse\":{\"bytes\":82049,\"fetchMs\":11.8,\"hashMs\":0.1,\"decodeMs\":18.2,\"uploadMs\":1.9}},\"hiddenFrames\":0}",
+    "ruelles": "{\"policy\":\"qa\",\"loaded\":[\"voile\",\"player-Cendre\",\"pnj-marchande-4\"],\"unapproved\":[\"pnj-marchande-4\"],\"issues\":[],\"timings\":{\"voile\":{\"bytes\":84589,\"fetchMs\":7.7,\"hashMs\":0.3,\"decodeMs\":10.8,\"uploadMs\":3.8},\"player\":{\"bytes\":98894,\"fetchMs\":9.2,\"hashMs\":0.1,\"decodeMs\":15.5,\"uploadMs\":1.6},\"pnj-marchande\":{\"bytes\":94813,\"fetchMs\":10.4,\"hashMs\":0.2,\"decodeMs\":16.9,\"uploadMs\":1.7}},\"hiddenFrames\":0}"
+  }
+}

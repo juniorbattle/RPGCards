@@ -153,6 +153,8 @@ export async function processSheet(arg) {
     return [Math.round(best.r / best.n), Math.round(best.g / best.n), Math.round(best.b / best.n)];
   };
   let art; let AW; let figures = null;
+  /** Option `yeux` : fenêtres des yeux et yeux posés (grille d’art avant l’alignement), figures sans yeux repérés. */
+  const yeux = { zones: [], poses: [], manques: [] };
   if (o.figures) {
     // figures repérées : rangées puis colonnes séparées par des bandes vides
     const runsOf = (counts, minGap, minLen) => {
@@ -180,15 +182,154 @@ export async function processSheet(arg) {
     AW = cw * 5; art = new Uint8ClampedArray(AW * ch * 3 * 4);
     figures.forEach((f, k) => {
       const r = Math.floor(k / 5); const col = k % 5;
-      const gi0 = Math.floor((f[0] - px.ph) / P) - 1; const gi1 = Math.ceil((f[2] - px.ph) / P) + 1;
-      const gj0 = Math.floor((f[1] - py.ph) / P) - 1; const gj1 = Math.ceil((f[3] - py.ph) / P) + 1;
+      const phx = px.ph; const phy = py.ph;
+      const gi0 = Math.floor((f[0] - phx) / P) - 1; const gi1 = Math.ceil((f[2] - phx) / P) + 1;
+      const gj0 = Math.floor((f[1] - phy) / P) - 1; const gj1 = Math.ceil((f[3] - phy) / P) + 1;
       for (let gj = gj0; gj <= gj1; gj++) for (let gi = gi0; gi <= gi1; gi++) {
-        const v = vote(px.ph + gi * P, py.ph + gj * P, f);
+        const v = vote(phx + gi * P, phy + gj * P, f);
         if (!v) continue;
         const i = gi - gi0 + 1; const j = gj - gj0 + 1;
         if (i < 0 || j < 0 || i >= cw || j >= ch) continue;
         const oo = ((r * ch + j) * AW + col * cw + i) * 4;
         art[oo] = v[0]; art[oo + 1] = v[1]; art[oo + 2] = v[2]; art[oo + 3] = 255;
+      }
+      // option `yeux` (feuilles des PNJ, passe 138 : yeux dissemblables relevés par le responsable), figures de face
+      // (rangée 0) et de profil (rangée 2). Les yeux sont repérés dans le brut par leur blanc (pixels clairs et peu
+      // saturés, dans la bande du visage), entouré de peau (une mèche claire ne compte pas). De face, la source dessine deux
+      // yeux identiques, mais la grille d'art les coupe à deux phases différentes et ils sortent dissemblables : les deux
+      // yeux du brut, recalés l'un sur l'autre, sont moyennés en un seul dessin, échantillonné à la phase qui le rend le plus
+      // fidèlement, et ce même dessin est posé aux deux places (après la palette : le reste de la feuille ne change pas).
+      // La fenêtre de chaque œil est notée : aucun de ses pixels ni de ceux du sourcil ne devient un ton clé de vêtement
+      // ni d'accent (il serait recoloré en jeu : le bleu parasite dans un œil du docker).
+      if (o.yeux && r !== 1) {
+        const H0 = f[3] - f[1];
+        const bx0 = f[0]; const bx1 = f[2]; const by0 = f[1] + Math.round(H0 * 0.08); const by1 = f[1] + Math.round(H0 * 0.32);
+        const bw = bx1 - bx0 + 1; const bh = by1 - by0 + 1;
+        const clair = (x, y) => { const i = y * W + x; if (!op[i]) return false; const R = d[i * 4]; const G = d[i * 4 + 1]; const B = d[i * 4 + 2]; return Math.min(R, G, B) > 185 && Math.max(R, G, B) - Math.min(R, G, B) < 50; };
+        const comps = []; const seen = new Uint8Array(bw * bh);
+        for (let s = 0; s < bw * bh; s++) {
+          const sx = (s % bw) + bx0; const sy = Math.floor(s / bw) + by0;
+          if (seen[s] || !clair(sx, sy)) continue;
+          const st = [s]; seen[s] = 1; const c0 = { n: 0, x0: 1e9, y0: 1e9, x1: -1, y1: -1 };
+          while (st.length) {
+            const q = st.pop(); const qx = q % bw; const qy = (q - qx) / bw;
+            c0.n++; c0.x0 = Math.min(c0.x0, qx + bx0); c0.x1 = Math.max(c0.x1, qx + bx0); c0.y0 = Math.min(c0.y0, qy + by0); c0.y1 = Math.max(c0.y1, qy + by0);
+            for (const [ax, ay] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nx = qx + ax; const ny = qy + ay; if (nx < 0 || ny < 0 || nx >= bw || ny >= bh) continue; const nq = ny * bw + nx; if (!seen[nq] && clair(nx + bx0, ny + by0)) { seen[nq] = 1; st.push(nq); } }
+          }
+          if (c0.n >= 0.25 * P * P) comps.push(c0);
+        }
+        // les morceaux d'un même blanc (le blanc et le reflet, séparés par l'iris) sont réunis : boîtes à moins d'un pixel
+        // d'art l'une de l'autre
+        for (let fus = true; fus;) {
+          fus = false;
+          for (let a = 0; a < comps.length && !fus; a++) for (let b = a + 1; b < comps.length && !fus; b++) {
+            const A = comps[a]; const B = comps[b];
+            if (A.x0 - P <= B.x1 && B.x0 - P <= A.x1 && A.y0 - P <= B.y1 && B.y0 - P <= A.y1) {
+              comps[a] = { n: A.n + B.n, x0: Math.min(A.x0, B.x0), y0: Math.min(A.y0, B.y0), x1: Math.max(A.x1, B.x1), y1: Math.max(A.y1, B.y1) };
+              comps.splice(b, 1); fus = true;
+            }
+          }
+        }
+        // entouré de peau : l'anneau autour du blanc (un pixel d'art) est opaque et presque sans clair (une mèche ou une
+        // barbe claires ne comptent pas)
+        const entoure = (c0) => {
+          let ring = 0; let opq = 0; let cl = 0; const m = Math.ceil(P);
+          for (let y = c0.y0 - m; y <= c0.y1 + m; y++) for (let x = c0.x0 - m; x <= c0.x1 + m; x++) {
+            if (x >= c0.x0 && x <= c0.x1 && y >= c0.y0 && y <= c0.y1) continue;
+            ring++; if (x < 0 || y < 0 || x >= W || y >= H) continue; if (op[y * W + x]) opq++; if (clair(x, y)) cl++;
+          }
+          return c0.n >= 0.5 * P * P && opq >= 0.95 * ring && cl <= 0.2 * ring && c0.x1 - c0.x0 <= 5 * P && c0.y1 - c0.y0 <= 5 * P;
+        };
+        comps.splice(0, comps.length, ...comps.filter(entoure));
+        comps.sort((a, b) => b.n - a.n);
+        const cx = (e) => (e.x0 + e.x1) / 2; const cy = (e) => (e.y0 + e.y1) / 2;
+        const ys = r === 0 ? comps.slice(0, 2).sort((a, b) => a.x0 - b.x0) : comps.slice(0, 1);
+        const valide = r === 0
+          ? ys.length === 2 && Math.max(ys[0].n, ys[1].n) <= 3 * Math.min(ys[0].n, ys[1].n) && Math.abs(cy(ys[0]) - cy(ys[1])) <= 1.5 * P && cx(ys[1]) - cx(ys[0]) >= 2 * P
+          : ys.length === 1;
+        const ai = (x) => Math.floor((x - phx) / P) - gi0 + 1; const aj = (y) => Math.floor((y - phy) / P) - gj0 + 1;
+        // l'œil entier, pas seulement son blanc : depuis le blanc, les pixels qui ne sont pas de la peau (iris, pupille, cils),
+        // à trois pixels d'art au plus du centre ; la peau est la couleur majoritaire de l'anneau autour du blanc
+        if (valide) for (const e of ys) {
+          const votes = new Map(); const m = Math.ceil(P);
+          for (let y = e.y0 - m; y <= e.y1 + m; y++) for (let x = e.x0 - m; x <= e.x1 + m; x++) {
+            if (x >= e.x0 && x <= e.x1 && y >= e.y0 && y <= e.y1) continue;
+            const i = y * W + x; if (!op[i] || clair(x, y)) continue;
+            const key = ((d[i * 4] >> 4) << 8) | ((d[i * 4 + 1] >> 4) << 4) | (d[i * 4 + 2] >> 4);
+            const v = votes.get(key) ?? { n: 0, r: 0, g: 0, b: 0 }; v.n++; v.r += d[i * 4]; v.g += d[i * 4 + 1]; v.b += d[i * 4 + 2]; votes.set(key, v);
+          }
+          let pv = null; for (const v of votes.values()) if (!pv || v.n > pv.n) pv = v;
+          const peau = pv ? [pv.r / pv.n, pv.g / pv.n, pv.b / pv.n] : [0, 0, 0];
+          const ex = cx(e); const ey = cy(e); const L = 3 * P;
+          const pasPeau = (x, y) => { if (x < ex - L || x > ex + L || y < ey - L || y > ey + L) return false; const i = y * W + x; return !!op[i] && Math.abs(d[i * 4] - peau[0]) + Math.abs(d[i * 4 + 1] - peau[1]) + Math.abs(d[i * 4 + 2] - peau[2]) > 80; };
+          const vu = new Set(); const st = [];
+          for (let y = e.y0; y <= e.y1; y++) for (let x = e.x0; x <= e.x1; x++) if (clair(x, y)) { vu.add(y * W + x); st.push([x, y]); }
+          const z = { x0: e.x0, y0: e.y0, x1: e.x1, y1: e.y1 };
+          while (st.length) {
+            const [x, y] = st.pop();
+            z.x0 = Math.min(z.x0, x); z.x1 = Math.max(z.x1, x); z.y0 = Math.min(z.y0, y); z.y1 = Math.max(z.y1, y);
+            for (const [ax, ay] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const nx = x + ax; const ny = y + ay; const q = ny * W + nx; if (!vu.has(q) && pasPeau(nx, ny)) { vu.add(q); st.push([nx, ny]); } }
+          }
+          e.oeil = z;
+        }
+        const ocx = (e) => (e.oeil.x0 + e.oeil.x1) / 2; const ocy = (e) => (e.oeil.y0 + e.oeil.y1) / 2;
+        if (!valide) yeux.manques.push(k);
+        else if (r === 2) {
+          const e = ys[0];
+          yeux.zones.push({ k, i0: ai(e.oeil.x0), j0: aj(e.oeil.y0), i1: ai(e.oeil.x1), j1: aj(e.oeil.y1) });
+        } else {
+          // les deux fenêtres du brut, de même taille, centrées sur chaque œil entier (marge d'un demi-pixel d'art)
+          const pw = Math.ceil(Math.max(...ys.map((e) => e.oeil.x1 - e.oeil.x0 + 1)) + P); const ph = Math.ceil(Math.max(...ys.map((e) => e.oeil.y1 - e.oeil.y0 + 1)) + P);
+          const org = ys.map((e) => [Math.round(ocx(e) - pw / 2), Math.round(ocy(e) - ph / 2)]);
+          const lit = (x, y) => { const i = y * W + x; return op[i] ? [d[i * 4], d[i * 4 + 1], d[i * 4 + 2]] : null; };
+          // recalage du second œil sur le premier (décalage entier de moins d'un pixel d'art), tel quel ou en miroir : selon la
+          // feuille, la source dessine deux yeux identiques (reflet du même côté) ou symétriques (blanc côté extérieur)
+          const second = (x, y, s2, mir) => lit(org[1][0] + (mir ? pw - 1 - x : x) + s2[0], org[1][1] + y + s2[1]);
+          let sb = [0, 0]; let eb = Infinity; let miroir = false; const M = Math.ceil(P);
+          for (const mir of [false, true]) for (let sy2 = -M; sy2 <= M; sy2++) for (let sx2 = -M; sx2 <= M; sx2++) {
+            let s = 0; let n = 0;
+            for (let y = 0; y < ph; y++) for (let x = 0; x < pw; x++) { const a = lit(org[0][0] + x, org[0][1] + y); const b = second(x, y, [sx2, sy2], mir); if (!a || !b) continue; s += (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 + (a[2] - b[2]) ** 2; n++; }
+            if (n && s / n < eb) { eb = s / n; sb = [sx2, sy2]; miroir = mir; }
+          }
+          // le dessin moyen des deux yeux
+          const moy = new Array(pw * ph).fill(null);
+          for (let y = 0; y < ph; y++) for (let x = 0; x < pw; x++) {
+            const a = lit(org[0][0] + x, org[0][1] + y); const b = second(x, y, sb, miroir);
+            moy[y * pw + x] = a && b ? [0, 1, 2].map((c2) => Math.round((a[c2] + b[c2]) / 2)) : (a ?? b);
+          }
+          // échantillonnage à la phase qui rend le mieux le dessin moyen (couleur majoritaire du cœur de chaque bloc)
+          const bloc = (x0, y0) => {
+            const votes = new Map();
+            for (let yy = y0 + P * 0.25; yy < y0 + P * 0.75; yy += 0.5) for (let xx = x0 + P * 0.25; xx < x0 + P * 0.75; xx += 0.5) {
+              const c3 = moy[Math.floor(yy) * pw + Math.floor(xx)]; if (!c3) continue;
+              const key = ((c3[0] >> 3) << 10) | ((c3[1] >> 3) << 5) | (c3[2] >> 3);
+              const v = votes.get(key) ?? { n: 0, r: 0, g: 0, b: 0 }; v.n++; v.r += c3[0]; v.g += c3[1]; v.b += c3[2]; votes.set(key, v);
+            }
+            let best = null; for (const v of votes.values()) if (!best || v.n > best.n) best = v;
+            return best ? [Math.round(best.r / best.n), Math.round(best.g / best.n), Math.round(best.b / best.n)] : null;
+          };
+          let choix = null;
+          for (let fy = 0; fy < P; fy += 0.5) for (let fx = 0; fx < P; fx += 0.5) {
+            const blocs = []; let s = 0; let n = 0;
+            for (let by = fy; by + P <= ph; by += P) for (let bx = fx; bx + P <= pw; bx += P) {
+              const c3 = bloc(bx, by); if (!c3) continue; blocs.push([bx, by, c3]);
+              for (let y = Math.ceil(by); y < by + P; y++) for (let x = Math.ceil(bx); x < bx + P; x++) { const q = moy[y * pw + x]; if (!q) continue; s += (q[0] - c3[0]) ** 2 + (q[1] - c3[1]) ** 2 + (q[2] - c3[2]) ** 2; n++; }
+            }
+            if (n && (!choix || s / n < choix.e)) choix = { e: s / n, blocs };
+          }
+          if (!choix) yeux.manques.push(k);
+          else {
+            const px2 = [];
+            for (const [bx, by, c3] of choix.blocs) {
+              px2.push([ai(org[0][0] + bx + P / 2), aj(org[0][1] + by + P / 2), c3[0], c3[1], c3[2], 0]);
+              // le second œil : même bloc, à sa place (en miroir : le bloc symétrique dans sa fenêtre)
+              const xb = miroir ? pw - bx - P : bx;
+              px2.push([ai(org[1][0] + sb[0] + xb + P / 2), aj(org[1][1] + sb[1] + by + P / 2), c3[0], c3[1], c3[2], 1]);
+            }
+            yeux.poses.push({ k, px: px2, ecart: Math.round(choix.e), recalage: sb, miroir });
+            for (const e of [0, 1]) { const q = px2.filter((p) => p[5] === e); yeux.zones.push({ k, i0: Math.min(...q.map((p) => p[0])), j0: Math.min(...q.map((p) => p[1])), i1: Math.max(...q.map((p) => p[0])), j1: Math.max(...q.map((p) => p[1])) }); }
+          }
+        }
       }
     });
   } else {
@@ -270,10 +411,31 @@ export async function processSheet(arg) {
     const j = Math.floor(i / AW) % ch; const k = Math.floor(Math.floor(i / AW) / ch) * 5 + Math.floor((i % AW) / cw);
     const sh = shifts[k]; return !sh || j <= BASE - sh.h + 1 + 0.45 * sh.h;
   };
+  // option `yeux` : fenêtres des yeux, élargies aux sourcils et aux joues (trois pixels d'art au-dessus, deux au-dessous, un sur les côtés) et reportées
+  // après l'alignement ; aucun ton clé de vêtement ni d'accent n'y est reconnu
+  const oeil = new Uint8Array(cls.length); const exclu = new Uint8Array(cls.length);
+  // tons clés écartés des yeux et des sourcils : ceux des vêtements et de l'accent (la peau et les cheveux y sont chez eux :
+  // paupières, sourcils)
+  const HORS_YEUX = ['tenue', 'chemise', 'accent'];
+  const aSourcil = [];
+  // et, dans les sourcils, les ombres du ton clé des cheveux qui dérivent jusqu'à l'orange vif (teinte 8–20°, saturées) :
+  // rattachées aux cheveux (sinon un point orange reste au sourcil d'un PNJ aux cheveux recolorés)
+  const KCH = SLOTS.indexOf('cheveux') + 1;
+  const sourcil = (hh, s, v) => KCH > 0 && hh >= 8 && hh < 20 && s > 0.8 && v > 0.3;
+  for (const z of yeux.zones) {
+    const sh = shifts[z.k]; if (!sh) continue;
+    const zr = Math.floor(z.k / 5); const zc = z.k % 5;
+    for (let j = z.j0 - 3; j <= z.j1 + 2; j++) for (let i = z.i0 - 1; i <= z.i1 + 1; i++) { const ni = i + sh.dx; const nj = j + sh.dy; if (ni >= 0 && nj >= 0 && ni < cw && nj < ch) oeil[(zr * ch + nj) * AW + zc * cw + ni] = 1; }
+  }
   for (let i = 0; i < cls.length; i++) {
     if (!aligned[i * 4 + 3]) continue;
     const [hh, s, v] = hsv(aligned[i * 4], aligned[i * 4 + 1], aligned[i * 4 + 2]);
-    const k = slotOf(hh, s, v, i);
+    let k = slotOf(hh, s, v, i);
+    // (comptés dans les statistiques comme avant : les niveaux des tons clés du reste de la feuille ne bougent pas)
+    if (k && oeil[i] && HORS_YEUX.includes(SLOTS[k - 1])) { vs[k].push(v); k = 0; exclu[i] = 1; }
+    // (rattachés après la palette et sans entrer dans les statistiques du ton clé : ni la palette ni les niveaux du reste
+    // de la chevelure ne bougent)
+    if (!k && oeil[i] && sourcil(hh, s, v)) aSourcil.push([i, v]);
     if (k) { cls[i] = k; vs[k].push(v); }
   }
   const vmax = (a) => { const s = [...a].sort((x, y) => x - y); return s[Math.floor(s.length * 0.98)] ?? 1; };
@@ -301,7 +463,7 @@ export async function processSheet(arg) {
     aligned[i * 4] = m[0] * LV[l]; aligned[i * 4 + 1] = m[1] * LV[l]; aligned[i * 4 + 2] = m[2] * LV[l]; counts[n][l]++;
   }
   // palette : couleurs naturelles réduites à 32 (k-moyennes, départ sur les couleurs les plus fréquentes, 16 tours)
-  const nat = []; for (let i = 0; i < cls.length; i++) if (!cls[i] && aligned[i * 4 + 3]) nat.push(i);
+  const nat = []; for (let i = 0; i < cls.length; i++) if (!cls[i] && aligned[i * 4 + 3] && !exclu[i]) nat.push(i);
   const freq = new Map(); for (const i of nat) { const k = ((aligned[i * 4] >> 4) << 8) | ((aligned[i * 4 + 1] >> 4) << 4) | (aligned[i * 4 + 2] >> 4); freq.set(k, (freq.get(k) ?? 0) + 1); }
   const KC = 32;
   let cent = [...freq.entries()].sort((a, b) => b[1] - a[1]).slice(0, KC).map(([k]) => [((k >> 8) & 15) * 16 + 8, ((k >> 4) & 15) * 16 + 8, (k & 15) * 16 + 8]);
@@ -312,10 +474,53 @@ export async function processSheet(arg) {
     cent = cent.map((c2, k) => (acc[k][3] ? [acc[k][0] / acc[k][3], acc[k][1] / acc[k][3], acc[k][2] / acc[k][3]] : c2));
   }
   nat.forEach((i, n) => { const c2 = cent[lab[n]]; aligned[i * 4] = Math.round(c2[0]); aligned[i * 4 + 1] = Math.round(c2[1]); aligned[i * 4 + 2] = Math.round(c2[2]); });
+  // option `yeux` : les pixels des yeux écartés des tons clés prennent la couleur de la palette la plus proche (la palette
+  // est calculée sans eux : le reste de la feuille ne change pas)
+  for (let i = 0; i < cls.length; i++) {
+    if (!exclu[i]) continue;
+    let bi = 0; let bd = Infinity;
+    for (let c2 = 0; c2 < cent.length; c2++) { const dr = aligned[i * 4] - cent[c2][0]; const dg = aligned[i * 4 + 1] - cent[c2][1]; const db = aligned[i * 4 + 2] - cent[c2][2]; const dist = 2 * dr * dr + 4 * dg * dg + 3 * db * db; if (dist < bd) { bd = dist; bi = c2; } }
+    aligned[i * 4] = Math.round(cent[bi][0]); aligned[i * 4 + 1] = Math.round(cent[bi][1]); aligned[i * 4 + 2] = Math.round(cent[bi][2]);
+  }
+  // option `yeux` : les ombres orange des sourcils rattachées aux cheveux (niveau du groupe le plus proche)
+  for (const [i, vv] of aSourcil) {
+    if (!GC || !GC[KCH].length) continue;
+    const l = GC[KCH].reduce((bi, x) => (Math.abs(x.c - vv) < Math.abs(bi.c - vv) ? x : bi)).level;
+    aligned[i * 4] = LV[l]; aligned[i * 4 + 1] = LV[l]; aligned[i * 4 + 2] = 0; cls[i] = KCH;
+  }
   // aucune couleur naturelle ne doit être exactement un ton clé (sinon elle serait recolorée)
   const keys = new Set(); for (const l of LV) for (const m of [[1, 0, 0], [1, 1, 0], [1, 0, 1], [0, 1, 1], [0, 1, 0]]) keys.add(m.map((x) => x * l).join(','));
   let nudged = 0;
   for (let i = 0; i < cls.length; i++) if (!cls[i] && aligned[i * 4 + 3] && keys.has(`${aligned[i * 4]},${aligned[i * 4 + 1]},${aligned[i * 4 + 2]}`)) { aligned[i * 4] = Math.max(0, aligned[i * 4] - 1) || 1; nudged++; }
+  // option `yeux` : le dessin moyen des yeux posé aux deux places (grille alignée, après la palette, qui ne l'a pas vu) ;
+  // chaque couleur suit les règles des autres pixels : ton clé exact (niveau du groupe le plus proche) ou couleur de la
+  // palette la plus proche, jamais un ton clé de vêtement ni d'accent
+  const plusProche = (c3) => {
+    let bi = 0; let bd = Infinity;
+    for (let c2 = 0; c2 < cent.length; c2++) { const dr = c3[0] - cent[c2][0]; const dg = c3[1] - cent[c2][1]; const db = c3[2] - cent[c2][2]; const dist = 2 * dr * dr + 4 * dg * dg + 3 * db * db; if (dist < bd) { bd = dist; bi = c2; } }
+    const out = cent[bi].map((x) => Math.round(x));
+    if (keys.has(out.join(','))) out[0] = Math.max(0, out[0] - 1) || 1;
+    return out;
+  };
+  for (const p0 of yeux.poses) {
+    const sh = shifts[p0.k]; if (!sh) continue;
+    const zr = Math.floor(p0.k / 5); const zc = p0.k % 5;
+    for (const [i, j, R, G, B] of p0.px) {
+      const ni = i + sh.dx; const nj = j + sh.dy; if (ni < 0 || nj < 0 || ni >= cw || nj >= ch) continue;
+      const q = (zr * ch + nj) * AW + zc * cw + ni;
+      const [hh, s, v] = hsv(R, G, B);
+      let kk = slotOf(hh, s, v, q);
+      if (kk && HORS_YEUX.includes(SLOTS[kk - 1])) kk = 0;
+      if (!kk && sourcil(hh, s, v)) kk = KCH;
+      let out;
+      if (kk && (!GC || GC[kk].length)) {
+        const vv = Math.max(R, G, B) / 255; const v2 = vv / VM[kk] * 255;
+        const l = GC ? GC[kk].reduce((bi, x) => (Math.abs(x.c - vv) < Math.abs(bi.c - vv) ? x : bi)).level : LV.reduce((bi, x, k2) => (Math.abs(x - v2) < Math.abs(LV[bi] - v2) ? k2 : bi), 0);
+        out = MASK[SLOTS[kk - 1]].map((m) => m * LV[l]);
+      } else out = plusProche([R, G, B]);
+      aligned[q * 4] = out[0]; aligned[q * 4 + 1] = out[1]; aligned[q * 4 + 2] = out[2]; aligned[q * 4 + 3] = 255;
+    }
+  }
   const toUrl = async (k) => {
     const s = new OffscreenCanvas(AW, ch * 3); s.getContext('2d').putImageData(new ImageData(aligned, AW, ch * 3), 0, 0);
     const o = new OffscreenCanvas(AW * k, ch * 3 * k); const og = o.getContext('2d'); og.imageSmoothingEnabled = false; og.drawImage(s, 0, 0, AW * k, ch * 3 * k);
@@ -326,7 +531,7 @@ export async function processSheet(arg) {
   return {
     K1: await toUrl(1), K3: await toUrl(3), cell: [cw, ch], anchor: [X0, BASE + 1], figureH,
     pitch: { x: Math.round(px.p * 1000) / 1000, y: Math.round(py.p * 1000) / 1000, rx: Math.round(px.r * 1000) / 1000, ry: Math.round(py.r * 1000) / 1000, phaseX: Math.round(px.ph * 100) / 100, phaseY: Math.round(py.ph * 100) / 100 },
-    shifts, clipped, counts, nudged, colors: colors.size, figures,
+    shifts, clipped, counts, nudged, colors: colors.size, figures, yeux,
   };
 }
 
