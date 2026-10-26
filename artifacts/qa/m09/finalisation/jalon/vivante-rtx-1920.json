@@ -1,0 +1,105 @@
+{
+  "date": "2026-10-26T03:49:41.169Z",
+  "commit": "52c44b5",
+  "viewport": [
+    1920,
+    1080
+  ],
+  "renderer": "Chrome headless, GPU réel : ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11) — arguments : --force_high_performance_gpu",
+  "checks": [
+    "OK la ville en rangs est affichée (QA : dioramas admis)",
+    "OK faits rejoués jusqu'au chapitre V sans refus (aucun)",
+    "OK la cour de la Chapelle : la porte cochère du bout est mène à la Grande Cour",
+    "OK arrivée dans la Grande Cour (par l’escalier du premier plan)",
+    "OK le héraut du Tournoi, devant l’estrade, avec un « ! » (heraut, rue-cour)",
+    "OK le héraut : l’ouverture du Championnat devant l’estrade",
+    "OK S’inscrire : les Quatre Bannières, le choix des chefs",
+    "OK après le duel : retour dans la Grande Cour, devant le héraut (cour, 0.00 m)",
+    "OK la Signature du duel de poule est retenue (Voile) : la suivante devra en changer",
+    "OK même Signature : aucun chef proposé tant qu’elle n’a pas changé",
+    "OK la raison est affichée (changer de Signature)",
+    "OK une rumeur (« ? ») : rumeur-cour @ cour, réplique lue, le passant repart",
+    "OK un refus : rue-cour @ cour reste, sans redemander, puis repart au point de décision suivant",
+    "OK quai : la sortie vers port est ouverte",
+    "OK port, arrivée 1 : membre-Ronce (rencontres du quartier seulement, deux au plus)",
+    "OK port, arrivée 2 : membre-Ronce, rue-port (rencontres du quartier seulement, deux au plus)",
+    "OK port, arrivée 3 : membre-Ronce, rue-port (rencontres du quartier seulement, deux au plus)",
+    "OK port, arrivée 4 : membre-Ronce, rue-port (rencontres du quartier seulement, deux au plus)",
+    "OK port, arrivée 5 : membre-Ronce, rue-port (rencontres du quartier seulement, deux au plus)",
+    "OK port, arrivée 6 : membre-Ronce, rue-port (rencontres du quartier seulement, deux au plus)",
+    "OK port : rencontres vues membre-Ronce, rue-port",
+    "OK port : réplique lue (membre-Ronce : Un membre de la Ronce« Une partie lente, comme on les aime à la Ronce ? Prends ton temps, …)",
+    "OK port : le texte de cour-ronce (La cour de la RonceLa cour de la Ronce, au cœur du Port, devant la vieille maiso…)",
+    "OK cour : la sortie vers haute est ouverte",
+    "OK haute, arrivée 1 : rumeur-haute (rencontres du quartier seulement, deux au plus)",
+    "OK haute, arrivée 2 : rue-haute (rencontres du quartier seulement, deux au plus)",
+    "OK haute, arrivée 3 : rue-haute, membre-Astre (rencontres du quartier seulement, deux au plus)",
+    "OK haute, arrivée 4 : rue-haute, membre-Astre (rencontres du quartier seulement, deux au plus)",
+    "OK haute, arrivée 5 : rue-haute, membre-Astre (rencontres du quartier seulement, deux au plus)",
+    "OK haute, arrivée 6 : rue-haute, membre-Astre (rencontres du quartier seulement, deux au plus)",
+    "OK haute : rencontres vues rumeur-haute, rue-haute, membre-Astre",
+    "OK haute : réplique lue (rumeur-haute : Une passante« Depuis l’esplanade, on voit l’estrade de la Grande Cour : le Championnat des…)",
+    "OK haute : le texte de parvis-observatoire (Le parvis de l’ObservatoireLe parvis de l’Observatoire, au sommet de la ville : …)",
+    "OK « Continuer » : même îlot (haute) et même directeur (aucun tirage au rechargement)",
+    "OK console : aucune erreur"
+  ],
+  "steps": [
+    {
+      "name": "cour-chapelle-porte",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/0a01192d-adda-4704-b511-ff99260f36dc/scratchpad/jalon-captures/vivante-rtx-1920/01-cour-chapelle-porte.png"
+    },
+    {
+      "name": "grande-cour-arrivee",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/0a01192d-adda-4704-b511-ff99260f36dc/scratchpad/jalon-captures/vivante-rtx-1920/02-grande-cour-arrivee.png"
+    },
+    {
+      "name": "heraut-ouverture",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/0a01192d-adda-4704-b511-ff99260f36dc/scratchpad/jalon-captures/vivante-rtx-1920/03-heraut-ouverture.png"
+    },
+    {
+      "name": "heraut-poule",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/0a01192d-adda-4704-b511-ff99260f36dc/scratchpad/jalon-captures/vivante-rtx-1920/04-heraut-poule.png"
+    },
+    {
+      "name": "heraut-meme-signature",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/0a01192d-adda-4704-b511-ff99260f36dc/scratchpad/jalon-captures/vivante-rtx-1920/05-heraut-meme-signature.png"
+    },
+    {
+      "name": "rumeur-cour",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/0a01192d-adda-4704-b511-ff99260f36dc/scratchpad/jalon-captures/vivante-rtx-1920/06-rumeur-cour.png"
+    },
+    {
+      "name": "facultative-cour",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/0a01192d-adda-4704-b511-ff99260f36dc/scratchpad/jalon-captures/vivante-rtx-1920/07-facultative-cour.png"
+    },
+    {
+      "name": "port-arrivee",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/0a01192d-adda-4704-b511-ff99260f36dc/scratchpad/jalon-captures/vivante-rtx-1920/08-port-arrivee.png"
+    },
+    {
+      "name": "port-membre-Ronce",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/0a01192d-adda-4704-b511-ff99260f36dc/scratchpad/jalon-captures/vivante-rtx-1920/09-port-membre-Ronce.png"
+    },
+    {
+      "name": "port-cour-ronce",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/0a01192d-adda-4704-b511-ff99260f36dc/scratchpad/jalon-captures/vivante-rtx-1920/10-port-cour-ronce.png"
+    },
+    {
+      "name": "haute-arrivee",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/0a01192d-adda-4704-b511-ff99260f36dc/scratchpad/jalon-captures/vivante-rtx-1920/11-haute-arrivee.png"
+    },
+    {
+      "name": "haute-rumeur-haute",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/0a01192d-adda-4704-b511-ff99260f36dc/scratchpad/jalon-captures/vivante-rtx-1920/12-haute-rumeur-haute.png"
+    },
+    {
+      "name": "haute-parvis-observatoire",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/0a01192d-adda-4704-b511-ff99260f36dc/scratchpad/jalon-captures/vivante-rtx-1920/13-haute-parvis-observatoire.png"
+    },
+    {
+      "name": "reprise",
+      "file": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-wizardly-nightingale-a37d0f/0a01192d-adda-4704-b511-ff99260f36dc/scratchpad/jalon-captures/vivante-rtx-1920/14-reprise.png"
+    }
+  ],
+  "console": []
+}

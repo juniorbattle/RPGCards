@@ -1,0 +1,161 @@
+{
+ "commit": "52c44b5",
+ "viewport": [
+  1280,
+  720
+ ],
+ "ilots": {
+  "quai": {
+   "pretMs": 1061,
+   "images": 660,
+   "medianeMs": 6.1,
+   "p95Ms": 6.2,
+   "p99Ms": 6.3,
+   "maxMs": 6.4,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 236,
+    "triangles": 5182,
+    "textures": 58,
+    "geometries": 150,
+    "programs": 20,
+    "lights": 16,
+    "cpuMs": 1.9,
+    "frames": 915,
+    "buildMs": 410,
+    "firstFrameMs": 1008,
+    "mountMs": null,
+    "mountFrameMs": null
+   },
+   "decors": "diorama"
+  },
+  "parvis": {
+   "pretMs": 994,
+   "images": 661,
+   "medianeMs": 6.1,
+   "p95Ms": 6.2,
+   "p99Ms": 6.3,
+   "maxMs": 6.5,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 242,
+    "triangles": 5190,
+    "textures": 56,
+    "geometries": 153,
+    "programs": 20,
+    "lights": 15,
+    "cpuMs": 1.5,
+    "frames": 1895,
+    "buildMs": 410,
+    "firstFrameMs": 1008,
+    "mountMs": 260,
+    "mountFrameMs": 608
+   },
+   "decors": "diorama"
+  },
+  "ruelles": {
+   "pretMs": 804,
+   "images": 659,
+   "medianeMs": 6.1,
+   "p95Ms": 6.2,
+   "p99Ms": 6.4,
+   "maxMs": 6.6,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 202,
+    "triangles": 5102,
+    "textures": 54,
+    "geometries": 127,
+    "programs": 20,
+    "lights": 13,
+    "cpuMs": 1.2,
+    "frames": 2881,
+    "buildMs": 410,
+    "firstFrameMs": 1008,
+    "mountMs": 72,
+    "mountFrameMs": 360
+   },
+   "decors": "diorama"
+  },
+  "cour": {
+   "pretMs": 810,
+   "images": 419,
+   "medianeMs": 10.1,
+   "p95Ms": 14.4,
+   "p99Ms": 14.5,
+   "maxMs": 15.1,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 161,
+    "triangles": 5028,
+    "textures": 47,
+    "geometries": 94,
+    "programs": 20,
+    "lights": 15,
+    "cpuMs": 1.2,
+    "frames": 3520,
+    "buildMs": 410,
+    "firstFrameMs": 1008,
+    "mountMs": 78,
+    "mountFrameMs": 288
+   },
+   "decors": "diorama"
+  },
+  "port": {
+   "pretMs": 799,
+   "images": 659,
+   "medianeMs": 6.1,
+   "p95Ms": 6.2,
+   "p99Ms": 6.4,
+   "maxMs": 6.8,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 167,
+    "triangles": 5024,
+    "textures": 50,
+    "geometries": 104,
+    "programs": 20,
+    "lights": 11,
+    "cpuMs": 2.6,
+    "frames": 4507,
+    "buildMs": 410,
+    "firstFrameMs": 1008,
+    "mountMs": 66,
+    "mountFrameMs": 349
+   },
+   "decors": "diorama"
+  },
+  "haute": {
+   "pretMs": 798,
+   "images": 660,
+   "medianeMs": 6.1,
+   "p95Ms": 6.2,
+   "p99Ms": 6.3,
+   "maxMs": 6.4,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 175,
+    "triangles": 5048,
+    "textures": 48,
+    "geometries": 108,
+    "programs": 20,
+    "lights": 13,
+    "cpuMs": 1.3,
+    "frames": 5502,
+    "buildMs": 410,
+    "firstFrameMs": 1008,
+    "mountMs": 66,
+    "mountFrameMs": 317
+   },
+   "decors": "diorama"
+  }
+ },
+ "renderer": "ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "console": []
+}

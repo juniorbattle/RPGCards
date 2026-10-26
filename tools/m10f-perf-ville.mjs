@@ -1,7 +1,8 @@
-// M10-F — performances de la ville de l'aventure sur GPU réel : la ville en rangs (images approuvées), chacun des quatre
-// îlots (le Quai, le Parvis, les Ruelles, la Grande Cour) parcouru à pied 4 s (2 s vers la droite, 2 s vers la gauche),
-// intervalles entre images relevés dans la page (requestAnimationFrame), appels de dessin, triangles, textures,
-// programmes, temps processeur du rendu, temps de mise en place de l'îlot. Animations réelles (sans `reducedMotion`).
+// M10-F — performances de la ville de l'aventure sur GPU réel : la ville en rangs (images approuvées), chacun des six
+// îlots (le Quai, le Parvis, les Ruelles, la Grande Cour ; la Place du Fanal et la Ville haute depuis la passe 140)
+// parcouru à pied 4 s (2 s vers la droite, 2 s vers la gauche), intervalles entre images relevés dans la page
+// (requestAnimationFrame), appels de dessin, triangles, textures, programmes, temps processeur du rendu, temps de mise en
+// place de l'îlot. Animations réelles (sans `reducedMotion`).
 // Usage : npm run build && LQV_GPU=1 CHROMIUM_PATH=<Chrome> [LQV_CHROME_ARGS=--force_high_performance_gpu] [LQV_VP=1920x1080] node tools/m10f-perf-ville.mjs [rapport.json]
 import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -25,7 +26,7 @@ try {
   await p.click('[data-key="av-new"]');
   await p.click('[data-key="av-start"]');
   const pret = (id) => p.waitForFunction((x) => { const t = window.__lqvAventure?.town; return !!t && t.ilot.id === x && t.stats().frames > 2 && !document.querySelector('.ville-host').hidden && !document.querySelector('.ville-fade'); }, id, { timeout: 120000 });
-  for (const id of ['quai', 'parvis', 'ruelles', 'cour']) {
+  for (const id of ['quai', 'parvis', 'ruelles', 'cour', 'port', 'haute']) {
     if (id !== 'quai') await p.evaluate((x) => window.__lqvAventure.voyager(x, 'arrivee'), id);
     const t0 = Date.now();
     await pret(id);
