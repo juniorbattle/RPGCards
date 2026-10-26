@@ -2800,3 +2800,10 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
   - `[OK]` ADR 028 (« Bannières de l'Observatoire »).
 - **[OK] Succès :** `npm run typecheck` 0 erreur ; `npm test` 466/466 ; `npm run build` OK ; vérificateur au laboratoire (`LQV_ILOTS=haute`, Radeon 780M, 1920 × 1080) : la Ville haute dessinée par son diorama (95,1 Mo de mémoire GPU), chaque rang et chaque spot praticables, console vide ; **politique du jeu** (`?aventure=1&qa=1&decors=approuvees&sprites=approuvees`) : ville en rangs, **seule la Place du Fanal ouverte**, la Ville haute fermée comme prévu. Planche `screenshots/qa/m09/finalisation/bannieres/avant-apres.png`.
 - **À reprendre :** l'ordre éventuel du responsable de réapprouver la planche retraitée (passe à part) ; vie des deux quartiers ; heure de ville ; jalon ; fiche.
+
+## Passe 135 — M09, finalisation : la planche retraitée de l'Observatoire approuvée par le registre (passe à part) ; la Ville haute rouverte dans le jeu — 2026-10-25, worktree local (session de la finalisation), départ `3453cba`, commit sur `main`
+
+- **Mission / contraintes :** ordre explicite du responsable, après la planche `screenshots/qa/m09/finalisation/bannieres/avant-apres.png` : « J'approuve » (question : « Approuves-tu la planche retraitée de l'Observatoire (Astre brodé), pour rouvrir la Ville haute dans le jeu ? »). Aucun drapeau posé à la main.
+- **Modifications :** `art-src/approbations.json` : `public/decors/quartiers-haute-observatoire.png` (`e119ba9a…`, décision citée) ; l'entrée caduque de la passe 130 reste dans `caduques` ; `node tools/m09-approbations.mjs` : 1 entrée du manifeste de la ville en rangs passée à `approved: true`, fiche mise à jour ; `test/approbations.test.ts` : 36 images.
+- **[OK] Succès :** registre vérifié sans écart (36 images, 326 entrées approuvées, 36 fiches) ; `npm run typecheck` 0 erreur ; `npm test` 466/466 ; `npm run build` OK ; **politique du jeu** (`?aventure=1&qa=1&decors=approuvees&sprites=approuvees`, Radeon 780M) : ville en rangs, **la Place du Fanal et la Ville haute ouvertes**.
+- **À reprendre :** vie des deux quartiers ; heure de ville ; jalon ; fiche.
