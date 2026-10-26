@@ -212,6 +212,12 @@
       "sha256": "8d090fb0e7147b591d2e348754bcebaebe1d31f0043a320165bad401cd295d7b",
       "date": "2026-10-25",
       "decision": "ordre explicite du responsable (2026-10-25, après les planches de la passe 129 : screenshots/qa/m09/quartiers-ajoutes/) : « J’approuve les 4 façades des quartiers (vieux phare, maison de la Ronce, hôtels à arcades, Observatoire) : passe-les à approved: true par le registre, dans une passe à part, pour ouvrir la Place du Fanal et la Ville haute. » ; passe 130"
+    },
+    {
+      "fichier": "public/decors/quartiers-haute-observatoire.png",
+      "sha256": "e119ba9ae4ac7ceadd1b54288d15e2e354e874edf9c8b00dbfcbf2f6c4d1caa7",
+      "date": "2026-10-25",
+      "decision": "ordre explicite du responsable (2026-10-25, après la planche screenshots/qa/m09/finalisation/bannieres/avant-apres.png ; réponse « J’approuve » à la question « Approuves-tu la planche retraitée de l’Observatoire (Astre brodé), pour rouvrir la Ville haute dans le jeu ? ») ; passe 135"
     }
   ],
   "caduques": [
