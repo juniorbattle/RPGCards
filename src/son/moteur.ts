@@ -119,6 +119,8 @@ export function creerMoteurSon(search = typeof location !== 'undefined' ? locati
     repere: (d, t) => { ton(d, t, 1320, 'square', 0.07, 0.06); ton(d, t + 0.09, 1760, 'square', 0.09, 0.06); return 0.2; },
     rival: (d, t) => { for (const f of [196, 198.5, 147]) ton(d, t, f, 'sawtooth', 0.55, 0.07, { attaque: 0.03 }); ton(d, t, 80, 'sine', 0.5, 0.5, { vers: 50 }); return 0.6; },
     voyage: (d, t) => { souffle(d, t, 0.6, 'bandpass', 300, 1.2, 0.18, 1200); return 0.6; },
+    gain: (d, t) => { [784, 988, 1175].forEach((f, i) => ton(d, t + i * 0.07, f, 'sine', 0.5, 0.14)); ton(d, t + 0.21, 1568, 'triangle', 0.6, 0.08); return 0.8; },
+    titre: (d, t) => { [392, 523, 659, 784].forEach((f, i) => ton(d, t + i * 0.16, f, 'sawtooth', i === 3 ? 1.4 : 0.3, 0.06, { attaque: 0.02 })); for (const f of [523, 659, 784]) ton(d, t + 0.64, f, 'triangle', 1.6, 0.1, { attaque: 0.05 }); return 2.2; },
   };
 
   // --- ambiances : boucles de bruit filtré modulé, ponctuations rares ---

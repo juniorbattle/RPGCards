@@ -39,6 +39,8 @@ ADR 042.
 | | `repere` | un guetteur repère le joueur (« ! ») | deux notes piquées, aiguës |
 | | `rival` | Kaï surgit | coup de cuivre (dents de scie désaccordées) + timbale |
 | | `voyage` | changement d'îlot (fondu) | souffle (bruit filtré qui monte puis descend) |
+| Aventure | `gain` | une carte ou une Technique entre au registre | trois notes claires montantes et un tintement |
+| | `titre` | le titre de la ville remporté | fanfare (dents de scie douces) et accord tenu |
 | Ambiances | `amb-quai` | dans le Quai | clapot (bruit filtré lent, modulé) + cloche lointaine rare |
 | | `amb-ruelles` | dans les Ruelles | filet d'eau (fontaine) |
 | | `amb-parvis` | dans le Parvis | rumeur de foule (bruit en bande, modulé) |
