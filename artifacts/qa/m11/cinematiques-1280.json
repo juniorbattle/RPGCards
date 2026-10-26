@@ -1,0 +1,84 @@
+{
+  "commit": "bf5682e",
+  "date": "2026-10-26T17:21:17.914Z",
+  "viewport": [
+    1280,
+    720
+  ],
+  "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU",
+  "lent": 10,
+  "checks": [
+    "OK arrivée sur le Quai : cinématique en bandes",
+    "OK carton du lieu (Le Quaisoir de tournoi)",
+    "OK l’interface de la ville s’efface pendant la cinématique",
+    "OK pas de carton plein écran par-dessus (la cinématique le remplace)",
+    "OK arrivée mémorisée dans la sauvegarde",
+    "OK travelling : le joueur traverse le cadre vers sa place, sans retour en arrière (-0.03 → -0.03 → -0.02 → -0.02 → -0.02 → 0.02 → 0.04 → 0.04 → 0.04 → 0.05 → 0.05 → 0.07 → 0.07 → 0.09 → 0.09 → 0.09 → 0.10 → 0.10 → 0.12 → 0.12 → 0.12 → 0.13 → 0.13 → 0.15 → 0.15 → 0.16 → 0.16 → 0.16 → 0.17 → 0.17 → 0.18 → 0.18 → 0.19 → 0.19 → 0.19 → 0.20 → 0.20 → 0.20 → 0.20 → 0.20 ; cadrage ordinaire : 0.14)",
+    "OK fin : bandes retirées, interface revenue",
+    "OK les entrées sont rendues au joueur (x -17.40 → -16.35)",
+    "OK Échap passe la cinématique sans ouvrir le menu",
+    "OK cinématique passée : la caméra est au joueur (0.83)",
+    "OK arrivée sur la Place du Fanal mémorisée même passée",
+    "OK retour au Quai : pas de seconde cinématique",
+    "OK chapitre I par des faits (aucun refus)",
+    "OK un docker du Quai posé (guetteur)",
+    "OK guetteur : plan court, sans bandes",
+    "OK retour du duel : plus de cadre gardé",
+    "OK le cadet de la Ronce vaincu (fait)",
+    "OK Kaï surgit (K1) : cinématique en bandes",
+    "OK la caméra se porte sur Kaï pendant la bulle (Kaï à 0.53 de la largeur)",
+    "OK dialogue ouvert sur les deux personnages (milieu à 0.49, 0.95 m)",
+    "OK les bandes se retirent quand le dialogue s’ouvre",
+    "OK retour du duel contre Kaï : caméra rendue au joueur (0.49)",
+    "OK menu : « Cinématiques : oui »",
+    "OK menu : coupées, mémorisé dans le navigateur",
+    "OK QA sans `?cine=1` : le carton d’avant, aucune cinématique"
+  ],
+  "steps": [
+    {
+      "name": "quai-debut",
+      "file": "screenshots/qa/m11/cinematiques-1280/01-quai-debut.png"
+    },
+    {
+      "name": "quai-travelling",
+      "file": "screenshots/qa/m11/cinematiques-1280/02-quai-travelling.png"
+    },
+    {
+      "name": "quai-fin",
+      "file": "screenshots/qa/m11/cinematiques-1280/03-quai-fin.png"
+    },
+    {
+      "name": "fanal-arrivee",
+      "file": "screenshots/qa/m11/cinematiques-1280/04-fanal-arrivee.png"
+    },
+    {
+      "name": "fanal-passee",
+      "file": "screenshots/qa/m11/cinematiques-1280/05-fanal-passee.png"
+    },
+    {
+      "name": "guetteur-plan",
+      "file": "screenshots/qa/m11/cinematiques-1280/06-guetteur-plan.png"
+    },
+    {
+      "name": "guetteur-dialogue",
+      "file": "screenshots/qa/m11/cinematiques-1280/07-guetteur-dialogue.png"
+    },
+    {
+      "name": "kai-point",
+      "file": "screenshots/qa/m11/cinematiques-1280/08-kai-point.png"
+    },
+    {
+      "name": "kai-dialogue",
+      "file": "screenshots/qa/m11/cinematiques-1280/09-kai-dialogue.png"
+    },
+    {
+      "name": "apres-kai",
+      "file": "screenshots/qa/m11/cinematiques-1280/10-apres-kai.png"
+    },
+    {
+      "name": "menu-cinematiques",
+      "file": "screenshots/qa/m11/cinematiques-1280/11-menu-cinematiques.png"
+    }
+  ],
+  "console": []
+}
