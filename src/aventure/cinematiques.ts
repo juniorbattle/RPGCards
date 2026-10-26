@@ -7,6 +7,7 @@
  * Ce module est PUR : il choisit les plans (où regarder, combien de temps), les textes des cartons et le réglage ; le
  * déroulé (bandes, minuterie, touches) est dans `cinema.ts`, les actions (marche d'un personnage) dans l'application.
  */
+import type { Family } from '../game/catalog/cards';
 import type { IlotId } from '../ville/ilots';
 import type { Vec2 } from '../ville/monde';
 
@@ -17,7 +18,20 @@ import type { Vec2 } from '../ville/monde';
  */
 export interface Plan { at: Vec2; zoom?: number; hauteur?: number; mouvement: 'coupe' | 'glisse' | 'travelling'; ms: number; tau?: number }
 
-export type CinematiqueId = `lieu-${IlotId}` | 'rival' | 'guetteur';
+export type CinematiqueId = `lieu-${IlotId}` | 'rival' | 'guetteur' | 'prologue-kai' | 'prologue-foule' | `affiliation-${Family}` | `chef-${Family}` | `chapitre-${ChapitreCarton}` | 'championnat' | 'titre';
+
+/** Chapitres qui ont leur carton (le I s'ouvre avec l'affiliation, le titre avec sa propre scène). */
+export type ChapitreCarton = 'II' | 'III' | 'IV' | 'V';
+
+/** Cartons de chapitre : le titre et une ligne (ce qui reste à faire). */
+export const CARTONS_CHAPITRE: Readonly<Record<ChapitreCarton, { titre: string; ligne: string }>> = {
+  II: { titre: 'Chapitre II', ligne: 'les trois voies · trois maisons à défier' },
+  III: { titre: 'Chapitre III', ligne: 'les trois voies · deux maisons à défier' },
+  IV: { titre: 'Chapitre IV', ligne: 'les trois voies · une dernière maison' },
+  V: { titre: 'Chapitre V', ligne: 'le Championnat des Champions' },
+};
+
+export const estChapitreCarton = (c: string): c is ChapitreCarton => c === 'II' || c === 'III' || c === 'IV' || c === 'V';
 
 /** Carton de la première arrivée dans un quartier : le nom vient de l'îlot, la ligne d'ici. */
 export const LIGNES_LIEU: Readonly<Record<IlotId, string>> = {
@@ -30,7 +44,11 @@ export const LIGNES_LIEU: Readonly<Record<IlotId, string>> = {
 };
 
 /** Durées (ms) : le travelling d'une arrivée, la mise au point sur Kaï, le retour au joueur. */
-export const DUREES = { arriveeTenue: 700, arriveeTravelling: 3200, arriveeRetour: 800, rivalPoint: 900, guetteur: 450 } as const;
+export const DUREES = {
+  arriveeTenue: 700, arriveeTravelling: 3200, arriveeRetour: 800, rivalPoint: 900, guetteur: 450,
+  chapitreTravelling: 3000, chefPoint: 1500, chefDuo: 1300, affiliationTenue: 700, affiliationRecul: 2400,
+  titreTenue: 800, titreTravelling: 3400, kaiPrologue: 1300,
+} as const;
 
 /**
  * Première arrivée dans un quartier : la caméra, un peu plus loin et plus haut, part du côté de la rue opposé au joueur
@@ -73,6 +91,80 @@ export function plansGuetteur(approche: Vec2, joueur: Vec2): Plan[] {
   return [{ ...cadrageDuo(approche, joueur), mouvement: 'glisse', tau: 0.4, ms: 0 }];
 }
 
+/** Cadre d'un dialogue de scène : sur un personnage (gros plan) ou sur deux ; `bandes` : la scène les garde. */
+export interface CadreDialogue { at: Vec2; zoom?: number; hauteur?: number; bandes?: boolean }
+
+/** Le cadre d'un dialogue : sur `a` seul, ou sur `a` et `b` ensemble. */
+export function cadreDialogue(a: Vec2, b?: Vec2 | null, bandes = true): CadreDialogue {
+  return b ? { ...cadrageDuo(a, b), bandes } : { at: { ...a }, zoom: 0.72, hauteur: -0.8, bandes };
+}
+
+/** Un groupe dans le même cadre (la foule et le joueur) : le centre, d'autant plus loin que le groupe est étendu. */
+export function cadreGroupe(points: readonly Vec2[], bandes = true): CadreDialogue {
+  const n = Math.max(1, points.length);
+  const c = { x: points.reduce((s, p) => s + p.x, 0) / n, z: points.reduce((s, p) => s + p.z, 0) / n };
+  const etendue = Math.max(0, ...points.map((p) => Math.hypot(p.x - c.x, p.z - c.z)));
+  return { at: c, zoom: Math.min(1.15, Math.max(0.8, 0.7 + etendue * 0.07)), hauteur: -0.3, bandes };
+}
+
+/**
+ * Carton de chapitre : la caméra, un peu plus loin, glisse lentement vers le joueur depuis le côté de la rue où il y a
+ * le plus de place (bornes de la caméra de l'îlot), puis revient à son cadrage ordinaire.
+ */
+export function plansChapitre(joueur: Vec2, bornes: { minX: number; maxX: number }): Plan[] {
+  const x = Math.min(bornes.maxX, Math.max(bornes.minX, joueur.x));
+  const cote = bornes.maxX - x >= x - bornes.minX ? 1 : -1;
+  const depart = { x: Math.min(bornes.maxX, Math.max(bornes.minX, x + cote * 4)), z: joueur.z };
+  return [
+    { at: depart, zoom: 1.18, hauteur: 0.6, mouvement: 'coupe', ms: 500 },
+    { at: { x, z: joueur.z }, zoom: 1.06, hauteur: 0.3, mouvement: 'travelling', ms: DUREES.chapitreTravelling },
+    { at: { ...joueur }, mouvement: 'glisse', tau: 0.45, ms: 700 },
+  ];
+}
+
+/** Un chef vaincu : la caméra se porte sur lui, tout près (il s'incline), puis prend les deux personnages. */
+export function plansChef(chef: Vec2, joueur: Vec2): Plan[] {
+  return [
+    { at: { ...chef }, zoom: 0.58, hauteur: -1.1, mouvement: 'glisse', tau: 0.35, ms: DUREES.chefPoint },
+    { ...cadrageDuo(chef, joueur), mouvement: 'glisse', tau: 0.6, ms: DUREES.chefDuo },
+  ];
+}
+
+/** L'affiliation confirmée : gros plan sur le joueur dans ses nouvelles couleurs, puis la caméra recule lentement. */
+export function plansAffiliation(joueur: Vec2): Plan[] {
+  return [
+    { at: { ...joueur }, zoom: 0.5, hauteur: -1.2, mouvement: 'coupe', ms: DUREES.affiliationTenue },
+    { at: { ...joueur }, zoom: 0.86, hauteur: -0.5, mouvement: 'travelling', ms: DUREES.affiliationRecul },
+  ];
+}
+
+/**
+ * Le titre : plan large de la place (plus loin, plus haut) depuis un bord, travelling jusqu'au héraut et au joueur ;
+ * le dialogue de la proclamation s'ouvre sur eux.
+ */
+export function plansTitre(heraut: Vec2 | null, joueur: Vec2, bornes: { minX: number; maxX: number }): Plan[] {
+  const cible = heraut ? cadrageDuo(heraut, joueur) : { at: { ...joueur }, zoom: 0.8, hauteur: -0.6 };
+  const depart = cible.at.x <= (bornes.minX + bornes.maxX) / 2 ? bornes.maxX : bornes.minX;
+  return [
+    { at: { x: depart, z: cible.at.z }, zoom: 1.32, hauteur: 1.1, mouvement: 'coupe', ms: DUREES.titreTenue },
+    { ...cible, mouvement: 'travelling', ms: DUREES.titreTravelling },
+  ];
+}
+
+/** Kaï au prologue : la caméra se porte sur lui, aux braseros, avant sa première réplique. */
+export function plansKaiPrologue(kai: Vec2): Plan[] {
+  return [{ at: { ...kai }, zoom: 0.62, hauteur: -1.0, mouvement: 'glisse', tau: 0.5, ms: DUREES.kaiPrologue }];
+}
+
+/** L'émissaire fend la foule : la caméra garde la foule et le joueur pendant qu'il s'avance jusqu'à lui. */
+export function plansEmissaire(foule: readonly Vec2[], arrivee: Vec2, joueur: Vec2): Plan[] {
+  const g = cadreGroupe([...foule, joueur]);
+  return [
+    { at: g.at, zoom: g.zoom, hauteur: g.hauteur, mouvement: 'glisse', tau: 0.5, ms: 400 },
+    { ...cadrageDuo(arrivee, joueur), mouvement: 'glisse', tau: 0.9, ms: 0 },
+  ];
+}
+
 /** Adoucissement des deux bouts d'un travelling (0 → 0, 1 → 1). */
 export const adoucir = (t: number): number => { const u = Math.min(1, Math.max(0, t)); return u * u * (3 - 2 * u); };
 
@@ -109,4 +201,7 @@ export function cinePermise(search: string): boolean {
 }
 
 /** Une cinématique d'arrivée se joue une fois par aventure et par quartier (mémoire `cinematiques` de la sauvegarde). */
-export const arriveeAJouer = (ilot: IlotId, vues: readonly string[] | undefined): boolean => !(vues ?? []).includes(`lieu-${ilot}`);
+export const arriveeAJouer = (ilot: IlotId, vues: readonly string[] | undefined): boolean => aJouer(`lieu-${ilot}`, vues);
+
+/** Une scène du récit se joue une fois par aventure (mémoire `cinematiques` de la sauvegarde). */
+export const aJouer = (id: CinematiqueId, vues: readonly string[] | undefined): boolean => !(vues ?? []).includes(id);

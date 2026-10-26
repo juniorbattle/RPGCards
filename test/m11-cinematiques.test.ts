@@ -125,7 +125,7 @@ describe('M11 — cinématiques : le déroulé (sans bandes, ville factice)', ()
   it('les plans dans l’ordre : coupe franche, glissé amorti ; la caméra revient au joueur à la fin', async () => {
     const { Cinema } = await import('../src/aventure/cinema');
     const { appels, town } = ville();
-    const c = new Cinema(town, { fige: false, reduit: false, bandes: false });
+    const c = new Cinema(town, { fige: false, reduit: false, bandes: null });
     let marche = false;
     const passee = await c.jouer([
       { at: { x: 1, z: 0 }, mouvement: 'coupe', ms: 5 },
@@ -139,7 +139,7 @@ describe('M11 — cinématiques : le déroulé (sans bandes, ville factice)', ()
   it('passée en route : les plans restants mettent leur état final ; le dernier cadre gardé est celui de la fin', async () => {
     const { Cinema } = await import('../src/aventure/cinema');
     const { appels, town } = ville();
-    const c = new Cinema(town, { fige: false, reduit: false, bandes: false, garder: true });
+    const c = new Cinema(town, { fige: false, reduit: false, bandes: null, garder: true });
     const finis: number[] = [];
     const p = c.jouer([
       { at: { x: 1, z: 0 }, mouvement: 'glisse', ms: 60000, finir: () => finis.push(1) },
@@ -155,13 +155,116 @@ describe('M11 — cinématiques : le déroulé (sans bandes, ville factice)', ()
     const { Cinema } = await import('../src/aventure/cinema');
     const a = ville();
     let n = 0;
-    await new Cinema(a.town, { fige: true, reduit: false, bandes: false }).jouer([
+    await new Cinema(a.town, { fige: true, reduit: false, bandes: null }).jouer([
       { at: { x: 1, z: 0 }, mouvement: 'glisse', ms: 60000, action: async () => { n++; }, finir: () => { n++; } },
     ]);
     expect(n).toBe(2);
     expect(a.appels).toEqual([{ c: null, coupe: true }]);
     const b = ville();
-    await new Cinema(b.town, { fige: false, reduit: true, bandes: false }).jouer([{ at: { x: 3, z: 0 }, mouvement: 'glisse', ms: 1 }]);
+    await new Cinema(b.town, { fige: false, reduit: true, bandes: null }).jouer([{ at: { x: 3, z: 0 }, mouvement: 'glisse', ms: 1 }]);
     expect(b.appels.map((x) => x.coupe)).toEqual([true, true]);
+  });
+});
+
+describe('M11 — cinématiques du récit (deuxième lot)', () => {
+  it('cartons de chapitre : II à V, une ligne chacun ; le I et le titre ont leur propre scène', async () => {
+    const { CARTONS_CHAPITRE, estChapitreCarton } = await import('../src/aventure/cinematiques');
+    expect(Object.keys(CARTONS_CHAPITRE)).toEqual(['II', 'III', 'IV', 'V']);
+    for (const c of ['II', 'III', 'IV', 'V']) expect(estChapitreCarton(c)).toBe(true);
+    for (const c of ['prologue', 'I', 'titre']) expect(estChapitreCarton(c)).toBe(false);
+  });
+
+  it('chapitre : depuis le côté où il y a de la place, vers le joueur, sans sortir des bornes', async () => {
+    const { plansChapitre } = await import('../src/aventure/cinematiques');
+    const b = { minX: -10, maxX: 10 };
+    const g = plansChapitre({ x: -8, z: 1 }, b);
+    expect(g[0]!.at.x).toBe(-4);
+    expect(g[1]!.at.x).toBe(-8);
+    expect(g.map((p) => p.mouvement)).toEqual(['coupe', 'travelling', 'glisse']);
+    expect(plansChapitre({ x: 9.5, z: 0 }, b)[0]!.at.x).toBe(5.5);
+    // joueur au-delà des bornes : borné
+    expect(plansChapitre({ x: 30, z: 0 }, b)[1]!.at.x).toBe(10);
+  });
+
+  it('chef vaincu : gros plan sur lui, puis les deux ; affiliation : gros plan sur le joueur puis recul', async () => {
+    const { plansChef, plansAffiliation } = await import('../src/aventure/cinematiques');
+    const [point, duo] = plansChef({ x: 3, z: -2 }, { x: 3, z: -1 });
+    expect(point!.at).toEqual({ x: 3, z: -2 });
+    expect(point!.zoom).toBeLessThan(duo!.zoom!);
+    const [pres, recul] = plansAffiliation({ x: 1, z: 1 });
+    expect(pres!.mouvement).toBe('coupe');
+    expect(recul!.mouvement).toBe('travelling');
+    expect(recul!.zoom!).toBeGreaterThan(pres!.zoom!);
+  });
+
+  it('titre : plan large depuis le bord opposé, jusqu’au héraut et au joueur (ou au joueur seul)', async () => {
+    const { plansTitre } = await import('../src/aventure/cinematiques');
+    const b = { minX: -8, maxX: 8 };
+    const [large, fin] = plansTitre({ x: -7.5, z: -6.9 }, { x: -7.5, z: -5.9 }, b);
+    expect(large!.at.x).toBe(8);
+    expect(large!.zoom).toBeGreaterThan(1.2);
+    expect(fin!.at).toEqual({ x: -7.5, z: -6.4 });
+    expect(plansTitre(null, { x: 5, z: 0 }, b)[1]!.at).toEqual({ x: 5, z: 0 });
+  });
+
+  it('cadres de dialogue : un personnage en gros plan, deux ensemble, un groupe plus large', async () => {
+    const { cadreDialogue, cadreGroupe } = await import('../src/aventure/cinematiques');
+    expect(cadreDialogue({ x: 1, z: 0 }).zoom).toBeLessThan(1);
+    expect(cadreDialogue({ x: 0, z: 0 }, { x: 2, z: 0 }).at).toEqual({ x: 1, z: 0 });
+    expect(cadreDialogue({ x: 0, z: 0 }, null, false).bandes).toBe(false);
+    const g = cadreGroupe([{ x: 10, z: 2 }, { x: 16, z: 2 }, { x: 12, z: -1 }, { x: 15, z: -1 }, { x: 12.4, z: 1.3 }]);
+    expect(g.at.x).toBeCloseTo(13.08, 5);
+    expect(g.zoom).toBeGreaterThan(0.8);
+    expect(g.zoom).toBeLessThanOrEqual(1.15);
+  });
+
+  it('l’émissaire : la foule et le joueur, puis les deux quand il arrive', async () => {
+    const { plansEmissaire } = await import('../src/aventure/cinematiques');
+    const [groupe, duo] = plansEmissaire([{ x: 10.6, z: 1.8 }, { x: 16.4, z: 1.6 }], { x: 13.6, z: 0.9 }, { x: 12.4, z: 1.3 });
+    expect(groupe!.at.x).toBeGreaterThan(12);
+    expect(duo!.at).toEqual({ x: 13, z: 1.1 });
+    expect(duo!.ms).toBe(0);
+  });
+
+  it('une scène du récit une fois par aventure', async () => {
+    const { aJouer } = await import('../src/aventure/cinematiques');
+    expect(aJouer('chef-Ronce', ['chef-Voile'])).toBe(true);
+    expect(aJouer('chef-Ronce', ['chef-Ronce'])).toBe(false);
+    expect(aJouer('chapitre-II', undefined)).toBe(true);
+  });
+});
+
+describe('M11 — bandes partagées', () => {
+  it('prises par une cinématique puis par le dialogue qui suit : gardées entre les deux, repliées à la fin', async () => {
+    const { Bandes } = await import('../src/aventure/cinema');
+    const el: { classes: Set<string>; removed: boolean } = { classes: new Set(), removed: false };
+    const body = new Set<string>();
+    const g = globalThis as unknown as Record<string, unknown>;
+    const avant = { document: g.document, requestAnimationFrame: g.requestAnimationFrame };
+    g.document = {
+      body: { classList: { add: (c: string) => body.add(c), remove: (c: string) => body.delete(c) }, append: () => undefined },
+      createElement: () => ({ classList: { add: (...c: string[]) => c.forEach((x) => el.classes.add(x)), remove: (c: string) => el.classes.delete(c) }, append: () => undefined, setAttribute: () => undefined, remove: () => { el.removed = true; }, set className(v: string) { for (const c of v.split(' ')) el.classes.add(c); } }),
+      createTextNode: () => ({}),
+    };
+    g.requestAnimationFrame = (f: () => void) => { f(); return 0; };
+    try {
+      const b = new Bandes(true);
+      b.prendre();
+      expect(b.tenues).toBe(true);
+      expect(body.has('av-cine-actif')).toBe(true);
+      b.prendre();
+      b.rendre();
+      await new Promise((r) => setTimeout(r, 5));
+      expect(b.tenues).toBe(true);
+      expect(el.removed).toBe(false);
+      b.rendre();
+      await new Promise((r) => setTimeout(r, 5));
+      expect(b.tenues).toBe(false);
+      expect(body.has('av-cine-actif')).toBe(false);
+      expect(el.removed).toBe(true);
+    } finally {
+      g.document = avant.document;
+      g.requestAnimationFrame = avant.requestAnimationFrame;
+    }
   });
 });

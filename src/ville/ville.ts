@@ -502,10 +502,14 @@ export function createTown(o: TownOptions): Town {
   let cadrage: Cadrage | null = null;
   let coupe = false;
   const camAt = (): Vec2 => cadrage?.at ?? walker.pos;
-  const camTuning = (): (RigTuning & { tau?: number }) | undefined => {
+  const camTuning = (): Partial<RigParams> | undefined => {
     if (!cadrage) return undefined;
     const p = rig.params;
+    // plus près, le champ est plus étroit : les bornes du point visé s'écartent d'autant (le bord du décor visible ne
+    // change pas) ; plus loin, elles se resserrent
+    const marge = cadrage.zoom !== undefined ? (1 - cadrage.zoom) * p.distance * Math.tan(THREE.MathUtils.degToRad(p.fov / 2)) * camera.aspect : 0;
     return {
+      ...(marge ? { minX: Math.min(p.minX - marge, (p.minX + p.maxX) / 2), maxX: Math.max(p.maxX + marge, (p.minX + p.maxX) / 2) } : {}),
       ...(cadrage.zoom !== undefined ? { distance: p.distance * cadrage.zoom } : {}),
       ...(cadrage.hauteur !== undefined ? { aimY: p.aimY + cadrage.hauteur } : {}),
       ...(cadrage.followZ !== undefined ? { followZ: cadrage.followZ } : {}),
