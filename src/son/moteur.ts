@@ -199,6 +199,10 @@ export function creerMoteurSon(search = typeof location !== 'undefined' ? locati
 let instance: MoteurSon | null = null;
 /** Le moteur du son de la page (créé au premier appel ; aucun contexte audio avant un geste). */
 export function son(): MoteurSon {
-  instance ??= creerMoteurSon();
+  if (!instance) {
+    instance = creerMoteurSon();
+    // QA : le moteur est lisible depuis la page (sons demandés, contexte créé ou non), jamais hors `?qa=1`
+    if (typeof window !== 'undefined' && new URLSearchParams(location.search).get('qa') === '1') (window as unknown as { __lqvSon?: MoteurSon }).__lqvSon = instance;
+  }
   return instance;
 }
