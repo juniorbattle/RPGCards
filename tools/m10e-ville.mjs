@@ -149,6 +149,47 @@ try {
   check(!!rumeur?.fait && rumeur.repere === '?' && /«/.test(rumeur.texte ?? '') && rumeur.parti, `une rumeur (« ? ») : ${rumeur ? `${rumeur.id} @ ${rumeur.il}, réplique lue, le passant repart` : 'aucune rencontrée'}`);
   check(!!facultative?.fait && facultative.reste && facultative.parti, `un refus : ${facultative ? `${facultative.id} @ ${facultative.il} reste, sans redemander, puis repart au point de décision suivant` : 'aucune rencontre facultative'}`);
 
+  // Finalisation de la ville (passe 136) : la Place du Fanal et la Ville haute ont leur vie facultative (aucune figure
+  // déplacée) : sorties ouvertes au bout ouest de la cour de la Chapelle et du Belvédère, textes des places, rencontres
+  // tirées dans leur liste propre, deux au plus, jamais une figure structurante ; une réplique lue.
+  const QUARTIERS = {
+    port: { depuis: 'quai', sortie: 'sortie-port', spot: 'cour-ronce', mot: /cour de la Ronce/, ids: ['membre-Ronce', 'rival-kai', 'rue-port', 'rumeur-port'] },
+    haute: { depuis: 'cour', sortie: 'sortie-haute', spot: 'parvis-observatoire', mot: /Observatoire/, ids: ['membre-Astre', 'rival-kai', 'rue-haute', 'rumeur-haute'] },
+  };
+  for (const [q, def] of Object.entries(QUARTIERS)) {
+    await voyage(def.depuis, 'arrivee');
+    check(await av((s) => window.__lqvAventure.town.ilot.zones.some((z) => z.id === s), def.sortie), `${def.depuis} : la sortie vers ${q} est ouverte`);
+    await voyage(q, 'arrivee');
+    await shot(`${q}-arrivee`);
+    const vus = new Set();
+    let lue = null;
+    for (let i = 0; i < 6; i++) {
+      const ps = await poses(q);
+      for (const x of ps) vus.add(x.id);
+      check(ps.length <= 2 && ps.every((x) => def.ids.includes(x.id)), `${q}, arrivée ${i + 1} : ${ps.map((x) => x.id).join(', ') || 'personne'} (rencontres du quartier seulement, deux au plus)`);
+      const r = !lue && ps.find((x) => x.genre === 'ambiance' || x.genre === 'facultative');
+      if (r) {
+        await devant(r.id);
+        lue = { id: r.id, texte: await p.textContent('.ville-dialog') };
+        await shot(`${q}-${r.id}`);
+        await fermer();
+      }
+      await voyage(def.depuis, 'arrivee');
+      await voyage(q, 'arrivee');
+    }
+    check(vus.size > 0, `${q} : rencontres vues ${[...vus].join(', ')}`);
+    check(!lue || /«/.test(lue.texte), `${q} : réplique lue (${lue ? `${lue.id} : ${lue.texte.slice(0, 90)}…` : 'aucune rencontre abordable'})`);
+    await fermer();
+    await av((s) => { const t = window.__lqvAventure.town; const z = t.ilot.zones.find((x) => x.id === s); const a = z.area; t.place({ x: 'r' in a ? a.x : (a.x0 + a.x1) / 2, z: 'r' in a ? a.z : (a.z0 + a.z1) / 2 }, 'dos'); }, def.spot);
+    await p.waitForTimeout(600);
+    await p.keyboard.press('KeyE');
+    await p.waitForSelector('.ville-dialog');
+    const info = await p.textContent('.ville-dialog');
+    check(def.mot.test(info) && !/Rien de plus ici/.test(info), `${q} : le texte de ${def.spot} (${info.slice(0, 80)}…)`);
+    await shot(`${q}-${def.spot}`);
+    await fermer();
+  }
+
   // « Continuer » après un rechargement : la ville se relit, sans point de décision
   await fermer();
   await av(() => window.__lqvAventure.memoriser?.());

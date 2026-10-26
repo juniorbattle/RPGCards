@@ -473,6 +473,12 @@ export class AventureApp {
       estrade: 'L’estrade des duels publics : la ville entière vient y voir les grands duels, et c’est ici que le Championnat proclame son vainqueur.',
       tableau: 'Le tableau des annonces : le Championnat des Champions s’ouvre aux duellistes qui ont vaincu les quatre chefs.',
       belvedere: 'Le Belvédère : la ville haute, au-delà de la balustrade. Toutes les ruelles finissent par monter jusqu’ici.',
+      // finalisation de la ville (passe 136) : les places de la Place du Fanal et de la Ville haute (aucune figure n'y est
+      // déplacée : la Ronce reçoit toujours au Fanal, l'Astre au Parvis)
+      'placette-filets': 'La placette des Filets : on y raccommode les filets autour du puits, et on y joue aux cartes quand la marée est basse.',
+      'cour-ronce': 'La cour de la Ronce, au cœur du Port, devant la vieille maison de la famille. On y parle bas et on y joue longtemps ; mais c’est au Fanal, sur le Quai, que la Ronce reçoit les duellistes.',
+      'jardin-spheres': 'Le jardin des Sphères : une fontaine, des cadrans, et des joueurs qui calculent leur coup comme on calcule une éclipse.',
+      'parvis-observatoire': 'Le parvis de l’Observatoire, au sommet de la ville : l’Astre y observe le ciel et y tient le registre des grands duels. Ses duellistes, eux, se mesurent au Parvis, devant l’arène.',
     };
     this.dire(z.label, INFO[z.id] ?? 'Rien de plus ici.', [fermer(this)]);
   }
@@ -498,13 +504,33 @@ export class AventureApp {
     const e = this.etat;
     const ch = chapitreDetaille(e);
     const chefs = FAMILIES.filter((f) => e.familles[f] === 'chef').length;
-    const ligne = ch === 'I' ? `« On raconte qu’une recrue ${e.affiliation ? de(e.affiliation) : 'du Quai'} a fait parler d’elle au duel public. Ce soir, toute la ville joue aux cartes. »`
+    // finalisation de la ville (passe 136) : les rumeurs du Port et de la Ville haute ont leurs propres mots
+    const tombes = chefs ? `${chefs} chef${chefs > 1 ? 's sont tombés' : ' est tombé'}` : 'aucun chef n’est encore tombé';
+    const LOCALES: Partial<Record<string, Record<'debut' | 'milieu' | 'V' | 'titre', string>>> = {
+      'rumeur-port': {
+        debut: '« Au Port, on regarde comment vous tenez une partie, pas comment vous la commencez. La Ronce a de vieilles racines ici, au fond de la cour. »',
+        milieu: `« Les dockers parient sur la Salle des Bannières : ${tombes} cette saison, et le vieux phare n’a jamais vu autant de monde. »`,
+        V: '« Le Championnat s’ouvre dans la Grande Cour : au Port, on fermera les entrepôts plus tôt pour aller voir. »',
+        titre: '« Les marins racontent votre finale d’un quai à l’autre. »',
+      },
+      'rumeur-haute': {
+        debut: '« Là-haut, à l’Observatoire, l’Astre note tout : les duels, les mains jouées, et même les vôtres, paraît-il. »',
+        milieu: `« Les astronomes tiennent le compte des maisons : ${tombes}. Les étoiles changent moins vite que la Salle des Bannières. »`,
+        V: '« Depuis l’esplanade, on voit l’estrade de la Grande Cour : le Championnat des Champions s’y joue, et l’Astre a déjà ses favoris. »',
+        titre: '« L’Observatoire a inscrit votre titre dans ses registres : cela ne s’efface pas. »',
+      },
+    };
+    const locale = LOCALES[id];
+    const ligne = locale ? locale[ch === 'I' || ch === 'prologue' ? 'debut' : ch === 'V' ? 'V' : ch === 'titre' ? 'titre' : 'milieu']
+      : ch === 'I' ? `« On raconte qu’une recrue ${e.affiliation ? de(e.affiliation) : 'du Quai'} a fait parler d’elle au duel public. Ce soir, toute la ville joue aux cartes. »`
       : ch === 'V' ? '« Le Championnat des Champions s’ouvre : le héraut l’annonce dans la Grande Cour, et les paris montent sur la place du Parvis. »'
       : ch === 'titre' ? '« Toute la ville parle de vous : personne ne joue mieux, dit-on. »'
       : `« On dit que ${chefs} chef${chefs > 1 ? 's sont tombés' : ' est tombé'} cette saison, et que la Salle des Bannières ne désemplit pas. »`;
+    // le passant reste pendant qu'il parle (la ville se relit à la fermeture du dialogue), puis repart (passe 136 : il
+    // disparaissait dès l'ouverture, `dire` relisant la ville avant d'ouvrir)
+    this.dire(capital(r.nom), ligne, [fermer(this)], r.apparence);
     this.save!.directeur = conclure(this.save!.directeur, id, true);
     this.persist();
-    this.dire(capital(r.nom), ligne, [fermer(this)], r.apparence);
   }
 
   /**
@@ -698,9 +724,14 @@ export class AventureApp {
       Astre: '« Les astres disaient qu’on jouerait ce soir. Une partie ? »',
     };
     const membre = id.startsWith('membre-') ? MAISON[id.slice(7) as Family] : null;
+    // finalisation de la ville (passe 136) : les duels de rue du Port et de la Ville haute
+    const RUE: Record<string, string> = {
+      'rue-port': '« Au Port, une partie se joue entre deux marées. Une main, pour voir si tu tiens ? »',
+      'rue-haute': '« Ici, on joue sous les étoiles, et on compte chaque carte. Une partie ? »',
+    };
     const texte = kai
       ? `${ligneKai} (défi facultatif, sans récompense ; vos duels contre lui : ${gagnes} victoire(s) sur ${contreKai.length})`
-      : `${membre ?? '« Une partie, pour passer le temps ? »'} (duel de rue, sans récompense)`;
+      : `${membre ?? RUE[id] ?? '« Une partie, pour passer le temps ? »'} (duel de rue, sans récompense)`;
     this.dire(capital(r.nom), texte, [
       { label: 'Accepter', key: 'dlg-duel', primary: true, run: () => this.preparer(duelFacultatif(id, this.etat, this.prochaineGraine())) },
       { label: 'Refuser', key: 'dlg-close', run: () => { this.save!.directeur = conclure(this.save!.directeur, id, false); this.persist(); this.fermerDialogue(); } },

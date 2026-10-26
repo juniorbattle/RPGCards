@@ -152,3 +152,8 @@ grammaire des rangs.
   graine, déjà possibles par code).
 - À terme, une **maison par famille** en rangs (le Fanal en intérieur ? la Maison du Chantier ? l'Observatoire du
   Parvis ?) : **proposition pour plus tard**, rien n'est demandé dans M10.
+
+> **Finalisation de la ville (2026-10-25, passe 136 ; ADR 032 amendement 8) :** la Place du Fanal et la Ville haute
+> (quartiers ajoutés, ville en rangs seulement) : `rue-port` et `rue-haute` (duels de rue, délai 2), `rumeur-port` et
+> `rumeur-haute` (répliques propres, délai 1), membre de la Ronce aussi dans la cour de la Ronce, membre de l'Astre aussi
+> sur le parvis de l'Observatoire, l'ombre de Kaï aussi dans chacun ; aucune figure structurante déplacée.

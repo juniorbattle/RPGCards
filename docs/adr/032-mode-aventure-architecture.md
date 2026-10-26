@@ -160,3 +160,18 @@ Le responsable a retenu l'option recommandée pour chacune (<https://claude.ai/a
 - **Réutiliser l'enveloppe standard (`Shell`)** en lui donnant une autre source de données : refonte du code du mode
   standard, campagne de QA complète requise, risque pour `lqv.save` ; écarté pour le prototype.
 - **Neutres dans le moteur dès maintenant** : demande de toucher au fichier du Clash (A-2) ; interdit sans ratification.
+
+## Amendement 8 (2026-10-25, finalisation de la ville, passe 136) : le directeur dans les quartiers ajoutés
+
+Décision du responsable (cadrage de la finalisation de la ville, passe 133 : « Vie facultative », aucune figure déplacée).
+
+- La Place du Fanal (`port`) et la Ville haute (`haute`), quartiers ajoutés et facultatifs (ADR 028, « Deuxième
+  reprise »), ont des places de rencontre **dans la ville en rangs seulement** : un duel de rue (`rue-port`, un docker du
+  Port ; `rue-haute`, une joueuse de la Ville haute), une rumeur avec ses propres répliques (`rumeur-port`,
+  `rumeur-haute`), une seconde place pour le membre de la Ronce (cour de la Ronce) et celui de l'Astre (parvis de
+  l'Observatoire), une place de l'ombre de Kaï dans chacun. Places ajoutées en fin de liste ; aucun tirage des quatre
+  îlots d'origine ne change (leurs candidates sont filtrées par îlot).
+- **Aucune figure structurante ni aucune compétition n'y est posée** (test) : les maisons de la Ronce et de l'Astre
+  restent au Fanal et au Parvis ; les textes des places nouvelles le disent.
+- Un passant de rumeur reste pendant qu'il parle et repart à la fermeture du dialogue (il disparaissait dès l'ouverture).
+- Tests : `test/villeFinale.test.ts` ; au navigateur : `npm run qa:vivante` passe par les deux quartiers.
