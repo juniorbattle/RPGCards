@@ -9,7 +9,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { execSync } from 'node:child_process';
 import { FAMILIES } from '../src/game/catalog/cards';
-import { PROFILES } from '../src/game/ai/policy';
+import { PROFILES, PROFILS_HISTORIQUES } from '../src/game/ai/policy';
 import { DEFAULT_CONFIG } from '../src/game/engine/engine';
 import { autoplay } from '../src/game/match';
 import type { GameConfig, PlayerId } from '../src/game/model/types';
@@ -36,7 +36,7 @@ const noter = (ligne: string, s: StatsClash, w: number) => {
 
 // 2. Corpus varié : 16 paires de Signatures, variantes « toutes » ou « aucune », profils d'IA tournants.
 {
-  const PROFILS = Object.keys(PROFILES);
+  const PROFILS = [...PROFILS_HISTORIQUES];
   const s = statsVides(); let w = 0;
   const parFamille = Object.fromEntries(FAMILIES.map((f) => [f, { s: statsVides(), w: 0 }]));
   for (let i = 0; i < N * 4; i++) {
