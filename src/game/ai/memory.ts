@@ -15,10 +15,14 @@ export interface AiMemory {
   oppInterferences: number;
   /** Nombre d’événements lus (QA). */
   observed: number;
+  /** M11-D (niveau 2) : modes des Primaires adverses révélées, selon leur Rang (0 : Signature) — habitude publique. */
+  oppStancesByRank: Record<number, Stance[]>;
+  /** M11-D (niveau 2) : l'adversaire a montré une carte grise (deck d'aventure) : les neutres sont des Primaires possibles. */
+  oppNeutral: boolean;
 }
 
 export function emptyMemory(): AiMemory {
-  return { knownOppHand: [], oppStances: [], oppInterferences: 0, observed: 0 };
+  return { knownOppHand: [], oppStances: [], oppInterferences: 0, observed: 0, oppStancesByRank: {}, oppNeutral: false };
 }
 
 export function buildMemory(events: readonly GameEvent[], viewer: PlayerId): AiMemory {
@@ -43,11 +47,17 @@ export function buildMemory(events: readonly GameEvent[], viewer: PlayerId): AiM
       case 'primariesRevealed':
         remove(d[opp]?.defId);
         if (d[opp]?.stance) m.oppStances.push(d[opp].stance);
+        if (d[opp]?.defId && d[opp]?.stance) {
+          const def = cardDef(d[opp].defId);
+          (m.oppStancesByRank[def.signature ? 0 : def.rank ?? 0] ??= []).push(d[opp].stance);
+          if (def.family === null) m.oppNeutral = true;
+        }
         break;
       case 'secondaryRevealed':
       case 'replaced':
       case 'destination':
         if (d.player === opp) remove(d.defId);
+        if (d.player === opp && typeof d.defId === 'string' && cardDef(d.defId).family === null) m.oppNeutral = true;
         break;
       case 'trim':
         if (d.player === opp) (d.defIds as string[]).forEach(remove);
@@ -66,4 +76,15 @@ export function assaultPrior(m: AiMemory | null): number {
   if (!m || !m.oppStances.length) return 0.6;
   const a = m.oppStances.filter((s) => s === 'assault').length;
   return (a + 1.2) / (m.oppStances.length + 2);
+}
+
+/**
+ * M11-D (niveau 2) : probabilité d'un Assaut adverse pour une Primaire de ce Rang (0 : Signature), lissée vers la fréquence
+ * globale (`assaultPrior`) : l'habitude publique d'un joueur selon la force de la carte qu'il joue.
+ */
+export function assaultPriorByRank(m: AiMemory | null, rank: number): number {
+  const base = assaultPrior(m);
+  const xs = m?.oppStancesByRank?.[rank] ?? [];
+  const a = xs.filter((s) => s === 'assault').length;
+  return (a + base * 2) / (xs.length + 2);
 }

@@ -32,7 +32,8 @@
     "qa:voies": "node tools/m10d-voies.mjs",
     "qa:vivante": "node tools/m10e-ville.mjs",
     "sim:heure": "tsx tools/m09-heure-ville.ts",
-    "qa:accessoires": "tsx tools/m09-accessoires.mjs"
+    "qa:accessoires": "tsx tools/m09-accessoires.mjs",
+    "qa:vue": "node tools/m11-vue.mjs"
   },
   "engines": {
     "node": ">=20"

@@ -7,9 +7,9 @@ import { BASIC_POWER, cardDef, FAMILIES, SIGNATURES, type CardDef, type Family, 
 import { TECHNIQUES, type TechniqueId } from '../catalog/techniques';
 import { computeClash, type ClashInput, type ClashSideInput, type ClashUse } from '../engine/clash';
 import { hashString, makeRng } from '../engine/rng';
-import type { PlayerCommand, SlotIndex, Stance, TacticPlan, TacticsTechnique } from '../model/types';
+import type { PlayerCommand, SlotIndex, Stance, StartTechnique, TacticPlan, TacticsTechnique } from '../model/types';
 import type { PlayerView, SlotView } from '../visibility/view';
-import { assaultPrior, type AiMemory } from './memory';
+import { assaultPrior, assaultPriorByRank, type AiMemory } from './memory';
 
 export interface AiProfile {
   name: string;
@@ -28,6 +28,11 @@ export interface AiProfile {
   interfereBonus: number;
   /** Poids donné aux cartes adverses observées légalement (mémoire). */
   memoryWeight: number;
+  /**
+   * M11-D (ADR 041) : niveau de jeu ; absent = le jeu historique, exactement (même suite de tirages : empreintes et replays
+   * du Duel standard inchangés) ; 2 = les améliorations du contrat 5 (`docs/m11/05_IA_DE_COMBAT.md`), sur la vue publique.
+   */
+  niveau?: 2;
 }
 
 export const PROFILES: Record<string, AiProfile> = {
@@ -39,6 +44,11 @@ export const PROFILES: Record<string, AiProfile> = {
   // rivaux, mais peu de Techniques, presque pas de mémoire des cartes vues et des Secondaires moins bien gérées.
   novice: { name: 'Novice franc', aggression: 1.15, caution: 0.6, bluff: 0.03, techniqueRate: 0.2, stanceBias: 2, keepValue: 0.5, interfereBonus: 0, memoryWeight: 0.1 },
   timide: { name: 'Novice prudent', aggression: 0.85, caution: 1.15, bluff: 0.08, techniqueRate: 0.25, stanceBias: -2, keepValue: 1.6, interfereBonus: 0, memoryWeight: 0.1 },
+  // M11-D (ADR 041) : profils de niveau 2, choisis seulement par l'aventure (tempéraments, ADR 039) ; le Duel standard
+  // ne les tire jamais.
+  tacticien: { name: 'Tacticien', aggression: 1, caution: 0.95, bluff: 0.15, techniqueRate: 0.75, stanceBias: 0, keepValue: 1.3, interfereBonus: 0.8, memoryWeight: 0.7, niveau: 2 },
+  agressif: { name: 'Agressif', aggression: 1.4, caution: 0.6, bluff: 0.06, techniqueRate: 0.55, stanceBias: 3, keepValue: 0.7, interfereBonus: 0, memoryWeight: 0.5, niveau: 2 },
+  vicieux: { name: 'Vicieux', aggression: 1.05, caution: 1, bluff: 0.35, techniqueRate: 0.9, stanceBias: 0, keepValue: 1.4, interfereBonus: 3.2, memoryWeight: 0.8, niveau: 2 },
 };
 
 const RANKS: OrdinaryRank[] = [1, 2, 3, 4];
@@ -135,6 +145,8 @@ function oppScenarios(oppActive: Array<{ slot: SlotIndex; def: CardDef; masked: 
 
 export function decide(view: PlayerView, profile: AiProfile = PROFILES.equilibre!, aiSeed = 1, memory: AiMemory | null = null): PlayerCommand | null {
   if (!view.awaitingMe) return null;
+  // M11-D (ADR 041) : le niveau 2 a son propre chemin ; sans niveau, le jeu historique, tirage pour tirage.
+  if (profile.niveau === 2) return decide2(view, profile, aiSeed, memory);
   const rng = makeRng(hashString(`${aiSeed}|${view.seed}|${view.turn}|${view.phase}|${view.me.handCount}|${view.me.insight}`));
   const pid = view.viewer;
   const hand = view.me.hand ?? [];
@@ -304,6 +316,203 @@ function decideTactics(view: PlayerView, profile: AiProfile, rng: () => number):
     const top = [...engaged].sort((a, b) => (b.def.rank ?? 0) - (a.def.rank ?? 0))[0]!;
     technique = { id: 'Ancrage', slot: top.slot };
   } else if (myStance === 'guard' && canTech(view, 'Rupture') && oppActive.length && rng() < profile.techniqueRate * 0.5) {
+    const tgt = [...oppActive].sort((a, b) => (b.def.rank ?? 0) - (a.def.rank ?? 0))[0]!;
+    technique = { id: 'Rupture', targetSlot: tgt.slot };
+  }
+  return { type: 'tactics', player: pid, plans, technique };
+}
+
+// ---------------------------------------------------------------------------
+// M11-D — niveau 2 (`docs/m11/05_IA_DE_COMBAT.md`, ADR 041). Toujours la seule vue publique et la mémoire tirée des
+// événements visibles : aucune information secrète (ADR 011). Chemin séparé : les profils sans niveau n'y passent jamais.
+
+const NEUTRES_DEFS: CardDef[] = RANKS.map((r) => cardDef(`neutre-${r}`));
+
+/** Profil ajusté à la course aux PV (N2-5) : mène de 15 PV ou plus → prudence +20 % ; mené d'autant → agressivité +20 %. */
+function profilCourse(view: PlayerView, p: AiProfile): AiProfile {
+  const ecart = view.me.hp - view.opp.hp;
+  if (ecart >= 15) return { ...p, caution: p.caution * 1.2 };
+  if (ecart <= -15) return { ...p, aggression: p.aggression * 1.2 };
+  return p;
+}
+
+/** Primaires adverses possibles (N2-1, N2-2) : chaque identité non localisée une fois, les neutres si l'adversaire en joue,
+ *  avec un poids (les cartes vues dans sa main pèsent davantage). */
+function oppPrimaries2(view: PlayerView, memory: AiMemory | null, profile: AiProfile): Array<{ def: CardDef; w: number }> {
+  const announced = view.reveal.signatures.opp;
+  if (announced) return [{ def: cardDef(announced), w: 1 }];
+  const pool = unknownOpponentPool(view);
+  const neutres = memory?.oppNeutral || view.opp.signatureFamily === null;
+  const seenNeutre = (r: number) => view.opp.discard.filter((d) => d === `neutre-${r}`).length;
+  const out = pool.map((def) => ({ def, w: memory?.knownOppHand.includes(def.identity) ? 1 + 3 * profile.memoryWeight : 1 }));
+  if (neutres) for (const n of NEUTRES_DEFS) if (seenNeutre(n.rank!) < 4) out.push({ def: n, w: 1.5 });
+  return out.length ? out : [{ def: basicDef('Cendre', 2), w: 1 }];
+}
+
+function decide2(view: PlayerView, profile0: AiProfile, aiSeed: number, memory: AiMemory | null): PlayerCommand | null {
+  const rng = makeRng(hashString(`n2|${aiSeed}|${view.seed}|${view.turn}|${view.phase}|${view.me.handCount}|${view.me.insight}`));
+  const profile = profilCourse(view, profile0);
+  const pid = view.viewer;
+  const hand = view.me.hand ?? [];
+  const defs = hand.map((c) => ({ ...c, def: cardDef(c.defId) }));
+  switch (view.phase) {
+    case 'START': {
+      const excess = Math.max(0, hand.length - 4);
+      const sorted = [...defs].sort((a, b) => (a.def.signature ? 99 : a.def.rank!) - (b.def.signature ? 99 : b.def.rank!));
+      const discard = sorted.slice(0, excess).map((c) => c.cardId);
+      const rest = sorted.slice(excess);
+      let technique: StartTechnique | null = null;
+      // N2-6 : Recentrage d'une carte de Rang I quand la main n'a ni Rang III ni Rang IV (ni Signature)
+      const faible = rest.find((c) => !c.def.signature && c.def.rank === 1);
+      const forte = rest.some((c) => c.def.signature || (c.def.rank ?? 0) >= 3);
+      if (canTech(view, 'Recentrage') && faible && !forte) technique = { id: 'Recentrage', cardId: faible.cardId };
+      // Sondage : seulement si l'Insight ne manque pas à une Lecture ou une Rupture du tour
+      else if (canTech(view, 'Sondage')) {
+        const garde = (view.me.techniques.includes('Lecture') || view.me.techniques.includes('Rupture')) ? 2 : 0;
+        if (view.me.insight - 1 >= garde && rng() < profile.techniqueRate) technique = { id: 'Sondage' };
+      }
+      return { type: 'start', player: pid, discard, technique };
+    }
+    case 'PREPARE': {
+      const eligible = view.me.slots.filter((s): s is SlotView => !!s && s.state === 'hidden');
+      const reveal = eligible.filter(() => rng() >= profile.bluff).map((s) => s.slot);
+      return { type: 'prepare', player: pid, reveal };
+    }
+    case 'DISSIPATION': {
+      const src = view.opp.slots.find((s) => s?.maskSource);
+      return { type: 'dissipate', player: pid, targetSlot: src && canTech(view, 'Dissipation') ? src.slot : null };
+    }
+    case 'COMMIT':
+      return decideCommit2(view, profile, rng, memory);
+    case 'REVISION': {
+      const commitRng = makeRng(hashString(`n2|${aiSeed}|${view.seed}|${view.turn}|COMMIT|${view.me.handCount}|${view.me.insight}`));
+      const c = decideCommit2(view, profile, commitRng, memory);
+      const held = view.revision?.held ?? null;
+      if (c.type !== 'commit') return { type: 'revise', player: pid, commit: null };
+      const keep = !!held && held.primaryId === c.primaryId && held.stance === c.stance;
+      const { type: _t, player: _p, ...choice } = c;
+      return { type: 'revise', player: pid, commit: keep ? null : choice };
+    }
+    case 'LECTURE': {
+      // Lecture quand le mode adverse est incertain (fréquence publique entre 35 et 65 %) ou que notre Primaire est faible
+      const pA = assaultPrior(memory);
+      const prim = view.me.primary?.card ? cardDef(view.me.primary.card.defId) : null;
+      const utile = (pA > 0.35 && pA < 0.65) || (!!prim && !prim.signature && (prim.rank ?? 0) <= 2);
+      return { type: 'lecture', player: pid, use: canTech(view, 'Lecture') && utile && rng() < profile.techniqueRate };
+    }
+    case 'LECTURE_CHANGE': {
+      const cur = view.me.primary?.stance ?? 'assault';
+      const prim = view.me.primary?.card ? cardDef(view.me.primary.card.defId) : null;
+      let stance: Stance = cur;
+      if (view.lectureSeen === 'guard') stance = 'assault';
+      else if (view.lectureSeen === 'assault' && prim && !prim.signature && (prim.rank ?? 0) <= 2) stance = 'guard';
+      return { type: 'lectureStance', player: pid, stance };
+    }
+    case 'TACTICS':
+      return decideTactics2(view, profile, rng, memory);
+    default:
+      // REPEL : la préférence historique (aucun tirage)
+      return decide(view, { ...profile0, niveau: undefined }, aiSeed, memory);
+  }
+}
+
+function decideCommit2(view: PlayerView, profile: AiProfile, rng: () => number, memory: AiMemory | null): PlayerCommand {
+  const pid = view.viewer;
+  const hand = (view.me.hand ?? []).map((c) => ({ ...c, def: cardDef(c.defId) }));
+  const myActive = activeDefs(view.me.slots, false);
+  const oppActive = activeDefs(view.opp.slots, true).map((a) => ({ ...a, masked: a.def === GENERIC_MASKED }));
+  const prims = oppPrimaries2(view, memory, profile);
+  const wTot = prims.reduce((a, x) => a + x.w, 0);
+  let best: { v: number; cardId: string; stance: Stance } | null = null;
+  for (const c of hand) {
+    for (const stance of ['assault', 'guard'] as Stance[]) {
+      const combos = enumeratePlans(myActive, stance, oppActive);
+      let total = 0;
+      let pire = Infinity;
+      for (const { def: oppPrim, w } of prims) {
+        // N2-4 : mode adverse selon l'habitude publique pour une carte de ce Rang ; les deux modes pesés (pas de tirage)
+        const pA = assaultPriorByRank(memory, oppPrim.signature ? 0 : oppPrim.rank ?? 0);
+        let cas = 0;
+        let casMin = Infinity;
+        for (const [oppStance, ps] of [['assault', pA], ['guard', 1 - pA]] as Array<[Stance, number]>) {
+          const usages: ClashUse[][] = oppActive.length ? [oppActive.map((a) => ({ slot: a.slot, def: a.def, mode: 'rank' as const })), oppActive.map((a) => ({ slot: a.slot, def: a.def, mode: oppStance === 'assault' ? ('damage' as const) : ('rank' as const) }))] : [[]];
+          let v = 0;
+          for (const oppUses of usages) {
+            let bestCombo = -Infinity;
+            for (const combo of combos) {
+              const e = evaluate(view, { primary: c.def, stance, active: myActive, uses: combo.uses }, { primary: oppPrim, stance: oppStance, active: oppActive, uses: oppUses });
+              bestCombo = Math.max(bestCombo, score(view, e, profile));
+            }
+            v += bestCombo / usages.length;
+          }
+          cas += ps * v;
+          casMin = Math.min(casMin, v);
+        }
+        total += w * cas;
+        pire = Math.min(pire, casMin);
+      }
+      const moyenne = total / wTot;
+      // N2-3 : une Signature est annoncée à son verrouillage : moitié contre la moyenne, moitié contre la meilleure réponse
+      const valeur = c.def.signature ? 0.5 * moyenne + 0.5 * pire : moyenne;
+      const v = valeur - cardCost(c.def) + rng() * 0.5 + (stance === 'assault' ? profile.stanceBias : 0);
+      if (!best || v > best.v) best = { v, cardId: c.cardId, stance };
+    }
+  }
+  const primaryId = best!.cardId;
+  const rest = hand.filter((c) => c.cardId !== primaryId && !c.def.signature);
+  let secondaryId: string | null = null;
+  let replaceSlot: SlotIndex | null = null;
+  const free = view.me.slots.some((s) => s === null);
+  if (rest.length) {
+    const ranked = rest.map((c) => ({ c, v: secondaryValue(c.def) + rng() * 0.5 })).sort((a, b) => b.v - a.v);
+    if (free) secondaryId = ranked[0]!.c.cardId;
+    else {
+      const weak = view.me.slots.map((s) => s && s.card ? { s, v: secondaryValue(cardDef(s.card.defId)) } : null)
+        .filter((x): x is { s: SlotView; v: number } => !!x && x.s.state !== 'active').sort((a, b) => a.v - b.v)[0];
+      if (weak && ranked[0]!.v > weak.v + 2) { secondaryId = ranked[0]!.c.cardId; replaceSlot = weak.s.slot; }
+    }
+  }
+  return { type: 'commit', player: pid, primaryId, stance: best!.stance, secondaryId, replaceSlot };
+}
+
+function decideTactics2(view: PlayerView, profile: AiProfile, rng: () => number, memory: AiMemory | null): PlayerCommand {
+  const pid = view.viewer;
+  const myPrim = cardDef(view.reveal.primaries!.me.defId);
+  const myStance = view.reveal.primaries!.me.stance;
+  const oppPrim = cardDef(view.reveal.primaries!.opp.defId);
+  const oppStance = view.reveal.primaries!.opp.stance;
+  const myActive = activeDefs(view.me.slots, false);
+  const oppActive = activeDefs(view.opp.slots, true).map((a) => ({ ...a, masked: a.def === GENERIC_MASKED }));
+  const combos = enumeratePlans(myActive, myStance, oppActive);
+  const scen = oppScenarios(oppActive, oppStance);
+  // N2-4 : un adversaire qui a déjà interféré peut interférer sur notre Secondaire la plus forte
+  if (oppActive.length && myActive.length && (memory?.oppInterferences ?? 0) > 0) {
+    const cible = [...myActive].sort((a, b) => (b.def.rank ?? 0) - (a.def.rank ?? 0))[0]!;
+    const uses = oppActive.filter((a) => a.masked || (a.def.rank ?? 0) >= (cible.def.rank ?? 99)).map((a) => ({ slot: a.slot, def: a.def, mode: 'interfere' as const, target: cible.slot }));
+    if (uses.length) {
+      const wI = Math.min(0.4, 0.1 + 0.1 * memory!.oppInterferences);
+      for (const sc of scen) sc.w *= 1 - wI;
+      scen.push({ w: wI, uses: uses.slice(0, 1) });
+    }
+  }
+  let best: { v: number; combo: PlanCombo } | null = null;
+  for (const combo of combos) {
+    let v = 0;
+    for (const sc of scen) {
+      const e = evaluate(view, { primary: myPrim, stance: myStance, active: myActive, uses: combo.uses }, { primary: oppPrim, stance: oppStance, active: oppActive, uses: sc.uses });
+      v += sc.w * score(view, e, profile);
+    }
+    v += profile.interfereBonus * combo.uses.filter((u) => u.mode === 'interfere').length;
+    v += rng() * 0.3;
+    if (!best || v > best.v) best = { v, combo };
+  }
+  const plans = best!.combo.plans;
+  let technique: TacticsTechnique | null = null;
+  const engaged = best!.combo.uses;
+  if (engaged.length && canTech(view, 'Ancrage') && oppActive.length && rng() < profile.techniqueRate * 0.8) {
+    const top = [...engaged].sort((a, b) => (b.def.rank ?? 0) - (a.def.rank ?? 0))[0]!;
+    technique = { id: 'Ancrage', slot: top.slot };
+  } else if (myStance === 'guard' && canTech(view, 'Rupture') && oppActive.length && rng() < profile.techniqueRate * 0.7) {
     const tgt = [...oppActive].sort((a, b) => (b.def.rank ?? 0) - (a.def.rank ?? 0))[0]!;
     technique = { id: 'Rupture', targetSlot: tgt.slot };
   }
