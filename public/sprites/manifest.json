@@ -49,7 +49,7 @@
       ],
       "source": "gpt-image-2 (feuille des PNJ de la ville, gabarit docker (dockers, membres, passants), recoloré par graine, reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
       "fiche": "art-src/sprites/pnj-docker/fiche.json",
-      "approved": false
+      "approved": true
     },
     "braise": {
       "file": "braise.png",
@@ -70,7 +70,7 @@
       "recolor": [],
       "source": "gpt-image-2 (feuille des PNJ de la ville, Kaï, la Braise du quai (couleurs propres), reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
       "fiche": "art-src/sprites/braise/fiche.json",
-      "approved": false
+      "approved": true
     },
     "pnj-marchande": {
       "file": "pnj-marchande.png",
@@ -96,7 +96,7 @@
       ],
       "source": "gpt-image-2 (feuille des PNJ de la ville, gabarit marchande (marchandes, cadette de la Cendre, passantes), recoloré par graine, reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
       "fiche": "art-src/sprites/pnj-marchande/fiche.json",
-      "approved": false
+      "approved": true
     },
     "pnj-commis": {
       "file": "pnj-commis.png",
@@ -122,7 +122,7 @@
       ],
       "source": "gpt-image-2 (feuille des PNJ de la ville, gabarit commis (commis, cadets de la Ronce et du Voile, passants), recoloré par graine, reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
       "fiche": "art-src/sprites/pnj-commis/fiche.json",
-      "approved": false
+      "approved": true
     },
     "pnj-joueuse": {
       "file": "pnj-joueuse.png",
@@ -148,7 +148,7 @@
       ],
       "source": "gpt-image-2 (feuille des PNJ de la ville, gabarit joueuse (joueuses, cadette de l’Astre, Tenante), recoloré par graine, reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
       "fiche": "art-src/sprites/pnj-joueuse/fiche.json",
-      "approved": false
+      "approved": true
     },
     "ronce": {
       "file": "ronce.png",
@@ -232,7 +232,7 @@
       "recolor": [],
       "source": "gpt-image-2 (feuille des PNJ de la ville, Bran, le Premier Feu, chef de la Cendre (couleurs propres), reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
       "fiche": "art-src/sprites/chef-cendre/fiche.json",
-      "approved": false
+      "approved": true
     },
     "chef-ronce": {
       "file": "chef-ronce.png",
@@ -274,7 +274,7 @@
       "recolor": [],
       "source": "gpt-image-2 (feuille des PNJ de la ville, Ilse, la Dame aux Voiles, cheffe du Voile (couleurs propres), reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
       "fiche": "art-src/sprites/chef-voile/fiche.json",
-      "approved": false
+      "approved": true
     },
     "chef-astre": {
       "file": "chef-astre.png",

@@ -1,6 +1,6 @@
 {
   "id": "pnj-commis",
-  "statut": "feuille des PNJ de la ville (gabarit commis (commis, cadets de la Ronce et du Voile, passants), recoloré par graine), suite de la deuxième reprise de M09 (passe 127), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas décidé",
+  "statut": "APPROUVÉ par le responsable le 2026-10-25 (ordre explicite du responsable (2026-10-25, après les planches screenshots/qa/m09/finalisation/yeux/ : réponse « J’approuve les 7 » à la question « Approuves-tu les 7 feuilles retraitées (docker, marchande, commis, joueuse, Kaï, Bran, Ilse) ? ») ; passe 139) : admis hors QA tant que l’empreinte reste ab12e3b51f6a…",
   "auteur": "Claude Code (session de reprise de M09, passe 127), à la demande du responsable : « Oui : génère les 10 autres feuilles des PNJ (gabarits marchande, commis, joueuse ; Maëlle, Sélène, Orin ; les quatre chefs), traite-les et pose-les. »",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-pnj-suite.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -133,5 +133,11 @@
     "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50 (entrée : public/sprites/player.png)",
     "d77caa09132a6efba565eb36204be5e601363a497331932e783f14a57d8320b8 (brut)",
     "ab12e3b51f6af9e608690f563361f3ee9cd20af0453206b6908bc58ee0a13f06 (feuille ×3)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-25",
+    "decision": "ordre explicite du responsable (2026-10-25, après les planches screenshots/qa/m09/finalisation/yeux/ : réponse « J’approuve les 7 » à la question « Approuves-tu les 7 feuilles retraitées (docker, marchande, commis, joueuse, Kaï, Bran, Ilse) ? ») ; passe 139",
+    "fichier": "public/sprites/pnj-commis.png",
+    "sha256": "ab12e3b51f6af9e608690f563361f3ee9cd20af0453206b6908bc58ee0a13f06"
+  }
 }
