@@ -8,7 +8,7 @@ import { dirname } from 'node:path';
 import { execSync } from 'node:child_process';
 import { FAMILIES } from '../src/game/catalog/cards';
 import { TECHNIQUE_IDS, type TechniqueId } from '../src/game/catalog/techniques';
-import { PROFILES } from '../src/game/ai/policy';
+import { PROFILES, PROFILS_HISTORIQUES } from '../src/game/ai/policy';
 import { autoplay } from '../src/game/match';
 import type { GameConfig } from '../src/game/model/types';
 import { replay, type ReplayRecord } from '../src/game/replay/replay';
@@ -17,7 +17,7 @@ const out = process.argv[2];
 if (!out) throw new Error('usage : npx tsx tools/m10a-empreintes.ts <sortie.json> [référence.json]');
 const ref = process.argv[3];
 
-const PROFILS = Object.keys(PROFILES);
+const PROFILS = [...PROFILS_HISTORIQUES];
 const VARIANTES: GameConfig['players']['p1']['variants'][] = ['all', 'none', ['Cendre-3', 'Voile-4', 'Ronce-1', 'Astre-2'], ['Astre-4', 'Astre-2', 'Voile-3', 'Cendre-4']];
 const hashes: Record<string, string> = {};
 /** Avenant 07 (V3.3, G-08) : le duel contient-il un Clash où l'Assaut gagne contre une Garde ? (journal public) */

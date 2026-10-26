@@ -4,7 +4,7 @@
  * les profils historiques ne passent jamais par le niveau 2 ; la mémoire étendue ne lit que les événements visibles.
  */
 import { describe, expect, it } from 'vitest';
-import { decide, PROFILES } from '../src/game/ai/policy';
+import { decide, PROFILES, PROFILS_HISTORIQUES } from '../src/game/ai/policy';
 import { assaultPriorByRank, buildMemory } from '../src/game/ai/memory';
 import { autoplay, Match } from '../src/game/match';
 import { visibleEvents } from '../src/game/visibility/view';
@@ -33,6 +33,10 @@ describe('M11-D — niveau 2 : des duels complets, déterministes', () => {
   it('même graine, même duel (empreinte)', () => {
     const run = () => autoplay(config({ seed: 77 }), 200, [PROFILES.tacticien!, PROFILES.vicieux!]).hash();
     expect(run()).toBe(run());
+  });
+  it('la liste des profils historiques est celle d’avant M11, dans l’ordre (outils de mesure et d’empreintes)', () => {
+    expect([...PROFILS_HISTORIQUES]).toEqual(['equilibre', 'offensif', 'prudent', 'lecteur', 'novice', 'timide']);
+    expect(Object.keys(PROFILES).slice(0, 6)).toEqual([...PROFILS_HISTORIQUES]);
   });
   it('les profils historiques n’ont pas de niveau (ancien chemin, tirage pour tirage)', () => {
     for (const k of VIEUX) expect(PROFILES[k]!.niveau).toBeUndefined();

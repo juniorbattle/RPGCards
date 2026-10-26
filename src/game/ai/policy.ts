@@ -54,6 +54,12 @@ export const PROFILES: Record<string, AiProfile> = {
   vicieux: { name: 'Vicieux', aggression: 1, caution: 1.2, bluff: 0.1, techniqueRate: 0.95, stanceBias: -3, keepValue: 2.2, interfereBonus: 1, memoryWeight: 0.9, niveau: 2 },
 };
 
+/**
+ * Les profils du jeu historique (Duel standard), dans leur ordre : les outils de mesure et d'empreintes les parcourent.
+ * M11-D : les profils de niveau 2 n'en font pas partie (aventure seulement) ; les y ajouter changerait les corpus mesurés.
+ */
+export const PROFILS_HISTORIQUES: readonly string[] = ['equilibre', 'offensif', 'prudent', 'lecteur', 'novice', 'timide'];
+
 const RANKS: OrdinaryRank[] = [1, 2, 3, 4];
 const GENERIC_MASKED: CardDef = { defId: 'masked', identity: 'masked', family: 'Voile', rank: 2, power: 6, rarity: 'Basic', name: 'Masquée', effect: null, signature: false };
 
