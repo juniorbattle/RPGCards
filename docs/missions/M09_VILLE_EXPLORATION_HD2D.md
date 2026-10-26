@@ -274,3 +274,15 @@ route M10-E).
    des rencontres) ; `qa:vivante` étendu aux deux quartiers ; une page « heure de ville » (lancer le build hors QA,
    parcours, quoi juger) ; des points de départ par chapitre pour juger les chapitres avancés sans tout rejouer ; le
    verdict du responsable dans la fiche finale.
+
+**Décisions du responsable (2026-10-25, passe 133 ; réponses aux quatre questions du cadrage, chacune sur l'option
+recommandée) :**
+
+1. **Quartiers : « Vie facultative »** seulement : textes des places, une rumeur, un duel de rue, seconde place des
+   membres de la Ronce et de l'Astre, ombre de Kaï ; **aucune figure déplacée**. Non retenus : les quatre chefs sur
+   l'estrade au Championnat (la cérémonie reste en texte), le déplacement de Mère Aubépine et Halvard, celui des Joutes.
+2. **Bannières : « Broder l'Astre »** par script (`fixBanners`), sans génération ; la planche retraitée perd son
+   approbation, la Ville haute se ferme hors QA jusqu'à une nouvelle approbation, sur ordre explicite, dans une passe à part.
+3. **Images : « Réserve »** : les 4 images restantes ne sont pas générées (16 sur 20 utilisées).
+4. **Heure de ville : « Tout préparer »** : heure simulée chiffrée, `qa:vivante` étendu aux deux quartiers, page de jeu,
+   points de départ par chapitre ; le responsable joue, son verdict va dans la fiche finale.
