@@ -99,6 +99,7 @@ export function voixDe(locuteur: string): string {
   if (locuteur === 'rue-commis') return 'commis';
   if (locuteur.startsWith('rumeur-')) return 'rumeur';
   if (locuteur.startsWith('defi-')) return 'defi';
+  if (/^(epreuve|joute)-/.test(locuteur)) return 'competition';
   if (/^(cadet|brasDroit|chef)-/.test(locuteur)) return `figure-${locuteur.split('-')[0]}`;
   return locuteur;
 }
@@ -272,6 +273,19 @@ export const CATALOGUE: Readonly<Record<string, readonly Replique[]>> = {
     V('defi-3', '« Une autre maison t’a déjà ouvert ses portes. La nôtre ne s’ouvre pas aussi facilement. »', { moment: ['defi'], chapitre: ['II', 'III', 'IV'] }),
     V('defi-4', (c) => `« ${c.chefs} chef${c.chefs > 1 ? 's sont tombés' : ' est tombé'} devant toi. Je ne compte pas allonger la liste. »`, { moment: ['defi'], chapitre: ['III', 'IV'] }),
     V('defi-5', '« Plus qu’une voie avant le Championnat, à ce qu’on dit. Tu ne la prendras pas sans te battre. »', { moment: ['defi'], chapitre: ['IV'] }),
+  ],
+  // --------------------------------------------------------------------- les PNJ de passage : organisateurs d'Épreuve et
+  // champions de Joute (ils se souviennent de votre dernière série, et de votre réputation)
+  competition: [
+    V('comp-neuf-1', '« Quelqu’un qui vient de soi-même : bon signe. »', { moment: ['parole'], jouesMax: 0 }),
+    V('comp-neuf-2', '« On ne vous attendait pas si tôt. Tant mieux, nos membres s’ennuyaient. »', { moment: ['parole'], jouesMax: 0 }),
+    V('comp-neuf-3', '« Ici, on ne fait pas de cadeau aux visages nouveaux. Tout le monde commence par perdre, ou presque. »', { moment: ['parole'], jouesMax: 0 }),
+    V('comp-def-1', '« Vous revenez après une défaite : c’est ce qu’on appelle du caractère. »', { moment: ['parole'], jouesMin: 1, dernier: ['defaite', 'abandon'] }),
+    V('comp-def-2', '« On reprend ? Sachez que mes membres ont aimé leur dernière victoire. »', { moment: ['parole'], jouesMin: 1, dernier: ['defaite', 'abandon'] }),
+    V('comp-vic-1', '« Encore vous ? Le quartier se souvient de votre dernier passage. »', { moment: ['parole'], jouesMin: 1, dernier: ['victoire'] }),
+    V('comp-vic-2', '« Mes membres ont revu leurs decks depuis votre passage. Vous allez le sentir. »', { moment: ['parole'], jouesMin: 1, dernier: ['victoire'] }),
+    V('comp-tard-1', '« Avec votre réputation, toute la rue vient regarder. Ne nous décevez pas. »', { moment: ['parole'], chapitre: ['IV', 'V', 'titre'] }),
+    V('comp-tard-2', '« On raconte vos duels jusque dans les autres quartiers. Ici, on veut voir de nos yeux. »', { moment: ['parole'], chapitre: ['III', 'IV', 'V', 'titre'] }),
   ],
   // --------------------------------------------------------------------- le héraut du Tournoi
   heraut: [
