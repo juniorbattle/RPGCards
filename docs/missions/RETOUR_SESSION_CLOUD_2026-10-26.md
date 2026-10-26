@@ -23,7 +23,15 @@ inchangée (paliers remesurés : `artifacts/qa/m11/paliers.json`, voir §1 bis) 
 d'approbation changé ; son coupé en QA ; sauvegardes : `aventure/1` migrée sans perte (original gardé une fois sous
 `lqv.aventure.v1`), profils et parties du jeu standard jamais lus ni écrits par l'aventure.
 
-### 1 bis. Mesures (moteur seul, même poste, mêmes graines)
+### 1 bis. Campagne de QA (rendu logiciel, lancée seule en fin de run)
+
+`qa:vue` 29/29 à 1280 et 1920 ; aventure d'avant M11 : `qa:maison` 29/29, `qa:voies` 62/62, `qa:vivante` 35/35,
+`qa:championnat` 13/13, `qa:demo` 30/30, `qa:aventure` 47/48 (la marche au clavier dépend de la fréquence d'images :
+**même échec sur le build de `bd93beb`**, à revoir sur GPU) ; jeu standard : `qa:browser` 5/5, `qa:product` 9/9,
+`qa:rc` 9/9 dans la salle, au bar et à l'arène, `qa:techniques` 8/8 ; consoles vides
+(`artifacts/qa/m11/campagne/`).
+
+### 1 ter. Mesures (moteur seul, même poste, mêmes graines)
 
 - **Duel standard inchangé** : 240 empreintes standard identiques au build de `bd93beb` (`artifacts/qa/m11/empreintes.json`) ;
   mesure d'équilibre du Duel standard identique au chiffre près (`artifacts/qa/m11/standard.json`). Un écart trouvé en
