@@ -27,7 +27,8 @@ describe('M11-C — forme du catalogue', () => {
       n++;
     }
     expect(n).toBeGreaterThan(1000);
-  });
+    // plus de 1 000 contextes et autant de motifs par réplique : quelques secondes, davantage quand la machine est chargée
+  }, 30000);
   it('identifiants uniques dans chaque voix', () => {
     for (const [voix, lignes] of Object.entries(CATALOGUE)) expect(new Set(lignes.map((r) => r.id)).size, voix).toBe(lignes.length);
   });

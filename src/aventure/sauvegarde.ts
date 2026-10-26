@@ -66,6 +66,8 @@ export interface AventureSave {
   compteur: number;
   /** M11-C : mémoire des dialogues (dernière réplique et nombre de répliques par locuteur : pas de répétition immédiate). */
   dialogues?: { dernier: Record<string, string>; n: Record<string, number> };
+  /** M11 (cinématiques) : celles déjà vues dans cette aventure (`lieu-<îlot>` : la première arrivée dans un quartier). */
+  cinematiques?: string[];
 }
 
 export function nouvelleSauvegarde(now: Date, nom: string, graine: number): AventureSave {

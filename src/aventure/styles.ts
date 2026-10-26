@@ -3,6 +3,8 @@
  * Palette de l'enveloppe et de la ville (ivoire, or pâle, nuit) ; carte neutre blanche/grise (ADR 030) ; écrans en
  * colonne lisibles à 1280 × 720 comme à 1920 × 1080.
  */
+import { STYLES_CINEMA } from './cinema';
+
 let done = false;
 
 export function installAventureStyles(): void {
@@ -102,6 +104,6 @@ export function installAventureStyles(): void {
 .av-transition { margin: 6px 0; padding: 5px 10px; border-left: 3px solid #e2c48a; background: rgba(226, 196, 138, 0.08); }
 .av-standard { color: #ffe7b0; font-weight: 700; }
 .av-cards.av-deja .card { filter: saturate(0.6) brightness(0.8); }
-`;
+${STYLES_CINEMA}`;
   document.head.append(s);
 }

@@ -82,8 +82,11 @@ export function framingFor(p: RigParams, target: { x: number; z: number }): Fram
 
 export interface CameraRig {
   readonly params: RigParams;
-  /** Place la caméra (amortie vers le cadrage visé ; `snap` = immédiat). */
-  update(camera: THREE.PerspectiveCamera, target: { x: number; z: number }, dt: number, snap?: boolean): void;
+  /**
+   * Place la caméra (amortie vers le cadrage visé ; `snap` = immédiat) ; `tuning` : réglages pour cette image seulement,
+   * par-dessus ceux de l'îlot (cinématiques, M11), `tau` compris.
+   */
+  update(camera: THREE.PerspectiveCamera, target: { x: number; z: number }, dt: number, snap?: boolean, tuning?: RigTuning & { tau?: number }): void;
   resize(camera: THREE.PerspectiveCamera, aspect: number): void;
 }
 
@@ -97,10 +100,11 @@ export function createRig(id: CameraId, bounds?: { minX: number; maxX: number },
   let primed = false;
   return {
     params,
-    update(camera, target, dt, snap = false) {
-      const f = framingFor(params, target);
+    update(camera, target, dt, snap = false, tuning) {
+      const p = tuning ? { ...params, ...tuning } : params;
+      const f = framingFor(p, target);
       if (snap || !primed) { aim.copy(f.aim); pos.copy(f.pos); primed = true; } else {
-        const k = 1 - Math.exp(-dt / params.tau);
+        const k = 1 - Math.exp(-dt / p.tau);
         aim.lerp(f.aim, k);
         pos.lerp(f.pos, k);
       }
