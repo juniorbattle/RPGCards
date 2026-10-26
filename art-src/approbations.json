@@ -212,12 +212,16 @@
       "sha256": "8d090fb0e7147b591d2e348754bcebaebe1d31f0043a320165bad401cd295d7b",
       "date": "2026-10-25",
       "decision": "ordre explicite du responsable (2026-10-25, après les planches de la passe 129 : screenshots/qa/m09/quartiers-ajoutes/) : « J’approuve les 4 façades des quartiers (vieux phare, maison de la Ronce, hôtels à arcades, Observatoire) : passe-les à approved: true par le registre, dans une passe à part, pour ouvrir la Place du Fanal et la Ville haute. » ; passe 130"
-    },
+    }
+  ],
+  "caduques": [
     {
       "fichier": "public/decors/quartiers-haute-observatoire.png",
       "sha256": "90e822a631bd3072bfb124907387b01005612b9e60c1d69051c62c650264432b",
       "date": "2026-10-25",
-      "decision": "ordre explicite du responsable (2026-10-25, après les planches de la passe 129 : screenshots/qa/m09/quartiers-ajoutes/) : « J’approuve les 4 façades des quartiers (vieux phare, maison de la Ronce, hôtels à arcades, Observatoire) : passe-les à approved: true par le registre, dans une passe à part, pour ouvrir la Place du Fanal et la Ville haute. » ; passe 130"
+      "decision": "ordre explicite du responsable (2026-10-25, après les planches de la passe 129 : screenshots/qa/m09/quartiers-ajoutes/) : « J’approuve les 4 façades des quartiers (vieux phare, maison de la Ronce, hôtels à arcades, Observatoire) : passe-les à approved: true par le registre, dans une passe à part, pour ouvrir la Place du Fanal et la Ville haute. » ; passe 130",
+      "caduque": "2026-10-25",
+      "raison": "planche retraitée par script sur décision du responsable (passe 133, « Broder l’Astre » : emblème de l’Astre brodé sur les bannières de l’Observatoire, passe 134) ; empreinte nouvelle : approbation caduque (AGENTS, « Images de la ville »), nouvelle approbation sur ordre explicite, dans une passe à part"
     }
   ]
 }

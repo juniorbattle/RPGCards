@@ -2789,3 +2789,14 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **Modifications :** mission M09 (« Finalisation de la ville », décisions) ; encadrés de CLAUDE et d'AGENTS ; ce journal.
 - **[OK] Succès :** documentaire.
 - **À reprendre :** bannières brodées (puis demande de nouvelle approbation) ; vie des deux quartiers ; heure de ville ; jalon ; fiche.
+
+## Passe 134 — M09, finalisation : emblème de l'Astre brodé par script sur les bannières de l'Observatoire ; approbation de la planche caduque, Ville haute fermée hors QA jusqu'à l'ordre du responsable — 2026-10-25, worktree local (session de la finalisation), départ `c9ebfcd`, commit sur `main`
+
+- **Mission / contraintes :** décision « Broder l'Astre » (passe 133) : traitement par script seulement, aucune image générée (toujours 16 sur 20) ; aucun drapeau `approved` posé à la main.
+- **Modifications :**
+  - `[OK]` `tools/m09-kit-quartiers.mjs` : bannières de l'Observatoire (boîtes `[466, 632, 514, 895]` et `[1019, 632, 1066, 895]` du brut, famille Astre, broderie) ; le script relancé sur les 4 bruts : `quartiers-port-fanal`, `-port-ronce`, `-haute-hotels` **identiques à l'octet près** (empreintes vérifiées ; leurs fiches réécrites par le script restaurées) ; `quartiers-haute-observatoire.png` `90e822a6…` → `e119ba9a…` ; lanternes repérées : les deux lanternes murales de la porte au lieu de deux reflets des bannières dorées.
+  - `[OK]` `tools/m09-quartiers-rangs.mjs assembler` : manifeste de la ville en rangs : **seule la Ville haute change** (quai, parvis, ruelles, cour, port identiques).
+  - `[OK]` Registre `art-src/approbations.json` : l'entrée de l'Observatoire passe dans `caduques` (planche retraitée, empreinte nouvelle : AGENTS, « une image retraitée perd son approbation ») ; **35 images approuvées** ; `node tools/m09-approbations.mjs` : 0 écart ; fiche de l'Observatoire « non approuvé » ; `test/approbations.test.ts` : 35.
+  - `[OK]` ADR 028 (« Bannières de l'Observatoire »).
+- **[OK] Succès :** `npm run typecheck` 0 erreur ; `npm test` 466/466 ; `npm run build` OK ; vérificateur au laboratoire (`LQV_ILOTS=haute`, Radeon 780M, 1920 × 1080) : la Ville haute dessinée par son diorama (95,1 Mo de mémoire GPU), chaque rang et chaque spot praticables, console vide ; **politique du jeu** (`?aventure=1&qa=1&decors=approuvees&sprites=approuvees`) : ville en rangs, **seule la Place du Fanal ouverte**, la Ville haute fermée comme prévu. Planche `screenshots/qa/m09/finalisation/bannieres/avant-apres.png`.
+- **À reprendre :** l'ordre éventuel du responsable de réapprouver la planche retraitée (passe à part) ; vie des deux quartiers ; heure de ville ; jalon ; fiche.

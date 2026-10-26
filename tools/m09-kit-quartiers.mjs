@@ -36,8 +36,9 @@ export const K = {
     'port-fanal': { largeur: 19.6, bannieres: [ban([102, 642, 160, 840], 'Ronce'), ban([1378, 642, 1438, 840], 'Ronce')] },
     'port-ronce': { largeur: 14, bannieres: [ban([552, 612, 604, 900], 'Ronce'), ban([932, 612, 986, 900], 'Ronce')] },
     'haute-hotels': { largeur: 19.6, bannieres: [ban([604, 400, 652, 660], 'Astre'), ban([902, 400, 950, 660], 'Astre')] },
-    // bannières déjà peintes d'étoiles par le modèle : laissées telles quelles (point signalé au responsable)
-    'haute-observatoire': { largeur: 16, bannieres: [] },
+    // bannières peintes d'étoiles par le modèle : l'emblème de l'Astre y est brodé (décision du responsable, passe 133 :
+    // « Broder l'Astre », sans génération) ; le tissu est refait par fixBanners, les étoiles peintes disparaissent
+    'haute-observatoire': { largeur: 16, bannieres: [ban([466, 632, 514, 895], 'Astre'), ban([1019, 632, 1066, 895], 'Astre')] },
   },
 };
 
