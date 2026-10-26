@@ -73,6 +73,9 @@ describe('M11-C — choix des répliques', () => {
     for (const id of GUETTEURS) for (const ch of ['I', 'II', 'III', 'IV', 'V'] as Chapitre[]) for (const il of ILOTS) expect(choisir(id, ctx({ chapitre: ch, ilot: il }), memoireVide(), 1), `${id}/${ch}/${il}`).not.toBeNull();
     for (const ch of CHAPITRES) expect(choisir('rumeur-quai', ctx({ moment: 'rumeur', chapitre: ch }), memoireVide(), 1)).not.toBeNull();
     for (const ch of ['I', 'II', 'III', 'IV', 'V', 'titre'] as Chapitre[]) expect(choisir('kai', ctx({ moment: 'rival', chapitre: ch }), memoireVide(), 1), ch).not.toBeNull();
+    // premier défi d'une figure d'une autre famille : une réplique de contexte aux chapitres II à IV, rien au chapitre I
+    for (const ch of ['II', 'III', 'IV'] as Chapitre[]) expect(choisir('defi-Voile', ctx({ moment: 'defi', chapitre: ch }), memoireVide(), 1), ch).not.toBeNull();
+    expect(choisir('defi-Voile', ctx({ moment: 'defi', chapitre: 'I' }), memoireVide(), 1)).toBeNull();
     for (const id of ['cadet-Ronce', 'brasDroit-Voile', 'chef-Astre']) for (const t of ['franc', 'ruse', 'agressif', 'calculateur'] as const) {
       const r = choisir(id, ctx({ moment: 'revanche', temperament: t }), memoireVide(), 1);
       if (voixDe(id) !== 'figure-chef' && !CATALOGUE[voixDe(id)]!.some((x) => x.quand?.temperament?.includes(t))) continue;
