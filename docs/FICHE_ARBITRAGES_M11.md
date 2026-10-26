@@ -42,7 +42,7 @@ Preuves : `artifacts/qa/m11/` (mesures, `qa:vue`, comparaison au pixel près), `
 
 | Entrée | Objet | Recommandation | Alternatives |
 |---|---|---|---|
-| **P1** | Tempéraments au jeu pour les PNJ facultatifs récurrents (duels de rue, membres), chapitre I au profil `novice` de l'annexe ; mesures : `artifacts/qa/m11/temperaments.md` | **Garder** | Garder `novice` partout (répliques seules) ; durcir encore les chapitres IV et V |
+| **P1** | Tempéraments au jeu pour les PNJ facultatifs récurrents (duels de rue, membres), chapitre I au profil `novice` de l'annexe ; mesures (`artifacts/qa/m11/temperaments.md`) : le joueur « équilibré » gagne 69 à 89 % contre « franc » ; à partir du chapitre II, chaque autre tempérament est plus dur (« vicieux » 62 à 68 %) ; les figures, Épreuves, Joutes et le Championnat ne changent pas (paliers identiques au chiffre près) | **Garder** | Garder `novice` partout (répliques seules) ; durcir encore les chapitres IV et V |
 | **P2** | Les trajectoires (tableau du contrat 3, §3) | **Garder** | Reprendre tel PNJ |
 | **P3** | Un cran de plus après deux défaites contre le joueur | **Garder** | Après trois ; jamais |
 | **P4** | Les figures structurantes gardent le profil de l'annexe ; seules leurs répliques suivent un tempérament | **Garder l'annexe** (`TEMPERAMENTS_AU_JEU_FIGURES = false`) | Tempéraments au jeu aussi pour les revanches des figures (pas pour la première rencontre) |
@@ -59,8 +59,8 @@ Preuves : `artifacts/qa/m11/` (mesures, `qa:vue`, comparaison au pixel près), `
 
 | Entrée | Objet | Recommandation | Alternatives |
 |---|---|---|---|
-| **I1** | Le niveau 2 en nouveaux profils (`tacticien`, `agressif`, `ruse`, `vicieux`), utilisés seulement par l'aventure ; mesures : `artifacts/qa/m11/ia.md` | **Recevoir** | Reprendre |
-| **I2** | **Extension au Duel standard** (proposition) : un réglage « Duelliste aguerri » qui donnerait aux rivaux le niveau 2 de leur profil | **Pas maintenant** (le Duel standard est équilibré et reçu ; le niveau 2 gagne nettement plus) | Le proposer en option dans les Options (désactivé par défaut) ; l'activer pour le Tournoi du Quai seulement |
+| **I1** | Le niveau 2 en nouveaux profils (`tacticien`, `agressif`, `ruse`, `vicieux`), utilisés seulement par l'aventure ; mesures (`artifacts/qa/m11/ia.md`) : contre « équilibré », tacticien 76 %, agressif 60,5 %, rusé 77,5 %, vicieux 84 % (bases : 46,5 %, 32 %, 61 %) ; Duel standard inchangé (240 empreintes et mesure d'équilibre identiques) | **Recevoir** | Reprendre |
+| **I2** | **Extension au Duel standard** (proposition) : un réglage « Duelliste aguerri » qui donnerait aux rivaux le niveau 2 de leur profil (+14 à +30 points de victoires contre le même adversaire) | **Pas maintenant** (le Duel standard est équilibré et reçu ; le niveau 2 gagne nettement plus) | Le proposer en option dans les Options (désactivé par défaut) ; l'activer pour le Tournoi du Quai seulement |
 
 ## Son (contrat 6)
 
