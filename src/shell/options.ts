@@ -6,6 +6,7 @@ import { parseSave } from '../product/save';
 import { downloadText } from './screens';
 import type { Shell } from './shell';
 import { btn, chip, cls, confirmDialog, h, screen } from './ui';
+import { son } from '../son/moteur';
 
 export function renderOptions(sh: Shell, inDuel: boolean): HTMLElement {
   const save = sh.save;
@@ -32,6 +33,12 @@ export function renderOptions(sh: Shell, inDuel: boolean): HTMLElement {
       h('div', { class: 'sh-seg' },
         btn('A−', () => commit(() => { p.scale = Math.max(0.8, Math.round((p.scale - 0.1) * 10) / 10); if (save) save.options.scale = p.scale; }), { ghost: true, key: 'opt-scale-down', disabled: p.scale <= 0.8 }),
         btn('A+', () => commit(() => { p.scale = Math.min(1.5, Math.round((p.scale + 0.1) * 10) / 10); if (save) save.options.scale = p.scale; }), { ghost: true, key: 'opt-scale-up', disabled: p.scale >= 1.5 }))),
+    // M11-E : le son (synthétisé par code) : coupure et volume général, mémorisés dans ce navigateur (`lqv.son`)
+    seg('Son', 'son', [['on', 'Activé', !son().reglages().coupe, () => son().regler({ coupe: false })], ['off', 'Coupé', son().reglages().coupe, () => son().regler({ coupe: true })]]),
+    h('div', { class: 'sh-opt' }, h('span', { class: 'sh-opt-l' }, `Volume : ${Math.round(son().reglages().volume * 100)} %${son().permis ? '' : ' (son désactivé par l’adresse)'}`),
+      h('div', { class: 'sh-seg' },
+        btn('−', () => commit(() => son().regler({ volume: son().reglages().volume - 0.1 })), { ghost: true, key: 'opt-son-moins', disabled: son().reglages().volume <= 0 }),
+        btn('+', () => commit(() => son().regler({ volume: son().reglages().volume + 0.1 })), { ghost: true, key: 'opt-son-plus', disabled: son().reglages().volume >= 1 }))),
   ];
   if (save && o) {
     rows.push(seg('Conseils pendant le duel', 'tips', [['on', 'Affichés', o.tips, () => { save.options.tips = true; }], ['off', 'Masqués', !o.tips, () => { save.options.tips = false; }]]));

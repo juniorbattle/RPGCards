@@ -9,7 +9,9 @@ import { describe, expect, it } from 'vitest';
 import { FAMILIES, type Family } from '../src/game/catalog/cards';
 import { PROFILES } from '../src/game/ai/policy';
 import { Match } from '../src/game/match';
-import { appliquer, bannieres, chapitre, nouvelleAventure, type AventureEtat, type Evenement } from '../src/aventure/aventure';
+import { appliquer, bannieres, chapitre, chapitreDetaille, nouvelleAventure, type AventureEtat, type Evenement } from '../src/aventure/aventure';
+import { evenementRival } from '../src/aventure/rival';
+import { choisir, memoireVide } from '../src/aventure/repliques';
 import { equiperSignature } from '../src/aventure/deck';
 import { conclureDuel, ouvrirDuel, REGLES_DUEL } from '../src/aventure/fin';
 import { figureDe, ROLES } from '../src/aventure/modele';
@@ -17,7 +19,7 @@ import { manche, statutFinale, statutPoule } from '../src/aventure/competitions'
 import { collectionDe } from '../src/aventure/registre';
 import { pvJoueur } from '../src/aventure/paliers';
 import { objectif, quetes } from '../src/aventure/quetes';
-import { duelChampionnat, duelFigure, duelPrologue, type DuelPrevu } from '../src/aventure/rencontres';
+import { duelChampionnat, duelFigure, duelPrologue, duelRival, type DuelPrevu } from '../src/aventure/rencontres';
 import { CLE_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave } from '../src/aventure/sauvegarde';
 import { RULES } from '../src/product/resume';
 import { duelSeed } from '../src/product/save';
@@ -35,6 +37,8 @@ class Parcours {
   readonly store = new MagasinAventure(this.mem, () => new Date(AT));
   s: AventureSave;
   bilan: Bilan = { duels: 0, victoires: 0, defaites: 0, reprises: 0, scenes: 0, tours: 0 };
+  /** M11 : événements du rival traversés. */
+  rivaux: string[] = [];
 
   constructor(graine: number) {
     this.s = nouvelleSauvegarde(new Date(AT), 'QA Parcours', graine);
@@ -117,8 +121,25 @@ class Parcours {
   }
 }
 
-function parcoursComplet(accueil: Family, graine: number): Parcours {
+/** M11-A/C : au point de décision qui suit un duel ou une scène, l'événement du rival dû (s'il y en a un) est joué. */
+function rival(p: Parcours, avec: boolean): void {
+  if (!avec) return;
+  const k = (['quai', 'cour', 'ruelles', 'parvis', 'port', 'haute'] as const).map((il) => evenementRival(p.e, il, true)).find((x) => !!x);
+  if (!k) return;
+  const memo = p.s.dialogues ?? memoireVide();
+  const c = { moment: 'rival' as const, chapitre: chapitreDetaille(p.e), voie: p.e.affiliation, temperament: null, joues: 0, victoires: 0, defaites: 0, dernier: null, chefs: FAMILIES.filter((f) => p.e.familles[f] === 'chef').length, cheffe: false };
+  const r = choisir('kai', c, memo, p.s.profil.graine)!;
+  expect(r.texte.length).toBeGreaterThan(10);
+  p.s.dialogues = r.memo;
+  p.rivaux.push(k.id);
+  if (k.duel) p.duel((seed) => duelRival(k.id, p.e, seed));
+  else p.scene(() => p.fait({ type: 'rival', id: k.id, issue: 'scene' }));
+}
+
+function parcoursComplet(accueil: Family, graine: number, avecRival = false): Parcours {
   const p = new Parcours(graine);
+  const _gagner = p.gagner.bind(p);
+  p.gagner = (prevuDe, quoi) => { _gagner(prevuDe, quoi); rival(p, avecRival); };
   // Prologue : P2, le duel public contre Kaï (son issue ne bloque rien), puis l'affiliation et P8
   p.scene(() => p.fait({ type: 'scene', id: 'P2' }));
   p.duel((seed) => duelPrologue(seed, p.e));
@@ -157,6 +178,7 @@ function parcoursComplet(accueil: Family, graine: number): Parcours {
     p.scene(() => { p.s.etat = { ...p.e, deck: equiperSignature(p.e.deck, sig) }; });
     p.duel((seed) => duelChampionnat('finale', p.e, seed, undefined, p.s.historique));
   }
+  rival(p, avecRival);
   return p;
 }
 
@@ -216,4 +238,17 @@ describe('M10-F — textes du mode Aventure relus', () => {
       for (const re of [/['`][^'`]*prototype[^'`]*['`]/i, /Nom du duelliste/, /avenant M10-A\)/, /\(\$\{ROLE_LABEL\./]) expect(re.test(code), `${f} : ${re}`).toBe(false);
     }
   });
+});
+
+describe('M11 — parcours complet avec le rival en événements fixes (K1 à K6) et les répliques', () => {
+  it('du prologue au titre : chaque événement du rival une fois, dans l’ordre, la sauvegarde relue à chaque scène', () => {
+    const p = parcoursComplet('Astre', 20261026, true);
+    expect(p.rivaux).toEqual(['K1', 'K2', 'K3', 'K4', 'K5', 'K6']);
+    expect(Object.keys(p.e.rival?.faits ?? {}).sort()).toEqual(['K1', 'K2', 'K3', 'K4', 'K5', 'K6']);
+    expect(p.e.competitions.championnat.titre).toBe(true);
+    expect(p.e.combats).toBe(p.bilan.duels);
+    const q = quetes(p.e).find((x) => x.id === 'rival')!;
+    expect(q.etapes.every((x) => x.faite)).toBe(true);
+    console.log(`Astre avec le rival : ${p.bilan.duels} duels, événements ${p.rivaux.join(' ')}`);
+  }, 180000);
 });
