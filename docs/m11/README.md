@@ -13,7 +13,7 @@ Aucun de ces documents ne change les règles du duel, le mode Duel standard par 
 | 4. Dialogues et narration de bout en bout (dont les deux Observatoires) | [`04_DIALOGUES_ET_NARRATION.md`](04_DIALOGUES_ET_NARRATION.md) | 040 |
 | 5. IA de combat : audit et niveau 2 | [`05_IA_DE_COMBAT.md`](05_IA_DE_COMBAT.md) | 041 |
 | 6. Le son, synthétisé par code | [`06_SON.md`](06_SON.md) | 042 |
-| 7. Cinématiques runtime (après la session, passe 150) | [`07_CINEMATIQUES.md`](07_CINEMATIQUES.md) | 043 |
+| 7. Cinématiques runtime (après la session, passes 150 et 151) | [`07_CINEMATIQUES.md`](07_CINEMATIQUES.md) | 043 |
 | Feuille de route M11-A à M11-F | [`FEUILLE_DE_ROUTE_M11.md`](FEUILLE_DE_ROUTE_M11.md) | — |
 
 ## En une page
@@ -29,4 +29,5 @@ Aucun de ces documents ne change les règles du duel, le mode Duel standard par 
 - **IA** : audit ; un niveau 2 en nouveaux profils (`tacticien`, `agressif`, `vicieux`) ; Duel standard inchangé.
 - **Son** : Web Audio, effets et ambiances, volume et coupure mémorisés, coupé en QA.
 - **Cinématiques** (demande d'après la session) : plans joués par la caméra de la ville (arrivée dans un quartier, Kaï,
-  guetteur), bandes et carton, toujours passables, réglables, coupées en QA sans `?cine=1`.
+  guetteur ; puis les scènes du récit : prologue, affiliation, chefs, chapitres, Championnat, titre), dialogues de scène
+  cadrés, bandes et cartons, toujours passables, réglables, coupées en QA sans `?cine=1`.

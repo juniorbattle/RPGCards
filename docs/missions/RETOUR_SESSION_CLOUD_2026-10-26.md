@@ -79,7 +79,10 @@ d'approbation changé ; son coupé en QA ; sauvegardes : `aventure/1` migrée sa
     visite de chaque quartier, Kaï qui surgit, un guetteur qui repère. « Passer ▸ », Échap, Espace ou Entrée les
     passent ; elles se coupent dans le menu de l'aventure (« Cinématiques »), ou avec `?cine=0`. En QA, seulement avec
     `?cine=1` (`node tools/m11-cinematiques.mjs`). Les juger à la fréquence de l'écran : en rendu logiciel, les captures
-    n'en montrent que des instants (fiche, C1 à C4).
+    n'en montrent que des instants (fiche, C1 à C5).
+  - **scènes du récit** (passe 151) : la conversation avec Kaï au prologue, le retour du duel (la foule, l'émissaire qui
+    fend la foule), l'affiliation, chaque chef vaincu, les chapitres II à V, l'ouverture du Championnat et le titre ;
+    dialogues de scène cadrés (fiche, C6 à C9).
 
 ## 3. Ce que la session a choisi seule (à confirmer ou défaire)
 

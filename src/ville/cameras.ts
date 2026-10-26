@@ -84,9 +84,9 @@ export interface CameraRig {
   readonly params: RigParams;
   /**
    * Place la caméra (amortie vers le cadrage visé ; `snap` = immédiat) ; `tuning` : réglages pour cette image seulement,
-   * par-dessus ceux de l'îlot (cinématiques, M11), `tau` compris.
+   * par-dessus ceux de l'îlot (cinématiques, M11), `tau` et bornes compris.
    */
-  update(camera: THREE.PerspectiveCamera, target: { x: number; z: number }, dt: number, snap?: boolean, tuning?: RigTuning & { tau?: number }): void;
+  update(camera: THREE.PerspectiveCamera, target: { x: number; z: number }, dt: number, snap?: boolean, tuning?: Partial<RigParams>): void;
   resize(camera: THREE.PerspectiveCamera, aspect: number): void;
 }
 

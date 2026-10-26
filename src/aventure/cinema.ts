@@ -19,8 +19,8 @@ export interface OptionsCinema {
   fige: boolean;
   /** Mouvement réduit : des coupes au lieu des mouvements de caméra. */
   reduit: boolean;
-  /** Bandes du haut et du bas (et bouton « Passer ») ; sans bandes, un plan court qu'on ne passe pas. */
-  bandes: boolean;
+  /** Bandes du haut et du bas, partagées avec les dialogues cadrés (et bouton « Passer ») ; `null` : un plan court, sans bandes, qu'on ne passe pas. */
+  bandes: Bandes | null;
   carton?: { lieu: string; ligne: string };
   /** Garder le dernier cadre à la fin (un dialogue s'ouvre dessus) ; sinon la caméra revient au joueur. */
   garder?: boolean;
@@ -85,18 +85,19 @@ export class Cinema {
     return passee;
   }
 
-  /** Bandes retirées ; la caméra revient au joueur (coupe si la cinématique a été passée), ou garde le dernier cadre. */
+  /**
+   * Fin : carton et bouton retirés, bandes rendues (elles restent si un dialogue cadré les reprend aussitôt) ; la caméra
+   * revient au joueur (coupe si la cinématique a été passée), ou garde le dernier cadre.
+   */
   private fin(): void {
-    if (this.el) {
-      window.removeEventListener('keydown', this.onKey, true);
-      document.body.classList.remove('av-cine-actif');
-    }
     const coupe = this.o.fige || this.o.reduit || this.passee;
     if (this.o.garder && this.dernier) this.town.cadrer(cadre(this.dernier), coupe);
     else this.town.cadrer(null, coupe);
     const el = this.el;
     this.el = null;
     if (!el) return;
+    window.removeEventListener('keydown', this.onKey, true);
+    this.o.bandes?.rendre();
     el.classList.remove('on');
     if (coupe) el.remove(); else setTimeout(() => el.remove(), 450);
   }
@@ -107,11 +108,10 @@ export class Cinema {
   private monter(): void {
     if (!this.o.bandes) return;
     window.addEventListener('keydown', this.onKey, true);
-    document.body.classList.add('av-cine-actif');
+    this.o.bandes.prendre();
     const c = this.o.carton;
     const el = h('div', { class: 'av-cine', 'data-key': 'av-cine' },
-      h('div', { class: 'av-cine-bande haut', 'aria-hidden': 'true' }),
-      h('div', { class: 'av-cine-bande bas' }, c ? h('div', { class: 'av-cine-carton', 'data-key': 'av-cine-carton' }, h('b', null, c.lieu), h('span', null, c.ligne)) : null),
+      c ? h('div', { class: 'av-cine-carton', 'data-key': 'av-cine-carton' }, h('div', null, h('b', null, c.lieu), h('span', null, c.ligne))) : null,
       h('button', { class: 'av-cine-passer', type: 'button', 'data-key': 'av-cine-passer', onclick: () => this.passer() }, 'Passer ▸'));
     document.body.append(el);
     this.el = el;
@@ -151,15 +151,61 @@ export class Cinema {
   }
 }
 
+/**
+ * Bandes du haut et du bas, partagées par les cinématiques et les dialogues cadrés d'une même scène : chacun les prend et
+ * les rend ; elles se replient quand plus personne ne les tient, une tâche plus tard (une scène qui enchaîne une
+ * cinématique et son dialogue, ou deux répliques, les garde sans les replier entre les deux). L'interface de la ville
+ * s'efface tant qu'elles sont là.
+ */
+export class Bandes {
+  private el: HTMLElement | null = null;
+  private n = 0;
+  private retrait: ReturnType<typeof setTimeout> | null = null;
+
+  constructor(private readonly reduit: boolean) {}
+
+  get tenues(): boolean { return this.n > 0; }
+
+  prendre(): void {
+    this.n++;
+    if (this.retrait) { clearTimeout(this.retrait); this.retrait = null; }
+    document.body.classList.add('av-cine-actif');
+    if (this.el) { this.el.classList.add('on'); return; }
+    const el = h('div', { class: 'av-cine-bandes', 'data-key': 'av-cine-bandes', 'aria-hidden': 'true' }, h('div', { class: 'av-cine-bande haut' }), h('div', { class: 'av-cine-bande bas' }));
+    document.body.append(el);
+    this.el = el;
+    if (this.reduit) el.classList.add('on', 'reduit');
+    else requestAnimationFrame(() => { if (this.el === el && this.n > 0) el.classList.add('on'); });
+  }
+
+  rendre(): void {
+    setTimeout(() => { this.n = Math.max(0, this.n - 1); if (!this.n) this.replier(); }, 0);
+  }
+
+  /** Repli (tout de suite avec `immediat` : un autre écran s'ouvre). */
+  replier(immediat = false): void {
+    this.n = 0;
+    document.body.classList.remove('av-cine-actif');
+    const el = this.el;
+    if (!el) return;
+    el.classList.remove('on');
+    if (immediat || this.reduit) { el.remove(); this.el = null; return; }
+    if (this.retrait) clearTimeout(this.retrait);
+    this.retrait = setTimeout(() => { el.remove(); if (this.el === el) this.el = null; this.retrait = null; }, 450);
+  }
+}
+
 /** Styles des bandes, du carton et du bouton (installés avec ceux de l'aventure). */
 export const STYLES_CINEMA = `
+.av-cine-bandes { position: fixed; inset: 0; z-index: 2610; pointer-events: none; }
 .av-cine { position: fixed; inset: 0; z-index: 2620; pointer-events: none; }
 .av-cine-bande { position: absolute; left: 0; right: 0; height: 0; background: #020307; transition: height 0.42s ease; }
 .av-cine-bande.haut { top: 0; }
-.av-cine-bande.bas { bottom: 0; display: grid; place-items: center; overflow: hidden; }
-.av-cine.on .av-cine-bande { height: 11.5vh; }
-.av-cine.reduit .av-cine-bande { transition: none; }
-.av-cine-carton { display: flex; align-items: baseline; gap: 16px; color: #ffe7b0; opacity: 0; transform: translateY(6px); transition: opacity 0.8s ease 0.5s, transform 0.8s ease 0.5s; }
+.av-cine-bande.bas { bottom: 0; }
+.av-cine-bandes.on .av-cine-bande { height: 11.5vh; }
+.av-cine-bandes.reduit .av-cine-bande { transition: none; }
+.av-cine-carton { position: absolute; left: 0; right: 0; bottom: 0; height: 11.5vh; display: grid; place-items: center; color: #ffe7b0; opacity: 0; transform: translateY(6px); transition: opacity 0.8s ease 0.5s, transform 0.8s ease 0.5s; }
+.av-cine-carton > div { display: flex; align-items: baseline; gap: 16px; }
 .av-cine.on .av-cine-carton { opacity: 1; transform: none; }
 .av-cine.reduit .av-cine-carton { transition: none; }
 .av-cine-carton b { font: 700 clamp(24px, 3.2vw, 40px)/1 Georgia, serif; letter-spacing: 0.04em; text-shadow: 0 0 18px rgba(255, 190, 110, 0.3); }
