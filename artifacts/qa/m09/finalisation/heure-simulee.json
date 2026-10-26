@@ -1,0 +1,214 @@
+{
+  "date": "2026-10-26T01:34:42.760Z",
+  "commit": "8085266",
+  "profils": 200,
+  "arrivees": 40,
+  "duelToutes": 4,
+  "chapitres": {
+    "I": {
+      "arrivees": 8000,
+      "vides": 275,
+      "une": 4491,
+      "deux": 3234,
+      "plusDeDeux": 0,
+      "nouvelles": 6819,
+      "rumeurs": 3987,
+      "duelsRue": 874,
+      "ombres": 200,
+      "refus": 1306,
+      "relances": 0,
+      "ombresMax": 1,
+      "profils": 200,
+      "parIlot": {
+        "port": {
+          "arrivees": 614,
+          "presentes": 807
+        },
+        "quai": {
+          "arrivees": 2329,
+          "presentes": 3457
+        },
+        "parvis": {
+          "arrivees": 1181,
+          "presentes": 1621
+        },
+        "ruelles": {
+          "arrivees": 1147,
+          "presentes": 1563
+        },
+        "cour": {
+          "arrivees": 2208,
+          "presentes": 2853
+        },
+        "haute": {
+          "arrivees": 521,
+          "presentes": 658
+        }
+      }
+    },
+    "II": {
+      "arrivees": 8000,
+      "vides": 255,
+      "une": 4579,
+      "deux": 3166,
+      "plusDeDeux": 0,
+      "nouvelles": 6887,
+      "rumeurs": 4013,
+      "duelsRue": 907,
+      "ombres": 200,
+      "refus": 1344,
+      "relances": 0,
+      "ombresMax": 1,
+      "profils": 200,
+      "parIlot": {
+        "port": {
+          "arrivees": 565,
+          "presentes": 729
+        },
+        "quai": {
+          "arrivees": 2276,
+          "presentes": 3279
+        },
+        "ruelles": {
+          "arrivees": 1132,
+          "presentes": 1517
+        },
+        "cour": {
+          "arrivees": 2291,
+          "presentes": 3036
+        },
+        "parvis": {
+          "arrivees": 1171,
+          "presentes": 1619
+        },
+        "haute": {
+          "arrivees": 565,
+          "presentes": 731
+        }
+      }
+    },
+    "III": {
+      "arrivees": 8000,
+      "vides": 183,
+      "une": 4152,
+      "deux": 3665,
+      "plusDeDeux": 0,
+      "nouvelles": 6689,
+      "rumeurs": 3552,
+      "duelsRue": 949,
+      "ombres": 200,
+      "refus": 1418,
+      "relances": 0,
+      "ombresMax": 1,
+      "profils": 200,
+      "parIlot": {
+        "parvis": {
+          "arrivees": 1145,
+          "presentes": 1610
+        },
+        "quai": {
+          "arrivees": 2201,
+          "presentes": 3613
+        },
+        "port": {
+          "arrivees": 602,
+          "presentes": 783
+        },
+        "cour": {
+          "arrivees": 2314,
+          "presentes": 3114
+        },
+        "ruelles": {
+          "arrivees": 1130,
+          "presentes": 1575
+        },
+        "haute": {
+          "arrivees": 608,
+          "presentes": 787
+        }
+      }
+    },
+    "IV": {
+      "arrivees": 8000,
+      "vides": 158,
+      "une": 3824,
+      "deux": 4018,
+      "plusDeDeux": 0,
+      "nouvelles": 6469,
+      "rumeurs": 3136,
+      "duelsRue": 958,
+      "ombres": 200,
+      "refus": 1493,
+      "relances": 0,
+      "ombresMax": 1,
+      "profils": 200,
+      "parIlot": {
+        "ruelles": {
+          "arrivees": 1178,
+          "presentes": 1806
+        },
+        "cour": {
+          "arrivees": 2234,
+          "presentes": 3011
+        },
+        "parvis": {
+          "arrivees": 1168,
+          "presentes": 1644
+        },
+        "quai": {
+          "arrivees": 2309,
+          "presentes": 3931
+        },
+        "haute": {
+          "arrivees": 519,
+          "presentes": 665
+        },
+        "port": {
+          "arrivees": 592,
+          "presentes": 803
+        }
+      }
+    },
+    "V": {
+      "arrivees": 8000,
+      "vides": 136,
+      "une": 3627,
+      "deux": 4237,
+      "plusDeDeux": 0,
+      "nouvelles": 6304,
+      "rumeurs": 2794,
+      "duelsRue": 1008,
+      "ombres": 200,
+      "refus": 1474,
+      "relances": 0,
+      "ombresMax": 1,
+      "profils": 200,
+      "parIlot": {
+        "port": {
+          "arrivees": 613,
+          "presentes": 866
+        },
+        "quai": {
+          "arrivees": 2249,
+          "presentes": 3882
+        },
+        "cour": {
+          "arrivees": 2257,
+          "presentes": 3021
+        },
+        "haute": {
+          "arrivees": 540,
+          "presentes": 729
+        },
+        "parvis": {
+          "arrivees": 1209,
+          "presentes": 1898
+        },
+        "ruelles": {
+          "arrivees": 1132,
+          "presentes": 1705
+        }
+      }
+    }
+  }
+}
