@@ -23,9 +23,20 @@ inchangée (paliers remesurés : `artifacts/qa/m11/paliers.json`, voir §1 bis) 
 d'approbation changé ; son coupé en QA ; sauvegardes : `aventure/1` migrée sans perte (original gardé une fois sous
 `lqv.aventure.v1`), profils et parties du jeu standard jamais lus ni écrits par l'aventure.
 
-### 1 bis. Mesures
+### 1 bis. Mesures (moteur seul, même poste, mêmes graines)
 
-(complété en fin de run, voir la passe 148 du journal)
+- **Duel standard inchangé** : 240 empreintes standard identiques au build de `bd93beb` (`artifacts/qa/m11/empreintes.json`) ;
+  mesure d'équilibre du Duel standard identique au chiffre près (`artifacts/qa/m11/standard.json`). Un écart trouvé en
+  cours de route venait des outils de mesure, qui faisaient tourner tous les profils, nouveaux compris : ils parcourent
+  maintenant les six profils historiques (`PROFILS_HISTORIQUES`).
+- **Annexe de calibrage inchangée** : les 30 lignes des paliers de l'aventure sont identiques au chiffre près à la
+  mesure de la RC (`artifacts/qa/m11/paliers.json`).
+- **Tempéraments** (`artifacts/qa/m11/temperaments.md`) : victoires du joueur « équilibré » contre « franc » (le
+  `novice` de l'annexe) 69 à 89 % ; à partir du chapitre II, chaque autre tempérament est plus dur, « vicieux » de 62 à
+  68 %.
+- **IA de niveau 2** (`artifacts/qa/m11/ia.md`) : en Duel standard, contre « équilibré », tacticien 76 %, agressif
+  60,5 %, rusé 77,5 %, vicieux 84 %, quand le profil de base fait 46,5 % (équilibré), 32 % (offensif) ou 61 %
+  (prudent) ; 640 duels de niveau 2 en decks d'aventure, aucun coup refusé.
 
 ## 2. À faire en local (impossible dans le cloud)
 
