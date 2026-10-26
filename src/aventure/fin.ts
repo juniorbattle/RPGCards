@@ -6,7 +6,10 @@
 import type { Family } from '../game/catalog/cards';
 import type { GameEvent } from '../game/model/types';
 import { appliquer, type Evenement, type FaitsPublics, type Issue } from './aventure';
-import { battre, conclure } from './directeur';
+import { battre, conclure, noterVu } from './directeur';
+import { chapitreDetaille } from './aventure';
+import { isKId, type KId } from './rival';
+import { estGuetteur } from './vue';
 import { faitsPublics } from './faits';
 import { figure } from './modele';
 import { pvJoueur } from './paliers';
@@ -78,7 +81,12 @@ export function conclureDuel(s: AventureSave, duel: DuelAventure, events: readon
     refus = r.refus;
     s.etat = r.etat;
     gains = r.gains;
+  } else if (rencontre.startsWith('rival:') && isKId(rencontre.slice(6))) {
+    // M11-A : événement fixe du rival ; accompli à l'issue d'un duel mené à son terme (un abandon le laisse dû)
+    s.etat = appliquer(s.etat, { type: 'rival', id: rencontre.slice(6) as KId, issue }, at).etat;
   } else {
+    // M11-A : l'issue d'un duel contre un guetteur règle son repos (rencontres en vue)
+    if (estGuetteur(rencontre)) s.directeur = noterVu(s.directeur, rencontre, issue, chapitreDetaille(s.etat));
     s.directeur = conclure(s.directeur, rencontre, true);
     // M10-E : l'ombre de Kaï menée à son terme compte pour la quête du rival (chapitre en cours)
     if (rencontre === 'rival-kai') s.etat = appliquer(s.etat, { type: 'ombre', issue }, at).etat;

@@ -14,6 +14,7 @@ import { siegeAventure } from './deck';
 import { rencontreDef } from './directeur';
 import { deF, figure, FIGURES, KAI_PROLOGUE, TECHNIQUES_RUE, TENANTE } from './modele';
 import { ELITE_JOUTE, famillesDominantes, MEMBRES_EPREUVE, signatureTenante, varianteDe } from './competitions';
+import { evenementDef, type KId } from './rival';
 import { adversaire, adversaireMiroir, PALIER_NOM, pvJoueur, type Adversaire, type RoleAdverse } from './paliers';
 
 export interface DuelPrevu {
@@ -81,6 +82,17 @@ export function duelFacultatif(id: string, e: AventureEtat, seed: number): DuelP
   const p = kai ? personnalite('braise', { nom: 'Kaï', titre: 'la Braise du quai', profil: adv.profil }) : personnalite(r.apparence, { nom: base.name, titre: base.title, profil: adv.profil });
   return {
     rencontre: id, titre: kai ? 'Kaï vous défie' : `Duel de rue — ${base.name}`, personnalite: p, venue: 'rue', enjeu: null,
+    config: config(e, seed, adv, p.name), note: note(p.name, adv),
+  };
+}
+
+/** M11-A : le duel d'un événement fixe du rival (contrat 2) : rôle `rival` du palier, profil de l'annexe ; sans récompense. */
+export function duelRival(id: KId, e: AventureEtat, seed: number): DuelPrevu {
+  const k = evenementDef(id);
+  const adv = adversaire('rival', 'Cendre', niveauDe(e), ['Sondage', 'Lecture']);
+  const p = personnalite('braise', { nom: 'Kaï', titre: 'la Braise du quai', profil: adv.profil });
+  return {
+    rencontre: `rival:${id}`, titre: `Kaï surgit — ${k.titre}`, personnalite: p, venue: id === 'K5' ? 'arene' : 'rue', enjeu: null,
     config: config(e, seed, adv, p.name), note: note(p.name, adv),
   };
 }

@@ -8,6 +8,7 @@ import { FAMILIES, type Family } from '../game/catalog/cards';
 import { deF, figure, figureDe, FIGURES, isNeutre, leF, MAISONS, ORDRE_ETAT, roleDe, chefVaincu, leChef, TECHNIQUES_RUE, type EtatFamille, type Figure, type SceneId } from './modele';
 import { accorder, aGain, collectionDe, gainBasics, gainNeutres, gainSignature, gainTechnique, gainVariante, type Gain } from './registre';
 import { deckDepart, equiperTechnique, equiperVersion, integrerBasics, standardLegal, type DeckAv } from './deck';
+import type { EtatRival, KId } from './rival';
 import { finEpreuve, finFinale, finJoute, finMiroir, finPoule, manche, nouvellesCompetitions, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, type EtatCompetitions } from './competitions';
 
 /** Faits PUBLICS d'un duel (journal public du joueur) : aucun secret (ADR 011, ADR 029 §5). */
@@ -51,6 +52,8 @@ export interface AventureEtat {
   combats: number;
   /** M10-E : chapitres de la trame où le défi de Kaï (l'ombre) a été mené à son terme (quête « L'ombre de Kaï »). */
   ombres?: string[];
+  /** M11-A : événements fixes du rival accomplis (K1 à K6) et leur issue (`rival.ts`, contrat 2). */
+  rival?: EtatRival;
 }
 
 export type Evenement =
@@ -69,7 +72,9 @@ export type Evenement =
   /** Un duel de l'aventure s'achève (tout duel : structurant, compétition, rue, rival, Championnat). */
   | { type: 'combat'; issue: Issue }
   /** M10-E : le défi de Kaï (l'ombre) mené à son terme, dans le chapitre en cours. */
-  | { type: 'ombre'; issue: Issue };
+  | { type: 'ombre'; issue: Issue }
+  /** M11-A : un événement fixe du rival mené à son terme (duel gagné ou perdu, ou scène) ; un abandon le laisse dû. */
+  | { type: 'rival'; id: KId; issue: Issue | 'scene' };
 
 export interface Resultat {
   etat: AventureEtat;
@@ -346,6 +351,13 @@ function appliquerBrut(e0: AventureEtat, ev: Evenement, at: string): Resultat {
       // M10-E : le défi de Kaï, une fois par chapitre au plus (le directeur le garantit) ; aucune carte, aucune statistique
       const ch = chapitreDetaille(e);
       if (ev.issue !== 'abandon' && ch !== 'prologue' && !(e.ombres ?? []).includes(ch)) e.ombres = [...(e.ombres ?? []), ch];
+      return { etat: e, gains };
+    }
+
+    case 'rival': {
+      // M11-A : l'histoire continue quelle que soit l'issue (comme dans Pokémon) ; un abandon laisse l'événement dû
+      if (ev.issue === 'abandon' || e.rival?.faits[ev.id]) return { etat: e, gains };
+      e.rival = { faits: { ...(e.rival?.faits ?? {}), [ev.id]: ev.issue } };
       return { etat: e, gains };
     }
   }

@@ -127,7 +127,13 @@ export interface Town {
   /** Rend une image tout de suite (captures en temps figé). */
   renderNow(): void;
   /** Repères au-dessus des personnages de l'îlot (« ! » : un défi à relever ; « ? » : quelqu'un à écouter). */
-  setMarkers(m: Readonly<Record<string, '!' | '?' | null>>): void;
+  setMarkers(m: Readonly<Record<string, '!' | '?' | 'vu' | null>>): void;
+  /**
+   * M11-A (rencontres en vue, rival) : fait marcher un personnage de l'îlot (identifiant de personnalité) jusqu'à `to`, à
+   * `speed` m/s, puis le tourne vers `face` ; résolu à l'arrivée (tout de suite en temps figé ou mouvement réduit). La
+   * logique (où, quand) est dans l'appelant ; un remontage de l'îlot remet chacun à sa place.
+   */
+  walkNpc(id: string, to: Vec2, speed: number, face: Facing): Promise<void>;
   /** Hauteur des personnages dans l'îlot courant (m), pour placer les bulles au-dessus des têtes. */
   walkerH(): number;
   /** Position écran (px CSS) d'un point du monde, pour les bulles DOM. */
@@ -355,7 +361,7 @@ export function createTown(o: TownOptions): Town {
   playerSprite.setHeight(walkerH());
   scene.add(playerSprite.group);
   applySheet(o.player, playerSprite);
-  type NpcSprite = { n: IlotNpc; s: WalkerSprite; marker: THREE.Mesh; kind: '!' | '?' | null };
+  type NpcSprite = { n: IlotNpc; s: WalkerSprite; marker: THREE.Mesh; kind: '!' | '?' | 'vu' | null; pos?: Vec2; walk?: { to: Vec2; speed: number; face: Facing; phase: number; done: () => void }; face?: Facing };
   const makeNpcs = (): NpcSprite[] => def.npcs.map((n) => {
     const s = createWalkerSprite(n.id);
     s.setHeight(walkerH());
@@ -542,13 +548,21 @@ export function createTown(o: TownOptions): Town {
     world.update(time);
     world.focus?.(walker.pos, !!o.freeze, camera.position);
     playerSprite.set(walker.pos, walker.facing, walker.phase, walker.moving, time);
-    for (const { n, s } of npcSprites) {
+    for (const e of npcSprites) {
+      const { n, s } = e;
+      // M11-A : un personnage qui marche (approche) suit sa position propre et son regard de marche
+      if (e.walk) { const p = e.pos!; s.set(p, regard(p, e.walk.to, e.walk.face), e.walk.phase, true, time); continue; }
+      const at = e.pos ?? n.at;
+      if (e.face) { s.set(at, e.face, 0, false, time + n.at.x); continue; }
       // Les PNJ se tournent vers le joueur quand il approche (à moins de 2,5 m).
-      const d = Math.hypot(walker.pos.x - n.at.x, walker.pos.z - n.at.z);
-      const face: Facing = d < 2.5 ? (Math.abs(walker.pos.x - n.at.x) > Math.abs(walker.pos.z - n.at.z) ? (walker.pos.x > n.at.x ? 'droite' : 'gauche') : walker.pos.z > n.at.z ? 'face' : 'dos') : n.facing;
-      s.set(n.at, face, 0, false, time + n.at.x);
+      const d = Math.hypot(walker.pos.x - at.x, walker.pos.z - at.z);
+      const face: Facing = d < 2.5 ? (Math.abs(walker.pos.x - at.x) > Math.abs(walker.pos.z - at.z) ? (walker.pos.x > at.x ? 'droite' : 'gauche') : walker.pos.z > at.z ? 'face' : 'dos') : n.facing;
+      s.set(at, face, 0, false, time + n.at.x);
     }
-    for (const { n, marker } of npcSprites) if (marker.visible) marker.position.y = markerY() + (o.freeze ? 0 : Math.sin(time * 2.4 + n.at.x) * 0.05);
+    for (const e of npcSprites) if (e.marker.visible) {
+      const at = e.pos ?? e.n.at;
+      e.marker.position.set(at.x, markerY() + (o.freeze || e.kind === 'vu' ? 0 : Math.sin(time * 2.4 + e.n.at.x) * 0.05), at.z + 0.02);
+    }
     for (const p of passers) p.s.set({ x: p.x, z: p.a.z }, p.dir > 0 ? 'droite' : 'gauche', p.phase, !o.freeze && !p.blocked, time);
     focus.set(walker.pos.x, 0.9, walker.pos.z).project(camera);
     finish.uniforms.uFocusY!.value = THREE.MathUtils.clamp(focus.y * 0.5 + 0.5, 0.2, 0.8);
@@ -590,6 +604,17 @@ export function createTown(o: TownOptions): Town {
         const dir = locked ? { x: 0, z: 0 } : inputDir();
         walker = stepWalker(def.ilot, walker, { dir, slow: keys.has('ShiftLeft') || keys.has('ShiftRight'), target: locked ? null : target }, STEP);
         if (target && !walker.moving && Math.hypot(target.x - walker.pos.x, target.z - walker.pos.z) < 0.15) target = null;
+        for (const e of npcSprites) {
+          if (!e.walk || !e.pos) continue;
+          const w = e.walk;
+          const dx = w.to.x - e.pos.x;
+          const dz = w.to.z - e.pos.z;
+          const dist = Math.hypot(dx, dz);
+          const stepLen = w.speed * STEP;
+          if (dist <= stepLen) { e.pos = { ...w.to }; e.face = w.face; e.walk = undefined; w.done(); continue; }
+          e.pos = { x: e.pos.x + (dx / dist) * stepLen, z: e.pos.z + (dz / dist) * stepLen };
+          w.phase = (w.phase + stepLen / 1.5) % 1;
+        }
         for (const p of passers) {
           const ahead = (walker.pos.x - p.x) * p.dir;
           p.blocked = ahead > 0 && ahead < 1.1 && Math.abs(walker.pos.z - p.a.z) < 0.8;
@@ -733,6 +758,12 @@ export function createTown(o: TownOptions): Town {
         }
       }
     },
+    walkNpc(id, to, speed, face) {
+      const e = npcSprites.find((x) => x.n.id === id);
+      if (!e) return Promise.resolve();
+      if (o.freeze || o.reducedMotion || paused) { e.pos = { ...to }; e.face = face; e.walk = undefined; return Promise.resolve(); }
+      return new Promise<void>((done) => { e.pos = e.pos ?? { ...e.n.at }; e.walk = { to: { ...to }, speed, face, phase: 0, done }; });
+    },
     project(p) {
       const v = new THREE.Vector3(p.x, p.y, p.z).project(camera);
       const r = renderer.domElement.getBoundingClientRect();
@@ -761,13 +792,32 @@ export function createTown(o: TownOptions): Town {
 
 const MARKERS = new Map<string, THREE.CanvasTexture>();
 /** Repère peint : losange ambré (accent chaud des lanternes), signe sombre au centre. */
-function markerTexture(kind: '!' | '?'): THREE.CanvasTexture {
+function markerTexture(kind: '!' | '?' | 'vu'): THREE.CanvasTexture {
   const hit = MARKERS.get(kind);
   if (hit) return hit;
   const c = document.createElement('canvas');
   c.width = 64;
   c.height = 80;
   const g = c.getContext('2d')!;
+  if (kind === 'vu') {
+    // M11-A : la bulle « ! » d'un guetteur qui repère le joueur (dessinée par code) : bulle ivoire, point d'exclamation rouge sombre
+    g.beginPath();
+    g.moveTo(14, 6); g.lineTo(50, 6); g.quadraticCurveTo(60, 6, 60, 16); g.lineTo(60, 52); g.quadraticCurveTo(60, 62, 50, 62);
+    g.lineTo(38, 62); g.lineTo(32, 76); g.lineTo(26, 62); g.lineTo(14, 62); g.quadraticCurveTo(4, 62, 4, 52); g.lineTo(4, 16); g.quadraticCurveTo(4, 6, 14, 6);
+    g.closePath();
+    g.fillStyle = '#f3ead6';
+    g.fill();
+    g.lineWidth = 4;
+    g.strokeStyle = '#1c1210';
+    g.stroke();
+    g.fillStyle = '#9a1c16';
+    g.beginPath(); g.moveTo(26, 14); g.lineTo(38, 14); g.lineTo(35, 44); g.lineTo(29, 44); g.closePath(); g.fill();
+    g.beginPath(); g.arc(32, 53, 4.5, 0, Math.PI * 2); g.fill();
+    const tv = new THREE.CanvasTexture(c);
+    tv.colorSpace = THREE.SRGBColorSpace;
+    MARKERS.set(kind, tv);
+    return tv;
+  }
   g.translate(32, 36);
   g.beginPath();
   g.moveTo(0, -30); g.lineTo(26, 0); g.lineTo(0, 30); g.lineTo(-26, 0); g.closePath();
@@ -792,3 +842,12 @@ function markerTexture(kind: '!' | '?'): THREE.CanvasTexture {
 }
 
 export { RIGS };
+
+/** Regard de marche vers une destination (quatre directions) ; à l'arrêt, le regard final. */
+function regard(p: Vec2, to: Vec2, fin: Facing): Facing {
+  const dx = to.x - p.x;
+  const dz = to.z - p.z;
+  if (Math.hypot(dx, dz) < 1e-3) return fin;
+  if (Math.abs(dx) > Math.abs(dz) * 1.15) return dx > 0 ? 'droite' : 'gauche';
+  return dz > 0 ? 'face' : 'dos';
+}

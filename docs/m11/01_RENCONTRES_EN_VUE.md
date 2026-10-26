@@ -45,7 +45,7 @@ refuser), comme avant.
 Toutes les conditions :
 1. l'écran est la ville, aucun dialogue, aucune fenêtre, aucun fondu de changement d'îlot en cours, entrées du joueur
    non verrouillées ;
-2. le prologue est terminé (**scène P8 jouée** : le joueur a confirmé une famille) ; avant, rien ne force ;
+2. le prologue est terminé (**une famille rejointe**, scène P7) ; avant, rien ne force ;
 3. aucun événement du rival (contrat 2) n'est en cours ou en attente à ce point de décision ;
 4. le guetteur n'est pas « au repos » (§5) et n'est pas sur le départ (refusé au point de décision précédent).
 
@@ -88,7 +88,7 @@ Le directeur garde ses délais d'apparition (2 battements pour les duels de rue)
 
 - le cône : dedans, hors portée, hors angle, derrière un obstacle, derrière un autre personnage ;
 - front montant : apparition dans le champ sans déclenchement ; sortie puis entrée : déclenchement ;
-- aucun déclenchement avant P8, pendant un dialogue ou une fenêtre, ni par un guetteur au repos ;
+- aucun déclenchement avant l'affiliation, pendant un dialogue ou une fenêtre, ni par un guetteur au repos ;
 - repos : victoire → pas avant le chapitre suivant ; défaite → pas avant 2 battements ;
 - le chemin d'approche reste praticable et s'arrête à 0,95 m ;
 - au navigateur : un PNJ repère le joueur, vient, la préparation s'ouvre ; un joueur qui passe hors de la vue n'est pas
