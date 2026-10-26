@@ -42,7 +42,11 @@ suite de tirages) : empreintes et replays standard identiques, tests du moteur i
 |---|---|---|
 | `tacticien` | équilibré | niveau 2 |
 | `agressif` | offensif | niveau 2, presse quand il mène |
-| `vicieux` | lecteur | niveau 2, bluff 0,35, interférences favorisées, Rupture et Dissipation plus volontiers |
+| `ruse` | prudent | niveau 2, mémoire et Techniques plus fortes |
+| `vicieux` | prudent | niveau 2, bluff 0,1, Interférences favorisées, Techniques presque toujours, mémoire 0,9 |
+
+Premier réglage écarté sur mesure (passe 144) : un « vicieux » tiré du profil `lecteur` avec un bluff de 0,35 jouait
+**plus mal** que le `novice` contre le deck d'aventure (Secondaires gardées cachées, donc sans soutien).
 
 Améliorations du niveau 2 (toutes sur la vue publique) :
 - **N2-1 cartes grises** : quand l'adversaire a montré une carte grise (défausse, Primaire révélée, Secondaire active),
@@ -53,7 +57,7 @@ Améliorations du niveau 2 (toutes sur la vue publique) :
   **meilleure réponse** adverse (l'adversaire la verra).
 - **N2-4 habitudes publiques** : fréquence des Assauts adverses selon le Rang de la Primaire révélée (lissée), et
   Interférences adverses observées dans les scénarios tactiques.
-- **N2-5 course aux PV** : agressivité +20 % quand il mène de 15 PV ou plus, prudence +20 % quand il est mené d'autant.
+- **N2-5 course aux PV** : prudence +20 % quand il mène de 15 PV ou plus (garder l'avance), agressivité +20 % quand il est mené d'autant (revenir).
 - **N2-6 Techniques** : Recentrage d'une carte de Rang I quand la main n'a aucune carte de Rang III ou IV ; Sondage
   seulement si l'Insight ne manque pas à la Lecture ou à la Rupture du tour.
 

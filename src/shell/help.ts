@@ -42,7 +42,7 @@ const SECTIONS: Array<[string, string[]]> = [
   ['Vues, commandes et raccourcis', [
     'La caméra reste face au rival pendant tout le duel, pose des cartes comprise ; V ou le bouton de vue l’incline vers la table à la demande.',
     'Clavier : Tab / Maj+Tab pour naviguer, Entrée ou Espace pour sélectionner et poser, 1 à 4 cartes de main, A / G posture, V vue, N action principale, Échap annuler. Tactile : glisser, ou toucher puis toucher la case ; appui long = inspection.',
-    'Menu (haut-droite) : pause, options, aide, abandon (compté à part, ce n’est pas un K.-O.). « Passer » saute la mise en scène sans rien changer au résultat.',
+    'Menu (haut-droite) : pause, options (dont le son : coupure et volume), aide, abandon (compté à part, ce n’est pas un K.-O.). « Passer » saute la mise en scène sans rien changer au résultat.',
   ]],
 ];
 

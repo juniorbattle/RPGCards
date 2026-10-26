@@ -10,12 +10,16 @@ agressif ou plus vicieux »). **Code :** `src/aventure/temperaments.ts` (pur). A
 |---|---|---|
 | **passif** | `timide` (existant) | hésite, propose plus qu'il ne provoque |
 | **franc** | `novice` (existant ; valeur de l'annexe pour la rue) | direct, bon joueur |
-| **rusé** | `lecteur` (existant) | sous-entendus, observe |
+| **rusé** | `ruse` (**nouveau** : prudent, niveau 2) | sous-entendus, observe |
 | **agressif** | `agressif` (**nouveau**, contrat 5 : offensif, niveau 2) | provoque, presse |
 | **calculateur** | `tacticien` (**nouveau** : équilibré, niveau 2) | compte, analyse |
-| **vicieux** | `vicieux` (**nouveau** : bluffe, interfère, lit, niveau 2) | piques, menaces voilées |
+| **vicieux** | `vicieux` (**nouveau** : Garde patiente, interfère, lit les habitudes, niveau 2) | piques, menaces voilées |
 
 Les nouveaux profils ne lisent que la vue publique de l'IA (ADR 011) et ne changent rien au Duel standard (contrat 5).
+
+Réglage mesuré (passe 144, `artifacts/qa/m11/temperaments.md`) : chaque tempérament d'après le chapitre I est plus dur
+que « franc » (le `novice` de l'annexe) ; un premier essai (« rusé » sur le profil `lecteur`, « vicieux » qui bluffait
+beaucoup) était **plus facile** que « franc » : un bluff élevé garde les Secondaires cachées, donc sans soutien.
 
 ## 2. Ce qui fait évoluer un PNJ
 

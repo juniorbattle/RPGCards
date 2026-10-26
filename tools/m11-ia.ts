@@ -1,6 +1,6 @@
 // M11-D — mesures IA contre IA de l'IA de niveau 2 (`docs/m11/05_IA_DE_COMBAT.md`) sur le moteur réel, mêmes graines pour
 // chaque appariement ; l'adversaire (p2) verrouille en premier, comme le rival du jeu. Chaque profil de niveau 2 est
-// comparé à son profil de base (tacticien ↔ equilibre, agressif ↔ offensif, vicieux ↔ lecteur) contre les mêmes
+// comparé à son profil de base (tacticien ↔ equilibre, agressif ↔ offensif, rusé et vicieux ↔ prudent) contre les mêmes
 // adversaires historiques : Duel standard (Signatures et Techniques tournantes) et duels d'aventure à cartes grises.
 // Usage : npx tsx tools/m11-ia.ts [duels par case] [sortie.md]
 import { writeFileSync } from 'node:fs';
@@ -17,7 +17,7 @@ import { config } from '../test/helpers';
 const N = Number(process.argv[2] ?? 200);
 const OUT = process.argv[3];
 const head = execSync('git rev-parse --short HEAD').toString().trim();
-const PAIRES: Array<[string, string]> = [['tacticien', 'equilibre'], ['agressif', 'offensif'], ['vicieux', 'lecteur']];
+const PAIRES: Array<[string, string]> = [['tacticien', 'equilibre'], ['agressif', 'offensif'], ['ruse', 'prudent'], ['vicieux', 'prudent']];
 const ADVERSES = ['equilibre', 'offensif', 'prudent', 'lecteur', 'novice'];
 const TECHS: TechniqueId[][] = [['Sondage', 'Lecture'], ['Ancrage', 'Rupture'], ['Lecture', 'Dissipation'], ['Recentrage', 'Ancrage']];
 
@@ -42,13 +42,13 @@ const L: string[] = [`# M11-D — IA de niveau 2 contre profils historiques (com
 const t0 = Date.now();
 L.push('## Duel standard (taux de victoire du profil mesuré, en p2, qui verrouille en premier ; tours par duel)', '');
 L.push(`| Profil mesuré | ${ADVERSES.map((a) => `contre ${a}`).join(' | ')} |`, `|---|${ADVERSES.map(() => '---:').join('|')}|`);
-for (const [n2, base] of PAIRES) for (const p of [base, n2]) {
+for (const [n2, base] of PAIRES) for (const p of n2 === 'vicieux' ? [n2] : [base, n2]) {
   L.push(`| ${p}${p === n2 ? ' (niveau 2)' : ''} | ${ADVERSES.map((a) => { const r = mesure(standard, p, a); return `${r.taux.toFixed(1)} % (${r.tours.toFixed(1)})`; }).join(' | ')} |`);
   console.log(L[L.length - 1]);
 }
 L.push('', '## Aventure : le profil mesuré tient un deck de rue (niveau 2) contre un joueur « équilibré » à seize cartes grises (PV 56)', '');
 L.push('| Profil mesuré | victoires du profil | tours |', '|---|---:|---:|');
-for (const p of ['novice', 'timide', 'lecteur', 'offensif', 'tacticien', 'agressif', 'vicieux']) {
+for (const p of ['novice', 'timide', 'lecteur', 'prudent', 'offensif', 'tacticien', 'agressif', 'ruse', 'vicieux']) {
   const r = mesure(aventure, p, 'equilibre');
   L.push(`| ${p} | ${r.taux.toFixed(1)} % | ${r.tours.toFixed(1)} |`);
   console.log(L[L.length - 1]);

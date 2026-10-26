@@ -48,7 +48,10 @@ export const PROFILES: Record<string, AiProfile> = {
   // ne les tire jamais.
   tacticien: { name: 'Tacticien', aggression: 1, caution: 0.95, bluff: 0.15, techniqueRate: 0.75, stanceBias: 0, keepValue: 1.3, interfereBonus: 0.8, memoryWeight: 0.7, niveau: 2 },
   agressif: { name: 'Agressif', aggression: 1.4, caution: 0.6, bluff: 0.06, techniqueRate: 0.55, stanceBias: 3, keepValue: 0.7, interfereBonus: 0, memoryWeight: 0.5, niveau: 2 },
-  vicieux: { name: 'Vicieux', aggression: 1.05, caution: 1, bluff: 0.35, techniqueRate: 0.9, stanceBias: 0, keepValue: 1.4, interfereBonus: 3.2, memoryWeight: 0.8, niveau: 2 },
+  // réglés sur mesure (passe 144) : un bluff élevé affaiblit (Secondaires gardées sans soutien) ; le vice est dans la
+  // Garde patiente, les Interférences et la lecture des habitudes
+  ruse: { name: 'Rusé', aggression: 0.8, caution: 1.4, bluff: 0.2, techniqueRate: 0.8, stanceBias: -3, keepValue: 2.2, interfereBonus: 0.8, memoryWeight: 0.8, niveau: 2 },
+  vicieux: { name: 'Vicieux', aggression: 1, caution: 1.2, bluff: 0.1, techniqueRate: 0.95, stanceBias: -3, keepValue: 2.2, interfereBonus: 1, memoryWeight: 0.9, niveau: 2 },
 };
 
 const RANKS: OrdinaryRank[] = [1, 2, 3, 4];
