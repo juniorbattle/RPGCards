@@ -9,12 +9,13 @@ import { FAMILIES, type Family } from '../game/catalog/cards';
 import type { GameConfig } from '../game/model/types';
 import { personalityById, type RivalPersonality } from '../presentation/personalities';
 import type { VenueId } from '../presentation/venues';
-import { nouvelleAventure, type AventureEtat } from './aventure';
+import { nouvelleAventure, type AventureEtat, type Issue } from './aventure';
 import { siegeAventure } from './deck';
 import { rencontreDef } from './directeur';
 import { deF, figure, FIGURES, KAI_PROLOGUE, TECHNIQUES_RUE, TENANTE } from './modele';
 import { ELITE_JOUTE, famillesDominantes, MEMBRES_EPREUVE, signatureTenante, varianteDe } from './competitions';
 import { evenementDef, type KId } from './rival';
+import { profilTemperament } from './temperaments';
 import { adversaire, adversaireMiroir, PALIER_NOM, pvJoueur, type Adversaire, type RoleAdverse } from './paliers';
 
 export interface DuelPrevu {
@@ -72,13 +73,18 @@ export function duelFigure(id: string, e: AventureEtat, seed: number, revanche: 
   };
 }
 
-/** Duel facultatif (rue, rival) : sans récompense ; la rue est de la populace tant que le joueur n'a qu'une famille. */
-export function duelFacultatif(id: string, e: AventureEtat, seed: number): DuelPrevu {
+/**
+ * Duel facultatif (rue, rival) : sans récompense ; la rue est de la populace tant que le joueur n'a qu'une famille.
+ * M11-B : un PNJ récurrent joue le profil de son tempérament du chapitre (`temperaments.ts` ; chapitre I : `novice`,
+ * l'annexe) ; `historique` : les duels joués (deux défaites contre le joueur le font monter d'un cran).
+ */
+export function duelFacultatif(id: string, e: AventureEtat, seed: number, historique: readonly { rencontre: string; issue: Issue }[] = []): DuelPrevu {
   const r = rencontreDef(id);
   if (!r) throw new Error(`Rencontre inconnue : ${id}`);
   const base = personalityById(r.apparence)!;
   const kai = id === 'rival-kai';
-  const adv = kai ? adversaire('rival', 'Cendre', niveauDe(e), ['Sondage', 'Lecture']) : adversaire('rue', base.family, niveauDe(e));
+  const adv0 = kai ? adversaire('rival', 'Cendre', niveauDe(e), ['Sondage', 'Lecture']) : adversaire('rue', base.family, niveauDe(e));
+  const adv = { ...adv0, profil: profilTemperament(id, e, historique) ?? adv0.profil };
   const p = kai ? personnalite('braise', { nom: 'Kaï', titre: 'la Braise du quai', profil: adv.profil }) : personnalite(r.apparence, { nom: base.name, titre: base.title, profil: adv.profil });
   return {
     rencontre: id, titre: kai ? 'Kaï vous défie' : `Duel de rue — ${base.name}`, personnalite: p, venue: 'rue', enjeu: null,

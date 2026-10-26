@@ -500,6 +500,7 @@ export class AventureApp {
    */
   private tickMonde(): void {
     const t = this.town;
+    if (!this.mondeActif) { this.pointDecision = null; return; }
     if (this.ecran !== 'ville' || !t || !this.save || this.dialog || this.modal || this.force || this.enVoyage) { this.vue.armee = false; return; }
     if (this.pointDecision) {
       const pd = this.pointDecision;
@@ -514,8 +515,15 @@ export class AventureApp {
     if (r.repere) void this.repere(r.repere);
   }
 
+  /**
+   * Rencontres forcées actives ? Toujours dans le jeu ; en QA (`?qa=1`) seulement avec `?vue=1`, pour que les parcours
+   * automatisés d'avant M11 restent déterministes (aucun duel imposé pendant qu'ils marchent).
+   */
+  private get mondeActif(): boolean { return !this.params.qa || new URLSearchParams(location.search).get('vue') === '1'; }
+
   private attendre(ms: number): Promise<void> {
-    return this.params.freeze || this.params.reducedMotion || ms <= 0 ? Promise.resolve() : new Promise((res) => setTimeout(res, ms));
+    // une pause, pas une animation : gardée avec le mouvement réduit (la bulle « ! » reste lisible), pas en temps figé
+    return this.params.freeze || ms <= 0 ? Promise.resolve() : new Promise((res) => setTimeout(res, ms));
   }
 
   /** Un guetteur repère le joueur : « ! », il vient, il défie (duel forcé ; contrat 1, §4). */
@@ -536,7 +544,7 @@ export class AventureApp {
     this.marquer();
     const r = rencontreDef(p.id)!;
     this.dire(capital(r.nom), this.ligneVue(p.id), [
-      { label: 'Relever le défi', key: 'dlg-duel', primary: true, run: () => this.preparer(duelFacultatif(p.id, this.etat, this.prochaineGraine()), true) },
+      { label: 'Relever le défi', key: 'dlg-duel', primary: true, run: () => this.preparer(duelFacultatif(p.id, this.etat, this.prochaineGraine(), this.save!.historique), true) },
     ], r.apparence, true);
   }
 
@@ -594,6 +602,22 @@ export class AventureApp {
       K6: '« Personne en ville ne joue mieux que toi. Je le savais depuis le premier soir. » Kaï vous tend la main. « La prochaine partie, c’est quand tu veux. »',
     };
     return L[id];
+  }
+
+  /** QA : pose un PNJ facultatif dans l'îlot courant, à sa première place de cet îlot (parcours déterministe). */
+  qaGuetteur(id: string): boolean {
+    if (!this.params.qa || !this.town || !this.save) return false;
+    const r = rencontreDef(id);
+    const il = this.town.ilotId();
+    const place = r ? r.lieux.findIndex((l) => l.ilot === il && (this.quaiRangs || !l.rangs)) : -1;
+    if (!r || place < 0) return false;
+    const d = structuredClone(this.save.directeur);
+    d.actives[il] = [{ id, place }];
+    d.partants = (d.partants ?? []).filter((x) => x !== id);
+    this.save.directeur = d;
+    this.persist();
+    this.rafraichir();
+    return true;
   }
 
   /** QA : état de la vue (guetteurs, ceux qui voient le joueur, rencontre forcée). */
@@ -892,7 +916,7 @@ export class AventureApp {
       ? `${ligneKai} (défi facultatif, sans récompense ; vos duels contre lui : ${gagnes} victoire(s) sur ${contreKai.length})`
       : `${membre ?? RUE[id] ?? '« Une partie, pour passer le temps ? »'} (duel de rue, sans récompense)`;
     this.dire(capital(r.nom), texte, [
-      { label: 'Accepter', key: 'dlg-duel', primary: true, run: () => this.preparer(duelFacultatif(id, this.etat, this.prochaineGraine())) },
+      { label: 'Accepter', key: 'dlg-duel', primary: true, run: () => this.preparer(duelFacultatif(id, this.etat, this.prochaineGraine(), this.save!.historique)) },
       { label: 'Refuser', key: 'dlg-close', run: () => { this.save!.directeur = conclure(this.save!.directeur, id, false); this.persist(); this.fermerDialogue(); } },
     ], r.apparence);
   }
@@ -1077,7 +1101,7 @@ export class AventureApp {
       : k === 'joute' ? duelJoute(a as Family, e, d.seed, !!e.competitions.joutes[a as Family]?.gagnee)
       : k === 'champ' ? duelChampionnat(a as 'poule' | 'miroir' | 'finale', e, d.seed, b as Family | undefined)
       : k === 'rival' && a && isKId(a) ? duelRival(a, e, d.seed)
-      : rencontreDef(d.rencontre) ? duelFacultatif(d.rencontre, e, d.seed) : null;
+      : rencontreDef(d.rencontre) ? duelFacultatif(d.rencontre, e, d.seed, this.save!.historique) : null;
     return base ? { ...base, config: d.config } : null;
   }
 

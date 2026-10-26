@@ -134,6 +134,8 @@ export interface Town {
    * logique (où, quand) est dans l'appelant ; un remontage de l'îlot remet chacun à sa place.
    */
   walkNpc(id: string, to: Vec2, speed: number, face: Facing): Promise<void>;
+  /** Position courante d'un personnage de l'îlot (QA, M11-A) ; null s'il n'y est pas. */
+  npcAt(id: string): Vec2 | null;
   /** Hauteur des personnages dans l'îlot courant (m), pour placer les bulles au-dessus des têtes. */
   walkerH(): number;
   /** Position écran (px CSS) d'un point du monde, pour les bulles DOM. */
@@ -361,7 +363,10 @@ export function createTown(o: TownOptions): Town {
   playerSprite.setHeight(walkerH());
   scene.add(playerSprite.group);
   applySheet(o.player, playerSprite);
-  type NpcSprite = { n: IlotNpc; s: WalkerSprite; marker: THREE.Mesh; kind: '!' | '?' | 'vu' | null; pos?: Vec2; walk?: { to: Vec2; speed: number; face: Facing; phase: number; done: () => void }; face?: Facing };
+  type NpcSprite = { n: IlotNpc; s: WalkerSprite; marker: THREE.Mesh; kind: '!' | '?' | 'vu' | null };
+  /** M11-A : personnages déplacés (approche) : position, regard, marche en cours ; gardés si le décor remonte l'îlot
+   *  (diorama décidé après coup), effacés à un changement d'îlot (`goTo`). */
+  const npcState = new Map<string, { pos: Vec2; face?: Facing; walk?: { to: Vec2; speed: number; face: Facing; phase: number; done: () => void } }>();
   const makeNpcs = (): NpcSprite[] => def.npcs.map((n) => {
     const s = createWalkerSprite(n.id);
     s.setHeight(walkerH());
@@ -551,16 +556,17 @@ export function createTown(o: TownOptions): Town {
     for (const e of npcSprites) {
       const { n, s } = e;
       // M11-A : un personnage qui marche (approche) suit sa position propre et son regard de marche
-      if (e.walk) { const p = e.pos!; s.set(p, regard(p, e.walk.to, e.walk.face), e.walk.phase, true, time); continue; }
-      const at = e.pos ?? n.at;
-      if (e.face) { s.set(at, e.face, 0, false, time + n.at.x); continue; }
+      const st = npcState.get(n.id);
+      if (st?.walk) { s.set(st.pos, regard(st.pos, st.walk.to, st.walk.face), st.walk.phase, true, time); continue; }
+      const at = st?.pos ?? n.at;
+      if (st?.face) { s.set(at, st.face, 0, false, time + n.at.x); continue; }
       // Les PNJ se tournent vers le joueur quand il approche (à moins de 2,5 m).
       const d = Math.hypot(walker.pos.x - at.x, walker.pos.z - at.z);
       const face: Facing = d < 2.5 ? (Math.abs(walker.pos.x - at.x) > Math.abs(walker.pos.z - at.z) ? (walker.pos.x > at.x ? 'droite' : 'gauche') : walker.pos.z > at.z ? 'face' : 'dos') : n.facing;
       s.set(at, face, 0, false, time + n.at.x);
     }
     for (const e of npcSprites) if (e.marker.visible) {
-      const at = e.pos ?? e.n.at;
+      const at = npcState.get(e.n.id)?.pos ?? e.n.at;
       e.marker.position.set(at.x, markerY() + (o.freeze || e.kind === 'vu' ? 0 : Math.sin(time * 2.4 + e.n.at.x) * 0.05), at.z + 0.02);
     }
     for (const p of passers) p.s.set({ x: p.x, z: p.a.z }, p.dir > 0 ? 'droite' : 'gauche', p.phase, !o.freeze && !p.blocked, time);
@@ -604,15 +610,15 @@ export function createTown(o: TownOptions): Town {
         const dir = locked ? { x: 0, z: 0 } : inputDir();
         walker = stepWalker(def.ilot, walker, { dir, slow: keys.has('ShiftLeft') || keys.has('ShiftRight'), target: locked ? null : target }, STEP);
         if (target && !walker.moving && Math.hypot(target.x - walker.pos.x, target.z - walker.pos.z) < 0.15) target = null;
-        for (const e of npcSprites) {
-          if (!e.walk || !e.pos) continue;
-          const w = e.walk;
-          const dx = w.to.x - e.pos.x;
-          const dz = w.to.z - e.pos.z;
+        for (const st of npcState.values()) {
+          const w = st.walk;
+          if (!w) continue;
+          const dx = w.to.x - st.pos.x;
+          const dz = w.to.z - st.pos.z;
           const dist = Math.hypot(dx, dz);
           const stepLen = w.speed * STEP;
-          if (dist <= stepLen) { e.pos = { ...w.to }; e.face = w.face; e.walk = undefined; w.done(); continue; }
-          e.pos = { x: e.pos.x + (dx / dist) * stepLen, z: e.pos.z + (dz / dist) * stepLen };
+          if (dist <= stepLen) { st.pos = { ...w.to }; st.face = w.face; st.walk = undefined; w.done(); continue; }
+          st.pos = { x: st.pos.x + (dx / dist) * stepLen, z: st.pos.z + (dz / dist) * stepLen };
           w.phase = (w.phase + stepLen / 1.5) % 1;
         }
         for (const p of passers) {
@@ -685,6 +691,9 @@ export function createTown(o: TownOptions): Town {
   /** Démonte l'îlot courant (personnages, passants, scène) et monte le suivant ; le renderer et le post-traitement restent. */
   const mount = (id: IlotId, spawnKey: string) => {
     const m0 = performance.now();
+    // M11-A : un remontage remet chacun à sa place ; une marche en cours se termine (jamais de promesse en suspens)
+    for (const st of npcState.values()) st.walk?.done();
+    npcState.clear();
     mountT0 = m0;
     unmountWorld();
     const prev = def.id;
@@ -761,8 +770,14 @@ export function createTown(o: TownOptions): Town {
     walkNpc(id, to, speed, face) {
       const e = npcSprites.find((x) => x.n.id === id);
       if (!e) return Promise.resolve();
-      if (o.freeze || o.reducedMotion || paused) { e.pos = { ...to }; e.face = face; e.walk = undefined; return Promise.resolve(); }
-      return new Promise<void>((done) => { e.pos = e.pos ?? { ...e.n.at }; e.walk = { to: { ...to }, speed, face, phase: 0, done }; });
+      const from = npcState.get(id)?.pos ?? e.n.at;
+      npcState.get(id)?.walk?.done();
+      if (o.freeze || o.reducedMotion || paused) { npcState.set(id, { pos: { ...to }, face }); return Promise.resolve(); }
+      return new Promise<void>((done) => { npcState.set(id, { pos: { ...from }, walk: { to: { ...to }, speed, face, phase: 0, done } }); });
+    },
+    npcAt(id) {
+      const e = npcSprites.find((x) => x.n.id === id);
+      return e ? { ...(npcState.get(id)?.pos ?? e.n.at) } : null;
     },
     project(p) {
       const v = new THREE.Vector3(p.x, p.y, p.z).project(camera);
