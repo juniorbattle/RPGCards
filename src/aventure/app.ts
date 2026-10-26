@@ -51,6 +51,8 @@ import { ambianceIlot } from '../son/evenements';
 import { CONTRAINTE_JOUTE, famillesDominantes, manche, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, varianteDe } from './competitions';
 import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave, type DuelAventure } from './sauvegarde';
 import { installAventureStyles } from './styles';
+import { arriveeAJouer, cinePermise, DUREES, ecrireCine, LIGNES_LIEU, lireCine, plansArrivee, plansGuetteur, plansRival } from './cinematiques';
+import { Cinema } from './cinema';
 import { conclureDuel, figureOuNull, ouvrirDuel, REGLES_DUEL } from './fin';
 
 export interface DepsAventure {
@@ -71,6 +73,8 @@ const FOULE = [
 ];
 
 const capital = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+/** Stockage du navigateur pour les réglages (un accès refusé ne casse rien). */
+const stockageLocal = (): Storage | null => { try { return window.localStorage; } catch { return null; } };
 const minuscule = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
 const de = deF;
 const la = leF;
@@ -116,6 +120,9 @@ export class AventureApp {
   private pointDecision: { retourKai: boolean } | null = null;
   private retourKai = false;
   private enVoyage = false;
+  /** M11 : cinématique en cours (le monde attend, le menu la passe) ; `cadreGarde` : un dialogue s'est ouvert sur son dernier cadre. */
+  private cine: Cinema | null = null;
+  private cadreGarde = false;
   /** M11-A : Kaï posé dans l'îlot pendant un événement fixe (il surgit, vient, défie). */
   private rivalScene: { id: KId; at: Vec2; facing: Facing } | null = null;
   /** M11-A : bulle « ! » d'alerte (identifiant de personnalité). */
@@ -340,6 +347,9 @@ export class AventureApp {
     this.force = null;
     this.rivalScene = null;
     this.alerte = null;
+    this.cine?.passer();
+    this.cine = null;
+    this.cadreGarde = false;
     cancelAnimationFrame(this.raf);
     this.town?.dispose();
     this.host?.remove();
@@ -350,8 +360,13 @@ export class AventureApp {
   }
 
   private cacherVille(): void {
+    // M11 : pas de cinématique ni de cadre gardé derrière un autre écran (la caméra revient au joueur, sans mouvement)
+    const garde = this.cadreGarde || !!this.cine;
+    this.cadreGarde = false;
+    this.cine?.passer();
     this.fermerDialogue();
     this.fermerModal();
+    if (garde) this.town?.cadrer(null, true);
     if (!this.town || this.host?.hidden) return;
     this.memoriser();
     cancelAnimationFrame(this.raf);
@@ -408,7 +423,7 @@ export class AventureApp {
       this.tickMonde();
     };
     loop();
-    if (arrivee) this.carton('Le Quai', 'soir de tournoi');
+    if (arrivee && !this.arrivee(this.town?.ilotId() ?? 'quai')) this.carton('Le Quai', 'soir de tournoi');
   }
 
   private cle(id: IlotId): string {
@@ -488,6 +503,8 @@ export class AventureApp {
     const veil = h('div', { class: 'ville-fade' });
     document.body.append(veil);
     const still = this.params.reducedMotion || this.params.freeze;
+    // M11 : une première visite (une sauvegarde d'avant les cinématiques n'en rejoue pas une déjà faite)
+    const premiere = !this.etat.visites.includes(to);
     const swap = () => {
       this.decider(to);
       town.goTo(to, spawn);
@@ -500,6 +517,8 @@ export class AventureApp {
       son().ambiance(ambianceIlot(to));
       this.vue.armee = false;
       this.pointDecision = { retourKai: false };
+      // M11 : première arrivée dans ce quartier, sous le fondu (le premier plan est coupé avant qu'il se lève)
+      if (premiere) this.arrivee(to);
       if (still) { veil.remove(); return; }
       veil.classList.add('out');
       setTimeout(() => veil.remove(), 420);
@@ -507,6 +526,49 @@ export class AventureApp {
     if (still) { swap(); return; }
     requestAnimationFrame(() => veil.classList.add('in'));
     setTimeout(swap, 300);
+  }
+
+  // ------------------------------------------------------------------ M11 : cinématiques runtime (docs/m11/07_CINEMATIQUES.md)
+
+  /** Cinématiques jouées ? Permises par l'adresse (en QA, seulement avec `?cine=1`) et pas coupées dans le menu. */
+  private get cineActives(): boolean { return cinePermise(location.search) && lireCine(stockageLocal()); }
+
+  /** Joue une cinématique sur la ville (le monde attend pendant ce temps) ; résolu à la fin. */
+  private async jouerCine(o: { bandes: boolean; garder?: boolean; carton?: { lieu: string; ligne: string } }, plans: Parameters<Cinema['jouer']>[0], avant?: Promise<void>): Promise<void> {
+    const t = this.town;
+    if (!t) return;
+    this.cine?.passer();
+    const lent = this.params.qa ? Number(new URLSearchParams(location.search).get('cineLent')) : NaN;
+    const c = new Cinema(t, { fige: this.params.freeze, reduit: this.params.reducedMotion, ...(Number.isFinite(lent) && lent > 0 ? { lent } : {}), ...o });
+    this.cine = c;
+    t.setInputLocked(true);
+    try {
+      // le quartier montré (feuilles et décor prêts) avant le premier plan ; une cinématique passée entre-temps ne joue rien
+      if (avant) await avant;
+      if (!c.passe && this.town === t) await c.jouer(plans);
+    } finally {
+      if (this.cine === c) this.cine = null;
+      if (this.town === t) {
+        // le dernier cadre est gardé pour le dialogue qui suit ; la ville cachée entre-temps : caméra rendue au joueur
+        if (o.garder && this.ecran === 'ville' && !this.host?.hidden) this.cadreGarde = true;
+        else if (o.garder) t.cadrer(null, true);
+        if (!this.dialog && !this.modal && !this.force) t.setInputLocked(false);
+      }
+    }
+  }
+
+  /**
+   * Première arrivée dans un quartier (une fois par aventure, mémoire `cinematiques`) : travelling le long du premier rang
+   * jusqu'au joueur, carton du lieu. Faux si elle n'est pas jouée (déjà vue, coupée, ou en QA sans `?cine=1`).
+   */
+  private arrivee(id: IlotId): boolean {
+    const t = this.town;
+    const s = this.save;
+    if (!t || !s || !this.cineActives || !arriveeAJouer(id, s.cinematiques)) return false;
+    s.cinematiques = [...(s.cinematiques ?? []), `lieu-${id}`];
+    this.persist();
+    void this.jouerCine({ bandes: true, carton: { lieu: capital(t.ilot.name), ligne: LIGNES_LIEU[id] } }, plansArrivee(t.walker().pos, t.cameraParams()), t.ready());
+    return true;
   }
 
   // ------------------------------------------------------------------ M11-A : rencontres en vue, rival en événements fixes
@@ -518,7 +580,7 @@ export class AventureApp {
   private tickMonde(): void {
     const t = this.town;
     if (!this.mondeActif) { this.pointDecision = null; return; }
-    if (this.ecran !== 'ville' || !t || !this.save || this.dialog || this.modal || this.force || this.enVoyage) { this.vue.armee = false; return; }
+    if (this.ecran !== 'ville' || !t || !this.save || this.dialog || this.modal || this.force || this.enVoyage || this.cine) { this.vue.armee = false; return; }
     if (this.pointDecision) {
       const pd = this.pointDecision;
       this.pointDecision = null;
@@ -562,7 +624,10 @@ export class AventureApp {
     const joueur = { ...t.walker().pos };
     const to = pointApproche(t.ilot, p.at, joueur);
     t.place(joueur, regardVers(joueur, to));
-    await t.walkNpc(p.apparence, to, 1.6, regardVers(to, joueur));
+    const marche = () => t.walkNpc(p.apparence, to, 1.6, regardVers(to, joueur));
+    // M11 : plan court sur les deux personnages pendant qu'il vient (sans bandes) ; le dialogue s'ouvre sur ce cadre
+    if (this.cineActives) await this.jouerCine({ bandes: false, garder: true }, plansGuetteur(to, joueur).map((pl) => ({ ...pl, action: marche, finir: () => { void t.walkNpc(p.apparence, to, 1000, regardVers(to, joueur)); } })));
+    else await marche();
     if (this.town !== t || this.force?.id !== p.id) return;
     this.alerte = null;
     this.marquer();
@@ -586,10 +651,18 @@ export class AventureApp {
     this.alerte = 'braise';
     this.marquer();
     son().jouer('rival');
-    await this.attendre(this.pauseAlerte(500));
-    if (this.town !== t || this.force?.id !== k.id) return;
     const to = pointApproche(t.ilot, at, joueur);
-    await t.walkNpc('braise', to, 3.2, regardVers(to, joueur));
+    if (this.cineActives) {
+      // M11 : la caméra se porte sur Kaï pendant la bulle « ! », puis prend les deux personnages pendant qu'il court
+      const [point, duo] = plansRival(at, to, joueur, this.pauseAlerte(DUREES.rivalPoint));
+      await this.jouerCine({ bandes: true, garder: true }, [point!, {
+        ...duo!, action: () => t.walkNpc('braise', to, 3.2, regardVers(to, joueur)), finir: () => { void t.walkNpc('braise', to, 1000, regardVers(to, joueur)); },
+      }]);
+    } else {
+      await this.attendre(this.pauseAlerte(500));
+      if (this.town !== t || this.force?.id !== k.id) return;
+      await t.walkNpc('braise', to, 3.2, regardVers(to, joueur));
+    }
     if (this.town !== t || this.force?.id !== k.id) return;
     this.alerte = null;
     this.marquer();
@@ -1269,8 +1342,11 @@ export class AventureApp {
   }
 
   fermerDialogue(): void {
+    const ouvert = !!this.dialog;
     this.dialog?.remove();
     this.dialog = null;
+    // M11 : la caméra laissée sur le dernier cadre d'une cinématique revient au joueur quand son dialogue se ferme
+    if (ouvert && this.cadreGarde) { this.cadreGarde = false; Cinema.rendre(this.town, this.params.reducedMotion || this.params.freeze); }
     if (!this.modal) this.town?.setInputLocked(false);
     this.rafraichir();
   }
@@ -1303,6 +1379,8 @@ export class AventureApp {
   }
 
   private menu(): void {
+    // M11 : Échap passe une cinématique
+    if (this.cine) { this.cine.passer(); return; }
     // M11-A : une rencontre forcée ne s'esquive pas par le menu (on peut abandonner le duel, sans perte)
     if (this.force) return;
     if (this.modal) { this.fermerModal(); return; }
@@ -1312,7 +1390,8 @@ export class AventureApp {
       { label: 'Deck et collection', key: 'menu-deck', run: () => { this.fermerDialogue(); this.collection(); } },
       { label: 'Journal des quêtes', key: 'menu-journal', run: () => { this.fermerDialogue(); this.journal(); } },
       { label: `Son : ${son().reglages().coupe ? 'coupé' : `${Math.round(son().reglages().volume * 100)} %`}`, key: 'menu-son', run: () => this.reglageSon() },
-      { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter. Les joueurs de cartes de la ville regardent devant eux : entrer dans leur regard, c’est accepter leur défi (une bulle « ! » s’allume, ils viennent à vous) ; passez derrière eux ou à l’abri d’un étal pour les éviter. Kaï surgit à certains moments de votre histoire ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? »). Le son se règle dans ce menu (« Son »).', [fermer(this)]) },
+      { label: `Cinématiques : ${!cinePermise(location.search) ? 'coupées par l’adresse' : lireCine(stockageLocal()) ? 'oui' : 'non'}`, key: 'menu-cine', run: () => { ecrireCine(stockageLocal(), !lireCine(stockageLocal())); this.fermerDialogue(); this.menu(); } },
+      { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter. Les joueurs de cartes de la ville regardent devant eux : entrer dans leur regard, c’est accepter leur défi (une bulle « ! » s’allume, ils viennent à vous) ; passez derrière eux ou à l’abri d’un étal pour les éviter. Kaï surgit à certains moments de votre histoire ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? »). Le son se règle dans ce menu (« Son »). Quelques moments se jouent en cinématique (première arrivée dans un quartier, Kaï qui surgit) : Échap, Espace, Entrée ou « Passer » pour la passer ; « Cinématiques », dans ce menu, les coupe.', [fermer(this)]) },
       { label: 'Écran titre', key: 'menu-home', run: () => { this.fermerDialogue(); this.titre(); } },
     ]);
   }

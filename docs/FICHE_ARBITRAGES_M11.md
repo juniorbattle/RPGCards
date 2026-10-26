@@ -70,6 +70,17 @@ Preuves : `artifacts/qa/m11/` (mesures, `qa:vue`, comparaison au pixel près), `
 | **S2** | Sons du duel calés sur les temps de la chorégraphie du Clash (Interférence, issue, dégâts, fin) ; « Passer » ne rejoue que la fin | **Garder**, à juger à l'écoute | Sons plus courts ; seulement l'issue et la fin |
 | **S3** | Les ambiances (une par îlot, bourdon du duel) | **À écouter** | Ambiances plus discrètes ; seulement les effets |
 
+## Après la session : chemins des premiers rangs et cinématiques (passes 149 et 150, contrat 7)
+
+| Entrée | Objet | Recommandation | Alternatives |
+|---|---|---|---|
+| **L1** | Chemins lumineux des premiers rangs, même lueur que les rangs du fond (planches `screenshots/qa/m11/chemins-rang1/`) ; dans la Grande Cour, l'allée s'arrête à la hauteur des étals, et le chemin reprend aux passages | **Recevoir** | Reculer les étals de la Cour pour un chemin continu jusqu'aux passages ; lueur plus marquée au premier rang |
+| **C1** | Les cinématiques runtime (contrat 7, ADR 043) : première arrivée dans chaque quartier, Kaï qui surgit, guetteur qui repère ; passables, réglables dans le menu (captures `screenshots/qa/m11/cinematiques-1280/`) | **À juger en jeu d'abord** (rendu logiciel ici : les captures n'en montrent que des instants) | Recevoir ; reprendre (durées, cadrages) |
+| **C2** | La première arrivée remplace le carton plein écran du Quai (même texte, dans la bande du bas) ; une fois par quartier et par aventure | **Garder** | Le carton plein écran gardé en plus ; l'arrivée à chaque visite ; seulement le Quai |
+| **C3** | Guetteur : un plan court, sans bandes (le passage revient souvent) ; Kaï : en bandes | **Garder** | Bandes aussi pour le guetteur ; aucun plan pour le guetteur |
+| **C4** | Passages suivants (contrat 7, §4) : affiliation, Signature d'un chef, titre du Championnat, prologue | **Affiliation et titre d'abord** | Tous ; aucun pour l'instant ; la vue d'ensemble d'un rang du fond (fantômes pilotés par la caméra, à décider à part) |
+| **C5** | Lignes des cartons de lieu (contrat 7, §3) | **Garder**, à relire | Les réécrire ; sans ligne |
+
 ## Suite
 
 | Entrée | Objet | Recommandation | Alternatives |

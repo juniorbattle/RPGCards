@@ -18,7 +18,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { createRig, RIGS, type CameraId, type CameraRig, type RigTuning } from './cameras';
+import { createRig, RIGS, type CameraId, type CameraRig, type RigParams, type RigTuning } from './cameras';
 import { createDecorResolver, type DecorCamera, type DecorReport, type DecorState } from './decors';
 import { buildDiorama } from './diorama';
 import { ilotDef, type IlotDef, type IlotId, type Passer } from './ilots';
@@ -68,6 +68,13 @@ export interface TownOptions {
   /** Manifeste des plans lu dans `decors/` (passe 62, laboratoire : `manifest-profondeur.json`). */
   decorsManifest?: string;
 }
+
+/**
+ * Cadrage d'une cinématique (M11) : point visé, et réglages relatifs à ceux de l'îlot : `zoom` multiplie la distance
+ * (moins de 1 : plus près), `hauteur` s'ajoute à la hauteur visée (m), `followZ` remplace la part de profondeur suivie,
+ * `tau` la constante de l'amorti (s).
+ */
+export interface Cadrage { at: Vec2; zoom?: number; hauteur?: number; followZ?: number; tau?: number }
 
 export interface TownStats {
   camera: CameraId;
@@ -138,6 +145,14 @@ export interface Town {
   npcAt(id: string): Vec2 | null;
   /** Hauteur des personnages dans l'îlot courant (m), pour placer les bulles au-dessus des têtes. */
   walkerH(): number;
+  /**
+   * M11 (cinématiques, `docs/m11/07_CINEMATIQUES.md`) : la caméra vise `c.at` au lieu du joueur, avec ses réglages ;
+   * `snap` : coupe franche, sinon mouvement amorti (constante `c.tau`). `null` : la caméra revient au joueur (amortie,
+   * ou coupe avec `snap`). Un changement d'îlot l'annule.
+   */
+  cadrer(c: Cadrage | null, snap?: boolean): void;
+  /** Réglages de la caméra de l'îlot courant (bornes du point visé comprises), pour composer une cinématique. */
+  cameraParams(): Readonly<RigParams>;
   /** Position écran (px CSS) d'un point du monde, pour les bulles DOM. */
   project(p: { x: number; y: number; z: number }): { x: number; y: number; visible: boolean };
   dispose(): void;
@@ -483,6 +498,20 @@ export function createTown(o: TownOptions): Town {
   const keys = new Set<string>();
   let locked = false;
   let target: Vec2 | null = null;
+  // M11 (cinématiques) : la caméra vise ce cadrage au lieu du joueur ; coupe franche à la prochaine image si `coupe`
+  let cadrage: Cadrage | null = null;
+  let coupe = false;
+  const camAt = (): Vec2 => cadrage?.at ?? walker.pos;
+  const camTuning = (): (RigTuning & { tau?: number }) | undefined => {
+    if (!cadrage) return undefined;
+    const p = rig.params;
+    return {
+      ...(cadrage.zoom !== undefined ? { distance: p.distance * cadrage.zoom } : {}),
+      ...(cadrage.hauteur !== undefined ? { aimY: p.aimY + cadrage.hauteur } : {}),
+      ...(cadrage.followZ !== undefined ? { followZ: cadrage.followZ } : {}),
+      ...(cadrage.tau !== undefined ? { tau: cadrage.tau } : {}),
+    };
+  };
   const KEYMAP: Record<string, [number, number]> = {
     ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0],
     KeyW: [0, -1], KeyZ: [0, -1], KeyS: [0, 1], KeyA: [-1, 0], KeyQ: [-1, 0], KeyD: [1, 0],
@@ -570,7 +599,7 @@ export function createTown(o: TownOptions): Town {
       e.marker.position.set(at.x, markerY() + (e.kind === 'vu' ? 0.3 : o.freeze ? 0 : Math.sin(time * 2.4 + e.n.at.x) * 0.05), at.z + 0.02);
     }
     for (const p of passers) p.s.set({ x: p.x, z: p.a.z }, p.dir > 0 ? 'droite' : 'gauche', p.phase, !o.freeze && !p.blocked, time);
-    focus.set(walker.pos.x, 0.9, walker.pos.z).project(camera);
+    focus.set(camAt().x, 0.9, camAt().z).project(camera);
     finish.uniforms.uFocusY!.value = THREE.MathUtils.clamp(focus.y * 0.5 + 0.5, 0.2, 0.8);
     if (dof.enabled && def.dof) {
       camera.updateMatrixWorld();
@@ -634,7 +663,8 @@ export function createTown(o: TownOptions): Town {
       }
       acc = Math.min(acc, STEP);
     }
-    rig.update(camera, walker.pos, dt, o.freeze);
+    rig.update(camera, camAt(), dt, o.freeze || coupe, camTuning());
+    coupe = false;
     if (holding()) return;
     render();
   };
@@ -642,7 +672,7 @@ export function createTown(o: TownOptions): Town {
   let mountT0: number | null = null;
   let mountMs: number | null = null;
   let mountFrameMs: number | null = null;
-  rig.update(camera, walker.pos, 0, true);
+  rig.update(camera, camAt(), 0, true, camTuning());
   raf = requestAnimationFrame(tick);
   const buildMs = Math.round(performance.now() - t0);
 
@@ -681,7 +711,7 @@ export function createTown(o: TownOptions): Town {
           rig = rigOf(rig.params.id);
           applyRig();
           resize();
-          rig.update(camera, walker.pos, 0, true);
+          rig.update(camera, camAt(), 0, true, camTuning());
         } else decorLate.push(`${id} : diorama prêt après ${Math.round(performance.now() - decorSince)} ms, décor par code gardé pour cette visite`);
       }
       flush();
@@ -710,11 +740,12 @@ export function createTown(o: TownOptions): Town {
     const sp = def.ilot.spawns[spawnKey] ?? def.ilot.spawns.arrivee!;
     walker = newWalker(sp, sp.face ?? walker.facing);
     target = null;
+    cadrage = null;
     keys.clear();
     rig = rigOf(rig.params.id);
     applyRig();
     resize();
-    rig.update(camera, walker.pos, 0, true);
+    rig.update(camera, camAt(), 0, true, camTuning());
     mountMs = Math.round(performance.now() - m0);
     flush();
   };
@@ -729,13 +760,13 @@ export function createTown(o: TownOptions): Town {
       rig = rigOf(id);
       applyRig();
       resize();
-      rig.update(camera, walker.pos, 0, true);
+      rig.update(camera, camAt(), 0, true, camTuning());
     },
     camera: () => rig.params.id,
     place(at, facing) {
       walker = { ...newWalker(at, facing ?? walker.facing) };
       target = null;
-      rig.update(camera, walker.pos, 0, true);
+      rig.update(camera, camAt(), 0, true, camTuning());
     },
     walker: () => walker,
     zone: () => activeZone(def.ilot, walker.pos),
@@ -755,8 +786,10 @@ export function createTown(o: TownOptions): Town {
     prepare: (id) => Promise.all([sheets.prepare(castOf(o.ilotDefOf?.(id) ?? ilotDef(id, false))), decors.prepare(id).then(() => { decors.peek(id); })]).then(() => undefined),
     isPrepared: (id) => castOf(o.ilotDefOf?.(id) ?? ilotDef(id, false)).every((x) => sheets.peek(x).state !== 'attente') && decors.peek(id).state !== 'attente',
     ready: () => (pending.size || decorPending ? new Promise<void>((res) => waiters.push(res)) : Promise.resolve()),
-    renderNow() { rig.update(camera, walker.pos, 0, true); render(); },
+    renderNow() { rig.update(camera, camAt(), 0, true, camTuning()); render(); },
     walkerH,
+    cadrer(c, snap = false) { cadrage = c ? { ...c, at: { ...c.at } } : null; if (snap) coupe = true; },
+    cameraParams: () => rig.params,
     setMarkers(m) {
       for (const e of npcSprites) {
         const k = m[e.n.id] ?? null;

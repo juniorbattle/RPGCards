@@ -73,6 +73,13 @@ d'approbation changé ; son coupé en QA ; sauvegardes : `aventure/1` migrée sa
   seulement avec `?son=1`.
 - **QA** : `npm run build && npm run qa:vue` (ajouter `LQV_VP=1920x1080` pour l'autre taille ; en local, retirer
   `reducedMotion=1` de l'adresse du script pour voir la marche à pied).
+- **Après la session (passes 149 et 150)** :
+  - chemins lumineux des premiers rangs : la rue du premier rang de chaque quartier en rangs ;
+  - **cinématiques runtime** (`docs/m11/07_CINEMATIQUES.md`, ADR 043) : nouvelle aventure (arrivée sur le Quai), première
+    visite de chaque quartier, Kaï qui surgit, un guetteur qui repère. « Passer ▸ », Échap, Espace ou Entrée les
+    passent ; elles se coupent dans le menu de l'aventure (« Cinématiques »), ou avec `?cine=0`. En QA, seulement avec
+    `?cine=1` (`node tools/m11-cinematiques.mjs`). Les juger à la fréquence de l'écran : en rendu logiciel, les captures
+    n'en montrent que des instants (fiche, C1 à C4).
 
 ## 3. Ce que la session a choisi seule (à confirmer ou défaire)
 
