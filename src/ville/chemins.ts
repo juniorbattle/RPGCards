@@ -14,7 +14,8 @@ import type { Rect } from './monde';
 import type { CheminSegment } from './rangs';
 import { LAYER_NOREFLECT } from './reflets';
 
-export const CHEMIN_MAX_SEGMENTS = 16;
+/** Segments d'un quartier au plus (rang 1 compris depuis le 2026-10-26 : 16 auparavant). */
+export const CHEMIN_MAX_SEGMENTS = 24;
 
 const FRAG = /* glsl */ `
 uniform vec4 uSeg[${CHEMIN_MAX_SEGMENTS}]; uniform int uCount; uniform float uT; uniform vec2 uPlayer; uniform vec3 uCol;

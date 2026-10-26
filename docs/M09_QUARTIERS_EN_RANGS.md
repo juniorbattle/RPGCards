@@ -185,3 +185,10 @@ de la Ronce, les hôtels à arcades, l'Observatoire ; le reste vient du kit des 
 ses sorties sont retirées (`ouvrirQuartiers`) et le pignon du bout de la ruelle n'est qu'un mur ; une sauvegarde qui s'y
 trouverait revient au Quai. Les bouts de ruelle portaient déjà un pignon à porte cochère : aucune planche approuvée n'est
 touchée.
+
+## Chemins des premiers rangs (passe 149, 2026-10-26)
+
+Le premier rang a désormais son chemin lumineux, comme les rangs du fond (demande du responsable) : `cheminsRang1`
+(`rangs.ts`) relie les sorties, les portes, l'arrivée et les bouches des passages, droit quand c'est possible, en coude du
+côté de la caméra sinon, en contournant les obstacles permanents par-devant. La Grande Cour a un tracé à la main
+(`CHEMINS_RANG1_COUR`), devant ses étals (ADR 028, « Chemins lumineux des premiers rangs »).

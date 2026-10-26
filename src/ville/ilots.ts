@@ -7,12 +7,15 @@ import type { RigTuning } from './cameras';
 import type { Ilot } from './monde';
 import { P_FACADE_Z, P_FRONT_Z, P_NPCS, PARVIS } from './parvis';
 import { FACADE_Z, NPCS, QUAI, QUAY_Z, type IlotNpc } from './quai';
-import { CHEMINS_COUR, GRANDE_COUR, NPCS_COUR, PLAN_COUR } from './grandeCour';
+import { CHEMINS_COUR, CHEMINS_RANG1_COUR, GRANDE_COUR, NPCS_COUR, PLAN_COUR } from './grandeCour';
 import { CHEMINS_PORT, NPCS_PORT, PLACE_FANAL, PLAN_PORT, PORT_FRONT_Z } from './placeFanal';
 import { CHEMINS_HAUTE, NPCS_HAUTE, PLAN_HAUTE, VILLE_HAUTE } from './villeHaute';
 import { CHEMINS_PARVIS, NPCS_PARVIS, PARVIS_PROFOND, PLAN_PARVIS } from './parvisRangs';
 import { CHEMINS_QUAI, FOND_Z, LANE_BACK_Z, NPCS_PROFOND, PLAN_QUAI, QUAI_PROFOND } from './quaiProfond';
-import type { CheminSegment } from './rangs';
+import { cheminsRang1, type CheminSegment } from './rangs';
+
+/** Les obstacles permanents d'un îlot, sans les personnages posés (ils bougent avec l'aventure ; les chemins ne les contournent pas). */
+const sansPersonnages = (il: Ilot, npcs: readonly IlotNpc[]): Ilot => ({ ...il, discs: il.discs.filter((c) => !npcs.some((n) => n.at.x === c.x && n.at.z === c.z)) });
 import { RUELLES, R_EDGE_Z, R_FACADE_Z, R_NPCS } from './ruelles';
 import { CHEMINS_RUELLES, NPCS_RUELLES, PLAN_RUELLES, RUELLES_PROFOND } from './ruellesRangs';
 import { buildRuellesD } from './ruellesScene';
@@ -113,7 +116,7 @@ export const QUAI_PROFOND_DEF: IlotDef = {
   ...ILOTS.quai,
   ilot: QUAI_PROFOND,
   npcs: NPCS_PROFOND,
-  chemins: CHEMINS_QUAI,
+  chemins: [...cheminsRang1(PLAN_QUAI, sansPersonnages(QUAI_PROFOND, NPCS_PROFOND)), ...CHEMINS_QUAI],
   dof: { nearZ: QUAY_Z + 0.5, farZ: FOND_Z - 1.5, nearSpan: 3.2, farSpan: 45, farAmt: 0.42, maxBlur: 9 },
   // passe 64 : un passant dans la rue haute (la rue vit aussi au fond) ; passe 65 : un autre dans la ruelle des Lanternes
   ambient: [
@@ -135,7 +138,7 @@ export const PARVIS_PROFOND_DEF: IlotDef = {
   ...ILOTS.parvis,
   ilot: PARVIS_PROFOND,
   npcs: NPCS_PARVIS,
-  chemins: CHEMINS_PARVIS,
+  chemins: [...cheminsRang1(PLAN_PARVIS, sansPersonnages(PARVIS_PROFOND, NPCS_PARVIS)), ...CHEMINS_PARVIS],
   dof: { nearZ: P_FRONT_Z + 0.6, farZ: PLAN_PARVIS.bounds.z0 - 1.5, nearSpan: 3.2, farSpan: 45, farAmt: 0.42, maxBlur: 9 },
   ambient: [
     ...ILOTS.parvis.ambient,
@@ -148,7 +151,7 @@ export const RUELLES_PROFOND_DEF: IlotDef = {
   ...ILOTS.ruelles,
   ilot: RUELLES_PROFOND,
   npcs: NPCS_RUELLES,
-  chemins: CHEMINS_RUELLES,
+  chemins: [...cheminsRang1(PLAN_RUELLES, sansPersonnages(RUELLES_PROFOND, NPCS_RUELLES)), ...CHEMINS_RUELLES],
   dof: { nearZ: R_EDGE_Z + 0.5, farZ: PLAN_RUELLES.bounds.z0 - 1.5, nearSpan: 3.2, farSpan: 45, farAmt: 0.42, maxBlur: 9 },
   ambient: [
     ...ILOTS.ruelles.ambient,
@@ -167,7 +170,7 @@ export const COUR_DEF: IlotDef = {
   id: 'cour',
   ilot: GRANDE_COUR,
   npcs: NPCS_COUR,
-  chemins: CHEMINS_COUR,
+  chemins: [...CHEMINS_RANG1_COUR, ...CHEMINS_COUR],
   camera: { minX: -8, maxX: 8 },
   build: buildQuai,
   dof: { nearZ: 4.5, farZ: PLAN_COUR.bounds.z0 - 1.5, nearSpan: 3.2, farSpan: 45, farAmt: 0.42, maxBlur: 9 },
@@ -190,7 +193,7 @@ export const PORT_DEF: IlotDef = {
   id: 'port',
   ilot: PLACE_FANAL,
   npcs: NPCS_PORT,
-  chemins: CHEMINS_PORT,
+  chemins: [...cheminsRang1(PLAN_PORT, sansPersonnages(PLACE_FANAL, NPCS_PORT)), ...CHEMINS_PORT],
   camera: { minX: -6, maxX: 6 },
   build: buildQuai,
   dof: { nearZ: PORT_FRONT_Z + 0.5, farZ: PLAN_PORT.bounds.z0 - 1.5, nearSpan: 3.2, farSpan: 45, farAmt: 0.42, maxBlur: 9 },
@@ -205,7 +208,7 @@ export const HAUTE_DEF: IlotDef = {
   id: 'haute',
   ilot: VILLE_HAUTE,
   npcs: NPCS_HAUTE,
-  chemins: CHEMINS_HAUTE,
+  chemins: [...cheminsRang1(PLAN_HAUTE, sansPersonnages(VILLE_HAUTE, NPCS_HAUTE)), ...CHEMINS_HAUTE],
   camera: { minX: -6, maxX: 6 },
   build: buildQuai,
   dof: { nearZ: 4.0, farZ: PLAN_HAUTE.bounds.z0 - 1.5, nearSpan: 3.2, farSpan: 45, farAmt: 0.42, maxBlur: 9 },

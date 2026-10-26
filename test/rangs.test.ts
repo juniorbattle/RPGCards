@@ -196,3 +196,45 @@ describe('quartiers en rangs : chemins lumineux, fantômes gardés, ombres (pass
     expect(ombresDuPlan({ center: [0, 20, -75], w: 140, h: 30, orient: 'face' }, [0, 2, -75])).toEqual([]);
   });
 });
+
+describe('premiers rangs : chemins lumineux (demande du responsable du 2026-10-26)', () => {
+  it('chaque quartier en rangs a un chemin au premier rang, sur le pavé praticable, dans la limite du shader', async () => {
+    const { ILOTS_RANGS } = await import('../src/ville/ilots');
+    const { CHEMIN_MAX_SEGMENTS } = await import('../src/ville/chemins');
+    const { PLAN_PARVIS } = await import('../src/ville/parvisRangs');
+    const { PLAN_RUELLES } = await import('../src/ville/ruellesRangs');
+    const { PLAN_COUR } = await import('../src/ville/grandeCour');
+    const { PLAN_PORT } = await import('../src/ville/placeFanal');
+    const { PLAN_HAUTE } = await import('../src/ville/villeHaute');
+    const plans = { quai: PLAN_QUAI, parvis: PLAN_PARVIS, ruelles: PLAN_RUELLES, cour: PLAN_COUR, port: PLAN_PORT, haute: PLAN_HAUTE };
+    expect(Object.keys(ILOTS_RANGS).sort()).toEqual(Object.keys(plans).sort());
+    for (const [id, plan] of Object.entries(plans)) {
+      const def = ILOTS_RANGS[id as keyof typeof ILOTS_RANGS]!;
+      const chemins = def.chemins ?? [];
+      expect(chemins.length, id).toBeLessThanOrEqual(CHEMIN_MAX_SEGMENTS);
+      const r1 = plan.rangs[0]!;
+      const rang1 = chemins.filter((s) => Math.min(s.z0, s.z1) >= r1.z0 && Math.max(s.z0, s.z1) <= r1.z1);
+      expect(rang1.length, id).toBeGreaterThanOrEqual(2);
+      // les personnages posés bougent avec l'aventure : le chemin ne les contourne pas
+      const ilot = { ...def.ilot, discs: def.ilot.discs.filter((c) => !def.npcs.some((n) => n.at.x === c.x && n.at.z === c.z)) };
+      for (const s of rang1) {
+        for (let t = 0; t <= 1; t += 0.05) {
+          const p = { x: s.x0 + (s.x1 - s.x0) * t, z: s.z0 + (s.z1 - s.z0) * t };
+          expect(blocked(ilot, p, 0.05), `${id} ${JSON.stringify(s)} à ${t.toFixed(2)}`).toBe(false);
+        }
+      }
+      // le chemin du premier rang passe près de l'arrivée
+      const arr = def.ilot.spawns.arrivee;
+      if (arr) {
+        const d = Math.min(...rang1.map((s) => distSeg(arr, s)));
+        expect(d, `${id} : arrivée à ${d.toFixed(2)} m du chemin`).toBeLessThan(1.6);
+      }
+    }
+  });
+});
+
+function distSeg(p: Vec2, s: { x0: number; z0: number; x1: number; z1: number }): number {
+  const dx = s.x1 - s.x0, dz = s.z1 - s.z0;
+  const t = Math.max(0, Math.min(1, ((p.x - s.x0) * dx + (p.z - s.z0) * dz) / (dx * dx + dz * dz || 1)));
+  return Math.hypot(p.x - (s.x0 + dx * t), p.z - (s.z0 + dz * t));
+}

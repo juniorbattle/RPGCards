@@ -14,7 +14,7 @@
  */
 import type { Disc, Ilot, Vec2, Zone } from './monde';
 import { NPC_RADIUS, TALK_RADIUS, type IlotNpc } from './quai';
-import { balisesRangs, cheminsRangs, ilotRangs, objet, planRangs, spotsRangs, zonesBalises, type MeubleRang, type QuartierRangs } from './rangs';
+import { balisesRangs, cheminsRangs, ilotRangs, objet, planRangs, spotsRangs, zonesBalises, type CheminSegment, type MeubleRang, type QuartierRangs } from './rangs';
 
 export const COUR_RANGS: QuartierRangs = {
   rang1: { zFond: -12, zAvant: 4, x0: -16, x1: 16 },
@@ -27,6 +27,19 @@ export const BALISES_COUR = balisesRangs(PLAN_COUR, 'la Grande Cour');
 /** Le cœur du Belvédère : au milieu de sa balustrade. */
 export const COEUR_COUR: Vec2 = { x: 0, z: -22.6 };
 export const CHEMINS_COUR = cheminsRangs(PLAN_COUR, COEUR_COUR);
+/**
+ * Le chemin lumineux du premier rang de la Cour (demande du responsable du 2026-10-26 : les premiers rangs ont leurs chemins,
+ * comme les rangs du fond), tracé à la main : le tracé commun (`cheminsRang1`) y passerait derrière les étals, qui le
+ * cacheraient (règle du 2026-10-21, passe 116 : jamais caché par les accessoires). Une allée entre la balustrade et le
+ * monument, reliée au pied de l'escalier du Quai, qui remonte le long des deux bords jusqu'à la hauteur des étals ; au-delà,
+ * c'est le chemin des passages (`CHEMINS_COUR`) qui reprend (les étals cacheraient le tronçon entre les deux).
+ */
+export const CHEMINS_RANG1_COUR: readonly CheminSegment[] = ([
+  [[-13.5, 1.2], [13.5, 1.2]],
+  [[0, 1.2], [0, 3.0]],
+  [[-13.5, 1.2], [-15.2, -0.2], [-15.2, -1.5]],
+  [[13.5, 1.2], [15.2, -0.2], [15.2, -1.5]],
+] as const).flatMap((pts) => pts.slice(1).map((q, i) => ({ x0: pts[i]![0], z0: pts[i]![1], x1: q[0], z1: q[1] })));
 const BELVEDERE = PLAN_COUR.rangs[1]!;
 /** Escalier vers le Quai : ouverture de la balustrade du premier plan (m, en x). */
 export const ESCALIER: readonly [number, number] = [-1.6, 1.6];
