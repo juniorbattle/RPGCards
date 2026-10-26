@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-25T18:24:24.214Z",
-  "commit": "2917690",
+  "date": "2026-10-26T01:14:15.247Z",
+  "commit": "c9ebfcd",
   "mode": "assembler",
   "checks": [
     "OK parvis en rangs : 64 plans découpés dans 11 images, 15 lumières, 10 brumes",

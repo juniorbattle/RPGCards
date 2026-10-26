@@ -629,3 +629,12 @@ haute ») ; les figures de l'aventure ne bougent pas sans sa décision.
   du kit des rangs et du lot des villes.
 
 **Ratification (2026-10-25, passe 131).** Ordre du responsable : « Ratifie l’amendement de l’ADR 028 (« Deuxième reprise » : quartiers ajoutés et facultatifs) tel quel, et consigne-le. » L'amendement vaut tel quel : deux quartiers ajoutés (`port`, `haute`) dans la ville en rangs, liés par les bouts ouest du cœur du Quai et du Belvédère ; la ville en rangs décidée sur ses quatre îlots d'origine (`ILOTS_COEUR`) ; un quartier ajouté ouvert seulement si son diorama est admis (hors QA : ses images approuvées), fermé sinon (sorties retirées, sauvegarde ramenée au Quai). Les 4 façades ont été approuvées en passe 130 : les deux quartiers sont ouverts dans le jeu.
+
+**Bannières de l'Observatoire (passe 134, 2026-10-25).** Décision du responsable (finalisation de la ville, passe 133 :
+« Broder l'Astre ») : l'emblème de l'Astre est brodé par script (`fixBanners`, `tools/m09-kit-quartiers.mjs`) sur les deux
+bannières de l'Observatoire, comme sur les hôtels à arcades ; les étoiles peintes par le modèle disparaissent avec le
+tissu refait ; aucune image générée. Les trois autres façades ressortent à l'octet près ; seule la Ville haute change
+dans le manifeste (les deux lanternes murales de la porte sont désormais repérées comme lumières, au lieu de reflets
+dorés des bannières). La planche retraitée a une empreinte nouvelle : son approbation de la passe 130 est **caduque**
+(registre : `caduques`), la Ville haute est **fermée hors QA** jusqu'à une nouvelle approbation, sur ordre explicite du
+responsable, dans une passe à part. Planche avant / après : `screenshots/qa/m09/finalisation/bannieres/avant-apres.png`.

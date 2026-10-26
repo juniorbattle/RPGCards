@@ -9302,14 +9302,14 @@
         },
         "coeur-haute-observatoire": {
           "file": "quartiers-haute-observatoire.png",
-          "sha256": "90e822a631bd3072bfb124907387b01005612b9e60c1d69051c62c650264432b",
+          "sha256": "e119ba9ae4ac7ceadd1b54288d15e2e354e874edf9c8b00dbfcbf2f6c4d1caa7",
           "size": [
             1260,
             939
           ],
           "source": "gpt-image-2 (lot des quartiers ajoutés : la Place du Fanal, la Ville haute ; ADR 028, deuxième reprise de M09), traité par script (tools/m09-kit-quartiers.mjs)",
           "fiche": "art-src/decors/quartiers-haute-observatoire/fiche.json",
-          "approved": true,
+          "approved": false,
           "orient": "face",
           "blend": "decoupe",
           "uv": [
