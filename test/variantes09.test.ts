@@ -201,13 +201,13 @@ function runTurn(state: GameState, plans: Record<PlayerId, Plan>): { state: Game
 }
 
 describe('avenant 09 — effets hors du Clash (moteur)', () => {
-  it('Escarbille : révélée, 2 dégâts fixes à son propriétaire et une carte piochée ; sans effet à 2 PV', () => {
+  it('Escarbille : révélée, 1 dégât fixe à son propriétaire et une carte piochée ; sans effet à 1 PV (après mesure)', () => {
     const s0 = fixture(cfg(['Cendre-1-escarbille']), { hand: ['Cendre-4', 'Voile-1', 'Astre-2', 'Ronce-3'], slots: [{ def: 'Cendre-1-escarbille' }, null], hp: 20 }, { hand: ['Ronce-4', 'Astre-1', 'Voile-3', 'Cendre-2'] }, { phase: 'PREPARE' });
     const r = runTurn(s0, { p1: { reveal: [0], primary: 'Cendre-4-basic' }, p2: { primary: 'Ronce-4-basic', stance: 'guard' } });
     const dmg = r.events.find((e) => e.kind === 'damage' && e.phase === 'PREPARE');
-    expect(dmg?.data).toMatchObject({ player: 'p1', amount: 2 });
+    expect(dmg?.data).toMatchObject({ player: 'p1', amount: 1 });
     expect(r.events.some((e) => e.kind === 'draw' && e.vis === 'public' && e.data.player === 'p1' && e.data.count === 1 && e.phase === 'PREPARE')).toBe(true);
-    const low = fixture(cfg(['Cendre-1-escarbille']), { hand: ['Cendre-4', 'Voile-1', 'Astre-2', 'Ronce-3'], slots: [{ def: 'Cendre-1-escarbille' }, null], hp: 2 }, { hand: ['Ronce-4', 'Astre-1', 'Voile-3', 'Cendre-2'] }, { phase: 'PREPARE' });
+    const low = fixture(cfg(['Cendre-1-escarbille']), { hand: ['Cendre-4', 'Voile-1', 'Astre-2', 'Ronce-3'], slots: [{ def: 'Cendre-1-escarbille' }, null], hp: 1 }, { hand: ['Ronce-4', 'Astre-1', 'Voile-3', 'Cendre-2'] }, { phase: 'PREPARE' });
     const r2 = runTurn(low, { p1: { reveal: [0], primary: 'Cendre-4-basic' }, p2: { primary: 'Ronce-4-basic', stance: 'guard' } });
     expect(r2.events.find((e) => e.kind === 'effect' && e.data.effect === 'escarbille')?.data.status).toBe('failed');
   });

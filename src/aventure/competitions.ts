@@ -20,7 +20,7 @@ import { CATALOG, FAMILIES, type Family } from '../game/catalog/cards';
 import type { TechniqueId } from '../game/catalog/techniques';
 import type { DeckAv } from './deck';
 import { deF } from './modele';
-import { accorder, aGain, gainVariante, type Gain } from './registre';
+import { accorder, aGain, gainVariante, varianteChoisie, type Gain } from './registre';
 
 export interface EtatCompetitions {
   /** Épreuves : duels gagnés d'affilée (0 à 3) et série gagnée. */
@@ -78,8 +78,11 @@ export function statutJoute(c: EtatCompetitions, vaincues: readonly string[], f:
   return { ouvert: true, texte: c.joutes[f]?.gagnee ? 'Joute déjà remportée : sans récompense.' : `Contrainte respectée : ${CONTRAINTE_JOUTE[f].texte}.` };
 }
 
-/** Résultat d'un duel d'Épreuve : série, et variante I à la première série gagnée. */
-export function finEpreuve(c0: EtatCompetitions, reg0: readonly Gain[], f: Family, victoire: boolean, duel: string, at: string): { c: EtatCompetitions; registre: Gain[]; gains: Gain[] } {
+/**
+ * Résultat d'un duel d'Épreuve : série, et une variante de Rang I à chaque série gagnée — avenant 09 : la première fois,
+ * celle que le joueur choisit (A, B ou C ; A par défaut) ; ensuite, en revanche, la suivante qui manque.
+ */
+export function finEpreuve(c0: EtatCompetitions, reg0: readonly Gain[], f: Family, victoire: boolean, duel: string, at: string, choix?: string): { c: EtatCompetitions; registre: Gain[]; gains: Gain[] } {
   const c = structuredClone(c0);
   const e = c.epreuves[f] ?? { etape: 0, gagnee: false };
   let registre = [...reg0];
@@ -87,9 +90,10 @@ export function finEpreuve(c0: EtatCompetitions, reg0: readonly Gain[], f: Famil
   if (!victoire) e.etape = 0;
   else if (++e.etape >= 3) {
     e.etape = 0;
-    if (!e.gagnee) {
-      e.gagnee = true;
-      const r = accorder(registre, gainVariante(varianteDe(f, 1), `epreuve:${f}:${duel}`, at));
+    const v = varianteChoisie(registre, `${f}-1`, e.gagnee ? undefined : choix);
+    e.gagnee = true;
+    if (v && !registre.some((g) => g.source === `epreuve:${f}:${duel}`)) {
+      const r = accorder(registre, gainVariante(v, `epreuve:${f}:${duel}`, at));
       registre = r.registre;
       if (r.nouveau) gains.push(r.registre.at(-1)!);
     }
@@ -98,11 +102,14 @@ export function finEpreuve(c0: EtatCompetitions, reg0: readonly Gain[], f: Famil
   return { c, registre, gains };
 }
 
-export function finJoute(c0: EtatCompetitions, reg0: readonly Gain[], f: Family, victoire: boolean, duel: string, at: string): { c: EtatCompetitions; registre: Gain[]; gains: Gain[] } {
+/** Joute : une variante de Rang II à chaque victoire (la première choisie, avenant 09 ; ensuite la suivante qui manque). */
+export function finJoute(c0: EtatCompetitions, reg0: readonly Gain[], f: Family, victoire: boolean, duel: string, at: string, choix?: string): { c: EtatCompetitions; registre: Gain[]; gains: Gain[] } {
   const c = structuredClone(c0);
   if (!victoire) return { c, registre: [...reg0], gains: [] };
-  const r = accorder(reg0, gainVariante(varianteDe(f, 2), `joute:${f}:${duel}`, at));
+  const v = varianteChoisie(reg0, `${f}-2`, c.joutes[f]?.gagnee ? undefined : choix);
   c.joutes[f] = { gagnee: true };
+  if (!v || reg0.some((g) => g.source === `joute:${f}:${duel}`)) return { c, registre: [...reg0], gains: [] };
+  const r = accorder(reg0, gainVariante(v, `joute:${f}:${duel}`, at));
   return { c, registre: r.registre, gains: r.nouveau ? [r.registre.at(-1)!] : [] };
 }
 

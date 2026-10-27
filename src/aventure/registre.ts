@@ -41,6 +41,18 @@ export const gainSignature = (f: Family, source: string, at: string): Gain => ({
 
 export const aGain = (reg: readonly Gain[], key: string): boolean => reg.some((g) => g.key === key);
 
+/** Avenant 09 : les variantes d'une identité, dans l'ordre A, B, C. */
+export const variantesIdentite = (identity: string): string[] =>
+  Object.values(CATALOG).filter((d) => d.identity === identity && d.rarity !== 'Basic' && !d.signature).map((d) => d.defId);
+
+/** Avenant 09 : la première variante de l'identité pas encore au registre (revanche), ou null. */
+export const prochaineVariante = (reg: readonly Gain[], identity: string): string | null =>
+  variantesIdentite(identity).find((v) => !aGain(reg, `variante:${v}`)) ?? null;
+
+/** Avenant 09 : la variante choisie à la victoire si elle est de cette identité et pas encore possédée, sinon la suivante. */
+export const varianteChoisie = (reg: readonly Gain[], identity: string, choix?: string): string | null =>
+  choix && variantesIdentite(identity).includes(choix) && !aGain(reg, `variante:${choix}`) ? choix : prochaineVariante(reg, identity);
+
 /**
  * Accorde un gain : refusé (avec sa raison) s'il viole une règle de l'ADR 031, ignoré s'il est déjà au registre.
  * Règles : une variante exige les Basics de sa famille (« carte familiale déjà possédée ») et doit exister au catalogue.

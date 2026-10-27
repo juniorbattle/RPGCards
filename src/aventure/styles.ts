@@ -83,7 +83,8 @@ export function installAventureStyles(): void {
 .av-col-fam { --famc: #a9a6a0; margin: 10px 0; padding: 4px 0 6px 10px; border-left: 4px solid var(--famc); }
 .av-col-fam.fam-Cendre { --famc: #d0541f; } .av-col-fam.fam-Voile { --famc: #5d63c4; } .av-col-fam.fam-Ronce { --famc: #3f8a46; } .av-col-fam.fam-Astre { --famc: #c9a23a; }
 .av-col-fam h3 { display: flex; align-items: center; gap: 4px; } .av-col-fam .av-emb svg { width: 20px; height: 20px; }
-.av-col-cartes { --card-w: 70px; display: grid; grid-template-columns: repeat(9, minmax(0, 1fr)); gap: 8px 6px; }
+.av-col-cartes { --card-w: 70px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px 6px; }
+.av-col-cartes > :last-child { grid-column: 5; grid-row: 1 / span 4; align-self: center; }
 .av-col-entree { position: relative; display: grid; gap: 3px; justify-items: center; align-content: start; color: #d8ccb4; font: 11px/1.25 system-ui, sans-serif; text-align: center; }
 .av-col-titre { color: #e2c48a; font-weight: 700; }
 .av-col-entree.verrou .card { filter: grayscale(1) brightness(0.42); }

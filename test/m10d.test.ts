@@ -326,7 +326,7 @@ describe('M10-D — Signatures, compétitions, collection', () => {
     expect(validerDeckAv(equiperSignature(avant.deck, 'Astre'), collectionDe(avant.registre)).map((p) => p.code)).toContain('signature');
   });
 
-  it('Épreuves et Joutes des trois autres familles : variantes I et II, une fois ; les seize variantes au bout du parcours', () => {
+  it('Épreuves et Joutes des trois autres familles : variantes I et II ; les seize variantes A au bout du parcours ; B et C en revanche', () => {
     const { e } = parcours('Astre', ['Voile', 'Cendre', 'Ronce']);
     const col = collectionDe(e.registre);
     for (const f of FAMILIES) {
@@ -335,10 +335,12 @@ describe('M10-D — Signatures, compétitions, collection', () => {
       expect(e.registre.find((g) => g.key === `variante:${varianteDe(f, 2)}`)!.source).toMatch(new RegExp(`^joute:${f}:`));
       expect(e.competitions.epreuves[f]!.gagnee && e.competitions.joutes[f]!.gagnee).toBe(true);
     }
-    // une série rejouée ou une Joute regagnée n'ajoute rien
-    const r = run(e, [...[1, 2, 3].map((k): Evenement => ({ type: 'epreuve', famille: 'Voile', issue: 'victoire', duel: `z${k}` })), { type: 'joute', famille: 'Voile', issue: 'victoire', duel: 'z4' }]);
-    expect(r.gains).toEqual([]);
     expect(col.variantes).toHaveLength(16);
+    // avenant 09 : une série regagnée ou une Joute regagnée donne la variante suivante de son identité (B) ; le même fait
+    // rejoué n'ajoute rien
+    const r = run(e, [...[1, 2, 3].map((k): Evenement => ({ type: 'epreuve', famille: 'Voile', issue: 'victoire', duel: `z${k}` })), { type: 'joute', famille: 'Voile', issue: 'victoire', duel: 'z4' }]);
+    expect(cles(r.gains)).toEqual(['variante:Voile-1-leurre', 'variante:Voile-2-echo']);
+    expect(run(r.etat, [{ type: 'joute', famille: 'Voile', issue: 'victoire', duel: 'z4' }]).gains).toEqual([]);
   });
 
   it('la collection reconstruite depuis le registre est identique à la collection stockée (et à ce que les récompenses ont remis)', () => {
@@ -361,8 +363,9 @@ describe('M10-D — Signatures, compétitions, collection', () => {
     // la collection accumulée gain par gain (écrans de récompense) est la même
     const vide: CollectionAv = { neutres: { 1: 0, 2: 0, 3: 0, 4: 0 }, basics: [], variantes: [], signatures: [], techniques: [] };
     expect(trie(accumuler(vide, gains))).toEqual(trie(col));
-    // tout le catalogue de l'aventure : 16 neutres, 16 Basics, 16 variantes, 4 Signatures, 6 Techniques
-    expect(vueCollection(e).compte).toEqual({ possedees: 36, total: 36 });
+    // tout le parcours sans revanche : 16 neutres, 16 Basics, 16 variantes (une par identité), 4 Signatures, 6 Techniques ;
+    // les 32 autres variantes (avenant 09) se gagnent en revanche ou au titre du Championnat
+    expect(vueCollection(e).compte).toEqual({ possedees: 36, total: 68 });
     expect(col.techniques).toHaveLength(6);
   });
 });

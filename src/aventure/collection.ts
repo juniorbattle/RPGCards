@@ -3,12 +3,12 @@
  * carte : possédée (avec l'origine de son gain) ou à gagner (avec la manière de l'obtenir : rien n'est caché, P-N4).
  * Module pur.
  */
-import { CATALOG, FAMILIES, type Family } from '../game/catalog/cards';
+import { CATALOG, FAMILIES, variantLetter, type Family } from '../game/catalog/cards';
 import { TECHNIQUE_IDS, type TechniqueId } from '../game/catalog/techniques';
 import type { AventureEtat } from './aventure';
 import { varianteDe } from './competitions';
 import { deF, FIGURES, figureDe, MAISONS, NEUTRES, RANGS, TECHNIQUES_RUE, type EtatFamille } from './modele';
-import { collectionDe, type Gain } from './registre';
+import { collectionDe, variantesIdentite, type Gain } from './registre';
 
 export interface EntreeCollection {
   /** Définition (`Cendre-3-…`, `sig-Cendre`) ou Technique. */
@@ -17,13 +17,15 @@ export interface EntreeCollection {
   /** Possédée : origine du gain ; sinon, comment l'obtenir. */
   texte: string;
   dansDeck: boolean;
+  /** Variante : sa lettre (A, B ou C ; avenant 09). */
+  lettre?: string;
 }
 
 export interface FamilleCollection {
   famille: Family;
   etat: EtatFamille;
   basics: EntreeCollection[];
-  /** Une variante par Rang (I : Épreuve, II : Joute, III : cadet, IV : bras droit). */
+  /** Trois variantes par Rang, A, B et C (I : Épreuve, II : Joute, III : cadet, IV : bras droit ; avenant 09). */
   variantes: EntreeCollection[];
   signature: EntreeCollection;
 }
@@ -32,7 +34,7 @@ export interface VueCollection {
   neutres: Array<{ id: string; possedees: number; dansDeck: number }>;
   familles: FamilleCollection[];
   techniques: EntreeCollection[];
-  /** Cartes familiales et Signatures possédées sur le total (16 Basics, 16 variantes, 4 Signatures). */
+  /** Cartes familiales et Signatures possédées sur le total (16 Basics, 48 variantes, 4 Signatures). */
   compte: { possedees: number; total: number };
 }
 
@@ -45,22 +47,32 @@ export function origineGain(g: Gain): string {
   if (k === 'engagement') return `Défi officiel ${deF(f)} engagé`;
   if (k === 'epreuve') return `Épreuve du quartier ${deF(f)}`;
   if (k === 'joute') return `Joute de la maison ${deF(f)}`;
+  if (k === 'championnat') return 'Titre du Championnat';
   if (k === 'duel') {
     const fig = g.kind === 'variante'
-      ? FIGURES.find((x) => x.enjeu.kind === 'variante' && x.enjeu.defId === g.items[0])
+      ? FIGURES.find((x) => x.enjeu.kind === 'variante' && CATALOG[x.enjeu.defId]!.identity === CATALOG[g.items[0]!]?.identity)
       : g.family ? figureDe(g.family, 'chef') : undefined;
     return fig ? `Victoire contre ${fig.nom}` : 'Victoire en duel';
   }
   return g.source;
 }
 
-/** Comment gagner une variante (jamais caché) : lieutenant, Épreuve ou Joute de sa famille. */
-function voieVariante(defId: string): string {
+/**
+ * Comment gagner une variante (jamais caché) : lieutenant, Épreuve ou Joute de sa famille ; avenant 09 : une variante au
+ * choix à la première victoire (`revanche` faux : aucune variante de l'identité possédée), les deux autres en revanche, toutes
+ * celles qui manquent au titre du Championnat.
+ */
+export function voieVariante(defId: string, revanche = false): string {
   const d = CATALOG[defId]!;
-  const fig = FIGURES.find((x) => x.enjeu.kind === 'variante' && x.enjeu.defId === defId);
-  if (fig) return `Battre ${fig.nom}, ${fig.titre}`;
-  if (varianteDe(d.family, 1) === defId) return `Gagner l’Épreuve du quartier ${deF(d.family)} (trois victoires d’affilée)`;
-  return `Gagner la Joute de la maison ${deF(d.family)}`;
+  const fig = FIGURES.find((x) => x.enjeu.kind === 'variante' && CATALOG[x.enjeu.defId]!.identity === d.identity);
+  const epreuve = CATALOG[varianteDe(d.family, 1)]!.identity === d.identity;
+  if (revanche) {
+    const voie = fig ? `Battre de nouveau ${fig.nom} (revanche)` : epreuve ? `Regagner l’Épreuve du quartier ${deF(d.family)}` : `Regagner la Joute de la maison ${deF(d.family)}`;
+    return `${voie}, ou remporter le Championnat`;
+  }
+  if (fig) return `Battre ${fig.nom}, ${fig.titre} (une variante au choix)`;
+  if (epreuve) return `Gagner l’Épreuve du quartier ${deF(d.family)} (trois victoires d’affilée ; une variante au choix)`;
+  return `Gagner la Joute de la maison ${deF(d.family)} (une variante au choix)`;
 }
 
 export function vueCollection(e: AventureEtat): VueCollection {
@@ -74,10 +86,13 @@ export function vueCollection(e: AventureEtat): VueCollection {
       id: `${f}-${r}-basic`, possedee: !!gb, dansDeck: deck.has(`${f}-${r}-basic`),
       texte: gb ? origineGain(gb) : `À l’affiliation ${deF(f)}, ou à l’engagement de son défi officiel`,
     }));
-    const variantes = RANGS.map((r) => {
-      const id = Object.values(CATALOG).find((d) => d.family === f && d.rank === r && d.rarity !== 'Basic' && !d.signature)!.defId;
-      const g = gain(`variante:${id}`);
-      return { id, possedee: !!g, dansDeck: deck.has(id), texte: g ? origineGain(g) : voieVariante(id) };
+    const variantes = RANGS.flatMap((r) => {
+      const ids = variantesIdentite(`${f}-${r}`);
+      const une = ids.some((id) => gain(`variante:${id}`));
+      return ids.map((id) => {
+        const g = gain(`variante:${id}`);
+        return { id, possedee: !!g, dansDeck: deck.has(id), texte: g ? origineGain(g) : voieVariante(id, une), lettre: variantLetter(CATALOG[id]!) ?? undefined };
+      });
     });
     const gs = gain(`signature:${f}`);
     const chef = figureDe(f, 'chef');
@@ -92,5 +107,5 @@ export function vueCollection(e: AventureEtat): VueCollection {
     return { id: t, possedee: !!g, dansDeck: e.deck.techniques.includes(t), texte: g ? origineGain(g) : voie };
   });
   const neutres = RANGS.map((r) => ({ id: NEUTRES[r].defId, possedees: col.neutres[r], dansDeck: e.deck.cartes.filter((c) => c === NEUTRES[r].defId).length }));
-  return { neutres, familles, techniques, compte: { possedees, total: FAMILIES.length * 9 } };
+  return { neutres, familles, techniques, compte: { possedees, total: FAMILIES.length * (4 + 12 + 1) } };
 }

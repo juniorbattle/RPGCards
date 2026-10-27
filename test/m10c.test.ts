@@ -4,7 +4,7 @@
  * fermé en cours, identités V2 des chefs.
  */
 import { describe, expect, it } from 'vitest';
-import { FAMILIES, type Family } from '../src/game/catalog/cards';
+import { CATALOG, FAMILIES, type Family } from '../src/game/catalog/cards';
 import { TECHNIQUE_IDS } from '../src/game/catalog/techniques';
 import { Match } from '../src/game/match';
 import { PROFILES } from '../src/game/ai/policy';
@@ -12,7 +12,7 @@ import { appliquer, controlerEtat, nouvelleAventure, statutDefi, type AventureEt
 import { basculerTechnique, choixPourCase, deckMoteur, rangDe, remplacerCase, validerDeckAv, type DeckAv } from '../src/aventure/deck';
 import { origineGain, vueCollection } from '../src/aventure/collection';
 import { figureDe, FIGURES, isNeutre, ROLES } from '../src/aventure/modele';
-import { collectionDe } from '../src/aventure/registre';
+import { collectionDe, variantesIdentite } from '../src/aventure/registre';
 import { duelFigure } from '../src/aventure/rencontres';
 import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel } from '../src/aventure/sauvegarde';
 import { CHEF_PERSONALITIES, PERSONALITIES, personalityById } from '../src/presentation/personalities';
@@ -107,15 +107,18 @@ describe('M10-C — écran Collection (vue dérivée du registre)', () => {
   it('au départ : seize neutres, rien de familial, chaque carte dit comment l’obtenir', () => {
     const v = vueCollection(nouvelleAventure(AT));
     expect(v.neutres.map((n) => [n.possedees, n.dansDeck])).toEqual([[4, 4], [4, 4], [4, 4], [4, 4]]);
-    expect(v.compte).toEqual({ possedees: 0, total: 36 });
+    expect(v.compte).toEqual({ possedees: 0, total: 68 });
     const cendre = v.familles.find((f) => f.famille === 'Cendre')!;
     expect(cendre.basics.every((b) => !b.possedee && /affiliation de la Cendre/.test(b.texte))).toBe(true);
-    expect(cendre.variantes.map((x) => x.texte)).toEqual([
-      'Gagner l’Épreuve du quartier de la Cendre (trois victoires d’affilée)',
-      'Gagner la Joute de la maison de la Cendre',
-      'Battre Tessa, cadette de la Cendre',
-      'Battre Kaï, la Braise du quai, bras droit de la Cendre',
+    // avenant 09 : trois variantes par Rang, A, B et C, la même voie (une au choix)
+    expect(cendre.variantes.map((x) => x.lettre)).toEqual(['A', 'B', 'C', 'A', 'B', 'C', 'A', 'B', 'C', 'A', 'B', 'C']);
+    expect(cendre.variantes.filter((x) => x.lettre === 'A').map((x) => x.texte)).toEqual([
+      'Gagner l’Épreuve du quartier de la Cendre (trois victoires d’affilée ; une variante au choix)',
+      'Gagner la Joute de la maison de la Cendre (une variante au choix)',
+      'Battre Tessa, cadette de la Cendre (une variante au choix)',
+      'Battre Kaï, la Braise du quai, bras droit de la Cendre (une variante au choix)',
     ]);
+    for (let i = 0; i < 12; i += 3) expect(new Set(cendre.variantes.slice(i, i + 3).map((x) => x.texte)).size).toBe(1);
     expect(cendre.signature.texte).toBe('Battre Bran, le Premier Feu, chef de la Cendre');
     expect(v.techniques.filter((t) => t.possedee).map((t) => t.id)).toEqual(['Sondage', 'Recentrage']);
   });
@@ -128,6 +131,10 @@ describe('M10-C — écran Collection (vue dérivée du registre)', () => {
     expect(astre.variantes.filter((x) => x.possedee).map((x) => [x.texte, x.dansDeck])).toEqual([[`Victoire contre ${figureDe('Astre', 'cadet').nom}`, true], [`Victoire contre ${figureDe('Astre', 'brasDroit').nom}`, true]]);
     expect([astre.signature.possedee, astre.signature.texte, astre.signature.dansDeck]).toEqual([true, 'Victoire contre Halvard', true]);
     expect(v.compte.possedees).toBe(4 + 2 + 1);
+    expect(v.compte.total).toBe(4 * 17);
+    expect(v.familles[0]!.variantes).toHaveLength(12);
+    // une variante de l'identité possédée : les deux autres se gagnent en revanche (ou au titre)
+    expect(astre.variantes.find((x) => x.lettre === 'B' && CATALOG[x.id]!.rank === 3)!.texte).toBe(`Battre de nouveau ${figureDe('Astre', 'cadet').nom} (revanche), ou remporter le Championnat`);
     expect(v.neutres.map((n) => n.dansDeck)).toEqual([3, 3, 3, 3]);
     for (const g of e.registre) expect(origineGain(g)).not.toBe(g.source);
   });
@@ -135,14 +142,15 @@ describe('M10-C — écran Collection (vue dérivée du registre)', () => {
 
 describe('M10-C — parcours complet d’une famille d’accueil (test paramétré, les quatre familles)', () => {
   for (const f of FAMILIES) {
-    it(`${f} : défaites sans effet, variantes III et IV aux lieutenants, Signature au chef, revanches sans gain, deck légal après chaque gain`, () => {
+    it(`${f} : défaites sans effet, variantes III et IV aux lieutenants, Signature au chef, B et C en revanche, deck légal après chaque gain`, () => {
       const lieutenants = FIGURES.filter((x) => x.famille === f && x.role !== 'chef');
       const legal = (e: AventureEtat, gains: string[]) => {
         if (gains.length) expect(validerDeckAv(e.deck, collectionDe(e.registre)), gains.join(',')).toEqual([]);
         expect(controlerEtat(e)).toEqual([]);
         // jamais plus d'une Signature équipée ; les variantes ne viennent que des lieutenants (ou des compétitions)
         expect(deckMoteur(e.deck).filter((c) => c.startsWith('sig-')).length).toBeLessThanOrEqual(1);
-        for (const k of gains.filter((x) => x.startsWith('variante:'))) expect(lieutenants.some((x) => x.enjeu.kind === 'variante' && `variante:${x.enjeu.defId}` === k)).toBe(true);
+        // (avenant 09 : A, B ou C de l'identité de l'enjeu)
+        for (const k of gains.filter((x) => x.startsWith('variante:'))) expect(lieutenants.some((x) => x.enjeu.kind === 'variante' && CATALOG[x.enjeu.defId]!.identity === CATALOG[k.slice(9)]!.identity)).toBe(true);
       };
       let r = run(prologue(), [{ type: 'confirmer', famille: f }], legal);
       expect(r.gains.sort()).toEqual([`basics:${f}`, `technique:${r.etat.deck.techniques[1]}`].sort());
@@ -156,7 +164,13 @@ describe('M10-C — parcours complet d’une famille d’accueil (test paramétr
         // victoire : l'enjeu, une fois
         r = run(r.etat, defi(fig.id, 'victoire', `${fig.id}-3`), legal);
         expect(r.gains).toEqual([fig.enjeu.kind === 'variante' ? `variante:${fig.enjeu.defId}` : `signature:${f}`]);
-        // revanche gagnée : registre inchangé
+        // revanches gagnées (avenant 09) : contre un lieutenant, les deux autres variantes de l'identité, puis rien ; contre le
+        // chef, rien
+        if (fig.enjeu.kind === 'variante') {
+          const [, b, c] = variantesIdentite(CATALOG[fig.enjeu.defId]!.identity);
+          r = run(r.etat, [...defi(fig.id, 'victoire', `${fig.id}-4b`), ...defi(fig.id, 'victoire', `${fig.id}-4c`)], legal);
+          expect(r.gains).toEqual([`variante:${b}`, `variante:${c}`]);
+        }
         const avant = JSON.stringify(r.etat.registre);
         r = run(r.etat, defi(fig.id, 'victoire', `${fig.id}-4`), legal);
         expect(r.gains).toEqual([]);
@@ -165,7 +179,7 @@ describe('M10-C — parcours complet d’une famille d’accueil (test paramétr
       }
       expect(e.deck.signature).toBe(f);
       expect(e.familles[f]).toBe('chef');
-      expect(vueCollection(e).compte.possedees).toBe(7);
+      expect(vueCollection(e).compte.possedees).toBe(4 + 2 * 3 + 1);
       // le duel contre le chef, Signature en jeu des deux côtés au besoin, se joue jusqu'au bout
       const cfg = duelFigure(figureDe(f, 'chef').id, e, 77, true).config;
       const m = new Match(cfg, { p1: { profile: PROFILES.equilibre!, seed: 1 }, p2: { profile: PROFILES.offensif!, seed: 2 } });

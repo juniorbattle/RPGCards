@@ -16,8 +16,12 @@ existants du moteur.
 - **Duel standard** : le deck par défaut garde les variantes A (empreintes, replays et calibrage d'avant inchangés tant
   qu'aucun deck ne prend une variante B ou C) ; l'éditeur propose Basic, A, B ou C pour chaque identité possédée ;
   une récompense de variantes d'une famille donne ses trois variantes par identité.
-- **Aventure** : chaque victoire qui donne une variante (Épreuve, Joute, lieutenants) laisse **choisir** A, B ou C ; les
-  deux autres se gagnent ensuite (revanches contre les membres, guetteurs et lieutenants de la famille, Championnat).
+- **Aventure** : la première victoire qui donne une variante (Épreuve du quartier, Joute de la maison, cadet ou bras droit)
+  laisse **choisir** A, B ou C ; chaque nouvelle victoire au même endroit (série d'Épreuve regagnée, Joute regagnée,
+  revanche gagnée contre le même lieutenant) donne la suivante pas encore possédée, puis plus rien ; le **titre du
+  Championnat** donne toutes celles qui manquent encore (familles dont on a les cartes de base). Une variante gagnée
+  remplace la Basic de son identité dans le deck ; une variante déjà équipée reste en place. Le même fait rejoué (reprise)
+  ne donne jamais rien (registre, idempotence).
 - Aucune nouvelle phase ni ressource. Le Clash (V3.3), la Garde, l'Insight (+1 par tour, réserve 2), le secret
   (ADR 011 : un effet d'une carte camouflée ne publie que sa conséquence observable ; un regard est privé) et les
   Signatures ne changent pas. Une Silence neutralise l'effet encore en attente d'une Primaire, comme aujourd'hui ;
@@ -51,8 +55,8 @@ existants du moteur.
 ### Cendre — la pression et le risque
 - **Tison** (Cendre I). *Secondaire · Amplifier les dégâts.* « Coefficient +1 si la Primaire est en Assaut. Si la Primaire
   perd le Clash, le propriétaire subit 2 dégâts fixes. »
-- **Escarbille** (Cendre I). *Secondaire · révélation volontaire.* « Révélation volontaire : le propriétaire subit 2 dégâts
-  fixes et pioche une carte. Sans effet s'il a 2 PV ou moins. »
+- **Escarbille** (Cendre I). *Secondaire · révélation volontaire.* « Révélation volontaire : le propriétaire subit 1 dégât
+  fixe et pioche une carte. Sans effet s'il a 1 PV. » (Ajustée après mesure, §5.)
 - **Percée** (Cendre II). *Secondaire · Amplifier le Rang.* « Si la Primaire gagne en Assaut contre une Garde : la Garde
   dominée absorbe 2 de moins (minimum 0). »
 - **Bravade** (Cendre II). *Primaire · Assaut.* « Si elle perd en Assaut contre une Garde : la Garde victorieuse ne
@@ -122,10 +126,21 @@ existants du moteur.
 
 ## 4. Mesures et calibrage
 
-Mesures IA contre IA (`tools/m12-variantes-mesure.ts`, rapport `artifacts/qa/m12/variantes/`) : chaque variante B ou C
-à la place de la variante A de son identité, dans un deck standard, contre le deck standard ; écart de taux de victoire et
-durée des duels. Un texte hors marge est ajusté et l'ajustement noté ici (§5).
+Mesures IA contre IA (`tools/m12-variantes-mesure.ts`, rapport `artifacts/qa/m12/variantes/mesure.md`) : chaque
+variante B ou C à la place de la variante A de son identité, dans un deck standard, contre le deck standard ; 400 duels par
+ligne, IA « équilibré » des deux côtés, sièges alternés, Signatures et Techniques tirées par graine ; écart de taux de
+victoire et durée des duels ; marge ±6 points (l'écart type d'une ligne est d'environ 2,5 points). Un texte hors marge est
+ajusté et l'ajustement noté ici (§5).
+
+**Résultats (commit `0d681dc`, 657 s) :** témoin A contre A 50,5 % ; **31 variantes sur 32 dans la marge** ; une hors
+marge : **Escarbille à 42,8 % (−7,3)**. Les plus fortes : Boussole 54,8 %, Phénix 54,3 %, Leurre et Solstice 53,8 %,
+Miroir brisé 53,5 % ; les plus faibles : Tison 45,0 %, Surenchère 45,5 %, Comète et Harmonie 47,0 %. Deck tout B contre
+deck tout A 53,0 % ; tout C contre tout A 51,8 % ; tout B contre tout C 55,8 %. Durée des duels inchangée (9,4 à 10,3 tours
+contre 9,7 au témoin).
 
 ## 5. Ajustements après mesure
 
-(Rempli après la mesure.)
+- **Escarbille** : 2 dégâts fixes → **1 dégât fixe** (seuil : sans effet à 1 PV au lieu de 2 PV ou moins). Remesurée sur
+  800 duels (`artifacts/qa/m12/variantes/mesure-Escarbille.md`) : **45,9 % (−4,1), dans la marge**.
+- Aucun autre ajustement : les écarts restants sont dans la marge. Tison et Surenchère (le risque de la Cendre, −5,0 et
+  −4,5) et Boussole (+4,8) sont les plus proches du bord : à surveiller au test complet du responsable.

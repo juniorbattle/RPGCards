@@ -1,0 +1,333 @@
+{
+  "commit": "0d681dc",
+  "date": "2026-10-27T06:54:00.549Z",
+  "duelsParMesure": 400,
+  "marge": 6,
+  "ms": 656563,
+  "results": [
+    {
+      "label": "témoin A contre A",
+      "wins": 202,
+      "games": 400,
+      "turns": 9.665,
+      "rate": 50.5,
+      "delta": 0.5,
+      "flag": false
+    },
+    {
+      "label": "Cendre-1 B Tison",
+      "wins": 180,
+      "games": 400,
+      "turns": 9.4825,
+      "rate": 45,
+      "delta": -5,
+      "flag": false
+    },
+    {
+      "label": "Cendre-1 C Escarbille",
+      "wins": 171,
+      "games": 400,
+      "turns": 9.8525,
+      "rate": 42.75,
+      "delta": -7.25,
+      "flag": true
+    },
+    {
+      "label": "Cendre-2 B Percée",
+      "wins": 204,
+      "games": 400,
+      "turns": 9.56,
+      "rate": 51,
+      "delta": 1,
+      "flag": false
+    },
+    {
+      "label": "Cendre-2 C Bravade",
+      "wins": 203,
+      "games": 400,
+      "turns": 9.86,
+      "rate": 50.75,
+      "delta": 0.75,
+      "flag": false
+    },
+    {
+      "label": "Cendre-3 B Surenchère",
+      "wins": 182,
+      "games": 400,
+      "turns": 9.585,
+      "rate": 45.5,
+      "delta": -4.5,
+      "flag": false
+    },
+    {
+      "label": "Cendre-3 C Brûlure",
+      "wins": 203,
+      "games": 400,
+      "turns": 9.7175,
+      "rate": 50.75,
+      "delta": 0.75,
+      "flag": false
+    },
+    {
+      "label": "Cendre-4 B Fournaise",
+      "wins": 210,
+      "games": 400,
+      "turns": 9.8375,
+      "rate": 52.5,
+      "delta": 2.5,
+      "flag": false
+    },
+    {
+      "label": "Cendre-4 C Phénix",
+      "wins": 217,
+      "games": 400,
+      "turns": 9.72,
+      "rate": 54.25,
+      "delta": 4.25,
+      "flag": false
+    },
+    {
+      "label": "Voile-1 B Leurre",
+      "wins": 215,
+      "games": 400,
+      "turns": 10.0125,
+      "rate": 53.75,
+      "delta": 3.75,
+      "flag": false
+    },
+    {
+      "label": "Voile-1 C Murmure",
+      "wins": 203,
+      "games": 400,
+      "turns": 9.6375,
+      "rate": 50.75,
+      "delta": 0.75,
+      "flag": false
+    },
+    {
+      "label": "Voile-2 B Écho",
+      "wins": 199,
+      "games": 400,
+      "turns": 9.73,
+      "rate": 49.75,
+      "delta": -0.25,
+      "flag": false
+    },
+    {
+      "label": "Voile-2 C Fil d’ombre",
+      "wins": 199,
+      "games": 400,
+      "turns": 9.72,
+      "rate": 49.75,
+      "delta": -0.25,
+      "flag": false
+    },
+    {
+      "label": "Voile-3 B Ombre portée",
+      "wins": 196,
+      "games": 400,
+      "turns": 9.805,
+      "rate": 49,
+      "delta": -1,
+      "flag": false
+    },
+    {
+      "label": "Voile-3 C Contre-jour",
+      "wins": 197,
+      "games": 400,
+      "turns": 9.8075,
+      "rate": 49.25,
+      "delta": -0.75,
+      "flag": false
+    },
+    {
+      "label": "Voile-4 B Éclipse",
+      "wins": 194,
+      "games": 400,
+      "turns": 9.815,
+      "rate": 48.5,
+      "delta": -1.5,
+      "flag": false
+    },
+    {
+      "label": "Voile-4 C Miroir brisé",
+      "wins": 214,
+      "games": 400,
+      "turns": 9.695,
+      "rate": 53.5,
+      "delta": 3.5,
+      "flag": false
+    },
+    {
+      "label": "Ronce-1 B Épine",
+      "wins": 192,
+      "games": 400,
+      "turns": 9.58,
+      "rate": 48,
+      "delta": -2,
+      "flag": false
+    },
+    {
+      "label": "Ronce-1 C Bouture",
+      "wins": 198,
+      "games": 400,
+      "turns": 9.81,
+      "rate": 49.5,
+      "delta": -0.5,
+      "flag": false
+    },
+    {
+      "label": "Ronce-2 B Sève",
+      "wins": 199,
+      "games": 400,
+      "turns": 9.695,
+      "rate": 49.75,
+      "delta": -0.25,
+      "flag": false
+    },
+    {
+      "label": "Ronce-2 C Lierre",
+      "wins": 205,
+      "games": 400,
+      "turns": 9.645,
+      "rate": 51.25,
+      "delta": 1.25,
+      "flag": false
+    },
+    {
+      "label": "Ronce-3 B Mur de ronces",
+      "wins": 203,
+      "games": 400,
+      "turns": 9.395,
+      "rate": 50.75,
+      "delta": 0.75,
+      "flag": false
+    },
+    {
+      "label": "Ronce-3 C Racines profondes",
+      "wins": 199,
+      "games": 400,
+      "turns": 9.7225,
+      "rate": 49.75,
+      "delta": -0.25,
+      "flag": false
+    },
+    {
+      "label": "Ronce-4 B Rempart",
+      "wins": 205,
+      "games": 400,
+      "turns": 9.7075,
+      "rate": 51.25,
+      "delta": 1.25,
+      "flag": false
+    },
+    {
+      "label": "Ronce-4 C Herse",
+      "wins": 194,
+      "games": 400,
+      "turns": 9.575,
+      "rate": 48.5,
+      "delta": -1.5,
+      "flag": false
+    },
+    {
+      "label": "Astre-1 B Boussole",
+      "wins": 219,
+      "games": 400,
+      "turns": 9.6225,
+      "rate": 54.75,
+      "delta": 4.75,
+      "flag": false
+    },
+    {
+      "label": "Astre-1 C Comète",
+      "wins": 188,
+      "games": 400,
+      "turns": 9.64,
+      "rate": 47,
+      "delta": -3,
+      "flag": false
+    },
+    {
+      "label": "Astre-2 B Constellation",
+      "wins": 189,
+      "games": 400,
+      "turns": 10.0425,
+      "rate": 47.25,
+      "delta": -2.75,
+      "flag": false
+    },
+    {
+      "label": "Astre-2 C Sextant",
+      "wins": 199,
+      "games": 400,
+      "turns": 9.8875,
+      "rate": 49.75,
+      "delta": -0.25,
+      "flag": false
+    },
+    {
+      "label": "Astre-3 B Équinoxe",
+      "wins": 196,
+      "games": 400,
+      "turns": 9.6475,
+      "rate": 49,
+      "delta": -1,
+      "flag": false
+    },
+    {
+      "label": "Astre-3 C Harmonie",
+      "wins": 188,
+      "games": 400,
+      "turns": 9.965,
+      "rate": 47,
+      "delta": -3,
+      "flag": false
+    },
+    {
+      "label": "Astre-4 B Zénith",
+      "wins": 205,
+      "games": 400,
+      "turns": 9.775,
+      "rate": 51.25,
+      "delta": 1.25,
+      "flag": false
+    },
+    {
+      "label": "Astre-4 C Solstice",
+      "wins": 215,
+      "games": 400,
+      "turns": 10.21,
+      "rate": 53.75,
+      "delta": 3.75,
+      "flag": false
+    },
+    {
+      "label": "deck tout B contre deck tout A",
+      "wins": 212,
+      "games": 400,
+      "turns": 10.1125,
+      "rate": 53,
+      "delta": 3,
+      "flag": false
+    },
+    {
+      "label": "deck tout C contre deck tout A",
+      "wins": 207,
+      "games": 400,
+      "turns": 9.8575,
+      "rate": 51.75,
+      "delta": 1.75,
+      "flag": false
+    },
+    {
+      "label": "deck tout B contre deck tout C",
+      "wins": 223,
+      "games": 400,
+      "turns": 10.255,
+      "rate": 55.75,
+      "delta": 5.75,
+      "flag": false
+    }
+  ]
+}
