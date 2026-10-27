@@ -127,7 +127,7 @@ function areneBackdropTexture(seed: number): THREE.CanvasTexture {
     const W = 1.4 * U;
     const T = by(8.2);
     const B = by(5.0);
-    const base: Record<Family, string> = { Cendre: '#7a1c12', Ronce: '#1d5228', Astre: '#1a2452', Voile: '#2346a0' };
+    const base: Record<Family, string> = { Cendre: '#7a1c12', Ronce: '#1d5228', Astre: '#7a5814', Voile: '#2346a0' };
     ctx.fillStyle = base[f];
     ctx.beginPath(); ctx.moveTo(X, T); ctx.lineTo(X + W, T); ctx.lineTo(X + W, B); ctx.lineTo(X + W / 2, B - 0.35 * U); ctx.lineTo(X, B); ctx.closePath(); ctx.fill();
     ctx.strokeStyle = '#c9a25e';

@@ -8,7 +8,8 @@
  *   - **Ilse, la Dame aux Voiles** (Voile) : cheveux noirs à mèche blanche sous un voile de dentelle indigo bordé
  *     d'argent, fronteau d'argent, regard gris, robe à col haut brodée d'yeux, miroir rond en pendentif ;
  *   - **Halvard, le Cartographe** (Astre) : front haut, longs cheveux blancs, moustache et barbiche blanches, monocle
- *     cerclé d'or à chaînette, manteau bleu nuit brodé d'une rose des vents, étui de carte en bandoulière.
+ *     cerclé d'or à chaînette, manteau ocre brodé d'or d'une rose des vents (bleu nuit jusqu'au 2026-10-27 ; ADR 046 :
+ *     l'Astre ne se confond plus avec le Voile), étui de carte en bandoulière.
  * Mêmes conventions que les rivaux : espace H, lumière en haut à gauche, traits d'encre effilés ; aucune image.
  * Identifiants `chef-<famille>` (hors des quatre rivaux signatures : le jeu standard ne les tire jamais).
  */
@@ -637,7 +638,7 @@ export const ILSE_V2: FigureV2Kit = {
 const H = {
   skinHi: '#f4d3bd', skin: '#dcaf95', skinShade: '#b07e66', skinDeep: '#7e5242', line: '#3a2018', lineSoft: '#6a4232',
   hair: '#ecebe7', hairShade: '#c4c0ba', hairDeep: '#8a8682', hairHi: '#ffffff',
-  coat: '#1a2450', coatHi: '#2e3c7a', coatShade: '#0e1430', coatDeep: '#070a1c', gold: '#e8c46a', goldHi: '#fff0b8', goldDeep: '#9a7a2a',
+  coat: '#5a4512', coatHi: '#806418', coatShade: '#36290a', coatDeep: '#1c1505', gold: '#e8c46a', goldHi: '#fff0b8', goldDeep: '#9a7a2a',
   leather: '#6a4428', leatherHi: '#9a6a40', parchment: '#e8d8b0',
   lash: '#2a1a14', lashSoft: '#5a4034', brow: '#cdc9c3', browHi: '#ffffff',
   lipUp: '#a86a5a', lipLow: '#bc7e6c', lipHi: '#e2ac98',

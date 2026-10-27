@@ -212,7 +212,7 @@ button { font: inherit; color: inherit; }
 .card.fam-Cendre { --famc: #ff6a2a; }
 .card.fam-Voile { --famc: #5f8dff; }
 .card.fam-Ronce { --famc: #5fd35a; }
-.card.fam-Astre { --famc: #3f6fe8; }
+.card.fam-Astre { --famc: #e3b341; }
 /* avenant M10-A : carte neutre, blanche et grise, sans emblème (ADR 030) */
 .card.fam-neutre { --famc: #b9b7b1; }
 .card.rar-Signature .frame { box-shadow: inset 0 0 0 2px #ffd36b, inset 0 0 calc(var(--card-w) * 0.12) rgba(255, 200, 90, 0.45); }

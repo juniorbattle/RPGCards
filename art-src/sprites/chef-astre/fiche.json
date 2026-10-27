@@ -1,6 +1,6 @@
 {
   "id": "chef-astre",
-  "statut": "APPROUVÉ par le responsable le 2026-10-25 (ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128) : admis hors QA tant que l’empreinte reste 111ae4c9e29e…",
+  "statut": "NON APPROUVÉ : approbation de la passe 128 caduque depuis la recoloration du manteau (ADR 046, 2026-10-27) ; admis en QA seulement jusqu’à un nouvel ordre explicite du responsable (empreinte 5e194dccf1ba…)",
   "auteur": "Claude Code (session de reprise de M09, passe 127), à la demande du responsable : « Oui : génère les 10 autres feuilles des PNJ (gabarits marchande, commis, joueuse ; Maëlle, Sélène, Orin ; les quatre chefs), traite-les et pose-les. »",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-pnj-suite.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -103,10 +103,54 @@
     "6047b039cd74180239101c8564b0eb447b103c18097c4d2e69e82f2ce3e02844 (brut)",
     "111ae4c9e29e87145273b4802f723aaec00ea10245b31da785d3397eac98fbe1 (feuille ×3)"
   ],
-  "approbation": {
-    "date": "2026-10-25",
-    "decision": "ordre explicite du responsable (2026-10-25, après la planche des douze, passe 127 : screenshots/qa/m09/pnj/planche-pnj.png) : « J’approuve les 12 feuilles des PNJ : passe-les à approved: true par le registre, dans une passe à part » ; passe 128",
-    "fichier": "public/sprites/chef-astre.png",
-    "sha256": "111ae4c9e29e87145273b4802f723aaec00ea10245b31da785d3397eac98fbe1"
-  }
+  "retouches": [
+    {
+      "adr": "046",
+      "date": "2026-10-27",
+      "outil": "tools/m12-couleurs-astre.mjs",
+      "quoi": "manteau marine recoloré en ocre (teinte 44°), 10 tons de la palette, 129672 pixels ; original gardé : art-src/sprites/chef-astre/avant-adr046.png",
+      "tons": [
+        [
+          "#060d16",
+          "#191405"
+        ],
+        [
+          "#0d172f",
+          "#362a0b"
+        ],
+        [
+          "#0a1223",
+          "#282009"
+        ],
+        [
+          "#111c3b",
+          "#43350f"
+        ],
+        [
+          "#2a3b6f",
+          "#7d6728"
+        ],
+        [
+          "#233363",
+          "#705b21"
+        ],
+        [
+          "#17254c",
+          "#564515"
+        ],
+        [
+          "#1c2a57",
+          "#634f19"
+        ],
+        [
+          "#132044",
+          "#4d3d11"
+        ],
+        [
+          "#2f457d",
+          "#8d732c"
+        ]
+      ]
+    }
+  ]
 }
