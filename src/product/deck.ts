@@ -31,10 +31,13 @@ export interface DeckIssue {
 /** Les 16 identités ordinaires (famille × Rang), dans l’ordre du catalogue. */
 export const IDENTITIES: readonly string[] = FAMILIES.flatMap((f) => [1, 2, 3, 4].map((r) => `${f}-${r}`));
 
-/** Variantes du catalogue pour une identité (aujourd’hui exactement une ; le modèle en accepte plusieurs). */
+/** Variantes du catalogue pour une identité, dans l'ordre A, B, C (avenant 09 : trois par identité). */
 export function variantsOf(identity: string): string[] {
   return Object.values(CATALOG).filter((d) => d.identity === identity && d.rarity !== 'Basic' && !d.signature).map((d) => d.defId);
 }
+
+/** La variante A d'une identité (catalogue initial). */
+export const variantA = (identity: string): string => variantsOf(identity)[0]!;
 
 export const ALL_VARIANTS: readonly string[] = IDENTITIES.flatMap(variantsOf);
 
@@ -45,7 +48,8 @@ export function equippedFor(choice: DeckChoice, identity: string): string {
 
 /** Les 17 définitions du deck (via le constructeur canonique du moteur). */
 export function deckDefs(choice: DeckChoice): string[] {
-  return buildDeck({ signature: choice.signature, variants: choice.variants.map((v) => cardDef(v).identity) });
+  // avenant 09 : la définition exacte de chaque variante (A, B ou C) est transmise au constructeur
+  return buildDeck({ signature: choice.signature, variants: [...choice.variants] });
 }
 
 /** Contrôle complet ; liste vide = deck légal. Chaque problème porte une raison affichable. */
@@ -80,7 +84,9 @@ export function validateDeck(choice: DeckChoice, owned: Collection): DeckIssue[]
 
 /** Configuration moteur du siège du joueur (PV propres au personnage, fournis par l’appelant). */
 export function playerSeat(choice: DeckChoice, name: string, hp: number): GameConfig['players']['p1'] {
-  return { name, hp, signature: choice.signature, variants: choice.variants.map((v) => cardDef(v).identity), techniques: [...choice.techniques] };
+  // Une variante A s'écrit par son identité (configurations, replays et empreintes d'avant l'avenant 09 inchangés) ; une
+  // variante B ou C par sa définition.
+  return { name, hp, signature: choice.signature, variants: choice.variants.map((v) => (v === variantA(cardDef(v).identity) ? cardDef(v).identity : v)), techniques: [...choice.techniques] };
 }
 
 /** Résumé lisible : nombre de variantes par famille et par rareté. */

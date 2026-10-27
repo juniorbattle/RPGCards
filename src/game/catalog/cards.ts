@@ -24,7 +24,12 @@ export type EffectId =
   | 'eclaireur' | 'detour' | 'dissimulation' | 'silence'
   | 'racine' | 'ecaille' | 'entrave' | 'tenacite'
   | 'repere' | 'prisme' | 'relance' | 'convergence'
-  | 'flamme' | 'clairvoyance' | 'emprise' | 'cycle';
+  | 'flamme' | 'clairvoyance' | 'emprise' | 'cycle'
+  // avenant 09 (M12, appliqué à titre provisoire) : variantes B puis C de chaque identité
+  | 'tison' | 'escarbille' | 'percee' | 'bravade' | 'surenchere' | 'brulure' | 'fournaise' | 'phenix'
+  | 'leurre' | 'murmure' | 'echo' | 'filombre' | 'ombre' | 'contrejour' | 'eclipse' | 'miroirbrise'
+  | 'epine' | 'bouture' | 'seve' | 'lierre' | 'mur' | 'profondes' | 'rempart' | 'herse'
+  | 'boussole' | 'comete' | 'constellation' | 'sextant' | 'equinoxe' | 'harmonie' | 'zenith' | 'solstice';
 
 /** Moment de déclenchement imprimé (§10.1). */
 export type EffectTrigger =
@@ -64,7 +69,46 @@ export const EFFECTS: Record<EffectId, EffectDef> = {
   clairvoyance: { id: 'clairvoyance', name: 'Clairvoyance voilée', trigger: 'primary-reveal', role: 'Signature · révélation', text: 'À la révélation : voit privément une carte aléatoire de la main adverse, puis la plus ancienne Secondaire adverse cachée.' },
   emprise: { id: 'emprise', name: 'Emprise', trigger: 'primary-reveal', role: 'Signature · Garde', text: 'Si elle gagne une Garde contre Assaut : Repousse une Secondaire adverse encore en jeu, cachée ou active (une seule cible).' },
   cycle: { id: 'cycle', name: 'Cycle astral', trigger: 'primary-reveal', role: 'Signature', text: 'Si elle gagne et qu’exactement un de ses soutiens engagés reste non annulé (Dégâts ou Interférence réussie) : ce soutien retourne au sommet de la pioche.' },
+  // Avenant 09 (M12, `docs/m12/04_AVENANT_09_VARIANTES.md`, appliqué à titre provisoire) — Cendre
+  tison: { id: 'tison', name: 'Tison', trigger: 'use-damage', role: 'Secondaire · Amplifier les dégâts', text: 'Coefficient +1 si la Primaire est en Assaut. Si la Primaire perd le Clash, le propriétaire subit 2 dégâts fixes.' },
+  escarbille: { id: 'escarbille', name: 'Escarbille', trigger: 'secondary-reveal', role: 'Secondaire · révélation volontaire', text: 'Révélation volontaire : le propriétaire subit 2 dégâts fixes et pioche une carte. Sans effet s’il a 2 PV ou moins.' },
+  percee: { id: 'percee', name: 'Percée', trigger: 'use-rank', role: 'Secondaire · Amplifier le Rang', text: 'Si la Primaire gagne en Assaut contre une Garde : la Garde dominée absorbe 2 de moins (minimum 0).' },
+  bravade: { id: 'bravade', name: 'Bravade', trigger: 'primary-reveal', role: 'Primaire · Assaut', text: 'Si elle perd en Assaut contre une Garde : la Garde victorieuse ne Repousse pas et son propriétaire ne gagne pas l’Insight de Garde victorieuse.' },
+  surenchere: { id: 'surenchere', name: 'Surenchère', trigger: 'use-rank', role: 'Secondaire · Amplifier le Rang', text: 'Soutien +2 au score. Si la Primaire perd le Clash, le propriétaire subit 3 dégâts fixes.' },
+  brulure: { id: 'brulure', name: 'Brûlure', trigger: 'use-interfere', role: 'Secondaire · Interférer', text: 'Si son Interférence réussit et n’est pas annulée : l’adversaire subit 2 dégâts fixes.' },
+  fournaise: { id: 'fournaise', name: 'Fournaise', trigger: 'use-damage', role: 'Secondaire · Amplifier les dégâts', text: 'Si la Primaire gagne en Assaut contre une Garde : la Garde dominée n’absorbe que le quart de sa Puissance imprimée (arrondi au supérieur) au lieu de la moitié.' },
+  phenix: { id: 'phenix', name: 'Phénix', trigger: 'primary-reveal', role: 'Primaire', text: 'Si elle perd le Clash : elle retourne dans la main du propriétaire au lieu de la défausse.' },
+  // Voile
+  leurre: { id: 'leurre', name: 'Leurre', trigger: 'use-rank', role: 'Secondaire · Amplifier le Rang', text: 'Une Interférence adverse dirigée contre Leurre échoue, quel que soit son Rang.' },
+  murmure: { id: 'murmure', name: 'Murmure', trigger: 'use-interfere', role: 'Secondaire · Interférer', text: 'Si son Interférence réussit et n’est pas annulée : le propriétaire voit privément la carte au sommet de la pioche adverse.' },
+  echo: { id: 'echo', name: 'Écho', trigger: 'primary-reveal', role: 'Primaire', text: 'Si elle perd le Clash : le propriétaire voit privément une carte aléatoire de la main adverse.' },
+  filombre: { id: 'filombre', name: 'Fil d’ombre', trigger: 'use-rank', role: 'Secondaire · Amplifier le Rang', text: 'Si la Primaire gagne et que Fil d’ombre n’est pas Interféré : le propriétaire voit privément une carte aléatoire de la main adverse.' },
+  ombre: { id: 'ombre', name: 'Ombre portée', trigger: 'primary-reveal', role: 'Primaire · révélation', text: 'À la révélation : le propriétaire voit privément la plus ancienne Secondaire adverse encore cachée.' },
+  contrejour: { id: 'contrejour', name: 'Contre-jour', trigger: 'use-interfere', role: 'Secondaire · Interférer', text: 'Son Interférence réussit aussi contre une Secondaire d’un Rang imprimé supérieur d’un cran au sien.' },
+  eclipse: { id: 'eclipse', name: 'Éclipse', trigger: 'use-damage', role: 'Secondaire · Amplifier les dégâts', text: 'Si la Primaire gagne et blesse : l’adversaire perd 1 Insight de sa réserve et n’en gagne aucun ce tour.' },
+  miroirbrise: { id: 'miroirbrise', name: 'Miroir brisé', trigger: 'primary-reveal', role: 'Primaire · révélation', text: 'À la révélation : le propriétaire voit privément les Secondaires adverses encore cachées (deux au plus).' },
+  // Ronce
+  epine: { id: 'epine', name: 'Épine', trigger: 'use-rank', role: 'Secondaire · Amplifier le Rang d’une Garde', text: 'Si la Garde gagne contre un Assaut : l’adversaire subit 1 dégât fixe.' },
+  bouture: { id: 'bouture', name: 'Bouture', trigger: 'use-interfere', role: 'Secondaire · Interférer', text: 'Si son Interférence réussit et n’est pas annulée : le propriétaire soigne 2 PV (sans dépasser ses PV max).' },
+  seve: { id: 'seve', name: 'Sève', trigger: 'secondary-reveal', role: 'Secondaire · révélation volontaire', text: 'Révélation volontaire : si le propriétaire a moins de PV que l’adversaire, il soigne 2 PV (sans dépasser ses PV max).' },
+  lierre: { id: 'lierre', name: 'Lierre', trigger: 'use-interfere', role: 'Secondaire · Interférer', text: 'Si son Interférence réussit et n’est pas annulée : Lierre reste active dans sa case au lieu d’aller à la défausse.' },
+  mur: { id: 'mur', name: 'Mur de ronces', trigger: 'use-rank', role: 'Secondaire · Amplifier le Rang', text: 'Soutien +2 au score si la Primaire est en Garde.' },
+  profondes: { id: 'profondes', name: 'Racines profondes', trigger: 'primary-reveal', role: 'Primaire · Garde', text: 'Si elle gagne en Garde : elle retourne dans la main du propriétaire au lieu de la défausse.' },
+  rempart: { id: 'rempart', name: 'Rempart', trigger: 'primary-reveal', role: 'Primaire · Garde', text: 'En Garde, si un Assaut la domine : elle absorbe les trois quarts de sa Puissance imprimée (arrondi au supérieur) au lieu de la moitié, toujours dans la limite de P_Assaut − 1.' },
+  herse: { id: 'herse', name: 'Herse', trigger: 'use-rank', role: 'Secondaire · Amplifier le Rang d’une Garde', text: 'Si la Garde gagne contre un Assaut : l’adversaire subit 3 dégâts fixes.' },
+  // Astre
+  boussole: { id: 'boussole', name: 'Boussole', trigger: 'use-rank', role: 'Secondaire · Amplifier le Rang', text: 'Compte l’affinité (+1) avec une Primaire de toute famille (sans double +1).' },
+  comete: { id: 'comete', name: 'Comète', trigger: 'use-damage', role: 'Secondaire · Amplifier les dégâts', text: 'Si la Primaire gagne et que Comète n’est pas Interférée : Comète retourne au sommet de la pioche du propriétaire au lieu de la défausse.' },
+  constellation: { id: 'constellation', name: 'Constellation', trigger: 'use-damage', role: 'Secondaire · Amplifier les dégâts', text: 'Coefficient +1 si l’autre soutien engagé du propriétaire (Rang ou Dégâts), non annulé, est d’une autre famille que Constellation.' },
+  sextant: { id: 'sextant', name: 'Sextant', trigger: 'secondary-reveal', role: 'Secondaire · révélation volontaire', text: 'Révélation volontaire : le propriétaire voit privément les deux cartes du sommet de sa pioche.' },
+  equinoxe: { id: 'equinoxe', name: 'Équinoxe', trigger: 'primary-reveal', role: 'Primaire · Assaut', text: 'En Assaut, à égalité de score contre un Assaut : elle gagne l’égalité (elle inflige ses dégâts ; ceux de l’adversaire ne s’appliquent pas). Sans effet contre une autre Équinoxe.' },
+  harmonie: { id: 'harmonie', name: 'Harmonie', trigger: 'use-rank', role: 'Secondaire · Amplifier le Rang', text: 'Soutien +2 au score si l’autre soutien engagé du propriétaire (Rang ou Dégâts), non annulé, est d’une autre famille qu’Harmonie.' },
+  zenith: { id: 'zenith', name: 'Zénith', trigger: 'use-rank', role: 'Secondaire · Amplifier le Rang', text: 'Soutien +1 au score si la Primaire est d’une autre famille. Si la Primaire gagne et que Zénith n’est pas Interféré : Zénith retourne au sommet de la pioche du propriétaire au lieu de la défausse.' },
+  solstice: { id: 'solstice', name: 'Solstice', trigger: 'primary-reveal', role: 'Primaire', text: 'Si elle gagne le Clash : +1 Insight (limite +1 par tour, réserve 2).' },
 };
+
+/** Effets de Primaire résolus dès la révélation (regards immédiats) : jamais « armés », jamais neutralisés par Silence. */
+export const INSTANT_PRIMARY_EFFECTS: ReadonlySet<EffectId> = new Set<EffectId>(['clairvoyance', 'ombre', 'miroirbrise']);
 
 export interface CardDef {
   /** Identifiant de définition unique (identité + variante). */
@@ -82,12 +126,40 @@ export interface CardDef {
   signature: boolean;
 }
 
-const VARIANTS: Record<Family, Record<OrdinaryRank, [EffectId, Rarity]>> = {
-  Cendre: { 1: ['etincelle', 'Uncommon'], 2: ['braise', 'Uncommon'], 3: ['ferveur', 'Rare'], 4: ['contrecoup', 'Epic'] },
-  Voile: { 1: ['eclaireur', 'Uncommon'], 2: ['detour', 'Rare'], 3: ['dissimulation', 'Epic'], 4: ['silence', 'Legendary'] },
-  Ronce: { 1: ['racine', 'Uncommon'], 2: ['ecaille', 'Rare'], 3: ['entrave', 'Rare'], 4: ['tenacite', 'Epic'] },
-  Astre: { 1: ['repere', 'Uncommon'], 2: ['prisme', 'Rare'], 3: ['relance', 'Epic'], 4: ['convergence', 'Legendary'] },
+/** Variantes de chaque identité, dans l'ordre A (catalogue initial), B et C (avenant 09). */
+export const VARIANTS: Readonly<Record<Family, Record<OrdinaryRank, ReadonlyArray<readonly [EffectId, Rarity]>>>> = {
+  Cendre: {
+    1: [['etincelle', 'Uncommon'], ['tison', 'Uncommon'], ['escarbille', 'Uncommon']],
+    2: [['braise', 'Uncommon'], ['percee', 'Uncommon'], ['bravade', 'Rare']],
+    3: [['ferveur', 'Rare'], ['surenchere', 'Rare'], ['brulure', 'Rare']],
+    4: [['contrecoup', 'Epic'], ['fournaise', 'Epic'], ['phenix', 'Epic']],
+  },
+  Voile: {
+    1: [['eclaireur', 'Uncommon'], ['leurre', 'Uncommon'], ['murmure', 'Uncommon']],
+    2: [['detour', 'Rare'], ['echo', 'Uncommon'], ['filombre', 'Rare']],
+    3: [['dissimulation', 'Epic'], ['ombre', 'Rare'], ['contrejour', 'Rare']],
+    4: [['silence', 'Legendary'], ['eclipse', 'Epic'], ['miroirbrise', 'Epic']],
+  },
+  Ronce: {
+    1: [['racine', 'Uncommon'], ['epine', 'Uncommon'], ['bouture', 'Uncommon']],
+    2: [['ecaille', 'Rare'], ['seve', 'Uncommon'], ['lierre', 'Rare']],
+    3: [['entrave', 'Rare'], ['mur', 'Rare'], ['profondes', 'Rare']],
+    4: [['tenacite', 'Epic'], ['rempart', 'Epic'], ['herse', 'Legendary']],
+  },
+  Astre: {
+    1: [['repere', 'Uncommon'], ['boussole', 'Uncommon'], ['comete', 'Uncommon']],
+    2: [['prisme', 'Rare'], ['constellation', 'Rare'], ['sextant', 'Uncommon']],
+    3: [['relance', 'Epic'], ['equinoxe', 'Epic'], ['harmonie', 'Rare']],
+    4: [['convergence', 'Legendary'], ['zenith', 'Legendary'], ['solstice', 'Epic']],
+  },
 };
+
+/** Lettre d'une variante dans son identité (A, B ou C), ou null pour une Basic, une Signature ou une neutre. */
+export function variantLetter(def: CardDef): 'A' | 'B' | 'C' | null {
+  if (!def.effect || def.signature || def.family === null || def.rank === null) return null;
+  const i = VARIANTS[def.family][def.rank].findIndex(([e]) => e === def.effect);
+  return i < 0 ? null : (['A', 'B', 'C'] as const)[i]!;
+}
 
 export const SIGNATURES: Record<Family, { name: string; power: number; effect: EffectId }> = {
   Cendre: { name: 'Brasier Originel', power: 14, effect: 'flamme' },
@@ -107,10 +179,11 @@ function buildCatalog(): Record<string, CardDef> {
         defId: `${identity}-basic`, identity, family, rank, power: BASIC_POWER[rank],
         rarity: 'Basic', name: `${family} ${ROMAN[rank]}`, effect: null, signature: false,
       };
-      const [effect, rarity] = VARIANTS[family][rank];
-      const variant: CardDef = { ...basic, defId: `${identity}-${effect}`, rarity, effect };
       out[basic.defId] = basic;
-      out[variant.defId] = variant;
+      for (const [effect, rarity] of VARIANTS[family][rank]) {
+        const variant: CardDef = { ...basic, defId: `${identity}-${effect}`, rarity, effect };
+        out[variant.defId] = variant;
+      }
     }
     const sig = SIGNATURES[family];
     out[`sig-${family}`] = {
@@ -124,7 +197,7 @@ function buildCatalog(): Record<string, CardDef> {
 /** Carte du catalogue du mode Duel standard : toujours une famille. */
 export type StandardCardDef = CardDef & { family: Family };
 
-/** Catalogue du mode Duel standard (16 Basics, 16 variantes, 4 Signatures), inchangé par l'avenant M10-A. */
+/** Catalogue du mode Duel standard (16 Basics, 48 variantes depuis l'avenant 09 — 16 avant —, 4 Signatures). */
 export const CATALOG: Readonly<Record<string, StandardCardDef>> = Object.freeze(buildCatalog() as Record<string, StandardCardDef>);
 
 /**
@@ -157,7 +230,10 @@ export function cardTitle(def: CardDef): string {
 
 export interface DeckSpec {
   signature: Family;
-  /** `all` = les 16 variantes du catalogue initial ; `none` = 16 Basic ; sinon liste d’identités jouées en variante. */
+  /**
+   * `all` = les 16 variantes A (catalogue initial) ; `none` = 16 Basic ; sinon une liste : une IDENTITÉ (`Cendre-3`) est
+   * jouée en variante A, une DÉFINITION de variante (`Cendre-3-surenchere`, avenant 09) est jouée telle quelle.
+   */
   variants: 'all' | 'none' | string[];
 }
 
@@ -167,9 +243,10 @@ export function buildDeck(spec: DeckSpec): string[] {
   for (const family of FAMILIES) {
     for (const rank of RANKS) {
       const identity = `${family}-${rank}`;
-      const useVariant = spec.variants === 'all' || (Array.isArray(spec.variants) && spec.variants.includes(identity));
-      const [effect] = VARIANTS[family][rank];
-      defs.push(useVariant ? `${identity}-${effect}` : `${identity}-basic`);
+      const [[effectA]] = VARIANTS[family][rank] as [readonly [EffectId, Rarity]];
+      const chosen = Array.isArray(spec.variants) ? spec.variants.find((v) => v.startsWith(`${identity}-`) && CATALOG[v]?.effect) : undefined;
+      const useA = spec.variants === 'all' || (Array.isArray(spec.variants) && spec.variants.includes(identity));
+      defs.push(chosen ?? (useA ? `${identity}-${effectA}` : `${identity}-basic`));
     }
   }
   defs.push(`sig-${spec.signature}`);

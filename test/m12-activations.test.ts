@@ -6,7 +6,7 @@
  * carte adverse montrée est nommée par le journal du spectateur (surface déjà éprouvée pour le secret, M03.1B).
  */
 import { describe, expect, it } from 'vitest';
-import { cardDef, EFFECTS } from '../src/game/catalog/cards';
+import { cardDef, EFFECTS, FAMILIES, VARIANTS } from '../src/game/catalog/cards';
 import { TECHNIQUE_IDS } from '../src/game/catalog/techniques';
 import { DEFAULT_CONFIG } from '../src/game/engine/engine';
 import { autoplay } from '../src/game/match';
@@ -123,14 +123,17 @@ describe('M12 — temps forts : la résolution, un temps par effet', () => {
 describe('M12 — temps forts : propriété sur des duels entiers', () => {
   const configs: GameConfig[] = [];
   const pairs = [['Sondage', 'Rupture'], ['Lecture', 'Dissipation'], ['Ancrage', 'Recentrage'], ['Rupture', 'Lecture'], ['Dissipation', 'Sondage']] as const;
-  for (let i = 0; i < 40; i++) {
+  // avenant 09 : un duel sur deux joue les variantes B ou C (Dissimulation gardée pour camoufler leurs effets)
+  const mix = (k: number): GameConfig['players']['p1']['variants'] => k === 0 ? 'all'
+    : FAMILIES.flatMap((f) => ([1, 2, 3, 4] as const).map((r) => (f === 'Voile' && r === 3 ? 'Voile-3' : `${f}-${r}-${VARIANTS[f][r][k]![0]}`)));
+  for (let i = 0; i < 60; i++) {
     const [a, b] = pairs[i % pairs.length]!;
     const fams = ['Cendre', 'Voile', 'Ronce', 'Astre'] as const;
     configs.push({
       seed: 9000 + i * 37,
       players: {
-        p1: { ...DEFAULT_CONFIG.players.p1, signature: fams[i % 4]!, variants: 'all', techniques: [a, b] },
-        p2: { ...DEFAULT_CONFIG.players.p2, signature: fams[(i + 1) % 4]!, variants: 'all', techniques: [b, a] },
+        p1: { ...DEFAULT_CONFIG.players.p1, signature: fams[i % 4]!, variants: mix(i % 3), techniques: [a, b] },
+        p2: { ...DEFAULT_CONFIG.players.p2, signature: fams[(i + 1) % 4]!, variants: mix((i + 1) % 3), techniques: [b, a] },
       },
     });
   }
@@ -166,7 +169,7 @@ describe('M12 — temps forts : propriété sur des duels entiers', () => {
     }
     // la propriété a bien couvert les formes principales
     for (const k of ['effet', 'echec', 'technique', 'regard', 'insight', 'interference']) expect(kinds.has(k), k).toBe(true);
-  }, 120000);
+  }, 240000);
 
   it('toutes les Techniques du catalogue ont un temps fort', () => {
     for (const t of TECHNIQUE_IDS) {

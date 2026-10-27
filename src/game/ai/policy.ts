@@ -290,7 +290,13 @@ function decideCommit(view: PlayerView, profile: AiProfile, rng: () => number, m
 
 function secondaryValue(def: CardDef): number {
   const r = def.rank ?? 0;
-  const bonus: Partial<Record<string, number>> = { eclaireur: 1.5, repere: 0.8, dissimulation: 1.2, convergence: 2, prisme: 1.2, silence: 1.5, ferveur: 0.8, detour: 0.8, relance: 0.8 };
+  const bonus: Partial<Record<string, number>> = {
+    eclaireur: 1.5, repere: 0.8, dissimulation: 1.2, convergence: 2, prisme: 1.2, silence: 1.5, ferveur: 0.8, detour: 0.8, relance: 0.8,
+    // avenant 09 : soutiens forts ou utiles en réserve (les effets résolus au Clash sont déjà pesés par la simulation)
+    tison: 0.8, surenchere: 1.0, mur: 1.0, boussole: 0.9, zenith: 1.4, harmonie: 0.8, constellation: 0.8, leurre: 0.7, contrejour: 0.9,
+    brulure: 0.9, bouture: 0.8, lierre: 0.9, escarbille: 0.6, seve: 0.7, sextant: 0.8, murmure: 0.6, filombre: 0.7, comete: 0.8,
+    eclipse: 1.0, epine: 0.6, herse: 1.2, percee: 0.8, fournaise: 1.2,
+  };
   // Les rangs moyens sont de bons soutiens ; les IV sont aussi de bonnes Primaires.
   return [0, 2.2, 2.8, 2.6, 2.0][r]! + (def.effect ? bonus[def.effect] ?? 0.3 : 0);
 }

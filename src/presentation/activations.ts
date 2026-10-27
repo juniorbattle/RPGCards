@@ -74,6 +74,15 @@ const CONSEQUENCE: Readonly<Record<EffectId | 'rupture', string>> = {
   repere: 'SOMMET DE LA PIOCHE', prisme: 'AFFINITÉ +1', relance: 'AU SOMMET DE LA PIOCHE', convergence: '×6',
   flamme: 'REPOUSSE UNE SECONDAIRE', clairvoyance: 'REGARD SUR LA MAIN', emprise: 'REPOUSSE UNE SECONDAIRE', cycle: 'SOUTIEN AU SOMMET',
   rupture: 'RENVOYÉE EN MAIN',
+  // avenant 09
+  tison: '2 DÉGÂTS POUR LUI', escarbille: 'UNE CARTE PIOCHÉE', percee: 'ABSORPTION −2', bravade: 'NI REPOUSSEMENT NI INSIGHT',
+  surenchere: '3 DÉGÂTS POUR LUI', brulure: '+2 DÉGÂTS', fournaise: 'ABSORPTION AU QUART', phenix: 'RETOUR EN MAIN',
+  leurre: 'INTERFÉRENCE DÉJOUÉE', murmure: 'SOMMET DE LA PIOCHE ADVERSE', echo: 'REGARD SUR LA MAIN', filombre: 'REGARD SUR LA MAIN',
+  ombre: 'SECONDAIRE CACHÉE VUE', contrejour: 'INTERFÈRE PLUS HAUT', eclipse: '−1 INSIGHT ADVERSE', miroirbrise: 'SECONDAIRES CACHÉES VUES',
+  epine: '+1 DÉGÂT', bouture: 'SOIN +2 PV', seve: 'SOIN +2 PV', lierre: 'RESTE EN JEU',
+  mur: 'RANG +2', profondes: 'RETOUR EN MAIN', rempart: 'ABSORBE LES TROIS QUARTS', herse: '+3 DÉGÂTS',
+  boussole: 'AFFINITÉ +1', comete: 'AU SOMMET DE LA PIOCHE', constellation: 'COEFFICIENT +1', sextant: 'SOMMET DE VOTRE PIOCHE',
+  equinoxe: 'GAGNE L’ÉGALITÉ', harmonie: 'RANG +2', zenith: 'AU SOMMET DE LA PIOCHE', solstice: '+1 INSIGHT',
 };
 
 const TECHNIQUE_CONSEQUENCE: Readonly<Record<TechniqueId, string>> = {
@@ -137,14 +146,15 @@ export function buildActivations(events: readonly GameEvent[], ctx: ActivationCo
         break;
       }
       case 'peek': {
-        const seen = [...((d.defIds as string[]) ?? []), ...(d.hiddenSlot?.defId ? [d.hiddenSlot.defId as string] : [])];
+        const hiddenSlots = (d.hiddenSlots as Array<{ defId: string }> | undefined) ?? [];
+        const seen = [...((d.defIds as string[]) ?? []), ...(d.hiddenSlot?.defId ? [d.hiddenSlot.defId as string] : []), ...hiddenSlots.map((h) => h.defId)];
         // l'origine du regard : une Technique (son sceau) ou un effet (l'icône de son déclenchement)
         const tech = (d.source in TECHNIQUES ? d.source : null) as TechniqueId | null;
         const eff = tech ? null : (Object.values(EFFECTS).find((x) => x.name === d.source)?.id ?? null);
         out.push(base('regard', d.player, e, {
           defId: seen[0] ?? null, family: familyOf(seen[0]), title: String(d.source), seen, technique: tech,
           trigger: eff ? (DEF_BY_EFFECT[eff] && cardDef(DEF_BY_EFFECT[eff]!).signature ? 'signature' : EFFECTS[eff].trigger) : null,
-          consequence: seen.length ? (d.source === 'Repère' ? 'SOMMET DE VOTRE PIOCHE' : 'VOUS VOYEZ') : 'RIEN À OBSERVER',
+          consequence: seen.length ? (d.source === 'Repère' || d.source === 'Sextant' ? 'SOMMET DE VOTRE PIOCHE' : d.deckTop ? 'SOMMET DE LA PIOCHE ADVERSE' : 'VOUS VOYEZ') : 'RIEN À OBSERVER',
           detail: 'Privé : vous seul voyez cette carte.', private: true, tone: 'good',
         }));
         break;
@@ -188,15 +198,24 @@ export function buildActivations(events: readonly GameEvent[], ctx: ActivationCo
         break;
       }
       case 'tacticsRevealed': {
-        // Prisme et Convergence agissent dès leur engagement en Dégâts : leur effet se lit sur le coefficient public.
+        // Prisme et Convergence (et, avenant 09, Tison, Boussole, Surenchère, Mur de ronces, Zénith) agissent dès leur
+        // engagement : leur effet se lit sur la valeur publique du soutien (coefficient ou apport au score).
+        const stanceOf = (p: PlayerId) => primaries?.[p]?.stance ?? null;
         for (const p of ['p1', 'p2'] as PlayerId[]) {
           for (const t of (tactics?.[p] ?? []).filter(Boolean) as RevealedTactic[]) {
-            if (t.masked || !t.defId || t.mode !== 'damage') continue;
-            const eff = cardDef(t.defId).effect;
-            if (eff !== 'prisme' && eff !== 'convergence') continue;
+            if (t.masked || !t.defId) continue;
+            const c = cardDef(t.defId);
+            const eff = c.effect;
+            if (!eff) continue;
+            const primFam = primaries?.[p] ? cardDef(primaries[p]!.defId).family : undefined;
+            const applies = t.mode === 'damage'
+              ? eff === 'prisme' || eff === 'convergence' || (eff === 'tison' && stanceOf(p) === 'assault')
+              : t.mode === 'rank' && (eff === 'surenchere' || (eff === 'mur' && stanceOf(p) === 'guard') || ((eff === 'boussole' || eff === 'zenith') && primFam !== undefined && primFam !== c.family));
+            if (!applies) continue;
+            const consequence = eff === 'convergence' ? `×${t.value ?? 6}` : eff === 'prisme' ? `AFFINITÉ +1 · ×${t.value ?? '?'}` : t.mode === 'damage' ? `COEFFICIENT +1 · ×${t.value ?? '?'}` : `RANG +${t.value ?? '?'}`;
             out.push(base('effet', p, e, {
-              defId: t.defId, family: t.family, title: EFFECTS[eff].name, consequence: eff === 'convergence' ? `×${t.value ?? 6}` : `AFFINITÉ +1 · ×${t.value ?? '?'}`,
-              detail: EFFECT_SUMMARY[eff], trigger: 'use-damage', from: `${sideOf(p)}-slot-${t.slot}`, tone: p === me ? 'good' : 'bad', private: false,
+              defId: t.defId, family: t.family, title: EFFECTS[eff].name, consequence,
+              detail: EFFECT_SUMMARY[eff], trigger: t.mode === 'damage' ? 'use-damage' : 'use-rank', from: `${sideOf(p)}-slot-${t.slot}`, tone: p === me ? 'good' : 'bad', private: false,
             }));
           }
         }
@@ -232,12 +251,17 @@ export function buildActivations(events: readonly GameEvent[], ctx: ActivationCo
           detail: cancelled ? `${cap(String(d.detail ?? ''))}${by}.` : EFFECT_SUMMARY[eff] ?? '',
           trigger: def ? (def.signature ? 'signature' : EFFECTS[eff].trigger) : null,
           from: primaryEffect ? `${sideOf(d.player)}-primary` : slot !== null && slot !== undefined ? `${sideOf(d.player)}-slot-${slot}` : null,
-          tone: cancelled ? (d.player === me ? 'bad' : 'good') : d.player === me ? 'good' : 'bad',
+          // avenant 09 : le prix d'une défaite (Tison, Surenchère) frappe son propre camp
+          tone: cancelled ? (d.player === me ? 'bad' : 'good') : (d.player === me) !== (eff === 'tison' || eff === 'surenchere') ? 'good' : 'bad',
           private: !!d.own,
         }));
         break;
       }
       case 'insight':
+        if (d.drain) {
+          out.push(base('insight', d.player, e, { title: 'Insight', consequence: `−${d.drain} INSIGHT`, detail: (d.reasons as string[] | undefined)?.join(', ') ?? '', to: `${sideOf(d.player)}-insight`, tone: d.player === me ? 'bad' : 'good' }));
+          break;
+        }
         if (!d.gain || (!d.own && insightOwn.has(d.player))) break;
         out.push(base('insight', d.player, e, { title: 'Insight', consequence: '+1 INSIGHT', detail: (d.reasons as string[] | undefined)?.join(', ') ?? '', to: `${sideOf(d.player)}-insight`, tone: d.player === me ? 'good' : 'warn' }));
         break;

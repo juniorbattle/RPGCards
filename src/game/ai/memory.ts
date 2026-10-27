@@ -42,7 +42,7 @@ export function buildMemory(events: readonly GameEvent[], viewer: PlayerId): AiM
     switch (e.kind) {
       case 'peek':
         // Seules les observations de la MAIN adverse (Sondage, Éclaireur, Clairvoyance, Détour).
-        if (d.player === viewer && !d.own && ['Sondage', 'Éclaireur', 'Clairvoyance voilée', 'Détour'].includes(d.source)) (d.defIds as string[]).forEach(add);
+        if (d.player === viewer && !d.own && ['Sondage', 'Éclaireur', 'Clairvoyance voilée', 'Détour', 'Écho', 'Fil d’ombre'].includes(d.source)) (d.defIds as string[]).forEach(add);
         break;
       case 'primariesRevealed':
         remove(d[opp]?.defId);
