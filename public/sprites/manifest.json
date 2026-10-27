@@ -295,7 +295,7 @@
       "recolor": [],
       "source": "gpt-image-2 (feuille des PNJ de la ville, Halvard, le Cartographe, chef de l’Astre (couleurs propres), reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs) ; manteau recoloré en ocre par script (ADR 046, tools/m12-couleurs-astre.mjs)",
       "fiche": "art-src/sprites/chef-astre/fiche.json",
-      "approved": false
+      "approved": true
     }
   }
 }

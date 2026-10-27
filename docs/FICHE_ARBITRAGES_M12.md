@@ -55,7 +55,7 @@ forts réels figés à mi-course, de vrais duels au navigateur, réglages), `art
 | Entrée | Objet | Recommandation | Alternatives |
 |---|---|---|---|
 | **H1** | L'Astre en ocre, ambre et or partout (cartes, étendards de la salle et de l'arène, ville dessinée par code, tenues), le Voile en marine et indigo ; Halvard en manteau ocre (portrait de combat) | **Recevoir** (fait, verrouillé par `test/couleurs-familles.test.ts`) | Retouches de teinte (laquelle) |
-| **H2** | La feuille de ville de Halvard recolorée par script (manteau marine → ocre, planche `screenshots/qa/m12/couleurs/halvard-avant-apres.png`) : son approbation de la passe 128 est caduque ; hors QA, Halvard est dessiné par code (en ocre) jusqu'à un nouvel ordre | **Approuver la feuille recolorée** (ordre explicite, appliqué par le registre dans une passe à part) | La reprendre (teinte, tons) ; revenir à la feuille marine (Halvard se confond de nouveau avec Ilse) |
+| **H2** | La feuille de ville de Halvard recolorée par script (manteau marine → ocre, planche `screenshots/qa/m12/couleurs/halvard-avant-apres.png`) : son approbation de la passe 128 est caduque ; hors QA, Halvard est dessiné par code (en ocre) jusqu'à un nouvel ordre | **Fait : approuvée** (ordre du responsable du 2026-10-27, « j'approuve la feuille recolorée de Halvard » ; passe 155, par le registre) | La reprendre (teinte, tons) ; revenir à la feuille marine (Halvard se confond de nouveau avec Ilse) |
 
 ## Suite
 
