@@ -1,6 +1,6 @@
 {
   "id": "chef-astre",
-  "statut": "NON APPROUVÉ : approbation de la passe 128 caduque depuis la recoloration du manteau (ADR 046, 2026-10-27) ; admis en QA seulement jusqu’à un nouvel ordre explicite du responsable (empreinte 5e194dccf1ba…)",
+  "statut": "APPROUVÉ par le responsable le 2026-10-27 (ordre explicite du responsable (2026-10-27, après la planche screenshots/qa/m12/couleurs/halvard-avant-apres.png, passe 154, ADR 046) : « j'approuve la feuille recolorée de Halvard » ; passe 155) : admis hors QA tant que l’empreinte reste 5e194dccf1ba…",
   "auteur": "Claude Code (session de reprise de M09, passe 127), à la demande du responsable : « Oui : génère les 10 autres feuilles des PNJ (gabarits marchande, commis, joueuse ; Maëlle, Sélène, Orin ; les quatre chefs), traite-les et pose-les. »",
   "generation": "tools/m09-generer-images.mjs (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-pnj-suite.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -152,5 +152,11 @@
         ]
       ]
     }
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-27",
+    "decision": "ordre explicite du responsable (2026-10-27, après la planche screenshots/qa/m12/couleurs/halvard-avant-apres.png, passe 154, ADR 046) : « j'approuve la feuille recolorée de Halvard » ; passe 155",
+    "fichier": "public/sprites/chef-astre.png",
+    "sha256": "5e194dccf1ba7840098d006333309c122cc052c94b1cefd5cb75fccb0c3ba4b4"
+  }
 }

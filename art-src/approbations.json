@@ -212,6 +212,12 @@
       "sha256": "22c93ecf24c312ab0c4ff58bcb65078947053489855fc663c82b2586f96aae5f",
       "date": "2026-10-25",
       "decision": "ordre explicite du responsable (2026-10-25, après les planches screenshots/qa/m09/finalisation/yeux/ : réponse « J’approuve les 7 » à la question « Approuves-tu les 7 feuilles retraitées (docker, marchande, commis, joueuse, Kaï, Bran, Ilse) ? ») ; passe 139"
+    },
+    {
+      "fichier": "public/sprites/chef-astre.png",
+      "sha256": "5e194dccf1ba7840098d006333309c122cc052c94b1cefd5cb75fccb0c3ba4b4",
+      "date": "2026-10-27",
+      "decision": "ordre explicite du responsable (2026-10-27, après la planche screenshots/qa/m12/couleurs/halvard-avant-apres.png, passe 154, ADR 046) : « j'approuve la feuille recolorée de Halvard » ; passe 155"
     }
   ],
   "caduques": [
