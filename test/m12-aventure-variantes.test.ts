@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { appliquer, nouvelleAventure, type AventureEtat, type Evenement } from '../src/aventure/aventure';
-import { choixVariante, conclureDuel, ouvrirDuel } from '../src/aventure/fin';
+import { choixVariante, conclureDuel, enjeuVariante, ouvrirDuel } from '../src/aventure/fin';
 import { collectionDe, variantesIdentite } from '../src/aventure/registre';
 import { duelEpreuve, duelFigure, duelJoute } from '../src/aventure/rencontres';
 import { nouvelleSauvegarde } from '../src/aventure/sauvegarde';
@@ -51,6 +51,21 @@ describe('avenant 09 — le choix de la variante à la victoire', () => {
     expect(conclureDuel(s, o3.duel, [], 'victoire', 9, AT, 'Ronce-1-epine').gains.map((g) => g.key)).toEqual(['variante:Ronce-3-mur']);
     const o4 = ouvrirDuel(s, duelFigure('cadet-Ronce', s.etat, 14, false), AT);
     expect(conclureDuel(s, o4.duel, [], 'victoire', 9, AT).gains).toEqual([]);
+  });
+
+  it('enjeuVariante : le choix à la première victoire, la suivante en revanche, rien quand tout est gagné ou pour la Signature', () => {
+    let e = affilie('Cendre');
+    expect(enjeuVariante(e, 'cadet-Cendre')).toEqual({ choix: variantesIdentite('Cendre-3') });
+    expect(enjeuVariante(e, 'chef-Cendre')).toBeNull();
+    e = run(e, [{ type: 'lancerDefi', figure: 'cadet-Cendre' }, { type: 'duelStructurant', figure: 'cadet-Cendre', issue: 'victoire', duel: 'd1', variante: 'Cendre-3-surenchere' }]);
+    expect(enjeuVariante(e, 'cadet-Cendre')).toEqual({ suivante: 'Cendre-3-ferveur' });
+    e = run(e, [1, 2].map((i): Evenement => ({ type: 'duelStructurant', figure: 'cadet-Cendre', issue: 'victoire', duel: `d${i + 1}` })));
+    expect(enjeuVariante(e, 'cadet-Cendre')).toBeNull();
+    // Épreuve regagnée : la suivante seulement au dernier duel de la série
+    e = run(e, [1, 2, 3].map((i): Evenement => ({ type: 'epreuve', famille: 'Cendre', issue: 'victoire', duel: `e${i}` })));
+    expect(enjeuVariante(e, 'epreuve:Cendre')).toBeNull();
+    e = run(e, [1, 2].map((i): Evenement => ({ type: 'epreuve', famille: 'Cendre', issue: 'victoire', duel: `f${i}` })));
+    expect(enjeuVariante(e, 'epreuve:Cendre')).toEqual({ suivante: 'Cendre-1-tison' });
   });
 
   it('Épreuve et Joute menées par conclureDuel : le choix passe jusqu’au registre', () => {
