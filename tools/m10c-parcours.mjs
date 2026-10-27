@@ -1,7 +1,7 @@
 // M10-C — parcours complet d'une famille d'accueil (la Cendre) au navigateur, par l'interface du mode Aventure :
 // nouvelle aventure → prologue → Tessa (émissaire) → confirmation → quatre Basics (écran de récompense) → éditeur de
 // deck (case par case) → Collection → Registre → Tessa, duel JOUÉ jusqu'au bout par le pilote des QA (victoire : variante
-// III ; défaite : défi toujours ouvert, rien de gagné, puis victoire imposée) → revanche sans gain → Kaï, bras droit,
+// III ; défaite : défi toujours ouvert, rien de gagné, puis victoire imposée) → revanche (variante suivante) → Kaï, bras droit,
 // dans la rue Haute (variante IV) → Bran, chef, dans la cour de la Chapelle (préparation, duel, Signature équipée) →
 // Collection finale → rechargement : même état. Puis la planche des écrans de récompense. Erreurs console.
 // Usage : npm run build && [LQV_GPU=1 CHROMIUM_PATH=<Chrome>] [LQV_VP=1920x1080] [LQV_AV_QS=&decors=code]
@@ -155,7 +155,7 @@ try {
   }
   check(e.deck.cartes.includes('Cendre-3-ferveur') && !e.deck.cartes.includes('Cendre-3-basic'), 'la variante III remplace la Basic de son identité dans le deck');
   await retour();
-  // Revanche : sans gain
+  // Revanche : la variante suivante (avenant 09 : B, Surenchère), la variante équipée reste
   const nReg = (await etat()).registre.length;
   await parler('cadet-Cendre');
   check(/Revanche/.test(await p.textContent('.ville-dialog')), 'Tessa battue : revanche proposée');
@@ -163,7 +163,8 @@ try {
   await p.click('[data-key="av-duel-go"]');
   await duelPret();
   await finDuel('victoire');
-  check((await etat()).registre.length === nReg, 'revanche gagnée : registre inchangé');
+  e = await etat();
+  check(e.registre.length === nReg + 1 && e.registre.some((g) => g.key === 'variante:Cendre-3-surenchere') && e.deck.cartes.includes('Cendre-3-ferveur'), 'revanche gagnée : la variante suivante (Surenchère) au registre ; Ferveur reste équipée');
   await retour();
   // Kaï, bras droit, dans la rue Haute
   await lancer('brasDroit-Cendre');
@@ -189,7 +190,7 @@ try {
   await shot('deck-fin-maison');
   await p.click('[data-key="av-onglet-collection"]');
   const fin = await p.$$eval('[data-possedee="true"]', (els) => els.map((x) => x.dataset.key));
-  check(fin.length === 7, `Collection : 7 cartes de la Cendre possédées (4 Basics, 2 variantes, la Signature) — ${fin.length}`);
+  check(fin.length === 8, `Collection : 8 cartes de la Cendre possédées (4 Basics, 3 variantes, la Signature) — ${fin.length}`);
   await shot('collection-fin-maison', 1200, 'Collection en fin de maison (Cendre)');
   await p.click('[data-key="av-deck-close"]');
   // Rechargement : même état

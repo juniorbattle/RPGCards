@@ -2,7 +2,7 @@
 // écran titre → Nouvelle aventure (16 neutres) → le Quai → Kaï (« Pas maintenant », puis défi) → préparation (bandeau du
 // deck de prêt) → duel → rechargement pendant le duel → reprise exacte (hash) → abandon → résultat → la foule → premier
 // émissaire → « Chercher une autre voie » → les Ruelles → Lior → confirmation → « Revenir » (rien reçu) → confirmation →
-// quatre Basics → premier défi de lieutenant → victoire (QA) → variante → revanche sans duplication → deck et registre →
+// quatre Basics → premier défi de lieutenant → victoire (QA) → variante → revanche (variante suivante) → deck et registre →
 // journal → rechargement → reprise au même endroit ; jeu par défaut et sauvegarde standard intacts. Erreurs console.
 // Usage : npm run build && [LQV_DIST=<dist>] [LQV_VP=1920x1080] node tools/m10-aventure.mjs [dossier] [rapport.json]
 import { execSync } from 'node:child_process';
@@ -150,13 +150,13 @@ try {
   await townReady();
   const nReg = e.registre.length;
   await parler('cadet-Voile');
-  check(/Revanche/.test(await p.textContent('.ville-dialog')), 'cadet battu : revanche proposée, sans récompense');
+  check(/Revanche : en jeu/.test(await p.textContent('.ville-dialog')), 'cadet battu : revanche proposée, la variante suivante en jeu (avenant 09)');
   await p.click('[data-key="dlg-duel"]');
   await p.click('[data-key="av-duel-go"]');
   await duelPret();
   await av(() => window.__lqvAventure.qaTerminer('victoire'));
   await p.waitForSelector('[data-screen="av-resultat"]');
-  check((await etat()).registre.length === nReg, 'revanche gagnée : registre inchangé (aucune duplication)');
+  check((await etat()).registre.length === nReg + 1 && (await etat()).registre.some((g) => g.key === 'variante:Voile-3-ombre'), 'revanche gagnée : la variante suivante (B, Ombre portée) au registre, sans duplication');
   await p.click('[data-key="av-retour"]');
   await townReady();
   await p.click('[data-key="av-deck"]');

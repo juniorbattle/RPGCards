@@ -16,6 +16,7 @@ import type { Controller } from '../app/controller';
 import { portraitUrl } from '../art/portrait';
 import { emblemSvg } from '../art/emblems';
 import { CATALOG, cardTitle, EFFECTS, FAMILIES, type Family } from '../game/catalog/cards';
+import { EFFECT_SUMMARY } from '../game/catalog/cardText';
 import { TECHNIQUES, type TechniqueId } from '../game/catalog/techniques';
 import { viewFor } from '../game/visibility/view';
 import { cardEl } from '../presentation/cardView';
@@ -40,7 +41,7 @@ import { estDepart, estFamille, etatDepart, type Depart } from './departs';
 import { ilotAventure, ilotBase } from './ilots';
 import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, RANGS, rangNeutre, roleDe, cheffe, chefVaincu, leChef, ROLES, ROMAIN, type EtatFamille } from './modele';
 import { objectif, quetes } from './quetes';
-import { aGain, collectionDe, type Gain } from './registre';
+import { aGain, collectionDe, prochaineVariante, variantesIdentite, type Gain } from './registre';
 import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue, duelRival, personnalite, type DuelPrevu } from './rencontres';
 import { detecter, guetteursActifs, pointApproche, pointSurgissement, regardVers } from './vue';
 import { evenementDef, evenementRival, isKId, type EvenementRival, type KId } from './rival';
@@ -53,7 +54,7 @@ import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, ty
 import { installAventureStyles } from './styles';
 import { aJouer, arriveeAJouer, cadreDialogue, cadreGroupe, CARTONS_CHAPITRE, cinePermise, DUREES, ecrireCine, estChapitreCarton, LIGNES_LIEU, lireCine, plansAffiliation, plansArrivee, plansChapitre, plansChef, plansEmissaire, plansGuetteur, plansKaiPrologue, plansRival, plansTitre, type CadreDialogue, type CinematiqueId } from './cinematiques';
 import { Bandes, Cinema } from './cinema';
-import { conclureDuel, figureOuNull, ouvrirDuel, REGLES_DUEL } from './fin';
+import { choixVariante, conclureDuel, figureOuNull, ouvrirDuel, REGLES_DUEL } from './fin';
 
 export interface DepsAventure {
   app: HTMLElement;
@@ -99,7 +100,7 @@ export class AventureApp {
   private look = '';
   private live: { session: DuelSession; duel: DuelAventure; prevu: DuelPrevu } | null = null;
   /** Écran courant (QA, aide au rendu). */
-  ecran: 'titre' | 'nouveau' | 'ville' | 'preparation' | 'duel' | 'resultat' = 'titre';
+  ecran: 'titre' | 'nouveau' | 'ville' | 'preparation' | 'duel' | 'choix' | 'resultat' = 'titre';
   private posesAffichees = '';
   /**
    * ARB-M10-12 : le Quai de l'aventure est le Quai en quatre rangs ; depuis la reprise de M09, toute la ville est en rangs
@@ -977,7 +978,12 @@ export class AventureApp {
       ], fig.apparence);
     }
     const st = statutDefi(e, fig);
-    const enjeu = st.deja ? 'Revanche, sans récompense : votre victoire est déjà au registre.' : `En jeu : ${fig.enjeu.kind === 'variante' ? nomCarte(fig.enjeu.defId) : `la Signature ∞ ${de(fig.famille)}`}.`;
+    // avenant 09 : la revanche contre un lieutenant met en jeu la variante suivante de la carte gagnée, tant qu'il en reste ;
+    // le premier défi, la variante au choix (A, B ou C)
+    const suivante = fig.enjeu.kind === 'variante' ? prochaineVariante(e.registre, CATALOG[fig.enjeu.defId]!.identity) : null;
+    const enjeu = st.deja
+      ? (suivante ? `Revanche : en jeu, ${nomCarte(suivante)}, une autre variante de la carte gagnée.` : 'Revanche, sans récompense : vos victoires sont déjà au registre.')
+      : `En jeu : ${fig.enjeu.kind === 'variante' ? `une variante au choix de ${CATALOG[fig.enjeu.defId]!.name} (${variantesIdentite(CATALOG[fig.enjeu.defId]!.identity).map((v) => EFFECTS[CATALOG[v]!.effect!].name).join(', ')})` : `la Signature ∞ ${de(fig.famille)}`}.`;
     if (!st.ouvert) return this.dire(`${fig.nom}, ${fig.titre}`, `« Pas encore. » ${st.raison}`, [fermer(this)], fig.apparence);
     // M11-C : au premier défi d'une figure d'une autre famille, elle a entendu parler de votre parcours
     const contexte = !st.deja && fig.famille !== e.affiliation ? this.replique(`defi-${fig.famille}`, 'defi') : '';
@@ -1320,11 +1326,42 @@ export class AventureApp {
     this.d.app.hidden = true;
     const v = viewFor(c.match.state, 'p1');
     const issue: Issue = forcee ?? (abandon ? 'abandon' : v.winner === 'me' ? 'victoire' : 'defaite');
-    const fin = conclureDuel(this.save, live.duel, c.match.events, issue, v.turn, new Date().toISOString());
-    if (fin.refus) this.toast(fin.refus);
-    this.persist();
-    this.dernierResultat = { prevu: live.prevu, issue, gains: fin.gains, turns: v.turn, faits: fin.faits, pv: fin.pv };
-    this.resultat();
+    const conclure = (variante?: string) => {
+      if (!this.save) return;
+      const fin = conclureDuel(this.save, live.duel, c.match.events, issue, v.turn, new Date().toISOString(), variante);
+      if (fin.refus) this.toast(fin.refus);
+      this.persist();
+      this.dernierResultat = { prevu: live.prevu, issue, gains: fin.gains, turns: v.turn, faits: fin.faits, pv: fin.pv };
+      this.resultat();
+    };
+    // Avenant 09 : la première victoire qui donne une variante la laisse choisir (A, B ou C). En QA, sans `?choix=1`, la
+    // variante A est prise d'office (parcours d'avant l'avenant inchangés).
+    const choix = issue === 'victoire' ? choixVariante(this.save.etat, live.duel.rencontre) : null;
+    if (!choix) return conclure();
+    if (this.params.qa && new URLSearchParams(location.search).get('choix') !== '1') return conclure(choix[0]);
+    this.choisirVariante(live.prevu, choix, conclure);
+  }
+
+  /** Avenant 09 : écran du choix de la variante, après une victoire qui en donne une ; rien n'est écrit avant le choix. */
+  private choisirVariante(prevu: DuelPrevu, ids: readonly string[], ok: (v: string) => void): void {
+    this.ecran = 'choix';
+    this.d.arena()?.setStaging('portrait');
+    this.d.arena()?.setPaused(false);
+    son().jouer('gain');
+    const ident = CATALOG[ids[0]!]!;
+    this.ecranShell('scr-result av-scr',
+      h('section', { class: 'av-titre av-resultat av-choix', 'data-screen': 'av-choix' },
+        h('h1', { class: 'av-h1' }, 'Victoire'),
+        h('p', { class: 'av-sous' }, `${prevu.titre} · choisissez votre carte`),
+        h('p', null, `${ident.name} : une variante au choix entre au registre et remplace la carte de base dans votre deck. Les deux autres se gagnent ensuite, en revanche ou au titre du Championnat.`),
+        h('div', { class: 'av-choix-cartes' }, ...ids.map((id, i) => {
+          const d = CATALOG[id]!;
+          return h('div', { class: 'av-choix-carte', 'data-key': `av-choix-carte-${id}` },
+            cardEl(id, { artSeed: this.params.artSeed, tag: 'div' }),
+            h('b', null, `${'ABC'[i]} · ${d.effect ? EFFECTS[d.effect].name : d.name}`),
+            h('small', null, d.effect ? EFFECT_SUMMARY[d.effect] : ''),
+            bouton('Prendre cette carte', () => ok(id), `av-choix-${id}`, i === 0));
+        }))));
   }
 
   private resultat(): void {
@@ -1337,8 +1374,8 @@ export class AventureApp {
     const titre = r.issue === 'victoire' ? 'Victoire' : r.issue === 'defaite' ? 'Défaite' : 'Abandon';
     const prologue = r.prevu.rencontre === 'prologue';
     const note = prologue ? 'Quelle que soit l’issue, la foule a tout vu.'
-      : r.prevu.rencontre.startsWith('champ:') ? (r.issue === 'victoire' ? 'Le Championnat avance : aucune carte en jeu, seulement le titre.' : 'Rien n’est perdu : la manche peut se rejouer.')
-      : r.prevu.rencontre.startsWith('epreuve:') ? (r.issue === 'victoire' ? (r.gains.length ? 'Épreuve remportée : la variante entre au registre.' : 'Duel gagné : la série continue.') : 'La série repart du début.') : r.issue === 'victoire' ? (r.gains.length ? 'Votre victoire entre au registre.' : 'Revanche : rien de nouveau au registre (aucune duplication).') : 'Rien n’est perdu : le défi reste ouvert.';
+      : r.prevu.rencontre.startsWith('champ:') ? (r.issue === 'victoire' ? (r.gains.length ? 'Le titre est à vous : les variantes qui vous manquaient encore entrent au registre.' : 'Le Championnat avance : aucune carte avant le titre.') : 'Rien n’est perdu : la manche peut se rejouer.')
+      : r.prevu.rencontre.startsWith('epreuve:') ? (r.issue === 'victoire' ? (r.gains.length ? 'Épreuve remportée : la variante entre au registre.' : 'Duel gagné : la série continue.') : 'La série repart du début.') : r.issue === 'victoire' ? (r.gains.length ? 'Votre victoire entre au registre.' : 'Revanche : rien de nouveau au registre (aucune duplication ; les trois variantes sont déjà à vous).') : 'Rien n’est perdu : le défi reste ouvert.';
     this.ecranShell('scr-result av-scr',
       h('section', { class: 'av-titre av-resultat', 'data-screen': 'av-resultat' },
         h('h1', { class: 'av-h1' }, titre),
@@ -1346,7 +1383,7 @@ export class AventureApp {
         h('p', null, note),
         h('p', { class: 'av-pv', 'data-key': 'av-pv' }, r.pv[1] > r.pv[0] ? `Entraînement : vos PV passent de ${r.pv[0]} à ${r.pv[1]}.` : `Un abandon ne compte pas comme un combat : vos PV restent à ${r.pv[0]}.`),
         prologue ? h('p', { class: 'av-proto', 'data-key': 'av-faits' }, `Ce que la foule a vu (faits publics du duel) : ${r.faits.assautsGagnes} Clash(es) gagné(s) en Assaut, ${r.faits.gardesGagnees} en Garde, ${r.faits.interferencesReussies} Interférence(s) réussie(s).`) : null,
-        r.gains.length ? h('div', { class: 'av-cards' }, ...r.gains.flatMap((g) => gainEls(g, this.params.artSeed))) : null,
+        r.gains.length ? h('div', { class: `av-cards${r.gains.length > 8 ? ' nombreuses' : ''}` }, ...r.gains.flatMap((g) => gainEls(g, this.params.artSeed))) : null,
         h('div', { class: 'av-items' }, bouton('Retour en ville', () => this.apresResultat(), 'av-retour', true))));
   }
 
@@ -1508,7 +1545,7 @@ export class AventureApp {
     if (gains.length) son().jouer('gain');
     const panel = h('div', { class: 'av-confirm av-recompense', 'data-key': 'av-recompense' },
       h('h2', null, titre),
-      gains.length ? h('p', null, 'Inscription au registre des gains (une seule fois : un rechargement, une reprise ou une revanche ne le dupliquent pas).') : null,
+      gains.length ? h('p', null, 'Inscription au registre des gains (une seule fois : un rechargement ou une reprise ne le dupliquent pas).') : null,
       gains.length ? h('div', { class: 'av-cards' }, ...gains.flatMap((g) => gainEls(g, this.params.artSeed))) : null,
       ...notes.map((n, i) => h('p', { class: 'av-transition', 'data-key': `av-recompense-note-${i}` }, n)),
       h('div', { class: 'ville-choices' }, h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-continuer', onclick: () => { this.fermerModal(); suite(); } }, 'Continuer')));
@@ -1747,7 +1784,7 @@ function nomGain(g: Gain): string {
 }
 
 function ligneFigure({ role, famille }: { role: 'cadet' | 'brasDroit' | 'chef'; famille: Family }, revanche: boolean): string {
-  if (revanche) return '« Encore ? Soit. Mais ce que tu as gagné, tu l’as déjà. »';
+  if (revanche) return '« Encore ? Soit. Je joue chaque partie comme la première. »';
   return role === 'cadet' ? '« Voyons si tu tiens la distance. »' : role === 'brasDroit' ? `« Avant ${leChef(famille)}, il y a moi. »` : '« Tout ce chemin jusqu’à moi. Montre-moi pourquoi. »';
 }
 

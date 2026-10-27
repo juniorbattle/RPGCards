@@ -245,7 +245,7 @@ const runs = {
     if (step === 3) {
       check((await page.textContent('.sh-recap'))?.includes('remporté'), 'récapitulatif de série affiché');
       await snap(page, 'E-recapitulatif-serie');
-      check(st.save.collection.techniques.includes('Rupture') && st.save.collection.techniques.includes('Dissipation') && st.save.collection.variants.length === 13, 'déblocages : 9 variantes + Rupture + Dissipation');
+      check(st.save.collection.techniques.includes('Rupture') && st.save.collection.techniques.includes('Dissipation') && st.save.collection.variants.length === 39, 'déblocages : 27 variantes (A, B et C de 9 identités, avenant 09) + Rupture + Dissipation');
       await page.click('[data-key="result-board"]');
       check(await page.locator('[data-key="enc-libre-astre"]:not([disabled])').count() === 1, 'Orin débloqué en duel libre');
       await snap(page, 'E-rencontres-apres-serie');

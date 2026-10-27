@@ -1,5 +1,5 @@
 /**
- * Éditeur de deck (M04) et collection (consultation) — 16 identités × (Basic | variante possédée),
+ * Éditeur de deck (M04) et collection (consultation) — 16 identités × (Basic | variante A, B ou C possédée),
  * 1 Signature, 2 Techniques ; validation en direct par `validateDeck` (catalogue canonique).
  * Rien n’est enregistré tant que le deck n’est pas légal ; un deck illégal ne lance aucun duel.
  */
@@ -42,22 +42,25 @@ function renderEditor(sh: Shell): HTMLElement {
       RANKS.map((r) => {
         const identity = `${f}-${r}`;
         const cur = equippedFor(draft, identity);
-        const variant = variantsOf(identity)[0]!;
-        const has = owned.variants.includes(variant);
-        const vd = cardDef(variant);
-        // M07 L4 : les deux versions sont deux cartes côte à côte ; on choisit en cliquant la carte (radio).
+        // M07 L4 : les versions sont des cartes côte à côte ; on choisit en cliquant la carte (radio). Avenant 09 : Basic et
+        // trois variantes (A, B, C) ; la clé de la variante A reste `ver-<identité>-variant` (outils de QA d'avant).
         const basic = `${identity}-basic`;
         const pick = (id: string, v: string | null) => { inspected = id; picked = id; set(setVersion(draft, identity, v)); };
+        const verBtn = (variant: string, i: number) => {
+          const has = owned.variants.includes(variant);
+          const vd = cardDef(variant);
+          return h('button', {
+            class: cls('sh-ver', cur === variant && 'on', !has && 'locked', picked === variant && 'just'), type: 'button', role: 'radio', 'aria-checked': String(cur === variant), 'data-key': `ver-${identity}-variant${i ? `-${'abc'[i]}` : ''}`,
+            disabled: has ? null : true, 'aria-label': `${vd.name} — ${EFFECTS[vd.effect!].name}, variante ${'ABC'[i]}${has ? '' : ' (verrouillée)'}`,
+            title: has ? `${EFFECTS[vd.effect!].name} (${vd.rarity}) : ${EFFECTS[vd.effect!].text}` : unlockHint(variant),
+            onclick: () => pick(variant, variant),
+          }, cardEl(variant, { artSeed: sh.params.artSeed, tag: 'div', classes: ['sh-mini'] }), h('span', { class: 'sh-ver-lettre', 'aria-hidden': 'true' }, 'ABC'[i]!), has ? null : h('span', { class: 'sh-lock-badge', html: iconSvg('lock', 16) }));
+        };
         return h('div', { class: 'sh-ident', role: 'row', 'data-identity': identity },
-          h('div', { class: 'sh-ident-opts', role: 'radiogroup', 'aria-label': `Version de ${f} ${rankLabel(vd)}` },
+          h('div', { class: 'sh-ident-opts', role: 'radiogroup', 'aria-label': `Version de ${f} ${rankLabel(cardDef(basic))}` },
             h('button', { class: cls('sh-ver', cur === basic && 'on', picked === basic && 'just'), type: 'button', role: 'radio', 'aria-checked': String(cur === basic), 'data-key': `ver-${identity}-basic`, 'aria-label': `${cardDef(basic).name} Basic`, title: 'Basic', onclick: () => pick(basic, null) },
               cardEl(basic, { artSeed: sh.params.artSeed, tag: 'div', classes: ['sh-mini'] })),
-            h('button', {
-              class: cls('sh-ver', cur === variant && 'on', !has && 'locked', picked === variant && 'just'), type: 'button', role: 'radio', 'aria-checked': String(cur === variant), 'data-key': `ver-${identity}-variant`,
-              disabled: has ? null : true, 'aria-label': `${vd.name} — ${EFFECTS[vd.effect!].name}${has ? '' : ' (verrouillée)'}`,
-              title: has ? `${EFFECTS[vd.effect!].name} (${vd.rarity}) : ${EFFECTS[vd.effect!].text}` : unlockHint(variant),
-              onclick: () => pick(variant, variant),
-            }, cardEl(variant, { artSeed: sh.params.artSeed, tag: 'div', classes: ['sh-mini'] }), has ? null : h('span', { class: 'sh-lock-badge', html: iconSvg('lock', 18) }))),
+            ...variantsOf(identity).map(verBtn)),
           h('button', { class: 'sh-ident-card', type: 'button', 'data-key': `inspect-${identity}`, 'aria-label': `Inspecter ${cardDef(cur).name}`, title: 'Inspecter', onclick: () => { inspected = cur; sh.render(); }, html: iconSvg('help', 16) }));
       }))));
   return screen('deck', 'Votre deck', [chip(issues.length ? `${issues.length} problème(s)` : 'Deck légal', issues.length ? 'bad' : 'ok'), dirty ? chip('modifications non enregistrées', 'gold') : null],
@@ -104,7 +107,7 @@ function inspectPanel(sh: Shell, defId: string): HTMLElement {
       eff ? h('p', null, h('b', null, `${eff.role}. `), eff.text) : h('p', null, 'Basic : aucun effet individuel ; Rang et Puissance de référence (3 / 6 / 9 / 12).')));
 }
 
-/** Collection : les 36 définitions du catalogue initial et les 6 Techniques, possédées ou non. */
+/** Collection : les 68 définitions du catalogue (avenant 09 : trois variantes par identité) et les 6 Techniques. */
 function renderCollection(sh: Shell): HTMLElement {
   const owned = sh.collection();
   const deck = sh.save?.deck;
@@ -114,7 +117,8 @@ function renderCollection(sh: Shell): HTMLElement {
   let k = 0;
   const filters = h('div', { class: 'sh-filters', role: 'radiogroup', 'aria-label': 'Filtrer par famille' },
     (['all', ...FAMILIES] as const).map((f) => h('button', { class: cls('sh-filter', familyFilter === f && 'on'), type: 'button', role: 'radio', 'aria-checked': String(familyFilter === f), 'data-key': `filter-${f}`, onclick: () => { familyFilter = f; sh.render(); } }, f === 'all' ? 'Toutes' : f)));
-  return screen('collection', 'Collection', [`${ownedCount} cartes équipables sur 36 · ${owned.techniques.length} Techniques sur 6. `, sh.save?.options.fullCollection ? chip('mode démo : collection complète', 'proto') : chip('déblocages de prototype', 'proto')],
+  const total = Object.values(CATALOG).filter((d) => d.family !== null).length;
+  return screen('collection', 'Collection', [`${ownedCount} cartes équipables sur ${total} · ${owned.techniques.length} Techniques sur 6. `, sh.save?.options.fullCollection ? chip('mode démo : collection complète', 'proto') : chip('déblocages de prototype', 'proto')],
     h('div', { class: 'sh-deck-layout' },
       h('div', { class: 'sh-deck-main' },
         filters,

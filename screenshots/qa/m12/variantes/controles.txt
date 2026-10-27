@@ -1,0 +1,12 @@
+OK éditeur : 16 identités
+OK éditeur : quatre versions par identité (Basic, A, B, C)
+OK collection de départ : B de Rang I équipable
+OK collection de départ : B de Rang II verrouillée
+OK deck enregistré avec la variante C (Cendre-1-escarbille, Voile-1-eclaireur, Ronce-1-racine, Astre-1-repere)
+OK mode démo : aucune version verrouillée
+OK collection : 68 cartes
+OK devant Tessa
+OK dialogue de Tessa : une variante au choix, les trois nommées
+OK écran du choix : trois variantes
+OK choix : Brûlure au registre et dans le deck
+OK revanche : la variante suivante en jeu (Ferveur)

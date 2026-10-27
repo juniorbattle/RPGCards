@@ -246,8 +246,8 @@ export const CATALOGUE: Readonly<Record<string, readonly Replique[]>> = {
   ],
   // --------------------------------------------------------------------- les figures : revanches (après la première victoire)
   'figure-cadet': [
-    V('cadet-rev-franc', '« Encore ? Soit. Mais ce que tu as gagné, tu l’as déjà. »', { moment: ['revanche'], temperament: ['franc'] }),
-    V('cadet-rev-franc-2', '« Une revanche ? J’en rêvais. Sans enjeu, mais pas sans fierté. »', { moment: ['revanche'], temperament: ['franc'] }),
+    V('cadet-rev-franc', '« Encore ? Soit. Je joue chaque partie comme la première. »', { moment: ['revanche'], temperament: ['franc'] }),
+    V('cadet-rev-franc-2', '« Une revanche ? J’en rêvais. Ma fierté, elle, est toujours en jeu. »', { moment: ['revanche'], temperament: ['franc'] }),
     V('cadet-rev-agr', '« Depuis notre duel, je m’entraîne tous les soirs. Revanche, et cette fois je mène. »', { moment: ['revanche'], temperament: ['agressif'] }),
     V('cadet-rev-agr-2', '« Tu reviens me voir ? Tu as bien fait : j’ai changé de jeu. »', { moment: ['revanche'], temperament: ['agressif'] }),
     V('cadet-rev-calc', '« J’ai analysé notre duel. Trois erreurs. Je ne les referai pas. »', { moment: ['revanche'], temperament: ['calculateur'] }),
@@ -256,8 +256,8 @@ export const CATALOGUE: Readonly<Record<string, readonly Replique[]>> = {
   'figure-brasDroit': [
     V('bd-rev-franc', (c) => `« Avant ${c.cheffe ? 'la cheffe' : 'le chef'}, il y avait moi. Maintenant, il n’y a plus que le plaisir du jeu. Une revanche ? »`, { moment: ['revanche'], temperament: ['franc'] }),
     V('bd-rev-ruse', '« Vous revenez. J’ai gardé le souvenir de votre jeu ; voyons s’il a changé. »', { moment: ['revanche'], temperament: ['ruse'] }),
-    V('bd-rev-ruse-2', '« Une revanche, sans enjeu. Les meilleures parties sont celles-là. »', { moment: ['revanche'], temperament: ['ruse'] }),
-    V('bd-rev-calc', '« Je garde la porte, mais la porte est ouverte pour vous, maintenant. Rejouons, pour l’honneur. »', { moment: ['revanche'], temperament: ['calculateur'] }),
+    V('bd-rev-ruse-2', '« Une revanche. Les meilleures parties sont celles qu’on rejoue. »', { moment: ['revanche'], temperament: ['ruse'] }),
+    V('bd-rev-calc', '« Je garde la porte, mais la porte est ouverte pour vous, maintenant. Rejouons. »', { moment: ['revanche'], temperament: ['calculateur'] }),
     V('bd-rev-calc-2', '« J’ai repris chaque Clash de notre duel. Je sais où j’ai perdu. Revanche. »', { moment: ['revanche'], temperament: ['calculateur'] }),
   ],
   'figure-chef': [

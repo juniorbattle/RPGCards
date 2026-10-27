@@ -32,6 +32,11 @@ export function installAventureStyles(): void {
 .av-input { font: 600 17px/1.2 system-ui, sans-serif; padding: 6px 10px; border-radius: 8px; border: 1px solid #e2c48a; background: #12101a; color: #fff4dc; width: 220px; }
 .av-cards { --card-w: 74px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 10px 0; }
 .av-cards .card { cursor: default; }
+.av-cards.nombreuses { --card-w: 50px; gap: 6px; max-height: 42vh; overflow-y: auto; }
+.av-choix-cartes { display: flex; flex-wrap: wrap; justify-content: center; gap: 18px; margin: 14px 0; }
+.av-choix-carte { --card-w: 108px; display: grid; justify-items: center; gap: 6px; width: 190px; text-align: center; }
+.av-choix-carte .card { cursor: default; }
+.av-choix-carte small { min-height: 2.6em; color: #d8ccb4; font: 12px/1.3 system-ui, sans-serif; }
 .av-neutre { --famc: #a9a6a0; display: grid; grid-template-rows: 1fr auto auto; place-items: center; padding: 8px 4px; box-sizing: border-box; background: linear-gradient(160deg, #f2f0ea, #c9c6be 70%, #a9a6a0); color: #2a2a2e; border: 1px solid #8d8b86; }
 .av-n-rank { font: 700 calc(var(--card-w) * 0.42)/1 Georgia, serif; color: #3a3a40; }
 .av-n-name { font: 600 calc(var(--card-w) * 0.13)/1 system-ui, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; color: #55555c; }
