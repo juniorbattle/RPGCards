@@ -218,6 +218,21 @@ check('intégration : genres vus dans de vrais duels au navigateur', vus.length 
   await ctx.close();
 }
 
+{
+  // téléphone en portrait (390 × 844) : la carte, la bannière, la conséquence et le détail dans la largeur, sans chevauchement
+  const { ctx, page } = await openPage('seed=4242&aiDelay=999999', { width: 390, height: 844 });
+  const r = await page.evaluate((a) => {
+    window.__lqv.actHoldOn(['camouflage'], 0.5);
+    window.__lqv.actPlay([a]);
+    const box = (s) => { const b = document.querySelector(s)?.getBoundingClientRect(); return b ? { top: Math.round(b.top), bottom: Math.round(b.bottom), left: Math.round(b.left), right: Math.round(b.right) } : null; };
+    return { banner: box('.act-banner'), cons: box('.act-cons'), detail: box('.act-detail'), card: box('.act-center') };
+  }, exemples.get('camouflage'));
+  await shot(page, 'reglage-portrait-390');
+  const inside = (b) => b && b.top >= 0 && b.bottom <= 844 && b.left >= 0 && b.right <= 390;
+  check('téléphone en portrait : tout dans la largeur, sans chevauchement', inside(r.banner) && inside(r.cons) && inside(r.detail) && inside(r.card) && r.card.bottom <= r.banner.top && r.banner.bottom <= r.cons.top && r.cons.bottom <= r.detail.top, JSON.stringify(r));
+  await ctx.close();
+}
+
 // planche composite (JPEG) : les genres réels, figés
 {
   const ctx = await browser.newContext({ viewport: { width: 1600, height: 1000 } });
