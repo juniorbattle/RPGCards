@@ -171,7 +171,7 @@ export interface GameEvent {
 export type EventKind =
   | 'turnStart' | 'draw' | 'shuffle' | 'trim' | 'technique' | 'peek' | 'recentrage'
   | 'secondaryRevealed' | 'masking' | 'dissipation' | 'locked'
-  | 'committed' | 'replaced' | 'signatureAnnounced' | 'signatureWithdrawn' | 'revisionOpened' | 'revised' | 'lecture' | 'primariesRevealed' | 'effectArmed'
+  | 'committed' | 'replaced' | 'signatureAnnounced' | 'signatureWithdrawn' | 'revisionOpened' | 'revised' | 'lecture' | 'primariesRevealed' | 'effectArmed' | 'primaryReturned'
   | 'tacticsRevealed' | 'interference' | 'clash' | 'effect' | 'damage' | 'heal'
   | 'insight' | 'destination' | 'repel' | 'repelSkipped' | 'overtime' | 'victory' | 'turnEnd';
 

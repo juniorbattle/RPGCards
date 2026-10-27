@@ -49,6 +49,13 @@ export function describeEvent(ev: GameEvent, viewer: PlayerId): JournalLine | nu
       const ids = (d.defIds as string[]) ?? [];
       const parts = [ids.length ? ids.map(t).join(', ') : 'rien à observer'];
       if (d.hiddenSlot) parts.push(`Secondaire cachée la plus ancienne (${slotName(d.hiddenSlot.slot)}) : ${t(d.hiddenSlot.defId)}`);
+      // avenant 09 : Secondaires cachées vues (Ombre portée, Miroir brisé) ; sommet de la pioche adverse (Murmure)
+      if (d.hiddenSlots) {
+        parts.splice(0, 1);
+        parts.push(...((d.hiddenSlots as Array<{ slot: SlotIndex; defId: string }>).map((h) => `Secondaire cachée (${slotName(h.slot)}) : ${t(h.defId)}`)));
+        if (!parts.length) parts.push('aucune Secondaire cachée');
+      }
+      if (d.deckTop) parts[0] = `sommet de la pioche adverse : ${parts[0]}`;
       return line(`[Privé] ${d.source} : ${parts.join(' · ')}.`);
     }
     case 'recentrage':
@@ -142,11 +149,13 @@ export function describeEvent(ev: GameEvent, viewer: PlayerId): JournalLine | nu
       if (d.own) return line(`[Privé] Soin de votre Secondaire masquée : ${d.amount} PV → ${d.hp} PV (non annoncé au rival).`);
       return line(`${verb(d.player, 'récupérez', 'récupère')} ${d.amount} PV → ${d.hp} PV.`, 'effect');
     case 'insight':
+      if (d.drain) return line(`${verb(d.player, 'perdez', 'perd')} ${d.drain} Insight (${(d.reasons as string[]).join(', ')}) → ${d.insight}/2.`, 'effect');
       if (d.own) return line(`[Privé] Motifs réels de l’Insight : ${(d.reasons as string[]).join(', ')}${d.gain ? '' : ' (gain plafonné)'} — l’effet de votre carte masquée n’est pas nommé au rival.`);
       return d.gain
         ? line(`${verb(d.player, 'gagnez', 'gagne')} 1 Insight (${(d.reasons as string[]).join(', ')}) → ${d.insight}/2.`, 'effect')
         : line(`${subj(d.player)} : gain d’Insight plafonné (${(d.reasons as string[]).join(', ')}).`);
     case 'destination': {
+      if (d.dest === 'stay' && d.reason === 'Lierre') return line(`Lierre reste active (${me(d.player) ? 'vous' : 'rival'}, ${slotName(d.slot)}) au lieu d’aller à la défausse.`, 'effect');
       if (d.dest === 'stay') return line(`Ancrage préserve la Secondaire ${me(d.player) ? 'votre' : 'adverse'} en ${slotName(d.slot)} (action annulée, carte active).`, 'effect');
       const where = d.dest === 'top' ? 'au sommet de la pioche' : d.dest === 'bottom' ? 'sous la pioche' : 'en défausse';
       return line(`${t(d.defId)} (${me(d.player) ? 'vous' : 'rival'}) est consommée → ${where}.`);
@@ -156,6 +165,8 @@ export function describeEvent(ev: GameEvent, viewer: PlayerId): JournalLine | nu
       const what = d.defId ? t(d.defId) : 'une Secondaire cachée';
       return line(`${kinds[d.kind] ?? d.kind} : ${verb(d.player, 'renvoyez', 'renvoie')} ${what} (${slotName(d.slot as SlotIndex)}) ${d.dest === 'bottom' ? 'sous la pioche de son propriétaire' : 'dans la main de son propriétaire'}.`, 'effect');
     }
+    case 'primaryReturned':
+      return line(`${t(d.defId)} (${me(d.player) ? 'vous' : 'rival'}) retourne dans la main de son propriétaire au lieu de la défausse.`, 'effect');
     case 'repelSkipped':
       return line(`${verb(d.player, 'renoncez', 'renonce')} au Repoussement.`);
     case 'overtime':

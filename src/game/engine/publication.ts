@@ -49,15 +49,19 @@ export function publicEffect(e: EffectOutcome, all: readonly EffectOutcome[], c:
   if (e.status !== 'success' || !q) return null;
   let detail: string | null = null;
   switch (q.kind) {
-    case 'fixed-damage': detail = `+${q.amount} dégâts fixes`; break;
+    case 'fixed-damage': detail = q.self ? `${q.amount} dégâts fixes subis par son propriétaire` : `+${q.amount} dégâts fixes`; break;
     case 'heal': detail = seen.healed[e.player] > 0 ? `soin de ${seen.healed[e.player]} PV` : null; break;
     case 'insight': detail = seen.insightOnlyHidden[e.player] ? '+1 Insight' : null; break;
-    case 'destination': detail = q.dest === 'top' ? 'retour au sommet de la pioche' : 'retour sous la pioche'; break;
+    case 'destination': detail = q.dest === 'top' ? 'retour au sommet de la pioche' : q.dest === 'stay' ? 'reste active dans sa case' : 'retour sous la pioche'; break;
     case 'neutralize':
       detail = all.some((x) => x.player === other(e.player) && x.status === 'cancelled' && x.silencedBy?.player === e.player && x.silencedBy.slot === slot)
         ? 'effet en attente de la Primaire adverse neutralisé' : null;
       break;
     case 'peek': detail = null; break; // observation privée : aucune conséquence publique
+    // avenant 09 : l'absorption se lit sur les dégâts ; l'Insight retiré est public ; un bonus dans un score masqué reste caché
+    case 'absorption': detail = 'la Garde adverse absorbe moins'; break;
+    case 'insight-drain': detail = 'l’adversaire perd 1 Insight et n’en gagne aucun ce tour'; break;
+    case 'none': detail = null; break;
   }
   if (detail === null) return null;
   return { player: e.player, effect: null, masked: true, family: c.family(e.player, slot), slot, status: 'success', detail };
@@ -76,7 +80,7 @@ export function publishInsight(player: PlayerId, sources: readonly InsightSource
   public: Record<string, unknown> | null; own: Record<string, unknown> | null; onlyHidden: boolean;
 } {
   type EffectSrc = Extract<InsightSource, { kind: 'effect' }>;
-  const isHidden = (x: InsightSource): x is EffectSrc => x.kind === 'effect' && c.hidden(player, x.slot);
+  const isHidden = (x: InsightSource): x is EffectSrc & { slot: SlotIndex } => x.kind === 'effect' && x.slot !== null && c.hidden(player, x.slot);
   const shown = sources.filter((x) => !isHidden(x));
   const hidden = sources.filter(isHidden);
   let pub: Record<string, unknown> | null = null;

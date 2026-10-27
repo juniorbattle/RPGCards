@@ -8,7 +8,7 @@
  * résolution, la chorégraphie du Clash, la mémoire de l’IA, les réactions et répliques du rival.
  */
 import { describe, expect, it } from 'vitest';
-import { cardDef, EFFECTS, type EffectId } from '../src/game/catalog/cards';
+import { cardDef, EFFECTS, FAMILIES, VARIANTS as CATALOG_VARIANTS, type EffectId } from '../src/game/catalog/cards';
 import { buildMemory } from '../src/game/ai/memory';
 import { applyCommand, checkCommand, createGame, DEFAULT_CONFIG, eligibleReveals } from '../src/game/engine/engine';
 import { makeRng } from '../src/game/engine/rng';
@@ -428,11 +428,15 @@ describe('ADR 011 — propriétés : aucune surface publique ne désigne une car
   }, 30_000);
 
   /** Configurations où les deux decks jouent Voile III avec toutes les variantes. */
+  // Avenant 09 : decks qui jouent les variantes B ou C partout, sauf Dissimulation (Voile III A) pour camoufler leurs effets.
+  const mix = (k: 1 | 2): string[] => FAMILIES.flatMap((f) => ([1, 2, 3, 4] as const).map((r) => (f === 'Voile' && r === 3 ? 'Voile-3' : `${f}-${r}-${CATALOG_VARIANTS[f][r][k]![0]}`)));
   const CONFIGS: GameConfig[] = [
     DEFAULT_CONFIG,
     { ...DEFAULT_CONFIG, players: { p1: { ...DEFAULT_CONFIG.players.p1, signature: 'Voile' }, p2: { ...DEFAULT_CONFIG.players.p2, signature: 'Voile' } } },
+    { ...DEFAULT_CONFIG, players: { p1: { ...DEFAULT_CONFIG.players.p1, variants: mix(1) }, p2: { ...DEFAULT_CONFIG.players.p2, variants: mix(2) } } },
+    { ...DEFAULT_CONFIG, players: { p1: { ...DEFAULT_CONFIG.players.p1, signature: 'Voile', variants: mix(2) }, p2: { ...DEFAULT_CONFIG.players.p2, signature: 'Astre', variants: mix(1) } } },
   ];
-  it('80 duels IA/IA rejoués commande par commande : événements publics et vue adverse anonymes jusqu’à la fin du tour', () => {
+  it('160 duels IA/IA rejoués commande par commande (dont 80 avec les variantes B et C) : événements publics et vue adverse anonymes jusqu’à la fin du tour', () => {
     let hidden = 0;
     let views = 0;
     for (const base of CONFIGS) {
@@ -477,7 +481,7 @@ describe('ADR 011 — propriétés : aucune surface publique ne désigne une car
     }
     expect(hidden).toBeGreaterThan(10);
     expect(views).toBeGreaterThan(30);
-  }, 30_000);
+  }, 90_000);
 });
 
 export type { SlotIndex, EffectId };

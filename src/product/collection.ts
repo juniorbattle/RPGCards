@@ -7,9 +7,10 @@
  */
 import { FAMILIES } from '../game/catalog/cards';
 import { TECHNIQUE_IDS } from '../game/catalog/techniques';
-import { ALL_VARIANTS, variantsOf, type Collection, type DeckChoice } from './deck';
+import { ALL_VARIANTS, variantA, variantsOf, type Collection, type DeckChoice } from './deck';
 
-/** Départ (prototype) : 16 Basic, les 4 Signatures, 4 Techniques, et la variante de Rang I de chaque famille. */
+/** Départ (prototype) : 16 Basic, les 4 Signatures, 4 Techniques, et les variantes de Rang I de chaque famille (A, B et C
+ *  depuis l'avenant 09). */
 export const STARTER_COLLECTION: Collection = {
   variants: FAMILIES.flatMap((f) => variantsOf(`${f}-1`)),
   signatures: [...FAMILIES],
@@ -19,5 +20,5 @@ export const STARTER_COLLECTION: Collection = {
 /** Mode démo réversible (options) : tout le catalogue initial est équipable. */
 export const FULL_COLLECTION: Collection = { variants: [...ALL_VARIANTS], signatures: [...FAMILIES], techniques: [...TECHNIQUE_IDS] };
 
-/** Deck de départ légal avec la collection de départ. */
-export const STARTER_DECK: DeckChoice = { signature: 'Cendre', variants: [...STARTER_COLLECTION.variants], techniques: ['Lecture', 'Ancrage'] };
+/** Deck de départ légal avec la collection de départ : les variantes A de Rang I (comme avant l'avenant 09). */
+export const STARTER_DECK: DeckChoice = { signature: 'Cendre', variants: FAMILIES.map((f) => variantA(`${f}-1`)), techniques: ['Lecture', 'Ancrage'] };

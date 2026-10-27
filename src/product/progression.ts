@@ -40,7 +40,8 @@ export interface Reward {
 
 const familyVariants = (fam: string, ranks: number[]) => ranks.flatMap((r) => variantsOf(`${fam}-${r}`));
 
-/** Première victoire contre un rival → ses variantes de famille (Rangs II–IV) et sa Technique distinctive. */
+/** Première victoire contre un rival → ses variantes de famille (Rangs II–IV ; A, B et C depuis l'avenant 09) et sa
+ *  Technique distinctive. */
 export const FIRST_WIN_REWARDS: Record<RivalId, Reward> = {
   braise: { variants: familyVariants('Cendre', [2, 3, 4]), techniques: [] },
   ronce: { variants: familyVariants('Ronce', [2, 3, 4]), techniques: ['Rupture'] },

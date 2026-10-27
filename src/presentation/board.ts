@@ -7,7 +7,7 @@
  * la table au centre ; main centrée en bas ; HUD joueur compact bas-gauche (portrait) ;
  * commandes + Techniques bas-droite ; journal en tiroir rétractable ; inspection flottante.
  */
-import { cardDef, cardTitle, EFFECTS, FAMILY_THEME, rankLabel, type Family } from '../game/catalog/cards';
+import { cardDef, cardTitle, EFFECTS, FAMILY_THEME, INSTANT_PRIMARY_EFFECTS, rankLabel, type Family } from '../game/catalog/cards';
 import { TECHNIQUES, type TechniqueId } from '../game/catalog/techniques';
 import type { SlotIndex, Stance } from '../game/model/types';
 import { guardHalf } from '../game/engine/clash';
@@ -357,7 +357,7 @@ function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
       zone.append(stanceBanner(revealed.stance));
       // M12 (contrat 2, §4) : un effet de révélation en attente de sa condition (public : la Primaire est révélée)
       const def = cardDef(revealed.defId);
-      if (def.effect && def.effect !== 'clairvoyance' && EFFECTS[def.effect].trigger === 'primary-reveal') {
+      if (def.effect && !INSTANT_PRIMARY_EFFECTS.has(def.effect) && EFFECTS[def.effect].trigger === 'primary-reveal') {
         zone.classList.add('armed');
         zone.append(h('span', { class: 'armed-badge', 'data-key': `armed-${who}`, title: `${EFFECTS[def.effect].name} : ${EFFECT_SUMMARY[def.effect]}` }, h('span', { class: 'ab-ico', html: triggerIcon(triggerOf(def)!, 12) }), 'ARMÉ'));
       }

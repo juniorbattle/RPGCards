@@ -3,7 +3,7 @@
  * Aucune dépendance DOM/rendu/timer. La RNG gameplay vit dans l’état (champ `rng`).
  * Règlement V3.0 + avenant mandaté V3.2 (affinité de Rang +1).
  */
-import { buildDeck, cardDef, EFFECTS, type CardDef, type Family } from '../catalog/cards';
+import { buildDeck, cardDef, EFFECTS, INSTANT_PRIMARY_EFFECTS, type CardDef, type Family } from '../catalog/cards';
 import { INSIGHT_MAX, INSIGHT_START, TECHNIQUES, type TechniqueId } from '../catalog/techniques';
 import {
   other, PLAYERS, RuleError, SLOTS,
@@ -11,8 +11,8 @@ import {
   type PlayerCommand, type PlayerId, type PlayerState, type SecondarySlot, type SecondaryState,
   type SlotIndex, type Stance, type TacticPlan, type Visibility,
 } from '../model/types';
-import { computeClash, rankSupport, damageCoefficient, type ClashInput, type ClashUse } from './clash';
-import { hiddenSource, ownerEffect, publicEffect, publishInsight, type Concealment, type Observed } from './publication';
+import { computeClash, damageBonus, rankBonus, rankSupport, damageCoefficient, type ClashInput, type ClashUse } from './clash';
+import { hiddenSource, maskedOrigin, ownerEffect, publicEffect, publishInsight, type Concealment, type Observed } from './publication';
 import { nextInt, seedToState, shuffleInPlace } from './rng';
 import { assertInvariants } from './invariants';
 
@@ -532,6 +532,32 @@ function applyPrepare(ctx: Ctx): void {
         ctx.emit(pid, 'peek', { player: pid, source: 'Repère', defIds: top ? [ctx.def(top).defId] : [], own: true });
       } else if (def.effect === 'dissimulation') {
         ctx.emit('public', 'effect', { player: pid, effect: 'dissimulation', status: p.mask ? 'success' : 'failed', detail: p.mask ? 'l’autre Secondaire est masquée jusqu’à la fin du tour' : 'aucune autre Secondaire active' });
+      } else if (def.effect === 'sextant') {
+        announce({ player: pid, effect: 'sextant', status: 'success', detail: 'deux cartes du sommet de pioche observées' });
+        ctx.emit(pid, 'peek', { player: pid, source: 'Sextant', defIds: p.deck.slice(-2).reverse().map((c) => ctx.def(c).defId), own: true });
+      } else if (def.effect === 'escarbille' || def.effect === 'seve') {
+        // Conséquences publiques (PV, pioche) : une carte camouflée les annonce sous une origine générique (ADR 011).
+        const o = s.players[other(pid)];
+        const ok = def.effect === 'escarbille' ? p.hp > 2 : p.hp < o.hp && p.hp < p.maxHp;
+        const masked = concealed(s, pid, i);
+        const data = { player: pid, effect: def.effect, status: ok ? 'success' : 'failed', detail: '' };
+        if (ok && def.effect === 'escarbille') {
+          const before = p.hp;
+          p.hp -= 2;
+          ctx.emit('public', 'damage', { player: pid, amount: 2, base: 0, fixed: 2, before, hp: p.hp });
+          if (drawOne(ctx, pid)) ctx.emit('public', 'draw', { player: pid, count: 1 });
+          data.detail = '2 dégâts fixes subis, une carte piochée';
+        } else if (ok) {
+          const before = p.hp;
+          p.hp = Math.min(p.maxHp, p.hp + 2);
+          ctx.emit('public', 'heal', { player: pid, amount: p.hp - before, hp: p.hp });
+          data.detail = `soin de ${p.hp - before} PV`;
+        } else data.detail = def.effect === 'escarbille' ? '2 PV ou moins' : 'pas moins de PV que l’adversaire';
+        if (!masked) ctx.emit('public', 'effect', data);
+        else {
+          ctx.emit(pid, 'effect', { ...data, own: true, slot: i });
+          if (ok) ctx.emit('public', 'effect', { player: pid, effect: null, masked: true, family: def.family, slot: i, status: 'success', detail: def.effect === 'escarbille' ? '2 dégâts fixes subis par son propriétaire, une carte piochée' : data.detail });
+        }
       }
     }
   }
@@ -672,7 +698,9 @@ function revealPrimaries(ctx: Ctx): void {
   ctx.emit('public', 'primariesRevealed', data);
   for (const pid of PLAYERS) {
     const def = ctx.def(s.players[pid].primary!.cardId);
-    if (def.effect && EFFECTS[def.effect].trigger === 'primary-reveal') ctx.emit('public', 'effectArmed', { player: pid, effect: def.effect });
+    // avenant 09 : Ombre portée et Miroir brisé sont immédiats (jamais armés) ; Clairvoyance voilée garde son événement
+    // historique (replays et empreintes du Duel standard inchangés)
+    if (def.effect && EFFECTS[def.effect].trigger === 'primary-reveal' && (def.effect === 'clairvoyance' || !INSTANT_PRIMARY_EFFECTS.has(def.effect))) ctx.emit('public', 'effectArmed', { player: pid, effect: def.effect });
   }
   // Clairvoyance voilée : information instantanée privée.
   for (const pid of PLAYERS) {
@@ -686,6 +714,17 @@ function revealPrimaries(ctx: Ctx): void {
       .sort((a, b) => a.sl!.placedTurn - b.sl!.placedTurn || a.i - b.i)[0];
     ctx.emit('public', 'effect', { player: pid, effect: 'clairvoyance', status: 'success', detail: 'des informations adverses ont été révélées au propriétaire' });
     ctx.emit(pid, 'peek', { player: pid, source: 'Clairvoyance voilée', defIds: seen, hiddenSlot: hidden ? { slot: hidden.i, defId: ctx.def(hidden.sl!.cardId).defId } : null });
+  }
+  // Avenant 09 : Ombre portée (la plus ancienne Secondaire adverse cachée) et Miroir brisé (toutes, deux au plus), immédiats.
+  for (const pid of PLAYERS) {
+    const def = ctx.def(s.players[pid].primary!.cardId);
+    if (def.effect !== 'ombre' && def.effect !== 'miroirbrise') continue;
+    const o = s.players[other(pid)];
+    const hidden = SLOTS.map((i) => ({ i, sl: o.slots[i] })).filter((x) => x.sl && !x.sl.active)
+      .sort((a, b) => a.sl!.placedTurn - b.sl!.placedTurn || a.i - b.i);
+    const seen = (def.effect === 'ombre' ? hidden.slice(0, 1) : hidden).map((x) => ({ slot: x.i, defId: ctx.def(x.sl!.cardId).defId }));
+    ctx.emit('public', 'effect', { player: pid, effect: def.effect, status: 'success', detail: seen.length ? 'des Secondaires adverses cachées ont été révélées au propriétaire' : 'aucune Secondaire adverse cachée' });
+    ctx.emit(pid, 'peek', { player: pid, source: EFFECTS[def.effect].name, defIds: [], hiddenSlots: seen });
   }
   openPhase(ctx, 'TACTICS');
 }
@@ -725,7 +764,10 @@ function resolveClash(ctx: Ctx): void {
       const masked = concealed(s, pid, i);
       const def = ctx.def(p.slots[i]!.cardId);
       const prim = input[pid].primary;
-      const value = plan.mode === 'rank' ? rankSupport(def, prim) : plan.mode === 'damage' ? damageCoefficient(def, prim) : null;
+      // avenant 09 : bonus sans condition compris (Boussole, Surenchère, Mur de ronces, Zénith, Tison) ; Harmonie et
+      // Constellation dépendent des annulations : leur bonus se lit sur le score et le multiplicateur du Clash
+      const use: ClashUse = { slot: i, def, mode: plan.mode === 'interfere' ? 'interfere' : plan.mode === 'damage' ? 'damage' : 'rank' };
+      const value = plan.mode === 'rank' ? rankSupport(def, prim) + rankBonus(use, input[pid], []) : plan.mode === 'damage' ? damageCoefficient(def, prim) + damageBonus(use, input[pid], []) : null;
       return { slot: i, mode: plan.mode, target: plan.target ?? null, defId: masked ? null : def.defId, family: def.family, masked, value: masked ? null : value, affinity: masked ? null : def.family !== null && def.family === prim.family };
     });
   }
@@ -741,7 +783,7 @@ function resolveClash(ctx: Ctx): void {
       const tMasked = u.target !== undefined && concealed(s, other(pid), u.target);
       ctx.emit('public', 'interference', {
         player: pid, slot: u.slot, target: u.target, success: u.success, cancelled: u.cancelled,
-        reason: u.success ? 'cible engagée annulée' : !u.targetEngaged ? 'cible Conservée' : 'Rang imprimé insuffisant',
+        reason: u.success ? 'cible engagée annulée' : !u.targetEngaged ? 'cible Conservée' : u.targetProtected ? 'cible protégée par son effet' : 'Rang imprimé insuffisant',
         targetDefId: tMasked ? null : u.targetRank !== null ? ctx.def(o.slots[u.target!]!.cardId).defId : null,
         targetFamily: u.targetRank !== null ? ctx.def(o.slots[u.target!]!.cardId).family : null,
       });
@@ -801,6 +843,16 @@ function resolveClash(ctx: Ctx): void {
     if (pub.public) ctx.emit('public', 'insight', pub.public);
     if (pub.own) ctx.emit(pid, 'insight', pub.own);
   }
+  // Avenant 09 — Éclipse : 1 Insight retiré de la réserve de l'adversaire touché (public ; origine générique si camouflée).
+  for (const pid of PLAYERS) {
+    if (!out.insightDrain[pid]) continue;
+    const p = s.players[pid];
+    const lost = Math.min(p.insight, out.insightDrain[pid]);
+    p.insight -= lost;
+    const src = out.effects.find((e) => e.effect === 'eclipse' && e.status === 'success' && e.player === other(pid));
+    const reason = src && hiddenSource(src, conceal) && src.source.kind === 'secondary' ? `effet de la ${maskedOrigin(conceal.family(src.player, src.source.slot), src.source.slot)}` : EFFECTS.eclipse.name;
+    ctx.emit('public', 'insight', { player: pid, gain: 0, drain: lost, reasons: [reason], insight: p.insight });
+  }
   const publicEffects: PublicEffect[] = [];
   for (const e of out.effects) {
     const pub = publicEffect(e, out.effects, conceal, seen);
@@ -814,6 +866,14 @@ function resolveClash(ctx: Ctx): void {
     if (!out.detourPeek[pid]) continue;
     const seen = randomHandCard(ctx, other(pid));
     ctx.emit(pid, 'peek', { player: pid, source: 'Détour', defIds: seen ? [ctx.def(seen).defId] : [] });
+  }
+  // Avenant 09 : regards privés (Écho, Fil d'ombre : main adverse ; Murmure : sommet de la pioche adverse).
+  for (const pid of PLAYERS) {
+    for (const pk of out.peeks[pid]) {
+      const o = s.players[other(pid)];
+      const seen = pk.what === 'hand' ? randomHandCard(ctx, other(pid)) : o.deck[o.deck.length - 1] ?? null;
+      ctx.emit(pid, 'peek', { player: pid, source: EFFECTS[pk.effect].name, defIds: seen ? [ctx.def(seen).defId] : [], ...(pk.what === 'deck-top' ? { deckTop: true } : {}) });
+    }
   }
 
   // Rapport public.
@@ -835,7 +895,7 @@ function resolveClash(ctx: Ctx): void {
       const dest = out.destinations[pid][u.slot] ?? 'discard';
       const sl = p.slots[u.slot]!;
       if (dest === 'stay') {
-        ctx.emit('public', 'destination', { player: pid, slot: u.slot, dest, reason: 'Ancrage' });
+        ctx.emit('public', 'destination', { player: pid, slot: u.slot, dest, reason: u.cancelled ? 'Ancrage' : 'Lierre' });
         continue;
       }
       // Une carte masquée ce tour n’est pas nommée publiquement avant la fin du tour
@@ -855,7 +915,7 @@ function resolveClash(ctx: Ctx): void {
   // K.-O. unilatéral : fin immédiate (le Repoussement n’a plus d’objet).
   const dead = PLAYERS.filter((pid) => s.players[pid].hp <= 0);
   if (dead.length === 1) {
-    finishPrimaries(ctx);
+    finishPrimaries(ctx, out.primaryToHand);
     s.winner = other(dead[0]!);
     s.phase = 'ENDED';
     s.awaiting = [];
@@ -884,7 +944,7 @@ function resolveClash(ctx: Ctx): void {
     const detail = !(out.guardWin && out.winner === pid) ? 'la Garde ne gagne pas contre un Assaut' : 'une autre cible de Repoussement existe ou la cible n’est plus active';
     ctx.emit('public', 'effect', { player: pid, effect: 'rupture', status: 'failed', detail, technique: true });
   }
-  finishPrimaries(ctx);
+  finishPrimaries(ctx, out.primaryToHand);
   if (s.repel) {
     openPhase(ctx, 'REPEL');
     return;
@@ -913,11 +973,15 @@ function buildReport(ctx: Ctx, input: ClashInput, out: ReturnType<typeof compute
   };
 }
 
-function finishPrimaries(ctx: Ctx): void {
+function finishPrimaries(ctx: Ctx, toHand?: Record<PlayerId, boolean>): void {
   for (const pid of PLAYERS) {
     const p = ctx.s.players[pid];
     if (p.primary) {
-      p.discard.push(p.primary.cardId);
+      // avenant 09 : Phénix (battue) et Racines profondes (Garde victorieuse) retournent dans la main
+      if (toHand?.[pid]) {
+        p.hand.push(p.primary.cardId);
+        ctx.emit('public', 'primaryReturned', { player: pid, defId: ctx.def(p.primary.cardId).defId });
+      } else p.discard.push(p.primary.cardId);
       p.primary = null;
     }
   }

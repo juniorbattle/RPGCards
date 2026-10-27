@@ -175,15 +175,20 @@ export function buildResolutionBeats(events: readonly GameEvent[], ctx: BeatCont
   const insOwn = new Set(vis.filter((x) => x.kind === 'insight' && x.data.own).map((x) => x.data.player));
   const ins = vis.filter((x) => x.kind === 'insight' && x.data.gain && (x.data.own || !insOwn.has(x.data.player)));
   if (ins.length) beats.push({ kind: 'insight', title: ins.map((e) => `${who(e.data.player)} : +1 Insight`).join(' · '), detail: ins.map((e) => `${who(e.data.player)} (${(e.data.reasons as string[]).join(', ')})`).join(' · '), tone: 'neutral', focus: ins.map((e) => `${side(e.data.player)}-insight`), events: ins });
+  // Avenant 09 : Insight retiré (Éclipse).
+  const drains = vis.filter((x) => x.kind === 'insight' && x.data.drain);
+  if (drains.length) beats.push({ kind: 'insight', title: drains.map((e) => `${who(e.data.player)} : −${e.data.drain} Insight`).join(' · '), detail: drains.map((e) => `${who(e.data.player)} (${(e.data.reasons as string[]).join(', ')}) → ${e.data.insight}/2`).join(' · '), tone: drains.some((e) => e.data.player === me) ? 'bad' : 'good', focus: drains.map((e) => `${side(e.data.player)}-insight`), events: drains });
 
   // 7. Destinations des Secondaires engagées, Repoussement
-  const dest = vis.filter((x) => x.kind === 'destination');
+  const dest = vis.filter((x) => x.kind === 'destination' || x.kind === 'primaryReturned');
   if (dest.length) {
     const special = dest.filter((e) => e.data.dest !== 'discard');
     beats.push({
       kind: 'destination',
-      title: `${dest.length} Secondaire(s) engagée(s) consommée(s)`,
-      detail: special.length ? special.map((e) => `${e.data.defId ? cardDef(e.data.defId as string).name : 'carte masquée'} → ${e.data.dest === 'top' ? 'sommet de la pioche' : e.data.dest === 'bottom' ? 'sous la pioche' : 'reste active (Ancrage)'}`).join(' · ') : 'Toutes rejoignent leur défausse ; les Secondaires conservées restent en jeu.',
+      title: `${dest.filter((e) => e.kind === 'destination').length} Secondaire(s) engagée(s) consommée(s)`,
+      detail: special.length ? special.map((e) => e.kind === 'primaryReturned'
+        ? `Primaire ${cardTitle(cardDef(e.data.defId as string))} (${who(e.data.player).toLowerCase()}) → retour en main`
+        : `${e.data.defId ? cardDef(e.data.defId as string).name : 'carte masquée'} → ${e.data.dest === 'top' ? 'sommet de la pioche' : e.data.dest === 'bottom' ? 'sous la pioche' : `reste active (${e.data.reason ?? 'Ancrage'})`}`).join(' · ') : 'Toutes rejoignent leur défausse ; les Secondaires conservées restent en jeu.',
       tone: 'neutral', focus: ['me-slots', 'opp-slots'], events: dest,
     });
   }

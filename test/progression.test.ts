@@ -69,7 +69,8 @@ describe('M05 — série, rencontres libres et déblocages (prototype)', () => {
     col = r.collection;
     p = r.progress;
     expect(col.techniques).toEqual(['Sondage', 'Recentrage', 'Lecture', 'Ancrage', 'Rupture', 'Dissipation']);
-    expect(col.variants).toHaveLength(4 + 9);
+    // avenant 09 : trois variantes par identité (A, B, C) — 4 identités de Rang I au départ, 9 identités gagnées
+    expect(col.variants).toHaveLength((4 + 9) * 3);
     // Revanche contre un rival déjà vaincu : aucun nouveau déblocage (pas de « farm » d’une monnaie).
     expect(applyOutcome(col, p, sum('libre-braise', 'victory', 5)).unlocked).toEqual([]);
     // Rejouer la série : manche 1, collection conservée.
@@ -87,7 +88,7 @@ describe('M05 — série, rencontres libres et déblocages (prototype)', () => {
       }
     }
     const all = new Set(Object.values(FIRST_WIN_REWARDS).flatMap((r) => r.variants));
-    expect(all.size).toBe(12);
+    expect(all.size).toBe(12 * 3); // avenant 09 : A, B et C de 12 identités
   });
 
   it('chaque rencontre se joue jusqu’au bout avec les mêmes règles ; Orin (Astre, profil équilibré) compris', () => {

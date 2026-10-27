@@ -48,8 +48,8 @@ describe('M10-A — cartes neutres (AV-01)', () => {
     for (const x of p1) { const d = c(x.defId); expect(d.family).toBeNull(); expect(d.effect).toBeNull(); expect(d.signature).toBe(false); expect(d.power).toBe(3 * d.rank!); }
   });
 
-  it('pas une cinquième famille : le catalogue standard est inchangé (36 définitions), les neutres sont à part', () => {
-    expect(Object.keys(CATALOG)).toHaveLength(36);
+  it('pas une cinquième famille : le catalogue standard (68 définitions depuis l’avenant 09 : 16 Basics, 48 variantes, 4 Signatures), les neutres sont à part', () => {
+    expect(Object.keys(CATALOG)).toHaveLength(68);
     expect(Object.values(CATALOG).every((d) => d.family !== null)).toBe(true);
     expect(Object.keys(NEUTRAL_CATALOG)).toEqual(['neutre-1', 'neutre-2', 'neutre-3', 'neutre-4']);
     expect(isNeutralDef('neutre-2')).toBe(true);

@@ -10,7 +10,7 @@ import { createGame } from '../src/game/engine/engine';
 import { autoplay } from '../src/game/match';
 import { viewFor } from '../src/game/visibility/view';
 import { FULL_COLLECTION, STARTER_COLLECTION, STARTER_DECK } from '../src/product/collection';
-import { ALL_VARIANTS, IDENTITIES, deckDefs, equippedFor, setVersion, toggleTechnique, validateDeck, type DeckChoice } from '../src/product/deck';
+import { ALL_VARIANTS, IDENTITIES, deckDefs, equippedFor, setVersion, toggleTechnique, validateDeck, variantsOf, type DeckChoice } from '../src/product/deck';
 import { ENCOUNTERS, encounterConfig, sheetOf } from '../src/product/encounters';
 import { INITIAL_FLOW, transition, type FlowContext, type FlowState } from '../src/product/flow';
 import { BACKUP_KEY, CORRUPT_KEY, SAVE_KEY, SaveStore, duelSeed, newSave, parseSave, validateSave, type StorageLike } from '../src/product/save';
@@ -93,7 +93,8 @@ describe('M04 — deck légal à partir du catalogue canonique', () => {
     for (const sig of FAMILIES) {
       for (let i = 0; i < TECHNIQUE_IDS.length; i++) {
         for (let j = i + 1; j < TECHNIQUE_IDS.length; j++) {
-          const deck: DeckChoice = { signature: sig, variants: [...ALL_VARIANTS], techniques: [TECHNIQUE_IDS[i]!, TECHNIQUE_IDS[j]!] };
+          // avenant 09 : une variante par identité ; la collection complète en offre trois (A, B, C), on prend tour à tour
+          const deck: DeckChoice = { signature: sig, variants: IDENTITIES.map((id, k) => variantsOf(id)[(k + n) % 3]!), techniques: [TECHNIQUE_IDS[i]!, TECHNIQUE_IDS[j]!] };
           expect(validateDeck(deck, FULL_COLLECTION)).toEqual([]);
           expect(() => createGame({ seed: n, players: { p1: { name: 'a', hp: 90, signature: sig, variants: IDENTITIES as string[], techniques: deck.techniques }, p2: { name: 'b', hp: 90, signature: 'Ronce', variants: 'none', techniques: [] } } })).not.toThrow();
           n++;
@@ -101,7 +102,7 @@ describe('M04 — deck légal à partir du catalogue canonique', () => {
       }
     }
     expect(n).toBe(4 * 15);
-    expect(ALL_VARIANTS).toHaveLength(16);
+    expect(ALL_VARIANTS).toHaveLength(48); // avenant 09 : trois variantes par identité
   });
 
   it('refuse : variante non possédée, deux versions d’une identité, variante inconnue, Techniques invalides', () => {
