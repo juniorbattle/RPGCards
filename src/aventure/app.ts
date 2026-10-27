@@ -1608,9 +1608,9 @@ export class AventureApp {
         h('div', { class: 'av-cards' }, ...v.neutres.map((n) => h('div', { class: 'av-col-entree' }, neutreEl(n.id, `×${n.possedees}`), h('span', { class: 'av-col-texte' }, `${n.dansDeck} dans le deck`)))),
         ...v.familles.map((f) => h('section', { class: `av-col-fam fam-${f.famille}`, 'data-key': `av-col-fam-${f.famille}` },
           h('h3', null, h('span', { class: `av-emb fam-${f.famille}`, html: emblemSvg(f.famille) }), ` ${capital(leF(f.famille))} — ${f.etat === 'chef' ? chefVaincu(f.famille) : ETAT_FAMILLE[f.etat]}`),
+          // avenant 09 : une ligne par Rang (Basic, variantes A, B et C), la Signature à part
           h('div', { class: 'av-col-cartes' },
-            ...f.basics.map((x, i) => entree(x, `Basic ${ROMAIN[RANGS[i]!]}`)),
-            ...f.variantes.map((x, i) => entree(x, `Variante ${ROMAIN[RANGS[i]!]}`)),
+            ...RANGS.flatMap((r, i) => [entree(f.basics[i]!, `Basic ${ROMAIN[r]}`), ...f.variantes.slice(3 * i, 3 * i + 3).map((x) => entree(x, `${ROMAIN[r]} ${x.lettre ?? ''}`.trim()))]),
             entree(f.signature, 'Signature')))),
         h('h3', null, 'Techniques'),
         h('ul', { class: 'av-col-techs' }, ...v.techniques.map((t) => h('li', { class: t.possedee ? 'faite' : '', title: TECHNIQUES[t.id as TechniqueId].text }, `${t.possedee ? '✓' : '🔒'} ${t.id} — ${t.texte}${t.dansDeck ? ' (équipée)' : ''}`))),
@@ -1618,7 +1618,7 @@ export class AventureApp {
     };
 
     const vueRegistre = (): HTMLElement[] => [
-      h('p', null, 'Chaque gain est inscrit une fois, avec son origine : une revanche ou une reprise n’en ajoute jamais.'),
+      h('p', null, 'Chaque gain est inscrit une fois, avec son origine : une reprise n’en ajoute jamais ; une revanche gagnée ne donne qu’une variante pas encore possédée.'),
       h('ol', { class: 'av-registre', 'data-key': 'av-registre' }, ...s.etat.registre.map((g) => h('li', null, `${nomGain(g)} — ${origineGain(g)}`))),
     ];
 

@@ -4,9 +4,9 @@
  * rendu, au stockage ni au moteur de duel : l'appelant lui transmet des FAITS (scène jouée, duel terminé et ses faits
  * publics, choix du joueur). Propositions : `docs/m10/` ; rien n'est ratifié hors ADR 029 à 031.
  */
-import { FAMILIES, type Family } from '../game/catalog/cards';
+import { CATALOG, FAMILIES, type Family } from '../game/catalog/cards';
 import { deF, figure, figureDe, FIGURES, isNeutre, leF, MAISONS, ORDRE_ETAT, roleDe, chefVaincu, leChef, TECHNIQUES_RUE, type EtatFamille, type Figure, type SceneId } from './modele';
-import { accorder, aGain, collectionDe, gainBasics, gainNeutres, gainSignature, gainTechnique, gainVariante, type Gain } from './registre';
+import { accorder, aGain, collectionDe, gainBasics, gainNeutres, gainSignature, gainTechnique, gainVariante, prochaineVariante, varianteChoisie, variantesIdentite, type Gain } from './registre';
 import { deckDepart, equiperTechnique, equiperVersion, integrerBasics, standardLegal, type DeckAv } from './deck';
 import type { EtatRival, KId } from './rival';
 import { finEpreuve, finFinale, finJoute, finMiroir, finPoule, manche, nouvellesCompetitions, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, type EtatCompetitions } from './competitions';
@@ -63,9 +63,10 @@ export type Evenement =
   | { type: 'changer'; famille: Family }
   | { type: 'engager'; famille: Family }
   | { type: 'lancerDefi'; figure: string }
-  | { type: 'duelStructurant'; figure: string; issue: Issue; duel: string }
-  | { type: 'epreuve'; famille: Family; issue: Issue; duel: string }
-  | { type: 'joute'; famille: Family; issue: Issue; duel: string }
+  /** `variante` (avenant 09) : la variante choisie à la première victoire qui en donne une (A, B ou C de l'identité). */
+  | { type: 'duelStructurant'; figure: string; issue: Issue; duel: string; variante?: string }
+  | { type: 'epreuve'; famille: Family; issue: Issue; duel: string; variante?: string }
+  | { type: 'joute'; famille: Family; issue: Issue; duel: string; variante?: string }
   | { type: 'championnat'; manche: 'poule' | 'miroir' | 'finale'; chef?: Family; signature: Family; issue: Issue }
   | { type: 'visite'; lieu: string }
   | { type: 'rencontre'; personne: string }
@@ -201,8 +202,15 @@ const ROLES_ORDRE = ['cadet', 'brasDroit', 'chef'] as const;
 /** Applique un fait ; un refus laisse l'état inchangé. Idempotent pour les gains (registre). */
 export function appliquer(e0: AventureEtat, ev: Evenement, at: string): Resultat {
   const r = appliquerBrut(e0, ev, at);
-  // « Une variante remplace une Basic de même identité dans le deck » (cadrage M10, ADR 031) : équipée à son gain.
-  if (!r.refus) for (const g of r.gains) if (g.kind === 'variante') r.etat.deck = equiperVersion(r.etat.deck, g.items[0]!);
+  // « Une variante remplace une Basic de même identité dans le deck » (cadrage M10, ADR 031) : équipée à son gain, si la case
+  // tient encore la Basic (avenant 09 : une variante déjà équipée reste en place quand une autre de la même identité arrive).
+  if (!r.refus) {
+    for (const g of r.gains) {
+      if (g.kind !== 'variante') continue;
+      const id = g.items[0]!;
+      if (r.etat.deck.cartes.includes(`${CATALOG[id]!.identity}-basic`)) r.etat.deck = equiperVersion(r.etat.deck, id);
+    }
+  }
   return r;
 }
 
@@ -284,17 +292,21 @@ function appliquerBrut(e0: AventureEtat, ev: Evenement, at: string): Resultat {
       if (ev.issue !== 'victoire') return { etat: e, gains }; // défaite, abandon : rien de perdu, le défi reste ouvert
       const premiere = !e.vaincues.includes(fig.id);
       if (premiere) e.vaincues.push(fig.id);
-      // Récompense de progression : à la PREMIÈRE victoire seulement (une revanche ne duplique rien, ADR 031).
-      if (premiere) {
-        const src = `duel:${ev.duel}`;
-        if (fig.enjeu.kind === 'variante') {
-          const refus = grant(gainVariante(fig.enjeu.defId, src, at));
+      // Récompense de progression : à la PREMIÈRE victoire (une revanche ne duplique rien, ADR 031) ; avenant 09 : la
+      // variante choisie (A, B ou C de l'identité de l'enjeu), puis, à chaque revanche gagnée, la suivante qui manque.
+      const src = `duel:${ev.duel}`;
+      // le même duel rejoué (rechargement, reprise) ne donne jamais deux fois : un gain par duel
+      if (fig.enjeu.kind === 'variante' && !e.registre.some((g) => g.source === src)) {
+        const identite = CATALOG[fig.enjeu.defId]!.identity;
+        const v = premiere ? varianteChoisie(e.registre, identite, ev.variante) ?? fig.enjeu.defId : prochaineVariante(e.registre, identite);
+        if (v) {
+          const refus = grant(gainVariante(v, src, at));
           if (refus) return refuse(refus);
-        } else {
-          grant(gainSignature(fig.famille, src, at));
-          e.familles[fig.famille] = 'chef';
-          if (e.deck.signature === null) e.deck = { ...e.deck, signature: fig.famille };
         }
+      } else if (premiere) {
+        grant(gainSignature(fig.famille, src, at));
+        e.familles[fig.famille] = 'chef';
+        if (e.deck.signature === null) e.deck = { ...e.deck, signature: fig.famille };
       }
       return { etat: e, gains };
     }
@@ -302,7 +314,7 @@ function appliquerBrut(e0: AventureEtat, ev: Evenement, at: string): Resultat {
     case 'epreuve': {
       const st = statutEpreuve(e.competitions, e.registre, ev.famille);
       if (!st.ouvert) return refuse(st.texte);
-      const r = finEpreuve(e.competitions, e.registre, ev.famille, ev.issue === 'victoire', ev.duel, at);
+      const r = finEpreuve(e.competitions, e.registre, ev.famille, ev.issue === 'victoire', ev.duel, at, ev.variante);
       e.competitions = r.c;
       e.registre = r.registre;
       gains.push(...r.gains);
@@ -311,7 +323,7 @@ function appliquerBrut(e0: AventureEtat, ev: Evenement, at: string): Resultat {
 
     case 'joute': {
       if (!e.vaincues.includes(`brasDroit-${ev.famille}`)) return refuse(statutJoute(e.competitions, e.vaincues, ev.famille, e.deck).texte);
-      const r = finJoute(e.competitions, e.registre, ev.famille, ev.issue === 'victoire', ev.duel, at);
+      const r = finJoute(e.competitions, e.registre, ev.famille, ev.issue === 'victoire', ev.duel, at, ev.variante);
       e.competitions = r.c;
       e.registre = r.registre;
       gains.push(...r.gains);
@@ -327,9 +339,19 @@ function appliquerBrut(e0: AventureEtat, ev: Evenement, at: string): Resultat {
         : ev.manche === 'finale' ? statutFinale(e.competitions, ev.signature) : { ouvert: true, texte: '' };
       if (!st.ouvert) return refuse(st.texte);
       const v = ev.issue === 'victoire';
+      const titreAvant = e.competitions.championnat.titre;
       if (ev.manche === 'poule' && ev.chef) e.competitions = finPoule(e.competitions, ev.chef, ev.signature, v);
       else if (ev.manche === 'miroir') e.competitions = finMiroir(e.competitions, v);
       else if (ev.manche === 'finale') e.competitions = finFinale(e.competitions, ev.signature, v);
+      // Avenant 09 : le titre donne toutes les variantes qui manquent encore (familles dont les cartes de base sont à soi).
+      if (e.competitions.championnat.titre && !titreAvant) {
+        for (const f of FAMILIES) {
+          if (!aGain(e.registre, `basics:${f}`)) continue;
+          for (const id of [1, 2, 3, 4].map((r) => `${f}-${r}`)) {
+            for (const v of variantesIdentite(id)) if (!aGain(e.registre, `variante:${v}`)) grant(gainVariante(v, 'championnat:titre', at));
+          }
+        }
+      }
       return { etat: e, gains };
     }
 

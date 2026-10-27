@@ -123,7 +123,7 @@ describe('M10-B — prologue et choix libre (ADR 029)', () => {
 });
 
 describe('M10-B/C — ascension (ADR 031)', () => {
-  it('variantes seulement aux victoires contre les lieutenants, Signature seulement au chef, revanche sans duplication', () => {
+  it('variantes seulement aux victoires contre les lieutenants (A au choix, B et C en revanche), Signature seulement au chef, sans duplication', () => {
     let e = run(prologue(), [{ type: 'confirmer', famille: 'Cendre' }]).etat;
     expect(defisOuverts(e).map((f) => f.id)).toEqual(['cadet-Cendre']);
     expect(statutDefi(e, figureDe('Cendre', 'chef')).ouvert).toBe(false);
@@ -137,8 +137,14 @@ describe('M10-B/C — ascension (ADR 031)', () => {
     // la variante remplace la Basic de même identité dans le deck (équipée à son gain)
     expect(r.etat.deck.cartes).toContain('Cendre-3-ferveur');
     expect(r.etat.deck.cartes).not.toContain('Cendre-3-basic');
-    // revanche gagnée : rien
+    // avenant 09 : chaque revanche gagnée donne la variante suivante (B, puis C), puis plus rien ; le même fait rejoué, rien
     r = run(r.etat, [{ type: 'lancerDefi', figure: 'cadet-Cendre' }, { type: 'duelStructurant', figure: 'cadet-Cendre', issue: 'victoire', duel: 'a3' }]);
+    expect(r.gains).toEqual(['variante:Cendre-3-surenchere']);
+    expect(appliquer(r.etat, { type: 'duelStructurant', figure: 'cadet-Cendre', issue: 'victoire', duel: 'a3' }, AT).gains).toEqual([]);
+    r = run(r.etat, [{ type: 'lancerDefi', figure: 'cadet-Cendre' }, { type: 'duelStructurant', figure: 'cadet-Cendre', issue: 'victoire', duel: 'a3b' }]);
+    expect(r.gains).toEqual(['variante:Cendre-3-brulure']);
+    expect(r.etat.deck.cartes).toContain('Cendre-3-ferveur'); // le deck garde la variante équipée
+    r = run(r.etat, [{ type: 'lancerDefi', figure: 'cadet-Cendre' }, { type: 'duelStructurant', figure: 'cadet-Cendre', issue: 'victoire', duel: 'a3c' }]);
     expect(r.gains).toEqual([]);
     r = run(r.etat, [{ type: 'lancerDefi', figure: 'brasDroit-Cendre' }, { type: 'duelStructurant', figure: 'brasDroit-Cendre', issue: 'victoire', duel: 'a4' }]);
     expect(r.gains).toEqual(['variante:Cendre-4-contrecoup']);
@@ -473,7 +479,7 @@ describe('M10-D/E en avance — compétitions facultatives et Championnat (propo
     return r.etat;
   };
 
-  it('Épreuve du quartier : fermée sans les Basics ; une défaite remet la série à zéro ; trois victoires : variante I, une seule fois', () => {
+  it('Épreuve du quartier : fermée sans les Basics ; une défaite remet la série à zéro ; trois victoires : variante I (au choix), puis les deux autres en revanche', () => {
     let e = prologue();
     expect(appliquer(e, { type: 'epreuve', famille: 'Ronce', issue: 'victoire', duel: 'x' }, AT).refus).toBeTruthy();
     e = run(e, [{ type: 'confirmer', famille: 'Ronce' }]).etat;
@@ -482,18 +488,24 @@ describe('M10-D/E en avance — compétitions facultatives et Championnat (propo
     expect(r.gains).toEqual([]);
     r = run(r.etat, [1, 2, 3].map((i) => ({ type: 'epreuve', famille: 'Ronce', issue: 'victoire', duel: `f${i}` }) as Evenement));
     expect(r.gains).toEqual(['variante:Ronce-1-racine']);
+    // avenant 09 : chaque nouvelle série gagnée donne la variante suivante (B, puis C), puis plus rien
     r = run(r.etat, [1, 2, 3].map((i) => ({ type: 'epreuve', famille: 'Ronce', issue: 'victoire', duel: `g${i}` }) as Evenement));
+    expect(r.gains).toEqual(['variante:Ronce-1-epine']);
+    r = run(r.etat, [1, 2, 3].map((i) => ({ type: 'epreuve', famille: 'Ronce', issue: 'victoire', duel: `h${i}` }) as Evenement));
+    expect(r.gains).toEqual(['variante:Ronce-1-bouture']);
+    r = run(r.etat, [1, 2, 3].map((i) => ({ type: 'epreuve', famille: 'Ronce', issue: 'victoire', duel: `k${i}` }) as Evenement));
     expect(r.gains).toEqual([]);
   });
 
-  it('Joute de la maison : après le bras droit, sous contrainte de deck ; variante II une seule fois', () => {
+  it('Joute de la maison : après le bras droit, sous contrainte de deck ; variante II (au choix), puis les deux autres en revanche', () => {
     let e = run(prologue(), [{ type: 'confirmer', famille: 'Ronce' }]).etat;
     expect(appliquer(e, { type: 'joute', famille: 'Ronce', issue: 'victoire', duel: 'j' }, AT).refus).toBeTruthy();
     e = run(e, conquerir('Ronce').slice(0, 4)).etat;
     expect(statutJoute(e.competitions, e.vaincues, 'Ronce', e.deck).ouvert).toBe(true); // 4 cartes Ronce dans le deck
     expect(statutJoute(e.competitions, e.vaincues, 'Ronce', { ...e.deck, cartes: e.deck.cartes.map((c) => (c.startsWith('Ronce-1') || c.startsWith('Ronce-2') ? `neutre-${c[6]}` : c)) }).ouvert).toBe(false);
-    const r = run(e, [{ type: 'joute', famille: 'Ronce', issue: 'victoire', duel: 'j1' }, { type: 'joute', famille: 'Ronce', issue: 'victoire', duel: 'j2' }]);
-    expect(r.gains).toEqual(['variante:Ronce-2-ecaille']);
+    const r = run(e, [{ type: 'joute', famille: 'Ronce', issue: 'victoire', duel: 'j1' }, { type: 'joute', famille: 'Ronce', issue: 'victoire', duel: 'j2' }, { type: 'joute', famille: 'Ronce', issue: 'victoire', duel: 'j3' }, { type: 'joute', famille: 'Ronce', issue: 'victoire', duel: 'j4' }]);
+    expect(r.gains).toEqual(['variante:Ronce-2-ecaille', 'variante:Ronce-2-seve', 'variante:Ronce-2-lierre']); // avenant 09 : A, puis B et C en revanche
+    expect(appliquer(r.etat, { type: 'joute', famille: 'Ronce', issue: 'victoire', duel: 'j4' }, AT).gains).toEqual([]);
   });
 
   it('les seize variantes sont atteignables (lieutenants III et IV, Épreuves I, Joutes II), sans duplication', () => {
@@ -532,8 +544,12 @@ describe('M10-D/E en avance — compétitions facultatives et Championnat (propo
     expect(e.competitions.championnat.titre).toBe(true);
     expect(chapitre(e)).toBe('champion');
     expect(objectif(e)).toMatch(/ne joue mieux que vous/);
-    // aucune carte gagnée au Championnat
-    expect(collectionDe(e.registre)).toEqual(collectionDe(conquis().registre));
+    // avenant 09 : le titre donne toutes les variantes encore manquantes des quatre familles (48), rien d'autre
+    const avantTitre = collectionDe(conquis().registre);
+    const apres = collectionDe(e.registre);
+    expect(apres.variantes).toHaveLength(48);
+    expect({ ...apres, variantes: [] }).toEqual({ ...avantTitre, variantes: [] });
+    expect(appliquer(e, { type: 'championnat', manche: 'finale', signature: 'Ronce', issue: 'victoire' }, AT).gains).toEqual([]);
   });
 
   it('duels des compétitions et du Championnat : configurations ordinaires du moteur, jouables', () => {

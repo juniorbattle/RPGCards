@@ -30,7 +30,7 @@ export const EFFECT_SUMMARY: Readonly<Record<EffectId, string>> = {
   cycle: 'Victoire avec un seul soutien valide : il revient au sommet de la pioche',
   // avenant 09 (appliqué à titre provisoire)
   tison: 'Assaut : coefficient +1 ; Primaire battue : 2 dégâts pour vous',
-  escarbille: 'Révélée : 2 dégâts pour vous, piochez une carte',
+  escarbille: 'Révélée : 1 dégât pour vous, piochez une carte',
   percee: 'Contre une Garde : elle absorbe 2 de moins',
   bravade: 'Battue par une Garde : ni Repoussement ni Insight pour elle',
   surenchere: 'Rang +2 ; Primaire battue : 3 dégâts pour vous',

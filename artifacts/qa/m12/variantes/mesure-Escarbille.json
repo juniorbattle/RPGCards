@@ -1,0 +1,18 @@
+{
+  "commit": "0d681dc",
+  "date": "2026-10-27T06:55:28.697Z",
+  "duelsParMesure": 800,
+  "marge": 6,
+  "ms": 42011,
+  "results": [
+    {
+      "label": "Cendre-1 C Escarbille",
+      "wins": 367,
+      "games": 800,
+      "turns": 9.69625,
+      "rate": 45.875,
+      "delta": -4.125,
+      "flag": false
+    }
+  ]
+}

@@ -538,25 +538,25 @@ function applyPrepare(ctx: Ctx): void {
       } else if (def.effect === 'escarbille' || def.effect === 'seve') {
         // Conséquences publiques (PV, pioche) : une carte camouflée les annonce sous une origine générique (ADR 011).
         const o = s.players[other(pid)];
-        const ok = def.effect === 'escarbille' ? p.hp > 2 : p.hp < o.hp && p.hp < p.maxHp;
+        const ok = def.effect === 'escarbille' ? p.hp > 1 : p.hp < o.hp && p.hp < p.maxHp;
         const masked = concealed(s, pid, i);
         const data = { player: pid, effect: def.effect, status: ok ? 'success' : 'failed', detail: '' };
         if (ok && def.effect === 'escarbille') {
           const before = p.hp;
-          p.hp -= 2;
-          ctx.emit('public', 'damage', { player: pid, amount: 2, base: 0, fixed: 2, before, hp: p.hp });
+          p.hp -= 1;
+          ctx.emit('public', 'damage', { player: pid, amount: 1, base: 0, fixed: 1, before, hp: p.hp });
           if (drawOne(ctx, pid)) ctx.emit('public', 'draw', { player: pid, count: 1 });
-          data.detail = '2 dégâts fixes subis, une carte piochée';
+          data.detail = '1 dégât fixe subi, une carte piochée';
         } else if (ok) {
           const before = p.hp;
           p.hp = Math.min(p.maxHp, p.hp + 2);
           ctx.emit('public', 'heal', { player: pid, amount: p.hp - before, hp: p.hp });
           data.detail = `soin de ${p.hp - before} PV`;
-        } else data.detail = def.effect === 'escarbille' ? '2 PV ou moins' : 'pas moins de PV que l’adversaire';
+        } else data.detail = def.effect === 'escarbille' ? '1 PV seulement' : 'pas moins de PV que l’adversaire';
         if (!masked) ctx.emit('public', 'effect', data);
         else {
           ctx.emit(pid, 'effect', { ...data, own: true, slot: i });
-          if (ok) ctx.emit('public', 'effect', { player: pid, effect: null, masked: true, family: def.family, slot: i, status: 'success', detail: def.effect === 'escarbille' ? '2 dégâts fixes subis par son propriétaire, une carte piochée' : data.detail });
+          if (ok) ctx.emit('public', 'effect', { player: pid, effect: null, masked: true, family: def.family, slot: i, status: 'success', detail: def.effect === 'escarbille' ? '1 dégât fixe subi par son propriétaire, une carte piochée' : data.detail });
         }
       }
     }
