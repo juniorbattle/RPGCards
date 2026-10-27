@@ -68,6 +68,8 @@ export interface AventureSave {
   dialogues?: { dernier: Record<string, string>; n: Record<string, number> };
   /** M11 (cinématiques) : celles déjà vues dans cette aventure (`lieu-<îlot>` : la première arrivée dans un quartier). */
   cinematiques?: string[];
+  /** M12 : conseils du duel déjà lus (« Compris »), `src/aventure/conseils.ts`. */
+  conseils?: string[];
 }
 
 export function nouvelleSauvegarde(now: Date, nom: string, graine: number): AventureSave {

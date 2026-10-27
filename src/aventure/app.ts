@@ -55,6 +55,8 @@ import { installAventureStyles } from './styles';
 import { aJouer, arriveeAJouer, cadreDialogue, cadreGroupe, CARTONS_CHAPITRE, cinePermise, DUREES, ecrireCine, estChapitreCarton, LIGNES_LIEU, lireCine, plansAffiliation, plansArrivee, plansChapitre, plansChef, plansEmissaire, plansGuetteur, plansKaiPrologue, plansRival, plansTitre, type CadreDialogue, type CinematiqueId } from './cinematiques';
 import { Bandes, Cinema } from './cinema';
 import { choixVariante, conclureDuel, figureOuNull, ouvrirDuel, REGLES_DUEL } from './fin';
+import { conseilLu, conseilsPermis, ecrireConseils, lireConseils } from './conseils';
+import { duelTip } from '../shell/tips';
 
 export interface DepsAventure {
   app: HTMLElement;
@@ -1215,7 +1217,13 @@ export class AventureApp {
     document.body.append(banner);
     const session = new DuelSession({
       app: this.d.app, arena, config: duel.config, params: this.params, scenario: null, personality: prevu.personnalite, product: { menu: true }, resume: duel.commands,
-      onTool: (t) => { if (t === 'menu') { void this.menuDuel(); return true; } return false; },
+      onTool: (t) => {
+        if (t === 'menu') { void this.menuDuel(); return true; }
+        // M12 : un conseil lu (« Compris ») est mémorisé dans la sauvegarde de l'aventure
+        if (t.startsWith('tip:') && this.save) { this.save.conseils = conseilLu(this.save.conseils, t.slice(4)); this.persist(); this.live?.session.render(); return true; }
+        return false;
+      },
+      tip: (c) => (this.save && conseilsPermis(location.search) && lireConseils(stockageLocal()) ? duelTip(c, this.save.conseils ?? []) : null),
       onCommand: (c) => this.pointDeSauvegarde(id, c),
       onEnded: (c) => this.finDuel(c, false),
     });
@@ -1565,8 +1573,21 @@ export class AventureApp {
       { label: 'Journal des quêtes', key: 'menu-journal', run: () => { this.fermerDialogue(); this.journal(); } },
       { label: `Son : ${son().reglages().coupe ? 'coupé' : `${Math.round(son().reglages().volume * 100)} %`}`, key: 'menu-son', run: () => this.reglageSon() },
       { label: `Cinématiques : ${!cinePermise(location.search) ? 'coupées par l’adresse' : lireCine(stockageLocal()) ? 'oui' : 'non'}`, key: 'menu-cine', run: () => { ecrireCine(stockageLocal(), !lireCine(stockageLocal())); this.fermerDialogue(); this.menu(); } },
-      { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter. Les joueurs de cartes de la ville regardent devant eux : entrer dans leur regard, c’est accepter leur défi (une bulle « ! » s’allume, ils viennent à vous) ; passez derrière eux ou à l’abri d’un étal pour les éviter. Kaï surgit à certains moments de votre histoire ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? »). Le son se règle dans ce menu (« Son »). Les grands moments de votre histoire se jouent en cinématique (première arrivée dans un quartier, Kaï qui surgit, votre affiliation, un chef vaincu, un nouveau chapitre, le Championnat) : Échap, Espace, Entrée ou « Passer » pour la passer ; « Cinématiques », dans ce menu, les coupe.', [fermer(this)]) },
+      { label: `Conseils du duel : ${!conseilsPermis(location.search) ? 'coupés par l’adresse' : lireConseils(stockageLocal()) ? 'affichés' : 'masqués'}`, key: 'menu-conseils', run: () => this.reglageConseils() },
+      { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter. Les joueurs de cartes de la ville regardent devant eux : entrer dans leur regard, c’est accepter leur défi (une bulle « ! » s’allume, ils viennent à vous) ; passez derrière eux ou à l’abri d’un étal pour les éviter. Kaï surgit à certains moments de votre histoire ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? ») ; des conseils, un à la fois, expliquent chaque phase et chaque signal des cartes la première fois qu’il paraît (« Conseils du duel », dans ce menu). Le son se règle dans ce menu (« Son »). Les grands moments de votre histoire se jouent en cinématique (première arrivée dans un quartier, Kaï qui surgit, votre affiliation, un chef vaincu, un nouveau chapitre, le Championnat) : Échap, Espace, Entrée ou « Passer » pour la passer ; « Cinématiques », dans ce menu, les coupe.', [fermer(this)]) },
       { label: 'Écran titre', key: 'menu-home', run: () => { this.fermerDialogue(); this.titre(); } },
+    ]);
+  }
+
+  /** M12 : conseils du duel (un à la fois, « Compris ») : les afficher ou les masquer, réafficher ceux déjà lus. */
+  private reglageConseils(): void {
+    const s = this.save;
+    const lus = s?.conseils?.length ?? 0;
+    const actifs = lireConseils(stockageLocal());
+    this.dire('Conseils du duel', `Un conseil à la fois, au-dessus des commandes du duel, la première fois qu’une situation se présente : les phases du tour, puis les signaux des cartes (RÉVÉLER, ARMÉ, la pastille de déclenchement, les temps forts, les regards privés). « Compris » le range. Conseils lus : ${lus}.${conseilsPermis(location.search) ? '' : ' Ils sont coupés par l’adresse de la page.'}`, [
+      { label: actifs ? 'Masquer les conseils' : 'Afficher les conseils', key: 'conseils-bascule', primary: true, run: () => { ecrireConseils(stockageLocal(), !actifs); this.reglageConseils(); } },
+      ...(s && lus ? [{ label: 'Tout réafficher', key: 'conseils-reset', run: () => { s.conseils = []; this.persist(); this.reglageConseils(); } }] : []),
+      { label: 'Fermer', key: 'dlg-close', run: () => this.fermerDialogue() },
     ]);
   }
 

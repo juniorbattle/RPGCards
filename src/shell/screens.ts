@@ -9,7 +9,7 @@ import { emblemSvg } from '../art/emblems';
 import { portraitUrl } from '../art/portrait';
 import { cardEl } from '../presentation/cardView';
 import { STARTER_DECK } from '../product/collection';
-import { deckSummary, type DeckChoice } from '../product/deck';
+import { ALL_VARIANTS, deckSummary, type DeckChoice } from '../product/deck';
 import { DIFFICULTY_LABEL, ENCOUNTERS, PLAYER_HP, SERIES, encounterById, personalityOf, sheetOf, type Encounter } from '../product/encounters';
 import { isSignatureRival, personalityById } from '../presentation/personalities';
 import { FIRST_WIN_REWARDS, encounterStatus, replaySeries, unlockLabel, type EncounterStatus } from '../product/progression';
@@ -48,7 +48,7 @@ export function renderHome(sh: Shell): HTMLElement {
       h('span', { class: 'sh-pstats' },
         pstat('swords', String(save.history.length), `${save.history.length} duel(s) joué(s)`),
         pstat('crown', String(save.progress.defeated.length), `${save.progress.defeated.length} rival(aux) vaincu(s)`),
-        pstat('cards', `${owned}/16`, `${owned} variantes sur 16`),
+        pstat('cards', `${owned}/${ALL_VARIANTS.length}`, `${owned} variantes sur ${ALL_VARIANTS.length}`),
         pstat('gem', `${save.collection.techniques.length}/6`, `${save.collection.techniques.length} Techniques sur 6`)),
       h('small', null, `sauvegardé le ${fmtDate(save.updatedAt)}`)));
     if (sh.deckIssues().length) status.push(h('p', { class: 'warn' }, 'Votre deck enregistré n’est plus légal : ouvrez le Deck pour le corriger avant de jouer.'));
