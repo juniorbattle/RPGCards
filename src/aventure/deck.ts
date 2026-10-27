@@ -11,7 +11,7 @@ import { TECHNIQUE_IDS, type TechniqueId } from '../game/catalog/techniques';
 import type { GameConfig } from '../game/model/types';
 import { validateDeck, type DeckChoice } from '../product/deck';
 import { deF, isNeutre, NEUTRES, RANGS, rangNeutre, TECHNIQUES_RUE } from './modele';
-import type { CollectionAv } from './registre';
+import { variantesIdentite, type CollectionAv } from './registre';
 
 export interface DeckAv {
   /** 16 définitions : `neutre-<r>`, `<Famille>-<r>-basic` ou une variante. */
@@ -98,7 +98,7 @@ export function choixPourCase(d: DeckAv, col: CollectionAv, i: number): string[]
   for (const f of col.basics) {
     const identity = `${f}-${r}`;
     if (prises.has(identity)) continue;
-    out.push(`${identity}-basic`, ...col.variantes.filter((v) => CATALOG[v]?.identity === identity));
+    out.push(`${identity}-basic`, ...variantesIdentite(identity).filter((v) => col.variantes.includes(v))); // A, B, C (avenant 09)
   }
   return out;
 }

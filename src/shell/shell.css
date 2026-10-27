@@ -411,8 +411,8 @@
   .sh-home-pair { grid-template-columns: 1fr; }
 }
 
-/* --- Deck : deux cartes par identité, on choisit en cliquant la carte ------------------------ */
-.sh-deck-grid { gap: 0.7rem; }
+/* --- Deck : quatre cartes par identité (Basic, A, B, C ; avenant 09), on choisit en cliquant la carte --- */
+.sh-deck-grid { gap: 0.7rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .sh-fam-col { padding: 0.6rem 0.5rem; background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.01)); }
 .sh-fam-col.fam-Cendre { --fam: var(--cendre); }
 .sh-fam-col.fam-Voile { --fam: var(--voile); }
@@ -422,7 +422,10 @@
 .sh-ident { position: relative; grid-template-columns: 1fr; justify-items: center; }
 .sh-ident-opts { display: flex; gap: 0.35rem; justify-content: center; }
 .sh-ver { position: relative; padding: 0; border: 0; background: none; border-radius: 6px; overflow: visible; transition: transform 0.18s var(--sh-ease), filter 0.18s, opacity 0.18s; }
-.sh-ver .card.sh-mini { --card-w: 74px; --card-h: 104px; --radius: 5px; }
+.sh-ver .card.sh-mini { --card-w: 64px; --card-h: 90px; --radius: 5px; }
+.sh-ver-lettre { position: absolute; left: 50%; bottom: -0.55rem; transform: translateX(-50%); min-width: 1.1rem; padding: 0 0.25rem; border-radius: 0.5rem; background: rgba(8, 6, 10, 0.92); border: 1px solid var(--line); color: var(--gold-hi); font: 700 0.62rem/1.1rem Georgia, serif; text-align: center; pointer-events: none; }
+.sh-ident { padding-bottom: 0.5rem; }
+@media (max-width: 760px) { .sh-deck-grid { grid-template-columns: minmax(0, 1fr); } }
 /* RC 0.8 (M08 C5) : le chiffre de rang des vignettes porte sa propre pastille sombre. Son contraste ne dépend plus de
    l’illustration ni du liseré sous la boîte du glyphe (3,5:1 mesuré sous Windows, police Georgia réelle). */
 .sh-ver .card.sh-mini .rank, .sh-sig .card.sh-mini .rank { padding: 0.08em 0.2em 0.04em; margin: -0.08em 0 0 -0.2em; border-radius: 0.16em; background: rgba(10, 7, 6, 0.8); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.6); }

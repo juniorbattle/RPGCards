@@ -3,9 +3,9 @@
  * autour de chaque duel, sortie de l'écran pour que le parcours complet du prologue au titre (`test/m10f.test.ts`) teste
  * le même code. Pur hormis la mutation de la sauvegarde passée en paramètre (comme l'application) ; aucune règle de duel.
  */
-import type { Family } from '../game/catalog/cards';
+import { CATALOG, type Family } from '../game/catalog/cards';
 import type { GameEvent } from '../game/model/types';
-import { appliquer, type Evenement, type FaitsPublics, type Issue } from './aventure';
+import { appliquer, type AventureEtat, type Evenement, type FaitsPublics, type Issue } from './aventure';
 import { battre, conclure, noterVu } from './directeur';
 import { chapitreDetaille } from './aventure';
 import { isKId, type KId } from './rival';
@@ -13,7 +13,7 @@ import { estGuetteur } from './vue';
 import { faitsPublics } from './faits';
 import { figure } from './modele';
 import { pvJoueur } from './paliers';
-import type { Gain } from './registre';
+import { aGain, variantesIdentite, type Gain } from './registre';
 import type { DuelPrevu } from './rencontres';
 import { CATALOG_AVENTURE, type AventureSave, type DuelAventure } from './sauvegarde';
 
@@ -40,6 +40,26 @@ export function ouvrirDuel(s: AventureSave, prevu: DuelPrevu, at: string): { due
   return refus ? { duel, refus } : { duel };
 }
 
+/**
+ * Avenant 09 : les trois variantes (A, B, C) à choisir si une VICTOIRE dans cette rencontre donne la première variante de
+ * son identité (première victoire contre un cadet ou un bras droit, série d'Épreuve à son dernier duel, Joute pas encore
+ * gagnée) et qu'aucune n'est encore possédée ; sinon null (la récompense, s'il y en a une, est la suivante qui manque).
+ */
+export function choixVariante(e: AventureEtat, rencontre: string): string[] | null {
+  const fig = figureOuNull(rencontre);
+  let identite: string | null = null;
+  if (fig) identite = fig.enjeu.kind === 'variante' && !e.vaincues.includes(fig.id) ? CATALOG[fig.enjeu.defId]!.identity : null;
+  else {
+    const m = rencontre.match(/^(epreuve|joute):(\w+)$/);
+    const f = m?.[2] as Family | undefined;
+    if (m?.[1] === 'epreuve' && f) identite = (e.competitions.epreuves[f]?.etape ?? 0) === 2 && !e.competitions.epreuves[f]?.gagnee ? `${f}-1` : null;
+    if (m?.[1] === 'joute' && f) identite = e.competitions.joutes[f]?.gagnee ? null : `${f}-2`;
+  }
+  if (!identite) return null;
+  const ids = variantesIdentite(identite);
+  return ids.some((v) => aGain(e.registre, `variante:${v}`)) ? null : ids;
+}
+
 export interface FinDuel {
   gains: Gain[];
   faits: FaitsPublics;
@@ -50,9 +70,10 @@ export interface FinDuel {
 
 /**
  * Fin de duel : faits publics → machine de l'aventure → registre (une seule écriture par l'appelant ensuite). `events` :
- * le journal du duel, dont seuls les faits publics sont lus.
+ * le journal du duel, dont seuls les faits publics sont lus. `variante` : la variante choisie à la victoire (avenant 09,
+ * `choixVariante`) ; absente ou invalide, la récompense est la suivante qui manque (A d'abord).
  */
-export function conclureDuel(s: AventureSave, duel: DuelAventure, events: readonly GameEvent[], issue: Issue, turns: number, at: string): FinDuel {
+export function conclureDuel(s: AventureSave, duel: DuelAventure, events: readonly GameEvent[], issue: Issue, turns: number, at: string, variante?: string): FinDuel {
   const rencontre = duel.rencontre;
   let gains: Gain[] = [];
   let refus: string | undefined;
@@ -68,14 +89,15 @@ export function conclureDuel(s: AventureSave, duel: DuelAventure, events: readon
   const pvApres = pvJoueur(s.etat.combats);
   if (rencontre === 'prologue') s.etat = appliquer(s.etat, { type: 'duelPrologue', issue, faits }, at).etat;
   else if (figureOuNull(rencontre)) {
-    const r = appliquer(s.etat, { type: 'duelStructurant', figure: rencontre, issue, duel: duel.id }, at);
+    const r = appliquer(s.etat, { type: 'duelStructurant', figure: rencontre, issue, duel: duel.id, ...(variante ? { variante } : {}) }, at);
     refus = r.refus;
     s.etat = r.etat;
     gains = r.gains;
   } else if (/^(epreuve|joute|champ):/.test(rencontre)) {
     const [k, a, b] = rencontre.split(':');
-    const ev: Evenement = k === 'epreuve' ? { type: 'epreuve', famille: a as Family, issue, duel: duel.id }
-      : k === 'joute' ? { type: 'joute', famille: a as Family, issue, duel: duel.id }
+    const v = variante ? { variante } : {};
+    const ev: Evenement = k === 'epreuve' ? { type: 'epreuve', famille: a as Family, issue, duel: duel.id, ...v }
+      : k === 'joute' ? { type: 'joute', famille: a as Family, issue, duel: duel.id, ...v }
       : { type: 'championnat', manche: a as 'poule' | 'miroir' | 'finale', chef: b as Family | undefined, signature: duel.config.players.p1.signature!, issue }; // le Championnat exige une Signature équipée (statutPoule, statutFinale)
     const r = appliquer(s.etat, ev, at);
     refus = r.refus;
