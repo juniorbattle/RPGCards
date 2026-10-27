@@ -1,8 +1,10 @@
 /** Rendu DOM d’une carte : illustration procédurale + typographie de règle (Rang ≠ Puissance). */
 import { cardDef, cardTitle, EFFECTS, rankLabel, type CardDef } from '../game/catalog/cards';
-import { cardArtUrl, cardBackUrl } from '../art/cardArt';
+import { EFFECT_SUMMARY, TRIGGER_LABEL } from '../game/catalog/cardText';
+import { cardArtUrl, cardArtVersion, cardBackUrl } from '../art/cardArt';
 import { emblemSvg } from '../art/emblems';
 import { cls, h } from './dom';
+import { triggerIcon, type TriggerIcon } from './effectIcons';
 
 export type CardVisualState = 'charging' | 'hidden' | 'active' | 'draft' | 'masked' | null;
 
@@ -23,9 +25,15 @@ export const STATE_WORD: Record<Exclude<CardVisualState, null>, string> = {
   masked: 'MASQUÉE',
 };
 
+/** M12 : moment de déclenchement d'une carte à effet (pastille, inspecteur, mises en avant) ; null pour une Basic. */
+export function triggerOf(def: CardDef): TriggerIcon | null {
+  if (!def.effect) return null;
+  return def.signature ? 'signature' : EFFECTS[def.effect].trigger;
+}
+
 export function cardAria(def: CardDef, state: CardVisualState = null): string {
   const parts = [cardTitle(def), def.family ? `famille ${def.family}` : 'neutre, sans famille', def.signature ? 'Signature, priorité infinie' : `Rang ${def.rank}`, `Puissance ${def.power}`, `rareté ${def.rarity}`];
-  if (def.effect) parts.push(`effet ${EFFECTS[def.effect].name} : ${EFFECTS[def.effect].text}`);
+  if (def.effect) parts.push(`effet ${EFFECTS[def.effect].name} (${TRIGGER_LABEL[EFFECTS[def.effect].trigger].toLowerCase()}) : ${EFFECT_SUMMARY[def.effect]}. ${EFFECTS[def.effect].text}`);
   if (state) parts.push(`état ${STATE_TEXT[state]}`);
   return parts.join(', ');
 }
@@ -46,9 +54,34 @@ export interface CardOpts {
  * cartes ; un clone natif coûte moins que dix éléments et un SVG à analyser).
  */
 const FACES = new Map<string, DocumentFragment>();
+/** Taille du nom selon sa longueur (M12 : les noms longs des Signatures entiers, plus petits). */
+const nameSize = (name: string): string | null => (name.length > 15 ? 'xlong' : name.length > 11 ? 'long' : null);
+
 function cardFace(def: CardDef, artSeed: number): Node {
-  const key = `${artSeed}|${def.defId}`;
+  const v2 = cardArtVersion() === 'v2';
+  const key = `${v2 ? 'v2' : 'v1'}|${artSeed}|${def.defId}`;
   let face = FACES.get(key);
+  if (!face && v2) {
+    // M12 (contrat 1, §2) : pastille de déclenchement sous l'emblème, gemme de rareté, nom entier, effet nommé
+    const trig = triggerOf(def);
+    face = document.createDocumentFragment();
+    face.append(
+      h('img', { class: 'art', src: cardArtUrl(def.defId, artSeed), alt: '', draggable: 'false' }),
+      h('span', { class: 'frame' }),
+      h('span', { class: 'rank', 'aria-hidden': 'true' }, rankLabel(def)),
+      h('span', { class: 'fam', html: def.family ? emblemSvg(def.family, 24) : '' }),
+    );
+    if (trig) face.append(h('span', { class: cls('trig', `trig-${trig}`), title: TRIGGER_LABEL[trig], html: triggerIcon(trig) }));
+    face.append(
+      h('span', { class: 'plate' },
+        def.rarity !== 'Basic' ? h('span', { class: 'gem', 'aria-hidden': 'true' }) : null,
+        h('span', { class: cls('name', nameSize(def.name)) }, def.name),
+        h('span', { class: cls('variant', def.effect && EFFECTS[def.effect].name.length > 14 && 'long') }, def.effect ? EFFECTS[def.effect].name : def.family ? 'Basic' : 'Sans famille'),
+        h('span', { class: 'stats' }, h('span', { class: 'r', title: 'Rang : priorité du Clash' }, `R ${def.rank ?? '∞'}`), h('span', { class: 'p', title: 'Puissance : dégâts / absorption' }, `P ${def.power}`)),
+      ),
+    );
+    FACES.set(key, face);
+  }
   if (!face) {
     face = document.createDocumentFragment();
     face.append(

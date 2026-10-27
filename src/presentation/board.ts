@@ -17,7 +17,10 @@ import { emblemSvg } from '../art/emblems';
 import { RARITY_FRAME } from '../art/palette';
 import { playerFigure, portraitUrl } from '../art/portrait';
 import type { Controller } from '../app/controller';
-import { backEl, cardEl } from './cardView';
+import { backEl, cardEl, triggerOf } from './cardView';
+import { cardArtVersion } from '../art/cardArt';
+import { EFFECT_SUMMARY, keywordsIn, TRIGGER_LABEL } from '../game/catalog/cardText';
+import { techniqueSeal, triggerIcon } from './effectIcons';
 import { animatedIn, cls, domDifference, fresh, h, listen, patchChildren, tracked } from './dom';
 import { moodLabel, rivalLine } from './rivalLines';
 import { STANCE_ICON, stanceBanner } from './stance';
@@ -285,7 +288,7 @@ function techChips(c: Controller): HTMLElement {
       class: cls('tech', usable && 'usable', armed && 'armed', used && 'used'), type: 'button', 'data-key': `tech-me-${t}`,
       title: `${t} — coût ${def.cost} Insight · ${def.timing}\n${def.text}`, 'aria-pressed': usable ? String(armed) : null, disabled: !usable,
       onclick,
-    }, `${t} (${def.cost})`);
+    }, h('span', { class: 'seal', html: techniqueSeal(t, 16) }), `${t} (${def.cost})`);
   }));
 }
 
@@ -801,7 +804,11 @@ function inspector(c: Controller): HTMLElement {
       h('h3', null, cardTitle(def)),
       h('div', { class: 'meta' }, def.family ? `${def.family} ${emblemText(def.family)} · ${fr.label} · ${FAMILY_THEME[def.family]}` : 'Neutre · sans famille, sans effet, jamais d’affinité (carte grise de la populace)'),
       h('div', { class: 'stats-line' }, 'Rang ', h('b', null, def.signature ? '∞ (priorité absolue)' : `${rankLabel(def)} (${def.rank})`), ' · Puissance ', h('b', null, String(def.power))),
+      // M12 (contrat 1) : quand l'effet joue (icône), son résumé, puis le texte canonique et les mots-clés expliqués
+      def.effect && cardArtVersion() === 'v2' ? h('div', { class: 'insp-trig' }, h('span', { class: 'trig-ico', html: triggerIcon(triggerOf(def)!, 16) }), TRIGGER_LABEL[EFFECTS[def.effect].trigger]) : null,
+      def.effect && cardArtVersion() === 'v2' ? h('div', { class: 'insp-sum' }, EFFECT_SUMMARY[def.effect]) : null,
       def.effect ? h('div', { class: 'eff' }, h('em', null, EFFECTS[def.effect].name), ` — ${EFFECTS[def.effect].role}. ${EFFECTS[def.effect].text}`) : h('div', { class: 'eff' }, 'Basic : aucun effet individuel. Primaire Assaut/Garde ; Secondaire Rang, Dégâts, Interférer, Conserver.'),
+      def.effect && cardArtVersion() === 'v2' ? h('dl', { class: 'insp-kw' }, ...keywordsIn(EFFECTS[def.effect].text).flatMap((k) => [h('dt', null, k.mot), h('dd', null, k.texte)])) : null,
       def.signature ? h('div', { class: 'eff' }, 'Signature : uniquement Primaire. ∞ domine tout score ordinaire ; Puissance finie, réduite par une Garde dominée.') : null,
     ),
   );

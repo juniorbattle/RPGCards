@@ -52,6 +52,8 @@ export interface AppParams {
   venueCache: number | null;
   /** M08 C1 : préparation des rivaux aux temps morts ; `qa=1&prep=art|off` = couches seules, ou rien (mesure). */
   prep: 'full' | 'art' | 'off';
+  /** M12 (ADR 044) : dessin des cartes ; `cartes=v1` : le dessin d'avant M12 (comparaison). */
+  cartes: 'v1' | 'v2';
 }
 
 export function readParams(search = window.location.search): AppParams {
@@ -93,5 +95,6 @@ export function readParams(search = window.location.search): AppParams {
     compileAsync: !(q.get('qa') === '1' && q.get('compileAsync') === '0'),
     venueCache: q.get('qa') === '1' && q.has('venueCache') ? Math.max(1, Math.floor(Number(q.get('venueCache')) || 1)) : null,
     prep: q.get('qa') === '1' && (q.get('prep') === 'art' || q.get('prep') === 'off') ? (q.get('prep') as 'art' | 'off') : 'full',
+    cartes: q.get('cartes') === 'v1' ? 'v1' : 'v2',
   };
 }
