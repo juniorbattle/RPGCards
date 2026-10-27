@@ -6,6 +6,7 @@
  */
 import { cardDef, cardTitle, EFFECTS } from '../game/catalog/cards';
 import { son } from '../son/moteur';
+import { sonDuTempsFort } from '../son/evenements';
 import type { Command, GameConfig } from '../game/model/types';
 import { artCacheSize } from '../art/cardArt';
 import { artWarmStats, warmCardArt } from '../art/artWarmup';
@@ -13,6 +14,7 @@ import { buildMemory } from '../game/ai/memory';
 import { viewFor, visibleEvents } from '../game/visibility/view';
 import { patchBeat, patchInspector, patchRivalBubble, renderApp, renderCheckStats, type BoardHooks } from '../presentation/board';
 import { ClashStage } from '../presentation/clashStage';
+import { ActivationStage } from '../presentation/activationStage';
 import { DragManager } from '../presentation/drag';
 import type { RivalPersonality } from '../presentation/personalities';
 import type { ArenaHandle, ArenaLayout } from '../scene/arena';
@@ -45,6 +47,7 @@ export class DuelSession {
   readonly controller: Controller;
   private readonly abort = new AbortController();
   private readonly stage: ClashStage;
+  private readonly acts: ActivationStage;
   private readonly drag: DragManager;
   /** Vrai pendant qu’un écran de l’enveloppe (menu, confirmation) recouvre le plateau. */
   suspended = false;
@@ -107,6 +110,18 @@ export class DuelSession {
       else if (m.type === 'end') stage.end();
       else stage.stop();
     });
+    // M12 : temps forts des activations, au premier plan, sur leur propre hôte au-dessus de la scène du Clash (celle-ci
+    // remplace le contenu du sien à chaque Clash)
+    let actHost = document.getElementById('activations');
+    if (!actHost) { actHost = document.createElement('div'); actHost.id = 'activations'; document.body.append(actHost); }
+    const clashHost = stageHost;
+    const acts = new ActivationStage(actHost, {
+      artSeed: params.artSeed, reduced: () => params.reducedMotion, freeze: () => params.freeze, pace: () => c.paceFactor(), instant: () => params.pace === 'instant',
+      onStart: (a) => { const x = sonDuTempsFort(a.kind, a.consequence); if (x) son().jouer(x); },
+      dim: (on) => clashHost.classList.toggle('act-on', on),
+    });
+    this.acts = acts;
+    c.onActivations({ play: (list) => acts.play(list), stop: () => acts.stop() });
     c.onBeat(() => {
       if (drag?.dragging || pointerHeld) { pendingRender = true; return; }
       patchBeat(app, c);
@@ -200,6 +215,11 @@ export class DuelSession {
       hash: () => c.match.hash(),
       record: () => c.match.record(),
       arenaStats: () => arena?.stats() ?? null,
+      // QA M12 : temps forts joués (genre, titre, camp) et file en cours
+      activations: () => ({ played: [...this.acts.played], busy: this.acts.busy, held: this.acts.held, shown: [...document.querySelectorAll<HTMLElement>('#activations .act')].map((e) => e.dataset.key ?? '') }),
+      actHoldOn: (kinds: string[], at?: number) => this.acts.holdOn(kinds, at),
+      actRelease: () => this.acts.release(),
+      actPlay: (list: Parameters<ActivationStage['play']>[0]) => this.acts.play(list),
       presentation: () => ({ view: c.viewMode, switches: c.director.switches, manual: c.director.manual, holding: c.director.holding, sequencing: c.sequencing, rival: c.rivalExpression, personality: c.rival.id, stage: stage.active, stageLeaving: stage.leaving, clash: c.seq?.script ? { outcome: c.seq.script.outcome, winner: c.seq.script.winner, verdict: c.seq.script.verdict } : null, beat: c.currentBeat()?.kind ?? null }),
       artCache: () => artCacheSize(),
       // QA passe 14 : pré-génération des illustrations par le worker (`artCheck=1` : comparaison).
@@ -223,6 +243,7 @@ export class DuelSession {
     this.abort.abort();
     this.drag.dispose();
     this.stage.stop();
+    this.acts.dispose();
     this.o.app.replaceChildren();
     this.o.app.className = '';
     delete this.o.app.dataset.view;

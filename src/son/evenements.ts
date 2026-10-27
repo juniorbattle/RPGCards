@@ -6,7 +6,8 @@ import type { GameEvent, PlayerId } from '../game/model/types';
 
 export type SonId =
   | 'ui' | 'ui-retour' | 'carte-pose' | 'revelation' | 'clash' | 'degats' | 'degats-adverse' | 'garde' | 'interference'
-  | 'signature' | 'victoire' | 'defaite' | 'pas' | 'repere' | 'rival' | 'voyage' | 'gain' | 'titre';
+  | 'signature' | 'victoire' | 'defaite' | 'pas' | 'repere' | 'rival' | 'voyage' | 'gain' | 'titre'
+  | 'activation' | 'annule' | 'sceau' | 'regard';
 export type AmbianceId = 'amb-quai' | 'amb-ruelles' | 'amb-parvis' | 'amb-cour' | 'amb-port' | 'amb-haute' | 'amb-duel';
 
 export function sonsDuDuel(events: readonly GameEvent[], viewer: PlayerId = 'p1'): SonId[] {
@@ -42,6 +43,23 @@ export function sonsDuDuel(events: readonly GameEvent[], viewer: PlayerId = 'p1'
     }
   }
   return out;
+}
+
+/**
+ * M12 (contrat 2, §5) — le son d'un temps fort (`src/presentation/activations.ts`) : « activation » pour un effet qui
+ * agit, « annulé » pour un effet éteint, « sceau » pour une Technique, « regard » pour un regard privé. La Signature
+ * annoncée et l'Interférence ont déjà le leur (`sonsDuDuel`) ; les petits temps forts se taisent. Un temps fort n'existe
+ * que pour un événement visible du joueur : son son ne trahit donc rien.
+ */
+export function sonDuTempsFort(kind: string, consequence = ''): SonId | null {
+  switch (kind) {
+    case 'effet': case 'repousse': case 'camouflage': case 'dissipation': return 'activation';
+    case 'masque': return consequence === 'ANNULÉ' ? 'annule' : 'activation';
+    case 'annule': return 'annule';
+    case 'technique': return 'sceau';
+    case 'regard': return 'regard';
+    default: return null;
+  }
 }
 
 /** Ambiance d'un îlot de la ville. */

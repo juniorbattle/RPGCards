@@ -152,15 +152,24 @@ export function buildResolutionBeats(events: readonly GameEvent[], ctx: BeatCont
   const ownSlot = (x: GameEvent) => `${x.data.player}|${x.data.slot}`;
   const owned = new Set(vis.filter((x) => x.kind === 'effect' && x.data.own).map(ownSlot));
   const effects = vis.filter((x) => x.kind === 'effect' && !(x.data.masked && owned.has(ownSlot(x))));
-  if (effects.length) {
-    const lines = effects.map((e) => {
-      const d = e.data as Record<string, any>;
-      const st = d.status === 'success' ? 'RÉUSSI' : d.status === 'cancelled' ? 'ANNULÉ' : 'non rempli';
-      if (d.masked) return `Effet masqué (${d.player === me ? 'vous' : 'rival'}, ${d.family ?? 'neutre'}) : ${st}`;
-      const name = d.technique ? String(d.effect).replace(/^./, (c: string) => c.toUpperCase()) : EFFECTS[d.effect as EffectId]?.name ?? String(d.effect);
-      return `${name} (${d.own ? 'vous, masquée' : d.player === me ? 'vous' : 'rival'}) : ${st}`;
-    });
-    beats.push({ kind: 'effect', title: lines[0]! + (lines.length > 1 ? ` (+${lines.length - 1})` : ''), detail: lines.join(' · '), tone: 'neutral', focus: [], events: effects });
+  const effLine = (e: GameEvent): string => {
+    const d = e.data as Record<string, any>;
+    const st = d.status === 'success' ? 'RÉUSSI' : d.status === 'cancelled' ? 'ANNULÉ' : 'non rempli';
+    if (d.masked) return `Effet masqué (${d.player === me ? 'vous' : 'rival'}, ${d.family ?? 'neutre'}) : ${st}`;
+    const name = d.technique ? String(d.effect).replace(/^./, (c: string) => c.toUpperCase()) : EFFECTS[d.effect as EffectId]?.name ?? String(d.effect);
+    return `${name} (${d.own ? 'vous, masquée' : d.player === me ? 'vous' : 'rival'}) : ${st}`;
+  };
+  // M12 (contrat 2) : un temps par effet réussi, annulé ou masqué (sa mise en avant au premier plan) ; les conditions
+  // non remplies, regroupées en un seul temps discret.
+  const effFocus = (d: Record<string, any>): string[] => (d.slot !== undefined && d.slot !== null ? [`${side(d.player)}-slot-${d.slot}`] : []);
+  for (const e of effects.filter((x) => x.data.status !== 'failed')) {
+    const d = e.data as Record<string, any>;
+    beats.push({ kind: 'effect', title: effLine(e), detail: String(d.detail ?? ''), tone: d.status === 'cancelled' ? 'warn' : d.player === me ? 'good' : 'bad', focus: effFocus(d), events: [e] });
+  }
+  const failedEff = effects.filter((x) => x.data.status === 'failed');
+  if (failedEff.length) {
+    const lines = failedEff.map(effLine);
+    beats.push({ kind: 'effect', title: lines[0]! + (lines.length > 1 ? ` (+${lines.length - 1})` : ''), detail: lines.join(' · '), tone: 'neutral', focus: [], events: failedEff });
   }
   // Insight : la forme privée complète (propriétaire d’une carte masquée) remplace la forme publique.
   const insOwn = new Set(vis.filter((x) => x.kind === 'insight' && x.data.own).map((x) => x.data.player));

@@ -18,6 +18,7 @@ import type { ClashReport, GameConfig, GameEvent, PlayerCommand, PlayerId, SlotI
 import { buildJournal } from '../src/game/visibility/journal';
 import { publicEvents, viewFor, visibleEvents } from '../src/game/visibility/view';
 import { buildResolutionBeats, resolutionStart } from '../src/presentation/beats';
+import { buildActivations } from '../src/presentation/activations';
 import { buildClashScript } from '../src/presentation/clashMotion';
 import { ExpressionDirector } from '../src/presentation/expression';
 import { PERSONALITIES } from '../src/presentation/personalities';
@@ -63,6 +64,8 @@ function exposure(r: Runner, viewer: PlayerId): Record<string, unknown> {
     journal: buildJournal(vis, viewer).map((l) => l.text),
     beats: beats.map((b) => [b.title, b.detail]),
     script: script ? [script.verdict, script.detail, script.bullets] : null,
+    // M12 (ADR 045) : les temps forts mis en avant au premier plan
+    activations: buildActivations(vis, { viewer, primaries: prim }).map((a) => [a.title, a.consequence, a.detail, a.defId, a.targetDefId ?? null, a.seen ?? null]),
     memory: buildMemory(vis, viewer),
     reactions,
   };

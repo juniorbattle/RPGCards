@@ -20,3 +20,14 @@ au centre de l'écran, au premier plan), à la manière de *Duel Links*.
 Aucune règle changée ; le rythme d'un tour s'allonge d'environ une seconde par activation au rythme normal (rapide :
 × 0,45 ; instantané : rien). Les captures de QA du duel changent ; les parcours de QA en rythme instantané ne voient
 aucun temps fort.
+
+## Mise en œuvre (passe 153)
+- Le premier plan a **son propre hôte** (`#activations`, au-dessus de `#stage`) : la scène du Clash remplace le contenu
+  du sien à chaque Clash ; partager l'hôte retirait les temps forts au premier Clash (constaté au navigateur, corrigé
+  avant livraison). Un grand temps fort efface la scène du Clash derrière lui (`#stage.act-on`).
+- Le contrôleur confie les temps forts par le crochet `onActivations` (`ActivationSink`) : ceux de l'immédiat dans
+  `refresh` (aucun en gel ni pour un rejeu en bloc), ceux d'un temps de résolution dans `advanceBeat` (le temps dure au
+  moins autant que sa file) ; en gel, seul le temps demandé (`?beat=`) pose le sien, dans son état tenu. Le rival attend
+  la fin de la file (`activationsUntil`), sauf avec `aiDelay=0` (pilotage instantané des outils).
+- Sons : `sonDuTempsFort` (`src/son/evenements.ts`) ; recettes « activation », « annulé », « sceau », « regard ».
+- QA : `__lqv.activations()`, `actHoldOn`, `actRelease`, `actPlay` (avec `?qa=1` seulement) ; `node tools/m12-activations.mjs`.

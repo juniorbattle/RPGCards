@@ -288,7 +288,7 @@ function techChips(c: Controller): HTMLElement {
       class: cls('tech', usable && 'usable', armed && 'armed', used && 'used'), type: 'button', 'data-key': `tech-me-${t}`,
       title: `${t} — coût ${def.cost} Insight · ${def.timing}\n${def.text}`, 'aria-pressed': usable ? String(armed) : null, disabled: !usable,
       onclick,
-    }, h('span', { class: 'seal', html: techniqueSeal(t, 16) }), `${t} (${def.cost})`);
+    }, cardArtVersion() === 'v2' ? h('span', { class: 'seal', html: techniqueSeal(t, 16) }) : null, `${t} (${def.cost})`);
   }));
 }
 
@@ -355,6 +355,12 @@ function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
     if (shown === 'card') {
       zone.append(fresh(cardEl(revealed.defId, { artSeed: c.artSeed, classes: [c.ui.flipPrimaries && 'flip-in', 'on-board'], tag: 'div', attrs: { tabindex: '0', 'data-key': `prim-${who}`, ...inspectHooks(c, revealed.defId, true) } }), c.ui.flipPrimaries));
       zone.append(stanceBanner(revealed.stance));
+      // M12 (contrat 2, §4) : un effet de révélation en attente de sa condition (public : la Primaire est révélée)
+      const def = cardDef(revealed.defId);
+      if (def.effect && def.effect !== 'clairvoyance' && EFFECTS[def.effect].trigger === 'primary-reveal') {
+        zone.classList.add('armed');
+        zone.append(h('span', { class: 'armed-badge', 'data-key': `armed-${who}`, title: `${EFFECTS[def.effect].name} : ${EFFECT_SUMMARY[def.effect]}` }, h('span', { class: 'ab-ico', html: triggerIcon(triggerOf(def)!, 12) }), 'ARMÉ'));
+      }
     } else if (shown === 'stage') {
       zone.classList.add('lifted');
       zone.append(h('span', { class: 'empty-hint' }, 'En Clash…'));
@@ -485,13 +491,23 @@ function slotZone(c: Controller, who: 'me' | 'opp', slot: SlotIndex, s: SlotView
     if (v.phase === 'PREPARE' && v.awaitingMe && s && s.state !== 'active') {
       interactive = true;
       // M07 : choix possible signalé (révéler une réserve cachée), sans obligation.
-      if (s.state === 'hidden' && !c.ui.reveal.includes(slot)) zone.classList.add('option');
+      if (s.state === 'hidden' && !c.ui.reveal.includes(slot)) {
+        zone.classList.add('option');
+        // M12 (contrat 2, §4) : une réserve dont l'effet joue à la révélation volontaire pulse et le dit
+        const def = s.card ? cardDef(s.card.defId) : null;
+        if (def?.effect && EFFECTS[def.effect].trigger === 'secondary-reveal') {
+          zone.classList.add('reveal-effect');
+          zone.append(h('span', { class: 'plan-badge reveal-hint', 'data-key': `reveal-hint-${slot}`, title: `${EFFECTS[def.effect].name} : ${EFFECT_SUMMARY[def.effect]}` }, h('span', { class: 'ab-ico', html: triggerIcon('secondary-reveal', 11) }), `RÉVÉLER : ${EFFECTS[def.effect].name}`));
+        }
+      }
     }
     if (v.phase === 'TACTICS' && v.awaitingMe && s) interactive = true;
     if (v.phase === 'TACTICS' && s?.state === 'active') {
       const plan = c.ui.plans[slot];
       if (v.awaitingMe && !plan && c.ui.menuSlot !== slot) zone.classList.add('option');
       if (v.awaitingMe && plan) zone.append(planBadge(plan.mode, plan.mode === 'interfere' ? `→ case ${plan.target! + 1}` : plan.mode === 'keep' ? '' : c.supportLabel(slot, plan.mode as 'rank' | 'damage'), false));
+      // M12 : la pastille de déclenchement s'illumine quand le mode choisi est celui de son effet
+      if (plan && s.card && triggerOf(cardDef(s.card.defId)) === MODE_TRIGGER[plan.mode]) zone.classList.add('trig-lit');
       if (c.ui.tacticsTech?.id === 'Ancrage' && c.ui.tacticsTech.slot === slot) zone.append(h('span', { class: 'plan-badge anchor' }, 'ANCRAGE'));
       if (c.ui.menuSlot === slot) zone.append(tacticsMenu(c, slot));
       if (c.ui.targetingFor === slot) zone.classList.add('targeted');
@@ -542,12 +558,20 @@ function planBadge(mode: string, extra: string, cancelled: boolean): HTMLElement
   return h('span', { class: cls('plan-badge', mode, cancelled && 'cancelled') }, `${MODE_LABEL[mode] ?? mode}${extra ? ' ' + extra : ''}`);
 }
 
+/** M12 : le mode tactique qui déclenche l'effet d'une Secondaire. */
+const MODE_TRIGGER: Readonly<Record<string, string>> = { rank: 'use-rank', damage: 'use-damage', interfere: 'use-interfere' };
+
 function tacticsMenu(c: Controller, slot: SlotIndex): HTMLElement {
   const cur = c.ui.plans[slot]?.mode ?? null;
+  const card = c.view.me.slots[slot]?.card;
+  const def = card ? cardDef(card.defId) : null;
+  const trig = def ? triggerOf(def) : null;
   const item = (mode: 'keep' | 'rank' | 'damage' | 'interfere', label: string, hint: string) => {
     const blocked = c.modeBlocked(slot, mode);
-    return h('button', { type: 'button', 'data-key': `menu-${slot}-${mode}`, 'aria-pressed': String(cur === mode), disabled: !!blocked, title: blocked ?? '', onclick: (e: Event) => { e.stopPropagation(); c.choosePlan(slot, mode); } },
-      h('span', null, label), h('small', null, blocked ?? hint));
+    // M12 : le mode qui déclenche l'effet de la carte porte son icône et le nom de l'effet
+    const fires = !!def?.effect && trig === MODE_TRIGGER[mode];
+    return h('button', { type: 'button', class: fires ? 'fires' : null, 'data-key': `menu-${slot}-${mode}`, 'aria-pressed': String(cur === mode), disabled: !!blocked, title: blocked ?? (fires ? `${EFFECTS[def!.effect!].name} : ${EFFECT_SUMMARY[def!.effect!]}` : ''), onclick: (e: Event) => { e.stopPropagation(); c.choosePlan(slot, mode); } },
+      h('span', null, label, fires ? h('em', { class: 'fires-tag' }, h('span', { class: 'ab-ico', html: triggerIcon(trig!, 11) }), EFFECTS[def!.effect!].name) : null), h('small', null, blocked ?? hint));
   };
   const menu = fresh(h('div', { class: cls('menu', slot === 0 ? 'left' : 'right'), role: 'menu', 'aria-label': `Action de la Secondaire ${slot + 1}` },
     h('div', { class: 'menu-title' }, 'Choix secret (révélé après verrouillage commun)'),

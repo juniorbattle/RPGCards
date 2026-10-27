@@ -607,6 +607,60 @@ button { font: inherit; color: inherit; }
   .cs-body > .stance-banner { font-size: 0.72rem; }
 }
 
+/* ==========================================================================
+   M12 (contrat 2, ADR 045) — temps forts des activations : premier plan au centre (copies, Web Animations API)
+   ========================================================================== */
+#activations { position: fixed; inset: 0; z-index: 3; pointer-events: none; }
+.act-stage { position: absolute; inset: 0; pointer-events: none; }
+#stage .clash-stage { transition: opacity 0.22s ease; }
+#stage.act-on .clash-stage { opacity: 0.22; }
+.act { position: absolute; inset: 0; --famc: #e8c480; --act-card: min(25vh, 230px); --act-top: 44%; }
+.act.fam-Cendre { --famc: #ff7a2e; } .act.fam-Voile { --famc: #8fb8ff; } .act.fam-Ronce { --famc: #8fdc6a; } .act.fam-Astre { --famc: #ffd36b; }
+.act-technique, .act-regard { --famc: #ffd36b; } .act-insight { --famc: #c9a6ff; } .act-soin { --famc: #8fdc6a; }
+.act-veil { position: absolute; inset: 0; background: radial-gradient(ellipse 46% 50% at 50% 46%, color-mix(in srgb, var(--famc) 22%, rgba(4, 3, 8, 0.6)), rgba(4, 3, 8, 0.68) 60%, rgba(4, 3, 8, 0.3) 100%); }
+.act-rings i { position: absolute; left: 50%; top: var(--act-top); width: min(46vh, 420px); height: min(46vh, 420px); border-radius: 50%; border: 3px solid var(--famc); box-shadow: 0 0 28px var(--famc), inset 0 0 28px color-mix(in srgb, var(--famc) 60%, transparent); transform: translate(-50%, -50%); opacity: 0; }
+.act-center { position: absolute; left: 50%; top: var(--act-top); transform: translate(-50%, -50%); display: flex; align-items: center; gap: 2.2vh; --card-w: var(--act-card); --card-h: calc(var(--card-w) * 1.4); --radius: calc(var(--card-w) * 0.07); }
+.act-center .card { cursor: default; box-shadow: 0 0 0 calc(var(--card-w) * 0.025) var(--famc), 0 0 calc(var(--card-w) * 0.35) color-mix(in srgb, var(--famc) 80%, transparent), 0 18px 40px rgba(0, 0, 0, 0.75); }
+.act-center .card.act-pair { --card-w: min(21vh, 200px); --card-h: calc(var(--card-w) * 1.4); }
+.act-center .act-src, .act-center .act-tgt { --card-w: min(19vh, 180px); --card-h: calc(var(--card-w) * 1.4); }
+.act-interference .act-center { gap: 12vh; }
+.act-bolt { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #ffe7a0; filter: drop-shadow(0 0 14px #ffd36b) drop-shadow(0 0 4px #fff); z-index: 2; }
+.act-stamp { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-14deg); padding: 0.25em 0.6em; font: 900 clamp(26px, 4.6vh, 46px)/1 system-ui, sans-serif; letter-spacing: 0.12em; color: #ff5a4a; border: 0.12em solid #ff5a4a; border-radius: 0.18em; background: rgba(20, 4, 4, 0.55); text-shadow: 0 0 10px rgba(255, 60, 40, 0.6); box-shadow: 0 0 22px rgba(255, 60, 40, 0.45); z-index: 3; }
+.act-stamp-tgt { left: calc(100% - min(19vh, 180px) / 2); }
+.act-banner { position: absolute; left: 50%; top: calc(var(--act-top) + var(--act-card) * 0.78); transform: translateX(-50%); display: flex; align-items: center; gap: 0.6rem; padding: 0.45rem 1.1rem; border-radius: 999px; background: linear-gradient(180deg, rgba(14, 10, 18, 0.92), rgba(8, 6, 12, 0.96)); border: 1px solid var(--famc); box-shadow: 0 0 18px color-mix(in srgb, var(--famc) 55%, transparent), 0 8px 22px rgba(0, 0, 0, 0.6); white-space: nowrap; }
+.act-ico { display: inline-grid; place-items: center; width: 1.9rem; height: 1.9rem; border-radius: 50%; color: #fff; background: color-mix(in srgb, var(--famc) 50%, #0b0810); border: 1px solid var(--famc); }
+.act-title { font: 700 clamp(18px, 2.6vh, 26px)/1 Georgia, serif; color: #fff4dc; letter-spacing: 0.02em; }
+.act-who { font-size: 0.78rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--famc); }
+.act-cons { position: absolute; left: 50%; top: calc(var(--act-top) + var(--act-card) * 0.78 + 3.4rem); transform: translateX(-50%); font: 900 clamp(28px, 5.2vh, 54px)/1 system-ui, sans-serif; letter-spacing: 0.05em; color: #fff; text-shadow: 0 0 18px var(--famc), 0 0 4px var(--famc), 0 3px 8px #000; white-space: nowrap; }
+.act.tone-bad .act-cons { color: #ffd9d2; } .act.tone-warn .act-cons { color: #ffe9b8; }
+.act-detail { position: absolute; left: 50%; top: calc(var(--act-top) + var(--act-card) * 0.78 + 3.4rem + clamp(34px, 6vh, 62px)); transform: translateX(-50%); width: max-content; max-width: min(620px, 86vw); text-align: center; font-size: 0.95rem; line-height: 1.35; color: #efe6d4; text-shadow: 0 1px 3px #000; }
+.act-private { position: absolute; left: 50%; top: calc(var(--act-top) - var(--act-card) * 0.82 - 1.6rem); transform: translateX(-50%); padding: 0.25rem 0.8rem; border-radius: 999px; font-size: 0.78rem; font-weight: 900; letter-spacing: 0.14em; color: #1a1206; background: linear-gradient(180deg, #fff0c2, #e8c46a); box-shadow: 0 0 14px rgba(255, 210, 110, 0.6); white-space: nowrap; }
+.act-seal { position: relative; width: min(30vh, 260px); height: min(30vh, 260px); display: grid; place-items: center; color: #fff6dc; }
+.act-seal-ring { position: absolute; inset: 0; border-radius: 50%; border: 3px dashed var(--famc); box-shadow: 0 0 26px color-mix(in srgb, var(--famc) 60%, transparent), inset 0 0 30px color-mix(in srgb, var(--famc) 35%, transparent); }
+.act-seal-ico { display: grid; filter: drop-shadow(0 0 12px var(--famc)); }
+.act-emblem { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: var(--famc); opacity: 0.5; filter: drop-shadow(0 0 30px var(--famc)); z-index: -1; }
+.act-veil-drop { position: absolute; inset: -4%; border-radius: 10px; background: repeating-linear-gradient(90deg, rgba(220, 230, 255, 0.55) 0 12px, rgba(200, 210, 255, 0.3) 12px 24px); box-shadow: 0 0 30px rgba(170, 200, 255, 0.6); }
+.act-tear { position: absolute; top: -4%; bottom: -4%; width: 54%; background: repeating-linear-gradient(90deg, rgba(220, 230, 255, 0.6) 0 10px, rgba(200, 210, 255, 0.32) 10px 20px); }
+.act-tear.l { left: -4%; } .act-tear.r { right: -4%; }
+.act-strip { position: absolute; left: 50%; top: 13%; transform: translateX(-50%); width: max-content; max-width: min(760px, 90vw); display: flex; gap: 0.6rem; align-items: baseline; padding: 0.45rem 1rem; border-radius: 10px; background: rgba(12, 10, 16, 0.88); border: 1px solid rgba(232, 196, 128, 0.45); color: #d9cfbd; font-size: 0.86rem; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.55); }
+.act-strip b { color: #e8c480; white-space: nowrap; }
+.act-chip { position: absolute; left: 50%; top: 30%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; padding: 0.4rem 0.9rem; border-radius: 12px; background: rgba(10, 8, 14, 0.9); border: 1px solid var(--famc); box-shadow: 0 0 18px color-mix(in srgb, var(--famc) 50%, transparent); }
+.act.anchored .act-chip { left: var(--ax); top: var(--ay); transform: translateY(-50%); }
+.act-chip b { font: 900 1.4rem/1 system-ui, sans-serif; color: #fff; text-shadow: 0 0 10px var(--famc); }
+.act-chip span { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--famc); }
+.act.held .act-rings i { opacity: 0.35; transform: translate(-50%, -50%) scale(1.2); }
+.act.held.act-camouflage .act-veil-drop { opacity: 0.85; }
+.act.held.act-dissipation .act-tear { opacity: 0; }
+/* Petit écran paysage : premier plan resserré (la bannière et la conséquence restent sous la carte). */
+@media (max-height: 560px) {
+  .act { --act-card: min(22vh, 120px); --act-top: 38%; }
+  .act-banner { padding: 0.3rem 0.8rem; }
+  .act-cons { top: calc(var(--act-top) + var(--act-card) * 0.78 + 2.7rem); font-size: clamp(20px, 6vh, 32px); }
+  .act-detail { top: calc(var(--act-top) + var(--act-card) * 0.78 + 2.7rem + 2.2rem); font-size: 0.78rem; }
+  .act-rings i { width: min(40vh, 220px); height: min(40vh, 220px); }
+  .act-seal { width: min(26vh, 140px); height: min(26vh, 140px); }
+}
+
 /* M04 — conseil contextuel (mode produit) : au-dessus des commandes, bord droit ; centre libre. */
 /* Sous le plateau (z 3) : un menu tactique ouvert passe au-dessus du conseil au lieu d’être recouvert (ADR 016 :
    colonnes plus espacées ; le menu de la Secondaire droite débordait déjà en partie sous le conseil). */
@@ -682,6 +736,21 @@ button { font: inherit; color: inherit; }
 /* Choix possible mais facultatif (réserve à révéler, Secondaire active sans action) : liseré vert fixe. */
 .zone.option > .zone-floor, .zone:has(> .card).option > .zone-floor { visibility: visible; border-color: rgba(143, 220, 106, 0.8); border-width: 2px; box-shadow: 0 0 14px rgba(143, 220, 106, 0.35); }
 
+/* M12 (contrat 2, §4) — ce qui est possible : effet armé de la Primaire révélée, réserve dont l'effet joue à la
+   révélation volontaire, mode tactique qui déclenche l'effet (pulsations coupées en mouvement réduit et en gel). */
+@keyframes lqvArmed { 0%, 100% { box-shadow: 0 0 0 0 rgba(255, 211, 107, 0), 0 2px 8px rgba(0, 0, 0, 0.6); } 50% { box-shadow: 0 0 0 3px rgba(255, 211, 107, 0.45), 0 0 16px rgba(255, 211, 107, 0.7); } }
+@keyframes lqvRevealHint { 0%, 100% { box-shadow: 0 0 14px rgba(143, 220, 106, 0.3); } 50% { box-shadow: 0 0 0 3px rgba(143, 220, 106, 0.4), 0 0 26px rgba(143, 220, 106, 0.65); } }
+.armed-badge { position: absolute; left: 50%; top: -0.7rem; transform: translateX(-50%); z-index: 5; display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.12rem 0.5rem; border-radius: 999px; font-size: 0.66rem; font-weight: 900; letter-spacing: 0.12em; color: #1a1206; background: linear-gradient(180deg, #ffe7a0, #e8b94a); border: 1px solid #fff2c8; animation: lqvArmed 1.4s ease-in-out infinite; pointer-events: auto; cursor: help; white-space: nowrap; }
+.side.opp .armed-badge { top: auto; bottom: -0.7rem; }
+.ab-ico { display: inline-grid; place-items: center; }
+.ab-ico svg { display: block; }
+.zone.armed > .card.on-board { filter: drop-shadow(0 0 10px rgba(255, 211, 107, 0.55)); }
+.plan-badge.reveal-hint { display: inline-flex; align-items: center; gap: 0.25rem; background: #17301a; border-color: rgba(143, 220, 106, 0.9); color: #dcf7cf; pointer-events: auto; cursor: help; }
+.zone.reveal-effect > .zone-floor { animation: lqvRevealHint 1.5s ease-in-out infinite; }
+.zone.trig-lit > .card .trig { color: #1a1206; background: #ffe7a0; border-color: #fff; box-shadow: 0 0 0 2px rgba(255, 231, 160, 0.5), 0 0 14px rgba(255, 211, 107, 0.9); }
+.menu button.fires { border-color: rgba(255, 211, 107, 0.6); }
+.fires-tag { display: inline-flex; align-items: center; gap: 0.2rem; margin-left: 0.4rem; padding: 0 0.35rem; border-radius: 999px; font-style: normal; font-size: 0.66rem; font-weight: 800; color: #1a1206; background: #ffd36b; vertical-align: 0.08em; }
+.reduced .armed-badge, .freeze .armed-badge, .reduced .zone.reveal-effect > .zone-floor, .freeze .zone.reveal-effect > .zone-floor { animation: none; }
 /* Étapes de l’engagement en pictogrammes ; seul le nom de l’étape en cours est écrit (les autres : infobulle). */
 .command .steps { display: flex; gap: 0.3rem; margin: 0; padding: 0; list-style: none; align-items: center; }
 .command.has-steps .msg { -webkit-line-clamp: 3; }
