@@ -44,7 +44,7 @@ export function renderOptions(sh: Shell, inDuel: boolean): HTMLElement {
     rows.push(seg('Conseils pendant le duel', 'tips', [['on', 'Affichés', o.tips, () => { save.options.tips = true; }], ['off', 'Masqués', !o.tips, () => { save.options.tips = false; }]]));
     rows.push(h('div', { class: 'sh-opt' }, h('span', { class: 'sh-opt-l' }, `Conseils déjà lus : ${save.tipsSeen.length}`), btn('Tout réafficher', () => commit(() => { save.tipsSeen = []; }), { ghost: true, key: 'opt-tips-reset', disabled: !save.tipsSeen.length })));
     rows.push(seg('Collection (mode démo)', 'full', [['off', 'Progression', !o.fullCollection, () => { save.options.fullCollection = false; }], ['on', 'Tout le catalogue', o.fullCollection, () => { save.options.fullCollection = true; }]]));
-    rows.push(h('p', { class: 'sh-note' }, chip('démo', 'proto'), ' « Tout le catalogue » rend équipables les 16 variantes, 4 Signatures et 6 Techniques sans les débloquer : réversible, sans effet sur l’historique. Revenir en « Progression » peut rendre votre deck illégal : il faudra le corriger avant le prochain duel.'));
+    rows.push(h('p', { class: 'sh-note' }, chip('démo', 'proto'), ' « Tout le catalogue » rend équipables les 48 variantes (A, B et C), 4 Signatures et 6 Techniques sans les débloquer : réversible, sans effet sur l’historique. Revenir en « Progression » peut rendre votre deck illégal : il faudra le corriger avant le prochain duel.'));
     rows.push(h('div', { class: 'sh-opt' },
       h('label', { class: 'sh-opt-l', for: 'opt-art' }, 'Seed esthétique (illustrations, rival)'),
       h('div', { class: 'sh-seg' },

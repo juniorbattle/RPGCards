@@ -13,7 +13,7 @@ import { estGuetteur } from './vue';
 import { faitsPublics } from './faits';
 import { figure } from './modele';
 import { pvJoueur } from './paliers';
-import { aGain, variantesIdentite, type Gain } from './registre';
+import { aGain, prochaineVariante, variantesIdentite, type Gain } from './registre';
 import type { DuelPrevu } from './rencontres';
 import { CATALOG_AVENTURE, type AventureSave, type DuelAventure } from './sauvegarde';
 
@@ -58,6 +58,25 @@ export function choixVariante(e: AventureEtat, rencontre: string): string[] | nu
   if (!identite) return null;
   const ids = variantesIdentite(identite);
   return ids.some((v) => aGain(e.registre, `variante:${v}`)) ? null : ids;
+}
+
+/**
+ * Avenant 09 : ce qu'une victoire dans cette rencontre mettrait en jeu, côté variantes : le choix (première variante de
+ * l'identité, `choixVariante`) ou la suivante qui manque (revanche contre un lieutenant, série d'Épreuve regagnée à son
+ * dernier duel, Joute regagnée) ; null sinon (Signature, duel sans enjeu, plus rien à gagner).
+ */
+export function enjeuVariante(e: AventureEtat, rencontre: string): { choix: string[] } | { suivante: string } | null {
+  const choix = choixVariante(e, rencontre);
+  if (choix) return { choix };
+  const fig = figureOuNull(rencontre);
+  const m = rencontre.match(/^(epreuve|joute):(\w+)$/);
+  const f = m?.[2] as Family | undefined;
+  const identite = fig ? (fig.enjeu.kind === 'variante' && e.vaincues.includes(fig.id) ? CATALOG[fig.enjeu.defId]!.identity : null)
+    : m?.[1] === 'epreuve' && f ? ((e.competitions.epreuves[f]?.etape ?? 0) === 2 && e.competitions.epreuves[f]?.gagnee ? `${f}-1` : null)
+    : m?.[1] === 'joute' && f ? (e.competitions.joutes[f]?.gagnee ? `${f}-2` : null)
+    : null;
+  const suivante = identite ? prochaineVariante(e.registre, identite) : null;
+  return suivante ? { suivante } : null;
 }
 
 export interface FinDuel {

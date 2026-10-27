@@ -54,7 +54,7 @@ import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, ty
 import { installAventureStyles } from './styles';
 import { aJouer, arriveeAJouer, cadreDialogue, cadreGroupe, CARTONS_CHAPITRE, cinePermise, DUREES, ecrireCine, estChapitreCarton, LIGNES_LIEU, lireCine, plansAffiliation, plansArrivee, plansChapitre, plansChef, plansEmissaire, plansGuetteur, plansKaiPrologue, plansRival, plansTitre, type CadreDialogue, type CinematiqueId } from './cinematiques';
 import { Bandes, Cinema } from './cinema';
-import { choixVariante, conclureDuel, figureOuNull, ouvrirDuel, REGLES_DUEL } from './fin';
+import { choixVariante, conclureDuel, enjeuVariante, figureOuNull, ouvrirDuel, REGLES_DUEL } from './fin';
 import { conseilLu, conseilsPermis, ecrireConseils, lireConseils } from './conseils';
 import { duelTip } from '../shell/tips';
 
@@ -953,7 +953,7 @@ export class AventureApp {
       const ouvrir = () => {
         const t = this.town;
         const at = this.ou(c.apparence);
-        this.dire(`${c.nom}, ${c.titre}`, `« Te voilà des nôtres. Maintenant, montre-moi ce que valent tes nouvelles cartes : je mets en jeu ${nomCarte(c.enjeu.kind === 'variante' ? c.enjeu.defId : '')}. »`, [
+        this.dire(`${c.nom}, ${c.titre}`, `« Te voilà des nôtres. Maintenant, montre-moi ce que valent tes nouvelles cartes : je mets en jeu ${c.enjeu.kind === 'variante' ? auChoix(c.enjeu.defId) : ''}. »`, [
           { label: `Défier ${c.nom}`, key: 'dlg-duel', primary: true, run: () => this.lancerFigure(c.id) },
           { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
         ], c.apparence, false, t && at ? cadreDialogue(at, t.walker().pos) : null);
@@ -985,7 +985,7 @@ export class AventureApp {
     const suivante = fig.enjeu.kind === 'variante' ? prochaineVariante(e.registre, CATALOG[fig.enjeu.defId]!.identity) : null;
     const enjeu = st.deja
       ? (suivante ? `Revanche : en jeu, ${nomCarte(suivante)}, une autre variante de la carte gagnée.` : 'Revanche, sans récompense : vos victoires sont déjà au registre.')
-      : `En jeu : ${fig.enjeu.kind === 'variante' ? `une variante au choix de ${CATALOG[fig.enjeu.defId]!.name} (${variantesIdentite(CATALOG[fig.enjeu.defId]!.identity).map((v) => EFFECTS[CATALOG[v]!.effect!].name).join(', ')})` : `la Signature ∞ ${de(fig.famille)}`}.`;
+      : `En jeu : ${fig.enjeu.kind === 'variante' ? auChoix(fig.enjeu.defId) : `la Signature ∞ ${de(fig.famille)}`}.`;
     if (!st.ouvert) return this.dire(`${fig.nom}, ${fig.titre}`, `« Pas encore. » ${st.raison}`, [fermer(this)], fig.apparence);
     // M11-C : au premier défi d'une figure d'une autre famille, elle a entendu parler de votre parcours
     const contexte = !st.deja && fig.famille !== e.affiliation ? this.replique(`defi-${fig.famille}`, 'defi') : '';
@@ -1131,7 +1131,7 @@ export class AventureApp {
     const m = MAISONS[f];
     const [c, b, ch] = ROLES.map((r) => figureDe(f, r));
     const gb = e.registre.find((g) => g.key === `basics:${f}`);
-    const enjeu = (x: typeof c) => (x!.enjeu.kind === 'variante' ? nomCarte(x!.enjeu.defId) : `la Signature ∞ ${de(f)}`);
+    const enjeu = (x: typeof c) => (x!.enjeu.kind === 'variante' ? auChoix(x!.enjeu.defId) : `la Signature ∞ ${de(f)}`);
     const remis = ap.basicsDeja
       ? `Les quatre cartes de base ${de(f)} sont déjà à vous (${gb ? minuscule(origineGain(gb)) : 'registre'}) : rien n’est remis une seconde fois.${ap.techniqueDeja ? ` La Technique ${m.technique} est déjà apprise.` : ''}`
       : `Les quatre cartes de base ${de(f)} (I à IV)${ap.techniqueDeja ? ` ; la Technique ${m.technique} est déjà apprise.` : `, et la Technique ${m.technique} (${TECHNIQUES[m.technique].text})`}`;
@@ -1178,9 +1178,16 @@ export class AventureApp {
   /** Préparation (dialogue) : adversaire, lieu, PV, enjeu annoncé, les deux decks ; puis le duel. */
   private preparer(prevu: DuelPrevu, forcee = false): void {
     this.fermerDialogue();
+    // avenant 09 : une variante au choix (trois cartes) à la première victoire, la suivante qui manque en revanche
+    const ev = enjeuVariante(this.etat, prevu.rencontre);
+    const carte = (id: string) => cardEl(id, { artSeed: this.params.artSeed, tag: 'div' });
+    const enjeuEl = () => ev && 'choix' in ev ? h('div', { class: 'av-enjeu' }, h('span', null, 'En jeu (première victoire) : une variante au choix, '), ...ev.choix.map(carte))
+      : ev ? h('div', { class: 'av-enjeu' }, h('span', null, 'En jeu (revanche) : '), carte(ev.suivante))
+      : prevu.enjeu?.startsWith('sig-') && CATALOG[prevu.enjeu] ? h('div', { class: 'av-enjeu' }, h('span', null, 'En jeu (première victoire) : '), carte(prevu.enjeu))
+      : h('p', null, 'Aucune récompense en jeu.');
     const panel = h('div', { class: 'av-confirm av-prep', 'data-key': 'av-preparation' },
       h('div', { class: 'av-confirm-head' }, h('img', { class: 'ville-portrait', alt: '', src: portraitUrl(prevu.personnalite, this.params.artSeed) }), h('div', null, h('h2', null, prevu.titre), h('p', { class: 'av-devise' }, `Lieu : ${LIEU[prevu.venue]} · PV ${prevu.config.players.p1.hp} contre ${prevu.config.players.p2.hp}`))),
-      prevu.enjeu ? h('div', { class: 'av-enjeu' }, h('span', null, 'En jeu (première victoire) : '), CATALOG[prevu.enjeu] ? cardEl(prevu.enjeu, { artSeed: this.params.artSeed, tag: 'div' }) : null) : h('p', null, 'Aucune récompense en jeu.'),
+      enjeuEl(),
       h('p', { class: 'av-proto', 'data-key': 'av-deck-adverse' }, `Adversaire : ${prevu.note}`),
       h('p', { class: 'av-proto', 'data-key': 'av-deck-reel' }, `Votre deck : ${resumeDeck(this.etat.deck)} ; Techniques ${this.etat.deck.techniques.join(' et ')}.`),
       h('div', { class: 'ville-choices' },
@@ -1773,6 +1780,8 @@ const LIEU: Record<VenueId, string> = { salle: 'la salle de jeu de cartes', rue:
 
 const lieuDe = (f: Family) => (f === 'Cendre' ? 'à la Maison du Chantier, à l’ouest du Quai' : f === 'Ronce' ? 'devant le Fanal, sur le Quai' : f === 'Voile' ? 'dans les Ruelles, près de la fontaine' : 'sur le Parvis de l’arène');
 const nomCarte = (defId: string) => (CATALOG[defId] ? cardTitle(CATALOG[defId]!) : defId);
+/** Avenant 09 : « une variante au choix de Cendre III (Ferveur, Surenchère, Brûlure) ». */
+const auChoix = (defId: string) => `une variante au choix de ${CATALOG[defId]!.name} (${variantesIdentite(CATALOG[defId]!.identity).map((v) => EFFECTS[CATALOG[v]!.effect!].name).join(', ')})`;
 /** Le deck au format standard (avenant M10-A, AV-04 ; A-6). */
 const STANDARD = 'Format standard : 17 cartes, sans carte grise ; le validateur du mode Duel l’accepte tel quel.';
 /** État d'une bannière, lu par le joueur (Salle des Bannières). */

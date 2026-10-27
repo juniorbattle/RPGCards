@@ -140,7 +140,7 @@ function gallery(): void {
   const t0 = performance.now();
   app.replaceChildren(h('div', { style: 'padding:16px' },
     h('h1', { class: 'serif', style: 'color:#ffe7b0;margin:0 0 8px' }, `Galerie procédurale — artSeed ${params.artSeed}`),
-    h('p', { style: 'color:#b9ae9c;margin:0 0 12px;font-size:13px' }, `${ids.length} définitions (16 Basic, 16 variantes, 4 Signatures) + verso commun. 100 % Canvas 2D / SVG générés, aucune image téléchargée.`),
+    h('p', { style: 'color:#b9ae9c;margin:0 0 12px;font-size:13px' }, `${ids.length} définitions (16 Basic, 48 variantes, 4 Signatures) + verso commun. 100 % Canvas 2D / SVG générés, aucune image téléchargée.`),
     h('div', { style: 'display:flex;flex-wrap:wrap;gap:10px;--card-w:112px;--card-h:157px;--radius:8px' },
       ...ids.map((id) => cardEl(id, { artSeed: params.artSeed, tag: 'div' })),
       backEl(params.artSeed),
