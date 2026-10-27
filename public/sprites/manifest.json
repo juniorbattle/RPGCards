@@ -278,7 +278,7 @@
     },
     "chef-astre": {
       "file": "chef-astre.png",
-      "sha256": "111ae4c9e29e87145273b4802f723aaec00ea10245b31da785d3397eac98fbe1",
+      "sha256": "5e194dccf1ba7840098d006333309c122cc052c94b1cefd5cb75fccb0c3ba4b4",
       "cell": [
         64,
         96
@@ -293,9 +293,9 @@
       ],
       "figureH": 83,
       "recolor": [],
-      "source": "gpt-image-2 (feuille des PNJ de la ville, Halvard, le Cartographe, chef de l’Astre (couleurs propres), reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs)",
+      "source": "gpt-image-2 (feuille des PNJ de la ville, Halvard, le Cartographe, chef de l’Astre (couleurs propres), reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs) ; manteau recoloré en ocre par script (ADR 046, tools/m12-couleurs-astre.mjs)",
       "fiche": "art-src/sprites/chef-astre/fiche.json",
-      "approved": true
+      "approved": false
     }
   }
 }

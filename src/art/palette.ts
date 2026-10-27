@@ -1,6 +1,10 @@
 /**
- * Palettes SÉMANTIQUES PROVISOIRES (non validées comme direction artistique).
- * Remplaçables en un seul point. Les familles se distinguent aussi par symbole et motif.
+ * Palettes des familles : source unique des couleurs des cartes, des lieux de duel, de la ville et des tenues.
+ * Les familles se distinguent aussi par symbole et motif.
+ *
+ * Couleurs canoniques (décision du responsable du 2026-10-27, ADR 046 : l'Astre et le Voile ne doivent plus se confondre) :
+ * Cendre rouille et orange, Voile marine et indigo (reflets cyan), Ronce vert, Astre ocre, ambre et or — comme les
+ * bannières peintes de la ville (pavillon du Parvis, façades de la Grande Cour, Observatoire) et le manteau d'Orin.
  */
 import type { Family, Rarity } from '../game/catalog/cards';
 
@@ -19,7 +23,7 @@ export const FAMILY_PALETTE: Record<Family, FamilyPalette> = {
   Cendre: { deep: '#1d0905', mid: '#7a2410', light: '#d0541f', accent: '#ffb347', glow: '#ff7a2e', ink: '#fff1e0', hex: 0xff6a2a },
   Voile: { deep: '#0b0b1f', mid: '#2f2d6e', light: '#5d63c4', accent: '#a8e6ff', glow: '#8fb8ff', ink: '#eef2ff', hex: 0x7f8cff },
   Ronce: { deep: '#06140b', mid: '#1d4a29', light: '#3f8a46', accent: '#d4ec7a', glow: '#8fdc6a', ink: '#effbe4', hex: 0x6fd66a },
-  Astre: { deep: '#070a24', mid: '#1b2a6b', light: '#3a63c9', accent: '#ffe08a', glow: '#ffd36b', ink: '#fff9e6', hex: 0xffcf5a },
+  Astre: { deep: '#1a1206', mid: '#6b4c14', light: '#b8882c', accent: '#ffe08a', glow: '#ffd36b', ink: '#fff9e6', hex: 0xffcf5a },
 };
 
 /**

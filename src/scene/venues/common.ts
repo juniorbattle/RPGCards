@@ -33,7 +33,7 @@ export function bannerTexture(family: Family, seed: number): THREE.CanvasTexture
   const { c, ctx } = canvas(W, H);
   const p = FAMILY_PALETTE[family];
   const rng = makeRng(hashString(`banner|${family}|${seed}`));
-  const base: Record<Family, [string, string]> = { Cendre: ['#8a1e12', '#3a0906'], Ronce: ['#1f5a2a', '#0b2410'], Astre: ['#16224f', '#070b22'], Voile: ['#244bb0', '#0c1a4e'] };
+  const base: Record<Family, [string, string]> = { Cendre: ['#8a1e12', '#3a0906'], Ronce: ['#1f5a2a', '#0b2410'], Astre: ['#8a6416', '#2e2006'], Voile: ['#244bb0', '#0c1a4e'] };
   const g = ctx.createLinearGradient(0, 0, 0, H);
   g.addColorStop(0, base[family][0]);
   g.addColorStop(1, base[family][1]);

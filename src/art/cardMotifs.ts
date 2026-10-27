@@ -923,7 +923,7 @@ function repere(ctx: Ctx, p: FamilyPalette): void {
     ctx.save();
     ctx.translate(CX - 26 + i * 4, CY + 10 - i * 6);
     ctx.rotate(-0.12 + i * 0.06);
-    cardShape(ctx, 0, 0, 52, 70, i === 0 ? '#3550a8' : '#22336f', `${p.accent}${i === 0 ? 'ee' : '77'}`);
+    cardShape(ctx, 0, 0, 52, 70, i === 0 ? p.mid : p.deep, `${p.accent}${i === 0 ? 'ee' : '77'}`);
     ctx.restore();
   }
   // rayon de l'étoile vers la carte du dessus
@@ -1052,7 +1052,7 @@ function relance(ctx: Ctx, p: FamilyPalette): void {
   ctx.save();
   ctx.translate(kx, ky);
   ctx.rotate(-0.4);
-  cardShape(ctx, -12, -16, 24, 32, '#3550a8', p.accent);
+  cardShape(ctx, -12, -16, 24, 32, p.mid, p.accent);
   ctx.restore();
 }
 

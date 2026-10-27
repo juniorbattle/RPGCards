@@ -115,7 +115,7 @@ export function walkerLook(id: string): WalkerLook {
     },
     'chef-astre': {
       skin: tone('#dcaf95', '#b07e66', '#7e5242', '#f4d3bd'), hair: tone('#ecebe7', '#c4c0ba', '#8a8682', '#ffffff'), cut: 'milongs',
-      cloth: tone('#1a2450', '#0e1430', '#070a1c', '#2e3c7a'), shirt: tone('#e8c46a', '#c4a04a', '#9a7a2a', '#fff0b8'), legs: '#141a34',
+      cloth: tone('#5a4512', '#36290a', '#1c1505', '#806418'), shirt: tone('#e8c46a', '#c4a04a', '#9a7a2a', '#fff0b8'), legs: '#1c1508',
       accessory: 'barbe', long: true, detail: 'revers', iris: '#5a8ac8',
     },
   };

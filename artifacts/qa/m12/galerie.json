@@ -1,13 +1,13 @@
 {
-  "date": "2026-10-27T02:47:37.698Z",
+  "date": "2026-10-27T05:27:31.081Z",
   "checks": [
     "OK worker et page : mêmes illustrations (contrôle non disponible sur cette page)",
     "OK console sans erreur (0 lignes)",
-    "OK génération des 36 illustrations sur la page : v2 690.9 ms, v1 510.6 ms"
+    "OK génération des 36 illustrations sur la page : v2 579.7 ms, v1 414.8 ms"
   ],
   "console": [],
   "genMs": {
-    "v2": 690.9,
-    "v1": 510.6
+    "v2": 579.7,
+    "v1": 414.8
   }
 }
