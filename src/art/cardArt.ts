@@ -9,6 +9,7 @@
  */
 import { cardDef, type CardDef, type Family } from '../game/catalog/cards';
 import { hashString, makeRng } from '../game/engine/rng';
+import { drawEffectMotif } from './cardMotifs';
 import { drawEmblem } from './emblems';
 import { FAMILY_PALETTE } from './palette';
 
@@ -25,9 +26,32 @@ export function artCacheSize(): number {
   return cache.size;
 }
 
-/** Clé de cache d’une illustration ; c’est aussi la graine de son tirage (même image partout). */
-export function artKey(defId: string, artSeed: number): string {
-  return `${artSeed}|${defId}`;
+/**
+ * M12 (ADR 044) : deux dessins. `v2` (défaut) : un motif propre à chaque variante et à chaque Signature
+ * (`cardMotifs.ts`) ; `v1` : le dessin d'avant, par famille (`?cartes=v1`, comparaison). Les Basics et les neutres ont
+ * la même image dans les deux.
+ */
+export type ArtVersion = 'v1' | 'v2';
+let version: ArtVersion = 'v2';
+
+/** Choisit le dessin des cartes (au démarrage, avant toute illustration). */
+export function setCardArtVersion(v: ArtVersion): void {
+  version = v;
+}
+
+export function cardArtVersion(): ArtVersion {
+  return version;
+}
+
+/** Une variante ou une Signature reçoit-elle un motif propre dans ce dessin ? */
+const ownMotif = (def: CardDef, v: ArtVersion): boolean => v === 'v2' && def.family !== null && def.effect !== null;
+
+/**
+ * Clé de cache d’une illustration ; c’est aussi la graine de son tirage (même image partout). Une carte qui garde son
+ * dessin d'avant garde sa clé (mêmes pixels) ; une carte au motif propre a la sienne.
+ */
+export function artKey(defId: string, artSeed: number, v: ArtVersion = version): string {
+  return ownMotif(cardDef(defId), v) ? `${artSeed}|${defId}|m12` : `${artSeed}|${defId}`;
 }
 
 /**
@@ -328,9 +352,9 @@ function neutreArt(ctx: Ctx, def: CardDef, rng: Rng): void {
 }
 
 /** Dessine l’illustration sur un contexte NEUF de ART_W × ART_H (page ou worker, même tracé). */
-export function drawCardArt(ctx: Ctx, defId: string, artSeed: number): void {
+export function drawCardArt(ctx: Ctx, defId: string, artSeed: number, v: ArtVersion = version): void {
   const def = cardDef(defId);
-  const rng = makeRng(hashString(artKey(defId, artSeed)));
+  const rng = makeRng(hashString(artKey(defId, artSeed, v)));
   if (def.family === null) {
     neutreArt(ctx, def, rng);
     vignette(ctx);
@@ -338,6 +362,13 @@ export function drawCardArt(ctx: Ctx, defId: string, artSeed: number): void {
   }
   const fdef = def as CardDef & { family: Family };
   bg(ctx, fdef, rng);
+  if (ownMotif(def, v)) {
+    // M12 : le motif de la famille, atténué, puis la composition propre à l'effet
+    MOTIFS[def.family](ctx, def, rng, def.signature ? 0.55 : 0.2 + ((def.rank ?? 1) - 1) * 0.05);
+    drawEffectMotif(ctx, def.family, def.effect!, rng);
+    vignette(ctx);
+    return;
+  }
   const intensity = def.signature ? 1 : 0.35 + ((def.rank ?? 1) - 1) * 0.2 + (def.effect ? 0.05 : 0);
   MOTIFS[def.family](ctx, def, rng, intensity);
   centralEmblem(ctx, fdef, rng);
@@ -345,9 +376,9 @@ export function drawCardArt(ctx: Ctx, defId: string, artSeed: number): void {
 }
 
 /** Génération synchrone sur le fil principal, sans cache (repli, et contrôle QA `artCheck`). */
-export function paintCardArtUrl(defId: string, artSeed: number): string {
+export function paintCardArtUrl(defId: string, artSeed: number, v: ArtVersion = version): string {
   const { c, ctx } = canvas(ART_W, ART_H);
-  drawCardArt(ctx, defId, artSeed);
+  drawCardArt(ctx, defId, artSeed, v);
   return c.toDataURL('image/png');
 }
 

@@ -13,9 +13,13 @@ import { PERSONALITIES, personalityById, personalityFor, type RivalPersonality }
 import { figureCost, figureLayers, portraitCost } from './scene/figureBench';
 import { prepStats, setPrepMode } from './scene/rival';
 import { playerFigure } from './art/portrait';
+import { setCardArtVersion } from './art/cardArt';
 import { DEFAULT_VENUE, type VenueId } from './presentation/venues';
 
 const params = readParams();
+// M12 (ADR 044) : dessin des cartes choisi avant toute illustration (`?cartes=v1` : celui d'avant)
+setCardArtVersion(params.cartes);
+document.documentElement.classList.toggle('cartes-v1', params.cartes === 'v1');
 // M08 C1 : préparation des rivaux aux temps morts (`?qa=1&prep=art|off` pour la mesure) ; état lisible en QA.
 setPrepMode(params.prep);
 if (params.qa) (window as unknown as Record<string, unknown>).__lqvPrep = prepStats;
@@ -137,7 +141,7 @@ function gallery(): void {
   app.replaceChildren(h('div', { style: 'padding:16px' },
     h('h1', { class: 'serif', style: 'color:#ffe7b0;margin:0 0 8px' }, `Galerie procédurale — artSeed ${params.artSeed}`),
     h('p', { style: 'color:#b9ae9c;margin:0 0 12px;font-size:13px' }, `${ids.length} définitions (16 Basic, 16 variantes, 4 Signatures) + verso commun. 100 % Canvas 2D / SVG générés, aucune image téléchargée.`),
-    h('div', { style: 'display:flex;flex-wrap:wrap;gap:10px;--card-w:112px' },
+    h('div', { style: 'display:flex;flex-wrap:wrap;gap:10px;--card-w:112px;--card-h:157px;--radius:8px' },
       ...ids.map((id) => cardEl(id, { artSeed: params.artSeed, tag: 'div' })),
       backEl(params.artSeed),
     )));

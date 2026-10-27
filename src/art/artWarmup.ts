@@ -10,7 +10,7 @@
  * Contrôle QA (`?qa=1&artCheck=1`) : chaque illustration du worker est comparée à une génération
  * synchrone de la page ; les écarts sont comptés (`__lqv.artWarm()`).
  */
-import { adoptCardArt, paintCardArtUrl } from './cardArt';
+import { adoptCardArt, cardArtVersion, paintCardArtUrl } from './cardArt';
 
 export interface ArtWarmStats {
   seed: number | null;
@@ -86,5 +86,5 @@ export function warmCardArt(artSeed: number, check = false): void {
   };
   // Repli : les illustrations manquantes seront générées sur place, comme avant.
   w.onerror = () => { own.failed = true; stop(); };
-  w.postMessage({ artSeed });
+  w.postMessage({ artSeed, version: cardArtVersion() });
 }
