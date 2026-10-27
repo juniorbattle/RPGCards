@@ -2,7 +2,7 @@
 // VRAIS CONTRÔLES de l’interface (clic souris 1280×720, toucher tactile 390×844) dans les scénarios
 // déterministes `?scenario=rupture | rupture-cachee | dissipation | masque` (rival scripté, mode démo).
 // Assertions : résultat, coût et Insight, cibles légales / refusées, zones, journal (sans doublon),
-// informations cachées (DOM, scène du Clash, export public), console. Sortie : artifacts/qa/qa-techniques.json
+// informations cachées (DOM, scène du Clash, temps forts M12, export public), console. Sortie : artifacts/qa/qa-techniques.json
 // + captures $TECH_OUT (défaut screenshots/qa/m03-1b/ ; une passe ultérieure garde ses preuves à part).
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
@@ -33,7 +33,7 @@ async function act(page, sel, touch) {
 /** Chaînes interdites présentes dans le DOM du jeu (texte, attributs) ou dans la scène du Clash. */
 async function domLeaks(page, patterns) {
   return lqv(page, (pats) => {
-    const html = (document.getElementById('app')?.innerHTML ?? '') + (document.getElementById('stage')?.innerHTML ?? '');
+    const html = (document.getElementById('app')?.innerHTML ?? '') + (document.getElementById('stage')?.innerHTML ?? '') + (document.getElementById('activations')?.innerHTML ?? '');
     return pats.filter((p) => new RegExp(p, 'i').test(html));
   }, patterns);
 }
@@ -183,7 +183,7 @@ const CASES = {
       const leaks = await lqv(page, ({ pats, late }) => {
         const app = document.getElementById('app').cloneNode(true);
         if (late) app.querySelectorAll('[data-discard-list]').forEach((x) => x.removeAttribute('title'));
-        const html = app.innerHTML + (document.getElementById('stage')?.innerHTML ?? '');
+        const html = app.innerHTML + (document.getElementById('stage')?.innerHTML ?? '') + (document.getElementById('activations')?.innerHTML ?? '');
         return pats.filter((x) => new RegExp(x, 'i').test(html));
       }, { pats: forbidden, late });
       check(r.issues, leaks.length === 0, `temps ${p.beat} : ${leaks}`);

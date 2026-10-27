@@ -144,7 +144,9 @@ export async function secretAudit(page) {
     const evs = window.__lqv.events?.() ?? [];
     // Seules les surfaces qui parlent du RIVAL sont lues (vos propres cartes peuvent porter les mêmes noms).
     if (v.phase !== 'RESOLVED' && v.phase !== 'ENDED' && !evs.some((e) => e.turn === v.turn && e.kind === 'dissipation' && e.data.target === 'p2')) {
-      const rivalHtml = [...document.querySelectorAll('.side.opp, .hud.opp, .rival-bubble, #stage .cs-slot.opp')].map((x) => x.outerHTML).join('');
+      // M12 : les temps forts du rival (premier plan `#activations`) ; ceux qui montrent VOS cartes (Repoussement, cible
+      // d'une Interférence) ne sont lus que par leur bannière, leur conséquence et leur détail
+      const rivalHtml = [...document.querySelectorAll('.side.opp, .hud.opp, .rival-bubble, #stage .cs-slot.opp, #activations .act.side-opp:not(.act-repousse):not(.act-interference) .act-center, #activations .act.side-opp .act-src, #activations .act.side-opp .act-banner, #activations .act.side-opp .act-cons, #activations .act.side-opp .act-detail')].map((x) => x.outerHTML).join('');
       const rivalText = [...document.querySelectorAll('.journal .line, .command .msg, #stage .cs-verdict')].map((x) => x.textContent ?? '')
         .flatMap((t) => t.split(' · ')).filter((t) => /rival/.test(t) && !/^\[Privé\]/.test(t)).join('\n');
       for (const e of evs) {

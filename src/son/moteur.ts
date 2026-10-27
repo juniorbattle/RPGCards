@@ -120,6 +120,11 @@ export function creerMoteurSon(search = typeof location !== 'undefined' ? locati
     rival: (d, t) => { for (const f of [196, 198.5, 147]) ton(d, t, f, 'sawtooth', 0.55, 0.07, { attaque: 0.03 }); ton(d, t, 80, 'sine', 0.5, 0.5, { vers: 50 }); return 0.6; },
     voyage: (d, t) => { souffle(d, t, 0.6, 'bandpass', 300, 1.2, 0.18, 1200); return 0.6; },
     gain: (d, t) => { [784, 988, 1175].forEach((f, i) => ton(d, t + i * 0.07, f, 'sine', 0.5, 0.14)); ton(d, t + 0.21, 1568, 'triangle', 0.6, 0.08); return 0.8; },
+    // M12 : montée brève et scintillante (un effet agit), choc sourd (annulé), cloche grave et quinte (sceau), deux notes voilées (regard privé)
+    activation: (d, t) => { ton(d, t, 330, 'triangle', 0.32, 0.16, { vers: 990, attaque: 0.02 }); [1319, 1760].forEach((f, i) => ton(d, t + 0.16 + i * 0.06, f, 'sine', 0.3, 0.07)); souffle(d, t, 0.25, 'bandpass', 1800, 1.2, 0.1, 5200); return 0.5; },
+    annule: (d, t) => { ton(d, t, 140, 'sine', 0.3, 0.6, { vers: 60 }); souffle(d, t, 0.12, 'lowpass', 900, 0.8, 0.4); ton(d, t + 0.03, 233, 'square', 0.12, 0.05, { vers: 180 }); return 0.32; },
+    sceau: (d, t) => { ton(d, t, 196, 'sine', 0.9, 0.3, { attaque: 0.01 }); ton(d, t, 294, 'sine', 0.8, 0.14, { attaque: 0.02 }); ton(d, t + 0.05, 1176, 'triangle', 0.4, 0.05); return 0.9; },
+    regard: (d, t) => { ton(d, t, 698, 'sine', 0.4, 0.1, { attaque: 0.06 }); ton(d, t + 0.14, 932, 'sine', 0.5, 0.08, { attaque: 0.08 }); souffle(d, t, 0.5, 'highpass', 3000, 0.6, 0.04); return 0.65; },
     titre: (d, t) => { [392, 523, 659, 784].forEach((f, i) => ton(d, t + i * 0.16, f, 'sawtooth', i === 3 ? 1.4 : 0.3, 0.06, { attaque: 0.02 })); for (const f of [523, 659, 784]) ton(d, t + 0.64, f, 'triangle', 1.6, 0.1, { attaque: 0.05 }); return 2.2; },
   };
 

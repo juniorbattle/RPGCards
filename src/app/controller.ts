@@ -21,6 +21,7 @@ import { ExpressionDirector, type Expression } from '../presentation/expression'
 import type { RivalPersonality } from '../presentation/personalities';
 import { buildClashScript, stepForBeat, type ClashScript, type MotionStep } from '../presentation/clashMotion';
 import { BEAT_ORDER, buildResolutionBeats, hpAfterBeat, hpBeforeSequence, resolutionStart, type Beat, type BeatKind } from '../presentation/beats';
+import { buildActivations, type Activation } from '../presentation/activations';
 import type { AppParams } from './params';
 import type { Scenario } from './scenarios';
 
@@ -32,6 +33,12 @@ export type MotionEvent =
   | { type: 'step'; step: MotionStep }
   | { type: 'end' }
   | { type: 'stop' };
+
+/** M12 (contrat 2) : la scène des temps forts. `play` rend la durée restante de sa file (ms, rythme compris). */
+export interface ActivationSink {
+  play(list: Activation[]): number;
+  stop(): void;
+}
 
 export interface UiState {
   phaseKey: string;
@@ -111,6 +118,9 @@ export class Controller {
   seq: { beats: Beat[]; index: number; hp: Record<PlayerId, number>; hidden: Set<number>; done: boolean; rendered: boolean; before: PlayerView | null; events: GameEvent[]; script: ClashScript | null } | null = null;
   private exprFn: (() => void) | null = null;
   private motionFn: ((m: MotionEvent) => void) | null = null;
+  private activationSink: ActivationSink | null = null;
+  /** Fin estimée de la file des temps forts (horloge `performance.now()`) : le rival attend jusque-là. */
+  private activationsUntil = 0;
   private seqTimer = 0;
   private exprQueue: Expression[] = [];
   private exprTimer = 0;
@@ -158,6 +168,11 @@ export class Controller {
     this.motionFn = fn;
   }
 
+  /** M12 : temps forts des activations (premier plan), joués hors du plateau. */
+  onActivations(sink: ActivationSink): void {
+    this.activationSink = sink;
+  }
+
   /** Après chaque commande acceptée par le moteur (joueur OU rival) : point de sauvegarde. */
   onCommand(fn: () => void): void {
     this.commandFn = fn;
@@ -172,6 +187,7 @@ export class Controller {
     this.aiTimer = this.seqTimer = this.exprTimer = 0;
     this.renderFn = () => {};
     this.beatFn = this.exprFn = this.motionFn = this.commandFn = null;
+    this.activationSink = null;
   }
 
   get artSeed(): number {
@@ -189,6 +205,9 @@ export class Controller {
     // pour ce qui est immédiat, au temps de la chorégraphie pour la résolution (`advanceBeat`) ; aucun son pour un rejeu
     // en bloc (reprise d'un duel) ; sans geste ni en QA, le moteur du son ne joue rien.
     if (newEvents.length < 60) this.jouerSons(immediate);
+    // M12 : temps forts de ce qui est immédiat (Techniques, regards, révélations, Signature annoncée) ; aucun pour un
+    // rejeu en bloc ni en gel (captures : seuls ceux de la résolution, au temps demandé)
+    if (newEvents.length < 60 && !this.params.freeze) this.playActivations(buildActivations(immediate, this.activationContext()));
     if (start >= 0) this.startSequence(newEvents.slice(start), before);
     this.rebuildJournal();
     const key = `${this.view.turn}:${this.view.phase}`;
@@ -293,6 +312,7 @@ export class Controller {
     window.clearTimeout(this.seqTimer);
     this.seqTimer = 0;
     const stopAt = this.params.freeze && this.params.beat !== null ? this.params.beat : null;
+    let wait = 0;
     for (;;) {
       q.index++;
       const b = q.beats[q.index];
@@ -305,16 +325,32 @@ export class Controller {
       // Chorégraphie du Clash : émise AVANT la mise à jour du plateau (les cartes quittent leurs cases).
       const step = stepForBeat(b.kind);
       if (step) this.motionFn?.({ type: 'step', step });
-      // Captures (freeze) : arrêt sur le temps demandé ; rythme instantané : enchaînement immédiat.
-      if (stopAt !== null && q.index >= stopAt) break;
+      // Captures (freeze) : arrêt sur le temps demandé, son temps fort posé ; rythme instantané : enchaînement immédiat.
+      if (stopAt !== null && q.index >= stopAt) { this.playActivations(buildActivations(b.events, this.activationContext())); break; }
       if (this.params.freeze || this.params.pace === 'instant') continue;
+      // M12 : les temps forts du temps (un effet, une Interférence, un Repoussement…) ; le temps dure au moins autant
+      wait = this.playActivations(buildActivations(b.events, this.activationContext()));
       break;
     }
     this.rebuildJournal();
     // Premier temps : rendu complet (le bandeau passe en mode résolution) ; ensuite, patch ciblé.
     if (!q.rendered || !this.beatFn) { q.rendered = true; this.renderFn(); }
     else this.beatFn();
-    if (!this.params.freeze && this.params.pace !== 'instant') this.seqTimer = window.setTimeout(() => this.advanceBeat(), this.beatDelay(q.beats[q.index]!));
+    if (!this.params.freeze && this.params.pace !== 'instant') this.seqTimer = window.setTimeout(() => this.advanceBeat(), Math.max(this.beatDelay(q.beats[q.index]!), wait));
+  }
+
+  /** M12 : contexte public des temps forts (Primaires révélées). */
+  private activationContext(): { viewer: PlayerId; primaries: Record<PlayerId, { defId: string; stance: Stance }> | null } {
+    const prim = this.view.reveal.primaries;
+    return { viewer: 'p1', primaries: prim ? { p1: prim.me, p2: prim.opp } : null };
+  }
+
+  /** M12 : confie des temps forts à la scène ; rend la durée restante de sa file (ms), 0 sans scène. */
+  private playActivations(list: Activation[]): number {
+    if (!list.length || !this.activationSink) return 0;
+    const ms = this.activationSink.play(list);
+    this.activationsUntil = Math.max(this.activationsUntil, performance.now() + ms);
+    return ms;
   }
 
   /** M11-E : les sons de ces événements (publics, ou privés du joueur). */
@@ -343,6 +379,9 @@ export class Controller {
     // M11-E : « Passer » ne rejoue pas les sons sautés, sauf la fin du duel
     if (last) this.jouerSons(last.events.filter((e) => e.kind === 'victory'));
     this.motionFn?.({ type: 'stop' });
+    // M12 : « Passer » vide aussi la file des temps forts
+    this.activationSink?.stop();
+    this.activationsUntil = 0;
     this.finishSequence();
   }
 
@@ -565,8 +604,9 @@ export class Controller {
       this.aiThinking = false;
       if (cmd) this.apply(cmd);
     };
+    // M12 : le rival attend la fin de la file des temps forts (sauf le pilotage instantané des outils, `aiDelay=0`)
     if (this.params.aiDelay <= 0) run();
-    else this.aiTimer = window.setTimeout(run, this.params.aiDelay);
+    else this.aiTimer = window.setTimeout(run, Math.max(this.params.aiDelay, this.activationsUntil - performance.now()));
   }
 
   /** Point d’entrée unique vers le moteur ; refus explicite sans mutation. */
