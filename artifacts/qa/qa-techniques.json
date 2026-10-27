@@ -1,6 +1,6 @@
 {
-  "commit": "6b67271",
-  "date": "2026-10-19T11:04:42.621Z",
+  "commit": "fa6e8b7",
+  "date": "2026-10-27T08:51:50.831Z",
   "note": "Chromium headless, WebGL logiciel SwiftShader ; rival SCRIPTÉ (scénarios de démonstration), jamais présenté comme l’IA.",
   "runs": [
     {
@@ -26,7 +26,7 @@
         "Fin du tour 5."
       ],
       "console": [],
-      "ms": 56311
+      "ms": 62817
     },
     {
       "scenario": "rupture",
@@ -51,7 +51,7 @@
         "Fin du tour 5."
       ],
       "console": [],
-      "ms": 36249
+      "ms": 33007
     },
     {
       "scenario": "rupture-cachee",
@@ -81,7 +81,7 @@
         "Fin du tour 5."
       ],
       "console": [],
-      "ms": 41881
+      "ms": 43590
     },
     {
       "scenario": "rupture-cachee",
@@ -111,7 +111,7 @@
         "Fin du tour 5."
       ],
       "console": [],
-      "ms": 35722
+      "ms": 34951
     },
     {
       "scenario": "dissipation",
@@ -135,12 +135,12 @@
         "Le rival engage une Primaire face cachée.",
         "Révélation simultanée des Primaires — Vous : Cendre IV · ASSAUT · Rang 4 · Puissance 12 / Rival : Ronce III · GARDE · Rang 3 · Puissance 9.",
         "Choix tactiques verrouillés et révélés — Rival : Voile III — Dissimulation → CONSERVER ; Voile I — Éclaireur → CONSERVER.",
-        "Le rival perd 3 PV → 87 PV.",
-        "CLASH — Scores : Vous 4 / Rival 3. Vous dominez au Rang (4 contre 3) ; la Garde absorbe 9 : (12 − 9) × 1 = 3. PV perdus : Vous 0 / Rival 3.",
+        "Le rival perd 7 PV → 83 PV.",
+        "CLASH — Scores : Vous 4 / Rival 3. Vous dominez au Rang (4 contre 3) ; la Garde absorbe 5 (moitié de sa Puissance 9) : (12 − 5) × 1 = 7. PV perdus : Vous 0 / Rival 7.",
         "Fin du tour 5."
       ],
       "console": [],
-      "ms": 48757
+      "ms": 51256
     },
     {
       "scenario": "dissipation",
@@ -164,12 +164,12 @@
         "Le rival engage une Primaire face cachée.",
         "Révélation simultanée des Primaires — Vous : Cendre IV · ASSAUT · Rang 4 · Puissance 12 / Rival : Ronce III · GARDE · Rang 3 · Puissance 9.",
         "Choix tactiques verrouillés et révélés — Rival : Voile III — Dissimulation → CONSERVER ; Voile I — Éclaireur → CONSERVER.",
-        "Le rival perd 3 PV → 87 PV.",
-        "CLASH — Scores : Vous 4 / Rival 3. Vous dominez au Rang (4 contre 3) ; la Garde absorbe 9 : (12 − 9) × 1 = 3. PV perdus : Vous 0 / Rival 3.",
+        "Le rival perd 7 PV → 83 PV.",
+        "CLASH — Scores : Vous 4 / Rival 3. Vous dominez au Rang (4 contre 3) ; la Garde absorbe 5 (moitié de sa Puissance 9) : (12 − 5) × 1 = 7. PV perdus : Vous 0 / Rival 7.",
         "Fin du tour 5."
       ],
       "console": [],
-      "ms": 36159
+      "ms": 34307
     },
     {
       "scenario": "masque",
@@ -203,15 +203,15 @@
         "Le rival engage une Primaire face cachée.",
         "Révélation simultanée des Primaires — Vous : Ronce II · GARDE · Rang 2 · Puissance 6 / Rival : Cendre IV · ASSAUT · Rang 4 · Puissance 12.",
         "Choix tactiques verrouillés et révélés — Rival : Voile III — Dissimulation → CONSERVER ; Secondaire Cendre masquée (case 2) → AMPLIFIER LES DÉGÂTS · coefficient masqué.",
-        "Vous perdez 24 PV → 66 PV.",
+        "Vous perdez 36 PV → 54 PV.",
         "Le rival gagne 1 Insight (effet de la Secondaire Cendre masquée (case 2)) → 2/2.",
         "Effet de la Secondaire Cendre masquée du rival (case 2) : RÉUSSI — +1 Insight.",
-        "CLASH — Scores : Vous 2 / Rival 4. Le rival domine au Rang (4 contre 2) ; la Garde absorbe 6 : (12 − 6) × ? = 24. PV perdus : Vous 24 / Rival 0.",
+        "CLASH — Scores : Vous 2 / Rival 4. Le rival domine au Rang (4 contre 2) ; la Garde absorbe 3 (moitié de sa Puissance 6) : (12 − 3) × ? = 36. PV perdus : Vous 36 / Rival 0.",
         "carte masquée (rival) est consommée → en défausse.",
         "Fin du tour 5."
       ],
       "console": [],
-      "ms": 32931
+      "ms": 36851
     },
     {
       "scenario": "masque",
@@ -245,15 +245,15 @@
         "Le rival engage une Primaire face cachée.",
         "Révélation simultanée des Primaires — Vous : Ronce II · GARDE · Rang 2 · Puissance 6 / Rival : Cendre IV · ASSAUT · Rang 4 · Puissance 12.",
         "Choix tactiques verrouillés et révélés — Rival : Voile III — Dissimulation → CONSERVER ; Secondaire Cendre masquée (case 2) → AMPLIFIER LES DÉGÂTS · coefficient masqué.",
-        "Vous perdez 24 PV → 66 PV.",
+        "Vous perdez 36 PV → 54 PV.",
         "Le rival gagne 1 Insight (effet de la Secondaire Cendre masquée (case 2)) → 2/2.",
         "Effet de la Secondaire Cendre masquée du rival (case 2) : RÉUSSI — +1 Insight.",
-        "CLASH — Scores : Vous 2 / Rival 4. Le rival domine au Rang (4 contre 2) ; la Garde absorbe 6 : (12 − 6) × ? = 24. PV perdus : Vous 24 / Rival 0.",
+        "CLASH — Scores : Vous 2 / Rival 4. Le rival domine au Rang (4 contre 2) ; la Garde absorbe 3 (moitié de sa Puissance 6) : (12 − 3) × ? = 36. PV perdus : Vous 36 / Rival 0.",
         "carte masquée (rival) est consommée → en défausse.",
         "Fin du tour 5."
       ],
       "console": [],
-      "ms": 26674
+      "ms": 27395
     }
   ]
 }

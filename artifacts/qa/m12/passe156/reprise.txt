@@ -1,0 +1,7 @@
+build exit=0
+vitest exit=0       Tests  597 passed (597)
+qa:aventure exit=1 fails=1
+qa:product B exit=0 fails=0
+qa:product I exit=0 fails=0
+galerie exit=0 fails=0
+DONE

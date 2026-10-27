@@ -1,0 +1,119 @@
+{
+  "date": "2026-10-27T07:54:04.338Z",
+  "viewport": [
+    1280,
+    720
+  ],
+  "checks": [
+    "OK navigateur neuf : « Nouvelle aventure » en action principale, rien à continuer",
+    "OK première arrivée sur le Quai : cinématique jouée, passable",
+    "OK devant kai-prologue",
+    "OK premier duel : un conseil affiché (start)",
+    "OK conseils lus mémorisés dans la sauvegarde de l’aventure (start, prepare)",
+    "OK l’émissaire propose sa famille (choix libre, ADR 029)",
+    "OK affiliation : les quatre Basics de Cendre",
+    "OK défi du cadet : une variante au choix, les trois nommées",
+    "OK préparation : les trois variantes en jeu",
+    "OK écran du choix : trois variantes (Cendre-3-ferveur, Cendre-3-surenchere, Cendre-3-brulure)",
+    "OK variante B choisie : au registre et dans le deck (Cendre-3-surenchere)",
+    "OK rencontre en vue : un guetteur a repéré le joueur, duel forcé joué",
+    "OK Collection : 17 cartes par famille (4 Basics, 12 variantes, la Signature) — 17",
+    "OK menu : « Conseils du duel : affichés »",
+    "OK rechargement : même état de l’aventure"
+  ],
+  "conseils": [
+    "start",
+    "prepare"
+  ],
+  "console": [],
+  "steps": [
+    {
+      "name": "titre",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/01-titre.png"
+    },
+    {
+      "name": "nouvelle-aventure",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/02-nouvelle-aventure.png"
+    },
+    {
+      "name": "cine-arrivee-quai",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/03-cine-arrivee-quai.png"
+    },
+    {
+      "name": "quai",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/04-quai.png"
+    },
+    {
+      "name": "dialogue-kai",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/05-dialogue-kai.png"
+    },
+    {
+      "name": "preparation-prologue",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/06-preparation-prologue.png"
+    },
+    {
+      "name": "prologue-conseil",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/07-prologue-conseil.png"
+    },
+    {
+      "name": "prologue-resultat",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/08-prologue-resultat.png"
+    },
+    {
+      "name": "cine-emissaire",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/09-cine-emissaire.png"
+    },
+    {
+      "name": "emissaire",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/10-emissaire.png"
+    },
+    {
+      "name": "confirmation",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/11-confirmation.png"
+    },
+    {
+      "name": "recompense-basics",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/12-recompense-basics.png"
+    },
+    {
+      "name": "cine-affiliation",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/13-cine-affiliation.png"
+    },
+    {
+      "name": "defi-cadet",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/14-defi-cadet.png"
+    },
+    {
+      "name": "preparation-cadet",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/15-preparation-cadet.png"
+    },
+    {
+      "name": "duel-cadet",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/16-duel-cadet.png"
+    },
+    {
+      "name": "choix-variante",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/17-choix-variante.png"
+    },
+    {
+      "name": "resultat-variante",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/18-resultat-variante.png"
+    },
+    {
+      "name": "rencontre-forcee",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/19-rencontre-forcee.png"
+    },
+    {
+      "name": "collection",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/20-collection.png"
+    },
+    {
+      "name": "menu",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/21-menu.png"
+    },
+    {
+      "name": "menu-conseils",
+      "file": "screenshots/qa/m12/nouveau-joueur-1280/22-menu-conseils.png"
+    }
+  ]
+}
