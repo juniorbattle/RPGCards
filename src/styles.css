@@ -660,6 +660,17 @@ button { font: inherit; color: inherit; }
   .act-rings i { width: min(40vh, 220px); height: min(40vh, 220px); }
   .act-seal { width: min(26vh, 140px); height: min(26vh, 140px); }
 }
+/* Téléphone en portrait : la carte suit la largeur ; la conséquence revient à la ligne au lieu de déborder. */
+@media (max-width: 600px) and (min-height: 561px) {
+  .act { --act-card: min(40vw, 22vh); --act-top: 36%; }
+  .act-cons { width: 92vw; white-space: normal; text-align: center; font-size: clamp(20px, 7vw, 30px); line-height: 1.05; }
+  .act-detail { top: calc(var(--act-top) + var(--act-card) * 0.78 + 3.4rem + 4.6rem); font-size: 0.82rem; }
+  .act-interference .act-center { gap: 8vw; }
+  .act-center .act-src, .act-center .act-tgt { --card-w: min(30vw, 19vh); }
+  .act-stamp-tgt { left: calc(100% - min(30vw, 19vh) / 2); }
+  .act-seal { width: min(46vw, 26vh); height: min(46vw, 26vh); }
+  .act-rings i { width: min(80vw, 40vh); height: min(80vw, 40vh); }
+}
 
 /* M04 — conseil contextuel (mode produit) : au-dessus des commandes, bord droit ; centre libre. */
 /* Sous le plateau (z 3) : un menu tactique ouvert passe au-dessus du conseil au lieu d’être recouvert (ADR 016 :

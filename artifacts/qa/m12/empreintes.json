@@ -1,0 +1,9989 @@
+{
+ "commit": "335ab9d",
+ "duels": 241,
+ "ms": 15040,
+ "hashes": {
+  "duel-000 Cendre/Cendre equilibre/lecteur": "bd9407fe0af059c9",
+  "duel-001 Voile/Cendre offensif/novice": "a82b153f01cceef0",
+  "duel-002 Ronce/Cendre prudent/timide": "41becb1568b179eb",
+  "duel-003 Astre/Cendre lecteur/equilibre": "3c288355e73ce0fe",
+  "duel-004 Cendre/Voile novice/offensif": "a4455019bcf28426",
+  "duel-005 Voile/Voile timide/prudent": "4795ba6e72a87da4",
+  "duel-006 Ronce/Voile equilibre/lecteur": "d2d67b1e9e320038",
+  "duel-007 Astre/Voile offensif/novice": "b0f495b66756f671",
+  "duel-008 Cendre/Ronce prudent/timide": "eb96f9a66b1789ba",
+  "duel-009 Voile/Ronce lecteur/equilibre": "58d032cadea91405",
+  "duel-010 Ronce/Ronce novice/offensif": "f5eb181998dab068",
+  "duel-011 Astre/Ronce timide/prudent": "c1c1f481263c052a",
+  "duel-012 Cendre/Astre equilibre/lecteur": "402283ef0e117667",
+  "duel-013 Voile/Astre offensif/novice": "456c6f8487fbbffe",
+  "duel-014 Ronce/Astre prudent/timide": "25a9e8097d23e607",
+  "duel-015 Astre/Astre lecteur/equilibre": "11f4fb4243edf0eb",
+  "duel-016 Cendre/Cendre novice/offensif": "a3472468cab428ed",
+  "duel-017 Voile/Cendre timide/prudent": "033a7d818a336bd5",
+  "duel-018 Ronce/Cendre equilibre/lecteur": "f5232bba664b30c6",
+  "duel-019 Astre/Cendre offensif/novice": "38344a4e6fe34aae",
+  "duel-020 Cendre/Voile prudent/timide": "81fe1940bc991f4c",
+  "duel-021 Voile/Voile lecteur/equilibre": "11634b42f8c01f7b",
+  "duel-022 Ronce/Voile novice/offensif": "b3b7e8582bc85f6d",
+  "duel-023 Astre/Voile timide/prudent": "f94953e62ed766b9",
+  "duel-024 Cendre/Ronce equilibre/lecteur": "1f6d33f6baa4f79e",
+  "duel-025 Voile/Ronce offensif/novice": "db9b8c8f56d2c132",
+  "duel-026 Ronce/Ronce prudent/timide": "86d7b7a73dfbb794",
+  "duel-027 Astre/Ronce lecteur/equilibre": "aea119b735c76d04",
+  "duel-028 Cendre/Astre novice/offensif": "d1cf22992e27559f",
+  "duel-029 Voile/Astre timide/prudent": "8690a42952e969a5",
+  "duel-030 Ronce/Astre equilibre/lecteur": "8c3c31ee7a34524f",
+  "duel-031 Astre/Astre offensif/novice": "f0602908cbd31dac",
+  "duel-032 Cendre/Cendre prudent/timide": "97b605ec65c7ed8d",
+  "duel-033 Voile/Cendre lecteur/equilibre": "f5871d25b5b1c629",
+  "duel-034 Ronce/Cendre novice/offensif": "c0ee038f428f5d49",
+  "duel-035 Astre/Cendre timide/prudent": "8737f800525bf13c",
+  "duel-036 Cendre/Voile equilibre/lecteur": "881e8f022cc7316c",
+  "duel-037 Voile/Voile offensif/novice": "acec707f63939f5c",
+  "duel-038 Ronce/Voile prudent/timide": "4b3a5299fd72cc5c",
+  "duel-039 Astre/Voile lecteur/equilibre": "26e47a85450863f5",
+  "duel-040 Cendre/Ronce novice/offensif": "93b047f1c33f26da",
+  "duel-041 Voile/Ronce timide/prudent": "dbc8333e49fb6c23",
+  "duel-042 Ronce/Ronce equilibre/lecteur": "5c03de7aa48cd400",
+  "duel-043 Astre/Ronce offensif/novice": "72196e0c1149d7dd",
+  "duel-044 Cendre/Astre prudent/timide": "e6a7163700fd597a",
+  "duel-045 Voile/Astre lecteur/equilibre": "c6f0f5e209245282",
+  "duel-046 Ronce/Astre novice/offensif": "5a53823161d66aed",
+  "duel-047 Astre/Astre timide/prudent": "89ea26267c5f560b",
+  "duel-048 Cendre/Cendre equilibre/lecteur": "00d701f6b333ae29",
+  "duel-049 Voile/Cendre offensif/novice": "7825f39013e4b48a",
+  "duel-050 Ronce/Cendre prudent/timide": "2529fe8fb8f3f173",
+  "duel-051 Astre/Cendre lecteur/equilibre": "0d9f5478ab42a429",
+  "duel-052 Cendre/Voile novice/offensif": "7bd45f8c9ba15072",
+  "duel-053 Voile/Voile timide/prudent": "82e6ab7b0c198115",
+  "duel-054 Ronce/Voile equilibre/lecteur": "cea4bab7f84e3ec2",
+  "duel-055 Astre/Voile offensif/novice": "f20f0d1539842dba",
+  "duel-056 Cendre/Ronce prudent/timide": "203ef3df32fdb81b",
+  "duel-057 Voile/Ronce lecteur/equilibre": "3913f1c94a1f9562",
+  "duel-058 Ronce/Ronce novice/offensif": "8a7f319c911d3a42",
+  "duel-059 Astre/Ronce timide/prudent": "6109ee8601d498f0",
+  "duel-060 Cendre/Astre equilibre/lecteur": "639fa0148ae3459c",
+  "duel-061 Voile/Astre offensif/novice": "a765c738419e7427",
+  "duel-062 Ronce/Astre prudent/timide": "0a757d4bdac009bd",
+  "duel-063 Astre/Astre lecteur/equilibre": "4557c8bf869fb3c4",
+  "duel-064 Cendre/Cendre novice/offensif": "282acc4b870140b8",
+  "duel-065 Voile/Cendre timide/prudent": "fc872435f018129f",
+  "duel-066 Ronce/Cendre equilibre/lecteur": "6c5a0dc56cab7853",
+  "duel-067 Astre/Cendre offensif/novice": "3b566e58fc71e474",
+  "duel-068 Cendre/Voile prudent/timide": "f1fb1200c0813367",
+  "duel-069 Voile/Voile lecteur/equilibre": "000dade128cb251d",
+  "duel-070 Ronce/Voile novice/offensif": "39e7638f9610177b",
+  "duel-071 Astre/Voile timide/prudent": "2a8b5fefadeef834",
+  "duel-072 Cendre/Ronce equilibre/lecteur": "5d864ac9e6ceb7f7",
+  "duel-073 Voile/Ronce offensif/novice": "edc9d595b08114bc",
+  "duel-074 Ronce/Ronce prudent/timide": "6682ceaad81a4a63",
+  "duel-075 Astre/Ronce lecteur/equilibre": "e239f7d9cae8968e",
+  "duel-076 Cendre/Astre novice/offensif": "2aa09e0584ef8dab",
+  "duel-077 Voile/Astre timide/prudent": "5d61acd42e98cb74",
+  "duel-078 Ronce/Astre equilibre/lecteur": "e171080c46966dec",
+  "duel-079 Astre/Astre offensif/novice": "87ef8bd6272ca60b",
+  "duel-080 Cendre/Cendre prudent/timide": "79da43e9de296b16",
+  "duel-081 Voile/Cendre lecteur/equilibre": "a09dc727e8459f67",
+  "duel-082 Ronce/Cendre novice/offensif": "5b4f365a84b023b6",
+  "duel-083 Astre/Cendre timide/prudent": "805330d51fab1a3c",
+  "duel-084 Cendre/Voile equilibre/lecteur": "37612171688d0ed9",
+  "duel-085 Voile/Voile offensif/novice": "7c4a323fb66b3d57",
+  "duel-086 Ronce/Voile prudent/timide": "a828c6293c2ad70c",
+  "duel-087 Astre/Voile lecteur/equilibre": "68e4d0cabd3d52aa",
+  "duel-088 Cendre/Ronce novice/offensif": "e39211a96d3f9749",
+  "duel-089 Voile/Ronce timide/prudent": "2ebe3536f767b856",
+  "duel-090 Ronce/Ronce equilibre/lecteur": "f1219dfe3b285675",
+  "duel-091 Astre/Ronce offensif/novice": "0414157bda747a6b",
+  "duel-092 Cendre/Astre prudent/timide": "afe52b91257d6b79",
+  "duel-093 Voile/Astre lecteur/equilibre": "b293bc1ac20814ec",
+  "duel-094 Ronce/Astre novice/offensif": "4a5edcc6fdf2c691",
+  "duel-095 Astre/Astre timide/prudent": "37775b239b750a45",
+  "duel-096 Cendre/Cendre equilibre/lecteur": "5d12e977372204f2",
+  "duel-097 Voile/Cendre offensif/novice": "190c5eeb24c785c9",
+  "duel-098 Ronce/Cendre prudent/timide": "6eb705a047bbdeb7",
+  "duel-099 Astre/Cendre lecteur/equilibre": "85d9127df3e16358",
+  "duel-100 Cendre/Voile novice/offensif": "5e65adc662ce1eee",
+  "duel-101 Voile/Voile timide/prudent": "25bb32938929de32",
+  "duel-102 Ronce/Voile equilibre/lecteur": "53b07cb565186a33",
+  "duel-103 Astre/Voile offensif/novice": "cee3a944b71ba3eb",
+  "duel-104 Cendre/Ronce prudent/timide": "3df97954dde74df7",
+  "duel-105 Voile/Ronce lecteur/equilibre": "369e719ad5f53cee",
+  "duel-106 Ronce/Ronce novice/offensif": "4dfb48e5ecd72788",
+  "duel-107 Astre/Ronce timide/prudent": "87024a716c65421c",
+  "duel-108 Cendre/Astre equilibre/lecteur": "3a774f71241f94b4",
+  "duel-109 Voile/Astre offensif/novice": "a65f625b80400d06",
+  "duel-110 Ronce/Astre prudent/timide": "121a924e7331f95a",
+  "duel-111 Astre/Astre lecteur/equilibre": "80a201afae250a97",
+  "duel-112 Cendre/Cendre novice/offensif": "def7997839c7fa03",
+  "duel-113 Voile/Cendre timide/prudent": "d61e2d8e23eef4fb",
+  "duel-114 Ronce/Cendre equilibre/lecteur": "344306131b27eee6",
+  "duel-115 Astre/Cendre offensif/novice": "dc44e11116896b01",
+  "duel-116 Cendre/Voile prudent/timide": "91168c87a4c8dfa1",
+  "duel-117 Voile/Voile lecteur/equilibre": "e8807437c2cda0b1",
+  "duel-118 Ronce/Voile novice/offensif": "93ac50f544077669",
+  "duel-119 Astre/Voile timide/prudent": "b07bc2b3e573b894",
+  "duel-120 Cendre/Ronce equilibre/lecteur": "983432aeb1f3d9ee",
+  "duel-121 Voile/Ronce offensif/novice": "716385539cb15215",
+  "duel-122 Ronce/Ronce prudent/timide": "6356e66b9cab1444",
+  "duel-123 Astre/Ronce lecteur/equilibre": "3bc37fbd748a61d6",
+  "duel-124 Cendre/Astre novice/offensif": "0343e9941d581099",
+  "duel-125 Voile/Astre timide/prudent": "c6f7eefdabdec1bd",
+  "duel-126 Ronce/Astre equilibre/lecteur": "ae1cd4e6e22fc9c2",
+  "duel-127 Astre/Astre offensif/novice": "1c5104d0629e382f",
+  "duel-128 Cendre/Cendre prudent/timide": "32e13113bae3defc",
+  "duel-129 Voile/Cendre lecteur/equilibre": "7863b2804928e721",
+  "duel-130 Ronce/Cendre novice/offensif": "c905e135c2976f01",
+  "duel-131 Astre/Cendre timide/prudent": "a3919667bcbd9cd4",
+  "duel-132 Cendre/Voile equilibre/lecteur": "4f52ce14dc487160",
+  "duel-133 Voile/Voile offensif/novice": "71c9478b7e740e60",
+  "duel-134 Ronce/Voile prudent/timide": "996aaae614226dce",
+  "duel-135 Astre/Voile lecteur/equilibre": "4152b48569a5f8c1",
+  "duel-136 Cendre/Ronce novice/offensif": "8835f6dce49a867a",
+  "duel-137 Voile/Ronce timide/prudent": "309f21ae292f9493",
+  "duel-138 Ronce/Ronce equilibre/lecteur": "263d04fccf9ae7c0",
+  "duel-139 Astre/Ronce offensif/novice": "c42c464e9b605412",
+  "duel-140 Cendre/Astre prudent/timide": "8fd2728da82d9e4a",
+  "duel-141 Voile/Astre lecteur/equilibre": "4d36328da9d96ba4",
+  "duel-142 Ronce/Astre novice/offensif": "8e46f7fd6214bd74",
+  "duel-143 Astre/Astre timide/prudent": "951455f91b31e3ed",
+  "duel-144 Cendre/Cendre equilibre/lecteur": "11b76959110ae44a",
+  "duel-145 Voile/Cendre offensif/novice": "97c93060d4ae0875",
+  "duel-146 Ronce/Cendre prudent/timide": "20d3c1fdb7eb2bf5",
+  "duel-147 Astre/Cendre lecteur/equilibre": "3dc862fedec98286",
+  "duel-148 Cendre/Voile novice/offensif": "043979911f6923ac",
+  "duel-149 Voile/Voile timide/prudent": "c65bf18d0c07f985",
+  "duel-150 Ronce/Voile equilibre/lecteur": "8d2e6b8e970b6d0b",
+  "duel-151 Astre/Voile offensif/novice": "3d420ff01e9a25ab",
+  "duel-152 Cendre/Ronce prudent/timide": "aa0cd76f8f81161b",
+  "duel-153 Voile/Ronce lecteur/equilibre": "a407afacfbec7dd6",
+  "duel-154 Ronce/Ronce novice/offensif": "2d7bae6867bcb400",
+  "duel-155 Astre/Ronce timide/prudent": "0cd8e5ce532acd4b",
+  "duel-156 Cendre/Astre equilibre/lecteur": "544adebfe6cf55a0",
+  "duel-157 Voile/Astre offensif/novice": "a05f0cd7e11285a7",
+  "duel-158 Ronce/Astre prudent/timide": "f47c2935ffe434e6",
+  "duel-159 Astre/Astre lecteur/equilibre": "9c1a322882f974bf",
+  "duel-160 Cendre/Cendre novice/offensif": "0a52e905817746ed",
+  "duel-161 Voile/Cendre timide/prudent": "62584fb1b87df59d",
+  "duel-162 Ronce/Cendre equilibre/lecteur": "01ed8b4ae0e7bd54",
+  "duel-163 Astre/Cendre offensif/novice": "c1b3bd9122dfb8df",
+  "duel-164 Cendre/Voile prudent/timide": "f3b2cc888fedd177",
+  "duel-165 Voile/Voile lecteur/equilibre": "1aa24dda7a883f18",
+  "duel-166 Ronce/Voile novice/offensif": "57bb071274d052a8",
+  "duel-167 Astre/Voile timide/prudent": "7d3734e70a01b173",
+  "duel-168 Cendre/Ronce equilibre/lecteur": "227318c2459ce6a6",
+  "duel-169 Voile/Ronce offensif/novice": "a7aca9365621438a",
+  "duel-170 Ronce/Ronce prudent/timide": "0dcb530600d83764",
+  "duel-171 Astre/Ronce lecteur/equilibre": "a0863f075f344913",
+  "duel-172 Cendre/Astre novice/offensif": "f34de2331e6271fe",
+  "duel-173 Voile/Astre timide/prudent": "68b8fa1934bee3c9",
+  "duel-174 Ronce/Astre equilibre/lecteur": "bb3b45267bffc75b",
+  "duel-175 Astre/Astre offensif/novice": "3df8c1cf9ed3dc9c",
+  "duel-176 Cendre/Cendre prudent/timide": "c9aa758b6ba5418b",
+  "duel-177 Voile/Cendre lecteur/equilibre": "8587d852f54138b3",
+  "duel-178 Ronce/Cendre novice/offensif": "1175f6b44b29c945",
+  "duel-179 Astre/Cendre timide/prudent": "72c1799de44f8f81",
+  "duel-180 Cendre/Voile equilibre/lecteur": "e827d47cc5f204d9",
+  "duel-181 Voile/Voile offensif/novice": "43cdb01512e37d51",
+  "duel-182 Ronce/Voile prudent/timide": "32858f8162c0a1ab",
+  "duel-183 Astre/Voile lecteur/equilibre": "64fdd98efc37fae1",
+  "duel-184 Cendre/Ronce novice/offensif": "db28b62021158721",
+  "duel-185 Voile/Ronce timide/prudent": "76fc0b60fc58f1ff",
+  "duel-186 Ronce/Ronce equilibre/lecteur": "3ccc8ebcc6a7331a",
+  "duel-187 Astre/Ronce offensif/novice": "221e6dd7408b96f7",
+  "duel-188 Cendre/Astre prudent/timide": "dc60aea23d1423ce",
+  "duel-189 Voile/Astre lecteur/equilibre": "42e7490fe90261ef",
+  "duel-190 Ronce/Astre novice/offensif": "c3529cee2c06f360",
+  "duel-191 Astre/Astre timide/prudent": "59d052c5c14bd17e",
+  "duel-192 Cendre/Cendre equilibre/lecteur": "58b9eb1fbc3e34ff",
+  "duel-193 Voile/Cendre offensif/novice": "121ccf2dcae56b5a",
+  "duel-194 Ronce/Cendre prudent/timide": "dc854acef4ebd185",
+  "duel-195 Astre/Cendre lecteur/equilibre": "9f37509341901e2b",
+  "duel-196 Cendre/Voile novice/offensif": "35d37d6a9d8b2790",
+  "duel-197 Voile/Voile timide/prudent": "627d5de9f2668873",
+  "duel-198 Ronce/Voile equilibre/lecteur": "39587c44b1592503",
+  "duel-199 Astre/Voile offensif/novice": "e38103ce15437aa3",
+  "duel-200 Cendre/Ronce prudent/timide": "9bd0f3b1b615b023",
+  "duel-201 Voile/Ronce lecteur/equilibre": "660dc1d578516ba8",
+  "duel-202 Ronce/Ronce novice/offensif": "af144788d2854a4f",
+  "duel-203 Astre/Ronce timide/prudent": "129f866e2556fab6",
+  "duel-204 Cendre/Astre equilibre/lecteur": "22b8ce25245403a7",
+  "duel-205 Voile/Astre offensif/novice": "53385f1ae5c84d01",
+  "duel-206 Ronce/Astre prudent/timide": "667d62d2480f17d2",
+  "duel-207 Astre/Astre lecteur/equilibre": "48d500540b477481",
+  "duel-208 Cendre/Cendre novice/offensif": "54a628cf8c476edc",
+  "duel-209 Voile/Cendre timide/prudent": "e19d022028f5df8e",
+  "duel-210 Ronce/Cendre equilibre/lecteur": "62920a2884cd97e7",
+  "duel-211 Astre/Cendre offensif/novice": "eaa28335e7a174d2",
+  "duel-212 Cendre/Voile prudent/timide": "484bf8ea5509e917",
+  "duel-213 Voile/Voile lecteur/equilibre": "475477c824fc2267",
+  "duel-214 Ronce/Voile novice/offensif": "4d883f0f358b6c80",
+  "duel-215 Astre/Voile timide/prudent": "deb8a336ef82e5b1",
+  "duel-216 Cendre/Ronce equilibre/lecteur": "18d607c7fde400a1",
+  "duel-217 Voile/Ronce offensif/novice": "9c2cf86fb56336e8",
+  "duel-218 Ronce/Ronce prudent/timide": "135c6935453c458a",
+  "duel-219 Astre/Ronce lecteur/equilibre": "31d8e2b0e87c1335",
+  "duel-220 Cendre/Astre novice/offensif": "a1cfefb564244000",
+  "duel-221 Voile/Astre timide/prudent": "41bc3d5e334e099e",
+  "duel-222 Ronce/Astre equilibre/lecteur": "4fddba191427f4c1",
+  "duel-223 Astre/Astre offensif/novice": "7914cd54ec093b81",
+  "duel-224 Cendre/Cendre prudent/timide": "7e457ea7cc7bd41c",
+  "duel-225 Voile/Cendre lecteur/equilibre": "5a437b3c13f2d2cb",
+  "duel-226 Ronce/Cendre novice/offensif": "858c31e4e3192505",
+  "duel-227 Astre/Cendre timide/prudent": "e360bb5f8f7c2a1d",
+  "duel-228 Cendre/Voile equilibre/lecteur": "8b916027aeb116ca",
+  "duel-229 Voile/Voile offensif/novice": "e728fd5afcd7e7a3",
+  "duel-230 Ronce/Voile prudent/timide": "33e1c3ca407b1196",
+  "duel-231 Astre/Voile lecteur/equilibre": "6de797cff0eb566a",
+  "duel-232 Cendre/Ronce novice/offensif": "94367da06132b8fa",
+  "duel-233 Voile/Ronce timide/prudent": "d07e959dd9893efe",
+  "duel-234 Ronce/Ronce equilibre/lecteur": "e1c756ab8d664064",
+  "duel-235 Astre/Ronce offensif/novice": "4521093c2e8f1f01",
+  "duel-236 Cendre/Astre prudent/timide": "246538db16421acd",
+  "duel-237 Voile/Astre lecteur/equilibre": "d0d8f6829132e1ed",
+  "duel-238 Ronce/Astre novice/offensif": "2b4694f15f2562bf",
+  "duel-239 Astre/Astre timide/prudent": "aad3043e00590b78",
+  "enregistrement artifacts/qa/tmp/rc-record.json": "2d3620700d0d701b"
+ },
+ "agAssaut": {
+  "duel-000 Cendre/Cendre equilibre/lecteur": true,
+  "duel-001 Voile/Cendre offensif/novice": true,
+  "duel-002 Ronce/Cendre prudent/timide": true,
+  "duel-003 Astre/Cendre lecteur/equilibre": true,
+  "duel-004 Cendre/Voile novice/offensif": true,
+  "duel-005 Voile/Voile timide/prudent": true,
+  "duel-006 Ronce/Voile equilibre/lecteur": true,
+  "duel-007 Astre/Voile offensif/novice": true,
+  "duel-008 Cendre/Ronce prudent/timide": true,
+  "duel-009 Voile/Ronce lecteur/equilibre": true,
+  "duel-010 Ronce/Ronce novice/offensif": false,
+  "duel-011 Astre/Ronce timide/prudent": true,
+  "duel-012 Cendre/Astre equilibre/lecteur": true,
+  "duel-013 Voile/Astre offensif/novice": true,
+  "duel-014 Ronce/Astre prudent/timide": true,
+  "duel-015 Astre/Astre lecteur/equilibre": true,
+  "duel-016 Cendre/Cendre novice/offensif": true,
+  "duel-017 Voile/Cendre timide/prudent": true,
+  "duel-018 Ronce/Cendre equilibre/lecteur": true,
+  "duel-019 Astre/Cendre offensif/novice": false,
+  "duel-020 Cendre/Voile prudent/timide": true,
+  "duel-021 Voile/Voile lecteur/equilibre": true,
+  "duel-022 Ronce/Voile novice/offensif": false,
+  "duel-023 Astre/Voile timide/prudent": true,
+  "duel-024 Cendre/Ronce equilibre/lecteur": true,
+  "duel-025 Voile/Ronce offensif/novice": true,
+  "duel-026 Ronce/Ronce prudent/timide": true,
+  "duel-027 Astre/Ronce lecteur/equilibre": true,
+  "duel-028 Cendre/Astre novice/offensif": false,
+  "duel-029 Voile/Astre timide/prudent": true,
+  "duel-030 Ronce/Astre equilibre/lecteur": true,
+  "duel-031 Astre/Astre offensif/novice": true,
+  "duel-032 Cendre/Cendre prudent/timide": true,
+  "duel-033 Voile/Cendre lecteur/equilibre": true,
+  "duel-034 Ronce/Cendre novice/offensif": false,
+  "duel-035 Astre/Cendre timide/prudent": true,
+  "duel-036 Cendre/Voile equilibre/lecteur": true,
+  "duel-037 Voile/Voile offensif/novice": true,
+  "duel-038 Ronce/Voile prudent/timide": true,
+  "duel-039 Astre/Voile lecteur/equilibre": false,
+  "duel-040 Cendre/Ronce novice/offensif": true,
+  "duel-041 Voile/Ronce timide/prudent": true,
+  "duel-042 Ronce/Ronce equilibre/lecteur": true,
+  "duel-043 Astre/Ronce offensif/novice": true,
+  "duel-044 Cendre/Astre prudent/timide": true,
+  "duel-045 Voile/Astre lecteur/equilibre": true,
+  "duel-046 Ronce/Astre novice/offensif": true,
+  "duel-047 Astre/Astre timide/prudent": true,
+  "duel-048 Cendre/Cendre equilibre/lecteur": true,
+  "duel-049 Voile/Cendre offensif/novice": true,
+  "duel-050 Ronce/Cendre prudent/timide": true,
+  "duel-051 Astre/Cendre lecteur/equilibre": true,
+  "duel-052 Cendre/Voile novice/offensif": true,
+  "duel-053 Voile/Voile timide/prudent": true,
+  "duel-054 Ronce/Voile equilibre/lecteur": true,
+  "duel-055 Astre/Voile offensif/novice": true,
+  "duel-056 Cendre/Ronce prudent/timide": true,
+  "duel-057 Voile/Ronce lecteur/equilibre": true,
+  "duel-058 Ronce/Ronce novice/offensif": true,
+  "duel-059 Astre/Ronce timide/prudent": true,
+  "duel-060 Cendre/Astre equilibre/lecteur": true,
+  "duel-061 Voile/Astre offensif/novice": true,
+  "duel-062 Ronce/Astre prudent/timide": true,
+  "duel-063 Astre/Astre lecteur/equilibre": true,
+  "duel-064 Cendre/Cendre novice/offensif": true,
+  "duel-065 Voile/Cendre timide/prudent": true,
+  "duel-066 Ronce/Cendre equilibre/lecteur": true,
+  "duel-067 Astre/Cendre offensif/novice": true,
+  "duel-068 Cendre/Voile prudent/timide": true,
+  "duel-069 Voile/Voile lecteur/equilibre": true,
+  "duel-070 Ronce/Voile novice/offensif": false,
+  "duel-071 Astre/Voile timide/prudent": true,
+  "duel-072 Cendre/Ronce equilibre/lecteur": true,
+  "duel-073 Voile/Ronce offensif/novice": false,
+  "duel-074 Ronce/Ronce prudent/timide": true,
+  "duel-075 Astre/Ronce lecteur/equilibre": true,
+  "duel-076 Cendre/Astre novice/offensif": true,
+  "duel-077 Voile/Astre timide/prudent": true,
+  "duel-078 Ronce/Astre equilibre/lecteur": true,
+  "duel-079 Astre/Astre offensif/novice": false,
+  "duel-080 Cendre/Cendre prudent/timide": true,
+  "duel-081 Voile/Cendre lecteur/equilibre": true,
+  "duel-082 Ronce/Cendre novice/offensif": true,
+  "duel-083 Astre/Cendre timide/prudent": true,
+  "duel-084 Cendre/Voile equilibre/lecteur": true,
+  "duel-085 Voile/Voile offensif/novice": false,
+  "duel-086 Ronce/Voile prudent/timide": true,
+  "duel-087 Astre/Voile lecteur/equilibre": true,
+  "duel-088 Cendre/Ronce novice/offensif": false,
+  "duel-089 Voile/Ronce timide/prudent": true,
+  "duel-090 Ronce/Ronce equilibre/lecteur": true,
+  "duel-091 Astre/Ronce offensif/novice": true,
+  "duel-092 Cendre/Astre prudent/timide": true,
+  "duel-093 Voile/Astre lecteur/equilibre": true,
+  "duel-094 Ronce/Astre novice/offensif": false,
+  "duel-095 Astre/Astre timide/prudent": true,
+  "duel-096 Cendre/Cendre equilibre/lecteur": true,
+  "duel-097 Voile/Cendre offensif/novice": true,
+  "duel-098 Ronce/Cendre prudent/timide": true,
+  "duel-099 Astre/Cendre lecteur/equilibre": true,
+  "duel-100 Cendre/Voile novice/offensif": true,
+  "duel-101 Voile/Voile timide/prudent": true,
+  "duel-102 Ronce/Voile equilibre/lecteur": true,
+  "duel-103 Astre/Voile offensif/novice": true,
+  "duel-104 Cendre/Ronce prudent/timide": true,
+  "duel-105 Voile/Ronce lecteur/equilibre": true,
+  "duel-106 Ronce/Ronce novice/offensif": true,
+  "duel-107 Astre/Ronce timide/prudent": true,
+  "duel-108 Cendre/Astre equilibre/lecteur": true,
+  "duel-109 Voile/Astre offensif/novice": false,
+  "duel-110 Ronce/Astre prudent/timide": true,
+  "duel-111 Astre/Astre lecteur/equilibre": true,
+  "duel-112 Cendre/Cendre novice/offensif": false,
+  "duel-113 Voile/Cendre timide/prudent": true,
+  "duel-114 Ronce/Cendre equilibre/lecteur": true,
+  "duel-115 Astre/Cendre offensif/novice": false,
+  "duel-116 Cendre/Voile prudent/timide": true,
+  "duel-117 Voile/Voile lecteur/equilibre": true,
+  "duel-118 Ronce/Voile novice/offensif": true,
+  "duel-119 Astre/Voile timide/prudent": true,
+  "duel-120 Cendre/Ronce equilibre/lecteur": true,
+  "duel-121 Voile/Ronce offensif/novice": true,
+  "duel-122 Ronce/Ronce prudent/timide": true,
+  "duel-123 Astre/Ronce lecteur/equilibre": true,
+  "duel-124 Cendre/Astre novice/offensif": false,
+  "duel-125 Voile/Astre timide/prudent": true,
+  "duel-126 Ronce/Astre equilibre/lecteur": true,
+  "duel-127 Astre/Astre offensif/novice": true,
+  "duel-128 Cendre/Cendre prudent/timide": true,
+  "duel-129 Voile/Cendre lecteur/equilibre": true,
+  "duel-130 Ronce/Cendre novice/offensif": true,
+  "duel-131 Astre/Cendre timide/prudent": true,
+  "duel-132 Cendre/Voile equilibre/lecteur": true,
+  "duel-133 Voile/Voile offensif/novice": true,
+  "duel-134 Ronce/Voile prudent/timide": true,
+  "duel-135 Astre/Voile lecteur/equilibre": true,
+  "duel-136 Cendre/Ronce novice/offensif": true,
+  "duel-137 Voile/Ronce timide/prudent": true,
+  "duel-138 Ronce/Ronce equilibre/lecteur": true,
+  "duel-139 Astre/Ronce offensif/novice": true,
+  "duel-140 Cendre/Astre prudent/timide": true,
+  "duel-141 Voile/Astre lecteur/equilibre": true,
+  "duel-142 Ronce/Astre novice/offensif": false,
+  "duel-143 Astre/Astre timide/prudent": true,
+  "duel-144 Cendre/Cendre equilibre/lecteur": true,
+  "duel-145 Voile/Cendre offensif/novice": true,
+  "duel-146 Ronce/Cendre prudent/timide": true,
+  "duel-147 Astre/Cendre lecteur/equilibre": true,
+  "duel-148 Cendre/Voile novice/offensif": false,
+  "duel-149 Voile/Voile timide/prudent": true,
+  "duel-150 Ronce/Voile equilibre/lecteur": true,
+  "duel-151 Astre/Voile offensif/novice": true,
+  "duel-152 Cendre/Ronce prudent/timide": true,
+  "duel-153 Voile/Ronce lecteur/equilibre": true,
+  "duel-154 Ronce/Ronce novice/offensif": true,
+  "duel-155 Astre/Ronce timide/prudent": true,
+  "duel-156 Cendre/Astre equilibre/lecteur": true,
+  "duel-157 Voile/Astre offensif/novice": false,
+  "duel-158 Ronce/Astre prudent/timide": true,
+  "duel-159 Astre/Astre lecteur/equilibre": true,
+  "duel-160 Cendre/Cendre novice/offensif": true,
+  "duel-161 Voile/Cendre timide/prudent": true,
+  "duel-162 Ronce/Cendre equilibre/lecteur": true,
+  "duel-163 Astre/Cendre offensif/novice": true,
+  "duel-164 Cendre/Voile prudent/timide": true,
+  "duel-165 Voile/Voile lecteur/equilibre": true,
+  "duel-166 Ronce/Voile novice/offensif": true,
+  "duel-167 Astre/Voile timide/prudent": true,
+  "duel-168 Cendre/Ronce equilibre/lecteur": true,
+  "duel-169 Voile/Ronce offensif/novice": false,
+  "duel-170 Ronce/Ronce prudent/timide": true,
+  "duel-171 Astre/Ronce lecteur/equilibre": true,
+  "duel-172 Cendre/Astre novice/offensif": true,
+  "duel-173 Voile/Astre timide/prudent": true,
+  "duel-174 Ronce/Astre equilibre/lecteur": true,
+  "duel-175 Astre/Astre offensif/novice": false,
+  "duel-176 Cendre/Cendre prudent/timide": true,
+  "duel-177 Voile/Cendre lecteur/equilibre": true,
+  "duel-178 Ronce/Cendre novice/offensif": true,
+  "duel-179 Astre/Cendre timide/prudent": true,
+  "duel-180 Cendre/Voile equilibre/lecteur": true,
+  "duel-181 Voile/Voile offensif/novice": true,
+  "duel-182 Ronce/Voile prudent/timide": true,
+  "duel-183 Astre/Voile lecteur/equilibre": true,
+  "duel-184 Cendre/Ronce novice/offensif": false,
+  "duel-185 Voile/Ronce timide/prudent": true,
+  "duel-186 Ronce/Ronce equilibre/lecteur": true,
+  "duel-187 Astre/Ronce offensif/novice": false,
+  "duel-188 Cendre/Astre prudent/timide": true,
+  "duel-189 Voile/Astre lecteur/equilibre": true,
+  "duel-190 Ronce/Astre novice/offensif": true,
+  "duel-191 Astre/Astre timide/prudent": true,
+  "duel-192 Cendre/Cendre equilibre/lecteur": true,
+  "duel-193 Voile/Cendre offensif/novice": true,
+  "duel-194 Ronce/Cendre prudent/timide": true,
+  "duel-195 Astre/Cendre lecteur/equilibre": true,
+  "duel-196 Cendre/Voile novice/offensif": false,
+  "duel-197 Voile/Voile timide/prudent": true,
+  "duel-198 Ronce/Voile equilibre/lecteur": true,
+  "duel-199 Astre/Voile offensif/novice": true,
+  "duel-200 Cendre/Ronce prudent/timide": true,
+  "duel-201 Voile/Ronce lecteur/equilibre": true,
+  "duel-202 Ronce/Ronce novice/offensif": true,
+  "duel-203 Astre/Ronce timide/prudent": true,
+  "duel-204 Cendre/Astre equilibre/lecteur": true,
+  "duel-205 Voile/Astre offensif/novice": true,
+  "duel-206 Ronce/Astre prudent/timide": true,
+  "duel-207 Astre/Astre lecteur/equilibre": true,
+  "duel-208 Cendre/Cendre novice/offensif": true,
+  "duel-209 Voile/Cendre timide/prudent": true,
+  "duel-210 Ronce/Cendre equilibre/lecteur": true,
+  "duel-211 Astre/Cendre offensif/novice": true,
+  "duel-212 Cendre/Voile prudent/timide": true,
+  "duel-213 Voile/Voile lecteur/equilibre": true,
+  "duel-214 Ronce/Voile novice/offensif": true,
+  "duel-215 Astre/Voile timide/prudent": true,
+  "duel-216 Cendre/Ronce equilibre/lecteur": true,
+  "duel-217 Voile/Ronce offensif/novice": true,
+  "duel-218 Ronce/Ronce prudent/timide": true,
+  "duel-219 Astre/Ronce lecteur/equilibre": true,
+  "duel-220 Cendre/Astre novice/offensif": false,
+  "duel-221 Voile/Astre timide/prudent": true,
+  "duel-222 Ronce/Astre equilibre/lecteur": true,
+  "duel-223 Astre/Astre offensif/novice": true,
+  "duel-224 Cendre/Cendre prudent/timide": true,
+  "duel-225 Voile/Cendre lecteur/equilibre": true,
+  "duel-226 Ronce/Cendre novice/offensif": true,
+  "duel-227 Astre/Cendre timide/prudent": true,
+  "duel-228 Cendre/Voile equilibre/lecteur": true,
+  "duel-229 Voile/Voile offensif/novice": true,
+  "duel-230 Ronce/Voile prudent/timide": true,
+  "duel-231 Astre/Voile lecteur/equilibre": true,
+  "duel-232 Cendre/Ronce novice/offensif": true,
+  "duel-233 Voile/Ronce timide/prudent": true,
+  "duel-234 Ronce/Ronce equilibre/lecteur": true,
+  "duel-235 Astre/Ronce offensif/novice": true,
+  "duel-236 Cendre/Astre prudent/timide": true,
+  "duel-237 Voile/Astre lecteur/equilibre": true,
+  "duel-238 Ronce/Astre novice/offensif": true,
+  "duel-239 Astre/Astre timide/prudent": true,
+  "enregistrement artifacts/qa/tmp/rc-record.json": true
+ },
+ "sansAG": {
+  "duel-010 Ronce/Ronce novice/offensif": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7011,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Ronce",
+      "variants": [
+       "Cendre-3",
+       "Voile-4",
+       "Ronce-1",
+       "Astre-2"
+      ],
+      "techniques": [
+       "Rupture",
+       "Dissipation"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Ronce",
+      "variants": [
+       "Astre-4",
+       "Astre-2",
+       "Voile-3",
+       "Cendre-4"
+      ],
+      "techniques": [
+       "Sondage",
+       "Lecture"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#02",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p1",
+     "commit": {
+      "primaryId": "p1#06",
+      "stance": "assault",
+      "secondaryId": "p1#13",
+      "replaceSlot": null
+     }
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": {
+      "id": "Sondage"
+     }
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": "p1#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#12",
+     "stance": "assault",
+     "secondaryId": "p2#14",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "interfere",
+       "target": 0
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": {
+      "id": "Sondage"
+     }
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": []
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": "p1#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0,
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "interfere",
+       "target": 0
+      },
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#14",
+     "stance": "assault",
+     "secondaryId": "p1#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#10",
+     "stance": "assault",
+     "secondaryId": "p2#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#05",
+     "stance": "assault",
+     "secondaryId": "p1#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": "p2#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "interfere",
+       "target": 0
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": "p1#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#06",
+     "stance": "assault",
+     "secondaryId": "p2#00",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "keep"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-019 Astre/Cendre offensif/novice": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7020,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Astre",
+      "variants": [
+       "Astre-4",
+       "Astre-2",
+       "Voile-3",
+       "Cendre-4"
+      ],
+      "techniques": [
+       "Recentrage",
+       "Lecture"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Cendre",
+      "variants": "none",
+      "techniques": [
+       "Ancrage",
+       "Dissipation"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": "p2#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p2",
+     "commit": {
+      "primaryId": "p2#01",
+      "stance": "assault",
+      "secondaryId": "p2#12",
+      "replaceSlot": null
+     }
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#10",
+     "stance": "assault",
+     "secondaryId": "p1#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": "p2#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p1",
+     "commit": {
+      "primaryId": "p1#00",
+      "stance": "assault",
+      "secondaryId": "p1#02",
+      "replaceSlot": null
+     }
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#10",
+     "stance": "assault",
+     "secondaryId": "p1#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#14",
+     "stance": "assault",
+     "secondaryId": "p1#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#15",
+     "stance": "assault",
+     "secondaryId": "p2#10",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#06",
+     "stance": "assault",
+     "secondaryId": "p1#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#02",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#14",
+     "stance": "assault",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#06",
+     "stance": "assault",
+     "secondaryId": "p2#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-022 Ronce/Voile novice/offensif": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7023,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Ronce",
+      "variants": [
+       "Cendre-3",
+       "Voile-4",
+       "Ronce-1",
+       "Astre-2"
+      ],
+      "techniques": [
+       "Rupture",
+       "Dissipation"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Voile",
+      "variants": "all",
+      "techniques": [
+       "Sondage",
+       "Lecture"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": "p1#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#05",
+     "stance": "assault",
+     "secondaryId": "p2#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": "p2#00",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": []
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#14",
+     "stance": "assault",
+     "secondaryId": "p1#10",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": {
+      "id": "Sondage"
+     }
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0,
+      1
+     ]
+    },
+    {
+     "type": "dissipate",
+     "player": "p1",
+     "targetSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": "p1#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#14",
+     "stance": "assault",
+     "secondaryId": "p2#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": "p1#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "keep"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p1",
+     "commit": {
+      "primaryId": "p1#00",
+      "stance": "assault",
+      "secondaryId": null,
+      "replaceSlot": null
+     }
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      {
+       "mode": "interfere",
+       "target": 0
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#13",
+     "stance": "assault",
+     "secondaryId": "p2#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-028 Cendre/Astre novice/offensif": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7029,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Cendre",
+      "variants": "all",
+      "techniques": [
+       "Rupture",
+       "Dissipation"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Astre",
+      "variants": [
+       "Cendre-3",
+       "Voile-4",
+       "Ronce-1",
+       "Astre-2"
+      ],
+      "techniques": [
+       "Sondage",
+       "Lecture"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": "p1#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": "p1#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#12",
+     "stance": "assault",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "keep"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "repel",
+     "player": "p1",
+     "targetSlot": 0
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#06",
+     "stance": "assault",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#00",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#02",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#05",
+     "stance": "assault",
+     "secondaryId": "p2#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": "p1#10",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": "p2#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p1",
+     "commit": {
+      "primaryId": "p1#10",
+      "stance": "assault",
+      "secondaryId": "p1#15",
+      "replaceSlot": null
+     }
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "keep"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#14",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-034 Ronce/Cendre novice/offensif": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7035,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Ronce",
+      "variants": [
+       "Cendre-3",
+       "Voile-4",
+       "Ronce-1",
+       "Astre-2"
+      ],
+      "techniques": [
+       "Rupture",
+       "Dissipation"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Cendre",
+      "variants": "none",
+      "techniques": [
+       "Sondage",
+       "Lecture"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#02",
+     "stance": "assault",
+     "secondaryId": "p2#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#06",
+     "stance": "assault",
+     "secondaryId": "p1#14",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": {
+      "id": "Sondage"
+     }
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "guard",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p1",
+     "commit": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "keep"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": "p1#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#05",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": {
+      "id": "Sondage"
+     }
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#14",
+     "stance": "assault",
+     "secondaryId": "p2#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#10",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": "p2#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "interfere",
+       "target": 0
+      },
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": []
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#02",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#15",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#09",
+     "stance": "assault",
+     "secondaryId": "p1#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": "p1#00",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#06",
+     "stance": "assault",
+     "secondaryId": "p2#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "interfere",
+       "target": 0
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#10",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#02",
+     "stance": "assault",
+     "secondaryId": "p1#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#15",
+     "stance": "assault",
+     "secondaryId": "p2#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-039 Astre/Voile lecteur/equilibre": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7040,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Astre",
+      "variants": [
+       "Astre-4",
+       "Astre-2",
+       "Voile-3",
+       "Cendre-4"
+      ],
+      "techniques": [
+       "Ancrage",
+       "Rupture"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 60,
+      "signature": "Voile",
+      "variants": [
+       "Cendre-3",
+       "Voile-4",
+       "Ronce-1",
+       "Astre-2"
+      ],
+      "techniques": [
+       "Dissipation",
+       "Recentrage"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#15",
+     "stance": "assault",
+     "secondaryId": "p2#07",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": "p1#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": []
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": "p1#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0,
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "dissipate",
+     "player": "p2",
+     "targetSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#14",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#01",
+     "stance": "assault",
+     "secondaryId": "p2#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "interfere",
+       "target": 0
+      },
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": {
+      "id": "Ancrage",
+      "slot": 1
+     }
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-070 Ronce/Voile novice/offensif": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7071,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Ronce",
+      "variants": [
+       "Cendre-3",
+       "Voile-4",
+       "Ronce-1",
+       "Astre-2"
+      ],
+      "techniques": [
+       "Rupture",
+       "Dissipation"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Voile",
+      "variants": [
+       "Astre-4",
+       "Astre-2",
+       "Voile-3",
+       "Cendre-4"
+      ],
+      "techniques": [
+       "Sondage",
+       "Lecture"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": {
+      "id": "Sondage"
+     }
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": "p1#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#00",
+     "stance": "assault",
+     "secondaryId": "p2#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#06",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#14",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#06",
+     "stance": "assault",
+     "secondaryId": "p2#10",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": "p1#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#14",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#09",
+     "stance": "assault",
+     "secondaryId": "p2#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#02",
+     "stance": "assault",
+     "secondaryId": "p1#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": "p2#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p1",
+     "commit": {
+      "primaryId": "p1#12",
+      "stance": "assault",
+      "secondaryId": "p1#02",
+      "replaceSlot": null
+     }
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "interfere",
+       "target": 1
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": []
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": "p1#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": "p2#15",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0,
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": []
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#10",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#13",
+     "stance": "assault",
+     "secondaryId": "p2#11",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-073 Voile/Ronce offensif/novice": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7074,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Voile",
+      "variants": "none",
+      "techniques": [
+       "Recentrage",
+       "Lecture"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Ronce",
+      "variants": [
+       "Cendre-3",
+       "Voile-4",
+       "Ronce-1",
+       "Astre-2"
+      ],
+      "techniques": [
+       "Ancrage",
+       "Dissipation"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#01",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": []
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": "p1#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0,
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#06",
+     "stance": "assault",
+     "secondaryId": "p2#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#14",
+     "stance": "assault",
+     "secondaryId": "p1#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#05",
+     "stance": "assault",
+     "secondaryId": "p2#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#02",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#09",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#14",
+     "stance": "assault",
+     "secondaryId": "p2#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": "p1#00",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p2",
+     "commit": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": "p2#00",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#12",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-079 Astre/Astre offensif/novice": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7080,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Astre",
+      "variants": [
+       "Astre-4",
+       "Astre-2",
+       "Voile-3",
+       "Cendre-4"
+      ],
+      "techniques": [
+       "Recentrage",
+       "Lecture"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Astre",
+      "variants": "all",
+      "techniques": [
+       "Ancrage",
+       "Dissipation"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#04",
+     "stance": "assault",
+     "secondaryId": "p1#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#15",
+     "stance": "assault",
+     "secondaryId": "p2#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#10",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#14",
+     "stance": "assault",
+     "secondaryId": "p2#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#10",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": "p1#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#06",
+     "stance": "assault",
+     "secondaryId": "p1#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": "p1#14",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p2",
+     "commit": {
+      "primaryId": "p2#09",
+      "stance": "assault",
+      "secondaryId": "p2#04",
+      "replaceSlot": null
+     }
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "interfere",
+       "target": 1
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": "p1#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#02",
+     "stance": "assault",
+     "secondaryId": "p2#14",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p2",
+     "commit": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-085 Voile/Voile offensif/novice": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7086,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Voile",
+      "variants": "none",
+      "techniques": [
+       "Recentrage",
+       "Lecture"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Voile",
+      "variants": [
+       "Astre-4",
+       "Astre-2",
+       "Voile-3",
+       "Cendre-4"
+      ],
+      "techniques": [
+       "Ancrage",
+       "Dissipation"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": "p2#10",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#12",
+     "stance": "assault",
+     "secondaryId": "p1#00",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#14",
+     "stance": "assault",
+     "secondaryId": "p2#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": "p1#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": {
+      "id": "Ancrage",
+      "slot": 0
+     }
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": "p2#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#10",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#02",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": "p1#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#12",
+     "stance": "assault",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p2",
+     "commit": {
+      "primaryId": "p2#08",
+      "stance": "assault",
+      "secondaryId": "p2#13",
+      "replaceSlot": null
+     }
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": []
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#15",
+     "stance": "assault",
+     "secondaryId": "p2#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#14",
+     "stance": "assault",
+     "secondaryId": "p1#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-088 Cendre/Ronce novice/offensif": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7089,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Cendre",
+      "variants": "all",
+      "techniques": [
+       "Rupture",
+       "Dissipation"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Ronce",
+      "variants": [
+       "Cendre-3",
+       "Voile-4",
+       "Ronce-1",
+       "Astre-2"
+      ],
+      "techniques": [
+       "Sondage",
+       "Lecture"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": {
+      "id": "Sondage"
+     }
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": "p2#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p1",
+     "commit": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#10",
+     "stance": "assault",
+     "secondaryId": "p1#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": "p2#14",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": "p1#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#06",
+     "stance": "assault",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "keep"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#06",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#10",
+     "stance": "assault",
+     "secondaryId": "p2#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": []
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": "p1#15",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#00",
+     "stance": "assault",
+     "secondaryId": "p2#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-094 Ronce/Astre novice/offensif": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7095,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Ronce",
+      "variants": [
+       "Cendre-3",
+       "Voile-4",
+       "Ronce-1",
+       "Astre-2"
+      ],
+      "techniques": [
+       "Rupture",
+       "Dissipation"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Astre",
+      "variants": "all",
+      "techniques": [
+       "Sondage",
+       "Lecture"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": "p1#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#13",
+     "stance": "assault",
+     "secondaryId": "p2#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": {
+      "id": "Sondage"
+     }
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": "p2#14",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p1",
+     "commit": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#06",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": []
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#02",
+     "stance": "assault",
+     "secondaryId": "p1#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0,
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": "p1#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#06",
+     "stance": "assault",
+     "secondaryId": "p2#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": "p1#14",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#01",
+     "stance": "assault",
+     "secondaryId": "p2#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-109 Voile/Astre offensif/novice": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7110,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Voile",
+      "variants": "none",
+      "techniques": [
+       "Recentrage",
+       "Lecture"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Astre",
+      "variants": "all",
+      "techniques": [
+       "Ancrage",
+       "Dissipation"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#07",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": []
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#10",
+     "stance": "assault",
+     "secondaryId": "p2#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#10",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0,
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#00",
+     "stance": "assault",
+     "secondaryId": "p1#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "interfere",
+       "target": 1
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": "p2#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": "p1#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "lecture",
+     "player": "p1",
+     "use": false
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#06",
+     "stance": "guard",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": "p1#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p2",
+     "commit": {
+      "primaryId": "p2#12",
+      "stance": "assault",
+      "secondaryId": "p2#06",
+      "replaceSlot": null
+     }
+    },
+    {
+     "type": "lecture",
+     "player": "p1",
+     "use": true
+    },
+    {
+     "type": "lectureStance",
+     "player": "p1",
+     "stance": "assault"
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-112 Cendre/Cendre novice/offensif": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7113,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Cendre",
+      "variants": "all",
+      "techniques": [
+       "Rupture",
+       "Dissipation"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Cendre",
+      "variants": "all",
+      "techniques": [
+       "Sondage",
+       "Lecture"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#14",
+     "stance": "assault",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#14",
+     "stance": "assault",
+     "secondaryId": "p1#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#10",
+     "stance": "assault",
+     "secondaryId": "p1#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#00",
+     "stance": "assault",
+     "secondaryId": "p1#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#01",
+     "stance": "assault",
+     "secondaryId": "p2#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": {
+      "id": "Sondage"
+     }
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#10",
+     "stance": "assault",
+     "secondaryId": "p2#00",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": "p1#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#15",
+     "stance": "assault",
+     "secondaryId": "p2#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#08",
+     "stance": "assault",
+     "secondaryId": "p2#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "keep"
+      }
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-115 Astre/Cendre offensif/novice": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7116,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Astre",
+      "variants": [
+       "Astre-4",
+       "Astre-2",
+       "Voile-3",
+       "Cendre-4"
+      ],
+      "techniques": [
+       "Recentrage",
+       "Lecture"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Cendre",
+      "variants": [
+       "Astre-4",
+       "Astre-2",
+       "Voile-3",
+       "Cendre-4"
+      ],
+      "techniques": [
+       "Ancrage",
+       "Dissipation"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": "p2#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#12",
+     "stance": "assault",
+     "secondaryId": "p1#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#02",
+     "stance": "assault",
+     "secondaryId": "p2#14",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": "p1#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": "p2#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#09",
+     "stance": "assault",
+     "secondaryId": "p1#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#15",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#10",
+     "stance": "assault",
+     "secondaryId": "p2#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#10",
+     "stance": "assault",
+     "secondaryId": "p1#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": "p1#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#04",
+     "stance": "assault",
+     "secondaryId": "p2#00",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p2",
+     "commit": {
+      "primaryId": "p2#08",
+      "stance": "assault",
+      "secondaryId": "p2#00",
+      "replaceSlot": null
+     }
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "keep"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#00",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-124 Cendre/Astre novice/offensif": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7125,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Cendre",
+      "variants": "all",
+      "techniques": [
+       "Rupture",
+       "Dissipation"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Astre",
+      "variants": "all",
+      "techniques": [
+       "Sondage",
+       "Lecture"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": "p1#14",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p2",
+     "commit": {
+      "primaryId": "p2#08",
+      "stance": "assault",
+      "secondaryId": null,
+      "replaceSlot": null
+     }
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#09",
+     "stance": "assault",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#06",
+     "stance": "assault",
+     "secondaryId": "p1#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#05",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#02",
+     "stance": "assault",
+     "secondaryId": "p1#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#10",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#02",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#15",
+     "stance": "assault",
+     "secondaryId": "p2#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#14",
+     "stance": "assault",
+     "secondaryId": "p2#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "interfere",
+       "target": 0
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-142 Ronce/Astre novice/offensif": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7143,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Ronce",
+      "variants": [
+       "Cendre-3",
+       "Voile-4",
+       "Ronce-1",
+       "Astre-2"
+      ],
+      "techniques": [
+       "Rupture",
+       "Dissipation"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Astre",
+      "variants": [
+       "Astre-4",
+       "Astre-2",
+       "Voile-3",
+       "Cendre-4"
+      ],
+      "techniques": [
+       "Sondage",
+       "Lecture"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": {
+      "id": "Sondage"
+     }
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": "p2#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p1",
+     "commit": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#10",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": "p1#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#14",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": "p1#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "interfere",
+       "target": 0
+      },
+      null
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-148 Cendre/Voile novice/offensif": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7149,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Cendre",
+      "variants": "all",
+      "techniques": [
+       "Rupture",
+       "Dissipation"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Voile",
+      "variants": [
+       "Cendre-3",
+       "Voile-4",
+       "Ronce-1",
+       "Astre-2"
+      ],
+      "techniques": [
+       "Sondage",
+       "Lecture"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": {
+      "id": "Sondage"
+     }
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#15",
+     "stance": "assault",
+     "secondaryId": "p2#07",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#02",
+     "stance": "assault",
+     "secondaryId": "p2#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#10",
+     "stance": "assault",
+     "secondaryId": "p2#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": "p1#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#06",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#14",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#05",
+     "stance": "assault",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#09",
+     "stance": "assault",
+     "secondaryId": "p1#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#10",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": "p2#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p1",
+     "commit": {
+      "primaryId": "p1#00",
+      "stance": "assault",
+      "secondaryId": "p1#13",
+      "replaceSlot": null
+     }
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "keep"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-157 Voile/Astre offensif/novice": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7158,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Voile",
+      "variants": "none",
+      "techniques": [
+       "Recentrage",
+       "Lecture"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Astre",
+      "variants": [
+       "Astre-4",
+       "Astre-2",
+       "Voile-3",
+       "Cendre-4"
+      ],
+      "techniques": [
+       "Ancrage",
+       "Dissipation"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#10",
+     "stance": "assault",
+     "secondaryId": "p1#00",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": "p2#14",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#08",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#10",
+     "stance": "assault",
+     "secondaryId": "p2#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#06",
+     "stance": "assault",
+     "secondaryId": "p1#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#02",
+     "stance": "assault",
+     "secondaryId": "p2#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-169 Voile/Ronce offensif/novice": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7170,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Voile",
+      "variants": "none",
+      "techniques": [
+       "Recentrage",
+       "Lecture"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Ronce",
+      "variants": "all",
+      "techniques": [
+       "Ancrage",
+       "Dissipation"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": "p2#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#01",
+     "stance": "assault",
+     "secondaryId": "p1#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#15",
+     "stance": "assault",
+     "secondaryId": "p2#10",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#14",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": {
+      "id": "Ancrage",
+      "slot": 0
+     }
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": "p1#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#06",
+     "stance": "assault",
+     "secondaryId": "p2#14",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#09",
+     "stance": "assault",
+     "secondaryId": "p2#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "guard",
+     "secondaryId": "p1#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "repel",
+     "player": "p1",
+     "targetSlot": 0
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": "p2#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#10",
+     "stance": "assault",
+     "secondaryId": "p1#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "lecture",
+     "player": "p1",
+     "use": false
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#13",
+     "stance": "assault",
+     "secondaryId": "p2#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p2",
+     "commit": null
+    },
+    {
+     "type": "lecture",
+     "player": "p1",
+     "use": false
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-175 Astre/Astre offensif/novice": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7176,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Astre",
+      "variants": [
+       "Astre-4",
+       "Astre-2",
+       "Voile-3",
+       "Cendre-4"
+      ],
+      "techniques": [
+       "Recentrage",
+       "Lecture"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Astre",
+      "variants": [
+       "Cendre-3",
+       "Voile-4",
+       "Ronce-1",
+       "Astre-2"
+      ],
+      "techniques": [
+       "Ancrage",
+       "Dissipation"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#10",
+     "stance": "assault",
+     "secondaryId": "p1#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": []
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#15",
+     "stance": "assault",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0,
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#08",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      {
+       "mode": "interfere",
+       "target": 0
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#12",
+     "stance": "guard",
+     "secondaryId": "p2#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p2",
+     "commit": {
+      "primaryId": "p2#05",
+      "stance": "assault",
+      "secondaryId": "p2#09",
+      "replaceSlot": null
+     }
+    },
+    {
+     "type": "lecture",
+     "player": "p1",
+     "use": false
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#02",
+     "stance": "assault",
+     "secondaryId": "p1#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#14",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "lecture",
+     "player": "p1",
+     "use": false
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#02",
+     "stance": "assault",
+     "secondaryId": "p2#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "lecture",
+     "player": "p1",
+     "use": false
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-184 Cendre/Ronce novice/offensif": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7185,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Cendre",
+      "variants": "all",
+      "techniques": [
+       "Rupture",
+       "Dissipation"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Ronce",
+      "variants": "all",
+      "techniques": [
+       "Sondage",
+       "Lecture"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": {
+      "id": "Sondage"
+     }
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#00",
+     "stance": "assault",
+     "secondaryId": "p2#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": "p1#10",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#15",
+     "stance": "assault",
+     "secondaryId": "p2#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#06",
+     "stance": "assault",
+     "secondaryId": "p1#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#02",
+     "stance": "assault",
+     "secondaryId": "p2#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#00",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": "p2#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p1",
+     "commit": {
+      "primaryId": "p1#00",
+      "stance": "assault",
+      "secondaryId": "p1#07",
+      "replaceSlot": null
+     }
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "keep"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "keep"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#14",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-187 Astre/Ronce offensif/novice": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7188,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Astre",
+      "variants": [
+       "Astre-4",
+       "Astre-2",
+       "Voile-3",
+       "Cendre-4"
+      ],
+      "techniques": [
+       "Recentrage",
+       "Lecture"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Ronce",
+      "variants": [
+       "Astre-4",
+       "Astre-2",
+       "Voile-3",
+       "Cendre-4"
+      ],
+      "techniques": [
+       "Ancrage",
+       "Dissipation"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#01",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#05",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#14",
+     "stance": "assault",
+     "secondaryId": "p2#00",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#02",
+     "stance": "assault",
+     "secondaryId": "p2#10",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#14",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p1",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#12",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#15",
+     "stance": "assault",
+     "secondaryId": "p2#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-196 Cendre/Voile novice/offensif": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7197,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Cendre",
+      "variants": "all",
+      "techniques": [
+       "Rupture",
+       "Dissipation"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Voile",
+      "variants": "none",
+      "techniques": [
+       "Sondage",
+       "Lecture"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#15",
+     "stance": "assault",
+     "secondaryId": "p2#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": "p1#02",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#05",
+     "stance": "assault",
+     "secondaryId": "p2#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": "p1#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": "p1#01",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "guard",
+     "secondaryId": "p2#06",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p1",
+     "commit": {
+      "primaryId": "p1#16",
+      "stance": "guard",
+      "secondaryId": null,
+      "replaceSlot": null
+     }
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": null
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#05",
+     "stance": "assault",
+     "secondaryId": "p1#14",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": {
+      "id": "Sondage"
+     }
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#10",
+     "stance": "assault",
+     "secondaryId": "p2#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#01",
+     "stance": "assault",
+     "secondaryId": "p1#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    }
+   ]
+  },
+  "duel-220 Cendre/Astre novice/offensif": {
+   "format": "lqv-replay/1",
+   "rules": "V3.0+delta-V3.3.2",
+   "catalog": "catalogue-initial-V3.0+16v+4s+6t",
+   "config": {
+    "seed": 7221,
+    "players": {
+     "p1": {
+      "name": "Vous",
+      "hp": 90,
+      "signature": "Cendre",
+      "variants": "all",
+      "techniques": [
+       "Rupture",
+       "Dissipation"
+      ]
+     },
+     "p2": {
+      "name": "Rival",
+      "hp": 90,
+      "signature": "Astre",
+      "variants": [
+       "Cendre-3",
+       "Voile-4",
+       "Ronce-1",
+       "Astre-2"
+      ],
+      "techniques": [
+       "Sondage",
+       "Lecture"
+      ]
+     }
+    }
+   },
+   "commands": [
+    {
+     "type": "start",
+     "player": "p2",
+     "discard": [],
+     "technique": {
+      "id": "Sondage"
+     }
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#07",
+     "stance": "assault",
+     "secondaryId": "p1#04",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#07",
+     "stance": "assault",
+     "secondaryId": "p2#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#11",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#10",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#02",
+     "stance": "assault",
+     "secondaryId": "p1#10",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#11",
+     "stance": "assault",
+     "secondaryId": "p2#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#06",
+     "stance": "assault",
+     "secondaryId": "p1#12",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#06",
+     "stance": "assault",
+     "secondaryId": "p2#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#16",
+     "stance": "assault",
+     "secondaryId": "p1#13",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#15",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "keep"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#14",
+     "stance": "assault",
+     "secondaryId": "p2#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#01",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      null,
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      {
+       "mode": "rank"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#15",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#16",
+     "stance": "assault",
+     "secondaryId": "p2#08",
+     "replaceSlot": null
+    },
+    {
+     "type": "revise",
+     "player": "p1",
+     "commit": {
+      "primaryId": "p1#05",
+      "stance": "assault",
+      "secondaryId": "p1#15",
+      "replaceSlot": null
+     }
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "damage"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "keep"
+      },
+      null
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p1",
+     "reveal": [
+      1
+     ]
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": []
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#14",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#03",
+     "stance": "assault",
+     "secondaryId": "p2#05",
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p1",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      {
+       "mode": "damage"
+      }
+     ],
+     "technique": null
+    },
+    {
+     "type": "nextTurn"
+    },
+    {
+     "type": "prepare",
+     "player": "p2",
+     "reveal": [
+      0
+     ]
+    },
+    {
+     "type": "commit",
+     "player": "p1",
+     "primaryId": "p1#03",
+     "stance": "assault",
+     "secondaryId": "p1#09",
+     "replaceSlot": null
+    },
+    {
+     "type": "commit",
+     "player": "p2",
+     "primaryId": "p2#02",
+     "stance": "assault",
+     "secondaryId": null,
+     "replaceSlot": null
+    },
+    {
+     "type": "tactics",
+     "player": "p2",
+     "plans": [
+      {
+       "mode": "rank"
+      },
+      null
+     ],
+     "technique": null
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,365 @@
+{
+  "commit": "335ab9d",
+  "date": "2026-10-27T04:35:49.210Z",
+  "planche": [
+    {
+      "kind": "effet",
+      "side": "me",
+      "title": "Prisme",
+      "consequence": "AFFINITÉ +1 · ×3",
+      "held": "effet"
+    },
+    {
+      "kind": "annule",
+      "side": "opp",
+      "title": "Ferveur",
+      "consequence": "ANNULÉ",
+      "held": "annule"
+    },
+    {
+      "kind": "echec",
+      "side": "me",
+      "title": "Condition non remplie",
+      "consequence": "",
+      "held": "echec"
+    },
+    {
+      "kind": "regard",
+      "side": "me",
+      "title": "Sondage",
+      "consequence": "VOUS VOYEZ",
+      "held": "regard"
+    },
+    {
+      "kind": "technique",
+      "side": "me",
+      "title": "Sondage",
+      "consequence": "OBSERVE UNE CARTE",
+      "held": "technique"
+    },
+    {
+      "kind": "camouflage",
+      "side": "opp",
+      "title": "Dissimulation",
+      "consequence": "MASQUÉE JUSQU’À LA FIN DU TOUR",
+      "held": "camouflage"
+    },
+    {
+      "kind": "dissipation",
+      "side": "me",
+      "title": "Dissipation",
+      "consequence": "CAMOUFLAGE LEVÉ",
+      "held": "dissipation"
+    },
+    {
+      "kind": "signature",
+      "side": "me",
+      "title": "Brasier Originel",
+      "consequence": "∞ SIGNATURE ANNONCÉE",
+      "held": "signature"
+    },
+    {
+      "kind": "interference",
+      "side": "opp",
+      "title": "Interférence",
+      "consequence": "SOUTIEN ANNULÉ",
+      "held": "interference"
+    },
+    {
+      "kind": "insight",
+      "side": "opp",
+      "title": "Insight",
+      "consequence": "+1 INSIGHT",
+      "held": "insight"
+    },
+    {
+      "kind": "soin",
+      "side": "opp",
+      "title": "Soin",
+      "consequence": "+2 PV",
+      "held": "soin"
+    },
+    {
+      "kind": "repousse",
+      "side": "me",
+      "title": "Emprise",
+      "consequence": "RENVOYÉE EN MAIN",
+      "held": "repousse"
+    },
+    {
+      "kind": "revelation",
+      "side": "me",
+      "title": "Secondaire révélée",
+      "consequence": "ACTIVE",
+      "held": "revelation"
+    }
+  ],
+  "integration": [
+    {
+      "run": "masque",
+      "ended": false,
+      "caught": [
+        {
+          "kind": "effet",
+          "side": "opp",
+          "title": "Dissimulation",
+          "consequence": "SECONDAIRE MASQUÉE",
+          "turn": 5
+        },
+        {
+          "kind": "masque",
+          "side": "opp",
+          "title": "Effet masqué",
+          "consequence": "+1 INSIGHT",
+          "turn": 5
+        },
+        {
+          "kind": "insight",
+          "side": "opp",
+          "title": "Insight",
+          "consequence": "+1 INSIGHT",
+          "turn": 5
+        },
+        {
+          "kind": "revelation",
+          "side": "me",
+          "title": "Secondaire révélée",
+          "consequence": "ACTIVE",
+          "turn": 6
+        }
+      ],
+      "played": 6,
+      "leaks": [],
+      "masqueFace": 0,
+      "restAfter": 0
+    },
+    {
+      "run": "dissipation",
+      "ended": false,
+      "caught": [
+        {
+          "kind": "technique",
+          "side": "me",
+          "title": "Dissipation",
+          "consequence": "CAMOUFLAGE LEVÉ",
+          "turn": 5
+        },
+        {
+          "kind": "dissipation",
+          "side": "me",
+          "title": "Dissipation",
+          "consequence": "CAMOUFLAGE LEVÉ",
+          "turn": 5
+        },
+        {
+          "kind": "signature",
+          "side": "me",
+          "title": "Brasier Originel",
+          "consequence": "∞ SIGNATURE ANNONCÉE",
+          "turn": 7
+        }
+      ],
+      "played": 8,
+      "leaks": [],
+      "masqueFace": 0,
+      "restAfter": 0
+    },
+    {
+      "run": "interference",
+      "ended": false,
+      "caught": [
+        {
+          "kind": "interference",
+          "side": "opp",
+          "title": "Interférence",
+          "consequence": "SOUTIEN ANNULÉ",
+          "turn": 5
+        }
+      ],
+      "played": 2,
+      "leaks": [],
+      "masqueFace": 0,
+      "restAfter": 0
+    },
+    {
+      "run": "signature-annonce",
+      "ended": false,
+      "caught": [
+        {
+          "kind": "echec",
+          "side": "me",
+          "title": "Condition non remplie",
+          "consequence": "",
+          "turn": 5
+        }
+      ],
+      "played": 9,
+      "leaks": [],
+      "masqueFace": 0,
+      "restAfter": 0
+    },
+    {
+      "run": "rupture",
+      "ended": false,
+      "caught": [],
+      "played": 1,
+      "leaks": [],
+      "masqueFace": 0,
+      "restAfter": 0
+    },
+    {
+      "run": "standard-sondage",
+      "ended": true,
+      "caught": [
+        {
+          "kind": "regard",
+          "side": "me",
+          "title": "Sondage",
+          "consequence": "VOUS VOYEZ",
+          "turn": 1
+        }
+      ],
+      "played": 16,
+      "leaks": [],
+      "masqueFace": 0,
+      "restAfter": 0
+    },
+    {
+      "run": "standard-recentrage",
+      "ended": true,
+      "caught": [],
+      "played": 25,
+      "leaks": [],
+      "masqueFace": 0,
+      "restAfter": 0
+    },
+    {
+      "run": "standard-ronce",
+      "ended": true,
+      "caught": [],
+      "played": 44,
+      "leaks": [],
+      "masqueFace": 0,
+      "restAfter": 0
+    }
+  ],
+  "checks": {
+    "planche : chaque genre trouvé est figé et montré": {
+      "ok": true,
+      "detail": ""
+    },
+    "intégration masque : secret (aucun nom masqué adverse, effet masqué adverse de dos)": {
+      "ok": true,
+      "detail": ""
+    },
+    "intégration masque : rien ne subsiste après la file": {
+      "ok": true,
+      "detail": "0 élément(s)"
+    },
+    "intégration dissipation : secret (aucun nom masqué adverse, effet masqué adverse de dos)": {
+      "ok": true,
+      "detail": ""
+    },
+    "intégration dissipation : rien ne subsiste après la file": {
+      "ok": true,
+      "detail": "0 élément(s)"
+    },
+    "« Passer » vide la scène des temps forts": {
+      "ok": true,
+      "detail": "{\"kids\":0,\"on\":false,\"busy\":false}"
+    },
+    "intégration interference : secret (aucun nom masqué adverse, effet masqué adverse de dos)": {
+      "ok": true,
+      "detail": ""
+    },
+    "intégration interference : rien ne subsiste après la file": {
+      "ok": true,
+      "detail": "0 élément(s)"
+    },
+    "intégration signature-annonce : secret (aucun nom masqué adverse, effet masqué adverse de dos)": {
+      "ok": true,
+      "detail": ""
+    },
+    "intégration signature-annonce : rien ne subsiste après la file": {
+      "ok": true,
+      "detail": "0 élément(s)"
+    },
+    "intégration rupture : secret (aucun nom masqué adverse, effet masqué adverse de dos)": {
+      "ok": true,
+      "detail": ""
+    },
+    "intégration rupture : rien ne subsiste après la file": {
+      "ok": true,
+      "detail": "0 élément(s)"
+    },
+    "intégration standard-sondage : secret (aucun nom masqué adverse, effet masqué adverse de dos)": {
+      "ok": true,
+      "detail": ""
+    },
+    "intégration standard-sondage : rien ne subsiste après la file": {
+      "ok": true,
+      "detail": "0 élément(s)"
+    },
+    "intégration standard-recentrage : secret (aucun nom masqué adverse, effet masqué adverse de dos)": {
+      "ok": true,
+      "detail": ""
+    },
+    "intégration standard-recentrage : rien ne subsiste après la file": {
+      "ok": true,
+      "detail": "0 élément(s)"
+    },
+    "intégration standard-ronce : secret (aucun nom masqué adverse, effet masqué adverse de dos)": {
+      "ok": true,
+      "detail": ""
+    },
+    "intégration standard-ronce : rien ne subsiste après la file": {
+      "ok": true,
+      "detail": "0 élément(s)"
+    },
+    "intégration : genres vus dans de vrais duels au navigateur": {
+      "ok": true,
+      "detail": "effet, masque, insight, revelation, technique, dissipation, signature, interference, echec, regard"
+    },
+    "mouvement réduit : des fondus, aucune transformation animée": {
+      "ok": true,
+      "detail": "{\"anims\":7,\"moving\":0}"
+    },
+    "instantané : aucun temps fort": {
+      "ok": true,
+      "detail": "{\"ms\":0,\"kids\":0}"
+    },
+    "gel : le dernier temps fort posé, rien n’attend": {
+      "ok": true,
+      "detail": "{\"ms\":0,\"held\":1,\"busy\":false}"
+    },
+    "petit écran paysage : carte, bannière et conséquence dans l’écran, sans chevauchement": {
+      "ok": true,
+      "detail": "{\"banner\":{\"top\":215,\"bottom\":247,\"left\":349,\"right\":495},\"cons\":{\"top\":248,\"bottom\":271,\"left\":318,\"right\":526},\"card\":{\"top\":88,\"bottom\":208,\"left\":379,\"right\":465}}"
+    },
+    "téléphone en portrait : tout dans la largeur, sans chevauchement": {
+      "ok": true,
+      "detail": "{\"banner\":{\"top\":426,\"bottom\":464,\"left\":74,\"right\":316},\"cons\":{\"top\":470,\"bottom\":527,\"left\":16,\"right\":374},\"detail\":{\"top\":530,\"bottom\":558,\"left\":27,\"right\":363},\"card\":{\"top\":195,\"bottom\":413,\"left\":117,\"right\":273}}"
+    },
+    "console sans erreur": {
+      "ok": true,
+      "detail": ""
+    }
+  },
+  "console": [],
+  "absents": [
+    "masque"
+  ],
+  "vusEnDuel": [
+    "effet",
+    "masque",
+    "insight",
+    "revelation",
+    "technique",
+    "dissipation",
+    "signature",
+    "interference",
+    "echec",
+    "regard"
+  ],
+  "consoleErrors": []
+}
