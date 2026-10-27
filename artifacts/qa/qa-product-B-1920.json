@@ -1,0 +1,72 @@
+{
+  "commit": "fa6e8b7",
+  "date": "2026-10-27T09:22:22.562Z",
+  "chromium": "153.0.8010.12",
+  "runs": {
+    "B-1920-glisser-abandon": {
+      "consoleIssues": [],
+      "checks": [
+        "OK duel glisser joué jusqu’au K.-O. (tour 6)",
+        "OK abandon annulé : le duel continue",
+        "OK abandon classé à part (ni victoire ni défaite)",
+        "OK écran Résultat : « Abandon »"
+      ],
+      "fails": [],
+      "duel": {
+        "outcome": "ended",
+        "winner": "opp",
+        "turn": 6,
+        "hp": [
+          0,
+          10
+        ],
+        "personality": "braise",
+        "turns": 5,
+        "drags": 10,
+        "clicks": 0,
+        "keyboard": 0,
+        "tactics": 4,
+        "repels": 0,
+        "leaks": [],
+        "viewChecks": 19,
+        "viewErrors": [],
+        "lostClicks": [],
+        "tech": {
+          "Ancrage": 1
+        },
+        "moods": [
+          "confident",
+          "triumphant"
+        ],
+        "sequencesWatched": 0,
+        "sequencesSkipped": 5,
+        "manualToggleChecked": "ok",
+        "holds": 0,
+        "layoutChecked": [
+          "COMMIT",
+          "TACTICS"
+        ],
+        "layoutIssues": [],
+        "stanceChecks": 10,
+        "stanceIssues": [],
+        "stageGhosts": [],
+        "stageFades": [],
+        "stagesSeen": 0,
+        "rotations": [],
+        "signatures": 1,
+        "stances": {
+          "assault": 6,
+          "guard": 0
+        },
+        "plans": {
+          "damage": 2,
+          "rank": 2
+        },
+        "revisions": 0,
+        "revised": 0
+      },
+      "keyboardTurns": 2,
+      "ms": 247659
+    }
+  }
+}

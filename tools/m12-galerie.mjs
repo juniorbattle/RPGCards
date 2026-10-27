@@ -18,7 +18,7 @@ const check = (ok, what) => { report.checks.push(`${ok ? 'OK' : 'ÉCHEC'} ${what
 const FAMILIES = ['Cendre', 'Voile', 'Ronce', 'Astre'];
 try {
   for (const v of ['v2', 'v1']) {
-    const p = await (await browser.newContext({ viewport: { width: 1500, height: 1000 }, deviceScaleFactor: 1 })).newPage();
+    const p = await (await browser.newContext({ viewport: { width: 3500, height: 1000 }, deviceScaleFactor: 1 })).newPage(); // avenant 09 : 17 cartes par famille
     watchConsole(p, report.console);
     await p.goto(`${server.base}/?gallery=1&qa=1&artCheck=1${v === 'v1' ? '&cartes=v1' : ''}`);
     await p.waitForFunction(() => typeof window.__artGenMs === 'number');
@@ -32,7 +32,7 @@ try {
       for (const img of document.querySelectorAll('.card img')) img.decoding = 'sync';
     }, W);
     await p.waitForTimeout(800);
-    // une rangée par famille : ses 9 cartes (I à IV Basic et variante, puis la Signature), puis le dos
+    // une rangée par famille : ses 17 cartes (I à IV : Basic, variantes A, B et C ; puis la Signature), puis le dos
     await p.evaluate((fams) => {
       const grid = document.querySelector('#app div[style*="flex-wrap"]');
       const holder = document.createElement('div');
@@ -65,7 +65,7 @@ try {
     await p.context().close();
   }
   check(report.console.filter((l) => /error/i.test(l)).length === 0, `console sans erreur (${report.console.length} lignes)`);
-  check(true, `génération des 36 illustrations sur la page : v2 ${report.genMs.v2} ms, v1 ${report.genMs.v1} ms`);
+  check(true, `génération des illustrations (68 cartes) sur la page : v2 ${report.genMs.v2} ms, v1 ${report.genMs.v1} ms`);
 } finally {
   server.stop();
   await browser.close();

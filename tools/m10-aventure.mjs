@@ -245,11 +245,14 @@ try {
     // marche réelle (clavier) au travers du passage ouest, du Quai jusqu’à la rue Haute
     await av(() => window.__lqvAventure.town.place({ x: -12.1, z: -1.8 }, 'dos'));
     await p.waitForTimeout(400);
+    // la touche tenue jusqu'à la rue Haute (150 s au plus) : le pas du marcheur est borné par image, et le rendu logiciel
+    // du Quai en rangs tombe sous 1 image par seconde dans le conteneur (passe 157) ; une durée fixe mesurait la machine
     await p.keyboard.down('KeyW');
-    await p.waitForTimeout(4200);
+    const t0 = Date.now();
+    let zr = -1.8;
+    while (zr >= -11 && Date.now() - t0 < 150000) { await p.waitForTimeout(400); zr = await av(() => window.__lqvAventure.town.walker().pos.z); }
     await p.keyboard.up('KeyW');
-    const zr = await av(() => window.__lqvAventure.town.walker().pos.z);
-    check(zr < -11, `marche au clavier au travers du passage ouest jusqu’à la rue Haute (z ${zr.toFixed(1)})`);
+    check(zr < -11, `marche au clavier au travers du passage ouest jusqu’à la rue Haute (z ${zr.toFixed(1)}, ${((Date.now() - t0) / 1000).toFixed(1)} s)`);
     await shot('rang-2-rue-haute', 1500);
     // Mère Aubépine, cheffe de la Ronce, attend dans la ruelle des Lanternes (troisième rang)
     await parler('chef-Ronce');

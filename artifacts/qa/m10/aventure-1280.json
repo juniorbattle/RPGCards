@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-25T22:24:38.600Z",
-  "commit": "e952efe",
+  "date": "2026-10-27T09:42:40.312Z",
+  "commit": "fa6e8b7",
   "viewport": [
     1280,
     720
@@ -33,8 +33,8 @@
     "OK préparation du cadet : l’enjeu (variante) annoncé",
     "OK victoire contre le cadet (issue imposée en QA) : variante III au registre",
     "OK devant cadet-Voile",
-    "OK cadet battu : revanche proposée, sans récompense",
-    "OK revanche gagnée : registre inchangé (aucune duplication)",
+    "OK cadet battu : revanche proposée, la variante suivante en jeu (avenant 09)",
+    "OK revanche gagnée : la variante suivante (B, Ombre portée) au registre, sans duplication",
     "OK deck de l’aventure légal (R-AV)",
     "OK reprise : les Ruelles, au même endroit (ruelles, 4.50, 1.20)",
     "OK devant brasDroit-Voile",
@@ -50,7 +50,7 @@
     "OK Quai de l’aventure : le Quai en quatre rangs (ARB-M10-12)",
     "OK HUD : « Le Quai »",
     "OK Quai en rangs : diorama des rangs affiché (0 plans non approuvés, QA seulement)",
-    "OK marche au clavier au travers du passage ouest jusqu’à la rue Haute (z -15.1)",
+    "OK marche au clavier au travers du passage ouest jusqu’à la rue Haute (z -11.2, 61.3 s)",
     "OK devant chef-Ronce",
     "OK Mère Aubépine dans la ruelle des Lanternes (rang 3, z -26.6) ; défi pas encore ouvert",
     "OK jeu par défaut : accueil habituel, sans le mode Aventure ni sa sauvegarde"

@@ -1,18 +1,18 @@
 {
-  "date": "2026-10-20T21:02:55.686Z",
-  "commit": "7ef4f82+arbre de travail",
+  "date": "2026-10-27T07:57:34.860Z",
+  "commit": "5ee230c+arbre de travail",
   "viewport": [
     1280,
     720
   ],
   "qs": "",
   "chromeArgs": [],
-  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU",
   "duelJoue": {
     "contre": "Lior",
     "issue": "victoire",
-    "tours": 16,
-    "ms": 40921,
+    "tours": 10,
+    "ms": 168184,
     "leaks": []
   },
   "checks": [
@@ -20,7 +20,7 @@
     "OK devant emissaire-Ronce",
     "OK affiliation à la Ronce : quatre Basics, 12 cartes grises",
     "OK devant cadet-Cendre",
-    "OK changement d’affiliation : les cartes reçues restent, le niveau des adversaires annoncé (2)",
+    "OK changement d’affiliation : les cartes reçues restent ; la famille quittée ne compte pas dans le niveau des adversaires (D1)",
     "OK changement d’affiliation vers la Cendre : les Basics de la Ronce restent, 8 cartes grises",
     "OK devant cadet-Cendre",
     "OK devant brasDroit-Cendre",
@@ -47,7 +47,7 @@
     "OK objectif : Défiez Lior, cadet du Voile, colporteur des Ruelles.",
     "OK quai : sortie vers ruelles",
     "OK devant cadet-Voile",
-    "OK duel contre Lior joué jusqu’au bout par l’interface (victoire, 16 tours, 41 s)",
+    "OK duel contre Lior joué jusqu’au bout par l’interface (victoire, 10 tours, 168 s)",
     "OK duel joué : aucune fuite d’information (vue du joueur)",
     "OK devant brasDroit-Voile",
     "OK devant chef-Voile",

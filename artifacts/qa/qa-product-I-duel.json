@@ -1,0 +1,74 @@
+{
+  "commit": "fa6e8b7",
+  "date": "2026-10-27T09:26:33.167Z",
+  "chromium": "153.0.8010.12",
+  "runs": {
+    "I-duel-de-la-ville-1280": {
+      "consoleIssues": [],
+      "checks": [
+        "OK rubrique « Duels de la ville » : 4 rencontres de PNJ ouvertes d’emblée",
+        "OK duel joué jusqu’au K.-O. (tour 11)",
+        "OK adversaire : duelliste PNJ (pnj-docker-1)",
+        "OK résultat enregistré dans l’historique contre le PNJ",
+        "OK aucune progression ni déblocage (entraînement)",
+        "OK sauvegarde valide après un duel de la ville (rechargement)"
+      ],
+      "fails": [],
+      "duel": {
+        "outcome": "ended",
+        "winner": "opp",
+        "turn": 11,
+        "hp": [
+          0,
+          18
+        ],
+        "personality": "pnj-docker-1",
+        "turns": 10,
+        "drags": 0,
+        "clicks": 11,
+        "keyboard": 0,
+        "tactics": 6,
+        "repels": 0,
+        "leaks": [],
+        "viewChecks": 35,
+        "viewErrors": [],
+        "lostClicks": [],
+        "tech": {
+          "Ancrage": 1
+        },
+        "moods": [
+          "confident",
+          "focused",
+          "smug"
+        ],
+        "sequencesWatched": 0,
+        "sequencesSkipped": 9,
+        "manualToggleChecked": "ok",
+        "holds": 0,
+        "layoutChecked": [
+          "COMMIT",
+          "TACTICS"
+        ],
+        "layoutIssues": [],
+        "stanceChecks": 18,
+        "stanceIssues": [],
+        "stageGhosts": [],
+        "stageFades": [],
+        "stagesSeen": 0,
+        "rotations": [],
+        "signatures": 1,
+        "stances": {
+          "assault": 7,
+          "guard": 4
+        },
+        "plans": {
+          "damage": 3,
+          "rank": 3
+        },
+        "revisions": 0,
+        "revised": 0
+      },
+      "ms": 201372
+    }
+  }
+}
