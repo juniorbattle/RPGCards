@@ -10,111 +10,16 @@ import {
   accordsTenus, arpegesBallade, basseDeux, basseLofi, basseMarche, batterieBalais, batterieLofi, batterieRide, chorus, comping,
   eviterMelodie, humaniser, lier, orner, versEvenements, type Evenement, type InstrId, type Rng,
 } from './generateurs';
-import { QUATRE_VOIES, type AccordP, type NoteP, type Theme } from './partitions';
+import { derouler, dynamiques, fenetre, varier, type DefJingle, type DefVersion, type JingleId, type Mix, type OptVersion, type VersionId } from './arrangement';
+import { QUATRE_VOIES, type AccordP, type NoteP } from './partitions';
 import { accord, midi, swinguer, voicer } from './theorie';
-import { augmenter, changerMode, deplacer, enrichir, renverser, retrograde, transposer, transposerAccords } from './variations';
+import { augmenter, deplacer, renverser, retrograde, transposer } from './variations';
 import { MONOPHONIQUES } from './vents';
+import { VERSIONS_DUEL } from './duel';
+import { VERSIONS_VILLE } from './ville';
 
-export type VersionId = 'I-1' | 'I-2' | 'I-3';
-export type JingleId = 'victoire' | 'defaite' | 'carte' | 'chapitre';
-/** Variations à la volée (laboratoire) : la mélodie de la tête transformée, à la manière de Zelda. */
-export type VariationMelodie = 'originale' | 'envers' | 'renversee' | 'mineur' | 'lente';
-
-export interface Mix { g?: number; pan?: number; rev?: number }
-
-export interface DefVersion {
-  id: VersionId;
-  titre: string;
-  tempo: number;
-  mesure: number;
-  /** Rapport de swing (0,5 : droit) et grille (1 : croches, 0,5 : doubles croches). */
-  swing: number;
-  sub: number;
-  salle: SalleId;
-  lofi?: boolean;
-  /** Pédale tenue (piano de ballade, vibraphone) : les notes s'éteignent lentement. */
-  pedale?: boolean;
-  gain: number;
-  mix: Partial<Record<InstrId, Mix>>;
-  instruments: InstrId[];
-  /** Durée d'un passage, en temps. */
-  duree: number;
-  passe: (p: number, rng: Rng, o: OptVersion) => Evenement[];
-  /** La grille du passage, en temps droits (ponctuations dans l'accord qui sonne, fin de duel sur la fondamentale). */
-  grille: (p: number, o: OptVersion) => readonly AccordP[];
-  /** Levée jouée avant le premier passage quand la version commence seule. */
-  intro?: { duree: number; ev: (rng: Rng) => Evenement[]; acc?: readonly AccordP[] };
-  /** Place des musiciens dans le temps (lecteur) : jazz par défaut, lofi pour les versions lofi. */
-  jeu?: 'jazz' | 'lofi' | 'droit';
-  /** Niveau de départ des couches (0 à 1) ; une couche absente part à 1 (contrat 2, §2). */
-  couches?: Record<string, number>;
-}
-
-/**
- * Contexte d'une version (faits publics seulement, contrat 2, §1) : variation de la mélodie, intensité (0 à 1 : le duel
- * qui se tend), chapitre de l'aventure (0 prologue à 5 ; 6 : champion), lu au début de chaque passage.
- */
-export interface OptVersion { melodie?: VariationMelodie; intensite?: number; chapitre?: number }
-
-export interface DefJingle {
-  id: JingleId;
-  titre: string;
-  tempo: number;
-  salle: SalleId;
-  gain: number;
-  mix: Partial<Record<InstrId, Mix>>;
-  instruments: InstrId[];
-  duree: number;
-  ev: () => Evenement[];
-}
-
-// ------------------------------------------------------------------ déroulé d'un thème
-
-export interface Deroule { mel: NoteP[]; acc: AccordP[]; total: number; debuts: number[]; cles: string[] }
-
-/** La forme du thème mise bout à bout (positions absolues), transposée et réharmonisée au besoin. */
-export function derouler(th: Theme, o: { transposer?: number; enrichir?: boolean; forme?: string[] } = {}): Deroule {
-  const mel: NoteP[] = [];
-  const acc: AccordP[] = [];
-  const debuts: number[] = [];
-  const cles = o.forme ?? th.forme;
-  let t0 = 0;
-  for (const k of cles) {
-    const s = th.sections[k]!;
-    debuts.push(t0);
-    mel.push(...deplacer(transposer(s.melodie, o.transposer ?? 0), t0));
-    let a = deplacerAccords(s.accords, t0);
-    if (o.transposer) a = transposerAccords(a, o.transposer);
-    if (o.enrichir) a = enrichir(a);
-    acc.push(...a);
-    t0 += s.mesures * th.mesure;
-  }
-  return { mel, acc, total: t0, debuts, cles };
-}
-const deplacerAccords = (as: readonly AccordP[], dt: number): AccordP[] => as.map((a) => ({ ...a, t: a.t + dt }));
-/**
- * Dynamique par section (contrat 2, §2, « jeu ensemble ») : la vélocité de chaque note multipliée selon la section où
- * elle tombe (`debuts` : début de chaque section, en temps).
- */
-export function dynamiques(ev: readonly Evenement[], debuts: readonly number[], f: readonly number[]): Evenement[] {
-  return ev.map((e) => {
-    let i = 0;
-    for (let k = 0; k < debuts.length; k++) if (e.t >= debuts[k]! - 1e-6) i = k;
-    return { ...e, v: Math.min(1, e.v * (f[i] ?? 1)) };
-  });
-}
-const fenetre = <T extends { t: number }>(xs: readonly T[], a: number, b: number): T[] => xs.filter((x) => x.t >= a && x.t < b).map((x) => ({ ...x, t: x.t - a }));
-
-/** La mélodie d'une section transformée par une variation « à la Zelda » (dans le ton de la section). */
-function varier(ns: readonly NoteP[], v: VariationMelodie, th: Theme, duree: number): NoteP[] {
-  switch (v) {
-    case 'envers': return retrograde(ns, duree);
-    case 'renversee': return renverser(ns, midi('A5'), th.tonique, th.mode);
-    case 'mineur': return changerMode(ns, th.tonique, 'ionien', 'eolien'); // le mode mineur naturel (éolien)
-    case 'lente': return augmenter(ns, 2).filter((x) => x.t < duree);
-    default: return [...ns];
-  }
-}
+export type { DefJingle, DefVersion, Deroule, JingleId, Mix, OptVersion, VariationMelodie, VersionId } from './arrangement';
+export { derouler, dynamiques } from './arrangement';
 
 // ------------------------------------------------------------------ mélanges
 
@@ -272,7 +177,7 @@ const recit: DefVersion = {
   },
 };
 
-export const VERSIONS: Record<VersionId, DefVersion> = { 'I-1': titre, 'I-2': menus, 'I-3': recit };
+export const VERSIONS: Record<VersionId, DefVersion> = { 'I-1': titre, 'I-2': menus, 'I-3': recit, ...VERSIONS_VILLE, ...VERSIONS_DUEL };
 
 // ------------------------------------------------------------------ jingles (tirés du motif)
 

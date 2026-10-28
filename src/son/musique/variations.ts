@@ -5,7 +5,7 @@
  * son entrée.
  */
 import type { AccordP, NoteP } from './partitions';
-import { accord, degre, depuisDegre, MODES, transposerSym, type Mode } from './theorie';
+import { accord, dansAccord, degre, depuisDegre, MODES, transposerSym, type Mode } from './theorie';
 
 const fin = (ns: readonly NoteP[]): number => ns.reduce((m, x) => Math.max(m, x.t + x.d), 0);
 
@@ -53,6 +53,62 @@ export function ramener(ns: readonly NoteP[], hi: number): NoteP[] {
   let k = 0;
   while (top + k > hi) k -= 12;
   return transposer(ns, k);
+}
+
+/**
+ * Valse : une mesure à quatre temps devient deux mesures à trois (valeurs multipliées par 1,5), chaque attaque ramenée
+ * à la croche la plus proche ; une note dure jusqu'à la suivante au plus.
+ */
+export function enValse(ns: readonly NoteP[]): NoteP[] {
+  const tri = [...ns].sort((a, b) => a.t - b.t);
+  const ts = tri.map((x) => Math.round((x.t * 1.5) / 0.5) * 0.5);
+  return tri.map((x, i) => {
+    const suiv = ts[i + 1];
+    const d = Math.max(0.5, Math.round((x.d * 1.5) / 0.5) * 0.5);
+    return { ...x, t: ts[i]!, d: suiv !== undefined ? Math.min(d, suiv - ts[i]!) : d };
+  }).filter((x) => x.d > 0);
+}
+
+const accordA = (acc: readonly AccordP[], t: number): AccordP => {
+  let a = acc[0]!;
+  for (const x of acc) if (x.t <= t + 1e-6) a = x;
+  return a;
+};
+const sonneA = (ns: readonly NoteP[], t: number): number | null => {
+  let r: number | null = null;
+  for (const x of ns) if (x.t <= t + 1e-6 && x.t + x.d > t + 1e-6) r = x.m;
+  return r;
+};
+
+/**
+ * Chaque note ramenée à l'accord qui sonne : une note hors de l'accord et de ses tensions prend la plus proche qui en
+ * est (le plus petit pas, vers le bas à égalité) ; `eviter` : une mélodie avec laquelle ne pas frotter (seconde mineure
+ * à l'octave près) ; `sous` : rester sous elle.
+ */
+export function consonner(ns: readonly NoteP[], acc: readonly AccordP[], o: { eviter?: readonly NoteP[]; sous?: boolean } = {}): NoteP[] {
+  return ns.map((x) => {
+    const a = accord(accordA(acc, x.t).sym);
+    const mel = o.eviter ? sonneA(o.eviter, x.t + 0.01) : null;
+    const ok = (m: number): boolean => {
+      if (!dansAccord(a, m, true)) return false;
+      if (mel === null) return true;
+      const iv = (((mel - m) % 12) + 12) % 12;
+      return iv !== 1 && iv !== 11 && iv !== 0 && (!o.sous || m < mel - 2);
+    };
+    for (const pas of [0, -1, 1, -2, 2, -3, 3, -4, 4, -5, 5, -7, 7, -12]) if (ok(x.m + pas)) return { ...x, m: x.m + pas };
+    return { ...x };
+  });
+}
+
+/**
+ * Contre-chant à l'envers : la mélodie jouée à rebours phrase par phrase (`phrase` temps), à l'octave dite, puis
+ * ramenée à l'harmonie sans frotter contre la mélodie.
+ */
+export function contreChant(mel: readonly NoteP[], acc: readonly AccordP[], total: number, o: { phrase?: number; octave?: number; sous?: boolean } = {}): NoteP[] {
+  const ph = o.phrase ?? 8;
+  const out: NoteP[] = [];
+  for (let t0 = 0; t0 < total - 1e-6; t0 += ph) out.push(...deplacer(retrograde(fragment(mel, t0, t0 + ph), ph), t0));
+  return consonner(transposer(out, o.octave ?? 0), acc, { eviter: mel, sous: o.sous ?? false });
 }
 
 // --- accords ---

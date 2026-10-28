@@ -77,7 +77,7 @@ export const PROFILS: Record<InstrVent, Profil> = {
     k: 2.4, b: 0.15, surech: 'none', pression: [0.3, 0.95], attaque: 0.05, eclat: 1.4, relache: 0.08, glisse: 0.02, tenue: -0.05,
     vibrato: { cents: 6, hz: 5.4, delai: 0.5 }, souffle: { niveau: 0, q: 0.8, chiff: 0 }, scoop: 0, niveau: 0.4,
     filtres: [{ type: 'highpass', f: 70, q: 0.7 }, { type: 'peaking', f: 1100, q: 1, g: 4 }, { type: 'peaking', f: 2700, q: 2, g: 2 }, { type: 'lowpass', f: 7500, q: 0.7 }],
-    voix: [-4, 4],
+    ensemble: true,
   },
   // les cordes : trois voix en dents de scie par note, attaque lente, vibrato doux, le corps du pupitre
   cordes: {
@@ -216,18 +216,22 @@ export function souffler(ctx: BaseAudioContext, dest: AudioNode, instr: InstrVen
   const amp = ctx.createGain();
   amp.gain.value = 0;
   amp.connect(dest);
-  const lfo = ctx.createOscillator();
-  lfo.frequency.value = P.vibrato.hz * (0.94 + rng() * 0.12);
-  const prof = ctx.createGain();
-  prof.gain.value = 0;
-  lfo.connect(prof);
+  // le vibrato seulement si une note est assez longue pour en avoir (les coups brefs n'en ont pas : moins de nœuds)
+  const vibre = notes.some((n) => n.d > 0.45);
+  const lfo = vibre ? ctx.createOscillator() : null;
+  const prof = vibre ? ctx.createGain() : null;
+  if (lfo && prof) {
+    lfo.frequency.value = P.vibrato.hz * (0.94 + rng() * 0.12);
+    prof.gain.value = 0;
+    lfo.connect(prof);
+  }
   const oscs: OscillatorNode[] = [];
   const pres: GainNode[] = [];
   for (const c of decalages) {
     const o = ctx.createOscillator();
     o.setPeriodicWave(onde(ctx, instr));
     o.detune.value = c + (decalages.length > 1 ? (rng() - 0.5) * 2 : 0);
-    prof.connect(o.detune);
+    prof?.connect(o.detune);
     if (P.k > 0) {
       const pre = ctx.createGain();
       pre.gain.value = 0;
@@ -280,8 +284,8 @@ export function souffler(ctx: BaseAudioContext, dest: AudioNode, instr: InstrVen
     }
     if (n.d > 0.4 && P.tenue) cible([amp.gain], niv * (1 + P.tenue), t + P.attaque + 0.05, n.d * 0.5);
     // le vibrato, tard sur les notes tenues
-    cible([prof.gain], 0, t, 0.03);
-    if (n.d > 0.45) cible([prof.gain], P.vibrato.cents * (0.75 + 0.4 * rng()) * (0.8 + 0.3 * v), t + P.vibrato.delai, 0.15);
+    if (prof) cible([prof.gain], 0, t, 0.03);
+    if (prof && n.d > 0.45) cible([prof.gain], P.vibrato.cents * (0.75 + 0.4 * rng()) * (0.8 + 0.3 * v), t + P.vibrato.delai, 0.15);
     // le souffle (plus présent dans la nuance douce), avec un éclat à l'attaque
     const souffle = niv * P.souffle.niveau * (1.4 - v);
     if (attaque && P.souffle.chiff) { cible(ng, niv * P.souffle.chiff, t, 0.004); cible(ng, souffle, t + 0.02, 0.03); }
@@ -303,6 +307,6 @@ export function souffler(ctx: BaseAudioContext, dest: AudioNode, instr: InstrVen
   if (chute) cible(freqs, freq(der.m) * 2 ** (-5 / 12), fin - 0.02, 0.12);
   // arrêt quand l'extinction est passée sous −70 dB environ
   const arret = fin + rel * 8 + 0.05;
-  for (const o of [...oscs, lfo]) { o.start(t0); o.stop(arret); }
+  for (const o of lfo ? [...oscs, lfo] : oscs) { o.start(t0); o.stop(arret); }
   if (souffleur) { souffleur.src.start(t0, (t0 * 0.61) % 1.5); souffleur.src.stop(arret); }
 }

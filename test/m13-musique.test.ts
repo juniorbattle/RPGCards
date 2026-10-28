@@ -205,8 +205,8 @@ describe('M13 — générateurs', () => {
 });
 
 describe('M13 — catalogue', () => {
-  it('trois versions et quatre jingles ; passages reproductibles à graine égale, différents d\'un passage à l\'autre', () => {
-    expect(Object.keys(VERSIONS)).toEqual(['I-1', 'I-2', 'I-3']);
+  it('les versions et quatre jingles ; passages reproductibles à graine égale, différents d\'un passage à l\'autre', () => {
+    expect(Object.keys(VERSIONS)).toEqual(['I-1', 'I-2', 'I-3', 'II-1', 'II-2', 'II-3', 'III-1', 'III-2']);
     expect(Object.keys(JINGLES)).toEqual(['victoire', 'defaite', 'carte', 'chapitre']);
     for (const id of Object.keys(VERSIONS) as VersionId[]) {
       const v = VERSIONS[id];
@@ -227,7 +227,7 @@ describe('M13 — catalogue', () => {
 
   it('chaque note jouée tient dans les zones calculées de son instrument (pas de transposition de plus de deux demi-tons)', () => {
     const tout: Evenement[] = [];
-    for (const id of Object.keys(VERSIONS) as VersionId[]) for (let p = -1; p < 4; p++) tout.push(...passage(VERSIONS[id], p, 3).ev);
+    for (const id of Object.keys(VERSIONS) as VersionId[]) for (let p = -1; p < 4; p++) for (const chapitre of [undefined, 0, 4, 6]) tout.push(...passage(VERSIONS[id], p, 3, { chapitre }).ev);
     for (const j of Object.values(JINGLES)) tout.push(...j.ev());
     for (const e of tout) {
       const d = DEFS[e.instr];
@@ -237,12 +237,16 @@ describe('M13 — catalogue', () => {
     }
   });
 
-  it('polyphonie bornée : jamais plus de 24 notes qui commencent dans la même demi-seconde', () => {
+  it('polyphonie bornée : jamais plus de 24 notes du fond (40 toutes couches) qui commencent dans la même demi-seconde', () => {
     for (const id of Object.keys(VERSIONS) as VersionId[]) {
       const v = VERSIONS[id];
-      const { ev } = passage(v, 1, 11);
-      const spb = 60 / v.tempo;
-      for (const e of ev) expect(ev.filter((x) => x.t >= e.t && (x.t - e.t) * spb < 0.5).length).toBeLessThanOrEqual(24);
+      for (const chapitre of [undefined, 0, 4, 6]) {
+        const { ev } = passage(v, 1, 11, { chapitre });
+        const fond = ev.filter((e) => !e.couche || e.couche === 'fond');
+        const spb = 60 / v.tempo;
+        for (const e of fond) expect(fond.filter((x) => x.t >= e.t && (x.t - e.t) * spb < 0.5).length, `${id} ${chapitre}`).toBeLessThanOrEqual(24);
+        for (const e of ev) expect(ev.filter((x) => x.t >= e.t && (x.t - e.t) * spb < 0.5).length, `${id} ${chapitre}`).toBeLessThanOrEqual(40);
+      }
     }
   });
 

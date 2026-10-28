@@ -31,8 +31,40 @@ try {
   await p.click('[data-key="mu-I-3"]');
   await p.waitForTimeout(1500);
   check(/Récit/.test(await p.textContent('[data-key="mu-etat"]')), 'récit (I-3)');
+  // la ville qui grandit, le dialogue, le Fanal, l'entrée en duel
+  await p.click('[data-key="mu-II-1"]');
+  await p.waitForTimeout(1200);
+  check(/Quai/.test(await p.textContent('[data-key="mu-etat"]')), 'la ville (II-1) : le Quai');
+  await p.click('[data-key="mu-ch-0"]');
+  check(await p.locator('[data-key="mu-ch-0"].on').count() === 1, 'formation du prologue (guitare et contrebasse) choisie');
+  await p.click('[data-key="mu-ch-6"]');
+  await p.click('[data-key="mu-focus"]');
+  check(await p.locator('[data-key="mu-focus"].on').count() === 1, 'dialogue : la musique s\'efface');
+  await p.click('[data-key="mu-focus"]');
+  await p.locator('[data-key="mu-fanal"]').fill('80');
+  await p.waitForTimeout(800);
+  await p.click('[data-key="mu-II-3"]');
+  await p.waitForTimeout(1200);
+  check(/valse|trois temps/.test(await p.textContent('[data-key="mu-etat"]')), 'les Ruelles (II-3), en valse');
+  await p.click('[data-key="mu-vers-duel"]');
+  await p.waitForTimeout(2500);
+  // le duel : couches, ponctuations, duel tendu, fin
+  await p.click('[data-key="mu-III-1"]');
+  await p.waitForTimeout(800);
+  check(await p.locator('[data-key^="mu-couche-"].on').count() === 0, 'duel (III-1) : la mélodie, la tension et les cuivres attendent');
+  await p.click('[data-key="mu-couche-melodie"]');
+  check(await p.locator('[data-key="mu-couche-melodie"].on').count() === 1, 'premier Clash : la mélodie entre');
+  for (const k of ['gagne', 'perdu', 'signature', 'prolongation']) await p.click(`[data-key="mu-p-${k}"]`);
+  await p.click('[data-key="mu-couche-cuivres"]');
+  await p.click('[data-key="mu-tendu"]');
+  await p.waitForTimeout(2000);
+  await p.click('[data-key="mu-fin-victoire"]');
+  await p.waitForTimeout(2500);
+  check(true, 'ponctuations, cuivres, duel tendu et fin de duel joués');
+  for (const i of ['trompette', 'sax']) { await p.click(`[data-key="mu-demo-${i}"]`); await p.waitForTimeout(1500); }
+  check(/sax seul/.test(await p.textContent('[data-key="mu-etat"]')), 'instruments seuls (trompette bouchée, saxophone)');
   await p.click('[data-key="mu-stop"]');
-  writeFileSync(`${DIR}/labo-apres.png`, await p.screenshot());
+  writeFileSync(`${DIR}/labo-apres.png`, await p.screenshot({ fullPage: true }));
 } catch (e) {
   check(false, `exception : ${e.message}`);
 } finally {
