@@ -1,6 +1,6 @@
 {
-  "commit": "fa6e8b7",
-  "date": "2026-10-27T08:57:25.812Z",
+  "commit": "55348ca",
+  "date": "2026-10-28T03:40:15.442Z",
   "chromium": "153.0.8010.12",
   "stageFault": null,
   "runs": [
@@ -28,7 +28,7 @@
         2
       ],
       "overtime": 0,
-      "ms": 156884,
+      "ms": 122449,
       "consoleIssues": [],
       "turns": 10,
       "drags": 20,
@@ -99,7 +99,7 @@
         40
       ],
       "overtime": 0,
-      "ms": 412302,
+      "ms": 299378,
       "consoleIssues": [],
       "turns": 10,
       "drags": 0,
@@ -168,7 +168,7 @@
         24
       ],
       "overtime": 0,
-      "ms": 40862,
+      "ms": 29644,
       "consoleIssues": [],
       "turns": 3,
       "drags": 0,
@@ -183,7 +183,6 @@
       "moods": [
         "confident",
         "focused",
-        "smug",
         "triumphant"
       ],
       "sequencesWatched": 0,
@@ -238,7 +237,7 @@
         12
       ],
       "overtime": 0,
-      "ms": 72403,
+      "ms": 56417,
       "consoleIssues": [],
       "turns": 9,
       "drags": 10,
@@ -339,7 +338,7 @@
         0
       ],
       "overtime": 0,
-      "ms": 74268,
+      "ms": 56870,
       "consoleIssues": [],
       "turns": 8,
       "drags": 9,
@@ -355,7 +354,6 @@
         "neutral",
         "focused",
         "smug",
-        "confident",
         "defeated"
       ],
       "sequencesWatched": 0,
@@ -371,7 +369,7 @@
       "stanceIssues": [],
       "stageGhosts": [],
       "stageFades": [
-        "tour 4 COMMIT : fondu de défausse à 404/300 ms, scène retirée 30 ms plus tard"
+        "tour 4 COMMIT : fondu de défausse à 207/300 ms, scène retirée 109 ms plus tard"
       ],
       "stagesSeen": 0,
       "rotations": [
