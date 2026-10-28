@@ -1,118 +1,488 @@
 {
-  "commit": "910e92e",
-  "date": "2026-10-28T00:45:56.399Z",
+  "commit": "c593437",
+  "date": "2026-10-28T02:48:39.847Z",
   "passes": 2,
   "graine": 1,
   "resultats": [
     {
       "nom": "I-1",
       "duree": 129.2642857142857,
-      "msBanque": 786.2999999998137,
-      "msRendu": 7253.9000000003725,
-      "lufs": -18,
-      "lra": 3.1,
-      "creteVraie": -4.8,
-      "vitesse": 17.819970734953483
+      "msBanque": 1064.8000000002794,
+      "msRendu": 10751.799999999814,
+      "lufs": -18.1,
+      "lra": 3.3,
+      "creteVraie": -4.3,
+      "vitesse": 12.0225716358459
     },
     {
       "nom": "I-2",
       "duree": 51.55,
-      "msBanque": 724.2000000001863,
-      "msRendu": 1905.4000000003725,
-      "lufs": -17,
+      "msBanque": 941.8000000002794,
+      "msRendu": 2741.5,
+      "lufs": -17.1,
       "lra": 2.4,
-      "creteVraie": -3.8,
-      "vitesse": 27.05468667995692
+      "creteVraie": -4.1,
+      "vitesse": 18.803574685391208
     },
     {
       "nom": "I-3",
       "duree": 243.55,
-      "msBanque": 533.1000000000931,
-      "msRendu": 17588.599999999627,
+      "msBanque": 758.8999999999069,
+      "msRendu": 24889.100000000093,
       "lufs": -19.3,
       "lra": 1.9,
-      "creteVraie": -6,
-      "vitesse": 13.847037285514775
+      "creteVraie": -5.4,
+      "vitesse": 9.785408070199368
+    },
+    {
+      "nom": "II-1",
+      "duree": 163.55,
+      "msBanque": 2633.2999999998137,
+      "msRendu": 9299.30000000028,
+      "lufs": -19.2,
+      "lra": 3.1,
+      "creteVraie": -4,
+      "vitesse": 17.58734528405311
+    },
+    {
+      "nom": "II-2",
+      "duree": 114.85434782608695,
+      "msBanque": 2373.899999999907,
+      "msRendu": 9982.69999999972,
+      "lufs": -20.8,
+      "lra": 3.4,
+      "creteVraie": -7,
+      "vitesse": 11.50533901911208
+    },
+    {
+      "nom": "II-3",
+      "duree": 209.26428571428573,
+      "msBanque": 2300.7000000001863,
+      "msRendu": 12704.200000000186,
+      "lufs": -20.1,
+      "lra": 2.3,
+      "creteVraie": -5.2,
+      "vitesse": 16.47205536076909
+    },
+    {
+      "nom": "III-1",
+      "duree": 110.21666666666667,
+      "msBanque": 1861.2000000001863,
+      "msRendu": 13405.5,
+      "lufs": -18.8,
+      "lra": 2.3,
+      "creteVraie": -5.4,
+      "vitesse": 8.221749779319433
+    },
+    {
+      "nom": "III-2",
+      "duree": 102.01153846153846,
+      "msBanque": 1680,
+      "msRendu": 14562.5,
+      "lufs": -18.1,
+      "lra": 2.1,
+      "creteVraie": -4.9,
+      "vitesse": 7.005084186200066
+    },
+    {
+      "nom": "IV-1",
+      "duree": 94.97857142857143,
+      "msBanque": 2252.600000000093,
+      "msRendu": 13127.69999999972,
+      "lufs": -19.1,
+      "lra": 3,
+      "creteVraie": -6.2,
+      "vitesse": 7.234974247474687
+    },
+    {
+      "nom": "IV-2",
+      "duree": 143.18636363636364,
+      "msBanque": 2238.1999999997206,
+      "msRendu": 12375.099999999627,
+      "lufs": -19.2,
+      "lra": 4.5,
+      "creteVraie": -6.5,
+      "vitesse": 11.570521744177256
+    },
+    {
+      "nom": "IV-3",
+      "duree": 170.50652173913045,
+      "msBanque": 2180.399999999907,
+      "msRendu": 14033.400000000373,
+      "lufs": -18.9,
+      "lra": 2.1,
+      "creteVraie": -3.4,
+      "vitesse": 12.150050717511503
+    },
+    {
+      "nom": "IV-4",
+      "duree": 131.55,
+      "msBanque": 2203.2000000001863,
+      "msRendu": 15422.400000000373,
+      "lufs": -18.4,
+      "lra": 3.6,
+      "creteVraie": -5.8,
+      "vitesse": 8.529800809212368
+    },
+    {
+      "nom": "V-1",
+      "duree": 69.00454545454545,
+      "msBanque": 1760,
+      "msRendu": 9355,
+      "lufs": -19.2,
+      "lra": 2.7,
+      "creteVraie": -5.8,
+      "vitesse": 7.376220786161993
+    },
+    {
+      "nom": "VI-1",
+      "duree": 105.95,
+      "msBanque": 2932.7000000001863,
+      "msRendu": 15910,
+      "lufs": -18.6,
+      "lra": 3.4,
+      "creteVraie": -4.9,
+      "vitesse": 6.659333752357008
+    },
+    {
+      "nom": "VI-2",
+      "duree": 99.55,
+      "msBanque": 2888.5999999996275,
+      "msRendu": 25857.099999999627,
+      "lufs": -18.5,
+      "lra": 3.9,
+      "creteVraie": -5.1,
+      "vitesse": 3.850006381226102
     },
     {
       "nom": "victoire",
       "duree": 6.277272727272727,
-      "msBanque": 637.2000000001863,
-      "msRendu": 204.39999999990687,
-      "lufs": -17.1,
-      "lra": 15,
-      "creteVraie": -4.5,
-      "vitesse": 30.71072762854984
+      "msBanque": 922.9000000003725,
+      "msRendu": 309.5,
+      "lufs": -16.9,
+      "lra": 15.1,
+      "creteVraie": -3.8,
+      "vitesse": 20.281979732706713
     },
     {
       "nom": "defaite",
       "duree": 9.004545454545454,
-      "msBanque": 773.2999999998137,
-      "msRendu": 271.89999999990687,
-      "lufs": -16.7,
-      "lra": 16.1,
-      "creteVraie": -3.8,
-      "vitesse": 33.11712193655218
+      "msBanque": 1167.2999999998137,
+      "msRendu": 427.90000000037253,
+      "lufs": -16.8,
+      "lra": 15.9,
+      "creteVraie": -2.7,
+      "vitesse": 21.043574327033454
     },
     {
       "nom": "carte",
       "duree": 5.425,
-      "msBanque": 220.60000000009313,
-      "msRendu": 169,
+      "msBanque": 267.29999999981374,
+      "msRendu": 228.09999999962747,
       "lufs": -16.8,
-      "lra": 15.9,
-      "creteVraie": -6.1,
-      "vitesse": 32.10059171597633
+      "lra": 15.4,
+      "creteVraie": -5.1,
+      "vitesse": 23.783428320950723
     },
     {
       "nom": "chapitre",
       "duree": 9.383333333333333,
-      "msBanque": 360.40000000037253,
-      "msRendu": 459.39999999990687,
-      "lufs": -17.1,
-      "lra": 15.4,
-      "creteVraie": -4.4,
-      "vitesse": 20.425192279789368
+      "msBanque": 492.29999999981374,
+      "msRendu": 856.2999999998137,
+      "lufs": -17,
+      "lra": 16.6,
+      "creteVraie": -4,
+      "vitesse": 10.957997586518012
     },
     {
       "nom": "I-1-envers",
       "duree": 64.50238095238095,
-      "msBanque": 695.1000000000931,
-      "msRendu": 3509.8000000002794,
-      "lufs": -17.3,
-      "lra": 1.7,
-      "creteVraie": -4.9,
-      "vitesse": 18.377793877820903
+      "msBanque": 934.3999999994412,
+      "msRendu": 5206.0999999996275,
+      "lufs": -17.4,
+      "lra": 2.6,
+      "creteVraie": -3.2,
+      "vitesse": 12.389769876180935
     },
     {
       "nom": "I-1-renversee",
       "duree": 64.50238095238095,
-      "msBanque": 621,
-      "msRendu": 3735.899999999907,
+      "msBanque": 894.7999999998137,
+      "msRendu": 5164.399999999441,
       "lufs": -17.1,
-      "lra": 1.5,
-      "creteVraie": -5,
-      "vitesse": 17.265553401424704
+      "lra": 2,
+      "creteVraie": -4.8,
+      "vitesse": 12.489811198278199
     },
     {
       "nom": "I-1-mineur",
       "duree": 64.50238095238095,
-      "msBanque": 620.9000000003725,
-      "msRendu": 3443,
+      "msBanque": 1044.3999999994412,
+      "msRendu": 5212.200000000186,
       "lufs": -17.4,
-      "lra": 2,
-      "creteVraie": -4.8,
-      "vitesse": 18.734354037868414
+      "lra": 2.9,
+      "creteVraie": -4,
+      "vitesse": 12.375269742599793
     },
     {
       "nom": "I-1-lente",
       "duree": 64.50238095238095,
-      "msBanque": 724.6000000000931,
-      "msRendu": 3436.2999999998137,
-      "lufs": -18,
-      "lra": 2.1,
+      "msBanque": 1045.6000000005588,
+      "msRendu": 5249.200000000186,
+      "lufs": -18.1,
+      "lra": 2.6,
+      "creteVraie": -5.7,
+      "vitesse": 12.288040263731359
+    },
+    {
+      "nom": "II-1-duo",
+      "duree": 83.55,
+      "msBanque": 2574.399999999441,
+      "msRendu": 4263.799999999814,
+      "lufs": -19.9,
+      "lra": 3.4,
+      "creteVraie": -5,
+      "vitesse": 19.595196772832605
+    },
+    {
+      "nom": "II-1-vents",
+      "duree": 83.55,
+      "msBanque": 2341.0999999996275,
+      "msRendu": 6585.5999999996275,
+      "lufs": -19.5,
+      "lra": 3.9,
+      "creteVraie": -4.7,
+      "vitesse": 12.686771137026957
+    },
+    {
+      "nom": "II-1-champion",
+      "duree": 83.55,
+      "msBanque": 2368.100000000559,
+      "msRendu": 10384.900000000373,
+      "lufs": -18.9,
+      "lra": 2.9,
+      "creteVraie": -5.6,
+      "vitesse": 8.045335053779718
+    },
+    {
+      "nom": "II-2-duo",
+      "duree": 59.202173913043474,
+      "msBanque": 2548.2999999998137,
+      "msRendu": 2800.5,
+      "lufs": -20,
+      "lra": 1.9,
+      "creteVraie": -7.9,
+      "vitesse": 21.139858565628806
+    },
+    {
+      "nom": "II-2-vents",
+      "duree": 59.202173913043474,
+      "msBanque": 2541.7000000001863,
+      "msRendu": 7524.5,
+      "lufs": -19,
+      "lra": 2.2,
+      "creteVraie": -5,
+      "vitesse": 7.86792131211954
+    },
+    {
+      "nom": "II-2-champion",
+      "duree": 59.202173913043474,
+      "msBanque": 2455.7000000001863,
+      "msRendu": 7843.299999999814,
+      "lufs": -18.3,
+      "lra": 3.3,
+      "creteVraie": -5.5,
+      "vitesse": 7.548120550411801
+    },
+    {
+      "nom": "II-3-duo",
+      "duree": 106.40714285714286,
+      "msBanque": 2487.399999999441,
+      "msRendu": 5560.9000000003725,
+      "lufs": -19.7,
+      "lra": 2.5,
       "creteVraie": -5.1,
-      "vitesse": 18.770881748504042
+      "vitesse": 19.13487796168529
+    },
+    {
+      "nom": "II-3-vents",
+      "duree": 106.40714285714286,
+      "msBanque": 2413.600000000559,
+      "msRendu": 9854.5,
+      "lufs": -19.5,
+      "lra": 2.1,
+      "creteVraie": -5.8,
+      "vitesse": 10.797822604611381
+    },
+    {
+      "nom": "II-3-champion",
+      "duree": 106.40714285714286,
+      "msBanque": 2453.4000000003725,
+      "msRendu": 14626.599999999627,
+      "lufs": -18.9,
+      "lra": 2.1,
+      "creteVraie": -5.9,
+      "vitesse": 7.274906188529499
+    },
+    {
+      "nom": "S-plein-III-1",
+      "duree": 51.55,
+      "msBanque": 1727.2999999998137,
+      "msRendu": 7515.299999999814,
+      "lufs": -17.8,
+      "lra": 2.9,
+      "creteVraie": -4.5,
+      "vitesse": 6.859340279164009
+    },
+    {
+      "nom": "S-plein-IV-1",
+      "duree": 51.55,
+      "msBanque": 2152.5,
+      "msRendu": 7079.199999999255,
+      "lufs": -18.9,
+      "lra": 4.5,
+      "creteVraie": -4.9,
+      "vitesse": 7.281896259465112
+    },
+    {
+      "nom": "S-plein-IV-2",
+      "duree": 51.55,
+      "msBanque": 2198.5,
+      "msRendu": 5277.799999999814,
+      "lufs": -18.5,
+      "lra": 3.3,
+      "creteVraie": -6.9,
+      "vitesse": 9.767327295464364
+    },
+    {
+      "nom": "S-plein-IV-3",
+      "duree": 51.55,
+      "msBanque": 2491.5,
+      "msRendu": 4515.700000000186,
+      "lufs": -18.4,
+      "lra": 3.7,
+      "creteVraie": -4,
+      "vitesse": 11.415727351240754
+    },
+    {
+      "nom": "S-plein-IV-4",
+      "duree": 51.55,
+      "msBanque": 2258.5999999996275,
+      "msRendu": 7956,
+      "lufs": -17.5,
+      "lra": 3.9,
+      "creteVraie": -4.3,
+      "vitesse": 6.479386626445449
+    },
+    {
+      "nom": "S-plein-V-1",
+      "duree": 51.55,
+      "msBanque": 1837.7999999998137,
+      "msRendu": 7036.4000000003725,
+      "lufs": -18.6,
+      "lra": 4.3,
+      "creteVraie": -5,
+      "vitesse": 7.326189528735897
+    },
+    {
+      "nom": "S-plein-VI-1",
+      "duree": 51.55,
+      "msBanque": 2664.4000000003725,
+      "msRendu": 7723.200000000186,
+      "lufs": -17.7,
+      "lra": 3.5,
+      "creteVraie": -4.2,
+      "vitesse": 6.674694427180282
+    },
+    {
+      "nom": "S-plein-VI-2",
+      "duree": 51.55,
+      "msBanque": 2748.9000000003725,
+      "msRendu": 13560.099999999627,
+      "lufs": -17.8,
+      "lra": 4.1,
+      "creteVraie": -5,
+      "vitesse": 3.8015943835223496
+    },
+    {
+      "nom": "S-couche-fond",
+      "duree": 30.55,
+      "msBanque": 1768.9000000003725,
+      "msRendu": 3090.7000000001863,
+      "lufs": -21.5,
+      "lra": 1.2,
+      "creteVraie": -7.6,
+      "vitesse": 9.884492186235533
+    },
+    {
+      "nom": "S-couche-melodie",
+      "duree": 30.55,
+      "msBanque": 1725.7000000001863,
+      "msRendu": 2138.899999999441,
+      "lufs": -21.5,
+      "lra": 2.5,
+      "creteVraie": -10.6,
+      "vitesse": 14.283042685496273
+    },
+    {
+      "nom": "S-couche-tension",
+      "duree": 30.55,
+      "msBanque": 1925.2000000001863,
+      "msRendu": 1776.6000000005588,
+      "lufs": -27.5,
+      "lra": 2.1,
+      "creteVraie": -13.3,
+      "vitesse": 17.195767195761785
+    },
+    {
+      "nom": "S-couche-cuivres",
+      "duree": 30.55,
+      "msBanque": 2056.9000000003725,
+      "msRendu": 1487.2000000001863,
+      "lufs": -20.9,
+      "lra": 5.7,
+      "creteVraie": -7.1,
+      "vitesse": 20.541958041955468
+    },
+    {
+      "nom": "S-ponctuations",
+      "duree": 47.55,
+      "msBanque": 876.3000000007451,
+      "msRendu": 4963.4000000003725,
+      "lufs": -17,
+      "lra": 2.7,
+      "creteVraie": -3.1,
+      "vitesse": 9.580126526170856
+    },
+    {
+      "nom": "S-duel",
+      "duree": 87.55,
+      "msBanque": 1631.2000000001863,
+      "msRendu": 14302.599999999627,
+      "lufs": -17.9,
+      "lra": 2.8,
+      "creteVraie": -3.5,
+      "vitesse": 6.121264665165934
+    },
+    {
+      "nom": "S-ville",
+      "duree": 73.55,
+      "msBanque": 2650.7000000001863,
+      "msRendu": 7208.899999999441,
+      "lufs": -20.1,
+      "lra": 6.7,
+      "creteVraie": -4.4,
+      "vitesse": 10.202666148789094
+    },
+    {
+      "nom": "S-transitions",
+      "duree": 55.55,
+      "msBanque": 1205.2000000001863,
+      "msRendu": 5462.799999999814,
+      "lufs": -18.3,
+      "lra": 4.2,
+      "creteVraie": -3.7,
+      "vitesse": 10.168777916087334
     }
   ],
   "console": []
