@@ -3,7 +3,8 @@
  * variations à la volée (à l'envers, renversée, autre mode, valeurs doublées), les transitions sur la mesure. Rendu hors
  * ligne pour les outils de QA (`?qa=1` : `window.__musique`). Contrat `docs/m13/01_MUSIQUE.md`, §6.
  */
-import { fabriquer, type BanqueBrute, type Zone } from './banque';
+import { fabriquer } from './banque';
+import { banqueWorker } from './orchestre';
 import { JINGLES, VERSIONS, type JingleId, type OptVersion, type VariationMelodie, type VersionId } from './catalogue';
 import { makeRng } from '../../game/engine/rng';
 import type { SalleId } from './effets';
@@ -118,23 +119,6 @@ export async function justesse(instr: InstrId, notes: number[], sr = 44100): Pro
     out.push({ m, cents: Math.round(1200 * Math.log2(f / f0) * 10) / 10 });
   }
   return out;
-}
-
-/** La banque calculée dans un worker, échantillon par échantillon (progression affichée). */
-function banqueWorker(sr: number, instrs: InstrId[], progres: (n: number, total: number) => void): Promise<BanqueBrute> {
-  return new Promise((resolve, reject) => {
-    const w = new Worker(new URL('./banque.worker.ts', import.meta.url), { type: 'module' });
-    const b: BanqueBrute = {};
-    let n = 0;
-    w.onmessage = (e: MessageEvent<(Zone & { instr: InstrId }) | { fini: true; total: number }>) => {
-      const d = e.data;
-      if ('fini' in d) { w.terminate(); resolve(b); return; }
-      (b[d.instr] ??= []).push({ racine: d.racine, couche: d.couche, sr: d.sr, data: d.data });
-      progres(++n, 0);
-    };
-    w.onerror = (err) => { w.terminate(); reject(err); };
-    w.postMessage({ sr, instrs });
-  });
 }
 
 /** WAV 16 bits stéréo d'un tampon audio. */

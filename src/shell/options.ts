@@ -39,6 +39,11 @@ export function renderOptions(sh: Shell, inDuel: boolean): HTMLElement {
       h('div', { class: 'sh-seg' },
         btn('−', () => commit(() => son().regler({ volume: son().reglages().volume - 0.1 })), { ghost: true, key: 'opt-son-moins', disabled: son().reglages().volume <= 0 }),
         btn('+', () => commit(() => son().regler({ volume: son().reglages().volume + 0.1 })), { ghost: true, key: 'opt-son-plus', disabled: son().reglages().volume >= 1 }))),
+    // M13 : la musique (jazz synthétisé par code), son volume propre sous le volume général ; à 0 %, rien n'est calculé
+    h('div', { class: 'sh-opt' }, h('span', { class: 'sh-opt-l', 'data-key': 'opt-musique-l' }, `Musique : ${son().reglages().musique ? `${Math.round(son().reglages().musique * 100)} %` : 'coupée'}`),
+      h('div', { class: 'sh-seg' },
+        btn('−', () => commit(() => son().regler({ musique: son().reglages().musique - 0.1 })), { ghost: true, key: 'opt-musique-moins', disabled: son().reglages().musique <= 0 }),
+        btn('+', () => commit(() => son().regler({ musique: son().reglages().musique + 0.1 })), { ghost: true, key: 'opt-musique-plus', disabled: son().reglages().musique >= 1 }))),
   ];
   if (save && o) {
     rows.push(seg('Conseils pendant le duel', 'tips', [['on', 'Affichés', o.tips, () => { save.options.tips = true; }], ['off', 'Masqués', !o.tips, () => { save.options.tips = false; }]]));

@@ -49,6 +49,7 @@ import { choisir, memoireVide, type Contexte, type Moment } from './repliques';
 import { temperamentDe, temperamentParole } from './temperaments';
 import { son } from '../son/moteur';
 import { ambianceIlot } from '../son/evenements';
+import { consigneVille, numeroChapitre, proximiteFanal, roleDuelAventure } from '../son/musique/chef';
 import { CONTRAINTE_JOUTE, famillesDominantes, manche, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, varianteDe } from './competitions';
 import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave, type DuelAventure } from './sauvegarde';
 import { installAventureStyles } from './styles';
@@ -125,6 +126,11 @@ export class AventureApp {
   private enVoyage = false;
   /** M11 : cinématique en cours (le monde attend, le menu la passe) ; `cadreGarde` : un dialogue s'est ouvert sur son dernier cadre. */
   private cine: Cinema | null = null;
+  /** M13 : une scène du récit se joue (la musique du récit), et l'instant où elle a été vue active pour la dernière fois. */
+  private recit = false;
+  private recitVu = 0;
+  /** M13 : le dialogue ouvert ne baisse pas la musique (réglage du son). */
+  private sansFocus = false;
   private cadreGarde = false;
   /** Bandes partagées des cinématiques et des dialogues cadrés ; `sceneBandes` : le dialogue cadré ouvert les tient. */
   private bandesCine: Bandes | null = null;
@@ -201,6 +207,8 @@ export class AventureApp {
   titre(): void {
     this.cacherVille();
     son().ambiance(null);
+    // M13 : l'écran titre de l'aventure joue le titre
+    son().musique.vouloir({ version: 'I-1' });
     this.ecran = 'titre';
     this.backdrop();
     const s = this.save;
@@ -379,6 +387,10 @@ export class AventureApp {
     this.sceneBandes = false;
     this.bandesCine?.replier(true);
     if (garde) this.town?.cadrer(null, true);
+    // M13 : hors de la ville, le combo du Fanal se tait et la musique sort du focus
+    son().musique.source('fanal', null, 0);
+    son().musique.focus(false);
+    this.recit = false;
     if (!this.town || this.host?.hidden) return;
     this.memoriser();
     cancelAnimationFrame(this.raf);
@@ -433,6 +445,7 @@ export class AventureApp {
       if (!this.dialog && !this.modal) this.bubble?.update(); else this.bubble!.el.hidden = true;
       this.majHud();
       this.tickMonde();
+      this.majMusique();
     };
     loop();
     if (arrivee && !this.arrivee(this.town?.ilotId() ?? 'quai')) this.carton('Le Quai', 'soir de tournoi');
@@ -597,7 +610,29 @@ export class AventureApp {
     if (!s || !this.town || !this.cineActives || !aJouer(id, s.cinematiques)) return false;
     s.cinematiques = [...(s.cinematiques ?? []), id];
     this.persist();
+    // M13 : une scène du récit prend la musique du récit (contrat 2, §3) ; un carton de chapitre a son jingle
+    if (id !== 'rival' && id !== 'guetteur') { this.recit = true; this.recitVu = performance.now(); }
+    if (id.startsWith('chapitre-')) son().musique.jingle('chapitre');
     return true;
+  }
+
+  /**
+   * M13 : la musique de la ville, redite à chaque image (le chef ne fait rien si rien ne change) : la version du quartier
+   * arrangée selon le chapitre (la ville qui grandit), le récit pendant une scène, le focus sous un dialogue ou un écran,
+   * le combo du Fanal selon la distance du joueur à sa porte.
+   */
+  private majMusique(): void {
+    if (this.ecran !== 'ville' || !this.town) return;
+    const m = son().musique;
+    const actif = !!this.cine || !!this.dialog;
+    if (this.recit && actif) this.recitVu = performance.now();
+    // une scène se termine quand ni cinématique ni dialogue ne l'a tenue depuis une seconde et demie (entre deux plans)
+    if (this.recit && !actif && performance.now() - this.recitVu > 1500) this.recit = false;
+    const ilot = this.town.ilotId();
+    m.vouloir(this.recit ? { version: 'I-3' } : consigneVille(ilot, numeroChapitre(chapitreDetaille(this.etat))));
+    m.focus((!!this.dialog && !this.recit && !this.sansFocus) || !!this.modal);
+    const x = this.recit ? null : proximiteFanal(ilot, this.town.walker().pos);
+    m.source('fanal', x === null ? null : 'I-2', x ?? 0);
   }
 
   /** Position d'un personnage de l'îlot courant (identifiant de personnalité), ou null. */
@@ -1233,6 +1268,8 @@ export class AventureApp {
       tip: (c) => (this.save && conseilsPermis(location.search) && lireConseils(stockageLocal()) ? duelTip(c, this.save.conseils ?? []) : null),
       onCommand: (c) => this.pointDeSauvegarde(id, c),
       onEnded: (c) => this.finDuel(c, false),
+      // M13 : le rôle musical de la rencontre (Kaï, Championnat, Finale, Maison, duel ordinaire)
+      musique: roleDuelAventure(prevu.rencontre, prevu.personnalite.id),
     });
     this.live = { session, duel, prevu };
     this.pointDeSauvegarde(id, session.controller);
@@ -1382,6 +1419,8 @@ export class AventureApp {
   private resultat(): void {
     const r = this.dernierResultat!;
     this.ecran = 'resultat';
+    // M13 : après le jingle de fin, l'écran de résultat joue le lounge
+    son().musique.vouloir({ version: 'I-2' });
     // M11-E : une carte gagnée s'entend (après le son de fin du duel)
     if (r.gains.length) setTimeout(() => son().jouer('gain'), 900);
     this.d.arena()?.setStaging('portrait');
@@ -1523,6 +1562,7 @@ export class AventureApp {
 
   fermerDialogue(): void {
     const ouvert = !!this.dialog;
+    this.sansFocus = false;
     this.dialog?.remove();
     this.dialog = null;
     // M11 : la caméra laissée sur un cadre (cinématique, dialogue de scène) revient au joueur quand son dialogue se ferme,
@@ -1601,12 +1641,17 @@ export class AventureApp {
   /** M11-E : réglage du son (coupure, volume), mémorisé dans ce navigateur ; même réglage que les Options du jeu standard. */
   private reglageSon(): void {
     const r = son().reglages();
-    this.dire('Son', `Effets et ambiances, synthétisés par le jeu. Volume : ${Math.round(r.volume * 100)} %${r.coupe ? ' (coupé)' : ''}.${son().permis ? '' : ' Le son est désactivé par l’adresse de la page.'}`, [
+    const musique = r.musique ? `${Math.round(r.musique * 100)} %` : 'coupée';
+    this.dire('Son', `Effets, ambiances et musique, synthétisés par le jeu. Volume : ${Math.round(r.volume * 100)} %${r.coupe ? ' (coupé)' : ''} ; musique : ${musique}.${son().permis ? '' : ' Le son est désactivé par l’adresse de la page.'}`, [
       { label: r.coupe ? 'Activer le son' : 'Couper le son', key: 'son-coupe', primary: true, run: () => { son().regler({ coupe: !r.coupe }); this.reglageSon(); } },
       { label: 'Volume −', key: 'son-moins', run: () => { son().regler({ volume: r.volume - 0.1 }); this.reglageSon(); } },
       { label: 'Volume +', key: 'son-plus', run: () => { son().regler({ volume: r.volume + 0.1 }); this.reglageSon(); } },
+      { label: 'Musique −', key: 'musique-moins', run: () => { son().regler({ musique: r.musique - 0.1 }); this.reglageSon(); } },
+      { label: 'Musique +', key: 'musique-plus', run: () => { son().regler({ musique: r.musique + 0.1 }); this.reglageSon(); } },
       { label: 'Fermer', key: 'dlg-close', run: () => this.fermerDialogue() },
     ]);
+    // M13 : on règle la musique en l'écoutant telle quelle (pas d'effacement sous ce dialogue)
+    this.sansFocus = true;
   }
 
   /**
