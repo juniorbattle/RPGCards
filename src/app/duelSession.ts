@@ -44,6 +44,8 @@ export interface DuelSessionOptions {
   onEnded?: (c: Controller) => void;
   /** M13 : le rôle musical du duel (aventure) ; par défaut, celui du rival du jeu standard (Kaï, ou le duel ordinaire). */
   musique?: RoleDuel;
+  /** M13 : le lieu du duel (rue, bar, salle, arène) : la musique y prend son acoustique. */
+  lieu?: string;
 }
 
 export class DuelSession {
@@ -66,7 +68,7 @@ export class DuelSession {
     // M11-E : le bourdon du duel remplace l'ambiance de la ville
     son().ambiance('amb-duel');
     // M13 : la musique du duel (la ville ou le menu s'assourdit jusqu'à son premier temps) ; un duel repris retrouve ses couches
-    son().musique.debutDuel(o.musique ?? roleDuelStandard(o.personality.id), c.match.events, c.pvPublics());
+    son().musique.debutDuel(o.musique ?? roleDuelStandard(o.personality.id), c.match.events, c.pvPublics(), o.lieu);
     let pointerHeld = false;
     let pendingRender = false;
     let drag: DragManager | null = null;

@@ -21,8 +21,8 @@ import type { Orchestre } from './musique/orchestre';
 export interface MusiqueSon {
   /** Ce qui doit jouer maintenant (idempotent : peut être redit à chaque image). */
   vouloir(c: Consigne): void;
-  /** Un duel commence (ou reprend) : son rôle musical, ses événements déjà joués, les PV publics. */
-  debutDuel(role: RoleDuel, events: readonly GameEvent[], pv: PvPublics | null): void;
+  /** Un duel commence (ou reprend) : son rôle musical, ses événements déjà joués, les PV publics, son lieu (l'acoustique). */
+  debutDuel(role: RoleDuel, events: readonly GameEvent[], pv: PvPublics | null, lieu?: string): void;
   /** Les événements d'un temps du duel (publics seulement comptent) et les PV publics après ce temps. */
   duel(events: readonly GameEvent[], pv: PvPublics | null): void;
   finDuel(): void;
@@ -72,6 +72,7 @@ export function creerMoteurSon(search = typeof location !== 'undefined' ? locati
   let voulu: Consigne = { version: null };
   let cleVoulu = '';
   let role: RoleDuel | null = null;
+  let lieu: string | undefined;
   let suivi: SuiviDuel = SUIVI_DEPART;
   const jMusique: string[] = [];
   const noter = (x: string): void => { jMusique.push(x); if (jMusique.length > 300) jMusique.splice(0, 150); };
@@ -241,10 +242,11 @@ export function creerMoteurSon(search = typeof location !== 'undefined' ? locati
       noter(`version:${c.version ?? 'silence'}${c.options?.chapitre !== undefined ? `:ch${c.options.chapitre}` : ''}${c.couches ? `:${Object.entries(c.couches).filter(([, v]) => v > 0).map(([n]) => n).join('+')}` : ''}`);
       orch?.appliquer(c);
     },
-    debutDuel(r, events, pv) {
+    debutDuel(r, events, pv, ou) {
       role = r;
+      lieu = ou;
       suivi = suiviDepuis(events, 'p1', pv);
-      const c = consigneDuel(r, suivi, pv);
+      const c = consigneDuel(r, suivi, pv, undefined, lieu);
       cleVoulu = JSON.stringify(c);
       voulu = c;
       noter(`duel:${r.role}${'famille' in r ? `:${r.famille}` : ''}:${c.version}`);
@@ -263,7 +265,7 @@ export function creerMoteurSon(search = typeof location !== 'undefined' ? locati
         if (musiqueActive()) orch!.finir(r.fin);
         return;
       }
-      musique.vouloir(consigneDuel(role, suivi, pv));
+      musique.vouloir(consigneDuel(role, suivi, pv, undefined, lieu));
     },
     finDuel() { role = null; },
     jingle(id) { noter(`jingle:${id}`); if (musiqueActive()) orch!.jingle(id); },

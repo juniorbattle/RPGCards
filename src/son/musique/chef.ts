@@ -6,10 +6,22 @@
  */
 import type { GameEvent, PlayerId } from '../../game/model/types';
 import type { OptVersion, VersionId } from './arrangement';
+import type { SalleId } from './effets';
 import type { PonctuationId } from './ponctuations';
 
-/** Ce qui doit jouer maintenant : une version (ou le silence), son contexte, ses couches. */
-export interface Consigne { version: VersionId | null; options?: OptVersion; couches?: Record<string, number> }
+/**
+ * Ce qui doit jouer maintenant : une version (ou le silence), son contexte, ses couches, et la salle où elle sonne (au
+ * lieu de celle de la version : l'acoustique du lieu d'un duel).
+ */
+export interface Consigne { version: VersionId | null; options?: OptVersion; couches?: Record<string, number>; salle?: SalleId }
+
+/**
+ * L'acoustique du lieu d'un duel (contrat 2, §2) : la rue en plein air (réflexions proches, queue courte), le bar
+ * (le club), la salle de jeu de cartes feutrée (le studio), l'arène (la grande salle).
+ */
+export function salleDuLieu(lieu: string | undefined): SalleId | undefined {
+  return lieu === 'rue' ? 'rue' : lieu === 'bar' ? 'club' : lieu === 'salle' ? 'studio' : lieu === 'arene' ? 'grande' : undefined;
+}
 
 // ------------------------------------------------------------------ jeu standard
 
@@ -139,12 +151,14 @@ export function intensiteDuel(s: SuiviDuel, pv: PvPublics | null): number {
   return Math.round(Math.min(1, 0.35 + Math.min(s.clashes, 8) * 0.04 + usure * 0.4 + (s.signature ? 0.1 : 0)) * 100) / 100;
 }
 
-/** La consigne d'un duel : la version (tendue ou non), les couches (mélodie, tension, cuivres), l'intensité. */
-export function consigneDuel(r: RoleDuel, s: SuiviDuel, pv: PvPublics | null, disponibles?: ReadonlySet<string>): Consigne {
+/** La consigne d'un duel : la version (tendue ou non), les couches (mélodie, tension, cuivres), l'intensité, la salle du lieu. */
+export function consigneDuel(r: RoleDuel, s: SuiviDuel, pv: PvPublics | null, disponibles?: ReadonlySet<string>, lieu?: string): Consigne {
+  const salle = salleDuLieu(lieu);
   return {
     version: versionDuel(r, s.tendu, disponibles),
     options: { intensite: intensiteDuel(s, pv) },
     couches: { melodie: s.clashes > 0 ? 1 : 0, tension: s.tendu ? 1 : 0, cuivres: s.signature ? 1 : 0 },
+    ...(salle ? { salle } : {}),
   };
 }
 
@@ -162,8 +176,16 @@ export function numeroChapitre(c: 'prologue' | 'I' | 'II' | 'III' | 'IV' | 'V' |
   return { prologue: 0, I: 1, II: 2, III: 3, IV: 4, V: 5, titre: 6 }[c];
 }
 
-/** La ville de l'aventure : la version du quartier, arrangée selon le chapitre (la ville qui grandit). */
-export const consigneVille = (ilot: string, chapitre?: number): Consigne => ({ version: versionQuartier(ilot), options: chapitre === undefined ? {} : { chapitre } });
+/** Au bout de ce temps sans bouger (ni dialogue, ni écran, ni scène), la ville respire : sa mélodie s'efface. */
+export const REPOS_VILLE_S = 30;
+
+/**
+ * La ville de l'aventure : la version du quartier, arrangée selon le chapitre (la ville qui grandit) ; au repos, la
+ * mélodie se retire sur la mesure et les musiciens continuent sans elle, puis elle revient dès que le joueur repart.
+ */
+export const consigneVille = (ilot: string, chapitre?: number, repos = false): Consigne => ({
+  version: versionQuartier(ilot), options: chapitre === undefined ? {} : { chapitre }, couches: { melodie: repos ? 0 : 1 },
+});
 
 /** Le combo du Fanal (source localisée) : sa porte sur le Quai ; on l'entend à `RAYON_FANAL` mètres. */
 export const FANAL = { ilot: 'quai', x: 7.2, z: -1.3 } as const;

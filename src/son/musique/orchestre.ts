@@ -100,7 +100,7 @@ export class Orchestre {
       const enCours = l.enCours();
       const tendu = enCours === 'III-1' && c.version === 'III-2';
       const quand = Math.max(enCours ? l.prochain(tendu ? 'phrase' : 'mesure') : now + 0.1, this.libre, now + 0.05);
-      l.jouer(c.version, { quand, options: opts, couches, intro: !enCours && this.libre <= now });
+      l.jouer(c.version, { quand, options: opts, couches, intro: !enCours && this.libre <= now, ...(c.salle ? { salle: c.salle } : {}) });
       // la ville s'assourdit jusqu'au premier temps du duel
       if (o.assourdie && enCours) {
         l.assourdir(true);
@@ -108,7 +108,7 @@ export class Orchestre {
         this.sourdine = window.setTimeout(() => { this.sourdine = null; l.assourdir(this.etatSourd); }, Math.max(0, (quand - now) * 1000 + 120));
       }
     } else if (c.version) {
-      if (cle !== this.joue.cle) l.jouer(c.version, { options: opts, couches, intro: false });
+      if (cle !== this.joue.cle) l.jouer(c.version, { options: opts, couches, intro: false, ...(c.salle ? { salle: c.salle } : {}) });
       else {
         if (opts.intensite !== undefined) l.contexte({ intensite: opts.intensite });
         const diff: Record<string, number> = {};

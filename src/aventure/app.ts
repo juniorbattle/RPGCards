@@ -49,7 +49,7 @@ import { choisir, memoireVide, type Contexte, type Moment } from './repliques';
 import { temperamentDe, temperamentParole } from './temperaments';
 import { son } from '../son/moteur';
 import { ambianceIlot } from '../son/evenements';
-import { consigneVille, numeroChapitre, proximiteFanal, roleDuelAventure } from '../son/musique/chef';
+import { consigneVille, numeroChapitre, proximiteFanal, REPOS_VILLE_S, roleDuelAventure } from '../son/musique/chef';
 import { CONTRAINTE_JOUTE, famillesDominantes, manche, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, varianteDe } from './competitions';
 import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave, type DuelAventure } from './sauvegarde';
 import { installAventureStyles } from './styles';
@@ -131,6 +131,8 @@ export class AventureApp {
   private recitVu = 0;
   /** M13 : le dialogue ouvert ne baisse pas la musique (réglage du son). */
   private sansFocus = false;
+  /** M13 : le dernier instant où le joueur a bougé (ou lu, ou regardé une scène) ; au-delà de 30 s, la ville respire. */
+  private bouge = 0;
   private cadreGarde = false;
   /** Bandes partagées des cinématiques et des dialogues cadrés ; `sceneBandes` : le dialogue cadré ouvert les tient. */
   private bandesCine: Bandes | null = null;
@@ -391,6 +393,7 @@ export class AventureApp {
     son().musique.source('fanal', null, 0);
     son().musique.focus(false);
     this.recit = false;
+    this.bouge = 0;
     if (!this.town || this.host?.hidden) return;
     this.memoriser();
     cancelAnimationFrame(this.raf);
@@ -629,9 +632,12 @@ export class AventureApp {
     // une scène se termine quand ni cinématique ni dialogue ne l'a tenue depuis une seconde et demie (entre deux plans)
     if (this.recit && !actif && performance.now() - this.recitVu > 1500) this.recit = false;
     const ilot = this.town.ilotId();
+    const maintenant = performance.now();
+    if (!this.bouge || this.town.walker().moving || this.dialog || this.modal || this.cine) this.bouge = maintenant;
+    const repos = maintenant - this.bouge > REPOS_VILLE_S * 1000;
     // Kaï qui surgit : son thème entre (la rythmique seule), et continue dans le duel qui suit sans recommencer
     const kai = this.force?.kind === 'rival';
-    m.vouloir(kai ? { version: 'V-1', couches: { melodie: 0, tension: 0, cuivres: 0 } } : this.recit ? { version: 'I-3' } : consigneVille(ilot, numeroChapitre(chapitreDetaille(this.etat))));
+    m.vouloir(kai ? { version: 'V-1', couches: { melodie: 0, tension: 0, cuivres: 0 } } : this.recit ? { version: 'I-3' } : consigneVille(ilot, numeroChapitre(chapitreDetaille(this.etat)), repos));
     m.focus((!!this.dialog && !this.recit && !this.sansFocus) || !!this.modal);
     const x = this.recit ? null : proximiteFanal(ilot, this.town.walker().pos);
     m.source('fanal', x === null ? null : 'I-2', x ?? 0);
@@ -1272,6 +1278,7 @@ export class AventureApp {
       onEnded: (c) => this.finDuel(c, false),
       // M13 : le rôle musical de la rencontre (Kaï, Championnat, Finale, Maison, duel ordinaire)
       musique: roleDuelAventure(prevu.rencontre, prevu.personnalite.id),
+      lieu: prevu.venue,
     });
     this.live = { session, duel, prevu };
     this.pointDeSauvegarde(id, session.controller);
