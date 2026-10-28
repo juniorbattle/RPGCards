@@ -8,7 +8,7 @@
  *   dorien, vibraphone, contre-chant joué à l'envers (112, à trois temps).
  * Un passage sur deux, un chorus improvisé sur la grille. Contrat `docs/m13/01_MUSIQUE.md`, §2.
  */
-import { derouler, dynamiques, fenetre, formation, type DefVersion } from './arrangement';
+import { derouler, dynamiques, enCouche, fenetre, formation, type DefVersion } from './arrangement';
 import {
   accordsTenus, basseDeux, basseMarche, basseValse, batterieBalais, batterieRide, batterieValse, chorus, comping, coups, guitareQuatre,
   harmoniser, humaniser, orner, ornerVents, versEvenements, type Evenement, type InstrId, type Rng,
@@ -52,14 +52,16 @@ const quai: DefVersion = {
     const tete = p % 2 === 0;
     const m0 = p >= 2 ? orner(TETE.mel, rng, 0.25) : TETE.mel;
     const ev: Evenement[] = [];
+    // la mélodie (tête, chorus, contre-chant) en couche : elle s'efface quand le joueur s'arrête longtemps (la ville respire)
+    const melo: Evenement[] = [];
     const [, , b, a3] = debuts as [number, number, number, number];
     if (f === 'duo') {
       // une guitare et une contrebasse : la tête à la guitare, des accords discrets dessous ; au chorus, la guitare improvise
-      ev.push(...(tete ? mel(m0, 'guitare', 0.6, rng) : chorus(acc, total, rng, { instr: 'guitare', lo: 57, hi: 79, vel: 0.52, densite: 0.8 })));
+      melo.push(...(tete ? mel(m0, 'guitare', 0.6, rng) : chorus(acc, total, rng, { instr: 'guitare', lo: 57, hi: 79, vel: 0.52, densite: 0.8 })));
       ev.push(...comping(acc, total, rng, { instr: 'guitare', densite: 0.25, vel: 0.32, tessiture: { lo: 45, hi: 60 }, melodie: tete ? m0 : undefined }));
       ev.push(...basseVille(acc, total, debuts, rng, !tete));
     } else if (f === 'trio') {
-      ev.push(...(tete ? mel(transposer(m0, 12), 'piano', 0.56, rng) : chorus(acc, total, rng, { instr: 'piano', lo: 62, hi: 86, vel: 0.52 })));
+      melo.push(...(tete ? mel(transposer(m0, 12), 'piano', 0.56, rng) : chorus(acc, total, rng, { instr: 'piano', lo: 62, hi: 86, vel: 0.52 })));
       ev.push(...comping(acc, total, rng, { instr: 'piano', densite: 0.4, vel: 0.4, tessiture: { lo: 48, hi: 64 }, melodie: tete ? transposer(m0, 12) : undefined }));
       ev.push(...basseVille(acc, total, debuts, rng, !tete));
       ev.push(...batterieBalais(total, rng, { intensite: tete ? 0.4 : 0.5 }));
@@ -68,13 +70,13 @@ const quai: DefVersion = {
       if (tete) {
         const aux = (a: number, z: number) => fenetre(m0, a, z).map((x) => ({ ...x, t: x.t + a }));
         const octaves = f === 'champion';
-        ev.push(...vent(transposer(aux(0, b), -12), 'sax', 0.62, rng));
-        if (octaves) ev.push(...vent(aux(0, b), 'trompette', 0.5, rng));
-        ev.push(...vent(aux(b, a3), 'trompette', 0.6, rng));
-        if (octaves) ev.push(...vent(transposer(aux(b, a3), -12), 'sax', 0.5, rng));
-        ev.push(...vent(aux(a3, total), 'trompette', 0.56, rng), ...vent(transposer(aux(a3, total), -12), 'sax', 0.56, rng));
+        melo.push(...vent(transposer(aux(0, b), -12), 'sax', 0.62, rng));
+        if (octaves) melo.push(...vent(aux(0, b), 'trompette', 0.5, rng));
+        melo.push(...vent(aux(b, a3), 'trompette', 0.6, rng));
+        if (octaves) melo.push(...vent(transposer(aux(b, a3), -12), 'sax', 0.5, rng));
+        melo.push(...vent(aux(a3, total), 'trompette', 0.56, rng), ...vent(transposer(aux(a3, total), -12), 'sax', 0.56, rng));
       } else {
-        ev.push(...ornerVents(p % 4 === 1 ? chorus(acc, total, rng, { instr: 'sax', lo: 48, hi: 72, vel: 0.55, densite: 0.8 }) : chorus(acc, total, rng, { instr: 'trompette', lo: 60, hi: 82, vel: 0.55, densite: 0.8 }), rng));
+        melo.push(...ornerVents(p % 4 === 1 ? chorus(acc, total, rng, { instr: 'sax', lo: 48, hi: 72, vel: 0.55, densite: 0.8 }) : chorus(acc, total, rng, { instr: 'trompette', lo: 60, hi: 82, vel: 0.55, densite: 0.8 }), rng));
       }
       ev.push(...comping(acc, total, rng, { instr: 'piano', densite: 0.4, vel: 0.38, tessiture: { lo: 50, hi: 68 }, melodie: tete ? m0 : undefined }));
       ev.push(...basseVille(acc, total, debuts, rng, !tete || f === 'champion'));
@@ -85,6 +87,7 @@ const quai: DefVersion = {
         ev.push(...coups(acc, [[a3 + 27.5, 0.45], [a3 + 28, 1.8]], { instr: 'cuivres', vel: 0.42, tessiture: { lo: 55, hi: 76 } }));
       } else ev.push(...batterieBalais(total, rng, { intensite: tete ? 0.45 : 0.55 }));
     }
+    ev.push(...enCouche(melo, 'melodie'));
     return dynamiques(ev, debuts, tete ? [0.9, 0.95, 1.05, 1] : [0.95, 1, 1.05, 1.08]);
   },
 };
@@ -113,26 +116,28 @@ const parvis: DefVersion = {
     const tete = p % 2 === 0;
     const m0 = p >= 2 ? orner(MEL_MAJ, rng, 0.25) : MEL_MAJ;
     const ev: Evenement[] = [];
+    // la mélodie (tête, chorus, contre-chant) en couche : elle s'efface quand le joueur s'arrête longtemps (la ville respire)
+    const melo: Evenement[] = [];
     const [, , b, a3] = debuts as [number, number, number, number];
     const aux = (a: number, z: number) => fenetre(m0, a, z).map((x) => ({ ...x, t: x.t + a }));
     if (f === 'duo') {
-      ev.push(...(tete ? mel(m0, 'guitare', 0.62, rng) : chorus(acc, total, rng, { instr: 'guitare', lo: 57, hi: 81, vel: 0.55 })));
+      melo.push(...(tete ? mel(m0, 'guitare', 0.62, rng) : chorus(acc, total, rng, { instr: 'guitare', lo: 57, hi: 81, vel: 0.55 })));
       ev.push(...basseMarche(acc, total, rng));
     } else {
       if (f === 'trio') {
-        ev.push(...(tete ? mel(transposer(m0, 12), 'vibra', 0.66, rng) : chorus(acc, total, rng, { instr: 'piano', lo: 62, hi: 86, vel: 0.54 })));
+        melo.push(...(tete ? mel(transposer(m0, 12), 'vibra', 0.66, rng) : chorus(acc, total, rng, { instr: 'piano', lo: 62, hi: 86, vel: 0.54 })));
       } else if (tete) {
         // les vents : le ténor, la trompette à l'octave au pont ; champion : les cuivres en soli au pont et au dernier A
-        ev.push(...vent(transposer(aux(0, b), -12), 'sax', 0.62, rng));
+        melo.push(...vent(transposer(aux(0, b), -12), 'sax', 0.62, rng));
         if (f === 'champion') {
-          ev.push(...harmoniser(aux(b, total), acc, { instr: 'cuivres', voix: 4, drop2: true, vel: 0.55 }));
-          ev.push(...mel(transposer(aux(b, total), 12), 'vibra', 0.5, rng));
+          melo.push(...harmoniser(aux(b, total), acc, { instr: 'cuivres', voix: 4, drop2: true, vel: 0.55 }));
+          melo.push(...mel(transposer(aux(b, total), 12), 'vibra', 0.5, rng));
         } else {
-          ev.push(...vent(aux(b, a3), 'trompette', 0.6, rng), ...vent(transposer(aux(b, a3), -12), 'sax', 0.5, rng));
-          ev.push(...vent(transposer(aux(a3, total), -12), 'sax', 0.62, rng));
+          melo.push(...vent(aux(b, a3), 'trompette', 0.6, rng), ...vent(transposer(aux(b, a3), -12), 'sax', 0.5, rng));
+          melo.push(...vent(transposer(aux(a3, total), -12), 'sax', 0.62, rng));
         }
       } else {
-        ev.push(...ornerVents(chorus(acc, total, rng, p % 4 === 1 ? { instr: 'sax', lo: 48, hi: 74, vel: 0.56 } : { instr: 'trompette', lo: 60, hi: 84, vel: 0.56 }), rng));
+        melo.push(...ornerVents(chorus(acc, total, rng, p % 4 === 1 ? { instr: 'sax', lo: 48, hi: 74, vel: 0.56 } : { instr: 'trompette', lo: 60, hi: 84, vel: 0.56 }), rng));
       }
       ev.push(...comping(acc, total, rng, { instr: 'piano', densite: 0.55, vel: 0.42, tessiture: { lo: 50, hi: 70 }, melodie: tete ? m0 : undefined }));
       if (f !== 'trio') ev.push(...guitareQuatre(acc, total, rng, { vel: 0.3 }));
@@ -141,6 +146,7 @@ const parvis: DefVersion = {
       ev.push(...basseMarche(acc, total, rng));
       ev.push(...batterieRide(total, rng, { intensite: f === 'champion' ? 0.85 : 0.65, relance: 8 }));
     }
+    ev.push(...enCouche(melo, 'melodie'));
     return dynamiques(ev, debuts, tete ? [0.92, 0.97, 1.04, 1.06] : [0.95, 1, 1.05, 1.08]);
   },
 };
@@ -176,20 +182,23 @@ const ruelles: DefVersion = {
     const tete = p % 2 === 0;
     const m0 = p >= 2 ? orner(MEL_VALSE, rng, 0.2) : MEL_VALSE;
     const ev: Evenement[] = [];
+    // la mélodie (tête, chorus, contre-chant) en couche : elle s'efface quand le joueur s'arrête longtemps (la ville respire)
+    const melo: Evenement[] = [];
     if (f === 'duo') {
-      ev.push(...(tete ? mel(m0, 'nylon', 0.62, rng) : chorus(acc, TOTAL_VALSE, rng, { instr: 'nylon', lo: 55, hi: 79, vel: 0.52, densite: 0.8 })));
+      melo.push(...(tete ? mel(m0, 'nylon', 0.62, rng) : chorus(acc, TOTAL_VALSE, rng, { instr: 'nylon', lo: 55, hi: 79, vel: 0.52, densite: 0.8 })));
       ev.push(...comping(acc, TOTAL_VALSE, rng, { instr: 'nylon', densite: 0.3, vel: 0.3, tessiture: { lo: 45, hi: 60 }, melodie: tete ? m0 : undefined }, 3));
       ev.push(...basseValse(acc, TOTAL_VALSE, rng));
     } else {
-      ev.push(...(tete ? mel(transposer(m0, 12), 'vibra', 0.64, rng) : chorus(acc, TOTAL_VALSE, rng, { instr: 'vibra', lo: 65, hi: 89, vel: 0.56, densite: 0.8 })));
+      melo.push(...(tete ? mel(transposer(m0, 12), 'vibra', 0.64, rng) : chorus(acc, TOTAL_VALSE, rng, { instr: 'vibra', lo: 65, hi: 89, vel: 0.56, densite: 0.8 })));
       // le contre-chant à l'envers : à la flûte avec les vents, au piano dans le trio (au deuxième A et au dernier)
-      if (tete && f !== 'trio') ev.push(...mel(CONTRE_VALSE, 'flute', 0.45, rng, 0.015));
-      if (tete && f === 'trio') ev.push(...mel(CONTRE_VALSE.filter((x) => x.t >= 48 && x.t < 96 || x.t >= 144), 'piano', 0.4, rng));
+      if (tete && f !== 'trio') melo.push(...mel(CONTRE_VALSE, 'flute', 0.45, rng, 0.015));
+      if (tete && f === 'trio') melo.push(...mel(CONTRE_VALSE.filter((x) => x.t >= 48 && x.t < 96 || x.t >= 144), 'piano', 0.4, rng));
       ev.push(...comping(acc, TOTAL_VALSE, rng, { instr: 'piano', densite: 0.45, vel: 0.38, tessiture: { lo: 48, hi: 66 }, melodie: tete ? transposer(m0, 12) : undefined }, 3));
       ev.push(...basseValse(acc, TOTAL_VALSE, rng, { marche: !tete && f !== 'trio' }));
       ev.push(...batterieValse(TOTAL_VALSE, rng, { intensite: tete ? 0.45 : 0.55, balais: f === 'trio' }));
       if (f === 'champion') ev.push(...accordsTenus(acc, TOTAL_VALSE, rng, { instr: 'cordes', tessiture: { lo: 50, hi: 74 }, vel: 0.4, melodie: tete ? transposer(m0, 12) : undefined }));
     }
+    ev.push(...enCouche(melo, 'melodie'));
     return dynamiques(ev, DEBUTS_VALSE, tete ? [0.9, 0.95, 1.05, 1] : [0.95, 1, 1.05, 1.08]);
   },
 };

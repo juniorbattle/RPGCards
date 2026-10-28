@@ -62,6 +62,13 @@ describe('M13 — thème II « La ville la nuit »', () => {
       if (m) expect([1, 11]).not.toContain((((m.m - x.m) % 12) + 12) % 12);
     }
   });
+  it('la mélodie de la ville est une couche (elle peut se retirer quand le joueur s\'arrête) ; le reste joue sans elle', () => {
+    for (const id of ['II-1', 'II-2', 'II-3'] as VersionId[]) for (const chapitre of [0, 2, 4, 6]) {
+      const { ev } = passage(VERSIONS[id], 0, 2, { chapitre });
+      expect(ev.some((e) => e.couche === 'melodie'), `${id} ${chapitre}`).toBe(true);
+      expect(ev.filter((e) => !e.couche).some((e) => e.instr === 'basse'), `${id} ${chapitre}`).toBe(true);
+    }
+  });
   it('la ville grandit avec les chapitres : guitare et contrebasse, puis le trio, puis les vents, puis les cuivres', () => {
     expect([undefined, 0, 1, 2, 3, 4, 5, 6].map(formation)).toEqual(['trio', 'duo', 'duo', 'trio', 'trio', 'vents', 'vents', 'champion']);
     for (const id of ['II-1', 'II-2', 'II-3'] as VersionId[]) {

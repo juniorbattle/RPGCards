@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import type { GameEvent } from '../src/game/model/types';
 import { creerMoteurSon } from '../src/son/moteur';
 import {
-  consigneDuel, consigneVille, estTendu, intensiteDuel, musiqueEcran, numeroChapitre, proximiteFanal, roleDuelAventure, roleDuelStandard,
+  consigneDuel, consigneVille, estTendu, intensiteDuel, musiqueEcran, numeroChapitre, proximiteFanal, roleDuelAventure, roleDuelStandard, salleDuLieu,
   suiviDepuis, suivreDuel, SUIVI_DEPART, versionDuel, versionQuartier,
 } from '../src/son/musique/chef';
 
@@ -98,12 +98,22 @@ describe('M13 — chef : le duel suit les faits publics', () => {
   });
 });
 
+describe('M13 — chef : l\'acoustique du lieu d\'un duel', () => {
+  it('la rue en plein air, le bar au club, la salle de jeu feutrée, l\'arène en grande salle ; sans lieu, la salle de la version', () => {
+    expect(['rue', 'bar', 'salle', 'arene', 'ailleurs'].map(salleDuLieu)).toEqual(['rue', 'club', 'studio', 'grande', undefined]);
+    expect(consigneDuel({ role: 'duel' }, SUIVI_DEPART, PV, undefined, 'arene').salle).toBe('grande');
+    expect('salle' in consigneDuel({ role: 'duel' }, SUIVI_DEPART, PV)).toBe(false);
+  });
+});
+
 describe('M13 — chef : la ville', () => {
   it('quartiers : le Quai et la Place du Fanal, le Parvis et la Grande Cour, les Ruelles et la Ville haute', () => {
     expect(['quai', 'port', 'parvis', 'cour', 'ruelles', 'haute'].map(versionQuartier)).toEqual(['II-1', 'II-1', 'II-2', 'II-2', 'II-3', 'II-3']);
     expect(['prologue', 'I', 'II', 'III', 'IV', 'V', 'titre'].map((c) => numeroChapitre(c as 'I'))).toEqual([0, 1, 2, 3, 4, 5, 6]);
-    expect(consigneVille('ruelles', 4)).toEqual({ version: 'II-3', options: { chapitre: 4 } });
-    expect(consigneVille('quai')).toEqual({ version: 'II-1', options: {} });
+    expect(consigneVille('ruelles', 4)).toEqual({ version: 'II-3', options: { chapitre: 4 }, couches: { melodie: 1 } });
+    expect(consigneVille('quai')).toEqual({ version: 'II-1', options: {}, couches: { melodie: 1 } });
+    // la ville respire : au repos, la mélodie se retire (les musiciens continuent)
+    expect(consigneVille('quai', 2, true).couches).toEqual({ melodie: 0 });
   });
   it('le combo du Fanal : tout près de sa porte, plus rien à seize mètres ; hors du Quai, pas de source', () => {
     expect(proximiteFanal('quai', { x: 7.2, z: -1.3 })).toBe(1);

@@ -325,6 +325,7 @@ export class Shell {
     this.d.app.hidden = false;
     const session = new DuelSession({
       app: this.d.app, arena, config, params: this.params, scenario: null, personality, product: { menu: true }, resume,
+      lieu: meta.encounter.venue,
       tip: (c) => this.tipFor(c),
       onTool: (t) => this.duelTool(t),
       onCommand: (c) => this.duelCommand(meta.id, c),

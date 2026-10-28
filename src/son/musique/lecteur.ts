@@ -278,6 +278,8 @@ export interface OptJouer {
   intro?: boolean;
   /** Niveaux de départ des couches (au lieu de ceux de la version). */
   couches?: Record<string, number>;
+  /** La salle où la version sonne (au lieu de la sienne : l'acoustique du lieu d'un duel). */
+  salle?: SalleId;
 }
 
 export class Lecteur {
@@ -355,7 +357,7 @@ export class Lecteur {
     if (avant) this.sortir(p, avant, quand, fondu);
     const opts: OptVersion = { ...(avant?.v.id === id ? avant.o : {}), ...(o.options ?? {}) };
     const gain = gainDe(v, opts);
-    const mel = new Melangeur(this.ctx, p.gain, this.banque, { salle: v.salle, lofi: v.lofi ?? false, pedale: v.pedale ?? false, gain, mix: v.mix, jeu: v.jeu ?? (v.lofi ? 'lofi' : 'jazz'), couches: { ...(v.couches ?? {}), ...(o.couches ?? {}) } });
+    const mel = new Melangeur(this.ctx, p.gain, this.banque, { salle: o.salle ?? v.salle, lofi: v.lofi ?? false, pedale: v.pedale ?? false, gain, mix: v.mix, jeu: v.jeu ?? (v.lofi ? 'lofi' : 'jazz'), couches: { ...(v.couches ?? {}), ...(o.couches ?? {}) } });
     if (avant) { mel.maitre.gain.value = 0.0001; mel.fondu(quand, gain, fondu * 0.6); }
     const intro = (o.intro ?? !avant) && !!v.intro;
     const inst: Instance = { v, mel, t0: quand, p: intro ? -1 : 0, spb: 60 / v.tempo, ev: [], acc: [], i: 0, fin: quand, graine: this.graine, o: opts, arret: null };
