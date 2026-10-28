@@ -183,6 +183,11 @@ else if (query.get('ville') === '1') {
   arenaHost.style.display = 'none';
   void import('./ville/labo').then((m) => m.startLab({ artSeed: params.artSeed, qa: params.qa, freeze: params.freeze, reducedMotion: params.reducedMotion, sig: params.sig }, query));
 }
+// M13 : laboratoire d'écoute de la musique (`?musique=1`), à part du jeu, chargé à la demande.
+else if (query.get('musique') === '1') {
+  arenaHost.style.display = 'none';
+  void import('./son/musique/labo').then((m) => m.lancerLabo({ qa: params.qa }));
+}
 else if (params.autostart) start(makeConfig(params, params.sig ?? 'Cendre', params.techs ?? ['Lecture', 'Ancrage']), params.scenario);
 else if (query.get('setup') === '1') setupScreen();
 // M10-B (provisoire, `?aventure=1`) : prototype du mode Aventure, chargé à la demande (rien dans le jeu par défaut).
