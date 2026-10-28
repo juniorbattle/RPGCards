@@ -5,8 +5,41 @@
  * ambiance (0,35), interface (0,6). Au plus 12 voix d'effets. Les ambiances se croisent en 0,8 s.
  */
 import { makeRng } from '../game/engine/rng';
-import { bornerVolume, ecrireReglages, gainGeneral, lireReglages, sonPermis, type ReglagesSon } from './reglages';
+import type { GameEvent } from '../game/model/types';
+import { bornerVolume, ecrireReglages, gainGeneral, lireReglages, REGLAGES_DEFAUT, sonPermis, type ReglagesSon } from './reglages';
 import type { AmbianceId, SonId } from './evenements';
+import type { VersionId } from './musique/arrangement';
+import { consigneDuel, suiviDepuis, suivreDuel, SUIVI_DEPART, type Consigne, type PvPublics, type RoleDuel, type SuiviDuel } from './musique/chef';
+import type { Orchestre } from './musique/orchestre';
+
+/**
+ * M13 — la musique (contrats `docs/m13/01_MUSIQUE.md` et `02_MUSIQUE_INTERACTIVE.md`) : un bus à côté des effets, de
+ * l'ambiance et de l'interface ; l'orchestre (le moteur musical, ses instruments calculés dans un worker) n'est chargé
+ * qu'après un geste, si le son est permis et la musique au-dessus de 0 %. Le jeu dit ce qui doit jouer (consignes du
+ * chef, faits publics seulement) ; sans orchestre, ces consignes sont seulement retenues (et lisibles en QA).
+ */
+export interface MusiqueSon {
+  /** Ce qui doit jouer maintenant (idempotent : peut être redit à chaque image). */
+  vouloir(c: Consigne): void;
+  /** Un duel commence (ou reprend) : son rôle musical, ses événements déjà joués, les PV publics. */
+  debutDuel(role: RoleDuel, events: readonly GameEvent[], pv: PvPublics | null): void;
+  /** Les événements d'un temps du duel (publics seulement comptent) et les PV publics après ce temps. */
+  duel(events: readonly GameEvent[], pv: PvPublics | null): void;
+  finDuel(): void;
+  jingle(id: 'carte' | 'chapitre' | 'victoire' | 'defaite'): void;
+  /** Sous un dialogue ou un écran de consultation : la musique baisse de 5 dB et s'adoucit. */
+  focus(on: boolean): void;
+  assourdir(on: boolean): void;
+  /** Une source de la ville (le combo du Fanal) : sa version (null : elle se tait) et la proximité du joueur. */
+  source(nom: string, version: VersionId | null, proximite: number): void;
+  /** La musique joue-t-elle (geste fait, son permis, volume de la musique au-dessus de 0, instruments prêts) ? */
+  active(): boolean;
+  /** QA : la consigne courante et le journal des demandes (versions, accents, jingles), sans écouter. */
+  consigne(): Consigne;
+  journal(): readonly string[];
+  /** QA : l'état de l'orchestre (prêt, version jouée, couches, focus, sources), null tant qu'il n'est pas chargé. */
+  etat(): ReturnType<Orchestre['etat']> | null;
+}
 
 export interface MoteurSon {
   jouer(id: SonId): void;
@@ -19,6 +52,7 @@ export interface MoteurSon {
   actif(): boolean;
   /** Sons demandés depuis le chargement (QA : vérifier un déclenchement sans écouter). */
   journal(): readonly SonId[];
+  readonly musique: MusiqueSon;
 }
 
 type Ctx = AudioContext;
@@ -31,7 +65,33 @@ export function creerMoteurSon(search = typeof location !== 'undefined' ? locati
   let reg = lireReglages(st);
   let ctx: Ctx | null = null;
   let general: GainNode | null = null;
-  let bus: Record<'effets' | 'ambiance' | 'ui', GainNode> | null = null;
+  let bus: Record<'effets' | 'ambiance' | 'ui' | 'musique', GainNode> | null = null;
+  // M13 : la musique
+  let orch: Orchestre | null = null;
+  let chargement = false;
+  let voulu: Consigne = { version: null };
+  let cleVoulu = '';
+  let role: RoleDuel | null = null;
+  let suivi: SuiviDuel = SUIVI_DEPART;
+  const jMusique: string[] = [];
+  const noter = (x: string): void => { jMusique.push(x); if (jMusique.length > 300) jMusique.splice(0, 150); };
+  const musiqueActive = (): boolean => !!orch && !!ctx && permis && !reg.coupe && reg.musique > 0 && orch.etat().pret;
+  const AMBIANCE = 0.35;
+  const chargerMusique = (): void => {
+    if (chargement || orch || !ctx || !bus || reg.musique <= 0) return;
+    chargement = true;
+    const c = ctx;
+    const b = bus;
+    void import('./musique/orchestre').then(({ Orchestre }) => {
+      // une graine par séance (jamais deux fois la même boucle d'une partie à l'autre ; aucun hasard du moteur de jeu)
+      orch = new Orchestre(c, b.musique, (Date.now() % 100000) + 1);
+      orch.appliquer(voulu, { assourdie: false });
+      return orch.charger(voulu.version).then(() => {
+        // les ambiances un peu baissées pendant la musique
+        b.ambiance.gain.setTargetAtTime(AMBIANCE * 0.65, c.currentTime, 0.5);
+      });
+    }).catch(() => { orch = null; chargement = false; });
+  };
   let bruit: AudioBuffer | null = null;
   let voix = 0;
   let amb: { id: AmbianceId; stop: () => void } | null = null;
@@ -49,13 +109,14 @@ export function creerMoteurSon(search = typeof location !== 'undefined' ? locati
     general.gain.value = gainGeneral(reg, permis);
     general.connect(lim).connect(ctx.destination);
     const g = (v: number) => { const n = ctx!.createGain(); n.gain.value = v; n.connect(general!); return n; };
-    bus = { effets: g(1), ambiance: g(0.35), ui: g(0.6) };
+    bus = { effets: g(1), ambiance: g(AMBIANCE), ui: g(0.6), musique: g(reg.musique) };
     // deux secondes de bruit blanc, à graine fixe (aucun Math.random)
     const rng = makeRng(0x50a);
     bruit = ctx.createBuffer(1, ctx.sampleRate * 2, ctx.sampleRate);
     const data = bruit.getChannelData(0);
     for (let i = 0; i < data.length; i++) data[i] = rng() * 2 - 1;
     if (ambVoulue) lancerAmbiance(ambVoulue);
+    chargerMusique();
   };
   const geste = (): void => { creer(); if (ctx?.state === 'suspended') void ctx.resume(); };
   // l'interface : un tic à chaque bouton (plus grave pour fermer, revenir, annuler)
@@ -171,21 +232,83 @@ export function creerMoteurSon(search = typeof location !== 'undefined' ? locati
     amb = { id, stop: () => { const t = c.currentTime; sortie.gain.cancelScheduledValues(t); sortie.gain.setValueAtTime(Math.max(0.0001, sortie.gain.value), t); sortie.gain.exponentialRampToValueAtTime(0.0001, t + 0.8); setTimeout(() => { arrets.forEach((f) => f()); sortie.disconnect(); }, 900); } };
   };
 
+  const musique: MusiqueSon = {
+    vouloir(c) {
+      const k = JSON.stringify(c);
+      if (k === cleVoulu) return;
+      cleVoulu = k;
+      voulu = c;
+      noter(`version:${c.version ?? 'silence'}${c.options?.chapitre !== undefined ? `:ch${c.options.chapitre}` : ''}${c.couches ? `:${Object.entries(c.couches).filter(([, v]) => v > 0).map(([n]) => n).join('+')}` : ''}`);
+      orch?.appliquer(c);
+    },
+    debutDuel(r, events, pv) {
+      role = r;
+      suivi = suiviDepuis(events, 'p1', pv);
+      const c = consigneDuel(r, suivi, pv);
+      cleVoulu = JSON.stringify(c);
+      voulu = c;
+      noter(`duel:${r.role}${'famille' in r ? `:${r.famille}` : ''}:${c.version}`);
+      orch?.appliquer(c, { assourdie: true });
+    },
+    duel(events, pv) {
+      if (!role) return;
+      const r = suivreDuel(suivi, events, 'p1', pv);
+      suivi = r.suivi;
+      for (const p of r.ponctuations) { noter(`ponctuation:${p}`); if (musiqueActive()) orch!.ponctuer(p); }
+      if (r.fin) {
+        noter(`fin:${r.fin}`);
+        role = null;
+        voulu = { version: null };
+        cleVoulu = JSON.stringify(voulu);
+        if (musiqueActive()) orch!.finir(r.fin);
+        return;
+      }
+      musique.vouloir(consigneDuel(role, suivi, pv));
+    },
+    finDuel() { role = null; },
+    jingle(id) { noter(`jingle:${id}`); if (musiqueActive()) orch!.jingle(id); },
+    focus(on) { orch?.focus(on); },
+    assourdir(on) { orch?.assourdir(on); },
+    source(nom, version, x) { orch?.source(nom, version, x); },
+    active: musiqueActive,
+    consigne: () => voulu,
+    journal: () => jMusique,
+    etat: () => orch?.etat() ?? null,
+  };
+
+  /** Les sons que la musique remplace quand elle joue (contrat 1, §2) : la fin du duel, la carte gagnée, le titre. */
+  const JINGLE_DE: Partial<Record<SonId, 'carte' | 'victoire'>> = { gain: 'carte', titre: 'victoire' };
+
   const api: MoteurSon = {
     permis,
+    musique,
     actif: () => !!ctx,
     journal: () => demandes,
     reglages: () => ({ ...reg }),
     regler(r) {
-      reg = { ...reg, ...r, volume: bornerVolume(r.volume ?? reg.volume) };
+      reg = { ...reg, ...r, volume: bornerVolume(r.volume ?? reg.volume), musique: bornerVolume(r.musique ?? reg.musique, REGLAGES_DEFAUT.musique) };
       ecrireReglages(st, reg);
       if (general && ctx) general.gain.setTargetAtTime(gainGeneral(reg, permis), ctx.currentTime, 0.05);
       else creer();
+      // la musique : son bus ; à 0 %, plus aucune note planifiée ; au-dessus, l'orchestre (chargé au besoin) reprend
+      if (bus && ctx) {
+        bus.musique.gain.setTargetAtTime(reg.musique, ctx.currentTime, 0.05);
+        if (reg.musique <= 0) { orch?.suspendre(); bus.ambiance.gain.setTargetAtTime(AMBIANCE, ctx.currentTime, 0.3); }
+        else if (orch) { orch.reprendre(); bus.ambiance.gain.setTargetAtTime(AMBIANCE * 0.65, ctx.currentTime, 0.3); }
+        else chargerMusique();
+      }
     },
     jouer(id) {
       demandes.push(id);
       if (demandes.length > 200) demandes.splice(0, 100);
       if (!ctx || !bus || reg.coupe || !permis || ctx.state !== 'running') return;
+      // M13 : avec la musique, la fin du duel est jouée par elle (sur le temps fort, puis le jingle) ; la carte gagnée et le
+      // titre deviennent des jingles
+      if (musiqueActive()) {
+        if (id === 'victoire' || id === 'defaite') return;
+        const j = JINGLE_DE[id];
+        if (j) { musique.jingle(j); return; }
+      }
       if (voix >= MAX_VOIX) return;
       const dest = id === 'ui' || id === 'ui-retour' ? bus.ui : bus.effets;
       const dur = RECETTES[id](dest, ctx.currentTime + 0.005);

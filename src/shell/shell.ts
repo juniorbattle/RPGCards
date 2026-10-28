@@ -37,6 +37,8 @@ import { renderDeck } from './deckEditor';
 import { renderOptions } from './options';
 import { renderHelp } from './help';
 import { duelTip } from './tips';
+import { son } from '../son/moteur';
+import { consigneVille, musiqueEcran } from '../son/musique/chef';
 
 export interface ShellDeps {
   shellHost: HTMLElement;
@@ -458,6 +460,8 @@ export class Shell {
       // (couches, rig, textures envoyées au GPU) : leur apparition ne coûte plus de génération.
       if (arena) this.prepareUpcoming();
     }
+    // M13 : la musique de l'écran (le duel a la sienne, posée par sa session)
+    if (!inDuel) son().musique.vouloir(this.d.hub && s.screen === 'board' && !this.hubBoard ? consigneVille('quai') : musiqueEcran(scr));
     // M09 V2 (`?demo=1`) : au tableau des rencontres, la ville prend l'écran (HUD dans l'enveloppe, transparente aux clics).
     if (this.d.hub && (s.screen === 'duel' || s.screen === 'home')) this.hubBoard = false;
     if (this.d.hub && s.screen === 'board' && !this.hubBoard) {

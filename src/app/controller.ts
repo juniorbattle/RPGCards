@@ -6,6 +6,7 @@
 import { cardDef, type Family } from '../game/catalog/cards';
 import { son } from '../son/moteur';
 import { sonsDuDuel } from '../son/evenements';
+import type { PvPublics } from '../son/musique/chef';
 import { TECHNIQUES, type TechniqueId } from '../game/catalog/techniques';
 import { decide, PROFILES } from '../game/ai/policy';
 import { buildMemory } from '../game/ai/memory';
@@ -204,7 +205,8 @@ export class Controller {
     // M11-E : sons des événements publics et des événements privés du joueur (jamais ceux de l'adversaire) : tout de suite
     // pour ce qui est immédiat, au temps de la chorégraphie pour la résolution (`advanceBeat`) ; aucun son pour un rejeu
     // en bloc (reprise d'un duel) ; sans geste ni en QA, le moteur du son ne joue rien.
-    if (newEvents.length < 60) this.jouerSons(immediate);
+    // M13 : la musique compte les PV d'avant la résolution tant que celle-ci n'est pas présentée
+    if (newEvents.length < 60) this.jouerSons(immediate, start >= 0 ? hpBeforeSequence(newEvents.slice(start), { p1: this.view.me.hp, p2: this.view.opp.hp }) : undefined);
     // M12 : temps forts de ce qui est immédiat (Techniques, regards, révélations, Signature annoncée) ; aucun pour un
     // rejeu en bloc ni en gel (captures : seuls ceux de la résolution, au temps demandé)
     if (newEvents.length < 60 && !this.params.freeze) this.playActivations(buildActivations(immediate, this.activationContext()));
@@ -320,7 +322,7 @@ export class Controller {
       q.hp = hpAfterBeat(q.hp, b);
       for (const e of b.events) q.hidden.delete(e.seq);
       this.playFx(b.events);
-      this.jouerSons(b.events);
+      this.jouerSons(b.events, q.hp);
       this.pushReactions(this.expr.observe(b.events));
       // Chorégraphie du Clash : émise AVANT la mise à jour du plateau (les cartes quittent leurs cases).
       const step = stepForBeat(b.kind);
@@ -353,9 +355,20 @@ export class Controller {
     return ms;
   }
 
-  /** M11-E : les sons de ces événements (publics, ou privés du joueur). */
-  private jouerSons(events: readonly GameEvent[]): void {
+  /**
+   * M11-E : les sons de ces événements (publics, ou privés du joueur). M13 : la musique les suit aussi (Clash gagné ou
+   * perdu, Signature annoncée, prolongation, PV publics après ce temps, fin du duel ; faits publics seulement).
+   */
+  private jouerSons(events: readonly GameEvent[], hp?: Record<PlayerId, number>): void {
     for (const x of sonsDuDuel(events, 'p1')) son().jouer(x);
+    son().musique.duel(events, this.pvPublics(hp));
+  }
+
+  /** M13 : les PV publics des deux camps (ceux du temps présenté pendant une résolution). */
+  pvPublics(hp?: Record<PlayerId, number>): PvPublics | null {
+    const v = this.view as PlayerView | undefined;
+    if (!v) return null;
+    return { me: hp?.p1 ?? v.me.hp, meMax: v.me.maxHp, opp: hp?.p2 ?? v.opp.hp, oppMax: v.opp.maxHp };
   }
 
   /** QA uniquement (`?qa=1`) : fige la séquence sur le temps courant (pellicules déterministes). */
@@ -377,7 +390,7 @@ export class Controller {
     }
     if (last) this.pushReactions(this.expr.observe(last.events));
     // M11-E : « Passer » ne rejoue pas les sons sautés, sauf la fin du duel
-    if (last) this.jouerSons(last.events.filter((e) => e.kind === 'victory'));
+    if (last) this.jouerSons(last.events.filter((e) => e.kind === 'victory'), q.hp);
     this.motionFn?.({ type: 'stop' });
     // M12 : « Passer » vide aussi la file des temps forts
     this.activationSink?.stop();

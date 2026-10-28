@@ -45,9 +45,12 @@ describe('M11-E — réglages', () => {
   it('défaut, écriture, relecture, bornes', () => {
     const { m, st } = mem();
     expect(lireReglages(st)).toEqual(REGLAGES_DEFAUT);
-    expect(ecrireReglages(st, { volume: 1.7, coupe: true })).toBe(true);
-    expect(JSON.parse(m.get(CLE_SON)!)).toEqual({ volume: 1, coupe: true });
-    expect(lireReglages(st)).toEqual({ volume: 1, coupe: true });
+    expect(ecrireReglages(st, { volume: 1.7, coupe: true, musique: 0.25 })).toBe(true);
+    expect(JSON.parse(m.get(CLE_SON)!)).toEqual({ volume: 1, coupe: true, musique: 0.25 });
+    expect(lireReglages(st)).toEqual({ volume: 1, coupe: true, musique: 0.25 });
+    // M13 : un réglage d'avant la musique garde son volume et prend la musique à 60 %
+    m.set(CLE_SON, JSON.stringify({ volume: 0.4, coupe: false }));
+    expect(lireReglages(st)).toEqual({ volume: 0.4, coupe: false, musique: 0.6 });
     expect(bornerVolume(-3)).toBe(0);
     expect(bornerVolume(Number.NaN)).toBe(REGLAGES_DEFAUT.volume);
   });

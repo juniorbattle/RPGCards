@@ -7,6 +7,7 @@
 import { cardDef, cardTitle, EFFECTS } from '../game/catalog/cards';
 import { son } from '../son/moteur';
 import { sonDuTempsFort } from '../son/evenements';
+import { roleDuelStandard, type RoleDuel } from '../son/musique/chef';
 import type { Command, GameConfig } from '../game/model/types';
 import { artCacheSize } from '../art/cardArt';
 import { artWarmStats, warmCardArt } from '../art/artWarmup';
@@ -41,6 +42,8 @@ export interface DuelSessionOptions {
   onCommand?: (c: Controller) => void;
   /** Fin de duel (phase ENDED) et mise en scène terminée. */
   onEnded?: (c: Controller) => void;
+  /** M13 : le rôle musical du duel (aventure) ; par défaut, celui du rival du jeu standard (Kaï, ou le duel ordinaire). */
+  musique?: RoleDuel;
 }
 
 export class DuelSession {
@@ -62,6 +65,8 @@ export class DuelSession {
     this.controller = c;
     // M11-E : le bourdon du duel remplace l'ambiance de la ville
     son().ambiance('amb-duel');
+    // M13 : la musique du duel (la ville ou le menu s'assourdit jusqu'à son premier temps) ; un duel repris retrouve ses couches
+    son().musique.debutDuel(o.musique ?? roleDuelStandard(o.personality.id), c.match.events, c.pvPublics());
     let pointerHeld = false;
     let pendingRender = false;
     let drag: DragManager | null = null;
@@ -239,6 +244,7 @@ export class DuelSession {
   /** Retire tout : minuteries du contrôleur, écouteurs, scène du Clash, contenu du plateau. */
   dispose(): void {
     son().ambiance(null);
+    son().musique.finDuel();
     this.controller.dispose();
     this.abort.abort();
     this.drag.dispose();

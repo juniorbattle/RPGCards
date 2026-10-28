@@ -262,11 +262,14 @@ export interface OptJouer {
   fondu?: number;
   options?: OptVersion;
   intro?: boolean;
+  /** Niveaux de départ des couches (au lieu de ceux de la version). */
+  couches?: Record<string, number>;
 }
 
 export class Lecteur {
   private pistes = new Map<string, Piste>();
   private bus: GainNode;
+  private retrait: GainNode;
   private filtreBus: BiquadFilterNode;
   private proximites = new Map<string, number>();
   private etatFocus = false;
@@ -276,13 +279,23 @@ export class Lecteur {
 
   constructor(private ctx: BaseAudioContext, sortie: AudioNode, private banque: BanqueAudio, private graine = 1) {
     this.bus = ctx.createGain();
+    this.retrait = ctx.createGain();
     this.filtreBus = ctx.createBiquadFilter();
     this.filtreBus.type = 'lowpass';
     this.filtreBus.frequency.value = 20000;
     this.filtreBus.Q.value = 0.5;
     const comp = ctx.createDynamicsCompressor();
     comp.threshold.value = -16; comp.knee.value = 8; comp.ratio.value = 2.2; comp.attack.value = 0.02; comp.release.value = 0.3;
-    this.bus.connect(this.filtreBus).connect(comp).connect(sortie);
+    // pistes → bus (focus) → retrait (sous un jingle) → passe-bas (assourdie, focus) → compresseur ; les jingles entrent après le retrait
+    this.bus.connect(this.retrait).connect(this.filtreBus).connect(comp).connect(sortie);
+  }
+
+  /** Le fond s'efface (en dB) pendant `duree` secondes à partir de `t`, puis revient (un jingle par-dessus la musique). */
+  retirer(db: number, t: number, duree: number): void {
+    const g = this.retrait.gain;
+    g.cancelScheduledValues(t);
+    g.setTargetAtTime(10 ** (db / 20), t, 0.08);
+    g.setTargetAtTime(1, t + duree, 0.5);
   }
 
   private piste(nom: string): Piste {
@@ -328,7 +341,7 @@ export class Lecteur {
     if (avant) this.sortir(p, avant, quand, fondu);
     const opts: OptVersion = { ...(avant?.v.id === id ? avant.o : {}), ...(o.options ?? {}) };
     const gain = gainDe(v, opts);
-    const mel = new Melangeur(this.ctx, p.gain, this.banque, { salle: v.salle, lofi: v.lofi ?? false, pedale: v.pedale ?? false, gain, mix: v.mix, jeu: v.jeu ?? (v.lofi ? 'lofi' : 'jazz'), couches: v.couches ?? {} });
+    const mel = new Melangeur(this.ctx, p.gain, this.banque, { salle: v.salle, lofi: v.lofi ?? false, pedale: v.pedale ?? false, gain, mix: v.mix, jeu: v.jeu ?? (v.lofi ? 'lofi' : 'jazz'), couches: { ...(v.couches ?? {}), ...(o.couches ?? {}) } });
     if (avant) { mel.maitre.gain.value = 0.0001; mel.fondu(quand, gain, fondu * 0.6); }
     const intro = (o.intro ?? !avant) && !!v.intro;
     const inst: Instance = { v, mel, t0: quand, p: intro ? -1 : 0, spb: 60 / v.tempo, ev: [], acc: [], i: 0, fin: quand, graine: this.graine, o: opts, arret: null };
@@ -439,7 +452,7 @@ export class Lecteur {
   jingle(id: JingleId, quand?: number): number {
     const j: DefJingle = JINGLES[id];
     const t = quand ?? (this.pistes.get('fond')?.cur ? this.prochain('temps') : this.ctx.currentTime + 0.05);
-    const mel = new Melangeur(this.ctx, this.bus, this.banque, { salle: j.salle, gain: j.gain, mix: j.mix });
+    const mel = new Melangeur(this.ctx, this.filtreBus, this.banque, { salle: j.salle, gain: j.gain, mix: j.mix });
     const spb = 60 / j.tempo;
     for (const e of j.ev()) mel.note(e, t + e.t * spb, e.d * spb, spb);
     mel.fermer(t + j.duree * spb + 3);
