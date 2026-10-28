@@ -13,6 +13,11 @@ export type InstrId =
   | 'trompette' | 'sax' | 'flute' | 'cuivres' | 'cordes'
   | 'ride' | 'cloche' | 'crash' | 'charley' | 'charley-ferme' | 'gc' | 'cc' | 'cc-balai' | 'balai' | 'rim';
 
+/** Ornements des vents : coulé par en dessous (scoop), chute en fin de phrase. */
+export type Orn = 'scoop' | 'chute';
+/** Une note d'une phrase de vent (positions relatives au début de la phrase). */
+export interface NoteV { t: number; d: number; m: number; v: number; orn?: Orn }
+
 export interface Evenement {
   t: number;
   d: number;
@@ -26,6 +31,9 @@ export interface Evenement {
   couche?: string;
   /** Cymbale étouffée à la main au bout de `d` (fin de duel). */
   etouffe?: boolean;
+  orn?: Orn;
+  /** Phrase d'un instrument à une voix (`lier`) : toutes ses notes, la première comprise, jouées d'un souffle. */
+  phrase?: NoteV[];
 }
 
 export type Rng = () => number;
@@ -431,6 +439,32 @@ export function chorus(as: readonly AccordP[], total: number, rng: Rng, o: { ins
 }
 
 /** Les notes d'une partition en événements d'un instrument (nuance de base `v`). */
+/**
+ * Les phrases des instruments à une voix (vents) : des notes séparées de moins de `souffle` temps se jouent d'un seul
+ * souffle (la voix glisse de l'une à l'autre, ou les reprend à la langue) ; une respiration au plus tous les `max` temps.
+ * Deux notes qui se chevauchent : la première s'arrête où la seconde commence. Événements triés en entrée.
+ */
+export function lier(ev: readonly Evenement[], mono: ReadonlySet<InstrId>, souffle = 0.6, max = 24): Evenement[] {
+  const out: Evenement[] = [];
+  const ouvertes = new Map<string, Evenement & { phrase: NoteV[] }>();
+  for (const e of ev) {
+    if (!mono.has(e.instr)) { out.push(e); continue; }
+    const k = `${e.instr}|${e.couche ?? 'fond'}`;
+    const ph = ouvertes.get(k);
+    const der = ph?.phrase[ph.phrase.length - 1];
+    if (ph && der && e.t - (ph.t + der.t + der.d) < souffle && e.t - ph.t < max) {
+      if (ph.t + der.t + der.d > e.t) der.d = Math.max(0.05, e.t - ph.t - der.t);
+      ph.phrase.push({ t: e.t - ph.t, d: e.d, m: e.m, v: e.v, ...(e.orn ? { orn: e.orn } : {}) });
+      ph.d = e.t - ph.t + e.d;
+    } else {
+      const n = { ...e, phrase: [{ t: 0, d: e.d, m: e.m, v: e.v, ...(e.orn ? { orn: e.orn } : {}) }] };
+      ouvertes.set(k, n);
+      out.push(n);
+    }
+  }
+  return out;
+}
+
 export const versEvenements = (ns: readonly NoteP[], instr: InstrId, v = 0.7, dt = 0): Evenement[] => ns.map((x) => ({ t: x.t + dt, d: x.d, instr, m: x.m, v: v * (x.v ?? 1) }));
 
 /** Vérifie qu'une note est consonante avec l'accord (pour les tests de composition). */

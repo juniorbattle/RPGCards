@@ -214,6 +214,68 @@ export function basse(sr: number, m: number, vel: number): Float32Array<ArrayBuf
   return normaliser(out, 0.55 + 0.35 * vel);
 }
 
+/**
+ * Guitare jazz (caisse creuse, micro manche, cordes filées à plat) : corde pincée en additif (position du médiator),
+ * peigne du micro (sa place sous la corde donne le timbre de l'instrument électrique), tonalité sombre, aigus qui
+ * s'éteignent vite ; deux polarisations légèrement désaccordées (la corde vit), médiator.
+ */
+export function guitare(sr: number, m: number, vel: number): Float32Array<ArrayBuffer> {
+  const f0 = freq(m);
+  const dur = clamp(2.8 - (m - 40) * 0.025, 1.6, 2.8);
+  const out = new Float32Array(nombre(sr, dur));
+  const rng = makeRng(0x9017 + m * 3 + Math.round(vel * 10));
+  const tau0 = clamp(2.4 * 2 ** (-(m - 40) / 30), 0.9, 2.4);
+  const fc = 1300 + 1600 * vel;
+  for (let k = 1; k <= 40; k++) {
+    const fk = k * f0 * Math.sqrt(1 + 0.00004 * k * k);
+    if (fk > Math.min(sr * 0.44, 9000)) break;
+    const a = (Math.abs(Math.sin(Math.PI * k * 0.18)) / k) * (Math.abs(Math.sin(Math.PI * k * 0.27)) ** 0.8 + 0.06) / (1 + (fk / fc) ** 2);
+    const tk = tau0 / (1 + 0.45 * (k - 1));
+    const det = (0.2 + rng() * 0.3) * 1e-3;
+    amorti(out, sr, fk, a * 0.6, tk, rng() * TAU);
+    amorti(out, sr, fk * (1 + det), a * 0.4, tk * 0.7, rng() * TAU);
+  }
+  const pique = bruit(nombre(sr, 0.012), sr, rng, 0.002);
+  biquad(pique, sr, 'hp', 1500, 0.7);
+  ajouter(out, pique, 0.02 * vel);
+  biquad(out, sr, 'pk', 180, 1, 2);
+  biquad(out, sr, 'pk', 2500, 1.2, -2);
+  attaque(out, sr, 0.001);
+  queue(out, sr, dur * 0.3);
+  return normaliser(out, 0.45 + 0.45 * vel);
+}
+
+/**
+ * Guitare à cordes de nylon : pincée au doigt (aigus plus doux), déclin long ; la caisse : résonance de l'air vers
+ * 100 Hz, de la table vers 200 Hz, un creux vers 1,5 kHz ; le bruit du doigt.
+ */
+export function nylon(sr: number, m: number, vel: number): Float32Array<ArrayBuffer> {
+  const f0 = freq(m);
+  const dur = clamp(3.2 - (m - 40) * 0.03, 1.8, 3.2);
+  const out = new Float32Array(nombre(sr, dur));
+  const rng = makeRng(0x7110 + m * 3 + Math.round(vel * 10));
+  const tau0 = clamp(2.8 * 2 ** (-(m - 40) / 28), 1, 2.8);
+  const fc = 2200 + 2600 * vel;
+  for (let k = 1; k <= 36; k++) {
+    const fk = k * f0 * Math.sqrt(1 + 0.00002 * k * k);
+    if (fk > sr * 0.44) break;
+    const a = (Math.abs(Math.sin(Math.PI * k * 0.13)) + 0.03) / k ** 1.25 / (1 + (fk / fc) ** 2);
+    const tk = tau0 / (1 + 0.3 * (k - 1));
+    const det = (0.15 + rng() * 0.25) * 1e-3;
+    amorti(out, sr, fk, a * 0.55, tk, rng() * TAU);
+    amorti(out, sr, fk * (1 - det), a * 0.45, tk * 0.8, rng() * TAU);
+  }
+  const doigt = bruit(nombre(sr, 0.02), sr, rng, 0.004);
+  biquad(doigt, sr, 'lp', 1200, 0.7);
+  ajouter(out, doigt, 0.04 * vel);
+  biquad(out, sr, 'pk', 105, 2, 4);
+  biquad(out, sr, 'pk', 210, 1.5, 3);
+  biquad(out, sr, 'pk', 1500, 1, -2);
+  attaque(out, sr, 0.0015);
+  queue(out, sr, dur * 0.3);
+  return normaliser(out, 0.45 + 0.45 * vel);
+}
+
 // ------------------------------------------------------------------ batterie
 
 /** Cymbale : partiels inharmoniques (le corps), bruit filtré en bandes qui s'éteignent à des vitesses différentes (le souffle), ping de baguette. */

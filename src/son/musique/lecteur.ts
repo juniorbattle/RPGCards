@@ -11,10 +11,11 @@ import type { BanqueBrute } from './banque';
 import { choisir } from './banque';
 import { JINGLES, mixDe, passage, VERSIONS, type DefJingle, type DefVersion, type JingleId, type OptVersion, type VersionId } from './catalogue';
 import { chaineLofi, tamponSalle, type SalleId } from './effets';
-import type { Evenement, InstrId } from './generateurs';
+import { lier, type Evenement, type InstrId } from './generateurs';
 import type { AccordP } from './partitions';
 import { ponctuation, type PonctuationId } from './ponctuations';
 import { freq } from './theorie';
+import { corps, MONOPHONIQUES as MONOPHONIQUES_, souffler, VENTS, type InstrVent } from './vents';
 
 export interface ZoneAudio { racine: number; couche: number; buffer: AudioBuffer }
 export type BanqueAudio = Partial<Record<InstrId, ZoneAudio[]>>;
@@ -33,7 +34,7 @@ export function versAudio(ctx: BaseAudioContext, b: BanqueBrute): BanqueAudio {
 }
 
 /** Constante de temps de l'extinction d'une note relâchée (étouffoir, pédale). */
-const RELACHE: Partial<Record<InstrId, number>> = { piano: 0.08, rhodes: 0.12, vibra: 0.25, basse: 0.05, guitare: 0.08, nylon: 0.1 };
+const RELACHE: Partial<Record<InstrId, number>> = { piano: 0.08, rhodes: 0.12, vibra: 0.25, basse: 0.05, guitare: 0.07, nylon: 0.1 };
 const FRAPPES = new Set<InstrId>(['ride', 'cloche', 'crash', 'charley', 'charley-ferme', 'gc', 'cc', 'cc-balai', 'balai', 'rim']);
 
 /**
@@ -41,8 +42,8 @@ const FRAPPES = new Set<InstrId>(['ride', 'cloche', 'crash', 'charley', 'charley
  * devant, la basse sur le temps, le piano et la mélodie un peu derrière ; lofi : la caisse claire posée en arrière.
  */
 const DECALAGES: Record<'jazz' | 'lofi' | 'droit', Partial<Record<InstrId, number>>> = {
-  jazz: { ride: -0.007, cloche: -0.007, charley: -0.004, basse: -0.002, piano: 0.006, rhodes: 0.008, vibra: 0.01, guitare: 0.004, nylon: 0.004 },
-  lofi: { 'cc-balai': 0.014, rim: 0.012, 'charley-ferme': -0.003, piano: 0.01, rhodes: 0.012 },
+  jazz: { ride: -0.007, cloche: -0.007, charley: -0.004, basse: -0.002, piano: 0.006, rhodes: 0.008, vibra: 0.01, guitare: 0.004, nylon: 0.004, trompette: 0.014, sax: 0.014, flute: 0.01, cuivres: 0.006, cordes: 0.02 },
+  lofi: { 'cc-balai': 0.014, rim: 0.012, 'charley-ferme': -0.003, piano: 0.01, rhodes: 0.012, trompette: 0.018, sax: 0.018, flute: 0.014, nylon: 0.008 },
   droit: {},
 };
 
@@ -101,6 +102,13 @@ class Melangeur {
     const pan = this.ctx.createStereoPanner();
     pan.pan.value = Math.max(-1, Math.min(1, mx.pan + reg.pan));
     let tete: AudioNode = c;
+    if (VENTS.has(instr)) {
+      // le corps de l'instrument à vent (ou du pupitre de cordes)
+      const k = corps(this.ctx, instr as InstrVent);
+      c.connect(k.entree);
+      tete = k.sortie;
+      this.arrets.push(k.arreter);
+    }
     if (instr === 'nappe') {
       // la nappe : un seul couple de filtres pour toutes ses voix (adoucie, sans grave)
       const lp = this.ctx.createBiquadFilter();
@@ -132,12 +140,16 @@ class Melangeur {
     return c;
   }
 
-  /** Une note (secondes absolues sur l'horloge du contexte). */
-  note(e: Evenement, t0: number, d: number): void {
+  /** Une note (secondes absolues sur l'horloge du contexte ; `spb` : secondes par temps, pour les phrases). */
+  note(e: Evenement, t0: number, d: number, spb = 1): void {
     const ctx = this.ctx;
     const t = Math.max(0, t0 + (DECALAGES[this.cfg.jeu ?? 'jazz'][e.instr] ?? 0));
     const couche = e.couche ?? 'fond';
     if (e.instr === 'nappe') return this.nappe(e, t, d, couche);
+    if (VENTS.has(e.instr)) {
+      const notes = e.phrase ? e.phrase.map((x) => ({ ...x, t: t + x.t * spb, d: x.d * spb })) : [{ t, d, m: e.m, v: e.v, ...(e.orn ? { orn: e.orn } : {}) }];
+      return souffler(ctx, this.canal(e.instr, couche, e.m), e.instr as InstrVent, notes);
+    }
     const zones = this.banque[e.instr];
     if (!zones?.length) return;
     this.k = (this.k + 1) % 9973;
@@ -358,7 +370,7 @@ export class Lecteur {
             if (inst.arret !== null && t > inst.arret) continue;
             if (t < this.ctx.currentTime - 0.05) continue;
             if (this.solo && !this.solo.has(e.instr)) continue;
-            inst.mel.note(e, t, e.d * inst.spb);
+            inst.mel.note(e, t, e.d * inst.spb, inst.spb);
           }
           if (inst.i < inst.ev.length || inst.fin >= jusqua || (inst.arret !== null && inst.fin > inst.arret)) break;
           inst.p++;
@@ -390,7 +402,7 @@ export class Lecteur {
     const sym = this.accordA(t) ?? 'Fmaj7';
     const mel = new Melangeur(this.ctx, this.piste('fond').gain, this.banque, { salle: c.v.salle, gain: c.v.gain, mix: c.v.mix });
     const p = ponctuation(id, sym);
-    for (const e of p.ev) mel.note(e, t + e.t * c.spb, e.d * c.spb);
+    for (const e of p.ev) mel.note(e, t + e.t * c.spb, e.d * c.spb, c.spb);
     mel.fermer(t + p.duree * c.spb + 3);
     return t;
   }
@@ -406,7 +418,7 @@ export class Lecteur {
     const t = this.prochain('fort');
     const sym = this.accordA(t - 0.01) ?? 'Fmaj7';
     const mel = new Melangeur(this.ctx, p.gain, this.banque, { salle: c.v.salle, gain: c.v.gain, mix: c.v.mix });
-    for (const e of ponctuation('fin', sym).ev) mel.note(e, t + e.t * c.spb, e.d * c.spb);
+    for (const e of ponctuation('fin', sym).ev) mel.note(e, t + e.t * c.spb, e.d * c.spb, c.spb);
     mel.fermer(t + 4);
     this.sortir(p, c, t, 0.08);
     return t;
@@ -418,9 +430,25 @@ export class Lecteur {
     const t = quand ?? (this.pistes.get('fond')?.cur ? this.prochain('temps') : this.ctx.currentTime + 0.05);
     const mel = new Melangeur(this.ctx, this.bus, this.banque, { salle: j.salle, gain: j.gain, mix: j.mix });
     const spb = 60 / j.tempo;
-    for (const e of j.ev()) mel.note(e, t + e.t * spb, e.d * spb);
+    for (const e of j.ev()) mel.note(e, t + e.t * spb, e.d * spb, spb);
     mel.fermer(t + j.duree * spb + 3);
     return j.duree * spb;
+  }
+
+  /**
+   * Des événements bruts (laboratoire, mesures d'un instrument) : liés en phrases, joués à `tempo` dans une salle, à
+   * partir de `quand` ; renvoie la durée en secondes.
+   */
+  brut(ev: readonly Evenement[], o: { tempo?: number; salle?: SalleId; quand?: number; mix?: DefVersion['mix']; mono?: ReadonlySet<InstrId> } = {}): number {
+    const spb = 60 / (o.tempo ?? 60);
+    const t = o.quand ?? this.ctx.currentTime + 0.05;
+    const mel = new Melangeur(this.ctx, this.bus, this.banque, { salle: o.salle ?? 'studio', gain: 1, mix: o.mix ?? {} });
+    const tri = [...ev].sort((a, b) => a.t - b.t);
+    const lies = lier(tri, o.mono ?? MONOPHONIQUES_);
+    let fin = 0;
+    for (const e of lies) { mel.note(e, t + e.t * spb, e.d * spb, spb); fin = Math.max(fin, e.t + e.d); }
+    mel.fermer(t + fin * spb + 3);
+    return fin * spb;
   }
 
   /** Efface la musique d'une piste (fondu). */

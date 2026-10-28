@@ -258,12 +258,14 @@ describe('M13 — catalogue', () => {
 });
 
 describe('M13 — instruments calculés', () => {
-  it('justes : la fondamentale mesurée à moins de 6 cents de la note (piano, Rhodes, vibraphone, contrebasse)', () => {
+  it('justes : la fondamentale mesurée à moins de 6 cents de la note (piano, Rhodes, vibraphone, contrebasse, guitares)', () => {
     for (const [nom, synth, notes] of [
       ['piano', I.piano, [48, 60, 72]],
       ['rhodes', I.rhodes, [52, 64, 76]],
       ['vibra', I.vibra, [60, 72, 84]],
       ['basse', I.basse, [33, 40, 48]],
+      ['guitare', I.guitare, [43, 55, 67, 79]],
+      ['nylon', I.nylon, [45, 57, 69, 81]],
     ] as const) {
       for (const m of notes) {
         const x = synth(SR, m, 0.6);
@@ -274,7 +276,7 @@ describe('M13 — instruments calculés', () => {
   });
 
   it('niveaux : crête bornée, aucune valeur non finie, une note qui s\'éteint, une couche forte plus forte', () => {
-    for (const p of plan(['piano', 'rhodes', 'vibra', 'basse']).filter((_, i) => i % 5 === 0)) {
+    for (const p of plan(['piano', 'rhodes', 'vibra', 'basse', 'guitare', 'nylon']).filter((_, i) => i % 5 === 0)) {
       const x = calculer(SR, p);
       expect(x.every(Number.isFinite)).toBe(true);
       expect(crete(x)).toBeLessThanOrEqual(0.95);
