@@ -1,14 +1,19 @@
 /**
  * M13 — lecteur (Web Audio) : joue les versions et les jingles sur l'horloge audio, en temps réel (planification en
- * avance, `avancer` appelé toutes les 25 ms) ou hors ligne (tout planifié d'un coup, `OfflineAudioContext`). Un mélangeur
- * par version qui joue (tranches par instrument, panoramique, envoi vers la salle, moteur du vibraphone, chaîne lofi),
- * fondus enchaînés calés sur la mesure, jingles sur le temps. Contrat `docs/m13/01_MUSIQUE.md`, §4.
+ * avance, `avancer` appelé toutes les 25 ms) ou hors ligne (`OfflineAudioContext`, par fenêtres). Plusieurs pistes à la
+ * fois : la musique de fond et des sources localisées dans la ville (contrat 2, §2). Par version qui joue, un mélangeur :
+ * couches (fond, mélodie, tension…) qui entrent et sortent en fondu, tranches par instrument (le piano en trois registres
+ * pour la stéréo), place de chaque musicien dans le temps, envoi vers la salle, moteur du vibraphone, chaîne lofi.
+ * Fondus enchaînés calés sur la mesure, ponctuations sur le temps dans l'accord qui sonne, fin de duel sur le temps fort,
+ * jingles. Contrats `docs/m13/01_MUSIQUE.md` (§4) et `02_MUSIQUE_INTERACTIVE.md`.
  */
 import type { BanqueBrute } from './banque';
 import { choisir } from './banque';
 import { JINGLES, mixDe, passage, VERSIONS, type DefJingle, type DefVersion, type JingleId, type OptVersion, type VersionId } from './catalogue';
 import { chaineLofi, tamponSalle, type SalleId } from './effets';
 import type { Evenement, InstrId } from './generateurs';
+import type { AccordP } from './partitions';
+import { ponctuation, type PonctuationId } from './ponctuations';
 import { freq } from './theorie';
 
 export interface ZoneAudio { racine: number; couche: number; buffer: AudioBuffer }
@@ -28,18 +33,37 @@ export function versAudio(ctx: BaseAudioContext, b: BanqueBrute): BanqueAudio {
 }
 
 /** Constante de temps de l'extinction d'une note relâchée (étouffoir, pédale). */
-const RELACHE: Partial<Record<InstrId, number>> = { piano: 0.08, rhodes: 0.12, vibra: 0.25, basse: 0.05 };
+const RELACHE: Partial<Record<InstrId, number>> = { piano: 0.08, rhodes: 0.12, vibra: 0.25, basse: 0.05, guitare: 0.08, nylon: 0.1 };
 const FRAPPES = new Set<InstrId>(['ride', 'cloche', 'crash', 'charley', 'charley-ferme', 'gc', 'cc', 'cc-balai', 'balai', 'rim']);
+
+/**
+ * Jeu ensemble (contrat 2, §2) : la place de chaque musicien dans le temps, en secondes. Jazz : la ride légèrement
+ * devant, la basse sur le temps, le piano et la mélodie un peu derrière ; lofi : la caisse claire posée en arrière.
+ */
+const DECALAGES: Record<'jazz' | 'lofi' | 'droit', Partial<Record<InstrId, number>>> = {
+  jazz: { ride: -0.007, cloche: -0.007, charley: -0.004, basse: -0.002, piano: 0.006, rhodes: 0.008, vibra: 0.01, guitare: 0.004, nylon: 0.004 },
+  lofi: { 'cc-balai': 0.014, rim: 0.012, 'charley-ferme': -0.003, piano: 0.01, rhodes: 0.012 },
+  droit: {},
+};
+
+/** Panoramique par registre (le piano s'étale de gauche à droite, comme vu du clavier). */
+const registre = (instr: InstrId, m: number): { cle: string; pan: number } => {
+  if (instr !== 'piano' && instr !== 'rhodes') return { cle: '', pan: 0 };
+  return m < 55 ? { cle: 'g', pan: -0.22 } : m < 72 ? { cle: 'm', pan: 0 } : { cle: 'a', pan: 0.18 };
+};
+
+interface CfgMelangeur { salle: SalleId; lofi?: boolean; pedale?: boolean; gain: number; mix: DefVersion['mix']; jeu?: 'jazz' | 'lofi' | 'droit'; couches?: Record<string, number> }
 
 class Melangeur {
   readonly maitre: GainNode;
-  private canaux = new Map<InstrId, GainNode>();
+  private canaux = new Map<string, GainNode>();
+  private couches = new Map<string, GainNode>();
   private salle: ConvolverNode;
   private lofi: { arreter: () => void } | null = null;
   private arrets: Array<() => void> = [];
   private k = 0;
 
-  constructor(private ctx: BaseAudioContext, sortie: AudioNode, private banque: BanqueAudio, private cfg: { salle: SalleId; lofi?: boolean; pedale?: boolean; gain: number; mix: DefVersion['mix'] }) {
+  constructor(private ctx: BaseAudioContext, sortie: AudioNode, private banque: BanqueAudio, private cfg: CfgMelangeur) {
     this.maitre = ctx.createGain();
     this.maitre.gain.value = cfg.gain;
     let dest: AudioNode = sortie;
@@ -52,19 +76,30 @@ class Melangeur {
     this.maitre.connect(dest);
     this.salle = ctx.createConvolver();
     this.salle.buffer = tamponSalle(ctx, cfg.salle);
-    const retour = ctx.createGain();
-    retour.gain.value = 1;
-    this.salle.connect(retour).connect(this.maitre);
+    this.salle.connect(this.maitre);
   }
 
-  private canal(instr: InstrId): GainNode {
-    let c = this.canaux.get(instr);
+  /** Gain d'une couche (créée à sa première note, au niveau initial de la version). */
+  couche(nom: string): GainNode {
+    let g = this.couches.get(nom);
+    if (g) return g;
+    g = this.ctx.createGain();
+    g.gain.value = this.cfg.couches?.[nom] ?? 1;
+    g.connect(this.maitre);
+    this.couches.set(nom, g);
+    return g;
+  }
+
+  private canal(instr: InstrId, couche: string, m: number): GainNode {
+    const reg = registre(instr, m);
+    const cle = `${couche}|${instr}|${reg.cle}`;
+    let c = this.canaux.get(cle);
     if (c) return c;
-    const m = mixDe(instr, this.cfg.mix);
+    const mx = mixDe(instr, this.cfg.mix);
     c = this.ctx.createGain();
-    c.gain.value = m.g;
+    c.gain.value = mx.g;
     const pan = this.ctx.createStereoPanner();
-    pan.pan.value = m.pan;
+    pan.pan.value = Math.max(-1, Math.min(1, mx.pan + reg.pan));
     let tete: AudioNode = c;
     if (instr === 'nappe') {
       // la nappe : un seul couple de filtres pour toutes ses voix (adoucie, sans grave)
@@ -89,18 +124,20 @@ class Melangeur {
       c.connect(trem);
       tete = trem;
     }
-    tete.connect(pan).connect(this.maitre);
+    tete.connect(pan).connect(this.couche(couche));
     const envoi = this.ctx.createGain();
-    envoi.gain.value = m.rev;
+    envoi.gain.value = mx.rev;
     tete.connect(envoi).connect(this.salle);
-    this.canaux.set(instr, c);
+    this.canaux.set(cle, c);
     return c;
   }
 
   /** Une note (secondes absolues sur l'horloge du contexte). */
-  note(e: Evenement, t: number, d: number): void {
+  note(e: Evenement, t0: number, d: number): void {
     const ctx = this.ctx;
-    if (e.instr === 'nappe') return this.nappe(e, t, d);
+    const t = Math.max(0, t0 + (DECALAGES[this.cfg.jeu ?? 'jazz'][e.instr] ?? 0));
+    const couche = e.couche ?? 'fond';
+    if (e.instr === 'nappe') return this.nappe(e, t, d, couche);
     const zones = this.banque[e.instr];
     if (!zones?.length) return;
     this.k = (this.k + 1) % 9973;
@@ -112,11 +149,13 @@ class Melangeur {
     src.playbackRate.value = ch.vitesse;
     const g = ctx.createGain();
     g.gain.value = ch.gain;
-    src.connect(g).connect(this.canal(e.instr));
-    src.start(Math.max(t, 0));
+    src.connect(g).connect(this.canal(e.instr, couche, e.m));
+    src.start(t);
     const longueur = z.buffer.duration / ch.vitesse;
     if (FRAPPES.has(e.instr)) {
-      src.stop(t + longueur);
+      // une cymbale étouffée (fin de duel) s'arrête net
+      if (e.etouffe) { g.gain.setValueAtTime(ch.gain, t + d); g.gain.setTargetAtTime(0, t + d, 0.05); src.stop(t + d + 0.4); }
+      else src.stop(t + longueur);
       return;
     }
     const tau = (RELACHE[e.instr] ?? 0.1) * (this.cfg.pedale ? 2 : 1);
@@ -127,7 +166,7 @@ class Melangeur {
   }
 
   /** La nappe : deux dents de scie désaccordées, attaque et extinction lentes (temps réel ; filtres partagés du canal). */
-  private nappe(e: Evenement, t: number, d: number): void {
+  private nappe(e: Evenement, t: number, d: number, couche: string): void {
     const ctx = this.ctx;
     const f = freq(e.m);
     const g = ctx.createGain();
@@ -136,7 +175,7 @@ class Melangeur {
     g.gain.linearRampToValueAtTime(a, t + Math.min(0.8, d * 0.4));
     g.gain.setValueAtTime(a, t + d);
     g.gain.setTargetAtTime(0.0001, t + d, 0.35);
-    g.connect(this.canal('nappe'));
+    g.connect(this.canal('nappe', couche, e.m));
     for (const det of [-6, 6]) {
       const o = ctx.createOscillator();
       o.type = 'sawtooth';
@@ -149,13 +188,21 @@ class Melangeur {
   }
 
   fondu(t: number, vers: number, duree: number): void {
+    this.maitre.gain.cancelScheduledValues(t);
     this.maitre.gain.setValueAtTime(this.maitre.gain.value, t);
-    this.maitre.gain.linearRampToValueAtTime(vers, t + duree);
+    this.maitre.gain.linearRampToValueAtTime(Math.max(0.0001, vers), t + duree);
+  }
+
+  /** Une couche vers un niveau, en fondu, à l'instant `t`. */
+  regler(nom: string, niveau: number, t: number, duree: number): void {
+    const g = this.couche(nom);
+    g.gain.cancelScheduledValues(t);
+    g.gain.setValueAtTime(g.gain.value, t);
+    g.gain.linearRampToValueAtTime(niveau, t + duree);
   }
 
   fermer(t: number): void {
-    const ctx = this.ctx;
-    const ms = Math.max(0, (t - ctx.currentTime) * 1000) + 4000;
+    const ms = Math.max(0, (t - this.ctx.currentTime) * 1000) + 4000;
     setTimeout(() => {
       this.arrets.forEach((f) => f());
       this.lofi?.arreter();
@@ -171,6 +218,7 @@ interface Instance {
   p: number;
   spb: number;
   ev: Evenement[];
+  acc: readonly AccordP[];
   i: number;
   fin: number;
   graine: number;
@@ -178,91 +226,196 @@ interface Instance {
   arret: number | null;
 }
 
+interface Piste {
+  cur: Instance | null;
+  sortantes: Instance[];
+  /** Gain de la piste (effacement du fond près d'une source ; proximité d'une source). */
+  gain: GainNode;
+  /** Source localisée : passe-bas selon la distance. */
+  filtre: BiquadFilterNode | null;
+}
+
+export interface OptJouer {
+  piste?: string;
+  quand?: number;
+  fondu?: number;
+  options?: OptVersion;
+  intro?: boolean;
+}
+
 export class Lecteur {
-  private cur: Instance | null = null;
-  private sortantes: Instance[] = [];
+  private pistes = new Map<string, Piste>();
   private bus: GainNode;
+  private filtreBus: BiquadFilterNode;
+  private proximites = new Map<string, number>();
+  private etatFocus = false;
+  private etatSourd = false;
   /** Mesures (outil de rendu) : seuls ces instruments jouent. */
   solo: ReadonlySet<InstrId> | null = null;
 
   constructor(private ctx: BaseAudioContext, sortie: AudioNode, private banque: BanqueAudio, private graine = 1) {
     this.bus = ctx.createGain();
+    this.filtreBus = ctx.createBiquadFilter();
+    this.filtreBus.type = 'lowpass';
+    this.filtreBus.frequency.value = 20000;
+    this.filtreBus.Q.value = 0.5;
     const comp = ctx.createDynamicsCompressor();
     comp.threshold.value = -16; comp.knee.value = 8; comp.ratio.value = 2.2; comp.attack.value = 0.02; comp.release.value = 0.3;
-    this.bus.connect(comp).connect(sortie);
+    this.bus.connect(this.filtreBus).connect(comp).connect(sortie);
   }
 
-  enCours(): VersionId | null { return this.cur?.v.id ?? null; }
+  private piste(nom: string): Piste {
+    let p = this.pistes.get(nom);
+    if (p) return p;
+    const gain = this.ctx.createGain();
+    let filtre: BiquadFilterNode | null = null;
+    if (nom !== 'fond') {
+      filtre = this.ctx.createBiquadFilter();
+      filtre.type = 'lowpass'; filtre.frequency.value = 600; filtre.Q.value = 0.6;
+      gain.gain.value = 0;
+      gain.connect(filtre).connect(this.bus);
+    } else gain.connect(this.bus);
+    p = { cur: null, sortantes: [], gain, filtre };
+    this.pistes.set(nom, p);
+    return p;
+  }
 
-  /** Le début de la prochaine mesure de la version en cours (ou maintenant). */
-  prochaineMesure(apres = this.ctx.currentTime + 0.05): number {
-    const c = this.cur;
+  enCours(piste = 'fond'): VersionId | null { return this.pistes.get(piste)?.cur?.v.id ?? null; }
+
+  /**
+   * Le début du prochain temps, temps fort (le 1 et le 3 d'une mesure à quatre temps, le 1 d'une valse), mesure ou phrase
+   * de quatre mesures de la version en cours.
+   */
+  prochain(unite: 'temps' | 'fort' | 'mesure' | 'phrase' = 'mesure', piste = 'fond', apres = this.ctx.currentTime + 0.05): number {
+    const c = this.pistes.get(piste)?.cur;
     if (!c) return apres;
-    const mes = c.v.mesure * c.spb;
-    return c.t0 + Math.ceil((apres - c.t0) / mes - 1e-6) * mes;
+    const m = c.v.mesure;
+    const pas = (unite === 'temps' ? 1 : unite === 'fort' ? (m === 4 ? 2 : m) : unite === 'mesure' ? m : m * 4) * c.spb;
+    return c.t0 + Math.ceil((apres - c.t0) / pas - 1e-6) * pas;
   }
+  prochaineMesure(apres?: number): number { return this.prochain('mesure', 'fond', apres); }
 
-  /** Joue une version : la précédente s'efface sur la mesure ; levée si la version commence seule. */
-  jouer(id: VersionId, o: { quand?: number; fondu?: number; options?: OptVersion; intro?: boolean } = {}): void {
+  /** Joue une version : la précédente de la piste s'efface sur la mesure ; levée si la version commence seule. */
+  jouer(id: VersionId, o: OptJouer = {}): void {
+    const nom = o.piste ?? 'fond';
+    const p = this.piste(nom);
     const v = VERSIONS[id];
-    const quand = o.quand ?? (this.cur ? this.prochaineMesure() : this.ctx.currentTime + 0.1);
+    if (p.cur?.v.id === id && !o.options) return;
+    const quand = o.quand ?? (p.cur ? this.prochain('mesure', nom) : this.ctx.currentTime + 0.1);
     const fondu = o.fondu ?? 1.2;
-    if (this.cur) {
-      this.cur.mel.fondu(quand, 0.0001, fondu);
-      this.cur.arret = quand + fondu;
-      this.cur.mel.fermer(quand + fondu);
-      this.sortantes.push(this.cur);
-    }
-    const mel = new Melangeur(this.ctx, this.bus, this.banque, { salle: v.salle, lofi: v.lofi ?? false, pedale: v.pedale ?? false, gain: v.gain, mix: v.mix });
-    if (this.cur) { mel.maitre.gain.value = 0.0001; mel.fondu(quand, v.gain, fondu * 0.6); }
-    const intro = (o.intro ?? !this.cur) && !!v.intro;
-    const inst: Instance = { v, mel, t0: quand, p: intro ? -1 : 0, spb: 60 / v.tempo, ev: [], i: 0, fin: quand, graine: this.graine, o: o.options ?? {}, arret: null };
+    const avant = p.cur;
+    if (avant) this.sortir(p, avant, quand, fondu);
+    const mel = new Melangeur(this.ctx, p.gain, this.banque, { salle: v.salle, lofi: v.lofi ?? false, pedale: v.pedale ?? false, gain: v.gain, mix: v.mix, jeu: v.jeu ?? (v.lofi ? 'lofi' : 'jazz'), couches: v.couches ?? {} });
+    if (avant) { mel.maitre.gain.value = 0.0001; mel.fondu(quand, v.gain, fondu * 0.6); }
+    const intro = (o.intro ?? !avant) && !!v.intro;
+    const inst: Instance = { v, mel, t0: quand, p: intro ? -1 : 0, spb: 60 / v.tempo, ev: [], acc: [], i: 0, fin: quand, graine: this.graine, o: { ...(avant?.v.id === id ? avant.o : {}), ...(o.options ?? {}) }, arret: null };
     this.preparer(inst, quand);
-    this.cur = inst;
+    p.cur = inst;
   }
 
-  /** Change la variation de la mélodie à partir du prochain passage. */
-  varier(o: OptVersion): void { if (this.cur) this.cur.o = o; }
+  private sortir(p: Piste, inst: Instance, quand: number, fondu: number): void {
+    inst.mel.fondu(quand, 0.0001, fondu);
+    inst.arret = quand + fondu;
+    inst.mel.fermer(quand + fondu);
+    p.sortantes.push(inst);
+    if (p.cur === inst) p.cur = null;
+  }
+
+  /** Change le contexte (variation de la mélodie, intensité, chapitre…) à partir du prochain passage. */
+  contexte(o: OptVersion, piste = 'fond'): void { const c = this.pistes.get(piste)?.cur; if (c) c.o = { ...c.o, ...o }; }
+  /** Compatibilité : variation de la mélodie. */
+  varier(o: OptVersion): void { this.contexte(o); }
+
+  /** Couches de la version en cours vers des niveaux (0 à 1), en fondu, sur la mesure (ou la phrase, ou le temps). */
+  couches(niveaux: Record<string, number>, o: { piste?: string; sur?: 'temps' | 'fort' | 'mesure' | 'phrase'; duree?: number } = {}): void {
+    const nom = o.piste ?? 'fond';
+    const c = this.pistes.get(nom)?.cur;
+    if (!c) return;
+    const t = this.prochain(o.sur ?? 'mesure', nom);
+    for (const [k, v] of Object.entries(niveaux)) c.mel.regler(k, v, t, o.duree ?? 1.5);
+  }
 
   private preparer(inst: Instance, t0: number): void {
-    const { ev, duree } = passage(inst.v, inst.p, inst.graine, inst.o);
+    const { ev, duree, acc } = passage(inst.v, inst.p, inst.graine, inst.o);
     inst.t0 = t0;
     inst.ev = ev;
+    inst.acc = acc;
     inst.i = 0;
     inst.fin = t0 + duree * inst.spb;
   }
 
   /** Planifie tout ce qui commence avant `jusqua` (secondes, horloge du contexte). */
   avancer(jusqua: number): void {
-    for (const inst of [this.cur, ...this.sortantes]) {
-      if (!inst) continue;
-      for (;;) {
-        while (inst.i < inst.ev.length) {
-          const e = inst.ev[inst.i]!;
-          const t = inst.t0 + e.t * inst.spb;
-          if (t >= jusqua) break;
-          inst.i++;
-          if (inst.arret !== null && t > inst.arret) continue;
-          if (t < this.ctx.currentTime - 0.05) continue;
-          if (this.solo && !this.solo.has(e.instr)) continue;
-          inst.mel.note(e, t, e.d * inst.spb);
+    for (const p of this.pistes.values()) {
+      for (const inst of [p.cur, ...p.sortantes]) {
+        if (!inst) continue;
+        for (;;) {
+          while (inst.i < inst.ev.length) {
+            const e = inst.ev[inst.i]!;
+            const t = inst.t0 + e.t * inst.spb;
+            if (t >= jusqua) break;
+            inst.i++;
+            if (inst.arret !== null && t > inst.arret) continue;
+            if (t < this.ctx.currentTime - 0.05) continue;
+            if (this.solo && !this.solo.has(e.instr)) continue;
+            inst.mel.note(e, t, e.d * inst.spb);
+          }
+          if (inst.i < inst.ev.length || inst.fin >= jusqua || (inst.arret !== null && inst.fin > inst.arret)) break;
+          inst.p++;
+          this.preparer(inst, inst.fin);
         }
-        if (inst.i < inst.ev.length || inst.fin >= jusqua || (inst.arret !== null && inst.fin > inst.arret)) break;
-        inst.p++;
-        this.preparer(inst, inst.fin);
       }
+      p.sortantes = p.sortantes.filter((s) => s.arret === null || s.arret > this.ctx.currentTime - 1);
     }
-    this.sortantes = this.sortantes.filter((s) => s.arret === null || s.arret > this.ctx.currentTime - 1);
   }
 
-  /** Joue un jingle (sur le prochain temps de la version en cours, sinon tout de suite) ; renvoie sa durée en secondes. */
+  /** L'accord qui sonne à l'instant `t` dans la version de fond (null hors musique). */
+  accordA(t: number, piste = 'fond'): string | null {
+    const c = this.pistes.get(piste)?.cur;
+    if (!c || !c.acc.length) return null;
+    let beat = (t - c.t0) / c.spb;
+    if (beat < 0) return c.acc[0]!.sym;
+    const total = c.acc[c.acc.length - 1]!.t + c.acc[c.acc.length - 1]!.d;
+    beat %= total;
+    let s = c.acc[0]!.sym;
+    for (const a of c.acc) if (a.t <= beat + 1e-6) s = a.sym;
+    return s;
+  }
+
+  /** Une ponctuation sur le temps suivant, dans l'accord qui sonne (contrat 2, §2) ; renvoie son instant. */
+  ponctuer(id: PonctuationId): number | null {
+    const c = this.pistes.get('fond')?.cur;
+    if (!c) return null;
+    const t = this.prochain('temps');
+    const sym = this.accordA(t) ?? 'Fmaj7';
+    const mel = new Melangeur(this.ctx, this.piste('fond').gain, this.banque, { salle: c.v.salle, gain: c.v.gain, mix: c.v.mix });
+    const p = ponctuation(id, sym);
+    for (const e of p.ev) mel.note(e, t + e.t * c.spb, e.d * c.spb);
+    mel.fermer(t + p.duree * c.spb + 3);
+    return t;
+  }
+
+  /**
+   * Fin de duel (contrat 2, §2) : la musique de fond s'arrête sur le temps fort suivant, sur une cymbale étouffée et la
+   * fondamentale ; renvoie l'instant de l'arrêt (le jingle peut s'y caler).
+   */
+  terminer(): number {
+    const p = this.pistes.get('fond');
+    const c = p?.cur;
+    if (!p || !c) return this.ctx.currentTime;
+    const t = this.prochain('fort');
+    const sym = this.accordA(t - 0.01) ?? 'Fmaj7';
+    const mel = new Melangeur(this.ctx, p.gain, this.banque, { salle: c.v.salle, gain: c.v.gain, mix: c.v.mix });
+    for (const e of ponctuation('fin', sym).ev) mel.note(e, t + e.t * c.spb, e.d * c.spb);
+    mel.fermer(t + 4);
+    this.sortir(p, c, t, 0.08);
+    return t;
+  }
+
+  /** Joue un jingle (sur le prochain temps de la musique de fond, sinon tout de suite) ; renvoie sa durée en secondes. */
   jingle(id: JingleId, quand?: number): number {
     const j: DefJingle = JINGLES[id];
-    let t = quand ?? this.ctx.currentTime + 0.05;
-    if (quand === undefined && this.cur) {
-      const b = this.cur.spb;
-      t = this.cur.t0 + Math.ceil((t - this.cur.t0) / b) * b;
-    }
+    const t = quand ?? (this.pistes.get('fond')?.cur ? this.prochain('temps') : this.ctx.currentTime + 0.05);
     const mel = new Melangeur(this.ctx, this.bus, this.banque, { salle: j.salle, gain: j.gain, mix: j.mix });
     const spb = 60 / j.tempo;
     for (const e of j.ev()) mel.note(e, t + e.t * spb, e.d * spb);
@@ -270,23 +423,54 @@ export class Lecteur {
     return j.duree * spb;
   }
 
-  /** Efface la musique (fondu). */
-  arreter(fondu = 1.2): void {
-    const t = this.ctx.currentTime + 0.02;
-    if (this.cur) {
-      this.cur.mel.fondu(t, 0.0001, fondu);
-      this.cur.arret = t + fondu;
-      this.cur.mel.fermer(t + fondu);
-      this.sortantes.push(this.cur);
-      this.cur = null;
-    }
+  /** Efface la musique d'une piste (fondu). */
+  arreter(fondu = 1.2, piste = 'fond'): void {
+    const p = this.pistes.get(piste);
+    if (p?.cur) this.sortir(p, p.cur, this.ctx.currentTime + 0.02, fondu);
   }
 
-  /** Effacement léger (dialogues) : `db` négatif, rendu à 0 pour revenir. */
+  /** Effacement (dialogues) : `db` négatif ; 0 pour revenir. */
   effacer(db: number, duree = 0.4): void {
-    const g = 10 ** (db / 20);
-    const t = this.ctx.currentTime;
-    this.bus.gain.setTargetAtTime(g, t, duree / 3);
+    this.bus.gain.setTargetAtTime(10 ** (db / 20), this.ctx.currentTime, duree / 3);
+  }
+
+  private filtrer(): void {
+    const f = this.etatSourd ? 700 : this.etatFocus ? 3500 : 20000;
+    this.filtreBus.frequency.setTargetAtTime(f, this.ctx.currentTime, 0.25);
+  }
+
+  /** Focus (contrat 2) : sous un dialogue, la musique baisse de 5 dB et s'adoucit. */
+  focus(on: boolean): void { this.etatFocus = on; this.effacer(on ? -5 : 0); this.filtrer(); }
+
+  /** Assourdie (la ville quand un duel commence) : passe-bas profond, ou retour. */
+  assourdir(on: boolean): void { this.etatSourd = on; this.filtrer(); }
+
+  /**
+   * Source localisée (contrat 2, §2) : une version jouée par un lieu de la ville, sur sa propre piste ; sa proximité
+   * (0 loin, 1 tout près) règle son niveau et sa clarté, et efface d'autant la musique de fond.
+   */
+  source(nom: string, id: VersionId | null): void {
+    if (!id) { this.arreter(2, nom); this.proximites.delete(nom); this.appliquerProximites(); return; }
+    this.jouer(id, { piste: nom, intro: false, quand: this.ctx.currentTime + 0.1, fondu: 0.5 });
+    if (!this.proximites.has(nom)) this.proximites.set(nom, 0);
+  }
+
+  proximite(nom: string, x: number): void {
+    const v = Math.max(0, Math.min(1, x));
+    this.proximites.set(nom, v);
+    const p = this.pistes.get(nom);
+    if (p?.filtre) {
+      const t = this.ctx.currentTime;
+      p.gain.gain.setTargetAtTime(v ** 1.6, t, 0.2);
+      p.filtre.frequency.setTargetAtTime(500 + 11000 * v * v, t, 0.2);
+    }
+    this.appliquerProximites();
+  }
+
+  private appliquerProximites(): void {
+    const max = Math.max(0, ...this.proximites.values());
+    const fond = this.pistes.get('fond');
+    if (fond) fond.gain.gain.setTargetAtTime(1 - 0.7 * max, this.ctx.currentTime, 0.25);
   }
 }
 

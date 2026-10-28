@@ -8,7 +8,9 @@ import type { AccordP, NoteP } from './partitions';
 import { accord, dansAccord, hauteursAccord, hauteursGamme, pc, voicer, type Accord, type Tessiture } from './theorie';
 
 export type InstrId =
-  | 'piano' | 'rhodes' | 'vibra' | 'basse' | 'nappe'
+  | 'piano' | 'rhodes' | 'vibra' | 'basse' | 'guitare' | 'nylon' | 'nappe'
+  // vents et cordes, synthétisés en temps réel (expressifs : attaque, vibrato, souffle) : `vents.ts`
+  | 'trompette' | 'sax' | 'flute' | 'cuivres' | 'cordes'
   | 'ride' | 'cloche' | 'crash' | 'charley' | 'charley-ferme' | 'gc' | 'cc' | 'cc-balai' | 'balai' | 'rim';
 
 export interface Evenement {
@@ -20,6 +22,10 @@ export interface Evenement {
   v: number;
   /** Pas de swing (déjà placé). */
   droit?: boolean;
+  /** Couche du mélange (fond par défaut) : elle entre et sort en fondu sans recommencer le morceau (contrat 2, §2). */
+  couche?: string;
+  /** Cymbale étouffée à la main au bout de `d` (fin de duel). */
+  etouffe?: boolean;
 }
 
 export type Rng = () => number;

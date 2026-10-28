@@ -17,6 +17,35 @@ const OUT = 'artifacts/qa/m13';
 for (const d of [WAV, OGG, IMG, OUT]) mkdirSync(d, { recursive: true });
 const commit = execFileSync('git', ['rev-parse', '--short', 'HEAD']).toString().trim();
 
+// Scénarios de la musique interactive (contrat 2) : actions aux instants dits, rendues comme un morceau.
+const SCENARIOS = [
+  {
+    nom: 'S-ponctuations', requiert: 'I-1',
+    scenario: {
+      duree: 44,
+      actions: [
+        { t: 0, faire: 'jouer', version: 'I-1', intro: false },
+        { t: 8, faire: 'ponctuer', id: 'gagne' }, { t: 14, faire: 'ponctuer', id: 'perdu' }, { t: 20, faire: 'ponctuer', id: 'gagne' },
+        { t: 26, faire: 'ponctuer', id: 'signature' }, { t: 32, faire: 'ponctuer', id: 'prolongation' },
+        { t: 38, faire: 'terminer', jingle: 'victoire' },
+      ],
+    },
+  },
+  {
+    nom: 'S-transitions', requiert: 'I-1',
+    scenario: {
+      duree: 52,
+      actions: [
+        { t: 0, faire: 'jouer', version: 'I-2' },
+        { t: 9, faire: 'focus', on: true }, { t: 15, faire: 'focus', on: false },
+        { t: 18, faire: 'jouer', version: 'I-1' },
+        { t: 30, faire: 'assourdir', on: true }, { t: 34, faire: 'assourdir', on: false },
+        { t: 40, faire: 'jouer', version: 'I-3', fondu: 2.5 },
+      ],
+    },
+  },
+];
+
 const server = await startPreview(Number(process.env.LQV_PREVIEW_PORT) || 4499, process.env.LQV_DIST || 'dist');
 const browser = await launch();
 const erreurs = [];
@@ -31,13 +60,14 @@ try {
   const { versions, jingles } = await p.evaluate(() => ({ versions: window.__musique.versions, jingles: window.__musique.jingles }));
   // les versions, les jingles, et les variations à la volée du titre (un passage de tête chacune, sans levée)
   const variations = ['envers', 'renversee', 'mineur', 'lente'].map((m) => ({ version: 'I-1', nom: `I-1-${m}`, options: { melodie: m }, passes: 1, intro: false }));
-  const cibles = [...versions.map((v) => ({ version: v })), ...jingles.map((j) => ({ jingle: j })), ...variations].filter((c) => !FILTRE || (c.nom ?? c.version ?? c.jingle) === FILTRE);
+  const cibles = [...versions.map((v) => ({ version: v })), ...jingles.map((j) => ({ jingle: j })), ...variations, ...SCENARIOS.filter((c) => versions.includes(c.requiert))]
+    .filter((c) => !FILTRE || (c.nom ?? c.version ?? c.jingle) === FILTRE || (FILTRE === 'scenarios' && c.scenario));
   for (const c of cibles) {
     const nom = c.nom ?? c.version ?? c.jingle;
     const wav = `${WAV}/${nom}.wav`;
     rmSync(wav, { force: true });
     const meta = await p.evaluate(async ({ c, passes, graine, wav }) => {
-      const r = await window.__musique.rendre({ version: c.version, jingle: c.jingle }, { passes, graine, ...(c.options ? { options: c.options } : {}), ...(c.intro === false ? { intro: false } : {}) });
+      const r = await window.__musique.rendre({ version: c.version, jingle: c.jingle, scenario: c.scenario }, { passes, graine, ...(c.options ? { options: c.options } : {}), ...(c.intro === false ? { intro: false } : {}) });
       const b = r.wav;
       const pas = 3 * 1024 * 1024;
       for (let i = 0; i < b.length; i += pas) {

@@ -39,11 +39,21 @@ export interface DefVersion {
   /** Durée d'un passage, en temps. */
   duree: number;
   passe: (p: number, rng: Rng, o: OptVersion) => Evenement[];
+  /** La grille du passage, en temps droits (ponctuations dans l'accord qui sonne, fin de duel sur la fondamentale). */
+  grille: (p: number, o: OptVersion) => readonly AccordP[];
   /** Levée jouée avant le premier passage quand la version commence seule. */
-  intro?: { duree: number; ev: (rng: Rng) => Evenement[] };
+  intro?: { duree: number; ev: (rng: Rng) => Evenement[]; acc?: readonly AccordP[] };
+  /** Place des musiciens dans le temps (lecteur) : jazz par défaut, lofi pour les versions lofi. */
+  jeu?: 'jazz' | 'lofi' | 'droit';
+  /** Niveau de départ des couches (0 à 1) ; une couche absente part à 1 (contrat 2, §2). */
+  couches?: Record<string, number>;
 }
 
-export interface OptVersion { melodie?: VariationMelodie }
+/**
+ * Contexte d'une version (faits publics seulement, contrat 2, §1) : variation de la mélodie, intensité (0 à 1 : le duel
+ * qui se tend), chapitre de l'aventure (0 prologue à 5 ; 6 : champion), lu au début de chaque passage.
+ */
+export interface OptVersion { melodie?: VariationMelodie; intensite?: number; chapitre?: number }
 
 export interface DefJingle {
   id: JingleId;
@@ -81,6 +91,17 @@ export function derouler(th: Theme, o: { transposer?: number; enrichir?: boolean
   return { mel, acc, total: t0, debuts, cles };
 }
 const deplacerAccords = (as: readonly AccordP[], dt: number): AccordP[] => as.map((a) => ({ ...a, t: a.t + dt }));
+/**
+ * Dynamique par section (contrat 2, §2, « jeu ensemble ») : la vélocité de chaque note multipliée selon la section où
+ * elle tombe (`debuts` : début de chaque section, en temps).
+ */
+export function dynamiques(ev: readonly Evenement[], debuts: readonly number[], f: readonly number[]): Evenement[] {
+  return ev.map((e) => {
+    let i = 0;
+    for (let k = 0; k < debuts.length; k++) if (e.t >= debuts[k]! - 1e-6) i = k;
+    return { ...e, v: Math.min(1, e.v * (f[i] ?? 1)) };
+  });
+}
 const fenetre = <T extends { t: number }>(xs: readonly T[], a: number, b: number): T[] => xs.filter((x) => x.t >= a && x.t < b).map((x) => ({ ...x, t: x.t - a }));
 
 /** La mélodie d'une section transformée par une variation « à la Zelda » (dans le ton de la section). */
@@ -129,14 +150,16 @@ const TRIO: InstrId[] = ['piano', 'vibra', 'basse', 'ride', 'crash', 'charley', 
 // ------------------------------------------------------------------ I-1 Titre
 
 const TETE = derouler(QUATRE_VOIES);
+const LEVEE_I1: AccordP[] = [{ t: 0, d: 2, sym: 'Gm7' }, { t: 2, d: 2, sym: 'C7' }, { t: 4, d: 2, sym: 'Gm7' }, { t: 6, d: 2, sym: 'C7' }];
 
 const titre: DefVersion = {
   id: 'I-1', titre: 'Les Quatre Voies — Titre', tempo: 126, mesure: 4, swing: 0.64, sub: 1, salle: 'club', gain: 1,
-  mix: {}, instruments: TRIO, duree: TETE.total,
+  mix: {}, instruments: TRIO, duree: TETE.total, grille: () => TETE.acc,
   intro: {
     duree: 8,
+    acc: LEVEE_I1,
     ev: (rng) => {
-      const acc: AccordP[] = [{ t: 0, d: 2, sym: 'Gm7' }, { t: 2, d: 2, sym: 'C7' }, { t: 4, d: 2, sym: 'Gm7' }, { t: 6, d: 2, sym: 'C7' }];
+      const acc = LEVEE_I1;
       return [
         ...comping(acc, 8, rng, { instr: 'piano', densite: 0.5, vel: 0.5 }),
         ...basseDeux(acc, 8, rng, 4, { fantomes: 0 }),
@@ -180,7 +203,8 @@ const titre: DefVersion = {
     } else ev.push(...batterieRide(total, rng, { intensite: 0.7, relance: 8 }));
     // accompagnement du piano, sous la mélodie (tête) ou sous son propre chorus (plus bas)
     ev.push(...comping(acc, total, rng, tete ? { instr: 'piano', densite: 0.5, vel: 0.48, melodie: mel } : { instr: 'piano', densite: 0.45, vel: 0.44, tessiture: { lo: 48, hi: 66 } }));
-    return ev;
+    // la tête respire (premier A retenu, le pont qui s'ouvre) ; le chorus monte jusqu'au dernier A
+    return dynamiques(ev, debuts, tete ? [0.88, 0.95, 1.06, 1] : [0.92, 1, 1.07, 1.1]);
   },
 };
 
@@ -194,7 +218,7 @@ const GRILLE_LOUNGE: AccordP[] = [
 const menus: DefVersion = {
   id: 'I-2', titre: 'Les Quatre Voies — Menus (lounge)', tempo: 80, mesure: 4, swing: 0.6, sub: 0.5, salle: 'studio', lofi: true, gain: 1,
   mix: { piano: { g: 0.6, rev: 0.25 }, rhodes: { g: 0.45, rev: 0.2 }, basse: { g: 0.5 }, gc: { g: 0.7 }, vibra: { g: 0.45 }, 'charley-ferme': { g: 0.9 } },
-  instruments: ['piano', 'rhodes', 'vibra', 'basse', 'gc', 'rim', 'cc-balai', 'charley-ferme'], duree: 32,
+  instruments: ['piano', 'rhodes', 'vibra', 'basse', 'gc', 'rim', 'cc-balai', 'charley-ferme'], duree: 32, grille: () => GRILLE_LOUNGE,
   passe: (p, rng) => {
     const ev: Evenement[] = [];
     const th = QUATRE_VOIES;
@@ -222,7 +246,7 @@ const BALLADE = derouler(QUATRE_VOIES, { transposer: -4, enrichir: true });
 const recit: DefVersion = {
   id: 'I-3', titre: 'Les Quatre Voies — Récit (ballade)', tempo: 64, mesure: 4, swing: 0.56, sub: 1, salle: 'grande', pedale: true, gain: 1,
   mix: { piano: { g: 0.62, rev: 0.32, pan: -0.05 }, basse: { g: 0.4 } },
-  instruments: ['piano', 'basse', 'cc-balai', 'balai', 'gc', 'charley'], duree: BALLADE.total,
+  instruments: ['piano', 'basse', 'cc-balai', 'balai', 'gc', 'charley'], duree: BALLADE.total, grille: () => BALLADE.acc,
   passe: (p, rng) => {
     const { mel, acc, total, debuts } = BALLADE;
     const ev: Evenement[] = [];
@@ -309,7 +333,7 @@ export function graineDe(id: string, graine: number, p: number): number {
 }
 
 /** Les événements d'un passage, swingués (positions et fins), triés. `p` = -1 : la levée. */
-export function passage(v: DefVersion, p: number, graine: number, o: OptVersion = {}): { ev: Evenement[]; duree: number } {
+export function passage(v: DefVersion, p: number, graine: number, o: OptVersion = {}): { ev: Evenement[]; duree: number; acc: readonly AccordP[] } {
   const rng = makeRng(graineDe(v.id, graine, p));
   const brut = p < 0 ? v.intro?.ev(rng) ?? [] : v.passe(p, rng, o);
   const duree = p < 0 ? v.intro?.duree ?? 0 : v.duree;
@@ -322,5 +346,5 @@ export function passage(v: DefVersion, p: number, graine: number, o: OptVersion 
       return { ...e, t, d: Math.max(0.05, sw(e.t + e.d) - t) };
     })
     .sort((a, b) => a.t - b.t);
-  return { ev, duree };
+  return { ev, duree, acc: p < 0 ? v.intro?.acc ?? [] : v.grille(p, o) };
 }
