@@ -5,7 +5,11 @@
  */
 import { fabriquer, type BanqueBrute, type Zone } from './banque';
 import { JINGLES, VERSIONS, type JingleId, type OptVersion, type VariationMelodie, type VersionId } from './catalogue';
-import type { InstrId } from './generateurs';
+import { makeRng } from '../../game/engine/rng';
+import type { SalleId } from './effets';
+import { accordsTenus, basseDeux, comping, versEvenements, type Evenement, type InstrId } from './generateurs';
+import { QUATRE_VOIES } from './partitions';
+import { transposer } from './variations';
 import { dureeVersion, Lecteur, versAudio, type BanqueAudio } from './lecteur';
 import type { PonctuationId } from './ponctuations';
 
@@ -55,7 +59,66 @@ function instrumentsDe(sc: Scenario): InstrId[] {
   return [...s];
 }
 
-const TOUS: InstrId[] = ['piano', 'rhodes', 'vibra', 'basse', 'ride', 'cloche', 'crash', 'charley', 'charley-ferme', 'gc', 'cc', 'cc-balai', 'balai', 'rim'];
+const TOUS: InstrId[] = ['piano', 'rhodes', 'vibra', 'basse', 'guitare', 'nylon', 'ride', 'cloche', 'crash', 'charley', 'charley-ferme', 'gc', 'cc', 'cc-balai', 'balai', 'rim'];
+/** Les instruments à écouter seuls (laboratoire, aperçus) : la mélodie du premier A dans leur registre, accompagnée. */
+export const DEMOS: InstrId[] = ['trompette', 'sax', 'flute', 'cuivres', 'cordes', 'guitare', 'nylon', 'piano', 'rhodes', 'vibra'];
+
+/** Démonstration d'un instrument : le premier A du thème I dans son registre (piano et contrebasse discrets dessous). */
+export function demo(instr: InstrId): { ev: Evenement[]; tempo: number; salle: SalleId } {
+  const rng = makeRng(0xde40 + instr.length);
+  const A = QUATRE_VOIES.sections.A1!;
+  const oct: Partial<Record<InstrId, number>> = { sax: -12, guitare: -12, nylon: -12 };
+  const mel = transposer(A.melodie, oct[instr] ?? 0);
+  const ev: Evenement[] = [];
+  if (instr === 'cuivres') {
+    ev.push(...comping(A.accords, 32, rng, { instr: 'cuivres', densite: 0.35, vel: 0.7, tessiture: { lo: 55, hi: 79 } }));
+    ev.push(...versEvenements(mel, 'vibra', 0.6));
+  } else if (instr === 'cordes') {
+    ev.push(...accordsTenus(A.accords, 32, rng, { instr: 'cordes', tessiture: { lo: 50, hi: 74 }, vel: 0.45, melodie: mel }));
+    ev.push(...versEvenements(mel, 'cordes', 0.6));
+  } else {
+    // ornements des vents : coulé par en dessous sur les notes longues qui suivent un silence, chute à la fin
+    const notes = versEvenements(mel, instr, 0.68).map((e, i, xs) => {
+      const avant = xs[i - 1];
+      if (i === xs.length - 1) return { ...e, orn: 'chute' as const };
+      if (e.d >= 1.5 && (!avant || e.t - (avant.t + avant.d) > 0.4)) return { ...e, orn: 'scoop' as const };
+      return e;
+    });
+    ev.push(...notes);
+    if (instr !== 'piano') ev.push(...comping(A.accords, 32, rng, { instr: 'piano', densite: 0.4, vel: 0.36, tessiture: { lo: 48, hi: 66 } }));
+  }
+  ev.push(...basseDeux(A.accords, 32, rng).map((e) => ({ ...e, v: e.v * 0.8 })));
+  return { ev: ev.map((e) => ({ ...e, t: e.t + 0.5 })), tempo: 116, salle: 'club' };
+}
+
+/** La fondamentale par autocorrélation (QA des instruments en temps réel). */
+function f0Estimee(x: Float32Array, sr: number, fmin: number, fmax: number, debut: number, duree: number): number {
+  const a = Math.round(debut * sr);
+  const n = Math.round(duree * sr);
+  const r = (lag: number) => { let s = 0; for (let i = a; i < a + n; i++) s += x[i]! * x[i + lag]!; return s; };
+  let best = -Infinity;
+  let bl = 0;
+  for (let lag = Math.floor(sr / fmax); lag <= Math.ceil(sr / fmin); lag++) { const s = r(lag); if (s > best) { best = s; bl = lag; } }
+  const y0 = r(bl - 1), y1 = r(bl), y2 = r(bl + 1);
+  const dx = (y0 - y2) / (2 * (y0 - 2 * y1 + y2));
+  return sr / (bl + (Number.isFinite(dx) ? dx : 0));
+}
+
+/** Justesse d'un instrument (écart en cents de chaque note jouée seule, à sec). */
+export async function justesse(instr: InstrId, notes: number[], sr = 44100): Promise<Array<{ m: number; cents: number }>> {
+  const out: Array<{ m: number; cents: number }> = [];
+  const brute = fabriquer(sr, [instr]);
+  for (const m of notes) {
+    const ctx = new OfflineAudioContext(1, Math.ceil(1.2 * sr), sr);
+    const l = new Lecteur(ctx, ctx.destination, versAudio(ctx, brute), 1);
+    l.brut([{ t: 0, d: 0.45, instr, m, v: 0.6 }], { tempo: 60, quand: 0.05, mix: { [instr]: { rev: 0 } } });
+    const buf = await ctx.startRendering();
+    const f0 = 440 * 2 ** ((m - 69) / 12);
+    const f = f0Estimee(buf.getChannelData(0), sr, f0 * 0.8, f0 * 1.25, 0.17, 0.2);
+    out.push({ m, cents: Math.round(1200 * Math.log2(f / f0) * 10) / 10 });
+  }
+  return out;
+}
 
 /** La banque calculée dans un worker, échantillon par échantillon (progression affichée). */
 function banqueWorker(sr: number, instrs: InstrId[], progres: (n: number, total: number) => void): Promise<BanqueBrute> {
@@ -93,11 +156,24 @@ export function encoderWav(buf: AudioBuffer): Uint8Array {
 
 export interface Rendu { wav: Uint8Array; duree: number; msBanque: number; msRendu: number }
 
-/** Rendu hors ligne d'une version (`passes` passages, levée comprise), d'un jingle ou d'un scénario interactif. */
-export async function rendre(cible: { version?: VersionId; jingle?: JingleId; scenario?: Scenario }, o: { passes?: number; graine?: number; sr?: number; options?: OptVersion; intro?: boolean; solo?: InstrId[] } = {}): Promise<Rendu> {
+/** Rendu hors ligne d'une version (`passes` passages, levée comprise), d'un jingle, d'un scénario ou d'une démonstration. */
+export async function rendre(cible: { version?: VersionId; jingle?: JingleId; scenario?: Scenario; demo?: InstrId }, o: { passes?: number; graine?: number; sr?: number; options?: OptVersion; intro?: boolean; solo?: InstrId[] } = {}): Promise<Rendu> {
   const sr = o.sr ?? 44100;
   const t0 = performance.now();
   const sc = cible.scenario;
+  if (cible.demo) {
+    const d = demo(cible.demo);
+    const brute = fabriquer(sr, [...new Set(d.ev.map((e) => e.instr))]);
+    const msBanque = performance.now() - t0;
+    const fin = Math.max(...d.ev.map((e) => e.t + e.d)) * (60 / d.tempo);
+    const duree = fin + 3.5;
+    const ctx = new OfflineAudioContext(2, Math.ceil(duree * sr), sr);
+    const l = new Lecteur(ctx, ctx.destination, versAudio(ctx, brute), 1);
+    l.brut(d.ev, { tempo: d.tempo, salle: d.salle, quand: 0.05 });
+    const t1 = performance.now();
+    const buf = await ctx.startRendering();
+    return { wav: encoderWav(buf), duree, msBanque, msRendu: performance.now() - t1 };
+  }
   const instrs = sc ? instrumentsDe(sc) : cible.version ? VERSIONS[cible.version].instruments : JINGLES[cible.jingle!].instruments;
   const brute = fabriquer(sr, instrs);
   const msBanque = performance.now() - t0;
@@ -236,5 +312,5 @@ export function lancerLabo(o: { qa: boolean }): void {
     h('h2', {}, 'Volume'), h('label', {}, vol),
     etat));
   window.addEventListener('pagehide', () => { if (timer !== null) clearInterval(timer); void ctx?.close(); });
-  if (o.qa) (window as unknown as Record<string, unknown>).__musique = { rendre, versions: Object.keys(VERSIONS), jingles: Object.keys(JINGLES), TOUS };
+  if (o.qa) (window as unknown as Record<string, unknown>).__musique = { rendre, justesse, versions: Object.keys(VERSIONS), jingles: Object.keys(JINGLES), demos: DEMOS, TOUS };
 }

@@ -8,11 +8,12 @@ import { makeRng } from '../../game/engine/rng';
 import type { SalleId } from './effets';
 import {
   accordsTenus, arpegesBallade, basseDeux, basseLofi, basseMarche, batterieBalais, batterieLofi, batterieRide, chorus, comping,
-  eviterMelodie, humaniser, orner, versEvenements, type Evenement, type InstrId, type Rng,
+  eviterMelodie, humaniser, lier, orner, versEvenements, type Evenement, type InstrId, type Rng,
 } from './generateurs';
 import { QUATRE_VOIES, type AccordP, type NoteP, type Theme } from './partitions';
 import { accord, midi, swinguer, voicer } from './theorie';
 import { augmenter, changerMode, deplacer, enrichir, renverser, retrograde, transposer, transposerAccords } from './variations';
+import { MONOPHONIQUES } from './vents';
 
 export type VersionId = 'I-1' | 'I-2' | 'I-3';
 export type JingleId = 'victoire' | 'defaite' | 'carte' | 'chapitre';
@@ -128,6 +129,13 @@ const MIX_BASE: Partial<Record<InstrId, Mix>> = {
   rhodes: { g: 0.5, pan: -0.2, rev: 0.22 },
   vibra: { g: 0.66, pan: 0.25, rev: 0.32 },
   basse: { g: 0.53, pan: 0, rev: 0.05 },
+  guitare: { g: 0.75, pan: -0.25, rev: 0.15 },
+  nylon: { g: 0.85, pan: -0.2, rev: 0.2 },
+  trompette: { g: 0.5, pan: 0.1, rev: 0.26 },
+  sax: { g: 0.62, pan: -0.08, rev: 0.25 },
+  flute: { g: 0.62, pan: 0.15, rev: 0.3 },
+  cuivres: { g: 0.5, pan: 0, rev: 0.25 },
+  cordes: { g: 1.6, pan: 0, rev: 0.42 },
   nappe: { g: 1.1, pan: 0, rev: 0.5 },
   ride: { g: 0.37, pan: 0.35, rev: 0.14 },
   cloche: { g: 0.35, pan: 0.35, rev: 0.2 },
@@ -346,5 +354,5 @@ export function passage(v: DefVersion, p: number, graine: number, o: OptVersion 
       return { ...e, t, d: Math.max(0.05, sw(e.t + e.d) - t) };
     })
     .sort((a, b) => a.t - b.t);
-  return { ev, duree, acc: p < 0 ? v.intro?.acc ?? [] : v.grille(p, o) };
+  return { ev: lier(ev, MONOPHONIQUES), duree, acc: p < 0 ? v.intro?.acc ?? [] : v.grille(p, o) };
 }

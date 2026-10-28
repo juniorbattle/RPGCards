@@ -27,6 +27,8 @@ export const DEFS: Partial<Record<InstrId, DefMelodique | DefFrappe>> = {
   rhodes: { kind: 'notes', de: 37, a: 93, pas: 4, couches: [0.4, 0.85], sr: 32000, synth: I.rhodes },
   vibra: { kind: 'notes', de: 53, a: 93, pas: 4, couches: [0.45, 0.9], sr: 32000, synth: I.vibra },
   basse: { kind: 'notes', de: 26, a: 62, pas: 3, couches: [0.75], sr: 32000, synth: I.basse },
+  guitare: { kind: 'notes', de: 40, a: 88, pas: 4, couches: [0.4, 0.85], sr: 32000, synth: I.guitare },
+  nylon: { kind: 'notes', de: 40, a: 84, pas: 4, couches: [0.45, 0.85], sr: 32000, synth: I.nylon },
   ride: { kind: 'frappe', variantes: 2, synth: I.ride },
   crash: { kind: 'frappe', variantes: 1, synth: (sr) => I.crash(sr) },
   cloche: { kind: 'frappe', variantes: 1, synth: (sr) => I.cloche(sr) },
