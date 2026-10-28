@@ -6,6 +6,8 @@ responsable). Mandat `docs/missions/M13_MUSIQUE.md` ; contrats `docs/m13/01_MUSI
 « prends le temps qu'il faudra pour obtenir un résultat le plus optimal possible. Je veux une bande son vraiment, mais
 vraiment immersive. »
 
+**Fiche interactive publiée le 2026-10-28** par la session principale (privée, 34 entrées, choix enregistrés dans sa collection `decisions`) : <https://claude.ai/artifact/7HnZxaxHX6WkA4LNkgPLwZ>.
+
 La session cloud ne peut pas écouter. Elle a vérifié ce qui se mesure : justesse de chaque instrument (moins de 3 cents
 partout), harmonie note par note (chaque note de chaque tête est une note ou une tension de son accord ; la valse, la
 version majeure, le contre-chant et les quatre couleurs des Maisons y compris ; le riff de Kaï dans la gamme de blues de
