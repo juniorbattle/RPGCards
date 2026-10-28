@@ -57,6 +57,8 @@ la musique au navigateur). **L'oreille du responsable tranche.**
 | **J5** | Le focus : sous un dialogue, un écran de l'aventure ou une préparation, la musique baisse de 5 dB et s'adoucit ; la ville s'assourdit à l'entrée en duel jusqu'au premier temps du duel | `S-ville.ogg`, `S-transitions.ogg` | **Recevoir** | Plus ou moins d'effacement |
 | **J6** | Les scènes du récit (prologue, émissaire, affiliation, chef vaincu, cartons, Championnat, titre) prennent la ballade (I-3) ; un carton de chapitre a son jingle ; les arrivées de quartier gardent la musique du quartier | — | **Recevoir** | La ballade aussi aux arrivées |
 | **J7** | Rôle musical des duels : Kaï (prologue, ses événements, son défi, le bras droit de la Cendre, le Miroir quand c'est lui ; au jeu standard, la Braise) ; Championnat (poule, Miroir) ; Finale ; Maison (cadet, bras droit, chef, Joute) ; le reste : le duel | — | **Recevoir** | Les Épreuves de quartier dans la couleur de la famille |
+| **J8** | L'acoustique du lieu du duel : la musique y prend sa salle (la rue en plein air, réflexions proches et queue courte ; le bar au club ; la salle de jeu feutrée, presque sèche ; l'arène en grande salle) | laboratoire (`?musique=1`), au jeu | **Recevoir** | La salle de la version partout |
+| **J9** | La ville respire : après 30 s sans bouger (ni dialogue, ni écran, ni scène), la mélodie se retire sur la mesure et les musiciens continuent ; elle revient dès que le joueur repart | au jeu | **Recevoir** | Délai plus long ou plus court ; jamais |
 
 ## Les instruments
 
@@ -74,7 +76,7 @@ la musique au navigateur). **L'oreille du responsable tranche.**
 |---|---|---|---|
 | **M1** | Les niveaux (mesurés, `artifacts/qa/m13/mesures.md`) : titre et menus vers −18 LUFS ; la ville vers −20 (elle grandit en instruments, pas en volume : une correction par formation) ; un duel complet vers −18 ; crêtes sous −3 dBTP | **Recevoir** | Ville plus présente ; duel plus discret |
 | **M2** | Les salles : club pour le jazz, studio pour le lounge, grande salle pour le récit, l'Astre et la Finale | **Garder** | Plus ou moins de réverbération |
-| **M3** | Le coût, mesuré dans le conteneur cloud (lent) en rendus hors ligne : la plupart des versions de 6 à 35 fois plus vite que le temps réel ; le big band au complet environ 6 fois, la Finale environ 4 fois ; instruments calculés environ 2 s dans un worker au premier geste (la musique demandée d'abord) ; environ 50 Mo en mémoire | **Mesurer sur le poste du responsable** (en local) | Alléger la Finale (moins de cordes) ; ne calculer que les instruments du moment |
+| **M3** | Le coût, mesuré dans le conteneur cloud (lent) en rendus hors ligne (`artifacts/qa/m13/mesures.md`) : de 7 à 21 fois plus vite que le temps réel pour toutes les versions et les jingles, la Finale près de 4 fois (ses cordes en temps réel) ; un duel complet avec toutes ses couches environ 6 fois ; instruments calculés environ 2 à 3 s dans un worker au premier geste (la musique demandée d'abord) ; environ 50 Mo en mémoire | **Mesurer sur le poste du responsable** (en local) | Alléger la Finale (cordes calculées, comme les pupitres) ; ne calculer que les instruments du moment |
 | **M4** | Le volume de la musique : 60 % par défaut, sous le volume général ; à 0 %, rien n'est calculé ni joué et les anciens sons reviennent | **Recevoir** | Autre défaut |
 
 ## Suite
