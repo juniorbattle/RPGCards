@@ -42,10 +42,10 @@ try {
   await p.click('[data-key="enc-libre-braise"]');
   await p.click('[data-key="prep-start"]');
   await p.waitForFunction(() => !!window.__lqv?.controller?.view?.awaitingMe, null, { timeout: 120000 });
-  check((await m(() => window.__lqvSon.musique.journal())).includes('duel:kai:III-1'), 'duel contre Kaï : rôle « kai », le duel (III-1) en attendant le thème de Kaï');
+  check((await m(() => window.__lqvSon.musique.journal())).includes('duel:kai:V-1'), 'duel contre Kaï : rôle « kai », son thème (V-1)');
   await p.waitForTimeout(3500);
   const e0 = await m(() => window.__lqvSon.musique.etat());
-  check(e0?.version === 'III-1' && e0.couches.melodie === 0, `le duel joue, mélodie en attente (${JSON.stringify(e0?.couches)})`);
+  check(e0?.version === 'V-1' && e0.couches.melodie === 0, `le thème de Kaï joue, mélodie en attente (${JSON.stringify(e0?.couches)})`);
   writeFileSync(`${DIR}/duel.png`, await p.screenshot());
   const stats = newStats();
   for (let i = 0; i < 60; i++) {
@@ -56,7 +56,7 @@ try {
   const j = await m(() => window.__lqvSon.musique.journal());
   journaux.standard = j;
   check(j.some((x) => x.startsWith('ponctuation:')), `Clashes : des accents (${j.filter((x) => x.startsWith('ponctuation:')).length})`);
-  check(j.some((x) => /^version:III-[12]:melodie/.test(x)), 'la mélodie est entrée au premier Clash');
+  check(j.some((x) => /^version:V-1:melodie/.test(x)), 'la mélodie est entrée au premier Clash');
   check(j.some((x) => x === 'fin:victoire' || x === 'fin:defaite'), `fin du duel : ${j.find((x) => x.startsWith('fin:'))}`);
   await p.waitForSelector('[data-key="result-board"]', { timeout: 120000 });
   await p.waitForTimeout(6000);
@@ -90,7 +90,7 @@ try {
   check(c.version === 'II-1' && c.options?.chapitre === 3, `la ville : le Quai au chapitre III, le trio (${JSON.stringify(c)})`);
   check((await am(() => window.__lqvSon.musique.etat()))?.version === 'II-1', 'la ville joue (II-1)');
   check(await am((x) => window.__lqvAventure.qaDevant(x), 'cadet-Ronce'), 'devant Gaspard, à deux pas du Fanal');
-  await a.waitForTimeout(1500);
+  await a.waitForFunction(() => (window.__lqvSon.musique.etat()?.sources?.fanal?.x ?? 0) > 0.7, null, { timeout: 8000 }).catch(() => undefined);
   const fanal = (await am(() => window.__lqvSon.musique.etat()))?.sources?.fanal;
   check(fanal?.version === 'I-2' && fanal.x > 0.7, `le combo du Fanal s'entend de près (${JSON.stringify(fanal)})`);
   await a.keyboard.press('KeyE');

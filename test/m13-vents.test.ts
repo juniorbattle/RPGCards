@@ -5,7 +5,8 @@
  */
 import { describe, expect, it } from 'vitest';
 import { lier, type Evenement } from '../src/son/musique/generateurs';
-import { articuler, courbe, DOMAINE, MONOPHONIQUES, PROFILS, rendement, type InstrVent } from '../src/son/musique/vents';
+import { articuler, boucleSection, courbe, DOMAINE, echantillonSection, MONOPHONIQUES, PROFILS, rendement, SECTIONS, VENTS, type InstrVent } from '../src/son/musique/vents';
+import { freq } from '../src/son/musique/theorie';
 
 const IDS = Object.keys(PROFILS) as InstrVent[];
 
@@ -28,7 +29,7 @@ describe('M13 — vents : le façonneur et les profils', () => {
       const v = p.voix ?? [0];
       expect(Math.abs(v.reduce((s, x) => s + x, 0) / v.length), id).toBeLessThan(1);
     }
-    expect([...MONOPHONIQUES].sort()).toEqual(['flute', 'sax', 'trompette']);
+    expect([...MONOPHONIQUES].sort()).toEqual(['archet', 'flute', 'sax', 'trompette', 'trompette-ouverte']);
   });
   it('articulation : liée si la note suit à moins de 30 ms, sinon reprise à la langue', () => {
     const p = articuler([{ t: 0, d: 0.5, m: 60, v: 0.7 }, { t: 0.5, d: 0.25, m: 62, v: 0.7 }, { t: 0.8, d: 0.2, m: 64, v: 0.7 }]);
@@ -66,3 +67,26 @@ describe('M13 — phrases des instruments à une voix', () => {
     expect(src).toEqual(copie);
   });
 });
+
+describe('M13 — pupitres calculés (cuivres, saxophones)', () => {
+  it('les pupitres sont joués comme des échantillons, pas synthétisés en temps réel', () => {
+    for (const i of SECTIONS) expect(VENTS.has(i)).toBe(false);
+  });
+  it('une note de pupitre : finie, bornée, tenue stable après 0,8 s ; sa boucle est un nombre entier de périodes, sans saut', () => {
+    const sr = 22050;
+    for (const instr of ['cuivres', 'saxes'] as const) for (const m of [48, 60, 72]) for (const v of [0.45, 0.85]) {
+      const x = echantillonSection(sr, m, v, instr);
+      expect(x.every(Number.isFinite)).toBe(true);
+      expect(Math.max(...x.map(Math.abs))).toBeLessThan(1);
+      const [a, b] = boucleSection(m, sr, x.length);
+      expect(a).toBeGreaterThan(0.8 * sr);
+      const periodes = (b - a) / (sr / freq(m));
+      expect(Math.abs(periodes - Math.round(periodes))).toBeLessThan(0.02);
+      // la tenue bouclée : la fin de la boucle et son début se raccordent (écart d'un échantillon à l'autre comparable au signal)
+      let pas = 0;
+      for (let i = a + 1; i < a + 200; i++) pas = Math.max(pas, Math.abs(x[i]! - x[i - 1]!));
+      expect(Math.abs(x[b]! - x[a]!)).toBeLessThan(pas * 1.5 + 1e-6);
+    }
+  });
+});
+

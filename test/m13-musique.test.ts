@@ -206,7 +206,7 @@ describe('M13 — générateurs', () => {
 
 describe('M13 — catalogue', () => {
   it('les versions et quatre jingles ; passages reproductibles à graine égale, différents d\'un passage à l\'autre', () => {
-    expect(Object.keys(VERSIONS)).toEqual(['I-1', 'I-2', 'I-3', 'II-1', 'II-2', 'II-3', 'III-1', 'III-2']);
+    expect(Object.keys(VERSIONS)).toEqual(['I-1', 'I-2', 'I-3', 'II-1', 'II-2', 'II-3', 'III-1', 'III-2', 'IV-1', 'IV-2', 'IV-3', 'IV-4', 'V-1', 'VI-1', 'VI-2']);
     expect(Object.keys(JINGLES)).toEqual(['victoire', 'defaite', 'carte', 'chapitre']);
     for (const id of Object.keys(VERSIONS) as VersionId[]) {
       const v = VERSIONS[id];
@@ -237,15 +237,22 @@ describe('M13 — catalogue', () => {
     }
   });
 
-  it('polyphonie bornée : jamais plus de 24 notes du fond (40 toutes couches) qui commencent dans la même demi-seconde', () => {
+  it('polyphonie bornée : jamais plus de 24 notes du fond (48 toutes couches, le tutti du big band) qui commencent dans la même demi-seconde', () => {
     for (const id of Object.keys(VERSIONS) as VersionId[]) {
       const v = VERSIONS[id];
       for (const chapitre of [undefined, 0, 4, 6]) {
         const { ev } = passage(v, 1, 11, { chapitre });
         const fond = ev.filter((e) => !e.couche || e.couche === 'fond');
         const spb = 60 / v.tempo;
-        for (const e of fond) expect(fond.filter((x) => x.t >= e.t && (x.t - e.t) * spb < 0.5).length, `${id} ${chapitre}`).toBeLessThanOrEqual(24);
-        for (const e of ev) expect(ev.filter((x) => x.t >= e.t && (x.t - e.t) * spb < 0.5).length, `${id} ${chapitre}`).toBeLessThanOrEqual(40);
+        // fenêtre glissante d'une demi-seconde sur les attaques triées
+        const pic = (xs: readonly Evenement[]): number => {
+          const ts = xs.map((x) => x.t * spb).sort((a, b) => a - b);
+          let max = 0;
+          for (let i = 0, j = 0; i < ts.length; i++) { while (ts[j]! < ts[i]! - 0.5 + 1e-9) j++; max = Math.max(max, i - j + 1); }
+          return max;
+        };
+        expect(pic(fond), `${id} ${chapitre}`).toBeLessThanOrEqual(24);
+        expect(pic(ev), `${id} ${chapitre}`).toBeLessThanOrEqual(48);
       }
     }
   });

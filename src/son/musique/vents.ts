@@ -12,10 +12,16 @@ import { makeRng } from '../../game/engine/rng';
 import type { InstrId, NoteV } from './generateurs';
 import { freq } from './theorie';
 
-export type InstrVent = 'trompette' | 'sax' | 'flute' | 'cuivres' | 'cordes';
-export const VENTS: ReadonlySet<InstrId> = new Set<InstrId>(['trompette', 'sax', 'flute', 'cuivres', 'cordes']);
+export type InstrVent = 'trompette' | 'trompette-ouverte' | 'sax' | 'saxes' | 'flute' | 'cuivres' | 'cordes' | 'archet';
+export const VENTS: ReadonlySet<InstrId> = new Set<InstrId>(['trompette', 'trompette-ouverte', 'sax', 'flute', 'cordes', 'archet']);
+/**
+ * Les pupitres (section de cuivres, de saxophones) : calculés une fois dans le worker avec ces mêmes profils
+ * (`echantillonSection`), joués comme le piano (beaucoup de voix à la fois, peu de coût), bouclés sur leur tenue pour
+ * les notes longues, élargis par le chorus du canal.
+ */
+export const SECTIONS: ReadonlySet<InstrId> = new Set<InstrId>(['cuivres', 'saxes']);
 /** Une seule voix : les notes se lient en phrases (`lier`). */
-export const MONOPHONIQUES: ReadonlySet<InstrId> = new Set<InstrId>(['trompette', 'sax', 'flute']);
+export const MONOPHONIQUES: ReadonlySet<InstrId> = new Set<InstrId>(['trompette', 'trompette-ouverte', 'sax', 'flute', 'archet']);
 
 interface Filtre { type: BiquadFilterType; f: number; q: number; g?: number }
 export interface Profil {
@@ -86,6 +92,28 @@ export const PROFILS: Record<InstrVent, Profil> = {
     vibrato: { cents: 7, hz: 5.5, delai: 0.15 }, souffle: { niveau: 0, q: 0.8, chiff: 0 }, scoop: 0, niveau: 0.22,
     filtres: [{ type: 'highpass', f: 60, q: 0.7 }, { type: 'peaking', f: 280, q: 1, g: 3 }, { type: 'peaking', f: 1100, q: 1, g: 1.5 }, { type: 'peaking', f: 3200, q: 1.5, g: -3 }, { type: 'lowpass', f: 5200, q: 0.7 }],
     voix: [-6, 6], ensemble: true,
+  },
+  // lot MU-C — la trompette ouverte (hard bop, big band) : brillante, cuivrée à forte nuance, éclat d'attaque
+  'trompette-ouverte': {
+    harmoniques: [1, 0.9, 0.8, 0.65, 0.55, 0.45, 0.36, 0.3, 0.24, 0.19, 0.15, 0.12, 0.1],
+    k: 2.6, b: 0.1, surech: '2x', pression: [0.3, 0.9], attaque: 0.02, eclat: 1.5, relache: 0.04, glisse: 0.01, tenue: -0.05,
+    vibrato: { cents: 9, hz: 5.8, delai: 0.3 }, souffle: { niveau: 0.02, f: 4500, q: 0.8, chiff: 0.06 }, scoop: 1, niveau: 0.45,
+    filtres: [{ type: 'highpass', f: 180, q: 0.7 }, { type: 'peaking', f: 1300, q: 1, g: 5 }, { type: 'peaking', f: 3000, q: 1.8, g: 3 }, { type: 'lowpass', f: 9000, q: 0.7 }],
+  },
+  // la section de saxophones (soli harmonisés du big band) : le timbre du ténor, plusieurs notes à la fois, élargie
+  saxes: {
+    harmoniques: [1, 0.85, 0.55, 0.5, 0.38, 0.32, 0.25, 0.2, 0.16, 0.13, 0.1, 0.08],
+    k: 1.8, b: 0.2, surech: 'none', pression: [0.26, 0.8], attaque: 0.035, eclat: 1.2, relache: 0.06, glisse: 0.014, tenue: -0.05,
+    vibrato: { cents: 12, hz: 5.3, delai: 0.4 }, souffle: { niveau: 0, q: 0.7, chiff: 0 }, scoop: 0, niveau: 0.36,
+    filtres: [{ type: 'highpass', f: 80, q: 0.7 }, { type: 'peaking', f: 450, q: 1.2, g: 4 }, { type: 'peaking', f: 1500, q: 1.5, g: 3 }, { type: 'lowpass', f: 5000, q: 0.7 }],
+    ensemble: true,
+  },
+  // la contrebasse à l'archet (la Ronce) : dents de scie de la corde frottée, attaque lente, bruit d'archet, le corps
+  archet: {
+    harmoniques: Array.from({ length: 20 }, (_, i) => 1 / (i + 1) ** 1.1),
+    k: 0, b: 0, surech: 'none', pression: [1, 1], attaque: 0.12, eclat: 1, relache: 0.15, glisse: 0.03, tenue: 0.05,
+    vibrato: { cents: 8, hz: 5, delai: 0.25 }, souffle: { niveau: 0.05, f: 1500, q: 0.6, chiff: 0.15 }, scoop: 0, niveau: 0.5,
+    filtres: [{ type: 'highpass', f: 35, q: 0.7 }, { type: 'peaking', f: 120, q: 1, g: 3 }, { type: 'peaking', f: 600, q: 1.2, g: 2 }, { type: 'peaking', f: 2200, q: 2, g: -4 }, { type: 'lowpass', f: 2600, q: 0.7 }],
   },
 };
 
@@ -171,7 +199,12 @@ export function corps(ctx: BaseAudioContext, instr: InstrVent): { entree: AudioN
   });
   for (let i = 1; i < fs.length; i++) fs[i - 1]!.connect(fs[i]!);
   if (!P.ensemble) return { entree: fs[0]!, sortie: fs[fs.length - 1]!, arreter: () => {} };
-  const fin = fs[fs.length - 1]!;
+  const e = ensemble(ctx, fs[fs.length - 1]!);
+  return { entree: fs[0]!, sortie: e.sortie, arreter: e.arreter };
+}
+
+/** Le chorus stéréo d'un pupitre : le son direct au centre, deux lignes à retard modulées lentement, une de chaque côté. */
+export function ensemble(ctx: BaseAudioContext, fin: AudioNode): { sortie: AudioNode; arreter: () => void } {
   const fusion = ctx.createChannelMerger(2);
   const lfos: OscillatorNode[] = [];
   const direct = ctx.createGain();
@@ -194,7 +227,81 @@ export function corps(ctx: BaseAudioContext, instr: InstrVent): { entree: AudioN
     l.start();
     lfos.push(l);
   });
-  return { entree: fs[0]!, sortie: fusion, arreter: () => lfos.forEach((l) => { try { l.stop(); } catch { /* arrêté */ } }) };
+  return { sortie: fusion, arreter: () => lfos.forEach((l) => { try { l.stop(); } catch { /* arrêté */ } }) };
+}
+
+// ------------------------------------------------------------------ pupitres calculés (pur, pour le worker)
+
+const DUREE_SECTION = 2.2;
+/**
+ * Une note d'un pupitre, calculée : le spectre du profil (harmoniques), la pression de la couche de vélocité (éclat à
+ * l'attaque, puis tenue stable), le façonneur, l'amplitude, le corps (filtres du profil, en biquads numériques). La
+ * tenue est strictement périodique après 0,8 s : `boucleSection` y découpe une boucle sans saut.
+ */
+export function echantillonSection(sr: number, m: number, vel: number, instr: 'cuivres' | 'saxes'): Float32Array<ArrayBuffer> {
+  const P = PROFILS[instr];
+  const f0 = freq(m);
+  const n = Math.round(sr * DUREE_SECTION);
+  const out = new Float32Array(n);
+  const h = P.harmoniques.map((a, i) => ({ k: i + 1, a })).filter((x) => x.k * f0 < sr * 0.45);
+  // crête de la source (une période), comme une PeriodicWave normalisée
+  let crete = 0;
+  for (let i = 0; i < 256; i++) { let v = 0; for (const x of h) v += x.a * Math.sin((2 * Math.PI * x.k * i) / 256); crete = Math.max(crete, Math.abs(v)); }
+  const crv = courbe(P);
+  const a = P.pression[0] + (P.pression[1] - P.pression[0]) * vel;
+  const niv = (P.niveau * vel ** 1.25) / rendement(P, a);
+  const att = Math.round(P.attaque * sr);
+  const stable = Math.round(0.8 * sr);
+  const w = (2 * Math.PI * f0) / sr;
+  for (let i = 0; i < n; i++) {
+    let src = 0;
+    for (const x of h) src += x.a * Math.sin(w * x.k * i);
+    src /= crete;
+    // la pression : l'éclat de l'attaque redescend vers la tenue ; l'amplitude monte en `attaque`, puis la tenue
+    const t = i / sr;
+    const p = i < att ? (a * P.eclat * i) / att : a + (a * P.eclat - a) * Math.exp(-(i - att) / (0.06 * sr));
+    const pe = i >= stable ? a : p;
+    const u = Math.max(-1, Math.min(1, (src * pe) / DOMAINE));
+    const xi = (u + 1) * 0.5 * (crv.length - 1);
+    const j = Math.min(crv.length - 2, Math.floor(xi));
+    const y = crv[j]! + (crv[j + 1]! - crv[j]!) * (xi - j);
+    const env = i < att ? i / att : i < stable ? 1 + P.tenue * Math.min(1, (t - P.attaque) / 0.75) : 1 + P.tenue;
+    // 0,7 : une marge sous la pleine échelle (le corps relève certaines bandes) ; le mélange compense
+    out[i] = y * env * niv * 0.7;
+  }
+  for (const f of P.filtres) biquadNum(out, sr, f.type === 'lowpass' ? 'lp' : f.type === 'highpass' ? 'hp' : 'pk', f.f, f.q, f.g ?? 0);
+  return out;
+}
+
+/** La boucle de tenue d'un pupitre (en échantillons) : un nombre entier de périodes, au plus près, avant la fin. */
+export function boucleSection(m: number, sr: number, longueur: number): [number, number] {
+  const f0 = freq(m);
+  const per = sr / f0;
+  const fin = longueur - Math.round(0.04 * sr);
+  let best = 1;
+  let err = Infinity;
+  for (let k = 8; k * per <= 0.9 * sr; k++) { const e = Math.abs(k * per - Math.round(k * per)); if (e < err - 1e-9) { err = e; best = k; } }
+  return [fin - Math.round(best * per), fin];
+}
+
+/** Biquad numérique (RBJ), en place (les filtres du corps cuits dans l'échantillon). */
+function biquadNum(buf: Float32Array, sr: number, type: 'lp' | 'hp' | 'pk', f: number, q: number, gainDb: number): void {
+  const w = (2 * Math.PI * Math.min(f, sr * 0.45)) / sr;
+  const cw = Math.cos(w);
+  const al = Math.sin(w) / (2 * q);
+  const A = 10 ** (gainDb / 40);
+  let b0: number, b1: number, b2: number, a0: number, a1: number, a2: number;
+  if (type === 'lp') { b0 = (1 - cw) / 2; b1 = 1 - cw; b2 = b0; a0 = 1 + al; a1 = -2 * cw; a2 = 1 - al; }
+  else if (type === 'hp') { b0 = (1 + cw) / 2; b1 = -(1 + cw); b2 = b0; a0 = 1 + al; a1 = -2 * cw; a2 = 1 - al; }
+  else { b0 = 1 + al * A; b1 = -2 * cw; b2 = 1 - al * A; a0 = 1 + al / A; a1 = -2 * cw; a2 = 1 - al / A; }
+  b0 /= a0; b1 /= a0; b2 /= a0; a1 /= a0; a2 /= a0;
+  let x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+  for (let i = 0; i < buf.length; i++) {
+    const x0 = buf[i]!;
+    const y0 = b0 * x0 + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
+    x2 = x1; x1 = x0; y2 = y1; y1 = y0;
+    buf[i] = y0;
+  }
 }
 
 const cible = (ps: readonly AudioParam[], v: number, t: number, tau: number): void => { for (const p of ps) p.setTargetAtTime(v, t, Math.max(0.001, tau)); };

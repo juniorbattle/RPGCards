@@ -19,6 +19,11 @@ const commit = execFileSync('git', ['rev-parse', '--short', 'HEAD']).toString().
 
 // Scénarios de la musique interactive (contrat 2) : actions aux instants dits, rendues comme un morceau.
 const SCENARIOS = [
+  // les thèmes propres des duels (Maisons, Kaï, Championnat) avec toutes leurs couches (mélodie, tension, cuivres)
+  ...['III-1', 'IV-1', 'IV-2', 'IV-3', 'IV-4', 'V-1', 'VI-1', 'VI-2'].map((v) => ({
+    nom: `S-plein-${v}`, requiert: v,
+    scenario: { duree: 48, actions: [{ t: 0, faire: 'jouer', version: v, intro: false, }, { t: 0.06, faire: 'couches', niveaux: { melodie: 1, tension: 0, cuivres: 0 }, sur: 'temps', duree: 0.01 }, { t: 30, faire: 'couches', niveaux: { tension: 1, cuivres: 1 } }] },
+  })),
   // les couches du duel, chacune seule (sonie relative, outil de mélange)
   ...['fond', 'melodie', 'tension', 'cuivres'].map((k) => ({
     nom: `S-couche-${k}`, requiert: 'III-1',
@@ -110,7 +115,9 @@ try {
     const wav = `${WAV}/${nom}.wav`;
     rmSync(wav, { force: true });
     const meta = await p.evaluate(async ({ c, passes, graine, wav }) => {
-      const r = await window.__musique.rendre({ version: c.version, jingle: c.jingle, scenario: c.scenario }, { passes, graine, ...(c.options ? { options: c.options } : {}), ...(c.intro === false ? { intro: false } : {}) });
+      // un duel rendu seul : sa mélodie d'emblée (au jeu, elle attend le premier Clash ; ses autres couches : `S-plein-…`)
+      const duel = c.version && /^(III|IV|V|VI)-/.test(c.version) && !c.scenario;
+      const r = await window.__musique.rendre({ version: c.version, jingle: c.jingle, scenario: c.scenario }, { passes, graine, ...(c.options ? { options: c.options } : {}), ...(c.intro === false ? { intro: false } : {}), ...(duel ? { couches: { melodie: 1 } } : {}) });
       const b = r.wav;
       const pas = 3 * 1024 * 1024;
       for (let i = 0; i < b.length; i += pas) {

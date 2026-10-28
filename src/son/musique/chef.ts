@@ -42,11 +42,14 @@ export function roleDuelAventure(rencontre: string, adversaire = ''): RoleDuel {
   return { role: 'duel' };
 }
 
+/** Les thèmes propres aux rôles (lot MU-C) : les quatre couleurs des Maisons, Kaï, le Championnat et sa Finale. */
+export const THEMES_PROPRES: ReadonlySet<string> = new Set(['IV-1', 'IV-2', 'IV-3', 'IV-4', 'V-1', 'VI-1', 'VI-2']);
+
 /**
- * La version d'un duel selon son rôle et sa tension. Lot MU-B : le thème III pour tous les rôles ; les thèmes des
- * Maisons, de Kaï et du Championnat (lot MU-C) prennent leur place quand ils existent (`disponibles`).
+ * La version d'un duel selon son rôle et sa tension : le thème propre au rôle quand il existe (`disponibles`), sinon le
+ * thème III (duel, ou duel tendu). Un thème propre n'a pas de version tendue : sa couche « tension » en tient lieu.
  */
-export function versionDuel(r: RoleDuel, tendu: boolean, disponibles: ReadonlySet<string> = new Set()): VersionId {
+export function versionDuel(r: RoleDuel, tendu: boolean, disponibles: ReadonlySet<string> = THEMES_PROPRES): VersionId {
   const propre: Record<RoleDuel['role'], string | null> = {
     duel: null,
     maison: r.role === 'maison' ? `IV-${({ Cendre: 1, Voile: 2, Ronce: 3, Astre: 4 } as const)[r.famille]}` : null,

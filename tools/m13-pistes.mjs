@@ -8,7 +8,11 @@ import { launch, startPreview } from './browser.mjs';
 const VERSION = process.argv[2] ?? 'I-1';
 const DIR = 'artifacts/qa/tmp/m13/pistes';
 mkdirSync(DIR, { recursive: true });
-const GROUPES = { tout: null, melodie: ['vibra'], piano: ['piano'], rhodes: ['rhodes'], basse: ['basse'], ride: ['ride', 'crash', 'cloche'], charley: ['charley', 'charley-ferme'], gc: ['gc'], caisse: ['cc', 'cc-balai', 'rim'], balais: ['balai'], nappe: ['nappe'] };
+const GROUPES = {
+  tout: null, vibra: ['vibra'], piano: ['piano'], rhodes: ['rhodes'], basse: ['basse'], guitares: ['guitare', 'nylon'], ride: ['ride', 'crash', 'cloche'], charley: ['charley', 'charley-ferme'], gc: ['gc'], caisse: ['cc', 'cc-balai', 'rim'], balais: ['balai'], nappe: ['nappe'],
+  // vents et cordes (temps réel) ; les couches du duel sont toutes ouvertes pour la mesure
+  sax: ['sax'], saxes: ['saxes'], trompettes: ['trompette', 'trompette-ouverte'], flute: ['flute'], cuivres: ['cuivres'], cordes: ['cordes'], archet: ['archet'],
+};
 const server = await startPreview(Number(process.env.LQV_PREVIEW_PORT) || 4500, process.env.LQV_DIST || 'dist');
 const browser = await launch();
 try {
@@ -21,7 +25,7 @@ try {
     const wav = `${DIR}/${VERSION}-${nom}.wav`;
     rmSync(wav, { force: true });
     const meta = await p.evaluate(async ({ v, solo, wav }) => {
-      const r = await window.__musique.rendre({ version: v }, { passes: 1, graine: 1, intro: false, ...(solo ? { solo } : {}) });
+      const r = await window.__musique.rendre({ version: v }, { passes: 1, graine: 1, intro: false, couches: { melodie: 1, tension: 1, cuivres: 1 }, ...(solo ? { solo } : {}) });
       const b = r.wav;
       for (let i = 0; i < b.length; i += 3 << 20) {
         let s = '';

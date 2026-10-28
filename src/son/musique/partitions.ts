@@ -24,7 +24,7 @@ export interface Section {
   accords: AccordP[];
 }
 
-export type ThemeId = 'quatre-voies' | 'ville-nuit' | 'duel';
+export type ThemeId = 'quatre-voies' | 'ville-nuit' | 'duel' | 'maisons' | 'kai' | 'championnat';
 
 export interface Theme {
   id: ThemeId;
@@ -243,4 +243,113 @@ export const DUEL: Theme = {
   motif: [n(0, 1, 'E5'), n(1, 1, 'A5'), n(2, 0.5, 'G5'), n(2.5, 1.5, 'C6')],
 };
 
-export const THEMES: Record<ThemeId, Theme> = { 'quatre-voies': QUATRE_VOIES, 'ville-nuit': VILLE_NUIT, duel: DUEL };
+/*
+ * IV. « Les Maisons » — un seul thème, écrit en ré mixolydien (16 mesures, A et B), que chaque famille colore à sa
+ * manière (mode, harmonie, tempo, orchestration : la leçon de Zelda) : la Cendre telle quelle en hard bop, le Voile en
+ * dorien, la Ronce en blues, l'Astre en lydien. Le motif des quatre voies l'ouvre (la, ré, do, fa dièse), revient sur sol
+ * et ferme la forme ; le pont passe au IV puis par le VI bémol (si bémol), la couleur sombre de la maison.
+ */
+const MA: Section = {
+  mesures: 8,
+  melodie: [
+    n(0, 1, 'A4'), n(1, 1, 'D5'), n(2, 0.5, 'C5'), n(2.5, 1.5, 'F#5'),
+    n(4.5, 0.5, 'E5'), n(5, 0.5, 'D5'), n(5.5, 0.5, 'C5'), n(6, 2, 'A4'),
+    n(8, 1, 'G4'), n(9, 1, 'C5'), n(10, 0.5, 'B4'), n(10.5, 1.5, 'E5'),
+    n(12.5, 0.5, 'D5'), n(13, 0.5, 'C5'), n(13.5, 0.5, 'B4'), n(14, 2, 'G4'),
+    n(16, 0.5, 'A4'), n(16.5, 0.5, 'B4'), n(17, 0.5, 'C5'), n(17.5, 0.5, 'D5'), n(18, 0.5, 'E5'), n(18.5, 0.5, 'F#5'), n(19, 1, 'A5'),
+    n(20, 0.5, 'F#5'), n(20.5, 0.5, 'E5'), n(21, 0.5, 'D5'), n(21.5, 0.5, 'C5'), n(22, 1, 'A4'), n(23, 1, 'F#4'),
+    n(24, 1, 'B4'), n(25, 0.5, 'D5'), n(25.5, 1.5, 'G5'), n(27, 1, 'E5'),
+    n(28, 2, 'D5'), n(30, 0.5, 'E5'), n(30.5, 0.5, 'G4'), n(31, 1, 'A4'),
+  ],
+  accords: [c(0, 8, 'D7'), c(8, 8, 'C/D'), c(16, 8, 'D7'), c(24, 4, 'G7'), c(28, 4, 'A7sus4')],
+};
+const MB: Section = {
+  mesures: 8,
+  melodie: [
+    n(0, 1.5, 'B4'), n(1.5, 0.5, 'D5'), n(2, 2, 'F#5'),
+    n(4, 0.5, 'E5'), n(4.5, 0.5, 'D5'), n(5, 1, 'B4'), n(6, 2, 'A4'),
+    n(8, 1, 'G4'), n(9, 1, 'B4'), n(10, 0.5, 'D5'), n(10.5, 1.5, 'F#5'),
+    n(12, 1, 'E5'), n(13, 0.5, 'C#5'), n(13.5, 0.5, 'B4'), n(14, 1, 'A4'), n(15, 1, 'G4'),
+    n(16, 1, 'A4'), n(17, 1, 'D5'), n(18, 0.5, 'C5'), n(18.5, 1.5, 'F#5'),
+    n(20, 0.5, 'E5'), n(20.5, 1.5, 'G5'), n(22, 1, 'E5'), n(23, 1, 'C5'),
+    n(24, 1.5, 'D5'), n(25.5, 0.5, 'F5'), n(26, 2, 'A5'),
+    n(28, 1, 'G5'), n(29, 0.5, 'E5'), n(29.5, 0.5, 'D5'), n(30, 2, 'A4'),
+  ],
+  accords: [c(0, 8, 'Gmaj7'), c(8, 4, 'Em7'), c(12, 4, 'A7'), c(16, 4, 'D7'), c(20, 4, 'C/D'), c(24, 4, 'Bbmaj7'), c(28, 4, 'A7sus4')],
+};
+export const MAISONS: Theme = {
+  id: 'maisons', titre: 'Les Maisons', tonique: midi('D4'), mode: 'mixolydien', mesure: 4,
+  sections: { A: MA, B: MB }, forme: ['A', 'B'],
+  motif: [n(0, 1, 'A4'), n(1, 1, 'D5'), n(2, 0.5, 'C5'), n(2.5, 1.5, 'F#5')],
+};
+
+/*
+ * V. « Kaï » — mi, blues de douze mesures, rapide et crâneur. Le riff de deux mesures monte par la blue note (mi, sol,
+ * la, si bémol, si) et retombe ; il passe au IV (une quinte plus bas) ; les quatre dernières mesures répondent par le motif des quatre voies
+ * sur la dominante (fa dièse, si, la, ré dièse), puis le riff revient en tête de chorus.
+ */
+export const RIFF_KAI: NoteP[] = [
+  n(0, 0.5, 'E4'), n(0.5, 0.5, 'G4'), n(1, 0.5, 'A4'), n(1.5, 0.5, 'Bb4'), n(2, 1, 'B4'), n(3.5, 0.5, 'D5'),
+  n(4, 1.5, 'E5'), n(5.5, 0.5, 'D5'), n(6, 0.5, 'B4'), n(6.5, 0.5, 'A4'), n(7, 0.5, 'G4'), n(7.5, 0.5, 'E4'),
+];
+const KB: NoteP[] = [
+  // mesures 9 et 10 : le motif sur si 7 (fa dièse, si, la, ré dièse), puis sur la 7 (mi, la, sol, do dièse)
+  n(32, 1, 'F#4'), n(33, 1, 'B4'), n(34, 0.5, 'A4'), n(34.5, 1.5, 'D#5'),
+  n(36, 1, 'E4'), n(37, 1, 'A4'), n(38, 0.5, 'G4'), n(38.5, 1.5, 'C#5'),
+  // mesures 11 et 12 : la chute, la note bleue, la reprise
+  n(40, 0.5, 'B4'), n(40.5, 0.5, 'Bb4'), n(41, 0.5, 'A4'), n(41.5, 0.5, 'G4'), n(42, 1, 'E4'),
+  n(44, 0.5, 'F#4'), n(44.5, 0.5, 'A4'), n(45, 0.5, 'B4'), n(45.5, 1.5, 'D#5'),
+];
+export const KAI: Theme = {
+  id: 'kai', titre: 'Kaï', tonique: midi('E4'), mode: 'mixolydien', mesure: 4,
+  sections: {
+    T: {
+      mesures: 12,
+      melodie: [...RIFF_KAI, ...RIFF_KAI.map((x) => ({ ...x, t: x.t + 8 })), ...RIFF_KAI.map((x) => ({ ...x, t: x.t + 16, m: x.m - 7 })), ...RIFF_KAI.map((x) => ({ ...x, t: x.t + 24 })), ...KB],
+      accords: [c(0, 16, 'E7'), c(16, 8, 'A7'), c(24, 8, 'E7'), c(32, 4, 'B7'), c(36, 4, 'A7'), c(40, 4, 'E7'), c(44, 4, 'B7')],
+    },
+  },
+  forme: ['T'],
+  motif: [n(0, 1, 'F#4'), n(1, 1, 'B4'), n(2, 0.5, 'A4'), n(2.5, 1.5, 'D#5')],
+};
+/** La gamme de blues de mi (mi, sol, la, si bémol, si, ré) : les notes du riff de Kaï. */
+export const BLUES_MI = [4, 7, 9, 10, 11, 2];
+
+/*
+ * VI. « Championnat » — si bémol majeur, AABA de 32 mesures, big band. Le motif des quatre voies tombe juste sur
+ * l'accord de tonique (fa, si bémol, la, ré) : il ouvre chaque A, revient sur do et sur ré ; le pont part vers le IV
+ * (mi bémol), passe par la porte de derrière (mi bémol mineur, la bémol 7) et remonte par sol 7 vers la cadence.
+ */
+const ca = (fin: AccordP[]): AccordP[] => [c(0, 4, 'Bbmaj7'), c(4, 4, 'Gm7'), c(8, 4, 'Cm7'), c(12, 4, 'F7'), c(16, 4, 'Dm7'), c(20, 4, 'G7'), c(24, 2, 'Cm7'), c(26, 2, 'F7'), ...fin];
+const melodieChamp = (): NoteP[] => [
+  n(0, 1, 'F4'), n(1, 1, 'Bb4'), n(2, 0.5, 'A4'), n(2.5, 1.5, 'D5'),
+  n(4.5, 0.5, 'C5'), n(5, 0.5, 'D5'), n(5.5, 2.5, 'F5'),
+  n(8, 1, 'G4'), n(9, 1, 'C5'), n(10, 0.5, 'Bb4'), n(10.5, 1.5, 'Eb5'),
+  n(12.5, 0.5, 'D5'), n(13, 0.5, 'C5'), n(13.5, 0.5, 'A4'), n(14, 2, 'F4'),
+  n(16, 1, 'A4'), n(17, 1, 'D5'), n(18, 0.5, 'C5'), n(18.5, 1.5, 'F5'),
+  n(20.5, 0.5, 'E5'), n(21, 0.5, 'D5'), n(21.5, 0.5, 'B4'), n(22, 1, 'G4'), n(23, 1, 'A4'),
+  n(24, 1, 'Bb4'), n(25, 0.5, 'G4'), n(25.5, 0.5, 'Eb5'), n(26, 0.5, 'D5'), n(26.5, 0.5, 'C5'), n(27, 1, 'A4'),
+];
+const CA1: Section = { mesures: 8, melodie: [...melodieChamp(), n(28, 3, 'Bb4')], accords: ca([c(28, 2, 'Bbmaj7'), c(30, 1, 'Cm7'), c(31, 1, 'F7')]) };
+const CA2: Section = { mesures: 8, melodie: [...melodieChamp(), n(28, 1.5, 'Bb4'), n(29.5, 0.5, 'D5'), n(30, 1, 'F5'), n(31, 1, 'Ab5')], accords: ca([c(28, 2, 'Bbmaj7'), c(30, 2, 'Bb7')]) };
+const CB: Section = {
+  mesures: 8,
+  melodie: [
+    n(0, 1.5, 'G5'), n(1.5, 0.5, 'F5'), n(2, 2, 'D5'),
+    n(4, 1, 'Gb5'), n(5, 1, 'Eb5'), n(6, 1, 'C5'), n(7, 1, 'Gb5'),
+    n(8, 1.5, 'F5'), n(9.5, 0.5, 'D5'), n(10, 2, 'A4'),
+    n(12, 1, 'Ab4'), n(13, 1, 'B4'), n(14, 1, 'D5'), n(15, 1, 'F5'),
+    n(16, 1.5, 'Eb5'), n(17.5, 0.5, 'G5'), n(18, 2, 'Bb5'),
+    n(20, 1, 'A5'), n(21, 0.5, 'G5'), n(21.5, 0.5, 'F5'), n(22, 1, 'Eb5'), n(23, 1, 'C5'),
+    n(24, 0.5, 'D5'), n(24.5, 0.5, 'F5'), n(25, 1, 'A5'), n(26, 0.5, 'G5'), n(26.5, 0.5, 'F5'), n(27, 1, 'E5'),
+    n(28, 1, 'Eb5'), n(29, 1, 'D5'), n(30, 1, 'C5'), n(31, 1, 'A4'),
+  ],
+  accords: [c(0, 4, 'Ebmaj7'), c(4, 2, 'Ebm7'), c(6, 2, 'Ab7'), c(8, 4, 'Bbmaj7'), c(12, 4, 'G7b9'), c(16, 4, 'Cm7'), c(20, 4, 'F7'), c(24, 2, 'Dm7'), c(26, 2, 'G7'), c(28, 2, 'Cm7'), c(30, 2, 'F7')],
+};
+export const CHAMPIONNAT: Theme = {
+  id: 'championnat', titre: 'Championnat', tonique: midi('Bb4'), mode: 'ionien', mesure: 4,
+  sections: { A1: CA1, A2: CA2, B: CB, A3: { ...CA1 } }, forme: ['A1', 'A2', 'B', 'A3'],
+  motif: [n(0, 1, 'F4'), n(1, 1, 'Bb4'), n(2, 0.5, 'A4'), n(2.5, 1.5, 'D5')],
+};
+
+export const THEMES: Record<ThemeId, Theme> = { 'quatre-voies': QUATRE_VOIES, 'ville-nuit': VILLE_NUIT, duel: DUEL, maisons: MAISONS, kai: KAI, championnat: CHAMPIONNAT };

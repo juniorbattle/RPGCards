@@ -15,7 +15,10 @@ import { QUATRE_VOIES, type AccordP, type NoteP } from './partitions';
 import { accord, midi, swinguer, voicer } from './theorie';
 import { augmenter, deplacer, renverser, retrograde, transposer } from './variations';
 import { MONOPHONIQUES } from './vents';
+import { VERSIONS_CHAMPIONNAT } from './championnat';
 import { VERSIONS_DUEL } from './duel';
+import { VERSIONS_KAI } from './kai';
+import { VERSIONS_MAISONS } from './maisons';
 import { VERSIONS_VILLE } from './ville';
 
 export type { DefJingle, DefVersion, Deroule, JingleId, Mix, OptVersion, VariationMelodie, VersionId } from './arrangement';
@@ -39,8 +42,11 @@ const MIX_BASE: Partial<Record<InstrId, Mix>> = {
   trompette: { g: 0.5, pan: 0.1, rev: 0.26 },
   sax: { g: 0.62, pan: -0.08, rev: 0.25 },
   flute: { g: 0.62, pan: 0.15, rev: 0.3 },
-  cuivres: { g: 0.5, pan: 0, rev: 0.25 },
+  cuivres: { g: 0.71, pan: 0, rev: 0.25 },
   cordes: { g: 1.6, pan: 0, rev: 0.42 },
+  'trompette-ouverte': { g: 0.5, pan: 0.12, rev: 0.24 },
+  saxes: { g: 0.79, pan: -0.15, rev: 0.25 },
+  archet: { g: 0.62, pan: 0, rev: 0.2 },
   nappe: { g: 1.1, pan: 0, rev: 0.5 },
   ride: { g: 0.37, pan: 0.35, rev: 0.14 },
   cloche: { g: 0.35, pan: 0.35, rev: 0.2 },
@@ -177,7 +183,7 @@ const recit: DefVersion = {
   },
 };
 
-export const VERSIONS: Record<VersionId, DefVersion> = { 'I-1': titre, 'I-2': menus, 'I-3': recit, ...VERSIONS_VILLE, ...VERSIONS_DUEL };
+export const VERSIONS: Record<VersionId, DefVersion> = { 'I-1': titre, 'I-2': menus, 'I-3': recit, ...VERSIONS_VILLE, ...VERSIONS_DUEL, ...VERSIONS_MAISONS, ...VERSIONS_KAI, ...VERSIONS_CHAMPIONNAT };
 
 // ------------------------------------------------------------------ jingles (tirés du motif)
 

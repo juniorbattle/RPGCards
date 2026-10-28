@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { derouler, formation } from '../src/son/musique/arrangement';
 import { passage, VERSIONS, type VersionId } from '../src/son/musique/catalogue';
 import type { Evenement, InstrId } from '../src/son/musique/generateurs';
-import { DUEL, VILLE_NUIT, type AccordP, type NoteP } from '../src/son/musique/partitions';
+import { CHAMPIONNAT as CHAMPIONNAT_, DUEL, VILLE_NUIT, type AccordP, type NoteP } from '../src/son/musique/partitions';
 import { accord, dansAccord, nomDe, pc } from '../src/son/musique/theorie';
 import { enValse } from '../src/son/musique/variations';
 import { CONTRE_VALSE, MEL_MAJ, MEL_VALSE } from '../src/son/musique/ville';
@@ -111,7 +111,7 @@ describe('M13 — thème III « Duel »', () => {
 });
 
 describe('M13 — tessitures des vents et des cordes', () => {
-  const T: Partial<Record<InstrId, [number, number]>> = { sax: [44, 77], trompette: [52, 86], flute: [60, 96], cuivres: [40, 86], cordes: [36, 96] };
+  const T: Partial<Record<InstrId, [number, number]>> = { sax: [44, 77], saxes: [41, 80], trompette: [52, 86], 'trompette-ouverte': [52, 86], flute: [60, 96], cuivres: [40, 86], cordes: [36, 96], archet: [28, 55] };
   it('aucune note hors de la tessiture de son instrument, dans toutes les versions et toutes les formations', () => {
     for (const id of Object.keys(VERSIONS) as VersionId[]) {
       for (const chapitre of [undefined, 0, 2, 4, 6]) for (const p of [0, 1, 2, 3]) {
@@ -122,6 +122,54 @@ describe('M13 — tessitures des vents et des cordes', () => {
           expect(e.m, `${id} ${chapitre} ${e.instr} ${nomDe(e.m)}`).toBeLessThanOrEqual(r[1]);
         }
       }
+    }
+  });
+});
+
+describe('M13, lot MU-C — IV « Les Maisons », V « Kaï », VI « Championnat »', () => {
+  it('Maisons : un thème, quatre couleurs ; chaque tête sonne dans sa grille ; le motif des quatre voies l\'ouvre', async () => {
+    const { GRILLES, MELODIES } = await import('../src/son/musique/maisons');
+    for (const c of ['Cendre', 'Voile', 'Ronce', 'Astre'] as const) {
+      couvre(GRILLES[c], 64);
+      consonante(MELODIES[c], GRILLES[c], c);
+    }
+    expect(MELODIES.Cendre.slice(0, 4).map((x) => nomDe(x.m))).toEqual(['A4', 'D5', 'C5', 'F#5']);
+    // les couleurs : le Voile en mineur (fa naturel), l'Astre en lydien (sol dièse), la Ronce reste dominante
+    expect(MELODIES.Voile.some((x) => pc(x.m) === 5)).toBe(true);
+    expect(MELODIES.Astre.some((x) => pc(x.m) === 8)).toBe(true);
+    const tempos = (['IV-1', 'IV-2', 'IV-3', 'IV-4'] as VersionId[]).map((id) => VERSIONS[id].tempo);
+    expect(tempos).toEqual([168, 110, 92, 120]);
+  });
+  it('Ronce : la contrebasse à l\'archet tient les A, des notes bleues en appoggiature ; Astre : la grande salle', () => {
+    const { ev } = passage(VERSIONS['IV-3'], 0, 2);
+    expect(ev.some((e) => e.instr === 'archet')).toBe(true);
+    expect(VERSIONS['IV-4'].salle).toBe('grande');
+  });
+  it('Kaï : le riff monte par la blue note (si bémol) ; chaque note est de l\'accord ou de la gamme de blues de sa fondamentale', async () => {
+    const { KAI, RIFF_KAI } = await import('../src/son/musique/partitions');
+    expect(RIFF_KAI.slice(0, 5).map((x) => nomDe(x.m))).toEqual(['E4', 'G4', 'A4', 'Bb4', 'B4']);
+    const d = derouler(KAI);
+    const blues = [0, 3, 5, 6, 7, 10];
+    for (const x of d.mel) {
+      const a = accord(accordA(d.acc, x.t).sym);
+      expect(dansAccord(a, x.m, true) || blues.includes(pc(x.m - a.fond)), `${nomDe(x.m)} sur ${accordA(d.acc, x.t).sym}`).toBe(true);
+    }
+    expect(VERSIONS['V-1'].tempo).toBe(176);
+  });
+  it('Championnat : le motif sur la tonique (fa, si bémol, la, ré) ; tête consonante ; la Finale un ton plus haut, plus rapide', () => {
+    const d = derouler(CHAMPIONNAT_);
+    consonante(d.mel, d.acc, 'championnat');
+    expect(d.mel.slice(0, 4).map((x) => nomDe(x.m))).toEqual(['F4', 'Bb4', 'A4', 'D5']);
+    expect(VERSIONS['VI-2'].tempo).toBeGreaterThan(VERSIONS['VI-1'].tempo);
+    expect(passage(VERSIONS['VI-2'], 0, 1).acc[0]!.sym).toBe('Cmaj7');
+    const { ev } = passage(VERSIONS['VI-1'], 0, 3);
+    expect(new Set(ev.filter((e) => e.couche === 'melodie').map((e) => e.instr))).toEqual(new Set(['saxes', 'trompette-ouverte', 'cuivres']));
+  });
+  it('tous les duels ont les mêmes couches (mélodie, tension, cuivres), muettes au départ', () => {
+    for (const id of ['III-1', 'IV-1', 'IV-2', 'IV-3', 'IV-4', 'V-1', 'VI-1', 'VI-2'] as VersionId[]) {
+      expect(VERSIONS[id].couches, id).toEqual({ melodie: 0, tension: 0, cuivres: 0 });
+      const couches = new Set(passage(VERSIONS[id], 0, 4).ev.map((e) => e.couche ?? 'fond'));
+      expect([...couches].sort(), id).toEqual(['cuivres', 'fond', 'melodie', 'tension']);
     }
   });
 });

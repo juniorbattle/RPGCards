@@ -9,7 +9,7 @@ import type { AccordP, NoteP, Theme } from './partitions';
 import { midi } from './theorie';
 import { augmenter, changerMode, deplacer, enrichir, renverser, retrograde, transposer, transposerAccords } from './variations';
 
-export type VersionId = 'I-1' | 'I-2' | 'I-3' | 'II-1' | 'II-2' | 'II-3' | 'III-1' | 'III-2';
+export type VersionId = 'I-1' | 'I-2' | 'I-3' | 'II-1' | 'II-2' | 'II-3' | 'III-1' | 'III-2' | 'IV-1' | 'IV-2' | 'IV-3' | 'IV-4' | 'V-1' | 'VI-1' | 'VI-2';
 export type JingleId = 'victoire' | 'defaite' | 'carte' | 'chapitre';
 /** Variations à la volée (laboratoire) : la mélodie de la tête transformée, à la manière de Zelda. */
 export type VariationMelodie = 'originale' | 'envers' | 'renversee' | 'mineur' | 'lente';
