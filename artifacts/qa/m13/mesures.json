@@ -1,0 +1,119 @@
+{
+  "commit": "910e92e",
+  "date": "2026-10-28T00:45:56.399Z",
+  "passes": 2,
+  "graine": 1,
+  "resultats": [
+    {
+      "nom": "I-1",
+      "duree": 129.2642857142857,
+      "msBanque": 786.2999999998137,
+      "msRendu": 7253.9000000003725,
+      "lufs": -18,
+      "lra": 3.1,
+      "creteVraie": -4.8,
+      "vitesse": 17.819970734953483
+    },
+    {
+      "nom": "I-2",
+      "duree": 51.55,
+      "msBanque": 724.2000000001863,
+      "msRendu": 1905.4000000003725,
+      "lufs": -17,
+      "lra": 2.4,
+      "creteVraie": -3.8,
+      "vitesse": 27.05468667995692
+    },
+    {
+      "nom": "I-3",
+      "duree": 243.55,
+      "msBanque": 533.1000000000931,
+      "msRendu": 17588.599999999627,
+      "lufs": -19.3,
+      "lra": 1.9,
+      "creteVraie": -6,
+      "vitesse": 13.847037285514775
+    },
+    {
+      "nom": "victoire",
+      "duree": 6.277272727272727,
+      "msBanque": 637.2000000001863,
+      "msRendu": 204.39999999990687,
+      "lufs": -17.1,
+      "lra": 15,
+      "creteVraie": -4.5,
+      "vitesse": 30.71072762854984
+    },
+    {
+      "nom": "defaite",
+      "duree": 9.004545454545454,
+      "msBanque": 773.2999999998137,
+      "msRendu": 271.89999999990687,
+      "lufs": -16.7,
+      "lra": 16.1,
+      "creteVraie": -3.8,
+      "vitesse": 33.11712193655218
+    },
+    {
+      "nom": "carte",
+      "duree": 5.425,
+      "msBanque": 220.60000000009313,
+      "msRendu": 169,
+      "lufs": -16.8,
+      "lra": 15.9,
+      "creteVraie": -6.1,
+      "vitesse": 32.10059171597633
+    },
+    {
+      "nom": "chapitre",
+      "duree": 9.383333333333333,
+      "msBanque": 360.40000000037253,
+      "msRendu": 459.39999999990687,
+      "lufs": -17.1,
+      "lra": 15.4,
+      "creteVraie": -4.4,
+      "vitesse": 20.425192279789368
+    },
+    {
+      "nom": "I-1-envers",
+      "duree": 64.50238095238095,
+      "msBanque": 695.1000000000931,
+      "msRendu": 3509.8000000002794,
+      "lufs": -17.3,
+      "lra": 1.7,
+      "creteVraie": -4.9,
+      "vitesse": 18.377793877820903
+    },
+    {
+      "nom": "I-1-renversee",
+      "duree": 64.50238095238095,
+      "msBanque": 621,
+      "msRendu": 3735.899999999907,
+      "lufs": -17.1,
+      "lra": 1.5,
+      "creteVraie": -5,
+      "vitesse": 17.265553401424704
+    },
+    {
+      "nom": "I-1-mineur",
+      "duree": 64.50238095238095,
+      "msBanque": 620.9000000003725,
+      "msRendu": 3443,
+      "lufs": -17.4,
+      "lra": 2,
+      "creteVraie": -4.8,
+      "vitesse": 18.734354037868414
+    },
+    {
+      "nom": "I-1-lente",
+      "duree": 64.50238095238095,
+      "msBanque": 724.6000000000931,
+      "msRendu": 3436.2999999998137,
+      "lufs": -18,
+      "lra": 2.1,
+      "creteVraie": -5.1,
+      "vitesse": 18.770881748504042
+    }
+  ],
+  "console": []
+}
