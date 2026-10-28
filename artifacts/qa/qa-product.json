@@ -1,6 +1,6 @@
 {
-  "commit": "fa6e8b7",
-  "date": "2026-10-27T08:12:33.711Z",
+  "commit": "55348ca",
+  "date": "2026-10-28T02:59:50.095Z",
   "chromium": "153.0.8010.12",
   "runs": {
     "A-nouveau-joueur-1280-clic": {
@@ -9,9 +9,9 @@
         "OK profil créé avec Signature et Techniques choisies",
         "OK deck modifié : enregistrement possible",
         "OK variante retirée enregistrée (Basic à la place)",
-        "OK aucune génération ni préparation de personnage pendant le duel (compteurs 73/0/3/1/0/50 → 73/0/3/1/0/50)",
-        "OK duel joué jusqu’au K.-O. (tour 10)",
-        "OK résultat enregistré (defeat) = vainqueur moteur (opp)",
+        "OK aucune génération ni préparation de personnage pendant le duel (compteurs 159/0/5/1/0/125 → 159/0/5/1/0/125)",
+        "OK duel joué jusqu’au K.-O. (tour 7)",
+        "OK résultat enregistré (victory) = vainqueur moteur (me)",
         "OK tours du résumé = tours du moteur",
         "OK session de duel retirée (crochets, plateau, scène)",
         "OK bilan du rival mis à jour sur le tableau",
@@ -23,43 +23,43 @@
         "start": {
           "held": true,
           "n": [
-            73,
+            159,
             0,
-            3,
+            5,
             1,
             0,
-            50
+            125
           ]
         },
         "end": {
           "held": true,
           "n": [
-            73,
+            159,
             0,
-            3,
+            5,
             1,
             0,
-            50
+            125
           ]
         }
       },
       "duel": {
         "outcome": "ended",
-        "winner": "opp",
-        "turn": 10,
+        "winner": "me",
+        "turn": 7,
         "hp": [
-          0,
-          6
+          39,
+          0
         ],
         "personality": "braise",
-        "turns": 9,
+        "turns": 6,
         "drags": 0,
-        "clicks": 10,
+        "clicks": 7,
         "keyboard": 0,
-        "tactics": 4,
+        "tactics": 5,
         "repels": 0,
         "leaks": [],
-        "viewChecks": 28,
+        "viewChecks": 25,
         "viewErrors": [],
         "lostClicks": [],
         "tech": {
@@ -67,14 +67,13 @@
         },
         "moods": [
           "confident",
-          "triumphant",
-          "surprised",
-          "pained",
           "focused",
-          "smug"
+          "smug",
+          "surprised",
+          "pained"
         ],
         "sequencesWatched": 0,
-        "sequencesSkipped": 6,
+        "sequencesSkipped": 5,
         "manualToggleChecked": "ok",
         "holds": 0,
         "layoutChecked": [
@@ -82,7 +81,71 @@
           "TACTICS"
         ],
         "layoutIssues": [],
-        "stanceChecks": 14,
+        "stanceChecks": 13,
+        "stanceIssues": [],
+        "stageGhosts": [],
+        "stageFades": [],
+        "stagesSeen": 0,
+        "rotations": [],
+        "signatures": 1,
+        "stances": {
+          "assault": 7,
+          "guard": 0
+        },
+        "plans": {
+          "damage": 2,
+          "rank": 3
+        },
+        "revisions": 0,
+        "revised": 0
+      },
+      "ms": 121629
+    },
+    "B-1920-glisser-abandon": {
+      "consoleIssues": [],
+      "checks": [
+        "OK duel glisser joué jusqu’au K.-O. (tour 11)",
+        "OK abandon annulé : le duel continue",
+        "OK abandon classé à part (ni victoire ni défaite)",
+        "OK écran Résultat : « Abandon »"
+      ],
+      "fails": [],
+      "duel": {
+        "outcome": "ended",
+        "winner": "opp",
+        "turn": 11,
+        "hp": [
+          0,
+          18
+        ],
+        "personality": "braise",
+        "turns": 10,
+        "drags": 20,
+        "clicks": 0,
+        "keyboard": 0,
+        "tactics": 8,
+        "repels": 0,
+        "leaks": [],
+        "viewChecks": 37,
+        "viewErrors": [],
+        "lostClicks": [],
+        "tech": {
+          "Ancrage": 1
+        },
+        "moods": [
+          "confident",
+          "focused"
+        ],
+        "sequencesWatched": 0,
+        "sequencesSkipped": 10,
+        "manualToggleChecked": "ok",
+        "holds": 0,
+        "layoutChecked": [
+          "COMMIT",
+          "TACTICS"
+        ],
+        "layoutIssues": [],
+        "stanceChecks": 19,
         "stanceIssues": [],
         "stageGhosts": [],
         "stageFades": [],
@@ -91,24 +154,17 @@
         "signatures": 1,
         "stances": {
           "assault": 9,
-          "guard": 1
+          "guard": 2
         },
         "plans": {
-          "rank": 2,
-          "damage": 2
+          "rank": 5,
+          "damage": 3
         },
         "revisions": 0,
         "revised": 0
       },
-      "ms": 173956
-    },
-    "B-1920-glisser-abandon": {
-      "consoleIssues": [],
-      "checks": [],
-      "fails": [
-        "exception : page.click: Timeout 15000ms exceeded."
-      ],
-      "ms": 106800
+      "keyboardTurns": 2,
+      "ms": 228898
     },
     "C-deck-illegal-refuse": {
       "consoleIssues": [],
@@ -120,7 +176,7 @@
         "OK deck corrigé : duel possible"
       ],
       "fails": [],
-      "ms": 44569
+      "ms": 37709
     },
     "D-sauvegarde-illisible": {
       "consoleIssues": [],
@@ -133,7 +189,7 @@
         "OK nouvelle partie : la sauvegarde future est conservée à part"
       ],
       "fails": [],
-      "ms": 60500
+      "ms": 42684
     },
     "E-serie-complete-1280": {
       "consoleIssues": [],
@@ -232,7 +288,7 @@
           "unlocked": 39
         }
       ],
-      "ms": 755363
+      "ms": 566560
     },
     "F-reprise-en-plein-duel": {
       "consoleIssues": [],
@@ -304,7 +360,7 @@
         "revisions": 0,
         "revised": 0
       },
-      "ms": 208297
+      "ms": 165598
     },
     "G-migration-v1-reelle": {
       "consoleIssues": [],
@@ -315,7 +371,7 @@
         "OK réécrite au schéma 2 dès la première écriture"
       ],
       "fails": [],
-      "ms": 31343
+      "ms": 22555
     },
     "H-reprise-alteree-refusee": {
       "consoleIssues": [],
@@ -325,17 +381,75 @@
         "OK recommencé depuis le début avec la configuration enregistrée (tour 1)"
       ],
       "fails": [],
-      "ms": 63257
+      "ms": 46182
     },
     "I-duel-de-la-ville-1280": {
       "consoleIssues": [],
       "checks": [
-        "OK rubrique « Duels de la ville » : 4 rencontres de PNJ ouvertes d’emblée"
+        "OK rubrique « Duels de la ville » : 4 rencontres de PNJ ouvertes d’emblée",
+        "OK duel joué jusqu’au K.-O. (tour 11)",
+        "OK adversaire : duelliste PNJ (pnj-docker-1)",
+        "OK résultat enregistré dans l’historique contre le PNJ",
+        "OK aucune progression ni déblocage (entraînement)",
+        "OK sauvegarde valide après un duel de la ville (rechargement)"
       ],
-      "fails": [
-        "exception : page.click: Target page, context or browser has been closed"
-      ],
-      "ms": 55244
+      "fails": [],
+      "duel": {
+        "outcome": "ended",
+        "winner": "opp",
+        "turn": 11,
+        "hp": [
+          0,
+          18
+        ],
+        "personality": "pnj-docker-1",
+        "turns": 10,
+        "drags": 0,
+        "clicks": 11,
+        "keyboard": 0,
+        "tactics": 6,
+        "repels": 0,
+        "leaks": [],
+        "viewChecks": 35,
+        "viewErrors": [],
+        "lostClicks": [],
+        "tech": {
+          "Ancrage": 1
+        },
+        "moods": [
+          "confident",
+          "focused",
+          "surprised",
+          "smug"
+        ],
+        "sequencesWatched": 0,
+        "sequencesSkipped": 9,
+        "manualToggleChecked": "ok",
+        "holds": 0,
+        "layoutChecked": [
+          "COMMIT",
+          "TACTICS"
+        ],
+        "layoutIssues": [],
+        "stanceChecks": 18,
+        "stanceIssues": [],
+        "stageGhosts": [],
+        "stageFades": [],
+        "stagesSeen": 0,
+        "rotations": [],
+        "signatures": 1,
+        "stances": {
+          "assault": 7,
+          "guard": 4
+        },
+        "plans": {
+          "damage": 3,
+          "rank": 3
+        },
+        "revisions": 0,
+        "revised": 0
+      },
+      "ms": 115841
     }
   }
 }

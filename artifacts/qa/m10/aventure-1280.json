@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-27T09:42:40.312Z",
-  "commit": "fa6e8b7",
+  "date": "2026-10-28T03:30:05.770Z",
+  "commit": "55348ca",
   "viewport": [
     1280,
     720
@@ -50,7 +50,7 @@
     "OK Quai de l’aventure : le Quai en quatre rangs (ARB-M10-12)",
     "OK HUD : « Le Quai »",
     "OK Quai en rangs : diorama des rangs affiché (0 plans non approuvés, QA seulement)",
-    "OK marche au clavier au travers du passage ouest jusqu’à la rue Haute (z -11.2, 61.3 s)",
+    "OK marche au clavier au travers du passage ouest jusqu’à la rue Haute (z -11.2, 41.3 s)",
     "OK devant chef-Ronce",
     "OK Mère Aubépine dans la ruelle des Lanternes (rang 3, z -26.6) ; défi pas encore ouvert",
     "OK jeu par défaut : accueil habituel, sans le mode Aventure ni sa sauvegarde"
