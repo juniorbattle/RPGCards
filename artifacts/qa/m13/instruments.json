@@ -1,5 +1,5 @@
 {
-  "commit": "59e32be",
+  "commit": "557c425",
   "justesses": {
     "trompette": [
       {
@@ -82,49 +82,49 @@
     "cuivres": [
       {
         "m": 50,
-        "cents": 3.5
+        "cents": -2.2
       },
       {
         "m": 57,
-        "cents": 3.8
+        "cents": -2.1
       },
       {
         "m": 64,
-        "cents": 3.8
+        "cents": -2.6
       },
       {
         "m": 71,
-        "cents": 3.5
+        "cents": -2.6
       },
       {
         "m": 76,
-        "cents": 3.6
+        "cents": -1.9
       }
     ],
     "cordes": [
       {
         "m": 48,
-        "cents": 0.1
+        "cents": -1.9
       },
       {
         "m": 55,
-        "cents": -0.4
+        "cents": -2.3
       },
       {
         "m": 62,
-        "cents": 0
+        "cents": -2.1
       },
       {
         "m": 69,
-        "cents": 0.5
+        "cents": -1.6
       },
       {
         "m": 76,
-        "cents": -0.1
+        "cents": -0.5
       },
       {
         "m": 83,
-        "cents": -0.3
+        "cents": -2.8
       }
     ],
     "guitare": [
@@ -170,6 +170,76 @@
         "m": 76,
         "cents": 0
       }
+    ],
+    "trompette-ouverte": [
+      {
+        "m": 55,
+        "cents": 0.2
+      },
+      {
+        "m": 62,
+        "cents": 0
+      },
+      {
+        "m": 67,
+        "cents": -0.1
+      },
+      {
+        "m": 74,
+        "cents": 0.1
+      },
+      {
+        "m": 79,
+        "cents": 0.3
+      },
+      {
+        "m": 84,
+        "cents": 0.3
+      }
+    ],
+    "saxes": [
+      {
+        "m": 46,
+        "cents": -2.6
+      },
+      {
+        "m": 53,
+        "cents": -2.3
+      },
+      {
+        "m": 60,
+        "cents": -2.7
+      },
+      {
+        "m": 67,
+        "cents": -2.4
+      },
+      {
+        "m": 74,
+        "cents": -2.2
+      }
+    ],
+    "archet": [
+      {
+        "m": 28,
+        "cents": 0.1
+      },
+      {
+        "m": 33,
+        "cents": -0.3
+      },
+      {
+        "m": 40,
+        "cents": 0.1
+      },
+      {
+        "m": 45,
+        "cents": 0
+      },
+      {
+        "m": 50,
+        "cents": -0.2
+      }
     ]
   },
   "demos": [
@@ -178,70 +248,91 @@
       "duree": 20.310344827586206,
       "lufs": -16.5,
       "crete": -5.2,
-      "vitesse": 21.211848383902044
+      "vitesse": 14.20701233042688
+    },
+    {
+      "instr": "trompette-ouverte",
+      "duree": 20.23275862068966,
+      "lufs": -18.2,
+      "crete": -5.8,
+      "vitesse": 13.178374663383124
     },
     {
       "instr": "sax",
       "duree": 20.23275862068966,
       "lufs": -17.3,
       "crete": -5.6,
-      "vitesse": 22.302423523683316
+      "vitesse": 12.932412029843182
+    },
+    {
+      "instr": "saxes",
+      "duree": 20.23275862068966,
+      "lufs": -16.9,
+      "crete": -4.3,
+      "vitesse": 15.251589492447712
     },
     {
       "instr": "flute",
       "duree": 20.23275862068966,
       "lufs": -17.5,
       "crete": -6.7,
-      "vitesse": 24.883481270076164
+      "vitesse": 17.67516259341868
     },
     {
       "instr": "cuivres",
       "duree": 20.23275862068966,
-      "lufs": -16.7,
-      "crete": -4.7,
-      "vitesse": 6.299507634563432
+      "lufs": -16.1,
+      "crete": -3.8,
+      "vitesse": 14.887975438329402
     },
     {
       "instr": "cordes",
       "duree": 20.284482758620694,
-      "lufs": -18.4,
-      "crete": -7.6,
-      "vitesse": 9.27842043665674
+      "lufs": -17.6,
+      "crete": -5.7,
+      "vitesse": 7.664934536965303
+    },
+    {
+      "instr": "archet",
+      "duree": 20.310344827586206,
+      "lufs": -19.8,
+      "crete": -6.9,
+      "vitesse": 14.795909395777263
     },
     {
       "instr": "guitare",
       "duree": 20.23275862068966,
       "lufs": -17.5,
       "crete": -4.7,
-      "vitesse": 23.477324925381797
+      "vitesse": 16.618282234652696
     },
     {
       "instr": "nylon",
       "duree": 20.23275862068966,
       "lufs": -17.9,
       "crete": -5,
-      "vitesse": 26.731085507602845
+      "vitesse": 19.339283713139032
     },
     {
       "instr": "piano",
       "duree": 20.23275862068966,
       "lufs": -22.8,
       "crete": -10.4,
-      "vitesse": 36.78683385579937
+      "vitesse": 25.478854830217127
     },
     {
       "instr": "rhodes",
       "duree": 20.310344827586206,
       "lufs": -16.3,
       "crete": -5.2,
-      "vitesse": 23.743681117137566
+      "vitesse": 16.096326539538122
     },
     {
       "instr": "vibra",
       "duree": 20.23275862068966,
       "lufs": -18.4,
       "crete": -6.4,
-      "vitesse": 23.7417960815363
+      "vitesse": 16.59647167639721
     }
   ],
   "console": []
