@@ -44,25 +44,29 @@ function riffA(acc: readonly AccordP[], court: boolean): NoteP[] {
   return out;
 }
 
-/** L'ostinato de la tension : le motif en croches piquées, transposé sur chaque accord, une mesure sur deux en miroir. */
-function ostinatoTension(acc: readonly AccordP[], total: number, rng: Rng): Evenement[] {
-  const motif = [midi('E5'), midi('A5'), midi('G5'), midi('C6')];
+/**
+ * L'ostinato de la tension : le motif en croches piquées, transposé sur chaque accord (relatif à la note `ref`), une
+ * mesure sur deux en miroir ; une note qui ne sonne pas dans l'accord se tait.
+ */
+export function ostinatoTension(acc: readonly AccordP[], total: number, rng: Rng, o: { motif?: readonly number[]; ref?: number; instr?: InstrId; octave?: number } = {}): Evenement[] {
+  const motif = o.motif ?? [midi('E5'), midi('A5'), midi('G5'), midi('C6')];
+  const ref = o.ref ?? 9;
   const out: Evenement[] = [];
   for (let t = 0; t < total; t += 0.5) {
     const a = acc.reduce((r, x) => (x.t <= t + 1e-6 ? x : r), acc[0]!);
-    const k = ((pc(accord(a.sym).fond) - 9 + 18) % 12) - 6;
+    const k = ((pc(accord(a.sym).fond) - ref + 18) % 12) - 6;
     const i = Math.round(t * 2) % 4;
     const mes = Math.floor(t / 4);
     const m = motif[mes % 2 === 0 ? i : 3 - i]! + k;
     const ok = [...accord(a.sym).tons, ...accord(a.sym).tensions].some((iv) => pc(m - accord(a.sym).fond) === iv % 12);
     if (!ok) continue;
-    out.push({ t, d: 0.3, instr: 'piano', m: m - 12, v: 0.3 + (i === 0 ? 0.06 : 0) + rng() * 0.04 });
+    out.push({ t, d: 0.3, instr: o.instr ?? 'piano', m: m + (o.octave ?? -12), v: 0.3 + (i === 0 ? 0.06 : 0) + rng() * 0.04 });
   }
   return out;
 }
 
 /** La pulsation de la tension : charleston en croches, grosse caisse feutrée sur les temps. */
-function pulsation(total: number, rng: Rng, it: number): Evenement[] {
+export function pulsation(total: number, rng: Rng, it: number): Evenement[] {
   const out: Evenement[] = [];
   for (let t = 0; t < total; t += 0.5) {
     out.push({ t, d: 0.2, instr: 'charley-ferme', m: Math.round(t * 2) % 3, v: (t % 1 === 0 ? 0.3 : 0.2) * (0.8 + it * 0.4) + rng() * 0.03 });

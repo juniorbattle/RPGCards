@@ -36,9 +36,14 @@ describe('M13 — chef : les écrans et les rôles', () => {
     expect(roleDuelAventure('epreuve:Voile')).toEqual({ role: 'duel' });
     expect(roleDuelAventure('rue-docker')).toEqual({ role: 'duel' });
   });
-  it('version d\'un duel : le thème III (tendu ou non) tant que le thème propre au rôle n\'existe pas, puis le sien', () => {
-    expect(versionDuel({ role: 'kai' }, false)).toBe('III-1');
-    expect(versionDuel({ role: 'maison', famille: 'Cendre' }, true)).toBe('III-2');
+  it('version d\'un duel : le thème propre au rôle (Maisons, Kaï, Championnat, Finale), sinon le thème III, tendu ou non', () => {
+    expect(versionDuel({ role: 'duel' }, false)).toBe('III-1');
+    expect(versionDuel({ role: 'duel' }, true)).toBe('III-2');
+    expect(versionDuel({ role: 'kai' }, true)).toBe('V-1');
+    expect(['Cendre', 'Voile', 'Ronce', 'Astre'].map((f) => versionDuel({ role: 'maison', famille: f as 'Cendre' }, false))).toEqual(['IV-1', 'IV-2', 'IV-3', 'IV-4']);
+    expect(versionDuel({ role: 'championnat' }, false)).toBe('VI-1');
+    expect(versionDuel({ role: 'kai' }, false, new Set())).toBe('III-1');
+    expect(versionDuel({ role: 'maison', famille: 'Cendre' }, true, new Set())).toBe('III-2');
     expect(versionDuel({ role: 'kai' }, false, new Set(['V-1']))).toBe('V-1');
     expect(versionDuel({ role: 'maison', famille: 'Ronce' }, false, new Set(['IV-3']))).toBe('IV-3');
     expect(versionDuel({ role: 'finale' }, true, new Set(['VI-2']))).toBe('VI-2');
@@ -118,7 +123,7 @@ describe('M13 — la musique du moteur du son (sans contexte audio)', () => {
     m.duel([ev('clash', { winner: 'p1' })], PV);
     m.duel([ev('victory', { winner: 'p1' })], PV);
     m.jingle('carte');
-    expect(m.journal()).toEqual(['version:I-1', 'duel:kai:III-1', 'ponctuation:gagne', 'version:III-1:melodie', 'fin:victoire', 'jingle:carte']);
+    expect(m.journal()).toEqual(['version:I-1', 'duel:kai:V-1', 'ponctuation:gagne', 'version:V-1:melodie', 'fin:victoire', 'jingle:carte']);
     expect(m.consigne()).toEqual({ version: null });
   });
 });

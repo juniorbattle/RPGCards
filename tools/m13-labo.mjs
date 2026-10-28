@@ -51,9 +51,10 @@ try {
   // le duel : couches, ponctuations, duel tendu, fin
   await p.click('[data-key="mu-III-1"]');
   await p.waitForTimeout(800);
-  check(await p.locator('[data-key^="mu-couche-"].on').count() === 0, 'duel (III-1) : la mélodie, la tension et les cuivres attendent');
+  check(await p.locator('[data-key="mu-couche-melodie"].on').count() === 1 && await p.locator('[data-key^="mu-couche-"].on').count() === 1, 'duel (III-1) lancé seul : la mélodie d\'emblée, la tension et les cuivres attendent');
   await p.click('[data-key="mu-couche-melodie"]');
-  check(await p.locator('[data-key="mu-couche-melodie"].on').count() === 1, 'premier Clash : la mélodie entre');
+  check(await p.locator('[data-key="mu-couche-melodie"].on').count() === 0, 'la mélodie sort sur la mesure');
+  await p.click('[data-key="mu-couche-melodie"]');
   for (const k of ['gagne', 'perdu', 'signature', 'prolongation']) await p.click(`[data-key="mu-p-${k}"]`);
   await p.click('[data-key="mu-couche-cuivres"]');
   await p.click('[data-key="mu-tendu"]');
@@ -61,6 +62,8 @@ try {
   await p.click('[data-key="mu-fin-victoire"]');
   await p.waitForTimeout(2500);
   check(true, 'ponctuations, cuivres, duel tendu et fin de duel joués');
+  for (const id of ['IV-3', 'V-1', 'VI-2']) { await p.click(`[data-key="mu-${id}"]`); await p.waitForTimeout(1500); }
+  check(/Finale/.test(await p.textContent('[data-key="mu-etat"]')), 'les Maisons, Kaï, la Finale du Championnat');
   for (const i of ['trompette', 'sax']) { await p.click(`[data-key="mu-demo-${i}"]`); await p.waitForTimeout(1500); }
   check(/sax seul/.test(await p.textContent('[data-key="mu-etat"]')), 'instruments seuls (trompette bouchée, saxophone)');
   await p.click('[data-key="mu-stop"]');

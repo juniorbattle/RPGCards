@@ -3,7 +3,7 @@
  * variations à la volée (à l'envers, renversée, autre mode, valeurs doublées), les transitions sur la mesure. Rendu hors
  * ligne pour les outils de QA (`?qa=1` : `window.__musique`). Contrat `docs/m13/01_MUSIQUE.md`, §6.
  */
-import { fabriquer } from './banque';
+import { DEFS, fabriquer } from './banque';
 import { banqueWorker } from './orchestre';
 import { JINGLES, VERSIONS, type JingleId, type OptVersion, type VariationMelodie, type VersionId } from './catalogue';
 import { makeRng } from '../../game/engine/rng';
@@ -60,19 +60,20 @@ function instrumentsDe(sc: Scenario): InstrId[] {
   return [...s];
 }
 
-const TOUS: InstrId[] = ['piano', 'rhodes', 'vibra', 'basse', 'guitare', 'nylon', 'ride', 'cloche', 'crash', 'charley', 'charley-ferme', 'gc', 'cc', 'cc-balai', 'balai', 'rim'];
+/** Tous les instruments calculés (le reste, vents et cordes, est synthétisé en temps réel). */
+const TOUS = Object.keys(DEFS) as InstrId[];
 /** Les instruments à écouter seuls (laboratoire, aperçus) : la mélodie du premier A dans leur registre, accompagnée. */
-export const DEMOS: InstrId[] = ['trompette', 'sax', 'flute', 'cuivres', 'cordes', 'guitare', 'nylon', 'piano', 'rhodes', 'vibra'];
+export const DEMOS: InstrId[] = ['trompette', 'trompette-ouverte', 'sax', 'saxes', 'flute', 'cuivres', 'cordes', 'archet', 'guitare', 'nylon', 'piano', 'rhodes', 'vibra'];
 
 /** Démonstration d'un instrument : le premier A du thème I dans son registre (piano et contrebasse discrets dessous). */
 export function demo(instr: InstrId): { ev: Evenement[]; tempo: number; salle: SalleId } {
   const rng = makeRng(0xde40 + instr.length);
   const A = QUATRE_VOIES.sections.A1!;
-  const oct: Partial<Record<InstrId, number>> = { sax: -12, guitare: -12, nylon: -12 };
+  const oct: Partial<Record<InstrId, number>> = { sax: -12, guitare: -12, nylon: -12, archet: -36 };
   const mel = transposer(A.melodie, oct[instr] ?? 0);
   const ev: Evenement[] = [];
-  if (instr === 'cuivres') {
-    ev.push(...comping(A.accords, 32, rng, { instr: 'cuivres', densite: 0.35, vel: 0.7, tessiture: { lo: 55, hi: 79 } }));
+  if (instr === 'cuivres' || instr === 'saxes') {
+    ev.push(...comping(A.accords, 32, rng, { instr, densite: 0.35, vel: 0.7, tessiture: instr === 'saxes' ? { lo: 50, hi: 72 } : { lo: 55, hi: 79 } }));
     ev.push(...versEvenements(mel, 'vibra', 0.6));
   } else if (instr === 'cordes') {
     ev.push(...accordsTenus(A.accords, 32, rng, { instr: 'cordes', tessiture: { lo: 50, hi: 74 }, vel: 0.45, melodie: mel }));
@@ -141,7 +142,7 @@ export function encoderWav(buf: AudioBuffer): Uint8Array {
 export interface Rendu { wav: Uint8Array; duree: number; msBanque: number; msRendu: number }
 
 /** Rendu hors ligne d'une version (`passes` passages, levée comprise), d'un jingle, d'un scénario ou d'une démonstration. */
-export async function rendre(cible: { version?: VersionId; jingle?: JingleId; scenario?: Scenario; demo?: InstrId }, o: { passes?: number; graine?: number; sr?: number; options?: OptVersion; intro?: boolean; solo?: InstrId[] } = {}): Promise<Rendu> {
+export async function rendre(cible: { version?: VersionId; jingle?: JingleId; scenario?: Scenario; demo?: InstrId }, o: { passes?: number; graine?: number; sr?: number; options?: OptVersion; intro?: boolean; solo?: InstrId[]; couches?: Record<string, number> } = {}): Promise<Rendu> {
   const sr = o.sr ?? 44100;
   const t0 = performance.now();
   const sc = cible.scenario;
@@ -182,7 +183,7 @@ export async function rendre(cible: { version?: VersionId; jingle?: JingleId; sc
     // planification par fenêtres d'une seconde, comme le lecteur en temps réel (peu de nœuds vivants à la fois : le coût
     // mesuré est celui du jeu)
     const fin = debut + musique - 1e-3;
-    l.jouer(cible.version, { quand: debut, intro, options: o.options ?? {} });
+    l.jouer(cible.version, { quand: debut, intro, options: o.options ?? {}, ...(o.couches ? { couches: o.couches } : {}) });
     l.avancer(Math.min(fin, 1.25));
     for (let t = 1; t < duree - 0.5; t += 1) {
       const tt = t;
@@ -266,6 +267,8 @@ export function lancerLabo(o: { qa: boolean }): void {
   const boutonsV = ids.map((id) => bouton(`mu-${id}`, `${id} · ${VERSIONS[id].titre.replace(/^[^—]+— /, '')}`, (l, b) => {
     l.jouer(id, { options: options() });
     if (VERSIONS[id].couches) { for (const k of Object.keys(couches)) couches[k] = VERSIONS[id].couches![k] ?? 1; majCouches(); }
+    // un duel lancé seul : la mélodie d'emblée (au jeu, elle attend le premier Clash)
+    if (VERSIONS[id].couches && (VERSIONS[id].couches!.melodie ?? 1) === 0) { couches.melodie = 1; l.couches({ melodie: 1 }, { sur: 'temps', duree: 0.05 }); majCouches(); }
     boutonsV.forEach((x) => x.classList.toggle('on', x === b));
     etat.textContent = decrire(id);
   }));
@@ -331,7 +334,7 @@ export function lancerLabo(o: { qa: boolean }): void {
 
   document.body.append(style, h('main', { class: 'lab', 'data-key': 'mu-labo' },
     h('h1', {}, 'Laboratoire de la musique'),
-    h('p', {}, 'M13 : la musique synthétisée par le code (aucun fichier son). Chaque passage regénère la basse, l\'accompagnement, la batterie et les chorus ; les changements tombent sur la mesure, les ponctuations sur le temps, dans l\'accord qui sonne.'),
+    h('p', {}, 'M13 : la musique synthétisée par le code (aucun fichier son) : six thèmes, quinze versions, quatre jingles. Chaque passage regénère la basse, l\'accompagnement, la batterie et les chorus ; les changements tombent sur la mesure, les ponctuations sur le temps, dans l\'accord qui sonne.'),
     h('h2', {}, 'I. « Les Quatre Voies »'), h('div', { class: 'rang' }, ...parTheme('I-'), stop),
     h('h2', {}, 'Variations du titre à la volée (à la manière de Zelda)'), h('div', { class: 'rang' }, ...boutonsVar),
     h('h2', {}, 'II. « La ville la nuit »'), h('div', { class: 'rang' }, ...parTheme('II-')),
@@ -341,6 +344,9 @@ export function lancerLabo(o: { qa: boolean }): void {
     h('h2', {}, 'III. « Duel »'), h('div', { class: 'rang' }, ...parTheme('III-'), tendu),
     h('p', {}, 'Les couches (elles entrent et sortent sur la mesure) :'), h('div', { class: 'rang' }, ...boutonsC),
     h('p', {}, 'Les ponctuations et la fin du duel :'), h('div', { class: 'rang' }, ...ponct, ...fins),
+    h('h2', {}, 'IV. « Les Maisons » (une couleur par famille)'), h('div', { class: 'rang' }, ...parTheme('IV-')),
+    h('h2', {}, 'V. « Kaï » et VI. « Championnat »'), h('div', { class: 'rang' }, ...parTheme('V-'), ...parTheme('VI-')),
+    h('p', {}, 'Ces duels ont les mêmes couches et ponctuations que le thème III (boutons ci-dessus).'),
     h('h2', {}, 'Jingles'), h('div', { class: 'rang' }, ...boutonsJ),
     h('h2', {}, 'Les instruments seuls'), h('div', { class: 'rang' }, ...boutonsD),
     h('h2', {}, 'Transitions'), h('div', { class: 'rang' }, demoT),

@@ -16,7 +16,7 @@ import { lier, type Evenement, type InstrId } from './generateurs';
 import type { AccordP } from './partitions';
 import { ponctuation, type PonctuationId } from './ponctuations';
 import { freq } from './theorie';
-import { corps, MONOPHONIQUES as MONOPHONIQUES_, souffler, VENTS, type InstrVent } from './vents';
+import { boucleSection, corps, ensemble, MONOPHONIQUES as MONOPHONIQUES_, SECTIONS, souffler, VENTS, type InstrVent } from './vents';
 
 export interface ZoneAudio { racine: number; couche: number; buffer: AudioBuffer }
 export type BanqueAudio = Partial<Record<InstrId, ZoneAudio[]>>;
@@ -38,7 +38,7 @@ export function versAudio(ctx: BaseAudioContext, b: BanqueBrute): BanqueAudio {
 export const gainDe = (v: DefVersion, o: OptVersion): number => v.gain * 10 ** ((v.niveaux?.[formation(o.chapitre)] ?? 0) / 20);
 
 /** Constante de temps de l'extinction d'une note relâchée (étouffoir, pédale). */
-const RELACHE: Partial<Record<InstrId, number>> = { piano: 0.08, rhodes: 0.12, vibra: 0.25, basse: 0.05, guitare: 0.07, nylon: 0.1 };
+const RELACHE: Partial<Record<InstrId, number>> = { piano: 0.08, rhodes: 0.12, vibra: 0.25, basse: 0.05, guitare: 0.07, nylon: 0.1, cuivres: 0.07, saxes: 0.07 };
 const FRAPPES = new Set<InstrId>(['ride', 'cloche', 'crash', 'charley', 'charley-ferme', 'gc', 'cc', 'cc-balai', 'balai', 'rim']);
 
 /**
@@ -46,7 +46,7 @@ const FRAPPES = new Set<InstrId>(['ride', 'cloche', 'crash', 'charley', 'charley
  * devant, la basse sur le temps, le piano et la mélodie un peu derrière ; lofi : la caisse claire posée en arrière.
  */
 const DECALAGES: Record<'jazz' | 'lofi' | 'droit', Partial<Record<InstrId, number>>> = {
-  jazz: { ride: -0.007, cloche: -0.007, charley: -0.004, basse: -0.002, piano: 0.006, rhodes: 0.008, vibra: 0.01, guitare: 0.004, nylon: 0.004, trompette: 0.014, sax: 0.014, flute: 0.01, cuivres: 0.006, cordes: 0.02 },
+  jazz: { ride: -0.007, cloche: -0.007, charley: -0.004, basse: -0.002, piano: 0.006, rhodes: 0.008, vibra: 0.01, guitare: 0.004, nylon: 0.004, trompette: 0.014, sax: 0.014, flute: 0.01, cuivres: 0.006, cordes: 0.02, 'trompette-ouverte': 0.01, saxes: 0.01, archet: 0.01 },
   lofi: { 'cc-balai': 0.014, rim: 0.012, 'charley-ferme': -0.003, piano: 0.01, rhodes: 0.012, trompette: 0.018, sax: 0.018, flute: 0.014, nylon: 0.008 },
   droit: {},
 };
@@ -116,6 +116,12 @@ class Melangeur {
       tete = k.sortie;
       this.arrets.push(k.arreter);
     }
+    if (SECTIONS.has(instr)) {
+      // un pupitre calculé : le chorus du canal l'élargit
+      const e = ensemble(this.ctx, c);
+      tete = e.sortie;
+      this.arrets.push(e.arreter);
+    }
     if (instr === 'nappe') {
       // la nappe : un seul couple de filtres pour toutes ses voix (adoucie, sans grave)
       const lp = this.ctx.createBiquadFilter();
@@ -171,7 +177,15 @@ class Melangeur {
     g.gain.value = ch.gain;
     src.connect(g).connect(this.canal(e.instr, couche, e.m));
     src.start(t);
-    const longueur = z.buffer.duration / ch.vitesse;
+    let longueur = z.buffer.duration / ch.vitesse;
+    if (SECTIONS.has(e.instr)) {
+      // la tenue bouclée : une note plus longue que l'échantillon continue sans saut
+      const [a, b] = boucleSection(z.racine, z.buffer.sampleRate, z.buffer.length);
+      src.loop = true;
+      src.loopStart = a / z.buffer.sampleRate;
+      src.loopEnd = b / z.buffer.sampleRate;
+      longueur = Infinity;
+    }
     if (FRAPPES.has(e.instr)) {
       // une cymbale étouffée (fin de duel) s'arrête net
       if (e.etouffe) { g.gain.setValueAtTime(ch.gain, t + d); g.gain.setTargetAtTime(0, t + d, 0.05); src.stop(t + d + 0.4); }
@@ -182,7 +196,7 @@ class Melangeur {
     const fin = Math.min(t + d, t + longueur);
     g.gain.setValueAtTime(ch.gain, fin);
     g.gain.setTargetAtTime(0, fin, tau);
-    src.stop(Math.min(t + longueur, fin + tau * 6));
+    src.stop(Math.min(t + longueur, fin + tau * 7));
   }
 
   /** La nappe : deux dents de scie désaccordées, attaque et extinction lentes (temps réel ; filtres partagés du canal). */

@@ -14,6 +14,7 @@ for (const d of [WAV, OGG, OUT]) mkdirSync(d, { recursive: true });
 const NOTES = {
   trompette: [55, 62, 67, 74, 79, 84], sax: [46, 51, 58, 63, 70, 75], flute: [62, 69, 74, 81, 86, 93], cuivres: [50, 57, 64, 71, 76],
   cordes: [48, 55, 62, 69, 76, 83], guitare: [43, 52, 59, 67, 76], nylon: [45, 52, 59, 66, 76],
+  'trompette-ouverte': [55, 62, 67, 74, 79, 84], saxes: [46, 53, 60, 67, 74], archet: [28, 33, 40, 45, 50],
 };
 const server = await startPreview(Number(process.env.LQV_PREVIEW_PORT) || 4499, process.env.LQV_DIST || 'dist');
 const browser = await launch();

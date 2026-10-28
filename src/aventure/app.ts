@@ -629,7 +629,9 @@ export class AventureApp {
     // une scène se termine quand ni cinématique ni dialogue ne l'a tenue depuis une seconde et demie (entre deux plans)
     if (this.recit && !actif && performance.now() - this.recitVu > 1500) this.recit = false;
     const ilot = this.town.ilotId();
-    m.vouloir(this.recit ? { version: 'I-3' } : consigneVille(ilot, numeroChapitre(chapitreDetaille(this.etat))));
+    // Kaï qui surgit : son thème entre (la rythmique seule), et continue dans le duel qui suit sans recommencer
+    const kai = this.force?.kind === 'rival';
+    m.vouloir(kai ? { version: 'V-1', couches: { melodie: 0, tension: 0, cuivres: 0 } } : this.recit ? { version: 'I-3' } : consigneVille(ilot, numeroChapitre(chapitreDetaille(this.etat))));
     m.focus((!!this.dialog && !this.recit && !this.sansFocus) || !!this.modal);
     const x = this.recit ? null : proximiteFanal(ilot, this.town.walker().pos);
     m.source('fanal', x === null ? null : 'I-2', x ?? 0);

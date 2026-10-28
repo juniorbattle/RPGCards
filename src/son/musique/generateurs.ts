@@ -10,7 +10,7 @@ import { accord, dansAccord, hauteursAccord, hauteursGamme, pc, voicer, type Acc
 export type InstrId =
   | 'piano' | 'rhodes' | 'vibra' | 'basse' | 'guitare' | 'nylon' | 'nappe'
   // vents et cordes, synthétisés en temps réel (expressifs : attaque, vibrato, souffle) : `vents.ts`
-  | 'trompette' | 'sax' | 'flute' | 'cuivres' | 'cordes'
+  | 'trompette' | 'trompette-ouverte' | 'sax' | 'saxes' | 'flute' | 'cuivres' | 'cordes' | 'archet'
   | 'ride' | 'cloche' | 'crash' | 'charley' | 'charley-ferme' | 'gc' | 'cc' | 'cc-balai' | 'balai' | 'rim';
 
 /** Des accords plaqués aux positions dites (coups de cuivres, ponctuations d'arrangement), voicés dans la tessiture. */
@@ -571,7 +571,7 @@ export function guitareQuatre(as: readonly AccordP[], total: number, rng: Rng, o
  * Soli : la mélodie harmonisée à `voix` voix (la mélodie en haut, les notes de l'accord serrées dessous, la deuxième
  * voix descendue d'une octave en option, « drop 2 ») ; une note de passage reçoit l'accord qui sonne.
  */
-export function harmoniser(mel: readonly NoteP[], as: readonly AccordP[], o: { instr: InstrId; voix?: number; drop2?: boolean; vel?: number }): Evenement[] {
+export function harmoniser(mel: readonly NoteP[], as: readonly AccordP[], o: { instr: InstrId; voix?: number; drop2?: boolean; vel?: number; sansMelodie?: boolean }): Evenement[] {
   const ac = lireAccords(as);
   const n = (o.voix ?? 4) - 1;
   const out: Evenement[] = [];
@@ -585,7 +585,7 @@ export function harmoniser(mel: readonly NoteP[], as: readonly AccordP[], o: { i
       voix.push(m);
     }
     if (o.drop2 && voix.length) voix[0] = voix[0]! - 12;
-    out.push({ t: x.t, d: x.d, instr: o.instr, m: x.m, v: (o.vel ?? 0.6) * (x.v ?? 1) });
+    if (!o.sansMelodie) out.push({ t: x.t, d: x.d, instr: o.instr, m: x.m, v: (o.vel ?? 0.6) * (x.v ?? 1) });
     for (const m of voix) out.push({ t: x.t, d: x.d, instr: o.instr, m, v: (o.vel ?? 0.6) * (x.v ?? 1) * 0.85 });
   }
   return out;
