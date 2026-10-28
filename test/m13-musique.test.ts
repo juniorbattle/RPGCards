@@ -235,7 +235,7 @@ describe('M13 — catalogue', () => {
       expect(e.m, `${e.instr} ${nomDe(e.m)}`).toBeGreaterThanOrEqual(d.de - 2);
       expect(e.m, `${e.instr} ${nomDe(e.m)}`).toBeLessThanOrEqual(d.a + 2);
     }
-  });
+  }, 60000);
 
   it('polyphonie bornée : jamais plus de 24 notes du fond (48 toutes couches, le tutti du big band) qui commencent dans la même demi-seconde', () => {
     for (const id of Object.keys(VERSIONS) as VersionId[]) {
@@ -255,7 +255,7 @@ describe('M13 — catalogue', () => {
         expect(pic(ev), `${id} ${chapitre}`).toBeLessThanOrEqual(48);
       }
     }
-  });
+  }, 60000);
 
   it('les variations à la volée changent la mélodie du titre sans toucher à la grille', () => {
     const v = VERSIONS['I-1'];

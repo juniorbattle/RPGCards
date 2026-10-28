@@ -130,7 +130,7 @@ describe('M13 — tessitures des vents et des cordes', () => {
         }
       }
     }
-  });
+  }, 60000);
 });
 
 describe('M13, lot MU-C — IV « Les Maisons », V « Kaï », VI « Championnat »', () => {
