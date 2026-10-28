@@ -62,6 +62,13 @@ vingtaine) et la question du mode de production :
 | **MU-C** | thème IV « Les Maisons » (4 couleurs), thème V « Kaï », thème VI « Championnat » (2 versions) ; cinématiques ; instruments à vent (trompette en sourdine, saxophone, section de cuivres), guitare | idem |
 | **MU-D** | mixage final, coût mesuré sur les deux GPU du responsable (le son passe par le processeur), campagne de QA, fiche, réception | jalon |
 
+**État au 2026-10-28 (passes 158 à 160) :** MU-A, MU-B, MU-C et le branchement au jeu **livrés** dans la même session
+(ordre du responsable : « prends le temps qu'il faudra pour obtenir un résultat le plus optimal possible ; je veux une
+bande son vraiment, mais vraiment immersive ») ; contrat 2 (`docs/m13/02_MUSIQUE_INTERACTIVE.md`) et amendement 1 de
+l'ADR 047 **proposés**. Les 6 thèmes, les 15 versions et les 4 jingles existent ; la musique suit le jeu standard et
+l'aventure. MU-D en cours : mixage mesuré, coût, campagne de QA, fiche d'écoute `docs/FICHE_ARBITRAGES_M13.md`. **À faire
+en local : l'écoute (l'oreille du responsable tranche) et la mesure du coût sur son poste.**
+
 Garanties pendant tout le chantier : règles du duel, catalogue, IA, sauvegardes, images et approbations inchangées ;
 jeu par défaut au repos identique au pixel près (la musique ne joue qu'après un geste et ne dessine rien) ; son coupé en
 QA ; aucune information secrète par la musique (seuls des faits publics la font changer).

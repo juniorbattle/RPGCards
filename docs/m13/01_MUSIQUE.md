@@ -1,6 +1,7 @@
 # M13 — Contrat 1 : la musique, jazz synthétisé par code
 
-**Date :** 2026-10-27. **Statut : PROPOSÉ** (mandat `docs/missions/M13_MUSIQUE.md` ; décisions du responsable :
+**Date :** 2026-10-27 (état au 2026-10-28 : tout le tableau du §2 est composé et branché ; contrat 2 pour la musique
+qui suit le jeu). **Statut : PROPOSÉ** (mandat `docs/missions/M13_MUSIQUE.md` ; décisions du responsable :
 version semi-resserrée, synthèse par code, jazz, inspirations Final Fantasy VIII, Breath of Fire III et Zelda). ADR 047.
 
 ## 1. Principes
@@ -74,7 +75,9 @@ collection et le journal de l'aventure ne changent pas la musique : elle s'effac
 - **Instruments** (fabriqués par le code, calculés hors du fil principal) : Rhodes (FM), piano (additif, inharmonicité,
   déclin par partiel, marteau), contrebasse (corde pincée modélisée, archet en MU-C), vibraphone (partiels de lame,
   moteur), batterie (ride et charleston en partiels inharmoniques, balais en bruit sculpté, caisse claire, grosse
-  caisse) ; en MU-C : trompette en sourdine, saxophone, section de cuivres, guitare archtop, nappe.
+  caisse), guitare jazz et guitare à cordes de nylon ; pupitres de cuivres et de saxophones (calculés, bouclés) ; en
+  temps réel : trompette bouchée et ouverte, saxophone ténor, flûte, cordes, contrebasse à l'archet (ADR 047,
+  amendement 1).
 - **Effets** : salles par réponse impulsionnelle calculée (club, grande salle, rue), chaleur (saturation douce),
   lofi (bande passante réduite, pleurage, souffle de vinyle) ; compression du bus ; placement stéréo d'un trio.
 - **Séquenceur** : planification en avance sur l'horloge audio ; changements de morceau **sur la mesure** (fondu
