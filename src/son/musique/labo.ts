@@ -7,6 +7,53 @@ import { fabriquer, type BanqueBrute, type Zone } from './banque';
 import { JINGLES, VERSIONS, type JingleId, type OptVersion, type VariationMelodie, type VersionId } from './catalogue';
 import type { InstrId } from './generateurs';
 import { dureeVersion, Lecteur, versAudio, type BanqueAudio } from './lecteur';
+import type { PonctuationId } from './ponctuations';
+
+/**
+ * Une action d'un scénario de rendu (secondes depuis le début) : la musique interactive (couches, ponctuations, fin de
+ * duel, sources, focus) rendue hors ligne et mesurée comme un morceau (contrat 2, §4).
+ */
+export type Action =
+  | { t: number; faire: 'jouer'; version: VersionId; options?: OptVersion; fondu?: number; intro?: boolean; piste?: string }
+  | { t: number; faire: 'contexte'; options: OptVersion; piste?: string }
+  | { t: number; faire: 'couches'; niveaux: Record<string, number>; sur?: 'temps' | 'fort' | 'mesure' | 'phrase'; duree?: number; piste?: string }
+  | { t: number; faire: 'ponctuer'; id: PonctuationId }
+  | { t: number; faire: 'terminer'; jingle?: JingleId }
+  | { t: number; faire: 'jingle'; id: JingleId }
+  | { t: number; faire: 'arreter'; fondu?: number; piste?: string }
+  | { t: number; faire: 'focus'; on: boolean }
+  | { t: number; faire: 'assourdir'; on: boolean }
+  | { t: number; faire: 'source'; nom: string; version: VersionId | null }
+  | { t: number; faire: 'proximite'; nom: string; x: number };
+export interface Scenario { duree: number; actions: Action[] }
+
+/** Applique une action au lecteur (laboratoire, scénarios de rendu). */
+export function agir(l: Lecteur, a: Action): void {
+  switch (a.faire) {
+    case 'jouer': l.jouer(a.version, { options: a.options, fondu: a.fondu, intro: a.intro, piste: a.piste }); break;
+    case 'contexte': l.contexte(a.options, a.piste); break;
+    case 'couches': l.couches(a.niveaux, { sur: a.sur, duree: a.duree, piste: a.piste }); break;
+    case 'ponctuer': l.ponctuer(a.id); break;
+    case 'terminer': { const t = l.terminer(); if (a.jingle) l.jingle(a.jingle, t + 0.6); break; }
+    case 'jingle': l.jingle(a.id); break;
+    case 'arreter': l.arreter(a.fondu, a.piste); break;
+    case 'focus': l.focus(a.on); break;
+    case 'assourdir': l.assourdir(a.on); break;
+    case 'source': l.source(a.nom, a.version); break;
+    case 'proximite': l.proximite(a.nom, a.x); break;
+  }
+}
+
+/** Les instruments qu'un scénario fait jouer (versions jouées, jingles, ponctuations). */
+function instrumentsDe(sc: Scenario): InstrId[] {
+  const s = new Set<InstrId>(['piano', 'vibra', 'basse', 'crash', 'cloche', 'gc', 'cc']);
+  for (const a of sc.actions) {
+    if ((a.faire === 'jouer' || a.faire === 'source') && a.version) VERSIONS[a.version].instruments.forEach((i) => s.add(i));
+    if (a.faire === 'jingle') JINGLES[a.id].instruments.forEach((i) => s.add(i));
+    if (a.faire === 'terminer' && a.jingle) JINGLES[a.jingle].instruments.forEach((i) => s.add(i));
+  }
+  return [...s];
+}
 
 const TOUS: InstrId[] = ['piano', 'rhodes', 'vibra', 'basse', 'ride', 'cloche', 'crash', 'charley', 'charley-ferme', 'gc', 'cc', 'cc-balai', 'balai', 'rim'];
 
@@ -46,21 +93,32 @@ export function encoderWav(buf: AudioBuffer): Uint8Array {
 
 export interface Rendu { wav: Uint8Array; duree: number; msBanque: number; msRendu: number }
 
-/** Rendu hors ligne d'une version (`passes` passages, levée comprise) ou d'un jingle. */
-export async function rendre(cible: { version?: VersionId; jingle?: JingleId }, o: { passes?: number; graine?: number; sr?: number; options?: OptVersion; intro?: boolean; solo?: InstrId[] } = {}): Promise<Rendu> {
+/** Rendu hors ligne d'une version (`passes` passages, levée comprise), d'un jingle ou d'un scénario interactif. */
+export async function rendre(cible: { version?: VersionId; jingle?: JingleId; scenario?: Scenario }, o: { passes?: number; graine?: number; sr?: number; options?: OptVersion; intro?: boolean; solo?: InstrId[] } = {}): Promise<Rendu> {
   const sr = o.sr ?? 44100;
   const t0 = performance.now();
-  const instrs = cible.version ? VERSIONS[cible.version].instruments : JINGLES[cible.jingle!].instruments;
+  const sc = cible.scenario;
+  const instrs = sc ? instrumentsDe(sc) : cible.version ? VERSIONS[cible.version].instruments : JINGLES[cible.jingle!].instruments;
   const brute = fabriquer(sr, instrs);
   const msBanque = performance.now() - t0;
   const debut = 0.05;
   const intro = o.intro ?? true;
-  const musique = cible.version ? dureeVersion(cible.version, o.passes ?? 1, intro) : JINGLES[cible.jingle!].duree * (60 / JINGLES[cible.jingle!].tempo);
+  const musique = sc ? sc.duree : cible.version ? dureeVersion(cible.version, o.passes ?? 1, intro) : JINGLES[cible.jingle!].duree * (60 / JINGLES[cible.jingle!].tempo);
   const duree = debut + musique + 3.5;
   const ctx = new OfflineAudioContext(2, Math.ceil(duree * sr), sr);
   const l = new Lecteur(ctx, ctx.destination, versAudio(ctx, brute), o.graine ?? 1);
   if (o.solo) l.solo = new Set(o.solo);
-  if (cible.version) {
+  if (sc) {
+    // les actions aux instants dits (au quantum de rendu près), la planification par fenêtres d'une seconde entre elles
+    const q = 128 / sr;
+    const instants = new Map<number, Action[]>();
+    const a0 = sc.actions.filter((a) => a.t <= debut);
+    for (const a of sc.actions) if (a.t > debut) { const k = Math.ceil(a.t / q) * q; instants.set(k, [...(instants.get(k) ?? []), a]); }
+    for (let t = 1; t < duree - 0.5; t += 1) { const k = Math.ceil(t / q) * q; if (!instants.has(k)) instants.set(k, []); }
+    a0.forEach((a) => agir(l, a));
+    l.avancer(1.25);
+    for (const [k, as] of instants) void ctx.suspend(k).then(() => { as.forEach((a) => agir(l, a)); l.avancer(k + 1.25); void ctx.resume(); });
+  } else if (cible.version) {
     // planification par fenêtres d'une seconde, comme le lecteur en temps réel (peu de nœuds vivants à la fois : le coût
     // mesuré est celui du jeu)
     const fin = debut + musique - 1e-3;
