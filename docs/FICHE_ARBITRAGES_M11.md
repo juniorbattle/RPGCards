@@ -5,6 +5,8 @@ remplir.** La session principale en fera une fiche interactive ; chaque entrée 
 (première option) et les alternatives. Tout ce qui est marqué « fait » est sur `main` et réversible ; rien n'a changé
 les règles du duel, l'annexe de calibrage, les images ou les approbations.
 
+**Fiche interactive publiée le 2026-10-28** par la session principale (privée, 39 entrées, choix enregistrés dans sa collection `decisions`) : <https://claude.ai/artifact/L5PVYnPmeZEEBYtvrgQcXB>.
+
 Preuves : `artifacts/qa/m11/` (mesures, `qa:vue`, comparaison au pixel près), `screenshots/qa/m11/vue-1280/`.
 
 ## Réception

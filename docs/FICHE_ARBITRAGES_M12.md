@@ -8,6 +8,8 @@ catalogue, l'IA, l'annexe de calibrage, les images de la ville et les approbatio
 (passes 156 et 157) : 32 variantes de plus au catalogue, appliquées à titre provisoire sur ordre du responsable (V1 à
 V8), Duel standard par défaut inchangé (empreintes identiques).
 
+**Fiche interactive publiée le 2026-10-28** par la session principale (privée, 32 entrées, choix enregistrés dans sa collection `decisions`) : <https://claude.ai/artifact/WGK7ybvw414J9uQTekEjmP>.
+
 Preuves : `screenshots/qa/m12/galerie/` (toutes les cartes, avant et après), `screenshots/qa/m12/activations/` (temps
 forts réels figés à mi-course, de vrais duels au navigateur, réglages), `screenshots/qa/m12/variantes/` (éditeur Basic,
 A, B, C ; écran du choix de l'aventure), `screenshots/qa/m12/nouveau-joueur-1280/` (parcours d'un nouveau joueur),
