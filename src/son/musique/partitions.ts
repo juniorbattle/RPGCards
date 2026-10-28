@@ -24,7 +24,7 @@ export interface Section {
   accords: AccordP[];
 }
 
-export type ThemeId = 'quatre-voies';
+export type ThemeId = 'quatre-voies' | 'ville-nuit' | 'duel';
 
 export interface Theme {
   id: ThemeId;
@@ -118,4 +118,129 @@ export const QUATRE_VOIES: Theme = {
   motif: [n(0, 1, 'C5'), n(1, 1, 'F5'), n(2, 0.5, 'E5'), n(2.5, 1.5, 'A5')],
 };
 
-export const THEMES: Record<ThemeId, Theme> = { 'quatre-voies': QUATRE_VOIES };
+/*
+ * II. « La ville la nuit » — ré mineur, AABA de 32 mesures, swing feutré.
+ * La tête s'ouvre sur le motif des quatre voies renversé (une quarte qui descend, un pas qui monte, une quarte qui
+ * descend : la, mi, fa, do), qui revient en marche sur sol et sur do. Sa couleur : une note longue sur la quarte
+ * augmentée d'un accord lydien (mi sur si bémol, la sur mi bémol), comme une enseigne qui grésille ; la neuvième mineure
+ * de la dominante (si bémol sur la 7). Le pont monte vers le relatif majeur et retrouve la même couleur (mi sur si
+ * bémol), puis redescend par la dominante altérée.
+ */
+const melodieVille = (): NoteP[] => [
+  // mesure 1, Dm9 : le motif renversé
+  n(0, 1.5, 'A4'), n(1.5, 0.5, 'E4'), n(2, 0.5, 'F4'), n(2.5, 1.5, 'C4'),
+  // mesure 2, Bbmaj7#11 : la quarte augmentée tenue
+  n(4, 0.5, 'D4'), n(4.5, 2.5, 'E4'), n(7, 0.5, 'F4'), n(7.5, 0.5, 'G4'),
+  // mesure 3, Gm9 : le motif sur ré
+  n(8, 1.5, 'D5'), n(9.5, 0.5, 'A4'), n(10, 0.5, 'Bb4'), n(10.5, 1.5, 'F4'),
+  // mesure 4, A7b9 : la neuvième mineure
+  n(12, 0.5, 'E4'), n(12.5, 0.5, 'G4'), n(13, 2, 'Bb4'), n(15, 1, 'A4'),
+  // mesure 5, Dm9 : le motif sur do
+  n(16, 1.5, 'C5'), n(17.5, 0.5, 'G4'), n(18, 0.5, 'A4'), n(18.5, 1.5, 'E4'),
+  // mesure 6, Ebmaj7#11 : la quarte augmentée, un demi-ton plus haut
+  n(20, 0.5, 'F4'), n(20.5, 2.5, 'A4'), n(23, 0.5, 'G4'), n(23.5, 0.5, 'Bb4'),
+  // mesure 7, Em7b5 puis A7b9
+  n(24, 1, 'D5'), n(25, 1, 'Bb4'), n(26, 0.5, 'G4'), n(26.5, 0.5, 'F4'), n(27, 0.5, 'E4'), n(27.5, 0.5, 'C#4'),
+];
+const accordsVille = (fin: AccordP[]): AccordP[] => [
+  c(0, 4, 'Dm9'), c(4, 4, 'Bbmaj7#11'), c(8, 4, 'Gm9'), c(12, 4, 'A7b9'), c(16, 4, 'Dm9'), c(20, 4, 'Ebmaj7#11'),
+  c(24, 2, 'Em7b5'), c(26, 2, 'A7b9'), ...fin,
+];
+const VA1: Section = {
+  mesures: 8,
+  melodie: [...melodieVille(), n(28, 2, 'D4'), n(30, 0.5, 'E4'), n(30.5, 0.5, 'G4'), n(31, 0.5, 'F4'), n(31.5, 0.5, 'E4')],
+  accords: accordsVille([c(28, 2, 'Dm9'), c(30, 1, 'Em7b5'), c(31, 1, 'A7b9')]),
+};
+const VA2: Section = {
+  mesures: 8,
+  melodie: [...melodieVille(), n(28, 1.5, 'D4'), n(29.5, 0.5, 'G4'), n(30, 0.5, 'G4'), n(30.5, 0.5, 'C5'), n(31, 0.5, 'F#4'), n(31.5, 0.5, 'A4')],
+  accords: accordsVille([c(28, 2, 'Dm9'), c(30, 1, 'Am7b5'), c(31, 1, 'D7b9')]),
+};
+const VB: Section = {
+  mesures: 8,
+  melodie: [
+    // Gm9, C9 : la montée
+    n(0, 0.5, 'Bb4'), n(0.5, 0.5, 'D5'), n(1, 1.5, 'F5'), n(2.5, 0.5, 'D5'), n(3, 0.5, 'C5'), n(3.5, 0.5, 'A4'),
+    n(4, 1, 'Bb4'), n(5, 0.5, 'G4'), n(5.5, 0.5, 'Bb4'), n(6, 1.5, 'D5'), n(7.5, 0.5, 'E5'),
+    // Fmaj9 : le sommet ; Bbmaj7#11 : la couleur revient
+    n(8, 2.5, 'G5'), n(10.5, 0.5, 'F5'), n(11, 0.5, 'E5'), n(11.5, 0.5, 'C5'),
+    n(12, 3, 'E5'), n(15, 0.5, 'D5'), n(15.5, 0.5, 'C5'),
+    // Em7b5, A7b9 : la redescente
+    n(16, 1.5, 'Bb4'), n(17.5, 0.5, 'G4'), n(18, 1, 'D5'), n(19, 1, 'A4'),
+    n(20, 1.5, 'Bb4'), n(21.5, 0.5, 'A4'), n(22, 1, 'G4'), n(23, 1, 'E4'),
+    // Dm9, puis Em7b5 et la dominante altérée qui ramène au motif
+    n(24, 0.5, 'F4'), n(24.5, 0.5, 'A4'), n(25, 0.5, 'C5'), n(25.5, 1.5, 'E5'), n(27, 1, 'D5'),
+    n(28, 1, 'Bb4'), n(29, 1, 'G4'), n(30, 0.5, 'C5'), n(30.5, 0.5, 'Bb4'), n(31, 0.5, 'G4'), n(31.5, 0.5, 'F4'),
+  ],
+  accords: [
+    c(0, 4, 'Gm9'), c(4, 4, 'C9'), c(8, 4, 'Fmaj9'), c(12, 4, 'Bbmaj7#11'), c(16, 4, 'Em7b5'), c(20, 4, 'A7b9'),
+    c(24, 4, 'Dm9'), c(28, 2, 'Em7b5'), c(30, 2, 'A7alt'),
+  ],
+};
+export const VILLE_NUIT: Theme = {
+  id: 'ville-nuit',
+  titre: 'La ville la nuit',
+  tonique: midi('D4'),
+  mode: 'eolien',
+  mesure: 4,
+  sections: { A1: VA1, A2: VA2, B: VB, A3: { ...VA1 } },
+  forme: ['A1', 'A2', 'B', 'A3'],
+  motif: [n(0, 1, 'A4'), n(1, 1, 'E4'), n(2, 0.5, 'F4'), n(2.5, 1.5, 'C4')],
+};
+
+/*
+ * III. « Duel » — la mineur (dorien), AABA de 32 mesures, swing entraînant. Un riff de contrebasse de deux mesures (la
+ * gamme de blues : la, do, ré, mi bémol, mi, sol), doublé au piano, tient les A ; il passe au IV (ré 7) puis s'arrête
+ * sur la cadence (fa, mi 7 altéré). Par-dessus, la mélodie s'ouvre sur le motif des quatre voies en la mineur (mi, la,
+ * sol, do) et lui répond ; elle n'entre qu'au premier Clash (couche « mélodie », contrat 2). Le pont marche.
+ */
+const melodieDuel = (): NoteP[] => [
+  // mesures 1 et 2, Am7 : le motif, puis la réponse
+  n(0, 1, 'E5'), n(1, 1, 'A5'), n(2, 0.5, 'G5'), n(2.5, 1.5, 'C6'),
+  n(4.5, 0.5, 'B5'), n(5, 0.5, 'A5'), n(5.5, 0.5, 'G5'), n(6, 1, 'E5'), n(7, 1, 'D5'),
+  // mesures 3 et 4 : l'appel redescend, la note tenue
+  n(9, 0.5, 'C6'), n(9.5, 0.5, 'B5'), n(10, 0.5, 'A5'), n(10.5, 0.5, 'G5'), n(11, 1, 'E5'),
+  n(12, 1.5, 'G5'), n(13.5, 2.5, 'A5'),
+  // mesures 5 et 6, D7 : le motif sur ré
+  n(16, 1, 'A4'), n(17, 1, 'D5'), n(18, 0.5, 'C5'), n(18.5, 1.5, 'F#5'),
+  n(20.5, 0.5, 'E5'), n(21, 0.5, 'D5'), n(21.5, 0.5, 'C5'), n(22, 1, 'A4'), n(23, 1, 'B4'),
+  // mesure 7, Fmaj7 puis E7alt ; mesure 8, Am7
+  n(24, 1, 'C5'), n(25, 0.5, 'A4'), n(25.5, 0.5, 'E5'), n(26, 0.5, 'D5'), n(26.5, 0.5, 'C5'), n(27, 1, 'G#4'),
+  n(28, 2, 'A4'),
+];
+const accordsDuelA: AccordP[] = [c(0, 8, 'Am7'), c(8, 8, 'Am7'), c(16, 8, 'D7'), c(24, 2, 'Fmaj7'), c(26, 2, 'E7alt'), c(28, 4, 'Am7')];
+const DA: Section = { mesures: 8, melodie: melodieDuel(), accords: accordsDuelA };
+const DB: Section = {
+  mesures: 8,
+  melodie: [
+    n(0, 1.5, 'F5'), n(1.5, 0.5, 'E5'), n(2, 1, 'D5'), n(3, 1, 'A4'),
+    n(4, 1.5, 'B4'), n(5.5, 0.5, 'D5'), n(6, 2, 'E5'),
+    n(8, 1.5, 'D5'), n(9.5, 0.5, 'B4'), n(10, 1, 'G4'), n(11, 1, 'E5'),
+    n(12, 3, 'B4'), n(15, 0.5, 'A4'), n(15.5, 0.5, 'C5'),
+    n(16, 1.5, 'D5'), n(17.5, 0.5, 'F5'), n(18, 1, 'A5'), n(19, 1, 'E5'),
+    n(20, 1.5, 'F5'), n(21.5, 0.5, 'E5'), n(22, 1, 'D5'), n(23, 1, 'G#4'),
+    n(24, 0.5, 'A4'), n(24.5, 0.5, 'C5'), n(25, 0.5, 'E5'), n(25.5, 0.5, 'G5'), n(26, 2, 'B5'),
+    n(28, 1, 'A5'), n(29, 1, 'F5'), n(30, 0.5, 'D5'), n(30.5, 0.5, 'C5'), n(31, 0.5, 'G#4'), n(31.5, 0.5, 'F4'),
+  ],
+  accords: [
+    c(0, 4, 'Dm9'), c(4, 4, 'G13'), c(8, 4, 'Cmaj9'), c(12, 4, 'Fmaj7#11'), c(16, 4, 'Bm7b5'), c(20, 4, 'E7b9'),
+    c(24, 4, 'Am9'), c(28, 2, 'Bm7b5'), c(30, 2, 'E7alt'),
+  ],
+};
+/** Le riff de deux mesures (la mineur, registre de la contrebasse). */
+export const RIFF_DUEL: NoteP[] = [
+  n(0, 1.5, 'A1'), n(1.5, 0.5, 'C2'), n(2, 1, 'D2'), n(3, 0.5, 'Eb2'), n(3.5, 0.5, 'E2'),
+  n(4, 1, 'G2'), n(5, 1, 'E2'), n(6, 0.5, 'D2'), n(6.5, 0.5, 'C2'), n(7, 0.5, 'A1'), n(7.5, 0.5, 'G1'),
+];
+export const DUEL: Theme = {
+  id: 'duel',
+  titre: 'Duel',
+  tonique: midi('A4'),
+  mode: 'dorien',
+  mesure: 4,
+  sections: { A1: DA, A2: { ...DA }, B: DB, A3: { ...DA } },
+  forme: ['A1', 'A2', 'B', 'A3'],
+  motif: [n(0, 1, 'E5'), n(1, 1, 'A5'), n(2, 0.5, 'G5'), n(2.5, 1.5, 'C6')],
+};
+
+export const THEMES: Record<ThemeId, Theme> = { 'quatre-voies': QUATRE_VOIES, 'ville-nuit': VILLE_NUIT, duel: DUEL };

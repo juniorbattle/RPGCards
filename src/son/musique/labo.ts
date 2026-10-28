@@ -217,13 +217,17 @@ const h = <K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Record<string, 
   return e;
 };
 
+const FORMATIONS: Array<[number | undefined, string]> = [[0, 'Prologue et chapitre I (guitare, contrebasse)'], [undefined, 'Chapitres II et III (le trio)'], [4, 'Chapitres IV et V (avec les vents)'], [6, 'Champion']];
+
 export function lancerLabo(o: { qa: boolean }): void {
   document.title = 'Laboratoire de la musique';
   // le laboratoire est à part du jeu : ses calques (plateau, enveloppe, scène) sont masqués
   for (const id of ['app', 'shell', 'arena', 'stage', 'activations']) { const e = document.getElementById(id); if (e) e.style.display = 'none'; }
+  // la page du jeu ne défile pas ; celle du laboratoire, si
   const style = h('style', {}, `
+    html, body { height: auto !important; overflow: auto !important; position: static !important; }
     body { margin: 0; background: #0d0b10; color: #eae2d2; font: 15px/1.5 system-ui, sans-serif; }
-    .lab { max-width: 880px; margin: 0 auto; padding: 24px 16px 60px; }
+    .lab { max-width: 920px; margin: 0 auto; padding: 24px 16px 60px; }
     h1 { font: 600 28px Georgia, serif; color: #f1d58f; margin: 0 0 4px; }
     h2 { font: 600 17px Georgia, serif; color: #e8c97a; margin: 22px 0 8px; }
     p { color: #c9bfae; margin: 6px 0; }
@@ -232,15 +236,18 @@ export function lancerLabo(o: { qa: boolean }): void {
     button:hover { border-color: #d9b26a; } button.on { background: #d9b26a; color: #1a130b; border-color: #d9b26a; }
     .etat { margin-top: 14px; padding: 10px 12px; border-radius: 8px; background: #17131b; border: 1px solid #3a3040; min-height: 1.5em; }
     label { display: inline-flex; gap: 8px; align-items: center; }
+    input[type=range] { width: min(320px, 70vw); }
   `);
   const etat = h('div', { class: 'etat', 'data-key': 'mu-etat' }, 'Cliquez une version pour lancer le son (le navigateur exige un geste).');
   let ctx: AudioContext | null = null;
   let lecteur: Lecteur | null = null;
   let banque: BanqueAudio | null = null;
   let variation: VariationMelodie = 'originale';
+  let chapitre: number | undefined;
   let timer: number | null = null;
-  const volume = (() => { const g = { v: 0.8 }; return g; })();
+  const volume = { v: 0.8 };
   let general: GainNode | null = null;
+  const couches: Record<string, number> = { melodie: 0, tension: 0, cuivres: 0 };
 
   const pret = async (): Promise<Lecteur> => {
     if (lecteur) return lecteur;
@@ -259,56 +266,100 @@ export function lancerLabo(o: { qa: boolean }): void {
     timer = window.setInterval(() => { if (ctx && lecteur) lecteur.avancer(ctx.currentTime + 0.25); }, 25);
     return lecteur;
   };
+  const go = async (f: (l: Lecteur) => void): Promise<void> => { const l = await pret(); void ctx!.resume(); f(l); };
+  const options = (): OptVersion => ({ melodie: variation, chapitre });
+  const bouton = (cle: string, texte: string, f: (l: Lecteur, b: HTMLButtonElement) => void): HTMLButtonElement => {
+    const b = h('button', { 'data-key': cle }, texte);
+    b.onclick = () => void go((l) => f(l, b));
+    return b;
+  };
+  const decrire = (id: VersionId): string => {
+    const v = VERSIONS[id];
+    return `${v.titre} · ${v.tempo} à la noire${v.mesure === 3 ? ', à trois temps' : ''} · salle « ${v.salle} »${v.lofi ? ' · lofi' : ''}. Chaque passage est regénéré.`;
+  };
 
-  const boutonsV = (Object.keys(VERSIONS) as VersionId[]).map((id) => {
-    const b = h('button', { 'data-key': `mu-${id}` }, `${id} · ${VERSIONS[id].titre.replace('Les Quatre Voies — ', '')}`);
-    b.onclick = async () => {
-      const l = await pret();
-      void ctx!.resume();
-      l.jouer(id, { options: { melodie: variation } });
-      boutonsV.forEach((x) => x.classList.toggle('on', x === b));
-      etat.textContent = `${VERSIONS[id].titre} · ${VERSIONS[id].tempo} à la noire · salle « ${VERSIONS[id].salle} »${VERSIONS[id].lofi ? ' · lofi' : ''}. Chaque passage est regénéré.`;
+  const ids = Object.keys(VERSIONS) as VersionId[];
+  const boutonsV = ids.map((id) => bouton(`mu-${id}`, `${id} · ${VERSIONS[id].titre.replace(/^[^—]+— /, '')}`, (l, b) => {
+    l.jouer(id, { options: options() });
+    if (VERSIONS[id].couches) { for (const k of Object.keys(couches)) couches[k] = VERSIONS[id].couches![k] ?? 1; majCouches(); }
+    boutonsV.forEach((x) => x.classList.toggle('on', x === b));
+    etat.textContent = decrire(id);
+  }));
+  const parTheme = (pre: string) => boutonsV.filter((_, i) => ids[i]!.startsWith(pre) && (pre !== 'I-' || !ids[i]!.startsWith('II') && !ids[i]!.startsWith('III')));
+  const stop = bouton('mu-stop', 'Arrêter', (l) => { l.arreter(); boutonsV.forEach((x) => x.classList.remove('on')); });
+
+  // la ville qui grandit
+  const boutonsF = FORMATIONS.map(([ch, t]) => {
+    const b = h('button', { 'data-key': `mu-ch-${ch ?? 'trio'}` }, t);
+    b.onclick = () => {
+      chapitre = ch;
+      boutonsF.forEach((x) => x.classList.toggle('on', x === b));
+      const id = lecteur?.enCours();
+      if (lecteur && id?.startsWith('II-')) lecteur.jouer(id, { options: options(), intro: false });
     };
     return b;
   });
-  const boutonsJ = (Object.keys(JINGLES) as JingleId[]).map((id) => {
-    const b = h('button', { 'data-key': `mu-j-${id}` }, JINGLES[id].titre);
-    b.onclick = async () => { const l = await pret(); void ctx!.resume(); l.jingle(id); };
-    return b;
+  boutonsF[1]!.classList.add('on');
+
+  // le duel : couches et ponctuations
+  const boutonsC = (['melodie', 'tension', 'cuivres'] as const).map((k) => {
+    const noms = { melodie: 'Mélodie (premier Clash)', tension: 'Tension (PV sous 30 %)', cuivres: 'Cuivres (Signature annoncée)' };
+    return bouton(`mu-couche-${k}`, noms[k], (l) => { couches[k] = couches[k]! > 0 ? 0 : 1; l.couches({ [k]: couches[k]! }); majCouches(); });
   });
-  const VARS: Array<[VariationMelodie, string]> = [['originale', 'Originale'], ['envers', 'À l\'envers'], ['renversee', 'Renversée'], ['mineur', 'Mode mineur'], ['lente', 'Valeurs doublées']];
+  const majCouches = (): void => { boutonsC.forEach((b, i) => b.classList.toggle('on', (couches[['melodie', 'tension', 'cuivres'][i]!] ?? 0) > 0)); };
+  const ponct = ([['gagne', 'Clash gagné'], ['perdu', 'Clash perdu'], ['signature', 'Signature'], ['prolongation', 'Prolongation']] as const).map(([k, t]) => bouton(`mu-p-${k}`, t, (l) => { l.ponctuer(k); }));
+  const fins = ([['victoire', 'Fin : victoire'], ['defaite', 'Fin : défaite']] as const).map(([k, t]) => bouton(`mu-fin-${k}`, t, (l) => { const t0 = l.terminer(); l.jingle(k, t0 + 0.6); boutonsV.forEach((x) => x.classList.remove('on')); }));
+  const tendu = bouton('mu-tendu', 'Passer au duel tendu', (l) => { l.jouer('III-2', { fondu: 0.8 }); });
+
+  // la ville : dialogue, entrée en duel, le Fanal
+  const dialogue = bouton('mu-focus', 'Dialogue (la musique s\'efface)', (l, b) => { const on = !b.classList.contains('on'); l.focus(on); b.classList.toggle('on', on); });
+  const versDuel = bouton('mu-vers-duel', 'Entrer en duel', (l) => { l.assourdir(true); setTimeout(() => { l.jouer('III-1', { fondu: 1 }); l.assourdir(false); }, 1500); });
+  const fanal = h('input', { type: 'range', min: '0', max: '100', value: '0', 'data-key': 'mu-fanal' }) as HTMLInputElement;
+  let fanalOn = false;
+  fanal.oninput = () => void go((l) => { if (!fanalOn) { l.source('fanal', 'I-2'); fanalOn = true; } l.proximite('fanal', Number(fanal.value) / 100); });
+
+  const boutonsJ = (Object.keys(JINGLES) as JingleId[]).map((id) => bouton(`mu-j-${id}`, JINGLES[id].titre, (l) => { l.jingle(id); }));
+  const VARS: Array<[VariationMelodie, string]> = [['originale', 'Originale'], ['envers', 'À l\'envers'], ['renversee', 'Renversée'], ['mineur', 'Autre mode'], ['lente', 'Valeurs doublées']];
   const boutonsVar = VARS.map(([k, t]) => {
     const b = h('button', { 'data-key': `mu-var-${k}` }, t);
     b.onclick = () => {
       variation = k;
       boutonsVar.forEach((x) => x.classList.toggle('on', x === b));
-      const id = lecteur?.enCours();
-      if (lecteur && id) lecteur.jouer(id, { options: { melodie: variation }, intro: false });
+      if (lecteur?.enCours() === 'I-1') lecteur.jouer('I-1', { options: options(), intro: false });
     };
     return b;
   });
   boutonsVar[0]!.classList.add('on');
-  const stop = h('button', { 'data-key': 'mu-stop' }, 'Arrêter');
-  stop.onclick = () => { lecteur?.arreter(); boutonsV.forEach((x) => x.classList.remove('on')); };
-  const demo = h('button', { 'data-key': 'mu-demo' }, 'Transitions : menus → titre → victoire → récit');
-  demo.onclick = async () => {
-    const l = await pret();
-    void ctx!.resume();
+  const boutonsD = DEMOS.map((i) => bouton(`mu-demo-${i}`, i, (l) => {
+    l.arreter(0.5);
+    const d = demo(i);
+    const s = l.brut(d.ev, { tempo: d.tempo, salle: d.salle });
+    etat.textContent = `${i} seul : le premier A du thème I dans son registre (${Math.round(s)} s).`;
+  }));
+  const demoT = bouton('mu-demo', 'Transitions : menus → titre → victoire → récit', (l) => {
     l.jouer('I-2');
     setTimeout(() => l.jouer('I-1'), 9000);
     setTimeout(() => { l.arreter(0.6); l.jingle('victoire'); }, 20000);
     setTimeout(() => l.jouer('I-3'), 24000);
-  };
+  });
   const vol = h('input', { type: 'range', min: '0', max: '100', value: '80', 'data-key': 'mu-volume' }) as HTMLInputElement;
   vol.oninput = () => { volume.v = Number(vol.value) / 100; if (general && ctx) general.gain.setTargetAtTime(volume.v, ctx.currentTime, 0.05); };
 
   document.body.append(style, h('main', { class: 'lab', 'data-key': 'mu-labo' },
     h('h1', {}, 'Laboratoire de la musique'),
-    h('p', {}, 'M13, lot MU-A : le thème « Les Quatre Voies » en trois versions et les quatre jingles, synthétisés par le code (aucun fichier son). Chaque passage regénère la basse, l\'accompagnement et la batterie.'),
-    h('h2', {}, 'Versions'), h('div', { class: 'rang' }, ...boutonsV, stop),
-    h('h2', {}, 'Variations à la volée (la mélodie de la tête, à la manière de Zelda)'), h('div', { class: 'rang' }, ...boutonsVar),
+    h('p', {}, 'M13 : la musique synthétisée par le code (aucun fichier son). Chaque passage regénère la basse, l\'accompagnement, la batterie et les chorus ; les changements tombent sur la mesure, les ponctuations sur le temps, dans l\'accord qui sonne.'),
+    h('h2', {}, 'I. « Les Quatre Voies »'), h('div', { class: 'rang' }, ...parTheme('I-'), stop),
+    h('h2', {}, 'Variations du titre à la volée (à la manière de Zelda)'), h('div', { class: 'rang' }, ...boutonsVar),
+    h('h2', {}, 'II. « La ville la nuit »'), h('div', { class: 'rang' }, ...parTheme('II-')),
+    h('p', {}, 'La ville grandit avec l\'histoire :'), h('div', { class: 'rang' }, ...boutonsF),
+    h('div', { class: 'rang' }, dialogue, versDuel),
+    h('p', {}, 'Le Fanal (un combo de bar, source localisée) : approchez-vous.'), h('label', {}, 'loin', fanal, 'tout près'),
+    h('h2', {}, 'III. « Duel »'), h('div', { class: 'rang' }, ...parTheme('III-'), tendu),
+    h('p', {}, 'Les couches (elles entrent et sortent sur la mesure) :'), h('div', { class: 'rang' }, ...boutonsC),
+    h('p', {}, 'Les ponctuations et la fin du duel :'), h('div', { class: 'rang' }, ...ponct, ...fins),
     h('h2', {}, 'Jingles'), h('div', { class: 'rang' }, ...boutonsJ),
-    h('h2', {}, 'Transitions'), h('div', { class: 'rang' }, demo),
+    h('h2', {}, 'Les instruments seuls'), h('div', { class: 'rang' }, ...boutonsD),
+    h('h2', {}, 'Transitions'), h('div', { class: 'rang' }, demoT),
     h('h2', {}, 'Volume'), h('label', {}, vol),
     etat));
   window.addEventListener('pagehide', () => { if (timer !== null) clearInterval(timer); void ctx?.close(); });

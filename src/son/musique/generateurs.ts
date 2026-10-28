@@ -13,6 +13,21 @@ export type InstrId =
   | 'trompette' | 'sax' | 'flute' | 'cuivres' | 'cordes'
   | 'ride' | 'cloche' | 'crash' | 'charley' | 'charley-ferme' | 'gc' | 'cc' | 'cc-balai' | 'balai' | 'rim';
 
+/** Des accords plaqués aux positions dites (coups de cuivres, ponctuations d'arrangement), voicés dans la tessiture. */
+export function coups(as: readonly AccordP[], positions: ReadonlyArray<readonly [number, number]>, o: { instr: InstrId; tessiture?: Tessiture; vel?: number; melodie?: readonly NoteP[] }): Evenement[] {
+  const ac = lireAccords(as);
+  const out: Evenement[] = [];
+  let prev: number[] | null = null;
+  for (const [t, d] of positions) {
+    const a = accordA(ac, t).a;
+    let v = voicer(a, prev, o.tessiture ?? { lo: 55, hi: 79 });
+    prev = v;
+    if (o.melodie) v = eviterMelodie(v, melodieA(o.melodie, t + 0.01), a);
+    for (const m of v) out.push({ t, d, instr: o.instr, m, v: o.vel ?? 0.6 });
+  }
+  return out;
+}
+
 /** Ornements des vents : coulé par en dessous (scoop), chute en fin de phrase. */
 export type Orn = 'scoop' | 'chute';
 /** Une note d'une phrase de vent (positions relatives au début de la phrase). */
@@ -90,7 +105,8 @@ export function basseMarche(as: readonly AccordP[], total: number, rng: Rng, o: 
       const cible = proche(cibleP, prev, lo, hi);
       const cands = [cible - 1, cible + 1, cible + 7 <= hi ? cible + 7 : cible - 5, cible - 2].filter((x) => x >= lo && x <= hi && x !== prev);
       const r = rng();
-      m = r < 0.5 ? (Math.abs(cands[0]! - prev) <= Math.abs(cands[1]! - prev) ? cands[0]! : cands[1]!) : r < 0.75 ? cands[2] ?? cands[0]! : cands[3] ?? cands[0]!;
+      const [c0, c1] = [cands[0] ?? cible, cands[1] ?? cands[0] ?? cible];
+      m = r < 0.5 ? (Math.abs(c0 - prev) <= Math.abs(c1 - prev) ? c0 : c1) : r < 0.75 ? cands[2] ?? c0 : cands[3] ?? c0;
     } else {
       const cible = proche(cibleP, prev + dir * 4, lo, hi);
       dir = cible >= prev ? 1 : -1;
@@ -197,6 +213,17 @@ const RYTHMES: ReadonlyArray<ReadonlyArray<readonly [number, number]>> = [
   [[0.5, 0.4], [2, 0.9]],
 ];
 
+/** Rythmes d'accompagnement d'une mesure de valse (3 temps) : sur 2 et 3, en contretemps, notes tenues. */
+const RYTHMES3: ReadonlyArray<ReadonlyArray<readonly [number, number]>> = [
+  [[1, 0.6], [2, 0.6]],
+  [[0, 1.4], [2, 0.6]],
+  [[1.5, 0.5]],
+  [[1, 0.5], [2.5, 0.4]],
+  [[0, 0.8], [1.5, 0.4]],
+  [[2, 0.8]],
+  [[0, 2.5]],
+];
+
 export interface OptComping {
   instr: InstrId;
   tessiture?: Tessiture;
@@ -215,7 +242,7 @@ export function comping(as: readonly AccordP[], total: number, rng: Rng, o: OptC
   const out: Evenement[] = [];
   let prev: number[] | null = null;
   for (let b = 0; b < total; b += mesure) {
-    const choix = RYTHMES.filter((_, i) => (dens > 0.7 ? i < 6 : dens > 0.4 ? i < 8 : i >= 3));
+    const choix = mesure === 3 ? RYTHMES3.filter((_, i) => (dens > 0.7 ? i < 5 : dens > 0.4 ? i < 6 : i >= 2)) : RYTHMES.filter((_, i) => (dens > 0.7 ? i < 6 : dens > 0.4 ? i < 8 : i >= 3));
     let r = [...pick(rng, choix)];
     // chaque accord de la mesure reçoit au moins un coup
     for (const x of ac.filter((y) => y.t >= b && y.t < b + mesure && y.t > b)) {
@@ -227,7 +254,7 @@ export function comping(as: readonly AccordP[], total: number, rng: Rng, o: OptC
       const tt = b + p;
       if (tt >= total) continue;
       // un coup sur la dernière croche de la mesure anticipe l'accord suivant
-      const cible = p >= 3.5 ? prochainAccord(ac, tt) : accordA(ac, tt);
+      const cible = p >= mesure - 0.5 ? prochainAccord(ac, tt) : accordA(ac, tt);
       let v = voicer(cible.a, prev, t, { quartes: o.quartes ?? false });
       prev = v;
       if (o.melodie) v = eviterMelodie(v, melodieA(o.melodie, tt + 0.01), cible.a);
@@ -438,7 +465,6 @@ export function chorus(as: readonly AccordP[], total: number, rng: Rng, o: { ins
   return out.filter((e) => e.t < total);
 }
 
-/** Les notes d'une partition en événements d'un instrument (nuance de base `v`). */
 /**
  * Les phrases des instruments à une voix (vents) : des notes séparées de moins de `souffle` temps se jouent d'un seul
  * souffle (la voix glisse de l'une à l'autre, ou les reprend à la langue) ; une respiration au plus tous les `max` temps.
@@ -465,6 +491,119 @@ export function lier(ev: readonly Evenement[], mono: ReadonlySet<InstrId>, souff
   return out;
 }
 
+// ------------------------------------------------------------------ valse, guitare en quatre, soli, vents
+
+/**
+ * Valse jazz (3 temps) : ride sur chaque temps et sur le contretemps du 2 (« ding, ding-a ding »), charleston sur 2 et 3,
+ * grosse caisse effleurée sur le 1, notes fantômes ; balais en option (un cercle par mesure, frappés sur 2 et 3) ;
+ * relance au bout de chaque phrase de `relance` mesures.
+ */
+export function batterieValse(total: number, rng: Rng, o: OptBatterie & { balais?: boolean } = {}): Evenement[] {
+  const it = o.intensite ?? 0.5;
+  const rel = o.relance ?? 8;
+  const out: Evenement[] = [];
+  const v = (x: number) => Math.max(0.05, Math.min(1, x * (0.7 + it * 0.5) + gauss(rng, 0.04)));
+  for (let b = 0; b < total; b++) {
+    const dans = b % 3;
+    const mesureN = Math.floor(b / 3);
+    if (rel > 0 && (mesureN + 1) % rel === 0 && dans >= 1) {
+      if (dans === 1) [0, 0.667, 1, 1.333, 1.667].forEach((p, i) => out.push({ t: b + p, d: 0.2, instr: o.balais ? 'cc-balai' : 'cc', m: i % 2, v: v(0.3 + i * 0.08), droit: true }));
+      continue;
+    }
+    if (o.balais) {
+      if (dans === 0) out.push({ t: b, d: 3, instr: 'balai', m: mesureN % 2, v: 0.3 + it * 0.2 + gauss(rng, 0.03) });
+      else out.push({ t: b, d: 0.4, instr: 'cc-balai', m: dans, v: v(0.42) });
+    } else {
+      out.push({ t: b, d: 1, instr: 'ride', m: dans % 2, v: v(dans === 0 ? 0.58 : 0.5) });
+      if (dans === 1) out.push({ t: b + 0.5, d: 0.5, instr: 'ride', m: 2, v: v(0.36) });
+      if (dans > 0) out.push({ t: b, d: 0.2, instr: 'charley', m: 0, v: v(0.36) });
+      if (chance(rng, 0.1 * it)) out.push({ t: b + 0.5, d: 0.2, instr: 'cc', m: 1, v: v(0.16 + rng() * 0.14) });
+    }
+    if (dans === 0) out.push({ t: b, d: 0.3, instr: 'gc', m: 0, v: v(0.14) });
+    if (dans === 0 && mesureN > 0 && rel > 0 && mesureN % rel === 0 && !o.balais) out.push({ t: b, d: 2, instr: 'crash', m: 0, v: v(0.36) });
+  }
+  return out;
+}
+
+/** Contrebasse de valse : la fondamentale sur le 1 (blanche pointée, ou blanche et quinte sur le 3) ; en marche : trois noires. */
+export function basseValse(as: readonly AccordP[], total: number, rng: Rng, o: OptBasse & { marche?: boolean } = {}): Evenement[] {
+  if (o.marche) return basseMarche(as, total, rng, o).map((e) => ({ ...e }));
+  const ac = lireAccords(as);
+  const lo = o.lo ?? 28;
+  const hi = o.hi ?? 50;
+  const out: Evenement[] = [];
+  let prev = o.depart ?? 38;
+  for (let b = 0; b < total; b += 3) {
+    const cur = accordA(ac, b);
+    const r = proche(cur.a.basse, prev, lo, hi);
+    if (chance(rng, 0.55)) out.push({ t: b, d: 2.85, instr: 'basse', m: r, v: 0.74 + gauss(rng, 0.04) });
+    else {
+      out.push({ t: b, d: 1.9, instr: 'basse', m: r, v: 0.74 + gauss(rng, 0.04) });
+      const nx = prochainAccord(ac, b + 2.5);
+      const cinq = proche(cur.a.fond + 7, r + 5, lo, hi);
+      out.push({ t: b + 2, d: 0.95, instr: 'basse', m: nx.t <= b + 3 && nx.t > b ? proche(nx.a.basse, r, lo, hi) - 1 : cinq, v: 0.6 + gauss(rng, 0.04) });
+    }
+    prev = r;
+  }
+  return out;
+}
+
+/**
+ * Guitare en quatre (à la manière des guitaristes d'orchestre de swing) : un accord court sur chaque temps, trois
+ * notes (la basse, la tierce, la septième), un peu plus appuyé sur 2 et 4.
+ */
+export function guitareQuatre(as: readonly AccordP[], total: number, rng: Rng, o: { vel?: number; mesure?: number } = {}): Evenement[] {
+  const ac = lireAccords(as);
+  const mes = o.mesure ?? 4;
+  const out: Evenement[] = [];
+  for (let b = 0; b < total; b++) {
+    const a = accordA(ac, b).a;
+    const r = proche(a.basse, 47, 43, 52);
+    const tierce = proche(a.fond + a.tons[1]!, r + 10, r + 7, r + 17);
+    const sept = proche(a.fond + a.tons[3]!, tierce + 4, r + 9, r + 22);
+    const accent = mes === 4 && b % 2 === 1 ? 0.05 : 0;
+    for (const m of [r, Math.min(tierce, sept), Math.max(tierce, sept)]) out.push({ t: b, d: 0.32, instr: 'guitare', m, v: (o.vel ?? 0.38) + accent + gauss(rng, 0.03) });
+  }
+  return out;
+}
+
+/**
+ * Soli : la mélodie harmonisée à `voix` voix (la mélodie en haut, les notes de l'accord serrées dessous, la deuxième
+ * voix descendue d'une octave en option, « drop 2 ») ; une note de passage reçoit l'accord qui sonne.
+ */
+export function harmoniser(mel: readonly NoteP[], as: readonly AccordP[], o: { instr: InstrId; voix?: number; drop2?: boolean; vel?: number }): Evenement[] {
+  const ac = lireAccords(as);
+  const n = (o.voix ?? 4) - 1;
+  const out: Evenement[] = [];
+  for (const x of mel) {
+    const a = accordA(ac, x.t).a;
+    const pool = hauteursAccord(a, x.m - 12, x.m - 1, true).filter((m) => (((x.m - m) % 12) + 12) % 12 !== 1).reverse();
+    const voix: number[] = [];
+    for (const m of pool) {
+      if (voix.length >= n) break;
+      if (voix.some((v) => Math.abs(v - m) < 2)) continue;
+      voix.push(m);
+    }
+    if (o.drop2 && voix.length) voix[0] = voix[0]! - 12;
+    out.push({ t: x.t, d: x.d, instr: o.instr, m: x.m, v: (o.vel ?? 0.6) * (x.v ?? 1) });
+    for (const m of voix) out.push({ t: x.t, d: x.d, instr: o.instr, m, v: (o.vel ?? 0.6) * (x.v ?? 1) * 0.85 });
+  }
+  return out;
+}
+
+/** Ornements des vents : coulé par en dessous sur une note longue après un silence, chute sur une fin de phrase longue. */
+export function ornerVents(ev: readonly Evenement[], rng: Rng, o: { scoop?: number; chute?: number } = {}): Evenement[] {
+  const tri = [...ev].sort((a, b) => a.t - b.t);
+  return tri.map((e, i) => {
+    const avant = tri[i - 1];
+    const apres = tri[i + 1];
+    if (e.d >= 1 && (!avant || e.t - (avant.t + avant.d) > 0.5) && chance(rng, o.scoop ?? 0.35)) return { ...e, orn: 'scoop' as const };
+    if (e.d >= 1.5 && (!apres || apres.t - (e.t + e.d) >= 1.5) && chance(rng, o.chute ?? 0.12)) return { ...e, orn: 'chute' as const };
+    return e;
+  });
+}
+
+/** Les notes d'une partition en événements d'un instrument (nuance de base `v`). */
 export const versEvenements = (ns: readonly NoteP[], instr: InstrId, v = 0.7, dt = 0): Evenement[] => ns.map((x) => ({ t: x.t + dt, d: x.d, instr, m: x.m, v: v * (x.v ?? 1) }));
 
 /** Vérifie qu'une note est consonante avec l'accord (pour les tests de composition). */

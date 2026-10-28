@@ -9,6 +9,7 @@
  */
 import type { BanqueBrute } from './banque';
 import { choisir } from './banque';
+import { formation } from './arrangement';
 import { JINGLES, mixDe, passage, VERSIONS, type DefJingle, type DefVersion, type JingleId, type OptVersion, type VersionId } from './catalogue';
 import { chaineLofi, tamponSalle, type SalleId } from './effets';
 import { lier, type Evenement, type InstrId } from './generateurs';
@@ -32,6 +33,9 @@ export function versAudio(ctx: BaseAudioContext, b: BanqueBrute): BanqueAudio {
   }
   return out;
 }
+
+/** Le gain d'une version dans son contexte : la ville garde son niveau quand sa formation grandit (`niveaux`, en dB). */
+export const gainDe = (v: DefVersion, o: OptVersion): number => v.gain * 10 ** ((v.niveaux?.[formation(o.chapitre)] ?? 0) / 20);
 
 /** Constante de temps de l'extinction d'une note relâchée (étouffoir, pédale). */
 const RELACHE: Partial<Record<InstrId, number>> = { piano: 0.08, rhodes: 0.12, vibra: 0.25, basse: 0.05, guitare: 0.07, nylon: 0.1 };
@@ -59,6 +63,8 @@ class Melangeur {
   readonly maitre: GainNode;
   private canaux = new Map<string, GainNode>();
   private couches = new Map<string, GainNode>();
+  /** Instant à partir duquel une couche est muette (ses notes ne sont plus calculées : les vents coûtent cher). */
+  private silences = new Map<string, number>();
   private salle: ConvolverNode;
   private lofi: { arreter: () => void } | null = null;
   private arrets: Array<() => void> = [];
@@ -78,6 +84,7 @@ class Melangeur {
     this.salle = ctx.createConvolver();
     this.salle.buffer = tamponSalle(ctx, cfg.salle);
     this.salle.connect(this.maitre);
+    for (const [k, v] of Object.entries(cfg.couches ?? {})) if (v <= 0.001) this.silences.set(k, -Infinity);
   }
 
   /** Gain d'une couche (créée à sa première note, au niveau initial de la version). */
@@ -145,6 +152,7 @@ class Melangeur {
     const ctx = this.ctx;
     const t = Math.max(0, t0 + (DECALAGES[this.cfg.jeu ?? 'jazz'][e.instr] ?? 0));
     const couche = e.couche ?? 'fond';
+    if (t >= (this.silences.get(couche) ?? Infinity)) return;
     if (e.instr === 'nappe') return this.nappe(e, t, d, couche);
     if (VENTS.has(e.instr)) {
       const notes = e.phrase ? e.phrase.map((x) => ({ ...x, t: t + x.t * spb, d: x.d * spb })) : [{ t, d, m: e.m, v: e.v, ...(e.orn ? { orn: e.orn } : {}) }];
@@ -207,6 +215,7 @@ class Melangeur {
 
   /** Une couche vers un niveau, en fondu, à l'instant `t`. */
   regler(nom: string, niveau: number, t: number, duree: number): void {
+    this.silences.set(nom, niveau <= 0.001 ? t + duree : Infinity);
     const g = this.couche(nom);
     g.gain.cancelScheduledValues(t);
     g.gain.setValueAtTime(g.gain.value, t);
@@ -317,10 +326,12 @@ export class Lecteur {
     const fondu = o.fondu ?? 1.2;
     const avant = p.cur;
     if (avant) this.sortir(p, avant, quand, fondu);
-    const mel = new Melangeur(this.ctx, p.gain, this.banque, { salle: v.salle, lofi: v.lofi ?? false, pedale: v.pedale ?? false, gain: v.gain, mix: v.mix, jeu: v.jeu ?? (v.lofi ? 'lofi' : 'jazz'), couches: v.couches ?? {} });
-    if (avant) { mel.maitre.gain.value = 0.0001; mel.fondu(quand, v.gain, fondu * 0.6); }
+    const opts: OptVersion = { ...(avant?.v.id === id ? avant.o : {}), ...(o.options ?? {}) };
+    const gain = gainDe(v, opts);
+    const mel = new Melangeur(this.ctx, p.gain, this.banque, { salle: v.salle, lofi: v.lofi ?? false, pedale: v.pedale ?? false, gain, mix: v.mix, jeu: v.jeu ?? (v.lofi ? 'lofi' : 'jazz'), couches: v.couches ?? {} });
+    if (avant) { mel.maitre.gain.value = 0.0001; mel.fondu(quand, gain, fondu * 0.6); }
     const intro = (o.intro ?? !avant) && !!v.intro;
-    const inst: Instance = { v, mel, t0: quand, p: intro ? -1 : 0, spb: 60 / v.tempo, ev: [], acc: [], i: 0, fin: quand, graine: this.graine, o: { ...(avant?.v.id === id ? avant.o : {}), ...(o.options ?? {}) }, arret: null };
+    const inst: Instance = { v, mel, t0: quand, p: intro ? -1 : 0, spb: 60 / v.tempo, ev: [], acc: [], i: 0, fin: quand, graine: this.graine, o: opts, arret: null };
     this.preparer(inst, quand);
     p.cur = inst;
   }

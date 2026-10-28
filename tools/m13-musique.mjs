@@ -19,6 +19,11 @@ const commit = execFileSync('git', ['rev-parse', '--short', 'HEAD']).toString().
 
 // Scénarios de la musique interactive (contrat 2) : actions aux instants dits, rendues comme un morceau.
 const SCENARIOS = [
+  // les couches du duel, chacune seule (sonie relative, outil de mélange)
+  ...['fond', 'melodie', 'tension', 'cuivres'].map((k) => ({
+    nom: `S-couche-${k}`, requiert: 'III-1',
+    scenario: { duree: 27, actions: [{ t: 0, faire: 'jouer', version: 'III-1', intro: false }, { t: 0.06, faire: 'couches', niveaux: { fond: 0, melodie: 0, tension: 0, cuivres: 0, [k]: 1 }, sur: 'temps', duree: 0.01 }] },
+  })),
   {
     nom: 'S-ponctuations', requiert: 'I-1',
     scenario: {
@@ -28,6 +33,41 @@ const SCENARIOS = [
         { t: 8, faire: 'ponctuer', id: 'gagne' }, { t: 14, faire: 'ponctuer', id: 'perdu' }, { t: 20, faire: 'ponctuer', id: 'gagne' },
         { t: 26, faire: 'ponctuer', id: 'signature' }, { t: 32, faire: 'ponctuer', id: 'prolongation' },
         { t: 38, faire: 'terminer', jingle: 'victoire' },
+      ],
+    },
+  },
+  {
+    // un duel entier : la mélodie au premier Clash, des ponctuations, l'intensité qui monte, le duel tendu (PV sous 30 %),
+    // les cuivres à une Signature annoncée, la fin sur le temps fort et le jingle de victoire
+    nom: 'S-duel', requiert: 'III-1',
+    scenario: {
+      duree: 84,
+      actions: [
+        { t: 0, faire: 'jouer', version: 'III-1', intro: false },
+        { t: 7, faire: 'couches', niveaux: { melodie: 1 } }, { t: 7, faire: 'ponctuer', id: 'gagne' },
+        { t: 15, faire: 'ponctuer', id: 'perdu' }, { t: 24, faire: 'ponctuer', id: 'gagne' },
+        { t: 30, faire: 'contexte', options: { intensite: 0.7 } },
+        { t: 44, faire: 'jouer', version: 'III-2', fondu: 0.8 },
+        { t: 56, faire: 'couches', niveaux: { cuivres: 1 } }, { t: 56, faire: 'ponctuer', id: 'signature' },
+        { t: 66, faire: 'ponctuer', id: 'gagne' },
+        { t: 76, faire: 'terminer', jingle: 'victoire' },
+      ],
+    },
+  },
+  {
+    // la ville : le Quai, un dialogue (focus), l'entrée en duel (la ville s'assourdit), puis la Place du Fanal où le
+    // combo du Fanal joue (source localisée qu'on approche puis qu'on quitte)
+    nom: 'S-ville', requiert: 'II-1',
+    scenario: {
+      duree: 70,
+      actions: [
+        { t: 0, faire: 'jouer', version: 'II-1', options: { chapitre: 2 }, intro: false },
+        { t: 10, faire: 'focus', on: true }, { t: 18, faire: 'focus', on: false },
+        { t: 24, faire: 'source', nom: 'fanal', version: 'I-2' },
+        { t: 26, faire: 'proximite', nom: 'fanal', x: 0.2 }, { t: 32, faire: 'proximite', nom: 'fanal', x: 0.55 },
+        { t: 38, faire: 'proximite', nom: 'fanal', x: 1 }, { t: 48, faire: 'proximite', nom: 'fanal', x: 0.3 },
+        { t: 54, faire: 'source', nom: 'fanal', version: null },
+        { t: 58, faire: 'assourdir', on: true }, { t: 62, faire: 'jouer', version: 'III-1', fondu: 1 }, { t: 62, faire: 'assourdir', on: false },
       ],
     },
   },
@@ -60,6 +100,9 @@ try {
   const { versions, jingles } = await p.evaluate(() => ({ versions: window.__musique.versions, jingles: window.__musique.jingles }));
   // les versions, les jingles, et les variations à la volée du titre (un passage de tête chacune, sans levée)
   const variations = ['envers', 'renversee', 'mineur', 'lente'].map((m) => ({ version: 'I-1', nom: `I-1-${m}`, options: { melodie: m }, passes: 1, intro: false }));
+  // la ville qui grandit : chaque version de la ville au prologue (duo), au chapitre IV (vents) et en champion (le trio
+  // est la version par défaut) ; un passage de tête chacune
+  for (const v of ['II-1', 'II-2', 'II-3']) for (const [ch, nom] of [[0, 'duo'], [4, 'vents'], [6, 'champion']]) if (versions.includes(v)) variations.push({ version: v, nom: `${v}-${nom}`, options: { chapitre: ch }, passes: 1, intro: false });
   const cibles = [...versions.map((v) => ({ version: v })), ...jingles.map((j) => ({ jingle: j })), ...variations, ...SCENARIOS.filter((c) => versions.includes(c.requiert))]
     .filter((c) => !FILTRE || (c.nom ?? c.version ?? c.jingle) === FILTRE || (FILTRE === 'scenarios' && c.scenario));
   for (const c of cibles) {

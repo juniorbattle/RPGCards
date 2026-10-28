@@ -1,0 +1,19 @@
+{
+  "commit": "c72c91c",
+  "date": "2026-10-28T01:37:32.346Z",
+  "passes": 1,
+  "graine": 1,
+  "resultats": [
+    {
+      "nom": "II-2-vents",
+      "duree": 59.202173913043474,
+      "msBanque": 1821.899999999965,
+      "msRendu": 9226.700000000012,
+      "lufs": -19.1,
+      "lra": 2.1,
+      "creteVraie": -4.9,
+      "vitesse": 6.416397402434608
+    }
+  ],
+  "console": []
+}
