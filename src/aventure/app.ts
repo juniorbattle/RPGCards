@@ -26,7 +26,7 @@ import { duelSeed, SaveStore } from '../product/save';
 import { webglAvailable, type ArenaHandle } from '../scene/arena';
 import { confirmDialog, h } from '../shell/ui';
 import { APPARENCE_DEFAUT, estOrigine, idJoueur, type Apparence } from '../ville/apparence';
-import { coupesDisponibles, editeurApparence } from './apparence';
+import { apparencesDisponibles, editeurApparence } from './apparence';
 import { parseRig } from '../ville/cameras';
 import { decorPolicy, preloadDecors } from '../ville/decors';
 import { MANIFESTE_RANGS, QUARTIERS_AJOUTES, type IlotId } from '../ville/ilots';
@@ -254,8 +254,8 @@ export class AventureApp {
     let apparence: Apparence = { ...APPARENCE_DEFAUT.a };
     const go = () => this.commencer(input.value.trim() || 'Duelliste', undefined, apparence);
     const zone = h('div', { class: 'av-apparence-zone' });
-    void coupesDisponibles(this.params.qa, new URLSearchParams(location.search).get('sprites')).then((coupes) => {
-      zone.replaceChildren(h('p', { class: 'av-label' }, 'Votre apparence'), editeurApparence({ valeur: apparence, tenue: 'gris', coupes, change: (a) => { apparence = a; } }));
+    void apparencesDisponibles(this.params.qa, new URLSearchParams(location.search).get('sprites')).then((dispo) => {
+      zone.replaceChildren(h('p', { class: 'av-label' }, 'Votre apparence'), editeurApparence({ valeur: apparence, tenue: 'gris', dispo, change: (a) => { apparence = a; } }));
     });
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
     this.ecranShell('scr-home av-scr',
@@ -1647,15 +1647,15 @@ export class AventureApp {
     ]);
   }
 
-  /** Passe 165 : l'apparence du protagoniste (silhouette, coupe, peau, cheveux, yeux), modifiable à tout moment ; sauvegardée. */
+  /** Passe 165 : l'apparence du protagoniste (silhouette, coupe, visage, peau, cheveux, yeux), modifiable à tout moment ; sauvegardée. */
   private async reglageApparence(): Promise<void> {
     const s = this.save;
     if (!s) return;
-    const coupes = await coupesDisponibles(this.params.qa, new URLSearchParams(location.search).get('sprites'));
+    const dispo = await apparencesDisponibles(this.params.qa, new URLSearchParams(location.search).get('sprites'));
     let apparence: Apparence = s.profil.apparence ?? { ...APPARENCE_DEFAUT.a };
     this.ouvrirModal(h('div', { class: 'av-confirm', 'data-key': 'av-apparence-menu' },
       h('h2', null, 'Apparence'),
-      editeurApparence({ valeur: apparence, tenue: this.etat.affiliation ?? 'gris', coupes, change: (a) => { apparence = a; } }),
+      editeurApparence({ valeur: apparence, tenue: this.etat.affiliation ?? 'gris', dispo, change: (a) => { apparence = a; } }),
       h('div', { class: 'ville-choices' },
         h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-apparence-ok', onclick: () => {
           if (estOrigine(apparence)) delete s.profil.apparence;

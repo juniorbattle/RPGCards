@@ -38,6 +38,8 @@ export function installAventureStyles(): void {
 .av-ap-items { display: flex; flex-wrap: wrap; gap: 6px; }
 .av-ap-pastille { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #3a3446; cursor: pointer; padding: 0; }
 .av-ap-pastille.choisi, .av-ap-sil.choisi { border-color: #ffe7b0; box-shadow: 0 0 0 2px rgba(255, 231, 176, 0.35); }
+.av-ap-sil canvas { height: 72px; width: auto; }
+.av-ap-sil canvas.av-tete { height: 48px; }
 .av-ap-sil { display: grid; justify-items: center; gap: 2px; padding: 4px 6px; border-radius: 8px; border: 2px solid #3a3446; background: rgba(12, 10, 20, 0.7); color: #efe6d4; font: 600 12px/1 system-ui, sans-serif; cursor: pointer; }
 .av-ap-pastille:focus-visible, .av-ap-sil:focus-visible { outline: 3px solid #ffe7b0; outline-offset: 2px; }
 .av-input { font: 600 17px/1.2 system-ui, sans-serif; padding: 6px 10px; border-radius: 8px; border: 1px solid #e2c48a; background: #12101a; color: #fff4dc; width: 220px; }

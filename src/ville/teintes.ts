@@ -80,7 +80,10 @@ function classerCase(f: Feuille, cls: Uint8Array, x0: number, y0: number, cw: nu
     return out;
   };
   for (const pts of plages(gris, top, tete)) if (pts.length >= 25) poser(pts, CHEVEUX);
-  for (const pts of plages(chaud, top, tete)) if (pts.length >= 6) poser(pts, PEAU);
+  // visage : aussi ses ombres (orbites, joues, cou ; passe 170 : sur une peau repeinte foncée, une ombre laissée au naturel
+  // faisait une tache claire), tons chauds plus sombres ou plus saturés que ceux des mains
+  const chaudTete = (i: number, j: number) => { if (!opaque(i, j)) return false; const [h, s, v] = teinte(i, j); return chaud(i, j) || (v > 0.35 && s > 0.2 && s < 0.85 && h >= 12 && h <= 52); };
+  for (const pts of plages(chaudTete, top, tete)) if (pts.length >= 6) poser(pts, PEAU);
   const main = (i: number, j: number) => chaud(i, j) && !manteau(i + 1, j) && !manteau(i - 1, j) && !manteau(i, j + 1) && !manteau(i, j - 1);
   for (const pts of plages(main, tete + 1, bot)) {
     const xs = pts.map((p) => p[0]);
