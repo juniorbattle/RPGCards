@@ -17,7 +17,7 @@ import { FAMILY_PALETTE } from '../art/palette';
 import type { Family } from '../game/catalog/cards';
 import { NPC_HAIRS, NPC_SKINS, npcLook, type Accessory, type HairCut, type Tone } from '../presentation/npcs';
 import { COMMON_GLSL, U } from './materiaux';
-import { CHEVEUX, PEAUX, YEUX, estOrigine, lireIdJoueur, type Yeux } from './apparence';
+import { CHEVEUX, PEAUX, YEUX, coupeDe, estOrigine, lireIdJoueur, type Yeux } from './apparence';
 import { cyclePlan, ecartPieds, posePassage } from './passage';
 import { classerTeintes, repeindre } from './teintes';
 import type { Facing } from './monde';
@@ -75,7 +75,7 @@ export function walkerLook(id: string): WalkerLook {
     const p = paletteJoueur(joueur.tenue);
     const a = joueur.apparence;
     return {
-      skin: PEAUX[a.peau]!, hair: CHEVEUX[a.cheveux]!, cut: a.silhouette === 'a' ? 'carre-argent' : 'courte',
+      skin: PEAUX[a.peau]!, hair: CHEVEUX[a.cheveux]!, cut: coupeDe(a).atlas,
       cloth: tone(p.mid, p.deep, p.deep, p.light), shirt: tone('#e6e0d2', '#c2bcae', '#98928a', '#f6f2ea'), legs: '#262a34',
       accessory: 'bandeau', long: true, detail: 'echarpe', iris: YEUX[a.yeux]!.iris, hood: true,
     };

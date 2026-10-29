@@ -720,3 +720,14 @@ l'apparence, par code.
 - **Sauvegarde** : `profil.apparence`, facultative (absente : l'apparence d'origine), schéma `aventure/2` inchangé.
 - **Portrait du duel** (`scene/v2/joueur.ts`) : couleurs de l'apparence ; silhouette B en coupe courte (ni pans du carré
   ni arrière long) ; l'apparence d'origine garde le portrait historique.
+
+### Coupes de plus pour le protagoniste (passe 167, 2026-10-29)
+
+Ordre du responsable : « fait donc » (d'autres coupes, avec les 3 dernières images de la deuxième reprise). Une coupe de
+plus par silhouette, chacune sa feuille (2 images, la réserve non utilisée ; **19 images sur 20**) : **A, queue de
+cheval** (`player-a2`) et **B, mi-longue** (`player-b2`, case de 64 × 100 px d'art : ses cheveux plus hauts, au vrai pas
+des pixels, rien de rogné) ; `approved: false` jusqu'à l'ordre du responsable. L'apparence gagne une **coupe** (`COUPES`,
+`coupeDe`, `feuilleApparence` ; code de cinq signes quand la coupe n'est pas la première, les codes de quatre signes
+restent valables) ; l'éditeur montre une ligne « Coupe » en vignettes ; le portrait du duel prend la coupe courte pour la
+queue de cheval et le carré pour la coupe mi-longue. Le type de visage reste un par feuille : un visage choisi à part
+demanderait des images, hors du budget de la deuxième reprise.

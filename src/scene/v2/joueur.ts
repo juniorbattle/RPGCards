@@ -8,7 +8,7 @@
 import { drawEmblem } from '../../art/emblems';
 import { paletteOf } from '../../art/palette';
 import type { Family } from '../../game/catalog/cards';
-import { APPARENCE_DEFAUT, CHEVEUX, PEAUX, YEUX, estOrigine, idJoueur, type Apparence } from '../../ville/apparence';
+import { APPARENCE_DEFAUT, CHEVEUX, PEAUX, YEUX, coupeDe, estOrigine, idJoueur, type Apparence } from '../../ville/apparence';
 import {
   backCanvasH, canvas, clipped, edgeBand, EYE_CX, fill, mirrored, P, softShade, stroke, taper, torsoCanvasH, translatedPath,
   type BrowShape, type Cubic, type FigureV2Kit,
@@ -338,7 +338,7 @@ export function playerKitV2(family: Tenue, apparence: Apparence = APPARENCE_DEFA
   const o = outfit(family);
   const origine = estOrigine(apparence);
   const C = origine ? C_ORIGINE : couleursApparence(apparence);
-  const court = apparence.silhouette === 'b';
+  const court = coupeDe(apparence).portrait === 'court';
   const dessin = <T>(f: () => T) => (origine ? f : () => avec(C, court, f));
   const kit: FigureV2Kit = {
     id,

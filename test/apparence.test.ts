@@ -2,7 +2,7 @@
 // des yeux sur les deux feuilles, repeinte, et sauvegarde compatible (apparence facultative).
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { APPARENCE_DEFAUT, CHEVEUX, PEAUX, YEUX, apparenceValable, codeApparence, estOrigine, feuilleSilhouette, idJoueur, lireCode, lireIdJoueur } from '../src/ville/apparence';
+import { APPARENCE_DEFAUT, CHEVEUX, COUPES, PEAUX, YEUX, apparenceValable, codeApparence, estOrigine, feuilleSilhouette, idJoueur, lireCode, lireIdJoueur } from '../src/ville/apparence';
 import { sheetKeys } from '../src/ville/spritesExternes';
 import { CHEVEUX as C_CHEVEUX, IRIS, PEAU, classerTeintes, repeindre } from '../src/ville/teintes';
 import { nouvelleSauvegarde, validerSauvegarde } from '../src/aventure/sauvegarde';
@@ -41,18 +41,28 @@ describe('apparence du protagoniste : identifiants', () => {
     expect(lireCode(`a${PEAUX.length}00`)).toBeNull();
     expect(apparenceValable({ silhouette: 'c', peau: 0, cheveux: 0, yeux: 0 })).toBe(false);
     expect(estOrigine(APPARENCE_DEFAUT.b)).toBe(false);
+    // passe 167 : la coupe (cinq signes quand elle n'est pas la première ; quatre signes : la première, codes d'avant)
+    expect(idJoueur('Cendre', { silhouette: 'a', coupe: 1, peau: 0, cheveux: 0, yeux: 0 })).toBe('player-Cendre@a1000');
+    expect(lireCode('b1431')).toEqual({ silhouette: 'b', coupe: 1, peau: 4, cheveux: 3, yeux: 1 });
+    expect(lireCode('b0431')).toBeNull();
+    expect(lireCode('b2431')).toBeNull();
+    expect(lireCode('b431')).toEqual({ silhouette: 'b', peau: 4, cheveux: 3, yeux: 1 });
   });
 
   it('chaque silhouette a sa feuille ; la B n’est pas approuvée sans ordre du responsable', () => {
     expect(sheetKeys('player-Cendre')).toEqual(['player-Cendre', 'player']);
     expect(sheetKeys('player-gris@b431')).toEqual(['player-gris@b431', 'player-b']);
+    expect(sheetKeys('player-Voile@a1000')).toEqual(['player-Voile@a1000', 'player-a2']);
+    expect(sheetKeys('player-Voile@b1000')).toEqual(['player-Voile@b1000', 'player-b2']);
+    for (const s of ['a', 'b'] as const) for (const c of COUPES[s]) expect(man.sprites[c.feuille], c.feuille).toBeTruthy();
+    expect([man.sprites['player-a2'].approved, man.sprites['player-b2'].approved]).toEqual([false, false]);
     expect(feuilleSilhouette('a')).toBe('player');
     expect(man.sprites['player-b'].approved).toBe(true);
   });
 });
 
 describe('apparence du protagoniste : teintes reconnues et repeintes', () => {
-  for (const id of ['player', 'player-b']) {
+  for (const id of ['player', 'player-b', 'player-a2', 'player-b2']) {
     it(`${id} : peau, cheveux et iris dans chaque case ; la boucle de ceinture reste dorée`, () => {
       const { f, cw, ch } = art(id);
       const cls = classerTeintes(f, cw, ch);

@@ -7,13 +7,13 @@ import { dirname } from 'node:path';
 import { deflateSync } from 'node:zlib';
 import type { Browser } from 'playwright-core';
 import { lirePng } from '../test/png';
-import { CHEVEUX, PEAUX, YEUX, estOrigine, feuilleSilhouette, lireCode } from '../src/ville/apparence';
+import { CHEVEUX, PEAUX, YEUX, coupeDe, estOrigine, feuilleApparence, lireCode } from '../src/ville/apparence';
 import { cyclePlan, posePassage } from '../src/ville/passage';
 import { classerTeintes, repeindre } from '../src/ville/teintes';
 import { FAMILY_PALETTE } from '../src/art/palette';
 
 const OUT = process.argv[2] ?? 'screenshots/qa/protagoniste/apparences/planche-apparences.png';
-const CODES = (process.argv[3] ?? 'a000,a530,a193,b200,b000,b462,b581').split(',');
+const CODES = (process.argv[3] ?? 'a000,a530,a193,a1000,a1281,b200,b462,b581,b1200,b1390').split(',');
 const man = JSON.parse(readFileSync('public/sprites/manifest.json', 'utf8'));
 const hex = (s: string) => [parseInt(s.slice(1, 3), 16), parseInt(s.slice(3, 5), 16), parseInt(s.slice(5, 7), 16)];
 const fam = FAMILY_PALETTE.Cendre;
@@ -23,7 +23,7 @@ const NIV = [64, 128, 191, 255];
 
 function feuille(code: string) {
   const a = lireCode(code)!;
-  const e = man.sprites[feuilleSilhouette(a.silhouette)];
+  const e = man.sprites[feuilleApparence(a)];
   const im = lirePng(`public/sprites/${e.file}`);
   const [cw, ch] = e.cell as [number, number];
   const W = cw * 5; const H = ch * 3; const S = e.scale as number;
@@ -59,7 +59,7 @@ try {
   await page.setContent('<!doctype html><html><body></body></html>');
   await page.evaluate('window.__name = (f) => f');
   const url = await page.evaluate(async (ls: { titre: string; cases: string[] }[]) => {
-    const Z = 3; const cw = 64 * Z; const ch = 96 * Z; const pad = 16; const lab = 300;
+    const Z = 3; const cw = 64 * Z; const ch = 100 * Z; const pad = 16; const lab = 300;
     const c = new OffscreenCanvas(lab + 6 * (cw + 8) + pad, 50 + ls.length * (ch + 10));
     const g = c.getContext('2d')!; g.imageSmoothingEnabled = false;
     g.fillStyle = '#1d212b'; g.fillRect(0, 0, c.width, c.height);
@@ -72,12 +72,12 @@ try {
       for (const [j, s] of l.cases.entries()) {
         const im = new Image(); im.src = s; await im.decode();
         g.fillStyle = '#2a2f3c'; g.fillRect(lab + j * (cw + 8), y, cw, ch);
-        g.drawImage(im, lab + j * (cw + 8), y, cw, ch);
+        g.drawImage(im, lab + j * (cw + 8), y + ch - im.height * Z, im.width * Z, im.height * Z);
       }
     }
     const blob = await c.convertToBlob({ type: 'image/png' });
     return await new Promise<string>((r) => { const f = new FileReader(); f.onload = () => r(f.result as string); f.readAsDataURL(blob); });
-  }, lignes.map((l) => ({ titre: `${l.code}\nSilhouette ${l.a.silhouette.toUpperCase()}\npeau ${l.a.peau + 1}, cheveux ${l.a.cheveux + 1}, yeux ${l.a.yeux + 1}${estOrigine(l.a) ? '\n(origine : rien de repeint)' : ''}`, cases: l.cases.map((b) => `data:image/png;base64,${b.toString('base64')}`) })));
+  }, lignes.map((l) => ({ titre: `${l.code}\nSilhouette ${l.a.silhouette.toUpperCase()}, coupe ${coupeDe(l.a).nom}\npeau ${l.a.peau + 1}, cheveux ${l.a.cheveux + 1}, yeux ${l.a.yeux + 1}${estOrigine(l.a) ? '\n(origine : rien de repeint)' : ''}`, cases: l.cases.map((b) => `data:image/png;base64,${b.toString('base64')}`) })));
   mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(OUT, Buffer.from(url.split(',')[1]!, 'base64'));
 } finally {
