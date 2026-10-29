@@ -29,6 +29,17 @@ export function installAventureStyles(): void {
 .av-profil { margin: 0; color: #d8ccb4; font-size: 13px; }
 .av-link { color: #b8c4dc; font-size: 13px; }
 .av-label { display: block; margin-top: 14px; color: #efe6d4; }
+.av-apparence { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; margin: 6px auto 0; max-width: 620px; text-align: left; }
+.av-ap-apercu { display: grid; place-items: center; width: 148px; height: 204px; border-radius: 10px; background: radial-gradient(ellipse at 50% 70%, rgba(80, 70, 50, 0.35), rgba(10, 10, 18, 0.6)); }
+.av-vignette { image-rendering: pixelated; display: block; }
+.av-ap-choix { display: grid; gap: 8px; }
+.av-ap-ligne { display: grid; grid-template-columns: 82px 1fr; gap: 8px; align-items: center; }
+.av-ap-titre { color: #e2c48a; font: 600 13px/1.2 system-ui, sans-serif; }
+.av-ap-items { display: flex; flex-wrap: wrap; gap: 6px; }
+.av-ap-pastille { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #3a3446; cursor: pointer; padding: 0; }
+.av-ap-pastille.choisi, .av-ap-sil.choisi { border-color: #ffe7b0; box-shadow: 0 0 0 2px rgba(255, 231, 176, 0.35); }
+.av-ap-sil { display: grid; justify-items: center; gap: 2px; padding: 4px 6px; border-radius: 8px; border: 2px solid #3a3446; background: rgba(12, 10, 20, 0.7); color: #efe6d4; font: 600 12px/1 system-ui, sans-serif; cursor: pointer; }
+.av-ap-pastille:focus-visible, .av-ap-sil:focus-visible { outline: 3px solid #ffe7b0; outline-offset: 2px; }
 .av-input { font: 600 17px/1.2 system-ui, sans-serif; padding: 6px 10px; border-radius: 8px; border: 1px solid #e2c48a; background: #12101a; color: #fff4dc; width: 220px; }
 .av-cards { --card-w: 74px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 10px 0; }
 .av-cards .card { cursor: default; }

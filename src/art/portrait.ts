@@ -7,6 +7,7 @@ import type { Family } from '../game/catalog/cards';
 import { paletteOf } from './palette';
 import { drawFigureV2Portrait, figureV2PortraitArt, type MouthShape } from '../scene/figureV2';
 import { figureKitV2 } from '../scene/v2';
+import { idJoueur, type Apparence } from '../ville/apparence';
 
 /** Figure dessinable (rival, PNJ ou duelliste joueur) : son identité V2 est retrouvée par `id` (`figureKitV2`). */
 export interface Figure { id: string; family: Family | null }
@@ -17,9 +18,10 @@ const cache = new Map<string, string>();
  * Duelliste joueur (cheveux argent, bandeau ; tenue aux couleurs de sa Signature), dessiné par `scene/v2/joueur.ts`
  * (id `player-<Famille>`).
  */
-export function playerFigure(family: Family | null): Figure {
-  // sans Signature (deck d'aventure, avenant M10-A) : tenue grise, sans emblème (`player-gris`)
-  return { id: `player-${family ?? 'gris'}`, family };
+export function playerFigure(family: Family | null, apparence?: Apparence): Figure {
+  // sans Signature (deck d'aventure, avenant M10-A) : tenue grise, sans emblème (`player-gris`) ; apparence choisie dans
+  // l'aventure : `player-<tenue>@code` (`ville/apparence.ts`)
+  return { id: idJoueur(family ?? 'gris', apparence), family };
 }
 
 /** Portrait carré (buste + visage), à double définition (affiches ≈ 280 px CSS) : au moins 384 px. */

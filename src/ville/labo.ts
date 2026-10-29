@@ -8,6 +8,7 @@ import { CAMERA_IDS, RIGS, parseRig, type CameraId } from './cameras';
 import type { Zone } from './monde';
 import { installVilleStyles, promptBubble, toast } from './ui';
 import { createTown, type Town } from './ville';
+import { idJoueur, lireCode } from './apparence';
 import { ILOTS_RANGS, isIlotBande, isIlotId, MANIFESTE_RANGS, type IlotId } from './ilots';
 import { recolorTargets, walkerAtlasCanvas, walkerAtlasCanvasFor } from './sprites';
 import { spritePolicy, type RecolorSlot } from './spritesExternes';
@@ -32,7 +33,7 @@ export async function startLab(p: LabParams, q: URLSearchParams): Promise<Town> 
   document.body.append(host);
   const cam: CameraId = 'frontale';
   const town = createTown({
-    host, artSeed: p.artSeed, camera: cam, player: `player-${p.sig ?? 'Cendre'}`, spawn: q.get('spawn') ?? undefined,
+    host, artSeed: p.artSeed, camera: cam, player: idJoueur(p.sig ?? 'Cendre', lireCode(q.get('apparence') ?? '')), spawn: q.get('spawn') ?? undefined,
     ilot,
     freeze: p.freeze, reducedMotion: p.reducedMotion, sprites: spritePolicy(p.qa, q.get('sprites')), decors, rig: parseRig(q.get('rig')),
     ...(profondeur ? { ilotDefOf: (id: IlotId) => ILOTS_RANGS[id], decorsManifest } : {}),

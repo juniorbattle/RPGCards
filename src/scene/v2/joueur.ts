@@ -8,19 +8,45 @@
 import { drawEmblem } from '../../art/emblems';
 import { paletteOf } from '../../art/palette';
 import type { Family } from '../../game/catalog/cards';
+import { APPARENCE_DEFAUT, CHEVEUX, PEAUX, YEUX, estOrigine, idJoueur, type Apparence } from '../../ville/apparence';
 import {
   backCanvasH, canvas, clipped, edgeBand, EYE_CX, fill, mirrored, P, softShade, stroke, taper, torsoCanvasH, translatedPath,
   type BrowShape, type Cubic, type FigureV2Kit,
 } from '../figureV2';
 
 /** Peau claire, cheveux argent aux ombres d’acier, yeux bleus (apparence V1 du joueur). */
-const C = {
+const C_ORIGINE = {
   skinHi: '#fde6d6', skin: '#f2cdb4', skinShade: '#cf9f88', skinDeep: '#a87262', line: '#4a2a24', lineSoft: '#8c5c50',
   hair: '#dfe2ef', hairShade: '#aab1cb', hairDeep: '#6c7392', hairHi: '#ffffff', hairSheen: '#ffffff', hairRim: '#f2f5ff',
   lash: '#241a20', lashSoft: '#56444c', brow: '#767c98', browHi: '#d2d6e8',
   lipUp: '#b06c62', lipLow: '#c98478', lipHi: '#f0bcae',
   iris: '#4a6fd6', irisDeep: '#16224e', irisLight: '#a9c6ff', irisAmber: '#a6e4ff', pupil: '#06080f',
 };
+type Couleurs = typeof C_ORIGINE;
+/** Couleurs du portrait en cours de dessin : celles d'origine, ou celles de l'apparence choisie (`avec`). */
+let C: Couleurs = C_ORIGINE;
+/** Coupe courte (silhouette B) : ni pans du carré ni arrière long, le dessous de l'oreille dégagé. */
+let COURT = false;
+const avec = <T>(c: Couleurs, court: boolean, f: () => T): T => {
+  const [pc, pk] = [C, COURT];
+  C = c;
+  COURT = court;
+  try { return f(); } finally { C = pc; COURT = pk; }
+};
+
+/** Couleurs d'une apparence (`apparence.ts`) : peau, cheveux et iris ; le trait et les lèvres d'origine. */
+function couleursApparence(a: Apparence): Couleurs {
+  const p = PEAUX[a.peau]!;
+  const h = CHEVEUX[a.cheveux]!;
+  const y = YEUX[a.yeux]!;
+  return {
+    ...C_ORIGINE,
+    skinHi: p.hi, skin: p.base, skinShade: p.shade, skinDeep: p.deep,
+    hair: h.base, hairShade: h.shade, hairDeep: h.deep, hairHi: h.hi, hairSheen: mix(h.hi, '#ffffff', 0.5), hairRim: mix(h.hi, '#ffffff', 0.3),
+    brow: h.deep, browHi: h.shade,
+    iris: y.iris, irisDeep: y.deep, irisLight: y.light, irisAmber: y.light,
+  };
+}
 
 /** Tenue : la famille de la Signature, ou `gris` (sans Signature, deck d'aventure, avenant M10-A : sans emblème). */
 export type Tenue = Family | 'gris';
@@ -78,7 +104,9 @@ const NECKLINE = 'M40,200 L216,200 L216,286 C188,292 158,300 128,302 C98,300 68,
 function drawHead(): HTMLCanvasElement {
   const { c, ctx } = canvas(256, 312);
   // Arrière du carré : sombre derrière la mâchoire et du côté de l’ombre (occlusion).
-  const back = P('M128,13 C72,11 35,49 31,106 C27,152 30,200 40,238 C44,252 52,262 64,266 L192,266 C204,262 212,252 216,238 C226,200 229,152 225,106 C220,49 184,11 128,13 Z');
+  const back = P(COURT
+    ? 'M128,13 C72,11 35,49 31,106 C29,128 32,146 40,158 L216,158 C224,146 227,128 225,106 C220,49 184,11 128,13 Z'
+    : 'M128,13 C72,11 35,49 31,106 C27,152 30,200 40,238 C44,252 52,262 64,266 L192,266 C204,262 212,252 216,238 C226,200 229,152 225,106 C220,49 184,11 128,13 Z');
   fill(ctx, back, C.hairShade);
   clipped(ctx, back, () => {
     fill(ctx, 'M128,0 L240,0 L240,280 L128,280 Z', C.hairDeep, 0.3);
@@ -159,16 +187,16 @@ function drawFront(o: Outfit, family: Tenue): HTMLCanvasElement {
   const left = P(SIDE);
   const right = new Path2D();
   right.addPath(left, new DOMMatrix([-1, 0, 0, 1, 256, 0]));
-  fill(ctx, left, C.hair);
-  clipped(ctx, left, () => {
+  if (!COURT) fill(ctx, left, C.hair);
+  if (!COURT) clipped(ctx, left, () => {
     edgeBand(ctx, left, -5, -2, C.hairShade, 0.9, box);
     edgeBand(ctx, left, 3, 1, C.hairHi, 0.8, box);
     for (const [s, w] of [[[50, 96, 42, 140, 40, 190, 46, 236], 6], [[56, 120, 52, 160, 52, 200, 58, 240], 3.6]] as Array<[Cubic, number]>) taper(ctx, s, 0.5, w, 0.5, C.hairHi, 0.6);
     for (const s of [[58, 80, 48, 120, 44, 170, 50, 226], [46, 110, 40, 150, 40, 200, 46, 248], [60, 150, 58, 190, 62, 230, 66, 258]] as Cubic[]) taper(ctx, s, 0.2, 1.1, 0.2, C.hairDeep, 0.7);
     for (const [x, y, l] of [[41, 144, 14], [45, 172, 12], [43, 200, 11]] as Array<[number, number, number]>) taper(ctx, [x, y - l / 2, x - 0.4, y - l / 6, x - 0.4, y + l / 6, x, y + l / 2], 0, 3, 0, C.hairSheen, 0.85);
   });
-  fill(ctx, right, C.hair);
-  clipped(ctx, right, () => {
+  if (!COURT) fill(ctx, right, C.hair);
+  if (!COURT) clipped(ctx, right, () => {
     fill(ctx, 'M150,0 L260,0 L260,320 L150,320 Z', C.hairShade, 0.55);
     edgeBand(ctx, right, 5, -2, C.hairShade, 0.9, box);
     edgeBand(ctx, right, -3, 0, C.hairRim, 0.6, box);
@@ -204,10 +232,12 @@ function drawFront(o: Outfit, family: Tenue): HTMLCanvasElement {
     taper(ctx, a, 0.3, 0.9, 0.2, C.hairDeep, 0.85);
     taper(ctx, b, 0.2, 1, 0.3, C.hairDeep, 0.85);
   }
-  for (const s of [[66, 64, 58, 90, 53, 122, 53, 154], [53, 154, 53, 180, 56, 204, 62, 224]] as Cubic[]) taper(ctx, s, 0.3, 1, 0.3, C.hairDeep, 0.8);
-  for (const s of [[190, 64, 198, 90, 203, 122, 203, 154], [203, 154, 203, 180, 200, 204, 194, 224]] as Cubic[]) taper(ctx, s, 0.3, 1.2, 0.3, C.hairDeep, 0.85);
-  // Cheveux libres sur le bord extérieur des pans.
-  for (const s of [[36, 120, 30, 152, 30, 186, 34, 218], [220, 120, 226, 152, 226, 186, 222, 218]] as Cubic[]) taper(ctx, s, 0, 0.8, 0, C.hairHi, 0.55);
+  if (!COURT) {
+    for (const s of [[66, 64, 58, 90, 53, 122, 53, 154], [53, 154, 53, 180, 56, 204, 62, 224]] as Cubic[]) taper(ctx, s, 0.3, 1, 0.3, C.hairDeep, 0.8);
+    for (const s of [[190, 64, 198, 90, 203, 122, 203, 154], [203, 154, 203, 180, 200, 204, 194, 224]] as Cubic[]) taper(ctx, s, 0.3, 1.2, 0.3, C.hairDeep, 0.85);
+    // Cheveux libres sur le bord extérieur des pans.
+    for (const s of [[36, 120, 30, 152, 30, 186, 34, 218], [220, 120, 226, 152, 226, 186, 222, 218]] as Cubic[]) taper(ctx, s, 0, 0.8, 0, C.hairHi, 0.55);
+  }
   // Bandeau d’étoffe aux couleurs de la Signature, médaillon frappé de l’emblème.
   const band = P(BAND);
   fill(ctx, translatedPath(BAND, 1.5, 3), C.hairDeep, 0.35);
@@ -295,26 +325,34 @@ const BROWS_JOUEUR: Record<BrowShape, string> = {
   knit: 'M3,13.4 C16,10.8 30,10.4 43,11.2 C54,12 62,14.2 68.6,17.2 C70.8,18.4 70.6,21.2 68.8,22.2 C60,19.4 51,17.8 41,17.4 C28,17 15,16.6 3,17 Z',
 };
 
-const KITS = new Map<Tenue, FigureV2Kit>();
+const KITS = new Map<string, FigureV2Kit>();
 
-/** Identité V2 du duelliste joueur pour la famille de sa Signature (id `player-<Famille>`, comme `playerFigure`). */
-export function playerKitV2(family: Tenue): FigureV2Kit {
-  const hit = KITS.get(family);
+/**
+ * Identité V2 du duelliste joueur pour la famille de sa Signature (id `player-<Famille>`, comme `playerFigure`) ;
+ * apparence choisie (`apparence.ts`) : peau, cheveux et yeux, coupe courte pour la silhouette B (`player-<Famille>@code`).
+ */
+export function playerKitV2(family: Tenue, apparence: Apparence = APPARENCE_DEFAUT.a): FigureV2Kit {
+  const id = idJoueur(family, apparence);
+  const hit = KITS.get(id);
   if (hit) return hit;
   const o = outfit(family);
+  const origine = estOrigine(apparence);
+  const C = origine ? C_ORIGINE : couleursApparence(apparence);
+  const court = apparence.silhouette === 'b';
+  const dessin = <T>(f: () => T) => (origine ? f : () => avec(C, court, f));
   const kit: FigureV2Kit = {
-    id: `player-${family}`,
+    id,
     colors: {
       skinShade: C.skinShade, line: C.line, lineSoft: C.lineSoft, lash: C.lash, lashSoft: C.lashSoft, brow: C.brow, browHi: C.browHi,
       lipUp: C.lipUp, lipLow: C.lipLow, lipHi: C.lipHi, iris: C.iris, irisDeep: C.irisDeep, irisLight: C.irisLight, irisAmber: C.irisAmber,
       pupil: C.pupil, irisGlow: '170,205,255', lashWeight: 0.9, lashWing: false, lashStrands: false,
     },
     brows: BROWS_JOUEUR,
-    head: drawHead,
-    front: () => drawFront(o, family),
-    back: () => drawBack(o),
-    torso: () => drawTorso(o, family),
+    head: dessin(drawHead),
+    front: dessin(() => drawFront(o, family)),
+    back: dessin(() => drawBack(o)),
+    torso: dessin(() => drawTorso(o, family)),
   };
-  KITS.set(family, kit);
+  KITS.set(id, kit);
   return kit;
 }

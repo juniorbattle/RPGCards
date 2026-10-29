@@ -11,6 +11,7 @@ import { CATALOG_VERSION, replay } from '../game/replay/replay';
 import { RULES } from '../product/resume';
 import type { StorageLike } from '../product/save';
 import { GAME_VERSION } from '../product/version';
+import { apparenceValable, estOrigine, type Apparence } from '../ville/apparence';
 import { isIlotId, type IlotId } from '../ville/ilots';
 import { controlerEtat, nouvelleAventure, type AventureEtat, type Issue } from './aventure';
 import { nouveauDirecteur, type EtatDirecteur } from './directeur';
@@ -57,7 +58,8 @@ export interface AventureSave {
   gameVersion: string;
   createdAt: string;
   updatedAt: string;
-  profil: { nom: string; graine: number };
+  /** Passe 165 : apparence du protagoniste (`ville/apparence.ts`), facultative : absente, l'apparence d'origine. */
+  profil: { nom: string; graine: number; apparence?: Apparence };
   etat: AventureEtat;
   directeur: EtatDirecteur;
   ville: { ilot: IlotId; pos: { x: number; z: number } | null };
@@ -72,10 +74,10 @@ export interface AventureSave {
   conseils?: string[];
 }
 
-export function nouvelleSauvegarde(now: Date, nom: string, graine: number): AventureSave {
+export function nouvelleSauvegarde(now: Date, nom: string, graine: number, apparence?: Apparence): AventureSave {
   const t = now.toISOString();
   return {
-    schema: SCHEMA_AVENTURE, gameVersion: GAME_VERSION, createdAt: t, updatedAt: t, profil: { nom, graine: graine >>> 0 },
+    schema: SCHEMA_AVENTURE, gameVersion: GAME_VERSION, createdAt: t, updatedAt: t, profil: { nom, graine: graine >>> 0, ...(apparence && !estOrigine(apparence) ? { apparence } : {}) },
     etat: nouvelleAventure(t), directeur: nouveauDirecteur(graine), ville: { ilot: 'quai', pos: null }, duel: null, historique: [], compteur: 0,
   };
 }
@@ -88,6 +90,7 @@ export function validerSauvegarde(x: unknown): string[] {
   if (!isObj(x)) return ['racine : objet attendu'];
   if (x.schema !== SCHEMA_AVENTURE) errs.push(`schema : ${String(x.schema)}`);
   if (!isObj(x.profil) || typeof x.profil.nom !== 'string' || !Number.isInteger(x.profil.graine)) errs.push('profil invalide');
+  else if (x.profil.apparence !== undefined && !apparenceValable(x.profil.apparence)) errs.push('profil.apparence invalide');
   const e = x.etat as AventureEtat | undefined;
   if (!isObj(e)) return [...errs, 'etat : objet attendu'];
   if (!Array.isArray(e.scenes) || e.scenes.some((s) => !(SCENES as readonly string[]).includes(s))) errs.push('etat.scenes invalide');
