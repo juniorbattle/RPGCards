@@ -2,7 +2,7 @@
 // en QA), sauvegarde (`profil.apparence`), personnage de la ville à l'apparence choisie, reprise, menu « Apparence »
 // (changement et remontage de la ville), sauvegarde d'origine sans apparence (compatibilité). Captures.
 // Usage : npm run build && node tools/protagoniste-aventure.mjs [sortie, défaut screenshots/qa/protagoniste/aventure]
-//   (ou LQV_BASE=http://localhost:5173 pour le serveur de dev)
+//   (ou LQV_BASE=http://localhost:5173 pour le serveur de dev ; LQV_QS=&sprites=approuvees : politique du jeu)
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { launch, startPreview, watchConsole } from './browser.mjs';
@@ -21,7 +21,7 @@ try {
   const joueur = () => p.evaluate(() => window.__lqvAventure.town.externalReport().loaded.find((id) => id.startsWith('player-')) ?? null);
   const save = () => p.evaluate(() => JSON.parse(JSON.stringify(window.__lqvAventure.save.profil)));
   const go = async (qs = '') => {
-    await p.goto(`${server.base}/?aventure=1&qa=1&aiDelay=0&reducedMotion=1&profileSeed=5${qs}`, { timeout: 90000 });
+    await p.goto(`${server.base}/?aventure=1&qa=1&aiDelay=0&reducedMotion=1&profileSeed=5${qs}${process.env.LQV_QS ?? ""}`, { timeout: 90000 });
     await p.waitForSelector('[data-key="av-new"]', { state: 'visible' });
   };
   await go();

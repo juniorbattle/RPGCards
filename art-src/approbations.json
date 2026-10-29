@@ -218,6 +218,12 @@
       "sha256": "5e194dccf1ba7840098d006333309c122cc052c94b1cefd5cb75fccb0c3ba4b4",
       "date": "2026-10-27",
       "decision": "ordre explicite du responsable (2026-10-27, après la planche screenshots/qa/m12/couleurs/halvard-avant-apres.png, passe 154, ADR 046) : « j'approuve la feuille recolorée de Halvard » ; passe 155"
+    },
+    {
+      "fichier": "public/sprites/player-b.png",
+      "sha256": "728b5b08d100cf0126481caae63643ff18b259614668b4c3551c703e2bfff8f0",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-silhouettes.png et apparences/planche-apparences.png, passes 164 et 165) : « J’approuve B » (question : « Approuves-tu la feuille de la silhouette B (player-b.png) ? ») ; passe 166"
     }
   ],
   "caduques": [

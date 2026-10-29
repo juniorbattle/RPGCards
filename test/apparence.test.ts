@@ -47,7 +47,7 @@ describe('apparence du protagoniste : identifiants', () => {
     expect(sheetKeys('player-Cendre')).toEqual(['player-Cendre', 'player']);
     expect(sheetKeys('player-gris@b431')).toEqual(['player-gris@b431', 'player-b']);
     expect(feuilleSilhouette('a')).toBe('player');
-    expect(man.sprites['player-b'].approved).toBe(false);
+    expect(man.sprites['player-b'].approved).toBe(true);
   });
 });
 

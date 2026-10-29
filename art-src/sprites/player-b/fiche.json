@@ -1,6 +1,6 @@
 {
   "id": "player-b",
-  "statut": "protagoniste, silhouette B (passe 164), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas donné l’ordre, dans une passe à part",
+  "statut": "APPROUVÉ par le responsable le 2026-10-29 (ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-silhouettes.png et apparences/planche-apparences.png, passes 164 et 165) : « J’approuve B » (question : « Approuves-tu la feuille de la silhouette B (player-b.png) ? ») ; passe 166) : admis hors QA tant que l’empreinte reste 728b5b08d100…",
   "auteur": "Claude Code (session « protagoniste », passe 164), à la demande du responsable : version homme du protagoniste, même structure et même tenue, cheveux argentés plus courts, peau mate ; accord dans la session : « H1 + réserve », personnage personnalisable, « 4 images, couleurs par code », choix nommé « Silhouette »",
   "generation": "tools/m09-generer-images.mjs --only (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-protagoniste.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -146,5 +146,11 @@
     "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50 (entrée : public/sprites/player.png)",
     "d872063ecd41c74311b24f83830eb53f9e242b8c4ea17c5eddb76d21a5397a5d (brut)",
     "728b5b08d100cf0126481caae63643ff18b259614668b4c3551c703e2bfff8f0 (feuille ×3)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-29",
+    "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-silhouettes.png et apparences/planche-apparences.png, passes 164 et 165) : « J’approuve B » (question : « Approuves-tu la feuille de la silhouette B (player-b.png) ? ») ; passe 166",
+    "fichier": "public/sprites/player-b.png",
+    "sha256": "728b5b08d100cf0126481caae63643ff18b259614668b4c3551c703e2bfff8f0"
+  }
 }
