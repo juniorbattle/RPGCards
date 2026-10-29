@@ -411,6 +411,40 @@
       "source": "gpt-image-2 (protagoniste, silhouette B, coupe mi-longue, depuis la feuille B approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
       "fiche": "art-src/sprites/player-b2/fiche.json",
       "approved": true
+    },
+    "player-v1": {
+      "file": "player-v1.png",
+      "sha256": "12024ce227eae35749a6938081bd3ffbe35ac4af0a98f070b7f5564e72753331",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 87,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          2
+        ],
+        "passages": [
+          3,
+          4
+        ]
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette A, coupe carré, visage en amande, depuis la feuille A approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-v1/fiche.json",
+      "approved": false
     }
   }
 }
