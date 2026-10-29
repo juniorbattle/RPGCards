@@ -340,7 +340,7 @@
       },
       "source": "gpt-image-2 (protagoniste, silhouette B, depuis la feuille du joueur approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
       "fiche": "art-src/sprites/player-b/fiche.json",
-      "approved": false
+      "approved": true
     }
   }
 }
