@@ -2,10 +2,11 @@
  * Éditeur de l'apparence du protagoniste (passe 165 ; décisions du responsable : « Silhouette » avec deux vignettes,
  * jamais un mot genré ; peau, cheveux et yeux au choix ; à la « Nouvelle aventure » et dans le menu). La vignette montre
  * la case de face au repos de la feuille de la silhouette, repeinte par les mêmes fonctions que le jeu (`teintes.ts`) et
- * aux couleurs de la tenue. La silhouette B n'est proposée que si sa feuille est admise (approuvée, ou en QA).
+ * aux couleurs de la tenue. Passe 167 : une coupe de plus par silhouette (« Coupe », vignettes). Une silhouette ou une coupe
+ * n'est proposée que si sa feuille est admise (approuvée, ou en QA).
  */
 import { h } from '../shell/ui';
-import { APPARENCE_DEFAUT, CHEVEUX, PEAUX, YEUX, estOrigine, feuilleSilhouette, idJoueur, type Apparence, type Silhouette } from '../ville/apparence';
+import { APPARENCE_DEFAUT, CHEVEUX, COUPES, PEAUX, YEUX, estOrigine, feuilleApparence, idJoueur, type Apparence, type Silhouette } from '../ville/apparence';
 import { recolorTargets } from '../ville/sprites';
 import { RAMP_STEPS, RECOLOR_KEYS, RECOLOR_LEVELS, admit, spritePolicy, type SpriteManifest } from '../ville/spritesExternes';
 import { classerTeintes, repeindre } from '../ville/teintes';
@@ -23,25 +24,28 @@ function lireManifeste(): Promise<SpriteManifest | null> {
   return manifeste;
 }
 
-/** Silhouettes proposées : A toujours ; B si sa feuille est admise par la politique du jeu (approuvée, ou QA). */
-export async function silhouettesDisponibles(qa: boolean, sprites: string | null): Promise<Silhouette[]> {
+/** Coupes proposées de chaque silhouette (indices de `COUPES`) : celles dont la feuille est admise par la politique du jeu
+ *  (approuvée, ou QA) ; la coupe d'origine de la silhouette A toujours. */
+export type Disponibles = Record<Silhouette, number[]>;
+export async function coupesDisponibles(qa: boolean, sprites: string | null): Promise<Disponibles> {
   const m = await lireManifeste();
-  const b = m?.sprites[feuilleSilhouette('b')];
-  return b && admit(spritePolicy(qa, sprites), b.approved).ok ? ['a', 'b'] : ['a'];
+  const pol = spritePolicy(qa, sprites);
+  const ok = (s: Silhouette, i: number) => (s === 'a' && i === 0) || (!!m?.sprites[COUPES[s][i]!.feuille] && admit(pol, m.sprites[COUPES[s][i]!.feuille]!.approved).ok);
+  return { a: COUPES.a.map((_, i) => i).filter((i) => ok('a', i)), b: COUPES.b.map((_, i) => i).filter((i) => ok('b', i)) };
 }
 
-function feuille(s: Silhouette): Promise<FeuilleLue | null> {
-  let p = images.get(s);
+function feuille(cle: string): Promise<FeuilleLue | null> {
+  let p = images.get(cle);
   if (!p) {
     p = lireManifeste().then(async (m) => {
-      const e = m?.sprites[feuilleSilhouette(s)] as { file: string; cell?: [number, number]; scale: number } | undefined;
+      const e = m?.sprites[cle] as { file: string; cell?: [number, number]; scale: number } | undefined;
       if (!e?.cell) return null;
       const im = new Image();
       im.src = `sprites/${e.file}`;
       await im.decode();
       return { im, cell: e.cell, scale: e.scale };
     }).catch(() => null);
-    images.set(s, p);
+    images.set(cle, p);
   }
   return p;
 }
@@ -50,7 +54,7 @@ function feuille(s: Silhouette): Promise<FeuilleLue | null> {
 export function vignette(a: Apparence, tenue: string, z = 3): HTMLCanvasElement {
   const c = document.createElement('canvas');
   c.className = 'av-vignette';
-  void feuille(a.silhouette).then((f) => {
+  void feuille(feuilleApparence(a)).then((f) => {
     if (!f) return;
     const [cw, ch] = f.cell;
     const art = document.createElement('canvas');
@@ -85,20 +89,28 @@ export function vignette(a: Apparence, tenue: string, z = 3): HTMLCanvasElement 
 }
 
 /**
- * Éditeur : vignette de l'apparence en cours, choix de la silhouette (vignettes), de la peau, des cheveux et des yeux
- * (pastilles). `change` reçoit chaque nouvelle apparence ; changer de silhouette reprend ses couleurs d'origine.
+ * Éditeur : vignette de l'apparence en cours, choix de la silhouette et de la coupe (vignettes), de la peau, des cheveux et
+ * des yeux (pastilles). `change` reçoit chaque nouvelle apparence ; changer de silhouette reprend ses couleurs d'origine.
  */
-export function editeurApparence(o: { valeur: Apparence; tenue: string; silhouettes: readonly Silhouette[]; change: (a: Apparence) => void }): HTMLElement {
-  let a: Apparence = o.silhouettes.includes(o.valeur.silhouette) ? { ...o.valeur } : { ...APPARENCE_DEFAUT.a };
+export function editeurApparence(o: { valeur: Apparence; tenue: string; coupes: Disponibles; change: (a: Apparence) => void }): HTMLElement {
+  const silhouettes = (['a', 'b'] as const).filter((s) => o.coupes[s].length > 0);
+  let a: Apparence = o.coupes[o.valeur.silhouette].includes(o.valeur.coupe ?? 0) ? { ...o.valeur } : { ...APPARENCE_DEFAUT.a };
   const racine = h('div', { class: 'av-apparence', 'data-key': 'av-apparence' });
   const rendre = () => {
     racine.replaceChildren(
       h('div', { class: 'av-ap-apercu' }, vignette(a, o.tenue, 2)),
       h('div', { class: 'av-ap-choix' },
-        o.silhouettes.length > 1 ? ligne('Silhouette', o.silhouettes.map((s) => {
-          const b = h('button', { type: 'button', class: `av-ap-sil${a.silhouette === s ? ' choisi' : ''}`, 'data-key': `av-ap-sil-${s}`, 'aria-pressed': a.silhouette === s ? 'true' : 'false', 'aria-label': `Silhouette ${s.toUpperCase()}`, onclick: () => choisir({ ...APPARENCE_DEFAUT[s] }) },
-            vignette({ ...APPARENCE_DEFAUT[s], peau: a.peau, cheveux: a.cheveux, yeux: a.yeux, silhouette: s }, o.tenue, 1), h('span', null, s.toUpperCase()));
+        silhouettes.length > 1 ? ligne('Silhouette', silhouettes.map((s) => {
+          const c0 = o.coupes[s][0]!;
+          const b = h('button', { type: 'button', class: `av-ap-sil${a.silhouette === s ? ' choisi' : ''}`, 'data-key': `av-ap-sil-${s}`, 'aria-pressed': a.silhouette === s ? 'true' : 'false', 'aria-label': `Silhouette ${s.toUpperCase()}`, onclick: () => choisir({ ...APPARENCE_DEFAUT[s], ...(c0 ? { coupe: c0 } : {}) }) },
+            vignette({ silhouette: s, peau: a.peau, cheveux: a.cheveux, yeux: a.yeux, ...(c0 ? { coupe: c0 } : {}) }, o.tenue, 1), h('span', null, s.toUpperCase()));
           return b;
+        })) : null,
+        o.coupes[a.silhouette].length > 1 ? ligne('Coupe', o.coupes[a.silhouette].map((i) => {
+          const nom = COUPES[a.silhouette][i]!.nom;
+          const choisie = (a.coupe ?? 0) === i;
+          return h('button', { type: 'button', class: `av-ap-sil${choisie ? ' choisi' : ''}`, 'data-key': `av-ap-coupe-${i}`, 'aria-pressed': choisie ? 'true' : 'false', 'aria-label': `Coupe ${nom}`, title: nom, onclick: () => { const { coupe: _, ...reste } = a; choisir({ ...reste, ...(i ? { coupe: i } : {}) }); } },
+            vignette({ ...a, ...(i ? { coupe: i } : { coupe: undefined }) }, o.tenue, 1), h('span', null, nom));
         })) : null,
         ligne('Peau', PEAUX.map((t, i) => pastille(t.base, `Peau ${NOMS_PEAU[i] ?? i + 1}`, a.peau === i, `av-ap-peau-${i}`, () => choisir({ ...a, peau: i })))),
         ligne('Cheveux', CHEVEUX.map((t, i) => pastille(t.base, `Cheveux ${NOMS_CHEVEUX[i] ?? i + 1}`, a.cheveux === i, `av-ap-cheveux-${i}`, () => choisir({ ...a, cheveux: i })))),

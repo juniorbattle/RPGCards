@@ -1,0 +1,150 @@
+{
+  "id": "player-b2",
+  "statut": "protagoniste, silhouette B, coupe mi-longue (passe 167), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas donné l’ordre, dans une passe à part",
+  "auteur": "Claude Code (session « protagoniste », passe 167), à la demande du responsable : « fait donc », en réponse à « d’autres coupes ou visages demanderaient de nouvelles images, dans un lot à part avec son propre budget. Il reste 3 images sur 20. »",
+  "generation": "tools/m09-generer-images.mjs --only (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-coupes.mjs",
+  "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production ; aucune analyse juridique faite par l’agent : point à confirmer par le responsable avant tout usage en jeu",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "style": "style, échelle, proportions, visage et tenue de la feuille B approuvée (seule entrée) ; peau et cheveux au naturel, reconnus et repeints en jeu (src/ville/teintes.ts)",
+  "sources": [
+    {
+      "nom": "player-b2",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-29T22:10:11.235Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1024x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "The attached image is our own approved pixel-art sprite sheet of the player character, a young card duellist of a night harbour city. Redraw the same character on a new sprite sheet with exactly the same layout, the same face, the same outfit and the same overall silhouette. Only the hair changes: the silver-white hair is worn longer and loose, in tousled locks falling over the ears to the nape and the jaw line, a messy fringe under the headband; clearly longer than the attached sheet, never reaching the shoulders.\n\nExact grid of 5 columns and 3 rows of equal cells, nothing between the cells; row 1 facing the viewer, row 2 seen from the back, row 3 right profile walking to the right; column 1 standing still, columns 2 to 5 a four-frame walking cycle; same size in every cell, both boots fully visible, both feet on the same baseline, figure centred, head steady.\n\nThe profile walk (row 3, columns 2 to 5) must be a real walking cycle, frame by frame: column 2 contact: the near leg (the lighter trouser leg) forward with the heel down, the far leg (the darker trouser leg) behind on its toes, the far arm swinging forward; column 3 passing: both legs under the body, the near leg straight and supporting, the far foot lifted just beside it, arms close to the body, the body one pixel higher; column 4 contact with the OTHER leg forward: the far leg forward with the heel down, the near leg behind on its toes, the near arm swinging forward; column 5 passing: both legs under the body, the near foot lifted beside the far leg. The two contact frames must show different legs in front. Rows 1 and 2 keep alternating legs as well.\n\nEach cell is 64 art pixels wide and 96 art pixels tall; the character is about 90 art pixels tall. Same sturdy RPG proportions as the attached sheet, about 3 heads tall, big readable eyes with both eyes drawn identically, large readable hands, short sturdy legs and boots.\n\nPremium illustrative pixel art exactly in the style of the attached sheet: crisp square pixels of one uniform size across the whole sheet; colour ramps of four to five tones per material; selective dark outlines with a continuous dark line around the whole silhouette; clean pixel clusters, no dithering, no noise, no anti-aliasing, no gradients, no blur.\n\nColours exactly as in the attached sheet: coat and lowered hood in flat shades of pure magenta only (from #400040 to #FF00FF), headband and scarf in flat shades of pure green only (from #004000 to #00FF00); silver-white hair in light neutral greys; natural light skin; dark blue trousers, brown leather satchel, belt and boots, a small amber buckle, blue eyes with a white catchlight. No other magenta or green anywhere.\n\nA perfectly flat, uniform pure cyan (#00FFFF) background with no shading, no texture, no floor and no cast shadow. No text, no letters, no numbers, no grid lines, no labels, no watermark, no logos, no playing-card suit symbols.",
+      "entrees": [
+        {
+          "chemin": "public/sprites/player-b.png",
+          "sha256": "728b5b08d100cf0126481caae63643ff18b259614668b4c3551c703e2bfff8f0"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-29-coupes/player-b2.png (dossier principal, ignoré par git)",
+        "sha256": "629fcae9db856cf3e77b4fcf5a23099b41d97a557b354ea68e4d22c6dff6e2af",
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 1596,
+        "input_tokens_details": {
+          "image_tokens": 928,
+          "text_tokens": 668
+        },
+        "output_tokens": 7024,
+        "output_tokens_details": {
+          "image_tokens": 7024,
+          "text_tokens": 0
+        },
+        "total_tokens": 8620
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs (processSheet)",
+      "tools/m09-protagoniste-feuille.mjs"
+    ],
+    "etapes": [
+      "fond cyan et liseré teinté retirés ; alpha binaire",
+      "pas des pixels d’art mesuré sur les arêtes (3.03 × 3.03 px)",
+      "figures repérées par les bandes vides ; grille d’art 64 × 100 px d’art par case imposée, couleur majoritaire du cœur de chaque bloc",
+      "pieds alignés sur une même ligne, tête centrée",
+      "tons clés (tenue, accent) ramenés exactement sur 64, 128, 191, 255",
+      "palette : couleurs naturelles réduites (k-moyennes)",
+      "yeux (passe 138) : de face, les deux yeux du brut recalés et moyennés, posés aux deux places ; aucun ton clé de vêtement ni d’accent dans les yeux et les sourcils",
+      "agrandissement ×3 au plus proche",
+      "pixels d’accent isolés (moins de deux voisins d’accent : liseré des cheveux sur le fond cyan) ramenés à la couleur majoritaire de leurs voisins : 33"
+    ]
+  },
+  "marche_de_profil": {
+    "largeurs_des_pieds": [
+      16,
+      39,
+      26,
+      39,
+      31
+    ],
+    "plan": {
+      "contacts": [
+        1,
+        3
+      ],
+      "passages": [
+        2,
+        4
+      ],
+      "dessines": true
+    }
+  },
+  "sortie": {
+    "fichier": "public/sprites/player-b2.png",
+    "sha256": "caa01f35ec8003a8856bd3bd387d7d550b27ef9b4c0153843a2e4dca76619fd0",
+    "octets": 104375,
+    "entree_du_manifeste": {
+      "file": "player-b2.png",
+      "sha256": "caa01f35ec8003a8856bd3bd387d7d550b27ef9b4c0153843a2e4dca76619fd0",
+      "cell": [
+        64,
+        100
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        97
+      ],
+      "figureH": 96,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          3
+        ],
+        "passages": [
+          2,
+          4
+        ],
+        "dessines": true
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette B, coupe mi-longue, depuis la feuille B approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-b2/fiche.json",
+      "approved": false
+    },
+    "tons_cles": {
+      "tenue": [
+        3803,
+        846,
+        6123,
+        0
+      ],
+      "accent": [
+        272,
+        185,
+        649,
+        0
+      ]
+    },
+    "couleurs": 38
+  },
+  "chaine_des_empreintes": [
+    "728b5b08d100cf0126481caae63643ff18b259614668b4c3551c703e2bfff8f0 (entrée : public/sprites/player-b.png)",
+    "629fcae9db856cf3e77b4fcf5a23099b41d97a557b354ea68e4d22c6dff6e2af (brut)",
+    "caa01f35ec8003a8856bd3bd387d7d550b27ef9b4c0153843a2e4dca76619fd0 (feuille ×3)"
+  ]
+}

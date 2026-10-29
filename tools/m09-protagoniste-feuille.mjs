@@ -4,7 +4,9 @@
 // d'art de 64 × 96 imposée, pieds alignés, tons clés exacts peau, cheveux, tenue et accent, palette réduite, yeux de face
 // rendus pareils, agrandissement ×3), contrôles, puis `public/sprites/player-b.png`, son entrée du manifeste (contrat v3 ;
 // `approved` selon le registre, donc false tant que le responsable n'a pas donné l'ordre) et sa fiche.
-// Usage : node tools/m09-protagoniste-feuille.mjs [brut, défaut player-homme] [--profil c1,c2,p1,p2 (passages redessinés par code)]
+// Passe 167 : aussi les coupes de plus (`tools/m09-lot-coupes.mjs`) : `player-a2` (A, queue de cheval) et `player-b2` (B,
+// cheveux mi-longs).
+// Usage : node tools/m09-protagoniste-feuille.mjs [id, défaut player-b][=<brut>] [--profil c1,c2,p1,p2 (passages redessinés par code)]
 import { createHash } from 'node:crypto';
 import { execSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -13,8 +15,25 @@ import { launch } from './browser.mjs';
 import { processSheet } from './m09-traitement-images.mjs';
 import { approuve } from './m09-approbations.mjs';
 
-const LOT = '2026-10-29-protagoniste';
-const ID = 'player-b';
+/** Feuilles du protagoniste générées : lot, brut, description, plan de marche par défaut (après lecture de la feuille). */
+const FEUILLES = {
+  // marche de profil : la feuille dessine de vrais passages (temps 2 et 4, pieds 29 et 31 px contre 35 et 38 aux contacts),
+  // mais moins fermés que le repos (16) : le cycle mesuré de la passe 162 prendrait le repos ; le plan garde les siens
+  'player-b': { lot: '2026-10-29-protagoniste', brut: 'player-homme', passe: 164, qui: 'silhouette B', entree: 'la feuille du joueur approuvée', profil: { contacts: [1, 3], passages: [2, 4], dessines: true } },
+  // A2 et B2 : vrais passages dessinés (pieds de 28 et 30, puis 26 et 31 px d'art contre 32 à 39 aux contacts) : plan aux
+  // passages de la feuille, comme B
+  // A2 : pas borné à 2,6–3 px (sans borne : 3,75 × 3,2, pas pris sur un multiple, figure de 75 px d'art) ; yeux sans blanc
+  // entouré de peau, laissés tels que dessinés, comme sur la feuille A
+  'player-a2': { lot: '2026-10-29-coupes', brut: 'player-a2', passe: 167, qui: 'silhouette A, coupe en queue de cheval', entree: 'la feuille A approuvée', profil: { contacts: [1, 3], passages: [2, 4], dessines: true }, pitch: [2.6, 3], yeux: false },
+  // B2 : cheveux mi-longs plus hauts (figure de 94 px d'art au vrai pas, 3,03 px) : case de 64 × 100 px d'art (contrat v3),
+  // rien de rogné, plutôt qu'un pas forcé qui brouillerait les pixels ; yeux repérés sur un seul cadre de face (mèches sur les
+  // tempes) : laissés tels que dessinés, semblables d'un cadre à l'autre (planche)
+  'player-b2': { lot: '2026-10-29-coupes', brut: 'player-b2', passe: 167, qui: 'silhouette B, coupe mi-longue', entree: 'la feuille B approuvée', profil: { contacts: [1, 3], passages: [2, 4], dessines: true }, cell: [64, 100], yeux: false },
+};
+const [ID, brutArg] = (process.argv.slice(2).find((a) => !a.startsWith('--') && !/^\d/.test(a)) ?? 'player-b').split('=');
+const F = FEUILLES[ID];
+if (!F) throw new Error(`feuille inconnue : ${ID}`);
+const LOT = F.lot;
 // peau et cheveux : le modèle les a peints au naturel malgré l'invite (tons clés absents) ; reconnus en jeu par code, comme
 // sur la feuille du joueur (`teintes.ts`) : seuls la tenue et l'accent sont des tons clés, comme sur la silhouette A
 const SLOTS = ['tenue', 'accent'];
@@ -23,7 +42,7 @@ const SLOTS = ['tenue', 'accent'];
 const args = process.argv.slice(2);
 const iProfil = args.indexOf('--profil');
 const profilArg = iProfil >= 0 ? args.splice(iProfil, 2)[1].split(',').map(Number) : null;
-const BRUT = args[0] ?? 'player-homme';
+const BRUT = brutArg ?? F.brut;
 const main = dirname(resolve(execSync('git rev-parse --git-common-dir').toString().trim()));
 const RAW = join(main, 'art-gen', LOT);
 const sha = (b) => createHash('sha256').update(b).digest('hex');
@@ -41,7 +60,7 @@ let sheet; let k3; let mesures;
 try {
   const pg = await (await browser.newContext()).newPage();
   await pg.setContent('<!doctype html><html><body></body></html>');
-  sheet = await pg.evaluate(processSheet, { url: dataUrl(readFileSync(join(RAW, `${BRUT}.png`))), figures: true, levels: 'kmeans', cell: [64, 96], slots: SLOTS, yeux: true, pitchMin: 2.8, pitchMax: 4 });
+  sheet = await pg.evaluate(processSheet, { url: dataUrl(readFileSync(join(RAW, `${BRUT}.png`))), figures: true, levels: 'kmeans', cell: F.cell ?? [64, 96], slots: SLOTS, yeux: F.yeux !== false, pitchMin: F.pitch?.[0] ?? 2.8, pitchMax: F.pitch?.[1] ?? 4 });
   // pixels d'accent isolés (liseré clair des cheveux sur le fond cyan, pris pour le vert du bandeau) : un pixel d'art
   // d'accent qui n'a pas deux voisins d'accent prend la couleur majoritaire de ses voisins (ou le vide)
   const nettoye = await pg.evaluate(async (url) => {
@@ -75,27 +94,28 @@ try {
   sheet.accentIsoles = nettoye.n;
   k3 = fromUrl(sheet.K3);
   // marche de profil : largeur des pieds (4 px d'art au-dessus de l'ancrage) de chaque colonne de la rangée de profil
-  mesures = await pg.evaluate(async ({ url, anchor }) => {
+  mesures = await pg.evaluate(async ({ url, anchor, cell }) => {
     const im = new Image(); im.src = url; await im.decode();
     const c = new OffscreenCanvas(im.width, im.height); const x = c.getContext('2d'); x.drawImage(im, 0, 0);
-    const s = im.width / 320; const d = x.getImageData(0, 0, im.width, im.height).data;
+    const [cw, ch] = cell; const s = im.width / (5 * cw); const d = x.getImageData(0, 0, im.width, im.height).data;
     return [0, 1, 2, 3, 4].map((col) => {
       let x0 = 99; let x1 = -1;
-      for (let j = anchor[1] - 4; j < anchor[1]; j++) for (let i = 0; i < 64; i++) {
-        const X = Math.floor((col * 64 + i) * s + s / 2); const Y = Math.floor((2 * 96 + j) * s + s / 2);
+      for (let j = anchor[1] - 4; j < anchor[1]; j++) for (let i = 0; i < cw; i++) {
+        const X = Math.floor((col * cw + i) * s + s / 2); const Y = Math.floor((2 * ch + j) * s + s / 2);
         if (d[(Y * im.width + X) * 4 + 3] > 128) { x0 = Math.min(x0, i); x1 = Math.max(x1, i); }
       }
       return x1 >= x0 ? x1 - x0 : 0;
     });
-  }, { url: sheet.K3, anchor: sheet.anchor });
+  }, { url: sheet.K3, anchor: sheet.anchor, cell: sheet.cell });
 } finally {
   await browser.close();
 }
 
 check(sheet.shifts.every((s) => s) && sheet.clipped === 0, `grille d’art ${sheet.cell.join(' × ')}, pas ${sheet.pitch.x} × ${sheet.pitch.y}, ${sheet.colors} couleurs, ancrage ${sheet.anchor}, figure ${sheet.figureH} px d’art, ${sheet.clipped ? `${sheet.clipped} px d’art rognés` : 'rien de rogné'}${sheet.shifts.some((s) => !s) ? `, figures absentes : ${sheet.shifts.map((s, k) => (s ? null : k)).filter((k) => k !== null).join(', ')}` : ''}`);
 for (const s of SLOTS) check(Object.values(sheet.counts[s] ?? {}).filter((n) => n > 0).length >= 2, `ton clé ${s} présent sur au moins deux niveaux : ${JSON.stringify(sheet.counts[s])}`);
-const face = sheet.yeux.poses.map((p) => p.k).sort((a, b) => a - b);
-check(face.join() === '0,1,2,3,4', `yeux de face rendus pareils sur les 5 cadres (${face.join(', ') || 'aucun'})`);
+const face = (sheet.yeux?.poses ?? []).map((p) => p.k).sort((a, b) => a - b);
+if (F.yeux !== false) check(face.join() === '0,1,2,3,4', `yeux de face rendus pareils sur les 5 cadres (${face.join(', ') || 'aucun'})`);
+else console.log('yeux : laissés tels que dessinés (contrôlés sur la planche)');
 check(k3.length <= 1048576, `feuille ≤ 1 Mo : ${Math.round(k3.length / 1024)} Ko, ${dim(k3).join(' × ')}`);
 console.log(`marche de profil : largeur des pieds par colonne (repos, puis 1 à 4) : ${mesures.join(', ')}`);
 mkdirSync(`${RAW}/traitement`, { recursive: true });
@@ -107,10 +127,8 @@ const man = JSON.parse(readFileSync('public/sprites/manifest.json', 'utf8'));
 const entry = {
   file: `${ID}.png`, sha256: sha(k3), cell: sheet.cell, cols: 5, rows: 3, pixel: true, scale: 3, anchor: sheet.anchor, figureH: sheet.figureH,
   recolor: SLOTS,
-  // marche de profil : la feuille dessine de vrais passages (temps 2 et 4, pieds 29 et 31 px contre 35 et 38 aux contacts),
-  // mais moins fermés que le repos (16) : le cycle mesuré de la passe 162 prendrait le repos ; le plan garde les siens
-  profil: profilArg ? { contacts: profilArg.slice(0, 2), passages: profilArg.slice(2, 4) } : { contacts: [1, 3], passages: [2, 4], dessines: true },
-  source: 'gpt-image-2 (protagoniste, silhouette B, depuis la feuille du joueur approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)',
+  ...(profilArg ? { profil: { contacts: profilArg.slice(0, 2), passages: profilArg.slice(2, 4), ...(profilArg[4] ? { dessines: true } : {}) } } : F.profil ? { profil: F.profil } : {}),
+  source: `gpt-image-2 (protagoniste, ${F.qui}, depuis ${F.entree}), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)`,
   fiche: `art-src/sprites/${ID}/fiche.json`,
   approved: approuve(`public/sprites/${ID}.png`, sha(k3)),
 };
@@ -120,11 +138,13 @@ const joueur = JSON.parse(readFileSync('art-src/sprites/player/fiche.json', 'utf
 mkdirSync(`art-src/sprites/${ID}`, { recursive: true });
 writeFileSync(`art-src/sprites/${ID}/fiche.json`, `${JSON.stringify({
   id: ID,
-  statut: 'protagoniste, silhouette B (passe 164), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas donné l’ordre, dans une passe à part',
-  auteur: 'Claude Code (session « protagoniste », passe 164), à la demande du responsable : version homme du protagoniste, même structure et même tenue, cheveux argentés plus courts, peau mate ; accord dans la session : « H1 + réserve », personnage personnalisable, « 4 images, couleurs par code », choix nommé « Silhouette »',
-  generation: 'tools/m09-generer-images.mjs --only (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-protagoniste.mjs',
+  statut: `protagoniste, ${F.qui} (passe ${F.passe}), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas donné l’ordre, dans une passe à part`,
+  auteur: F.passe === 164
+    ? 'Claude Code (session « protagoniste », passe 164), à la demande du responsable : version homme du protagoniste, même structure et même tenue, cheveux argentés plus courts, peau mate ; accord dans la session : « H1 + réserve », personnage personnalisable, « 4 images, couleurs par code », choix nommé « Silhouette »'
+    : `Claude Code (session « protagoniste », passe ${F.passe}), à la demande du responsable : « fait donc », en réponse à « d’autres coupes ou visages demanderaient de nouvelles images, dans un lot à part avec son propre budget. Il reste 3 images sur 20. »`,
+  generation: `tools/m09-generer-images.mjs --only (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification ${F.passe === 164 ? 'tools/m09-lot-protagoniste.mjs' : 'tools/m09-lot-coupes.mjs'}`,
   aseprite: joueur.aseprite, licences: joueur.licences, contenu: joueur.contenu,
-  style: 'style, échelle, proportions et tenue de la feuille du joueur approuvée (seule entrée) ; peau et cheveux en tons clés, recolorés en jeu',
+  style: F.passe === 164 ? 'style, échelle, proportions et tenue de la feuille du joueur approuvée (seule entrée) ; peau et cheveux en tons clés, recolorés en jeu' : `style, échelle, proportions, visage et tenue de ${F.entree} (seule entrée) ; peau et cheveux au naturel, reconnus et repeints en jeu (src/ville/teintes.ts)`,
   sources: [ps],
   traitement: { scripts: ['tools/m09-traitement-images.mjs (processSheet)', 'tools/m09-protagoniste-feuille.mjs'], etapes: ['fond cyan et liseré teinté retirés ; alpha binaire', `pas des pixels d’art mesuré sur les arêtes (${sheet.pitch.x} × ${sheet.pitch.y} px)`, `figures repérées par les bandes vides ; grille d’art ${sheet.cell.join(' × ')} px d’art par case imposée, couleur majoritaire du cœur de chaque bloc`, 'pieds alignés sur une même ligne, tête centrée', `tons clés (${SLOTS.join(', ')}) ramenés exactement sur 64, 128, 191, 255`, 'palette : couleurs naturelles réduites (k-moyennes)', 'yeux (passe 138) : de face, les deux yeux du brut recalés et moyennés, posés aux deux places ; aucun ton clé de vêtement ni d’accent dans les yeux et les sourcils', 'agrandissement ×3 au plus proche', `pixels d’accent isolés (moins de deux voisins d’accent : liseré des cheveux sur le fond cyan) ramenés à la couleur majoritaire de leurs voisins : ${sheet.accentIsoles}`] },
   marche_de_profil: { largeurs_des_pieds: mesures, plan: entry.profil ?? null },

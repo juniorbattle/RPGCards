@@ -32,11 +32,11 @@ function hsv(r: number, g: number, b: number): [number, number, number] {
 /** Classe de chaque pixel d'art d'une feuille de 5 × 3 cases (`AUTRE`, `PEAU`, `CHEVEUX`, `IRIS`). */
 export function classerTeintes(f: Feuille, cw: number, ch: number): Uint8Array {
   const cls = new Uint8Array(f.w * f.h);
-  for (let r = 0; r < 3; r++) for (let c = 0; c < 5; c++) classerCase(f, cls, c * cw, r * ch, cw, ch);
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 5; c++) classerCase(f, cls, c * cw, r * ch, cw, ch, r === 2);
   return cls;
 }
 
-function classerCase(f: Feuille, cls: Uint8Array, x0: number, y0: number, cw: number, ch: number): void {
+function classerCase(f: Feuille, cls: Uint8Array, x0: number, y0: number, cw: number, ch: number, profil: boolean): void {
   const k = (i: number, j: number) => ((y0 + j) * f.w + x0 + i) * 4;
   const opaque = (i: number, j: number) => i >= 0 && j >= 0 && i < cw && j < ch && f.px[k(i, j) + 3]! > 128;
   const teinte = (i: number, j: number) => hsv(f.px[k(i, j)]!, f.px[k(i, j) + 1]!, f.px[k(i, j) + 2]!);
@@ -88,7 +88,9 @@ function classerCase(f: Feuille, cls: Uint8Array, x0: number, y0: number, cw: nu
     const bw = Math.max(...xs) - Math.min(...xs) + 1;
     const bh = Math.max(...ys) - Math.min(...ys) + 1;
     if (pts.length < 10 || Math.min(bw, bh) < 3 || Math.max(bw, bh) > 2.5 * Math.min(bw, bh)) continue;
-    // boucle de ceinture : un anneau (un trou dans sa boîte) près du milieu de la figure
+    // boucle de ceinture : de face et de dos, au milieu de la figure (les mains sont sur les côtés) ; un anneau (un trou dans sa boîte) tout
+    // près (de profil, elle est un peu en avant) ; passe 167 : sur les feuilles des coupes, elle touche la sangle et n'est
+    // pas toujours fermée
     const dans = new Set(pts.map(([i, j]) => j * cw + i));
     const cx = xs.reduce((s, v) => s + v, 0) / xs.length;
     let trou = false;
@@ -97,7 +99,7 @@ function classerCase(f: Feuille, cls: Uint8Array, x0: number, y0: number, cw: nu
       const voit = (di: number, dj: number) => { for (let a = i + di, b = j + dj; a >= 0 && b >= 0 && a < cw && b < ch; a += di, b += dj) if (dans.has(b * cw + a)) return true; return false; };
       trou = voit(1, 0) && voit(-1, 0) && voit(0, 1) && voit(0, -1);
     }
-    if (trou && Math.abs(cx - cw / 2) <= 6) continue;
+    if ((!profil && Math.abs(cx - cw / 2) <= 6) || (trou && Math.abs(cx - cw / 2) <= 9)) continue;
     poser(pts, PEAU);
   }
   const prochePeau = (i: number, j: number) => { for (let dj = -2; dj <= 2; dj++) for (let di = -2; di <= 2; di++) { const a = i + di; const b = j + dj; if (a >= 0 && b >= 0 && a < cw && b < ch && cls[(y0 + b) * f.w + x0 + a] === PEAU) return true; } return false; };
