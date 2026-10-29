@@ -1,6 +1,6 @@
 {
-  "commit": "335ab9d",
-  "date": "2026-10-27T04:35:49.210Z",
+  "commit": "3498af1",
+  "date": "2026-10-29T04:23:32.237Z",
   "planche": [
     {
       "kind": "effet",
@@ -99,6 +99,13 @@
       "run": "masque",
       "ended": false,
       "caught": [
+        {
+          "kind": "camouflage",
+          "side": "opp",
+          "title": "Dissimulation",
+          "consequence": "MASQUÉE JUSQU’À LA FIN DU TOUR",
+          "turn": 5
+        },
         {
           "kind": "effet",
           "side": "opp",
@@ -235,9 +242,9 @@
     },
     {
       "run": "standard-ronce",
-      "ended": true,
+      "ended": false,
       "caught": [],
-      "played": 44,
+      "played": 40,
       "leaks": [],
       "masqueFace": 0,
       "restAfter": 0
@@ -318,7 +325,7 @@
     },
     "intégration : genres vus dans de vrais duels au navigateur": {
       "ok": true,
-      "detail": "effet, masque, insight, revelation, technique, dissipation, signature, interference, echec, regard"
+      "detail": "camouflage, effet, masque, insight, revelation, technique, dissipation, signature, interference, echec, regard"
     },
     "mouvement réduit : des fondus, aucune transformation animée": {
       "ok": true,
@@ -340,6 +347,26 @@
       "ok": true,
       "detail": "{\"banner\":{\"top\":426,\"bottom\":464,\"left\":74,\"right\":316},\"cons\":{\"top\":470,\"bottom\":527,\"left\":16,\"right\":374},\"detail\":{\"top\":530,\"bottom\":558,\"left\":27,\"right\":363},\"card\":{\"top\":195,\"bottom\":413,\"left\":117,\"right\":273}}"
     },
+    "tenue : l’effet du joueur reste posé (visible) après sa durée, l’invite au clic montrée, la file attend": {
+      "ok": true,
+      "detail": "{\"ms\":null,\"tenu\":1,\"visible\":true,\"invite\":1,\"busy\":true}"
+    },
+    "tenue : le clic le fait partir et la file reprend (la pastille de soin passe seule)": {
+      "ok": true,
+      "detail": "{\"effet\":0,\"played\":[\"effet\",\"soin\"]}"
+    },
+    "tenue : Espace le fait partir aussi": {
+      "ok": true,
+      "detail": "0 élément(s)"
+    },
+    "tenue : coupée en QA sans tenir=1 (les pilotes ne cliquent pas)": {
+      "ok": true,
+      "detail": "{\"ms\":2200,\"tenu\":0}"
+    },
+    "tenue en duel : des temps forts tenus cliqués, et le duel avance (résolution et rival repartent après le clic)": {
+      "ok": true,
+      "detail": "{\"clics\":1,\"tour\":6}"
+    },
     "console sans erreur": {
       "ok": true,
       "detail": ""
@@ -350,6 +377,7 @@
     "masque"
   ],
   "vusEnDuel": [
+    "camouflage",
     "effet",
     "masque",
     "insight",
@@ -361,5 +389,9 @@
     "echec",
     "regard"
   ],
+  "tenue": {
+    "clics": 1,
+    "tour": 6
+  },
   "consoleErrors": []
 }

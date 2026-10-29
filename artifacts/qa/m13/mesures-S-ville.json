@@ -1,0 +1,19 @@
+{
+  "commit": "a7c7fe6",
+  "date": "2026-10-29T04:36:48.109Z",
+  "passes": 1,
+  "graine": 1,
+  "resultats": [
+    {
+      "nom": "S-ville",
+      "duree": 73.55,
+      "msBanque": 2606.4000000003725,
+      "msRendu": 6368.199999999255,
+      "lufs": -20.1,
+      "lra": 8,
+      "creteVraie": -4.4,
+      "vitesse": 11.549574448040044
+    }
+  ],
+  "console": []
+}
