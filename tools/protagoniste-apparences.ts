@@ -7,13 +7,13 @@ import { dirname } from 'node:path';
 import { deflateSync } from 'node:zlib';
 import type { Browser } from 'playwright-core';
 import { lirePng } from '../test/png';
-import { CHEVEUX, PEAUX, YEUX, coupeDe, estOrigine, feuilleApparence, lireCode } from '../src/ville/apparence';
+import { CHEVEUX, PEAUX, VISAGES, YEUX, coupeDe, estOrigine, feuilleApparence, lireCode } from '../src/ville/apparence';
 import { cyclePlan, posePassage } from '../src/ville/passage';
 import { classerTeintes, repeindre } from '../src/ville/teintes';
 import { FAMILY_PALETTE } from '../src/art/palette';
 
 const OUT = process.argv[2] ?? 'screenshots/qa/protagoniste/apparences/planche-apparences.png';
-const CODES = (process.argv[3] ?? 'a000,a530,a193,a1000,a1281,b200,b462,b581,b1200,b1390').split(',');
+const CODES = (process.argv[3] ?? 'a000,a01530,a02193,a03000,a11281,b200,b01462,b02581,b13200,b12390').split(',');
 const man = JSON.parse(readFileSync('public/sprites/manifest.json', 'utf8'));
 const hex = (s: string) => [parseInt(s.slice(1, 3), 16), parseInt(s.slice(3, 5), 16), parseInt(s.slice(5, 7), 16)];
 const fam = FAMILY_PALETTE.Cendre;
@@ -77,7 +77,7 @@ try {
     }
     const blob = await c.convertToBlob({ type: 'image/png' });
     return await new Promise<string>((r) => { const f = new FileReader(); f.onload = () => r(f.result as string); f.readAsDataURL(blob); });
-  }, lignes.map((l) => ({ titre: `${l.code}\nSilhouette ${l.a.silhouette.toUpperCase()}, coupe ${coupeDe(l.a).nom}\npeau ${l.a.peau + 1}, cheveux ${l.a.cheveux + 1}, yeux ${l.a.yeux + 1}${estOrigine(l.a) ? '\n(origine : rien de repeint)' : ''}`, cases: l.cases.map((b) => `data:image/png;base64,${b.toString('base64')}`) })));
+  }, lignes.map((l) => ({ titre: `${l.code}\nSilhouette ${l.a.silhouette.toUpperCase()}, coupe ${coupeDe(l.a).nom}\nvisage ${VISAGES[l.a.visage ?? 0]}\npeau ${l.a.peau + 1}, cheveux ${l.a.cheveux + 1}, yeux ${l.a.yeux + 1}${estOrigine(l.a) ? '\n(origine : rien de repeint)' : ''}`, cases: l.cases.map((b) => `data:image/png;base64,${b.toString('base64')}`) })));
   mkdirSync(dirname(OUT), { recursive: true });
   writeFileSync(OUT, Buffer.from(url.split(',')[1]!, 'base64'));
 } finally {

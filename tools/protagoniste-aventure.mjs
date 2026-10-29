@@ -38,6 +38,9 @@ try {
   // passe 167 : la coupe mi-longue de la silhouette B (feuille en QA)
   await p.waitForSelector('[data-key="av-ap-coupe-1"]');
   await p.click('[data-key="av-ap-coupe-1"]');
+  // passe 170 : le visage rond de cette coupe
+  await p.waitForSelector('[data-key="av-ap-visage-2"]');
+  await p.click('[data-key="av-ap-visage-2"]');
   await p.click('[data-key="av-ap-peau-4"]');
   await p.click('[data-key="av-ap-cheveux-3"]');
   await p.click('[data-key="av-ap-yeux-1"]');
@@ -48,15 +51,15 @@ try {
   await p.click('[data-key="av-start"]');
   await townReady();
   await p.waitForTimeout(1500);
-  check(norm((await save()).apparence) === norm({ silhouette: 'b', coupe: 1, peau: 4, cheveux: 3, yeux: 1 }), `sauvegarde : ${JSON.stringify((await save()).apparence)}`);
-  check((await joueur()) === 'player-gris@b1431', `personnage de la ville : ${await joueur()}`);
+  check(norm((await save()).apparence) === norm({ silhouette: 'b', coupe: 1, visage: 2, peau: 4, cheveux: 3, yeux: 1 }), `sauvegarde : ${JSON.stringify((await save()).apparence)}`);
+  check((await joueur()) === 'player-gris@b12431', `personnage de la ville : ${await joueur()}`);
   await p.screenshot({ path: join(OUT, '03-ville-silhouette-b.png') });
   // reprise
   await go();
   await p.click('[data-key="av-continue"]').catch(() => p.click('text=Continuer'));
   await townReady();
   await p.waitForTimeout(800);
-  check((await joueur()) === 'player-gris@b1431', `après reprise : ${await joueur()}`);
+  check((await joueur()) === 'player-gris@b12431', `après reprise : ${await joueur()}`);
   // menu « Apparence » : silhouette A, cheveux bleu nuit
   await p.keyboard.press('Escape');
   await p.waitForSelector('[data-key="menu-apparence"]');
@@ -69,14 +72,16 @@ try {
   await p.click('[data-key="av-apparence-ok"]');
   await townReady();
   await p.waitForTimeout(1500);
-  check((await joueur()) === 'player-gris@a090', `menu : personnage remonté ${await joueur()}`);
-  check(norm((await save()).apparence) === norm({ silhouette: 'a', peau: 0, cheveux: 9, yeux: 0 }), 'menu : sauvegardé');
+  // une autre silhouette garde le visage choisi (il existe sur toutes les feuilles)
+  check((await joueur()) === 'player-gris@a02090', `menu : personnage remonté ${await joueur()}`);
+  check(norm((await save()).apparence) === norm({ silhouette: 'a', visage: 2, peau: 0, cheveux: 9, yeux: 0 }), 'menu : sauvegardé');
   await p.screenshot({ path: join(OUT, '05-ville-apres-menu.png') });
   // retour à l'origine : plus d'apparence dans la sauvegarde, identifiant historique
   await p.keyboard.press('Escape');
   await p.click('[data-key="menu-apparence"]');
   await p.waitForSelector('[data-key="av-apparence-menu"]');
   await p.click('[data-key="av-ap-cheveux-0"]');
+  await p.click('[data-key="av-ap-visage-0"]');
   await p.click('[data-key="av-apparence-ok"]');
   await townReady();
   await p.waitForTimeout(1200);

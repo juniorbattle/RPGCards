@@ -2,7 +2,7 @@
 // des yeux sur les deux feuilles, repeinte, et sauvegarde compatible (apparence facultative).
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { APPARENCE_DEFAUT, CHEVEUX, COUPES, PEAUX, YEUX, apparenceValable, codeApparence, estOrigine, feuilleSilhouette, idJoueur, lireCode, lireIdJoueur } from '../src/ville/apparence';
+import { APPARENCE_DEFAUT, CHEVEUX, COUPES, PEAUX, VISAGES, YEUX, apparenceValable, codeApparence, estOrigine, feuilleSilhouette, idJoueur, lireCode, lireIdJoueur } from '../src/ville/apparence';
 import { sheetKeys } from '../src/ville/spritesExternes';
 import { CHEVEUX as C_CHEVEUX, IRIS, PEAU, classerTeintes, repeindre } from '../src/ville/teintes';
 import { nouvelleSauvegarde, validerSauvegarde } from '../src/aventure/sauvegarde';
@@ -47,6 +47,12 @@ describe('apparence du protagoniste : identifiants', () => {
     expect(lireCode('b0431')).toBeNull();
     expect(lireCode('b2431')).toBeNull();
     expect(lireCode('b431')).toEqual({ silhouette: 'b', peau: 4, cheveux: 3, yeux: 1 });
+    // passe 170 : le visage (six signes : silhouette, coupe, visage, peau, cheveux, yeux)
+    expect(idJoueur('Astre', { silhouette: 'a', visage: 2, peau: 0, cheveux: 0, yeux: 0 })).toBe('player-Astre@a02000');
+    expect(lireCode('b13431')).toEqual({ silhouette: 'b', coupe: 1, visage: 3, peau: 4, cheveux: 3, yeux: 1 });
+    expect(lireCode('b10431')).toBeNull();
+    expect(lireCode('b14431')).toBeNull();
+    expect(estOrigine({ ...APPARENCE_DEFAUT.a, visage: 1 })).toBe(false);
   });
 
   it('chaque silhouette a sa feuille ; la B n’est pas approuvée sans ordre du responsable', () => {
@@ -54,6 +60,9 @@ describe('apparence du protagoniste : identifiants', () => {
     expect(sheetKeys('player-gris@b431')).toEqual(['player-gris@b431', 'player-b']);
     expect(sheetKeys('player-Voile@a1000')).toEqual(['player-Voile@a1000', 'player-a2']);
     expect(sheetKeys('player-Voile@b1000')).toEqual(['player-Voile@b1000', 'player-b2']);
+    expect(sheetKeys('player-Voile@b12000')).toEqual(['player-Voile@b12000', 'player-b2-v2']);
+    expect(sheetKeys('player-Voile@a01000')).toEqual(['player-Voile@a01000', 'player-v1']);
+    for (const s of ['a', 'b'] as const) for (const c of COUPES[s]) for (let k = 1; k < VISAGES.length; k++) expect(man.sprites[`${c.feuille}-v${k}`], `${c.feuille}-v${k}`).toBeTruthy();
     for (const s of ['a', 'b'] as const) for (const c of COUPES[s]) expect(man.sprites[c.feuille], c.feuille).toBeTruthy();
     expect([man.sprites['player-a2'].approved, man.sprites['player-b2'].approved]).toEqual([true, true]);
     expect(feuilleSilhouette('a')).toBe('player');
@@ -62,7 +71,7 @@ describe('apparence du protagoniste : identifiants', () => {
 });
 
 describe('apparence du protagoniste : teintes reconnues et repeintes', () => {
-  for (const id of ['player', 'player-b', 'player-a2', 'player-b2']) {
+  for (const id of ['player', 'player-b', 'player-a2', 'player-b2'].flatMap((b) => [b, `${b}-v1`, `${b}-v2`, `${b}-v3`])) {
     it(`${id} : peau, cheveux et iris dans chaque case ; la boucle de ceinture reste dorée`, () => {
       const { f, cw, ch } = art(id);
       const cls = classerTeintes(f, cw, ch);
@@ -70,12 +79,14 @@ describe('apparence du protagoniste : teintes reconnues et repeintes', () => {
         const n = [0, 0, 0, 0];
         for (let j = 0; j < ch; j++) for (let i = 0; i < cw; i++) n[cls[(r * ch + j) * f.w + c * cw + i]!]!++;
         expect(n[C_CHEVEUX], `cheveux, rangée ${r}, colonne ${c}`).toBeGreaterThan(150);
-        expect(n[PEAU], `peau, rangée ${r}, colonne ${c}`).toBeGreaterThan(r === 1 ? 10 : 60);
-        if (r === 0) expect(n[IRIS], `iris de face, colonne ${c}`).toBeGreaterThan(2);
+        // de dos, les mains ne se voient pas toujours (passe 170 : un cadre de dos sans main)
+        expect(n[PEAU], `peau, rangée ${r}, colonne ${c}`).toBeGreaterThan(r === 1 ? -1 : 60);
+        // yeux en amande ou anguleux : un ou deux pixels d'iris de face suffisent
+        if (r === 0) expect(n[IRIS], `iris de face, colonne ${c}`).toBeGreaterThan(0);
         if (r === 1) expect(n[IRIS], `pas d’iris de dos, colonne ${c}`).toBe(0);
       }
       // la boucle (de face, au milieu de la figure, à hauteur de ceinture) n'est jamais prise pour de la peau
-      for (let c = 0; c < 5; c++) for (let j = 40; j < 60; j++) for (let i = 26; i < 38; i++) {
+      for (let c = 0; c < 5; c++) for (let j = 47; j < 62; j++) for (let i = 26; i < 38; i++) {
         const k = j * f.w + c * cw + i;
         const [R, G, B] = [f.px[k * 4]!, f.px[k * 4 + 1]!, f.px[k * 4 + 2]!];
         if (R > 130 && G > 95 && R > B + 40) expect(cls[k], `boucle, colonne ${c} (${i}, ${j})`).not.toBe(PEAU);

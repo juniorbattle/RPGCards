@@ -1,0 +1,148 @@
+{
+  "id": "player-v3",
+  "statut": "protagoniste, silhouette A, coupe carré, visage anguleux (passe 170), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas donné l’ordre, dans une passe à part",
+  "auteur": "Claude Code (session « protagoniste », passe 170), à la demande du responsable : « tu peux ajouter du budget pour effectuer les types de visages » ; après l'essai du calque (passe 169), décision dans la session : « Feuilles complètes » (chaque visage redessiné sur chacune des quatre feuilles : 11 images, 1 réserve au plus)",
+  "generation": "tools/m09-generer-images.mjs --only (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-visages.mjs",
+  "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production ; aucune analyse juridique faite par l’agent : point à confirmer par le responsable avant tout usage en jeu",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "style": "style, échelle, proportions et tenue de la feuille A approuvée (seule entrée) ; peau et cheveux au naturel, reconnus et repeints en jeu (src/ville/teintes.ts)",
+  "sources": [
+    {
+      "nom": "visage-anguleux",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-29T23:31:18.578Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1024x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "The attached image is our own approved pixel-art sprite sheet of the player character, a young card duellist of a night harbour city. Redraw the same sheet with the same character; only the FACE changes: a more angular face with a defined jaw and cheekbones; thick, strongly marked straight eyebrows; slightly narrower eyes with a serious, determined look; a firm straight mouth.\n\nKeep everything else exactly as in the attached sheet: the same grid of 5 columns and 3 rows of equal cells (row 1 facing the viewer, row 2 seen from the back, row 3 right profile walking to the right; column 1 standing still, columns 2 to 5 the walking cycle), the same poses in every cell, the same size and position of the head in every cell, the same silver-white haircut and headband, the same outfit and colours, the same pixel size. The head and the face stay at exactly the same place in each cell as in the attached sheet.\n\nEach cell has the same size as in the attached sheet; same sturdy RPG proportions, about 3 heads tall; both eyes drawn identically (mirrored) in the front views; the face fully visible, the scarf below the chin.\n\nPremium illustrative pixel art exactly in the style of the attached sheet: crisp square pixels of one uniform size across the whole sheet; selective dark outlines; clean pixel clusters, no dithering, no noise, no anti-aliasing, no gradients, no blur.\n\nColours exactly as in the attached sheet: coat and lowered hood in flat shades of pure magenta only, headband and scarf in flat shades of pure green only; silver-white hair in light neutral greys; natural light skin; blue eyes with a white catchlight; no other magenta or green anywhere. A perfectly flat, uniform pure cyan (#00FFFF) background with no shading, no floor and no cast shadow. No text, no letters, no numbers, no grid lines, no labels, no watermark, no logos, no playing-card suit symbols.",
+      "entrees": [
+        {
+          "chemin": "public/sprites/player.png",
+          "sha256": "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-29-visages/visage-anguleux.png (dossier principal, ignoré par git)",
+        "sha256": "3a436f54f729dfb9e0b059f656b9b731f88e5030d94009354198582b313b860f",
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 1349,
+        "input_tokens_details": {
+          "image_tokens": 928,
+          "text_tokens": 421
+        },
+        "output_tokens": 7024,
+        "output_tokens_details": {
+          "image_tokens": 7024,
+          "text_tokens": 0
+        },
+        "total_tokens": 8373
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs (processSheet)",
+      "tools/m09-protagoniste-feuille.mjs"
+    ],
+    "etapes": [
+      "fond cyan et liseré teinté retirés ; alpha binaire",
+      "pas des pixels d’art mesuré sur les arêtes (3.065 × 3.1 px)",
+      "figures repérées par les bandes vides ; grille d’art 64 × 96 px d’art par case imposée, couleur majoritaire du cœur de chaque bloc",
+      "pieds alignés sur une même ligne, tête centrée",
+      "tons clés (tenue, accent) ramenés exactement sur 64, 128, 191, 255",
+      "palette : couleurs naturelles réduites (k-moyennes)",
+      "yeux (passe 138) : de face, les deux yeux du brut recalés et moyennés, posés aux deux places ; aucun ton clé de vêtement ni d’accent dans les yeux et les sourcils",
+      "agrandissement ×3 au plus proche",
+      "pixels d’accent isolés (moins de deux voisins d’accent : liseré des cheveux sur le fond cyan) ramenés à la couleur majoritaire de leurs voisins : 18"
+    ]
+  },
+  "marche_de_profil": {
+    "largeurs_des_pieds": [
+      17,
+      34,
+      35,
+      35,
+      36
+    ],
+    "plan": {
+      "contacts": [
+        1,
+        2
+      ],
+      "passages": [
+        3,
+        4
+      ]
+    }
+  },
+  "sortie": {
+    "fichier": "public/sprites/player-v3.png",
+    "sha256": "9750d6593b1875a5fa2107e74262067334f0d96fe899431c4fc0b282a2411d93",
+    "octets": 97130,
+    "entree_du_manifeste": {
+      "file": "player-v3.png",
+      "sha256": "9750d6593b1875a5fa2107e74262067334f0d96fe899431c4fc0b282a2411d93",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 90,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          2
+        ],
+        "passages": [
+          3,
+          4
+        ]
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette A, coupe carré, visage anguleux, depuis la feuille A approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-v3/fiche.json",
+      "approved": false
+    },
+    "tons_cles": {
+      "tenue": [
+        3241,
+        940,
+        5624,
+        0
+      ],
+      "accent": [
+        382,
+        162,
+        210,
+        0
+      ]
+    },
+    "couleurs": 38
+  },
+  "chaine_des_empreintes": [
+    "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50 (entrée : public/sprites/player.png)",
+    "3a436f54f729dfb9e0b059f656b9b731f88e5030d94009354198582b313b860f (brut)",
+    "9750d6593b1875a5fa2107e74262067334f0d96fe899431c4fc0b282a2411d93 (feuille ×3)"
+  ]
+}

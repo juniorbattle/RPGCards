@@ -33,9 +33,32 @@ const FEUILLES = {
   // `tools/m09-protagoniste-visages.ts`) ; V1 : pas borné à 3–3,3 px (sans borne : 3,29 × 3,525, inégal) ; foulées sans passage,
   // comme la feuille A : passages redessinés par code, même plan qu'elle
   'player-v1': { lot: '2026-10-29-visages', brut: 'visage-amande', passe: 169, qui: 'silhouette A, coupe carré, visage en amande', entree: 'la feuille A approuvée', profil: { contacts: [1, 2], passages: [3, 4] }, pitch: [3, 3.3], yeux: false },
-  'player-v2': { lot: '2026-10-29-visages', brut: 'visage-rond', passe: 169, qui: 'silhouette A, coupe carré, visage rond', entree: 'la feuille A approuvée', profil: null },
-  'player-v3': { lot: '2026-10-29-visages', brut: 'visage-anguleux', passe: 169, qui: 'silhouette A, coupe carré, visage anguleux', entree: 'la feuille A approuvée', profil: null },
 };
+// passe 170 : « Feuilles complètes » : chaque visage redessiné sur chacune des quatre feuilles (`tools/m09-lot-visages.mjs`) ;
+// réglages par défaut repris de la feuille de base (case, plan de marche), puis ceux relevés à la lecture de chaque feuille
+const BASES = {
+  player: { lot: '2026-10-29-visages', brut: (t) => `visage-${t}`, qui: 'silhouette A, coupe carré', entree: 'la feuille A approuvée', profil: { contacts: [1, 2], passages: [3, 4] } },
+  'player-b': { lot: '2026-10-29-visages-b', brut: (t) => `player-b-${t}`, qui: 'silhouette B, coupe courte', entree: 'la feuille B approuvée', profil: { contacts: [1, 3], passages: [2, 4], dessines: true } },
+  'player-a2': { lot: '2026-10-29-visages-a2', brut: (t) => `player-a2-${t}`, qui: 'silhouette A, queue de cheval', entree: 'la feuille A2 approuvée', profil: { contacts: [1, 3], passages: [2, 4], dessines: true } },
+  'player-b2': { lot: '2026-10-29-visages-b2', brut: (t) => `player-b2-${t}`, qui: 'silhouette B, coupe mi-longue', entree: 'la feuille B2 approuvée', profil: { contacts: [1, 3], passages: [2, 4], dessines: true }, cell: [64, 100] },
+};
+const TYPES = { 1: ['amande', 'visage en amande'], 2: ['rond', 'visage rond'], 3: ['anguleux', 'visage anguleux'] };
+/**
+ * Réglages relevés à la lecture des feuilles de visage, passe 170 : pas borné à la fenêtre qui donne des pixels carrés
+ * (écart des deux axes sous 0,08 px), rien de rogné et une figure de la hauteur de sa feuille de base (91, 91, 88, 96 px
+ * d'art) ; sans borne, le pas est souvent pris sur un multiple (figures de 74 à 76 px d'art) ou les cheveux rognés.
+ */
+const REGLAGES = {
+  'player-v2': { pitch: [3, 3.3] }, 'player-v3': { pitch: [2.8, 3.1] },
+  'player-b-v1': { pitch: [3.2, 3.5] }, 'player-b-v2': { pitch: [3.2, 3.5] }, 'player-b-v3': { pitch: [3, 3.3] },
+  'player-a2-v1': { pitch: [3.1, 3.25] }, 'player-a2-v2': { pitch: [3, 3.3] }, 'player-a2-v3': { pitch: [2.8, 3.1] },
+  'player-b2-v1': { pitch: [2.8, 3.1] }, 'player-b2-v2': { pitch: [3.2, 3.5] }, 'player-b2-v3': { pitch: [3.1, 3.25] },
+};
+for (const [base, b] of Object.entries(BASES)) for (const [k, [t, nom]] of Object.entries(TYPES)) {
+  const id = `${base}-v${k}`;
+  if (FEUILLES[id]) continue;
+  FEUILLES[id] = { lot: b.lot, brut: b.brut(t), passe: 170, qui: `${b.qui}, ${nom}`, entree: b.entree, profil: b.profil, yeux: false, ...(b.cell ? { cell: b.cell } : {}), ...REGLAGES[id] };
+}
 const [ID, brutArg] = (process.argv.slice(2).find((a) => !a.startsWith('--') && !/^\d/.test(a)) ?? 'player-b').split('=');
 const F = FEUILLES[ID];
 if (!F) throw new Error(`feuille inconnue : ${ID}`);
@@ -147,12 +170,14 @@ writeFileSync(`art-src/sprites/${ID}/fiche.json`, `${JSON.stringify({
   statut: `protagoniste, ${F.qui} (passe ${F.passe}), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas donné l’ordre, dans une passe à part`,
   auteur: F.passe === 164
     ? 'Claude Code (session « protagoniste », passe 164), à la demande du responsable : version homme du protagoniste, même structure et même tenue, cheveux argentés plus courts, peau mate ; accord dans la session : « H1 + réserve », personnage personnalisable, « 4 images, couleurs par code », choix nommé « Silhouette »'
-    : F.passe === 167
+    : F.passe === 170
+      ? `Claude Code (session « protagoniste », passe 170), à la demande du responsable : « tu peux ajouter du budget pour effectuer les types de visages » ; après l'essai du calque (passe 169), décision dans la session : « Feuilles complètes » (chaque visage redessiné sur chacune des quatre feuilles : 11 images, 1 réserve au plus)`
+      : F.passe === 167
       ? `Claude Code (session « protagoniste », passe ${F.passe}), à la demande du responsable : « fait donc », en réponse à « d’autres coupes ou visages demanderaient de nouvelles images, dans un lot à part avec son propre budget. Il reste 3 images sur 20. »`
       : `Claude Code (session « protagoniste », passe ${F.passe}), à la demande du responsable : « tu peux ajouter du budget pour effectuer les types de visages » ; décisions dans la session : « Calques de visage » (3 images et 1 réserve au plus), types « Yeux en amande, regard vif », « Visage rond, grands yeux », « Visage anguleux, sourcils marqués »`,
-  generation: `tools/m09-generer-images.mjs --only (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification ${{ 164: 'tools/m09-lot-protagoniste.mjs', 167: 'tools/m09-lot-coupes.mjs', 169: 'tools/m09-lot-visages.mjs' }[F.passe]}`,
+  generation: `tools/m09-generer-images.mjs --only (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification ${{ 164: 'tools/m09-lot-protagoniste.mjs', 167: 'tools/m09-lot-coupes.mjs', 169: 'tools/m09-lot-visages.mjs', 170: 'tools/m09-lot-visages.mjs' }[F.passe]}`,
   aseprite: joueur.aseprite, licences: joueur.licences, contenu: joueur.contenu,
-  style: F.passe === 164 ? 'style, échelle, proportions et tenue de la feuille du joueur approuvée (seule entrée) ; peau et cheveux en tons clés, recolorés en jeu' : `style, échelle, proportions${F.passe === 169 ? '' : ', visage'} et tenue de ${F.entree} (seule entrée) ; peau et cheveux au naturel, reconnus et repeints en jeu (src/ville/teintes.ts)`,
+  style: F.passe === 164 ? 'style, échelle, proportions et tenue de la feuille du joueur approuvée (seule entrée) ; peau et cheveux en tons clés, recolorés en jeu' : `style, échelle, proportions${F.passe >= 169 ? '' : ', visage'} et tenue de ${F.entree} (seule entrée) ; peau et cheveux au naturel, reconnus et repeints en jeu (src/ville/teintes.ts)`,
   sources: [ps],
   traitement: { scripts: ['tools/m09-traitement-images.mjs (processSheet)', 'tools/m09-protagoniste-feuille.mjs'], etapes: ['fond cyan et liseré teinté retirés ; alpha binaire', `pas des pixels d’art mesuré sur les arêtes (${sheet.pitch.x} × ${sheet.pitch.y} px)`, `figures repérées par les bandes vides ; grille d’art ${sheet.cell.join(' × ')} px d’art par case imposée, couleur majoritaire du cœur de chaque bloc`, 'pieds alignés sur une même ligne, tête centrée', `tons clés (${SLOTS.join(', ')}) ramenés exactement sur 64, 128, 191, 255`, 'palette : couleurs naturelles réduites (k-moyennes)', 'yeux (passe 138) : de face, les deux yeux du brut recalés et moyennés, posés aux deux places ; aucun ton clé de vêtement ni d’accent dans les yeux et les sourcils', 'agrandissement ×3 au plus proche', `pixels d’accent isolés (moins de deux voisins d’accent : liseré des cheveux sur le fond cyan) ramenés à la couleur majoritaire de leurs voisins : ${sheet.accentIsoles}`] },
   marche_de_profil: { largeurs_des_pieds: mesures, plan: entry.profil ?? null },

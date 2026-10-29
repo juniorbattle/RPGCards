@@ -731,3 +731,17 @@ des pixels, rien de rogné) ; `approved: false` jusqu'à l'ordre du responsable.
 restent valables) ; l'éditeur montre une ligne « Coupe » en vignettes ; le portrait du duel prend la coupe courte pour la
 queue de cheval et le carré pour la coupe mi-longue. Le type de visage reste un par feuille : un visage choisi à part
 demanderait des images, hors du budget de la deuxième reprise.
+
+### Types de visage du protagoniste : une feuille par coupe et par visage (passes 169 et 170, 2026-10-29)
+
+Demande du responsable : « tu peux ajouter du budget pour effectuer les types de visages » ; trois types : yeux en amande,
+visage rond, visage anguleux. Essai de la méthode des **calques** (passe 169 : un visage généré sur la silhouette A, posé
+par script sur les autres feuilles) : **ne tient pas** (têtes de tailles, d'écartements des yeux et de mèches différents :
+traits effacés sans être repeints en entier). Décision du responsable : **« Feuilles complètes »** : chaque visage
+redessiné par le modèle sur chacune des quatre feuilles (seule entrée : la feuille approuvée ; 12 feuilles, dont l'essai :
+**12 images en tout**, réserve non utilisée), traitées par script (pas borné à la fenêtre des pixels carrés et de la
+hauteur de figure de la feuille de base), `<feuille>-v<k>`, `approved: false` jusqu'à l'ordre du responsable.
+L'apparence gagne un **visage** (`VISAGES`, code de six signes, `feuilleApparence`) ; une autre silhouette ou coupe garde
+le visage choisi ; l'éditeur montre une ligne « Visage » en vignettes de la tête. Le portrait V2 du duel ne change pas
+avec le visage (dessiné par code ; à reprendre si le responsable le demande). `src/ville/teintes.ts` compte aussi les
+ombres du visage comme peau (sur une peau repeinte foncée, une ombre laissée au naturel faisait une tache claire).

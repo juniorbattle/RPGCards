@@ -3,4 +3,4 @@ console : aucune erreur
 29/29 contrôles ; console : aucune erreur
 35/35 contrôles ; console : aucune erreur
 tout est vert ; console : vide
-9/9 contrôles
+9/9 contrôles (relancé après la correction de l’attente du menu : une autre silhouette garde le visage choisi)
