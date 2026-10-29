@@ -224,6 +224,18 @@
       "sha256": "728b5b08d100cf0126481caae63643ff18b259614668b4c3551c703e2bfff8f0",
       "date": "2026-10-29",
       "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-silhouettes.png et apparences/planche-apparences.png, passes 164 et 165) : « J’approuve B » (question : « Approuves-tu la feuille de la silhouette B (player-b.png) ? ») ; passe 166"
+    },
+    {
+      "fichier": "public/sprites/player-a2.png",
+      "sha256": "3ea477af91bc218b07dd918d8c3820a24e358860918a0e9d8fe29792be68f72d",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-silhouettes.png et apparences/planche-apparences.png, passe 167) : « oui j’approuve A2 et B2 » (question : « Approuves-tu les feuilles A2 et B2 ? ») ; passe 168"
+    },
+    {
+      "fichier": "public/sprites/player-b2.png",
+      "sha256": "caa01f35ec8003a8856bd3bd387d7d550b27ef9b4c0153843a2e4dca76619fd0",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-silhouettes.png et apparences/planche-apparences.png, passe 167) : « oui j’approuve A2 et B2 » (question : « Approuves-tu les feuilles A2 et B2 ? ») ; passe 168"
     }
   ],
   "caduques": [

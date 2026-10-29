@@ -1,6 +1,6 @@
 {
   "id": "player-b2",
-  "statut": "protagoniste, silhouette B, coupe mi-longue (passe 167), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas donné l’ordre, dans une passe à part",
+  "statut": "APPROUVÉ par le responsable le 2026-10-29 (ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-silhouettes.png et apparences/planche-apparences.png, passe 167) : « oui j’approuve A2 et B2 » (question : « Approuves-tu les feuilles A2 et B2 ? ») ; passe 168) : admis hors QA tant que l’empreinte reste caa01f35ec80…",
   "auteur": "Claude Code (session « protagoniste », passe 167), à la demande du responsable : « fait donc », en réponse à « d’autres coupes ou visages demanderaient de nouvelles images, dans un lot à part avec son propre budget. Il reste 3 images sur 20. »",
   "generation": "tools/m09-generer-images.mjs --only (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-coupes.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -146,5 +146,11 @@
     "728b5b08d100cf0126481caae63643ff18b259614668b4c3551c703e2bfff8f0 (entrée : public/sprites/player-b.png)",
     "629fcae9db856cf3e77b4fcf5a23099b41d97a557b354ea68e4d22c6dff6e2af (brut)",
     "caa01f35ec8003a8856bd3bd387d7d550b27ef9b4c0153843a2e4dca76619fd0 (feuille ×3)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-29",
+    "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-silhouettes.png et apparences/planche-apparences.png, passe 167) : « oui j’approuve A2 et B2 » (question : « Approuves-tu les feuilles A2 et B2 ? ») ; passe 168",
+    "fichier": "public/sprites/player-b2.png",
+    "sha256": "caa01f35ec8003a8856bd3bd387d7d550b27ef9b4c0153843a2e4dca76619fd0"
+  }
 }
