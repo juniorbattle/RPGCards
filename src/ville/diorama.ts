@@ -19,6 +19,7 @@ import { finish, type LightDef, type QuaiScene } from './scene';
 import { plateRect, type DecorLight, type PreparedDiorama, type PreparedPlate } from './decors';
 import { cheminMesh } from './chemins';
 import { ombreMesh, ombresDuPlan, profilPied } from './ombres';
+import { encoder, RELIEF_MAX, RELIEF_MIN, reliefDansMorceau, RELIEFS, sommets } from './reliefs';
 
 const PLATE_VERT = /* glsl */ `
 varying vec2 vUv; varying vec3 vWorld; varying vec3 vN;
@@ -35,8 +36,40 @@ const PLATE_FRAG = /* glsl */ `
 ${COMMON_GLSL}
 uniform sampler2D tPlate; uniform float uLit; uniform float uFog; uniform float uCut; uniform float uVoile; uniform float uFade; uniform float uCutY; uniform float uCoupe; uniform float uAO; uniform float uBase; uniform vec2 uAOk; uniform float uSpill;
 varying vec2 vUv; varying vec3 vWorld; varying vec3 vN;
+#ifdef RELIEF
+// relief du plan (retour du responsable du 2026-10-29, \`reliefs.ts\`) : le rayon de la caméra traverse la carte des
+// profondeurs, de la saillie la plus forte au retrait le plus profond ; l'image se lit là où il la rencontre ; une paroi
+// révélée par le biais (le jambage d'une arcade, le dessous d'un balcon, le flanc d'un escalier) reste dans l'ombre
+uniform sampler2D tRelief; uniform vec2 uUvM; uniform vec4 uCrop;
+float rProf(vec2 uv){ return mix(${RELIEF_MIN.toFixed(2)}, ${RELIEF_MAX.toFixed(2)}, texture2D(tRelief, clamp(uv, uCrop.xy, uCrop.zw)).r); }
+vec3 relief(vec2 uv0){
+  vec3 V = normalize(cameraPosition - vWorld);
+  vec2 dir = -V.xy / max(V.z, 0.3) * uUvM;
+  float pas = (${RELIEF_MAX.toFixed(2)} - (${RELIEF_MIN.toFixed(2)})) / 24.0;
+  float d0 = ${RELIEF_MIN.toFixed(2)};
+  float s0 = rProf(uv0 + dir * d0);
+  for (int i = 1; i <= 24; i++) {
+    float d1 = d0 + pas;
+    float s1 = rProf(uv0 + dir * d1);
+    if (d1 >= s1) {
+      float a = s0 - d0; float b = s1 - d1;
+      // paroi : la surface change plus vite que le rayon n'avance (marche, jambage, dessous)
+      float paroi = clamp((abs(s1 - s0) - pas) / 0.8, 0.0, 1.0);
+      return vec3(clamp(uv0 + dir * mix(d0, d1, a / max(a - b, 1e-4)), uCrop.xy, uCrop.zw), 1.0 - 0.5 * paroi);
+    }
+    d0 = d1; s0 = s1;
+  }
+  return vec3(clamp(uv0 + dir * ${RELIEF_MAX.toFixed(2)}, uCrop.xy, uCrop.zw), 1.0);
+}
+#endif
 void main(){
+#ifdef RELIEF
+  vec3 R = relief(vUv);
+  vec4 A = texture2D(tPlate, R.xy);
+  A.rgb *= R.z;
+#else
   vec4 A = texture2D(tPlate, vUv);
+#endif
   if (A.a < uCut) discard;
   vec3 c = A.rgb / max(A.a, 1e-4);
   if (uLit > 0.0) {
@@ -82,12 +115,15 @@ export function aoDuPlan(e: Pick<PreparedPlate['entry'], 'at' | 'width' | 'size'
 
 /** Matière d'un plan (une par plan : chacun a sa texture). `profond` : diorama en rangs (passe 65), chaque plan peut
  *  s'effacer (fondu lointain) ; sinon seuls les plans `coupe` ont le nuanceur d'effacement. */
-function plateMaterial(p: PreparedPlate, profond = false): THREE.ShaderMaterial {
+function plateMaterial(p: PreparedPlate, profond = false, relief: THREE.Texture | null = null): THREE.ShaderMaterial {
   const cut = p.entry.blend === 'decoupe';
-  return new THREE.ShaderMaterial({
+  const r = plateRect(p.entry);
+  const [u0, v0, u1, v1] = p.entry.uv ?? [0, 0, 1, 1];
+  const avecRelief = !!relief && r.orient === 'face';
+  const m = new THREE.ShaderMaterial({
     name: 'VillePlan',
     uniforms: { ...U, tPlate: { value: p.texture }, uLit: { value: p.entry.lit ?? 0 }, uFog: { value: p.entry.fog ?? 1 }, uCut: { value: cut ? 0.02 : 0.004 }, uVoile: { value: p.entry.voile ?? 0 }, uFade: { value: 0 }, uCutY: { value: p.entry.coupeY ?? -1000 }, uCoupe: { value: COUPE_ALPHA }, uAO: { value: profond && p.entry.orient !== 'sol' && Math.abs(p.entry.at[1]) <= 0.25 ? 1 : 0 }, uBase: { value: p.entry.at[1] }, uAOk: { value: new THREE.Vector2(...aoDuPlan(p.entry)) }, uSpill: { value: profond && p.entry.orient === 'face' && Math.abs(p.entry.at[1]) <= 0.25 && plateRect(p.entry).h < 6 ? 1 : 0 } },
-    defines: p.entry.coupe || profond ? { COUPE: 1 } : {},
+    defines: { ...(p.entry.coupe || profond ? { COUPE: 1 } : {}), ...(avecRelief ? { RELIEF: 1 } : {}) },
     vertexShader: PLATE_VERT,
     fragmentShader: PLATE_FRAG,
     transparent: true,
@@ -95,6 +131,52 @@ function plateMaterial(p: PreparedPlate, profond = false): THREE.ShaderMaterial 
     depthWrite: cut,
     side: THREE.FrontSide,
   });
+  if (avecRelief) {
+    // uv par mètre du plan, et le morceau de l'image (image retournée : v vers le haut)
+    m.uniforms.tRelief = { value: relief };
+    m.uniforms.uUvM = { value: new THREE.Vector2((u1 - u0) / r.w, (v1 - v0) / r.h) };
+    m.uniforms.uCrop = { value: new THREE.Vector4(u0, 1 - v1, u1, 1 - v0) };
+  }
+  return m;
+}
+
+/**
+ * Carte des profondeurs d'une image du décor (`reliefs.ts`), tracée au chargement à mi-résolution : le plan de la façade
+ * en fond, puis chaque forme (profondeur constante, ou dégradé vertical). null sans relief déclaré, ou sans canevas.
+ */
+function reliefTexture(file: string, size: readonly [number, number]): THREE.Texture | null {
+  const formes = RELIEFS[file];
+  if (!formes?.length || typeof document === 'undefined') return null;
+  const k = 0.5;
+  const c = document.createElement('canvas');
+  c.width = Math.max(1, Math.round(size[0] * k));
+  c.height = Math.max(1, Math.round(size[1] * k));
+  const g = c.getContext('2d');
+  if (!g) return null;
+  const gris = (prof: number) => { const v = encoder(prof); return `rgb(${v},${v},${v})`; };
+  g.fillStyle = gris(0);
+  g.fillRect(0, 0, c.width, c.height);
+  for (const f of formes) {
+    const pts = sommets(f);
+    g.beginPath();
+    pts.forEach(([x, y], i) => (i ? g.lineTo(x * k, y * k) : g.moveTo(x * k, y * k)));
+    g.closePath();
+    if (typeof f.prof === 'number') g.fillStyle = gris(f.prof);
+    else {
+      const ys = pts.map((q) => q[1]);
+      const gr = g.createLinearGradient(0, Math.min(...ys) * k, 0, Math.max(...ys) * k);
+      gr.addColorStop(0, gris(f.prof[0]));
+      gr.addColorStop(1, gris(f.prof[1]));
+      g.fillStyle = gr;
+    }
+    g.fill();
+  }
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.NoColorSpace;
+  t.generateMipmaps = false;
+  t.minFilter = THREE.LinearFilter;
+  t.magFilter = THREE.LinearFilter;
+  return t;
 }
 
 /**
@@ -229,6 +311,18 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
   const pieds = new Map<string, number[] | null>();
   const ground = d.ground ? engineGround(def, artSeed, textures) : null;
   if (ground) meshes.push(ground);
+  // relief des plans (retour du 2026-10-29) : une carte par image, partagée par ses plans ; `?relief=0` le coupe (comparaison)
+  const sansRelief = typeof location !== 'undefined' && new URLSearchParams(location.search).get('relief') === '0';
+  const reliefs = new Map<string, THREE.Texture | null>();
+  const reliefDe = (p: PreparedPlate): THREE.Texture | null => {
+    if (sansRelief || !reliefDansMorceau(p.entry.file, p.entry.size, p.entry.uv)) return null;
+    if (!reliefs.has(p.entry.file)) {
+      const t = reliefTexture(p.entry.file, p.entry.size);
+      if (t) textures.push(t);
+      reliefs.set(p.entry.file, t);
+    }
+    return reliefs.get(p.entry.file) ?? null;
+  };
   // créés dans l'ordre de dessin : à profondeur égale, three.js départage les transparents par ordre de création
   for (const p of d.plates) {
     const r = plateRect(p.entry);
@@ -245,7 +339,7 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
       const [u0, , u1] = p.entry.uv ?? [0, 0, 1, 1];
       for (let i = 0; i < uv.count; i++) uv.setX(i, u0 + u1 - uv.getX(i));
     }
-    const mat = plateMaterial(p, profond);
+    const mat = plateMaterial(p, profond, reliefDe(p));
     const mesh = new THREE.Mesh(g, mat);
     mesh.name = `plan:${d.ilot}/${p.id}`;
     mesh.position.set(...r.center);

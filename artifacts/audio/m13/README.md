@@ -28,10 +28,10 @@ attend le premier Clash) ; ses autres couches : les fichiers `S-plein-…`.
 
 | Fichier | Contenu |
 |---|---|
-| `S-duel.ogg` | un duel : la mélodie au premier Clash, des accents, l'intensité qui monte, le duel tendu, les cuivres à une Signature, la fin sur le temps fort et le jingle de victoire |
+| `S-duel.ogg` | un duel : la mélodie au premier Clash, des accents, l'intensité qui monte, le duel tendu (par un break : arrêt net sur la phrase, une mesure de silence), les cuivres à une Signature, la fin sur le temps fort et le jingle de victoire |
 | `S-ponctuations.ogg` | Clash gagné, perdu, Signature, prolongation, puis la fin du duel |
-| `S-ville.ogg` | le Quai, un dialogue (la musique s'efface), le combo du Fanal qu'on approche puis qu'on quitte, l'entrée en duel (la ville s'assourdit) |
-| `S-transitions.ogg` | les menus, un dialogue, le titre, la ville assourdie, le récit |
+| `S-ville.ogg` | le Quai, un dialogue (la musique s'efface), le combo du Fanal qu'on approche puis qu'on quitte, l'entrée en duel (la ville assourdie s'efface, un silence, puis le duel) |
+| `S-transitions.ogg` | les enchaînements (retour du responsable du 2026-10-29) : chaque nouveau morceau après un effacement et un silence, par sa levée ; les menus, un dialogue, le titre, la ville, un duel, sa fin et le jingle, un silence, la ville |
 | `S-couche-*.ogg` | les couches du duel, chacune seule (fond, mélodie, tension, cuivres) |
 | `S-plein-*.ogg` | chaque thème de duel : la mélodie d'emblée, puis la tension et les cuivres à 30 s |
 
