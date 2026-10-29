@@ -690,6 +690,8 @@ export interface WalkerSprite {
    * de sa hauteur de figure, tons clés recolorés aux couleurs du personnage.
    */
   setSheet(sheet: { texture: THREE.Texture; spec: SheetSpec }): void;
+  /** QA : le cycle de marche de profil de la feuille (`cycleProfil`), null pour l'atlas par code. */
+  profil(): readonly number[] | null;
   dispose(): void;
 }
 
@@ -709,13 +711,16 @@ export function cycleProfil(pieds: readonly number[]): readonly [number, number,
   return [a, passe, b, passe];
 }
 
-/** Bande des pieds (4 px d'art au-dessus de l'ancrage) dans la rangée de profil d'une feuille haute de `h` px. */
-export function bandePieds(h: number, spec: Pick<SheetSpec, 'anchor' | 'cell'>): { y0: number; h: number } {
+/**
+ * Bande des pieds (4 px d'art au-dessus de l'ancrage) dans la rangée de profil d'une feuille haute de `h` px ;
+ * `retournee` : image retournée à la création (les feuilles vérifiées, `spritesExternes.ts`), la rangée de profil en haut.
+ */
+export function bandePieds(h: number, spec: Pick<SheetSpec, 'anchor' | 'cell'>, retournee = false): { y0: number; h: number } {
   const ch = h / ROWS;
   const cellH = spec.cell?.[1] ?? CELL_H;
   const y1 = Math.round(2 * ch + (spec.anchor[1] / cellH) * ch);
   const bh = Math.max(2, Math.round((4 / cellH) * ch));
-  return { y0: y1 - bh, h: bh };
+  return { y0: retournee ? h - y1 : y1 - bh, h: bh };
 }
 
 /** Largeur des pieds (px, opacité franche) de chaque colonne d'une bande RGBA de `w` px de large. */
@@ -734,11 +739,11 @@ export function largeursPieds(rgba: ArrayLike<number>, w: number, h: number): nu
 const CYCLES = new WeakMap<object, readonly number[] | null>();
 
 /** Le cycle de profil d'une feuille chargée, mesuré une fois par image ; null sans canevas lisible (quatre temps d'origine). */
-function cycleFeuille(im: CanvasImageSource & { width: number; height: number }, spec: SheetSpec): readonly number[] | null {
+function cycleFeuille(im: CanvasImageSource & { width: number; height: number }, spec: SheetSpec, retournee: boolean): readonly number[] | null {
   if (CYCLES.has(im)) return CYCLES.get(im)!;
   let out: readonly number[] | null = null;
   try {
-    const b = bandePieds(im.height, spec);
+    const b = bandePieds(im.height, spec, retournee);
     const c = document.createElement('canvas');
     c.width = im.width;
     c.height = b.h;
@@ -847,7 +852,8 @@ export function createWalkerSprite(id: string): WalkerSprite {
         else delete mat.defines.PIXEL;
         mat.needsUpdate = true;
       }
-      profil = im ? cycleFeuille(texture.image as CanvasImageSource & { width: number; height: number }, spec) : null;
+      // une texture sans `flipY` porte une image déjà retournée à la création
+      profil = im ? cycleFeuille(texture.image as CanvasImageSource & { width: number; height: number }, spec, !texture.flipY) : null;
       artPx = WALKER_H / spec.figureH;
       const panel = walkerPanel(spec);
       geo.dispose();
@@ -864,6 +870,7 @@ export function createWalkerSprite(id: string): WalkerSprite {
       uniforms.uSlots.value = slots;
       uniforms.uRecolor.value = slots.some((x) => x) ? 1 : 0;
     },
+    profil: () => profil,
     dispose() { geo.dispose(); mat.dispose(); shadow.geometry.dispose(); (shadow.material as THREE.Material).dispose(); },
   };
 }

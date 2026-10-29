@@ -34,7 +34,8 @@ changée, règles du duel inchangées, jeu par défaut au repos identique au pix
   (`cycleProfil`, `src/ville/sprites.ts`). Joueur, PNJ qui viennent au joueur et passants : tous en profitent.
 - Preuves : `screenshots/qa/retours-2026-10-29/marche-profil-cycle.png` (les cycles avant et après, cinq feuilles),
   `marche-profil-jeu-avant-apres.png` (au navigateur : avant, toujours des foulées ; après, foulées et passages) ;
-  `test/marche-profil.test.ts` sur les 13 feuilles.
+  `test/marche-profil.test.ts` sur les 13 feuilles (à l'endroit et retournées, comme au jeu) ; `tools/marche-profil.mjs`
+  (au navigateur, dans les six îlots : chacun des 34 personnages a son cycle).
 
 ## 3. Cinématiques : le cadrage
 
