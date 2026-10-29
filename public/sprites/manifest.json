@@ -306,6 +306,41 @@
       "source": "gpt-image-2 (feuille des PNJ de la ville, Halvard, le Cartographe, chef de l’Astre (couleurs propres), reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-pnj-feuilles.mjs) ; manteau recoloré en ocre par script (ADR 046, tools/m12-couleurs-astre.mjs)",
       "fiche": "art-src/sprites/chef-astre/fiche.json",
       "approved": true
+    },
+    "player-b": {
+      "file": "player-b.png",
+      "sha256": "728b5b08d100cf0126481caae63643ff18b259614668b4c3551c703e2bfff8f0",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 91,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          3
+        ],
+        "passages": [
+          2,
+          4
+        ],
+        "dessines": true
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette B, depuis la feuille du joueur approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-b/fiche.json",
+      "approved": false
     }
   }
 }

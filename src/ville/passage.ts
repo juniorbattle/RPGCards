@@ -15,13 +15,16 @@
 export interface PlanProfil {
   contacts: readonly [number, number];
   passages: readonly [number, number];
+  /** Passages déjà dessinés par la feuille (silhouette B) : seulement l'ordre du cycle et la foulée, rien de redessiné. */
+  dessines?: boolean;
 }
 
 /** Contrôle d'un plan : quatre colonnes de marche (1 à 4) distinctes. */
 export function planValable(p: unknown): p is PlanProfil {
   const x = p as Partial<PlanProfil> | null;
   const cols = [...(Array.isArray(x?.contacts) ? x!.contacts : []), ...(Array.isArray(x?.passages) ? x!.passages : [])];
-  return cols.length === 4 && x!.contacts!.length === 2 && cols.every((c) => Number.isInteger(c) && c >= 1 && c <= 4) && new Set(cols).size === 4;
+  return cols.length === 4 && x!.contacts!.length === 2 && cols.every((c) => Number.isInteger(c) && c >= 1 && c <= 4) && new Set(cols).size === 4
+    && (x!.dessines === undefined || typeof x!.dessines === 'boolean');
 }
 
 /** Cycle de profil d'un plan : contact, passage aux mêmes bras, contact opposé, passage. */
