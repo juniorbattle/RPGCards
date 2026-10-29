@@ -1,11 +1,11 @@
 {
-  "date": "2026-10-27T08:06:55.473Z",
-  "commit": "fa6e8b7",
+  "date": "2026-10-29T20:02:54.752Z",
+  "commit": "fe919d5",
   "viewport": [
     1280,
     720
   ],
-  "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
   "checks": [
     "OK la ville en rangs est affichée (QA : dioramas admis)",
     "OK chapitre I (la Ronce rejointe) par des faits, sans refus (aucun)",
@@ -34,7 +34,7 @@
     "OK sons demandés : « repère » et « rival » (ui, repere, ui-retour, rival)",
     "OK coupé en QA : aucun contexte audio créé",
     "OK accueil au repos : aucun réglage du son affiché",
-    "OK Options : son coupé et volume à 60 %, mémorisés ({\"volume\":0.6,\"coupe\":true})",
+    "OK Options : son coupé et volume à 60 %, mémorisés ({\"volume\":0.6,\"coupe\":true,\"musique\":0.6})",
     "OK console : aucune erreur"
   ],
   "steps": [

@@ -17,6 +17,7 @@ import { FAMILY_PALETTE } from '../art/palette';
 import type { Family } from '../game/catalog/cards';
 import { NPC_HAIRS, NPC_SKINS, npcLook, type Accessory, type HairCut, type Tone } from '../presentation/npcs';
 import { COMMON_GLSL, U } from './materiaux';
+import { cyclePlan, ecartPieds, posePassage } from './passage';
 import type { Facing } from './monde';
 import { DEFAULT_ANCHOR, DEFAULT_FIGURE_H, RAMP_STEPS, RECOLOR_SLOTS, keyColor, type RecolorSlot, type SheetSpec } from './spritesExternes';
 
@@ -692,6 +693,11 @@ export interface WalkerSprite {
   setSheet(sheet: { texture: THREE.Texture; spec: SheetSpec }): void;
   /** QA : le cycle de marche de profil de la feuille (`cycleProfil`), null pour l'atlas par code. */
   profil(): readonly number[] | null;
+  /**
+   * Longueur d'une foulée complète (deux pas, m, à la hauteur de référence `WALKER_H`) mesurée sur les contacts d'une
+   * feuille au plan de marche (`passage.ts`) ; null sinon (la foulée commune `STRIDE` de `monde.ts` s'applique).
+   */
+  foulee(): number | null;
   dispose(): void;
 }
 
@@ -758,6 +764,50 @@ function cycleFeuille(im: CanvasImageSource & { width: number; height: number },
   return out;
 }
 
+const PASSAGES = new WeakMap<object, { texture: THREE.Texture; ecart: number } | null>();
+
+/**
+ * Feuille au plan de marche de profil (`spec.profil`, `passage.ts`) : copie en pixels d'art de la feuille chargée, les
+ * deux colonnes de passage de la rangée de profil redessinées (jambes sous le corps) ; l'image approuvée n'est pas
+ * modifiée. Mesure aussi l'écart des pieds des deux contacts (px d'art). Une fois par image ; null sans canevas lisible.
+ */
+function feuilleAvecPassages(im: CanvasImageSource & { width: number; height: number }, spec: SheetSpec, retournee: boolean): { texture: THREE.Texture; ecart: number } | null {
+  if (PASSAGES.has(im)) return PASSAGES.get(im)!;
+  let out: { texture: THREE.Texture; ecart: number } | null = null;
+  try {
+    const [cw, ch] = spec.cell!;
+    const plan = spec.profil!;
+    const c = document.createElement('canvas');
+    c.width = cw * COLS;
+    c.height = ch * ROWS;
+    const g = c.getContext('2d', { willReadFrequently: true });
+    if (g) {
+      // au plus proche, au centre des blocs agrandis ; remise à l'endroit d'une image retournée à la création
+      g.imageSmoothingEnabled = false;
+      if (retournee) { g.translate(0, c.height); g.scale(1, -1); }
+      g.drawImage(im, 0, 0, c.width, c.height);
+      const sol = Math.round(spec.anchor[1]) - 1;
+      const hanche = sol - Math.round(spec.figureH / 3);
+      const lire = (col: number) => ({ px: g.getImageData(col * cw, 2 * ch, cw, ch).data, w: cw, h: ch });
+      const ecart = (ecartPieds(lire(plan.contacts[0]), sol) + ecartPieds(lire(plan.contacts[1]), sol)) / 2;
+      for (const col of plan.passages) {
+        const k = lire(col);
+        posePassage(k, sol, hanche);
+        g.putImageData(new ImageData(k.px as Uint8ClampedArray<ArrayBuffer>, cw, ch), col * cw, 2 * ch);
+      }
+      const texture = new THREE.CanvasTexture(c);
+      texture.name = 'feuille:passages';
+      texture.colorSpace = THREE.NoColorSpace;
+      texture.magFilter = THREE.NearestFilter;
+      texture.minFilter = THREE.NearestFilter;
+      texture.generateMipmaps = false;
+      if (ecart > 0) out = { texture, ecart };
+    }
+  } catch { out = null; }
+  PASSAGES.set(im, out);
+  return out;
+}
+
 /**
  * Panneau d'un personnage à la hauteur de référence `WALKER_H` (la hauteur de l'îlot s'applique par l'échelle du
  * groupe) : la figure (`figureH` px logiques) vaut `WALKER_H`, les pieds (`anchor`) sont à l'origine. `ax` : décalage
@@ -805,6 +855,7 @@ export function createWalkerSprite(id: string): WalkerSprite {
   const body = new THREE.Mesh(geo, mat);
   // cycle de profil d'une feuille et pixel d'art en mètres (l'atlas par code garde ses quatre temps dessinés)
   let profil: readonly number[] | null = null;
+  let foulee: number | null = null;
   let artPx = 0;
   const shadow = new THREE.Mesh(
     new THREE.PlaneGeometry(0.95, 0.5),
@@ -853,7 +904,12 @@ export function createWalkerSprite(id: string): WalkerSprite {
         mat.needsUpdate = true;
       }
       // une texture sans `flipY` porte une image déjà retournée à la création
-      profil = im ? cycleFeuille(texture.image as CanvasImageSource & { width: number; height: number }, spec, !texture.flipY) : null;
+      const source = texture.image as CanvasImageSource & { width: number; height: number };
+      // plan de marche de profil (protagoniste) : passages redessinés par code, foulée mesurée sur les contacts
+      const plan = im && spec.pixel && spec.cell && spec.profil ? feuilleAvecPassages(source, spec, !texture.flipY) : null;
+      if (plan) uniforms.tAtlas.value = plan.texture;
+      profil = plan ? cyclePlan(spec.profil!) : im ? cycleFeuille(source, spec, !texture.flipY) : null;
+      foulee = plan ? (2 * plan.ecart * WALKER_H) / spec.figureH : null;
       artPx = WALKER_H / spec.figureH;
       const panel = walkerPanel(spec);
       geo.dispose();
@@ -871,6 +927,7 @@ export function createWalkerSprite(id: string): WalkerSprite {
       uniforms.uRecolor.value = slots.some((x) => x) ? 1 : 0;
     },
     profil: () => profil,
+    foulee: () => foulee,
     dispose() { geo.dispose(); mat.dispose(); shadow.geometry.dispose(); (shadow.material as THREE.Material).dispose(); },
   };
 }
