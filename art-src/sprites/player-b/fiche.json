@@ -1,0 +1,150 @@
+{
+  "id": "player-b",
+  "statut": "protagoniste, silhouette B (passe 164), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas donné l’ordre, dans une passe à part",
+  "auteur": "Claude Code (session « protagoniste », passe 164), à la demande du responsable : version homme du protagoniste, même structure et même tenue, cheveux argentés plus courts, peau mate ; accord dans la session : « H1 + réserve », personnage personnalisable, « 4 images, couleurs par code », choix nommé « Silhouette »",
+  "generation": "tools/m09-generer-images.mjs --only (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-protagoniste.mjs",
+  "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
+  "licences": "conditions d’OpenAI applicables aux sorties de l’API à la date de production ; aucune analyse juridique faite par l’agent : point à confirmer par le responsable avant tout usage en jeu",
+  "contenu": "aucun texte, lettre, chiffre, signature, filigrane ni logo demandé ; aucune enseigne du jeu de cartes classique ; aucun nom d’artiste ni de franchise dans les prompts",
+  "style": "style, échelle, proportions et tenue de la feuille du joueur approuvée (seule entrée) ; peau et cheveux en tons clés, recolorés en jeu",
+  "sources": [
+    {
+      "nom": "player-homme",
+      "modele": "gpt-image-2",
+      "point_d_acces": "/v1/images/edits",
+      "date": "2026-10-29T20:35:17.554Z",
+      "parametres": {
+        "model": "gpt-image-2",
+        "size": "1024x1024",
+        "quality": "high",
+        "output_format": "png",
+        "n": 1
+      },
+      "prompt": "The attached image is our own approved pixel-art sprite sheet of the player character, a young card duellist of a night harbour city. Draw the male version of this character on a new sprite sheet with exactly the same layout, the same outfit and the same overall silhouette: a young man of the same age and height. Only these differences: his hair is short, cut above the ears and at the nape, a short tousled fringe falling under the headband, nothing reaching the jaw (no bob); a slightly squarer jaw and slightly broader shoulders. Keep everything else: the cloth headband across the forehead, the scarf knotted loosely under the chin (never covering the mouth), the lowered hood framing the neck, the long coat, the leather satchel on its strap across the chest, the belt with its small amber buckle, dark blue trousers and brown boots, clearly drawn eyes.\n\nExact grid of 5 columns and 3 rows of equal cells, nothing between the cells; row 1 facing the viewer, row 2 seen from the back, row 3 right profile walking to the right; column 1 standing still, columns 2 to 5 a four-frame walking cycle; same size in every cell, both boots fully visible, both feet on the same baseline, figure centred, head steady.\n\nThe profile walk (row 3, columns 2 to 5) must be a real walking cycle, frame by frame: column 2 contact: the near leg (the lighter trouser leg) forward with the heel down, the far leg (the darker trouser leg) behind on its toes, the far arm swinging forward; column 3 passing: both legs under the body, the near leg straight and supporting, the far foot lifted just beside it, arms close to the body, the body one pixel higher; column 4 contact with the OTHER leg forward: the far leg forward with the heel down, the near leg behind on its toes, the near arm swinging forward; column 5 passing: both legs under the body, the near foot lifted beside the far leg. The two contact frames must show different legs in front. Rows 1 and 2 keep alternating legs as well.\n\nEach cell is 64 art pixels wide and 96 art pixels tall; the character is about 90 art pixels tall. Same sturdy RPG proportions as the attached sheet, about 3 heads tall, big readable eyes with both eyes drawn identically, large readable hands, short sturdy legs and boots.\n\nPremium illustrative pixel art exactly in the style of the attached sheet: crisp square pixels of one uniform size across the whole sheet; colour ramps of four to five tones per material; selective dark outlines with a continuous dark line around the whole silhouette; clean pixel clusters, no dithering, no noise, no anti-aliasing, no gradients, no blur.\n\nPlaceholder colours for in-game recolouring, each in flat shades of one pure hue only: skin (face, ears, neck, hands) in shades of pure red only (from #400000 to #FF0000), shaded as a light warm tan skin; hair and eyebrows in shades of pure yellow only (from #404000 to #FFFF00), shaded as silver-white hair; coat and lowered hood in shades of pure magenta only (from #400040 to #FF00FF); headband and scarf in shades of pure green only (from #004000 to #00FF00). Everything else in natural muted colours: dark blue trousers, brown leather satchel, belt and boots, a small amber buckle, blue eyes with a white catchlight, a dark mouth. A dark outline separates every placeholder-coloured area from any other colour. No other red, yellow, magenta, cyan or green anywhere.\n\nA perfectly flat, uniform pure cyan (#00FFFF) background with no shading, no texture, no floor and no cast shadow. No text, no letters, no numbers, no grid lines, no labels, no watermark, no logos, no playing-card suit symbols.",
+      "entrees": [
+        {
+          "chemin": "public/sprites/player.png",
+          "sha256": "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50"
+        }
+      ],
+      "brut": {
+        "fichier": "art-gen/2026-10-29-protagoniste/player-homme.png (dossier principal, ignoré par git)",
+        "sha256": "d872063ecd41c74311b24f83830eb53f9e242b8c4ea17c5eddb76d21a5397a5d",
+        "dimensions": [
+          1024,
+          1024
+        ]
+      },
+      "usage_api": {
+        "input_tokens": 1753,
+        "input_tokens_details": {
+          "image_tokens": 928,
+          "text_tokens": 825
+        },
+        "output_tokens": 7024,
+        "output_tokens_details": {
+          "image_tokens": 7024,
+          "text_tokens": 0
+        },
+        "total_tokens": 8777
+      }
+    }
+  ],
+  "traitement": {
+    "scripts": [
+      "tools/m09-traitement-images.mjs (processSheet)",
+      "tools/m09-protagoniste-feuille.mjs"
+    ],
+    "etapes": [
+      "fond cyan et liseré teinté retirés ; alpha binaire",
+      "pas des pixels d’art mesuré sur les arêtes (2.815 × 2.82 px)",
+      "figures repérées par les bandes vides ; grille d’art 64 × 96 px d’art par case imposée, couleur majoritaire du cœur de chaque bloc",
+      "pieds alignés sur une même ligne, tête centrée",
+      "tons clés (tenue, accent) ramenés exactement sur 64, 128, 191, 255",
+      "palette : couleurs naturelles réduites (k-moyennes)",
+      "yeux (passe 138) : de face, les deux yeux du brut recalés et moyennés, posés aux deux places ; aucun ton clé de vêtement ni d’accent dans les yeux et les sourcils",
+      "agrandissement ×3 au plus proche",
+      "pixels d’accent isolés (moins de deux voisins d’accent : liseré des cheveux sur le fond cyan) ramenés à la couleur majoritaire de leurs voisins : 47"
+    ]
+  },
+  "marche_de_profil": {
+    "largeurs_des_pieds": [
+      16,
+      35,
+      29,
+      38,
+      31
+    ],
+    "plan": {
+      "contacts": [
+        1,
+        3
+      ],
+      "passages": [
+        2,
+        4
+      ],
+      "dessines": true
+    }
+  },
+  "sortie": {
+    "fichier": "public/sprites/player-b.png",
+    "sha256": "728b5b08d100cf0126481caae63643ff18b259614668b4c3551c703e2bfff8f0",
+    "octets": 98176,
+    "entree_du_manifeste": {
+      "file": "player-b.png",
+      "sha256": "728b5b08d100cf0126481caae63643ff18b259614668b4c3551c703e2bfff8f0",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 91,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          3
+        ],
+        "passages": [
+          2,
+          4
+        ],
+        "dessines": true
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette B, depuis la feuille du joueur approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-b/fiche.json",
+      "approved": false
+    },
+    "tons_cles": {
+      "tenue": [
+        3150,
+        1250,
+        5963,
+        0
+      ],
+      "accent": [
+        0,
+        0,
+        310,
+        812
+      ]
+    },
+    "couleurs": 37
+  },
+  "chaine_des_empreintes": [
+    "c4782716b87cff1ec19a9ce3e16115f001d225d149d0fdf13cc574f6bb0c2a50 (entrée : public/sprites/player.png)",
+    "d872063ecd41c74311b24f83830eb53f9e242b8c4ea17c5eddb76d21a5397a5d (brut)",
+    "728b5b08d100cf0126481caae63643ff18b259614668b4c3551c703e2bfff8f0 (feuille ×3)"
+  ]
+}

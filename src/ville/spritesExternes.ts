@@ -173,7 +173,7 @@ export function specOf(e: SpriteManifestEntry, version: ManifestVersion): SheetS
   const v = e as SpriteManifestEntryV3;
   const spec: SheetSpec = { scale: v.scale, anchor: [v.anchor[0], v.anchor[1]], figureH: v.figureH, recolor: v.recolor ?? [] };
   if (v.pixel === true) { spec.cell = [v.cell[0], v.cell[1]]; spec.pixel = true; }
-  if (spec.pixel && planValable(v.profil)) spec.profil = { contacts: [v.profil.contacts[0], v.profil.contacts[1]], passages: [v.profil.passages[0], v.profil.passages[1]] };
+  if (spec.pixel && planValable(v.profil)) spec.profil = { contacts: [v.profil.contacts[0], v.profil.contacts[1]], passages: [v.profil.passages[0], v.profil.passages[1]], ...(v.profil.dessines ? { dessines: true } : {}) };
   return spec;
 }
 

@@ -790,7 +790,7 @@ function feuilleAvecPassages(im: CanvasImageSource & { width: number; height: nu
       const hanche = sol - Math.round(spec.figureH / 3);
       const lire = (col: number) => ({ px: g.getImageData(col * cw, 2 * ch, cw, ch).data, w: cw, h: ch });
       const ecart = (ecartPieds(lire(plan.contacts[0]), sol) + ecartPieds(lire(plan.contacts[1]), sol)) / 2;
-      for (const col of plan.passages) {
+      for (const col of plan.dessines ? [] : plan.passages) {
         const k = lire(col);
         posePassage(k, sol, hanche);
         g.putImageData(new ImageData(k.px as Uint8ClampedArray<ArrayBuffer>, cw, ch), col * cw, 2 * ch);
