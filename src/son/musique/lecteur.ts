@@ -12,6 +12,7 @@ import { choisir } from './banque';
 import { formation } from './arrangement';
 import { JINGLES, mixDe, passage, VERSIONS, type DefJingle, type DefVersion, type JingleId, type OptVersion, type VersionId } from './catalogue';
 import { chaineLofi, tamponSalle, type SalleId } from './effets';
+import { planEnchainement, type PlanEnchainement } from './enchainement';
 import { lier, type Evenement, type InstrId } from './generateurs';
 import type { AccordP } from './partitions';
 import { ponctuation, type PonctuationId } from './ponctuations';
@@ -249,6 +250,8 @@ class Melangeur {
 interface Instance {
   v: DefVersion;
   mel: Melangeur;
+  /** Premier temps de la version (levée comprise) ; `t0` : début du passage en cours. */
+  debut: number;
   t0: number;
   p: number;
   spb: number;
@@ -360,9 +363,30 @@ export class Lecteur {
     const mel = new Melangeur(this.ctx, p.gain, this.banque, { salle: o.salle ?? v.salle, lofi: v.lofi ?? false, pedale: v.pedale ?? false, gain, mix: v.mix, jeu: v.jeu ?? (v.lofi ? 'lofi' : 'jazz'), couches: { ...(v.couches ?? {}), ...(o.couches ?? {}) } });
     if (avant) { mel.maitre.gain.value = 0.0001; mel.fondu(quand, gain, fondu * 0.6); }
     const intro = (o.intro ?? !avant) && !!v.intro;
-    const inst: Instance = { v, mel, t0: quand, p: intro ? -1 : 0, spb: 60 / v.tempo, ev: [], acc: [], i: 0, fin: quand, graine: this.graine, o: opts, arret: null };
+    const inst: Instance = { v, mel, debut: quand, t0: quand, p: intro ? -1 : 0, spb: 60 / v.tempo, ev: [], acc: [], i: 0, fin: quand, graine: this.graine, o: opts, arret: null };
     this.preparer(inst, quand);
     p.cur = inst;
+  }
+
+  /**
+   * Enchaîne vers une autre version (`enchainement.ts`) : la version en cours s'efface, un silence, puis la nouvelle par
+   * sa levée ; le duel qui se tend, par un break. `libre` : rien ne reprend avant. Renvoie le plan suivi.
+   */
+  enchainer(id: VersionId, o: OptJouer & { libre?: number } = {}): PlanEnchainement {
+    const p = this.pistes.get('fond');
+    const c = p?.cur ?? null;
+    const v = VERSIONS[id];
+    const plan = planEnchainement({
+      now: this.ctx.currentTime, de: c?.v.id ?? null, debutDe: c?.debut ?? null,
+      prochainTemps: this.prochain('temps'), prochainePhrase: this.prochain('phrase'), libre: o.libre ?? 0,
+    }, id, (v.mesure * 60) / v.tempo);
+    if (plan.sortie && p && c) {
+      if (plan.sortie.coupe) this.terminer('phrase');
+      else this.sortir(p, c, plan.sortie.a, plan.sortie.duree);
+    }
+    const { libre: _l, ...jouer } = o;
+    this.jouer(id, { ...jouer, quand: plan.debut, intro: plan.intro });
+    return plan;
   }
 
   private sortir(p: Piste, inst: Instance, quand: number, fondu: number): void {
@@ -451,11 +475,11 @@ export class Lecteur {
    * Fin de duel (contrat 2, §2) : la musique de fond s'arrête sur le temps fort suivant, sur une cymbale étouffée et la
    * fondamentale ; renvoie l'instant de l'arrêt (le jingle peut s'y caler).
    */
-  terminer(): number {
+  terminer(sur: 'fort' | 'phrase' = 'fort'): number {
     const p = this.pistes.get('fond');
     const c = p?.cur;
     if (!p || !c) return this.ctx.currentTime;
-    const t = this.prochain('fort');
+    const t = this.prochain(sur);
     const sym = this.accordA(t - 0.01) ?? 'Fmaj7';
     const mel = new Melangeur(this.ctx, p.gain, this.banque, { salle: c.v.salle, gain: c.v.gain, mix: c.v.mix });
     for (const e of ponctuation('fin', sym).ev) mel.note(e, t + e.t * c.spb, e.d * c.spb, c.spb);
@@ -491,10 +515,10 @@ export class Lecteur {
     return fin * spb;
   }
 
-  /** Efface la musique d'une piste (fondu). */
-  arreter(fondu = 1.2, piste = 'fond'): void {
+  /** Efface la musique d'une piste (fondu), tout de suite ou à partir de `quand`. */
+  arreter(fondu = 1.2, piste = 'fond', quand = this.ctx.currentTime + 0.02): void {
     const p = this.pistes.get(piste);
-    if (p?.cur) this.sortir(p, p.cur, this.ctx.currentTime + 0.02, fondu);
+    if (p?.cur) this.sortir(p, p.cur, quand, fondu);
   }
 
   /** Effacement (dialogues) : `db` négatif ; 0 pour revenir. */

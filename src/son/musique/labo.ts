@@ -20,6 +20,7 @@ import type { PonctuationId } from './ponctuations';
  */
 export type Action =
   | { t: number; faire: 'jouer'; version: VersionId; options?: OptVersion; fondu?: number; intro?: boolean; piste?: string }
+  | { t: number; faire: 'enchainer'; version: VersionId; options?: OptVersion; couches?: Record<string, number> }
   | { t: number; faire: 'contexte'; options: OptVersion; piste?: string }
   | { t: number; faire: 'couches'; niveaux: Record<string, number>; sur?: 'temps' | 'fort' | 'mesure' | 'phrase'; duree?: number; piste?: string }
   | { t: number; faire: 'ponctuer'; id: PonctuationId }
@@ -36,6 +37,7 @@ export interface Scenario { duree: number; actions: Action[] }
 export function agir(l: Lecteur, a: Action): void {
   switch (a.faire) {
     case 'jouer': l.jouer(a.version, { options: a.options, fondu: a.fondu, intro: a.intro, piste: a.piste }); break;
+    case 'enchainer': l.enchainer(a.version, { options: a.options, ...(a.couches ? { couches: a.couches } : {}) }); break;
     case 'contexte': l.contexte(a.options, a.piste); break;
     case 'couches': l.couches(a.niveaux, { sur: a.sur, duree: a.duree, piste: a.piste }); break;
     case 'ponctuer': l.ponctuer(a.id); break;
@@ -53,7 +55,7 @@ export function agir(l: Lecteur, a: Action): void {
 function instrumentsDe(sc: Scenario): InstrId[] {
   const s = new Set<InstrId>(['piano', 'vibra', 'basse', 'crash', 'cloche', 'gc', 'cc']);
   for (const a of sc.actions) {
-    if ((a.faire === 'jouer' || a.faire === 'source') && a.version) VERSIONS[a.version].instruments.forEach((i) => s.add(i));
+    if ((a.faire === 'jouer' || a.faire === 'enchainer' || a.faire === 'source') && a.version) VERSIONS[a.version].instruments.forEach((i) => s.add(i));
     if (a.faire === 'jingle') JINGLES[a.id].instruments.forEach((i) => s.add(i));
     if (a.faire === 'terminer' && a.jingle) JINGLES[a.jingle].instruments.forEach((i) => s.add(i));
   }
@@ -265,10 +267,11 @@ export function lancerLabo(o: { qa: boolean }): void {
 
   const ids = Object.keys(VERSIONS) as VersionId[];
   const boutonsV = ids.map((id) => bouton(`mu-${id}`, `${id} · ${VERSIONS[id].titre.replace(/^[^—]+— /, '')}`, (l, b) => {
-    l.jouer(id, { options: options() });
-    if (VERSIONS[id].couches) { for (const k of Object.keys(couches)) couches[k] = VERSIONS[id].couches![k] ?? 1; majCouches(); }
     // un duel lancé seul : la mélodie d'emblée (au jeu, elle attend le premier Clash)
-    if (VERSIONS[id].couches && (VERSIONS[id].couches!.melodie ?? 1) === 0) { couches.melodie = 1; l.couches({ melodie: 1 }, { sur: 'temps', duree: 0.05 }); majCouches(); }
+    const seul = !!VERSIONS[id].couches && (VERSIONS[id].couches!.melodie ?? 1) === 0;
+    // comme au jeu : le morceau en cours s'efface, un silence, puis la levée du nouveau
+    l.enchainer(id, { options: options(), ...(seul ? { couches: { melodie: 1 } } : {}) });
+    if (VERSIONS[id].couches) { for (const k of Object.keys(couches)) couches[k] = VERSIONS[id].couches![k] ?? 1; if (seul) couches.melodie = 1; majCouches(); }
     boutonsV.forEach((x) => x.classList.toggle('on', x === b));
     etat.textContent = decrire(id);
   }));
@@ -296,11 +299,15 @@ export function lancerLabo(o: { qa: boolean }): void {
   const majCouches = (): void => { boutonsC.forEach((b, i) => b.classList.toggle('on', (couches[['melodie', 'tension', 'cuivres'][i]!] ?? 0) > 0)); };
   const ponct = ([['gagne', 'Clash gagné'], ['perdu', 'Clash perdu'], ['signature', 'Signature'], ['prolongation', 'Prolongation']] as const).map(([k, t]) => bouton(`mu-p-${k}`, t, (l) => { l.ponctuer(k); }));
   const fins = ([['victoire', 'Fin : victoire'], ['defaite', 'Fin : défaite']] as const).map(([k, t]) => bouton(`mu-fin-${k}`, t, (l) => { const t0 = l.terminer(); l.jingle(k, t0 + 0.6); boutonsV.forEach((x) => x.classList.remove('on')); }));
-  const tendu = bouton('mu-tendu', 'Passer au duel tendu', (l) => { l.jouer('III-2', { fondu: 0.8 }); });
+  const tendu = bouton('mu-tendu', 'Passer au duel tendu', (l) => { l.enchainer('III-2', { couches: { melodie: 1 } }); });
 
   // la ville : dialogue, entrée en duel, le Fanal
   const dialogue = bouton('mu-focus', 'Dialogue (la musique s\'efface)', (l, b) => { const on = !b.classList.contains('on'); l.focus(on); b.classList.toggle('on', on); });
-  const versDuel = bouton('mu-vers-duel', 'Entrer en duel', (l) => { l.assourdir(true); setTimeout(() => { l.jouer('III-1', { fondu: 1 }); l.assourdir(false); }, 1500); });
+  const versDuel = bouton('mu-vers-duel', 'Entrer en duel', (l) => {
+    l.assourdir(true);
+    const t = l.enchainer('III-1').debut;
+    setTimeout(() => l.assourdir(false), Math.max(0, (t - (ctx?.currentTime ?? 0)) * 1000));
+  });
   const fanal = h('input', { type: 'range', min: '0', max: '100', value: '0', 'data-key': 'mu-fanal' }) as HTMLInputElement;
   let fanalOn = false;
   fanal.oninput = () => void go((l) => { if (!fanalOn) { l.source('fanal', 'I-2'); fanalOn = true; } l.proximite('fanal', Number(fanal.value) / 100); });
@@ -324,10 +331,10 @@ export function lancerLabo(o: { qa: boolean }): void {
     etat.textContent = `${i} seul : le premier A du thème I dans son registre (${Math.round(s)} s).`;
   }));
   const demoT = bouton('mu-demo', 'Transitions : menus → titre → victoire → récit', (l) => {
-    l.jouer('I-2');
-    setTimeout(() => l.jouer('I-1'), 9000);
-    setTimeout(() => { l.arreter(0.6); l.jingle('victoire'); }, 20000);
-    setTimeout(() => l.jouer('I-3'), 24000);
+    l.enchainer('I-2');
+    setTimeout(() => l.enchainer('I-1'), 9000);
+    setTimeout(() => { const t = l.terminer(); l.jingle('victoire', t + 0.6); }, 20000);
+    setTimeout(() => l.enchainer('I-3'), 26000);
   });
   const vol = h('input', { type: 'range', min: '0', max: '100', value: '80', 'data-key': 'mu-volume' }) as HTMLInputElement;
   vol.oninput = () => { volume.v = Number(vol.value) / 100; if (general && ctx) general.gain.setTargetAtTime(volume.v, ctx.currentTime, 0.05); };

@@ -10,6 +10,7 @@ import {
   consigneDuel, consigneVille, estTendu, intensiteDuel, musiqueEcran, numeroChapitre, proximiteFanal, roleDuelAventure, roleDuelStandard, salleDuLieu,
   suiviDepuis, suivreDuel, SUIVI_DEPART, versionDuel, versionQuartier,
 } from '../src/son/musique/chef';
+import { FONDU_SORTIE_S, SILENCE_S, finArret, planEnchainement } from '../src/son/musique/enchainement';
 
 let seq = 0;
 const ev = (kind: GameEvent['kind'], data: Record<string, unknown> = {}, vis: GameEvent['vis'] = 'public'): GameEvent => ({ seq: seq++, turn: 1, phase: 'CLASH' as GameEvent['phase'], vis, kind, data });
@@ -135,5 +136,33 @@ describe('M13 — la musique du moteur du son (sans contexte audio)', () => {
     m.jingle('carte');
     expect(m.journal()).toEqual(['version:I-1', 'duel:kai:V-1', 'ponctuation:gagne', 'version:V-1:melodie', 'fin:victoire', 'jingle:carte']);
     expect(m.consigne()).toEqual({ version: null });
+  });
+});
+
+describe('M13 — les enchaînements entre deux morceaux (retour du responsable du 2026-10-29)', () => {
+  const base = { now: 10, debutDe: 2, prochainTemps: 10.3, prochainePhrase: 12, libre: 0 };
+  it('un autre morceau : effacement à partir du temps suivant, un silence, puis la levée du nouveau ; jamais de chevauchement', () => {
+    const p = planEnchainement({ ...base, de: 'II-1' }, 'III-1', 1.67);
+    expect(p.sortie).toEqual({ a: 10.3, duree: FONDU_SORTIE_S, coupe: false });
+    expect(p.debut).toBeCloseTo(10.3 + FONDU_SORTIE_S + SILENCE_S, 9);
+    expect(p.debut - (p.sortie!.a + p.sortie!.duree)).toBeGreaterThanOrEqual(1);
+    expect(p.intro).toBe(true);
+  });
+  it('le duel qui se tend : un break, arrêt net sur la phrase et une mesure de silence, sans levée', () => {
+    const p = planEnchainement({ ...base, de: 'III-1' }, 'III-2', 1.54);
+    expect(p.sortie).toEqual({ a: 12, duree: 0.08, coupe: true });
+    expect(p.debut).toBeCloseTo(13.54, 9);
+    expect(p.intro).toBe(false);
+  });
+  it('depuis le silence : tout de suite, ou après le silence qui suit un arrêt ou un jingle de fin', () => {
+    expect(planEnchainement({ ...base, de: null, debutDe: null }, 'I-1', 1.9)).toEqual({ sortie: null, debut: 10.1, intro: true });
+    expect(planEnchainement({ ...base, de: null, debutDe: null, libre: 14 }, 'II-1', 2.5).debut).toBe(14);
+    expect(finArret(10, 0)).toBeCloseTo(10.02 + FONDU_SORTIE_S + SILENCE_S, 9);
+    expect(finArret(10, 20)).toBe(20);
+  });
+  it('un morceau prévu qui n\'a pas commencé (dans le silence) est remplacé sans allonger le silence', () => {
+    const p = planEnchainement({ ...base, de: 'II-2', debutDe: 12.5 }, 'II-1', 2.5);
+    expect(p.sortie).toEqual({ a: 10, duree: 0, coupe: false });
+    expect(p.debut).toBe(12.5);
   });
 });

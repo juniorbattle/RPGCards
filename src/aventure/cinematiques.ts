@@ -16,7 +16,11 @@ import type { Vec2 } from '../ville/monde';
  * s'ajoute à la hauteur visée) ; `mouvement` : `coupe` (franche), `glisse` (amortie, constante `tau` en s) ou
  * `travelling` (du plan précédent à celui-ci, minuté sur `ms`, adouci aux deux bouts) ; `ms` : durée du plan.
  */
-export interface Plan { at: Vec2; zoom?: number; hauteur?: number; mouvement: 'coupe' | 'glisse' | 'travelling'; ms: number; tau?: number }
+/**
+ * Un plan : point visé et réglages relatifs à ceux de l'îlot (`zoom`, `hauteur`), ou des personnages à cadrer
+ * (`sujets`, `Town.cadrer` : leurs pieds au-dessus de la boîte de dialogue ; `serre` plus serré, `zoom` plus large).
+ */
+export interface Plan { at: Vec2; zoom?: number; hauteur?: number; sujets?: readonly Vec2[]; serre?: number; mouvement: 'coupe' | 'glisse' | 'travelling'; ms: number; tau?: number }
 
 export type CinematiqueId = `lieu-${IlotId}` | 'rival' | 'guetteur' | 'prologue-kai' | 'prologue-foule' | `affiliation-${Family}` | `chef-${Family}` | `chapitre-${ChapitreCarton}` | 'championnat' | 'titre';
 
@@ -68,10 +72,20 @@ export function plansArrivee(joueur: Vec2, bornes: { minX: number; maxX: number 
   ];
 }
 
-/** Deux personnages dans le même cadre : le milieu des deux, d'autant plus près qu'ils sont proches. */
+/** Deux personnages dans le même cadre : le milieu des deux, d'autant plus près qu'ils sont proches (plans larges). */
 export function cadrageDuo(a: Vec2, b: Vec2): { at: Vec2; zoom: number; hauteur: number } {
   const d = Math.hypot(a.x - b.x, a.z - b.z);
   return { at: { x: (a.x + b.x) / 2, z: (a.z + b.z) / 2 }, zoom: Math.min(1, Math.max(0.66, 0.6 + d * 0.06)), hauteur: -0.7 };
+}
+
+/**
+ * Des personnages cadrés (retour du responsable du 2026-10-29 : la première scène avec le rival « donne l'impression
+ * de manquer le cadre de vue ») : la caméra les cadre sur leur hauteur réelle, pieds au-dessus de la boîte de dialogue
+ * (`cadrageSujets`, `src/ville/cameras.ts`), au lieu de réglages relatifs à ceux de l'îlot.
+ */
+export function sur(points: readonly Vec2[], serre?: number): { at: Vec2; sujets: Vec2[]; serre?: number } {
+  const n = Math.max(1, points.length);
+  return { at: { x: points.reduce((s, p) => s + p.x, 0) / n, z: points.reduce((s, p) => s + p.z, 0) / n }, sujets: points.map((p) => ({ ...p })), ...(serre ? { serre } : {}) };
 }
 
 /**
@@ -79,32 +93,28 @@ export function cadrageDuo(a: Vec2, b: Vec2): { at: Vec2; zoom: number; hauteur:
  * personnages pendant qu'il court au joueur (le dialogue s'ouvre sur ce cadre).
  */
 export function plansRival(apparition: Vec2, approche: Vec2, joueur: Vec2, pointMs: number = DUREES.rivalPoint): Plan[] {
-  const duo = cadrageDuo(approche, joueur);
   return [
-    { at: { ...apparition }, zoom: 0.6, hauteur: -1.1, mouvement: 'glisse', tau: 0.32, ms: pointMs },
-    { ...duo, mouvement: 'glisse', tau: 0.55, ms: 0 },
+    { ...sur([apparition], 1.15), mouvement: 'glisse', tau: 0.32, ms: pointMs },
+    { ...sur([approche, joueur]), mouvement: 'glisse', tau: 0.55, ms: 0 },
   ];
 }
 
 /** Un guetteur repère le joueur : un plan court, sans bandes, sur les deux personnages pendant qu'il vient. */
 export function plansGuetteur(approche: Vec2, joueur: Vec2): Plan[] {
-  return [{ ...cadrageDuo(approche, joueur), mouvement: 'glisse', tau: 0.4, ms: 0 }];
+  return [{ ...sur([approche, joueur]), mouvement: 'glisse', tau: 0.4, ms: 0 }];
 }
 
-/** Cadre d'un dialogue de scène : sur un personnage (gros plan) ou sur deux ; `bandes` : la scène les garde. */
-export interface CadreDialogue { at: Vec2; zoom?: number; hauteur?: number; bandes?: boolean }
+/** Cadre d'un dialogue de scène : sur un personnage (gros plan) ou sur plusieurs ; `bandes` : la scène les garde. */
+export interface CadreDialogue { at: Vec2; zoom?: number; hauteur?: number; sujets?: readonly Vec2[]; serre?: number; bandes?: boolean }
 
 /** Le cadre d'un dialogue : sur `a` seul, ou sur `a` et `b` ensemble. */
 export function cadreDialogue(a: Vec2, b?: Vec2 | null, bandes = true): CadreDialogue {
-  return b ? { ...cadrageDuo(a, b), bandes } : { at: { ...a }, zoom: 0.72, hauteur: -0.8, bandes };
+  return { ...(b ? sur([a, b]) : sur([a], 1.1)), bandes };
 }
 
-/** Un groupe dans le même cadre (la foule et le joueur) : le centre, d'autant plus loin que le groupe est étendu. */
+/** Un groupe dans le même cadre (la foule et le joueur) : tous dans la largeur. */
 export function cadreGroupe(points: readonly Vec2[], bandes = true): CadreDialogue {
-  const n = Math.max(1, points.length);
-  const c = { x: points.reduce((s, p) => s + p.x, 0) / n, z: points.reduce((s, p) => s + p.z, 0) / n };
-  const etendue = Math.max(0, ...points.map((p) => Math.hypot(p.x - c.x, p.z - c.z)));
-  return { at: c, zoom: Math.min(1.15, Math.max(0.8, 0.7 + etendue * 0.07)), hauteur: -0.3, bandes };
+  return { ...sur(points), bandes };
 }
 
 /**
@@ -125,16 +135,16 @@ export function plansChapitre(joueur: Vec2, bornes: { minX: number; maxX: number
 /** Un chef vaincu : la caméra se porte sur lui, tout près (il s'incline), puis prend les deux personnages. */
 export function plansChef(chef: Vec2, joueur: Vec2): Plan[] {
   return [
-    { at: { ...chef }, zoom: 0.58, hauteur: -1.1, mouvement: 'glisse', tau: 0.35, ms: DUREES.chefPoint },
-    { ...cadrageDuo(chef, joueur), mouvement: 'glisse', tau: 0.6, ms: DUREES.chefDuo },
+    { ...sur([chef], 1.15), mouvement: 'glisse', tau: 0.35, ms: DUREES.chefPoint },
+    { ...sur([chef, joueur]), mouvement: 'glisse', tau: 0.6, ms: DUREES.chefDuo },
   ];
 }
 
 /** L'affiliation confirmée : gros plan sur le joueur dans ses nouvelles couleurs, puis la caméra recule lentement. */
 export function plansAffiliation(joueur: Vec2): Plan[] {
   return [
-    { at: { ...joueur }, zoom: 0.5, hauteur: -1.2, mouvement: 'coupe', ms: DUREES.affiliationTenue },
-    { at: { ...joueur }, zoom: 0.86, hauteur: -0.5, mouvement: 'travelling', ms: DUREES.affiliationRecul },
+    { ...sur([joueur], 1.25), mouvement: 'coupe', ms: DUREES.affiliationTenue },
+    { ...sur([joueur]), zoom: 1.7, mouvement: 'travelling', ms: DUREES.affiliationRecul },
   ];
 }
 
@@ -153,26 +163,29 @@ export function plansTitre(heraut: Vec2 | null, joueur: Vec2, bornes: { minX: nu
 
 /** Kaï au prologue : la caméra se porte sur lui, aux braseros, avant sa première réplique. */
 export function plansKaiPrologue(kai: Vec2): Plan[] {
-  return [{ at: { ...kai }, zoom: 0.62, hauteur: -1.0, mouvement: 'glisse', tau: 0.5, ms: DUREES.kaiPrologue }];
+  return [{ ...sur([kai], 1.1), mouvement: 'glisse', tau: 0.5, ms: DUREES.kaiPrologue }];
 }
 
 /** L'émissaire fend la foule : la caméra garde la foule et le joueur pendant qu'il s'avance jusqu'à lui. */
 export function plansEmissaire(foule: readonly Vec2[], arrivee: Vec2, joueur: Vec2): Plan[] {
-  const g = cadreGroupe([...foule, joueur]);
   return [
-    { at: g.at, zoom: g.zoom, hauteur: g.hauteur, mouvement: 'glisse', tau: 0.5, ms: 400 },
-    { ...cadrageDuo(arrivee, joueur), mouvement: 'glisse', tau: 0.9, ms: 0 },
+    { ...sur([...foule, joueur]), mouvement: 'glisse', tau: 0.5, ms: 400 },
+    { ...sur([arrivee, joueur]), mouvement: 'glisse', tau: 0.9, ms: 0 },
   ];
 }
 
 /** Adoucissement des deux bouts d'un travelling (0 → 0, 1 → 1). */
 export const adoucir = (t: number): number => { const u = Math.min(1, Math.max(0, t)); return u * u * (3 - 2 * u); };
 
-/** Interpolation d'un travelling entre deux plans, à l'instant `t` (0 à 1). */
-export function entre(a: Plan, b: Plan, t: number): { at: Vec2; zoom: number; hauteur: number } {
+/** Interpolation d'un travelling entre deux plans, à l'instant `t` (0 à 1) ; des personnages cadrés restent cadrés. */
+export function entre(a: Plan, b: Plan, t: number): { at: Vec2; zoom: number; hauteur: number; sujets?: readonly Vec2[]; serre?: number } {
   const k = adoucir(t);
   const m = (x: number, y: number) => x + (y - x) * k;
-  return { at: { x: m(a.at.x, b.at.x), z: m(a.at.z, b.at.z) }, zoom: m(a.zoom ?? 1, b.zoom ?? 1), hauteur: m(a.hauteur ?? 0, b.hauteur ?? 0) };
+  const sujets = b.sujets ?? a.sujets;
+  return {
+    at: { x: m(a.at.x, b.at.x), z: m(a.at.z, b.at.z) }, zoom: m(a.zoom ?? 1, b.zoom ?? 1), hauteur: m(a.hauteur ?? 0, b.hauteur ?? 0),
+    ...(sujets ? { sujets, serre: m(a.serre ?? 1, b.serre ?? 1) } : {}),
+  };
 }
 
 // ------------------------------------------------------------------ réglage (dans ce navigateur, à part des sauvegardes)

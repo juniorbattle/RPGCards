@@ -9,12 +9,14 @@
  * opacité, filtres), un hôte hors du plateau (ses re-rendus n'interrompent rien) et hors de celui de la scène du Clash
  * (qui remplace son contenu à chaque Clash), posé au-dessus. Rythmes : normal, rapide (durées ×
  * facteur), instantané (rien) ; mouvement réduit : aucun déplacement ni zoom, des fondus ; gel (captures) : le dernier
- * temps fort posé dans son état tenu ; `stop()` retire tout, tout de suite. Le premier plan ne capte aucun clic.
+ * temps fort posé dans son état tenu ; `stop()` retire tout, tout de suite. Le premier plan ne capte aucun clic, sauf un
+ * temps fort qui concerne le joueur (`attendClic`, retour du responsable du 2026-10-29) : il se pose et attend son clic
+ * (ou Espace, Entrée) avant de partir, et la file attend avec lui.
  */
 import type { Family } from '../game/catalog/cards';
 import { emblemSvg } from '../art/emblems';
 import type { Activation } from './activations';
-import { ACTIVATION_MS } from './activations';
+import { ACTIVATION_MS, attendClic } from './activations';
 import { backEl, cardEl } from './cardView';
 import { cls, h } from './dom';
 import { techniqueSeal, triggerIcon } from './effectIcons';
@@ -30,7 +32,14 @@ export interface ActivationStageDeps {
   onStart?(a: Activation): void;
   /** Un grand temps fort assourdit la scène du Clash (`true`), puis la rend (`false`). */
   dim?(on: boolean): void;
+  /** Vrai : un temps fort qui concerne le joueur attend son clic (rythme normal ; en QA, sur demande). */
+  tenir?(): boolean;
+  /** La file s'est vidée d'elle-même (après un clic : la résolution reprend, le rival peut jouer). */
+  onDrained?(): void;
 }
+
+/** Fraction de la durée où un temps fort tenu se pose (avant sa sortie) pour attendre le clic. */
+const POSE = 0.8;
 
 type Frames = Keyframe[];
 
@@ -40,7 +49,7 @@ const SMALL: ReadonlySet<string> = new Set(['echec', 'insight', 'soin']);
 export class ActivationStage {
   private root: HTMLElement;
   private queue: Activation[] = [];
-  private current: { a: Activation; el: HTMLElement; anims: Animation[]; timer: number; end: number } | null = null;
+  private current: { a: Activation; el: HTMLElement; anims: Animation[]; timer: number; end: number; ms: number; tenu: boolean; finir: () => void } | null = null;
   /** QA : temps forts joués (genre et titre), dans l'ordre. */
   readonly played: Array<{ kind: string; title: string; side: string }> = [];
   /** QA (`?qa=1`) : genres à figer à leur premier passage (captures), fraction de la durée, temps fort figé. */
@@ -58,10 +67,39 @@ export class ActivationStage {
     return !!this.current || this.queue.length > 0;
   }
 
-  /** Durée restante de la file (ms, rythme compris). */
+  /** Durée restante de la file (ms, rythme compris) ; infinie si un temps fort y attend le clic du joueur. */
   get remaining(): number {
+    if (this.current?.tenu || this.queue.some((a) => this.tient(a))) return Infinity;
     const now = performance.now();
     return this.queue.reduce((s, a) => s + this.duration(a), 0) + (this.current ? Math.max(0, this.current.end - now) : 0);
+  }
+
+  /** Vrai tant qu'un temps fort à l'écran attend le clic du joueur. */
+  get attend(): boolean {
+    return !!this.current?.tenu;
+  }
+
+  private tient(a: Activation): boolean {
+    return !!this.deps.tenir?.() && attendClic(a);
+  }
+
+  /** Le clic du joueur (ou Espace, Entrée) : le temps fort tenu part, la file reprend. Faux s'il n'y en avait pas. */
+  continuer(): boolean {
+    const c = this.current;
+    if (!c?.tenu) return false;
+    c.tenu = false;
+    window.clearTimeout(c.timer);
+    c.el.classList.remove('tenu', 'wait-click');
+    c.el.querySelector('.act-next')?.remove();
+    const pose = c.ms * POSE;
+    for (const an of c.anims) {
+      if (Number(an.currentTime ?? 0) < pose) an.currentTime = pose;
+      an.play();
+    }
+    const rest = c.ms - pose;
+    c.end = performance.now() + rest;
+    c.timer = window.setTimeout(c.finir, rest);
+    return true;
   }
 
   private duration(a: Activation): number {
@@ -110,7 +148,7 @@ export class ActivationStage {
 
   private next(): void {
     const a = this.queue.shift();
-    if (!a) { this.current = null; this.deps.dim?.(false); return; }
+    if (!a) { this.current = null; this.deps.dim?.(false); this.deps.onDrained?.(); return; }
     const ms = this.duration(a);
     const el = this.build(a);
     this.root.append(el);
@@ -118,18 +156,35 @@ export class ActivationStage {
     this.dim(a);
     this.deps.onStart?.(a);
     const anims = this.animate(el, a, ms);
-    const timer = window.setTimeout(() => {
+    const finir = (): void => {
       for (const an of anims) an.cancel();
       el.remove();
       this.current = null;
       this.next();
-    }, ms);
-    this.current = { a, el, anims, timer, end: performance.now() + ms };
+    };
+    // un temps fort qui concerne le joueur : il capte le clic dès son entrée, se pose, puis attend
+    const tenu = this.tient(a);
+    if (tenu) {
+      el.classList.add('tenu');
+      el.addEventListener('pointerdown', (e) => { e.stopPropagation(); this.continuer(); });
+    }
+    const timer = window.setTimeout(tenu ? () => this.poser() : finir, tenu ? ms * POSE : ms);
+    this.current = { a, el, anims, timer, end: tenu ? Infinity : performance.now() + ms, ms, tenu, finir };
     if (this.holdKinds?.delete(a.kind)) {
       window.clearTimeout(timer);
       for (const an of anims) { an.currentTime = ms * this.holdAt; an.pause(); }
       this.held = a;
     }
+  }
+
+  /** Le temps fort tenu arrive à sa pose : il s'arrête et invite au clic. */
+  private poser(): void {
+    const c = this.current;
+    if (!c?.tenu) return;
+    // la pose exacte (une image lente, en rendu logiciel, laisse les animations en attente de leur départ)
+    for (const an of c.anims) { an.pause(); an.currentTime = c.ms * POSE; }
+    c.el.classList.add('wait-click');
+    c.el.append(h('div', { class: 'act-next', 'data-key': 'act-next' }, 'Cliquer pour continuer'));
   }
 
   /** QA : fige le premier temps fort de chacun de ces genres à la fraction `at` de sa durée (jusqu'à `release`). */

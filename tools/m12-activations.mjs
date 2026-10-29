@@ -6,6 +6,7 @@
 //    Assertions : secret (aucun nom de carte masquée adverse dans la scène ; effet masqué adverse montré de dos), « Passer »
 //    vide la scène, rien ne subsiste à la fin du duel.
 // 3. Réglages : mouvement réduit (aucune transformation animée), instantané (rien), gel (temps fort posé, rien n'attend).
+// 4. Tenue au clic (retour du responsable du 2026-10-29) : ce qui concerne le joueur attend son clic ou Espace.
 // Sortie : screenshots/qa/m12/activations/ (JPEG), artifacts/qa/m12/activations.json. Son coupé en QA.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
@@ -230,6 +231,74 @@ check('intégration : genres vus dans de vrais duels au navigateur', vus.length 
   await shot(page, 'reglage-portrait-390');
   const inside = (b) => b && b.top >= 0 && b.bottom <= 844 && b.left >= 0 && b.right <= 390;
   check('téléphone en portrait : tout dans la largeur, sans chevauchement', inside(r.banner) && inside(r.cons) && inside(r.detail) && inside(r.card) && r.card.bottom <= r.banner.top && r.banner.bottom <= r.cons.top && r.cons.bottom <= r.detail.top, JSON.stringify(r));
+  await ctx.close();
+}
+
+// 4. tenue au clic (retour du responsable du 2026-10-29) : un temps fort qui concerne le joueur attend son clic ou
+//    Espace ; la file et le rival attendent avec lui ; en QA, seulement avec `tenir=1`
+{
+  const eff = exemples.get('effet');
+  const soin = exemples.get('soin');
+  const { ctx, page } = await openPage('seed=4242&aiDelay=999999&tenir=1');
+  const ms = await page.evaluate((l) => window.__lqv.actPlay(l), [eff, soin].filter(Boolean));
+  await page.waitForTimeout(4200);
+  const pose = await page.evaluate(() => { const el = document.querySelector('#activations .act.tenu.wait-click'); return { tenu: el ? 1 : 0, visible: el ? getComputedStyle(el).opacity === '1' : false, invite: document.querySelectorAll('#activations .act-next').length, busy: window.__lqv.activations().busy }; });
+  await shot(page, 'tenu-attend-le-clic');
+  check('tenue : l’effet du joueur reste posé (visible) après sa durée, l’invite au clic montrée, la file attend', ms === Infinity && pose.tenu === 1 && pose.visible && pose.invite === 1 && pose.busy === true, JSON.stringify({ ms, ...pose }));
+  await page.mouse.click(640, 300);
+  await page.waitForTimeout(700);
+  const apres = await page.evaluate(() => ({ effet: document.querySelectorAll('#activations .act-effet').length, played: window.__lqv.activations().played.map((p) => p.kind) }));
+  check('tenue : le clic le fait partir et la file reprend (la pastille de soin passe seule)', apres.effet === 0 && apres.played.includes('soin'), JSON.stringify(apres));
+  await page.waitForFunction(() => !window.__lqv.activations().busy, null, { timeout: 8000 }).catch(() => {});
+  await page.evaluate((a) => window.__lqv.actPlay([a]), eff);
+  await page.waitForTimeout(400);
+  await page.keyboard.press('Space');
+  await page.waitForTimeout(700);
+  const espace = await page.evaluate(() => document.querySelectorAll('#activations .act').length);
+  check('tenue : Espace le fait partir aussi', espace === 0, `${espace} élément(s)`);
+  await ctx.close();
+}
+{
+  const { ctx, page } = await openPage('seed=4242&aiDelay=999999');
+  const r = await page.evaluate((a) => ({ ms: window.__lqv.actPlay([a]), tenu: document.querySelectorAll('#activations .act.tenu').length }), exemples.get('effet'));
+  check('tenue : coupée en QA sans tenir=1 (les pilotes ne cliquent pas)', Number.isFinite(r.ms) && r.tenu === 0, JSON.stringify(r));
+  await ctx.close();
+}
+{
+  // un vrai duel avec la tenue : le joueur clique chaque temps fort tenu ; la résolution et le rival reprennent après
+  const { ctx, page } = await openPage('scenario=interference&aiDelay=400&tenir=1');
+  const t0 = Date.now();
+  let clics = 0;
+  let tour = 0;
+  let maxAttente = 0;
+  let depuis = Date.now();
+  while (Date.now() - t0 < 120000) {
+    const st = await page.evaluate(() => {
+      const v = window.__lqv.view();
+      return { phase: v.phase, awaitingMe: v.awaitingMe, repelMine: v.phase === 'REPEL' && !!v.repel?.mine, seq: window.__lqv.controller.sequencing, turn: v.turn, tenu: document.querySelectorAll('#activations .act.tenu.wait-click').length };
+    });
+    tour = Math.max(tour, st.turn);
+    if (st.tenu) {
+      if (clics === 0) await shot(page, 'tenu-en-duel');
+      maxAttente = Math.max(maxAttente, Date.now() - depuis);
+      await page.mouse.click(640, 300);
+      clics++;
+      depuis = Date.now();
+      await page.waitForTimeout(150);
+      continue;
+    }
+    if (st.phase === 'ENDED' && !st.seq) break;
+    if ((st.awaitingMe || st.repelMine) && !st.seq) {
+      const v = await page.evaluate(() => window.__lqv.view());
+      const cmd = await decisionIa(v, await page.evaluate(() => window.__lqv.events()));
+      if (cmd) await page.evaluate((x) => window.__lqv.apply(x), cmd);
+    } else if (st.phase === 'RESOLVED' && !st.seq) {
+      await page.evaluate(() => window.__lqv.apply({ type: 'nextTurn' }));
+    } else if (st.turn > 5) break;
+    await page.waitForTimeout(80);
+  }
+  check('tenue en duel : des temps forts tenus cliqués, et le duel avance (résolution et rival repartent après le clic)', clics > 0 && tour >= 4, JSON.stringify({ clics, tour }));
+  report.tenue = { clics, tour };
   await ctx.close();
 }
 

@@ -66,6 +66,25 @@ export function parseRig(s: string | null | undefined): RigTuning | null {
   return Object.keys(t).length ? t : null;
 }
 
+/**
+ * Une scène cadrée sur des personnages (retour du responsable du 2026-10-29 : la première scène avec le rival, dont
+ * l'angle « donne l'impression de manquer le cadre de vue ») : les pieds aux sept dixièmes de la hauteur de l'écran,
+ * au-dessus de la boîte de dialogue et de la bande du bas, les personnages sur trois dixièmes de cette hauteur, tous dans
+ * la largeur avec une marge ; la caméra suit leur profondeur. Le cadre se calcule sur la hauteur réelle des personnages
+ * de l'îlot, la focale et le format de l'écran, au lieu de réglages relatifs à ceux de l'îlot.
+ */
+export const SUJETS = { pieds: 0.7, part: 0.3, marge: 1.1 } as const;
+
+export function cadrageSujets(sujets: readonly { x: number; z: number }[], o: { h: number; fov: number; aspect: number; serre?: number }): { at: { x: number; z: number }; distance: number; aimY: number } {
+  const xs = sujets.map((s) => s.x);
+  const x0 = Math.min(...xs);
+  const x1 = Math.max(...xs);
+  const z = sujets.reduce((t, s) => t + s.z, 0) / Math.max(1, sujets.length);
+  // hauteur de champ (m) à la distance des personnages : leur part de l'écran, ou ce qu'il faut pour tous les voir
+  const champ = Math.max(o.h / SUJETS.part, (x1 - x0 + 2 * SUJETS.marge * o.h) / o.aspect) / (o.serre ?? 1);
+  return { at: { x: (x0 + x1) / 2, z }, distance: champ / 2 / Math.tan(THREE.MathUtils.degToRad(o.fov / 2)), aimY: (SUJETS.pieds - 0.5) * champ };
+}
+
 export interface Framing { pos: THREE.Vector3; aim: THREE.Vector3 }
 
 /** Cadrage visé pour une position du personnage (pur : mêmes entrées, même cadrage). */

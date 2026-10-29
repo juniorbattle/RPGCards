@@ -13,7 +13,7 @@ import { autoplay } from '../src/game/match';
 import type { GameConfig, GameEvent, PlayerId } from '../src/game/model/types';
 import { buildJournal } from '../src/game/visibility/journal';
 import { visibleEvents } from '../src/game/visibility/view';
-import { ACTIVATION_MS, activationsDuration, buildActivations, type Activation } from '../src/presentation/activations';
+import { ACTIVATION_MS, activationsDuration, attendClic, buildActivations, type Activation } from '../src/presentation/activations';
 import { buildResolutionBeats } from '../src/presentation/beats';
 import { sonDuTempsFort } from '../src/son/evenements';
 
@@ -100,6 +100,33 @@ describe('M12 — temps forts : les formes', () => {
   it('durées : chaque forme en a une ; la somme sert au rythme de la résolution', () => {
     const list = buildActivations([ev('technique', 'public', { player: 'p1', technique: 'Lecture', cost: 2 }), ev('heal', 'public', { player: 'p1', amount: 2, hp: 50 })], ctx);
     expect(activationsDuration(list)).toBe(ACTIVATION_MS.technique + ACTIVATION_MS.soin);
+  });
+});
+
+describe('temps forts tenus jusqu\'au clic (retour du responsable du 2026-10-29)', () => {
+  it('ce qui concerne le joueur attend son clic ; l\'annonce d\'une Technique, les pastilles et les révélations passent seules', () => {
+    const a = buildActivations([
+      ev('primariesRevealed', 'public', { p1: { defId: 'Cendre-2-braise', stance: 'assault' }, p2: { defId: 'Voile-1-basic', stance: 'assault' } }),
+      ev('technique', 'public', { player: 'p1', technique: 'Sondage', cost: 1 }),
+      ev('peek', 'p1', { player: 'p1', source: 'Sondage', defIds: ['Ronce-1-basic'] }),
+      ev('effect', 'public', { player: 'p1', effect: 'braise', status: 'success', detail: '+2 dégâts fixes' }),
+      ev('heal', 'public', { player: 'p1', amount: 2, hp: 50 }),
+      ev('technique', 'public', { player: 'p2', technique: 'Lecture', cost: 2 }),
+    ], ctx);
+    expect(a.map((x) => [x.kind, x.side, attendClic(x)])).toEqual([
+      ['technique', 'me', false], ['regard', 'me', true], ['effet', 'me', true], ['soin', 'me', false], ['technique', 'opp', false],
+    ]);
+    // le rival : son effet qui frappe le joueur attend ; son effet retourné contre lui, ou annulé, passe seul
+    const b = buildActivations([
+      ev('effect', 'public', { player: 'p2', effect: 'braise', status: 'success', detail: '+2 dégâts fixes' }),
+      ev('effect', 'public', { player: 'p2', effect: 'contrecoup', status: 'cancelled', detail: 'neutralisé par Silence' }),
+      ev('signatureAnnounced', 'public', { player: 'p2', defId: 'sig-Astre' }),
+    ], ctx);
+    expect(b.map(attendClic)).toEqual([true, false, true]);
+  });
+  it('les durées par défaut sont allongées (au moins 1 s pour tout temps fort, 2 s pour un effet)', () => {
+    for (const ms of Object.values(ACTIVATION_MS)) expect(ms).toBeGreaterThanOrEqual(1000);
+    expect(ACTIVATION_MS.effet).toBeGreaterThanOrEqual(2000);
   });
 });
 

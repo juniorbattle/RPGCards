@@ -1551,7 +1551,10 @@ export class AventureApp {
     this.town?.setInputLocked(true);
     // M11 : dialogue de scène, cadré (la caméra glisse sur le ou les personnages ; bandes gardées si la scène les tient)
     if (cadre && this.town && this.cineActives) {
-      this.town.cadrer({ at: cadre.at, ...(cadre.zoom !== undefined ? { zoom: cadre.zoom } : {}), ...(cadre.hauteur !== undefined ? { hauteur: cadre.hauteur } : {}), tau: 0.55 }, this.params.reducedMotion || this.params.freeze);
+      this.town.cadrer({
+        at: cadre.at, ...(cadre.zoom !== undefined ? { zoom: cadre.zoom } : {}), ...(cadre.hauteur !== undefined ? { hauteur: cadre.hauteur } : {}),
+        ...(cadre.sujets ? { sujets: cadre.sujets } : {}), ...(cadre.serre !== undefined ? { serre: cadre.serre } : {}), tau: 0.55,
+      }, this.params.reducedMotion || this.params.freeze);
       this.cadreGarde = true;
       if (cadre.bandes && !this.sceneBandes) { this.bandesEcran().prendre(); this.sceneBandes = true; }
     }

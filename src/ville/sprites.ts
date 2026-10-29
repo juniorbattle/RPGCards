@@ -694,6 +694,66 @@ export interface WalkerSprite {
 }
 
 /**
+ * Cycle de marche de profil d'une feuille (retour du responsable du 2026-10-29 : de côté, la marche de tous les
+ * personnages semblait bloquée). Les quatre temps de profil des feuilles sont des foulées ouvertes presque pareilles :
+ * une foulée qui glisse se lit comme une figure figée. Le cycle alterne donc deux foulées (la paire de colonnes 1 et 3,
+ * ou 2 et 4, la plus ouverte) et une pose de passage, jambes rapprochées : le temps de marche le plus fermé s'il l'est
+ * presque autant que le repos (les bras suivent la marche), sinon le repos. `pieds` : largeur des pieds de chaque
+ * colonne (repos puis les quatre temps).
+ */
+export function cycleProfil(pieds: readonly number[]): readonly [number, number, number, number] {
+  const w = (k: number) => pieds[k] ?? 0;
+  const [a, b, c, d] = w(1) + w(3) >= w(2) + w(4) ? [1, 3, 2, 4] : [2, 4, 1, 3];
+  const m = w(c) <= w(d) ? c : d;
+  const passe = w(m) <= w(0) * 1.15 ? m : 0;
+  return [a, passe, b, passe];
+}
+
+/** Bande des pieds (4 px d'art au-dessus de l'ancrage) dans la rangée de profil d'une feuille haute de `h` px. */
+export function bandePieds(h: number, spec: Pick<SheetSpec, 'anchor' | 'cell'>): { y0: number; h: number } {
+  const ch = h / ROWS;
+  const cellH = spec.cell?.[1] ?? CELL_H;
+  const y1 = Math.round(2 * ch + (spec.anchor[1] / cellH) * ch);
+  const bh = Math.max(2, Math.round((4 / cellH) * ch));
+  return { y0: y1 - bh, h: bh };
+}
+
+/** Largeur des pieds (px, opacité franche) de chaque colonne d'une bande RGBA de `w` px de large. */
+export function largeursPieds(rgba: ArrayLike<number>, w: number, h: number): number[] {
+  const cw = w / COLS;
+  return Array.from({ length: COLS }, (_, k) => {
+    let x0 = Infinity;
+    let x1 = -Infinity;
+    for (let y = 0; y < h; y++) for (let x = Math.floor(k * cw); x < Math.floor((k + 1) * cw); x++) {
+      if (rgba[(y * w + x) * 4 + 3]! > 128) { x0 = Math.min(x0, x); x1 = Math.max(x1, x); }
+    }
+    return x1 >= x0 ? x1 - x0 : 0;
+  });
+}
+
+const CYCLES = new WeakMap<object, readonly number[] | null>();
+
+/** Le cycle de profil d'une feuille chargée, mesuré une fois par image ; null sans canevas lisible (quatre temps d'origine). */
+function cycleFeuille(im: CanvasImageSource & { width: number; height: number }, spec: SheetSpec): readonly number[] | null {
+  if (CYCLES.has(im)) return CYCLES.get(im)!;
+  let out: readonly number[] | null = null;
+  try {
+    const b = bandePieds(im.height, spec);
+    const c = document.createElement('canvas');
+    c.width = im.width;
+    c.height = b.h;
+    const g = c.getContext('2d', { willReadFrequently: true });
+    if (g) {
+      g.drawImage(im, 0, b.y0, im.width, b.h, 0, 0, im.width, b.h);
+      const pieds = largeursPieds(g.getImageData(0, 0, im.width, b.h).data, im.width, b.h);
+      if (pieds.some((p) => p > 0)) out = cycleProfil(pieds);
+    }
+  } catch { out = null; }
+  CYCLES.set(im, out);
+  return out;
+}
+
+/**
  * Panneau d'un personnage à la hauteur de référence `WALKER_H` (la hauteur de l'îlot s'applique par l'échelle du
  * groupe) : la figure (`figureH` px logiques) vaut `WALKER_H`, les pieds (`anchor`) sont à l'origine. `ax` : décalage
  * horizontal du panneau qui ramène l'ancrage sous l'origine (nul pour l'atlas par code, centré).
@@ -738,6 +798,9 @@ export function createWalkerSprite(id: string): WalkerSprite {
     side: THREE.DoubleSide,
   });
   const body = new THREE.Mesh(geo, mat);
+  // cycle de profil d'une feuille et pixel d'art en mètres (l'atlas par code garde ses quatre temps dessinés)
+  let profil: readonly number[] | null = null;
+  let artPx = 0;
   const shadow = new THREE.Mesh(
     new THREE.PlaneGeometry(0.95, 0.5),
     new THREE.MeshBasicMaterial({ map: contactShadow(), transparent: true, depthWrite: false, color: 0xffffff }),
@@ -757,7 +820,10 @@ export function createWalkerSprite(id: string): WalkerSprite {
       group.position.set(pos.x, 0, pos.z);
       uniforms.uWorld.value.set(pos.x, 0, pos.z);
       const row = facing === 'face' ? 0 : facing === 'dos' ? 1 : 2;
-      const col = moving ? 1 + (Math.floor(phase * 4) % 4) : 0;
+      const k = Math.floor(phase * 4) % 4;
+      // de profil, une feuille alterne foulée et passage (`cycleProfil`), la figure soulevée d'un pixel d'art au passage
+      const col = !moving ? 0 : row === 2 && profil ? profil[k]! : 1 + k;
+      body.position.y = moving && row === 2 && profil && k % 2 ? artPx : 0;
       uniforms.uOff.value.set(col, ROWS - 1 - row);
       uniforms.uFlip.value = facing === 'gauche' ? 1 : 0;
       // ancrage hors du milieu de la case (feuille) : le miroir du profil gauche le renverse
@@ -781,6 +847,8 @@ export function createWalkerSprite(id: string): WalkerSprite {
         else delete mat.defines.PIXEL;
         mat.needsUpdate = true;
       }
+      profil = im ? cycleFeuille(texture.image as CanvasImageSource & { width: number; height: number }, spec) : null;
+      artPx = WALKER_H / spec.figureH;
       const panel = walkerPanel(spec);
       geo.dispose();
       geo = panel.geo;
