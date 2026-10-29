@@ -55,11 +55,29 @@ export interface ActivationContext {
   tactics?: Record<PlayerId, Array<RevealedTactic | null>> | null;
 }
 
-/** Durée d'un temps fort au rythme normal (ms), contrat 2, §2. */
+/**
+ * Durée d'un temps fort au rythme normal (ms), contrat 2, §2 ; allongée d'environ trois quarts sur le retour du
+ * responsable du 2026-10-29 (« les éléments s'affichent parfois trop vite »).
+ */
 export const ACTIVATION_MS: Readonly<Record<ActivationKind, number>> = {
-  effet: 1250, annule: 1000, masque: 1050, echec: 700, regard: 1500, technique: 1050, camouflage: 950, dissipation: 950,
-  signature: 1450, interference: 1050, insight: 750, soin: 750, repousse: 1050, revelation: 600,
+  effet: 2200, annule: 1800, masque: 1900, echec: 1500, regard: 2600, technique: 1900, camouflage: 1700, dissipation: 1700,
+  signature: 2500, interference: 1900, insight: 1300, soin: 1300, repousse: 1900, revelation: 1100,
 };
+
+/**
+ * Retour du responsable du 2026-10-29 : un temps fort qui concerne le joueur reste à l'écran jusqu'à son clic. Ce que
+ * ses cartes font et ce que ses Techniques lui apprennent (son camp, regards privés), et ce que le rival lui fait : effet
+ * qui le frappe, Interférence réussie sur son soutien, camouflage levé, Secondaire repoussée, Signature annoncée (il
+ * peut réviser son engagement). Passent seuls : l'annonce d'une Technique (le regard qui suit porte ce qu'elle apprend),
+ * les petits temps forts (pastilles, bandeau d'échec) et les révélations.
+ */
+export function attendClic(a: Activation): boolean {
+  if (a.kind === 'technique' || a.kind === 'echec' || a.kind === 'insight' || a.kind === 'soin' || a.kind === 'revelation') return false;
+  if (a.side === 'me' || a.private) return true;
+  if (a.kind === 'interference') return a.tone !== 'neutral';
+  if (a.kind === 'dissipation' || a.kind === 'repousse' || a.kind === 'signature') return true;
+  return (a.kind === 'effet' || a.kind === 'masque') && a.tone === 'bad';
+}
 
 /** La définition qui porte un effet (une seule par effet au catalogue). */
 const DEF_BY_EFFECT: Readonly<Partial<Record<EffectId, string>>> = Object.fromEntries(

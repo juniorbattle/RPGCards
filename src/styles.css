@@ -648,6 +648,12 @@ button { font: inherit; color: inherit; }
 .act.anchored .act-chip { left: var(--ax); top: var(--ay); transform: translateY(-50%); }
 .act-chip b { font: 900 1.4rem/1 system-ui, sans-serif; color: #fff; text-shadow: 0 0 10px var(--famc); }
 .act-chip span { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--famc); }
+/* Un temps fort qui concerne le joueur attend son clic (retour du responsable du 2026-10-29). */
+.act.tenu { pointer-events: auto; cursor: pointer; }
+.act-next { position: absolute; left: 50%; bottom: 6%; transform: translateX(-50%); padding: 0.4rem 1rem; border-radius: 999px; font-size: 0.8rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #fff4dc; background: rgba(10, 8, 14, 0.88); border: 1px solid var(--famc); box-shadow: 0 0 14px color-mix(in srgb, var(--famc) 45%, transparent); white-space: nowrap; animation: act-next 1.8s ease-in-out infinite; }
+.act-next::after { content: ' · Espace'; color: var(--famc); }
+@keyframes act-next { 50% { opacity: 0.6; } }
+@media (prefers-reduced-motion: reduce) { .act-next { animation: none; } }
 .act.held .act-rings i { opacity: 0.35; transform: translate(-50%, -50%) scale(1.2); }
 .act.held.act-camouflage .act-veil-drop { opacity: 0.85; }
 .act.held.act-dissipation .act-tear { opacity: 0; }

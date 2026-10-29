@@ -28,8 +28,9 @@ export interface OptionsCinema {
   lent?: number;
 }
 
-const cadre = (p: { at: Plan['at']; zoom?: number; hauteur?: number; tau?: number }): Cadrage => ({
+const cadre = (p: { at: Plan['at']; zoom?: number; hauteur?: number; tau?: number; sujets?: Plan['sujets']; serre?: number }): Cadrage => ({
   at: { ...p.at }, ...(p.zoom !== undefined ? { zoom: p.zoom } : {}), ...(p.hauteur !== undefined ? { hauteur: p.hauteur } : {}), ...(p.tau !== undefined ? { tau: p.tau } : {}),
+  ...(p.sujets ? { sujets: p.sujets.map((s) => ({ ...s })) } : {}), ...(p.serre !== undefined ? { serre: p.serre } : {}),
 });
 
 export class Cinema {

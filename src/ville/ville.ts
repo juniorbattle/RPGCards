@@ -18,7 +18,7 @@ import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { createRig, RIGS, type CameraId, type CameraRig, type RigParams, type RigTuning } from './cameras';
+import { cadrageSujets, createRig, RIGS, type CameraId, type CameraRig, type RigParams, type RigTuning } from './cameras';
 import { createDecorResolver, type DecorCamera, type DecorReport, type DecorState } from './decors';
 import { buildDiorama } from './diorama';
 import { ilotDef, type IlotDef, type IlotId, type Passer } from './ilots';
@@ -72,9 +72,10 @@ export interface TownOptions {
 /**
  * Cadrage d'une cinématique (M11) : point visé, et réglages relatifs à ceux de l'îlot : `zoom` multiplie la distance
  * (moins de 1 : plus près), `hauteur` s'ajoute à la hauteur visée (m), `followZ` remplace la part de profondeur suivie,
- * `tau` la constante de l'amorti (s).
+ * `tau` la constante de l'amorti (s). `sujets` : des personnages à cadrer (`cadrageSujets`) ; le point visé, la distance
+ * et la hauteur en découlent (`serre` : plus serré au-dessus de 1).
  */
-export interface Cadrage { at: Vec2; zoom?: number; hauteur?: number; followZ?: number; tau?: number }
+export interface Cadrage { at: Vec2; zoom?: number; hauteur?: number; followZ?: number; tau?: number; sujets?: readonly Vec2[]; serre?: number }
 
 export interface TownStats {
   camera: CameraId;
@@ -501,10 +502,19 @@ export function createTown(o: TownOptions): Town {
   // M11 (cinématiques) : la caméra vise ce cadrage au lieu du joueur ; coupe franche à la prochaine image si `coupe`
   let cadrage: Cadrage | null = null;
   let coupe = false;
-  const camAt = (): Vec2 => cadrage?.at ?? walker.pos;
+  const surSujets = () => (cadrage?.sujets?.length
+    ? cadrageSujets(cadrage.sujets, { h: walkerH(), fov: rig.params.fov, aspect: camera.aspect, serre: (cadrage.serre ?? 1) / (cadrage.zoom ?? 1) })
+    : null);
+  const camAt = (): Vec2 => surSujets()?.at ?? cadrage?.at ?? walker.pos;
   const camTuning = (): Partial<RigParams> | undefined => {
     if (!cadrage) return undefined;
     const p = rig.params;
+    const s = surSujets();
+    if (s) {
+      // des personnages cadrés : les bornes du point visé s'écartent de ce que la caméra rapprochée ne voit plus
+      const m = Math.max(0, p.distance - s.distance) * Math.tan(THREE.MathUtils.degToRad(p.fov / 2)) * camera.aspect;
+      return { minX: Math.min(p.minX - m, (p.minX + p.maxX) / 2), maxX: Math.max(p.maxX + m, (p.minX + p.maxX) / 2), distance: s.distance, aimY: s.aimY, followZ: 1, ...(cadrage.tau !== undefined ? { tau: cadrage.tau } : {}) };
+    }
     // plus près, le champ est plus étroit : les bornes du point visé s'écartent d'autant (le bord du décor visible ne
     // change pas) ; plus loin, elles se resserrent
     const marge = cadrage.zoom !== undefined ? (1 - cadrage.zoom) * p.distance * Math.tan(THREE.MathUtils.degToRad(p.fov / 2)) * camera.aspect : 0;

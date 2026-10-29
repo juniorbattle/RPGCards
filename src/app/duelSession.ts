@@ -126,6 +126,10 @@ export class DuelSession {
       artSeed: params.artSeed, reduced: () => params.reducedMotion, freeze: () => params.freeze, pace: () => c.paceFactor(), instant: () => params.pace === 'instant',
       onStart: (a) => { const x = sonDuTempsFort(a.kind, a.consequence); if (x) son().jouer(x); },
       dim: (on) => clashHost.classList.toggle('act-on', on),
+      // retour du responsable du 2026-10-29 : ce qui concerne le joueur attend son clic (rythme normal ; coupé en QA
+      // sans `?tenir=1`, pour les pilotes)
+      tenir: () => params.pace === 'normal' && (!params.qa || new URLSearchParams(location.search).get('tenir') === '1'),
+      onDrained: () => c.activationsDrained(),
     });
     this.acts = acts;
     c.onActivations({ play: (list) => acts.play(list), stop: () => acts.stop() });
@@ -173,6 +177,8 @@ export class DuelSession {
 
   private key(e: KeyboardEvent): void {
     if (this.suspended) return;
+    // un temps fort qui attend le clic du joueur : Espace ou Entrée le fait partir (et ne fait rien d'autre)
+    if ((e.key === ' ' || e.key === 'Enter') && this.acts.attend) { e.preventDefault(); this.acts.continuer(); return; }
     const c = this.controller;
     const app = this.o.app;
     if (e.target instanceof HTMLInputElement) return;

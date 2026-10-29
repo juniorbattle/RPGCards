@@ -52,7 +52,8 @@ const SCENARIOS = [
         { t: 7, faire: 'couches', niveaux: { melodie: 1 } }, { t: 7, faire: 'ponctuer', id: 'gagne' },
         { t: 15, faire: 'ponctuer', id: 'perdu' }, { t: 24, faire: 'ponctuer', id: 'gagne' },
         { t: 30, faire: 'contexte', options: { intensite: 0.7 } },
-        { t: 44, faire: 'jouer', version: 'III-2', fondu: 0.8 },
+        // le duel qui se tend : un break (arrêt net sur la phrase, une mesure de silence), puis le duel tendu
+        { t: 44, faire: 'enchainer', version: 'III-2', couches: { melodie: 1 } },
         { t: 56, faire: 'couches', niveaux: { cuivres: 1 } }, { t: 56, faire: 'ponctuer', id: 'signature' },
         { t: 66, faire: 'ponctuer', id: 'gagne' },
         { t: 76, faire: 'terminer', jingle: 'victoire' },
@@ -72,20 +73,25 @@ const SCENARIOS = [
         { t: 26, faire: 'proximite', nom: 'fanal', x: 0.2 }, { t: 32, faire: 'proximite', nom: 'fanal', x: 0.55 },
         { t: 38, faire: 'proximite', nom: 'fanal', x: 1 }, { t: 48, faire: 'proximite', nom: 'fanal', x: 0.3 },
         { t: 54, faire: 'source', nom: 'fanal', version: null },
-        { t: 58, faire: 'assourdir', on: true }, { t: 62, faire: 'jouer', version: 'III-1', fondu: 1 }, { t: 62, faire: 'assourdir', on: false },
+        // l'entrée en duel : la ville assourdie s'efface, un silence, puis le duel
+        { t: 58, faire: 'assourdir', on: true }, { t: 58, faire: 'enchainer', version: 'III-1' }, { t: 61.8, faire: 'assourdir', on: false },
       ],
     },
   },
   {
+    // les enchaînements (retour du responsable du 2026-10-29) : chaque nouveau morceau après un effacement et un silence,
+    // par sa levée ; la fin d'un duel : le jingle, un silence, puis la ville
     nom: 'S-transitions', requiert: 'I-1',
     scenario: {
-      duree: 52,
+      duree: 84,
       actions: [
-        { t: 0, faire: 'jouer', version: 'I-2' },
+        { t: 0, faire: 'enchainer', version: 'I-2' },
         { t: 9, faire: 'focus', on: true }, { t: 15, faire: 'focus', on: false },
-        { t: 18, faire: 'jouer', version: 'I-1' },
-        { t: 30, faire: 'assourdir', on: true }, { t: 34, faire: 'assourdir', on: false },
-        { t: 40, faire: 'jouer', version: 'I-3', fondu: 2.5 },
+        { t: 18, faire: 'enchainer', version: 'I-1' },
+        { t: 34, faire: 'enchainer', version: 'II-1', options: { chapitre: 2 } },
+        { t: 50, faire: 'enchainer', version: 'III-1', couches: { melodie: 1 } },
+        { t: 62, faire: 'terminer', jingle: 'victoire' },
+        { t: 67, faire: 'enchainer', version: 'II-2', options: { chapitre: 2 } },
       ],
     },
   },

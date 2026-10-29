@@ -37,6 +37,7 @@ export type MotionEvent =
 
 /** M12 (contrat 2) : la scène des temps forts. `play` rend la durée restante de sa file (ms, rythme compris). */
 export interface ActivationSink {
+  /** Rend la durée restante de la file (ms) ; infinie si un temps fort y attend le clic du joueur. */
   play(list: Activation[]): number;
   stop(): void;
 }
@@ -122,6 +123,10 @@ export class Controller {
   private activationSink: ActivationSink | null = null;
   /** Fin estimée de la file des temps forts (horloge `performance.now()`) : le rival attend jusque-là. */
   private activationsUntil = 0;
+  /** Un temps fort attend le clic du joueur : la résolution et le rival attendent `activationsDrained`. */
+  private seqWaiting = false;
+  private aiWaiting = false;
+  private beatAt = 0;
   private seqTimer = 0;
   private exprQueue: Expression[] = [];
   private exprTimer = 0;
@@ -338,7 +343,25 @@ export class Controller {
     // Premier temps : rendu complet (le bandeau passe en mode résolution) ; ensuite, patch ciblé.
     if (!q.rendered || !this.beatFn) { q.rendered = true; this.renderFn(); }
     else this.beatFn();
-    if (!this.params.freeze && this.params.pace !== 'instant') this.seqTimer = window.setTimeout(() => this.advanceBeat(), Math.max(this.beatDelay(q.beats[q.index]!), wait));
+    if (this.params.freeze || this.params.pace === 'instant') return;
+    this.beatAt = performance.now();
+    // un temps fort qui attend le clic du joueur : la résolution reprend quand la file se vide (`activationsDrained`)
+    if (wait === Infinity) this.seqWaiting = true;
+    else this.seqTimer = window.setTimeout(() => this.advanceBeat(), Math.max(this.beatDelay(q.beats[q.index]!), wait));
+  }
+
+  /** M12 : la file des temps forts s'est vidée après un clic du joueur : la résolution reprend, le rival peut jouer. */
+  activationsDrained(): void {
+    if (this.disposed) return;
+    if (this.activationsUntil === Infinity) this.activationsUntil = 0;
+    if (this.seqWaiting) {
+      this.seqWaiting = false;
+      const q = this.seq;
+      const b = q && !q.done ? q.beats[q.index] : undefined;
+      const rest = b ? this.beatDelay(b) - (performance.now() - this.beatAt) : 0;
+      this.seqTimer = window.setTimeout(() => this.advanceBeat(), Math.max(250, rest));
+    }
+    if (this.aiWaiting) { this.aiWaiting = false; this.scheduleAi(); }
   }
 
   /** M12 : contexte public des temps forts (Primaires révélées). */
@@ -395,6 +418,7 @@ export class Controller {
     // M12 : « Passer » vide aussi la file des temps forts
     this.activationSink?.stop();
     this.activationsUntil = 0;
+    this.seqWaiting = this.aiWaiting = false;
     this.finishSequence();
   }
 
@@ -603,6 +627,8 @@ export class Controller {
     const v2 = viewFor(this.match.state, 'p2');
     if (!v2.awaitingMe || this.aiTimer) return;
     if (this.sequencing) return; // le rival attend la fin de la mise en scène (relancé à la fin)
+    // un temps fort attend le clic du joueur : le rival attend aussi (relancé par `activationsDrained`)
+    if (this.params.aiDelay > 0 && this.activationsUntil === Infinity) { this.aiWaiting = true; return; }
     this.aiThinking = true;
     const run = () => {
       this.aiTimer = 0;

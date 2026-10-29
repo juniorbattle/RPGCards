@@ -39,7 +39,10 @@ describe('M11 — cinématiques : les plans', () => {
     const [point, duo] = plansRival({ x: 4, z: 0 }, { x: 1.2, z: 0 }, { x: 0, z: 0 }, 800);
     expect(point!.at).toEqual({ x: 4, z: 0 });
     expect(point!.ms).toBe(800);
-    expect(point!.zoom).toBeLessThan(duo!.zoom!);
+    // retour du 2026-10-29 : des personnages cadrés (gros plan sur Kaï, puis les deux)
+    expect(point!.sujets).toEqual([{ x: 4, z: 0 }]);
+    expect(point!.serre!).toBeGreaterThan(1);
+    expect(duo!.sujets).toEqual([{ x: 1.2, z: 0 }, { x: 0, z: 0 }]);
     expect(duo!.at).toEqual({ x: 0.6, z: 0 });
     expect(duo!.mouvement).toBe('glisse');
     const g = plansGuetteur({ x: 1, z: 0 }, { x: 0, z: 0 });
@@ -190,11 +193,14 @@ describe('M11 — cinématiques du récit (deuxième lot)', () => {
     const { plansChef, plansAffiliation } = await import('../src/aventure/cinematiques');
     const [point, duo] = plansChef({ x: 3, z: -2 }, { x: 3, z: -1 });
     expect(point!.at).toEqual({ x: 3, z: -2 });
-    expect(point!.zoom).toBeLessThan(duo!.zoom!);
+    expect(point!.sujets).toHaveLength(1);
+    expect(point!.serre!).toBeGreaterThan(duo!.serre ?? 1);
+    expect(duo!.sujets).toHaveLength(2);
     const [pres, recul] = plansAffiliation({ x: 1, z: 1 });
     expect(pres!.mouvement).toBe('coupe');
     expect(recul!.mouvement).toBe('travelling');
-    expect(recul!.zoom!).toBeGreaterThan(pres!.zoom!);
+    expect(pres!.serre!).toBeGreaterThan(1);
+    expect(recul!.zoom!).toBeGreaterThan(1);
   });
 
   it('titre : plan large depuis le bord opposé, jusqu’au héraut et au joueur (ou au joueur seul)', async () => {
@@ -209,13 +215,42 @@ describe('M11 — cinématiques du récit (deuxième lot)', () => {
 
   it('cadres de dialogue : un personnage en gros plan, deux ensemble, un groupe plus large', async () => {
     const { cadreDialogue, cadreGroupe } = await import('../src/aventure/cinematiques');
-    expect(cadreDialogue({ x: 1, z: 0 }).zoom).toBeLessThan(1);
+    expect(cadreDialogue({ x: 1, z: 0 }).sujets).toEqual([{ x: 1, z: 0 }]);
+    expect(cadreDialogue({ x: 1, z: 0 }).serre!).toBeGreaterThan(1);
     expect(cadreDialogue({ x: 0, z: 0 }, { x: 2, z: 0 }).at).toEqual({ x: 1, z: 0 });
     expect(cadreDialogue({ x: 0, z: 0 }, null, false).bandes).toBe(false);
     const g = cadreGroupe([{ x: 10, z: 2 }, { x: 16, z: 2 }, { x: 12, z: -1 }, { x: 15, z: -1 }, { x: 12.4, z: 1.3 }]);
     expect(g.at.x).toBeCloseTo(13.08, 5);
-    expect(g.zoom).toBeGreaterThan(0.8);
-    expect(g.zoom).toBeLessThanOrEqual(1.15);
+    expect(g.sujets).toHaveLength(5);
+  });
+
+  it('personnages cadrés (retour du 2026-10-29) : pieds au-dessus de la boîte de dialogue, tous dans la largeur', async () => {
+    const THREE = await import('three');
+    const { cadrageSujets, SUJETS } = await import('../src/ville/cameras');
+    const p = { ...RIGS.frontale, pitch: 6, distance: 25, fov: 42, aimY: 4.8, followZ: 0.9, aimZ: 0.3, minX: -30, maxX: 30 };
+    const ecran = (cam: InstanceType<typeof THREE.PerspectiveCamera>, x: number, y: number, z: number) => {
+      const v = new THREE.Vector3(x, y, z).project(cam);
+      return { x: v.x, haut: (1 - v.y) / 2 };
+    };
+    for (const sujets of [[{ x: 4, z: -1 }], [{ x: -3, z: 0.5 }, { x: 3.5, z: 1 }], [{ x: 10, z: 2 }, { x: 16, z: 2 }, { x: 12, z: -1 }]]) {
+      const h = 2.2;
+      const s = cadrageSujets(sujets, { h, fov: p.fov, aspect: 16 / 9 });
+      const cam = new THREE.PerspectiveCamera(p.fov, 16 / 9, 0.5, 400);
+      const f = framingFor({ ...p, distance: s.distance, aimY: s.aimY, followZ: 1 }, s.at);
+      cam.position.copy(f.pos);
+      cam.lookAt(f.aim);
+      cam.updateMatrixWorld();
+      for (const q of sujets) {
+        const pieds = ecran(cam, q.x, 0, q.z);
+        const tete = ecran(cam, q.x, h, q.z);
+        // pieds au-dessus de la boîte de dialogue (78 % de la hauteur) et sous la bande du haut ; tous dans la largeur
+        expect(pieds.haut).toBeLessThan(0.76);
+        expect(pieds.haut).toBeGreaterThan(0.55);
+        expect(tete.haut).toBeGreaterThan(0.12);
+        expect(Math.abs(pieds.x)).toBeLessThan(0.92);
+      }
+      if (sujets.length === 1) expect(ecran(cam, sujets[0]!.x, 0, sujets[0]!.z).haut).toBeCloseTo(SUJETS.pieds, 1);
+    }
   });
 
   it('l’émissaire : la foule et le joueur, puis les deux quand il arrive', async () => {

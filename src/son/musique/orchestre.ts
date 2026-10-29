@@ -2,14 +2,16 @@
  * M13 — l'orchestre du jeu (Web Audio) : le lecteur branché sur le bus de la musique, ses instruments calculés dans un
  * worker au premier geste (ceux de la musique demandée d'abord, les autres ensuite), et l'application des consignes du
  * chef (`chef.ts`) sans rien couper en plein vol (contrat `docs/m13/02_MUSIQUE_INTERACTIVE.md`, §1 et §2) : un
- * changement de morceau attend la mesure (le passage au duel tendu, la phrase) ; un changement d'arrangement (chapitre)
- * reprend la version sur la mesure ; l'intensité change au passage suivant ; les couches entrent et sortent sur la
- * mesure ; une ponctuation tombe sur le temps ; la fin d'un duel s'arrête sur le temps fort, puis le jingle, et la
- * musique suivante attend la fin du jingle. Chargé à la demande (`import()`), jamais avant un geste.
+ * changement de morceau s'efface, laisse un silence, puis le nouveau commence par sa levée (`enchainement.ts`) ; le
+ * passage au duel tendu se fait par un break sur la phrase ; un changement d'arrangement (chapitre) reprend la version
+ * sur la mesure ; l'intensité change au passage suivant ; les couches entrent et sortent sur la mesure ; une ponctuation
+ * tombe sur le temps ; la fin d'un duel s'arrête sur le temps fort, puis le jingle, un silence, et la musique suivante.
+ * Chargé à la demande (`import()`), jamais avant un geste.
  */
 import { DEFS, type BanqueBrute, type Zone } from './banque';
 import { VERSIONS, type JingleId, type VersionId } from './catalogue';
 import type { Consigne } from './chef';
+import { FONDU_SORTIE_S, SILENCE_S, finArret } from './enchainement';
 import type { InstrId } from './generateurs';
 import { Lecteur, type BanqueAudio } from './lecteur';
 import type { PonctuationId } from './ponctuations';
@@ -96,11 +98,15 @@ export class Orchestre {
     const cle = `${opts.chapitre ?? ''}|${opts.melodie ?? ''}`;
     const couches = c.couches ?? {};
     if (c.version !== this.joue.version) {
-      if (!c.version) { l.arreter(1.5); this.joue = { version: null, cle: '', couches: {} }; return; }
+      // vers le silence : le morceau s'efface, et rien ne reprend avant la fin du silence qui suit
+      if (!c.version) {
+        if (l.enCours()) { l.arreter(FONDU_SORTIE_S); this.libre = finArret(now, this.libre); }
+        this.joue = { version: null, cle: '', couches: {} };
+        return;
+      }
       const enCours = l.enCours();
-      const tendu = enCours === 'III-1' && c.version === 'III-2';
-      const quand = Math.max(enCours ? l.prochain(tendu ? 'phrase' : 'mesure') : now + 0.1, this.libre, now + 0.05);
-      l.jouer(c.version, { quand, options: opts, couches, intro: !enCours && this.libre <= now, ...(c.salle ? { salle: c.salle } : {}) });
+      // un autre morceau : effacement, silence, puis la levée du nouveau ; le duel qui se tend : un break
+      const quand = l.enchainer(c.version, { options: opts, couches, libre: this.libre, ...(c.salle ? { salle: c.salle } : {}) }).debut;
       // la ville s'assourdit jusqu'au premier temps du duel
       if (o.assourdie && enCours) {
         l.assourdir(true);
@@ -127,7 +133,8 @@ export class Orchestre {
     const l = this.lecteur;
     const t = l.enCours() ? l.terminer() : this.ctx.currentTime + 0.05;
     const d = l.jingle(j, t + 0.6);
-    this.libre = t + 0.6 + d + 0.4;
+    // un silence après le jingle, puis la musique suivante par sa levée
+    this.libre = t + 0.6 + d + SILENCE_S;
     this.joue = { version: null, cle: '', couches: {} };
     this.voulu = { version: null };
   }
@@ -136,8 +143,14 @@ export class Orchestre {
   jingle(id: JingleId): void {
     if (!this.pret || this.timer === null) return;
     const l = this.lecteur;
-    // après le jingle de fin s'il sonne encore (la carte gagnée suit la victoire)
-    const t = Math.max(l.enCours() ? l.prochain('temps') : this.ctx.currentTime + 0.05, this.libre);
+    const now = this.ctx.currentTime;
+    // après le jingle de fin d'un duel (la carte gagnée suit la victoire) : à sa suite, et le silence se déplace après lui
+    if (this.libre > now && !l.enCours()) {
+      const t = Math.max(now + 0.05, this.libre - SILENCE_S + 0.3);
+      this.libre = t + l.jingle(id, t) + SILENCE_S;
+      return;
+    }
+    const t = Math.max(l.enCours() ? l.prochain('temps') : now + 0.05, this.libre);
     const d = l.jingle(id, t);
     l.retirer(-9, t, d);
   }
