@@ -1,0 +1,19 @@
+{
+  "commit": "a7c7fe6",
+  "date": "2026-10-29T04:36:33.104Z",
+  "passes": 1,
+  "graine": 1,
+  "resultats": [
+    {
+      "nom": "S-duel",
+      "duree": 87.55,
+      "msBanque": 1789.4000000003725,
+      "msRendu": 14696.400000000373,
+      "lufs": -17.9,
+      "lra": 3.8,
+      "creteVraie": -4,
+      "vitesse": 5.957241229144402
+    }
+  ],
+  "console": []
+}
