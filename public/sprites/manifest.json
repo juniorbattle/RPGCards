@@ -375,7 +375,7 @@
       },
       "source": "gpt-image-2 (protagoniste, silhouette A, coupe en queue de cheval, depuis la feuille A approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
       "fiche": "art-src/sprites/player-a2/fiche.json",
-      "approved": false
+      "approved": true
     },
     "player-b2": {
       "file": "player-b2.png",
@@ -410,7 +410,7 @@
       },
       "source": "gpt-image-2 (protagoniste, silhouette B, coupe mi-longue, depuis la feuille B approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
       "fiche": "art-src/sprites/player-b2/fiche.json",
-      "approved": false
+      "approved": true
     }
   }
 }

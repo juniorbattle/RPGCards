@@ -1,11 +1,11 @@
 {
- "date": "2026-10-29T22:03:16.252Z",
+ "date": "2026-10-29T23:13:42.516Z",
  "checks": [
-  "OK écran « Nouvelle aventure » : éditeur et silhouette B (QA)",
+  "OK écran « Nouvelle aventure » : éditeur et silhouette B",
   "OK aucun mot genré à l’écran de création",
-  "OK sauvegarde : {\"silhouette\":\"b\",\"peau\":4,\"cheveux\":3,\"yeux\":1}",
-  "OK personnage de la ville : player-gris@b431",
-  "OK après reprise : player-gris@b431",
+  "OK sauvegarde : {\"silhouette\":\"b\",\"peau\":4,\"cheveux\":3,\"yeux\":1,\"coupe\":1}",
+  "OK personnage de la ville : player-gris@b1431",
+  "OK après reprise : player-gris@b1431",
   "OK menu : personnage remonté player-gris@a090",
   "OK menu : sauvegardé",
   "OK origine : sauvegarde sans apparence, player-gris",

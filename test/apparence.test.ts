@@ -55,7 +55,7 @@ describe('apparence du protagoniste : identifiants', () => {
     expect(sheetKeys('player-Voile@a1000')).toEqual(['player-Voile@a1000', 'player-a2']);
     expect(sheetKeys('player-Voile@b1000')).toEqual(['player-Voile@b1000', 'player-b2']);
     for (const s of ['a', 'b'] as const) for (const c of COUPES[s]) expect(man.sprites[c.feuille], c.feuille).toBeTruthy();
-    expect([man.sprites['player-a2'].approved, man.sprites['player-b2'].approved]).toEqual([false, false]);
+    expect([man.sprites['player-a2'].approved, man.sprites['player-b2'].approved]).toEqual([true, true]);
     expect(feuilleSilhouette('a')).toBe('player');
     expect(man.sprites['player-b'].approved).toBe(true);
   });
