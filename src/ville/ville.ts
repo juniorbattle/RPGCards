@@ -116,7 +116,7 @@ export interface Town {
    * Feuilles de personnages : politique, personnages dessinés par une feuille (dont non approuvées, en QA), refus motivés ;
    * `hiddenFrames` : images rendues alors qu'un personnage attendait encore sa feuille (0 attendu : préparation avant).
    */
-  externalReport(): ExternalReport & { hiddenFrames: number };
+  externalReport(): ExternalReport & { hiddenFrames: number; marche: Record<string, readonly number[] | null> };
   /**
    * Plans de décor (ADR 028) : politique, îlots en diorama, plans non approuvés (QA), refus motivés, temps et mémoire GPU ;
    * `world` : décor de l'îlot courant ; `pendingFrames` : images rendues alors que la décision du décor attendait encore
@@ -794,7 +794,7 @@ export function createTown(o: TownOptions): Town {
         cpuMs: Math.round(cpuMs * 10) / 10, frames, buildMs, firstFrameMs, mountMs, mountFrameMs,
       };
     },
-    externalReport: () => ({ ...sheets.report(), hiddenFrames }),
+    externalReport: () => ({ ...sheets.report(), hiddenFrames, marche: Object.fromEntries([['joueur', playerSprite.profil()], ...npcSprites.map((e) => [e.n.id, e.s.profil()] as const)]) }),
     decorReport: () => ({ ...decors.report(), ilot: def.id, world: worldKind, pendingFrames: decorPendingFrames, late: [...decorLate] }),
     // plans décodés puis envoyés au GPU dès qu'ils sont prêts (`peek`), pendant le fondu : `goTo` n'a plus qu'à construire
     prepare: (id) => Promise.all([sheets.prepare(castOf(o.ilotDefOf?.(id) ?? ilotDef(id, false))), decors.prepare(id).then(() => { decors.peek(id); })]).then(() => undefined),

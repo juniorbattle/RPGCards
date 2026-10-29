@@ -59,6 +59,12 @@ describe('marche de profil', () => {
       const im = lirePng(`public/sprites/${e.file}`);
       const b = bandePieds(im.h, e);
       const pieds = largeursPieds(im.data.subarray(b.y0 * im.w * 4, (b.y0 + b.h) * im.w * 4), im.w, b.h);
+      // la même mesure sur l'image retournée à la création (comme au jeu : ImageBitmap en `flipY`)
+      const ret = new Uint8Array(im.data.length);
+      const ligne = im.w * 4;
+      for (let y = 0; y < im.h; y++) ret.set(im.data.subarray(y * ligne, (y + 1) * ligne), (im.h - 1 - y) * ligne);
+      const br = bandePieds(im.h, e, true);
+      expect(largeursPieds(ret.subarray(br.y0 * ligne, (br.y0 + br.h) * ligne), im.w, br.h)).toEqual(pieds);
       const [a, passe, c, passe2] = cycleProfil(pieds);
       expect(passe).toBe(passe2);
       expect(a).not.toBe(c);
