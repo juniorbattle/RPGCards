@@ -673,3 +673,26 @@ chemin, dans la même lueur et le même nuanceur (`chemins.ts`, 24 segments au p
 - **Aucune image** ni approbation touchée ; tests : `test/rangs.test.ts` (chemin du premier rang sur le pavé praticable,
   près de l'arrivée, dans la limite du nuanceur) et `test/accessoires.test.ts` (jamais caché par un accessoire, inchangé) ;
   vérification au navigateur `tools/m11-chemins-rang1.mjs` (planches `screenshots/qa/m11/chemins-rang1/`).
+
+### Marche de profil du protagoniste : passages redessinés par code (passe 163, 2026-10-29)
+
+Retour du responsable après la passe 162 : les PNJ marchent mieux de côté, mais la marche de profil du protagoniste
+« demande encore du peaufinage ». Relevé sur la feuille approuvée (`public/sprites/player.png`, J1) : les quatre temps de
+profil sont quatre foulées ouvertes, **la même jambe devant** (pieds arrière et avant à 27 à 31 px d'art) ; les bras, eux,
+alternent (besace en arrière aux temps 1 et 3, en avant aux temps 2 et 4) ; sans pose fermée, la passe 162 prenait le
+**repos** pour passage : à chaque pas, bras, besace et manteau sautaient d'une silhouette à l'autre (la course à 3,2 m/s,
+environ dix temps par seconde, et la caméra qui suit le rendaient bien plus visible que chez les PNJ, qui flânent).
+
+- **Plan de marche** (champ facultatif `profil` d'une entrée v3 du manifeste, contrôlé par `checkManifestEntry`) : pour
+  le joueur, contacts aux temps 1 et 2 (bras opposés), passages tirés des temps 3 et 4 (mêmes bras que le contact qui les
+  précède) ; cycle contact, passage, contact, passage.
+- **Passage redessiné par code au chargement** (`src/ville/passage.ts`, pur) : sur une copie en pixels d'art de la feuille
+  chargée, le haut du corps et tout le manteau restent tels quels ; les pixels des jambes (sous le pixel de manteau le plus
+  bas de leur colonne) glissent vers le milieu des pieds, de 0 à la hanche jusqu'au sol, et passent derrière le manteau.
+  **L'image approuvée et son empreinte ne changent pas** ; aucune approbation touchée ; les PNJ gardent le cycle de la
+  passe 162.
+- **Foulée mesurée** : la phase du joueur avance selon l'écart des pieds de ses contacts à la hauteur de l'îlot (1,38 m
+  pour deux pas à 2,2 m de haut, au lieu de 1,5 m) : les pieds glissent moins.
+- Limite : la même jambe reste devant aux deux contacts (le dessin n'en a pas d'autre). Une rangée de profil redessinée
+  (vraie alternance des jambes) demanderait une image, dans la génération de la version homme du protagoniste, sur
+  l'accord du responsable.

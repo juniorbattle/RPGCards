@@ -1,11 +1,11 @@
 {
-  "date": "2026-10-27T08:12:30.125Z",
-  "commit": "fa6e8b7",
+  "date": "2026-10-29T20:03:54.010Z",
+  "commit": "fe919d5",
   "viewport": [
     1280,
     720
   ],
-  "renderer": "Chromium headless + ANGLE/SwiftShader (CPU) — FPS non représentatifs d’un GPU",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
   "checks": [
     "OK la ville en rangs est affichée (QA : dioramas admis)",
     "OK faits rejoués jusqu'au chapitre V sans refus (aucun)",

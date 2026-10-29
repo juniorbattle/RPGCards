@@ -1,0 +1,9 @@
+OK Mère Aubépine dans la ruelle des Lanternes (rang 3, z -26.6) ; défi pas encore ouvert
+OK jeu par défaut : accueil habituel, sans le mode Aventure ni sa sauvegarde
+console : aucune erreur
+OK Options : son coupé et volume à 60 %, mémorisés ({"volume":0.6,"coupe":true,"musique":0.6})
+OK console : aucune erreur
+29/29 contrôles ; console : aucune erreur
+OK « Continuer » : même îlot (haute) et même directeur (aucun tirage au rechargement)
+OK console : aucune erreur
+35/35 contrôles ; console : aucune erreur

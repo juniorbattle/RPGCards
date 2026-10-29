@@ -54,6 +54,8 @@ export interface MoveInput {
   slow?: boolean;
   /** Destination (clic au sol) : utilisée si `dir` est nulle. */
   target?: Vec2 | null;
+  /** Foulée du personnage (m, deux pas) ; défaut `STRIDE`. */
+  stride?: number;
 }
 
 export const WALKER_RADIUS = 0.3;
@@ -144,7 +146,7 @@ export function stepWalker(ilot: Ilot, w: Walker, input: MoveInput, dt: number):
     pos,
     vel: real,
     facing: moving ? facingOf(want.x || real.x, want.z || real.z, w.facing) : w.facing,
-    phase: moving ? (w.phase + moved / STRIDE) % 1 : 0,
+    phase: moving ? (w.phase + moved / (input.stride ?? STRIDE)) % 1 : 0,
     moving,
   };
 }

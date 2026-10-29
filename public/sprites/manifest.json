@@ -21,6 +21,16 @@
         "tenue",
         "accent"
       ],
+      "profil": {
+        "contacts": [
+          1,
+          2
+        ],
+        "passages": [
+          3,
+          4
+        ]
+      },
       "source": "gpt-image-2 (feuille du joueur refaite, J1, reprise de M09), grille d’art, alignement, palette et tons clés par script (tools/m09-joueur-j1.mjs)",
       "fiche": "art-src/sprites/player/fiche.json",
       "approved": true

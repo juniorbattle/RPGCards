@@ -651,7 +651,9 @@ export function createTown(o: TownOptions): Town {
       let n = 0;
       while (acc >= STEP && n++ < 6) {
         const dir = locked ? { x: 0, z: 0 } : inputDir();
-        walker = stepWalker(def.ilot, walker, { dir, slow: keys.has('ShiftLeft') || keys.has('ShiftRight'), target: locked ? null : target }, STEP);
+        // foulée mesurée sur la feuille du protagoniste (marche de profil), à la hauteur de l'îlot : les pieds glissent moins
+        const foulee = playerSprite.foulee();
+        walker = stepWalker(def.ilot, walker, { dir, slow: keys.has('ShiftLeft') || keys.has('ShiftRight'), target: locked ? null : target, stride: foulee ? (foulee * walkerH()) / WALKER_H : undefined }, STEP);
         if (target && !walker.moving && Math.hypot(target.x - walker.pos.x, target.z - walker.pos.z) < 0.15) target = null;
         for (const st of npcState.values()) {
           const w = st.walk;

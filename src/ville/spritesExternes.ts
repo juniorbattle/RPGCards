@@ -24,6 +24,7 @@
  * quatre `player-<Famille>`, `pnj-<gabarit>` pour tous les `pnj-<gabarit>-<graine>` (ADR 027, D5).
  */
 import * as THREE from 'three';
+import { planValable, type PlanProfil } from './passage';
 
 /** Grille logique du contrat (celle de l'atlas dessiné par code). */
 export const SHEET_CELL: readonly [number, number] = [96, 160];
@@ -97,6 +98,8 @@ export interface SpriteManifestEntryV2 extends SpriteManifestEntryV1 {
 /** Contrat v3 : feuille en pixel art (grille `cell` en px d'art, agrandissement entier `scale`). */
 export interface SpriteManifestEntryV3 extends SpriteManifestEntryV2 {
   pixel?: boolean;
+  /** Marche de profil (pixel art) : contacts et passages redessinés par code (`passage.ts`), l'image restant intacte. */
+  profil?: PlanProfil;
 }
 
 export type SpriteManifestEntry = SpriteManifestEntryV1 | SpriteManifestEntryV2 | SpriteManifestEntryV3;
@@ -112,6 +115,8 @@ export interface SheetSpec {
   cell?: readonly [number, number];
   /** Pixel art (contrat v3) : filtrage au plus proche, recoloration exacte texel par texel. */
   pixel?: boolean;
+  /** Plan de la marche de profil (`passage.ts`) : passages redessinés par code à partir des foulées. */
+  profil?: PlanProfil;
 }
 
 const isNum = (x: unknown): x is number => typeof x === 'number' && Number.isFinite(x);
@@ -157,6 +162,7 @@ export function checkManifestEntry(id: string, e: unknown, version: ManifestVers
       out.push(`${id} : teintes inconnues ou répétées (${RECOLOR_SLOTS.join(', ')})`);
     }
   }
+  if (x.profil !== undefined && (!pixel || !planValable(x.profil))) out.push(`${id} : plan de marche de profil invalide (pixel art ; contacts et passages : quatre colonnes de 1 à 4)`);
   if (typeof x.fiche !== 'string' || !/^art-src\/sprites\/[\w.-]+\/fiche\.json$/.test(x.fiche)) out.push(`${id} : fiche de provenance manquante (art-src/sprites/<id>/fiche.json)`);
   return out;
 }
@@ -167,6 +173,7 @@ export function specOf(e: SpriteManifestEntry, version: ManifestVersion): SheetS
   const v = e as SpriteManifestEntryV3;
   const spec: SheetSpec = { scale: v.scale, anchor: [v.anchor[0], v.anchor[1]], figureH: v.figureH, recolor: v.recolor ?? [] };
   if (v.pixel === true) { spec.cell = [v.cell[0], v.cell[1]]; spec.pixel = true; }
+  if (spec.pixel && planValable(v.profil)) spec.profil = { contacts: [v.profil.contacts[0], v.profil.contacts[1]], passages: [v.profil.passages[0], v.profil.passages[1]] };
   return spec;
 }
 
