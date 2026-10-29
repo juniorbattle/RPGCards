@@ -25,6 +25,8 @@ import type { VenueId } from '../presentation/venues';
 import { duelSeed, SaveStore } from '../product/save';
 import { webglAvailable, type ArenaHandle } from '../scene/arena';
 import { confirmDialog, h } from '../shell/ui';
+import { APPARENCE_DEFAUT, estOrigine, idJoueur, type Apparence } from '../ville/apparence';
+import { editeurApparence, silhouettesDisponibles } from './apparence';
 import { parseRig } from '../ville/cameras';
 import { decorPolicy, preloadDecors } from '../ville/decors';
 import { MANIFESTE_RANGS, QUARTIERS_AJOUTES, type IlotId } from '../ville/ilots';
@@ -249,7 +251,12 @@ export class AventureApp {
     }
     this.ecran = 'nouveau';
     const input = h('input', { class: 'av-input', type: 'text', maxlength: '24', value: 'Duelliste', 'data-key': 'av-name', 'aria-label': 'Votre nom' }) as HTMLInputElement;
-    const go = () => this.commencer(input.value.trim() || 'Duelliste');
+    let apparence: Apparence = { ...APPARENCE_DEFAUT.a };
+    const go = () => this.commencer(input.value.trim() || 'Duelliste', undefined, apparence);
+    const zone = h('div', { class: 'av-apparence-zone' });
+    void silhouettesDisponibles(this.params.qa, new URLSearchParams(location.search).get('sprites')).then((sil) => {
+      zone.replaceChildren(h('p', { class: 'av-label' }, 'Votre apparence'), editeurApparence({ valeur: apparence, tenue: 'gris', silhouettes: sil, change: (a) => { apparence = a; } }));
+    });
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
     this.ecranShell('scr-home av-scr',
       h('section', { class: 'av-titre', 'data-screen': 'av-nouveau' },
@@ -257,6 +264,7 @@ export class AventureApp {
         h('p', { class: 'av-sous' }, 'Vous n’avez ni famille ni Signature : seize cartes grises, quatre de chaque Rang, sans effet ni bonus. Le soir du tournoi, le Quai est plein.'),
         h('div', { class: 'av-cards' }, ...[1, 2, 3, 4].map((r) => neutreEl(`neutre-${r}`, '×4'))),
         h('label', { class: 'av-label' }, 'Votre nom ', input),
+        zone,
         h('div', { class: 'av-items' }, bouton('Commencer', go, 'av-start', true), bouton('Retour', () => this.titre(), 'av-back'))));
     input.focus();
     input.select();
@@ -271,11 +279,11 @@ export class AventureApp {
     this.commencer('Duelliste', (e) => etatDepart(e, dep, fam, new Date().toISOString()));
   }
 
-  private commencer(nom: string, depart?: (e: AventureEtat) => AventureEtat): void {
+  private commencer(nom: string, depart?: (e: AventureEtat) => AventureEtat, apparence?: Apparence): void {
     const forced = this.params.qa ? Number(new URLSearchParams(location.search).get('profileSeed')) : NaN;
     const graine = Number.isInteger(forced) && forced > 0 ? forced >>> 0 : (crypto.getRandomValues(new Uint32Array(1))[0] ?? Date.now()) >>> 0;
     if (this.charge.status === 'illisible') this.store.ecarter();
-    this.save = nouvelleSauvegarde(new Date(), nom, graine);
+    this.save = nouvelleSauvegarde(new Date(), nom, graine, apparence);
     this.charge = { status: 'ok', save: this.save };
     this.save.etat = appliquer(this.save.etat, { type: 'scene', id: 'P1' }, new Date().toISOString()).etat;
     if (depart) this.save.etat = depart(this.save.etat);
@@ -295,7 +303,7 @@ export class AventureApp {
   // ------------------------------------------------------------------ la ville
 
   private lookJoueur(): string {
-    return this.etat.affiliation ? `player-${this.etat.affiliation}` : 'player-gris';
+    return idJoueur(this.etat.affiliation ?? 'gris', this.save?.profil.apparence);
   }
 
   private posesDe(id: IlotId): Pose[] {
@@ -1266,7 +1274,7 @@ export class AventureApp {
     const banner = h('div', { class: 'av-banner', 'data-key': 'av-banner', title: prevu.note }, 'Aventure');
     document.body.append(banner);
     const session = new DuelSession({
-      app: this.d.app, arena, config: duel.config, params: this.params, scenario: null, personality: prevu.personnalite, product: { menu: true }, resume: duel.commands,
+      app: this.d.app, arena, config: duel.config, params: { ...this.params, ...(this.save?.profil.apparence ? { apparence: this.save.profil.apparence } : {}) }, scenario: null, personality: prevu.personnalite, product: { menu: true }, resume: duel.commands,
       onTool: (t) => {
         if (t === 'menu') { void this.menuDuel(); return true; }
         // M12 : un conseil lu (« Compris ») est mémorisé dans la sauvegarde de l'aventure
@@ -1630,12 +1638,34 @@ export class AventureApp {
       { label: 'Reprendre', key: 'dlg-close', primary: true, run: () => this.fermerDialogue() },
       { label: 'Deck et collection', key: 'menu-deck', run: () => { this.fermerDialogue(); this.collection(); } },
       { label: 'Journal des quêtes', key: 'menu-journal', run: () => { this.fermerDialogue(); this.journal(); } },
+      { label: 'Apparence', key: 'menu-apparence', run: () => { this.fermerDialogue(); void this.reglageApparence(); } },
       { label: `Son : ${son().reglages().coupe ? 'coupé' : `${Math.round(son().reglages().volume * 100)} %`}`, key: 'menu-son', run: () => this.reglageSon() },
       { label: `Cinématiques : ${!cinePermise(location.search) ? 'coupées par l’adresse' : lireCine(stockageLocal()) ? 'oui' : 'non'}`, key: 'menu-cine', run: () => { ecrireCine(stockageLocal(), !lireCine(stockageLocal())); this.fermerDialogue(); this.menu(); } },
       { label: `Conseils du duel : ${!conseilsPermis(location.search) ? 'coupés par l’adresse' : lireConseils(stockageLocal()) ? 'affichés' : 'masqués'}`, key: 'menu-conseils', run: () => this.reglageConseils() },
       { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter. Les joueurs de cartes de la ville regardent devant eux : entrer dans leur regard, c’est accepter leur défi (une bulle « ! » s’allume, ils viennent à vous) ; passez derrière eux ou à l’abri d’un étal pour les éviter. Kaï surgit à certains moments de votre histoire ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? ») ; des conseils, un à la fois, expliquent chaque phase et chaque signal des cartes la première fois qu’il paraît (« Conseils du duel », dans ce menu). Le son se règle dans ce menu (« Son »). Les grands moments de votre histoire se jouent en cinématique (première arrivée dans un quartier, Kaï qui surgit, votre affiliation, un chef vaincu, un nouveau chapitre, le Championnat) : Échap, Espace, Entrée ou « Passer » pour la passer ; « Cinématiques », dans ce menu, les coupe.', [fermer(this)]) },
       { label: 'Écran titre', key: 'menu-home', run: () => { this.fermerDialogue(); this.titre(); } },
     ]);
+  }
+
+  /** Passe 165 : l'apparence du protagoniste (silhouette, peau, cheveux, yeux), modifiable à tout moment ; sauvegardée. */
+  private async reglageApparence(): Promise<void> {
+    const s = this.save;
+    if (!s) return;
+    const sil = await silhouettesDisponibles(this.params.qa, new URLSearchParams(location.search).get('sprites'));
+    let apparence: Apparence = s.profil.apparence ?? { ...APPARENCE_DEFAUT.a };
+    this.ouvrirModal(h('div', { class: 'av-confirm', 'data-key': 'av-apparence-menu' },
+      h('h2', null, 'Apparence'),
+      editeurApparence({ valeur: apparence, tenue: this.etat.affiliation ?? 'gris', silhouettes: sil, change: (a) => { apparence = a; } }),
+      h('div', { class: 'ville-choices' },
+        h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-apparence-ok', onclick: () => {
+          if (estOrigine(apparence)) delete s.profil.apparence;
+          else s.profil.apparence = apparence;
+          this.persist();
+          this.fermerModal();
+          // la ville se remonte sur le nouveau personnage (même îlot, même place, sans nouveau tirage)
+          if (this.ecran === 'ville') this.entrerVille(false, undefined, true);
+        } }, 'Valider'),
+        h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-apparence-annuler', onclick: () => this.fermerModal() }, 'Annuler'))));
   }
 
   /** M12 : conseils du duel (un à la fois, « Compris ») : les afficher ou les masquer, réafficher ceux déjà lus. */

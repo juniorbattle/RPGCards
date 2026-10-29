@@ -696,3 +696,27 @@ environ dix temps par seconde, et la caméra qui suit le rendaient bien plus vis
 - Limite : la même jambe reste devant aux deux contacts (le dessin n'en a pas d'autre). Une rangée de profil redessinée
   (vraie alternance des jambes) demanderait une image, dans la génération de la version homme du protagoniste, sur
   l'accord du responsable.
+
+### Protagoniste personnalisable : deux silhouettes, couleurs par code (passes 164 et 165, 2026-10-29)
+
+Demande du responsable : une version homme du protagoniste (même structure et même tenue, cheveux argentés plus courts,
+peau mate), puis « un système personnalisable de personne avec genre, type cheveu et couleur de cheveux, couleur de
+peau, et type de visage », à la « nouvelle aventure » et dans le menu. Décisions dans la session : « 4 images, couleurs
+par code » ; le choix nommé **« Silhouette »**, avec deux vignettes, jamais un mot genré ; le portrait du duel suit
+l'apparence, par code.
+
+- **Silhouette B** : une feuille générée (`player-b`, passe 164, réserve non utilisée ; 17 images sur 20), `approved: false`
+  jusqu'à l'ordre du responsable ; hors QA, elle n'est pas proposée.
+- **Apparence** (`src/ville/apparence.ts`) : silhouette, peau (6), cheveux (10 : l'argent, sept couleurs naturelles, roux
+  vif, bleu nuit), yeux (6) ; elle voyage dans l'identifiant du personnage (`player-<tenue>` pour l'apparence d'origine,
+  rendu inchangé ; `player-<tenue>@b431` sinon) ; chaque silhouette a sa feuille (`sheetKeys`).
+- **Couleurs par code** (`src/ville/teintes.ts`) : les deux feuilles peignent la peau et les cheveux au naturel, la peau
+  partageant ses tons avec le liseré doré du manteau ; au chargement, sur une copie en pixels d'art, les cheveux (gris
+  clairs du haut de la figure, en grandes plages), la peau (visage ; plus bas, mains compactes qui ne touchent pas le
+  manteau, la boucle de ceinture écartée) et l'iris (bleus du visage) sont reconnus puis repeints sur quatre niveaux. Les
+  images ne changent pas.
+- **Coupe et visage** : un par silhouette pour l'instant ; d'autres coupes ou visages demanderont des images, dans un lot
+  à part avec son budget.
+- **Sauvegarde** : `profil.apparence`, facultative (absente : l'apparence d'origine), schéma `aventure/2` inchangé.
+- **Portrait du duel** (`scene/v2/joueur.ts`) : couleurs de l'apparence ; silhouette B en coupe courte (ni pans du carré
+  ni arrière long) ; l'apparence d'origine garde le portrait historique.

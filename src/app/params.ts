@@ -2,6 +2,7 @@
 import { FAMILIES, type Family } from '../game/catalog/cards';
 import { TECHNIQUE_IDS, type TechniqueId } from '../game/catalog/techniques';
 import { isVenueId, type VenueId } from '../presentation/venues';
+import type { Apparence } from '../ville/apparence';
 
 export interface AppParams {
   seed: number;
@@ -29,6 +30,8 @@ export interface AppParams {
   intro: boolean;
   /** Revue visuelle uniquement : humeur imposée au rival (planche de comparaison), jamais en jeu normal. */
   pose: string | null;
+  /** Mode Aventure : apparence du protagoniste (portrait du duel, `ville/apparence.ts`) ; absente ailleurs (apparence d'origine). */
+  apparence?: Apparence;
   /** QA (`qa=1`) : éléments de la scène retirés pour mesurer leur coût (voir ArenaOptions.ablate). */
   ablate: string[];
   /** QA (`qa=1&fallback=off|nobloom|direct`) : repli automatique du post-traitement désactivé, ou niveau imposé

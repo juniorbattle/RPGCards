@@ -17,7 +17,9 @@ import { FAMILY_PALETTE } from '../art/palette';
 import type { Family } from '../game/catalog/cards';
 import { NPC_HAIRS, NPC_SKINS, npcLook, type Accessory, type HairCut, type Tone } from '../presentation/npcs';
 import { COMMON_GLSL, U } from './materiaux';
+import { CHEVEUX, PEAUX, YEUX, estOrigine, lireIdJoueur, type Yeux } from './apparence';
 import { cyclePlan, ecartPieds, posePassage } from './passage';
+import { classerTeintes, repeindre } from './teintes';
 import type { Facing } from './monde';
 import { DEFAULT_ANCHOR, DEFAULT_FIGURE_H, RAMP_STEPS, RECOLOR_SLOTS, keyColor, type RecolorSlot, type SheetSpec } from './spritesExternes';
 
@@ -68,12 +70,14 @@ export function walkerLook(id: string): WalkerLook {
       iris: n.iris.iris,
     };
   }
-  if (id.startsWith('player-')) {
-    const p = paletteJoueur(id.slice(7));
+  const joueur = lireIdJoueur(id);
+  if (joueur) {
+    const p = paletteJoueur(joueur.tenue);
+    const a = joueur.apparence;
     return {
-      skin: NPC_SKINS[0]!, hair: tone('#dfe2ef', '#b4b8c8', '#8a8ea0', '#ffffff'), cut: 'carre-argent',
+      skin: PEAUX[a.peau]!, hair: CHEVEUX[a.cheveux]!, cut: a.silhouette === 'a' ? 'carre-argent' : 'courte',
       cloth: tone(p.mid, p.deep, p.deep, p.light), shirt: tone('#e6e0d2', '#c2bcae', '#98928a', '#f6f2ea'), legs: '#262a34',
-      accessory: 'bandeau', long: true, detail: 'echarpe', iris: '#4a6fd6', hood: true,
+      accessory: 'bandeau', long: true, detail: 'echarpe', iris: YEUX[a.yeux]!.iris, hood: true,
     };
   }
   // Rivaux signatures présents dans la ville (couleurs de leurs identités V2, ADR 021) : Kaï sur le Quai, Orin au Parvis, Sélène dans les Ruelles.
@@ -134,8 +138,9 @@ export function walkerLook(id: string): WalkerLook {
 export function recolorTargets(id: string): Partial<Record<RecolorSlot, Tone>> {
   const L = walkerLook(id);
   const t: Partial<Record<RecolorSlot, Tone>> = { peau: L.skin, cheveux: L.hair, tenue: L.cloth, chemise: L.shirt };
-  if (id.startsWith('player-')) {
-    const p = paletteJoueur(id.slice(7));
+  const joueur = lireIdJoueur(id);
+  if (joueur) {
+    const p = paletteJoueur(joueur.tenue);
     t.accent = tone(p.accent, p.light, p.mid, p.ink);
   }
   return t;
@@ -764,19 +769,25 @@ function cycleFeuille(im: CanvasImageSource & { width: number; height: number },
   return out;
 }
 
-const PASSAGES = new WeakMap<object, { texture: THREE.Texture; ecart: number } | null>();
+/** Teintes repeintes d'une feuille du protagoniste (`teintes.ts`) : peau, cheveux et yeux de son apparence. */
+interface Teintes { code: string; peau: Tone; cheveux: Tone; yeux: Yeux }
+const DERIVEES = new WeakMap<object, Map<string, { texture: THREE.Texture; ecart: number } | null>>();
 
 /**
- * Feuille au plan de marche de profil (`spec.profil`, `passage.ts`) : copie en pixels d'art de la feuille chargée, les
- * deux colonnes de passage de la rangée de profil redessinées (jambes sous le corps) ; l'image approuvée n'est pas
- * modifiée. Mesure aussi l'écart des pieds des deux contacts (px d'art). Une fois par image ; null sans canevas lisible.
+ * Feuille dérivée du protagoniste : copie en pixels d'art de la feuille chargée (l'image approuvée n'est pas modifiée),
+ * les deux colonnes de passage de la rangée de profil redessinées (plan `spec.profil`, `passage.ts` : jambes sous le
+ * corps) et, pour une apparence choisie, la peau, les cheveux et les yeux repeints (`teintes.ts`). Mesure aussi l'écart
+ * des pieds des deux contacts (px d'art, 0 sans plan). Une fois par image et par apparence ; null sans canevas lisible.
  */
-function feuilleAvecPassages(im: CanvasImageSource & { width: number; height: number }, spec: SheetSpec, retournee: boolean): { texture: THREE.Texture; ecart: number } | null {
-  if (PASSAGES.has(im)) return PASSAGES.get(im)!;
+function feuilleDerivee(im: CanvasImageSource & { width: number; height: number }, spec: SheetSpec, retournee: boolean, teintes: Teintes | null): { texture: THREE.Texture; ecart: number } | null {
+  let parImage = DERIVEES.get(im);
+  if (!parImage) { parImage = new Map(); DERIVEES.set(im, parImage); }
+  const cle = teintes?.code ?? '';
+  if (parImage.has(cle)) return parImage.get(cle)!;
   let out: { texture: THREE.Texture; ecart: number } | null = null;
   try {
     const [cw, ch] = spec.cell!;
-    const plan = spec.profil!;
+    const plan = spec.profil;
     const c = document.createElement('canvas');
     c.width = cw * COLS;
     c.height = ch * ROWS;
@@ -786,11 +797,17 @@ function feuilleAvecPassages(im: CanvasImageSource & { width: number; height: nu
       g.imageSmoothingEnabled = false;
       if (retournee) { g.translate(0, c.height); g.scale(1, -1); }
       g.drawImage(im, 0, 0, c.width, c.height);
+      if (teintes) {
+        const tout = g.getImageData(0, 0, c.width, c.height);
+        const f = { px: tout.data, w: c.width, h: c.height };
+        repeindre(f, classerTeintes(f, cw, ch), teintes);
+        g.putImageData(tout, 0, 0);
+      }
       const sol = Math.round(spec.anchor[1]) - 1;
       const hanche = sol - Math.round(spec.figureH / 3);
       const lire = (col: number) => ({ px: g.getImageData(col * cw, 2 * ch, cw, ch).data, w: cw, h: ch });
-      const ecart = (ecartPieds(lire(plan.contacts[0]), sol) + ecartPieds(lire(plan.contacts[1]), sol)) / 2;
-      for (const col of plan.dessines ? [] : plan.passages) {
+      const ecart = plan ? (ecartPieds(lire(plan.contacts[0]), sol) + ecartPieds(lire(plan.contacts[1]), sol)) / 2 : 0;
+      for (const col of !plan || plan.dessines ? [] : plan.passages) {
         const k = lire(col);
         posePassage(k, sol, hanche);
         g.putImageData(new ImageData(k.px as Uint8ClampedArray<ArrayBuffer>, cw, ch), col * cw, 2 * ch);
@@ -801,10 +818,10 @@ function feuilleAvecPassages(im: CanvasImageSource & { width: number; height: nu
       texture.magFilter = THREE.NearestFilter;
       texture.minFilter = THREE.NearestFilter;
       texture.generateMipmaps = false;
-      if (ecart > 0) out = { texture, ecart };
+      if (ecart > 0 || !plan) out = { texture, ecart };
     }
   } catch { out = null; }
-  PASSAGES.set(im, out);
+  parImage.set(cle, out);
   return out;
 }
 
@@ -826,6 +843,10 @@ export function walkerPanel(spec: SheetSpec): { geo: THREE.PlaneGeometry; ax: nu
 /** Personnage en panneau tourné vers le plan de la caméra, ombre de contact au sol, découpe nette (alpha testé). */
 export function createWalkerSprite(id: string): WalkerSprite {
   const atlas = walkerAtlas(id);
+  // protagoniste à l'apparence choisie : peau, cheveux et yeux repeints sur sa feuille (`apparence.ts`, `teintes.ts`)
+  const joueur = lireIdJoueur(id);
+  const ap = joueur && !estOrigine(joueur.apparence) ? joueur.apparence : null;
+  const teintes: Teintes | null = ap ? { code: `${ap.peau}.${ap.cheveux}.${ap.yeux}`, peau: PEAUX[ap.peau]!, cheveux: CHEVEUX[ap.cheveux]!, yeux: YEUX[ap.yeux]! } : null;
   let { geo, ax } = walkerPanel(CODE_SPEC);
   const img = atlas.image as HTMLCanvasElement;
   const uniforms = {
@@ -905,11 +926,11 @@ export function createWalkerSprite(id: string): WalkerSprite {
       }
       // une texture sans `flipY` porte une image déjà retournée à la création
       const source = texture.image as CanvasImageSource & { width: number; height: number };
-      // plan de marche de profil (protagoniste) : passages redessinés par code, foulée mesurée sur les contacts
-      const plan = im && spec.pixel && spec.cell && spec.profil ? feuilleAvecPassages(source, spec, !texture.flipY) : null;
-      if (plan) uniforms.tAtlas.value = plan.texture;
-      profil = plan ? cyclePlan(spec.profil!) : im ? cycleFeuille(source, spec, !texture.flipY) : null;
-      foulee = plan ? (2 * plan.ecart * WALKER_H) / spec.figureH : null;
+      // protagoniste : plan de marche de profil (passages redessinés par code, foulée mesurée sur les contacts) et teintes
+      const derivee = im && spec.pixel && spec.cell && (spec.profil || teintes) ? feuilleDerivee(source, spec, !texture.flipY, teintes) : null;
+      if (derivee) uniforms.tAtlas.value = derivee.texture;
+      profil = derivee && spec.profil ? cyclePlan(spec.profil) : im ? cycleFeuille(source, spec, !texture.flipY) : null;
+      foulee = derivee && derivee.ecart > 0 ? (2 * derivee.ecart * WALKER_H) / spec.figureH : null;
       artPx = WALKER_H / spec.figureH;
       const panel = walkerPanel(spec);
       geo.dispose();

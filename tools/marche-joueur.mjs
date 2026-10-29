@@ -1,7 +1,7 @@
 // Marche du protagoniste filmée au navigateur (retour du responsable du 2026-10-29 : sa marche de côté « demande encore du
 // peaufinage ») : horloge de la page tenue par Playwright (images à pas fixe, reproductibles), le joueur marche dans les
 // quatre directions ; pour chacune, une bande d'images recadrées sur lui et la suite des temps de la feuille affichés.
-// Usage : npm run build && node tools/marche-joueur.mjs <sortie (dossier)> [îlot, défaut quai] [lent]
+// Usage : npm run build && node tools/marche-joueur.mjs <sortie (dossier)> [îlot, défaut quai] [lent|vite] [apparence, ex. b200]
 //   (ou LQV_BASE=http://localhost:5173 pour filmer le serveur de dev)
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -10,18 +10,19 @@ import { launch, startPreview, watchConsole } from './browser.mjs';
 const OUT = process.argv[2] ?? 'artifacts/qa/marche-joueur';
 const ILOT = process.argv[3] ?? 'quai';
 const LENT = process.argv[4] === 'lent';
+const APPARENCE = process.argv[5] ?? '';
 const FPS = 30;
 const N = 24;
 mkdirSync(OUT, { recursive: true });
 const server = process.env.LQV_BASE ? { base: process.env.LQV_BASE, stop() {} } : await startPreview(Number(process.env.LQV_PREVIEW_PORT) || 4392);
 const browser = await launch();
 const erreurs = [];
-const rapport = { ilot: ILOT, fps: FPS, lent: LENT, directions: {} };
+const rapport = { ilot: ILOT, fps: FPS, lent: LENT, apparence: APPARENCE || null, directions: {} };
 try {
   const p = await (await browser.newContext({ viewport: { width: 1280, height: 720 } })).newPage();
   watchConsole(p, erreurs);
   await p.clock.install();
-  await p.goto(`${server.base}/?ville=1&qa=1&profondeur=1&ilot=${ILOT}`);
+  await p.goto(`${server.base}/?ville=1&qa=1&profondeur=1&ilot=${ILOT}${APPARENCE ? `&apparence=${APPARENCE}` : ''}`);
   for (let i = 0; i < 600; i++) {
     await p.clock.runFor(100);
     if (await p.evaluate(() => !!window.__lqvVille && window.__lqvVille.town.stats().frames > 3)) break;

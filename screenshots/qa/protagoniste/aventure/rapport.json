@@ -1,0 +1,14 @@
+{
+ "date": "2026-10-29T20:58:52.623Z",
+ "checks": [
+  "OK écran « Nouvelle aventure » : éditeur et silhouette B (QA)",
+  "OK aucun mot genré à l’écran de création",
+  "OK sauvegarde : {\"silhouette\":\"b\",\"peau\":4,\"cheveux\":3,\"yeux\":1}",
+  "OK personnage de la ville : player-gris@b431",
+  "OK après reprise : player-gris@b431",
+  "OK menu : personnage remonté player-gris@a090",
+  "OK menu : sauvegardé",
+  "OK origine : sauvegarde sans apparence, player-gris",
+  "OK console : vide"
+ ]
+}

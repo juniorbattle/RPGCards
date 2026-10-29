@@ -5,6 +5,7 @@
  */
 import { FAMILIES, type Family } from '../../game/catalog/cards';
 import type { FigureV2Kit } from '../figureV2';
+import { lireIdJoueur } from '../../ville/apparence';
 import { playerKitV2 } from './joueur';
 import { KAI_V2 } from './kai';
 import { MAELLE_V2 } from './maelle';
@@ -31,10 +32,12 @@ export function kitV2(id: string): FigureV2Kit | null {
   const chef = CHEF_KITS[id];
   if (chef) return chef;
   if (id.startsWith('pnj-')) return npcKitV2(id);
-  const fam = id.startsWith('player-') ? id.slice('player-'.length) : null;
-  // `player-gris` : duelliste sans Signature (deck d'aventure, avenant M10-A), tenue grise sans emblème
-  if (fam === 'gris') return playerKitV2('gris');
-  return fam && (FAMILIES as readonly string[]).includes(fam) ? playerKitV2(fam as Family) : null;
+  // `player-<tenue>[@apparence]` (`apparence.ts`) ; `player-gris` : duelliste sans Signature (deck d'aventure, avenant
+  // M10-A), tenue grise sans emblème
+  const joueur = lireIdJoueur(id);
+  const fam = joueur?.tenue ?? null;
+  if (fam === 'gris') return playerKitV2('gris', joueur!.apparence);
+  return fam && (FAMILIES as readonly string[]).includes(fam) ? playerKitV2(fam as Family, joueur!.apparence) : null;
 }
 
 /** Rival signature de chaque famille (repli de `figureKitV2`). */

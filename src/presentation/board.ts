@@ -248,7 +248,7 @@ function hud(c: Controller, s: SideView, who: 'me' | 'opp'): HTMLElement {
     class: cls('hud', who, `fam-${fam ?? 'neutre'}`, focus.includes(`${who}-hp`) && 'beat-hit', focus.includes(`${who}-insight`) && 'beat-insight'),
     'aria-label': who === 'me' ? 'Votre duelliste' : `Duelliste rival : ${s.name}`,
   },
-  who === 'me' ? h('div', { class: 'portrait' }, h('img', { src: portraitUrl(playerFigure(c.mySignature), c.artSeed), alt: 'Votre portrait', draggable: 'false' })) : null,
+  who === 'me' ? h('div', { class: 'portrait' }, h('img', { src: portraitUrl(playerFigure(c.mySignature, c.params.apparence), c.artSeed), alt: 'Votre portrait', draggable: 'false' })) : null,
   who === 'opp' ? h('div', { class: 'portrait mini' }, h('img', { src: portraitUrl(c.rival, c.artSeed), alt: `Portrait de ${s.name}`, draggable: 'false' })) : null,
   body,
   ), focus.includes(`${who}-hp`) || focus.includes(`${who}-insight`));

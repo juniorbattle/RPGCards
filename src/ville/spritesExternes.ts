@@ -24,6 +24,7 @@
  * quatre `player-<Famille>`, `pnj-<gabarit>` pour tous les `pnj-<gabarit>-<graine>` (ADR 027, D5).
  */
 import * as THREE from 'three';
+import { feuilleSilhouette, lireIdJoueur } from './apparence';
 import { planValable, type PlanProfil } from './passage';
 
 /** Grille logique du contrat (celle de l'atlas dessiné par code). */
@@ -185,7 +186,9 @@ export function sheetSize(scale: number, cell: readonly [number, number] = SHEET
 /** Clés du manifeste essayées pour un personnage, dans l'ordre : l'identifiant, puis la feuille commune de son dessin. */
 export function sheetKeys(id: string): string[] {
   const keys = [id];
-  if (/^player-[A-Za-z]+$/.test(id)) keys.push('player');
+  // duelliste joueur : la feuille de sa silhouette (`apparence.ts`)
+  const j = lireIdJoueur(id);
+  if (j) keys.push(feuilleSilhouette(j.apparence.silhouette));
   const n = /^(pnj-[a-z]+)-\d+$/.exec(id);
   if (n) keys.push(n[1]!);
   return keys;
