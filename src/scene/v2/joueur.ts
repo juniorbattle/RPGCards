@@ -159,7 +159,9 @@ function drawHead(): HTMLCanvasElement {
   clipped(ctx, face, () => {
     softShade(ctx, 'M204,70 C208,104 206,132 208,156 C206,170 198,182 188,192 C180,200 174,212 172,226 C170,242 160,258 144,268 L250,300 L250,40 Z', C.skinShade);
     // Ombres portées de la frange, du bandeau et des pans (lumière en haut à gauche).
-    fill(ctx, translatedPath(FRINGE, 3, 6), C.skinShade, 0.8);
+    // (bouclée : l'ombre douce de la frange de boucles, pas celle des pointes de la frange balayée)
+    if (COUPE === 'boucles') fill(ctx, 'M40,104 C80,116 176,116 216,104 L216,122 C176,128 80,128 40,122 Z', C.skinShade, 0.55);
+    else fill(ctx, translatedPath(FRINGE, 3, 6), C.skinShade, 0.8);
     fill(ctx, translatedPath(SIDE, 4, 3), C.skinShade, 0.7);
     mirrored(ctx, 128, () => fill(ctx, translatedPath(SIDE, -2, 3), C.skinDeep, 0.5));
     // Orbites : ombre douce sous l’arcade, côté nez.
@@ -233,34 +235,38 @@ function drawFront(o: Outfit, family: Tenue): HTMLCanvasElement {
     for (const s of [[198, 80, 208, 120, 212, 170, 206, 226], [210, 110, 216, 150, 216, 200, 210, 248], [196, 150, 198, 190, 194, 230, 190, 258]] as Cubic[]) taper(ctx, s, 0.2, 1.1, 0.2, C.hairDeep, 0.75);
     taper(ctx, [206, 120, 212, 150, 213, 180, 210, 210], 0, 2.2, 0, C.hairHi, 0.45);
   });
-  // Frange balayée, dessus du crâne et raie à droite.
-  const fringe = P(FRINGE);
-  fill(ctx, fringe, C.hair);
-  clipped(ctx, fringe, () => {
-    edgeBand(ctx, fringe, -3, -5, C.hairShade, 0.85, box);
-    fill(ctx, 'M168,0 L260,0 L260,120 L168,120 Z', C.hairShade, 0.45);
-    // Une mèche par pointe, balayée depuis la raie : demi-teinte au cœur, séparation sombre.
+  // bouclée (retour du responsable, passe 175 : « la frange devant n'est pas bonne ») : pas de frange balayée, une frange
+  // de boucles (plus bas)
+  if (COUPE !== 'boucles') {
+    // Frange balayée, dessus du crâne et raie à droite.
+    const fringe = P(FRINGE);
+    fill(ctx, fringe, C.hair);
+    clipped(ctx, fringe, () => {
+      edgeBand(ctx, fringe, -3, -5, C.hairShade, 0.85, box);
+      fill(ctx, 'M168,0 L260,0 L260,120 L168,120 Z', C.hairShade, 0.45);
+      // Une mèche par pointe, balayée depuis la raie : demi-teinte au cœur, séparation sombre.
+      for (let i = 0; i < TIP.length; i++) {
+        const [tx, ty] = TIP[i]!;
+        const [xb, yb] = NOTCH[i + 1]!;
+        taper(ctx, [xb + 14, yb - 34, xb + 2, yb - 10, tx + 7, ty - 16, tx + 1, ty - 1], 0.4, 6, 0.3, C.hairHi, i < 4 ? 0.6 : 0.32);
+        taper(ctx, [xb + 14, yb - 36, xb + 4, yb - 12, xb - 1, yb + 4, xb - 4, yb + 12], 0.2, 1.2, 0.2, C.hairDeep, 0.75);
+      }
+      // Dessus du crâne : mèches qui partent de la raie vers la gauche, reflet en couronne, raie.
+      for (const s of [[170, 18, 140, 18, 100, 22, 70, 40], [172, 24, 146, 28, 112, 36, 84, 56], [176, 22, 194, 28, 208, 44, 214, 66]] as Cubic[]) taper(ctx, s, 0.2, 1, 0.2, C.hairDeep, 0.55);
+      taper(ctx, [150, 22, 120, 22, 88, 30, 64, 50], 0, 5, 0, C.hairSheen, 0.9);
+      for (const [x, y, a, l] of [[112, 26, -0.2, 14], [92, 32, -0.5, 12], [76, 42, -0.8, 11]] as Array<[number, number, number, number]>) {
+        const ux = Math.cos(a) * l / 2;
+        const uy = Math.sin(a) * l / 2;
+        taper(ctx, [x - ux, y - uy, x - ux / 3, y - uy / 3, x + ux / 3, y + uy / 3, x + ux, y + uy], 0, 2.4, 0, C.hairSheen, 0.9);
+      }
+      taper(ctx, [168, 16, 171, 30, 174, 44, 178, 60], 0.6, 1.6, 0.4, C.skinShade, 0.9);
+    });
+    // Encre sur les bords des pointes qui passent devant le front.
     for (let i = 0; i < TIP.length; i++) {
-      const [tx, ty] = TIP[i]!;
-      const [xb, yb] = NOTCH[i + 1]!;
-      taper(ctx, [xb + 14, yb - 34, xb + 2, yb - 10, tx + 7, ty - 16, tx + 1, ty - 1], 0.4, 6, 0.3, C.hairHi, i < 4 ? 0.6 : 0.32);
-      taper(ctx, [xb + 14, yb - 36, xb + 4, yb - 12, xb - 1, yb + 4, xb - 4, yb + 12], 0.2, 1.2, 0.2, C.hairDeep, 0.75);
+      const [a, b] = lockEdges(i);
+      taper(ctx, a, 0.3, 0.9, 0.2, C.hairDeep, 0.85);
+      taper(ctx, b, 0.2, 1, 0.3, C.hairDeep, 0.85);
     }
-    // Dessus du crâne : mèches qui partent de la raie vers la gauche, reflet en couronne, raie.
-    for (const s of [[170, 18, 140, 18, 100, 22, 70, 40], [172, 24, 146, 28, 112, 36, 84, 56], [176, 22, 194, 28, 208, 44, 214, 66]] as Cubic[]) taper(ctx, s, 0.2, 1, 0.2, C.hairDeep, 0.55);
-    taper(ctx, [150, 22, 120, 22, 88, 30, 64, 50], 0, 5, 0, C.hairSheen, 0.9);
-    for (const [x, y, a, l] of [[112, 26, -0.2, 14], [92, 32, -0.5, 12], [76, 42, -0.8, 11]] as Array<[number, number, number, number]>) {
-      const ux = Math.cos(a) * l / 2;
-      const uy = Math.sin(a) * l / 2;
-      taper(ctx, [x - ux, y - uy, x - ux / 3, y - uy / 3, x + ux / 3, y + uy / 3, x + ux, y + uy], 0, 2.4, 0, C.hairSheen, 0.9);
-    }
-    taper(ctx, [168, 16, 171, 30, 174, 44, 178, 60], 0.6, 1.6, 0.4, C.skinShade, 0.9);
-  });
-  // Encre sur les bords des pointes qui passent devant le front.
-  for (let i = 0; i < TIP.length; i++) {
-    const [a, b] = lockEdges(i);
-    taper(ctx, a, 0.3, 0.9, 0.2, C.hairDeep, 0.85);
-    taper(ctx, b, 0.2, 1, 0.3, C.hairDeep, 0.85);
   }
   // courte effilée : une longue mèche balayée sur le front, de la raie jusqu'au sourcil
   if (COUPE === 'effilee') {
@@ -269,13 +275,21 @@ function drawFront(o: Outfit, family: Tenue): HTMLCanvasElement {
     clipped(ctx, meche, () => { taper(ctx, [166, 30, 130, 52, 102, 90, 84, 148], 0, 4, 0, C.hairHi, 0.6); edgeBand(ctx, meche, 3, 2, C.hairShade, 0.8, box); });
     taper(ctx, [180, 46, 128, 76, 102, 112, 88, 158], 0.3, 1.2, 0.2, C.hairDeep, 0.85);
   }
-  // bouclée : des boucles sur le haut de la frange
+  // bouclée : calotte de cheveux, puis boucles sur le crâne, aux tempes et en frange courte sous le bandeau (au-dessus des
+  // sourcils), chacune avec son ombre et son reflet, la lumière en haut à gauche
   if (COUPE === 'boucles') {
-    for (const [x, y, r] of [[60, 46, 13], [84, 30, 14], [112, 22, 14], [142, 20, 14], [170, 26, 14], [194, 40, 13], [210, 60, 11], [46, 66, 11]] as const) {
+    const calotte = P('M38,104 C34,52 76,12 128,11 C180,12 222,52 218,104 C190,96 66,96 38,104 Z');
+    fill(ctx, calotte, C.hairShade);
+    const boucle = (x: number, y: number, r: number) => {
       ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fillStyle = C.hair; ctx.fill();
-      ctx.lineWidth = 1.4; ctx.strokeStyle = C.hairDeep; ctx.globalAlpha = 0.7; ctx.stroke(); ctx.globalAlpha = 1;
-      ctx.beginPath(); ctx.arc(x - r * 0.3, y - r * 0.35, r * 0.4, 0, Math.PI * 2); ctx.fillStyle = C.hairHi; ctx.globalAlpha = 0.5; ctx.fill(); ctx.globalAlpha = 1;
-    }
+      ctx.beginPath(); ctx.arc(x + r * 0.25, y + r * 0.3, r * 0.75, 0.1 * Math.PI, 1.1 * Math.PI); ctx.fillStyle = C.hairShade; ctx.globalAlpha = 0.6; ctx.fill(); ctx.globalAlpha = 1;
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.lineWidth = 1.3; ctx.strokeStyle = C.hairDeep; ctx.globalAlpha = 0.75; ctx.stroke(); ctx.globalAlpha = 1;
+      ctx.beginPath(); ctx.arc(x - r * 0.32, y - r * 0.36, r * 0.36, 0, Math.PI * 2); ctx.fillStyle = C.hairHi; ctx.globalAlpha = 0.55; ctx.fill(); ctx.globalAlpha = 1;
+    };
+    // crâne (le bandeau passe par-dessus), puis tempes, puis frange : de l'arrière vers l'avant
+    for (const [x, y, r] of [[128, 18, 13], [100, 22, 13], [156, 22, 13], [74, 36, 13], [182, 36, 13], [54, 56, 12], [202, 56, 12], [114, 42, 12], [142, 42, 12], [88, 56, 11], [168, 56, 11]] as const) boucle(x, y, r);
+    for (const [x, y, r] of [[44, 82, 12], [212, 82, 12], [40, 106, 11], [216, 106, 11], [44, 128, 9], [212, 128, 9]] as const) boucle(x, y, r);
+    for (const [x, y, r] of [[64, 100, 10], [84, 104, 10], [104, 101, 10], [124, 104, 10], [144, 101, 10], [164, 104, 10], [184, 100, 10], [200, 96, 9], [56, 96, 9]] as const) boucle(x, y, r);
   }
   if (!COURT()) {
     for (const s of [[66, 64, 58, 90, 53, 122, 53, 154], [53, 154, 53, 180, 56, 204, 62, 224]] as Cubic[]) taper(ctx, s, 0.3, 1, 0.3, C.hairDeep, 0.8);
