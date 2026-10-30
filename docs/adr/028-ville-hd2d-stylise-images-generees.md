@@ -755,3 +755,13 @@ depuis la feuille de chaque coupe posée), réserves non utilisées ; `player-a3
 leurs `-v1` à `-v3`, `approved: false` jusqu'à l'ordre du responsable. `COUPES` passe à quatre coupes par silhouette (le
 portrait du duel les dessine en coupe courte). `src/ville/teintes.ts` repeint aussi les petites plages de cheveux qui ne
 touchent pas un iris et le gris beige d'une nuque rasée.
+
+### Portrait du duel : les coupes et les visages (passe 174, 2026-10-29)
+
+Sur la proposition de la session, acceptée par le responsable (« Oui, fais-le ») : le portrait V2 du duel, dessiné par
+code (`scene/v2/joueur.ts`), suit la coupe et le visage. Coupes : carré d'origine (A et B mi-longue), courte (B), queue de
+cheval (houppe au-dessus du crâne), chignon bas (de part et d'autre du cou), courte effilée (longue mèche sur le front),
+côtés rasés (arrière ras), bouclée (contour et frange en boucles) ; `CoupePortrait` dans `COUPES`. Visages : yeux en
+amande (sourcils fins et droits, paupière basse relevée, départ des cils étiré), rond (sourcils arqués et hauts, yeux
+grands ouverts), anguleux (sourcils épais et bas, regard plissé), par les sourcils du portrait et le plissement des yeux.
+Aucune image ; l'apparence d'origine garde le portrait historique.
