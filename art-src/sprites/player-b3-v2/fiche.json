@@ -1,6 +1,6 @@
 {
   "id": "player-b3-v2",
-  "statut": "protagoniste, silhouette B, côtés rasés, visage rond (passe 172), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas donné l’ordre, dans une passe à part",
+  "statut": "APPROUVÉ par le responsable le 2026-10-29 (ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173) : admis hors QA tant que l’empreinte reste 58921214cfa4…",
   "auteur": "Claude Code (session « protagoniste », passe 172), à la demande du responsable : « tu peux proposer d'autres variantes de coupes cheveux » ; choix dans la session : A « Chignon bas » et « Courte effilée », B « Côtés rasés, dessus en brosse » et « Bouclée courte », chacune avec les trois visages (« Oui, 4 images par coupe »)",
   "generation": "tools/m09-generer-images.mjs --only (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-visages.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -146,5 +146,11 @@
     "90d5388847b9c14882d819e15013f6f39df73e796cbe1641028223de4bf0f28c (entrée : public/sprites/player-b3.png)",
     "4dc1eee1b756e372a4cae021aaae9dee3934fbb172a9e3962542127632950f1a (brut)",
     "58921214cfa41cda957164d59456207d9875e456c1236eb05a29d178b42b9a87 (feuille ×3)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-29",
+    "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173",
+    "fichier": "public/sprites/player-b3-v2.png",
+    "sha256": "58921214cfa41cda957164d59456207d9875e456c1236eb05a29d178b42b9a87"
+  }
 }

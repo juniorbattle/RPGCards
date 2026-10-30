@@ -1,6 +1,6 @@
 {
   "id": "player-a4-v2",
-  "statut": "protagoniste, silhouette A, courte effilée, visage rond (passe 172), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas donné l’ordre, dans une passe à part",
+  "statut": "APPROUVÉ par le responsable le 2026-10-29 (ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173) : admis hors QA tant que l’empreinte reste 71e2ee6e62b6…",
   "auteur": "Claude Code (session « protagoniste », passe 172), à la demande du responsable : « tu peux proposer d'autres variantes de coupes cheveux » ; choix dans la session : A « Chignon bas » et « Courte effilée », B « Côtés rasés, dessus en brosse » et « Bouclée courte », chacune avec les trois visages (« Oui, 4 images par coupe »)",
   "generation": "tools/m09-generer-images.mjs --only (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-visages.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -144,5 +144,11 @@
     "d0d22a223964d8fdaba7f2bc1cece7287eda29423a6aab3f566d63ffc068651a (entrée : public/sprites/player-a4.png)",
     "5a600b411b8f73c91285d4538d6f21c8d86313bfe616a7489369e7b97ae2aba4 (brut)",
     "71e2ee6e62b600699dae1ffd733896473bf64f8608a045d00f32d9780f9cda54 (feuille ×3)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-29",
+    "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173",
+    "fichier": "public/sprites/player-a4-v2.png",
+    "sha256": "71e2ee6e62b600699dae1ffd733896473bf64f8608a045d00f32d9780f9cda54"
+  }
 }
