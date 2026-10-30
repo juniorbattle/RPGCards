@@ -1,6 +1,6 @@
 {
   "id": "player-b4-v1",
-  "statut": "protagoniste, silhouette B, bouclée courte, visage en amande (passe 172), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas donné l’ordre, dans une passe à part",
+  "statut": "APPROUVÉ par le responsable le 2026-10-29 (ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173) : admis hors QA tant que l’empreinte reste cfe99d480ed1…",
   "auteur": "Claude Code (session « protagoniste », passe 172), à la demande du responsable : « tu peux proposer d'autres variantes de coupes cheveux » ; choix dans la session : A « Chignon bas » et « Courte effilée », B « Côtés rasés, dessus en brosse » et « Bouclée courte », chacune avec les trois visages (« Oui, 4 images par coupe »)",
   "generation": "tools/m09-generer-images.mjs --only (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-visages.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -146,5 +146,11 @@
     "fe6473be045b06b0d05ef0ccfd99633dbd80c82ef30f2356c7fe1fc3ae8cc605 (entrée : public/sprites/player-b4.png)",
     "590f7b90ea45782020ca78bd057d21e30d2d675a41f4203f301a1944066e6e4c (brut)",
     "cfe99d480ed182de06d5d8e125168772ae02ea8f4af5493f2aeb145abb3ae66e (feuille ×3)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-29",
+    "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173",
+    "fichier": "public/sprites/player-b4-v1.png",
+    "sha256": "cfe99d480ed182de06d5d8e125168772ae02ea8f4af5493f2aeb145abb3ae66e"
+  }
 }

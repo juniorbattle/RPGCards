@@ -64,8 +64,8 @@ describe('apparence du protagoniste : identifiants', () => {
     expect(sheetKeys('player-Voile@a01000')).toEqual(['player-Voile@a01000', 'player-v1']);
     // passe 171 : les douze feuilles de visage approuvées par le registre (ordre du responsable)
     for (const s of ['a', 'b'] as const) for (const c of COUPES[s].slice(0, 2)) for (let k = 1; k < VISAGES.length; k++) expect(man.sprites[`${c.feuille}-v${k}`]?.approved, `${c.feuille}-v${k}`).toBe(true);
-    // passe 172 : les coupes du deuxième lot et leurs visages, non approuvés tant que le responsable n'a pas donné l'ordre
-    for (const s of ['a', 'b'] as const) for (const c of COUPES[s].slice(2)) for (const f of [c.feuille, ...[1, 2, 3].map((k) => `${c.feuille}-v${k}`)]) expect(man.sprites[f]?.approved, f).toBe(false);
+    // passe 173 : les coupes du deuxième lot et leurs visages approuvés par le registre (ordre du responsable)
+    for (const s of ['a', 'b'] as const) for (const c of COUPES[s].slice(2)) for (const f of [c.feuille, ...[1, 2, 3].map((k) => `${c.feuille}-v${k}`)]) expect(man.sprites[f]?.approved, f).toBe(true);
     for (const s of ['a', 'b'] as const) for (const c of COUPES[s]) expect(man.sprites[c.feuille], c.feuille).toBeTruthy();
     expect([man.sprites['player-a2'].approved, man.sprites['player-b2'].approved]).toEqual([true, true]);
     expect(feuilleSilhouette('a')).toBe('player');

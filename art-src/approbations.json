@@ -308,6 +308,102 @@
       "sha256": "00d96b91fa8cd90e8f5b9e692a1269c38d6b7090f3499445199678b84a5fc6c3",
       "date": "2026-10-29",
       "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/visages/planche-visages-a.png, -b, -a2, -b2, passe 170) : « oui j’approuve les 12 » (question : « Approuves-tu les 12 feuilles de visage ? ») ; passe 171"
+    },
+    {
+      "fichier": "public/sprites/player-a3.png",
+      "sha256": "7071d0dd8157f942334b8be5e8590b6c019de292a4602c8ad9c4fdae95964dce",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173"
+    },
+    {
+      "fichier": "public/sprites/player-a3-v1.png",
+      "sha256": "26947d2e774f4a714a24cd3d86e9f65ac9caec7f636313745baa3afdbde9802b",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173"
+    },
+    {
+      "fichier": "public/sprites/player-a3-v2.png",
+      "sha256": "bdc5c47824c1413df929c5fac9be6f169c946c671e61b4e8c39e132b06556b25",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173"
+    },
+    {
+      "fichier": "public/sprites/player-a3-v3.png",
+      "sha256": "3a06e4e5e3bfdbf1e01c453ceb16a60ee3f5806709f00542f417dcec532060c4",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173"
+    },
+    {
+      "fichier": "public/sprites/player-a4.png",
+      "sha256": "d0d22a223964d8fdaba7f2bc1cece7287eda29423a6aab3f566d63ffc068651a",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173"
+    },
+    {
+      "fichier": "public/sprites/player-a4-v1.png",
+      "sha256": "114d9539b01eb15d47eeeaf4f60cf1534005c56d59ae9f66e02d5433c714bb3d",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173"
+    },
+    {
+      "fichier": "public/sprites/player-a4-v2.png",
+      "sha256": "71e2ee6e62b600699dae1ffd733896473bf64f8608a045d00f32d9780f9cda54",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173"
+    },
+    {
+      "fichier": "public/sprites/player-a4-v3.png",
+      "sha256": "8406d898b36b31459de93bf7f553448f2235678fe7c5f982e2621c4240684a69",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173"
+    },
+    {
+      "fichier": "public/sprites/player-b3.png",
+      "sha256": "90d5388847b9c14882d819e15013f6f39df73e796cbe1641028223de4bf0f28c",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173"
+    },
+    {
+      "fichier": "public/sprites/player-b3-v1.png",
+      "sha256": "0ecb0040cee92acd6044df568ba513b4e6f37a808aeefaa0acb9555ab38e881e",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173"
+    },
+    {
+      "fichier": "public/sprites/player-b3-v2.png",
+      "sha256": "58921214cfa41cda957164d59456207d9875e456c1236eb05a29d178b42b9a87",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173"
+    },
+    {
+      "fichier": "public/sprites/player-b3-v3.png",
+      "sha256": "527a7967d44124a992a2030613e88797e2c6bd248e7b07c3d65b5500635e0ba1",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173"
+    },
+    {
+      "fichier": "public/sprites/player-b4.png",
+      "sha256": "fe6473be045b06b0d05ef0ccfd99633dbd80c82ef30f2356c7fe1fc3ae8cc605",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173"
+    },
+    {
+      "fichier": "public/sprites/player-b4-v1.png",
+      "sha256": "cfe99d480ed182de06d5d8e125168772ae02ea8f4af5493f2aeb145abb3ae66e",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173"
+    },
+    {
+      "fichier": "public/sprites/player-b4-v2.png",
+      "sha256": "e1d1dec8df5116a9adf2db8a5157c6b9b0dfb646679437d87cb230f9304f2f4d",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173"
+    },
+    {
+      "fichier": "public/sprites/player-b4-v3.png",
+      "sha256": "88177a4a5d3d0b9b26fc76d9d57e616c57b63c970c5ed8bfee7cbd94583813d2",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-coupes-2.png et visages/planche-visages-a3.png à -b4.png, passe 172) : « J’approuve les 16 » (question : « Approuves-tu les 16 feuilles des nouvelles coupes ? ») ; passe 173"
     }
   ],
   "caduques": [
