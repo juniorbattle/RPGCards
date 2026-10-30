@@ -1,9 +1,9 @@
 {
-  "date": "2026-10-30T00:55:46.730Z",
+  "date": "2026-10-30T01:55:34.889Z",
   "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
   "builds": {
     "avant": "fe919d5",
-    "apres": "b02c7e1+arbre de travail"
+    "apres": "e50d008+arbre de travail"
   },
   "identical": true,
   "results": [
