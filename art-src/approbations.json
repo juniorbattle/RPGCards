@@ -236,6 +236,78 @@
       "sha256": "caa01f35ec8003a8856bd3bd387d7d550b27ef9b4c0153843a2e4dca76619fd0",
       "date": "2026-10-29",
       "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/silhouettes/planche-silhouettes.png et apparences/planche-apparences.png, passe 167) : « oui j’approuve A2 et B2 » (question : « Approuves-tu les feuilles A2 et B2 ? ») ; passe 168"
+    },
+    {
+      "fichier": "public/sprites/player-v1.png",
+      "sha256": "12024ce227eae35749a6938081bd3ffbe35ac4af0a98f070b7f5564e72753331",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/visages/planche-visages-a.png, -b, -a2, -b2, passe 170) : « oui j’approuve les 12 » (question : « Approuves-tu les 12 feuilles de visage ? ») ; passe 171"
+    },
+    {
+      "fichier": "public/sprites/player-v2.png",
+      "sha256": "5f8cf89e85da85cd80f26314a6fb3c3616fad083dae2dafbb000674ea71b45b3",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/visages/planche-visages-a.png, -b, -a2, -b2, passe 170) : « oui j’approuve les 12 » (question : « Approuves-tu les 12 feuilles de visage ? ») ; passe 171"
+    },
+    {
+      "fichier": "public/sprites/player-v3.png",
+      "sha256": "9750d6593b1875a5fa2107e74262067334f0d96fe899431c4fc0b282a2411d93",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/visages/planche-visages-a.png, -b, -a2, -b2, passe 170) : « oui j’approuve les 12 » (question : « Approuves-tu les 12 feuilles de visage ? ») ; passe 171"
+    },
+    {
+      "fichier": "public/sprites/player-b-v1.png",
+      "sha256": "575d09330690c975d8f4a12e901c8002f5556a7ecd2054ecd684d46c1ee7a408",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/visages/planche-visages-a.png, -b, -a2, -b2, passe 170) : « oui j’approuve les 12 » (question : « Approuves-tu les 12 feuilles de visage ? ») ; passe 171"
+    },
+    {
+      "fichier": "public/sprites/player-b-v2.png",
+      "sha256": "dd37b1739033ab90b5adba7770a6dc8b7058e83bab72abbe0d30939794cd6f73",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/visages/planche-visages-a.png, -b, -a2, -b2, passe 170) : « oui j’approuve les 12 » (question : « Approuves-tu les 12 feuilles de visage ? ») ; passe 171"
+    },
+    {
+      "fichier": "public/sprites/player-b-v3.png",
+      "sha256": "403a7a06a2c12699e20893e8f3b707e96a57fbcf7439770193a24d3729a66c7f",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/visages/planche-visages-a.png, -b, -a2, -b2, passe 170) : « oui j’approuve les 12 » (question : « Approuves-tu les 12 feuilles de visage ? ») ; passe 171"
+    },
+    {
+      "fichier": "public/sprites/player-a2-v1.png",
+      "sha256": "4e844da7ab3598c6dc1a761ac1713e0bf0264e461b84ce85af3c8dfec498b3fb",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/visages/planche-visages-a.png, -b, -a2, -b2, passe 170) : « oui j’approuve les 12 » (question : « Approuves-tu les 12 feuilles de visage ? ») ; passe 171"
+    },
+    {
+      "fichier": "public/sprites/player-a2-v2.png",
+      "sha256": "49113427fcfb024b519c8eef40f79b696f651b58b24601c0953f72e840702eca",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/visages/planche-visages-a.png, -b, -a2, -b2, passe 170) : « oui j’approuve les 12 » (question : « Approuves-tu les 12 feuilles de visage ? ») ; passe 171"
+    },
+    {
+      "fichier": "public/sprites/player-a2-v3.png",
+      "sha256": "324aa0c266695646da2fffe694cca51654d0e5f29d477ffe328cd249348b3bf3",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/visages/planche-visages-a.png, -b, -a2, -b2, passe 170) : « oui j’approuve les 12 » (question : « Approuves-tu les 12 feuilles de visage ? ») ; passe 171"
+    },
+    {
+      "fichier": "public/sprites/player-b2-v1.png",
+      "sha256": "1b2144fd01b2c79ba7b67fd0b11b26e1ede89b9c975bc50bb1addad9f5b4c7a6",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/visages/planche-visages-a.png, -b, -a2, -b2, passe 170) : « oui j’approuve les 12 » (question : « Approuves-tu les 12 feuilles de visage ? ») ; passe 171"
+    },
+    {
+      "fichier": "public/sprites/player-b2-v2.png",
+      "sha256": "0812a35467cccee8e558dfecaa09cbf40cdef18e400020ee08f733e5a62cf8d0",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/visages/planche-visages-a.png, -b, -a2, -b2, passe 170) : « oui j’approuve les 12 » (question : « Approuves-tu les 12 feuilles de visage ? ») ; passe 171"
+    },
+    {
+      "fichier": "public/sprites/player-b2-v3.png",
+      "sha256": "00d96b91fa8cd90e8f5b9e692a1269c38d6b7090f3499445199678b84a5fc6c3",
+      "date": "2026-10-29",
+      "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/visages/planche-visages-a.png, -b, -a2, -b2, passe 170) : « oui j’approuve les 12 » (question : « Approuves-tu les 12 feuilles de visage ? ») ; passe 171"
     }
   ],
   "caduques": [

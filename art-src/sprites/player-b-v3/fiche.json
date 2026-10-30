@@ -1,6 +1,6 @@
 {
   "id": "player-b-v3",
-  "statut": "protagoniste, silhouette B, coupe courte, visage anguleux (passe 170), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas donné l’ordre, dans une passe à part",
+  "statut": "APPROUVÉ par le responsable le 2026-10-29 (ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/visages/planche-visages-a.png, -b, -a2, -b2, passe 170) : « oui j’approuve les 12 » (question : « Approuves-tu les 12 feuilles de visage ? ») ; passe 171) : admis hors QA tant que l’empreinte reste 403a7a06a2c1…",
   "auteur": "Claude Code (session « protagoniste », passe 170), à la demande du responsable : « tu peux ajouter du budget pour effectuer les types de visages » ; après l'essai du calque (passe 169), décision dans la session : « Feuilles complètes » (chaque visage redessiné sur chacune des quatre feuilles : 11 images, 1 réserve au plus)",
   "generation": "tools/m09-generer-images.mjs --only (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-visages.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -146,5 +146,11 @@
     "728b5b08d100cf0126481caae63643ff18b259614668b4c3551c703e2bfff8f0 (entrée : public/sprites/player-b.png)",
     "e38da11b271fc1d8c78f7aa6c1e421c40086428efd6b90f1474fb29cb9f2642a (brut)",
     "403a7a06a2c12699e20893e8f3b707e96a57fbcf7439770193a24d3729a66c7f (feuille ×3)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-29",
+    "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/visages/planche-visages-a.png, -b, -a2, -b2, passe 170) : « oui j’approuve les 12 » (question : « Approuves-tu les 12 feuilles de visage ? ») ; passe 171",
+    "fichier": "public/sprites/player-b-v3.png",
+    "sha256": "403a7a06a2c12699e20893e8f3b707e96a57fbcf7439770193a24d3729a66c7f"
+  }
 }
