@@ -22,7 +22,7 @@ export interface Apparence {
 /** Visages : celui de chaque feuille, puis trois redessinés sur chaque feuille (`<feuille>-v<k>`, passe 170). */
 export const VISAGES: readonly string[] = ['d’origine', 'yeux en amande', 'rond', 'anguleux'];
 /** Coupe d'une silhouette : sa feuille (clé du manifeste), son nom, la coupe du portrait du duel et celle de l'atlas par code. */
-export interface Coupe { feuille: string; nom: string; portrait: 'carre' | 'court'; atlas: 'carre-argent' | 'courte' | 'queue' | 'milongs' }
+export interface Coupe { feuille: string; nom: string; portrait: 'carre' | 'court'; atlas: 'carre-argent' | 'courte' | 'queue' | 'milongs' | 'chignon' | 'rase' | 'boucles' }
 export interface Yeux { iris: string; deep: string; light: string }
 
 const T = (base: string, shade: string, deep: string, hi: string): Tone => ({ base, shade, deep, hi });
@@ -47,8 +47,15 @@ export const YEUX: readonly Yeux[] = [
 
 /** Coupes de chaque silhouette, la première d'origine. */
 export const COUPES: Readonly<Record<Silhouette, readonly Coupe[]>> = {
-  a: [{ feuille: 'player', nom: 'carré', portrait: 'carre', atlas: 'carre-argent' }, { feuille: 'player-a2', nom: 'queue de cheval', portrait: 'court', atlas: 'queue' }],
-  b: [{ feuille: 'player-b', nom: 'courte', portrait: 'court', atlas: 'courte' }, { feuille: 'player-b2', nom: 'mi-longue', portrait: 'carre', atlas: 'milongs' }],
+  a: [
+    { feuille: 'player', nom: 'carré', portrait: 'carre', atlas: 'carre-argent' }, { feuille: 'player-a2', nom: 'queue de cheval', portrait: 'court', atlas: 'queue' },
+    // passe 172
+    { feuille: 'player-a3', nom: 'chignon bas', portrait: 'court', atlas: 'chignon' }, { feuille: 'player-a4', nom: 'courte effilée', portrait: 'court', atlas: 'courte' },
+  ],
+  b: [
+    { feuille: 'player-b', nom: 'courte', portrait: 'court', atlas: 'courte' }, { feuille: 'player-b2', nom: 'mi-longue', portrait: 'carre', atlas: 'milongs' },
+    { feuille: 'player-b3', nom: 'côtés rasés', portrait: 'court', atlas: 'rase' }, { feuille: 'player-b4', nom: 'bouclée', portrait: 'court', atlas: 'boucles' },
+  ],
 };
 export const coupeDe = (a: Apparence): Coupe => COUPES[a.silhouette][a.coupe ?? 0]!;
 

@@ -7,7 +7,7 @@ import { launch } from './browser.mjs';
 
 const OUT = process.argv[2] ?? 'screenshots/qa/protagoniste/silhouettes/planche-silhouettes.png';
 const IDS = (process.argv[3] ?? 'player,player-b,player-a2,player-b2').split(',');
-const COUPE = { player: 'A, carré', 'player-b': 'B, courte', 'player-a2': 'A, queue de cheval', 'player-b2': 'B, mi-longue' };
+const COUPE = { player: 'A, carré', 'player-b': 'B, courte', 'player-a2': 'A, queue de cheval', 'player-b2': 'B, mi-longue', 'player-a3': 'A, chignon bas', 'player-a4': 'A, courte effilée', 'player-b3': 'B, côtés rasés', 'player-b4': 'B, bouclée' };
 const VIS = ['', ', yeux en amande', ', visage rond', ', visage anguleux'];
 const NOMS = Object.fromEntries(Object.entries(COUPE).flatMap(([k, v]) => VIS.map((s, i) => [i ? `${k}-v${i}` : k, v + s])));
 const man = JSON.parse(readFileSync('public/sprites/manifest.json', 'utf8'));

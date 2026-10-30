@@ -16,7 +16,10 @@
 import { writeFileSync } from 'node:fs';
 
 const BASE = process.argv[3] ?? 'player';
-const LOTS = { player: '2026-10-29-visages', 'player-b': '2026-10-29-visages-b', 'player-a2': '2026-10-29-visages-a2', 'player-b2': '2026-10-29-visages-b2' };
+// passe 172 : les visages des quatre coupes du deuxième lot (`tools/m09-lot-coupes-2.mjs`), depuis la feuille de la coupe
+// posée (non encore approuvée)
+const LOTS = { player: '2026-10-29-visages', 'player-b': '2026-10-29-visages-b', 'player-a2': '2026-10-29-visages-a2', 'player-b2': '2026-10-29-visages-b2', 'player-a3': '2026-10-29-visages-a3', 'player-a4': '2026-10-29-visages-a4', 'player-b3': '2026-10-29-visages-b3', 'player-b4': '2026-10-29-visages-b4' };
+const APPROUVEE = ['player', 'player-b', 'player-a2', 'player-b2'].includes(BASE);
 if (!LOTS[BASE]) throw new Error(`feuille de base inconnue : ${BASE}`);
 const commun = [
   'Keep everything else exactly as in the attached sheet: the same grid of 5 columns and 3 rows of equal cells (row 1 facing the viewer, row 2 seen from the back, row 3 right profile walking to the right; column 1 standing still, columns 2 to 5 the walking cycle), the same poses in every cell, the same size and position of the head in every cell, the same silver-white haircut and headband, the same outfit and colours, the same pixel size. The head and the face stay at exactly the same place in each cell as in the attached sheet.',
@@ -24,7 +27,7 @@ const commun = [
   'Premium illustrative pixel art exactly in the style of the attached sheet: crisp square pixels of one uniform size across the whole sheet; selective dark outlines; clean pixel clusters, no dithering, no noise, no anti-aliasing, no gradients, no blur.',
   'Colours exactly as in the attached sheet: coat and lowered hood in flat shades of pure magenta only, headband and scarf in flat shades of pure green only; silver-white hair in light neutral greys; natural light skin; blue eyes with a white catchlight; no other magenta or green anywhere. A perfectly flat, uniform pure cyan (#00FFFF) background with no shading, no floor and no cast shadow. No text, no letters, no numbers, no grid lines, no labels, no watermark, no logos, no playing-card suit symbols.',
 ];
-const visage = (d) => [`The attached image is our own approved pixel-art sprite sheet of the player character, a young card duellist of a night harbour city. Redraw the same sheet with the same character; only the FACE changes: ${d}`, ...commun].join('\n\n');
+const visage = (d) => [`The attached image is our own ${APPROUVEE ? 'approved ' : ''}pixel-art sprite sheet of the player character, a young card duellist of a night harbour city. Redraw the same sheet with the same character; only the FACE changes: ${d}`, ...commun].join('\n\n');
 const V = {
   amande: visage('almond-shaped eyes, narrower and slightly longer, with a lively, alert look; straight short eyebrows; a small confident mouth; the same face outline.'),
   rond: visage('a rounder, softer face with fuller cheeks; large round eyes with big irises and two catchlights; gently arched eyebrows; a small rounded mouth.'),
