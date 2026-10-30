@@ -34,6 +34,12 @@ const FEUILLES = {
   // comme la feuille A : passages redessinés par code, même plan qu'elle
   'player-v1': { lot: '2026-10-29-visages', brut: 'visage-amande', passe: 169, qui: 'silhouette A, coupe carré, visage en amande', entree: 'la feuille A approuvée', profil: { contacts: [1, 2], passages: [3, 4] }, pitch: [3, 3.3], yeux: false },
 };
+// passe 172 : deuxième lot de coupes (`tools/m09-lot-coupes-2.mjs`) ; pas borné à la fenêtre des pixels carrés, rien de rogné
+const COUPES2 = { 'player-a3': ['a', 'chignon bas', [2.85, 3], { contacts: [1, 2], passages: [3, 4] }], 'player-a4': ['a', 'courte effilée', [2.85, 3], { contacts: [1, 2], passages: [3, 4] }], 'player-b3': ['b', 'côtés rasés', [2.8, 3.1]], 'player-b4': ['b', 'bouclée courte', [3.2, 3.5]] };
+// A3 et A4 : foulées sans passage (pieds de 33 à 37 px d'art), comme la feuille A : passages redessinés par code, même plan
+for (const [id, [s, nom, pitch, plan]] of Object.entries(COUPES2)) {
+  FEUILLES[id] = { lot: `2026-10-29-coupes2-${s}`, brut: id, passe: 172, qui: `silhouette ${s.toUpperCase()}, coupe ${nom}`, entree: `la feuille ${s.toUpperCase()} approuvée`, profil: plan ?? { contacts: [1, 3], passages: [2, 4], dessines: true }, pitch, yeux: false };
+}
 // passe 170 : « Feuilles complètes » : chaque visage redessiné sur chacune des quatre feuilles (`tools/m09-lot-visages.mjs`) ;
 // réglages par défaut repris de la feuille de base (case, plan de marche), puis ceux relevés à la lecture de chaque feuille
 const BASES = {
@@ -41,6 +47,11 @@ const BASES = {
   'player-b': { lot: '2026-10-29-visages-b', brut: (t) => `player-b-${t}`, qui: 'silhouette B, coupe courte', entree: 'la feuille B approuvée', profil: { contacts: [1, 3], passages: [2, 4], dessines: true } },
   'player-a2': { lot: '2026-10-29-visages-a2', brut: (t) => `player-a2-${t}`, qui: 'silhouette A, queue de cheval', entree: 'la feuille A2 approuvée', profil: { contacts: [1, 3], passages: [2, 4], dessines: true } },
   'player-b2': { lot: '2026-10-29-visages-b2', brut: (t) => `player-b2-${t}`, qui: 'silhouette B, coupe mi-longue', entree: 'la feuille B2 approuvée', profil: { contacts: [1, 3], passages: [2, 4], dessines: true }, cell: [64, 100] },
+  // passe 172 : visages des coupes du deuxième lot (entrée : la feuille de la coupe, posée, non encore approuvée)
+  'player-a3': { lot: '2026-10-29-visages-a3', brut: (t) => `player-a3-${t}`, qui: 'silhouette A, chignon bas', entree: 'la feuille A3', profil: { contacts: [1, 2], passages: [3, 4] }, passe: 172 },
+  'player-a4': { lot: '2026-10-29-visages-a4', brut: (t) => `player-a4-${t}`, qui: 'silhouette A, courte effilée', entree: 'la feuille A4', profil: { contacts: [1, 2], passages: [3, 4] }, passe: 172 },
+  'player-b3': { lot: '2026-10-29-visages-b3', brut: (t) => `player-b3-${t}`, qui: 'silhouette B, côtés rasés', entree: 'la feuille B3', profil: { contacts: [1, 3], passages: [2, 4], dessines: true }, passe: 172 },
+  'player-b4': { lot: '2026-10-29-visages-b4', brut: (t) => `player-b4-${t}`, qui: 'silhouette B, bouclée courte', entree: 'la feuille B4', profil: { contacts: [1, 3], passages: [2, 4], dessines: true }, passe: 172 },
 };
 const TYPES = { 1: ['amande', 'visage en amande'], 2: ['rond', 'visage rond'], 3: ['anguleux', 'visage anguleux'] };
 /**
@@ -53,11 +64,16 @@ const REGLAGES = {
   'player-b-v1': { pitch: [3.2, 3.5] }, 'player-b-v2': { pitch: [3.2, 3.5] }, 'player-b-v3': { pitch: [3, 3.3] },
   'player-a2-v1': { pitch: [3.1, 3.25] }, 'player-a2-v2': { pitch: [3, 3.3] }, 'player-a2-v3': { pitch: [2.8, 3.1] },
   'player-b2-v1': { pitch: [2.8, 3.1] }, 'player-b2-v2': { pitch: [3.2, 3.5] }, 'player-b2-v3': { pitch: [3.1, 3.25] },
+  // passe 172
+  'player-a3-v1': { pitch: [3.2, 3.5] }, 'player-a3-v2': { pitch: [3.2, 3.5] }, 'player-a3-v3': { pitch: [2.9, 3.1] },
+  'player-a4-v1': { pitch: [3.2, 3.5] }, 'player-a4-v2': { pitch: [2.9, 3.1] }, 'player-a4-v3': { pitch: [2.9, 3.1] },
+  'player-b3-v1': { pitch: [3, 3.3] }, 'player-b3-v2': { pitch: [3.2, 3.5] }, 'player-b3-v3': { pitch: [3.2, 3.5] },
+  'player-b4-v1': { pitch: [3, 3.3] }, 'player-b4-v2': { pitch: [3.2, 3.5] }, 'player-b4-v3': { pitch: [3, 3.3] },
 };
 for (const [base, b] of Object.entries(BASES)) for (const [k, [t, nom]] of Object.entries(TYPES)) {
   const id = `${base}-v${k}`;
   if (FEUILLES[id]) continue;
-  FEUILLES[id] = { lot: b.lot, brut: b.brut(t), passe: 170, qui: `${b.qui}, ${nom}`, entree: b.entree, profil: b.profil, yeux: false, ...(b.cell ? { cell: b.cell } : {}), ...REGLAGES[id] };
+  FEUILLES[id] = { lot: b.lot, brut: b.brut(t), passe: b.passe ?? 170, qui: `${b.qui}, ${nom}`, entree: b.entree, profil: b.profil, yeux: false, ...(b.cell ? { cell: b.cell } : {}), ...REGLAGES[id] };
 }
 const [ID, brutArg] = (process.argv.slice(2).find((a) => !a.startsWith('--') && !/^\d/.test(a)) ?? 'player-b').split('=');
 const F = FEUILLES[ID];
@@ -170,12 +186,14 @@ writeFileSync(`art-src/sprites/${ID}/fiche.json`, `${JSON.stringify({
   statut: `protagoniste, ${F.qui} (passe ${F.passe}), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas donné l’ordre, dans une passe à part`,
   auteur: F.passe === 164
     ? 'Claude Code (session « protagoniste », passe 164), à la demande du responsable : version homme du protagoniste, même structure et même tenue, cheveux argentés plus courts, peau mate ; accord dans la session : « H1 + réserve », personnage personnalisable, « 4 images, couleurs par code », choix nommé « Silhouette »'
-    : F.passe === 170
+    : F.passe === 172
+      ? `Claude Code (session « protagoniste », passe 172), à la demande du responsable : « tu peux proposer d'autres variantes de coupes cheveux » ; choix dans la session : A « Chignon bas » et « Courte effilée », B « Côtés rasés, dessus en brosse » et « Bouclée courte », chacune avec les trois visages (« Oui, 4 images par coupe »)`
+      : F.passe === 170
       ? `Claude Code (session « protagoniste », passe 170), à la demande du responsable : « tu peux ajouter du budget pour effectuer les types de visages » ; après l'essai du calque (passe 169), décision dans la session : « Feuilles complètes » (chaque visage redessiné sur chacune des quatre feuilles : 11 images, 1 réserve au plus)`
       : F.passe === 167
       ? `Claude Code (session « protagoniste », passe ${F.passe}), à la demande du responsable : « fait donc », en réponse à « d’autres coupes ou visages demanderaient de nouvelles images, dans un lot à part avec son propre budget. Il reste 3 images sur 20. »`
       : `Claude Code (session « protagoniste », passe ${F.passe}), à la demande du responsable : « tu peux ajouter du budget pour effectuer les types de visages » ; décisions dans la session : « Calques de visage » (3 images et 1 réserve au plus), types « Yeux en amande, regard vif », « Visage rond, grands yeux », « Visage anguleux, sourcils marqués »`,
-  generation: `tools/m09-generer-images.mjs --only (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification ${{ 164: 'tools/m09-lot-protagoniste.mjs', 167: 'tools/m09-lot-coupes.mjs', 169: 'tools/m09-lot-visages.mjs', 170: 'tools/m09-lot-visages.mjs' }[F.passe]}`,
+  generation: `tools/m09-generer-images.mjs --only (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification ${{ 164: 'tools/m09-lot-protagoniste.mjs', 167: 'tools/m09-lot-coupes.mjs', 169: 'tools/m09-lot-visages.mjs', 170: 'tools/m09-lot-visages.mjs', 172: F.lot.includes('visages') ? 'tools/m09-lot-visages.mjs' : 'tools/m09-lot-coupes-2.mjs' }[F.passe]}`,
   aseprite: joueur.aseprite, licences: joueur.licences, contenu: joueur.contenu,
   style: F.passe === 164 ? 'style, échelle, proportions et tenue de la feuille du joueur approuvée (seule entrée) ; peau et cheveux en tons clés, recolorés en jeu' : `style, échelle, proportions${F.passe >= 169 ? '' : ', visage'} et tenue de ${F.entree} (seule entrée) ; peau et cheveux au naturel, reconnus et repeints en jeu (src/ville/teintes.ts)`,
   sources: [ps],

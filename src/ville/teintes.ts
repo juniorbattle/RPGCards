@@ -53,7 +53,8 @@ function classerCase(f: Feuille, cls: Uint8Array, x0: number, y0: number, cw: nu
     return f.px[k(i, j) + 1]! < 20 && r > 15 && b > 15 && Math.abs(r - b) < 20;
   };
   const chaud = (i: number, j: number) => { if (!opaque(i, j)) return false; const [h, s, v] = teinte(i, j); return v > 0.5 && s > 0.25 && s < 0.7 && h >= 25 && h <= 50; };
-  const gris = (i: number, j: number) => { if (!opaque(i, j)) return false; const [, s, v] = teinte(i, j); return s < 0.12 && v > 0.3; };
+  // gris des cheveux argentés, et gris beige d'une nuque rasée (passe 172)
+  const gris = (i: number, j: number) => { if (!opaque(i, j)) return false; const [, s, v] = teinte(i, j); return s < 0.22 && v > 0.3; };
   const bleu = (i: number, j: number) => { if (!opaque(i, j)) return false; const [h, s, v] = teinte(i, j); return s > 0.4 && h >= 200 && h <= 250 && v > 0.2; };
   const poser = (pts: [number, number][], c: number) => { for (const [i, j] of pts) cls[(y0 + j) * f.w + x0 + i] = c; };
   const plages = (test: (i: number, j: number) => boolean, j0: number, j1: number): [number, number][][] => {
@@ -79,7 +80,10 @@ function classerCase(f: Feuille, cls: Uint8Array, x0: number, y0: number, cw: nu
     }
     return out;
   };
-  for (const pts of plages(gris, top, tete)) if (pts.length >= 25) poser(pts, CHEVEUX);
+  // passe 172 : de petites plages aussi (côtés rasés, mèches isolées), pourvu qu'elles ne touchent pas un iris (le blanc de
+  // l'œil)
+  const bleuProche = (pts: [number, number][]) => pts.some(([i, j]) => [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([di, dj]) => bleu(i + di!, j + dj!)));
+  for (const pts of plages(gris, top, tete)) if (pts.length >= 25 || (pts.length >= 6 && !bleuProche(pts))) poser(pts, CHEVEUX);
   // visage : aussi ses ombres (orbites, joues, cou ; passe 170 : sur une peau repeinte foncée, une ombre laissée au naturel
   // faisait une tache claire), tons chauds plus sombres ou plus saturés que ceux des mains
   const chaudTete = (i: number, j: number) => { if (!opaque(i, j)) return false; const [h, s, v] = teinte(i, j); return chaud(i, j) || (v > 0.35 && s > 0.2 && s < 0.85 && h >= 12 && h <= 52); };

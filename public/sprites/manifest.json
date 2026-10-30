@@ -828,6 +828,558 @@
       "source": "gpt-image-2 (protagoniste, silhouette B, coupe mi-longue, visage rond, depuis la feuille B2 approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
       "fiche": "art-src/sprites/player-b2-v2/fiche.json",
       "approved": true
+    },
+    "player-a3": {
+      "file": "player-a3.png",
+      "sha256": "7071d0dd8157f942334b8be5e8590b6c019de292a4602c8ad9c4fdae95964dce",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 88,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          2
+        ],
+        "passages": [
+          3,
+          4
+        ]
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette A, coupe chignon bas, depuis la feuille A approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-a3/fiche.json",
+      "approved": false
+    },
+    "player-a4": {
+      "file": "player-a4.png",
+      "sha256": "d0d22a223964d8fdaba7f2bc1cece7287eda29423a6aab3f566d63ffc068651a",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 86,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          2
+        ],
+        "passages": [
+          3,
+          4
+        ]
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette A, coupe courte effilée, depuis la feuille A approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-a4/fiche.json",
+      "approved": false
+    },
+    "player-b3": {
+      "file": "player-b3.png",
+      "sha256": "90d5388847b9c14882d819e15013f6f39df73e796cbe1641028223de4bf0f28c",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 88,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          3
+        ],
+        "passages": [
+          2,
+          4
+        ],
+        "dessines": true
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette B, coupe côtés rasés, depuis la feuille B approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-b3/fiche.json",
+      "approved": false
+    },
+    "player-b4": {
+      "file": "player-b4.png",
+      "sha256": "fe6473be045b06b0d05ef0ccfd99633dbd80c82ef30f2356c7fe1fc3ae8cc605",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 88,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          3
+        ],
+        "passages": [
+          2,
+          4
+        ],
+        "dessines": true
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette B, coupe bouclée courte, depuis la feuille B approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-b4/fiche.json",
+      "approved": false
+    },
+    "player-a3-v1": {
+      "file": "player-a3-v1.png",
+      "sha256": "26947d2e774f4a714a24cd3d86e9f65ac9caec7f636313745baa3afdbde9802b",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 87,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          2
+        ],
+        "passages": [
+          3,
+          4
+        ]
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette A, chignon bas, visage en amande, depuis la feuille A3), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-a3-v1/fiche.json",
+      "approved": false
+    },
+    "player-a3-v2": {
+      "file": "player-a3-v2.png",
+      "sha256": "bdc5c47824c1413df929c5fac9be6f169c946c671e61b4e8c39e132b06556b25",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 86,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          2
+        ],
+        "passages": [
+          3,
+          4
+        ]
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette A, chignon bas, visage rond, depuis la feuille A3), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-a3-v2/fiche.json",
+      "approved": false
+    },
+    "player-a3-v3": {
+      "file": "player-a3-v3.png",
+      "sha256": "3a06e4e5e3bfdbf1e01c453ceb16a60ee3f5806709f00542f417dcec532060c4",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 91,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          2
+        ],
+        "passages": [
+          3,
+          4
+        ]
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette A, chignon bas, visage anguleux, depuis la feuille A3), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-a3-v3/fiche.json",
+      "approved": false
+    },
+    "player-a4-v1": {
+      "file": "player-a4-v1.png",
+      "sha256": "114d9539b01eb15d47eeeaf4f60cf1534005c56d59ae9f66e02d5433c714bb3d",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 85,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          2
+        ],
+        "passages": [
+          3,
+          4
+        ]
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette A, courte effilée, visage en amande, depuis la feuille A4), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-a4-v1/fiche.json",
+      "approved": false
+    },
+    "player-a4-v2": {
+      "file": "player-a4-v2.png",
+      "sha256": "71e2ee6e62b600699dae1ffd733896473bf64f8608a045d00f32d9780f9cda54",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 86,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          2
+        ],
+        "passages": [
+          3,
+          4
+        ]
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette A, courte effilée, visage rond, depuis la feuille A4), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-a4-v2/fiche.json",
+      "approved": false
+    },
+    "player-a4-v3": {
+      "file": "player-a4-v3.png",
+      "sha256": "8406d898b36b31459de93bf7f553448f2235678fe7c5f982e2621c4240684a69",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 90,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          2
+        ],
+        "passages": [
+          3,
+          4
+        ]
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette A, courte effilée, visage anguleux, depuis la feuille A4), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-a4-v3/fiche.json",
+      "approved": false
+    },
+    "player-b3-v1": {
+      "file": "player-b3-v1.png",
+      "sha256": "0ecb0040cee92acd6044df568ba513b4e6f37a808aeefaa0acb9555ab38e881e",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 90,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          3
+        ],
+        "passages": [
+          2,
+          4
+        ],
+        "dessines": true
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette B, côtés rasés, visage en amande, depuis la feuille B3), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-b3-v1/fiche.json",
+      "approved": false
+    },
+    "player-b3-v2": {
+      "file": "player-b3-v2.png",
+      "sha256": "58921214cfa41cda957164d59456207d9875e456c1236eb05a29d178b42b9a87",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 89,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          3
+        ],
+        "passages": [
+          2,
+          4
+        ],
+        "dessines": true
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette B, côtés rasés, visage rond, depuis la feuille B3), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-b3-v2/fiche.json",
+      "approved": false
+    },
+    "player-b3-v3": {
+      "file": "player-b3-v3.png",
+      "sha256": "527a7967d44124a992a2030613e88797e2c6bd248e7b07c3d65b5500635e0ba1",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 86,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          3
+        ],
+        "passages": [
+          2,
+          4
+        ],
+        "dessines": true
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette B, côtés rasés, visage anguleux, depuis la feuille B3), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-b3-v3/fiche.json",
+      "approved": false
+    },
+    "player-b4-v1": {
+      "file": "player-b4-v1.png",
+      "sha256": "cfe99d480ed182de06d5d8e125168772ae02ea8f4af5493f2aeb145abb3ae66e",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 88,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          3
+        ],
+        "passages": [
+          2,
+          4
+        ],
+        "dessines": true
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette B, bouclée courte, visage en amande, depuis la feuille B4), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-b4-v1/fiche.json",
+      "approved": false
+    },
+    "player-b4-v2": {
+      "file": "player-b4-v2.png",
+      "sha256": "e1d1dec8df5116a9adf2db8a5157c6b9b0dfb646679437d87cb230f9304f2f4d",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 87,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          3
+        ],
+        "passages": [
+          2,
+          4
+        ],
+        "dessines": true
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette B, bouclée courte, visage rond, depuis la feuille B4), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-b4-v2/fiche.json",
+      "approved": false
+    },
+    "player-b4-v3": {
+      "file": "player-b4-v3.png",
+      "sha256": "88177a4a5d3d0b9b26fc76d9d57e616c57b63c970c5ed8bfee7cbd94583813d2",
+      "cell": [
+        64,
+        96
+      ],
+      "cols": 5,
+      "rows": 3,
+      "pixel": true,
+      "scale": 3,
+      "anchor": [
+        32,
+        93
+      ],
+      "figureH": 89,
+      "recolor": [
+        "tenue",
+        "accent"
+      ],
+      "profil": {
+        "contacts": [
+          1,
+          3
+        ],
+        "passages": [
+          2,
+          4
+        ],
+        "dessines": true
+      },
+      "source": "gpt-image-2 (protagoniste, silhouette B, bouclée courte, visage anguleux, depuis la feuille B4), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
+      "fiche": "art-src/sprites/player-b4-v3/fiche.json",
+      "approved": false
     }
   }
 }

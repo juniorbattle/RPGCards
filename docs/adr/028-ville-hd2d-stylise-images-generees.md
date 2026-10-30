@@ -745,3 +745,13 @@ L'apparence gagne un **visage** (`VISAGES`, code de six signes, `feuilleApparenc
 le visage choisi ; l'éditeur montre une ligne « Visage » en vignettes de la tête. Le portrait V2 du duel ne change pas
 avec le visage (dessiné par code ; à reprendre si le responsable le demande). `src/ville/teintes.ts` compte aussi les
 ombres du visage comme peau (sur une peau repeinte foncée, une ombre laissée au naturel faisait une tache claire).
+
+### Deuxième lot de coupes du protagoniste (passe 172, 2026-10-29)
+
+Demande du responsable : « tu peux proposer d'autres variantes de coupes cheveux » ; choix dans la session : A « Chignon
+bas » et « Courte effilée », B « Côtés rasés, dessus en brosse » et « Bouclée courte », chacune avec les trois visages
+(« Oui, 4 images par coupe ») : **16 images** (4 coupes depuis la feuille approuvée de leur silhouette, puis 12 visages
+depuis la feuille de chaque coupe posée), réserves non utilisées ; `player-a3`, `player-a4`, `player-b3`, `player-b4` et
+leurs `-v1` à `-v3`, `approved: false` jusqu'à l'ordre du responsable. `COUPES` passe à quatre coupes par silhouette (le
+portrait du duel les dessine en coupe courte). `src/ville/teintes.ts` repeint aussi les petites plages de cheveux qui ne
+touchent pas un iris et le gris beige d'une nuque rasée.
