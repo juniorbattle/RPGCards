@@ -3322,4 +3322,5 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **Modification :** `src/scene/v2/joueur.ts` : pour la coupe bouclée, plus de frange balayée ni d'ombre en pointes ; une calotte de cheveux, des boucles sur le crâne (le bandeau passe par-dessus), aux tempes, et une frange courte de boucles sous le bandeau, au-dessus des yeux, chacune avec son ombre et son reflet ; une ombre douce sous la frange.
 - **[OK] Vérifications :** `npm run typecheck` 0 erreur ; `npm test` 760/760 ; `npm run build` OK ; **jeu par défaut identique au pixel près** au build de `fe919d5` (Chrome, Radeon 780M) ; planches `screenshots/qa/protagoniste/portraits/portraits-bouclee.png` (six couleurs et visages sur la coupe bouclée) et `portraits-duel.png`.
 - **[?] Limites :** la frange de boucles cache en partie les sourcils (les visages anguleux et ronds y sont moins lisibles) ; à juger par le responsable.
-- **À reprendre :** son avis sur la nouvelle frange ; sinon, une autre coupe (cheveux tirés en arrière, frange dégagée).
+- **Décision du responsable (même jour) :** « Oui, elle convient » : frange bouclée reçue.
+- **À reprendre :** le jalon de QA complet (deux GPU), si le responsable le demande.
