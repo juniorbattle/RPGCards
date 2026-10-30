@@ -1,6 +1,6 @@
 {
   "id": "player-b2-v2",
-  "statut": "protagoniste, silhouette B, coupe mi-longue, visage rond (passe 170), NON APPROUVÉE par le responsable : refusée hors QA (approved: false) tant qu’il n’a pas donné l’ordre, dans une passe à part",
+  "statut": "APPROUVÉ par le responsable le 2026-10-29 (ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/visages/planche-visages-a.png, -b, -a2, -b2, passe 170) : « oui j’approuve les 12 » (question : « Approuves-tu les 12 feuilles de visage ? ») ; passe 171) : admis hors QA tant que l’empreinte reste 0812a35467cc…",
   "auteur": "Claude Code (session « protagoniste », passe 170), à la demande du responsable : « tu peux ajouter du budget pour effectuer les types de visages » ; après l'essai du calque (passe 169), décision dans la session : « Feuilles complètes » (chaque visage redessiné sur chacune des quatre feuilles : 11 images, 1 réserve au plus)",
   "generation": "tools/m09-generer-images.mjs --only (clé lue à l’exécution dans .env.local du dossier principal, jamais affichée ni écrite) ; spécification tools/m09-lot-visages.mjs",
   "aseprite": "non utilisé : traitement et assemblage par scripts Node et canvas (tools/m09-traitement-images.mjs, tools/m09-porte-quai.mjs)",
@@ -146,5 +146,11 @@
     "caa01f35ec8003a8856bd3bd387d7d550b27ef9b4c0153843a2e4dca76619fd0 (entrée : public/sprites/player-b2.png)",
     "a76cd176f556d85c4a666af0a4070a09451fc67c7ce8ee3dda737423449db353 (brut)",
     "0812a35467cccee8e558dfecaa09cbf40cdef18e400020ee08f733e5a62cf8d0 (feuille ×3)"
-  ]
+  ],
+  "approbation": {
+    "date": "2026-10-29",
+    "decision": "ordre explicite du responsable (2026-10-29, après les planches screenshots/qa/protagoniste/visages/planche-visages-a.png, -b, -a2, -b2, passe 170) : « oui j’approuve les 12 » (question : « Approuves-tu les 12 feuilles de visage ? ») ; passe 171",
+    "fichier": "public/sprites/player-b2-v2.png",
+    "sha256": "0812a35467cccee8e558dfecaa09cbf40cdef18e400020ee08f733e5a62cf8d0"
+  }
 }

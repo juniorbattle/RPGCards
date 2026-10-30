@@ -444,7 +444,7 @@
       },
       "source": "gpt-image-2 (protagoniste, silhouette A, coupe carré, visage en amande, depuis la feuille A approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
       "fiche": "art-src/sprites/player-v1/fiche.json",
-      "approved": false
+      "approved": true
     },
     "player-v3": {
       "file": "player-v3.png",
@@ -478,7 +478,7 @@
       },
       "source": "gpt-image-2 (protagoniste, silhouette A, coupe carré, visage anguleux, depuis la feuille A approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
       "fiche": "art-src/sprites/player-v3/fiche.json",
-      "approved": false
+      "approved": true
     },
     "player-b-v2": {
       "file": "player-b-v2.png",
@@ -513,7 +513,7 @@
       },
       "source": "gpt-image-2 (protagoniste, silhouette B, coupe courte, visage rond, depuis la feuille B approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
       "fiche": "art-src/sprites/player-b-v2/fiche.json",
-      "approved": false
+      "approved": true
     },
     "player-b-v3": {
       "file": "player-b-v3.png",
@@ -548,7 +548,7 @@
       },
       "source": "gpt-image-2 (protagoniste, silhouette B, coupe courte, visage anguleux, depuis la feuille B approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
       "fiche": "art-src/sprites/player-b-v3/fiche.json",
-      "approved": false
+      "approved": true
     },
     "player-a2-v1": {
       "file": "player-a2-v1.png",
@@ -583,7 +583,7 @@
       },
       "source": "gpt-image-2 (protagoniste, silhouette A, queue de cheval, visage en amande, depuis la feuille A2 approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
       "fiche": "art-src/sprites/player-a2-v1/fiche.json",
-      "approved": false
+      "approved": true
     },
     "player-a2-v2": {
       "file": "player-a2-v2.png",
@@ -618,7 +618,7 @@
       },
       "source": "gpt-image-2 (protagoniste, silhouette A, queue de cheval, visage rond, depuis la feuille A2 approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
       "fiche": "art-src/sprites/player-a2-v2/fiche.json",
-      "approved": false
+      "approved": true
     },
     "player-a2-v3": {
       "file": "player-a2-v3.png",
@@ -653,7 +653,7 @@
       },
       "source": "gpt-image-2 (protagoniste, silhouette A, queue de cheval, visage anguleux, depuis la feuille A2 approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
       "fiche": "art-src/sprites/player-a2-v3/fiche.json",
-      "approved": false
+      "approved": true
     },
     "player-b2-v1": {
       "file": "player-b2-v1.png",
@@ -688,7 +688,7 @@
       },
       "source": "gpt-image-2 (protagoniste, silhouette B, coupe mi-longue, visage en amande, depuis la feuille B2 approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
       "fiche": "art-src/sprites/player-b2-v1/fiche.json",
-      "approved": false
+      "approved": true
     },
     "player-b2-v3": {
       "file": "player-b2-v3.png",
@@ -723,7 +723,7 @@
       },
       "source": "gpt-image-2 (protagoniste, silhouette B, coupe mi-longue, visage anguleux, depuis la feuille B2 approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
       "fiche": "art-src/sprites/player-b2-v3/fiche.json",
-      "approved": false
+      "approved": true
     },
     "player-v2": {
       "file": "player-v2.png",
@@ -757,7 +757,7 @@
       },
       "source": "gpt-image-2 (protagoniste, silhouette A, coupe carré, visage rond, depuis la feuille A approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
       "fiche": "art-src/sprites/player-v2/fiche.json",
-      "approved": false
+      "approved": true
     },
     "player-b-v1": {
       "file": "player-b-v1.png",
@@ -792,7 +792,7 @@
       },
       "source": "gpt-image-2 (protagoniste, silhouette B, coupe courte, visage en amande, depuis la feuille B approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
       "fiche": "art-src/sprites/player-b-v1/fiche.json",
-      "approved": false
+      "approved": true
     },
     "player-b2-v2": {
       "file": "player-b2-v2.png",
@@ -827,7 +827,7 @@
       },
       "source": "gpt-image-2 (protagoniste, silhouette B, coupe mi-longue, visage rond, depuis la feuille B2 approuvée), grille d’art, alignement, palette et tons clés par script (tools/m09-protagoniste-feuille.mjs)",
       "fiche": "art-src/sprites/player-b2-v2/fiche.json",
-      "approved": false
+      "approved": true
     }
   }
 }
