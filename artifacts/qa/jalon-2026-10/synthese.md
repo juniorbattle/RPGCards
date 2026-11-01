@@ -124,9 +124,10 @@ passe 140. Mémoire du parcours continu (23 duels) : tas JS de 20 à 135 Mo sans
 
 ### 3.5 Duel : surcoût des effets à leur première apparition, cause isolée (passe 179)
 
-**Cette section remplace la première mesure du jalon, faussée** : la Radeon, qui affiche l'image sur ce portable même quand la RTX
-calcule, était occupée par une charge extérieure (99 %, origine non recherchée). Les comptes annoncés d'abord (54 à 157 images lentes,
-maximum de 139 à 152 ms) étaient 4 à 5 fois trop hauts ; le sens de l'écart était juste, sa cause non.
+**Cette section remplace la première mesure du jalon, trop haute** : la Radeon, qui affiche l'image sur ce portable même quand la RTX
+calcule, a été vue occupée à 99 % par une charge extérieure pendant l'enquête (origine non recherchée). Sa charge pendant les duels du
+jalon n'a pas été relevée : c'est l'explication probable, pas un fait observé. Les comptes annoncés d'abord (54 à 157 images lentes,
+maximum de 139 à 152 ms) étaient 4 à 5 fois au-dessus de la mesure au repos ; le sens de l'écart était juste, sa cause non.
 
 `perf:play`, duel de 90 s, 1280, chaque mesure lancée Radeon sous 15 %, trois passages (au-delà de 16,7 ms · de 33 ms · maximum, sur
 14 000 images ; `cout/duel-cause/mesures.json`). Le duel « à chaud » est rejoué dans le même navigateur (`LQV_PERF_CHAUD=1`) :
@@ -142,14 +143,16 @@ maximum de 139 à 152 ms) étaient 4 à 5 fois trop hauts ; le sens de l'écart 
   d'un passage à l'autre : premier temps fort à 0,2 s (85 à 91 ms, 48 à la passe 140), premier retournement avec le liseré de Signature à
   0,55 s, puis le premier temps fort de chaque sorte. Le deuxième duel dans le même navigateur les efface presque toutes, ce qui désigne
   les caches du GPU ; la compilation des shaders elle-même n'a pas été observée dans une trace.
-- **Date :** fin de M11 identique à la passe 140 ; une marche à M12 A (les cartes), une à M12 B et C (les temps forts) ; plus rien depuis
-  (ADR 046, avenant 09, M13, retours du 2026-10-29, protagoniste : même niveau).
+- **Date :** fin de M11 au niveau de la passe 140 ; une marche à M12 A (les cartes), une à M12 B et C (les temps forts) ; plus rien depuis
+  (ADR 046, avenant 09, M13, retours du 2026-10-29, protagoniste : même niveau). **Cette bisection n'a pas été faite au repos** (Radeon non
+  vérifiée, comptes 4 à 5 fois trop hauts, trois passages par build, `mesures.json`) et n'a pas été refaite : seul l'ordre des marches compte. Au
+  repos, seuls la passe 140 et `main` ont été comparés ; la part de M12 y est confirmée par la ligne suivante.
 - **Part de chacun** (RTX à froid, médiane de quatre passages, `LQV_PERF_CSS`, feuille ajoutée par l'outil) : `main` 32 images · 91 ms ;
   temps forts masqués 25 · 79 ms ; `?cartes=v1` 24 · 91 ms ; **les deux 19 · 61 ms, le niveau de la passe 140** (15 · 61 ms) ; sans les quatre
   animations sans fin de M12 (sceau, liseré, ARMÉ, RÉVÉLER) 27 · 97 ms, elles ne sont pas la cause.
 - **Hors de cause :** le fil principal (temps processeur, passages propres : 1 ms par image et environ 10 tâches de plus de 8 ms, de la
   passe 140 à `main`). Le « 5,6 à 6,6 ms par commande » annoncé d'abord n'est pas confirmé.
-- **Ce qui reste à chaud :** une image de 18 à 30 ms à l'entrée de certains temps forts, sur 14 000 ; médiane et 99e centile inchangés (6,1 et
+- **Ce qui reste à chaud :** une image de 18 à 36 ms à l'entrée de certains temps forts, sur 14 000 ; médiane et 99e centile inchangés (6,1 et
   6,3 ms).
 - **Décision de la session : aucun changement du jeu.** Le joueur le sent au plus une fois : le navigateur garde ses caches sur le disque
   (constaté aux passes précédentes, non remesuré ici). Reprendre les halos floutés toucherait un rendu livré pour un gain que personne ne
