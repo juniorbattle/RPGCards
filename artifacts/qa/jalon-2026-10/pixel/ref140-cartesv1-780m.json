@@ -1,0 +1,124 @@
+{
+  "date": "2026-11-01T04:09:02.689Z",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "builds": {
+    "avant": "52c44b5",
+    "apres": "fbb41a2"
+  },
+  "identical": false,
+  "results": [
+    {
+      "viewport": "1280x720",
+      "kind": "scene",
+      "rival": "braise",
+      "meanAbs": 0.519,
+      "max": 152,
+      "pixels": 12984
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "scene",
+      "rival": "ronce",
+      "meanAbs": 0.519,
+      "max": 144,
+      "pixels": 12988
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "scene",
+      "rival": "voile",
+      "meanAbs": 0.521,
+      "max": 146,
+      "pixels": 12993
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "scene",
+      "rival": "astre",
+      "meanAbs": 0.528,
+      "max": 152,
+      "pixels": 12978
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "complet",
+      "rival": "ronce",
+      "meanAbs": 0.515,
+      "max": 142,
+      "pixels": 12988
+    },
+    {
+      "viewport": "1280x720",
+      "kind": "rencontres",
+      "rival": null,
+      "meanAbs": 0.335,
+      "max": 244,
+      "pixels": 35384
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "scene",
+      "rival": "braise",
+      "meanAbs": 0.528,
+      "max": 152,
+      "pixels": 28303
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "scene",
+      "rival": "ronce",
+      "meanAbs": 0.528,
+      "max": 144,
+      "pixels": 28366
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "scene",
+      "rival": "voile",
+      "meanAbs": 0.53,
+      "max": 146,
+      "pixels": 28388
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "scene",
+      "rival": "astre",
+      "meanAbs": 0.538,
+      "max": 152,
+      "pixels": 28311
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "complet",
+      "rival": "ronce",
+      "meanAbs": 0.528,
+      "max": 144,
+      "pixels": 28366
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "rencontres",
+      "rival": null,
+      "meanAbs": 0.488,
+      "max": 245,
+      "pixels": 62476
+    }
+  ],
+  "control": [
+    {
+      "viewport": "1280x720",
+      "kind": "scene ronce, pose=surprised",
+      "meanAbs": 1.096,
+      "max": 209,
+      "pixels": 66494
+    },
+    {
+      "viewport": "1920x1080",
+      "kind": "scene ronce, pose=surprised",
+      "meanAbs": 1.186,
+      "max": 222,
+      "pixels": 146539
+    }
+  ],
+  "issues": []
+}

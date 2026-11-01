@@ -1,6 +1,6 @@
 // M07 L5 — preuve que le rendu des personnages est inchangé au pixel près entre deux builds : avant (LQV_BEFORE) et
-// après (dist/), rendu par défaut des deux côtés (`LQV_APRES_QUERY` : paramètres d’URL en plus côté après, vide par
-// défaut). Scène 3D seule du duel (vue A, rendu figé, seed 202) pour les quatre rivaux, capture complète (HUD compris)
+// après (dist/), rendu par défaut des deux côtés (`LQV_AVANT_QUERY`, `LQV_APRES_QUERY` : paramètres d’URL en plus de chaque
+// côté, vides par défaut). Scène 3D seule du duel (vue A, rendu figé, seed 202) pour les quatre rivaux, capture complète (HUD compris)
 // du duel contre Maëlle, et écran Rencontres (affiches et portraits des quatre rivaux), à 1280×720 et 1920×1080.
 // Témoin : la scène de Maëlle, côté après, avec une humeur imposée (`pose=surprised`) doit relever un écart (la méthode
 // voit un changement du visage). Historique : jusqu’à M08 C5, le défaut côté après était `&figure=v1` (chemin V1,
@@ -70,6 +70,7 @@ async function capture(which, vp, kind, rival, extra = '') {
 }
 
 const APRES = process.env.LQV_APRES_QUERY ?? '';
+const AVANT = process.env.LQV_AVANT_QUERY ?? '';
 const results = [];
 const control = [];
 try {
@@ -78,7 +79,7 @@ try {
     const rivals = (process.env.LQV_IDENT_RIVALS ?? 'braise,ronce,voile,astre').split(',');
     const cases = [...rivals.map((r) => ['scene', r]), ...(process.env.LQV_IDENT_EXTRA === '0' ? [] : [['complet', 'ronce'], ['rencontres', null]])];
     for (const [kind, rival] of cases) {
-      const a = await capture('avant', vp, kind, rival);
+      const a = await capture('avant', vp, kind, rival, AVANT);
       const b = await capture('apres', vp, kind, rival, APRES);
       const d = await diff(a, b);
       results.push({ viewport: `${vp[0]}x${vp[1]}`, kind, rival, ...d });

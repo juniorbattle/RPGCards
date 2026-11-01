@@ -3,6 +3,8 @@
 // parcouru à pied 4 s (2 s vers la droite, 2 s vers la gauche), intervalles entre images relevés dans la page
 // (requestAnimationFrame), appels de dessin, triangles, textures, programmes, temps processeur du rendu, temps de mise en
 // place de l'îlot. Animations réelles (sans `reducedMotion`).
+// `LQV_PERF_QUERY` : paramètres d'URL en plus (`&relief=0`, `&vue=1`, `&son=1`) ; `LQV_PERF_DEPART=1` : départ au chapitre III
+// (`?depart=III`, des guetteurs dans la ville).
 // Usage : npm run build && LQV_GPU=1 CHROMIUM_PATH=<Chrome> [LQV_CHROME_ARGS=--force_high_performance_gpu] [LQV_VP=1920x1080] node tools/m10f-perf-ville.mjs [rapport.json]
 import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -21,10 +23,14 @@ try {
   const p = await ctx.newPage();
   p.setDefaultTimeout(120000);
   watchConsole(p, issues);
-  await p.goto(`${server.base}/?aventure=1&qa=1&profileSeed=31`, { timeout: 120000 });
+  const depart = process.env.LQV_PERF_DEPART === '1';
+  await p.goto(`${server.base}/?aventure=1&qa=1&profileSeed=31${depart ? '&depart=III&famille=Ronce' : ''}${process.env.LQV_PERF_QUERY ?? ''}`, { timeout: 120000 });
   report.renderer = await webglRenderer(p).catch(() => null);
-  await p.click('[data-key="av-new"]');
-  await p.click('[data-key="av-start"]');
+  if (depart) await p.click('[data-key="av-depart"]');
+  else {
+    await p.click('[data-key="av-new"]');
+    await p.click('[data-key="av-start"]');
+  }
   const pret = (id) => p.waitForFunction((x) => { const t = window.__lqvAventure?.town; return !!t && t.ilot.id === x && t.stats().frames > 2 && !document.querySelector('.ville-host').hidden && !document.querySelector('.ville-fade'); }, id, { timeout: 120000 });
   for (const id of ['quai', 'parvis', 'ruelles', 'cour', 'port', 'haute']) {
     if (id !== 'quai') await p.evaluate((x) => window.__lqvAventure.voyager(x, 'arrivee'), id);
