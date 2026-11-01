@@ -8,7 +8,7 @@ catalogue, l'IA, l'annexe de calibrage, les images de la ville et les approbatio
 (passes 156 et 157) : 32 variantes de plus au catalogue, appliquées à titre provisoire sur ordre du responsable (V1 à
 V8), Duel standard par défaut inchangé (empreintes identiques).
 
-**Fiche interactive publiée le 2026-10-28** par la session principale (privée, 32 entrées, choix enregistrés dans sa collection `decisions`) : <https://claude.ai/artifact/WGK7ybvw414J9uQTekEjmP>.
+**Fiche interactive publiée le 2026-10-28** par la session principale (privée, 33 entrées depuis la remise à jour, choix enregistrés dans sa collection `decisions`) : <https://claude.ai/artifact/WGK7ybvw414J9uQTekEjmP>.
 
 Preuves : `screenshots/qa/m12/galerie/` (toutes les cartes, avant et après), `screenshots/qa/m12/activations/` (temps
 forts réels figés à mi-course, de vrais duels au navigateur, réglages), `screenshots/qa/m12/variantes/` (éditeur Basic,
@@ -16,6 +16,8 @@ A, B, C ; écran du choix de l'aventure), `screenshots/qa/m12/nouveau-joueur-128
 `artifacts/qa/m12/` (rapports, mesure des variantes), tests `test/m12-cartes.test.ts`, `test/m12-activations.test.ts`,
 `test/concealment.test.ts` (surface des temps forts), `test/variantes09.test.ts`, `test/m12-aventure-variantes.test.ts`,
 `test/m12-conseils.test.ts`.
+
+**Remise à jour le 2026-11-01** (passe 185) : durées réelles des temps forts (A1), tenue au clic (A8, nouvelle), jalon fait (S1).
 
 ## Réception
 
@@ -39,12 +41,13 @@ A, B, C ; écran du choix de l'aventure), `screenshots/qa/m12/nouveau-joueur-128
 
 | Entrée | Objet | Recommandation | Alternatives |
 |---|---|---|---|
-| **A1** | Durées au rythme normal : effet 1,25 s, annulé 1 s, effet masqué 1,05 s, échecs 0,7 s, regard 1,5 s, Technique 1,05 s, camouflage et Dissipation 0,95 s, Signature 1,45 s, Interférence 1,05 s, Insight et soin 0,75 s, Repoussement 1,05 s, révélation 0,6 s (rapide : × 0,45 ; instantané : aucun) | **Garder** | Plus courtes (× 0,75) ; plus longues (× 1,25) |
+| **A1** | Durées au rythme normal, **allongées après ton retour du 2026-10-29** : effet 2,2 s, annulé 1,8 s, effet masqué 1,9 s, échecs 1,5 s, regard 2,6 s, Technique 1,9 s, camouflage et Dissipation 1,7 s, Signature 2,5 s, Interférence 1,9 s, Insight et soin 1,3 s, Repoussement 1,9 s, révélation 1,1 s (rapide : × 0,45 ; instantané : aucun) | **Garder ces durées allongées** | Plus courtes (× 0,75) ; plus longues (× 1,25) |
 | **A2** | Un temps de résolution par effet (au lieu d'un temps groupé) ; le panneau « Résolution » compte plus de temps | **Garder** | Revenir au temps groupé (les temps forts s'enchaînent dans le même temps) |
-| **A3** | Le rival attend la fin de la file avant d'agir (le joueur garde la main ; « Passer » vide la file) | **Garder** | Le rival n'attend pas (les temps forts se superposent à sa décision) |
+| **A3** | Le rival attend la fin de la file avant d'agir, clics de A8 compris (le joueur garde la main ; « Passer » vide la file) | **Garder** | Le rival n'attend pas (les temps forts se superposent à sa décision) |
 | **A4** | Un voile assombrit la table pendant un grand temps fort ; la scène du Clash s'efface derrière | **Garder** | Un voile plus léger ; aucun voile (la carte seule) |
 | **A5** | Les petits temps forts (échecs regroupés, Insight, soin) restent discrets : un bandeau ou une pastille près du HUD | **Garder** | Leur donner aussi le premier plan |
 | **A6** | Le regard privé montre la carte vue avec « PRIVÉ — vous seul voyez » ; l'adversaire ne voit que la Technique publique | **Garder** (ADR 011) | — |
+| **A8** | **Nouveau, à ta demande (2026-10-29) :** ce qui concerne le joueur reste posé jusqu'à son clic, Espace ou Entrée, avec « Cliquer pour continuer » : les effets de ses cartes, ce que ses Techniques lui apprennent, ce que le rival lui fait, une Signature annoncée ; la résolution et le rival attendent. Rythme normal seulement | **Garder** | Seulement les regards privés et les Signatures ; revenir au minutage seul |
 | **A7** | Les impulsions du plateau : étiquette « ARMÉ » qui pulse sur une Primaire dont l'effet attend sa condition ; « RÉVÉLER : <effet> » sur une réserve dont l'effet joue à la révélation ; pastille de déclenchement allumée et mode marqué dans le menu tactique quand le mode choisi déclenche l'effet | **Garder** | Retirer l'une d'elles (laquelle) |
 
 ## Les 48 variantes (avenant 09, appliqué à titre provisoire)
@@ -92,5 +95,5 @@ standard). L'avenant `docs/m12/04_AVENANT_09_VARIANTES.md` remplace la propositi
 
 | Entrée | Objet | Recommandation | Alternatives |
 |---|---|---|---|
-| **S1** | Prochain chantier | **Le test complet du jeu par le responsable** (sa décision : « après cette passe, nous sommes bons pour un test complet »), puis le jalon de QA sur les deux GPU | La structure narrative (lots suivants) ; les autres quartiers |
-| **S2** | L'allègement du chargement du jeu | **Plus tard**, lors d'une optimisation quasi finale (décision du responsable du 2026-10-27) | — |
+| **S1** | Prochain chantier (le jalon de QA est fait, vert sur les deux GPU) | **Le test complet du jeu par le responsable**, sur les deux modes (fiche M14) | La structure narrative (lots suivants) ; les autres quartiers |
+| **S2** | L'allègement du chargement du jeu, et les images lentes du premier duel relevées au jalon | **Plus tard**, lors d'une optimisation quasi finale (décision du responsable du 2026-10-27) | — |

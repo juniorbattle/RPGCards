@@ -80,8 +80,8 @@ collection et le journal de l'aventure ne changent pas la musique : elle s'effac
   amendement 1).
 - **Effets** : salles par réponse impulsionnelle calculée (club, grande salle, rue), chaleur (saturation douce),
   lofi (bande passante réduite, pleurage, souffle de vinyle) ; compression du bus ; placement stéréo d'un trio.
-- **Séquenceur** : planification en avance sur l'horloge audio ; changements de morceau **sur la mesure** (fondu
-  enchaîné d'environ 1,2 s, levée quand la version en a une), passage au duel tendu **sur la phrase** ; jingles sur le
+- **Séquenceur** : planification en avance sur l'horloge audio ; changements de morceau **sur le temps**, avec une pause
+  de silence (amendement 2 de l'ADR 047, `src/son/musique/enchainement.ts`), levée quand la version en a une, passage au duel tendu **sur la phrase** ; jingles sur le
   temps.
 - **Bus de la musique** : sous le bus général, à côté des effets, de l'ambiance et de l'interface ; volume propre ;
   ambiances un peu baissées pendant la musique ; effacement sous les dialogues (−5 dB).

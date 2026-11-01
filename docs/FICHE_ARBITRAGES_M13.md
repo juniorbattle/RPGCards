@@ -6,13 +6,16 @@ responsable). Mandat `docs/missions/M13_MUSIQUE.md` ; contrats `docs/m13/01_MUSI
 « prends le temps qu'il faudra pour obtenir un résultat le plus optimal possible. Je veux une bande son vraiment, mais
 vraiment immersive. »
 
-**Fiche interactive publiée le 2026-10-28** par la session principale (privée, 34 entrées, choix enregistrés dans sa collection `decisions`) : <https://claude.ai/artifact/7HnZxaxHX6WkA4LNkgPLwZ>.
+**Fiche interactive publiée le 2026-10-28** par la session principale (privée, 36 entrées depuis la remise à jour, choix enregistrés dans sa collection `decisions`) : <https://claude.ai/artifact/7HnZxaxHX6WkA4LNkgPLwZ>.
 
 La session cloud ne peut pas écouter. Elle a vérifié ce qui se mesure : justesse de chaque instrument (moins de 3 cents
 partout), harmonie note par note (chaque note de chaque tête est une note ou une tension de son accord ; la valse, la
 version majeure, le contre-chant et les quatre couleurs des Maisons y compris ; le riff de Kaï dans la gamme de blues de
 chaque accord), tessitures, sonie et crêtes de chaque morceau, coût de rendu, et le comportement dans le jeu (journal de
 la musique au navigateur). **L'oreille du responsable tranche.**
+
+**Remise à jour le 2026-11-01** (passe 185) : depuis ton retour du 2026-10-29, un morceau ne se fond plus dans le suivant :
+pause de silence entre les deux (J10, nouvelle). Les aperçus `S-*.ogg` ont été refaits avec elle.
 
 ## Comment écouter
 
@@ -28,7 +31,8 @@ la musique au navigateur). **L'oreille du responsable tranche.**
 
 | Entrée | Objet | Recommandation | Alternatives |
 |---|---|---|---|
-| **R1** | Les contrats 1 et 2, l'ADR 047 et son amendement 1 (synthèse par code ; vents en temps réel ; pupitres calculés ; la musique qui suit le jeu sur faits publics) | **Recevoir** | Reprendre un point (lequel) |
+| **R1** | Les contrats 1 et 2, l'ADR 047 et ses amendements 1 et 2 (synthèse par code ; vents en temps réel ; pupitres calculés ; la musique qui suit le jeu sur faits publics) | **Recevoir** | Reprendre un point (lequel) |
+| **R3** | **Ta question du 2026-11-01 :** la couleur sonore. Aujourd'hui, du jazz aux timbres riches (piano, Rhodes, cuivres, salle), ni chiptune ni son de console 16 bits | **Décider à l'écoute** | Garder cette couleur ; aller vers un son 16 bits (une mission à cadrer) |
 | **R2** | Les six thèmes originaux : I « Les Quatre Voies » (le motif de quatre notes en quartes), II « La ville la nuit » (le motif renversé), III « Duel » (riff de blues), IV « Les Maisons » (un thème, quatre couleurs), V « Kaï » (riff sur la blue note), VI « Championnat » (big band) | **Recevoir** | Recevoir avec retours (lesquels) ; recomposer un thème |
 
 ## Écoute, version par version
@@ -45,14 +49,14 @@ la musique au navigateur). **L'oreille du responsable tranche.**
 | **E8** | `IV-1.ogg` … `IV-4.ogg`, `S-plein-IV-*.ogg` | Les Maisons, un thème, quatre couleurs : Cendre en hard bop (trompette ouverte et ténor, 168) ; Voile cool en dorien (flûte et trompette bouchée, balais, 110) ; Ronce en blues lent (ténor aux notes bleues, contrebasse à l'archet, guitare, 92) ; Astre en lydien (vibraphone, Rhodes, cordes, grande salle, 120) | **Recevoir** | Une couleur à reprendre (laquelle) |
 | **E9** | `V-1.ogg`, `S-plein-V-1.ogg` | Kaï : blues rapide en mi (176), le riff monte par la blue note (si bémol), la réponse par le motif des quatre voies ; au deuxième chorus, la rythmique s'arrête et ne frappe que les accents (il fanfaronne) ; son thème entre dès qu'il surgit en ville et continue dans le duel | **Recevoir** | Moins rapide ; sans le chorus arrêté |
 | **E10** | `VI-1.ogg`, `VI-2.ogg`, `S-plein-VI-*.ogg` | Championnat : big band en si bémol (150) ; la tête passe des saxophones (soli) à la trompette et aux cuivres, aux cuivres en soli au pont, à tout l'orchestre au dernier A ; Finale un ton plus haut, plus rapide, avec les cordes (160) | **Recevoir** | Moins dense ; Finale encore plus ample |
-| **E11** | `victoire.ogg`, `defaite.ogg`, `carte.ogg`, `chapitre.ogg` | Les jingles tirés du motif ; au jeu, la fin du duel s'arrête sur le temps fort (cymbale étouffée) puis le jingle ; la carte gagnée attend la fin du jingle de victoire ; le titre de champion prend le jingle de victoire | **Recevoir** | Plus courts ; plus éclatants |
+| **E11** | `victoire.ogg`, `defaite.ogg`, `carte.ogg`, `chapitre.ogg` | Les jingles tirés du motif ; au jeu, la fin du duel s'arrête sur le temps fort (cymbale étouffée) puis le jingle, suivi du silence de J10 ; la carte gagnée attend la fin du jingle de victoire ; le titre de champion prend le jingle de victoire | **Recevoir** | Plus courts ; plus éclatants |
 | **E12** | `I-1-envers.ogg`, `-renversee`, `-mineur`, `-lente` | La leçon de Zelda sur la tête du titre (à l'envers, renversée, autre mode, valeurs doublées) ; le procédé fait la ville (mode majeur, valse), le contre-chant à l'envers, le duel tendu (tête renversée) et les Maisons (quatre modes) | **Garder le procédé** | En faire aussi des variations de jeu |
 
 ## La musique qui suit le jeu
 
 | Entrée | Ce qui se passe | Aperçu | Recommandation | Alternatives |
 |---|---|---|---|---|
-| **J1** | Les couches du duel : la mélodie entre au premier Clash (sur la mesure), la tension quand les PV d'un camp passent sous 30 % ou en prolongation (le thème III passe au duel tendu, sur la phrase), les cuivres à une Signature annoncée | `S-duel.ogg` | **Recevoir** | La mélodie d'emblée ; seuil de tension à 25 % ou 40 % |
+| **J1** | Les couches du duel : la mélodie entre au premier Clash (sur la mesure), la tension quand les PV d'un camp passent sous 30 % ou en prolongation (le thème III passe au duel tendu par un break : arrêt net, une mesure de silence), les cuivres à une Signature annoncée | `S-duel.ogg` | **Recevoir** | La mélodie d'emblée ; seuil de tension à 25 % ou 40 % |
 | **J2** | Les ponctuations, sur le temps et dans l'accord qui sonne : Clash gagné (une gerbe au vibraphone et la cloche), perdu (un accord sourd dans le grave), Signature annoncée (tout l'orchestre), prolongation (roulement et crash) ; rien sur une égalité | `S-ponctuations.ogg` | **Recevoir** | Plus discrètes ; seulement Signature et prolongation |
 | **J3** | La ville qui grandit avec l'histoire (prologue et I : guitare et contrebasse ; II-III : le trio ; IV-V : les vents ; champion : cuivres, cordes) | `II-*-duo/vents/champion.ogg` | **Recevoir** | Une autre répartition |
 | **J4** | Le combo du Fanal : une source localisée devant la porte du bar sur le Quai (le lounge, étouffé de loin, clair tout près ; la ville s'efface d'autant) | `S-ville.ogg` | **Recevoir** | Une autre musique pour le combo ; une source sur la Place du Fanal |
@@ -60,6 +64,7 @@ la musique au navigateur). **L'oreille du responsable tranche.**
 | **J6** | Les scènes du récit (prologue, émissaire, affiliation, chef vaincu, cartons, Championnat, titre) prennent la ballade (I-3) ; un carton de chapitre a son jingle ; les arrivées de quartier gardent la musique du quartier | — | **Recevoir** | La ballade aussi aux arrivées |
 | **J7** | Rôle musical des duels : Kaï (prologue, ses événements, son défi, le bras droit de la Cendre, le Miroir quand c'est lui ; au jeu standard, la Braise) ; Championnat (poule, Miroir) ; Finale ; Maison (cadet, bras droit, chef, Joute) ; le reste : le duel | — | **Recevoir** | Les Épreuves de quartier dans la couleur de la famille |
 | **J8** | L'acoustique du lieu du duel : la musique y prend sa salle (la rue en plein air, réflexions proches et queue courte ; le bar au club ; la salle de jeu feutrée, presque sèche ; l'arène en grande salle) | laboratoire (`?musique=1`), au jeu | **Recevoir** | La salle de la version partout |
+| **J10** | **Nouveau, à ta demande (2026-10-29) :** les enchaînements. Le morceau s'efface (1,8 s), un silence (1,5 s), puis le nouveau par sa levée ; plus aucun fondu où deux morceaux se chevauchent | `S-transitions.ogg` | **Garder** | Silence plus court ; silence plus long |
 | **J9** | La ville respire : après 30 s sans bouger (ni dialogue, ni écran, ni scène), la mélodie se retire sur la mesure et les musiciens continuent ; elle revient dès que le joueur repart | au jeu | **Recevoir** | Délai plus long ou plus court ; jamais |
 
 ## Les instruments
