@@ -8,13 +8,13 @@
 //      progression ⇒ deck signalé illégal et refusé ;
 //   M  stockage refusé : jouable, signalé une fois, aucune avalanche d’erreurs ;
 //   N  Recommencer / Effacer : confirmations (annuler conserve tout ; confirmer agit) ;
-//   P  coût CPU des écrans (CDP Performance : temps de tâches par seconde) — SwiftShader, CPU.
+//   P  coût CPU des écrans (CDP Performance : temps de tâches par seconde).
 // Sortie : artifacts/qa/qa-rc.json
 import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import { chromium } from 'playwright-core';
-import { CHROMIUM, launch, startPreview, view, waitDecision, watchConsole } from './browser.mjs';
+import { CHROMIUM, launch, rendererLabel, startPreview, view, waitDecision, watchConsole, webglRenderer } from './browser.mjs';
 import { newStats, playTurn } from './duel-driver.mjs';
 
 const OUT = 'artifacts/qa';
@@ -93,6 +93,11 @@ const OPEN_ALL = () => {
 
 const server = await startPreview();
 const browser = await launch();
+{
+  const pg = await browser.newPage();
+  report.renderer = rendererLabel(await webglRenderer(pg).catch(() => null));
+  await pg.close();
+}
 try {
   // --- I : sans WebGL --------------------------------------------------------------------------
   if (wanted('I-sans-webgl')) {
@@ -336,8 +341,13 @@ try {
           const px = [];
           for (let i = 0; i < d.length; i += 4) px.push([L(d[i], d[i + 1], d[i + 2]), d[i], d[i + 1], d[i + 2]]);
           px.sort((a, b) => a[0] - b[0]);
-          const [bg, br, bgG, bb] = px[Math.floor(px.length / 2)];
           const [r, gg, b, a] = it.rgba;
+          // très petit texte (cadre de 10 px de haut au plus ; 7,7 px, poids 800, sous Windows) : glyphe et bords lissés couvrent
+          // plus de la moitié du cadre et la médiane tombe sur la lettre ; le fond se lit dans les 40 % de pixels les plus loin
+          // de la couleur du texte (un texte trop pâle y reste trop pâle)
+          const fg0 = L(r, gg, b);
+          const loin = [...px].sort((p, q) => Math.abs(q[0] - fg0) - Math.abs(p[0] - fg0)).slice(0, Math.ceil(px.length * 0.4));
+          const [bg, br, bgG, bb] = it.h <= 10 ? loin[Math.floor(loin.length / 2)] : px[Math.floor(px.length / 2)];
           const fg = L(a * r + (1 - a) * br, a * gg + (1 - a) * bgG, a * b + (1 - a) * bb);
           return { ...it, ratio: Math.round(((Math.max(fg, bg) + 0.05) / (Math.min(fg, bg) + 0.05)) * 10) / 10 };
         });
@@ -445,7 +455,7 @@ try {
     const d1 = await frames();
     res.arena = await page.evaluate(() => window.__lqv.arenaStats());
     res.framesDuel4s = d1 - d0;
-    console.log(`   fil principal (ms de tâches par seconde) : ${JSON.stringify(res.cpu)} · images 3D : accueil ${res.framesAccueil} / duel ${res.framesDuel4s} en 4 s (${res.arena.fps} FPS SwiftShader) · accueil prêt en ${res.homeReadyMs} ms · ${res.arena.drawCalls} draw calls`);
+    console.log(`   fil principal (ms de tâches par seconde) : ${JSON.stringify(res.cpu)} · images 3D : accueil ${res.framesAccueil} / duel ${res.framesDuel4s} en 4 s (${res.arena.fps} FPS) · accueil prêt en ${res.homeReadyMs} ms · ${res.arena.drawCalls} draw calls`);
     check(res.framesDuel4s > 0, `duel : la scène est rendue en continu (${res.framesDuel4s} images en 4 s)`);
   });
 } finally {

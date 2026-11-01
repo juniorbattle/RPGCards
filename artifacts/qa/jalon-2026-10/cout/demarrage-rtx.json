@@ -1,0 +1,121 @@
+{
+  "date": "2026-11-01T06:21:03.319Z",
+  "commit": "0c9ab70",
+  "dist": "dist",
+  "assets": [
+    {
+      "f": "app-R0CU5cJ1.js",
+      "octets": 190249
+    },
+    {
+      "f": "banque.worker-y0XewzxV.js",
+      "octets": 14659
+    },
+    {
+      "f": "cardArtWorker-uAS3M5L_.js",
+      "octets": 45515
+    },
+    {
+      "f": "demo-Y0ZdIba5.js",
+      "octets": 15408
+    },
+    {
+      "f": "index-B9WqB1yo.css",
+      "octets": 94665
+    },
+    {
+      "f": "index-CHkb11ZD.js",
+      "octets": 1162928
+    },
+    {
+      "f": "labo-BG47r1nq.js",
+      "octets": 2853
+    },
+    {
+      "f": "labo-DVNWdW2B.js",
+      "octets": 12973
+    },
+    {
+      "f": "orchestre-DrzTc-Jo.js",
+      "octets": 92809
+    },
+    {
+      "f": "ville-9O52GfDQ.js",
+      "octets": 243244
+    },
+    {
+      "f": "villeRangs-CRD5ZqV-.js",
+      "octets": 495
+    }
+  ],
+  "renderer": "Chrome headless, GPU réel : ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11) — arguments : --force_high_performance_gpu",
+  "rounds": [
+    {
+      "home": 1666,
+      "arene": 1739,
+      "dcl": 838,
+      "load": 838,
+      "longTasks": 2,
+      "longTasksMs": 1112,
+      "maxLongTask": 782,
+      "duel": 152,
+      "octets": 1303108
+    },
+    {
+      "home": 699,
+      "arene": 743,
+      "dcl": 219,
+      "load": 220,
+      "longTasks": 2,
+      "longTasksMs": 382,
+      "maxLongTask": 236,
+      "duel": 203,
+      "octets": 1303108
+    },
+    {
+      "home": 671,
+      "arene": 718,
+      "dcl": 205,
+      "load": 205,
+      "longTasks": 2,
+      "longTasksMs": 366,
+      "maxLongTask": 234,
+      "duel": 273,
+      "octets": 1303108
+    },
+    {
+      "home": 707,
+      "arene": 741,
+      "dcl": 209,
+      "load": 209,
+      "longTasks": 2,
+      "longTasksMs": 373,
+      "maxLongTask": 234,
+      "duel": 359,
+      "octets": 1303108
+    },
+    {
+      "home": 694,
+      "arene": 741,
+      "dcl": 208,
+      "load": 208,
+      "longTasks": 3,
+      "longTasksMs": 447,
+      "maxLongTask": 259,
+      "duel": 417,
+      "octets": 1303108
+    }
+  ],
+  "median": {
+    "home": 699,
+    "arene": 741,
+    "dcl": 209,
+    "load": 209,
+    "longTasks": 2,
+    "longTasksMs": 382,
+    "maxLongTask": 236,
+    "duel": 273,
+    "octets": 1303108
+  },
+  "issues": []
+}

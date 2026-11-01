@@ -96,6 +96,5 @@ changée, règles du duel inchangées, jeu par défaut au repos identique au pix
 
 - **Écouter** les enchaînements (durée du silence) ; les régler au besoin.
 - **Jouer** la marche de côté, les cinématiques et les temps forts tenus : l'effet se juge en mouvement.
-- **Mesurer le coût du relief sur le poste** (Radeon 780M et RTX 4060) : un lancer de rayon de 24 pas, sur les seuls plans
-  qui ont des formes. Le conteneur rend sans GPU (rendu logiciel) : le coût n'y est pas mesurable ; à faire au prochain
-  jalon, avec `?relief=0` pour comparer.
+- ~~Mesurer le coût du relief sur le poste~~ : **fait au jalon 2026-10** (`artifacts/qa/jalon-2026-10/synthese.md`, § 3.2) : nul sur la RTX 4060,
+  jusqu'à +2,4 ms sur la Radeon 780M en 1920 × 1080.

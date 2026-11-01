@@ -1,0 +1,142 @@
+{
+  "date": "2026-11-01T06:46:22.726Z",
+  "commit": "0c9ab70",
+  "dist": "C:/Users/miche/AppData/Local/Temp/claude/C--Users-miche-Documents-Projects-RPGCards--claude-worktrees-beautiful-napier-33a78a/fd171d31-36f4-4df2-a77f-6c4d50251a4c/scratchpad/refs/52c44b5/dist",
+  "assets": [
+    {
+      "f": "app-Dp-1TeW6.js",
+      "octets": 124215
+    },
+    {
+      "f": "cardArtWorker-CyolruEc.js",
+      "octets": 9794
+    },
+    {
+      "f": "demo-BH9biurG.js",
+      "octets": 15408
+    },
+    {
+      "f": "index-D6vBDN_M.css",
+      "octets": 81725
+    },
+    {
+      "f": "index-rlgX2JFp.js",
+      "octets": 1043332
+    },
+    {
+      "f": "labo-eWcYDWmt.js",
+      "octets": 2817
+    },
+    {
+      "f": "ville-D-mc66vX.js",
+      "octets": 222738
+    },
+    {
+      "f": "villeRangs-Bgwqmti_.js",
+      "octets": 495
+    }
+  ],
+  "renderer": "Chrome headless, GPU réel : ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11) — arguments : --force_high_performance_gpu",
+  "rounds": [
+    {
+      "home": 2075,
+      "arene": 2158,
+      "dcl": 1209,
+      "load": 1209,
+      "longTasks": 3,
+      "longTasksMs": 1547,
+      "maxLongTask": 1154,
+      "duel": 100,
+      "octets": 1134851
+    },
+    {
+      "home": 484,
+      "arene": 511,
+      "dcl": 157,
+      "load": 157,
+      "longTasks": 2,
+      "longTasksMs": 347,
+      "maxLongTask": 235,
+      "duel": 55,
+      "octets": 1134851
+    },
+    {
+      "home": 479,
+      "arene": 502,
+      "dcl": 166,
+      "load": 166,
+      "longTasks": 2,
+      "longTasksMs": 281,
+      "maxLongTask": 162,
+      "duel": 60,
+      "octets": 1134851
+    },
+    {
+      "home": 462,
+      "arene": 495,
+      "dcl": 167,
+      "load": 167,
+      "longTasks": 2,
+      "longTasksMs": 291,
+      "maxLongTask": 169,
+      "duel": 53,
+      "octets": 1134851
+    },
+    {
+      "home": 537,
+      "arene": 540,
+      "dcl": 162,
+      "load": 162,
+      "longTasks": 2,
+      "longTasksMs": 362,
+      "maxLongTask": 248,
+      "duel": 57,
+      "octets": 1134851
+    },
+    {
+      "home": 528,
+      "arene": 550,
+      "dcl": 162,
+      "load": 162,
+      "longTasks": 2,
+      "longTasksMs": 390,
+      "maxLongTask": 272,
+      "duel": 55,
+      "octets": 1134851
+    },
+    {
+      "home": 534,
+      "arene": 567,
+      "dcl": 166,
+      "load": 166,
+      "longTasks": 2,
+      "longTasksMs": 386,
+      "maxLongTask": 267,
+      "duel": 66,
+      "octets": 1134851
+    },
+    {
+      "home": 559,
+      "arene": 589,
+      "dcl": 159,
+      "load": 159,
+      "longTasks": 2,
+      "longTasksMs": 407,
+      "maxLongTask": 292,
+      "duel": 60,
+      "octets": 1134851
+    }
+  ],
+  "median": {
+    "home": 534,
+    "arene": 550,
+    "dcl": 166,
+    "load": 166,
+    "longTasks": 2,
+    "longTasksMs": 386,
+    "maxLongTask": 267,
+    "duel": 60,
+    "octets": 1134851
+  },
+  "issues": []
+}

@@ -93,7 +93,7 @@ try {
   await shot('quai-fin');
   // le joueur marche de nouveau
   const w0 = await av(() => ({ ...window.__lqvAventure.town.walker().pos }));
-  await p.keyboard.down('ArrowRight'); await frames(4); await p.keyboard.up('ArrowRight');
+  await p.keyboard.down('ArrowRight'); await frames(4); await p.waitForTimeout(300); await p.keyboard.up('ArrowRight'); // 4 images ne font que 24 ms à 165 Hz
   const w1 = await av(() => ({ ...window.__lqvAventure.town.walker().pos }));
   check(w1.x > w0.x + 0.05, `les entrées sont rendues au joueur (x ${w0.x.toFixed(2)} → ${w1.x.toFixed(2)})`);
 
@@ -239,8 +239,9 @@ try {
   await rframes(2);
   await r.keyboard.press('KeyE');
   await r.waitForFunction(() => !!document.querySelector('.av-cine'), null, { timeout: 60000 });
-  await rframes(3);
-  const k0 = await ecran('braise');
+  // le travelling dure le même temps sur toute machine : à 165 Hz, 3 images ne font que 18 ms ; on attend qu'il arrive
+  let k0 = await ecran('braise');
+  for (let i = 0; i < 40 && !(k0 !== null && Math.abs(k0 - 0.5) < 0.2); i++) { await r.waitForTimeout(100); k0 = await ecran('braise'); }
   check(k0 !== null && Math.abs(k0 - 0.5) < 0.2 && (await rcine()).bandes, `prologue : la caméra se porte sur Kaï aux braseros, en bandes (Kaï à ${k0?.toFixed(2)})`);
   await rshot('prologue-kai');
   await r.waitForSelector('.ville-dialog [data-key="dlg-duel"]', { timeout: 240000 });
