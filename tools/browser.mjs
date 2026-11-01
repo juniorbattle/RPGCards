@@ -21,7 +21,19 @@ export function launchOptions() {
   return { executablePath: CHROMIUM, headless: process.env.LQV_HEADED !== '1', args: [...base, ...EXTRA_ARGS] };
 }
 export async function launch() {
-  return chromium.launch(launchOptions());
+  const browser = await chromium.launch(launchOptions());
+  if (GPU) {
+    // chaque journal dit le rendu réellement obtenu ; un repli logiciel arrête l'outil (jalon 2026-10 : la moitié des rapports ne le notaient pas)
+    const page = await browser.newPage();
+    const renderer = await webglRenderer(page).catch(() => null);
+    await page.close();
+    console.log(`rendu : ${renderer ?? 'inconnu'}`);
+    if (!renderer || /swiftshader|llvmpipe|software/i.test(renderer)) {
+      await browser.close();
+      throw new Error(`LQV_GPU=1 mais rendu logiciel : ${renderer}`);
+    }
+  }
+  return browser;
 }
 
 /** Profil PERSISTANT (dossier `userDataDir`) : caches disque de Chrome (shaders compris) conservés d’un lancement à l’autre. */

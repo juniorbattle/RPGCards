@@ -1,0 +1,118 @@
+{
+ "date": "2026-11-01T06:14:38.359Z",
+ "commit": "0c9ab70",
+ "dureeS": 20,
+ "repos": {
+  "pagePct": 0,
+  "audioPct": 0,
+  "trous": null,
+  "trousS": null
+ },
+ "tempsReel": {
+  "I-1": {
+   "banqueMs": 2052,
+   "couches": [],
+   "etat": "Les Quatre Voies — Titre · 126 à la noire · salle « club ». Chaque passage est r",
+   "pagePct": 6.5,
+   "audioPct": 0.6,
+   "trous": 0,
+   "trousS": 0
+  },
+  "II-1": {
+   "banqueMs": 1706,
+   "couches": [],
+   "etat": "La ville la nuit — Le Quai et la Place du Fanal · 96 à la noire · salle « club »",
+   "pagePct": 5.9,
+   "audioPct": 0.6,
+   "trous": 0,
+   "trousS": 0
+  },
+  "III-1": {
+   "banqueMs": 1713,
+   "couches": [
+    "tension",
+    "cuivres"
+   ],
+   "etat": "Duel · 144 à la noire · salle « club ». Chaque passage est regénéré.",
+   "pagePct": 11.5,
+   "audioPct": 0.6,
+   "trous": 0,
+   "trousS": 0
+  },
+  "V-1": {
+   "banqueMs": 1912,
+   "couches": [
+    "tension",
+    "cuivres"
+   ],
+   "etat": "Kaï · 176 à la noire · salle « club ». Chaque passage est regénéré.",
+   "pagePct": 11.9,
+   "audioPct": 0.6,
+   "trous": 0,
+   "trousS": 0
+  },
+  "VI-1": {
+   "banqueMs": 1837,
+   "couches": [
+    "tension",
+    "cuivres"
+   ],
+   "etat": "Championnat · 150 à la noire · salle « club ». Chaque passage est regénéré.",
+   "pagePct": 11.4,
+   "audioPct": 0.6,
+   "trous": 0,
+   "trousS": 0
+  },
+  "VI-2": {
+   "banqueMs": 1726,
+   "couches": [
+    "tension",
+    "cuivres"
+   ],
+   "etat": "Championnat — la Finale · 160 à la noire · salle « grande ». Chaque passage est ",
+   "pagePct": 19.3,
+   "audioPct": 0.6,
+   "trous": 0,
+   "trousS": 0
+  }
+ },
+ "horsLigne": {
+  "I-1": {
+   "dureeS": 68.3,
+   "banqueMs": 450,
+   "renduMs": 1584,
+   "vitesse": 43.1
+  },
+  "II-1": {
+   "dureeS": 83.6,
+   "banqueMs": 1485,
+   "renduMs": 2535,
+   "vitesse": 33
+  },
+  "S-plein-III-1": {
+   "dureeS": 51.6,
+   "banqueMs": 1364,
+   "renduMs": 3715,
+   "vitesse": 13.9
+  },
+  "S-plein-V-1": {
+   "dureeS": 51.6,
+   "banqueMs": 1403,
+   "renduMs": 3843,
+   "vitesse": 13.4
+  },
+  "S-plein-VI-1": {
+   "dureeS": 51.6,
+   "banqueMs": 2268,
+   "renduMs": 4042,
+   "vitesse": 12.8
+  },
+  "S-plein-VI-2": {
+   "dureeS": 51.6,
+   "banqueMs": 2250,
+   "renduMs": 7569,
+   "vitesse": 6.8
+  }
+ },
+ "console": []
+}

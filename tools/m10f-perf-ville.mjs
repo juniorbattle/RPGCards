@@ -47,7 +47,8 @@ try {
       const s = [...iv].sort((a, b) => a - b);
       const q = (f) => Math.round(s[Math.min(s.length - 1, Math.floor(s.length * f))] * 10) / 10;
       const t = window.__lqvAventure.town;
-      return { images: iv.length, medianeMs: q(0.5), p95Ms: q(0.95), p99Ms: q(0.99), maxMs: Math.round(s[s.length - 1] * 10) / 10, sup33ms: s.filter((d) => d > 33.4).length, stats: t.stats(), decors: t.decorReport?.().world ?? null };
+      const qv = window.__lqvAventure.qaVue();
+      return { images: iv.length, medianeMs: q(0.5), p95Ms: q(0.95), p99Ms: q(0.99), maxMs: Math.round(s[s.length - 1] * 10) / 10, sup33ms: s.filter((d) => d > 33.4).length, stats: t.stats(), decors: t.decorReport?.().world ?? null, vue: { guetteurs: qv.guetteurs.length, armee: qv.armee, force: qv.force?.kind ?? null }, musique: window.__lqvSon?.musique?.etat()?.version ?? null };
     });
     report.ilots[id] = { pretMs, ...r };
     console.log(id, JSON.stringify({ pretMs, images: r.images, medianeMs: r.medianeMs, p95Ms: r.p95Ms, maxMs: r.maxMs, appels: r.stats.calls, triangles: r.stats.triangles, textures: r.stats.textures, programmes: r.stats.programs, cpuMs: r.stats.cpuMs, monde: r.decors }));

@@ -1,0 +1,121 @@
+{
+  "date": "2026-11-01T06:04:50.680Z",
+  "commit": "0c9ab70",
+  "dist": "dist",
+  "assets": [
+    {
+      "f": "app-R0CU5cJ1.js",
+      "octets": 190249
+    },
+    {
+      "f": "banque.worker-y0XewzxV.js",
+      "octets": 14659
+    },
+    {
+      "f": "cardArtWorker-uAS3M5L_.js",
+      "octets": 45515
+    },
+    {
+      "f": "demo-Y0ZdIba5.js",
+      "octets": 15408
+    },
+    {
+      "f": "index-B9WqB1yo.css",
+      "octets": 94665
+    },
+    {
+      "f": "index-CHkb11ZD.js",
+      "octets": 1162928
+    },
+    {
+      "f": "labo-BG47r1nq.js",
+      "octets": 2853
+    },
+    {
+      "f": "labo-DVNWdW2B.js",
+      "octets": 12973
+    },
+    {
+      "f": "orchestre-DrzTc-Jo.js",
+      "octets": 92809
+    },
+    {
+      "f": "ville-9O52GfDQ.js",
+      "octets": 243244
+    },
+    {
+      "f": "villeRangs-CRD5ZqV-.js",
+      "octets": 495
+    }
+  ],
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "rounds": [
+    {
+      "home": 1446,
+      "arene": 1518,
+      "dcl": 596,
+      "load": 596,
+      "longTasks": 3,
+      "longTasksMs": 916,
+      "maxLongTask": 536,
+      "duel": 79,
+      "octets": 1303108
+    },
+    {
+      "home": 645,
+      "arene": 684,
+      "dcl": 194,
+      "load": 194,
+      "longTasks": 2,
+      "longTasksMs": 384,
+      "maxLongTask": 256,
+      "duel": 66,
+      "octets": 1303108
+    },
+    {
+      "home": 632,
+      "arene": 687,
+      "dcl": 193,
+      "load": 193,
+      "longTasks": 2,
+      "longTasksMs": 362,
+      "maxLongTask": 237,
+      "duel": 65,
+      "octets": 1303108
+    },
+    {
+      "home": 657,
+      "arene": 711,
+      "dcl": 188,
+      "load": 188,
+      "longTasks": 2,
+      "longTasksMs": 354,
+      "maxLongTask": 233,
+      "duel": 65,
+      "octets": 1303108
+    },
+    {
+      "home": 670,
+      "arene": 705,
+      "dcl": 201,
+      "load": 201,
+      "longTasks": 3,
+      "longTasksMs": 432,
+      "maxLongTask": 251,
+      "duel": 213,
+      "octets": 1303108
+    }
+  ],
+  "median": {
+    "home": 657,
+    "arene": 705,
+    "dcl": 194,
+    "load": 194,
+    "longTasks": 2,
+    "longTasksMs": 384,
+    "maxLongTask": 251,
+    "duel": 66,
+    "octets": 1303108
+  },
+  "issues": []
+}

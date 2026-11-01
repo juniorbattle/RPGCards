@@ -58,9 +58,11 @@ for gpu in $GPUS; do
       run "parcours/nouveau-joueur-$gpu-$w" node tools/m12-nouveau-joueur.mjs "$SHOTS/nouveau-joueur-$gpu-$w" "$P/nouveau-joueur-$gpu-$w.json"
     done
     unset LQV_VP
+    LQV_VOIES_TITRE=1 run "parcours/prologue-au-titre-$gpu" node tools/m10d-voies.mjs "$SHOTS/prologue-au-titre-$gpu" "$P/prologue-au-titre-$gpu.json"
     run "parcours/accessoires-$gpu" npx tsx tools/m09-accessoires.mjs "$SHOTS/accessoires-$gpu" "$P/accessoires-$gpu.json"
     run "parcours/activations-$gpu" node tools/m12-activations.mjs
     restaure artifacts/qa/m12/activations.json "$P/activations-$gpu.json" screenshots/qa/m12/activations
+    rm -f screenshots/qa/m12/activations/duel-camouflage.jpg
     run "parcours/marche-profil-$gpu" node tools/marche-profil.mjs
     run "parcours/apparence-$gpu" node tools/protagoniste-aventure.mjs "$SHOTS/apparence-$gpu"
     cp "$SHOTS/apparence-$gpu/rapport.json" "$P/apparence-$gpu.json" 2>/dev/null

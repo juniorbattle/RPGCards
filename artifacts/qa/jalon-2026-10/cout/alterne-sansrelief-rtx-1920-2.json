@@ -1,0 +1,197 @@
+{
+ "commit": "0c9ab70",
+ "viewport": [
+  1920,
+  1080
+ ],
+ "ilots": {
+  "quai": {
+   "pretMs": 484,
+   "images": 2303,
+   "medianeMs": 1.1,
+   "p95Ms": 7,
+   "p99Ms": 8.5,
+   "maxMs": 10.4,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 236,
+    "triangles": 5182,
+    "textures": 59,
+    "geometries": 150,
+    "programs": 20,
+    "lights": 16,
+    "cpuMs": 0.8,
+    "frames": 3182,
+    "buildMs": 250,
+    "firstFrameMs": 738,
+    "mountMs": null,
+    "mountFrameMs": null
+   },
+   "decors": "diorama",
+   "vue": {
+    "guetteurs": 0,
+    "armee": false,
+    "force": null
+   },
+   "musique": null
+  },
+  "parvis": {
+   "pretMs": 973,
+   "images": 2371,
+   "medianeMs": 1.1,
+   "p95Ms": 6.4,
+   "p99Ms": 8.2,
+   "maxMs": 10.8,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 242,
+    "triangles": 5190,
+    "textures": 57,
+    "geometries": 153,
+    "programs": 20,
+    "lights": 15,
+    "cpuMs": 0.9,
+    "frames": 6741,
+    "buildMs": 250,
+    "firstFrameMs": 738,
+    "mountMs": 237,
+    "mountFrameMs": 500
+   },
+   "decors": "diorama",
+   "vue": {
+    "guetteurs": 0,
+    "armee": false,
+    "force": null
+   },
+   "musique": null
+  },
+  "ruelles": {
+   "pretMs": 824,
+   "images": 2407,
+   "medianeMs": 1,
+   "p95Ms": 8.4,
+   "p99Ms": 10.3,
+   "maxMs": 13.1,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 202,
+    "triangles": 5102,
+    "textures": 55,
+    "geometries": 127,
+    "programs": 20,
+    "lights": 13,
+    "cpuMs": 1.1,
+    "frames": 10370,
+    "buildMs": 250,
+    "firstFrameMs": 738,
+    "mountMs": 67,
+    "mountFrameMs": 345
+   },
+   "decors": "diorama",
+   "vue": {
+    "guetteurs": 0,
+    "armee": false,
+    "force": null
+   },
+   "musique": null
+  },
+  "cour": {
+   "pretMs": 817,
+   "images": 2960,
+   "medianeMs": 0.8,
+   "p95Ms": 8.1,
+   "p99Ms": 10.2,
+   "maxMs": 12.4,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 161,
+    "triangles": 5028,
+    "textures": 48,
+    "geometries": 94,
+    "programs": 20,
+    "lights": 15,
+    "cpuMs": 0.7,
+    "frames": 14855,
+    "buildMs": 250,
+    "firstFrameMs": 738,
+    "mountMs": 70,
+    "mountFrameMs": 264
+   },
+   "decors": "diorama",
+   "vue": {
+    "guetteurs": 0,
+    "armee": false,
+    "force": null
+   },
+   "musique": null
+  },
+  "port": {
+   "pretMs": 810,
+   "images": 2731,
+   "medianeMs": 0.8,
+   "p95Ms": 8.6,
+   "p99Ms": 11,
+   "maxMs": 12.6,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 167,
+    "triangles": 5024,
+    "textures": 51,
+    "geometries": 104,
+    "programs": 20,
+    "lights": 11,
+    "cpuMs": 0.9,
+    "frames": 19011,
+    "buildMs": 250,
+    "firstFrameMs": 738,
+    "mountMs": 63,
+    "mountFrameMs": 324
+   },
+   "decors": "diorama",
+   "vue": {
+    "guetteurs": 0,
+    "armee": false,
+    "force": null
+   },
+   "musique": null
+  },
+  "haute": {
+   "pretMs": 817,
+   "images": 2607,
+   "medianeMs": 0.8,
+   "p95Ms": 9.5,
+   "p99Ms": 11.5,
+   "maxMs": 13.8,
+   "sup33ms": 0,
+   "stats": {
+    "camera": "frontale",
+    "calls": 175,
+    "triangles": 5048,
+    "textures": 49,
+    "geometries": 108,
+    "programs": 20,
+    "lights": 13,
+    "cpuMs": 0.9,
+    "frames": 22977,
+    "buildMs": 250,
+    "firstFrameMs": 738,
+    "mountMs": 67,
+    "mountFrameMs": 300
+   },
+   "decors": "diorama",
+   "vue": {
+    "guetteurs": 0,
+    "armee": false,
+    "force": null
+   },
+   "musique": null
+  }
+ },
+ "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "console": []
+}

@@ -31,6 +31,7 @@ const check = (ok, what) => { checks.push(`${ok ? 'OK' : 'ÉCHEC'} ${what}`); co
 let n = 0;
 let renderer = null;
 let duelJoue = null;
+const memoire = [];
 const grises = (e) => e.deck.cartes.filter((c) => c.startsWith('neutre-')).length;
 const SORTIE = { parvis: 'sortie-arene', ruelles: 'sortie-ruelles', quai: 'sortie-quai' };
 try {
@@ -60,7 +61,11 @@ try {
     await av((x) => window.__lqvAventure.qaTerminer(x), issue);
     await p.waitForSelector('[data-screen="av-resultat"]');
   };
-  const retour = async () => { await p.click('[data-key="av-retour"]'); await townReady(); };
+  const retour = async () => {
+    await p.click('[data-key="av-retour"]');
+    await townReady();
+    memoire.push(await av(() => ({ tasMo: Math.round((performance.memory?.usedJSHeapSize ?? 0) / 1048576), textures: window.__lqvAventure.town.stats().textures, ilot: window.__lqvAventure.town.ilotId() })));
+  };
   const lancer = async (id, shotPrep) => {
     await parler(id);
     await p.click('[data-key="dlg-duel"]');
@@ -297,6 +302,57 @@ try {
   await townReady();
   check(JSON.stringify(await etat()) === avant, 'rechargement : état de l’aventure identique');
   check(await av(() => localStorage.getItem('lqv.save') === null), 'sauvegarde du jeu standard jamais créée');
+  // Jalon 2026-10 (`LQV_VOIES_TITRE=1`) : le parcours continue dans la même page jusqu'au titre (poule, Miroir, Finale), un
+  // seul parcours du prologue au titre au navigateur ; relevé de la mémoire après chaque duel (tas JS, textures de la ville).
+  if (process.env.LQV_VOIES_TITRE === '1') {
+    const gagner = async () => {
+      await p.click('[data-key="av-duel-go"]');
+      await duelPret();
+      await finDuel('victoire');
+      await retour();
+    };
+    const porte = async () => {
+      await p.waitForTimeout(400);
+      if (await p.$('.ville-dialog')) await p.keyboard.press('Escape');
+      await av(() => window.__lqvAventure.town.place({ x: 0, z: -4.4 }, 'dos'));
+      await p.waitForTimeout(700);
+      await p.keyboard.press('KeyE');
+      await p.waitForSelector('.ville-dialog');
+    };
+    const signature = async (f) => {
+      await p.click('[data-key="av-deck"]');
+      await p.waitForSelector('[data-key="av-collection"]');
+      await p.click(`[data-key="av-sig-${f}"]`);
+      await p.click('[data-key="av-deck-save"]');
+    };
+    await av(() => window.__lqvAventure.voyager('parvis', 'arrivee'));
+    await p.waitForFunction(() => window.__lqvAventure.town.ilotId() === 'parvis' && !document.querySelector('.ville-fade'), null, { timeout: 30000 });
+    await townReady();
+    const e0 = await etat();
+    const chefs = ['Voile', 'Ronce', 'Astre', 'Cendre'].filter((f) => f !== e0.affiliation).slice(0, 3);
+    for (const f of chefs) {
+      await signature(f);
+      await porte();
+      await p.click(`[data-key="dlg-poule-${f}"]`);
+      await gagner();
+    }
+    check(Object.keys((await etat()).competitions.championnat.poule).length === 3, 'poule : trois chefs vaincus, trois Signatures');
+    await porte();
+    check(/Miroir/.test(await texte('.ville-dialog')), 'le Miroir : Kaï');
+    await p.click('[data-key="dlg-duel"]');
+    await gagner();
+    await porte();
+    check(/Finale/.test(await texte('.ville-dialog')), 'la Finale');
+    await p.click('[data-key="dlg-duel"]');
+    await gagner();
+    await signature(chefs[0]);
+    await porte();
+    await p.click('[data-key="dlg-duel"]');
+    await gagner();
+    await p.waitForSelector('.ville-dialog');
+    check((await etat()).competitions.championnat.titre, 'Finale gagnée : le titre, dans la même aventure que le prologue');
+    await shot('titre', 1000);
+  }
   await ctx.close();
 
   // Planche des écrans du lot
@@ -318,7 +374,7 @@ try {
   server.stop();
 }
 const failed = checks.filter((c) => c.startsWith('ÉCHEC')).length;
-const report = { date: new Date().toISOString(), commit, viewport: VP, qs: QS, chromeArgs: EXTRA_ARGS, renderer: rendererLabel(renderer), duelJoue, checks, steps, issues, ok: failed === 0 && issues.length === 0 };
+const report = { date: new Date().toISOString(), commit, viewport: VP, qs: QS, chromeArgs: EXTRA_ARGS, renderer: rendererLabel(renderer), duelJoue, memoire, checks, steps, issues, ok: failed === 0 && issues.length === 0 };
 mkdirSync(dirname(OUT), { recursive: true });
 writeFileSync(OUT, JSON.stringify(report, null, 2));
 console.log(`${checks.length - failed}/${checks.length} contrôles ; console : ${issues.length ? issues.join(' | ') : 'aucune erreur'}`);

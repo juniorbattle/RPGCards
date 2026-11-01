@@ -1,0 +1,154 @@
+{
+  "date": "2026-11-01T06:46:43.746Z",
+  "commit": "0c9ab70",
+  "dist": "dist",
+  "assets": [
+    {
+      "f": "app-R0CU5cJ1.js",
+      "octets": 190249
+    },
+    {
+      "f": "banque.worker-y0XewzxV.js",
+      "octets": 14659
+    },
+    {
+      "f": "cardArtWorker-uAS3M5L_.js",
+      "octets": 45515
+    },
+    {
+      "f": "demo-Y0ZdIba5.js",
+      "octets": 15408
+    },
+    {
+      "f": "index-B9WqB1yo.css",
+      "octets": 94665
+    },
+    {
+      "f": "index-CHkb11ZD.js",
+      "octets": 1162928
+    },
+    {
+      "f": "labo-BG47r1nq.js",
+      "octets": 2853
+    },
+    {
+      "f": "labo-DVNWdW2B.js",
+      "octets": 12973
+    },
+    {
+      "f": "orchestre-DrzTc-Jo.js",
+      "octets": 92809
+    },
+    {
+      "f": "ville-9O52GfDQ.js",
+      "octets": 243244
+    },
+    {
+      "f": "villeRangs-CRD5ZqV-.js",
+      "octets": 495
+    }
+  ],
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "rounds": [
+    {
+      "home": 1455,
+      "arene": 1532,
+      "dcl": 571,
+      "load": 571,
+      "longTasks": 3,
+      "longTasksMs": 925,
+      "maxLongTask": 518,
+      "duel": 98,
+      "octets": 1303108
+    },
+    {
+      "home": 454,
+      "arene": 478,
+      "dcl": 157,
+      "load": 157,
+      "longTasks": 2,
+      "longTasksMs": 317,
+      "maxLongTask": 210,
+      "duel": 128,
+      "octets": 1303108
+    },
+    {
+      "home": 496,
+      "arene": 562,
+      "dcl": 163,
+      "load": 163,
+      "longTasks": 2,
+      "longTasksMs": 324,
+      "maxLongTask": 212,
+      "duel": 77,
+      "octets": 1303108
+    },
+    {
+      "home": 461,
+      "arene": 487,
+      "dcl": 161,
+      "load": 161,
+      "longTasks": 2,
+      "longTasksMs": 322,
+      "maxLongTask": 211,
+      "duel": 89,
+      "octets": 1303108
+    },
+    {
+      "home": 478,
+      "arene": 542,
+      "dcl": 172,
+      "load": 172,
+      "longTasks": 2,
+      "longTasksMs": 308,
+      "maxLongTask": 203,
+      "duel": 60,
+      "octets": 1303108
+    },
+    {
+      "home": 435,
+      "arene": 499,
+      "dcl": 153,
+      "load": 154,
+      "longTasks": 2,
+      "longTasksMs": 303,
+      "maxLongTask": 200,
+      "duel": 71,
+      "octets": 1303108
+    },
+    {
+      "home": 452,
+      "arene": 480,
+      "dcl": 159,
+      "load": 159,
+      "longTasks": 2,
+      "longTasksMs": 309,
+      "maxLongTask": 203,
+      "duel": 59,
+      "octets": 1303108
+    },
+    {
+      "home": 457,
+      "arene": 461,
+      "dcl": 160,
+      "load": 160,
+      "longTasks": 2,
+      "longTasksMs": 303,
+      "maxLongTask": 194,
+      "duel": 60,
+      "octets": 1303108
+    }
+  ],
+  "median": {
+    "home": 461,
+    "arene": 499,
+    "dcl": 161,
+    "load": 161,
+    "longTasks": 2,
+    "longTasksMs": 317,
+    "maxLongTask": 210,
+    "duel": 77,
+    "octets": 1303108
+  },
+  "issues": []
+}
