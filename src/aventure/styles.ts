@@ -73,6 +73,11 @@ export function installAventureStyles(): void {
 .av-qa-decor[hidden] { display: none; }
 .av-slot { display: grid; gap: 4px; justify-items: center; }
 .ville-btn.av-mini { padding: 1px 6px; font-size: 11px; }
+/* M14 : le choix du récit, le bouton de la suite (au doigt comme à la souris) */
+.av-recit { display: flex; justify-content: center; gap: 8px; }
+.av-recit-texte { min-height: 2.6em; }
+.av-suite { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 40; min-height: 48px; padding: 10px 28px; font-size: 18px; font-weight: 600; pointer-events: auto; }
+.av-suite[hidden] { display: none; }
 .av-issues { color: #ffb4a0; margin: 6px 0; } .av-ok { color: #b8e6a0; }
 .av-registre { columns: 2; font: 12px/1.4 ui-monospace, monospace; color: #d8ccb4; }
 .av-quete ul { list-style: none; padding-left: 4px; margin: 2px 0; } .av-quete li.faite { color: #b8e6a0; }
