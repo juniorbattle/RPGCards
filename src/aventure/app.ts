@@ -240,10 +240,10 @@ export class AventureApp {
     if (this.charge.status === 'indisponible') items.push(h('p', { class: 'warn' }, 'Stockage local indisponible : l’aventure ne pourra pas être conservée.'));
     items.push(h('a', { class: 'av-link', href: location.pathname, 'data-key': 'av-standard' }, 'Jeu standard (duels, Tournoi du Quai)'));
     this.ecranShell('scr-home av-scr',
-      h('section', { class: 'av-titre', 'data-screen': 'av-titre', 'aria-labelledby': 'av-t' },
+      h('section', { class: 'av-titre av-accroche', 'data-screen': 'av-titre', 'aria-labelledby': 'av-t' },
         h('div', { class: 'av-emblems', 'aria-hidden': 'true', html: FAMILIES.map((f) => `<span class="fam-${f}">${emblemSvg(f, 30)}</span>`).join('') }),
         h('h1', { id: 'av-t', class: 'av-h1' }, 'Les Quatre Voies'),
-        h('p', { class: 'av-sous' }, 'Aventure'),
+        h('p', { class: 'av-trait' }, 'Aventure'),
         h('div', { class: 'av-items' }, ...items)));
   }
 
@@ -271,15 +271,19 @@ export class AventureApp {
     });
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
     this.ecranShell('scr-home av-scr',
-      h('section', { class: 'av-titre', 'data-screen': 'av-nouveau' },
+      h('section', { class: 'av-titre av-nouveau', 'data-screen': 'av-nouveau' },
         h('h1', { class: 'av-h1' }, 'De la populace'),
         h('p', { class: 'av-sous' }, 'Vous n’avez ni famille ni Signature : seize cartes grises, quatre de chaque Rang, sans effet ni bonus. Le soir du tournoi, le Quai est plein.'),
-        h('div', { class: 'av-cards' }, ...[1, 2, 3, 4].map((r) => neutreEl(`neutre-${r}`, '×4'))),
-        h('label', { class: 'av-label' }, 'Votre nom ', input),
-        h('div', { class: 'av-recit' }, ...boutonsMode),
-        texteMode,
-        zone,
-        h('div', { class: 'av-items' }, bouton('Commencer', go, 'av-start', true), bouton('Retour', () => this.titre(), 'av-back'))));
+        h('div', { class: 'av-nouveau-grille' },
+          h('div', { class: 'av-nouveau-col' },
+            h('label', { class: 'av-label' }, 'Votre nom', input),
+            h('p', { class: 'av-label' }, 'Votre récit'),
+            h('div', { class: 'av-recit' }, ...boutonsMode),
+            texteMode,
+            h('p', { class: 'av-label' }, 'Votre deck'),
+            h('div', { class: 'av-cards' }, ...[1, 2, 3, 4].map((r) => neutreEl(`neutre-${r}`, '×4')))),
+          zone),
+        h('div', { class: 'av-actions' }, bouton('Retour', () => this.titre(), 'av-back'), bouton('Commencer', go, 'av-start', true))));
     input.focus();
     input.select();
   }
@@ -511,11 +515,12 @@ export class AventureApp {
   private renderHud(): HTMLElement {
     const t = this.town!;
     const b = (label: string, key: string, run: () => void) => h('button', { class: 'ville-btn', type: 'button', 'data-key': key, onclick: (e: Event) => { (e.currentTarget as HTMLElement).blur(); run(); } }, label);
-    return h('div', { class: 'ville-hud' },
-      h('div', { class: 'ville-place' }, h('b', { 'data-key': 'ville-place' }, capital(t.ilot.name)), h('small', null, 'la nuit · aventure')),
-      h('div', { class: 'ville-objective', 'data-key': 'ville-objective' }, objectif(this.etat)),
-      h('div', { class: 'ville-tools' }, b('Menu (Échap)', 'av-menu', () => this.menu()), b('Deck', 'av-deck', () => this.collection()), b('Journal', 'av-journal', () => this.journal())),
-      h('div', { class: 'av-statut', 'data-key': 'av-statut' }),
+    return h('div', { class: 'ville-hud av-hud' },
+      h('div', { class: 'av-cartouche' },
+        h('div', { class: 'ville-place' }, h('b', { 'data-key': 'ville-place' }, capital(t.ilot.name))),
+        h('div', { class: 'av-hud-ligne' }, h('span', { class: 'av-chapitre', 'data-key': 'av-chapitre' }), h('span', { class: 'av-statut', 'data-key': 'av-statut' })),
+        h('div', { class: 'ville-objective', 'data-key': 'ville-objective' }, objectif(this.etat))),
+      h('div', { class: 'ville-tools' }, b('Journal', 'av-journal', () => this.journal()), b('Deck', 'av-deck', () => this.collection()), h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-menu', onclick: (e: Event) => { (e.currentTarget as HTMLElement).blur(); this.menu(); } }, 'Menu', h('kbd', null, 'Échap'))),
       h('button', { class: 'ville-btn primary av-suite', type: 'button', 'data-key': 'av-suite', hidden: true, onclick: () => this.suite() }, 'Suite du récit ▸'),
       h('div', { class: 'av-qa-decor', 'data-key': 'av-qa-decor', hidden: true }));
   }
@@ -540,7 +545,13 @@ export class AventureApp {
     const st = this.hud?.querySelector<HTMLElement>('[data-key="av-statut"]');
     const e = this.etat;
     const s = e.affiliation ? `Voie ${de(e.affiliation)}` : 'Sans famille';
-    if (st && st.textContent !== s) { st.textContent = s; st.className = `av-statut${e.affiliation ? ` fam-${e.affiliation}` : ''}`; }
+    if (st && st.textContent !== s) {
+      st.innerHTML = `${e.affiliation ? emblemSvg(e.affiliation, 15) : ''}<span>${s}</span>`;
+      st.className = `av-statut${e.affiliation ? ` fam-${e.affiliation}` : ''}`;
+    }
+    const chap = this.hud?.querySelector<HTMLElement>('[data-key="av-chapitre"]');
+    const chapTxt = CHAPITRE[chapitreDetaille(e)];
+    if (chap && chap.textContent !== chapTxt) chap.textContent = chapTxt;
     // M14 : le bouton du Récit guidé ; il prend le focus, pour Entrée et Espace (la marche coupée, ces touches sont libres)
     const suite = this.hud?.querySelector<HTMLButtonElement>('[data-key="av-suite"]');
     if (suite) {
@@ -1556,9 +1567,9 @@ export class AventureApp {
       : r.prevu.rencontre.startsWith('champ:') ? (r.issue === 'victoire' ? (r.gains.length ? 'Le titre est à vous : les variantes qui vous manquaient encore entrent au registre.' : 'Le Championnat avance : aucune carte avant le titre.') : 'Rien n’est perdu : la manche peut se rejouer.')
       : r.prevu.rencontre.startsWith('epreuve:') ? (r.issue === 'victoire' ? (r.gains.length ? 'Épreuve remportée : la variante entre au registre.' : 'Duel gagné : la série continue.') : 'La série repart du début.') : r.issue === 'victoire' ? (r.gains.length ? 'Votre victoire entre au registre.' : 'Revanche : rien de nouveau au registre (aucune duplication ; les trois variantes sont déjà à vous).') : 'Rien n’est perdu : le défi reste ouvert.';
     this.ecranShell('scr-result av-scr',
-      h('section', { class: 'av-titre av-resultat', 'data-screen': 'av-resultat' },
+      h('section', { class: 'av-titre av-resultat av-accroche', 'data-screen': 'av-resultat' },
         h('h1', { class: 'av-h1' }, titre),
-        h('p', { class: 'av-sous' }, `${r.prevu.titre} · ${r.turns} tour(s)`),
+        h('p', { class: 'av-trait' }, `${r.prevu.titre} · ${r.turns} tour${r.turns > 1 ? 's' : ''}`),
         h('p', null, note),
         h('p', { class: 'av-pv', 'data-key': 'av-pv' }, r.pv[1] > r.pv[0] ? `Entraînement : vos PV passent de ${r.pv[0]} à ${r.pv[1]}.` : `Un abandon ne compte pas comme un combat : vos PV restent à ${r.pv[0]}.`),
         prologue ? h('p', { class: 'av-proto', 'data-key': 'av-faits' }, `Ce que la foule a vu (faits publics du duel) : ${r.faits.assautsGagnes} Clash(es) gagné(s) en Assaut, ${r.faits.gardesGagnees} en Garde, ${r.faits.interferencesReussies} Interférence(s) réussie(s).`) : null,
@@ -1662,7 +1673,7 @@ export class AventureApp {
 
   // ------------------------------------------------------------------ fenêtres
 
-  dire(titre: string, texte: string, choix: Choix[], apparence?: string, forcee = false, cadre?: CadreDialogue | null): void {
+  dire(titre: string, texte: string, choix: Choix[], apparence?: string, forcee = false, cadre?: CadreDialogue | null, panneau = false): void {
     this.fermerDialogue();
     this.town?.setInputLocked(true);
     // M11 : dialogue de scène, cadré (la caméra glisse sur le ou les personnages ; bandes gardées si la scène les tient)
@@ -1675,12 +1686,12 @@ export class AventureApp {
       if (cadre.bandes && !this.sceneBandes) { this.bandesEcran().prendre(); this.sceneBandes = true; }
     }
     if (!cadre?.bandes && this.sceneBandes) { this.sceneBandes = false; this.bandesEcran().rendre(); }
-    const box = h('div', { class: 'ville-dialog', role: 'dialog', 'aria-label': titre });
+    const box = h('div', { class: `ville-dialog${panneau ? ' av-panneau' : ''}`, role: 'dialog', 'aria-label': titre });
     if (apparence) {
       const p = personnalite(apparence, { nom: titre, titre: '' });
       box.append(h('img', { class: 'ville-portrait', alt: '', src: portraitUrl(p, this.params.artSeed) }));
     }
-    const row = h('div', { class: 'ville-choices' }, ...choix.map((c) => h('button', { class: `ville-btn${c.primary ? ' primary' : ''}`, type: 'button', 'data-key': c.key, onclick: () => c.run() }, c.label)));
+    const row = h('div', { class: 'ville-choices' }, ...choix.map((c) => h('button', { class: `ville-btn${c.primary ? ' primary' : ''}`, type: 'button', 'data-key': c.key, onclick: () => c.run() }, ...(panneau ? ligneMenu(c.label) : [c.label]))));
     box.append(h('div', { class: 'ville-dialog-body' }, h('b', null, titre), h('p', null, texte), row));
     box.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); if (!forcee) this.fermerDialogue(); } });
     document.body.append(box);
@@ -1753,7 +1764,7 @@ export class AventureApp {
       { label: `Conseils du duel : ${!conseilsPermis(location.search) ? 'coupés par l’adresse' : lireConseils(stockageLocal()) ? 'affichés' : 'masqués'}`, key: 'menu-conseils', run: () => this.reglageConseils() },
       { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter. Les joueurs de cartes de la ville regardent devant eux : entrer dans leur regard, c’est accepter leur défi (une bulle « ! » s’allume, ils viennent à vous) ; passez derrière eux ou à l’abri d’un étal pour les éviter. Kaï surgit à certains moments de votre histoire ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? ») ; des conseils, un à la fois, expliquent chaque phase et chaque signal des cartes la première fois qu’il paraît (« Conseils du duel », dans ce menu). Le son se règle dans ce menu (« Son »). Les grands moments de votre histoire se jouent en cinématique (première arrivée dans un quartier, Kaï qui surgit, votre affiliation, un chef vaincu, un nouveau chapitre, le Championnat) : Échap, Espace, Entrée ou « Passer » pour la passer ; « Cinématiques », dans ce menu, les coupe. « Récit », dans ce menu, passe de la Promenade libre, où l’on parcourt la ville, au Récit guidé, où « Suite du récit » mène d’événement en événement ; on en change quand on veut, sans rien perdre.', [fermer(this)]) },
       { label: 'Écran titre', key: 'menu-home', run: () => { this.fermerDialogue(); this.titre(); } },
-    ]);
+    ], undefined, false, null, true);
   }
 
   /** Passe 165 : l'apparence du protagoniste (silhouette, coupe, visage, peau, cheveux, yeux), modifiable à tout moment ; sauvegardée. */
@@ -1898,12 +1909,23 @@ export class AventureApp {
     const q = quetes(this.etat);
     this.ouvrirModal(h('div', { class: 'av-confirm av-large', 'data-key': 'av-journal-panel' },
       h('h2', null, 'Journal des quêtes'),
-      ...q.map((x) => h('div', { class: 'av-quete' }, h('h3', null, x.titre), h('ul', null, ...x.etapes.map((s) => h('li', { class: s.faite ? 'faite' : '' }, `${s.faite ? '✓ ' : '· '}${s.texte}`))))),
-      h('p', { class: 'av-proto' }, `Les familles : ${FAMILIES.map((f) => `${capital(leF(f))}, ${this.etat.familles[f] === 'chef' ? chefVaincu(f) : ETAT_FAMILLE[this.etat.familles[f]]}`).join(' · ')}`),
-      h('h3', null, 'Duels de l’aventure (les plus récents d’abord)'),
-      this.save!.historique.length
+      h('div', { class: 'av-journal-grille' },
+        h('div', null, ...[...q].sort((a, b) => Number(a.etapes.every((s) => s.faite)) - Number(b.etapes.every((s) => s.faite))).map((x) => {
+          // les quêtes finies se replient ; la prochaine étape d'une quête ouverte ressort
+          const faites = x.etapes.filter((s) => s.faite).length;
+          const finie = faites === x.etapes.length;
+          const courante = x.etapes.findIndex((s) => !s.faite);
+          return h('details', { class: `av-quete${finie ? ' finie' : ''}`, open: finie ? null : true },
+            h('summary', null, h('span', null, `${finie ? '✓ ' : ''}${x.titre}`), h('span', { class: 'av-compte' }, `${faites} sur ${x.etapes.length}`)),
+            h('ul', null, ...x.etapes.map((s, i) => h('li', { class: s.faite ? 'faite' : i === courante ? 'courante' : '' }, `${s.faite ? '✓ ' : i === courante ? '◆ ' : '· '}${s.texte}`))));
+        })),
+        h('div', null,
+          h('h3', null, 'Les familles'),
+          h('ul', { class: 'av-familles', 'data-key': 'av-familles' }, ...FAMILIES.map((f) => h('li', { class: `fam-${f}` }, h('span', { html: emblemSvg(f, 16) }), `${capital(leF(f))}, ${this.etat.familles[f] === 'chef' ? chefVaincu(f) : ETAT_FAMILLE[this.etat.familles[f]]}`))),
+          h('h3', null, 'Derniers duels'),
+          this.save!.historique.length
         ? h('ol', { class: 'av-registre', 'data-key': 'av-historique' }, ...[...this.save!.historique].reverse().slice(0, 20).map((d) => h('li', null, `${titreRencontre(d.rencontre)} · ${ISSUE[d.issue]} · ${d.turns} tour${d.turns > 1 ? 's' : ''}`)))
-        : h('p', null, 'Aucun duel joué.'),
+        : h('p', null, 'Aucun duel joué.'))),
       h('div', { class: 'ville-choices' }, h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-journal-close', onclick: () => this.fermerModal() }, 'Fermer'))));
   }
 
@@ -2016,6 +2038,13 @@ function ligneFigure({ role, famille }: { role: 'cadet' | 'brasDroit' | 'chef'; 
 
 function fermer(a: AventureApp): Choix {
   return { label: 'Fermer', key: 'dlg-close', primary: true, run: () => a.fermerDialogue() };
+}
+
+/** Une entrée du menu : son libellé, et sa valeur au bout (« Son : 70 % ») ; le texte complet reste celui de l'entrée. */
+function ligneMenu(label: string): Array<string | HTMLElement> {
+  const i = label.indexOf(' : ');
+  if (i < 0) return [label];
+  return [h('span', null, label.slice(0, i), h('span', { class: 'av-menu-sep' }, ' : ')), h('span', { class: 'av-menu-val' }, label.slice(i + 3))];
 }
 
 function bouton(label: string, run: () => void, key: string, primary = false, sous?: string): HTMLElement {

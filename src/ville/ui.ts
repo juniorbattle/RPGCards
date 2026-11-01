@@ -1,6 +1,7 @@
 /**
  * M09 — interface DOM de la ville : bulle d'interaction au-dessus de la zone active (« E — Entrer au Fanal »), toasts,
- * styles. Typographie système et palette du jeu (ivoire, or), comme les écrans hors duel (ADR 020).
+ * styles. Palette du jeu (nuit, ivoire, or) ; M14 : langage commun de l'interface hors combat (ADR 049) : cadre ornementé
+ * dessiné par code (`--lqv-cadre`), coins carrés, Georgia pour ce qui se lit et se clique, système pour les petites données.
  */
 import type { Town } from './ville';
 
@@ -10,19 +11,28 @@ export function installVilleStyles(): void {
   styled = true;
   const s = document.createElement('style');
   s.textContent = `
+:root {
+  --lqv-nuit: #0a0c15; --lqv-nuit-claire: #161827; --lqv-or: #e2c48a; --lqv-or-clair: #ffe7b0; --lqv-ivoire: #f3ead8; --lqv-sepia: #cfc3ac;
+  --lqv-panneau: linear-gradient(180deg, rgba(22, 24, 39, 0.97), rgba(9, 10, 18, 0.98));
+  --lqv-ombre: 0 16px 48px rgba(0, 0, 0, 0.72);
+  /* filet double et losanges des quatre coins (les losanges des cartes) ; à poser avec une bordure transparente de 14 px */
+  --lqv-cadre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cg fill='none' stroke='%23e2c48a'%3E%3Crect x='1.5' y='1.5' width='45' height='45'/%3E%3Crect x='4.5' y='4.5' width='39' height='39' stroke-opacity='.32'/%3E%3C/g%3E%3Cg fill='%23ffe7b0'%3E%3Cpath d='M8 4.5 11.5 8 8 11.5 4.5 8zM40 4.5 43.5 8 40 11.5 36.5 8zM8 36.5 11.5 40 8 43.5 4.5 40zM40 36.5 43.5 40 40 43.5 36.5 40z'/%3E%3C/g%3E%3C/svg%3E");
+}
 .ville-host { position: fixed; inset: 0; background: #04060c; overflow: hidden; }
 .ville-canvas { display: block; }
 .ville-panel { position: fixed; left: 16px; top: 14px; z-index: 2650; max-width: min(640px, calc(100vw - 32px)); padding: 10px 14px; border-radius: 10px; background: rgba(8, 9, 16, 0.78); border: 1px solid rgba(226, 196, 138, 0.35); color: #efe6d4; font: 13px/1.4 system-ui, sans-serif; box-shadow: 0 6px 24px rgba(0,0,0,.5); }
 .ville-title b { font-family: Georgia, serif; font-size: 16px; color: #ffe7b0; }
 .ville-title small { display: block; color: #c9bda6; font-size: 12px; }
 .ville-cams { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 6px; }
-.ville-btn { font: inherit; color: #efe6d4; background: rgba(30, 28, 40, 0.9); border: 1px solid rgba(226, 196, 138, 0.4); border-radius: 7px; padding: 5px 10px; cursor: pointer; }
-.ville-btn[aria-pressed="true"] { background: #e2c48a; color: #1a1408; border-color: #ffe7b0; font-weight: 600; }
+.ville-btn { font: 600 14px/1.2 Georgia, serif; letter-spacing: 0.01em; color: var(--lqv-ivoire); background: linear-gradient(180deg, rgba(36, 36, 54, 0.94), rgba(16, 17, 28, 0.96)); border: 1px solid rgba(226, 196, 138, 0.42); border-radius: 2px; padding: 7px 14px; cursor: pointer; transition: border-color 0.12s, color 0.12s, box-shadow 0.12s; }
+.ville-btn:hover:not(:disabled) { border-color: var(--lqv-or-clair); color: var(--lqv-or-clair); box-shadow: 0 0 12px rgba(255, 200, 120, 0.2); }
+.ville-btn:disabled { opacity: 0.45; cursor: default; }
+.ville-btn[aria-pressed="true"] { background: linear-gradient(180deg, #f2dcab, #d6b26e); color: #1a1408; border-color: var(--lqv-or-clair); }
 .ville-btn:focus-visible { outline: 3px solid #ffe7b0; outline-offset: 2px; }
 .ville-help { color: #d8ccb4; font-size: 12px; }
 .ville-stats { margin-top: 6px; color: #b8c4dc; font: 11px/1.4 ui-monospace, monospace; }
-.ville-bubble { position: fixed; z-index: 2650; transform: translate(-50%, -100%); padding: 6px 11px; border-radius: 9px; background: rgba(10, 10, 18, 0.88); border: 1px solid #e2c48a; color: #f6eedc; font: 600 14px/1.2 system-ui, sans-serif; white-space: nowrap; pointer-events: auto; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.55); }
-.ville-bubble kbd { display: inline-block; min-width: 1.4em; margin-right: 6px; padding: 1px 5px; border-radius: 4px; background: #e2c48a; color: #1a1408; font: 700 12px/1.3 system-ui, sans-serif; text-align: center; }
+.ville-bubble { position: fixed; z-index: 2650; transform: translate(-50%, -100%); padding: 6px 12px; border-radius: 2px; background: rgba(10, 11, 19, 0.92); border: 1px solid var(--lqv-or); color: var(--lqv-ivoire); font: 600 14px/1.2 Georgia, serif; white-space: nowrap; pointer-events: auto; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.55); }
+.ville-bubble kbd { display: inline-block; min-width: 1.4em; margin-right: 8px; padding: 1px 5px; border-radius: 2px; background: linear-gradient(180deg, #f2dcab, #d6b26e); color: #1a1408; font: 700 12px/1.3 system-ui, sans-serif; text-align: center; }
 .ville-bubble[hidden] { display: none; }
 .ville-host.demo { z-index: 2000; }
 .ville-host[hidden] { display: none; }
@@ -36,15 +46,20 @@ export function installVilleStyles(): void {
 .ville-objective { position: absolute; left: 16px; top: 82px; max-width: min(520px, calc(100vw - 32px)); padding: 7px 12px; border-radius: 9px; background: rgba(8, 9, 16, 0.66); border-left: 3px solid #e2c48a; color: #f3ead8; }
 .ville-objective::before { content: "Objectif — "; color: #e2c48a; font-weight: 700; }
 .ville-tools { position: absolute; right: 16px; top: 14px; display: flex; gap: 6px; }
-.ville-tip { position: absolute; left: 50%; top: 16px; transform: translateX(-50%); max-width: min(560px, calc(100vw - 32px)); padding: 9px 16px; border-radius: 10px; background: rgba(20, 16, 10, 0.86); border: 1px solid #e2c48a; color: #fff4dc; font-weight: 600; text-align: center; box-shadow: 0 6px 20px rgba(0,0,0,.5); }
+.ville-tip { position: absolute; left: 50%; top: 16px; transform: translateX(-50%); max-width: min(560px, calc(100vw - 32px)); padding: 9px 16px; border-radius: 2px; background: rgba(14, 12, 12, 0.92); border: 1px solid var(--lqv-or); color: #fff4dc; font: 600 14px/1.35 Georgia, serif; text-align: center; box-shadow: 0 6px 20px rgba(0,0,0,.5); }
 .ville-tip[hidden] { display: none; }
-.ville-dialog { position: fixed; z-index: 2700; left: 50%; bottom: 22px; transform: translateX(-50%); width: min(820px, calc(100vw - 32px)); display: flex; gap: 14px; align-items: flex-end; padding: 12px 16px; border-radius: 12px; background: rgba(9, 9, 16, 0.94); border: 1px solid #e2c48a; color: #f6eedc; font: 15px/1.45 system-ui, sans-serif; box-shadow: 0 10px 34px rgba(0,0,0,.65); }
-.ville-portrait { width: 112px; height: 112px; flex: none; border-radius: 10px; border: 1px solid rgba(226, 196, 138, 0.55); background: #141019; object-fit: cover; }
+.ville-dialog { position: fixed; z-index: 2700; left: 50%; bottom: 14px; transform: translateX(-50%); box-sizing: border-box; width: min(clamp(980px, 62vw, 1320px), calc(100vw - 24px)); min-height: 148px; display: flex; gap: 18px; align-items: center; padding: 6px 14px; border: 14px solid transparent; border-image: var(--lqv-cadre) 14 / 14px stretch; background: var(--lqv-panneau) border-box; color: var(--lqv-ivoire); font: clamp(17px, 1.15vw, 22px)/1.5 Georgia, serif; box-shadow: var(--lqv-ombre); }
+@media (prefers-reduced-motion: no-preference) { .ville-dialog, .av-confirm { animation: lqv-entree 0.16s ease-out; } }
+@keyframes lqv-entree { from { opacity: 0; } to { opacity: 1; } }
+.ville-portrait { width: clamp(104px, 7.2vw, 150px); height: clamp(104px, 7.2vw, 150px); flex: none; border-radius: 0; border: 1px solid var(--lqv-or); outline: 1px solid rgba(226, 196, 138, 0.32); outline-offset: 2px; background: #141019; object-fit: cover; }
 .ville-dialog-body { flex: 1; min-width: 0; }
-.ville-dialog-body b { display: block; font: 700 17px/1.2 Georgia, serif; color: #ffe7b0; margin-bottom: 4px; }
-.ville-dialog-body p { margin: 0 0 10px; }
-.ville-choices { display: flex; flex-wrap: wrap; gap: 8px; }
-.ville-btn.primary { background: #e2c48a; color: #1a1408; border-color: #ffe7b0; font-weight: 700; }
+.ville-dialog-body > b { position: absolute; left: 12px; top: -28px; max-width: calc(100% - 24px); box-sizing: border-box; padding: 4px 22px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 700 15px/1.25 Georgia, serif; letter-spacing: 0.02em; color: #1a1408; background: linear-gradient(180deg, #f2dcab, #d6b26e); clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%); }
+.ville-portrait + .ville-dialog-body > b { left: calc(clamp(104px, 7.2vw, 150px) + 26px); max-width: calc(100% - clamp(104px, 7.2vw, 150px) - 38px); font-size: clamp(15px, 1vw, 19px); }
+.ville-dialog-body p { margin: 8px 0 12px; }
+.ville-choices { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.ville-dialog .ville-btn { font-size: clamp(14px, 1vw, 19px); }
+.ville-btn.primary { background: linear-gradient(180deg, #f2dcab, #d6b26e); color: #1a1408; border-color: var(--lqv-or-clair); box-shadow: inset 0 0 0 1px rgba(90, 60, 20, 0.4); }
+.ville-btn.primary:hover:not(:disabled) { color: #1a1408; box-shadow: inset 0 0 0 1px rgba(90, 60, 20, 0.4), 0 0 14px rgba(255, 200, 120, 0.35); }
 .ville-card { position: fixed; inset: 0; z-index: 2900; display: grid; place-content: center; text-align: center; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(4,6,12,0.55), rgba(4,6,12,0.95)); color: #ffe7b0; }
 .ville-card b { font: 700 clamp(40px, 6vw, 84px)/1 Georgia, serif; letter-spacing: 0.04em; text-shadow: 0 0 24px rgba(255, 190, 110, 0.35); }
 .ville-card span { margin-top: 10px; font: italic 18px/1.2 Georgia, serif; color: #d8ccb4; letter-spacing: 0.2em; text-transform: uppercase; }
@@ -52,7 +67,7 @@ export function installVilleStyles(): void {
 .ville-fade { position: fixed; inset: 0; z-index: 2950; pointer-events: none; background: #04060c; opacity: 0; transition: opacity 0.28s ease; }
 .ville-fade.in { opacity: 1; }
 .ville-fade.out { opacity: 0; transition-duration: 0.4s; }
-.ville-toast { position: fixed; left: 50%; bottom: 28px; z-index: 2800; transform: translateX(-50%); padding: 9px 16px; border-radius: 10px; background: rgba(10, 10, 18, 0.92); border: 1px solid rgba(226, 196, 138, 0.55); color: #f6eedc; font: 14px/1.35 system-ui, sans-serif; max-width: calc(100vw - 32px); }
+.ville-toast { position: fixed; left: 50%; bottom: 28px; z-index: 2800; transform: translateX(-50%); padding: 9px 18px; border-radius: 2px; background: rgba(10, 11, 19, 0.95); border: 1px solid var(--lqv-or); color: var(--lqv-ivoire); font: 14px/1.35 Georgia, serif; max-width: calc(100vw - 32px); box-shadow: 0 6px 20px rgba(0,0,0,.5); }
 `;
   document.head.append(s);
 }
