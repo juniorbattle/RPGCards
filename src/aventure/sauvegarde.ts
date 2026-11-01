@@ -70,6 +70,8 @@ export interface AventureSave {
   dialogues?: { dernier: Record<string, string>; n: Record<string, number> };
   /** M11 (cinématiques) : celles déjà vues dans cette aventure (`lieu-<îlot>` : la première arrivée dans un quartier). */
   cinematiques?: string[];
+  /** M14 : le Récit guidé (`docs/m14/01_RECIT_GUIDE.md`) ; absent en Promenade libre (facultatif, sans migration). */
+  recit?: 'guide';
   /** M12 : conseils du duel déjà lus (« Compris »), `src/aventure/conseils.ts`. */
   conseils?: string[];
 }
@@ -106,6 +108,7 @@ export function validerSauvegarde(x: unknown): string[] {
   if (!isObj(x.directeur) || !Number.isInteger((x.directeur as unknown as EtatDirecteur).battement)) errs.push('directeur invalide');
   if (!isObj(x.ville) || !isIlotId((x.ville as AventureSave['ville']).ilot)) errs.push('ville invalide');
   if (!Array.isArray(x.historique)) errs.push('historique invalide');
+  if (x.recit !== undefined && x.recit !== 'guide') errs.push('recit invalide');
   return errs;
 }
 
