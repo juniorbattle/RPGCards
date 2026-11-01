@@ -48,3 +48,8 @@ synthèse par code menée en autonomie, pour la qualité.
    que le temps réel ; le big band au complet environ 6 fois, la Finale environ 4 fois (à mesurer sur le poste du
    responsable). Instruments calculés : environ 2 s dans le worker au premier geste, la musique demandée d'abord.
 
+## Amendement 2 (2026-10-29, retour du responsable ; consigné le 2026-11-01, passe 185)
+
+« la transition devrait se faire avec une pause sans musique avant d'enchaîner vers la nouvelle » : plus de fondu enchaîné.
+Le morceau s'efface (1,8 s), un silence (1,5 s), puis le nouveau par sa levée ; le duel tendu passe par un break ; un silence
+suit aussi le jingle de fin. Code : `src/son/musique/enchainement.ts`. Ce point remplace « fondu enchaîné » des contrats 1 et 2.

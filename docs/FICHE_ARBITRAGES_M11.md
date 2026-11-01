@@ -9,12 +9,15 @@ les règles du duel, l'annexe de calibrage, les images ou les approbations.
 
 Preuves : `artifacts/qa/m11/` (mesures, `qa:vue`, comparaison au pixel près), `screenshots/qa/m11/vue-1280/`.
 
+**Remise à jour le 2026-11-01** (passe 185) : les entrées tiennent compte du jalon de QA, des retours du 2026-10-29 et de M14.
+Rencontres en vue et duels forcés décrits ici : ceux de la **Promenade libre** ; le Récit guidé les coupe (fiche M14).
+
 ## Réception
 
 | Entrée | Objet | Recommandation | Alternatives |
 |---|---|---|---|
 | **R1** | Les six contrats M11 (`docs/m11/`, ADR 037 à 042), proposés | **Recevoir** (les ADR passent « approuvé ») | Recevoir avec retours ; reprendre tel contrat |
-| **R2** | Les rencontres « en vue » telles que livrées (`qa:vue` 25/25, captures 01 à 06) | **Recevoir** | Garder le code, mais désactiver les duels forcés (comportement de M10) ; reprendre |
+| **R2** | Les rencontres « en vue » telles que livrées, en Promenade libre (`qa:vue` 29/29, captures 01 à 06 ; le Récit guidé les coupe) | **Recevoir** | Garder le code, mais désactiver les duels forcés (comportement de M10) ; reprendre |
 | **R3** | Kaï en événements fixes K1 à K6 (captures 07 à 11) | **Recevoir** | Garder aussi l'ombre de Kaï entre les événements ; reprendre |
 | **R4** | Le son synthétisé (à écouter en local : Options du jeu standard, menu « Son » de l'aventure) | **À écouter d'abord** (« pas encore écouté ») | Recevoir ; reprendre (timbres, niveaux) |
 
@@ -35,7 +38,7 @@ Preuves : `artifacts/qa/m11/` (mesures, `qa:vue`, comparaison au pixel près), `
 | Entrée | Objet | Recommandation | Alternatives |
 |---|---|---|---|
 | **K1** | Les six moments écrits (K1 : premier lieutenant de la maison ; K2 : Signature de la maison ; K3, K4 : un, puis deux chefs d'autres familles ; K5 : Championnat ouvert ; K6 : la main tendue après le titre) et leurs îlots | **Garder** | Ajouter un moment (après la Joute de la maison) ; en retirer (K4) |
-| **K2** | Un événement manqué dans son chapitre ne se rattrape pas | **Garder** (simple, jamais deux Kaï de suite) | Le rattraper au chapitre suivant, avant le sien |
+| **K2** | Un événement manqué dans son chapitre ne se rattrape pas (en Promenade libre ; en Récit guidé, Kaï passe avant l'objectif, aucun n'est manqué) | **Garder** (simple, jamais deux Kaï de suite) | Le rattraper au chapitre suivant, avant le sien |
 | **K3** | Une défaite contre Kaï accomplit l'événement (l'histoire continue) ; un abandon le laisse dû | **Garder** | Le faire rejouer jusqu'à la victoire |
 | **K4** | Kaï joue le profil `offensif` de l'annexe à tous les événements | **Garder l'annexe** | Proposition : profil de tempérament (agressif au chapitre II et III, tacticien au IV, vicieux au V), avec les mesures de l'IA (entrée I2) |
 | **K5** | L'ombre de Kaï (M10-E) n'est plus tirée ; sa quête est remplacée par « Kaï, la Braise du quai » (gardée seulement pour une aventure qui en a relevé) | **Garder** | Garder aussi l'ombre, une fois par chapitre, entre deux événements |
@@ -77,11 +80,11 @@ Preuves : `artifacts/qa/m11/` (mesures, `qa:vue`, comparaison au pixel près), `
 | Entrée | Objet | Recommandation | Alternatives |
 |---|---|---|---|
 | **L1** | Chemins lumineux des premiers rangs, même lueur que les rangs du fond (planches `screenshots/qa/m11/chemins-rang1/`) ; dans la Grande Cour, l'allée s'arrête à la hauteur des étals, et le chemin reprend aux passages | **Recevoir** | Reculer les étals de la Cour pour un chemin continu jusqu'aux passages ; lueur plus marquée au premier rang |
-| **C1** | Les cinématiques runtime (contrat 7, ADR 043) : première arrivée dans chaque quartier, Kaï qui surgit, guetteur qui repère ; passables, réglables dans le menu (captures `screenshots/qa/m11/cinematiques-1280/`) | **À juger en jeu d'abord** (rendu logiciel ici : les captures n'en montrent que des instants) | Recevoir ; reprendre (durées, cadrages) |
+| **C1** | Les cinématiques runtime (contrat 7, ADR 043) : première arrivée dans chaque quartier, Kaï qui surgit, guetteur qui repère ; passables, réglables dans le menu ; cadrage refait après ton retour (passe 162 : les scènes cadrent leurs personnages sur leur hauteur réelle, captures `screenshots/qa/retours-2026-10-29/cinematiques/`) | **À juger en jeu d'abord** | Recevoir ; reprendre (durées, cadrages) |
 | **C2** | La première arrivée remplace le carton plein écran du Quai (même texte, dans la bande du bas) ; une fois par quartier et par aventure | **Garder** | Le carton plein écran gardé en plus ; l'arrivée à chaque visite ; seulement le Quai |
 | **C3** | Guetteur : un plan court, sans bandes (le passage revient souvent) ; Kaï : en bandes | **Garder** | Bandes aussi pour le guetteur ; aucun plan pour le guetteur |
 | **C4** | Passages suivants : **faits en passe 151** sur la consigne du responsable (« fais toutes les autres cinématiques nécessaires ») : prologue (Kaï, la foule, l'émissaire qui fend la foule), affiliation, chef vaincu, cartons de chapitre II à V, ouverture du Championnat, titre (contrat 7, §3 bis ; captures `screenshots/qa/m11/cinematiques-1280/`, 13 et suivantes) | **Recevoir** | Reprendre telle scène ; en retirer |
-| **C6** | Dialogues de scène **cadrés** (la caméra sur celui qui parle ou sur les deux, bandes gardées) : seulement dans les scènes du récit ; les conversations ordinaires restent comme avant | **Garder ainsi** | Cadrer aussi les premières conversations avec chaque figure ; ne cadrer aucun dialogue |
+| **C6** | Dialogues de scène **cadrés** (la caméra sur celui qui parle ou sur les deux, pieds au-dessus de la boîte de dialogue depuis la passe 162, bandes gardées) : seulement dans les scènes du récit ; les conversations ordinaires restent comme avant | **Garder ainsi** | Cadrer aussi les premières conversations avec chaque figure ; ne cadrer aucun dialogue |
 | **C7** | Cartons de chapitre II à V (lignes : « trois maisons à défier », « deux maisons à défier », « une dernière maison », « le Championnat des Champions ») | **Garder** | Sans carton de chapitre ; d'autres lignes |
 | **C8** | Bornes de la caméra qui suivent le zoom (plus près, la caméra peut aller plus loin vers le bord sans montrer davantage le bord du décor) | **Garder** | Bornes fixes (les personnages au bout d'une rue restent décentrés en gros plan) |
 | **C9** | Suite possible (contrat 7, §4) : la vue d'ensemble d'un rang du fond (fantômes pilotés par la caméra : un changement du diorama) ; Épreuves, Joutes, engagement ; une mise en scène propre à chaque événement de Kaï | **Pas maintenant** | L'une ou l'autre |
@@ -91,4 +94,4 @@ Preuves : `artifacts/qa/m11/` (mesures, `qa:vue`, comparaison au pixel près), `
 
 | Entrée | Objet | Recommandation | Alternatives |
 |---|---|---|---|
-| **N1** | Suite de M11 | **Écoute et jalon en local** (son, marche des guetteurs à pied, GPU), puis un lot de textes de la structure narrative (D2, D3) | Un lot de contenu (nouveaux PNJ guetteurs, répliques du premier défi des figures) ; le niveau 2 en Duel standard (I2) |
+| **N1** | Suite de M11 (le jalon GPU est fait, vert sur les deux cartes) | **Écoute en local** (son, marche des guetteurs à pied), puis un lot de textes de la structure narrative (D2, D3) | Un lot de contenu (nouveaux PNJ guetteurs, répliques du premier défi des figures) ; le niveau 2 en Duel standard (I2) |
