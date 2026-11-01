@@ -1,0 +1,359 @@
+{
+  "date": "2026-11-01T13:41:45.524Z",
+  "secondes": 5,
+  "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "reglages": [
+    {
+      "nom": "base",
+      "animations": {
+        "lqvPulse": 1,
+        "seal-pulse": 1
+      },
+      "parNom": {
+        "GPUTask": {
+          "parS": 641,
+          "msParS": 287.7
+        },
+        "FireAnimationFrame": {
+          "parS": 87,
+          "msParS": 264.8
+        },
+        "FunctionCall": {
+          "parS": 87,
+          "msParS": 261.6
+        },
+        "Display::DrawAndSwap": {
+          "parS": 88,
+          "msParS": 130.2
+        },
+        "DirectRenderer::DrawFrame": {
+          "parS": 88,
+          "msParS": 103.4
+        },
+        "Layerize": {
+          "parS": 87,
+          "msParS": 39.9
+        },
+        "Paint": {
+          "parS": 174,
+          "msParS": 34.1
+        },
+        "LayerTreeHostImpl::PrepareToDraw": {
+          "parS": 87,
+          "msParS": 25.4
+        },
+        "Commit": {
+          "parS": 87,
+          "msParS": 15
+        },
+        "PrePaint": {
+          "parS": 87,
+          "msParS": 14.7
+        },
+        "RasterTask": {
+          "parS": 87,
+          "msParS": 10
+        },
+        "SkiaRenderer::SwapBuffers": {
+          "parS": 88,
+          "msParS": 0.9
+        }
+      },
+      "parFilMsParS": {
+        "CrGpuMain": 510.5,
+        "CrRendererMain": 393.2,
+        "VizCompositorThread": 163.6,
+        "Compositor": 108.6,
+        "ThreadPoolForegroundWorker": 22.8,
+        "GpuVSyncThread": 14.9,
+        "Chrome_ChildIOThread": 9.6,
+        "CrBrowserMain": 1.4,
+        "PerfettoTrace": 0.8,
+        "Chrome_IOThread": 0.1,
+        "ThreadPoolServiceThread": 0.1,
+        "DevToolsPipeHandlerWriteThread": 0
+      },
+      "consoleIssues": []
+    },
+    {
+      "nom": "sans-legende",
+      "animations": {
+        "lqvPulse": 1,
+        "seal-pulse": 1
+      },
+      "parNom": {
+        "GPUTask": {
+          "parS": 624,
+          "msParS": 288.3
+        },
+        "FireAnimationFrame": {
+          "parS": 84,
+          "msParS": 263.7
+        },
+        "FunctionCall": {
+          "parS": 84,
+          "msParS": 260.6
+        },
+        "Display::DrawAndSwap": {
+          "parS": 84,
+          "msParS": 133.8
+        },
+        "DirectRenderer::DrawFrame": {
+          "parS": 84,
+          "msParS": 107.2
+        },
+        "Layerize": {
+          "parS": 84,
+          "msParS": 37.6
+        },
+        "Paint": {
+          "parS": 168,
+          "msParS": 32.1
+        },
+        "LayerTreeHostImpl::PrepareToDraw": {
+          "parS": 84,
+          "msParS": 25.8
+        },
+        "Commit": {
+          "parS": 84,
+          "msParS": 14.6
+        },
+        "PrePaint": {
+          "parS": 84,
+          "msParS": 14.1
+        },
+        "RasterTask": {
+          "parS": 84,
+          "msParS": 10.3
+        },
+        "SkiaRenderer::SwapBuffers": {
+          "parS": 84,
+          "msParS": 1
+        }
+      },
+      "parFilMsParS": {
+        "CrGpuMain": 507.4,
+        "CrRendererMain": 386.8,
+        "VizCompositorThread": 167.7,
+        "Compositor": 109.6,
+        "ThreadPoolForegroundWorker": 25.2,
+        "GpuVSyncThread": 15.6,
+        "Chrome_ChildIOThread": 9.9,
+        "CrBrowserMain": 3.7,
+        "ThreadPoolSingleThreadForegroundBlocking": 2.9,
+        "PerfettoTrace": 1,
+        "Chrome_IOThread": 0.2,
+        "ThreadPoolServiceThread": 0.1,
+        "MemoryInfra": 0,
+        "DevToolsPipeHandlerWriteThread": 0,
+        "CacheThread_BlockFile": 0
+      },
+      "consoleIssues": []
+    },
+    {
+      "nom": "sans-sceau",
+      "animations": {
+        "lqvPulse": 1
+      },
+      "parNom": {
+        "GPUTask": {
+          "parS": 803,
+          "msParS": 357.1
+        },
+        "FireAnimationFrame": {
+          "parS": 110,
+          "msParS": 339.3
+        },
+        "FunctionCall": {
+          "parS": 110,
+          "msParS": 335.7
+        },
+        "Display::DrawAndSwap": {
+          "parS": 110,
+          "msParS": 156.2
+        },
+        "DirectRenderer::DrawFrame": {
+          "parS": 110,
+          "msParS": 125.8
+        },
+        "Paint": {
+          "parS": 221,
+          "msParS": 41.6
+        },
+        "Layerize": {
+          "parS": 111,
+          "msParS": 21.3
+        },
+        "LayerTreeHostImpl::PrepareToDraw": {
+          "parS": 110,
+          "msParS": 20.4
+        },
+        "Commit": {
+          "parS": 111,
+          "msParS": 16.7
+        },
+        "RasterTask": {
+          "parS": 111,
+          "msParS": 12.5
+        },
+        "PrePaint": {
+          "parS": 111,
+          "msParS": 12.3
+        },
+        "SkiaRenderer::SwapBuffers": {
+          "parS": 110,
+          "msParS": 1.7
+        }
+      },
+      "parFilMsParS": {
+        "CrGpuMain": 593.8,
+        "CrRendererMain": 449.3,
+        "VizCompositorThread": 193.6,
+        "Compositor": 117.8,
+        "ThreadPoolForegroundWorker": 40.1,
+        "GpuVSyncThread": 14.6,
+        "Chrome_ChildIOThread": 11.9,
+        "CrBrowserMain": 1.1,
+        "PerfettoTrace": 1.1,
+        "Chrome_IOThread": 0.1,
+        "ThreadPoolServiceThread": 0.1,
+        "DevToolsPipeHandlerWriteThread": 0
+      },
+      "consoleIssues": []
+    },
+    {
+      "nom": "sans-pulsations",
+      "animations": {},
+      "parNom": {
+        "FireAnimationFrame": {
+          "parS": 102,
+          "msParS": 314.1
+        },
+        "FunctionCall": {
+          "parS": 102,
+          "msParS": 310.4
+        },
+        "GPUTask": {
+          "parS": 556,
+          "msParS": 172.1
+        },
+        "Display::DrawAndSwap": {
+          "parS": 102,
+          "msParS": 146.3
+        },
+        "DirectRenderer::DrawFrame": {
+          "parS": 102,
+          "msParS": 116.8
+        },
+        "LayerTreeHostImpl::PrepareToDraw": {
+          "parS": 102,
+          "msParS": 18.1
+        },
+        "Commit": {
+          "parS": 102,
+          "msParS": 15.7
+        },
+        "PrePaint": {
+          "parS": 102,
+          "msParS": 6.4
+        },
+        "SkiaRenderer::SwapBuffers": {
+          "parS": 102,
+          "msParS": 1.7
+        },
+        "Layerize": {
+          "parS": 102,
+          "msParS": 0.2
+        }
+      },
+      "parFilMsParS": {
+        "CrGpuMain": 401.5,
+        "CrRendererMain": 354.4,
+        "VizCompositorThread": 181.2,
+        "Compositor": 97.3,
+        "GpuVSyncThread": 14.8,
+        "ThreadPoolForegroundWorker": 13.7,
+        "Chrome_ChildIOThread": 9,
+        "CrBrowserMain": 1.2,
+        "PerfettoTrace": 0.9,
+        "Chrome_IOThread": 0.1,
+        "ThreadPoolServiceThread": 0.1,
+        "DevToolsPipeHandlerWriteThread": 0
+      },
+      "consoleIssues": []
+    },
+    {
+      "nom": "base-bis",
+      "animations": {
+        "lqvPulse": 1,
+        "seal-pulse": 1
+      },
+      "parNom": {
+        "GPUTask": {
+          "parS": 888,
+          "msParS": 358.7
+        },
+        "FireAnimationFrame": {
+          "parS": 131,
+          "msParS": 344.7
+        },
+        "FunctionCall": {
+          "parS": 131,
+          "msParS": 341
+        },
+        "Display::DrawAndSwap": {
+          "parS": 131,
+          "msParS": 179
+        },
+        "DirectRenderer::DrawFrame": {
+          "parS": 131,
+          "msParS": 146.2
+        },
+        "Layerize": {
+          "parS": 131,
+          "msParS": 48.6
+        },
+        "Paint": {
+          "parS": 262,
+          "msParS": 41.7
+        },
+        "LayerTreeHostImpl::PrepareToDraw": {
+          "parS": 131,
+          "msParS": 31.2
+        },
+        "Commit": {
+          "parS": 131,
+          "msParS": 20.4
+        },
+        "PrePaint": {
+          "parS": 131,
+          "msParS": 18
+        },
+        "RasterTask": {
+          "parS": 131,
+          "msParS": 13.6
+        },
+        "SkiaRenderer::SwapBuffers": {
+          "parS": 131,
+          "msParS": 1.4
+        }
+      },
+      "parFilMsParS": {
+        "CrGpuMain": 631.2,
+        "CrRendererMain": 504,
+        "VizCompositorThread": 217.9,
+        "Compositor": 136.6,
+        "ThreadPoolForegroundWorker": 25.7,
+        "GpuVSyncThread": 14.3,
+        "Chrome_ChildIOThread": 12.7,
+        "CrBrowserMain": 1.6,
+        "PerfettoTrace": 0.9,
+        "Chrome_IOThread": 0.1,
+        "ThreadPoolServiceThread": 0.1,
+        "DevToolsPipeHandlerWriteThread": 0
+      },
+      "consoleIssues": []
+    }
+  ],
+  "rendererLabel": "Chrome headless, GPU réel : ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11) — arguments : --force_high_performance_gpu"
+}
