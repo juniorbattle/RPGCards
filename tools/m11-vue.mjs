@@ -5,6 +5,7 @@
 // issue imposée en QA (`qaTerminer`), retour : le PNJ est parti, son issue notée (repos). Puis le cadet battu : au point
 // de décision suivant sur le Quai, **Kaï surgit** (K1), court au joueur, défie ; défaite imposée : K1 accompli, pas de
 // second Kaï au retour.
+// `LQV_VUE_MOUVEMENT=1` : sans mouvement réduit (la marche réelle des guetteurs et de Kaï, sur GPU réel).
 // Usage : npm run build && [LQV_VP=1920x1080] node tools/m11-vue.mjs [dossier] [rapport.json]
 import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -62,7 +63,7 @@ try {
     await frames(4);
   };
 
-  await p.goto(`${server.base}/?aventure=1&qa=1&vue=1&aiDelay=0&reducedMotion=1&vuePause=5000&profileSeed=31`, { timeout: Number(process.env.LQV_QA_NAV_TIMEOUT) || 90000 });
+  await p.goto(`${server.base}/?aventure=1&qa=1&vue=1&aiDelay=0${process.env.LQV_VUE_MOUVEMENT === '1' ? '' : '&reducedMotion=1'}&vuePause=5000&profileSeed=31`, { timeout: Number(process.env.LQV_QA_NAV_TIMEOUT) || 90000 });
   renderer = rendererLabel(await webglRenderer(p).catch(() => null));
   await p.click('[data-key="av-new"]');
   await p.fill('[data-key="av-name"]', 'Lou');
