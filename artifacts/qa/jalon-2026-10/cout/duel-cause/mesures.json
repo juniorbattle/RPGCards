@@ -1,0 +1,588 @@
+{
+ "note": "perf-play, duel de 90 s, 1280, graine 202. bisection : RTX, Radeon NON vérifiée libre (bruit fort, seul l ordre compte). essais et froidChaud : mesure lancée Radeon < 15 %.",
+ "bisection": {
+  "52c44b5": [
+   {
+    "images": 12780,
+    "medianeMs": 6.1,
+    "plus16_7": 60,
+    "plus33": 7,
+    "maxMs": 42.6
+   },
+   {
+    "images": 13168,
+    "medianeMs": 6.1,
+    "plus16_7": 77,
+    "plus33": 12,
+    "maxMs": 103
+   },
+   {
+    "images": 13157,
+    "medianeMs": 6.1,
+    "plus16_7": 77,
+    "plus33": 11,
+    "maxMs": 96.9
+   }
+  ],
+  "f392d90": [
+   {
+    "images": 13075,
+    "medianeMs": 6.1,
+    "plus16_7": 116,
+    "plus33": 16,
+    "maxMs": 151.6
+   },
+   {
+    "images": 13061,
+    "medianeMs": 6.1,
+    "plus16_7": 121,
+    "plus33": 19,
+    "maxMs": 157.6
+   },
+   {
+    "images": 13085,
+    "medianeMs": 6.1,
+    "plus16_7": 119,
+    "plus33": 22,
+    "maxMs": 151.4
+   }
+  ],
+  "43a4ef5": [
+   {
+    "images": 13072,
+    "medianeMs": 6.1,
+    "plus16_7": 119,
+    "plus33": 18,
+    "maxMs": 151.7
+   },
+   {
+    "images": 13046,
+    "medianeMs": 6.1,
+    "plus16_7": 127,
+    "plus33": 24,
+    "maxMs": 163.8
+   },
+   {
+    "images": 13055,
+    "medianeMs": 6.1,
+    "plus16_7": 128,
+    "plus33": 20,
+    "maxMs": 157.5
+   }
+  ],
+  "40dfe36": [
+   {
+    "images": 13061,
+    "medianeMs": 6.1,
+    "plus16_7": 122,
+    "plus33": 27,
+    "maxMs": 151.4
+   },
+   {
+    "images": 13023,
+    "medianeMs": 6.1,
+    "plus16_7": 133,
+    "plus33": 22,
+    "maxMs": 157.6
+   },
+   {
+    "images": 13057,
+    "medianeMs": 6.1,
+    "plus16_7": 123,
+    "plus33": 21,
+    "maxMs": 157.7
+   }
+  ],
+  "main": [
+   {
+    "images": 14071,
+    "medianeMs": 6.1,
+    "plus16_7": 121,
+    "plus33": 21,
+    "maxMs": 151.6
+   },
+   {
+    "images": 13988,
+    "medianeMs": 6.1,
+    "plus16_7": 143,
+    "plus33": 24,
+    "maxMs": 145.4
+   },
+   {
+    "images": 14061,
+    "medianeMs": 6.1,
+    "plus16_7": 124,
+    "plus33": 24,
+    "maxMs": 187.8
+   }
+  ],
+  "mainv1": [
+   {
+    "images": 14036,
+    "medianeMs": 6.1,
+    "plus16_7": 127,
+    "plus33": 26,
+    "maxMs": 163.7
+   },
+   {
+    "images": 14129,
+    "medianeMs": 6.1,
+    "plus16_7": 103,
+    "plus33": 14,
+    "maxMs": 157.5
+   },
+   {
+    "images": 14147,
+    "medianeMs": 6.1,
+    "plus16_7": 96,
+    "plus33": 15,
+    "maxMs": 169.7
+   }
+  ],
+  "b4e57e3": [
+   {
+    "images": 13176,
+    "medianeMs": 6.1,
+    "plus16_7": 81,
+    "plus33": 14,
+    "maxMs": 97
+   },
+   {
+    "images": 13172,
+    "medianeMs": 6.1,
+    "plus16_7": 77,
+    "plus33": 13,
+    "maxMs": 103
+   },
+   {
+    "images": 13142,
+    "medianeMs": 6.1,
+    "plus16_7": 89,
+    "plus33": 17,
+    "maxMs": 103
+   }
+  ],
+  "373e42d": [
+   {
+    "images": 13101,
+    "medianeMs": 6.1,
+    "plus16_7": 108,
+    "plus33": 15,
+    "maxMs": 139.5
+   },
+   {
+    "images": 13115,
+    "medianeMs": 6.1,
+    "plus16_7": 99,
+    "plus33": 16,
+    "maxMs": 139.3
+   },
+   {
+    "images": 13126,
+    "medianeMs": 6.1,
+    "plus16_7": 106,
+    "plus33": 15,
+    "maxMs": 139.4
+   }
+  ],
+  "335ab9d": [
+   {
+    "images": 13080,
+    "medianeMs": 6.1,
+    "plus16_7": 129,
+    "plus33": 22,
+    "maxMs": 151.6
+   },
+   {
+    "images": 13009,
+    "medianeMs": 6.1,
+    "plus16_7": 154,
+    "plus33": 24,
+    "maxMs": 151.5
+   },
+   {
+    "images": 13035,
+    "medianeMs": 6.1,
+    "plus16_7": 140,
+    "plus33": 20,
+    "maxMs": 145.4
+   }
+  ]
+ },
+ "essais": {
+  "ref140": [
+   {
+    "images": 13118,
+    "medianeMs": 6.1,
+    "plus16_7": 11,
+    "plus33": 6,
+    "maxMs": 60.6
+   },
+   {
+    "images": 13098,
+    "medianeMs": 6.1,
+    "plus16_7": 15,
+    "plus33": 7,
+    "maxMs": 60.7
+   },
+   {
+    "images": 13112,
+    "medianeMs": 6.1,
+    "plus16_7": 15,
+    "plus33": 7,
+    "maxMs": 60.6
+   },
+   {
+    "images": 13110,
+    "medianeMs": 6.1,
+    "plus16_7": 16,
+    "plus33": 6,
+    "maxMs": 60.6
+   }
+  ],
+  "base": [
+   {
+    "images": 14135,
+    "medianeMs": 6.1,
+    "plus16_7": 28,
+    "plus33": 8,
+    "maxMs": 90.9
+   },
+   {
+    "images": 14133,
+    "medianeMs": 6.1,
+    "plus16_7": 32,
+    "plus33": 7,
+    "maxMs": 91
+   },
+   {
+    "images": 14111,
+    "medianeMs": 6.1,
+    "plus16_7": 36,
+    "plus33": 8,
+    "maxMs": 84.8
+   },
+   {
+    "images": 14124,
+    "medianeMs": 6.1,
+    "plus16_7": 29,
+    "plus33": 8,
+    "maxMs": 90.9
+   }
+  ],
+  "sansact": [
+   {
+    "images": 14141,
+    "medianeMs": 6.1,
+    "plus16_7": 23,
+    "plus33": 9,
+    "maxMs": 84.9
+   },
+   {
+    "images": 14134,
+    "medianeMs": 6.1,
+    "plus16_7": 25,
+    "plus33": 8,
+    "maxMs": 78.7
+   },
+   {
+    "images": 14138,
+    "medianeMs": 6.1,
+    "plus16_7": 25,
+    "plus33": 8,
+    "maxMs": 72.7
+   },
+   {
+    "images": 14141,
+    "medianeMs": 6.1,
+    "plus16_7": 29,
+    "plus33": 9,
+    "maxMs": 78.8
+   }
+  ],
+  "sanspuls": [
+   {
+    "images": 14125,
+    "medianeMs": 6.1,
+    "plus16_7": 28,
+    "plus33": 7,
+    "maxMs": 90.9
+   },
+   {
+    "images": 14135,
+    "medianeMs": 6.1,
+    "plus16_7": 26,
+    "plus33": 7,
+    "maxMs": 97.1
+   },
+   {
+    "images": 14142,
+    "medianeMs": 6.1,
+    "plus16_7": 27,
+    "plus33": 7,
+    "maxMs": 97
+   },
+   {
+    "images": 14124,
+    "medianeMs": 6.1,
+    "plus16_7": 26,
+    "plus33": 7,
+    "maxMs": 97.1
+   }
+  ],
+  "v1": [
+   {
+    "images": 14140,
+    "medianeMs": 6.1,
+    "plus16_7": 22,
+    "plus33": 5,
+    "maxMs": 91
+   },
+   {
+    "images": 14148,
+    "medianeMs": 6.1,
+    "plus16_7": 23,
+    "plus33": 5,
+    "maxMs": 90.8
+   },
+   {
+    "images": 14134,
+    "medianeMs": 6.1,
+    "plus16_7": 31,
+    "plus33": 5,
+    "maxMs": 96.8
+   },
+   {
+    "images": 14148,
+    "medianeMs": 6.1,
+    "plus16_7": 24,
+    "plus33": 5,
+    "maxMs": 96.9
+   }
+  ],
+  "v1sansact": [
+   {
+    "images": 14146,
+    "medianeMs": 6.1,
+    "plus16_7": 19,
+    "plus33": 7,
+    "maxMs": 60.6
+   },
+   {
+    "images": 14156,
+    "medianeMs": 6.1,
+    "plus16_7": 16,
+    "plus33": 6,
+    "maxMs": 54.6
+   },
+   {
+    "images": 14167,
+    "medianeMs": 6.1,
+    "plus16_7": 15,
+    "plus33": 6,
+    "maxMs": 54.5
+   },
+   {
+    "images": 14152,
+    "medianeMs": 6.1,
+    "plus16_7": 25,
+    "plus33": 7,
+    "maxMs": 60.8
+   }
+  ]
+ },
+ "froidChaud": {
+  "ref140-rtx": {
+   "froid": [
+    {
+     "images": 13116,
+     "medianeMs": 6.1,
+     "plus16_7": 15,
+     "plus33": 7,
+     "maxMs": 60.6
+    },
+    {
+     "images": 13095,
+     "medianeMs": 6.1,
+     "plus16_7": 13,
+     "plus33": 6,
+     "maxMs": 60.5
+    },
+    {
+     "images": 13119,
+     "medianeMs": 6.1,
+     "plus16_7": 11,
+     "plus33": 6,
+     "maxMs": 54.5
+    }
+   ],
+   "chaud": [
+    {
+     "images": 13125,
+     "medianeMs": 6.1,
+     "plus16_7": 1,
+     "plus33": 0,
+     "maxMs": 18.3
+    },
+    {
+     "images": 13131,
+     "medianeMs": 6.1,
+     "plus16_7": 2,
+     "plus33": 0,
+     "maxMs": 18.2
+    },
+    {
+     "images": 13111,
+     "medianeMs": 6.1,
+     "plus16_7": 4,
+     "plus33": 0,
+     "maxMs": 24.3
+    }
+   ]
+  },
+  "main-rtx": {
+   "froid": [
+    {
+     "images": 14125,
+     "medianeMs": 6.1,
+     "plus16_7": 30,
+     "plus33": 9,
+     "maxMs": 90.9
+    },
+    {
+     "images": 14114,
+     "medianeMs": 6.1,
+     "plus16_7": 26,
+     "plus33": 7,
+     "maxMs": 84.9
+    },
+    {
+     "images": 14125,
+     "medianeMs": 6.1,
+     "plus16_7": 33,
+     "plus33": 8,
+     "maxMs": 91
+    }
+   ],
+   "chaud": [
+    {
+     "images": 14172,
+     "medianeMs": 6.1,
+     "plus16_7": 17,
+     "plus33": 0,
+     "maxMs": 30.3
+    },
+    {
+     "images": 14164,
+     "medianeMs": 6.1,
+     "plus16_7": 12,
+     "plus33": 0,
+     "maxMs": 24.2
+    },
+    {
+     "images": 14163,
+     "medianeMs": 6.1,
+     "plus16_7": 9,
+     "plus33": 0,
+     "maxMs": 24.2
+    }
+   ]
+  },
+  "ref140-780m": {
+   "froid": [
+    {
+     "images": 13168,
+     "medianeMs": 6.1,
+     "plus16_7": 12,
+     "plus33": 6,
+     "maxMs": 60.5
+    },
+    {
+     "images": 13177,
+     "medianeMs": 6.1,
+     "plus16_7": 14,
+     "plus33": 5,
+     "maxMs": 60.5
+    },
+    {
+     "images": 13156,
+     "medianeMs": 6.1,
+     "plus16_7": 13,
+     "plus33": 7,
+     "maxMs": 66.9
+    }
+   ],
+   "chaud": [
+    {
+     "images": 13199,
+     "medianeMs": 6.1,
+     "plus16_7": 1,
+     "plus33": 0,
+     "maxMs": 18.3
+    },
+    {
+     "images": 13184,
+     "medianeMs": 6.1,
+     "plus16_7": 0,
+     "plus33": 0,
+     "maxMs": 12.2
+    },
+    {
+     "images": 13199,
+     "medianeMs": 6.1,
+     "plus16_7": 1,
+     "plus33": 0,
+     "maxMs": 18.2
+    }
+   ]
+  },
+  "main-780m": {
+   "froid": [
+    {
+     "images": 14173,
+     "medianeMs": 6.1,
+     "plus16_7": 27,
+     "plus33": 7,
+     "maxMs": 84.8
+    },
+    {
+     "images": 14174,
+     "medianeMs": 6.1,
+     "plus16_7": 28,
+     "plus33": 7,
+     "maxMs": 90.9
+    },
+    {
+     "images": 14163,
+     "medianeMs": 6.1,
+     "plus16_7": 28,
+     "plus33": 7,
+     "maxMs": 84.9
+    }
+   ],
+   "chaud": [
+    {
+     "images": 14214,
+     "medianeMs": 6.1,
+     "plus16_7": 9,
+     "plus33": 1,
+     "maxMs": 36.4
+    },
+    {
+     "images": 14227,
+     "medianeMs": 6.1,
+     "plus16_7": 11,
+     "plus33": 0,
+     "maxMs": 24.3
+    },
+    {
+     "images": 14218,
+     "medianeMs": 6.1,
+     "plus16_7": 6,
+     "plus33": 0,
+     "maxMs": 18.2
+    }
+   ]
+  }
+ }
+}

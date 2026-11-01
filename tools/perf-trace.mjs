@@ -41,6 +41,7 @@ const USERDATA = process.env.LQV_TRACE_USERDATA ?? null;
 const AI_DELAY = Number(process.env.LQV_TRACE_AIDELAY ?? 650);
 const DRIVER = process.env.LQV_TRACE_DRIVER ?? 'lean';
 const ROUNDS = Math.max(1, Number(process.env.LQV_TRACE_ROUNDS ?? 1));
+const CSS = process.env.LQV_PERF_CSS ?? ''; // feuille ajoutée par l'outil seulement, pour mesurer la part d'un effet
 const OUT = process.env.LQV_TRACE_OUT ?? 'artifacts/qa/trace/perf-trace.json';
 const RAW = 'artifacts/qa/tmp/traces';
 const TAG = OUT.replace(/^.*\//, '').replace(/\.json$/, ''); // préfixe des fichiers bruts : une série n’écrase pas l’autre
@@ -53,7 +54,7 @@ const machine = { cpu: os.cpus()[0]?.model, cores: os.cpus().length, memGB: Math
 // tous les fils (`toplevel` : fil principal du processus GPU) et compilation ANGLE. Écartées car trop
 // volumineuses pour un duel de 2 min (≈ 1 Go) : `gpu` (chaque flush du tampon de commandes),
 // `disabled-by-default-devtools.timeline.frame`, `loading`, `latencyInfo`.
-const CATEGORIES = process.env.LQV_TRACE_LIGHT === '1' ? ['toplevel', 'blink.user_timing'] : [
+const CATEGORIES = process.env.LQV_TRACE_LIGHT === '1' ? ['toplevel', 'blink.user_timing', ...(process.env.LQV_TRACE_CATS ?? '').split(',').filter(Boolean)] : [
   'devtools.timeline', 'disabled-by-default-devtools.timeline', 'toplevel', 'blink.user_timing', 'blink.console',
   'v8.execute', 'v8', 'disabled-by-default-v8.gc', 'disabled-by-default-v8.cpu_profiler', 'gpu.angle',
   ...(process.env.LQV_TRACE_CATS ?? '').split(',').filter(Boolean),

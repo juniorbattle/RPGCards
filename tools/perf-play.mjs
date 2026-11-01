@@ -4,6 +4,7 @@
 // (A / B), par la présence d’une scène de Clash et par le niveau du post-traitement (repli automatique,
 // amendement ADR 019), et `arenaStats()` toutes les 500 ms.
 // Usage : LQV_GPU=1 CHROMIUM_PATH=<Chrome> [LQV_CHROME_ARGS=…] node tools/perf-play.mjs
+// Poste au repos : la Radeon affiche l'image même quand la RTX calcule ; une charge dessus multiplie les images lentes (passe 179).
 // (LQV_PERF_PLAY_OUT=… pour le fichier de sortie, défaut artifacts/qa/perf-play.json ; LQV_PERF_RUNS=jeu-1280-clic
 // pour une seule partie ; LQV_PERF_QUERY=fallback=off pour des paramètres d’URL en plus ; LQV_GPU_STRESS_MS=3.5 :
 // charge GPU injectée par l’outil seulement — un canvas WebGL hors document dessine à chaque image un shader
@@ -20,11 +21,14 @@ const OUT = process.env.LQV_PERF_PLAY_OUT ?? 'artifacts/qa/perf-play.json';
 const QUERY = process.env.LQV_PERF_QUERY ? `&${process.env.LQV_PERF_QUERY}` : '';
 const STRESS_MS = Number(process.env.LQV_GPU_STRESS_MS ?? 0);
 const ONLY = (process.env.LQV_PERF_RUNS ?? '').split(',').filter(Boolean);
+const CSS = process.env.LQV_PERF_CSS ?? ''; // feuille ajoutée par l'outil seulement, pour mesurer la part d'un effet
 const machine = { cpu: os.cpus()[0]?.model, cores: os.cpus().length, memGB: Math.round(os.totalmem() / 2 ** 30), platform: `${os.platform()} ${os.release()}`, node: process.version };
 const runs = [
   { name: 'jeu-1280-clic', seed: 202, viewport: { width: 1280, height: 720 }, mode: 'click', tech: 'Sondage,Rupture', watchSequence: true },
   { name: 'jeu-1920-clic', seed: 202, viewport: { width: 1920, height: 1080 }, mode: 'click', tech: 'Sondage,Rupture', watchSequence: true },
 ].filter((r) => !ONLY.length || ONLY.includes(r.name));
+// LQV_PERF_CHAUD=1 : chaque duel rejoué dans le même navigateur (caches de shaders chauds, comme le navigateur d'un joueur)
+if (process.env.LQV_PERF_CHAUD === '1') runs.push(...runs.map((r) => ({ ...r, name: `${r.name}-chaud` })));
 
 const r1 = (x) => Math.round(x * 10) / 10;
 function summarize(intervals) {
@@ -45,6 +49,7 @@ try {
     const consoleIssues = [];
     watchConsole(page, consoleIssues);
     if (STRESS_MS > 0) await page.addInitScript(gpuStress, STRESS_MS);
+    if (CSS) await page.addInitScript((css) => { const add = () => document.head.append(Object.assign(document.createElement('style'), { textContent: css })); if (document.head) add(); else addEventListener('DOMContentLoaded', add); }, CSS);
     await page.goto(`${server.base}/?seed=${run.seed}&autostart=1&qa=1&aiDelay=0&reducedMotion=0&pace=normal&tech=${run.tech}${QUERY}`);
     await page.waitForFunction(() => !!window.__lqv);
     report.renderer ??= await webglRenderer(page);
@@ -61,7 +66,10 @@ try {
       rec.tagTimer = setInterval(retag, 100);
       rec.statTimer = setInterval(() => { const st = window.__lqv.arenaStats(); if (st) rec.stats.push({ tag, frameMs: st.frameMs, fps: st.fps, drawCalls: st.drawCalls, triangles: st.triangles, level: st.post?.level, slice: st.post?.slice ? [st.post.slice.medianMs, st.post.slice.lateShare, st.post.slice.bad] : null, stressMs: window.__gpuStress?.ms.at(-1) ?? null, tS: Math.round((performance.now() - t0) / 100) / 10 }); }, 500);
       let last = performance.now();
-      const step = (t) => { rec.frames.push([t - last, tag, level]); last = t; if (!rec.stop) requestAnimationFrame(step); };
+      // Images lentes (> 16,7 ms) : ce qui est à l'écran à ce moment, pour en trouver la cause
+      rec.slow = [];
+      const scene = () => [...new Set(document.getAnimations().map((a) => a.animationName ?? a.transitionProperty ?? a.effect?.target?.className?.split?.(' ')[0] ?? '?'))].slice(0, 8);
+      const step = (t) => { const d = t - last; rec.frames.push([d, tag, level]); if (d > 1000 / 60) rec.slow.push({ tS: Math.round(t - t0) / 1000, ms: Math.round(d * 10) / 10, tag, act: document.querySelector('.act')?.className ?? null, anims: scene() }); last = t; if (!rec.stop) requestAnimationFrame(step); };
       requestAnimationFrame(step);
     });
     const stats = newStats();
@@ -74,7 +82,7 @@ try {
       stats.error = String(err.message).split('\n')[0];
       console.error(`[${run.name}] échec : ${stats.error}`);
     }
-    const rec = await page.evaluate(() => { const r = window.__perfPlay; r.stop = true; clearInterval(r.tagTimer); clearInterval(r.statTimer); return { frames: r.frames, stats: r.stats }; });
+    const rec = await page.evaluate(() => { const r = window.__perfPlay; r.stop = true; clearInterval(r.tagTimer); clearInterval(r.statTimer); return { frames: r.frames, stats: r.stats, slow: r.slow }; });
     const end = await page.evaluate(() => ({ post: window.__lqv.arenaStats()?.post ?? null, programs: window.__lqv.arenaStats()?.programs ?? null, stress: window.__gpuStress ? { iter: window.__gpuStress.iter, timer: window.__gpuStress.timer, medianMs: [...window.__gpuStress.ms].sort((a, b) => a - b)[Math.floor(window.__gpuStress.ms.length / 2)] ?? null } : null }));
     const v = await view(page);
     await ctx.close();
@@ -89,7 +97,7 @@ try {
       const fr = rec.frames.filter(([, , l]) => l === lv).map(([d]) => d);
       if (fr.length) byLevel[lv] = summarize(fr);
     }
-    const result = { name: run.name, viewport: run.viewport, seed: run.seed, outcome, winner: v.winner, turns: v.turn, durationS: Math.round((Date.now() - t0) / 1000), sequencesWatched: stats.sequencesWatched, stagesSeen: stats.stagesSeen, leaks: [...new Set(stats.leaks)], viewErrors: stats.viewErrors, consoleIssues, all: summarize(rec.frames.map(([d]) => d)), byView: byTag, byLevel, post: end.post, programs: { start: programsStart, end: end.programs }, stress: end.stress, levelTimeline: rec.stats.map((x) => [x.tS, x.level, x.stressMs, ...(x.slice ?? [])]) };
+    const result = { name: run.name, viewport: run.viewport, seed: run.seed, outcome, winner: v.winner, turns: v.turn, durationS: Math.round((Date.now() - t0) / 1000), sequencesWatched: stats.sequencesWatched, stagesSeen: stats.stagesSeen, leaks: [...new Set(stats.leaks)], viewErrors: stats.viewErrors, consoleIssues, all: summarize(rec.frames.map(([d]) => d)), slow: rec.slow, byView: byTag, byLevel, post: end.post, programs: { start: programsStart, end: end.programs }, stress: end.stress, levelTimeline: rec.stats.map((x) => [x.tS, x.level, x.stressMs, ...(x.slice ?? [])]) };
     report.runs.push(result);
     console.log(JSON.stringify({ name: result.name, outcome, turns: result.turns, all: result.all, A: byTag.A.frames, B: byTag.B.frames, clash: byTag.clash.frames, cpuA: byTag.A.arenaStats?.medianFrameMsCpu, cpuB: byTag.B.arenaStats?.medianFrameMsCpu, console: consoleIssues.length, level: end.post?.level, steps: end.post?.steps, byLevel, programs: result.programs, stress: end.stress }));
   }

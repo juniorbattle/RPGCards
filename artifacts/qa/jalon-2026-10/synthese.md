@@ -5,7 +5,7 @@ Sur `main` au code de `fbb41a2` (passe 175 ; depuis, seuls les outils de QA et l
 165 Hz. Outil : `tools/jalon-2026-10.sh`, une campagne à la fois, ports de `vite preview` vérifiés libres avant chaque série.
 
 **Bilan : tout est vert sur les deux GPU, aux deux tailles. Aucun défaut du jeu bloquant, aucune correction du jeu : seuls des
-outils de QA ont été corrigés. Une régression légère est mesurée sur la fluidité du duel (§ 3.5).** Le son, la musique et le rendu
+outils de QA ont été corrigés. Le duel a un surcoût d'effets à leur première apparition, isolé et sans correction nécessaire (§ 3.5).** Le son, la musique et le rendu
 des scènes restent à juger à l'oreille et à l'œil par le responsable.
 
 ## 1. Rendu réel
@@ -122,23 +122,45 @@ Chargement, 16 rondes à froid, build de `main` contre passe 140 :
 Fichiers du jeu : 1,88 Mo (1,50 Mo à la passe 140) ; 1,30 Mo transférés (1,13 Mo). Mise en place d'un îlot : 0,8 à 1,2 s, comme à la
 passe 140. Mémoire du parcours continu (23 duels) : tas JS de 20 à 135 Mo sans dérive, 65 à 71 textures.
 
-### 3.5 Duel : légère régression, confirmée
+### 3.5 Duel : surcoût des effets à leur première apparition, cause isolée (passe 179)
 
-`perf:play` (deux duels, 1280 et 1920), le même jour, en alternance, deux passages : **médiane 6,1 ms, inchangée**, mais plus
-d'images lentes qu'à la passe 140 (au-delà de 16,7 ms · de 33 ms · maximum) :
+**Cette section remplace la première mesure du jalon, faussée** : la Radeon, qui affiche l'image sur ce portable même quand la RTX
+calcule, était occupée par une charge extérieure (99 %, origine non recherchée). Les comptes annoncés d'abord (54 à 157 images lentes,
+maximum de 139 à 152 ms) étaient 4 à 5 fois trop hauts ; le sens de l'écart était juste, sa cause non.
+
+`perf:play`, duel de 90 s, 1280, chaque mesure lancée Radeon sous 15 %, trois passages (au-delà de 16,7 ms · de 33 ms · maximum, sur
+14 000 images ; `cout/duel-cause/mesures.json`). Le duel « à chaud » est rejoué dans le même navigateur (`LQV_PERF_CHAUD=1`) :
 
 | | Passe 140 | `main` |
 |---|---|---|
-| 780M 1280 | 54 à 62 · 9 à 10 · 97 ms | 111 à 118 · 14 à 18 · 152 ms |
-| 780M 1920 | 84 à 109 · 1 à 3 · 48 ms | 150 à 157 · 5 à 6 · 48 ms |
-| RTX 1280 | 71 à 78 · 10 à 11 · 97 ms | 112 à 117 · 17 à 18 · 139 ms |
-| RTX 1920 | 76 à 82 · 1 à 2 · 43 ms | 119 à 132 · 10 à 13 · 55 ms |
+| RTX, à froid | 11 à 15 · 6 à 7 · 61 ms | 26 à 33 · 7 à 9 · 91 ms |
+| RTX, à chaud | 1 à 4 · 0 · 24 ms | 9 à 17 · 0 · 30 ms |
+| 780M, à froid | 12 à 14 · 5 à 7 · 67 ms | 27 à 28 · 7 · 91 ms |
+| 780M, à chaud | 0 à 1 · 0 · 18 ms | 6 à 11 · 0 à 1 · 36 ms |
 
-Sur 14 000 images environ, soit 1 % au plus. Trace (`cout/trace-duel-rtx.json`) : l'excès est dans la vue du plateau (27 à 39 images
-lentes, 77 à 83 maintenant), **pas sur le fil principal** (0 à 6 longues images d'animation) ; le coût d'une commande passe de
-5,6 à 6,6 ms environ sur le fil principal (+0,7 à 0,9 ms en médiane) ; les plus gros à-coups viennent du GPU (Skia, compositeur) ; avec le pilote
-léger de la trace, le pic de 139 ms n'apparaît pas (85 ms au plus), il dépend en partie du sondage du pilote de QA. Cause exacte
-non isolée : à regarder avec l'allègement prévu à la fin, pas de correction évidente et petite.
+- **Cause :** les effets de M12 à leur **première apparition**, sur un profil Chrome neuf. Les images lentes reviennent aux mêmes instants
+  d'un passage à l'autre : premier temps fort à 0,2 s (85 à 91 ms, 48 à la passe 140), premier retournement avec le liseré de Signature à
+  0,55 s, puis le premier temps fort de chaque sorte. Le deuxième duel dans le même navigateur les efface presque toutes, ce qui désigne
+  les caches du GPU ; la compilation des shaders elle-même n'a pas été observée dans une trace.
+- **Date :** fin de M11 identique à la passe 140 ; une marche à M12 A (les cartes), une à M12 B et C (les temps forts) ; plus rien depuis
+  (ADR 046, avenant 09, M13, retours du 2026-10-29, protagoniste : même niveau).
+- **Part de chacun** (RTX à froid, médiane de quatre passages, `LQV_PERF_CSS`, feuille ajoutée par l'outil) : `main` 32 images · 91 ms ;
+  temps forts masqués 25 · 79 ms ; `?cartes=v1` 24 · 91 ms ; **les deux 19 · 61 ms, le niveau de la passe 140** (15 · 61 ms) ; sans les quatre
+  animations sans fin de M12 (sceau, liseré, ARMÉ, RÉVÉLER) 27 · 97 ms, elles ne sont pas la cause.
+- **Hors de cause :** le fil principal (temps processeur, passages propres : 1 ms par image et environ 10 tâches de plus de 8 ms, de la
+  passe 140 à `main`). Le « 5,6 à 6,6 ms par commande » annoncé d'abord n'est pas confirmé.
+- **Ce qui reste à chaud :** une image de 18 à 30 ms à l'entrée de certains temps forts, sur 14 000 ; médiane et 99e centile inchangés (6,1 et
+  6,3 ms).
+- **Décision de la session : aucun changement du jeu.** Le joueur le sent au plus une fois : le navigateur garde ses caches sur le disque
+  (constaté aux passes précédentes, non remesuré ici). Reprendre les halos floutés toucherait un rendu livré pour un gain que personne ne
+  verrait.
+- **Si l'allègement final veut aller plus loin**, deux pistes non essayées : préchauffer un temps fort invisible au chargement du duel (coupe
+  le pic du premier duel) ; passer `lqvPulse` (M07) à l'opacité, car cette ombre animée repeint et rastérise le plateau à chaque image au
+  repos : le travail du fil GPU va de 3 à 1,7 ms par image sans les pulsations (`cout/duel-cause/plateau-au-repos-rtx.json`,
+  `tools/duel-cout-repos.mjs`). Antérieure à la passe 140, ce n'est pas une régression.
+- **Consigne de mesure :** avant tout compte d'images à l'horloge, vérifier que la Radeon est libre ; en temps processeur (trace), la charge
+  extérieure ne compte pas. Les médianes de ce jalon tiennent ; ses comptes d'images lentes et ses maximums de la ville sont à lire comme
+  pessimistes.
 
 ## 4. Outils corrigés (aucun code du jeu)
 
