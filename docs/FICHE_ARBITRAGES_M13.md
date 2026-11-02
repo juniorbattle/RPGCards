@@ -101,3 +101,5 @@ Toutes les entrées sont sur l'option recommandée, sauf :
 | **R3** | **Aller vers un son 16 bits (une mission à cadrer)** | la couleur sonore change : mission M15, à cadrer avant tout code |
 
 **Lecture appliquée (à confirmer dans le cadrage de M15) :** les thèmes, les versions et les comportements sont reçus (R2, E1 à E12, J1 à J10) ; ce qui change, c'est la palette (les instruments S1 à S5, restés « à écouter d'abord ») et le mélange. La synthèse par code (R1) reste la méthode. ADR 047 et ses amendements, contrats 1 et 2 approuvés, sous cette réserve.
+
+**Suite (page d'écoute M15, 2026-11-01) :** direction B choisie, avec une porte d'écoute avant bascule ; R2 et E10 retirés pour le thème VI, à réécrire (`docs/m15/01_SON_16_BITS.md`).

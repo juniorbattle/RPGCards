@@ -57,3 +57,7 @@ suit aussi le jingle de fin. Code : `src/son/musique/enchainement.ts`. Ce point 
 ## Ratification (2026-11-01)
 
 Fiche M13, <https://claude.ai/artifact/7HnZxaxHX6WkA4LNkgPLwZ> : la synthèse par code, les thèmes et la musique qui suit le jeu sont reçus (R1, R2, J1 à J10) avec les amendements 1 et 2. **Réserve (R3) : le responsable choisit d'aller vers un son 16 bits** ; cette couleur sonore remplace « des timbres riches » et sera cadrée par la mission M15 avant tout code.
+
+## Amendement 3, proposé (2026-11-01) : la couleur 16 bits
+
+Page d'écoute de M15 : direction B (16 voix, échantillons de 16 kHz sur 4 bits, écho de console). La synthèse par code reste la méthode. Bascule seulement après une écoute comparée de la vraie palette et de la musique actuelle. Contrat `docs/m15/01_SON_16_BITS.md`.

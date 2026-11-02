@@ -1,6 +1,6 @@
 # M15 — Vers un son 16 bits (cadrage proposé, à valider avant tout code)
 
-**Date :** 2026-11-01. **Statut : PROPOSÉ.** **Origine :** fiche M13, entrée R3 : « aller vers un son 16 bits (une mission à cadrer) »,
+**Date :** 2026-11-01. **Statut : DIRECTION CHOISIE (page d'écoute remplie le 2026-11-01), contrat `docs/m15/01_SON_16_BITS.md` proposé.** **Origine :** fiche M13, entrée R3 : « aller vers un son 16 bits (une mission à cadrer) »,
 après la question du responsable (« on est sur du 16Bit ? »). **Lot 1 fait** (2026-11-01, ordre du responsable : « Oui, lance-le ») : **page d'écoute <https://claude.ai/artifact/XgP1XMMfaCyb8hjrq5fJpf>**, à remplir. Le jeu n'a pas changé.
 
 ## 1. Ce que la fiche a déjà tranché
@@ -47,6 +47,16 @@ dans les trois options, avec la version actuelle en référence, en OGG à écou
 - **Q1.** Tranchée : essai lancé. **D1 de la page :** la direction. Recommandation par les chiffres seulement, B : aucune note perdue, même au Championnat (A y perd 239 notes sur 1 067 et en coupe 376).
 - **Q2.** Les bruitages et les ambiances (M11, S1 à S3) passent-ils aussi en 16 bits ? **Recommandation :** oui, pour un jeu cohérent, en dernier.
 - **Q3.** La lecture du §1 (on garde l'écriture, on change la palette) est-elle la bonne ?
+
+## 4 bis. Décisions du responsable (page d'écoute, 3 choix, consignés à la passe 195)
+
+| Entrée | Choix | Note |
+|---|---|---|
+| **D1** Direction | B, couleur 16 bits | « j'hesite avec la musique actuelle et la B, couleur 16 Bits » |
+| **D2** Bruitages et ambiances | Oui, en dernier | |
+| **D3** Ce qu'on garde | **Non, certains thèmes sont à réécrire** (écart à la recommandation) | « je pense que nous devons refaire le theme championnat qui est encore brouillon dans son intonation » |
+
+**Effets :** D1 : porte d'écoute avant toute bascule, la musique actuelle reste le défaut (contrat 1, §2). D3 : le thème VI est réécrit ; cela retire pour lui la réception de la fiche M13 (R2, E10).
 
 ## 5. Garanties
 
