@@ -1,6 +1,6 @@
 # M12 — Contrat 1 : la conception des cartes
 
-**Date :** 2026-10-27. **Statut : PROPOSÉ** (présentation seulement ; aucune règle changée). ADR 044.
+**Date :** 2026-10-27. **Statut : APPROUVÉ (2026-11-01, fiche M12, R1)** (présentation seulement ; aucune règle changée). ADR 044.
 **Code :** `src/art/cardArt.ts` (illustrations), `src/art/cardMotifs.ts` (motifs propres à chaque carte),
 `src/presentation/cardView.ts` (face), `src/presentation/effectIcons.ts` (icônes de déclenchement),
 `src/game/catalog/cardText.ts` (résumés d'une ligne, données pures), `src/styles.css` (cadres de rareté).

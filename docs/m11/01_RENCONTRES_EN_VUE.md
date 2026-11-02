@@ -1,7 +1,7 @@
 # M11 — Contrat 1 : les rencontres « en vue »
 
 **Date :** 2026-10-26 (session cloud autonome, brief `docs/missions/BRIEF_SESSION_CLOUD_2026-10-26_M11.md`).
-**Statut : PROPOSÉ** (décision de principe du responsable, annexe A du brief : « les npcs peuvent venir vers vous (si dans
+**Statut : APPROUVÉ (2026-11-01, fiche M11, R1, amendé par V2, V4 et V7)** (décision de principe du responsable, annexe A du brief : « les npcs peuvent venir vers vous (si dans
 votre champ de vision) pour forcer un combat » ; les PNJ joueurs de cartes sont des rencontres répétées). Les valeurs
 chiffrées ci-dessous sont des choix de la session, **provisoires jusqu'à la fiche** (`docs/FICHE_ARBITRAGES_M11.md`).
 **Code :** `src/aventure/vue.ts` (pur), branché dans `src/aventure/app.ts` ; la ville expose seulement de quoi faire
@@ -16,7 +16,7 @@ marcher un personnage et afficher la bulle (`src/ville/ville.ts`). ADR 037.
 | Rencontre (directeur) | Guetteur ? | Pourquoi |
 |---|---|---|
 | Duels de rue : `rue-docker`, `rue-joueuse`, `rue-commis`, `rue-cour`, `rue-port`, `rue-haute` | **oui** | les joueurs de cartes de la ville, rencontres répétées |
-| Membres des familles : `membre-Cendre`, `membre-Ronce`, `membre-Voile`, `membre-Astre` | **oui** | idem, avec la voix de leur maison |
+| Membres des familles : `membre-Cendre`, `membre-Ronce`, `membre-Voile`, `membre-Astre` | non (fiche, V2) | on va à eux, avec la voix de leur maison ; leurs répliques « vue » sont gardées, sans usage |
 | Émissaires, cadets, bras droits, chefs, héraut | non | défis de progression, engagés par le joueur (ADR 031) |
 | Épreuves et Joutes | non | compétitions, à leur rythme |
 | Rumeurs (ambiance) | non | aucun duel |
@@ -70,9 +70,7 @@ L'issue est notée par rencontre dans l'état du directeur (`vus[id] = { issue, 
 
 | Issue du dernier duel forcé | Quand ce PNJ peut-il de nouveau **forcer** un duel ? | En lui parlant |
 |---|---|---|
-| Victoire du joueur | **au chapitre suivant** (il revient plus fort : contrat 3) | « ! » : revanche à la demande, refusable |
-| Défaite du joueur | après **2 battements** de repos (deux duels ou scènes) | idem |
-| Abandon | après 2 battements | idem |
+| Victoire, défaite ou abandon (fiche, V4) | **au chapitre suivant** (il revient plus fort : contrat 3) | « ! » : revanche à la demande, refusable |
 
 Le directeur garde ses délais d'apparition (2 battements pour les duels de rue) : un guetteur battu revient d'abord
 « au repos » (repère « ! », il ne force pas), puis guette de nouveau à l'échéance.
@@ -81,7 +79,8 @@ Le directeur garde ses délais d'apparition (2 battements pour les duels de rue)
 
 - Rester **hors de son cône** : passer derrière lui, sur le côté au-delà de 32°, à plus de 4,5 m, ou derrière un étal,
   une façade, un autre personnage.
-- Les guetteurs regardent dans une direction fixe (celle de leur place) : on apprend où ils regardent.
+- La plupart des guetteurs regardent dans une direction fixe (celle de leur place) : on apprend où ils regardent.
+- **Certains tournent la tête** (fiche, V7) : `rue-joueuse`, `rue-commis` et `rue-haute` regardent à tour de rôle devant eux et sur un côté, toutes les 2,4 s. Le joueur déjà dans le nouveau champ est repéré (front montant) : il faut passer quand ils regardent ailleurs. Le rythme est public et régulier, pour rester lisible.
 - Un guetteur n'agit jamais pendant un dialogue, une scène, un fondu, ni dans un îlot où un événement du rival attend.
 
 ## 7. QA
@@ -95,7 +94,8 @@ M11 (`qa:aventure`, `qa:maison`, `qa:voies`, `qa:vivante`, `qa:championnat`) res
 - le cône : dedans, hors portée, hors angle, derrière un obstacle, derrière un autre personnage ;
 - front montant : apparition dans le champ sans déclenchement ; sortie puis entrée : déclenchement ;
 - aucun déclenchement avant l'affiliation, pendant un dialogue ou une fenêtre, ni par un guetteur au repos ;
-- repos : victoire → pas avant le chapitre suivant ; défaite → pas avant 2 battements ;
+- repos : quelle que soit l'issue, pas avant le chapitre suivant ;
+- regard : les guetteurs qui tournent la tête et le rythme de leur regard, déterministes ;
 - le chemin d'approche reste praticable et s'arrête à 0,95 m ;
 - au navigateur : un PNJ repère le joueur, vient, la préparation s'ouvre ; un joueur qui passe hors de la vue n'est pas
   arrêté.

@@ -1,6 +1,6 @@
 # ADR 042 — Son synthétisé par code (Web Audio)
 
-**Date :** 2026-10-26. **Statut : PROPOSÉ.** Contrat : `docs/m11/06_SON.md`.
+**Date :** 2026-10-26. **Statut : APPROUVÉ (2026-11-01, fiche M11, R1 ; les sons restent à écouter, R4).** Contrat : `docs/m11/06_SON.md`.
 
 ## Contexte
 Le responsable veut des effets sonores et des ambiances. AGENTS : aucun son externe au runtime ; art « code-first ».

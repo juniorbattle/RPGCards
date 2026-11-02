@@ -1,7 +1,6 @@
 # Fiche d'arbitrages M13 — la musique (fiche d'écoute, lots MU-A à MU-D ; à remplir par le responsable)
 
-**Date :** 2026-10-28. **Statut : à remplir** (à envoyer à la session locale avec les autres fiches, décision du
-responsable). Mandat `docs/missions/M13_MUSIQUE.md` ; contrats `docs/m13/01_MUSIQUE.md` et
+**Date :** 2026-10-28. **Statut : remplie le 2026-11-01** (décisions en fin de fiche). Mandat `docs/missions/M13_MUSIQUE.md` ; contrats `docs/m13/01_MUSIQUE.md` et
 `02_MUSIQUE_INTERACTIVE.md` ; ADR 047 et son amendement 1 (tous **proposés**). Ordre du responsable du même jour :
 « prends le temps qu'il faudra pour obtenir un résultat le plus optimal possible. Je veux une bande son vraiment, mais
 vraiment immersive. »
@@ -92,3 +91,13 @@ pause de silence entre les deux (J10, nouvelle). Les aperçus `S-*.ogg` ont ét�
 |---|---|---|---|
 | **N1** | D'autres thèmes pour les situations qui demandent une identité propre (une figure, un quartier, les cinématiques de Kaï) : ils s'ajoutent au catalogue sans rien changer au reste | **Après l'écoute**, selon les retours | Tout de suite |
 | **N2** | Le combo du Fanal sur la Place du Fanal (une source au pied du phare) | **Après l'écoute** | Non |
+
+## Décisions du responsable (fiche remplie le 2026-11-01, 36 choix, consignés à la passe 186)
+
+Toutes les entrées sont sur l'option recommandée, sauf :
+
+| Entrée | Choix | Effet |
+|---|---|---|
+| **R3** | **Aller vers un son 16 bits (une mission à cadrer)** | la couleur sonore change : mission M15, à cadrer avant tout code |
+
+**Lecture appliquée (à confirmer dans le cadrage de M15) :** les thèmes, les versions et les comportements sont reçus (R2, E1 à E12, J1 à J10) ; ce qui change, c'est la palette (les instruments S1 à S5, restés « à écouter d'abord ») et le mélange. La synthèse par code (R1) reste la méthode. ADR 047 et ses amendements, contrats 1 et 2 approuvés, sous cette réserve.

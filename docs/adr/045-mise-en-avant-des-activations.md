@@ -1,6 +1,6 @@
 # ADR 045 — Les activations mises en avant au premier plan
 
-**Date :** 2026-10-27. **Statut : PROPOSÉ.** Contrat : `docs/m12/02_MISE_EN_AVANT_DES_ACTIVATIONS.md`.
+**Date :** 2026-10-27. **Statut : APPROUVÉ (2026-11-01, fiche M12, R1).** Contrat : `docs/m12/02_MISE_EN_AVANT_DES_ACTIVATIONS.md`.
 
 ## Contexte
 En combat, les effets de cartes, les Techniques, les regards privés, l'Insight, le camouflage et le Repoussement ne sont

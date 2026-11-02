@@ -1,7 +1,6 @@
 # Fiche d'arbitrages M11 — un monde qui réagit (à remplir par le responsable)
 
-**Date :** 2026-10-26 (session cloud autonome, brief `docs/missions/BRIEF_SESSION_CLOUD_2026-10-26_M11.md`). **Statut : à
-remplir.** La session principale en fera une fiche interactive ; chaque entrée donne le contexte, la recommandation
+**Date :** 2026-10-26 (session cloud autonome, brief `docs/missions/BRIEF_SESSION_CLOUD_2026-10-26_M11.md`). **Statut : remplie le 2026-11-01** (décisions en fin de fiche). La session principale en fera une fiche interactive ; chaque entrée donne le contexte, la recommandation
 (première option) et les alternatives. Tout ce qui est marqué « fait » est sur `main` et réversible ; rien n'a changé
 les règles du duel, l'annexe de calibrage, les images ou les approbations.
 
@@ -95,3 +94,17 @@ Rencontres en vue et duels forcés décrits ici : ceux de la **Promenade libre**
 | Entrée | Objet | Recommandation | Alternatives |
 |---|---|---|---|
 | **N1** | Suite de M11 (le jalon GPU est fait, vert sur les deux cartes) | **Écoute en local** (son, marche des guetteurs à pied), puis un lot de textes de la structure narrative (D2, D3) | Un lot de contenu (nouveaux PNJ guetteurs, répliques du premier défi des figures) ; le niveau 2 en Duel standard (I2) |
+
+## Décisions du responsable (fiche remplie le 2026-11-01, 39 choix, consignés à la passe 186)
+
+Toutes les entrées sont sur l'option recommandée, sauf :
+
+| Entrée | Choix | Note | Effet |
+|---|---|---|---|
+| **V2** | Seulement les duels de rue | | les membres des familles ne guettent plus ; ils restent ouverts à la parole. Contrat 1, §1 |
+| **V4** | Chapitre suivant dans les deux cas | | quelle que soit l'issue, un PNJ ne force plus avant le chapitre suivant. Contrat 1, §5 |
+| **V6** | Garder | « il doit etre integrer dans le jeu final, je comprends pas cette distinction » | **déjà le cas** : les rencontres forcées sont toujours actives dans le jeu ; `?vue=1` ne concerne que les parcours de test automatiques (`?qa=1`). Aucun changement |
+| **V7** | Des guetteurs qui tournent la tête | « oui certains... adoptent le 2e cas » | certains tournent la tête, les autres gardent leur direction. Contrat 1, §6 |
+| **K3** | Le faire rejouer jusqu'à la victoire | | une défaite n'accomplit plus l'événement. Contrat 2, §4 |
+
+**Suites :** ADR 037 à 042 et contrats 1 à 6 approuvés (R1) ; rencontres, Kaï, IA, répliques reçus ; contrat 7 et ADR 043 attendent le jugement en jeu (C1) ; son et ambiances attendent l'écoute (R4, S3) ; **un seul Observatoire, dans la Ville haute** (D2) : textes à changer dans le lot de la structure narrative ; trame reçue comme contrat de la structure narrative (D3).

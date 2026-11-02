@@ -1,7 +1,6 @@
 # Fiche d'arbitrages M12 — les cartes et leurs effets (à remplir par le responsable)
 
-**Date :** 2026-10-27 (mandat du responsable du même jour, `docs/missions/M12_CARTES_ET_EFFETS.md`). **Statut : à
-remplir.** La session locale en fera une fiche interactive (décision du responsable : « nous enverrons toutes les fiches
+**Date :** 2026-10-27 (mandat du responsable du même jour, `docs/missions/M12_CARTES_ET_EFFETS.md`). **Statut : remplie le 2026-11-01** (décisions en fin de fiche). La session locale en fera une fiche interactive (décision du responsable : « nous enverrons toutes les fiches
 d'arbitrages à notre session locale ») ; chaque entrée donne le contexte, la recommandation (première option) et les
 alternatives. Tout ce qui est marqué « fait » est sur `main` et réversible. Lots A et B : les règles du duel, le
 catalogue, l'IA, l'annexe de calibrage, les images de la ville et les approbations n'ont pas changé ; avenant 09
@@ -97,3 +96,7 @@ standard). L'avenant `docs/m12/04_AVENANT_09_VARIANTES.md` remplace la propositi
 |---|---|---|---|
 | **S1** | Prochain chantier (le jalon de QA est fait, vert sur les deux GPU) | **Le test complet du jeu par le responsable**, sur les deux modes (fiche M14) | La structure narrative (lots suivants) ; les autres quartiers |
 | **S2** | L'allègement du chargement du jeu, et les images lentes du premier duel relevées au jalon | **Plus tard**, lors d'une optimisation quasi finale (décision du responsable du 2026-10-27) | — |
+
+## Décisions du responsable (fiche remplie le 2026-11-01, 33 choix, consignés à la passe 186)
+
+**Les 33 entrées sont sur l'option recommandée, sans note.** Ordres qu'elles donnent : **N2** (« Aventure » à l'accueil du jeu standard, dans une passe à part : la garantie « identique au pixel près » du jeu par défaut au repos prend fin) ; **H3** (façade du Quai à la bannière de l'Astre en ocre, par le registre, dans une passe à part). **Restent ouverts :** R4 (les sons, à écouter), V2 (les 32 textes, à relire carte par carte pendant le test complet), donc V8 (l'avenant 09 ne va sous `contracts/` qu'après cette relecture). ADR 044 et 045 et contrats 1 et 2 approuvés (R1).

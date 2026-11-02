@@ -1,6 +1,6 @@
 # Fiche d'arbitrages M14 — les deux récits, l'interface et les retours (à remplir par le responsable)
 
-**Date :** 2026-11-01. **Statut : à remplir.** Elle couvre ce que les fiches M11, M12 et M13 ne couvrent pas : le travail
+**Date :** 2026-11-01. **Statut : remplie le 2026-11-01** (décisions en fin de fiche). Elle couvre ce que les fiches M11, M12 et M13 ne couvrent pas : le travail
 fait depuis leur publication (passes 162 à 184). Tout est sur `main` et réversible.
 
 **Fiche interactive publiée le 2026-11-01** par la session principale (privée, 12 entrées, choix enregistrés dans sa collection `decisions`) : <https://claude.ai/artifact/249L7Q8Lp6QuUZPGtAfaVs>.
@@ -42,3 +42,14 @@ les morceaux (M13, J10).
 |---|---|---|---|
 | **S1** | Le jeu mobile paysage, différé depuis M04 : le Récit guidé vise aussi ces joueurs, mais le duel n'est pas adapté au téléphone | **Après la version bureau** | L'inclure dans la version finale ; l'abandonner |
 | **S2** | L'enveloppe du Duel standard (accueil, Options, éditeur) garde son style, l'interface refaite ne couvre que l'aventure | **L'accorder à la nouvelle interface**, dans une passe à part sur ordre (le jeu par défaut au repos changera, ce qui rompt la garantie « identique au pixel près ») | La laisser telle quelle |
+
+## Décisions du responsable (fiche remplie le 2026-11-01, 12 choix, consignés à la passe 186)
+
+Toutes les entrées sont sur l'option recommandée, sauf :
+
+| Entrée | Choix | Note | Effet |
+|---|---|---|---|
+| **G1** | Garder | « une interface specifique au recit guide poir gerer le deck, les configs, ou faire des duels contre les joueurs de rue » | le clic entre deux étapes reste, et il s'ouvre sur cette interface : la Halte. Contrat 1, §4 bis |
+| **G2** | Proposer des duels de rue entre deux étapes | « on creerait une interface specifique au recit guide qui permet de gerer notre deck ou autres config ou effectuer quelques duels contre joueur du rue visible dans l'interface ( semblable a notre premier interface de selection de combat ) » | la Halte liste les joueurs de rue |
+
+**Ordre donné :** S2 (l'enveloppe du Duel standard accordée à la nouvelle interface, dans une passe à part). **Restent ouverts au test :** R1 à R3, T1, T2. G5 attend les textes de la structure narrative ; S1 : le mobile après la version bureau.

@@ -1,7 +1,7 @@
 # M13 — Contrat 1 : la musique, jazz synthétisé par code
 
 **Date :** 2026-10-27 (état au 2026-10-28 : tout le tableau du §2 est composé et branché ; contrat 2 pour la musique
-qui suit le jeu). **Statut : PROPOSÉ** (mandat `docs/missions/M13_MUSIQUE.md` ; décisions du responsable :
+qui suit le jeu). **Statut : APPROUVÉ (2026-11-01, fiche M13, R1, sous réserve de R3 : la couleur sonore va vers le 16 bits, mission M15)** (mandat `docs/missions/M13_MUSIQUE.md` ; décisions du responsable :
 version semi-resserrée, synthèse par code, jazz, inspirations Final Fantasy VIII, Breath of Fire III et Zelda). ADR 047.
 
 ## 1. Principes

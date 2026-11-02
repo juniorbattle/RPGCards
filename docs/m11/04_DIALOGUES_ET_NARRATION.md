@@ -1,6 +1,6 @@
 # M11 — Contrat 4 : dialogues et narration de bout en bout
 
-**Date :** 2026-10-26. **Statut : PROPOSÉ.** C'est aussi le **contrat de la structure narrative de bout en bout** décidée
+**Date :** 2026-10-26. **Statut : APPROUVÉ (2026-11-01, fiche M11, R1 ; D2 et D3 tranchés).** C'est aussi le **contrat de la structure narrative de bout en bout** décidée
 par la fiche de finalisation de la ville (S1 : « contrat d'abord, puis lots ») ; il tranche **en proposition** la question
 des deux Observatoires (O1). **Code :** `src/aventure/repliques.ts` (pur : catalogue et choix), `src/aventure/scenes.ts`
 (textes de la trame). ADR 040.
@@ -64,7 +64,7 @@ journal la redisent).
 En continu : guetteurs (contrat 1, répliques selon le tempérament), rumeurs (répliques par chapitre et par îlot),
 membres des familles, Épreuves et Joutes.
 
-## 4. Les deux Observatoires (question O1, PROPOSÉ)
+## 4. Les deux Observatoires (question O1, TRANCHÉE le 2026-11-01, fiche M11, D2 : la proposition ci-dessous ; textes à changer dans le lot de la structure narrative)
 
 Constat : la maison de l'Astre s'appelle « l'Observatoire du Parvis » (`MAISONS.Astre`), alors que la Ville haute a un
 bâtiment « l'Observatoire » avec son parvis (approuvé en image, passe 135) et que les figures de l'Astre reçoivent sur le

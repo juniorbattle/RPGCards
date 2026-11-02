@@ -1,6 +1,6 @@
 # M12 — Contrat 2 : la mise en avant des activations
 
-**Date :** 2026-10-27. **Statut : PROPOSÉ** (présentation seulement ; aucune règle changée). ADR 045.
+**Date :** 2026-10-27. **Statut : APPROUVÉ (2026-11-01, fiche M12, R1)** (présentation seulement ; aucune règle changée). ADR 045.
 **Code :** `src/presentation/activations.ts` (pur : événements visibles → temps forts), `src/presentation/activationStage.ts`
 (premier plan DOM, Web Animations), `src/app/controller.ts` (ordonnancement), `src/presentation/beats.ts` (un temps par
 effet), `src/presentation/board.ts` et `src/styles.css` (impulsions du plateau), `src/son/` (sons d'activation).

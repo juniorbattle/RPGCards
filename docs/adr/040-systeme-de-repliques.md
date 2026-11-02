@@ -1,6 +1,6 @@
 # ADR 040 — Système de répliques et trame de bout en bout
 
-**Date :** 2026-10-26. **Statut : PROPOSÉ.** Contrat : `docs/m11/04_DIALOGUES_ET_NARRATION.md`.
+**Date :** 2026-10-26. **Statut : APPROUVÉ (2026-11-01, fiche M11, R1).** Contrat : `docs/m11/04_DIALOGUES_ET_NARRATION.md`.
 
 ## Contexte
 Les répliques de l'aventure étaient dispersées dans `app.ts` (constantes, ternaires par chapitre) et se répétaient.

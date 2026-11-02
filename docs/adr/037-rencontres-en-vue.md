@@ -1,6 +1,6 @@
 # ADR 037 — Rencontres « en vue » : la vue déclenche, le directeur pose
 
-**Date :** 2026-10-26. **Statut : PROPOSÉ** (session cloud M11 ; décision de principe du responsable, annexe A du brief
+**Date :** 2026-10-26. **Statut : APPROUVÉ (2026-11-01, fiche M11, R1, avec trois écarts)** (session cloud M11 ; décision de principe du responsable, annexe A du brief
 M11). Contrat : `docs/m11/01_RENCONTRES_EN_VUE.md`.
 
 ## Contexte
@@ -23,3 +23,7 @@ ville (ADR 025) ne connaît que des positions.
 - Le principe « jamais de duel sans accord » (VILLE_RENCONTRES P-V1.1) ne vaut plus pour les guetteurs (décision plus
   récente du responsable) ; l'abandon du duel reste possible et sans perte.
 - Testable sans rendu ; réversible : vider la liste des guetteurs rend le comportement de M10.
+
+## Ratification (2026-11-01)
+
+Fiche M11, <https://claude.ai/artifact/L5PVYnPmeZEEBYtvrgQcXB> : reçu, avec trois écarts, portés au contrat 1 : seuls les duels de rue guettent (V2) ; quelle que soit l'issue, un PNJ attend le chapitre suivant pour forcer de nouveau (V4) ; certains guetteurs tournent la tête (V7).

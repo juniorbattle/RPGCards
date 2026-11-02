@@ -1,6 +1,6 @@
 # M11 — Contrat 5 : l'IA de combat (audit et niveau 2)
 
-**Date :** 2026-10-26. **Statut : PROPOSÉ.** **Code :** `src/game/ai/policy.ts` (nouvelle branche activée par le profil),
+**Date :** 2026-10-26. **Statut : APPROUVÉ (2026-11-01, fiche M11, R1).** **Code :** `src/game/ai/policy.ts` (nouvelle branche activée par le profil),
 `src/game/ai/memory.ts` (mémoire étendue, vue publique). ADR 041.
 
 ## 1. Audit de `policy.ts` (état au départ, `bd93beb`)

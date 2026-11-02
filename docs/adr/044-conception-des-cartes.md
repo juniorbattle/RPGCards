@@ -1,6 +1,6 @@
 # ADR 044 — Une illustration et une lecture d'effet par carte
 
-**Date :** 2026-10-27. **Statut : PROPOSÉ.** Contrat : `docs/m12/01_CONCEPTION_DES_CARTES.md`.
+**Date :** 2026-10-27. **Statut : APPROUVÉ (2026-11-01, fiche M12, R1).** Contrat : `docs/m12/01_CONCEPTION_DES_CARTES.md`.
 
 ## Contexte
 Les 36 cartes standard partagent le dessin de leur famille ; une variante ne se distingue d'une Basic que par une ligne

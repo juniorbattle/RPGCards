@@ -1,6 +1,6 @@
 # M11 — Contrat 6 : le son, synthétisé par code
 
-**Date :** 2026-10-26. **Statut : PROPOSÉ** (décision du responsable : « le son entre dans le jeu : effets sonores et
+**Date :** 2026-10-26. **Statut : APPROUVÉ (2026-11-01, fiche M11, R1 ; à écouter, R4)** (décision du responsable : « le son entre dans le jeu : effets sonores et
 ambiance »). **Code :** `src/son/` (moteur Web Audio, catalogue de sons, correspondances pures événements → sons).
 ADR 042.
 

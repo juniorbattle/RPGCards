@@ -1,6 +1,6 @@
 # ADR 041 — IA de combat : un niveau 2 en nouveaux profils
 
-**Date :** 2026-10-26. **Statut : PROPOSÉ.** Contrat : `docs/m11/05_IA_DE_COMBAT.md`.
+**Date :** 2026-10-26. **Statut : APPROUVÉ (2026-11-01, fiche M11, R1).** Contrat : `docs/m11/05_IA_DE_COMBAT.md`.
 
 ## Contexte
 L'IA heuristique (`policy.ts`) ignore les cartes grises, évalue mal sa propre Signature annoncée, joue certaines

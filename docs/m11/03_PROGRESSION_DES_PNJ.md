@@ -1,6 +1,6 @@
 # M11 — Contrat 3 : tout le monde progresse (tempéraments par chapitre)
 
-**Date :** 2026-10-26. **Statut : PROPOSÉ** (décision de principe du responsable : « tout le monde autour progresse aussi
+**Date :** 2026-10-26. **Statut : APPROUVÉ (2026-11-01, fiche M11, R1)** (décision de principe du responsable : « tout le monde autour progresse aussi
 bien dans les dialogues que dans le jeu de cartes avec de meilleures stratégies, un npc passif par le passé peut devenir
 agressif ou plus vicieux »). **Code :** `src/aventure/temperaments.ts` (pur). ADR 039.
 

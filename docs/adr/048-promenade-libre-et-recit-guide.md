@@ -25,3 +25,7 @@ déplacement libre restreint au profit de la mise en scène, de la narration et 
 
 - La Promenade libre reste le mode par défaut et le jeu par défaut au repos reste identique au pixel près.
 - `objectif` et `etapeRecit` doivent évoluer ensemble, ce que la parité testée impose.
+
+## Fiche M14 (2026-11-01)
+
+Reçu après le test du responsable (R1), statut inchangé d'ici là. Écart : **la Halte**, interface propre au Récit guidé (deck, réglages, duels de rue entre deux étapes), demandée en G1 et G2 ; contrat 1, §4 bis.
