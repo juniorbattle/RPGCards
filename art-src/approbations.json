@@ -17,9 +17,9 @@
     },
     {
       "fichier": "public/decors/quai-facades.png",
-      "sha256": "6940c1ecf629335d062a35d24fd71013a23ce556d6a6fc8ffa7ee3ba38602afa",
-      "date": "2026-10-21",
-      "decision": "décision A1 du responsable : approbation en bloc des 20 planches (fiche de la reprise de M09, https://claude.ai/artifact/MBMoN6uKqegRnai5Lo3LV1, passe 97), ordre explicite de passer à approved: true (fiche du lot M10-E, https://claude.ai/artifact/RF1NNces82oGupjz9WXE3w, passes 103 et 104)"
+      "sha256": "fd687e7796276b56d7aef94d4ffac6241148c47ccdc7aa4a7c2c8d5d04c00f20",
+      "date": "2026-11-01",
+      "decision": "décision H3 du responsable : « Approuver la proposition » (fiche M12, https://claude.ai/artifact/WGK7ybvw414J9uQTekEjmP, remplie le 2026-11-01) : drap de la bannière de l’Astre recoloré en ocre par script (tools/m12-banniere-astre.mjs, ADR 046), aucune image générée ; remplace l’approbation A1 de la façade marine, passe 189"
     },
     {
       "fichier": "public/decors/quai-pied-facades.png",

@@ -36,3 +36,7 @@ fanions et vitraux de la ville dessinés par code, joueur de l'Astre). Les image
 changent pas (leur Astre est déjà ocre), sauf la feuille de Halvard (point 3). Les règles, le catalogue et l'IA ne
 changent pas. Preuves : `screenshots/qa/m12/couleurs/` (Halvard avant / après à côté d'Ilse et d'Orin ; duels dans la
 salle et à l'arène avant / après), `screenshots/qa/m12/galerie/v2-planche.png`.
+
+## Façade du Quai (2026-11-01)
+
+Fiche M12, H3 : proposition approuvée. La bannière de l'Astre de la Salle des Bannières du Quai est désormais ocre (passe 189, par le registre).
