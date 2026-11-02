@@ -21,5 +21,6 @@ La direction B est choisie, **l'hésitation reste ouverte**. Aucune bascule avan
 
 - **Bruitages et ambiances :** passent dans la même couleur, en dernier.
 - **Thème VI, Championnat :** à réécrire (note du responsable : « encore brouillon dans son intonation »). Diagnostic : la justesse est bonne ; l'écriture est trop dense, chaque note de passage harmonisée à quatre voix. Cibles, sur le premier passage de VI-1 : notes tenues en moyenne à 7 ou moins (avant : 10), voisines de la mélodie à 2 ou moins (avant : 3,3), le motif des quatre voies gardé.
+  **Réécrit (passe 196), à recevoir à l'oreille (page d'écoute, D4) :** fanfare sur le motif, un accord pour deux mesures, pont par le cycle des quintes, pupitres à l'unisson, notes longues seules harmonisées à trois voix, sans piano d'accompagnement. Mesuré sur VI-1 : notes tenues 5,2 (10 avant), voisines de la mélodie 1,1 (3,3), secondes mineures par croche 0,54 (0,93). Finale : 9,5 notes tenues (12,9). En 16 voix : aucune note coupée au Championnat (91 avant), 11 à la Finale.
 - **Autres thèmes :** gardés (M13, R2) ; le responsable n'a nommé que le Championnat.
 - **Vents en temps réel :** disparaissent à la bascule seulement, au profit de timbres en boucle.

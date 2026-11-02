@@ -7,11 +7,15 @@ import { launch, startPreview, watchConsole } from './browser.mjs';
 const WAV = process.argv[2] ?? 'artifacts/qa/tmp/m15';
 const OUT = process.argv[3] ?? 'artifacts/audio/m15';
 const DUREE = 30;
-const EXTRAITS = [
+const SUFFIXE = process.env.LQV_M15_SUFFIXE ?? '';
+const garde = (nom, id) => !process.env[nom] || process.env[nom].split(',').includes(id);
+const TOUS = [
   { id: 'ville', version: 'II-1', options: { chapitre: 4 } },
   { id: 'duel', version: 'III-1', options: {}, couches: { melodie: 1, tension: 0, cuivres: 0 } },
   { id: 'championnat', version: 'VI-1', options: {}, couches: { melodie: 1, tension: 0, cuivres: 1 } },
+  { id: 'finale', version: 'VI-2', options: {}, couches: { melodie: 1, tension: 0, cuivres: 1 } },
 ];
+const EXTRAITS = TOUS.filter((x) => garde('LQV_M15_EXTRAITS', x.id));
 mkdirSync(OUT, { recursive: true });
 const server = await startPreview(Number(process.env.LQV_PREVIEW_PORT) || 4380, process.env.LQV_DIST || 'dist');
 const browser = await launch();
@@ -31,11 +35,11 @@ try {
       for (let i = 0; i < r.wav.length; i += 0x8000) s += String.fromCharCode(...r.wav.subarray(i, i + 0x8000));
       return btoa(s);
     }, x);
-    writeFileSync(`${WAV}/${x.id}-actuel.wav`, Buffer.from(b64, 'base64'));
+    writeFileSync(`${WAV}/${x.id}${SUFFIXE}-actuel.wav`, Buffer.from(b64, 'base64'));
     console.log(`référence ${x.id} rendue`);
   }
 
-  const clips = EXTRAITS.flatMap((x) => ['actuel', 'A', 'B', 'C'].map((o) => `${x.id}-${o}`));
+  const clips = EXTRAITS.flatMap((x) => ['actuel', 'A', 'B', 'C'].filter((o) => o === 'actuel' || garde('LQV_M15_OPTIONS', o)).map((o) => `${x.id}${SUFFIXE}-${o}`));
   await page.mouse.click(10, 10);
   const mesures = [];
   // par lots de quatre : l'encodage suit l'horloge, trop de flux à la fois ferait décrocher le rendu
@@ -115,7 +119,7 @@ try {
     Object.assign(m, { secondes: Number(v.secondes.toFixed(1)), dbfsFichier: Number(v.dbfs.toFixed(1)), centreHz: Math.round(v.centre), au8kHz: Number(v.haut.toFixed(2)) });
     console.log(JSON.stringify(m));
   }
-  writeFileSync(`${OUT}/mesures.json`, JSON.stringify(mesures, null, 1));
+  writeFileSync(`${OUT}/mesures${SUFFIXE}.json`, JSON.stringify(mesures, null, 1));
 } finally {
   await browser.close();
   await server.stop();

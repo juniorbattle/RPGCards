@@ -316,35 +316,29 @@ export const KAI: Theme = {
 export const BLUES_MI = [4, 7, 9, 10, 11, 2];
 
 /*
- * VI. « Championnat » — si bémol majeur, AABA de 32 mesures, big band. Le motif des quatre voies tombe juste sur
- * l'accord de tonique (fa, si bémol, la, ré) : il ouvre chaque A, revient sur do et sur ré ; le pont part vers le IV
- * (mi bémol), passe par la porte de derrière (mi bémol mineur, la bémol 7) et remonte par sol 7 vers la cadence.
+ * VI. « Championnat » — si bémol majeur, AABA de 32 mesures, big band ; réécrit (fiche d'écoute M15, D3 : « encore brouillon »).
+ * Une fanfare : le motif des quatre voies sonné puis tenu (fa, si bémol, la, ré), repris une quarte plus haut sur le IV,
+ * une descente vers la cadence. Un accord pour deux mesures, pour laisser respirer l'orchestre. Le pont monte par le cycle
+ * des quintes (ré 7, sol 7, do 7, fa 7), une même cellule de phrase à chaque marche.
  */
-const ca = (fin: AccordP[]): AccordP[] => [c(0, 4, 'Bbmaj7'), c(4, 4, 'Gm7'), c(8, 4, 'Cm7'), c(12, 4, 'F7'), c(16, 4, 'Dm7'), c(20, 4, 'G7'), c(24, 2, 'Cm7'), c(26, 2, 'F7'), ...fin];
+const ca = (fin: AccordP[]): AccordP[] => [c(0, 8, 'Bbmaj7'), c(8, 8, 'Ebmaj7'), c(16, 4, 'Cm7'), c(20, 4, 'F7'), ...fin];
 const melodieChamp = (): NoteP[] => [
-  n(0, 1, 'F4'), n(1, 1, 'Bb4'), n(2, 0.5, 'A4'), n(2.5, 1.5, 'D5'),
-  n(4.5, 0.5, 'C5'), n(5, 0.5, 'D5'), n(5.5, 2.5, 'F5'),
-  n(8, 1, 'G4'), n(9, 1, 'C5'), n(10, 0.5, 'Bb4'), n(10.5, 1.5, 'Eb5'),
-  n(12.5, 0.5, 'D5'), n(13, 0.5, 'C5'), n(13.5, 0.5, 'A4'), n(14, 2, 'F4'),
-  n(16, 1, 'A4'), n(17, 1, 'D5'), n(18, 0.5, 'C5'), n(18.5, 1.5, 'F5'),
-  n(20.5, 0.5, 'E5'), n(21, 0.5, 'D5'), n(21.5, 0.5, 'B4'), n(22, 1, 'G4'), n(23, 1, 'A4'),
-  n(24, 1, 'Bb4'), n(25, 0.5, 'G4'), n(25.5, 0.5, 'Eb5'), n(26, 0.5, 'D5'), n(26.5, 0.5, 'C5'), n(27, 1, 'A4'),
+  n(0, 1, 'F4'), n(1, 1, 'Bb4'), n(2, 1, 'A4'), n(3, 5, 'D5'),
+  n(8, 1, 'Bb4'), n(9, 1, 'Eb5'), n(10, 1, 'D5'), n(11, 5, 'G5'),
+  n(16, 1.5, 'G5'), n(17.5, 0.5, 'F5'), n(18, 2, 'Eb5'),
+  n(20, 1, 'D5'), n(21, 1, 'C5'), n(22, 2, 'A4'),
 ];
-const CA1: Section = { mesures: 8, melodie: [...melodieChamp(), n(28, 3, 'Bb4')], accords: ca([c(28, 2, 'Bbmaj7'), c(30, 1, 'Cm7'), c(31, 1, 'F7')]) };
-const CA2: Section = { mesures: 8, melodie: [...melodieChamp(), n(28, 1.5, 'Bb4'), n(29.5, 0.5, 'D5'), n(30, 1, 'F5'), n(31, 1, 'Ab5')], accords: ca([c(28, 2, 'Bbmaj7'), c(30, 2, 'Bb7')]) };
+const CA1: Section = { mesures: 8, melodie: [...melodieChamp(), n(24, 4, 'Bb4')], accords: ca([c(24, 4, 'Bbmaj7'), c(28, 2, 'Cm7'), c(30, 2, 'F7')]) };
+const CA2: Section = { mesures: 8, melodie: [...melodieChamp(), n(24, 2, 'Bb4'), n(26, 1, 'D5'), n(27, 1, 'F5'), n(28, 4, 'Bb5')], accords: ca([c(24, 8, 'Bbmaj7')]) };
 const CB: Section = {
   mesures: 8,
   melodie: [
-    n(0, 1.5, 'G5'), n(1.5, 0.5, 'F5'), n(2, 2, 'D5'),
-    n(4, 1, 'Gb5'), n(5, 1, 'Eb5'), n(6, 1, 'C5'), n(7, 1, 'Gb5'),
-    n(8, 1.5, 'F5'), n(9.5, 0.5, 'D5'), n(10, 2, 'A4'),
-    n(12, 1, 'Ab4'), n(13, 1, 'B4'), n(14, 1, 'D5'), n(15, 1, 'F5'),
-    n(16, 1.5, 'Eb5'), n(17.5, 0.5, 'G5'), n(18, 2, 'Bb5'),
-    n(20, 1, 'A5'), n(21, 0.5, 'G5'), n(21.5, 0.5, 'F5'), n(22, 1, 'Eb5'), n(23, 1, 'C5'),
-    n(24, 0.5, 'D5'), n(24.5, 0.5, 'F5'), n(25, 1, 'A5'), n(26, 0.5, 'G5'), n(26.5, 0.5, 'F5'), n(27, 1, 'E5'),
-    n(28, 1, 'Eb5'), n(29, 1, 'D5'), n(30, 1, 'C5'), n(31, 1, 'A4'),
+    n(0, 1.5, 'Gb5'), n(1.5, 0.5, 'A5'), n(2, 2, 'C6'), n(4, 4, 'A5'),
+    n(8, 1.5, 'B4'), n(9.5, 0.5, 'D5'), n(10, 2, 'F5'), n(12, 4, 'D5'),
+    n(16, 1.5, 'E5'), n(17.5, 0.5, 'G5'), n(18, 2, 'Bb5'), n(20, 4, 'G5'),
+    n(24, 1.5, 'A4'), n(25.5, 0.5, 'C5'), n(26, 2, 'Eb5'), n(28, 2, 'C5'), n(30, 2, 'A4'),
   ],
-  accords: [c(0, 4, 'Ebmaj7'), c(4, 2, 'Ebm7'), c(6, 2, 'Ab7'), c(8, 4, 'Bbmaj7'), c(12, 4, 'G7b9'), c(16, 4, 'Cm7'), c(20, 4, 'F7'), c(24, 2, 'Dm7'), c(26, 2, 'G7'), c(28, 2, 'Cm7'), c(30, 2, 'F7')],
+  accords: [c(0, 8, 'D7'), c(8, 8, 'G7'), c(16, 8, 'C7'), c(24, 8, 'F7')],
 };
 export const CHAMPIONNAT: Theme = {
   id: 'championnat', titre: 'Championnat', tonique: midi('Bb4'), mode: 'ionien', mesure: 4,

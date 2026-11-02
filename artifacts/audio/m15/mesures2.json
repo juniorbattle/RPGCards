@@ -1,0 +1,42 @@
+[
+ {
+  "clip": "championnat2-actuel",
+  "dbfs": -20.1,
+  "crete": -4.6,
+  "octets": 602504,
+  "secondes": 30,
+  "dbfsFichier": -19.8,
+  "centreHz": 689,
+  "au8kHz": 0.48
+ },
+ {
+  "clip": "championnat2-B",
+  "dbfs": -20,
+  "crete": -3.2,
+  "octets": 603296,
+  "secondes": 30,
+  "dbfsFichier": -19.9,
+  "centreHz": 839,
+  "au8kHz": 0.22
+ },
+ {
+  "clip": "finale2-actuel",
+  "dbfs": -20.1,
+  "crete": -4.8,
+  "octets": 602504,
+  "secondes": 30,
+  "dbfsFichier": -20,
+  "centreHz": 635,
+  "au8kHz": 0.18
+ },
+ {
+  "clip": "finale2-B",
+  "dbfs": -20,
+  "crete": -5,
+  "octets": 603296,
+  "secondes": 30,
+  "dbfsFichier": -20,
+  "centreHz": 631,
+  "au8kHz": 0.04
+ }
+]

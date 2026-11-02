@@ -40,3 +40,5 @@ attend le premier Clash) ; ses autres couches : les fichiers `S-plein-…`.
 Le premier A du thème I dans le registre de chaque instrument (piano et contrebasse discrets dessous) : `trompette`
 (bouchée), `trompette-ouverte`, `sax`, `saxes` (pupitre), `flute`, `cuivres` (pupitre), `cordes`, `archet`, `guitare`,
 `nylon`, `piano`, `rhodes`, `vibra`. Justesse : `artifacts/qa/m13/instruments.json`.
+
+**Attention (2026-11-01) :** les aperçus `VI-*.ogg` et `S-plein-VI-*.ogg` sont encore ceux de l'ancien thème du Championnat, réécrit à la passe 196 (ffmpeg absent du poste). Le nouveau : `artifacts/audio/m15/`.

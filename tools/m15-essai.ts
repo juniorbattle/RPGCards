@@ -3,7 +3,7 @@
 // Timbres bâtis sur les instruments calculés du jeu, réduits, bouclés et dégradés ; une APPROXIMATION pour juger une direction,
 // ni une émulation, ni la palette finale. Ornements et placement des musiciens ne sont pas repris.
 // Sortie : WAV dans `artifacts/qa/tmp/m15/`, mesures `artifacts/qa/m15/essai.json`.
-// Usage : npx tsx tools/m15-essai.ts
+// Usage : npx tsx tools/m15-essai.ts ; LQV_M15_EXTRAITS, LQV_M15_OPTIONS et LQV_M15_SUFFIXE pour n'en refaire qu'une partie.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { mixDe, passage, VERSIONS, type VersionId } from '../src/son/musique/catalogue';
 import type { Evenement, InstrId } from '../src/son/musique/generateurs';
@@ -12,13 +12,16 @@ import * as I from '../src/son/musique/instruments';
 const DUREE = 30;
 const WAV = 'artifacts/qa/tmp/m15';
 const OUT = 'artifacts/qa/m15';
+const SUFFIXE = process.env.LQV_M15_SUFFIXE ?? '';
+const garde = (nom: string, id: string): boolean => !process.env[nom] || process.env[nom]!.split(',').includes(id);
 mkdirSync(WAV, { recursive: true });
 mkdirSync(OUT, { recursive: true });
 
-export const EXTRAITS = [
-  { id: 'ville', titre: 'La ville la nuit, avec les vents', version: 'II-1' as VersionId, options: { chapitre: 4 }, couches: {} as Record<string, number> },
-  { id: 'duel', titre: 'Duel', version: 'III-1' as VersionId, options: {}, couches: { melodie: 1, tension: 0, cuivres: 0 } },
-  { id: 'championnat', titre: 'Championnat, big band', version: 'VI-1' as VersionId, options: {}, couches: { melodie: 1, tension: 0, cuivres: 1 } },
+export const EXTRAITS: Array<{ id: string; titre: string; version: VersionId; options: { chapitre?: number }; couches: Record<string, number> }> = [
+  { id: 'ville', titre: 'La ville la nuit, avec les vents', version: 'II-1', options: { chapitre: 4 }, couches: {} },
+  { id: 'duel', titre: 'Duel', version: 'III-1', options: {}, couches: { melodie: 1, tension: 0, cuivres: 0 } },
+  { id: 'championnat', titre: 'Championnat, big band', version: 'VI-1', options: {}, couches: { melodie: 1, tension: 0, cuivres: 1 } },
+  { id: 'finale', titre: 'La Finale', version: 'VI-2', options: {}, couches: { melodie: 1, tension: 0, cuivres: 1 } },
 ];
 
 interface Contrainte { id: string; sr: number; voix: number; srEch: number; brr: boolean; pasZone: number; tenue: number; coupure: number; salle: 'echo' | 'reverb' }
@@ -296,15 +299,15 @@ export function ecrireWav(chemin: string, l: Float32Array, r: Float32Array, sr: 
 }
 
 const rapport: unknown[] = [];
-for (const x of EXTRAITS) {
-  for (const c of OPTIONS) {
+for (const x of EXTRAITS.filter((e) => garde('LQV_M15_EXTRAITS', e.id))) {
+  for (const c of OPTIONS.filter((o) => garde('LQV_M15_OPTIONS', o.id))) {
     const t0 = performance.now();
     const o = rendre(x, c);
     egaliser(o.l, o.r, c.sr);
-    ecrireWav(`${WAV}/${x.id}-${c.id}.wav`, o.l, o.r, c.sr);
+    ecrireWav(`${WAV}/${x.id}${SUFFIXE}-${c.id}.wav`, o.l, o.r, c.sr);
     const ligne = { extrait: x.id, option: c.id, notes: o.total, perdues: o.perdues, volees: o.volees, voixMax: o.maxi, voixPermises: c.voix, ms: Math.round(performance.now() - t0) };
     rapport.push(ligne);
     console.log(JSON.stringify(ligne));
   }
 }
-writeFileSync(`${OUT}/essai.json`, JSON.stringify(rapport, null, 1));
+writeFileSync(`${OUT}/essai${SUFFIXE}.json`, JSON.stringify(rapport, null, 1));
