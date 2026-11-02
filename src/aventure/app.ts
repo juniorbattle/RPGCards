@@ -9,6 +9,7 @@
  * Depuis l'avenant M10-A (ARB-M10-02, ADR 033), chaque duel se joue avec le deck d'aventure du joueur tel qu'il est
  * (règle R-AV : cartes grises, Basics, variantes, Signature éventuelle).
  */
+import '../interface.css';
 import '../shell/shell.css';
 import type { AppParams } from '../app/params';
 import { DuelSession } from '../app/duelSession';

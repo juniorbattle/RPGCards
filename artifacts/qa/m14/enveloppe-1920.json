@@ -1,0 +1,22 @@
+{
+ "head": "b5e9522",
+ "viewport": [
+  1920,
+  1080
+ ],
+ "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "checks": [
+  "OK accueil sans partie : « Aventure » proposée",
+  "OK accueil-neuf : aucun débordement horizontal (1920/1920)",
+  "OK nouvelle-partie : aucun débordement horizontal (1920/1920)",
+  "OK rencontres : aucun débordement horizontal (1920/1920)",
+  "OK deck : aucun débordement horizontal (1920/1920)",
+  "OK accueil : aucun débordement horizontal (1920/1920)",
+  "OK options : aucun débordement horizontal (1920/1920)",
+  "OK aide : aucun débordement horizontal (1920/1920)",
+  "OK collection : aucun débordement horizontal (1920/1920)",
+  "OK preparation : aucun débordement horizontal (1920/1920)",
+  "OK « Aventure » ouvre l’écran titre de l’aventure"
+ ],
+ "issues": []
+}

@@ -5,19 +5,14 @@
  */
 import type { Town } from './ville';
 
+import '../interface.css';
+
 let styled = false;
 export function installVilleStyles(): void {
   if (styled) return;
   styled = true;
   const s = document.createElement('style');
   s.textContent = `
-:root {
-  --lqv-nuit: #0a0c15; --lqv-nuit-claire: #161827; --lqv-or: #e2c48a; --lqv-or-clair: #ffe7b0; --lqv-ivoire: #f3ead8; --lqv-sepia: #cfc3ac;
-  --lqv-panneau: linear-gradient(180deg, rgba(22, 24, 39, 0.97), rgba(9, 10, 18, 0.98));
-  --lqv-ombre: 0 16px 48px rgba(0, 0, 0, 0.72);
-  /* filet double et losanges des quatre coins (les losanges des cartes) ; à poser avec une bordure transparente de 14 px */
-  --lqv-cadre: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cg fill='none' stroke='%23e2c48a'%3E%3Crect x='1.5' y='1.5' width='45' height='45'/%3E%3Crect x='4.5' y='4.5' width='39' height='39' stroke-opacity='.32'/%3E%3C/g%3E%3Cg fill='%23ffe7b0'%3E%3Cpath d='M8 4.5 11.5 8 8 11.5 4.5 8zM40 4.5 43.5 8 40 11.5 36.5 8zM8 36.5 11.5 40 8 43.5 4.5 40zM40 36.5 43.5 40 40 43.5 36.5 40z'/%3E%3C/g%3E%3C/svg%3E");
-}
 .ville-host { position: fixed; inset: 0; background: #04060c; overflow: hidden; }
 .ville-canvas { display: block; }
 .ville-panel { position: fixed; left: 16px; top: 14px; z-index: 2650; max-width: min(640px, calc(100vw - 32px)); padding: 10px 14px; border-radius: 10px; background: rgba(8, 9, 16, 0.78); border: 1px solid rgba(226, 196, 138, 0.35); color: #efe6d4; font: 13px/1.4 system-ui, sans-serif; box-shadow: 0 6px 24px rgba(0,0,0,.5); }

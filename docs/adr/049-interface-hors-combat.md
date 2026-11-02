@@ -26,3 +26,7 @@ dialogue. Trois défauts francs : la nouvelle aventure débordait de 254 px en 1
 
 Mode Aventure et ville. Le jeu par défaut ne charge pas ces styles : son accueil et son jeu au repos ne changent pas. Le
 duel, les cartes et l'enveloppe du Duel standard n'ont pas été touchés.
+
+## Amendement 1 (2026-11-01, fiche M14, S2) : l'enveloppe du Duel standard
+
+L'accueil, les Rencontres, la préparation, le deck, la collection, les Options et l'Aide adoptent la même langue, par une couche de styles sous `#shell` (`src/shell/shell.css`) : mêmes variables (`src/interface.css`), coins carrés, cadre sur les grands panneaux, boutons de la ville. Le plateau et le duel ne sont pas restylés. **La garantie « jeu par défaut au repos identique au pixel près » prend fin pour l'accueil et l'enveloppe** ; elle reste vraie du duel, dont les règles et le rendu ne changent pas.
