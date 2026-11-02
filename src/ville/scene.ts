@@ -21,6 +21,8 @@ export interface QuaiScene {
    * immédiatement (captures figées), sinon en douceur.
    */
   focus?(p: { x: number; z: number }, snap: boolean, cam?: { z: number }): void;
+  /** M14 : retire les plans plantés entre la caméra et la profondeur `z` ; `null` : tous sont là. */
+  avantPlan?(z: number | null): void;
   stats(): { meshes: number; textures: number; lights: number };
   dispose(): void;
 }

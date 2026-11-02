@@ -49,7 +49,7 @@ export const LIGNES_LIEU: Readonly<Record<IlotId, string>> = {
 
 /** Durées (ms) : le travelling d'une arrivée, la mise au point sur Kaï, le retour au joueur. */
 export const DUREES = {
-  arriveeTenue: 700, arriveeTravelling: 3200, arriveeRetour: 800, rivalPoint: 900, guetteur: 450,
+  arriveeTenue: 700, arriveeTravelling: 3200, arriveeRetour: 800, arriveeRecit: 2200, rivalPoint: 900, guetteur: 450,
   chapitreTravelling: 3000, chefPoint: 1500, chefDuo: 1300, affiliationTenue: 700, affiliationRecul: 2400,
   titreTenue: 800, titreTravelling: 3400, kaiPrologue: 1300,
 } as const;
@@ -69,6 +69,22 @@ export function plansArrivee(joueur: Vec2, bornes: { minX: number; maxX: number 
     { at: { x: depart, z: joueur.z }, ...large, mouvement: 'coupe', ms: DUREES.arriveeTenue },
     { at: fin, ...large, mouvement: 'travelling', ms: DUREES.arriveeTravelling },
     { at: { ...joueur }, mouvement: 'glisse', tau: 0.45, ms: DUREES.arriveeRetour },
+  ];
+}
+
+/**
+ * La même arrivée en Récit guidé (retour du responsable du 2026-11-02 : pas de visuel de la ville « comme si on était en
+ * promenade libre ») : aucun plan large ni retour au cadrage ordinaire ; un plan serré glisse le long des façades, et la
+ * scène prend la suite.
+ */
+export function plansArriveeRecit(joueur: Vec2, bornes: { minX: number; maxX: number }): Plan[] {
+  const milieu = (bornes.minX + bornes.maxX) / 2;
+  const x = Math.min(bornes.maxX, Math.max(bornes.minX, joueur.x));
+  const depart = Math.min(bornes.maxX, Math.max(bornes.minX, x + (x <= milieu ? 1 : -1) * 4));
+  const serre = { zoom: 0.6, hauteur: -0.4 };
+  return [
+    { at: { x: depart, z: joueur.z }, ...serre, mouvement: 'coupe', ms: 300 },
+    { at: { x, z: joueur.z }, ...serre, mouvement: 'travelling', ms: DUREES.arriveeRecit },
   ];
 }
 

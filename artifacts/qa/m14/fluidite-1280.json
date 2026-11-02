@@ -1,57 +1,66 @@
 {
- "head": "7ad1749",
+ "head": "b21393f",
  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
  "viewport": [
   1280,
   720
  ],
  "checks": [
-  "OK Récit guidé : 120 étapes, 19 duels, 36 Préparations, 208 instants de cinématique",
-  "OK Récit guidé : aucune coupure sur 36925 images (0)",
+  "OK Récit guidé : 120 étapes, 19 duels, 36 Préparations, 196 instants de cinématique",
+  "OK Récit guidé : aucune coupure sur 35524 images (0)",
   "OK Promenade libre : le HUD",
-  "OK Promenade libre : aucune coupure sur 2739 images (0)",
+  "OK Promenade libre : aucune coupure sur 2868 images (0)",
   "OK console propre (0)"
  ],
  "mesures": {
   "guide": {
-   "images": 36925,
+   "images": 35524,
    "coupures": [],
-   "lentes": [],
+   "lentes": [
+    {
+     "ms": 78,
+     "t": 154022,
+     "ecran": "duel:",
+     "couvre": 0.02,
+     "noir": 0.02,
+     "scene": false
+    }
+   ],
    "pirePasNoir": 1,
-   "pirePasCam": 0.4612460642078947,
-   "pireImageVisible": 54.20000001788139,
+   "pirePasCam": 0.31959208761309676,
+   "pireImageVisible": 77.5,
    "marche": true
   },
   "parcours": {
    "etapes": 120,
    "duels": 19,
    "prepas": 36,
-   "cines": 208
+   "cines": 196
   },
   "promenade": {
-   "images": 2739,
+   "images": 2868,
    "coupures": [],
    "lentes": [
     {
-     "ms": 76,
-     "t": 870,
+     "ms": 60,
+     "t": 789,
      "ecran": "nouveau:av-nouveau",
-     "couvre": 0.96,
-     "noir": 0.96,
+     "couvre": 0.93,
+     "noir": 0.94,
      "scene": false
     },
     {
-     "ms": 115,
-     "t": 985,
+     "ms": 95,
+     "t": 884,
      "ecran": "nouveau:av-nouveau",
-     "couvre": 0.91,
-     "noir": 0.96,
+     "couvre": 0.88,
+     "noir": 0.93,
      "scene": false
     }
    ],
-   "pirePasNoir": 0.152227,
-   "pirePasCam": 0.10610422681648655,
-   "pireImageVisible": 114.80000001192093,
+   "pirePasNoir": 0.13626899999999997,
+   "pirePasCam": 0.06818308041411263,
+   "pireImageVisible": 95.30000001192093,
    "marche": true
   }
  }

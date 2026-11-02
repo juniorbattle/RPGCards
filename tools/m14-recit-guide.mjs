@@ -1,6 +1,6 @@
 // M14 — le Récit guidé en séquences (`docs/m14/01_RECIT_GUIDE.md`, révision 3 ; ADR 048), parcours navigateur dans l'aventure :
 // (1) le choix du mode à la nouvelle aventure, Promenade libre présélectionnée ; (2) la scène s'ouvre seule, marche et HUD
-// coupés ; (3) refuser une scène ramène à la Préparation, qui la repropose, au clavier ; (4) la trame entière, du prologue au
+// coupés ; (3) une scène ne se refuse pas (ni bouton, ni Échap) ; (4) la trame entière, du prologue au
 // titre, sans un pas du joueur, duels à l'issue imposée (`qaTerminer`), avec Kaï K1 à K6, et jamais la ville au repos ;
 // (5) après le titre, le HUD et la marche reviennent ; (6) la reprise par « Continuer », à la Préparation ; (7) le changement de
 // mode dans le menu, dans les deux sens ; (8) la Promenade libre d'une nouvelle aventure : ni Préparation, ni marche coupée.
@@ -88,19 +88,11 @@ try {
   await shot('scene-kai');
   check(await marche() < 0.01, 'marche coupée');
 
-  // (3) refuser : la Préparation, sans la ville, repropose la scène ; Entrée la rouvre
-  await p.click('.ville-dialog [data-key="dlg-close"]');
-  await prepa();
-  check(await av(() => document.querySelector('.ville-host').hidden), 'scène refusée : la Préparation, la ville cachée');
-  check(/Kaï/.test(await p.textContent('.av-prepa-suite')), 'la Préparation repropose la scène');
-  await p.waitForFunction(() => !document.querySelector('.ville-fade'), null, { timeout: 20000 });
-  await shot('preparation-prologue');
-  await p.keyboard.press('Enter');
-  await p.waitForFunction(() => !document.querySelector('[data-key="av-prepa"]'));
-  check(await p.$('.ville-fade') !== null, 'écran noir à la suite du récit');
-  await passer();
-  await scene();
-  check(/Kaï/.test(await dialogue() ?? ''), 'Entrée vaut « Suite du récit »');
+  // (3) une scène ne se refuse pas : un seul bouton, et Échap n'y fait rien
+  check(await p.$('.ville-dialog [data-key="dlg-close"]') === null && (await p.$$('.ville-dialog button')).length === 1, 'la scène n\'a pas de bouton de refus');
+  await p.keyboard.press('Escape');
+  await p.waitForTimeout(300);
+  check(await p.$('.ville-dialog') !== null, 'Échap ne quitte pas la scène');
 
   // (4) la trame entière, sans un pas : une boucle qui ne connaît que ce qu'un joueur voit à l'écran
   const depart = await av(() => window.__lqvAventure.save.etat.combats);
@@ -109,7 +101,8 @@ try {
   let bloque = 0;
   let capture = 0;
   let figureVue = false;
-  for (let i = 0; i < 500; i++) {
+  let clavier = false;
+  for (let i = 0; i < 4000; i++) {
     const vu = await av(() => {
       const a = window.__lqvAventure;
       const q = (s) => document.querySelector(s);
@@ -117,7 +110,8 @@ try {
       if (q('.ville-fade.in')) return 'attente'; // le rideau se ferme : plus rien à cliquer sous lui
       if (vis('[data-screen="av-resultat"]')) return 'resultat';
       if (vis('[data-key="av-choix"]')) return 'variante';
-      if (vis('[data-key="av-duel-go"]')) return 'preparer';
+      if (a.ecran === 'duel') return window.__lqv?.controller?.view?.awaitingMe ? 'duel' : 'attente';
+      if (vis('[data-key="av-duel-go"]')) return 'fenetre-de-duel';
       if (a.cine) return 'cine';
       if (q('[data-key="av-bannieres"]')) return 'bannieres';
       if (q('.av-modal')) return 'modal';
@@ -135,13 +129,13 @@ try {
       prepas.push(await av(() => { const e = window.__lqvAventure.etat; return { affiliation: e.affiliation, combats: e.combats }; }));
       if (capture++ % 6 === 1) await shot(`preparation-${capture}`);
       const choix = await p.$('[data-key^="av-prepa-choix-"]');
-      await (choix ?? await p.$('[data-key="av-prepa-suite"]')).click();
+      if (!choix && !clavier) { clavier = true; await p.keyboard.press('Enter'); } else await (choix ?? await p.$('[data-key="av-prepa-suite"]')).click();
       await p.waitForFunction(() => !document.querySelector('[data-key="av-prepa"]'));
+      check(await p.$('.ville-fade') !== null, 'écran noir à la suite du récit');
     } else if (vu === 'resultat') await p.click('[data-key="av-retour"]');
     else if (vu === 'variante') await p.click('[data-key="av-choix"] button');
-    else if (vu === 'preparer') {
-      await p.click('[data-key="av-duel-go"]');
-      await p.waitForFunction(() => !!window.__lqv?.controller?.view?.awaitingMe, null, { timeout: 120000 });
+    else if (vu === 'fenetre-de-duel') throw new Error('une fenêtre de duel en Récit guidé');
+    else if (vu === 'duel') {
       await av(() => window.__lqvAventure.qaTerminer('victoire'));
       await p.waitForSelector('[data-screen="av-resultat"]');
     } else if (vu === 'bannieres') {
@@ -152,9 +146,8 @@ try {
     else if (vu.startsWith('dialogue:')) {
       if (/^dialogue:Kaï —/.test(vu)) rivalVu.push(vu.slice(9));
       // le Championnat : ses règles (Signature à changer) sont vérifiées par `qa:championnat`, on proclame par le crochet
-      if (/Championnat|héraut/i.test(vu) && await p.$('.ville-dialog [data-key="dlg-close"]') && await av(() => window.__lqvAventure.etat.familles && Object.values(window.__lqvAventure.etat.familles).every((f) => f === 'chef'))) {
-        await p.click('.ville-dialog [data-key="dlg-close"]');
-        await av(() => window.__lqvAventure.qaTitre());
+      if (/Championnat|héraut/i.test(vu) && await av(() => window.__lqvAventure.etat.familles && Object.values(window.__lqvAventure.etat.familles).every((f) => f === 'chef'))) {
+        await av(() => { window.__lqvAventure.fermerDialogue(); window.__lqvAventure.qaTitre(); });
         continue;
       }
       if (!figureVue && prepas.length >= 2 && await p.$('.ville-dialog [data-key="dlg-duel"]')) { figureVue = true; await p.waitForTimeout(900); await shot('scene-cadree'); }
@@ -193,8 +186,6 @@ try {
   await p.click('[data-key="av-start"]');
   await pret();
   await scene();
-  await p.keyboard.press('Escape');
-  await prepa();
   await p.reload();
   await p.click('[data-key="av-continue"]');
   await prepa();
@@ -214,9 +205,6 @@ try {
   await p.click('[data-key="dlg-close"]');
   await scene();
   check(/Kaï/.test(await dialogue() ?? '') && !(await hud()), 'retour au Récit guidé : la scène en attente s\'ouvre seule, sans HUD');
-  await p.keyboard.press('Escape');
-  await prepa();
-  check(await av(() => document.querySelector('.ville-host').hidden), 'et son refus ramène à la Préparation, la ville cachée');
 
   // (8) la Promenade libre
   await p.goto(`${server.base}/?aventure=1&qa=1&aiDelay=0&profileSeed=33`, { timeout: 90000 });

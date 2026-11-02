@@ -27,6 +27,8 @@ export type Forme =
 /** Bornes des profondeurs encodées (m) : saillie jusqu'à 2,5 m devant le plan, retrait jusqu'à 4 m derrière. */
 export const RELIEF_MIN = -2.5;
 export const RELIEF_MAX = 4;
+/** Biais du regard retenu par le lancer de rayon (tangente) : au-delà, l'image glisse sans gagner en profondeur. */
+export const BIAIS_MAX = 0.3;
 
 /** Profondeur (m) → niveau de la carte (0 à 255) ; le plan de la façade (0 m) vaut `encoder(0)`. */
 export const encoder = (prof: number): number => Math.round(Math.min(1, Math.max(0, (prof - RELIEF_MIN) / (RELIEF_MAX - RELIEF_MIN))) * 255);
@@ -178,7 +180,9 @@ export const RELIEFS: Readonly<Record<string, readonly Forme[]>> = {
   'villes-parvis-porte.png': [
     { rect: [0, 100, 191, 931], prof: -0.8 },
     { rect: [1273, 100, 1440, 931], prof: -0.8 },
-    ...interieur([618, 836, 690, 585, 931], 4, 840),
+    // l'arène au fond, entre les vantaux, sur un seul plan : un sol en pente cisaillait les vantaux et le sol peints, déjà en perspective
+    { arc: [596, 856, 690, 585, 931], prof: 0.3 },
+    { arc: [652, 782, 690, 600, 931], prof: 1.2 },
     { arc: [218, 391, 718, 636, 931], prof: 0.7 },
     { arc: [1036, 1200, 718, 636, 931], prof: 0.7 },
   ],

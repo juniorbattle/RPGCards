@@ -34,7 +34,7 @@ import { MANIFESTE_RANGS, QUARTIERS_AJOUTES, type IlotId } from '../ville/ilots'
 import { blocked, type Facing, type Vec2, type Zone } from '../ville/monde';
 import { spritePolicy } from '../ville/spritesExternes';
 import { installVilleStyles, promptBubble } from '../ville/ui';
-import { createTown, type Town } from '../ville/ville';
+import { createTown, type Cadrage, type Town } from '../ville/ville';
 import { decideVille } from '../ville/villeRangs';
 import { apercuEngagement, appliquer, bannieres, chapitre, chapitreDetaille, peutChanger, peutConfirmer, statutDefi, type AventureEtat, type EtatBanniere, type Evenement, type FaitsPublics, type Issue } from './aventure';
 import { basculerTechnique, choixPourCase, equiperSignature, rangDe, remplacerCase, standardLegal, validerDeckAv, type DeckAv } from './deck';
@@ -58,7 +58,7 @@ import { consigneVille, numeroChapitre, proximiteFanal, REPOS_VILLE_S, roleDuelA
 import { CONTRAINTE_JOUTE, famillesDominantes, manche, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, varianteDe } from './competitions';
 import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave, type DuelAventure } from './sauvegarde';
 import { installAventureStyles } from './styles';
-import { aJouer, arriveeAJouer, cadreDialogue, cadreGroupe, CARTONS_CHAPITRE, cinePermise, DUREES, ecrireCine, estChapitreCarton, LIGNES_LIEU, lireCine, plansAffiliation, plansArrivee, plansChapitre, plansChef, plansEmissaire, plansGuetteur, plansKaiPrologue, plansRival, plansTitre, type CadreDialogue, type CinematiqueId } from './cinematiques';
+import { aJouer, arriveeAJouer, cadreDialogue, cadreGroupe, CARTONS_CHAPITRE, cinePermise, DUREES, ecrireCine, estChapitreCarton, LIGNES_LIEU, lireCine, plansAffiliation, plansArrivee, plansArriveeRecit, plansChapitre, plansChef, plansEmissaire, plansGuetteur, plansKaiPrologue, plansRival, plansTitre, type CadreDialogue, type CinematiqueId } from './cinematiques';
 import { Bandes, Cinema, type FonduCinema } from './cinema';
 import { effacer, fantomeEcran, FONDUS, Rideau } from './rideau';
 import { choixVariante, conclureDuel, enjeuVariante, figureOuNull, ouvrirDuel, REGLES_DUEL } from './fin';
@@ -73,7 +73,12 @@ export interface DepsAventure {
   arena(): ArenaHandle | null;
 }
 
-interface Choix { label: string; key: string; primary?: boolean; run: () => void }
+/** `refus` : remettre à plus tard, ce qui n'a de sens qu'en Promenade libre ; le Récit guidé ne le propose pas. */
+interface Choix { label: string; key: string; primary?: boolean; refus?: boolean; run: () => void }
+
+/** M14 : le travelling avant qui ouvre une scène du Récit guidé : d'un peu plus loin, en glissant. */
+const SERRE_OUVERTURE = 0.8;
+const TAU_OUVERTURE = 1.1;
 
 const FOULE = [
   { id: 'foule-1', apparence: 'pnj-docker-12', nom: 'un docker', at: { x: 10.6, z: 1.8 }, facing: 'droite' as const, ligne: 'Tu as vu ça ? Avec des cartes grises ! Les familles ne vont pas te lâcher.' },
@@ -142,6 +147,12 @@ export class AventureApp {
   private calmeDepuis = 0;
   /** La dernière suite enchaînée seule (une scène refusée ramène à la Préparation). */
   private enchaine: string | null = null;
+  /** Récit guidé : les personnages de la scène en cours (apparences) ; les autres quittent le plateau. */
+  private sujets: string[] = [];
+  /** Récit guidé : la personne devant qui le voyage en cours pose le joueur. */
+  private sujetVoyage: string | null = null;
+  /** Le dialogue ouvert ne se quitte pas à Échap (une rencontre forcée, une scène du Récit guidé). */
+  private dialogueTenu = false;
   /** M11 : cinématique en cours (le monde attend, le menu la passe) ; `cadreGarde` : un dialogue s'est ouvert sur son dernier cadre. */
   private cine: Cinema | null = null;
   /** M13 : une scène du récit se joue (la musique du récit), et l'instant où elle a été vue active pour la dernière fois. */
@@ -494,6 +505,7 @@ export class AventureApp {
       this.rafraichir(spawn);
     }
     if (spawn && this.town) { const sp = this.town.ilot.spawns[spawn]; if (sp) this.town.place(sp, sp.face); }
+    if (this.verrouRecit && this.sujets[0]) this.enPlace(this.sujets[0]);
     if (this.verrouRecit && this.cineActives && !this.bandesGuide) { this.bandesGuide = true; this.bandesEcran().prendre(); }
     // M11-A : point de décision du rival (pas à la reprise) ; la vue se réarme sur une image calme
     this.vue.armee = false;
@@ -546,7 +558,8 @@ export class AventureApp {
   private marquer(): void {
     if (!this.town) return;
     const m: Record<string, '!' | '?' | 'vu' | null> = {};
-    for (const p of this.posesDe(this.town.ilotId())) m[p.apparence] = p.repere;
+    // M14 : aucun repère de promenade dans une scène
+    if (!this.verrouRecit) for (const p of this.posesDe(this.town.ilotId())) m[p.apparence] = p.repere;
     if (this.alerte) m[this.alerte] = 'vu';
     this.town.setMarkers(m);
   }
@@ -599,7 +612,7 @@ export class AventureApp {
   private carton(lieu: string, moment: string, court = false): void {
     const card = h('div', { class: `ville-card fondu${court ? ' court' : ''}`, 'aria-hidden': 'true' }, h('b', null, lieu), h('span', null, moment));
     document.body.append(card);
-    const duree = this.sansMouvement ? (court ? 700 : 1200) : (court ? 1700 : 3200);
+    const duree = this.sansMouvement ? (court ? 700 : 1200) : (court ? 1300 : 3200);
     setTimeout(() => card.remove(), duree);
   }
 
@@ -627,6 +640,8 @@ export class AventureApp {
       this.villePrete = null;
       // M14 : la scène finie restait cadrée jusqu'au noir ; la suivante repart du joueur
       if (guide) { this.cadreGarde = false; town.cadrer(null, true); }
+      if (this.sujetVoyage) this.enPlace(this.sujetVoyage);
+      this.sujetVoyage = null;
       this.save!.ville = { ilot: to, pos: { ...town.walker().pos } };
       this.faire({ type: 'visite', lieu: to });
       town.setInputLocked(this.verrouRecit);
@@ -682,7 +697,7 @@ export class AventureApp {
     if (!t || !s || !this.cineActives || !arriveeAJouer(id, s.cinematiques)) return false;
     s.cinematiques = [...(s.cinematiques ?? []), `lieu-${id}`];
     this.persist();
-    void this.jouerCine({ bandes: true, carton: { lieu: capital(t.ilot.name), ligne: LIGNES_LIEU[id] } }, plansArrivee(t.walker().pos, t.cameraParams()), t.ready());
+    void this.jouerCine({ bandes: true, carton: { lieu: capital(t.ilot.name), ligne: LIGNES_LIEU[id] } }, (this.verrouRecit ? plansArriveeRecit : plansArrivee)(t.walker().pos, t.cameraParams()), t.ready());
     return true;
   }
 
@@ -725,6 +740,8 @@ export class AventureApp {
     if (this.ecran !== 'ville' || !this.town) return;
     const m = son().musique;
     const actif = !!this.cine || !!this.dialog;
+    // M14 : en Récit guidé, tout est scène : une seule musique, sans changer de morceau à chaque quartier
+    const scene = this.recit || this.verrouRecit;
     if (this.recit && actif) this.recitVu = performance.now();
     // une scène se termine quand ni cinématique ni dialogue ne l'a tenue depuis une seconde et demie (entre deux plans)
     if (this.recit && !actif && performance.now() - this.recitVu > 1500) this.recit = false;
@@ -734,9 +751,10 @@ export class AventureApp {
     const repos = maintenant - this.bouge > REPOS_VILLE_S * 1000;
     // Kaï qui surgit : son thème entre (la rythmique seule), et continue dans le duel qui suit sans recommencer
     const kai = this.force?.kind === 'rival';
-    m.vouloir(kai ? { version: 'V-1', couches: { melodie: 0, tension: 0, cuivres: 0 } } : this.recit ? { version: 'I-3' } : consigneVille(ilot, numeroChapitre(chapitreDetaille(this.etat)), repos));
-    m.focus((!!this.dialog && !this.recit && !this.sansFocus) || !!this.modal);
-    const x = this.recit ? null : proximiteFanal(ilot, this.town.walker().pos);
+    m.vouloir(kai ? { version: 'V-1', couches: { melodie: 0, tension: 0, cuivres: 0 } } : scene ? { version: 'I-3' } : consigneVille(ilot, numeroChapitre(chapitreDetaille(this.etat)), repos));
+    m.focus((!!this.dialog && !scene && !this.sansFocus) || !!this.modal);
+    // le combo du Fanal joue sur sa propre piste : jamais sous une scène ni sous un dialogue, deux morceaux s'y chevaucheraient
+    const x = scene || this.dialog ? null : proximiteFanal(ilot, this.town.walker().pos);
     m.source('fanal', x === null ? null : 'I-2', x ?? 0);
   }
 
@@ -755,6 +773,12 @@ export class AventureApp {
     const ch = this.save ? chapitreDetaille(this.etat) : null;
     if (!t || !ch || !estChapitreCarton(ch) || this.dialog || this.modal || this.force || !this.scene(`chapitre-${ch}`)) return;
     const c = CARTONS_CHAPITRE[ch];
+    // M14 : en Récit guidé, le chapitre s'annonce sur le noir, comme au théâtre
+    if (this.verrouRecit) {
+      await new Promise<void>((res) => this.rideau.fermer(res));
+      this.carton(c.titre, c.ligne);
+      return;
+    }
     await this.jouerCine({ bandes: true, carton: { lieu: c.titre, ligne: c.ligne } }, plansChapitre(t.walker().pos, t.cameraParams()), t.ready());
   }
 
@@ -767,6 +791,8 @@ export class AventureApp {
   private tickMonde(): void {
     const t = this.town;
     if (this.bandesGuide && !this.verrouRecit) { this.bandesGuide = false; this.bandesCine?.rendre(); }
+    // M14 : la scène vide le plateau (le prologue garde sa foule, le titre aussi)
+    if (this.save) t?.plateau(!this.verrouRecit ? null : this.etat.affiliation === null || this.etat.competitions.championnat.titre ? 'tous' : this.sujets);
     if (!this.verrouRecit && !this.enVoyage) this.leverSurVille();
     if (this.guide) {
       // M14 : ni rencontre forcée, ni Kaï au hasard : tout passe par les séquences ; la scène attend la fin de la transition
@@ -775,10 +801,13 @@ export class AventureApp {
       if (this.apresTransition && this.ecran === 'ville' && !this.dialog && !this.modal && !this.force && !this.enVoyage && !this.cine && !document.querySelector('.ville-card')) {
         const scene = this.apresTransition;
         this.apresTransition = null;
+        // le cadre de la cinématique d'arrivée n'est pas celui de la scène
+        this.cadreGarde = false;
         scene();
       }
       const enScene = !!(this.dialog || this.modal || this.force || this.cine);
-      const enRoute = this.enVoyage || !!this.apresTransition;
+      // une cinématique d'arrivée se joue à l'image, pas sous le noir ; un carton tient le noir
+      const enRoute = this.enVoyage || (!!this.apresTransition && !this.cine) || !!document.querySelector('.ville-card');
       if (enScene && !enRoute) this.leverSurVille();
       if (enScene || enRoute || this.rideau.enCours || this.ecran !== 'ville' || !this.verrouRecit) { this.calme = 0; return; }
       // quelques images calmes (`entrerVille` tourne une fois avant d'ouvrir ses scènes), et le dernier cadre respire avant le noir
@@ -1007,7 +1036,8 @@ export class AventureApp {
     if (!this.guide || !this.town || this.dialog || this.modal || this.force || this.cine || this.enVoyage || this.apresTransition) return;
     const s = this.prochaineSuite();
     if (!s) return;
-    if ('rival' in s) return this.transition(s.rival.ilot, 'arrivee', () => void this.surgirRival(s.rival.k));
+    this.sujets = [];
+    if ('rival' in s) { this.sujets = ['braise']; return this.transition(s.rival.ilot, 'arrivee', () => void this.surgirRival(s.rival.k)); }
     if (choisi) return this.rejoindre(choisi);
     this.etape(s.etape);
   }
@@ -1019,7 +1049,7 @@ export class AventureApp {
     this.d.app.hidden = true;
     document.querySelector('.ville-card')?.remove();
     son().ambiance(null);
-    son().musique.vouloir({ version: 'I-2' });
+    son().musique.vouloir({ version: 'I-3' });
     const s = this.save!;
     const e = this.etat;
     const joueurs = joueursDeRue(s.directeur, e, this.ilotsRecit, this.quaiRangs);
@@ -1139,7 +1169,12 @@ export class AventureApp {
   /** Écran noir, le joueur devant le personnage, et la scène s'ouvre. */
   private rejoindre(id: string): void {
     const ilot = quartierDe(id, this.ilotsRecit, (x) => this.posesDe(x));
-    if (ilot) return this.transition(ilot, `npc-${id}`, () => this.parler(id));
+    if (ilot) {
+      const sujet = this.posesDe(ilot).find((p) => p.id === id)?.apparence ?? null;
+      this.sujets = sujet ? [sujet] : [];
+      this.sujetVoyage = sujet;
+      return this.transition(ilot, `npc-${id}`, () => this.parler(id));
+    }
     // garde-fou (parité testée) : plutôt la marche qu'un joueur bloqué
     console.warn('Récit guidé : personnage introuvable', id);
     delete this.save!.recit;
@@ -1147,6 +1182,17 @@ export class AventureApp {
     this.town?.setInputLocked(false);
     this.rideau.ouvrir();
     this.toast('Cette étape se joue à pied : retour à la Promenade libre.');
+  }
+
+  /** Mise en scène : le joueur à côté du personnage, tous deux face à face, jamais de dos à la caméra. */
+  private enPlace(apparence: string): void {
+    const t = this.town;
+    const at = this.ou(apparence);
+    if (!t || !at) return;
+    const cote = t.walker().pos.x >= at.x ? 1 : -1;
+    const pos = [cote, -cote].map((c) => ({ x: at.x + c * 1.5, z: at.z })).find((p) => !blocked(t.ilot, p));
+    if (pos) t.place(pos, regardVers(pos, at));
+    t.tournerNpc(apparence, regardVers(at, pos ?? t.walker().pos));
   }
 
   /** Le menu change de mode, sans perte : ce n'est qu'un réglage de l'aventure. */
@@ -1241,7 +1287,7 @@ export class AventureApp {
       const j = t ? { ...t.walker().pos } : null;
       const ouvrir = () => this.dire('Le Championnat des Champions', '« Duellistes de la ville ! » Sur l’estrade, les quatre chefs lèvent leur bannière. « Quiconque a vaincu les quatre maisons peut prétendre au titre : quatre bannières, un miroir, une finale. » La foule de la Grande Cour se tourne vers vous.', [
         { label: 'S’inscrire', key: 'dlg-next', primary: true, run: () => this.championnatDialog() },
-        { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
+        { label: 'Plus tard', key: 'dlg-close', refus: true, run: () => this.fermerDialogue() },
       ], 'pnj-commis-40', false, hr && j ? cadreDialogue(hr, j) : null);
       if (t && j && this.scene('championnat')) {
         void this.jouerCine({ bandes: true, carton: { lieu: 'Le Championnat des Champions', ligne: 'quatre bannières, un miroir, une finale' } }, plansTitre(hr, j, t.cameraParams())).then(ouvrir);
@@ -1264,7 +1310,7 @@ export class AventureApp {
       ? 'Alors, tu te décides ? La foule commence à regarder.'
       : 'Toi aussi, ils t’ont fermé la porte du tournoi ? Cartes grises, pas de famille… Alors jouons ici, sur le Quai. Qu’ils voient ce qu’ils ratent.', [
       { label: 'Relever le défi', key: 'dlg-duel', primary: true, run: () => this.preparer(duelPrologue(this.prochaineGraine(), this.etat)) },
-      { label: 'Pas maintenant', key: 'dlg-close', run: () => this.fermerDialogue() },
+      { label: 'Pas maintenant', key: 'dlg-close', refus: true, run: () => this.fermerDialogue() },
     ], KAI_PROLOGUE.apparence, false, cadre);
     if (!deja && this.scene('prologue-kai')) { void this.jouerCine({ bandes: true }, plansKaiPrologue(kai)).then(ouvrir); return; }
     ouvrir();
@@ -1281,7 +1327,7 @@ export class AventureApp {
       : `« ${m.offre} » ${m.devise}`;
     this.dire(`${fig.nom}, ${fig.titre}`, texte, [
       { label: `Accepter ${la(f)}…`, key: 'dlg-accepter', primary: true, run: () => this.confirmation(f) },
-      { label: 'Différer', key: 'dlg-differer', run: () => { this.faire({ type: 'scene', id: 'P6' }); this.dire(fig.nom, `« Prends ton temps. Tu me trouveras ${lieuDe(f)}. L’invitation tient. »`, [fermer(this)], fig.apparence); } },
+      { label: 'Différer', key: 'dlg-differer', refus: true, run: () => { this.faire({ type: 'scene', id: 'P6' }); this.dire(fig.nom, `« Prends ton temps. Tu me trouveras ${lieuDe(f)}. L’invitation tient. »`, [fermer(this)], fig.apparence); } },
       { label: 'Chercher une autre voie', key: 'dlg-chercher', run: () => { this.faire({ type: 'scene', id: 'P6' }); this.dire('Les autres voies', `« Va les voir, c’est ton droit. » ${FAMILIES.filter((x) => x !== f).map((x) => `${emissaire(x).nom} (${x}) vous attend ${lieuDe(x)}`).join(' ; ')}. L’invitation ${de(f)} reste valable.`, [fermer(this)], fig.apparence); } },
     ], fig.apparence, false, cadre);
   }
@@ -1331,7 +1377,7 @@ export class AventureApp {
       const at = this.ou(c.apparence);
       this.dire(`${c.nom}, ${c.titre}`, `« Te voilà des nôtres. Maintenant, montre-moi ce que valent tes nouvelles cartes : je mets en jeu ${c.enjeu.kind === 'variante' ? auChoix(c.enjeu.defId) : ''}. »`, [
         { label: `Défier ${c.nom}`, key: 'dlg-duel', primary: true, run: () => this.lancerFigure(c.id) },
-        { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
+        { label: 'Plus tard', key: 'dlg-close', refus: true, run: () => this.fermerDialogue() },
       ], c.apparence, false, t && at ? cadreDialogue(at, t.walker().pos) : null);
     };
     const t = this.town;
@@ -1366,7 +1412,7 @@ export class AventureApp {
     const contexte = !st.deja && fig.famille !== e.affiliation ? this.replique(`defi-${fig.famille}`, 'defi') : '';
     this.dire(`${fig.nom}, ${fig.titre}`, `${st.deja ? this.replique(fig.id, 'revanche', ligneFigure(fig, true)) : REPLIQUES[fig.id] ?? ligneFigure(fig, false)}${contexte ? ` ${contexte}` : ''} ${enjeu}`, [
       { label: `${st.deja ? 'Revanche' : 'Défier'} — ${fig.nom}`, key: 'dlg-duel', primary: true, run: () => this.lancerFigure(fig.id) },
-      { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
+      { label: 'Plus tard', key: 'dlg-close', refus: true, run: () => this.fermerDialogue() },
     ], fig.apparence);
   }
 
@@ -1384,7 +1430,7 @@ export class AventureApp {
     const gagnee = !!e.competitions.epreuves[f]?.gagnee;
     this.dire(capital(r.nom), `${this.replique(`epreuve-${f}`, 'parole')} « L’Épreuve du quartier : trois de nos membres, l’un après l’autre. Une défaite, et l’on recommence. » ${st.texte} ${gagnee ? '' : `Récompense : ${nomCarte(varianteDe(f, 1))}.`}`, st.ouvert ? [
       { label: `Duel ${etape + 1} sur 3`, key: 'dlg-duel', primary: true, run: () => this.preparer(duelEpreuve(f, etape, this.etat, this.prochaineGraine(), gagnee)) },
-      { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
+      { label: 'Plus tard', key: 'dlg-close', refus: true, run: () => this.fermerDialogue() },
     ] : [fermer(this)], r.apparence);
   }
 
@@ -1396,7 +1442,7 @@ export class AventureApp {
     const gagnee = !!e.competitions.joutes[f]?.gagnee;
     this.dire(capital(r.nom), `${this.replique(`joute-${f}`, 'parole')} « La Joute de la maison se joue avec ${CONTRAINTE_JOUTE[f].texte}. » ${st.texte} ${gagnee ? '' : `Récompense : ${nomCarte(varianteDe(f, 2))}.`}`, st.ouvert ? [
       { label: gagnee ? 'Rejouer la Joute' : 'Jouter', key: 'dlg-duel', primary: true, run: () => this.preparer(duelJoute(f, this.etat, this.prochaineGraine(), gagnee)) },
-      { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
+      { label: 'Plus tard', key: 'dlg-close', refus: true, run: () => this.fermerDialogue() },
     ] : [{ label: 'Ouvrir le deck', key: 'dlg-deck', run: () => { this.fermerDialogue(); this.collection(); } }, fermer(this)], r.apparence);
   }
 
@@ -1417,7 +1463,7 @@ export class AventureApp {
         return st.ouvert ? [{ label: `${figureDe(f, 'chef').nom} (${f})`, key: `dlg-poule-${f}`, run: () => this.preparer(duelChampionnat('poule', this.etat, this.prochaineGraine(), f)) }] : [];
       });
       const vaincus = Object.keys(c.championnat.poule).length;
-      return this.dire('Les Quatre Bannières', `Battez trois des quatre chefs, avec une Signature différente à chaque victoire, et qui change à chaque duel (${vaincus}/3). Signature équipée : ${sig ? CATALOG[`sig-${sig}`]!.name : 'aucune'}.${choix.length ? '' : ' Aucun duel possible avec cette Signature : changez-la dans le deck.'}`, [...choix, { label: 'Ouvrir le deck', key: 'dlg-deck', run: () => { this.fermerDialogue(); this.collection(); } }, { label: 'Plus tard', key: 'dlg-close', primary: !choix.length, run: () => this.fermerDialogue() }]);
+      return this.dire('Les Quatre Bannières', `Battez trois des quatre chefs, avec une Signature différente à chaque victoire, et qui change à chaque duel (${vaincus}/3). Signature équipée : ${sig ? CATALOG[`sig-${sig}`]!.name : 'aucune'}.${choix.length ? '' : ' Aucun duel possible avec cette Signature : changez-la dans le deck.'}`, [...choix, { label: 'Ouvrir le deck', key: 'dlg-deck', run: () => { this.fermerDialogue(); this.collection(); } }, { label: 'Plus tard', key: 'dlg-close', primary: !choix.length, refus: !!choix.length, run: () => this.fermerDialogue() }]);
     }
     if (m === 'miroir') {
       // M10-E : le Miroir est construit sur vos deux familles les plus jouées (vos cinq derniers duels, données publiques)
@@ -1427,13 +1473,13 @@ export class AventureApp {
       const qui = kai ? 'Kaï' : figure(`brasDroit-${dom.find((f) => f !== 'Cendre') ?? 'Ronce'}`).nom;
       return this.dire('Le Miroir', `${kai ? '« On a commencé ensemble, le soir du tournoi. On finit ensemble. » Kaï a gagné sa place en demi-finale.' : `${qui} a gagné sa place en demi-finale.`} Son deck est construit sur vos deux familles les plus jouées : ${la(dom[0])} et ${la(dom[1])}.`, [
         { label: `Affronter ${qui}`, key: 'dlg-duel', primary: true, run: () => this.preparer(prevu()) },
-        { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
+        { label: 'Plus tard', key: 'dlg-close', refus: true, run: () => this.fermerDialogue() },
       ], kai ? 'braise' : figure(`brasDroit-${dom.find((f) => f !== 'Cendre') ?? 'Ronce'}`).apparence);
     }
     const st = statutFinale(c, sig);
     this.dire('La Finale', `${TENANTE.nom}, ${TENANTE.titre}, vous attend. Deux manches gagnantes ; changez de Signature entre deux manches. ${st.texte}`, st.ouvert ? [
       { label: 'Jouer la manche', key: 'dlg-duel', primary: true, run: () => this.preparer(duelChampionnat('finale', this.etat, this.prochaineGraine())) },
-      { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
+      { label: 'Plus tard', key: 'dlg-close', refus: true, run: () => this.fermerDialogue() },
     ] : [{ label: 'Ouvrir le deck', key: 'dlg-deck', run: () => { this.fermerDialogue(); this.collection(); } }, fermer(this)], TENANTE.apparence);
   }
 
@@ -1467,7 +1513,7 @@ export class AventureApp {
       : `${this.replique(id, 'parole', membre ?? RUE[id] ?? '« Une partie, pour passer le temps ? »')} (duel de rue, sans récompense)`;
     this.dire(capital(r.nom), texte, [
       { label: 'Accepter', key: 'dlg-duel', primary: true, run: () => this.preparer(duelFacultatif(id, this.etat, this.prochaineGraine(), this.save!.historique)) },
-      { label: 'Refuser', key: 'dlg-close', run: () => { this.save!.directeur = conclure(this.save!.directeur, id, false); this.persist(); this.fermerDialogue(); } },
+      { label: 'Refuser', key: 'dlg-close', refus: true, run: () => { this.save!.directeur = conclure(this.save!.directeur, id, false); this.persist(); this.fermerDialogue(); } },
     ], r.apparence);
   }
 
@@ -1553,6 +1599,8 @@ export class AventureApp {
   /** Préparation (dialogue) : adversaire, lieu, PV, enjeu annoncé, les deux decks ; puis le duel. */
   private preparer(prevu: DuelPrevu, forcee = false): void {
     this.fermerDialogue();
+    // M14 : la Préparation a déjà tout dit, et la scène l'enjeu : pas de fenêtre de plus devant le duel
+    if (this.verrouRecit) { this.lancer(prevu); return; }
     // avenant 09 : une variante au choix (trois cartes) à la première victoire, la suivante qui manque en revanche
     const ev = enjeuVariante(this.etat, prevu.rencontre);
     const carte = (id: string) => cardEl(id, { artSeed: this.params.artSeed, tag: 'div' });
@@ -1892,7 +1940,8 @@ export class AventureApp {
 
   // ------------------------------------------------------------------ fenêtres
 
-  dire(titre: string, texte: string, choix: Choix[], apparence?: string, forcee = false, cadre?: CadreDialogue | null, panneau = false): void {
+  dire(titre: string, texte: string, tous: Choix[], apparence?: string, forcee = false, cadre?: CadreDialogue | null, panneau = false): void {
+    const choix = this.verrouRecit ? tous.filter((c) => !c.refus) : tous;
     // une réplique qui en suit une autre : le cadre reste en place, seul le texte change
     const prec = this.dialog;
     const enchaine = !this.sansMouvement && !!prec && prec.classList.contains('av-panneau') === panneau;
@@ -1903,10 +1952,16 @@ export class AventureApp {
     cadre ??= this.cadreScene(apparence, panneau);
     // M11 : dialogue de scène, cadré (la caméra glisse sur le ou les personnages ; bandes gardées si la scène les tient)
     if (cadre && this.town && this.cineActives) {
-      this.town.cadrer({
+      const town = this.town;
+      const plan: Cadrage = {
         at: cadre.at, ...(cadre.zoom !== undefined ? { zoom: cadre.zoom } : {}), ...(cadre.hauteur !== undefined ? { hauteur: cadre.hauteur } : {}),
         ...(cadre.sujets ? { sujets: cadre.sujets } : {}), ...(cadre.serre !== undefined ? { serre: cadre.serre } : {}), tau: 0.65,
-      }, this.sansMouvement || this.rideau.noir);
+      };
+      // M14 : la scène s'ouvre sur un lent travelling avant, sorti du noir
+      if (this.verrouRecit && this.rideau.noir && cadre.sujets && !this.sansMouvement) {
+        town.cadrer({ ...plan, serre: (cadre.serre ?? 1) * SERRE_OUVERTURE }, true);
+        setTimeout(() => { if (this.town === town && this.cadreGarde) town.cadrer({ ...plan, tau: TAU_OUVERTURE }); }, 80);
+      } else town.cadrer(plan, this.sansMouvement || this.rideau.noir);
       this.cadreGarde = true;
       if (cadre.bandes && !this.sceneBandes) { this.bandesEcran().prendre(); this.sceneBandes = true; }
     }
@@ -1918,7 +1973,9 @@ export class AventureApp {
     }
     const row = h('div', { class: 'ville-choices' }, ...choix.map((c) => h('button', { class: `ville-btn${c.primary ? ' primary' : ''}`, type: 'button', 'data-key': c.key, onclick: () => c.run() }, ...(panneau ? ligneMenu(c.label) : [c.label]))));
     box.append(h('div', { class: 'ville-dialog-body' }, h('b', null, titre), h('p', null, texte), row));
-    box.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); if (!forcee) this.fermerDialogue(); } });
+    // M14 : une scène du Récit guidé ne se quitte pas à Échap, sauf si elle a un bouton pour se fermer
+    const tenue = this.dialogueTenu = forcee || (this.verrouRecit && !choix.some((c) => c.key === 'dlg-close'));
+    box.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); if (!tenue) this.fermerDialogue(); } });
     document.body.append(box);
     this.dialog = box;
     (row.querySelector<HTMLButtonElement>('.primary') ?? row.querySelector('button'))?.focus({ preventScroll: true });
@@ -1997,7 +2054,7 @@ export class AventureApp {
     // M11-A : une rencontre forcée ne s'esquive pas par le menu (on peut abandonner le duel, sans perte)
     if (this.force) return;
     if (this.modal) { this.fermerModal(); return; }
-    if (this.dialog) { this.fermerDialogue(); return; }
+    if (this.dialog) { if (!this.dialogueTenu) this.fermerDialogue(); return; }
     this.dire('Menu', 'L’aventure est sauvegardée à chaque étape.', [
       { label: 'Reprendre', key: 'dlg-close', primary: true, run: () => this.fermerDialogue() },
       { label: 'Deck et collection', key: 'menu-deck', run: () => { this.fermerDialogue(); this.collection(); } },
