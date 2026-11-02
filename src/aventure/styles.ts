@@ -15,7 +15,10 @@ export function installAventureStyles(): void {
   const s = document.createElement('style');
   s.textContent = `
 #shell.av-scr[hidden] { display: none; }
-#shell.av-scr { position: fixed; inset: 0; z-index: 2600; display: grid; place-items: center; overflow: auto; padding: 24px 16px; background: radial-gradient(ellipse at 50% 40%, rgba(6, 8, 16, 0.55), rgba(4, 6, 12, 0.92)); }
+/* passe 200 : deux écrans de l'enveloppe en fondu enchaîné */
+.shell-fantome { position: fixed; inset: 0; z-index: 2601; overflow: hidden; pointer-events: none; }
+@media (prefers-reduced-motion: no-preference) { #shell.av-entree { animation: lqv-texte 0.3s ease-out; } }
+:is(#shell, .shell-fantome).av-scr { position: fixed; inset: 0; z-index: 2600; display: grid; place-items: center; overflow: auto; padding: 24px 16px; background: radial-gradient(ellipse at 50% 40%, rgba(6, 8, 16, 0.55), rgba(4, 6, 12, 0.92)); }
 .av-titre { position: relative; z-index: 1; width: min(760px, 100%); color: var(--lqv-ivoire); font: 15px/1.5 Georgia, serif; text-align: center; }
 /* titre et résultat : le texte sous le buste, jamais dessus */
 .av-accroche { align-self: safe end; margin-bottom: 3vh; }
@@ -65,7 +68,8 @@ export function installAventureStyles(): void {
 .av-n-name { font: 600 calc(var(--card-w) * 0.13)/1 system-ui, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; color: #55555c; }
 .av-n-pow { font: 700 calc(var(--card-w) * 0.15)/1.3 system-ui, sans-serif; color: #2a2a2e; }
 .av-n-note { position: absolute; right: 4px; top: 3px; font: 700 11px/1 system-ui, sans-serif; color: #55555c; }
-.av-modal { position: fixed; inset: 0; z-index: 2750; display: grid; place-items: center; padding: 12px; background: radial-gradient(ellipse at 50% 45%, rgba(4, 6, 12, 0.55), rgba(4, 6, 12, 0.86)); }
+.av-modal, .av-modal-sortie { position: fixed; inset: 0; z-index: 2750; display: grid; place-items: center; padding: 12px; background: radial-gradient(ellipse at 50% 45%, rgba(4, 6, 12, 0.55), rgba(4, 6, 12, 0.86)); }
+@media (prefers-reduced-motion: no-preference) { .av-modal:not(.direct) { animation: lqv-texte 0.3s ease-out; } }
 .av-confirm { width: min(780px, 100%); max-height: calc(100vh - 24px); overflow: auto; box-sizing: border-box; padding: 6px 14px; border: 14px solid transparent; border-image: var(--lqv-cadre) 14 / 14px stretch; background: var(--lqv-panneau) border-box; color: var(--lqv-ivoire); font: 15px/1.5 Georgia, serif; box-shadow: var(--lqv-ombre); scrollbar-width: thin; scrollbar-color: rgba(226, 196, 138, 0.5) transparent; }
 /* les boutons d'une fenêtre restent à l'écran quand elle défile */
 .av-confirm > .ville-choices:last-child { position: sticky; bottom: -6px; margin: 10px -14px -6px; padding: 10px 14px 6px; background: linear-gradient(180deg, transparent, rgba(9, 10, 18, 0.98) 34%); }
@@ -92,9 +96,14 @@ export function installAventureStyles(): void {
 .av-suite { min-height: 52px; padding: 0.5em 1.8em; font-size: clamp(19px, 1.3vw, 25px); white-space: nowrap; }
 /* M14, révision 3 : le noir entre deux scènes, les fenêtres sur fond noir, la Préparation (plein écran, sans la ville) */
 .ville-fade.plein { opacity: 1; transition: none; }
-.ville-card.court.out { transition: opacity 0.45s ease 0.75s; }
+.ville-fade.in { pointer-events: auto; }
 .av-modal.noire { background: #04060c; }
-#shell.av-scr.av-preparation { background: radial-gradient(ellipse at 50% 0%, #1d1a26, #0a0b13 58%, #04060c); padding: 18px 20px; }
+.av-modal-sortie.noire { z-index: 2970; background: none; }
+:is(#shell, .shell-fantome).av-scr.av-preparation { background: radial-gradient(ellipse at 50% 0%, #1d1a26, #0a0b13 58%, #04060c); padding: 18px 20px; }
+@media (prefers-reduced-motion: no-preference) {
+  .av-prepa-tete, .av-prepa-suite, .av-prepa-rues, .av-prepa-pied { animation: lqv-entree 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+  .av-prepa-suite { animation-delay: 0.12s; } .av-prepa-rues { animation-delay: 0.22s; } .av-prepa-pied { animation-delay: 0.3s; }
+}
 .av-prepa { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 12px; box-sizing: border-box; width: min(1560px, 100%); height: min(940px, 100%); color: var(--lqv-ivoire); font: 15px/1.5 Georgia, serif; }
 .av-prepa-tete { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 20px; padding-bottom: 6px; border-bottom: 1px solid; border-image: linear-gradient(90deg, var(--lqv-or), transparent 80%) 1; }
 .av-prepa-tete h1 { margin: 0; font: 700 clamp(30px, 3vw, 44px)/1.1 Georgia, serif; color: var(--lqv-or-clair); letter-spacing: 0.02em; }
@@ -139,7 +148,7 @@ export function installAventureStyles(): void {
 .av-hud .ville-tools .ville-btn { margin-left: -1px; font-size: clamp(14px, 1vw, 19px); padding: 0.5em 1em; background: linear-gradient(180deg, rgba(30, 31, 46, 0.86), rgba(12, 13, 22, 0.9)); }
 .av-hud .ville-tools kbd { margin-left: 6px; padding: 0 4px; border: 1px solid rgba(226, 196, 138, 0.4); color: var(--lqv-sepia); font: 11px/1.4 system-ui, sans-serif; }
 /* le menu : un panneau à droite, une entrée par ligne, sa valeur au bout */
-.ville-dialog.av-panneau { left: auto; right: 12px; top: 62px; bottom: auto; transform: none; width: 356px; min-height: 0; max-height: calc(100vh - 74px); overflow: auto; }
+.ville-dialog.av-panneau, .ville-dialog-sortie.av-panneau { left: auto; right: 12px; top: 62px; bottom: auto; transform: none; width: 356px; min-height: 0; max-height: calc(100vh - 74px); overflow: auto; }
 .av-panneau .ville-dialog-body > b { position: static; max-width: none; padding: 0 0 6px; font-size: 22px; color: var(--lqv-or-clair); background: none; clip-path: none; }
 .av-panneau .ville-dialog-body p { margin: 0 0 10px; color: var(--lqv-sepia); font-size: 13px; }
 .av-panneau .ville-choices { flex-direction: column; flex-wrap: nowrap; gap: 4px; }

@@ -99,6 +99,27 @@ export function framingFor(p: RigParams, target: { x: number; z: number }): Fram
   return { pos, aim };
 }
 
+/**
+ * Un pas d'amorti (ressort critique, passe 200) : le mouvement part en douceur, s'arrête en douceur et ne dépasse jamais
+ * sa cible, quel que soit `dt` ; à vitesse de cible constante, le retard reste `tau`, comme l'amorti exponentiel d'avant.
+ * Rend la nouvelle valeur et la nouvelle vitesse.
+ */
+export function amortir(x: number, cible: number, v: number, tau: number, dt: number): [number, number] {
+  const w = 2 / Math.max(1e-4, tau);
+  const k = w * dt;
+  const e = 1 / (1 + k + 0.48 * k * k + 0.235 * k * k * k);
+  const d = x - cible;
+  const t = (v + w * d) * dt;
+  const v2 = (v - w * t) * e;
+  const x2 = cible + (d + t) * e;
+  // le pas ne franchit pas la cible
+  return (cible - x) * (x2 - cible) > 0 ? [cible, 0] : [x2, v2];
+}
+
+const amortirVec = (x: THREE.Vector3, cible: THREE.Vector3, v: THREE.Vector3, tau: number, dt: number): void => {
+  for (const c of ['x', 'y', 'z'] as const) [x[c], v[c]] = amortir(x[c], cible[c], v[c], tau, dt);
+};
+
 export interface CameraRig {
   readonly params: RigParams;
   /**
@@ -116,16 +137,17 @@ export function createRig(id: CameraId, bounds?: { minX: number; maxX: number },
   for (const t of tuning) if (t) Object.assign(params, t);
   const aim = new THREE.Vector3();
   const pos = new THREE.Vector3();
+  const vAim = new THREE.Vector3();
+  const vPos = new THREE.Vector3();
   let primed = false;
   return {
     params,
     update(camera, target, dt, snap = false, tuning) {
       const p = tuning ? { ...params, ...tuning } : params;
       const f = framingFor(p, target);
-      if (snap || !primed) { aim.copy(f.aim); pos.copy(f.pos); primed = true; } else {
-        const k = 1 - Math.exp(-dt / p.tau);
-        aim.lerp(f.aim, k);
-        pos.lerp(f.pos, k);
+      if (snap || !primed) { aim.copy(f.aim); pos.copy(f.pos); vAim.set(0, 0, 0); vPos.set(0, 0, 0); primed = true; } else {
+        amortirVec(aim, f.aim, vAim, p.tau, dt);
+        amortirVec(pos, f.pos, vPos, p.tau, dt);
       }
       camera.position.copy(pos);
       camera.lookAt(aim);

@@ -43,23 +43,36 @@ export function installVilleStyles(): void {
 .ville-tools { position: absolute; right: 16px; top: 14px; display: flex; gap: 6px; }
 .ville-tip { position: absolute; left: 50%; top: 16px; transform: translateX(-50%); max-width: min(560px, calc(100vw - 32px)); padding: 9px 16px; border-radius: 2px; background: rgba(14, 12, 12, 0.92); border: 1px solid var(--lqv-or); color: #fff4dc; font: 600 14px/1.35 Georgia, serif; text-align: center; box-shadow: 0 6px 20px rgba(0,0,0,.5); }
 .ville-tip[hidden] { display: none; }
-.ville-dialog { position: fixed; z-index: 2700; left: 50%; bottom: 14px; transform: translateX(-50%); box-sizing: border-box; width: min(clamp(980px, 62vw, 1320px), calc(100vw - 24px)); min-height: 148px; display: flex; gap: 18px; align-items: center; padding: 6px 14px; border: 14px solid transparent; border-image: var(--lqv-cadre) 14 / 14px stretch; background: var(--lqv-panneau) border-box; color: var(--lqv-ivoire); font: clamp(17px, 1.15vw, 22px)/1.5 Georgia, serif; box-shadow: var(--lqv-ombre); }
-@media (prefers-reduced-motion: no-preference) { .ville-dialog, .av-confirm { animation: lqv-entree 0.16s ease-out; } }
-@keyframes lqv-entree { from { opacity: 0; } to { opacity: 1; } }
+.ville-dialog, .ville-dialog-sortie { position: fixed; z-index: 2700; left: 50%; bottom: 14px; transform: translateX(-50%); box-sizing: border-box; width: min(clamp(980px, 62vw, 1320px), calc(100vw - 24px)); min-height: 148px; display: flex; gap: 18px; align-items: center; padding: 6px 14px; border: 14px solid transparent; border-image: var(--lqv-cadre) 14 / 14px stretch; background: var(--lqv-panneau) border-box; color: var(--lqv-ivoire); font: clamp(17px, 1.15vw, 22px)/1.5 Georgia, serif; box-shadow: var(--lqv-ombre); }
+/* passe 200 : on entre et on sort en douceur ; une réplique qui en suit une autre garde son cadre, seul le texte change */
+@media (prefers-reduced-motion: no-preference) {
+  .ville-dialog, .av-confirm { animation: lqv-entree 0.3s cubic-bezier(0.22, 0.61, 0.36, 1); }
+  .ville-dialog.enchaine { animation: none; }
+  .ville-dialog.enchaine .ville-dialog-body > p, .ville-dialog.enchaine .ville-choices, .ville-dialog.enchaine:not(.meme-voix) > .ville-portrait, .ville-dialog.enchaine:not(.meme-voix) .ville-dialog-body > b { animation: lqv-texte 0.3s ease-out; }
+  .sortie { animation: lqv-sortie 0.22s ease-in forwards; pointer-events: none; }
+}
+@keyframes lqv-entree { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
+@keyframes lqv-texte { from { opacity: 0; } to { opacity: 1; } }
+@keyframes lqv-sortie { from { opacity: 1; } to { opacity: 0; } }
 .ville-portrait { width: clamp(104px, 7.2vw, 150px); height: clamp(104px, 7.2vw, 150px); flex: none; border-radius: 0; border: 1px solid var(--lqv-or); outline: 1px solid rgba(226, 196, 138, 0.32); outline-offset: 2px; background: #141019; object-fit: cover; }
 .ville-dialog-body { flex: 1; min-width: 0; }
 .ville-dialog-body > b { position: absolute; left: 12px; top: -28px; max-width: calc(100% - 24px); box-sizing: border-box; padding: 4px 22px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 700 15px/1.25 Georgia, serif; letter-spacing: 0.02em; color: #1a1408; background: linear-gradient(180deg, #f2dcab, #d6b26e); clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%); }
 .ville-portrait + .ville-dialog-body > b { left: calc(clamp(104px, 7.2vw, 150px) + 26px); max-width: calc(100% - clamp(104px, 7.2vw, 150px) - 38px); font-size: clamp(15px, 1vw, 19px); }
 .ville-dialog-body p { margin: 8px 0 12px; }
 .ville-choices { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
-.ville-dialog .ville-btn { font-size: clamp(14px, 1vw, 19px); }
+.ville-dialog .ville-btn, .ville-dialog-sortie .ville-btn { font-size: clamp(14px, 1vw, 19px); }
 .ville-btn.primary { background: linear-gradient(180deg, #f2dcab, #d6b26e); color: #1a1408; border-color: var(--lqv-or-clair); box-shadow: inset 0 0 0 1px rgba(90, 60, 20, 0.4); }
 .ville-btn.primary:hover:not(:disabled) { color: #1a1408; box-shadow: inset 0 0 0 1px rgba(90, 60, 20, 0.4), 0 0 14px rgba(255, 200, 120, 0.35); }
-.ville-card { position: fixed; inset: 0; z-index: 2900; display: grid; place-content: center; text-align: center; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(4,6,12,0.55), rgba(4,6,12,0.95)); color: #ffe7b0; }
+.ville-card { position: fixed; inset: 0; z-index: 2960; display: grid; place-content: center; text-align: center; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(4,6,12,0.55), rgba(4,6,12,0.95)); color: #ffe7b0; }
 .ville-card b { font: 700 clamp(40px, 6vw, 84px)/1 Georgia, serif; letter-spacing: 0.04em; text-shadow: 0 0 24px rgba(255, 190, 110, 0.35); }
 .ville-card span { margin-top: 10px; font: italic 18px/1.2 Georgia, serif; color: #d8ccb4; letter-spacing: 0.2em; text-transform: uppercase; }
 .ville-card.out { opacity: 0; transition: opacity 1.4s ease 1.4s; }
-.ville-fade { position: fixed; inset: 0; z-index: 2950; pointer-events: none; background: #04060c; opacity: 0; transition: opacity 0.28s ease; }
+@media (prefers-reduced-motion: no-preference) {
+  .ville-card.fondu { animation: lqv-carton 3.2s ease both; }
+  .ville-card.fondu.court { animation-duration: 1.7s; }
+}
+@keyframes lqv-carton { from { opacity: 0; } 22% { opacity: 1; } 64% { opacity: 1; } to { opacity: 0; } }
+.ville-fade { position: fixed; inset: 0; z-index: 2950; pointer-events: none; background: #04060c; opacity: 0; transition: opacity 0.28s cubic-bezier(0.45, 0, 0.55, 1); }
 .ville-fade.in { opacity: 1; }
 .ville-fade.out { opacity: 0; transition-duration: 0.4s; }
 .ville-toast { position: fixed; left: 50%; bottom: 28px; z-index: 2800; transform: translateX(-50%); padding: 9px 18px; border-radius: 2px; background: rgba(10, 11, 19, 0.95); border: 1px solid var(--lqv-or); color: var(--lqv-ivoire); font: 14px/1.35 Georgia, serif; max-width: calc(100vw - 32px); box-shadow: 0 6px 20px rgba(0,0,0,.5); }

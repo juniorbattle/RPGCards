@@ -79,6 +79,8 @@ export interface Cadrage { at: Vec2; zoom?: number; hauteur?: number; followZ?: 
 
 export interface TownStats {
   camera: CameraId;
+  /** Position de la caméra (QA : `tools/m14-fluidite.mjs`). */
+  cam: [number, number, number];
   calls: number;
   triangles: number;
   textures: number;
@@ -793,7 +795,7 @@ export function createTown(o: TownOptions): Town {
     stats() {
       const info = renderer.info;
       return {
-        camera: rig.params.id, calls: info.render.calls, triangles: info.render.triangles, textures: info.memory.textures,
+        camera: rig.params.id, cam: [camera.position.x, camera.position.y, camera.position.z], calls: info.render.calls, triangles: info.render.triangles, textures: info.memory.textures,
         geometries: info.memory.geometries, programs: info.programs?.length ?? 0, lights: world.lights.length,
         cpuMs: Math.round(cpuMs * 10) / 10, frames, buildMs, firstFrameMs, mountMs, mountFrameMs,
       };

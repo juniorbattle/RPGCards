@@ -59,7 +59,8 @@ import { CONTRAINTE_JOUTE, famillesDominantes, manche, ouvertChampionnat, statut
 import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave, type DuelAventure } from './sauvegarde';
 import { installAventureStyles } from './styles';
 import { aJouer, arriveeAJouer, cadreDialogue, cadreGroupe, CARTONS_CHAPITRE, cinePermise, DUREES, ecrireCine, estChapitreCarton, LIGNES_LIEU, lireCine, plansAffiliation, plansArrivee, plansChapitre, plansChef, plansEmissaire, plansGuetteur, plansKaiPrologue, plansRival, plansTitre, type CadreDialogue, type CinematiqueId } from './cinematiques';
-import { Bandes, Cinema } from './cinema';
+import { Bandes, Cinema, type FonduCinema } from './cinema';
+import { effacer, fantomeEcran, FONDUS, Rideau } from './rideau';
 import { choixVariante, conclureDuel, enjeuVariante, figureOuNull, ouvrirDuel, REGLES_DUEL } from './fin';
 import { conseilLu, conseilsPermis, ecrireConseils, lireConseils } from './conseils';
 import { duelTip } from '../shell/tips';
@@ -131,13 +132,16 @@ export class AventureApp {
   /** M14 : la scène à ouvrir une fois la transition du Récit guidé finie (fondu, cinématique de lieu). */
   private apresTransition: (() => void) | null = null;
   private enVoyage = false;
-  /** M14, révision 3 : le noir entre deux scènes (posé, ou en fondu : `enFondu`) ; les images calmes qui disent qu'une scène est finie. */
-  private noir: HTMLElement | null = null;
-  private enFondu = false;
+  /** Passe 200 : le seul noir du jeu (`rideau.ts`) ; `plonge` : une cinématique le tient, le temps d'une coupe ; la ville prête à être montrée. */
+  private readonly rideau = new Rideau(() => this.sansMouvement);
+  private plonge = false;
+  private villePrete: Town | null = null;
+  private attenteVille = false;
+  /** M14, révision 3 : les images calmes qui disent qu'une scène est finie, et depuis quand. */
   private calme = 0;
-  /** La dernière suite enchaînée seule (une scène refusée ramène à la Préparation) ; `cadreCoupe` : premier cadre sorti du noir, sans glissade. */
+  private calmeDepuis = 0;
+  /** La dernière suite enchaînée seule (une scène refusée ramène à la Préparation). */
   private enchaine: string | null = null;
-  private cadreCoupe = false;
   /** M11 : cinématique en cours (le monde attend, le menu la passe) ; `cadreGarde` : un dialogue s'est ouvert sur son dernier cadre. */
   private cine: Cinema | null = null;
   /** M13 : une scène du récit se joue (la musique du récit), et l'instant où elle a été vue active pour la dernière fois. */
@@ -151,6 +155,8 @@ export class AventureApp {
   /** Bandes partagées des cinématiques et des dialogues cadrés ; `sceneBandes` : le dialogue cadré ouvert les tient. */
   private bandesCine: Bandes | null = null;
   private sceneBandes = false;
+  /** Passe 200 : le Récit guidé tient les bandes de la sortie du noir au retour au noir, sans repli entre deux scènes. */
+  private bandesGuide = false;
   /** Scène à jouer à la prochaine entrée en ville (chef vaincu, titre), avant le carton de chapitre. */
   private sceneEntree: (() => Promise<void>) | null = null;
   /** M11-A : Kaï posé dans l'îlot pendant un événement fixe (il surgit, vient, défie). */
@@ -164,7 +170,7 @@ export class AventureApp {
     document.title = 'Les Quatre Voies — Aventure';
     window.addEventListener('pagehide', () => this.memoriser());
     // M14 : la Préparation n'a pas de ville pour entendre Échap ; fenêtres et dialogues ont le leur
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && this.ecran === 'preparation' && !this.dialog && !this.modal) this.menu(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && this.ecran === 'preparation' && !this.dialog && !this.modal && !this.rideau.enCours) this.menu(); });
     const politique = decorPolicy(d.params.qa, new URLSearchParams(location.search).get('decors'));
     this.decisionQuai = decideVille(politique).then(({ rangs: oui, ouverts }) => {
       this.quaiRangs = oui;
@@ -175,9 +181,16 @@ export class AventureApp {
       return oui;
     });
     this.titre();
+    // le titre sort du noir une fois le lancement passé (son chargement ferait hoqueter le fondu)
+    if (!this.sansMouvement) {
+      this.rideau.poser();
+      void this.decisionQuai.then(() => requestAnimationFrame(() => requestAnimationFrame(() => this.rideau.ouvrir())));
+    }
   }
 
   get params(): AppParams { return this.d.params; }
+  /** Pas de fondu : mouvement réduit, ou temps figé des captures. */
+  private get sansMouvement(): boolean { return this.params.reducedMotion || this.params.freeze; }
   get etat() { return this.save!.etat; }
 
   // ------------------------------------------------------------------ sauvegarde
@@ -214,17 +227,19 @@ export class AventureApp {
     this.d.app.hidden = true;
   }
 
+  /** Monte un écran de l'enveloppe, en fondu enchaîné sur le précédent ; sous le noir, directement. */
   private ecranShell(cls: string, ...content: HTMLElement[]): void {
     const host = this.d.shellHost;
+    const enchaine = !host.hidden && host.childElementCount > 0 && !host.classList.contains('scr-ville') && !this.rideau.noir && !this.sansMouvement;
+    if (enchaine) fantomeEcran(host);
     host.hidden = false;
-    host.className = `shell ${cls}`;
+    host.className = `shell ${cls}${enchaine ? ' av-entree' : ''}`;
     host.replaceChildren(...content);
     host.querySelector<HTMLElement>('[data-shell-primary]')?.focus({ preventScroll: true });
   }
 
   titre(): void {
     this.cacherVille();
-    this.leverNoir(true);
     son().ambiance(null);
     // M13 : l'écran titre de l'aventure joue le titre
     son().musique.vouloir({ version: 'I-1' });
@@ -257,6 +272,7 @@ export class AventureApp {
         h('h1', { id: 'av-t', class: 'av-h1' }, 'Les Quatre Voies'),
         h('p', { class: 'av-trait' }, 'Aventure'),
         h('div', { class: 'av-items' }, ...items)));
+    this.rideau.ouvrir();
   }
 
   private async nouveau(): Promise<void> {
@@ -310,6 +326,7 @@ export class AventureApp {
   }
 
   private commencer(nom: string, depart?: (e: AventureEtat) => AventureEtat, apparence?: Apparence, mode: ModeRecit = 'libre'): void {
+    if (this.rideau.enCours) return;
     const forced = this.params.qa ? Number(new URLSearchParams(location.search).get('profileSeed')) : NaN;
     const graine = Number.isInteger(forced) && forced > 0 ? forced >>> 0 : (crypto.getRandomValues(new Uint32Array(1))[0] ?? Date.now()) >>> 0;
     if (this.charge.status === 'illisible') this.store.ecarter();
@@ -319,8 +336,10 @@ export class AventureApp {
     if (depart) this.save.etat = depart(this.save.etat);
     if (mode === 'guide') this.save.recit = 'guide';
     this.persist();
-    this.detruireVille();
-    void this.decisionQuai.then(() => this.entrerVille(true));
+    this.fondre(() => {
+      this.detruireVille();
+      void this.decisionQuai.then(() => this.entrerVille(true));
+    });
   }
 
   private continuer(): void {
@@ -329,7 +348,7 @@ export class AventureApp {
     if (s.duel) { this.reprendreDuel(s.duel); return; }
     // reprise : la ville se relit telle qu'elle était, sans point de décision (un rechargement ne fait pas re-tirer) ;
     // M14 : le Récit guidé reprend à la Préparation, sans construire la ville
-    void this.decisionQuai.then(() => { if (this.verrouRecit) this.preparation(); else this.entrerVille(false, undefined, true); });
+    this.fondre(() => { void this.decisionQuai.then(() => { if (this.verrouRecit) this.preparation(); else this.entrerVille(false, undefined, true); }); });
   }
 
   // ------------------------------------------------------------------ la ville
@@ -409,6 +428,7 @@ export class AventureApp {
     this.cine = null;
     this.cadreGarde = false;
     this.sceneBandes = false;
+    this.bandesGuide = false;
     this.bandesCine?.replier(true);
     cancelAnimationFrame(this.raf);
     this.town?.dispose();
@@ -427,8 +447,9 @@ export class AventureApp {
     this.fermerDialogue();
     this.fermerModal();
     this.sceneBandes = false;
+    this.bandesGuide = false;
     this.bandesCine?.replier(true);
-    if (garde) this.town?.cadrer(null, true);
+    if (garde || this.guide) this.town?.cadrer(null, true);
     // M13 : hors de la ville, le combo du Fanal se tait et la musique sort du focus
     son().musique.source('fanal', null, 0);
     son().musique.focus(false);
@@ -454,7 +475,8 @@ export class AventureApp {
     this.d.arena()?.setPaused(true);
     // M14 : aucun quartier au repos, le noir reste posé jusqu'à la scène
     this.calme = 0;
-    if (this.verrouRecit) this.poserNoir();
+    this.villePrete = null;
+    if (this.verrouRecit) this.rideau.poser();
     if (this.town && this.look !== this.lookJoueur()) this.detruireVille();
     if (!this.town) {
       try { this.creerVille(reprise); } catch (err) {
@@ -472,6 +494,7 @@ export class AventureApp {
       this.rafraichir(spawn);
     }
     if (spawn && this.town) { const sp = this.town.ilot.spawns[spawn]; if (sp) this.town.place(sp, sp.face); }
+    if (this.verrouRecit && this.cineActives && !this.bandesGuide) { this.bandesGuide = true; this.bandesEcran().prendre(); }
     // M11-A : point de décision du rival (pas à la reprise) ; la vue se réarme sur une image calme
     this.vue.armee = false;
     if (!reprise) this.pointDecision = { retourKai: this.retourKai };
@@ -574,21 +597,18 @@ export class AventureApp {
 
   /** Carton de lieu ; `court` (Récit guidé) : il ouvre la scène, qui l'attend (`tickMonde`). */
   private carton(lieu: string, moment: string, court = false): void {
-    const card = h('div', { class: `ville-card${court ? ' court' : ''}`, 'aria-hidden': 'true' }, h('b', null, lieu), h('span', null, moment));
+    const card = h('div', { class: `ville-card fondu${court ? ' court' : ''}`, 'aria-hidden': 'true' }, h('b', null, lieu), h('span', null, moment));
     document.body.append(card);
-    if (this.params.reducedMotion || this.params.freeze) { setTimeout(() => card.remove(), court ? 700 : 1200); return; }
-    requestAnimationFrame(() => card.classList.add('out'));
-    setTimeout(() => card.remove(), court ? 1300 : 3200);
+    const duree = this.sansMouvement ? (court ? 700 : 1200) : (court ? 1700 : 3200);
+    setTimeout(() => card.remove(), duree);
   }
 
   private voyager(to: IlotId, spawn: string, guide = false): void {
+    if (this.rideau.enCours) return;
     const town = this.town!;
     town.setInputLocked(true);
     this.enVoyage = true;
     son().jouer('voyage');
-    const veil = h('div', { class: 'ville-fade' });
-    document.body.append(veil);
-    const still = this.params.reducedMotion || this.params.freeze;
     // M11 : une première visite (une sauvegarde d'avant les cinématiques n'en rejoue pas une déjà faite)
     const premiere = !this.etat.visites.includes(to);
     const swap = () => {
@@ -604,6 +624,9 @@ export class AventureApp {
         this.posesAffichees = this.cle(to);
         this.marquer();
       }
+      this.villePrete = null;
+      // M14 : la scène finie restait cadrée jusqu'au noir ; la suivante repart du joueur
+      if (guide) { this.cadreGarde = false; town.cadrer(null, true); }
       this.save!.ville = { ilot: to, pos: { ...town.walker().pos } };
       this.faire({ type: 'visite', lieu: to });
       town.setInputLocked(this.verrouRecit);
@@ -614,14 +637,8 @@ export class AventureApp {
       // M11 : première arrivée dans ce quartier, sous le fondu (le premier plan est coupé avant qu'il se lève)
       const lieuJoue = premiere && this.arrivee(to);
       if (guide && !memeIlot && !lieuJoue) this.carton(capital(town.ilot.name), LIGNES_LIEU[to], true);
-      this.leverNoir(true); // sous le fondu du voyage
-      if (still) { veil.remove(); return; }
-      veil.classList.add('out');
-      setTimeout(() => veil.remove(), 420);
     };
-    if (still) { swap(); return; }
-    requestAnimationFrame(() => veil.classList.add('in'));
-    setTimeout(swap, 300);
+    this.fondre(swap, guide ? FONDUS.fermer : FONDUS.voyage);
   }
 
   // ------------------------------------------------------------------ M11 : cinématiques runtime (docs/m11/07_CINEMATIQUES.md)
@@ -635,7 +652,9 @@ export class AventureApp {
     if (!t) return;
     this.cine?.passer();
     const lent = this.params.qa ? Number(new URLSearchParams(location.search).get('cineLent')) : NaN;
-    const c = new Cinema(t, { fige: this.params.freeze, reduit: this.params.reducedMotion, ...(Number.isFinite(lent) && lent > 0 ? { lent } : {}), ...o, bandes: o.bandes ? this.bandesEcran() : null });
+    // M14 : le dernier cadre reste à l'écran jusqu'au noir
+    const garder = o.garder ?? this.verrouRecit;
+    const c = new Cinema(t, { fige: this.params.freeze, reduit: this.params.reducedMotion, ...(Number.isFinite(lent) && lent > 0 ? { lent } : {}), ...o, garder, bandes: o.bandes ? this.bandesEcran() : null, fondu: this.fonduCinema() });
     this.cine = c;
     t.setInputLocked(true);
     try {
@@ -646,8 +665,8 @@ export class AventureApp {
       if (this.cine === c) this.cine = null;
       if (this.town === t) {
         // le dernier cadre est gardé pour le dialogue qui suit ; la ville cachée entre-temps : caméra rendue au joueur
-        if (o.garder && this.ecran === 'ville' && !this.host?.hidden) this.cadreGarde = true;
-        else if (o.garder) t.cadrer(null, true);
+        if (garder && this.ecran === 'ville' && !this.host?.hidden) this.cadreGarde = true;
+        else if (garder) t.cadrer(null, true);
         if (!this.dialog && !this.modal && !this.force) t.setInputLocked(this.verrouRecit);
       }
     }
@@ -668,8 +687,21 @@ export class AventureApp {
   }
 
   private bandesEcran(): Bandes {
-    this.bandesCine ??= new Bandes(this.params.reducedMotion || this.params.freeze);
+    this.bandesCine ??= new Bandes(this.sansMouvement);
     return this.bandesCine;
+  }
+
+  /** Le rideau prêté à une cinématique : une coupe, ou « Passer », dans une image visible. */
+  private fonduCinema(): FonduCinema {
+    return {
+      noir: () => this.rideau.noir,
+      fermer: (ms) => new Promise<void>((res) => {
+        this.plonge = true;
+        if (this.rideau.enCours) setTimeout(res, ms); else this.rideau.fermer(res, ms);
+      }),
+      ouvrir: () => { this.plonge = false; this.rideau.ouvrir(FONDUS.coupeOuvrir); },
+      relacher: () => { this.plonge = false; },
+    };
   }
 
   /** Une scène du récit, une fois par aventure : vrai si elle est à jouer (cinématiques actives, pas encore vue) ; mémorisée. */
@@ -734,7 +766,8 @@ export class AventureApp {
    */
   private tickMonde(): void {
     const t = this.town;
-    if (!this.verrouRecit) this.leverNoir();
+    if (this.bandesGuide && !this.verrouRecit) { this.bandesGuide = false; this.bandesCine?.rendre(); }
+    if (!this.verrouRecit && !this.enVoyage) this.leverSurVille();
     if (this.guide) {
       // M14 : ni rencontre forcée, ni Kaï au hasard : tout passe par les séquences ; la scène attend la fin de la transition
       this.pointDecision = null;
@@ -742,16 +775,16 @@ export class AventureApp {
       if (this.apresTransition && this.ecran === 'ville' && !this.dialog && !this.modal && !this.force && !this.enVoyage && !this.cine && !document.querySelector('.ville-card')) {
         const scene = this.apresTransition;
         this.apresTransition = null;
-        this.cadreCoupe = true;
         scene();
-        this.cadreCoupe = false;
       }
       const enScene = !!(this.dialog || this.modal || this.force || this.cine);
       const enRoute = this.enVoyage || !!this.apresTransition;
-      if (enScene && !enRoute) this.leverNoir();
-      if (enScene || enRoute || this.enFondu || this.ecran !== 'ville' || !this.verrouRecit) { this.calme = 0; return; }
-      // quelques images calmes : `entrerVille` tourne une fois avant d'ouvrir ses scènes
-      if (++this.calme >= 3) { this.calme = 0; this.finDeScene(); }
+      if (enScene && !enRoute) this.leverSurVille();
+      if (enScene || enRoute || this.rideau.enCours || this.ecran !== 'ville' || !this.verrouRecit) { this.calme = 0; return; }
+      // quelques images calmes (`entrerVille` tourne une fois avant d'ouvrir ses scènes), et le dernier cadre respire avant le noir
+      if (++this.calme === 1) this.calmeDepuis = performance.now();
+      const attente = this.rideau.noir || this.sansMouvement ? 0 : FONDUS.respiration;
+      if (this.calme >= 3 && performance.now() - this.calmeDepuis >= attente) { this.calme = 0; this.finDeScene(); }
       return;
     }
     if (!this.mondeActif) { this.pointDecision = null; return; }
@@ -937,37 +970,21 @@ export class AventureApp {
   /** La ville n'est qu'un décor tant que la trame a une suite ; après le titre, elle se parcourt de nouveau. */
   private get verrouRecit(): boolean { return this.guide && this.prochaineSuite() !== null; }
 
-  /** Le noir, sans fondu : au retour d'un duel ou derrière une fenêtre refermée, aucun quartier ne se voit au repos. */
-  private poserNoir(): void {
-    this.noir ??= document.body.appendChild(h('div', { class: 'ville-fade' }));
-    this.noir.classList.add('plein');
+  /** Change d'écran sous le noir : le rideau se ferme, `puis` monte la suite, qui lèvera le rideau quand elle sera prête ; sans mouvement, d'un coup (le Récit guidé garde son noir). */
+  private fondre(puis: () => void, ms?: number): void {
+    if (this.sansMouvement && !this.verrouRecit) { puis(); return; }
+    this.rideau.fermer(puis, ms);
   }
 
-  /** Fondu au noir, puis `puis` ; tout de suite si le noir est déjà là, ou sans mouvement. */
-  private fondre(puis: () => void): void {
-    if (this.enFondu) return;
-    if (this.noir || this.params.reducedMotion || this.params.freeze) { this.poserNoir(); puis(); return; }
-    const voile = document.body.appendChild(h('div', { class: 'ville-fade' }));
-    this.noir = voile;
-    this.enFondu = true;
-    requestAnimationFrame(() => voile.classList.add('in'));
-    setTimeout(() => {
-      if (this.noir !== voile) return; // l'écran a changé pendant le fondu
-      this.enFondu = false;
-      voile.classList.add('plein');
-      puis();
-    }, 300);
-  }
-
-  private leverNoir(net = false): void {
-    const voile = this.noir;
-    if (!voile) return;
-    this.noir = null;
-    this.enFondu = false;
-    if (net || this.params.reducedMotion || this.params.freeze) { voile.remove(); return; }
-    voile.classList.remove('in', 'plein');
-    voile.classList.add('out');
-    setTimeout(() => voile.remove(), 420);
+  /** Lève le noir sur la ville quand l'image est prête : quartier chargé, premier plan d'une cinématique posé. */
+  private leverSurVille(): void {
+    const t = this.town;
+    if (!t || this.ecran !== 'ville' || !this.rideau.noir || this.plonge || (this.cine && this.cine.etape < 0)) return;
+    if (this.villePrete === t) { this.rideau.ouvrir(this.guide ? FONDUS.ouvrir : FONDUS.voyageOuvrir); return; }
+    if (this.attenteVille) return;
+    this.attenteVille = true;
+    // un quartier qui tarde ne laisse pas le joueur dans le noir
+    void Promise.race([t.ready(), new Promise((res) => setTimeout(res, 3000))]).then(() => { this.attenteVille = false; this.villePrete = t; });
   }
 
   /** Une scène vient de finir : la suivante s'enchaîne, ou, avant un duel de la trame, la Préparation (contrat, §4). */
@@ -981,7 +998,7 @@ export class AventureApp {
 
   /** Quitte la Préparation : le noir, la ville remontée derrière lui, puis la scène. */
   private leverRideau(scene: () => void = () => this.suite()): void {
-    if (this.enFondu || this.modal || this.dialog) return;
+    if (this.rideau.enCours || this.modal || this.dialog) return;
     this.fondre(() => { void this.decisionQuai.then(() => { this.entrerVille(false, undefined, true); scene(); }); });
   }
 
@@ -1022,7 +1039,7 @@ export class AventureApp {
         h('footer', { class: 'av-prepa-pied' },
           h('p', { class: 'av-proto', 'data-key': 'av-prepa-resume' }, `Votre deck : ${resumeDeck(e.deck)}.`),
           h('div', { class: 'ville-choices' }, outil('Deck', 'av-prepa-deck', () => this.collection()), outil('Journal', 'av-prepa-journal', () => this.journal()), outil('Menu', 'av-prepa-menu', () => this.menu())))));
-    this.leverNoir();
+    this.rideau.ouvrir();
   }
 
   /** « À suivre » : l'étape de la trame (Kaï surgit à sa place, sans s'annoncer), un duel de Kaï à rejouer, ou le choix du joueur. */
@@ -1104,6 +1121,7 @@ export class AventureApp {
   }
 
   private transition(to: IlotId, spawn: string, scene: () => void): void {
+    if (this.rideau.enCours) return;
     this.apresTransition = scene;
     this.voyager(to, spawn, true);
   }
@@ -1127,7 +1145,7 @@ export class AventureApp {
     delete this.save!.recit;
     this.persist();
     this.town?.setInputLocked(false);
-    this.leverNoir();
+    this.rideau.ouvrir();
     this.toast('Cette étape se joue à pied : retour à la Promenade libre.');
   }
 
@@ -1138,7 +1156,7 @@ export class AventureApp {
     this.persist();
     this.fermerDialogue();
     // de la Préparation à la Promenade libre : la ville revient, là où le joueur l'a laissée
-    if (this.ecran === 'preparation' && !this.guide) { void this.decisionQuai.then(() => this.entrerVille(false, undefined, true)); return; }
+    if (this.ecran === 'preparation' && !this.guide) { this.fondre(() => { void this.decisionQuai.then(() => this.entrerVille(false, undefined, true)); }); return; }
     this.menu();
   }
 
@@ -1295,27 +1313,31 @@ export class AventureApp {
     this.fermerModal();
     if (!gains) return;
     this.recompense(`Bienvenue ${f === 'Voile' || f === 'Astre' ? aF(f) : `dans ${leF(f)}`}`, gains, () => {
-      // Le duelliste porte désormais les couleurs de sa famille : la ville est reconstruite.
+      // Le duelliste porte désormais les couleurs de sa famille : la ville est reconstruite, sous le noir.
       this.memoriser();
-      this.entrerVille(false);
-      this.faire({ type: 'scene', id: 'P8' });
-      const c = figureDe(f, 'cadet');
-      // M11 (cinématiques) : le joueur dans ses nouvelles couleurs, gros plan puis recul, carton de la voie ; le cadet
-      // parle ensuite, cadré avec le joueur s'il est là (M14 : en Récit guidé, c'est la scène de la séquence suivante)
-      const ouvrir = () => {
-        if (this.guide) return;
-        const t = this.town;
-        const at = this.ou(c.apparence);
-        this.dire(`${c.nom}, ${c.titre}`, `« Te voilà des nôtres. Maintenant, montre-moi ce que valent tes nouvelles cartes : je mets en jeu ${c.enjeu.kind === 'variante' ? auChoix(c.enjeu.defId) : ''}. »`, [
-          { label: `Défier ${c.nom}`, key: 'dlg-duel', primary: true, run: () => this.lancerFigure(c.id) },
-          { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
-        ], c.apparence, false, t && at ? cadreDialogue(at, t.walker().pos) : null);
-      };
-      const t = this.town;
-      if (t && this.scene(`affiliation-${f}`)) {
-        void this.jouerCine({ bandes: true, carton: { lieu: `Voie ${de(f)}`, ligne: MAISONS[f].devise.replace(/[«»]/g, '').trim() } }, plansAffiliation(t.walker().pos), t.ready()).then(ouvrir);
-      } else ouvrir();
+      this.fondre(() => this.entrerDansLaVoie(f));
     });
+  }
+
+  private entrerDansLaVoie(f: Family): void {
+    this.entrerVille(false);
+    this.faire({ type: 'scene', id: 'P8' });
+    const c = figureDe(f, 'cadet');
+    // M11 (cinématiques) : le joueur dans ses nouvelles couleurs, gros plan puis recul, carton de la voie ; le cadet
+    // parle ensuite, cadré avec le joueur s'il est là (M14 : en Récit guidé, c'est la scène de la séquence suivante)
+    const ouvrir = () => {
+      if (this.guide) return;
+      const t = this.town;
+      const at = this.ou(c.apparence);
+      this.dire(`${c.nom}, ${c.titre}`, `« Te voilà des nôtres. Maintenant, montre-moi ce que valent tes nouvelles cartes : je mets en jeu ${c.enjeu.kind === 'variante' ? auChoix(c.enjeu.defId) : ''}. »`, [
+        { label: `Défier ${c.nom}`, key: 'dlg-duel', primary: true, run: () => this.lancerFigure(c.id) },
+        { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
+      ], c.apparence, false, t && at ? cadreDialogue(at, t.walker().pos) : null);
+    };
+    const t = this.town;
+    if (t && this.scene(`affiliation-${f}`)) {
+      void this.jouerCine({ bandes: true, carton: { lieu: `Voie ${de(f)}`, ligne: MAISONS[f].devise.replace(/[«»]/g, '').trim() } }, plansAffiliation(t.walker().pos), t.ready()).then(ouvrir);
+    } else ouvrir();
   }
 
   private figureDialog(id: string): void {
@@ -1517,7 +1539,7 @@ export class AventureApp {
       ...(ap.basicsDeja ? [`Les cartes de base ${de(f)} étaient déjà à vous : rien n’est remis une seconde fois (registre des gains).`] : []),
       standardLegal(this.etat.deck, collectionDe(this.etat.registre)) ? `Votre deck : ${STANDARD}` : `Votre deck : ${resumeDeck(this.etat.deck)}.`,
     ];
-    this.recompense(`Défi ${de(f)} engagé`, gains, () => this.entrerVille(false), notes);
+    this.recompense(`Défi ${de(f)} engagé`, gains, () => this.fondre(() => this.entrerVille(false)), notes);
   }
 
   // ------------------------------------------------------------------ duel
@@ -1544,13 +1566,18 @@ export class AventureApp {
       h('p', { class: 'av-proto', 'data-key': 'av-deck-adverse' }, `Adversaire : ${prevu.note}`),
       h('p', { class: 'av-proto', 'data-key': 'av-deck-reel' }, `Votre deck : ${resumeDeck(this.etat.deck)} ; Techniques ${this.etat.deck.techniques.join(' et ')}.`),
       h('div', { class: 'ville-choices' },
-        h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-duel-go', onclick: () => { this.fermerModal(); this.lancer(prevu); } }, 'Commencer le duel'),
+        h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-duel-go', onclick: () => this.lancer(prevu) }, 'Commencer le duel'),
         forcee ? null : h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-duel-back', onclick: () => this.fermerModal() }, 'Plus tard')),
       forcee ? h('p', { class: 'av-proto', 'data-key': 'av-duel-force' }, 'Ce duel ne se refuse pas. Vous pourrez l’abandonner depuis le menu du duel, sans rien perdre.') : null);
     this.ouvrirModal(panel, forcee);
   }
 
   private lancer(prevu: DuelPrevu, resume?: DuelAventure): void {
+    this.fondre(() => this.monterDuel(prevu, resume));
+  }
+
+  /** Le duel monté sous le noir ; le rideau se lève une fois le plateau peint. */
+  private monterDuel(prevu: DuelPrevu, resume?: DuelAventure): void {
     const s = this.save!;
     let duel = resume;
     if (!duel) {
@@ -1564,7 +1591,6 @@ export class AventureApp {
     this.rivalScene = null;
     this.alerte = null;
     this.cacherVille();
-    this.leverNoir(true);
     this.ecran = 'duel';
     this.d.shellHost.hidden = true;
     this.d.shellHost.className = 'shell';
@@ -1591,6 +1617,8 @@ export class AventureApp {
     });
     this.live = { session, duel, prevu };
     this.pointDeSauvegarde(id, session.controller);
+    if (this.sansMouvement) this.rideau.ouvrir();
+    else requestAnimationFrame(() => requestAnimationFrame(() => this.rideau.ouvrir()));
   }
 
   private pointDeSauvegarde(id: string, c: Controller): void {
@@ -1631,7 +1659,7 @@ export class AventureApp {
       s.duel = null;
       this.persist();
       this.toast(`${prevu ? '' : `Reprise exacte impossible : ${raison} `}Duel en cours retiré (non compté).`);
-      this.entrerVille(false);
+      this.fondre(() => this.entrerVille(false));
     }
   }
 
@@ -1677,21 +1705,23 @@ export class AventureApp {
   private quitterDuel(): void {
     const live = this.live;
     if (!live) return;
-    live.session.dispose();
     this.live = null;
-    this.d.app.hidden = true;
+    live.session.suspended = true;
     this.persist();
-    this.toast('Duel sauvegardé : « Continuer l’aventure » le reprendra.');
-    this.titre();
+    this.fondre(() => {
+      live.session.dispose();
+      this.d.app.hidden = true;
+      this.toast('Duel sauvegardé : « Continuer l’aventure » le reprendra.');
+      this.titre();
+    });
   }
 
   /** Fin de duel : faits publics → machine de l'aventure → registre ; une seule écriture ; puis le résultat. */
   finDuel(c: Controller, abandon: boolean, forcee?: Issue): void {
     const live = this.live;
     if (!live || !this.save) return;
-    live.session.dispose();
     this.live = null;
-    this.d.app.hidden = true;
+    live.session.suspended = true;
     const v = viewFor(c.match.state, 'p1');
     const issue: Issue = forcee ?? (abandon ? 'abandon' : v.winner === 'me' ? 'victoire' : 'defaite');
     const conclure = (variante?: string) => {
@@ -1700,14 +1730,21 @@ export class AventureApp {
       if (fin.refus) this.toast(fin.refus);
       this.persist();
       this.dernierResultat = { prevu: live.prevu, issue, gains: fin.gains, turns: v.turn, faits: fin.faits, pv: fin.pv };
-      this.resultat();
+    };
+    // le plateau reste à l'écran : le dernier coup respire, puis le noir, et l'écran suivant se monte derrière lui (tout est déjà écrit)
+    const sortir = (ecran: () => void) => {
+      const aller = () => this.fondre(() => { live.session.dispose(); this.d.app.hidden = true; ecran(); });
+      if (abandon || this.sansMouvement) aller(); else setTimeout(aller, FONDUS.finDuel);
     };
     // Avenant 09 : la première victoire qui donne une variante la laisse choisir (A, B ou C). En QA, sans `?choix=1`, la
     // variante A est prise d'office (parcours d'avant l'avenant inchangés).
     const choix = issue === 'victoire' ? choixVariante(this.save.etat, live.duel.rencontre) : null;
-    if (!choix) return conclure();
-    if (this.params.qa && new URLSearchParams(location.search).get('choix') !== '1') return conclure(choix[0]);
-    this.choisirVariante(live.prevu, choix, conclure);
+    if (!choix || (this.params.qa && new URLSearchParams(location.search).get('choix') !== '1')) {
+      conclure(choix?.[0]);
+      sortir(() => this.resultat());
+      return;
+    }
+    sortir(() => this.choisirVariante(live.prevu, choix, (id) => { conclure(id); this.resultat(); }));
   }
 
   /** Avenant 09 : écran du choix de la variante, après une victoire qui en donne une ; rien n'est écrit avant le choix. */
@@ -1730,6 +1767,7 @@ export class AventureApp {
             h('small', null, d.effect ? EFFECT_SUMMARY[d.effect] : ''),
             bouton('Prendre cette carte', () => ok(id), `av-choix-${id}`, i === 0));
         }))));
+    this.rideau.ouvrir();
   }
 
   private resultat(): void {
@@ -1754,7 +1792,8 @@ export class AventureApp {
         h('p', { class: 'av-pv', 'data-key': 'av-pv' }, r.pv[1] > r.pv[0] ? `Entraînement : vos PV passent de ${r.pv[0]} à ${r.pv[1]}.` : `Un abandon ne compte pas comme un combat : vos PV restent à ${r.pv[0]}.`),
         prologue ? h('p', { class: 'av-proto', 'data-key': 'av-faits' }, `Ce que la foule a vu (faits publics du duel) : ${r.faits.assautsGagnes} Clash(es) gagné(s) en Assaut, ${r.faits.gardesGagnees} en Garde, ${r.faits.interferencesReussies} Interférence(s) réussie(s).`) : null,
         r.gains.length ? h('div', { class: `av-cards${r.gains.length > 8 ? ' nombreuses' : ''}` }, ...r.gains.flatMap((g) => gainEls(g, this.params.artSeed))) : null,
-        h('div', { class: 'av-items' }, bouton(this.verrouRecit ? 'Continuer' : 'Retour en ville', () => this.apresResultat(), 'av-retour', true))));
+        h('div', { class: 'av-items' }, bouton(this.verrouRecit ? 'Continuer' : 'Retour en ville', () => this.fondre(() => this.apresResultat()), 'av-retour', true))));
+    this.rideau.ouvrir();
   }
 
   private apresResultat(): void {
@@ -1854,6 +1893,11 @@ export class AventureApp {
   // ------------------------------------------------------------------ fenêtres
 
   dire(titre: string, texte: string, choix: Choix[], apparence?: string, forcee = false, cadre?: CadreDialogue | null, panneau = false): void {
+    // une réplique qui en suit une autre : le cadre reste en place, seul le texte change
+    const prec = this.dialog;
+    const enchaine = !this.sansMouvement && !!prec && prec.classList.contains('av-panneau') === panneau;
+    const memeVoix = enchaine && prec.querySelector('.ville-dialog-body > b')?.textContent === titre;
+    if (enchaine) prec.remove();
     this.fermerDialogue();
     this.town?.setInputLocked(true);
     cadre ??= this.cadreScene(apparence, panneau);
@@ -1861,13 +1905,13 @@ export class AventureApp {
     if (cadre && this.town && this.cineActives) {
       this.town.cadrer({
         at: cadre.at, ...(cadre.zoom !== undefined ? { zoom: cadre.zoom } : {}), ...(cadre.hauteur !== undefined ? { hauteur: cadre.hauteur } : {}),
-        ...(cadre.sujets ? { sujets: cadre.sujets } : {}), ...(cadre.serre !== undefined ? { serre: cadre.serre } : {}), tau: 0.55,
-      }, this.params.reducedMotion || this.params.freeze || this.cadreCoupe);
+        ...(cadre.sujets ? { sujets: cadre.sujets } : {}), ...(cadre.serre !== undefined ? { serre: cadre.serre } : {}), tau: 0.65,
+      }, this.sansMouvement || this.rideau.noir);
       this.cadreGarde = true;
       if (cadre.bandes && !this.sceneBandes) { this.bandesEcran().prendre(); this.sceneBandes = true; }
     }
     if (!cadre?.bandes && this.sceneBandes) { this.sceneBandes = false; this.bandesEcran().rendre(); }
-    const box = h('div', { class: `ville-dialog${panneau ? ' av-panneau' : ''}`, role: 'dialog', 'aria-label': titre });
+    const box = h('div', { class: `ville-dialog${panneau ? ' av-panneau' : ''}${enchaine ? ' enchaine' : ''}${memeVoix ? ' meme-voix' : ''}`, role: 'dialog', 'aria-label': titre });
     if (apparence) {
       const p = personnalite(apparence, { nom: titre, titre: '' });
       box.append(h('img', { class: 'ville-portrait', alt: '', src: portraitUrl(p, this.params.artSeed) }));
@@ -1890,9 +1934,10 @@ export class AventureApp {
   }
 
   fermerDialogue(): void {
-    const ouvert = !!this.dialog;
+    const d = this.dialog;
+    const ouvert = !!d;
     this.sansFocus = false;
-    this.dialog?.remove();
+    if (d?.isConnected) effacer(d, 'ville-dialog', 'ville-dialog-sortie', this.sansMouvement || this.rideau.noir);
     this.dialog = null;
     // M11 : la caméra laissée sur un cadre (cinématique, dialogue de scène) revient au joueur quand son dialogue se ferme,
     // une tâche plus tard : une réplique qui enchaîne garde la scène (caméra et bandes) sans retour entre les deux
@@ -1901,8 +1946,8 @@ export class AventureApp {
       setTimeout(() => {
         if (this.cadreGarde) return;
         if (this.sceneBandes) { this.sceneBandes = false; this.bandesCine?.rendre(); }
-        // une cinématique qui vient de commencer tient la caméra
-        if (!this.cine) Cinema.rendre(this.town, this.params.reducedMotion || this.params.freeze);
+        // une cinématique qui vient de commencer tient la caméra ; le Récit guidé garde le dernier cadre jusqu'au noir
+        if (!this.cine && !this.verrouRecit) Cinema.rendre(this.town, this.sansMouvement);
       }, 0);
     }
     if (!this.modal) this.town?.setInputLocked(this.verrouRecit);
@@ -1916,8 +1961,10 @@ export class AventureApp {
     document.querySelector('.ville-card')?.remove(); // un carton de lieu ne passe pas devant une fenêtre
     // M14 : en Récit guidé, une fenêtre ne découvre pas la ville au repos
     const surNoir = this.ecran === 'ville' && this.verrouRecit;
-    if (surNoir) this.leverNoir(true);
-    const m = h('div', { class: `av-modal${surNoir ? ' noire' : ''}`, role: 'dialog', 'aria-modal': 'true' }, panel);
+    // sur le noir, son fond prend le relais ; sur une scène, il monte en fondu
+    const direct = surNoir && this.rideau.noir;
+    if (direct) this.rideau.retirer();
+    const m = h('div', { class: `av-modal${surNoir ? ' noire' : ''}${direct ? ' direct' : ''}`, role: 'dialog', 'aria-modal': 'true' }, panel);
     m.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); if (!forcee) this.fermerModal(); } });
     document.body.append(m);
     this.modal = m;
@@ -1925,11 +1972,11 @@ export class AventureApp {
   }
 
   fermerModal(): void {
-    const ouverte = !!this.modal;
-    this.modal?.remove();
+    const m = this.modal;
+    if (m) effacer(m, 'av-modal', 'av-modal-sortie', this.sansMouvement || this.rideau.noir);
     this.modal = null;
     if (!this.dialog) this.town?.setInputLocked(this.verrouRecit);
-    if (ouverte && !this.dialog && this.ecran === 'ville' && this.verrouRecit) this.poserNoir();
+    if (m && !this.dialog && this.ecran === 'ville' && this.verrouRecit) this.rideau.poser();
     this.rendrePreparation();
   }
 
@@ -1946,7 +1993,7 @@ export class AventureApp {
 
   private menu(): void {
     // M11 : Échap passe une cinématique
-    if (this.cine) { this.cine.passer(); return; }
+    if (this.cine) { this.cine.passerDoux(); return; }
     // M11-A : une rencontre forcée ne s'esquive pas par le menu (on peut abandonner le duel, sans perte)
     if (this.force) return;
     if (this.modal) { this.fermerModal(); return; }
@@ -1961,7 +2008,7 @@ export class AventureApp {
       { label: `Cinématiques : ${!cinePermise(location.search) ? 'coupées par l’adresse' : lireCine(stockageLocal()) ? 'oui' : 'non'}`, key: 'menu-cine', run: () => { ecrireCine(stockageLocal(), !lireCine(stockageLocal())); this.fermerDialogue(); this.menu(); } },
       { label: `Conseils du duel : ${!conseilsPermis(location.search) ? 'coupés par l’adresse' : lireConseils(stockageLocal()) ? 'affichés' : 'masqués'}`, key: 'menu-conseils', run: () => this.reglageConseils() },
       { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter. Les joueurs de cartes de la ville regardent devant eux : entrer dans leur regard, c’est accepter leur défi (une bulle « ! » s’allume, ils viennent à vous) ; passez derrière eux ou à l’abri d’un étal pour les éviter. Kaï surgit à certains moments de votre histoire ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? ») ; des conseils, un à la fois, expliquent chaque phase et chaque signal des cartes la première fois qu’il paraît (« Conseils du duel », dans ce menu). Le son se règle dans ce menu (« Son »). Les grands moments de votre histoire se jouent en cinématique (première arrivée dans un quartier, Kaï qui surgit, votre affiliation, un chef vaincu, un nouveau chapitre, le Championnat) : Échap, Espace, Entrée ou « Passer » pour la passer ; « Cinématiques », dans ce menu, les coupe. « Récit », dans ce menu, passe de la Promenade libre, où l’on parcourt la ville, au Récit guidé, un film en séquences : les scènes s’enchaînent, et la Préparation, avant chaque duel, réunit le deck, le journal et les joueurs de rue ; on en change quand on veut, sans rien perdre.', [fermer(this)]) },
-      { label: 'Écran titre', key: 'menu-home', run: () => { this.fermerDialogue(); this.titre(); } },
+      { label: 'Écran titre', key: 'menu-home', run: () => { this.fermerDialogue(); this.fondre(() => this.titre()); } },
     ], undefined, false, null, true);
   }
 
@@ -1981,7 +2028,7 @@ export class AventureApp {
           this.persist();
           this.fermerModal();
           // la ville se remonte sur le nouveau personnage (même îlot, même place, sans nouveau tirage)
-          if (this.ecran === 'ville') this.entrerVille(false, undefined, true);
+          if (this.ecran === 'ville') this.fondre(() => this.entrerVille(false, undefined, true));
         } }, 'Valider'),
         h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-apparence-annuler', onclick: () => this.fermerModal() }, 'Annuler'))));
   }
