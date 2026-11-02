@@ -29,3 +29,7 @@ déplacement libre restreint au profit de la mise en scène, de la narration et 
 ## Fiche M14 (2026-11-01)
 
 Reçu après le test du responsable (R1), statut inchangé d'ici là. Écart : **la Halte**, interface propre au Récit guidé (deck, réglages, duels de rue entre deux étapes), demandée en G1 et G2 ; contrat 1, §4 bis.
+
+## Révision 3 du contrat (2026-11-02, retour du test du responsable)
+
+Le Récit guidé devient une structure théâtrale : la ville n'est plus qu'un décor de scène, deux écrans seulement (la scène et la **Préparation**, plein écran, qui remplace la Halte et le bouton « Suite du récit » posé sur la ville), séparés par le noir. Les scènes s'enchaînent seules ; la Préparation ne s'ouvre qu'avant un duel de la trame (`enchainement`, `src/aventure/guide.ts`). Kaï surgit au début de la séquence suivante, à la place de ce qui est annoncé. Contrat 1, §4 et §4 bis. Promenade libre, duels, récompenses et sauvegarde `aventure/2` inchangés ; aucune image. Statut inchangé jusqu'au test du responsable.

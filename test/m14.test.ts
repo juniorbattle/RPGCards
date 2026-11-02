@@ -1,13 +1,14 @@
 /**
  * M14 — le Récit guidé (`docs/m14/01_RECIT_GUIDE.md`, ADR 048) : la suite du récit, pendant de `objectif`, sur le parcours
  * complet des quatre familles et de tous les ordres de voies ; Kaï jamais manqué ; un personnage réel à chaque étape ; le
- * mode, simple champ facultatif de la sauvegarde.
+ * découpage en séquences (les scènes s'enchaînent, la Préparation avant un duel de la trame) ; le mode, simple champ
+ * facultatif de la sauvegarde.
  */
 import { describe, expect, it } from 'vitest';
 import { FAMILIES, type Family } from '../src/game/catalog/cards';
 import { appliquer, chapitreDetaille, nouvelleAventure, type AventureEtat, type Evenement } from '../src/aventure/aventure';
 import { convoquer, noterVu, nouveauDirecteur, poses } from '../src/aventure/directeur';
-import { etapeRecit, ILOTS_RECIT, joueursDeRue, kaiVientDeJouer, quartierDe, suiteRecit, type EtapeRecit } from '../src/aventure/guide';
+import { cleSuite, enchainement, etapeRecit, ILOTS_RECIT, joueursDeRue, kaiVientDeJouer, quartierDe, suiteRecit, type EtapeRecit } from '../src/aventure/guide';
 import { ilotAventure } from '../src/aventure/ilots';
 import { figure, KAI_PROLOGUE } from '../src/aventure/modele';
 import { objectif } from '../src/aventure/quetes';
@@ -56,11 +57,12 @@ function verifierParite(e: AventureEtat, etape: EtapeRecit): void {
   if (etape.kind === 'championnat') { expect(txt).toContain('Championnat'); verifierPersonne(e, 'heraut'); }
 }
 
-interface Parcours { e: AventureEtat; ordres: Family[]; dernier?: string; vus: string[]; choix: number }
+interface Parcours { e: AventureEtat; ordres: Family[]; dernier?: string; vus: string[]; choix: number; prepas: string[] }
 
 function pas(p: Parcours, famille: Family, deuxAuChoix: boolean): void {
   const s = suiteRecit(p.e, { ilots: ILOTS_RECIT, ici: 'quai', dernier: p.dernier });
   if (!s) throw new Error('fin de la suite');
+  if (enchainement(s) === 'preparation') p.prepas.push(cleSuite(s));
   if ('rival' in s) {
     const { k } = s.rival;
     p.vus.push(k.id);
@@ -107,7 +109,7 @@ function pas(p: Parcours, famille: Family, deuxAuChoix: boolean): void {
 }
 
 function parcours(famille: Family, ordres: Family[], deuxAuChoix = false): Parcours {
-  const p: Parcours = { e: faire(nouvelleAventure(AT), [{ type: 'scene', id: 'P1' }]), ordres: [...ordres], vus: [], choix: 0 };
+  const p: Parcours = { e: faire(nouvelleAventure(AT), [{ type: 'scene', id: 'P1' }]), ordres: [...ordres], vus: [], choix: 0, prepas: [] };
   for (let i = 0; i < 80 && suiteRecit(p.e, { ilots: ILOTS_RECIT, ici: 'quai', dernier: p.dernier }); i++) pas(p, famille, deuxAuChoix);
   return p;
 }
@@ -156,6 +158,40 @@ describe('M14 — la suite du récit, du prologue au titre', () => {
   });
 });
 
+describe('M14 — les séquences (révision 3 du contrat, §4)', () => {
+  const rival = (id: 'K1' | 'K6', duel: boolean) => ({ rival: { k: { id, titre: id, chapitre: 'I', ilots: [], secours: [], duel }, ilot: 'quai' } }) as unknown as Parameters<typeof enchainement>[0];
+  const etape = (e: EtapeRecit) => ({ etape: e });
+
+  it('les scènes s\'enchaînent seules : le prologue, la Salle des Bannières, la main tendue de Kaï', () => {
+    expect(enchainement(etape({ kind: 'personne', id: KAI_PROLOGUE.id }))).toBe('scene');
+    expect(enchainement(etape({ kind: 'personne', id: 'emissaire-Ronce' }))).toBe('scene');
+    expect(enchainement(etape({ kind: 'bannieres' }))).toBe('scene');
+    expect(enchainement(rival('K6', false))).toBe('scene');
+  });
+
+  it('la Préparation avant un duel de la trame ou un choix', () => {
+    for (const id of ['cadet-Cendre', 'brasDroit-Voile', 'chef-Astre']) expect(enchainement(etape({ kind: 'personne', id }))).toBe('preparation');
+    expect(enchainement(etape({ kind: 'choix', titre: '', texte: '', ids: [] }))).toBe('preparation');
+    expect(enchainement(etape({ kind: 'championnat' }))).toBe('preparation');
+    expect(enchainement(rival('K1', true))).toBe('preparation');
+  });
+
+  it('du prologue au titre : une Préparation par figure, aucune avant l\'affiliation', () => {
+    const p = parcours('Cendre', ['Ronce', 'Voile', 'Astre']);
+    for (const f of FAMILIES) for (const r of ['cadet', 'brasDroit', 'chef']) expect(p.prepas).toContain(`${r}-${f}`);
+    expect(p.prepas[0]).toBe('cadet-Cendre');
+    expect(p.prepas).not.toContain(KAI_PROLOGUE.id);
+    expect(p.prepas).not.toContain('bannieres');
+    expect(p.prepas).not.toContain('rival:K6');
+  });
+
+  it('une suite a une identité stable : une scène refusée ne se rouvre pas seule', () => {
+    expect(cleSuite(etape({ kind: 'bannieres' }))).toBe('bannieres');
+    expect(cleSuite(etape({ kind: 'personne', id: 'emissaire-Ronce' }))).toBe('emissaire-Ronce');
+    expect(cleSuite(rival('K6', false))).toBe('rival:K6');
+  });
+});
+
 describe('M14 — le mode, champ facultatif de la sauvegarde', () => {
   it('`aventure/2` se relit avec et sans le champ ; une valeur inconnue est refusée', () => {
     const store = memoire();
@@ -178,7 +214,7 @@ describe('M14 — le mode, champ facultatif de la sauvegarde', () => {
   });
 });
 
-describe('M14 — la Halte (contrat, §4 bis ; fiche, G1 et G2)', () => {
+describe('M14 — les joueurs de rue de la Préparation (contrat, §4 bis ; fiche, G1 et G2)', () => {
   const ILOTS = ['quai', 'parvis', 'ruelles', 'cour', 'port', 'haute'] as const;
   const affilie = (): AventureEtat => {
     const e = nouvelleAventure(AT);

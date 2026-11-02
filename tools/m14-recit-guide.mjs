@@ -1,16 +1,18 @@
-// M14 — le Récit guidé (`docs/m14/01_RECIT_GUIDE.md`, ADR 048), parcours navigateur dans l'aventure : (1) le choix du mode
-// à la nouvelle aventure, Promenade libre présélectionnée ; (2) marche et bulle coupées, bouton « Suite du récit » ; (3) la
-// transition au noir, la scène qui s'ouvre près de son personnage ; (4) refuser une scène : le bouton la repropose ; (5) la
-// trame entière, du prologue au titre, sans un pas du joueur, duels à l'issue imposée (`qaTerminer`), avec Kaï K1 à K6 ;
-// (6) après le titre, la marche revient ; (7) le changement de mode dans le menu, dans les deux sens ; (8) la Promenade libre
-// d'une nouvelle aventure : ni bouton, ni marche coupée.
-// Usage : npm run build && [LQV_VP=1920x1080] node tools/m14-recit-guide.mjs [dossier] [rapport.json]
+// M14 — le Récit guidé en séquences (`docs/m14/01_RECIT_GUIDE.md`, révision 3 ; ADR 048), parcours navigateur dans l'aventure :
+// (1) le choix du mode à la nouvelle aventure, Promenade libre présélectionnée ; (2) la scène s'ouvre seule, marche et HUD
+// coupés ; (3) refuser une scène ramène à la Préparation, qui la repropose, au clavier ; (4) la trame entière, du prologue au
+// titre, sans un pas du joueur, duels à l'issue imposée (`qaTerminer`), avec Kaï K1 à K6, et jamais la ville au repos ;
+// (5) après le titre, le HUD et la marche reviennent ; (6) la reprise par « Continuer », à la Préparation ; (7) le changement de
+// mode dans le menu, dans les deux sens ; (8) la Promenade libre d'une nouvelle aventure : ni Préparation, ni marche coupée.
+// `LQV_M14_CINE=1` joue la trame avec les cinématiques, comme hors QA.
+// Usage : npm run build && [LQV_VP=1920x1080] [LQV_M14_CINE=1] node tools/m14-recit-guide.mjs [dossier] [rapport.json]
 import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { launch, rendererLabel, startPreview, watchConsole, webglRenderer } from './browser.mjs';
 
 const VP = (process.env.LQV_VP ?? '1280x720').split('x').map(Number);
+const CINE = process.env.LQV_M14_CINE ? '&cine=1' : '';
 const DIR = process.argv[2] ?? `screenshots/qa/m14/recit-guide-${VP[0]}`;
 const OUT = process.argv[3] ?? `artifacts/qa/m14/recit-guide-${VP[0]}.json`;
 const head = execSync('git rev-parse --short HEAD').toString().trim();
@@ -31,7 +33,9 @@ try {
   const shot = async (name) => writeFileSync(`${DIR}/${String(++n).padStart(2, '0')}-${name}.png`, await p.screenshot());
   const av = (fn, arg) => p.evaluate(fn, arg);
   const pos = () => av(() => ({ ...window.__lqvAventure.town.walker().pos }));
-  const suiteVisible = () => p.isVisible('[data-key="av-suite"]');
+  const prepa = () => p.waitForSelector('[data-key="av-prepa"]');
+  const scene = () => p.waitForSelector('.ville-dialog');
+  const hud = () => av(() => { const x = document.querySelector('.av-hud'); return !!x && !x.hidden && x.getClientRects().length > 0; });
   const pret = () => p.waitForFunction(() => { const t = window.__lqvAventure?.town; return !!t && t.stats().frames > 1 && !document.querySelector('.ville-host').hidden; }, null, { timeout: 120000 });
   const marche = async () => {
     await p.waitForTimeout(400); // l'élan du pas d'avant
@@ -41,8 +45,23 @@ try {
     return Math.hypot(b.x - a.x, b.z - a.z);
   };
   const dialogue = () => av(() => document.querySelector('.ville-dialog b')?.textContent ?? null);
+  // à chaque image : la ville au repos, visible, sans noir ni scène, alors que la trame a une suite ; un fondu la couvre en 3 images
+  const guetterRepos = () => av(() => {
+    const g = window.__repos = { images: 0, pire: 0, hud: 0 };
+    const a = window.__lqvAventure;
+    const tour = () => {
+      const visible = a.ecran === 'ville' && !document.querySelector('.ville-host')?.hidden;
+      const repos = visible && a.verrouRecit && !a.dialog && !a.modal && !a.cine && !a.force && !a.enVoyage && !a.apresTransition && !a.noir;
+      g.images = repos ? g.images + 1 : 0;
+      g.pire = Math.max(g.pire, g.images);
+      const h = document.querySelector('.av-hud');
+      if (a.verrouRecit && h && !h.hidden) g.hud += 1;
+      requestAnimationFrame(tour);
+    };
+    tour();
+  });
 
-  await p.goto(`${server.base}/?aventure=1&qa=1&aiDelay=0&profileSeed=31${process.env.LQV_M14_CINE ? "&cine=1" : ""}`, { timeout: Number(process.env.LQV_QA_NAV_TIMEOUT) || 90000 });
+  await p.goto(`${server.base}/?aventure=1&qa=1&aiDelay=0&profileSeed=31${CINE}`, { timeout: Number(process.env.LQV_QA_NAV_TIMEOUT) || 90000 });
   renderer = rendererLabel(await webglRenderer(p).catch(() => null));
 
   // (1) le choix du mode
@@ -56,33 +75,42 @@ try {
   await p.fill('[data-key="av-name"]', 'Lou');
   await p.click('[data-key="av-start"]');
   await pret();
+  await guetterRepos();
 
-  // (2) marche et bulle coupées, bouton
-  await p.waitForSelector('[data-key="av-suite"]:not([hidden])');
-  await p.waitForFunction(() => !document.querySelector('.ville-card'), null, { timeout: 20000 }).catch(() => {});
-  await shot('ville-suite-du-recit');
-  check(await marche() < 0.01, 'marche coupée');
-  check(await av(() => window.__lqvAventure.save.recit) === 'guide', 'le mode est noté dans la sauvegarde');
-
-  // (3) la transition, la scène, (4) refuser
-  await av(() => { document.querySelector('[data-key="av-suite"]').click(); });
-  check(await p.$('.ville-fade') !== null, 'écran noir à la suite du récit');
-  await p.waitForSelector('.ville-dialog');
-  check(/Kaï/.test(await dialogue() ?? ''), `la scène s'ouvre seule (${await dialogue()})`);
+  // (2) le prologue s'ouvre seul : aucun bouton à presser sur la ville
+  const passer = async () => { for (let i = 0; i < 200 && !(await p.$('.ville-dialog')); i++) { if (await av(() => !!window.__lqvAventure.cine)) await p.keyboard.press('Escape'); await p.waitForTimeout(100); } };
+  await passer();
+  await scene();
+  check(/Kaï/.test(await dialogue() ?? ''), `la première scène s'ouvre seule (${await dialogue()})`);
   await p.waitForFunction(() => !document.querySelector('.ville-fade'), null, { timeout: 20000 });
+  check(!(await hud()), 'pas de HUD pendant une scène');
+  check(await av(() => window.__lqvAventure.save.recit) === 'guide', 'le mode est noté dans la sauvegarde');
+  await p.waitForTimeout(700);
   await shot('scene-kai');
+  check(await marche() < 0.01, 'marche coupée');
+
+  // (3) refuser : la Préparation, sans la ville, repropose la scène ; Entrée la rouvre
   await p.click('.ville-dialog [data-key="dlg-close"]');
-  await p.waitForSelector('[data-key="av-suite"]:not([hidden])');
-  check(await marche() < 0.01, 'scène refusée : marche toujours coupée, le bouton la repropose');
+  await prepa();
+  check(await av(() => document.querySelector('.ville-host').hidden), 'scène refusée : la Préparation, la ville cachée');
+  check(/Kaï/.test(await p.textContent('.av-prepa-suite')), 'la Préparation repropose la scène');
+  await p.waitForFunction(() => !document.querySelector('.ville-fade'), null, { timeout: 20000 });
+  await shot('preparation-prologue');
   await p.keyboard.press('Enter');
-  await p.waitForSelector('.ville-dialog');
+  await p.waitForFunction(() => !document.querySelector('[data-key="av-prepa"]'));
+  check(await p.$('.ville-fade') !== null, 'écran noir à la suite du récit');
+  await passer();
+  await scene();
   check(/Kaï/.test(await dialogue() ?? ''), 'Entrée vaut « Suite du récit »');
 
-  // (5) la trame entière, sans un pas : une boucle qui ne connaît que ce qu'un joueur voit à l'écran
+  // (4) la trame entière, sans un pas : une boucle qui ne connaît que ce qu'un joueur voit à l'écran
   const depart = await av(() => window.__lqvAventure.save.etat.combats);
   const rivalVu = [];
+  const prepas = [];
   let bloque = 0;
-  for (let i = 0; i < 400; i++) {
+  let capture = 0;
+  let figureVue = false;
+  for (let i = 0; i < 500; i++) {
     const vu = await av(() => {
       const a = window.__lqvAventure;
       const q = (s) => document.querySelector(s);
@@ -94,7 +122,7 @@ try {
       if (q('[data-key="av-bannieres"]')) return 'bannieres';
       if (q('.av-modal')) return 'modal';
       if (q('.ville-dialog')) return `dialogue:${q('.ville-dialog b')?.textContent ?? ''}`;
-      if (vis('[data-key="av-suite"]')) return 'suite';
+      if (vis('[data-key="av-prepa"]') && !a.noir) return 'prepa';
       if (a.etat.competitions.championnat.titre && !a.verrouRecit) return 'fin';
       return 'attente';
     });
@@ -103,8 +131,13 @@ try {
     if (vu === 'attente' || vu === 'cine') { bloque++; if (bloque > 600) throw new Error(`bloqué sur ${vu}`); await p.waitForTimeout(100); continue; }
     bloque = 0;
     if (journal.at(-1) !== vu) journal.push(vu);
-    if (vu === 'suite') await p.click('[data-key="av-suite"]');
-    else if (vu === 'resultat') await p.click('[data-key="av-retour"]');
+    if (vu === 'prepa') {
+      prepas.push(await av(() => { const e = window.__lqvAventure.etat; return { affiliation: e.affiliation, combats: e.combats }; }));
+      if (capture++ % 6 === 1) await shot(`preparation-${capture}`);
+      const choix = await p.$('[data-key^="av-prepa-choix-"]');
+      await (choix ?? await p.$('[data-key="av-prepa-suite"]')).click();
+      await p.waitForFunction(() => !document.querySelector('[data-key="av-prepa"]'));
+    } else if (vu === 'resultat') await p.click('[data-key="av-retour"]');
     else if (vu === 'variante') await p.click('[data-key="av-choix"] button');
     else if (vu === 'preparer') {
       await p.click('[data-key="av-duel-go"]');
@@ -124,21 +157,32 @@ try {
         await av(() => window.__lqvAventure.qaTitre());
         continue;
       }
+      if (!figureVue && prepas.length >= 2 && await p.$('.ville-dialog [data-key="dlg-duel"]')) { figureVue = true; await p.waitForTimeout(900); await shot('scene-cadree'); }
       const primaire = await p.$('.ville-dialog .primary');
       await (primaire ?? await p.$('.ville-dialog button')).click();
     }
     await p.waitForTimeout(30);
   }
   await shot('apres-le-titre');
-  const fin = await av(() => { const a = window.__lqvAventure; return { titre: a.etat.competitions.championnat.titre, faits: Object.keys(a.etat.rival?.faits ?? {}).sort(), combats: a.etat.combats, chefs: Object.values(a.etat.familles).filter((f) => f === 'chef').length }; });
-  check(fin.titre && fin.chefs === 4, `la trame entière, du prologue au titre (${fin.combats - depart} combats)`);
+  const fin = await av(() => { const a = window.__lqvAventure; return { titre: a.etat.competitions.championnat.titre, faits: Object.keys(a.etat.rival?.faits ?? {}).sort(), combats: a.etat.combats, chefs: Object.values(a.etat.familles).filter((f) => f === 'chef').length, repos: window.__repos }; });
+  check(fin.titre && fin.chefs === 4, `la trame entière, du prologue au titre (${fin.combats - depart} combats, ${prepas.length} Préparations)`);
   check(fin.faits.join() === 'K1,K2,K3,K4,K5,K6', `Kaï K1 à K6, aucun manqué (${fin.faits.join(' ')})`);
+  check(fin.repos.pire <= 5, `jamais la ville au repos (au pire ${fin.repos.pire} images avant le noir)`);
+  check(fin.repos.hud === 0, `jamais le HUD tant que la trame a une suite (${fin.repos.hud} images)`);
+  const prologue = prepas.filter((x) => x.combats > 0 && !x.affiliation);
+  check(prologue.length === 0, 'le prologue d\'un seul tenant : aucune Préparation entre le premier duel et le choix de la voie');
+  const ap = journal.findIndex((x) => x === 'prepa');
+  check(!!prepas[0]?.affiliation && journal.slice(0, ap).some((x) => x === 'modal'), 'la première Préparation vient juste après l\'affiliation');
+  const interruptions = journal.filter((x, j) => /^dialogue:Kaï —/.test(x) && journal[j - 1] === 'prepa').length;
+  check(interruptions >= 4, `Kaï surgit à la sortie de la Préparation, à la place de l'étape annoncée (${interruptions} fois)`);
+  check(journal.some((x, j) => x === 'bannieres' && journal[j - 1] === 'resultat'), 'la Salle des Bannières s\'enchaîne sans Préparation');
 
-  // (6) après le titre, la marche revient
-  check(!(await suiteVisible()), 'après le titre : plus de bouton');
+  // (5) après le titre, le HUD et la marche reviennent
+  await p.waitForFunction(() => !document.querySelector('.ville-fade'), null, { timeout: 20000 });
+  check(await hud(), 'après le titre : le HUD revient');
   check(await marche() > 0.05, 'après le titre : la marche revient');
 
-  // (7) le changement de mode dans le menu
+  // (6) la reprise, (7) le changement de mode dans le menu
   await p.goto(`${server.base}/?aventure=1&qa=1&aiDelay=0&profileSeed=32&recit=guide`, { timeout: 90000 });
   await p.click('[data-key="av-new"]');
   await p.waitForFunction(() => /Recommencer/.test(document.body.textContent) || !!document.querySelector('[data-key="av-name"]'));
@@ -148,22 +192,31 @@ try {
   check(await presse('guide') === 'true', '`?recit=guide` en QA présélectionne le mode');
   await p.click('[data-key="av-start"]');
   await pret();
-  await p.waitForSelector('[data-key="av-suite"]:not([hidden])');
-  await p.click('[data-key="av-menu"]');
+  await scene();
+  await p.keyboard.press('Escape');
+  await prepa();
+  await p.reload();
+  await p.click('[data-key="av-continue"]');
+  await prepa();
+  check(await av(() => !window.__lqvAventure.town), '« Continuer » reprend à la Préparation, sans construire la ville');
+  await p.click('[data-key="av-prepa-menu"]');
   await p.waitForSelector('[data-key="menu-recit"]');
   check(/récit guidé/i.test(await p.textContent('[data-key="menu-recit"]')), 'le menu dit le mode');
   await p.click('[data-key="menu-recit"]');
-  await p.waitForFunction(() => /promenade libre/i.test(document.querySelector('[data-key="menu-recit"]')?.textContent ?? ''));
-  await shot('menu-promenade-libre');
-  await p.click('[data-key="dlg-close"]');
-  await p.waitForSelector('[data-key="av-suite"]', { state: 'hidden' });
-  check(await marche() > 0.05 && await av(() => window.__lqvAventure.save.recit === undefined), 'passage en Promenade libre : plus de bouton, la marche revient, sans champ dans la sauvegarde');
+  await pret();
+  await p.waitForSelector('[data-key="av-menu"]');
+  await p.waitForFunction(() => !document.querySelector('.ville-fade'), null, { timeout: 20000 });
+  await shot('promenade-libre-depuis-la-preparation');
+  check(await hud() && await marche() > 0.05 && await av(() => window.__lqvAventure.save.recit === undefined), 'passage en Promenade libre : le HUD et la marche reviennent, sans champ dans la sauvegarde');
   await p.click('[data-key="av-menu"]');
   await p.click('[data-key="menu-recit"]');
   await p.waitForFunction(() => /récit guidé/i.test(document.querySelector('[data-key="menu-recit"]')?.textContent ?? ''));
   await p.click('[data-key="dlg-close"]');
-  await p.waitForSelector('[data-key="av-suite"]:not([hidden])');
-  check(await marche() < 0.01, 'retour au Récit guidé : marche coupée de nouveau');
+  await scene();
+  check(/Kaï/.test(await dialogue() ?? '') && !(await hud()), 'retour au Récit guidé : la scène en attente s\'ouvre seule, sans HUD');
+  await p.keyboard.press('Escape');
+  await prepa();
+  check(await av(() => document.querySelector('.ville-host').hidden), 'et son refus ramène à la Préparation, la ville cachée');
 
   // (8) la Promenade libre
   await p.goto(`${server.base}/?aventure=1&qa=1&aiDelay=0&profileSeed=33`, { timeout: 90000 });
@@ -175,7 +228,7 @@ try {
   await p.click('[data-key="av-start"]');
   await pret();
   await p.waitForTimeout(800);
-  check(!(await suiteVisible()) && await marche() > 0.05 && await av(() => !('recit' in window.__lqvAventure.save)), 'Promenade libre : ni bouton, ni marche coupée, ni champ');
+  check(await p.$('[data-key="av-prepa"]') === null && await hud() && await marche() > 0.05 && await av(() => !('recit' in window.__lqvAventure.save)), 'Promenade libre : ni Préparation, ni marche coupée, ni champ');
   await ctx.close();
 } finally {
   await browser.close();

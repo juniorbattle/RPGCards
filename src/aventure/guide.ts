@@ -19,7 +19,7 @@ export const NOM_RECIT: Readonly<Record<ModeRecit, string>> = { libre: 'Promenad
 
 export const TEXTE_RECIT: Readonly<Record<ModeRecit, string>> = {
   libre: 'Parcourez la ville à pied et affrontez tous les joueurs de rue en menant votre quête.',
-  guide: 'Allez d’événement en événement, sans vous déplacer : la trame principale, ses scènes et ses combats.',
+  guide: 'Vivez la trame comme un film, d’événement en événement : ses scènes s’enchaînent, avec une Préparation avant chaque duel.',
 };
 
 /**
@@ -81,6 +81,22 @@ export function suiteRecit(e: AventureEtat, o: { ilots: readonly IlotId[]; ici: 
   if (rival && (!etape || aRejouer || !kaiVientDeJouer(o.dernier))) return { rival };
   return etape ? { etape } : null;
 }
+
+type SuiteRecit = NonNullable<ReturnType<typeof suiteRecit>>;
+
+/**
+ * Révision 3 du contrat, §4 : les scènes s'enchaînent seules ; la Préparation ne s'ouvre qu'avant un duel de la trame ou un
+ * choix. Le prologue (Kaï, l'émissaire) se joue d'un seul tenant ; Kaï qui défie surgit au début de la séquence suivante.
+ */
+export function enchainement(s: SuiteRecit): 'scene' | 'preparation' {
+  if ('rival' in s) return s.rival.k.duel ? 'preparation' : 'scene';
+  const e = s.etape;
+  if (e.kind === 'bannieres') return 'scene';
+  return e.kind === 'personne' && (e.id === KAI_PROLOGUE.id || e.id.startsWith('emissaire-')) ? 'scene' : 'preparation';
+}
+
+/** L'identité d'une suite : une scène enchaînée seule ne s'enchaîne qu'une fois (un refus ramène à la Préparation). */
+export const cleSuite = (s: SuiteRecit): string => ('rival' in s ? `rival:${s.rival.k.id}` : s.etape.kind === 'personne' ? s.etape.id : s.etape.kind);
 
 /** Le quartier où se trouve un personnage, d'après les personnages posés de chaque quartier. */
 export function quartierDe(id: string, ilots: readonly IlotId[], posesDe: (ilot: IlotId) => ReadonlyArray<{ id: string }>): IlotId | null {
