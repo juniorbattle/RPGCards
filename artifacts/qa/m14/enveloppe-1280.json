@@ -1,5 +1,5 @@
 {
- "head": "b5e9522",
+ "head": "f6a901b",
  "viewport": [
   1280,
   720
@@ -16,7 +16,12 @@
   "OK aide : aucun débordement horizontal (1280/1280)",
   "OK collection : aucun débordement horizontal (1280/1280)",
   "OK preparation : aucun débordement horizontal (1280/1280)",
-  "OK « Aventure » ouvre l’écran titre de l’aventure"
+  "OK « Aventure » ouvre l’écran titre de l’aventure",
+  "OK adresse nue : l’écran titre de l’aventure, pas l’accueil du prototype",
+  "OK le titre passe devant le dégradé de l’accueil",
+  "OK nouvelle aventure : le HUD en cartouche de la nouvelle interface",
+  "OK hors QA, le décor approuvé du Quai se charge (12 images de décor)",
+  "OK le lien de l’écran titre garde l’accès au jeu standard"
  ],
  "issues": []
 }

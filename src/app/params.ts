@@ -49,7 +49,10 @@ export interface AppParams {
   compileAsync: boolean;
   /** M09 V2 (provisoire, `demo=1`) : démo jouable, le Quai remplace le tableau des rencontres. Faux en jeu par défaut. */
   demo: boolean;
-  /** M10-B (provisoire, `aventure=1`) : prototype du mode Aventure (prologue). Faux en jeu par défaut. */
+  /**
+   * Le mode Aventure : ce que le jeu ouvre par défaut (ordre du responsable, 2026-11-01). Le jeu standard s'ouvre par
+   * `standard=1` ; les outils de QA (`qa=1`), la démo et les scénarios le gardent sans cela, `aventure=1` force l'aventure.
+   */
   aventure: boolean;
   /** M08 C2 (QA, `qa=1&venueCache=1`) : nombre de décors gardés montés (mesure du changement de lieu). Null en jeu : défaut de l’arène. */
   venueCache: number | null;
@@ -94,7 +97,7 @@ export function readParams(search = window.location.search): AppParams {
     artCheck: q.get('qa') === '1' && q.get('artCheck') === '1',
     venue: q.get('qa') === '1' && isVenueId(q.get('venue')) ? (q.get('venue') as VenueId) : null,
     demo: q.get('demo') === '1',
-    aventure: q.get('aventure') === '1',
+    aventure: q.get('aventure') === '1' || !['qa', 'standard', 'demo', 'autostart'].some((k) => q.get(k) === '1') && !q.has('scenario'),
     compileAsync: !(q.get('qa') === '1' && q.get('compileAsync') === '0'),
     venueCache: q.get('qa') === '1' && q.has('venueCache') ? Math.max(1, Math.floor(Number(q.get('venueCache')) || 1)) : null,
     prep: q.get('qa') === '1' && (q.get('prep') === 'art' || q.get('prep') === 'off') ? (q.get('prep') as 'art' | 'off') : 'full',

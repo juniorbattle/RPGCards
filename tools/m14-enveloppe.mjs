@@ -71,6 +71,35 @@ try {
   await p.waitForURL(/aventure=1/);
   await p.waitForSelector('[data-key="av-new"], [data-key="av-continue"]');
   check(true, '« Aventure » ouvre l’écran titre de l’aventure');
+
+  // le lancement réel : l'adresse nue, sans QA, dans un navigateur neuf
+  const neuf = await browser.newContext({ viewport: { width: VP[0], height: VP[1] }, deviceScaleFactor: 1 });
+  const j = await neuf.newPage();
+  j.setDefaultTimeout(Number(process.env.LQV_QA_TIMEOUT) || 90000);
+  watchConsole(j, issues);
+  const images = [];
+  j.on('response', (r) => { const m = r.url().match(/decors\/([^/?]+\.png)/); if (m && r.ok()) images.push(m[1]); });
+  await j.goto(`${server.base}/`, { timeout: Number(process.env.LQV_QA_NAV_TIMEOUT) || 90000 });
+  await j.waitForSelector('[data-screen="av-titre"]');
+  check(await j.$('[data-key="home-new"]') === null, 'adresse nue : l’écran titre de l’aventure, pas l’accueil du prototype');
+  await j.waitForTimeout(4000); // le buste vient avec l'arène
+  check(await j.evaluate(() => { const b = document.querySelector('[data-key="av-new"]').getBoundingClientRect(); const s = document.querySelector('.av-titre'); return getComputedStyle(s).position === 'relative' && getComputedStyle(s).zIndex === '1' && b.height > 0; }), 'le titre passe devant le dégradé de l’accueil');
+  writeFileSync(`${DIR}/${String(++n).padStart(2, '0')}-lancement-titre.png`, await j.screenshot());
+  await j.click('[data-key="av-new"]');
+  await j.waitForSelector('[data-key="av-start"]');
+  await j.click('[data-key="av-start"]');
+  await j.waitForSelector('.av-cartouche', { timeout: 120000 });
+  for (let i = 0; i < 14; i++) { await j.keyboard.press('Escape'); await j.waitForTimeout(350); }
+  check(await j.isVisible('.av-cartouche') && await j.$('.sh-home') === null, 'nouvelle aventure : le HUD en cartouche de la nouvelle interface');
+  check(images.includes('quai-facades.png'), `hors QA, le décor approuvé du Quai se charge (${images.length} images de décor)`);
+  writeFileSync(`${DIR}/${String(++n).padStart(2, '0')}-lancement-ville.png`, await j.screenshot());
+  await j.goto(`${server.base}/`);
+  await j.waitForSelector('[data-key="av-standard"]');
+  await j.click('[data-key="av-standard"]');
+  await j.waitForURL(/standard=1/);
+  await j.waitForSelector('[data-key="home-aventure"]');
+  check(true, 'le lien de l’écran titre garde l’accès au jeu standard');
+  await neuf.close();
   await ctx.close();
 } finally {
   await browser.close();

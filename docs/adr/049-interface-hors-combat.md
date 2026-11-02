@@ -30,3 +30,7 @@ duel, les cartes et l'enveloppe du Duel standard n'ont pas été touchés.
 ## Amendement 1 (2026-11-01, fiche M14, S2) : l'enveloppe du Duel standard
 
 L'accueil, les Rencontres, la préparation, le deck, la collection, les Options et l'Aide adoptent la même langue, par une couche de styles sous `#shell` (`src/shell/shell.css`) : mêmes variables (`src/interface.css`), coins carrés, cadre sur les grands panneaux, boutons de la ville. Le plateau et le duel ne sont pas restylés. **La garantie « jeu par défaut au repos identique au pixel près » prend fin pour l'accueil et l'enveloppe** ; elle reste vraie du duel, dont les règles et le rendu ne changent pas.
+
+## Amendement 2 (2026-11-01) : le jeu s'ouvre sur l'aventure
+
+Ordre du responsable : le jeu lance l'aventure, avec cette interface, et non le prototype. **L'adresse nue ouvre l'écran titre de l'aventure** (`params.aventure`). Le jeu standard s'ouvre par `?standard=1` ou le lien de l'écran titre ; `?aventure=1` force l'aventure ; `?demo=1`, les scénarios et les outils de QA (`?qa=1`) gardent leur chemin. Les sauvegardes des deux modes restent séparées et ne bougent pas. Corrigé au passage : le dégradé du bas de l'accueil (`.shell.scr-home::after`) voilait le titre de l'aventure.
