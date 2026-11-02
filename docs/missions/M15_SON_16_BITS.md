@@ -1,7 +1,7 @@
 # M15 — Vers un son 16 bits (cadrage proposé, à valider avant tout code)
 
 **Date :** 2026-11-01. **Statut : PROPOSÉ.** **Origine :** fiche M13, entrée R3 : « aller vers un son 16 bits (une mission à cadrer) »,
-après la question du responsable (« on est sur du 16Bit ? »). **Rien n'est commencé** : ni audio, ni code.
+après la question du responsable (« on est sur du 16Bit ? »). **Lot 1 fait** (2026-11-01, ordre du responsable : « Oui, lance-le ») : **page d'écoute <https://claude.ai/artifact/XgP1XMMfaCyb8hjrq5fJpf>**, à remplir. Le jeu n'a pas changé.
 
 ## 1. Ce que la fiche a déjà tranché
 
@@ -42,9 +42,9 @@ dans les trois options, avec la version actuelle en référence, en OGG à écou
 5. **Salles et mélange** : écho par lieu, niveaux, reprise des mesures de M13.
 6. **Bascule** : la nouvelle palette par défaut, après écoute complète ; l'ancienne retirée sur ordre seulement.
 
-## 4. Questions au responsable
+## 4. Questions au responsable (page d'écoute)
 
-- **Q1.** L'essai d'écoute (lot 1) est-il à lancer maintenant, ou après ton test complet ?
+- **Q1.** Tranchée : essai lancé. **D1 de la page :** la direction. Recommandation par les chiffres seulement, B : aucune note perdue, même au Championnat (A y perd 239 notes sur 1 067 et en coupe 376).
 - **Q2.** Les bruitages et les ambiances (M11, S1 à S3) passent-ils aussi en 16 bits ? **Recommandation :** oui, pour un jeu cohérent, en dernier.
 - **Q3.** La lecture du §1 (on garde l'écriture, on change la palette) est-elle la bonne ?
 
