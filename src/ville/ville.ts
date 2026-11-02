@@ -142,6 +142,8 @@ export interface Town {
    * logique (où, quand) est dans l'appelant ; un remontage de l'îlot remet chacun à sa place.
    */
   walkNpc(id: string, to: Vec2, speed: number, face: Facing): Promise<void>;
+  /** Un personnage sur place regarde ailleurs (un personnage qui marche finit sa marche). */
+  tournerNpc(id: string, face: Facing): void;
   /** Position courante d'un personnage de l'îlot (QA, M11-A) ; null s'il n'y est pas. */
   npcAt(id: string): Vec2 | null;
   /** Hauteur des personnages dans l'îlot courant (m), pour placer les bulles au-dessus des têtes. */
@@ -825,6 +827,12 @@ export function createTown(o: TownOptions): Town {
       npcState.get(id)?.walk?.done();
       if (o.freeze || o.reducedMotion || paused) { npcState.set(id, { pos: { ...to }, face }); return Promise.resolve(); }
       return new Promise<void>((done) => { npcState.set(id, { pos: { ...from }, walk: { to: { ...to }, speed, face, phase: 0, done } }); });
+    },
+    tournerNpc(id, face) {
+      const e = npcSprites.find((x) => x.n.id === id);
+      const st = npcState.get(id);
+      if (!e || st?.walk) return;
+      npcState.set(id, { pos: st?.pos ?? e.n.at, face });
     },
     npcAt(id) {
       const e = npcSprites.find((x) => x.n.id === id);

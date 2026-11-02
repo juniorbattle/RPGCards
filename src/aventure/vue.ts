@@ -2,22 +2,32 @@
  * M11-A — les rencontres « en vue » (`docs/m11/01_RENCONTRES_EN_VUE.md`, PROPOSÉ ; ADR 037). Logique PURE : le cône de
  * vision d'un guetteur (portée, demi-angle, direction de sa place), la ligne de vue coupée par les obstacles de l'îlot, le
  * front montant (entrer dans le champ, pas y apparaître), les guetteurs qui peuvent forcer un duel selon l'état du
- * directeur (repos après un duel) et de l'aventure (après P8), le point d'approche et le point où surgit le rival.
+ * directeur (repos jusqu'au chapitre suivant) et de l'aventure (après P8), le point d'approche et le point où surgit le rival.
  * Aucun DOM, aucun rendu, aucun temps réel : la ville n'exécute que des positions.
  */
 import { blocked, type Facing, type Ilot, type Vec2 } from '../ville/monde';
 import { chapitreDetaille, type AventureEtat, type Issue } from './aventure';
 import type { EtatDirecteur, Pose } from './directeur';
 
-/** Valeurs proposées (contrat 1, §2 et §5), provisoires jusqu'à la fiche. */
-export const VUE = { portee: 4.5, demiAngle: 32, approche: 0.95, reposDefaite: 2, pas: 0.1 } as const;
+/** Valeurs du contrat 1 (§2 et §6), gardées par la fiche M11 (V1). `tourRegard` : ms entre deux regards (V7). */
+export const VUE = { portee: 4.5, demiAngle: 32, approche: 0.95, tourRegard: 2400, pas: 0.1 } as const;
 
-/** Les joueurs de cartes de la ville qui guettent (duels de rue, membres des familles). */
-export const GUETTEURS: ReadonlySet<string> = new Set(['rue-docker', 'rue-joueuse', 'rue-commis', 'rue-cour', 'rue-port', 'rue-haute', 'membre-Cendre', 'membre-Ronce', 'membre-Voile', 'membre-Astre']);
+/** Les joueurs de cartes de la ville qui guettent : les duels de rue (fiche M11, V2). */
+export const GUETTEURS: ReadonlySet<string> = new Set(['rue-docker', 'rue-joueuse', 'rue-commis', 'rue-cour', 'rue-port', 'rue-haute']);
 export const estGuetteur = (id: string): boolean => GUETTEURS.has(id);
+
+/** Ceux qui tournent la tête (fiche M11, V7 : « certains ») ; les autres gardent la direction de leur place. */
+export const TOURNENT_LA_TETE: ReadonlySet<string> = new Set(['rue-joueuse', 'rue-commis', 'rue-haute']);
 
 const DIR: Record<Facing, Vec2> = { face: { x: 0, z: 1 }, dos: { x: 0, z: -1 }, gauche: { x: -1, z: 0 }, droite: { x: 1, z: 0 } };
 export const directionDe = (f: Facing): Vec2 => DIR[f];
+
+const COTE: Record<Facing, Facing> = { face: 'droite', droite: 'dos', dos: 'gauche', gauche: 'face' };
+
+/** Où regarde un guetteur à l'instant `ms` : devant lui, puis sur un côté, à rythme régulier (contrat 1, §6). */
+export function regardDe(id: string, base: Facing, ms: number): Facing {
+  return TOURNENT_LA_TETE.has(id) && Math.floor(ms / VUE.tourRegard) % 2 === 1 ? COTE[base] : base;
+}
 
 /** Le point est-il dans le cône (portée, demi-angle) d'un regard posé en `at` ? */
 export function dansLeCone(at: Vec2, facing: Facing, p: Vec2, portee: number = VUE.portee, demiAngle: number = VUE.demiAngle): boolean {
@@ -59,15 +69,13 @@ export interface Vu { issue: Issue; battement: number; chapitre: string }
 
 /**
  * Un PNJ peut-il FORCER un duel maintenant ? Guetteur, prologue terminé (une famille rejointe, P7), pas sur le départ, et pas au repos :
- * battu par le joueur, il attend le chapitre suivant ; vainqueur (ou duel abandonné), deux battements.
+ * quelle que soit l'issue de leur dernier duel, il attend le chapitre suivant (fiche M11, V4).
  */
 export function peutForcer(d: EtatDirecteur, e: AventureEtat, id: string): boolean {
   if (!estGuetteur(id) || e.affiliation === null) return false;
   if ((d.partants ?? []).includes(id)) return false;
   const v = d.vus?.[id];
-  if (!v) return true;
-  if (v.issue === 'victoire') return chapitreDetaille(e) !== v.chapitre;
-  return d.battement >= v.battement + VUE.reposDefaite;
+  return !v || chapitreDetaille(e) !== v.chapitre;
 }
 
 /** Les guetteurs actifs parmi les personnages posés dans l'îlot. */

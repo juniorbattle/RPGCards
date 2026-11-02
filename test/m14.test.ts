@@ -6,8 +6,8 @@
 import { describe, expect, it } from 'vitest';
 import { FAMILIES, type Family } from '../src/game/catalog/cards';
 import { appliquer, chapitreDetaille, nouvelleAventure, type AventureEtat, type Evenement } from '../src/aventure/aventure';
-import { nouveauDirecteur, poses } from '../src/aventure/directeur';
-import { etapeRecit, ILOTS_RECIT, kaiVientDeJouer, quartierDe, suiteRecit, type EtapeRecit } from '../src/aventure/guide';
+import { convoquer, noterVu, nouveauDirecteur, poses } from '../src/aventure/directeur';
+import { etapeRecit, ILOTS_RECIT, joueursDeRue, kaiVientDeJouer, quartierDe, suiteRecit, type EtapeRecit } from '../src/aventure/guide';
 import { ilotAventure } from '../src/aventure/ilots';
 import { figure, KAI_PROLOGUE } from '../src/aventure/modele';
 import { objectif } from '../src/aventure/quetes';
@@ -175,5 +175,43 @@ describe('M14 — le mode, champ facultatif de la sauvegarde', () => {
     const a = faire(nouvelleAventure(AT), [{ type: 'scene', id: 'P1' }]);
     expect(JSON.stringify(a)).not.toContain('recit');
     expect(JSON.stringify(a)).not.toContain('guide');
+  });
+});
+
+describe('M14 — la Halte (contrat, §4 bis ; fiche, G1 et G2)', () => {
+  const ILOTS = ['quai', 'parvis', 'ruelles', 'cour', 'port', 'haute'] as const;
+  const affilie = (): AventureEtat => {
+    const e = nouvelleAventure(AT);
+    return [{ type: 'scene', id: 'P1' }, { type: 'scene', id: 'P2' }, { type: 'duelPrologue', issue: 'victoire', faits: { assautsGagnes: 0, gardesGagnees: 0, interferencesReussies: 0 } }, { type: 'confirmer', famille: 'Ronce' }, { type: 'scene', id: 'P8' }]
+      .reduce((x: AventureEtat, ev) => appliquer(x, ev as Evenement, AT).etat, e);
+  };
+  it('rien avant l’affiliation ; ensuite, seulement des joueurs de rue, où qu’ils se tiennent', () => {
+    expect(joueursDeRue(nouveauDirecteur(1), nouvelleAventure(AT), ILOTS)).toEqual([]);
+    const j = joueursDeRue(nouveauDirecteur(1), affilie(), ILOTS);
+    expect(j.length).toBeGreaterThan(0);
+    expect(j.every((x) => x.id.startsWith('rue-') && ILOTS.includes(x.ilot as (typeof ILOTS)[number]))).toBe(true);
+  });
+  it('un joueur déjà posé reste à sa place ; un quartier fermé n’en propose aucun', () => {
+    const d = nouveauDirecteur(1);
+    const posee = convoquer(d, 'rue-docker', 'quai', 1);
+    expect(joueursDeRue(posee, affilie(), ILOTS).find((x) => x.id === 'rue-docker')).toEqual({ id: 'rue-docker', ilot: 'quai', place: 1 });
+    expect(joueursDeRue(d, affilie(), ['quai']).every((x) => x.ilot === 'quai')).toBe(true);
+    const deplacee = convoquer(posee, 'rue-docker', 'quai', 0);
+    expect(deplacee.actives.quai?.filter((a) => a.id === 'rue-docker')).toEqual([{ id: 'rue-docker', place: 0 }]);
+  });
+  it('affronté, il quitte la liste jusqu’au chapitre suivant, quelle que soit l’issue', () => {
+    const e = affilie();
+    for (const issue of ['victoire', 'defaite'] as const) {
+      const d = noterVu(nouveauDirecteur(1), 'rue-docker', issue, 'I');
+      expect(joueursDeRue(d, e, ILOTS).some((x) => x.id === 'rue-docker')).toBe(false);
+      expect(joueursDeRue(noterVu(nouveauDirecteur(1), 'rue-docker', issue, 'prologue'), e, ILOTS).some((x) => x.id === 'rue-docker')).toBe(true);
+    }
+  });
+  it('un joueur convoqué est bien posé dans son quartier (la scène peut s’ouvrir devant lui)', () => {
+    const e = affilie();
+    for (const j of joueursDeRue(nouveauDirecteur(1), e, ILOTS)) {
+      const d = convoquer(nouveauDirecteur(1), j.id, j.ilot, j.place);
+      expect(poses(d, e, j.ilot).some((p) => p.id === j.id), j.id).toBe(true);
+    }
   });
 });

@@ -89,7 +89,18 @@ export function installAventureStyles(): void {
 /* M14 : le choix du récit, le bouton de la suite (au doigt comme à la souris) */
 .av-recit { display: flex; justify-content: center; gap: 8px; }
 .av-recit-texte { min-height: 2.6em; }
-.av-suite { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 40; min-height: 52px; padding: 0.5em 1.8em; font-size: clamp(19px, 1.3vw, 25px); pointer-events: auto; box-shadow: inset 0 0 0 1px rgba(90, 60, 20, 0.4), 0 8px 26px rgba(0, 0, 0, 0.6); }
+.av-recit { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 40; display: flex; gap: 12px; align-items: stretch; pointer-events: none; }
+.av-recit > button { pointer-events: auto; box-shadow: inset 0 0 0 1px rgba(90, 60, 20, 0.4), 0 8px 26px rgba(0, 0, 0, 0.6); }
+.av-suite { min-height: 52px; padding: 0.5em 1.8em; font-size: clamp(19px, 1.3vw, 25px); white-space: nowrap; }
+.av-halte-btn { padding: 0.5em 1.3em; font-size: clamp(16px, 1.05vw, 21px); }
+.av-halte-suite { display: flex; gap: 18px; align-items: center; justify-content: space-between; margin: 10px 0 2px; padding: 8px 12px; background: rgba(226, 196, 138, 0.07); border-left: 3px solid var(--lqv-or); }
+.av-halte-suite h3 { margin: 0 0 2px; } .av-halte-suite p { margin: 0; } .av-halte-suite .ville-btn { flex: none; }
+.av-halte-grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+.av-rue { display: flex; gap: 10px; align-items: stretch; padding: 8px; border: 1px solid rgba(226, 196, 138, 0.3); background: rgba(9, 10, 18, 0.5); }
+.av-rue .ville-portrait { flex: none; width: 92px; height: 112px; object-fit: cover; }
+.av-rue-texte { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; font-size: 14px; line-height: 1.3; } .av-rue-texte b { font-size: 16px; color: var(--lqv-or-clair); }
+.av-rue-bilan { color: rgba(240, 232, 214, 0.72); } .av-rue .ville-btn { margin-top: auto; align-self: flex-start; }
+@media (max-width: 700px) { .av-halte-suite { flex-direction: column; align-items: stretch; } }
 /* le HUD : un seul cartouche à gauche, les outils à droite, sur un voile qui garde le décor visible */
 .av-hud::before { content: ""; position: absolute; inset: 0 0 auto 0; height: clamp(168px, 16vw, 300px); pointer-events: none; background: linear-gradient(180deg, rgba(4, 5, 10, 0.86), rgba(4, 5, 10, 0.5) 52%, rgba(4, 5, 10, 0)); }
 .av-cartouche { position: absolute; left: 22px; top: 14px; max-width: min(max(620px, 44vw), calc(100vw - 340px)); text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9); }

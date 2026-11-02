@@ -51,14 +51,30 @@ describe('M11-A — les moments écrits du rival (contrat 2, §1, §2)', () => {
     expect(ou(t.v!, false)).toEqual(['parvis:K5']);
     expect(ou(t.iii!, false)).toEqual(['parvis:K3', 'ruelles:K3']);
   });
-  it('une fois : accompli à l’issue d’un duel mené à son terme (victoire ou défaite) ; un abandon le laisse dû', () => {
+  it('seule une victoire l’accomplit ; perdu ou abandonné, il se rejoue (fiche, K3)', () => {
     const t = trame();
     const ab = appliquer(t.i1!, { type: 'rival', id: 'K1', issue: 'abandon' }, AT).etat;
     expect(evenementRival(ab, 'quai')?.id).toBe('K1');
     const def = appliquer(t.i1!, { type: 'rival', id: 'K1', issue: 'defaite' }, AT).etat;
-    expect(evenementRival(def, 'quai')).toBeNull();
-    expect(def.rival?.faits.K1).toBe('defaite');
-    expect(appliquer(def, { type: 'rival', id: 'K1', issue: 'victoire' }, AT).etat.rival?.faits.K1).toBe('defaite');
+    expect(evenementRival(def, 'quai')?.id).toBe('K1');
+    expect(def.rival?.faits.K1).toBeUndefined();
+    const bis = appliquer(def, { type: 'rival', id: 'K1', issue: 'defaite' }, AT).etat;
+    expect(bis.rival?.perdus).toEqual(['K1']);
+    const gagne = appliquer(bis, { type: 'rival', id: 'K1', issue: 'victoire' }, AT).etat;
+    expect(gagne.rival).toEqual({ faits: { K1: 'victoire' } });
+    expect(evenementRival(gagne, 'quai')).toBeNull();
+  });
+  it('perdu, il reste dû partout et après son chapitre, jusqu’au titre ; pas au retour même du duel', () => {
+    const t = trame();
+    const perdus = { faits: {}, perdus: ['K2' as const] };
+    expect(evenementRival({ ...t.iii!, rival: perdus }, 'port')?.id).toBe('K2');
+    expect(evenementRival({ ...t.iii!, rival: perdus }, 'port', true, true)).toBeNull();
+    const titre = structuredClone(t.v!);
+    titre.competitions.championnat.titre = true;
+    expect(evenementRival({ ...titre, rival: { faits: {}, perdus: ['K5'] } }, 'cour')?.id).toBe('K6');
+  });
+  it('une défaite d’une aventure d’avant la fiche reste accomplie', () => {
+    expect(evenementRival({ ...trame().i1!, rival: { faits: { K1: 'defaite' } } }, 'quai')).toBeNull();
   });
   it('jamais au retour d’un duel contre Kaï ; un événement manqué ne se rattrape pas au chapitre suivant', () => {
     const t = trame();
@@ -108,7 +124,7 @@ describe('M11-A — fin des duels du rival et des guetteurs (fin.ts)', () => {
     expect(prevu.personnalite.aiProfile).toBe('offensif');
     const o = ouvrirDuel(s, prevu, AT);
     conclureDuel(s, o.duel, [], 'defaite', 9, AT);
-    expect(s.etat.rival?.faits.K1).toBe('defaite');
+    expect(s.etat.rival?.perdus).toEqual(['K1']);
     expect(s.etat.combats).toBe(trame().i1!.combats + 1);
     const g = ouvrirDuel(s, duelFacultatif('rue-docker', s.etat, 100), AT);
     conclureDuel(s, g.duel, [], 'victoire', 8, AT);

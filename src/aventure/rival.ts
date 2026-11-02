@@ -13,7 +13,7 @@ export const isKId = (x: string): x is KId => (K_IDS as readonly string[]).inclu
 export interface EvenementRival {
   id: KId;
   titre: string;
-  /** Chapitre de la trame où il est dû (il ne se rattrape pas après). */
+  /** Chapitre de la trame où il est dû (un événement qui n'a pas eu lieu ne se rattrape pas après ; perdu, il reste dû). */
   chapitre: ReturnType<typeof chapitreDetaille>;
   /** Îlots où il peut surgir (ville en rangs) ; `secours` : dans la ville d'aujourd'hui (sans Grande Cour ni quartiers ajoutés). */
   ilots: readonly IlotId[];
@@ -34,18 +34,23 @@ export const EVENEMENTS_RIVAL: readonly EvenementRival[] = [
 ];
 export const evenementDef = (id: KId): EvenementRival => EVENEMENTS_RIVAL.find((k) => k.id === id)!;
 
-/** État du rival dans l'aventure : événements accomplis et leur issue (`scene` pour une scène sans duel). */
-export interface EtatRival { faits: Partial<Record<KId, 'victoire' | 'defaite' | 'scene'>> }
+/**
+ * État du rival dans l'aventure : événements accomplis (`scene` pour une scène sans duel ; `defaite`, seulement dans une
+ * aventure d'avant la fiche M11) et événements perdus ou abandonnés, encore à gagner (K3).
+ */
+export interface EtatRival { faits: Partial<Record<KId, 'victoire' | 'defaite' | 'scene'>>; perdus?: KId[] }
 
 export const accompli = (e: AventureEtat, id: KId): boolean => !!e.rival?.faits[id];
 
 /**
  * L'événement du rival dû à ce point de décision dans `ilot`, ou null. `retourKai` : on revient d'un duel contre Kaï
- * (jamais deux de suite). Au plus un ; jamais au prologue ; seulement dans son chapitre.
+ * (jamais deux de suite). Au plus un ; jamais au prologue ; dans son chapitre, ou, perdu, partout jusqu'au titre (K3).
  */
 export function evenementRival(e: AventureEtat, ilot: IlotId, quaiRangs = true, retourKai = false): EvenementRival | null {
   if (retourKai || e.affiliation === null) return null;
   const ch = chapitreDetaille(e);
+  const perdu = ch === 'titre' ? undefined : e.rival?.perdus?.[0];
+  if (perdu) return evenementDef(perdu);
   for (const k of EVENEMENTS_RIVAL) {
     if (k.chapitre !== ch || accompli(e, k.id)) continue;
     if (k.faits && !k.faits(e)) continue;
