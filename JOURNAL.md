@@ -3512,3 +3512,4 @@ Mettre aussi à jour les sections globales « À reprendre » et « Principes à
 - **Constat :** `main` local et distant à `e75a938`, aucun fichier modifié ; son, cinématiques et conseils actifs par défaut (seul `?qa=1` les coupe) ; 357 entrées de manifeste, 0 non approuvée.
 - **Joué depuis le build de `main`, adresse nue, navigateur neuf, sur la Radeon 780M :** deux modes proposés, huit coupes, visages ; cinématique d'arrivée ; menu complet ; contexte audio actif ; Récit guidé, Kaï, préparation, duel ; console propre. Aucun code changé.
 - **Non vérifié :** ce qui suit le premier duel, à l'adresse nue (les parcours complets passent par `?qa=1`) ; l'oreille et l'œil du responsable.
+- **Trouvé à la relecture de la capture :** la pastille « Aventure », reste du premier prototype, recouvrait la barre de phase du duel. Retirée.

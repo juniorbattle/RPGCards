@@ -74,7 +74,7 @@ try {
   await shot('preparation-prologue');
   await p.click('[data-key="av-duel-go"]');
   await duelPret();
-  check(!!(await p.$('[data-key="av-banner"]')), 'duel : bandeau du prototype visible');
+  check(!(await p.$('[data-key="av-banner"]')), 'duel : aucun bandeau de prototype');
   check(await av(() => { const c = window.__lqv.controller; const s = c.match.state; return Object.values(s.cards).length === 32 && Object.values(s.cards).every((x) => x.defId.startsWith('neutre-')); }), 'duel du prologue : seize cartes grises de chaque côté dans le moteur (avenant M10-A)');
   check((await p.$$('.card.fam-neutre')).length > 0, 'duel du prologue : cartes neutres dessinées en main (blanches et grises, sans emblème)');
   await shot('duel-prologue', 2500);
