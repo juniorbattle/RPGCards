@@ -77,7 +77,6 @@ export function installAventureStyles(): void {
 .av-devise { color: #d8ccb4; font-style: italic; }
 
 .av-enjeu { display: flex; align-items: center; gap: 12px; --card-w: 74px; }
-.av-banner { position: fixed; left: 50%; top: 6px; transform: translateX(-50%); z-index: 2400; padding: 3px 10px; border-radius: 999px; background: rgba(40, 30, 10, 0.82); border: 1px solid rgba(226, 196, 138, 0.6); color: #ffe7b0; font: 600 12px/1.3 system-ui, sans-serif; pointer-events: auto; white-space: nowrap; }
 .av-statut { display: inline-flex; align-items: center; gap: 5px; color: var(--lqv-sepia); font: clamp(14px, 1vw, 19px)/1.3 Georgia, serif; }
 .av-statut svg { width: 15px; height: 15px; }
 .av-statut.fam-Cendre svg { color: #ff8a4a; } .av-statut.fam-Voile svg { color: #a8b8ff; } .av-statut.fam-Ronce svg { color: #8fdc6a; } .av-statut.fam-Astre svg { color: #ffd36b; }

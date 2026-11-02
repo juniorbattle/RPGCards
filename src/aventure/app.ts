@@ -1444,8 +1444,6 @@ export class AventureApp {
     arena?.setPaused(false);
     this.d.app.hidden = false;
     const id = duel.id;
-    const banner = h('div', { class: 'av-banner', 'data-key': 'av-banner', title: prevu.note }, 'Aventure');
-    document.body.append(banner);
     const session = new DuelSession({
       app: this.d.app, arena, config: duel.config, params: { ...this.params, ...(this.save?.profil.apparence ? { apparence: this.save.profil.apparence } : {}) }, scenario: null, personality: prevu.personnalite, product: { menu: true }, resume: duel.commands,
       onTool: (t) => {
@@ -1551,7 +1549,6 @@ export class AventureApp {
     if (!live) return;
     live.session.dispose();
     this.live = null;
-    document.querySelector('.av-banner')?.remove();
     this.d.app.hidden = true;
     this.persist();
     this.toast('Duel sauvegardé : « Continuer l’aventure » le reprendra.');
@@ -1564,7 +1561,6 @@ export class AventureApp {
     if (!live || !this.save) return;
     live.session.dispose();
     this.live = null;
-    document.querySelector('.av-banner')?.remove();
     this.d.app.hidden = true;
     const v = viewFor(c.match.state, 'p1');
     const issue: Issue = forcee ?? (abandon ? 'abandon' : v.winner === 'me' ? 'victoire' : 'defaite');
