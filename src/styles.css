@@ -156,6 +156,7 @@ button { font: inherit; color: inherit; }
 /* Passage A ↔ B : les rangées et la main glissent de leur ancienne place (FLIP, board.ts) ;
    aucune transformation CSS de centrage sur ces éléments pour laisser la place à l’animation. */
 .board { position: absolute; inset: 0; pointer-events: none; z-index: 3; }
+.board:has(.menu) { z-index: 6; } /* le menu tactique de la case de droite ne passe pas sous le panneau de commande */
 /* Cases au format des cartes (ADR 016) : le cadre est le contour de la carte posée (même taille à 6 % près,
    même inclinaison --ct, même perspective) ; colonnes au pas de deux largeurs de carte. Vue A (pose comprise) :
    les deux rangées ont la même taille et la même inclinaison, donc six cadres identiques en colonnes alignées,
