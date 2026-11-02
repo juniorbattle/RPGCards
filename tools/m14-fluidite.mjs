@@ -108,7 +108,7 @@ try {
       if (q('.ville-fade.in')) return 'attente';
       if (v('[data-screen="av-resultat"]')) return 'resultat';
       if (v('[data-key="av-choix"]')) return 'variante';
-      if (v('[data-key="av-duel-go"]')) return 'preparer';
+      if (a.ecran === 'duel') return window.__lqv?.controller?.view?.awaitingMe ? 'duel' : 'attente';
       if (a.cine) return 'cine';
       if (q('[data-key="av-bannieres"]')) return 'bannieres';
       if (q('.av-modal')) return 'modal';
@@ -135,11 +135,7 @@ try {
       await p.waitForFunction(() => !document.querySelector('[data-key="av-prepa"]'));
     } else if (vu === 'resultat') { await p.waitForTimeout(900); await p.click('[data-key="av-retour"]'); }
     else if (vu === 'variante') await p.click('[data-key="av-choix"] button');
-    else if (vu === 'preparer') {
-      await p.waitForTimeout(500);
-      await p.click('[data-key="av-duel-go"]');
-      if (duels === 0) await rafale('vers-duel', 5, 120);
-      await p.waitForFunction(() => !!window.__lqv?.controller?.view?.awaitingMe, null, { timeout: 120000 });
+    else if (vu === 'duel') {
       await p.waitForTimeout(600);
       await av(() => window.__lqvAventure.qaTerminer('victoire'));
       if (duels++ === 0) await rafale('fin-de-duel', 8, 160);

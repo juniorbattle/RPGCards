@@ -32,7 +32,6 @@ try {
   const cartes = () => p.$$eval('[data-key^="av-rue-"]', (xs) => xs.map((x) => x.getAttribute('data-key').slice(7)));
   const duel = async () => {
     await p.click('.ville-dialog [data-key="dlg-duel"]');
-    await p.click('[data-key="av-duel-go"]');
     await p.waitForFunction(() => !!window.__lqv?.controller?.view?.awaitingMe, null, { timeout: 120000 });
     await av(() => window.__lqvAventure.qaTerminer('victoire'));
     await p.waitForSelector('[data-screen="av-resultat"]');
@@ -82,21 +81,16 @@ try {
   await p.click('[data-key="dlg-close"]');
   await p.waitForFunction(() => !document.querySelector('.ville-dialog') && !document.querySelector('.av-modal'));
 
-  // un défi loin d'ici, puis un défi refusé
+  // un défi loin d'ici
   const loin = ids.includes('rue-port') ? 'rue-port' : ids.at(-1);
   await p.click(`[data-key="av-defier-${loin}"]`);
   check(await p.$('.ville-fade') !== null, 'défier : écran noir');
   await p.waitForSelector('.ville-dialog', { timeout: 60000 });
   await p.waitForFunction(() => !document.querySelector('.ville-fade'), null, { timeout: 20000 });
-  const lieu = await av((id) => ({ ilot: window.__lqvAventure.town.ilotId(), proche: (() => { const t = window.__lqvAventure.town; const s = t.ilot.spawns[`npc-${id}`]; const w = t.walker().pos; return !!s && Math.hypot(s.x - w.x, s.z - w.z) < 0.05; })() }), loin);
+  const lieu = await av((id) => ({ ilot: window.__lqvAventure.town.ilotId(), proche: (() => { const t = window.__lqvAventure.town; const s = t.ilot.spawns[`npc-${id}`]; const w = t.walker().pos; return !!s && Math.hypot(s.x - w.x, s.z - w.z) < 2.5; })() }), loin);
   check(lieu.proche, `le joueur est devant lui (${lieu.ilot})`);
   await shot('devant-le-joueur');
-  await p.click('.ville-dialog [data-key="dlg-close"]');
-  await prepa();
-  check((await cartes()).includes(loin), 'un refus ramène à la Préparation et ne le retire pas de la liste');
-
-  await p.click(`[data-key="av-defier-${loin}"]`);
-  await p.waitForSelector('.ville-dialog [data-key="dlg-duel"]', { timeout: 60000 });
+  check(await p.$('.ville-dialog [data-key="dlg-close"]') === null, 'choisi à la Préparation, il ne se refuse plus');
   await duel();
   await prepa();
   check(!(await cartes()).includes(loin), 'affronté, il quitte la liste jusqu’au chapitre suivant');

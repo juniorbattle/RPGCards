@@ -19,7 +19,7 @@ import { finish, type LightDef, type QuaiScene } from './scene';
 import { plateRect, type DecorLight, type PreparedDiorama, type PreparedPlate } from './decors';
 import { cheminMesh } from './chemins';
 import { ombreMesh, ombresDuPlan, profilPied } from './ombres';
-import { encoder, RELIEF_MAX, RELIEF_MIN, reliefDansMorceau, RELIEFS, sommets } from './reliefs';
+import { BIAIS_MAX, encoder, RELIEF_MAX, RELIEF_MIN, reliefDansMorceau, RELIEFS, sommets } from './reliefs';
 
 const PLATE_VERT = /* glsl */ `
 varying vec2 vUv; varying vec3 vWorld; varying vec3 vN;
@@ -44,7 +44,9 @@ uniform sampler2D tRelief; uniform vec2 uUvM; uniform vec4 uCrop;
 float rProf(vec2 uv){ return mix(${RELIEF_MIN.toFixed(2)}, ${RELIEF_MAX.toFixed(2)}, texture2D(tRelief, clamp(uv, uCrop.xy, uCrop.zw)).r); }
 vec3 relief(vec2 uv0){
   vec3 V = normalize(cameraPosition - vWorld);
-  vec2 dir = -V.xy / max(V.z, 0.3) * uUvM;
+  // biais borné : cadrée de près ou de côté, une image peinte s'étire au lieu de gagner en relief
+  vec2 biais = -V.xy / max(V.z, 0.3);
+  vec2 dir = biais * min(1.0, ${BIAIS_MAX.toFixed(2)} / max(length(biais), 1e-4)) * uUvM;
   float pas = (${RELIEF_MAX.toFixed(2)} - (${RELIEF_MIN.toFixed(2)})) / 24.0;
   float d0 = ${RELIEF_MIN.toFixed(2)};
   float s0 = rProf(uv0 + dir * d0);
@@ -305,6 +307,8 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
   /** Plans `coupe` (passe 62) : opacité courante, profondeur écrite d'origine ; diorama en rangs (passe 65) : tous les
    *  plans, pour le fondu lointain. */
   const profond = d.plates.some((p) => p.entry.coupe);
+  /** Plans de face et leur profondeur, pour l'avant-plan d'une scène du Récit guidé (M14). */
+  const faces: { mesh: THREE.Mesh; z: number }[] = [];
   const cutaways: { rect: ReturnType<typeof plateRect>; mat: THREE.ShaderMaterial; cut: number; writes: boolean; ghost: boolean; vers: 'est' | 'ouest' | undefined; coupeZ: number | undefined; ombres: { mat: THREE.ShaderMaterial; alpha: number }[] }[] = [];
   /** Ombres au sol (passe 68), créées avant les plans : sous eux dans l'ordre de dessin. */
   const ombreMeshes: THREE.Mesh[] = [];
@@ -362,6 +366,7 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
       });
       cutaways.push({ rect: r, mat, cut: 0, writes: mat.depthWrite, ghost: !!p.entry.coupe, vers: r.orient === 'cote' ? p.entry.vers ?? 'est' : undefined, coupeZ: p.entry.coupeZ, ombres });
     }
+    if (r.orient === 'face') faces.push({ mesh, z: r.center[2] });
     meshes.push(mesh);
   }
   const lights: LightDef[] = d.lights.map((l) => ({
@@ -421,6 +426,7 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
       haloCol.needsUpdate = true;
     }
   };
-  if (!mistMats.length && !cutaways.length && !cheminMats.length) return base;
-  return { ...base, focus: cutaways.length ? focus : undefined, update: (time: number) => { base.update(time); for (const mm of [...mistMats, ...cheminMats]) mm.uniforms.uT!.value = time; } };
+  const avantPlan = (z: number | null) => { for (const f of faces) f.mesh.visible = z === null || f.z <= z + 2; };
+  if (!mistMats.length && !cutaways.length && !cheminMats.length) return { ...base, avantPlan };
+  return { ...base, avantPlan, focus: cutaways.length ? focus : undefined, update: (time: number) => { base.update(time); for (const mm of [...mistMats, ...cheminMats]) mm.uniforms.uT!.value = time; } };
 }

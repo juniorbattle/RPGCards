@@ -69,7 +69,7 @@ export function installVilleStyles(): void {
 .ville-card.out { opacity: 0; transition: opacity 1.4s ease 1.4s; }
 @media (prefers-reduced-motion: no-preference) {
   .ville-card.fondu { animation: lqv-carton 3.2s ease both; }
-  .ville-card.fondu.court { animation-duration: 1.7s; }
+  .ville-card.fondu.court { animation-duration: 1.3s; }
 }
 @keyframes lqv-carton { from { opacity: 0; } 22% { opacity: 1; } 64% { opacity: 1; } to { opacity: 0; } }
 .ville-fade { position: fixed; inset: 0; z-index: 2950; pointer-events: none; background: #04060c; opacity: 0; transition: opacity 0.28s cubic-bezier(0.45, 0, 0.55, 1); }

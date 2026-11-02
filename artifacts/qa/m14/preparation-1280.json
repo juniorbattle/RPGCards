@@ -1,5 +1,5 @@
 {
- "head": "96bf634",
+ "head": "b21393f",
  "viewport": [
   1280,
   720
@@ -21,7 +21,7 @@
   "OK les réglages depuis la Préparation",
   "OK défier : écran noir",
   "OK le joueur est devant lui (port)",
-  "OK un refus ramène à la Préparation et ne le retire pas de la liste",
+  "OK choisi à la Préparation, il ne se refuse plus",
   "OK le résultat dit « Continuer », pas « Retour en ville »",
   "OK affronté, il quitte la liste jusqu’au chapitre suivant",
   "OK le duel compte comme à pied (5 combats)",

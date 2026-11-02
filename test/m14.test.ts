@@ -4,6 +4,7 @@
  * découpage en séquences (les scènes s'enchaînent, la Préparation avant un duel de la trame) ; le mode, simple champ
  * facultatif de la sauvegarde.
  */
+import { plansArriveeRecit } from '../src/aventure/cinematiques';
 import { describe, expect, it } from 'vitest';
 import { FAMILIES, type Family } from '../src/game/catalog/cards';
 import { appliquer, chapitreDetaille, nouvelleAventure, type AventureEtat, type Evenement } from '../src/aventure/aventure';
@@ -249,5 +250,15 @@ describe('M14 — les joueurs de rue de la Préparation (contrat, §4 bis ; fich
       const d = convoquer(nouveauDirecteur(1), j.id, j.ilot, j.place);
       expect(poses(d, e, j.ilot).some((p) => p.id === j.id), j.id).toBe(true);
     }
+  });
+});
+
+describe('M14 : aucun plan de promenade dans le Récit guidé', () => {
+  it('l’arrivée reste serrée, sans plan large ni retour au cadrage ordinaire', () => {
+    const plans = plansArriveeRecit({ x: 12, z: 1 }, { minX: -14, maxX: 14 });
+    expect(plans.every((p) => (p.zoom ?? 1) < 0.8)).toBe(true);
+    expect(plans).toHaveLength(2);
+    expect(plans.at(-1)!.at.x).toBe(12);
+    expect(plans[0]!.at.x).toBeLessThan(12);
   });
 });

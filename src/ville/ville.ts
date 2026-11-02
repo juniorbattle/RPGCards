@@ -144,6 +144,11 @@ export interface Town {
    * logique (où, quand) est dans l'appelant ; un remontage de l'îlot remet chacun à sa place.
    */
   walkNpc(id: string, to: Vec2, speed: number, face: Facing): Promise<void>;
+  /**
+   * M14 (Récit guidé) : le plateau d'une scène : les passants s'en vont, et les personnages hors de `garder` (`'tous'` :
+   * chacun reste) ; `null` : tout le monde revient. Idempotent, redit à chaque image.
+   */
+  plateau(garder: readonly string[] | 'tous' | null): void;
   /** Un personnage sur place regarde ailleurs (un personnage qui marche finit sa marche). */
   tournerNpc(id: string, face: Facing): void;
   /** Position courante d'un personnage de l'îlot (QA, M11-A) ; null s'il n'y est pas. */
@@ -412,7 +417,9 @@ export function createTown(o: TownOptions): Town {
   });
   let npcSprites = makeNpcs();
   let passers = makePassers();
-  const spawn = def.ilot.spawns[o.spawn ?? 'arrivee'] ?? def.ilot.spawns.arrivee!;
+  /** Le plateau en place (`plateau`) ; vide : tout le monde est là. */
+  let plateauCle = '';
+  const spawn =def.ilot.spawns[o.spawn ?? 'arrivee'] ?? def.ilot.spawns.arrivee!;
   let walker = newWalker(spawn, spawn.face ?? 'face');
 
   // --- post-traitement ---
@@ -599,6 +606,8 @@ export function createTown(o: TownOptions): Town {
   const render = () => {
     world.update(time);
     world.focus?.(walker.pos, !!o.freeze, camera.position);
+    // M14 : dans une scène, rien du premier plan entre la caméra et les personnages
+    world.avantPlan?.(plateauCle.startsWith('|') ? walker.pos.z : null);
     playerSprite.set(walker.pos, walker.facing, walker.phase, walker.moving, time);
     for (const e of npcSprites) {
       const { n, s } = e;
@@ -712,6 +721,7 @@ export function createTown(o: TownOptions): Town {
     playerSprite.setHeight(walkerH());
     npcSprites = makeNpcs();
     passers = makePassers();
+    plateauCle = '';
   };
   /**
    * Décor de l'îlot courant pas encore décidé : image retenue (au plus `HOLD_MS`) ; à la décision, un diorama admis
@@ -829,6 +839,13 @@ export function createTown(o: TownOptions): Town {
       npcState.get(id)?.walk?.done();
       if (o.freeze || o.reducedMotion || paused) { npcState.set(id, { pos: { ...to }, face }); return Promise.resolve(); }
       return new Promise<void>((done) => { npcState.set(id, { pos: { ...from }, walk: { to: { ...to }, speed, face, phase: 0, done } }); });
+    },
+    plateau(garder) {
+      const cle = garder === null ? '' : garder === 'tous' ? '*' : `|${garder.join('|')}`;
+      if (cle === plateauCle) return;
+      plateauCle = cle;
+      for (const e of npcSprites) { if (garder === null || garder === 'tous' || garder.includes(e.n.id)) scene.add(e.s.group); else e.s.group.removeFromParent(); }
+      for (const p of passers) { if (garder === null) scene.add(p.s.group); else p.s.group.removeFromParent(); }
     },
     tournerNpc(id, face) {
       const e = npcSprites.find((x) => x.n.id === id);

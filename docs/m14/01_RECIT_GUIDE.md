@@ -66,8 +66,10 @@ qu'avant un duel de la trame (`enchainement`, pur).
 La **première Préparation** vient juste après l'affiliation : le dialogue du cadet ne s'ouvre plus à la suite de la cinématique,
 il devient la scène de la séquence suivante.
 
-**Refus.** Refuser une scène (« Pas maintenant », « Différer », « Plus tard », Échap) ramène à la Préparation : une scène enchaînée
-seule ne s'enchaîne qu'une fois. La Préparation la repropose.
+**Pas de refus (2026-11-02, retour du test du responsable : « "pas maintenant" n'est pas necessaire dans le recit guide ») :** remettre
+à plus tard sert à repartir en promenade. Le Récit guidé retire ces boutons (« Pas maintenant », « Plus tard », « Différer », « Refuser ») et
+Échap ne quitte pas une scène ; un duel de rue choisi à la Préparation non plus. Reste un vrai choix du récit, « Chercher une autre voie »,
+qui ramène à la Préparation et à la liste des émissaires. **Pas de fenêtre avant le duel** (« Commencer le duel ») : la Préparation et la scène ont tout dit.
 
 **Le noir.** La scène finie, son dernier cadre reste à l'écran le temps d'une respiration, bandes comprises, puis le noir se ferme ;
 aucun quartier ne se voit au repos. Le noir reste fermé au retour d'un duel et sous la reprise. La scène s'ouvre en sortant du noir, le
@@ -77,6 +79,14 @@ s'ouvrent sur un fond opaque. Mouvement réduit et temps figé : sans fondu.
 
 **Le cadre.** Tout dialogue d'une scène est cadré sur son personnage et le joueur, avec les bandes, premier plan posé sous le
 noir. Les bandes restent du premier cadre sorti du noir au retour au noir, sans repli entre deux scènes. Les cinématiques coupées dans le menu coupent aussi ce cadre : le dialogue s'ouvre alors sur la vue ordinaire de la scène.
+
+**La scène (2026-11-02, même retour : « on a encore acces a un visuel de la ville comme si on etait en promenade libre ») :**
+- **Un plateau vide :** ni passants, ni repères « ! » et « ? », seulement les personnages de la scène (`Town.plateau`). Le prologue et le
+  titre gardent leur foule, sans passants. Le premier plan placé entre la caméra et eux s'efface.
+- **Une mise en place :** le joueur à 1,5 m de son vis-à-vis, tous deux face à face, jamais de dos (`enPlace`).
+- **Aucun plan large :** la première arrivée dans un quartier est un plan serré sur les façades (`plansArriveeRecit`), sans retour au cadrage
+  ordinaire ; le chapitre s'annonce sur le noir ; une scène s'ouvre sur un lent travelling avant. Seule exception : le Championnat et le titre gardent leur grand plan.
+- **Une seule musique :** celle du récit, de la Préparation aux scènes, sans changer de morceau à chaque quartier ; jamais le combo du Fanal.
 
 **Ce qui vient ensuite** (`suiteRecit`, pur) :
 1. **Kaï, s'il est dû.** Un événement K se perd après son chapitre et n'a lieu que dans certains quartiers
@@ -98,11 +108,11 @@ pour la suite ».
 - **Un écran plein et opaque**, sans la ville derrière, qui s'ouvre seul entre deux séquences et à la reprise (« Continuer »). Il
   tient en une page : le chapitre, la voie, les PV ; **« À suivre »** (portrait, nom, quartier, objectif, PV adverses) et le grand
   bouton **« Suite du récit ▸ »**, au doigt comme à la souris, et par Entrée ou Espace ; ou, pour un choix, une carte par personne ; les
-  **joueurs de rue** ; Deck, Journal et Menu (aussi à Échap). Musique du résultat, sans ambiance de quartier.
+  **joueurs de rue** ; Deck, Journal et Menu (aussi à Échap). Musique du récit, sans ambiance de quartier.
 - **Les joueurs de rue listés** sont ceux de la Promenade libre : mêmes rencontres, mêmes disponibilités par chapitre, même
   tempérament annoncé, mêmes duels (`duelFacultatif`). Choisir l'un d'eux : écran noir, le joueur devant lui, sa scène s'ouvre,
-  on peut encore refuser. Le duel gagné ou perdu est compté comme à pied.
-- **Une fois par chapitre** : un joueur de rue affronté quitte la liste jusqu'au chapitre suivant (un refus ne compte pas), comme le repos
+  puis le duel. Le duel gagné ou perdu est compté comme à pied.
+- **Une fois par chapitre** : un joueur de rue affronté quitte la liste jusqu'au chapitre suivant, comme le repos
   de la Promenade libre (contrat 1 de M11, V4). La Préparation ne devient pas un lieu d'entraînement sans fin.
 - **Hors de la Préparation, rien ne change** : la trame ne dépend d'aucun duel de rue, et la Préparation ne compense rien.
 
