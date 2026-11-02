@@ -1,0 +1,122 @@
+[
+ {
+  "clip": "ville-actuel",
+  "dbfs": -20.1,
+  "crete": -3.3,
+  "octets": 602504,
+  "secondes": 30,
+  "dbfsFichier": -19.5,
+  "centreHz": 447,
+  "au8kHz": 0.12
+ },
+ {
+  "clip": "ville-A",
+  "dbfs": -20,
+  "crete": -4.6,
+  "octets": 603296,
+  "secondes": 30,
+  "dbfsFichier": -19.7,
+  "centreHz": 323,
+  "au8kHz": 0
+ },
+ {
+  "clip": "ville-B",
+  "dbfs": -20,
+  "crete": -4.5,
+  "octets": 603296,
+  "secondes": 30,
+  "dbfsFichier": -19.7,
+  "centreHz": 319,
+  "au8kHz": 0
+ },
+ {
+  "clip": "ville-C",
+  "dbfs": -20,
+  "crete": -4.4,
+  "octets": 603296,
+  "secondes": 30,
+  "dbfsFichier": -19.7,
+  "centreHz": 344,
+  "au8kHz": 0.02
+ },
+ {
+  "clip": "duel-actuel",
+  "dbfs": -20,
+  "crete": -4.9,
+  "octets": 602504,
+  "secondes": 30,
+  "dbfsFichier": -20.4,
+  "centreHz": 561,
+  "au8kHz": 0.19
+ },
+ {
+  "clip": "duel-A",
+  "dbfs": -20,
+  "crete": -5.4,
+  "octets": 603296,
+  "secondes": 30,
+  "dbfsFichier": -20.7,
+  "centreHz": 550,
+  "au8kHz": 0.24
+ },
+ {
+  "clip": "duel-B",
+  "dbfs": -20,
+  "crete": -5.5,
+  "octets": 603296,
+  "secondes": 30,
+  "dbfsFichier": -20.6,
+  "centreHz": 550,
+  "au8kHz": 0.21
+ },
+ {
+  "clip": "duel-C",
+  "dbfs": -20,
+  "crete": -3.9,
+  "octets": 603296,
+  "secondes": 30,
+  "dbfsFichier": -20.6,
+  "centreHz": 584,
+  "au8kHz": 0.38
+ },
+ {
+  "clip": "championnat-actuel",
+  "dbfs": -20.1,
+  "crete": -4.6,
+  "octets": 602504,
+  "secondes": 30,
+  "dbfsFichier": -19.7,
+  "centreHz": 584,
+  "au8kHz": 0.34
+ },
+ {
+  "clip": "championnat-A",
+  "dbfs": -20.1,
+  "crete": -4.7,
+  "octets": 603296,
+  "secondes": 30,
+  "dbfsFichier": -19.7,
+  "centreHz": 581,
+  "au8kHz": 0.03
+ },
+ {
+  "clip": "championnat-B",
+  "dbfs": -20.1,
+  "crete": -4.3,
+  "octets": 603296,
+  "secondes": 30,
+  "dbfsFichier": -19.8,
+  "centreHz": 600,
+  "au8kHz": 0.09
+ },
+ {
+  "clip": "championnat-C",
+  "dbfs": -20.1,
+  "crete": -3.3,
+  "octets": 603296,
+  "secondes": 30,
+  "dbfsFichier": -19.8,
+  "centreHz": 641,
+  "au8kHz": 0.16
+ }
+]

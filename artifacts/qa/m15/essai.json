@@ -1,0 +1,92 @@
+[
+ {
+  "extrait": "ville",
+  "option": "A",
+  "notes": 253,
+  "perdues": 0,
+  "volees": 13,
+  "voixMax": 8,
+  "voixPermises": 8,
+  "ms": 544
+ },
+ {
+  "extrait": "ville",
+  "option": "B",
+  "notes": 253,
+  "perdues": 0,
+  "volees": 0,
+  "voixMax": 13,
+  "voixPermises": 16,
+  "ms": 457
+ },
+ {
+  "extrait": "ville",
+  "option": "C",
+  "notes": 253,
+  "perdues": 0,
+  "volees": 0,
+  "voixMax": 13,
+  "voixPermises": 24,
+  "ms": 710
+ },
+ {
+  "extrait": "duel",
+  "option": "A",
+  "notes": 674,
+  "perdues": 2,
+  "volees": 164,
+  "voixMax": 8,
+  "voixPermises": 8,
+  "ms": 703
+ },
+ {
+  "extrait": "duel",
+  "option": "B",
+  "notes": 674,
+  "perdues": 0,
+  "volees": 0,
+  "voixMax": 16,
+  "voixPermises": 16,
+  "ms": 1228
+ },
+ {
+  "extrait": "duel",
+  "option": "C",
+  "notes": 674,
+  "perdues": 0,
+  "volees": 0,
+  "voixMax": 19,
+  "voixPermises": 24,
+  "ms": 2019
+ },
+ {
+  "extrait": "championnat",
+  "option": "A",
+  "notes": 1067,
+  "perdues": 239,
+  "volees": 376,
+  "voixMax": 8,
+  "voixPermises": 8,
+  "ms": 1142
+ },
+ {
+  "extrait": "championnat",
+  "option": "B",
+  "notes": 1067,
+  "perdues": 0,
+  "volees": 91,
+  "voixMax": 16,
+  "voixPermises": 16,
+  "ms": 1982
+ },
+ {
+  "extrait": "championnat",
+  "option": "C",
+  "notes": 1067,
+  "perdues": 0,
+  "volees": 2,
+  "voixMax": 24,
+  "voixPermises": 24,
+  "ms": 2859
+ }
+]
