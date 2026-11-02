@@ -24,7 +24,7 @@ try {
     // un panneau plus haut ou plus large que la fenêtre, ou un texte coupé, est un défaut d'interface
     const d = await p.evaluate(() => {
       const out = [];
-      for (const el of document.querySelectorAll('.av-confirm, .ville-dialog, .ville-objective, .av-titre, .av-suite, .ville-tools, .ville-place, .ville-hud-bas')) {
+      for (const el of document.querySelectorAll('.av-confirm, .ville-dialog, .ville-objective, .av-titre, .av-prepa, .av-suite, .ville-tools, .ville-place, .ville-hud-bas')) {
         if (el.hidden || !el.getClientRects().length) continue;
         const r = el.getBoundingClientRect();
         if (r.left < -1 || r.top < -1 || r.right > innerWidth + 1 || r.bottom > innerHeight + 1) out.push(`${el.className} [${Math.round(r.left)},${Math.round(r.top)} ${Math.round(r.right)},${Math.round(r.bottom)}]`);
@@ -115,8 +115,9 @@ try {
 
   // le Récit guidé
   await av(() => { window.__lqvAventure.save.recit = 'guide'; });
-  await p.waitForSelector('[data-key="av-suite"]:not([hidden])');
-  await shot('ville-recit-guide');
+  await p.waitForSelector('[data-key="av-prepa"]');
+  await p.waitForFunction(() => !document.querySelector('.ville-fade'), null, { timeout: 15000 });
+  await shot('preparation-recit-guide');
   await av(() => window.__lqvAventure.titre());
   await p.waitForSelector('[data-key="av-continue"]');
   await shot('titre-reprise');

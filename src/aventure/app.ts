@@ -41,9 +41,10 @@ import { basculerTechnique, choixPourCase, equiperSignature, rangDe, remplacerCa
 import { origineGain, vueCollection, type EntreeCollection } from './collection';
 import { conclure, convoquer, decider, poses, rencontreDef, type Pose } from './directeur';
 import { estDepart, estFamille, etatDepart, type Depart } from './departs';
-import { ILOTS_RECIT, joueursDeRue, NOM_RECIT, quartierDe, suiteRecit, TEXTE_RECIT, type EtapeRecit, type JoueurRue, type ModeRecit } from './guide';
+import { cleSuite, enchainement, etapeRecit, ILOTS_RECIT, joueursDeRue, NOM_RECIT, quartierDe, suiteRecit, TEXTE_RECIT, type EtapeRecit, type JoueurRue, type ModeRecit } from './guide';
 import { ilotAventure, ilotBase, nomIlot } from './ilots';
 import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, RANGS, rangNeutre, roleDe, cheffe, chefVaincu, leChef, ROLES, ROMAIN, type EtatFamille } from './modele';
+import { pvJoueur } from './paliers';
 import { objectif, quetes } from './quetes';
 import { aGain, collectionDe, prochaineVariante, variantesIdentite, type Gain } from './registre';
 import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue, duelRival, personnalite, type DuelPrevu } from './rencontres';
@@ -130,6 +131,13 @@ export class AventureApp {
   /** M14 : la scène à ouvrir une fois la transition du Récit guidé finie (fondu, cinématique de lieu). */
   private apresTransition: (() => void) | null = null;
   private enVoyage = false;
+  /** M14, révision 3 : le noir entre deux scènes (posé, ou en fondu : `enFondu`) ; les images calmes qui disent qu'une scène est finie. */
+  private noir: HTMLElement | null = null;
+  private enFondu = false;
+  private calme = 0;
+  /** La dernière suite enchaînée seule (une scène refusée ramène à la Préparation) ; `cadreCoupe` : premier cadre sorti du noir, sans glissade. */
+  private enchaine: string | null = null;
+  private cadreCoupe = false;
   /** M11 : cinématique en cours (le monde attend, le menu la passe) ; `cadreGarde` : un dialogue s'est ouvert sur son dernier cadre. */
   private cine: Cinema | null = null;
   /** M13 : une scène du récit se joue (la musique du récit), et l'instant où elle a été vue active pour la dernière fois. */
@@ -155,6 +163,8 @@ export class AventureApp {
     installAventureStyles();
     document.title = 'Les Quatre Voies — Aventure';
     window.addEventListener('pagehide', () => this.memoriser());
+    // M14 : la Préparation n'a pas de ville pour entendre Échap ; fenêtres et dialogues ont le leur
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && this.ecran === 'preparation' && !this.dialog && !this.modal) this.menu(); });
     const politique = decorPolicy(d.params.qa, new URLSearchParams(location.search).get('decors'));
     this.decisionQuai = decideVille(politique).then(({ rangs: oui, ouverts }) => {
       this.quaiRangs = oui;
@@ -214,6 +224,7 @@ export class AventureApp {
 
   titre(): void {
     this.cacherVille();
+    this.leverNoir(true);
     son().ambiance(null);
     // M13 : l'écran titre de l'aventure joue le titre
     son().musique.vouloir({ version: 'I-1' });
@@ -316,8 +327,9 @@ export class AventureApp {
     const s = this.save;
     if (!s) return;
     if (s.duel) { this.reprendreDuel(s.duel); return; }
-    // reprise : la ville se relit telle qu'elle était, sans point de décision (un rechargement ne fait pas re-tirer)
-    void this.decisionQuai.then(() => this.entrerVille(false, undefined, true));
+    // reprise : la ville se relit telle qu'elle était, sans point de décision (un rechargement ne fait pas re-tirer) ;
+    // M14 : le Récit guidé reprend à la Préparation, sans construire la ville
+    void this.decisionQuai.then(() => { if (this.verrouRecit) this.preparation(); else this.entrerVille(false, undefined, true); });
   }
 
   // ------------------------------------------------------------------ la ville
@@ -440,6 +452,9 @@ export class AventureApp {
     this.ecran = 'ville';
     this.d.app.hidden = true;
     this.d.arena()?.setPaused(true);
+    // M14 : aucun quartier au repos, le noir reste posé jusqu'à la scène
+    this.calme = 0;
+    if (this.verrouRecit) this.poserNoir();
     if (this.town && this.look !== this.lookJoueur()) this.detruireVille();
     if (!this.town) {
       try { this.creerVille(reprise); } catch (err) {
@@ -480,7 +495,7 @@ export class AventureApp {
     };
     loop();
     if (this.guide) this.town?.setInputLocked(this.verrouRecit);
-    if (arrivee && !this.arrivee(this.town?.ilotId() ?? 'quai')) this.carton('Le Quai', 'soir de tournoi');
+    if (arrivee && !this.arrivee(this.town?.ilotId() ?? 'quai') && !this.guide) this.carton('Le Quai', 'soir de tournoi');
     // M11 : scènes d'entrée (chef vaincu, titre, carton de chapitre), jamais à la reprise
     if (!reprise && !arrivee) void this.scenesEntree();
     else this.sceneEntree = null;
@@ -522,9 +537,6 @@ export class AventureApp {
         h('div', { class: 'av-hud-ligne' }, h('span', { class: 'av-chapitre', 'data-key': 'av-chapitre' }), h('span', { class: 'av-statut', 'data-key': 'av-statut' })),
         h('div', { class: 'ville-objective', 'data-key': 'ville-objective' }, objectif(this.etat))),
       h('div', { class: 'ville-tools' }, b('Journal', 'av-journal', () => this.journal()), b('Deck', 'av-deck', () => this.collection()), h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-menu', onclick: (e: Event) => { (e.currentTarget as HTMLElement).blur(); this.menu(); } }, 'Menu', h('kbd', null, 'Échap'))),
-      h('div', { class: 'av-recit' },
-        h('button', { class: 'ville-btn primary av-suite', type: 'button', 'data-key': 'av-suite', hidden: true, onclick: () => this.suite() }, 'Suite du récit ▸'),
-        h('button', { class: 'ville-btn av-halte-btn', type: 'button', 'data-key': 'av-halte-btn', hidden: true, onclick: () => this.halte() }, 'Halte')),
       h('div', { class: 'av-qa-decor', 'data-key': 'av-qa-decor', hidden: true }));
   }
 
@@ -555,24 +567,18 @@ export class AventureApp {
     const chap = this.hud?.querySelector<HTMLElement>('[data-key="av-chapitre"]');
     const chapTxt = CHAPITRE[chapitreDetaille(e)];
     if (chap && chap.textContent !== chapTxt) chap.textContent = chapTxt;
-    // M14 : le bouton du Récit guidé ; il prend le focus, pour Entrée et Espace (la marche coupée, ces touches sont libres)
-    const suite = this.hud?.querySelector<HTMLButtonElement>('[data-key="av-suite"]');
-    if (suite) {
-      const visible = this.verrouRecit && !this.dialog && !this.modal && !this.force && !this.cine && !this.enVoyage && !this.apresTransition;
-      if (suite.hidden === visible) suite.hidden = !visible;
-      if (visible && document.activeElement === document.body) suite.focus({ preventScroll: true });
-      const halte = this.hud?.querySelector<HTMLButtonElement>('[data-key="av-halte-btn"]');
-      const avecHalte = visible && e.affiliation !== null;
-      if (halte && halte.hidden === avecHalte) halte.hidden = !avecHalte;
-    }
+    // M14 : pas de HUD tant que la trame a une suite, la ville n'est qu'un décor de scène
+    const cache = this.verrouRecit;
+    if (this.hud && this.hud.hidden !== cache) this.hud.hidden = cache;
   }
 
-  private carton(lieu: string, moment: string): void {
-    const card = h('div', { class: 'ville-card', 'aria-hidden': 'true' }, h('b', null, lieu), h('span', null, moment));
+  /** Carton de lieu ; `court` (Récit guidé) : il ouvre la scène, qui l'attend (`tickMonde`). */
+  private carton(lieu: string, moment: string, court = false): void {
+    const card = h('div', { class: `ville-card${court ? ' court' : ''}`, 'aria-hidden': 'true' }, h('b', null, lieu), h('span', null, moment));
     document.body.append(card);
-    if (this.params.reducedMotion || this.params.freeze) { setTimeout(() => card.remove(), 1200); return; }
+    if (this.params.reducedMotion || this.params.freeze) { setTimeout(() => card.remove(), court ? 700 : 1200); return; }
     requestAnimationFrame(() => card.classList.add('out'));
-    setTimeout(() => card.remove(), 3200);
+    setTimeout(() => card.remove(), court ? 1300 : 3200);
   }
 
   private voyager(to: IlotId, spawn: string, guide = false): void {
@@ -607,7 +613,8 @@ export class AventureApp {
       this.pointDecision = { retourKai: false };
       // M11 : première arrivée dans ce quartier, sous le fondu (le premier plan est coupé avant qu'il se lève)
       const lieuJoue = premiere && this.arrivee(to);
-      if (guide && !memeIlot && !lieuJoue) this.carton(capital(town.ilot.name), LIGNES_LIEU[to]);
+      if (guide && !memeIlot && !lieuJoue) this.carton(capital(town.ilot.name), LIGNES_LIEU[to], true);
+      this.leverNoir(true); // sous le fondu du voyage
       if (still) { veil.remove(); return; }
       veil.classList.add('out');
       setTimeout(() => veil.remove(), 420);
@@ -727,15 +734,24 @@ export class AventureApp {
    */
   private tickMonde(): void {
     const t = this.town;
+    if (!this.verrouRecit) this.leverNoir();
     if (this.guide) {
-      // M14 : ni rencontre forcée, ni Kaï au hasard : tout passe par « Suite du récit » ; la scène attend la fin de la transition
+      // M14 : ni rencontre forcée, ni Kaï au hasard : tout passe par les séquences ; la scène attend la fin de la transition
       this.pointDecision = null;
       this.vue.armee = false;
-      if (this.apresTransition && this.ecran === 'ville' && !this.dialog && !this.modal && !this.force && !this.enVoyage && !this.cine) {
+      if (this.apresTransition && this.ecran === 'ville' && !this.dialog && !this.modal && !this.force && !this.enVoyage && !this.cine && !document.querySelector('.ville-card')) {
         const scene = this.apresTransition;
         this.apresTransition = null;
+        this.cadreCoupe = true;
         scene();
+        this.cadreCoupe = false;
       }
+      const enScene = !!(this.dialog || this.modal || this.force || this.cine);
+      const enRoute = this.enVoyage || !!this.apresTransition;
+      if (enScene && !enRoute) this.leverNoir();
+      if (enScene || enRoute || this.enFondu || this.ecran !== 'ville' || !this.verrouRecit) { this.calme = 0; return; }
+      // quelques images calmes : `entrerVille` tourne une fois avant d'ouvrir ses scènes
+      if (++this.calme >= 3) { this.calme = 0; this.finDeScene(); }
       return;
     }
     if (!this.mondeActif) { this.pointDecision = null; return; }
@@ -918,36 +934,149 @@ export class AventureApp {
     return suiteRecit(this.etat, { ilots: this.ilotsRecit, ici: this.town?.ilotId() ?? 'quai', quaiRangs: this.quaiRangs, dernier: this.save?.historique.at(-1)?.rencontre });
   }
 
-  /** La marche est coupée tant que la trame a une suite ; après le titre, la ville se parcourt de nouveau. */
+  /** La ville n'est qu'un décor tant que la trame a une suite ; après le titre, elle se parcourt de nouveau. */
   private get verrouRecit(): boolean { return this.guide && this.prochaineSuite() !== null; }
 
-  /** « Suite du récit » : écran noir, puis la scène, près de l'événement. */
-  private suite(): void {
+  /** Le noir, sans fondu : au retour d'un duel ou derrière une fenêtre refermée, aucun quartier ne se voit au repos. */
+  private poserNoir(): void {
+    this.noir ??= document.body.appendChild(h('div', { class: 'ville-fade' }));
+    this.noir.classList.add('plein');
+  }
+
+  /** Fondu au noir, puis `puis` ; tout de suite si le noir est déjà là, ou sans mouvement. */
+  private fondre(puis: () => void): void {
+    if (this.enFondu) return;
+    if (this.noir || this.params.reducedMotion || this.params.freeze) { this.poserNoir(); puis(); return; }
+    const voile = document.body.appendChild(h('div', { class: 'ville-fade' }));
+    this.noir = voile;
+    this.enFondu = true;
+    requestAnimationFrame(() => voile.classList.add('in'));
+    setTimeout(() => {
+      if (this.noir !== voile) return; // l'écran a changé pendant le fondu
+      this.enFondu = false;
+      voile.classList.add('plein');
+      puis();
+    }, 300);
+  }
+
+  private leverNoir(net = false): void {
+    const voile = this.noir;
+    if (!voile) return;
+    this.noir = null;
+    this.enFondu = false;
+    if (net || this.params.reducedMotion || this.params.freeze) { voile.remove(); return; }
+    voile.classList.remove('in', 'plein');
+    voile.classList.add('out');
+    setTimeout(() => voile.remove(), 420);
+  }
+
+  /** Une scène vient de finir : la suivante s'enchaîne, ou, avant un duel de la trame, la Préparation (contrat, §4). */
+  private finDeScene(): void {
+    const s = this.prochaineSuite();
+    if (!s) return;
+    const cle = cleSuite(s);
+    if (enchainement(s) === 'scene' && this.enchaine !== cle) { this.enchaine = cle; this.suite(); return; }
+    this.fondre(() => this.preparation());
+  }
+
+  /** Quitte la Préparation : le noir, la ville remontée derrière lui, puis la scène. */
+  private leverRideau(scene: () => void = () => this.suite()): void {
+    if (this.enFondu || this.modal || this.dialog) return;
+    this.fondre(() => { void this.decisionQuai.then(() => { this.entrerVille(false, undefined, true); scene(); }); });
+  }
+
+  /** La suite, sortie du noir : Kaï s'il est dû, sinon l'étape de la trame, ou la personne choisie à la Préparation. */
+  private suite(choisi?: string): void {
     if (!this.guide || !this.town || this.dialog || this.modal || this.force || this.cine || this.enVoyage || this.apresTransition) return;
     const s = this.prochaineSuite();
     if (!s) return;
     if ('rival' in s) return this.transition(s.rival.ilot, 'arrivee', () => void this.surgirRival(s.rival.k));
+    if (choisi) return this.rejoindre(choisi);
     this.etape(s.etape);
   }
 
-  /** La Halte, entre deux étapes : ce qui attend, les joueurs de rue, le deck et les réglages (contrat, §4 bis). */
-  private halte(): void {
-    if (!this.guide || !this.town || this.dialog || this.modal || this.force || this.cine || this.enVoyage || this.apresTransition) return;
+  /** La Préparation, entre deux séquences (contrat, §4 bis) : ce qui attend, les joueurs de rue, le deck et les réglages, sans la ville. */
+  private preparation(): void {
+    this.cacherVille();
+    this.ecran = 'preparation';
+    this.d.app.hidden = true;
+    document.querySelector('.ville-card')?.remove();
+    son().ambiance(null);
+    son().musique.vouloir({ version: 'I-2' });
     const s = this.save!;
     const e = this.etat;
     const joueurs = joueursDeRue(s.directeur, e, this.ilotsRecit, this.quaiRangs);
-    const outil = (label: string, key: string, run: () => void) => h('button', { class: 'ville-btn', type: 'button', 'data-key': key, onclick: () => { this.fermerModal(); run(); } }, label);
-    this.ouvrirModal(h('div', { class: 'av-confirm av-large av-halte', 'data-key': 'av-halte' },
-      h('h2', null, 'Halte'),
-      h('div', { class: 'av-halte-suite' },
-        h('div', null, h('h3', null, CHAPITRE[chapitreDetaille(e)]), h('p', { 'data-key': 'av-halte-objectif' }, objectif(e))),
-        h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-halte-suite', onclick: () => { this.fermerModal(); this.suite(); } }, 'Suite du récit ▸')),
-      h('h3', null, 'Joueurs de rue'),
-      joueurs.length
-        ? h('div', { class: 'av-halte-grille', 'data-key': 'av-halte-joueurs' }, ...joueurs.map((j) => this.carteRue(j)))
-        : h('p', { class: 'av-sous', 'data-key': 'av-halte-vide' }, 'Aucun joueur de rue ne vous attend pour ce chapitre.'),
-      h('div', { class: 'ville-choices' }, outil('Deck', 'av-halte-deck', () => this.collection()), outil('Journal', 'av-halte-journal', () => this.journal()), outil('Menu', 'av-halte-menu', () => this.menu()),
-        h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-halte-fermer', onclick: () => this.fermerModal() }, 'Fermer'))));
+    const outil = (label: string, key: string, run: () => void) => h('button', { class: 'ville-btn', type: 'button', 'data-key': key, onclick: run }, label);
+    this.ecranShell('av-scr av-preparation',
+      h('section', { class: 'av-prepa', 'data-screen': 'av-prepa', 'data-key': 'av-prepa', 'aria-labelledby': 'av-prepa-t' },
+        h('header', { class: 'av-prepa-tete' },
+          h('h1', { id: 'av-prepa-t' }, 'Préparation'),
+          h('p', { 'data-key': 'av-prepa-etat' }, `${CHAPITRE[chapitreDetaille(e)]} · ${e.affiliation ? `voie ${de(e.affiliation)}` : 'sans famille'} · ${pvJoueur(e.combats)} PV`)),
+        h('div', { class: `av-prepa-grille${e.affiliation ? '' : ' seule'}` },
+          this.aSuivre(),
+          e.affiliation ? h('div', { class: 'av-prepa-rues' },
+            h('h3', null, 'Joueurs de rue'),
+            joueurs.length
+              ? h('div', { class: 'av-prepa-liste', 'data-key': 'av-prepa-joueurs' }, ...joueurs.map((j) => this.carteRue(j)))
+              : h('p', { class: 'av-sous', 'data-key': 'av-prepa-vide' }, 'Aucun joueur de rue ne vous attend pour ce chapitre.')) : null),
+        h('footer', { class: 'av-prepa-pied' },
+          h('p', { class: 'av-proto', 'data-key': 'av-prepa-resume' }, `Votre deck : ${resumeDeck(e.deck)}.`),
+          h('div', { class: 'ville-choices' }, outil('Deck', 'av-prepa-deck', () => this.collection()), outil('Journal', 'av-prepa-journal', () => this.journal()), outil('Menu', 'av-prepa-menu', () => this.menu())))));
+    this.leverNoir();
+  }
+
+  /** « À suivre » : l'étape de la trame (Kaï surgit à sa place, sans s'annoncer), un duel de Kaï à rejouer, ou le choix du joueur. */
+  private aSuivre(): HTMLElement {
+    const e = this.etat;
+    const s = this.prochaineSuite();
+    const rejouer = s && 'rival' in s && e.rival?.perdus?.includes(s.rival.k.id) ? s.rival.k : null;
+    const etape = s && 'etape' in s ? s.etape : etapeRecit(e);
+    const rideau = h('button', { class: 'ville-btn primary av-suite', type: 'button', 'data-key': 'av-prepa-suite', 'data-shell-primary': 'true', onclick: () => this.leverRideau() }, 'Suite du récit ▸');
+    const bloc = (...corps: Array<HTMLElement | null>) => h('div', { class: 'av-prepa-suite' }, h('h3', null, 'À suivre'), ...corps);
+    const emblemes = (titre: string) => h('div', { class: 'av-prepa-carte' }, h('div', { class: 'av-emblems', 'aria-hidden': 'true', html: FAMILIES.map((f) => `<span class="fam-${f}">${emblemSvg(f, 30)}</span>`).join('') }), h('b', null, titre), h('p', null, objectif(e)));
+    if (rejouer) {
+      const prevu = duelRival(rejouer.id, e, 0);
+      return bloc(this.carteSuite(prevu.personnalite, `${rejouer.titre} · une revanche à prendre`, prevu.config.players.p2.hp), rideau);
+    }
+    if (!etape) return bloc(this.carteKai(), rideau);
+    if (etape.kind === 'bannieres') return bloc(emblemes('La Salle des Bannières'), rideau);
+    if (etape.kind === 'championnat') return bloc(emblemes('Le Championnat des Champions'), rideau);
+    if (etape.kind === 'personne') return bloc(this.cartePersonne(etape.id), h('p', { class: 'av-prepa-objectif', 'data-key': 'av-prepa-objectif' }, objectif(e)), rideau);
+    return h('div', { class: 'av-prepa-suite', 'data-key': 'av-prepa-choix' }, h('h3', null, etape.titre), h('p', null, etape.texte),
+      ...etape.ids.map((id, i) => h('div', { class: 'av-prepa-option' }, this.cartePersonne(id),
+        h('button', { class: `ville-btn${i === 0 ? ' primary' : ''}`, type: 'button', 'data-key': `av-prepa-choix-${id}`, 'data-shell-primary': i === 0 ? 'true' : null, onclick: () => this.leverRideau(() => this.suite(id)) }, id.startsWith('emissaire-') ? 'Écouter' : 'Défier'))));
+  }
+
+  private carteKai(): HTMLElement {
+    return this.carteSuite(personnalite(KAI_PROLOGUE.apparence, { nom: KAI_PROLOGUE.nom, titre: KAI_PROLOGUE.titre }), 'Il vous attend.');
+  }
+
+  private carteSuite(p: DuelPrevu['personnalite'], ligne: string, pv?: number): HTMLElement {
+    return h('article', { class: `av-prepa-carte av-rue fam-${p.family}` },
+      h('img', { class: 'ville-portrait', alt: '', src: portraitUrl(p, this.params.artSeed) }),
+      h('div', { class: 'av-rue-texte' }, h('b', null, p.name), h('span', null, ligne), pv ? h('span', { class: 'av-rue-bilan' }, `${pv} PV`) : null));
+  }
+
+  /** Une personne de la trame : son portrait, son quartier, les PV du duel qu'elle propose. */
+  private cartePersonne(id: string): HTMLElement {
+    const e = this.etat;
+    const em = id.startsWith('emissaire-') ? emissaire(id.slice(10) as Family) : null;
+    const fig = em ?? figureOuNull(id);
+    const prevu = em ? null : id === KAI_PROLOGUE.id ? duelPrologue(0, e) : fig ? duelFigure(id, e, 0, statutDefi(e, fig).deja) : null;
+    const ilot = quartierDe(id, this.ilotsRecit, (x) => this.posesDe(x));
+    const lieu = ilot ? capital(nomIlot(ilot, this.quaiRangs, this.ouverts)) : '';
+    const titre = fig?.titre ?? KAI_PROLOGUE.titre;
+    const p = prevu?.personnalite ?? personnalite(fig?.apparence ?? KAI_PROLOGUE.apparence, { nom: fig?.nom ?? KAI_PROLOGUE.nom, titre });
+    return this.carteSuite(p, lieu ? `${titre} · ${lieu}` : titre, prevu?.config.players.p2.hp);
+  }
+
+  /** Une fenêtre refermée sur la Préparation : le deck a pu changer, le focus revient au bouton principal. */
+  private rendrePreparation(): void {
+    if (this.ecran !== 'preparation' || this.dialog || this.modal) return;
+    const hote = this.d.shellHost;
+    const resume = hote.querySelector('[data-key="av-prepa-resume"]');
+    if (resume) resume.textContent = `Votre deck : ${resumeDeck(this.etat.deck)}.`;
+    hote.querySelector<HTMLElement>('[data-shell-primary]')?.focus({ preventScroll: true });
   }
 
   private carteRue(j: JoueurRue): HTMLElement {
@@ -971,8 +1100,7 @@ export class AventureApp {
   private defierRue(j: JoueurRue): void {
     this.save!.directeur = convoquer(this.save!.directeur, j.id, j.ilot, j.place);
     this.persist();
-    this.fermerModal();
-    this.rejoindre(j.id);
+    this.leverRideau(() => this.rejoindre(j.id));
   }
 
   private transition(to: IlotId, spawn: string, scene: () => void): void {
@@ -987,10 +1115,7 @@ export class AventureApp {
       if (quartierDe('heraut', this.ilotsRecit, (id) => this.posesDe(id))) return this.rejoindre('heraut');
       return this.transition('parvis', 'porte-arene', () => this.championnatDialog());
     }
-    this.dire(e.titre, e.texte, [
-      ...e.ids.map((id, i) => ({ label: capital(rencontreDef(id)?.nom ?? id), key: `recit-${id}`, primary: i === 0, run: () => { this.fermerDialogue(); this.rejoindre(id); } })),
-      { label: 'Plus tard', key: 'dlg-close', run: () => this.fermerDialogue() },
-    ]);
+    // un choix se fait à la Préparation (`suite` reçoit la personne choisie)
   }
 
   /** Écran noir, le joueur devant le personnage, et la scène s'ouvre. */
@@ -1002,6 +1127,7 @@ export class AventureApp {
     delete this.save!.recit;
     this.persist();
     this.town?.setInputLocked(false);
+    this.leverNoir();
     this.toast('Cette étape se joue à pied : retour à la Promenade libre.');
   }
 
@@ -1011,6 +1137,8 @@ export class AventureApp {
     if (this.guide) delete s.recit; else s.recit = 'guide';
     this.persist();
     this.fermerDialogue();
+    // de la Préparation à la Promenade libre : la ville revient, là où le joueur l'a laissée
+    if (this.ecran === 'preparation' && !this.guide) { void this.decisionQuai.then(() => this.entrerVille(false, undefined, true)); return; }
     this.menu();
   }
 
@@ -1173,8 +1301,9 @@ export class AventureApp {
       this.faire({ type: 'scene', id: 'P8' });
       const c = figureDe(f, 'cadet');
       // M11 (cinématiques) : le joueur dans ses nouvelles couleurs, gros plan puis recul, carton de la voie ; le cadet
-      // parle ensuite, cadré avec le joueur s'il est là
+      // parle ensuite, cadré avec le joueur s'il est là (M14 : en Récit guidé, c'est la scène de la séquence suivante)
       const ouvrir = () => {
+        if (this.guide) return;
         const t = this.town;
         const at = this.ou(c.apparence);
         this.dire(`${c.nom}, ${c.titre}`, `« Te voilà des nôtres. Maintenant, montre-moi ce que valent tes nouvelles cartes : je mets en jeu ${c.enjeu.kind === 'variante' ? auChoix(c.enjeu.defId) : ''}. »`, [
@@ -1435,6 +1564,7 @@ export class AventureApp {
     this.rivalScene = null;
     this.alerte = null;
     this.cacherVille();
+    this.leverNoir(true);
     this.ecran = 'duel';
     this.d.shellHost.hidden = true;
     this.d.shellHost.className = 'shell';
@@ -1624,7 +1754,7 @@ export class AventureApp {
         h('p', { class: 'av-pv', 'data-key': 'av-pv' }, r.pv[1] > r.pv[0] ? `Entraînement : vos PV passent de ${r.pv[0]} à ${r.pv[1]}.` : `Un abandon ne compte pas comme un combat : vos PV restent à ${r.pv[0]}.`),
         prologue ? h('p', { class: 'av-proto', 'data-key': 'av-faits' }, `Ce que la foule a vu (faits publics du duel) : ${r.faits.assautsGagnes} Clash(es) gagné(s) en Assaut, ${r.faits.gardesGagnees} en Garde, ${r.faits.interferencesReussies} Interférence(s) réussie(s).`) : null,
         r.gains.length ? h('div', { class: `av-cards${r.gains.length > 8 ? ' nombreuses' : ''}` }, ...r.gains.flatMap((g) => gainEls(g, this.params.artSeed))) : null,
-        h('div', { class: 'av-items' }, bouton('Retour en ville', () => this.apresResultat(), 'av-retour', true))));
+        h('div', { class: 'av-items' }, bouton(this.verrouRecit ? 'Continuer' : 'Retour en ville', () => this.apresResultat(), 'av-retour', true))));
   }
 
   private apresResultat(): void {
@@ -1726,12 +1856,13 @@ export class AventureApp {
   dire(titre: string, texte: string, choix: Choix[], apparence?: string, forcee = false, cadre?: CadreDialogue | null, panneau = false): void {
     this.fermerDialogue();
     this.town?.setInputLocked(true);
+    cadre ??= this.cadreScene(apparence, panneau);
     // M11 : dialogue de scène, cadré (la caméra glisse sur le ou les personnages ; bandes gardées si la scène les tient)
     if (cadre && this.town && this.cineActives) {
       this.town.cadrer({
         at: cadre.at, ...(cadre.zoom !== undefined ? { zoom: cadre.zoom } : {}), ...(cadre.hauteur !== undefined ? { hauteur: cadre.hauteur } : {}),
         ...(cadre.sujets ? { sujets: cadre.sujets } : {}), ...(cadre.serre !== undefined ? { serre: cadre.serre } : {}), tau: 0.55,
-      }, this.params.reducedMotion || this.params.freeze);
+      }, this.params.reducedMotion || this.params.freeze || this.cadreCoupe);
       this.cadreGarde = true;
       if (cadre.bandes && !this.sceneBandes) { this.bandesEcran().prendre(); this.sceneBandes = true; }
     }
@@ -1747,6 +1878,15 @@ export class AventureApp {
     document.body.append(box);
     this.dialog = box;
     (row.querySelector<HTMLButtonElement>('.primary') ?? row.querySelector('button'))?.focus({ preventScroll: true });
+  }
+
+  /** M14 : en Récit guidé, un dialogue sans cadre écrit est cadré comme une scène, sur son personnage et le joueur. */
+  private cadreScene(apparence: string | undefined, panneau: boolean): CadreDialogue | null {
+    const t = this.town;
+    if (!t || panneau || this.cadreGarde || this.ecran !== 'ville' || this.host?.hidden || !this.verrouRecit) return null;
+    const j = t.walker().pos;
+    const at = apparence ? this.ou(apparence) : null;
+    return at ? cadreDialogue(at, j) : cadreDialogue(j);
   }
 
   fermerDialogue(): void {
@@ -1767,13 +1907,17 @@ export class AventureApp {
     }
     if (!this.modal) this.town?.setInputLocked(this.verrouRecit);
     this.rafraichir();
+    this.rendrePreparation();
   }
 
   private ouvrirModal(panel: HTMLElement, forcee = false): void {
     this.fermerModal();
     this.town?.setInputLocked(true);
     document.querySelector('.ville-card')?.remove(); // un carton de lieu ne passe pas devant une fenêtre
-    const m = h('div', { class: 'av-modal', role: 'dialog', 'aria-modal': 'true' }, panel);
+    // M14 : en Récit guidé, une fenêtre ne découvre pas la ville au repos
+    const surNoir = this.ecran === 'ville' && this.verrouRecit;
+    if (surNoir) this.leverNoir(true);
+    const m = h('div', { class: `av-modal${surNoir ? ' noire' : ''}`, role: 'dialog', 'aria-modal': 'true' }, panel);
     m.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); if (!forcee) this.fermerModal(); } });
     document.body.append(m);
     this.modal = m;
@@ -1781,9 +1925,12 @@ export class AventureApp {
   }
 
   fermerModal(): void {
+    const ouverte = !!this.modal;
     this.modal?.remove();
     this.modal = null;
     if (!this.dialog) this.town?.setInputLocked(this.verrouRecit);
+    if (ouverte && !this.dialog && this.ecran === 'ville' && this.verrouRecit) this.poserNoir();
+    this.rendrePreparation();
   }
 
   private recompense(titre: string, gains: Gain[], suite: () => void, notes: string[] = []): void {
@@ -1813,7 +1960,7 @@ export class AventureApp {
       { label: `Son : ${son().reglages().coupe ? 'coupé' : `${Math.round(son().reglages().volume * 100)} %`}`, key: 'menu-son', run: () => this.reglageSon() },
       { label: `Cinématiques : ${!cinePermise(location.search) ? 'coupées par l’adresse' : lireCine(stockageLocal()) ? 'oui' : 'non'}`, key: 'menu-cine', run: () => { ecrireCine(stockageLocal(), !lireCine(stockageLocal())); this.fermerDialogue(); this.menu(); } },
       { label: `Conseils du duel : ${!conseilsPermis(location.search) ? 'coupés par l’adresse' : lireConseils(stockageLocal()) ? 'affichés' : 'masqués'}`, key: 'menu-conseils', run: () => this.reglageConseils() },
-      { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter. Les joueurs de cartes de la ville regardent devant eux : entrer dans leur regard, c’est accepter leur défi (une bulle « ! » s’allume, ils viennent à vous) ; passez derrière eux ou à l’abri d’un étal pour les éviter. Kaï surgit à certains moments de votre histoire ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? ») ; des conseils, un à la fois, expliquent chaque phase et chaque signal des cartes la première fois qu’il paraît (« Conseils du duel », dans ce menu). Le son se règle dans ce menu (« Son »). Les grands moments de votre histoire se jouent en cinématique (première arrivée dans un quartier, Kaï qui surgit, votre affiliation, un chef vaincu, un nouveau chapitre, le Championnat) : Échap, Espace, Entrée ou « Passer » pour la passer ; « Cinématiques », dans ce menu, les coupe. « Récit », dans ce menu, passe de la Promenade libre, où l’on parcourt la ville, au Récit guidé, où « Suite du récit » mène d’événement en événement ; on en change quand on veut, sans rien perdre.', [fermer(this)]) },
+      { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter. Les joueurs de cartes de la ville regardent devant eux : entrer dans leur regard, c’est accepter leur défi (une bulle « ! » s’allume, ils viennent à vous) ; passez derrière eux ou à l’abri d’un étal pour les éviter. Kaï surgit à certains moments de votre histoire ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? ») ; des conseils, un à la fois, expliquent chaque phase et chaque signal des cartes la première fois qu’il paraît (« Conseils du duel », dans ce menu). Le son se règle dans ce menu (« Son »). Les grands moments de votre histoire se jouent en cinématique (première arrivée dans un quartier, Kaï qui surgit, votre affiliation, un chef vaincu, un nouveau chapitre, le Championnat) : Échap, Espace, Entrée ou « Passer » pour la passer ; « Cinématiques », dans ce menu, les coupe. « Récit », dans ce menu, passe de la Promenade libre, où l’on parcourt la ville, au Récit guidé, un film en séquences : les scènes s’enchaînent, et la Préparation, avant chaque duel, réunit le deck, le journal et les joueurs de rue ; on en change quand on veut, sans rien perdre.', [fermer(this)]) },
       { label: 'Écran titre', key: 'menu-home', run: () => { this.fermerDialogue(); this.titre(); } },
     ], undefined, false, null, true);
   }
@@ -2009,6 +2156,7 @@ export class AventureApp {
     }
     this.persist();
     if (this.ecran === 'ville') this.entrerVille(false);
+    if (this.ecran === 'preparation') this.preparation();
     return refus;
   }
 

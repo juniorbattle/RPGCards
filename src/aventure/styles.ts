@@ -88,18 +88,43 @@ export function installAventureStyles(): void {
 /* M14 : le choix du récit, le bouton de la suite (au doigt comme à la souris) */
 .av-recit { display: flex; justify-content: center; gap: 8px; }
 .av-recit-texte { min-height: 2.6em; }
-.av-recit { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 40; display: flex; gap: 12px; align-items: stretch; pointer-events: none; }
-.av-recit > button { pointer-events: auto; box-shadow: inset 0 0 0 1px rgba(90, 60, 20, 0.4), 0 8px 26px rgba(0, 0, 0, 0.6); }
+.ville-btn[aria-pressed="true"]:hover:not(:disabled) { color: #1a1408; }
 .av-suite { min-height: 52px; padding: 0.5em 1.8em; font-size: clamp(19px, 1.3vw, 25px); white-space: nowrap; }
-.av-halte-btn { padding: 0.5em 1.3em; font-size: clamp(16px, 1.05vw, 21px); }
-.av-halte-suite { display: flex; gap: 18px; align-items: center; justify-content: space-between; margin: 10px 0 2px; padding: 8px 12px; background: rgba(226, 196, 138, 0.07); border-left: 3px solid var(--lqv-or); }
-.av-halte-suite h3 { margin: 0 0 2px; } .av-halte-suite p { margin: 0; } .av-halte-suite .ville-btn { flex: none; }
-.av-halte-grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+/* M14, révision 3 : le noir entre deux scènes, les fenêtres sur fond noir, la Préparation (plein écran, sans la ville) */
+.ville-fade.plein { opacity: 1; transition: none; }
+.ville-card.court.out { transition: opacity 0.45s ease 0.75s; }
+.av-modal.noire { background: #04060c; }
+#shell.av-scr.av-preparation { background: radial-gradient(ellipse at 50% 0%, #1d1a26, #0a0b13 58%, #04060c); padding: 18px 20px; }
+.av-prepa { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 12px; box-sizing: border-box; width: min(1560px, 100%); height: min(940px, 100%); color: var(--lqv-ivoire); font: 15px/1.5 Georgia, serif; }
+.av-prepa-tete { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 20px; padding-bottom: 6px; border-bottom: 1px solid; border-image: linear-gradient(90deg, var(--lqv-or), transparent 80%) 1; }
+.av-prepa-tete h1 { margin: 0; font: 700 clamp(30px, 3vw, 44px)/1.1 Georgia, serif; color: var(--lqv-or-clair); letter-spacing: 0.02em; }
+.av-prepa-tete p { margin: 0; color: var(--lqv-or); font: italic clamp(15px, 1.1vw, 19px)/1.3 Georgia, serif; }
+.av-prepa-grille { display: grid; grid-template-columns: minmax(340px, 5fr) minmax(0, 7fr); gap: 18px; min-height: 0; }
+.av-prepa-grille.seule { grid-template-columns: minmax(0, 620px); justify-content: center; }
+.av-prepa h3 { margin: 0 0 6px; font: 700 13px/1.3 Georgia, serif; letter-spacing: 0.1em; text-transform: uppercase; color: var(--lqv-or); }
+.av-prepa-suite { display: flex; flex-direction: column; gap: 10px; min-height: 0; overflow: auto; box-sizing: border-box; padding: 6px 14px; border: 14px solid transparent; border-image: var(--lqv-cadre) 14 / 14px stretch; background: var(--lqv-panneau) border-box; scrollbar-width: thin; }
+.av-prepa-suite > h3 { margin: 0; } .av-prepa-suite > p { margin: 0; }
+.av-prepa-suite .av-suite { margin-top: auto; align-self: stretch; }
+.av-prepa-carte { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.av-prepa-carte b { font: 700 22px/1.2 Georgia, serif; color: var(--lqv-or-clair); } .av-prepa-carte p { margin: 0; }
+/* « À suivre » : le personnage en grand ; dans un choix, une ligne par personne */
+.av-prepa-suite > .av-prepa-carte.av-rue { align-items: center; padding: 0; border: 0; background: none; }
+.av-prepa-suite > .av-prepa-carte .ville-portrait { width: clamp(150px, 26vh, 300px); height: auto; aspect-ratio: 5 / 6; }
+.av-prepa-suite > .av-prepa-carte .av-rue-texte { flex: none; align-items: center; gap: 2px; }
+.av-prepa-suite > .av-prepa-carte .av-rue-texte b { font-size: clamp(22px, 1.6vw, 30px); }
+.av-prepa-suite > .av-prepa-carte .av-rue-texte span { font-size: 15px; }
+.av-prepa-option .av-prepa-carte { flex-direction: row; align-items: stretch; text-align: left; }
+.av-prepa-objectif { font-size: 16px; line-height: 1.4; text-align: center; }
+.av-prepa-option { display: flex; align-items: center; gap: 10px; } .av-prepa-option .av-rue { flex: 1; min-width: 0; } .av-prepa-option .ville-btn { flex: none; }
+.av-prepa-rues { display: flex; flex-direction: column; min-height: 0; }
+.av-prepa-liste { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; align-content: start; min-height: 0; overflow: auto; scrollbar-width: thin; scrollbar-color: rgba(226, 196, 138, 0.5) transparent; }
+.av-prepa-pied { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.av-prepa-pied p { margin: 0; min-width: 0; } .av-prepa-pied .ville-choices { flex: none; margin: 0; }
 .av-rue { display: flex; gap: 10px; align-items: stretch; padding: 8px; border: 1px solid rgba(226, 196, 138, 0.3); background: rgba(9, 10, 18, 0.5); }
 .av-rue .ville-portrait { flex: none; width: 92px; height: 112px; object-fit: cover; }
 .av-rue-texte { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; font-size: 14px; line-height: 1.3; } .av-rue-texte b { font-size: 16px; color: var(--lqv-or-clair); }
 .av-rue-bilan { color: rgba(240, 232, 214, 0.72); } .av-rue .ville-btn { margin-top: auto; align-self: flex-start; }
-@media (max-width: 700px) { .av-halte-suite { flex-direction: column; align-items: stretch; } }
+@media (max-width: 860px) { .av-prepa { height: auto; } .av-prepa-grille { grid-template-columns: 1fr; } .av-prepa-pied { flex-direction: column; align-items: stretch; } }
 /* le HUD : un seul cartouche à gauche, les outils à droite, sur un voile qui garde le décor visible */
 .av-hud::before { content: ""; position: absolute; inset: 0 0 auto 0; height: clamp(168px, 16vw, 300px); pointer-events: none; background: linear-gradient(180deg, rgba(4, 5, 10, 0.86), rgba(4, 5, 10, 0.5) 52%, rgba(4, 5, 10, 0)); }
 .av-cartouche { position: absolute; left: 22px; top: 14px; max-width: min(max(620px, 44vw), calc(100vw - 340px)); text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9); }
@@ -154,7 +179,6 @@ export function installAventureStyles(): void {
 .av-familles li { display: flex; align-items: center; gap: 8px; padding: 2px 0; font-size: 14px; }
 .av-familles svg { width: 16px; height: 16px; flex: none; }
 .av-familles .fam-Cendre svg { color: #ff8a4a; } .av-familles .fam-Voile svg { color: #a8b8ff; } .av-familles .fam-Ronce svg { color: #8fdc6a; } .av-familles .fam-Astre svg { color: #ffd36b; }
-.av-suite[hidden] { display: none; }
 .av-issues { color: #ffb4a0; margin: 6px 0; } .av-ok { color: #b8e6a0; }
 .av-registre { margin: 2px 0; padding-left: 20px; font: 13.5px/1.45 Georgia, serif; color: var(--lqv-sepia); }
 .av-collection-registre .av-registre, .av-registre.large { columns: 2; }
