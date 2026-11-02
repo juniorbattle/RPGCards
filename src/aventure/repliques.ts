@@ -213,6 +213,8 @@ export const CATALOGUE: Readonly<Record<string, readonly Replique[]>> = {
     V('kai-K3', '« Une deuxième maison qui t’ouvre ses portes… Je monte aussi, tu sais. Un duel, pour garder le compte juste. »', { moment: ['rival'], chapitre: ['III'] }),
     V('kai-K3-perdu', '« La dernière fois, tu as plié. Pas de quoi rougir : je joue de mieux en mieux. Encore une ? »', { moment: ['rival'], chapitre: ['III'], dernier: ['defaite'] }),
     V('kai-K3-gagne', '« Tu as gagné la dernière fois. Je n’ai pensé qu’à ça. Cette fois, je lis tes Gardes. »', { moment: ['rival'], chapitre: ['III'], dernier: ['victoire'] }),
+    V('kai-rejoue-1', '« Déjà de retour ? Tant que tu ne m’as pas battu, je reste sur ton chemin. Sors tes cartes. »', { moment: ['rival'], chapitre: ['I', 'II', 'IV', 'V'], dernier: ['defaite', 'abandon'], jouesMin: 2 }),
+    V('kai-rejoue-2', '« On ne passe pas à la suite sur une défaite. Pas avec moi. Rejouons. »', { moment: ['rival'], chapitre: ['I', 'II', 'IV', 'V'], dernier: ['defaite', 'abandon'], jouesMin: 2 }),
     V('kai-K4', '« Plus qu’une voie et tu touches au Championnat. Moi, j’y serai. Prouve-moi que toi aussi. »', { moment: ['rival'], chapitre: ['IV'] }),
     V('kai-K4-mene', '« Je compte nos duels, tu sais. Tu mènes. Ce soir, je calcule chaque Clash. »', { moment: ['rival'], chapitre: ['IV'], mene: true, jouesMin: 3 }),
     V('kai-K5', '« Le Championnat est ouvert. On a commencé ensemble, sur le Quai. Un dernier duel avant l’arène, pour le plaisir. »', { moment: ['rival'], chapitre: ['V'] }),

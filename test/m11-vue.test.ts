@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { appliquer, nouvelleAventure, type AventureEtat, type Evenement } from '../src/aventure/aventure';
 import { battre, conclure, decider, nouveauDirecteur, noterVu, type Pose } from '../src/aventure/directeur';
 import { ilotAventure } from '../src/aventure/ilots';
-import { dansLeCone, detecter, estGuetteur, guetteursActifs, ligneDegagee, peutForcer, pointApproche, pointSurgissement, voit, VUE } from '../src/aventure/vue';
+import { dansLeCone, detecter, estGuetteur, guetteursActifs, ligneDegagee, peutForcer, pointApproche, pointSurgissement, regardDe, TOURNENT_LA_TETE, voit, VUE } from '../src/aventure/vue';
 import { figureDe, ROLES } from '../src/aventure/modele';
 import { blocked, type Ilot } from '../src/ville/monde';
 import type { IlotId } from '../src/ville/ilots';
@@ -57,9 +57,9 @@ describe('M11-A — le champ de vision (contrat 1, §2)', () => {
 });
 
 describe('M11-A — qui force un duel (contrat 1, §1, §3, §5)', () => {
-  it('seuls les duels de rue et les membres des familles guettent', () => {
-    for (const id of ['rue-docker', 'rue-joueuse', 'rue-commis', 'rue-cour', 'rue-port', 'rue-haute', 'membre-Cendre', 'membre-Astre']) expect(estGuetteur(id)).toBe(true);
-    for (const id of ['rival-kai', 'cadet-Ronce', 'chef-Voile', 'epreuve-Cendre', 'joute-Ronce', 'heraut', 'rumeur-quai', 'kai-prologue']) expect(estGuetteur(id)).toBe(false);
+  it('seuls les duels de rue guettent (fiche, V2)', () => {
+    for (const id of ['rue-docker', 'rue-joueuse', 'rue-commis', 'rue-cour', 'rue-port', 'rue-haute']) expect(estGuetteur(id)).toBe(true);
+    for (const id of ['membre-Cendre', 'membre-Astre', 'rival-kai', 'cadet-Ronce', 'chef-Voile', 'epreuve-Cendre', 'joute-Ronce', 'heraut', 'rumeur-quai', 'kai-prologue']) expect(estGuetteur(id)).toBe(false);
   });
   it('rien avant l’affiliation ; puis oui ; un refusé sur le départ ne force pas', () => {
     const d = nouveauDirecteur(7);
@@ -67,20 +67,27 @@ describe('M11-A — qui force un duel (contrat 1, §1, §3, §5)', () => {
     expect(peutForcer(d, affilie(), 'rue-docker')).toBe(true);
     expect(peutForcer(conclure(d, 'rue-docker', false), affilie(), 'rue-docker')).toBe(false);
   });
-  it('repos : battu par le joueur, il attend le chapitre suivant ; vainqueur, deux battements', () => {
+  it('certains guetteurs tournent la tête, à rythme régulier ; les autres gardent leur direction (fiche, V7)', () => {
+    expect([...TOURNENT_LA_TETE].every(estGuetteur)).toBe(true);
+    expect(TOURNENT_LA_TETE.size).toBeLessThan(6);
+    expect(regardDe('rue-joueuse', 'face', 0)).toBe('face');
+    expect(regardDe('rue-joueuse', 'face', VUE.tourRegard)).toBe('droite');
+    expect(regardDe('rue-joueuse', 'face', 2 * VUE.tourRegard)).toBe('face');
+    expect(regardDe('rue-docker', 'face', VUE.tourRegard)).toBe('face');
+  });
+  it('repos : quelle que soit l’issue, il attend le chapitre suivant (fiche, V4)', () => {
     const e = affilie();
     let d = noterVu(battre(nouveauDirecteur(7)), 'rue-docker', 'victoire', 'I');
     expect(peutForcer(d, e, 'rue-docker')).toBe(false);
     for (let i = 0; i < 6; i++) d = battre(d);
     expect(peutForcer(d, e, 'rue-docker')).toBe(false);
     expect(peutForcer(d, chefs(e), 'rue-docker')).toBe(true); // chapitre II
-    let d2 = noterVu(battre(nouveauDirecteur(7)), 'rue-joueuse', 'defaite', 'I');
-    expect(peutForcer(d2, e, 'rue-joueuse')).toBe(false);
-    d2 = battre(d2);
-    expect(peutForcer(d2, e, 'rue-joueuse')).toBe(false);
-    d2 = battre(d2);
-    expect(peutForcer(d2, e, 'rue-joueuse')).toBe(true);
-    expect(VUE.reposDefaite).toBe(2);
+    for (const issue of ['defaite', 'abandon'] as const) {
+      let d2 = noterVu(battre(nouveauDirecteur(7)), 'rue-joueuse', issue, 'I');
+      for (let i = 0; i < 6; i++) d2 = battre(d2);
+      expect(peutForcer(d2, e, 'rue-joueuse')).toBe(false);
+      expect(peutForcer(d2, chefs(e), 'rue-joueuse')).toBe(true);
+    }
   });
   it('les guetteurs actifs d’un îlot réel sont des facultatives posées par le directeur (le directeur pose, la vue déclenche)', () => {
     let d = nouveauDirecteur(11);

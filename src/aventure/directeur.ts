@@ -298,6 +298,15 @@ export function poses(d: EtatDirecteur, e: AventureEtat, ilot: IlotId, quaiRangs
   return out;
 }
 
+/** M14 (la Halte) : pose une facultative à une place, à la demande du joueur (seul endroit où elle se tient alors). */
+export function convoquer(d0: EtatDirecteur, id: string, ilot: IlotId, place: number): EtatDirecteur {
+  const d: EtatDirecteur = structuredClone(d0);
+  for (const k of Object.keys(d.actives) as IlotId[]) d.actives[k] = (d.actives[k] ?? []).filter((a) => a.id !== id);
+  d.actives[ilot] = [...(d.actives[ilot] ?? []), { id, place }];
+  if (d.partants) d.partants = d.partants.filter((x) => x !== id);
+  return d;
+}
+
 /** Une facultative jouée (duel accepté) quitte l'îlot ; un refus la laisse jusqu'au prochain point de décision, sans
  *  redemander, puis elle repart (M10-E). */
 export function conclure(d0: EtatDirecteur, id: string, accord: boolean): EtatDirecteur {

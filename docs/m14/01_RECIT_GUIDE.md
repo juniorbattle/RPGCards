@@ -73,7 +73,7 @@ les joueurs de rue, « semblable a notre premier interface de selection de comba
 - **Les joueurs de rue listés** sont ceux de la Promenade libre : mêmes rencontres, mêmes disponibilités par chapitre, même
   tempérament annoncé, mêmes duels (`duelFacultatif`). Choisir l'un d'eux : écran noir, le joueur devant lui, sa scène s'ouvre,
   on peut encore refuser. Le duel gagné ou perdu est compté comme à pied.
-- **Une fois par chapitre** : un joueur de rue affronté (ou refusé) quitte la liste jusqu'au chapitre suivant, comme le repos
+- **Une fois par chapitre** : un joueur de rue affronté quitte la liste jusqu'au chapitre suivant (un refus ne compte pas), comme le repos
   de la Promenade libre (contrat 1 de M11, V4). La Halte ne devient pas un lieu d'entraînement sans fin.
 - **Hors de la Halte, rien ne change** : la trame ne dépend d'aucun duel de rue, et la Halte ne compense rien.
 

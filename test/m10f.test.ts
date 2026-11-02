@@ -241,9 +241,11 @@ describe('M10-F — textes du mode Aventure relus', () => {
 });
 
 describe('M11 — parcours complet avec le rival en événements fixes (K1 à K6) et les répliques', () => {
-  it('du prologue au titre : chaque événement du rival une fois, dans l’ordre, la sauvegarde relue à chaque scène', () => {
+  it('du prologue au titre : chaque événement du rival dans l’ordre, rejoué jusqu’à la victoire (K3), la sauvegarde relue à chaque scène', () => {
     const p = parcoursComplet('Astre', 20261026, true);
-    expect(p.rivaux).toEqual(['K1', 'K2', 'K3', 'K4', 'K5', 'K6']);
+    expect([...new Set(p.rivaux)]).toEqual(['K1', 'K2', 'K3', 'K4', 'K5', 'K6']);
+    expect(p.e.rival?.perdus).toBeUndefined();
+    expect(Object.values(p.e.rival?.faits ?? {}).every((x) => x !== 'defaite')).toBe(true);
     expect(Object.keys(p.e.rival?.faits ?? {}).sort()).toEqual(['K1', 'K2', 'K3', 'K4', 'K5', 'K6']);
     expect(p.e.competitions.championnat.titre).toBe(true);
     expect(p.e.combats).toBe(p.bilan.duels);

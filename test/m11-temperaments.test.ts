@@ -45,7 +45,8 @@ describe('M11-B — trajectoires des PNJ récurrents (contrat 3, §3)', () => {
     expect(ch.map(chapitreDetaille)).toEqual(['I', 'II', 'III', 'IV', 'V']);
   });
   it('chaque guetteur a une trajectoire, au tempérament près, chapitre par chapitre', () => {
-    expect(Object.keys(TRAJECTOIRES).sort()).toEqual([...GUETTEURS].sort());
+    expect(Object.keys(TRAJECTOIRES).sort()).toEqual(Object.keys(ATTENDU).sort());
+    for (const id of GUETTEURS) expect(TRAJECTOIRES[id], id).toBeDefined();
     for (const [id, t] of Object.entries(ATTENDU)) expect(ch.map((e) => temperamentDe(id, e)).join(' '), id).toBe(t);
   });
   it('au chapitre I, toute la rue joue le profil `novice` de l’annexe de calibrage', () => {

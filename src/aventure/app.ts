@@ -38,18 +38,18 @@ import { decideVille } from '../ville/villeRangs';
 import { apercuEngagement, appliquer, bannieres, chapitre, chapitreDetaille, peutChanger, peutConfirmer, statutDefi, type AventureEtat, type EtatBanniere, type Evenement, type FaitsPublics, type Issue } from './aventure';
 import { basculerTechnique, choixPourCase, equiperSignature, rangDe, remplacerCase, standardLegal, validerDeckAv, type DeckAv } from './deck';
 import { origineGain, vueCollection, type EntreeCollection } from './collection';
-import { conclure, decider, poses, rencontreDef, type Pose } from './directeur';
+import { conclure, convoquer, decider, poses, rencontreDef, type Pose } from './directeur';
 import { estDepart, estFamille, etatDepart, type Depart } from './departs';
-import { ILOTS_RECIT, NOM_RECIT, quartierDe, suiteRecit, TEXTE_RECIT, type EtapeRecit, type ModeRecit } from './guide';
-import { ilotAventure, ilotBase } from './ilots';
+import { ILOTS_RECIT, joueursDeRue, NOM_RECIT, quartierDe, suiteRecit, TEXTE_RECIT, type EtapeRecit, type JoueurRue, type ModeRecit } from './guide';
+import { ilotAventure, ilotBase, nomIlot } from './ilots';
 import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, RANGS, rangNeutre, roleDe, cheffe, chefVaincu, leChef, ROLES, ROMAIN, type EtatFamille } from './modele';
 import { objectif, quetes } from './quetes';
 import { aGain, collectionDe, prochaineVariante, variantesIdentite, type Gain } from './registre';
 import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue, duelRival, personnalite, type DuelPrevu } from './rencontres';
-import { detecter, guetteursActifs, pointApproche, pointSurgissement, regardVers } from './vue';
+import { detecter, guetteursActifs, pointApproche, pointSurgissement, regardDe, regardVers, TOURNENT_LA_TETE } from './vue';
 import { evenementDef, evenementRival, isKId, type EvenementRival, type KId } from './rival';
 import { choisir, memoireVide, type Contexte, type Moment } from './repliques';
-import { temperamentDe, temperamentParole } from './temperaments';
+import { NOM_TEMPERAMENT, temperamentDe, temperamentParole } from './temperaments';
 import { son } from '../son/moteur';
 import { ambianceIlot } from '../son/evenements';
 import { consigneVille, numeroChapitre, proximiteFanal, REPOS_VILLE_S, roleDuelAventure } from '../son/musique/chef';
@@ -521,7 +521,9 @@ export class AventureApp {
         h('div', { class: 'av-hud-ligne' }, h('span', { class: 'av-chapitre', 'data-key': 'av-chapitre' }), h('span', { class: 'av-statut', 'data-key': 'av-statut' })),
         h('div', { class: 'ville-objective', 'data-key': 'ville-objective' }, objectif(this.etat))),
       h('div', { class: 'ville-tools' }, b('Journal', 'av-journal', () => this.journal()), b('Deck', 'av-deck', () => this.collection()), h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-menu', onclick: (e: Event) => { (e.currentTarget as HTMLElement).blur(); this.menu(); } }, 'Menu', h('kbd', null, 'Échap'))),
-      h('button', { class: 'ville-btn primary av-suite', type: 'button', 'data-key': 'av-suite', hidden: true, onclick: () => this.suite() }, 'Suite du récit ▸'),
+      h('div', { class: 'av-recit' },
+        h('button', { class: 'ville-btn primary av-suite', type: 'button', 'data-key': 'av-suite', hidden: true, onclick: () => this.suite() }, 'Suite du récit ▸'),
+        h('button', { class: 'ville-btn av-halte-btn', type: 'button', 'data-key': 'av-halte-btn', hidden: true, onclick: () => this.halte() }, 'Halte')),
       h('div', { class: 'av-qa-decor', 'data-key': 'av-qa-decor', hidden: true }));
   }
 
@@ -558,6 +560,9 @@ export class AventureApp {
       const visible = this.verrouRecit && !this.dialog && !this.modal && !this.force && !this.cine && !this.enVoyage && !this.apresTransition;
       if (suite.hidden === visible) suite.hidden = !visible;
       if (visible && document.activeElement === document.body) suite.focus({ preventScroll: true });
+      const halte = this.hud?.querySelector<HTMLButtonElement>('[data-key="av-halte-btn"]');
+      const avecHalte = visible && e.affiliation !== null;
+      if (halte && halte.hidden === avecHalte) halte.hidden = !avecHalte;
     }
   }
 
@@ -741,7 +746,10 @@ export class AventureApp {
       if (k) { void this.surgirRival(k); return; }
       this.vue.armee = false;
     }
-    const gs = guetteursActifs(this.save.directeur, this.etat, this.posesDe(t.ilotId()));
+    // temps figé : chacun regarde devant lui (images et parcours de QA déterministes)
+    const ms = this.params.freeze ? 0 : performance.now();
+    const gs = guetteursActifs(this.save.directeur, this.etat, this.posesDe(t.ilotId())).map((g) => ({ ...g, facing: regardDe(g.id, g.facing, ms) }));
+    for (const g of gs) if (TOURNENT_LA_TETE.has(g.id)) t.tournerNpc(g.apparence, g.facing);
     const r = detecter(t.ilot, gs, t.walker().pos, this.vue.armee ? this.vue.dedans : new Set(gs.map((g) => g.id)));
     this.vue = { armee: true, dedans: r.dedans };
     if (r.repere) void this.repere(r.repere);
@@ -919,6 +927,51 @@ export class AventureApp {
     if (!s) return;
     if ('rival' in s) return this.transition(s.rival.ilot, 'arrivee', () => void this.surgirRival(s.rival.k));
     this.etape(s.etape);
+  }
+
+  /** La Halte, entre deux étapes : ce qui attend, les joueurs de rue, le deck et les réglages (contrat, §4 bis). */
+  private halte(): void {
+    if (!this.guide || !this.town || this.dialog || this.modal || this.force || this.cine || this.enVoyage || this.apresTransition) return;
+    const s = this.save!;
+    const e = this.etat;
+    const joueurs = joueursDeRue(s.directeur, e, this.ilotsRecit, this.quaiRangs);
+    const outil = (label: string, key: string, run: () => void) => h('button', { class: 'ville-btn', type: 'button', 'data-key': key, onclick: () => { this.fermerModal(); run(); } }, label);
+    this.ouvrirModal(h('div', { class: 'av-confirm av-large av-halte', 'data-key': 'av-halte' },
+      h('h2', null, 'Halte'),
+      h('div', { class: 'av-halte-suite' },
+        h('div', null, h('h3', null, CHAPITRE[chapitreDetaille(e)]), h('p', { 'data-key': 'av-halte-objectif' }, objectif(e))),
+        h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-halte-suite', onclick: () => { this.fermerModal(); this.suite(); } }, 'Suite du récit ▸')),
+      h('h3', null, 'Joueurs de rue'),
+      joueurs.length
+        ? h('div', { class: 'av-halte-grille', 'data-key': 'av-halte-joueurs' }, ...joueurs.map((j) => this.carteRue(j)))
+        : h('p', { class: 'av-sous', 'data-key': 'av-halte-vide' }, 'Aucun joueur de rue ne vous attend pour ce chapitre.'),
+      h('div', { class: 'ville-choices' }, outil('Deck', 'av-halte-deck', () => this.collection()), outil('Journal', 'av-halte-journal', () => this.journal()), outil('Menu', 'av-halte-menu', () => this.menu()),
+        h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-halte-fermer', onclick: () => this.fermerModal() }, 'Fermer'))));
+  }
+
+  private carteRue(j: JoueurRue): HTMLElement {
+    const s = this.save!;
+    const e = this.etat;
+    const prevu = duelFacultatif(j.id, e, 0, s.historique);
+    const p = prevu.personnalite;
+    const joues = s.historique.filter((x) => x.rencontre === j.id && x.issue !== 'abandon');
+    const gagnes = joues.filter((x) => x.issue === 'victoire').length;
+    const t = temperamentDe(j.id, e, s.historique);
+    return h('article', { class: `av-rue fam-${p.family}`, 'data-key': `av-rue-${j.id}` },
+      h('img', { class: 'ville-portrait', alt: '', src: portraitUrl(p, this.params.artSeed) }),
+      h('div', { class: 'av-rue-texte' },
+        h('b', null, p.name),
+        h('span', null, `${capital(nomIlot(j.ilot, this.quaiRangs, this.ouverts))}${t ? ` · ${NOM_TEMPERAMENT[t]}` : ''}`),
+        h('span', { class: 'av-rue-bilan' }, `${prevu.config.players.p2.hp} PV · ${joues.length ? `${gagnes} V, ${joues.length - gagnes} D` : 'jamais affronté'}`),
+        h('button', { class: 'ville-btn', type: 'button', 'data-key': `av-defier-${j.id}`, onclick: () => this.defierRue(j) }, 'Défier')));
+  }
+
+  /** Écran noir, le joueur devant le joueur de rue, sa scène s'ouvre : comme à pied, on peut encore refuser. */
+  private defierRue(j: JoueurRue): void {
+    this.save!.directeur = convoquer(this.save!.directeur, j.id, j.ilot, j.place);
+    this.persist();
+    this.fermerModal();
+    this.rejoindre(j.id);
   }
 
   private transition(to: IlotId, spawn: string, scene: () => void): void {
@@ -1722,6 +1775,7 @@ export class AventureApp {
   private ouvrirModal(panel: HTMLElement, forcee = false): void {
     this.fermerModal();
     this.town?.setInputLocked(true);
+    document.querySelector('.ville-card')?.remove(); // un carton de lieu ne passe pas devant une fenêtre
     const m = h('div', { class: 'av-modal', role: 'dialog', 'aria-modal': 'true' }, panel);
     m.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); if (!forcee) this.fermerModal(); } });
     document.body.append(m);

@@ -377,9 +377,12 @@ function appliquerBrut(e0: AventureEtat, ev: Evenement, at: string): Resultat {
     }
 
     case 'rival': {
-      // M11-A : l'histoire continue quelle que soit l'issue (comme dans Pokémon) ; un abandon laisse l'événement dû
-      if (ev.issue === 'abandon' || e.rival?.faits[ev.id]) return { etat: e, gains };
-      e.rival = { faits: { ...(e.rival?.faits ?? {}), [ev.id]: ev.issue } };
+      // M11-A et fiche M11, K3 : seule une victoire accomplit l'événement ; perdu ou abandonné, il se rejoue
+      if (e.rival?.faits[ev.id]) return { etat: e, gains };
+      const faits = e.rival?.faits ?? {};
+      const perdus = (e.rival?.perdus ?? []).filter((id) => id !== ev.id);
+      if (ev.issue === 'defaite' || ev.issue === 'abandon') e.rival = { faits, perdus: [...perdus, ev.id] };
+      else e.rival = { faits: { ...faits, [ev.id]: ev.issue }, ...(perdus.length ? { perdus } : {}) };
       return { etat: e, gains };
     }
   }

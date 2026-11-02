@@ -133,8 +133,8 @@ try {
   await p.click('.ville-dialog [data-key="dlg-duel"]');
   await duel('defaite');
   const k = await av(() => ({ rival: window.__lqvAventure.save.etat.rival, force: window.__lqvAventure.qaVue() }));
-  check(k.rival?.faits?.K1 === 'defaite', 'défaite : K1 accompli (l’histoire continue)');
-  check(k.force.force === null && k.force.rival === null, 'au retour : pas de second Kaï');
+  check(k.rival?.perdus?.includes('K1') && !k.rival?.faits?.K1, 'défaite : K1 reste dû (à rejouer jusqu’à la victoire)');
+  check(k.force.force === null && k.force.rival === null, 'au retour même du duel : pas de second Kaï');
   await shot('apres-kai', 600);
 
   // le son (M11-E) : demandé aux bons moments, jamais joué en QA (aucun contexte audio)

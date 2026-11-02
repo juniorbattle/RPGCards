@@ -42,6 +42,9 @@ function devant(p: Pose): { x: number; z: number; face: 'dos' | 'gauche' | 'droi
   return { x: p.at.x + (p.facing === 'gauche' ? -1.0 : 1.0), z: p.at.z + 0.2, face: p.facing === 'gauche' ? 'droite' : 'gauche' };
 }
 
+/** Le nom d'un îlot dans l'aventure : les îlots en rangs du laboratoire portent une mention (« le Quai (en rangs, preuve) »). */
+export const nomIlot = (id: IlotId, quaiRangs = false, ouverts: ReadonlySet<IlotId> = new Set()): string => ilotBase(id, quaiRangs, ouverts).ilot.name.replace(/ \([^)]*\)$/, '');
+
 /** Définition d'îlot de l'aventure : l'îlot M09 nu + les personnages posés par le directeur. */
 export function ilotAventure(id: IlotId, poses: readonly Pose[], quaiRangs = false, ouverts: ReadonlySet<IlotId> = new Set()): IlotDef {
   const d = ilotBase(id, quaiRangs, ouverts);
@@ -49,8 +52,7 @@ export function ilotAventure(id: IlotId, poses: readonly Pose[], quaiRangs = fal
   const npcs: IlotNpc[] = poses.map((p) => ({ id: p.apparence, at: p.at, facing: p.facing, role: p.genre === 'structurante' ? 'rival' : 'duel' }));
   const ilot: Ilot = {
     ...nu,
-    // les îlots en rangs du laboratoire portent une mention (« le Quai (en rangs, preuve) ») : dans l'aventure, leur nom seul
-    name: d.ilot.name.replace(/ \([^)]*\)$/, ''),
+    name: nomIlot(id, quaiRangs, ouverts),
     discs: [...nu.discs, ...poses.map((p): Disc => ({ ...p.at, r: NPC_R }))],
     // la cible d'une zone « parler » est l'identifiant de la RENCONTRE (le produit décide, la ville ne lit rien)
     zones: [...nu.zones, ...poses.map((p): Zone => ({ id: `npc-${p.id}`, kind: 'parler', label: parlerA(p.nom), target: p.id, area: { x: p.at.x, z: p.at.z, r: TALK } }))],

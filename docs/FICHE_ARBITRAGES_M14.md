@@ -49,7 +49,7 @@ Toutes les entrées sont sur l'option recommandée, sauf :
 
 | Entrée | Choix | Note | Effet |
 |---|---|---|---|
-| **G1** | Garder | « une interface specifique au recit guide poir gerer le deck, les configs, ou faire des duels contre les joueurs de rue » | le clic entre deux étapes reste, et il s'ouvre sur cette interface : la Halte. Contrat 1, §4 bis |
+| **G1** | Garder | « une interface specifique au recit guide poir gerer le deck, les configs, ou faire des duels contre les joueurs de rue » | le clic entre deux étapes reste ; à côté de lui, cette interface : la Halte. Contrat 1, §4 bis |
 | **G2** | Proposer des duels de rue entre deux étapes | « on creerait une interface specifique au recit guide qui permet de gerer notre deck ou autres config ou effectuer quelques duels contre joueur du rue visible dans l'interface ( semblable a notre premier interface de selection de combat ) » | la Halte liste les joueurs de rue |
 
 **Ordre donné :** S2 (l'enveloppe du Duel standard accordée à la nouvelle interface, dans une passe à part). **Restent ouverts au test :** R1 à R3, T1, T2. G5 attend les textes de la structure narrative ; S1 : le mobile après la version bureau.

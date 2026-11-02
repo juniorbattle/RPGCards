@@ -6,9 +6,11 @@
  */
 import { FAMILIES } from '../game/catalog/cards';
 import type { IlotId } from '../ville/ilots';
-import { chapitre, statutDefi, type AventureEtat } from './aventure';
+import { chapitre, chapitreDetaille, statutDefi, type AventureEtat } from './aventure';
+import { rencontreDef, type EtatDirecteur } from './directeur';
 import { figureDe, KAI_PROLOGUE, ROLES } from './modele';
 import { evenementRival, type EvenementRival } from './rival';
+import { GUETTEURS } from './vue';
 
 /** Promenade libre (défaut, champ absent de la sauvegarde) ou Récit guidé. */
 export type ModeRecit = 'libre' | 'guide';
@@ -57,8 +59,8 @@ export function etapeRecit(e: AventureEtat): EtapeRecit | null {
 export const ILOTS_RECIT: readonly IlotId[] = ['quai', 'parvis', 'ruelles', 'cour', 'port', 'haute'];
 
 /**
- * L'événement de Kaï dû maintenant et un quartier où il peut surgir (l'îlot courant d'abord). Il ne se rattrape pas après
- * son chapitre (`rival.ts`) : le Récit guidé le passe avant l'objectif.
+ * L'événement de Kaï dû maintenant et un quartier où il peut surgir (l'îlot courant d'abord). Sans duel, il ne se rattrape
+ * pas après son chapitre (`rival.ts`) : le Récit guidé le passe avant l'objectif.
  */
 export function rivalDu(e: AventureEtat, ilots: readonly IlotId[], ici: IlotId, quaiRangs = true): { k: EvenementRival; ilot: IlotId } | null {
   for (const ilot of [ici, ...ilots.filter((x) => x !== ici)]) {
@@ -71,15 +73,38 @@ export function rivalDu(e: AventureEtat, ilots: readonly IlotId[], ici: IlotId, 
 /** Le dernier duel était-il contre Kaï ? Jamais deux duels de suite contre lui (contrat 2 de M11). */
 export const kaiVientDeJouer = (rencontre: string | undefined): boolean => !!rencontre && (rencontre.startsWith('rival:') || rencontre === 'brasDroit-Cendre' || rencontre === 'rival-kai');
 
-/** La suite du récit : Kaï s'il est dû, sinon l'étape de la trame ; null quand il ne reste rien. */
+/** La suite du récit : Kaï s'il est dû, ou tout de suite s'il vient de gagner (K3), sinon l'étape ; null quand il ne reste rien. */
 export function suiteRecit(e: AventureEtat, o: { ilots: readonly IlotId[]; ici: IlotId; quaiRangs?: boolean; dernier?: string | undefined }): { rival: { k: EvenementRival; ilot: IlotId } } | { etape: EtapeRecit } | null {
   const rival = rivalDu(e, o.ilots, o.ici, o.quaiRangs ?? true);
   const etape = etapeRecit(e);
-  if (rival && (!etape || !kaiVientDeJouer(o.dernier))) return { rival };
+  const aRejouer = !!rival && !!e.rival?.perdus?.includes(rival.k.id);
+  if (rival && (!etape || aRejouer || !kaiVientDeJouer(o.dernier))) return { rival };
   return etape ? { etape } : null;
 }
 
 /** Le quartier où se trouve un personnage, d'après les personnages posés de chaque quartier. */
 export function quartierDe(id: string, ilots: readonly IlotId[], posesDe: (ilot: IlotId) => ReadonlyArray<{ id: string }>): IlotId | null {
   return ilots.find((ilot) => posesDe(ilot).some((p) => p.id === id)) ?? null;
+}
+
+/** Un joueur de rue proposé par la Halte, et où il se tient. */
+export interface JoueurRue { id: string; ilot: IlotId; place: number }
+
+/**
+ * Les joueurs de rue de la Halte (contrat, §4 bis) : ceux de la Promenade libre, une fois votre famille rejointe ; un joueur
+ * déjà affronté quitte la liste jusqu'au chapitre suivant. Un joueur déjà posé reste où il se tient.
+ */
+export function joueursDeRue(d: EtatDirecteur, e: AventureEtat, ilots: readonly IlotId[], quaiRangs = true): JoueurRue[] {
+  if (e.affiliation === null) return [];
+  const ch = chapitreDetaille(e);
+  return [...GUETTEURS].flatMap((id) => {
+    const r = rencontreDef(id);
+    if (!r?.dispo(e) || d.vus?.[id]?.chapitre === ch) return [];
+    for (const ilot of ilots) {
+      const a = d.actives[ilot]?.find((x) => x.id === id);
+      if (a) return [{ id, ilot, place: a.place }];
+    }
+    const place = r.lieux.findIndex((l) => ilots.includes(l.ilot) && (quaiRangs || !l.rangs));
+    return place < 0 ? [] : [{ id, ilot: r.lieux[place]!.ilot, place }];
+  });
 }
