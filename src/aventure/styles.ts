@@ -16,7 +16,7 @@ export function installAventureStyles(): void {
   s.textContent = `
 #shell.av-scr[hidden] { display: none; }
 #shell.av-scr { position: fixed; inset: 0; z-index: 2600; display: grid; place-items: center; overflow: auto; padding: 24px 16px; background: radial-gradient(ellipse at 50% 40%, rgba(6, 8, 16, 0.55), rgba(4, 6, 12, 0.92)); }
-.av-titre { width: min(760px, 100%); color: var(--lqv-ivoire); font: 15px/1.5 Georgia, serif; text-align: center; }
+.av-titre { position: relative; z-index: 1; width: min(760px, 100%); color: var(--lqv-ivoire); font: 15px/1.5 Georgia, serif; text-align: center; }
 /* titre et résultat : le texte sous le buste, jamais dessus */
 .av-accroche { align-self: safe end; margin-bottom: 3vh; }
 .av-trait { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 4px auto 10px; color: var(--lqv-or); font: italic 17px/1.3 Georgia, serif; }

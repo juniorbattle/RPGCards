@@ -239,7 +239,7 @@ export class AventureApp {
     if (this.charge.status === 'illisible') items.push(h('p', { class: 'warn' }, `${this.charge.raison} « Nouvelle aventure » la mettra à l’écart (sans l’effacer).`));
     if (this.charge.status === 'future') items.push(h('p', { class: 'warn' }, this.charge.raison));
     if (this.charge.status === 'indisponible') items.push(h('p', { class: 'warn' }, 'Stockage local indisponible : l’aventure ne pourra pas être conservée.'));
-    items.push(h('a', { class: 'av-link', href: location.pathname, 'data-key': 'av-standard' }, 'Jeu standard (duels, Tournoi du Quai)'));
+    items.push(h('a', { class: 'av-link', href: `${location.pathname}?standard=1`, 'data-key': 'av-standard' }, 'Jeu standard (duels, Tournoi du Quai)'));
     this.ecranShell('scr-home av-scr',
       h('section', { class: 'av-titre av-accroche', 'data-screen': 'av-titre', 'aria-labelledby': 'av-t' },
         h('div', { class: 'av-emblems', 'aria-hidden': 'true', html: FAMILIES.map((f) => `<span class="fam-${f}">${emblemSvg(f, 30)}</span>`).join('') }),

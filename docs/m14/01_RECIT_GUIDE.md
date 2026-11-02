@@ -13,7 +13,7 @@ responsable (R1). **Mandat :** `docs/missions/M14_DEUX_MANIERES_DE_VIVRE_LE_RECI
 - **Promenade libre = le jeu d'aujourd'hui**, à l'identique : mode par défaut, celui de toute sauvegarde existante.
 - **Récit guidé = la trame en enchaînement.** Le déplacement libre y est restreint au profit de la mise en scène, de la
   narration et des combats.
-- **Mode Aventure seulement.** Duel standard, démo, laboratoire et jeu par défaut au repos ne changent pas.
+- **Mode Aventure seulement.** Duel standard, démo et laboratoire ne changent pas. Depuis le 2026-11-01, l'adresse nue ouvre l'aventure (ADR 049, amendement 2).
 
 ## 2. Ce qui diffère
 
