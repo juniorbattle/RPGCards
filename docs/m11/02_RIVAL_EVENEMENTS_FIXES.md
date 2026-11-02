@@ -1,6 +1,6 @@
 # M11 — Contrat 2 : Kaï, le rival en événements fixes
 
-**Date :** 2026-10-26. **Statut : PROPOSÉ** (décision de principe du responsable : « notre rival sera des événements fixes
+**Date :** 2026-10-26. **Statut : APPROUVÉ (2026-11-01, fiche M11, R1, amendé par K3)** (décision de principe du responsable : « notre rival sera des événements fixes
 et déterminés comme dans Pokémon, il apparaît d'un coup pour défier le joueur »). **Code :** `src/aventure/rival.ts`
 (pur : catalogue et déclenchement), branché dans `app.ts` et `fin.ts`. ADR 038.
 
@@ -20,7 +20,7 @@ pas.
 | **K5 — Le finaliste** | V | **Championnat ouvert** (les quatre chefs vaincus) | la Grande Cour (le Parvis si la ville en rangs n'est pas affichée) | oui |
 | **K6 — La main tendue** | titre | **titre remporté** | la Grande Cour, le Parvis | non : une scène |
 
-Un événement n'a lieu qu'une fois. Ceux dont le chapitre est dépassé sans qu'il ait eu lieu (une aventure reprise d'une
+Un événement gagné n'a lieu qu'une fois. Ceux dont le chapitre est dépassé sans qu'il ait eu lieu (une aventure reprise d'une
 version d'avant M11, ou un joueur qui n'a pas visité les îlots voulus) **ne se rattrapent pas** : on passe au suivant
 dont les faits sont vrais. Au plus un événement à la fois.
 
@@ -43,10 +43,12 @@ dont les faits sont vrais. Au plus un événement à la fois.
 
 ## 4. Après le duel
 
-- **Victoire ou défaite** : l'événement est accompli (comme dans Pokémon, l'histoire continue) ; l'issue est notée
-  (`rival.faits[K] = issue`) et nourrit ses répliques suivantes. Aucune carte n'est en jeu (inchangé : seul le bras
-  droit de la Cendre en donne une, une fois).
-- **Abandon** : l'événement reste dû ; il revient au point de décision suivant.
+- **Victoire** : l'événement est accompli ; l'issue est notée (`rival.faits[K]`) et nourrit ses répliques suivantes.
+  Aucune carte n'est en jeu (inchangé : seul le bras droit de la Cendre en donne une, une fois).
+- **Défaite ou abandon** (fiche, K3 : « le faire rejouer jusqu'à la victoire ») : l'événement reste dû (`rival.perdus`), au-delà
+  de son chapitre et **dans n'importe quel quartier**. Kaï revient au point de décision suivant, sauf au retour même du duel
+  perdu en Promenade libre ; en Récit guidé, « Suite du récit » le propose aussitôt. Après le titre, seul K6 reste : on ne
+  rejoue plus une manche d'avant la victoire finale. Les aventures en cours gardent leurs anciennes défaites comme accomplies.
 - Le combat compte pour les PV (+3), comme tout combat mené à son terme.
 - La quête **« Kaï, la Braise du quai »** (journal) remplace « L'ombre de Kaï » : une étape par événement (K1 à K5),
   faite à l'issue d'un duel mené à son terme ; les chapitres déjà notés dans l'ancienne quête restent dans la sauvegarde
@@ -62,7 +64,7 @@ fiche (mesures du contrat 5), désactivée par défaut.
 ## 6. Garanties testées (`test/m11-rival.test.ts`, `npm run qa:vue`)
 
 - chaque événement se déclenche à son moment écrit, dans ses îlots, une seule fois ; jamais au prologue ;
-- un abandon le laisse dû ; une défaite l'accomplit ;
+- une défaite ou un abandon le laisse dû, même après son chapitre, jusqu'au titre ; seule une victoire l'accomplit ;
 - jamais deux événements au même point de décision ; jamais au retour d'un duel contre Kaï ;
 - l'ancienne ombre de Kaï n'est plus tirée par le directeur ;
 - au navigateur : Kaï surgit au moment écrit, la préparation s'ouvre.

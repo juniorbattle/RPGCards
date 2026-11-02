@@ -1,6 +1,6 @@
 # ADR 038 — Le rival en événements fixes (K1 à K6)
 
-**Date :** 2026-10-26. **Statut : PROPOSÉ.** Contrat : `docs/m11/02_RIVAL_EVENEMENTS_FIXES.md`.
+**Date :** 2026-10-26. **Statut : APPROUVÉ (2026-11-01, fiche M11, R1, avec un écart).** Contrat : `docs/m11/02_RIVAL_EVENEMENTS_FIXES.md`.
 
 ## Contexte
 « L'ombre de Kaï » (M10-E) était une rencontre facultative tirée par le directeur, une fois par chapitre. Le responsable
@@ -17,3 +17,7 @@ veut un rival qui surgit à des moments écrits de la trame.
 ## Conséquences
 Le rival devient prévisible et dramatique ; plus de duel du rival au hasard. Un événement manqué (îlots non visités dans
 son chapitre) ne se rattrape pas : choix le plus simple, signalé dans la fiche.
+
+## Ratification (2026-11-01)
+
+Fiche M11 : reçu, avec un écart, porté au contrat 2 : Kaï se rejoue jusqu'à la victoire (K3). « Un événement manqué ne se rattrape pas » (K2) reste vrai d'un événement qui n'a pas eu lieu ; un événement perdu, lui, reste dû.

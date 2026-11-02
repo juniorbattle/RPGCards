@@ -2,8 +2,8 @@
 
 **Date :** 2026-11-01. **Statut : RÉVISION 2, APPLIQUÉE À TITRE PROVISOIRE** (révision demandée par le responsable le même
 jour : « plus simple, des transitions d'ecrans noir », « resteindre le deplacement libre et favoriser la mise en scene et
-l'enchainement narrative et donc combat », utile notamment sur mobile). Les choix du §7 restent provisoires jusqu'à la
-fiche de M14. **Mandat :** `docs/missions/M14_DEUX_MANIERES_DE_VIVRE_LE_RECIT.md`. **ADR :** 048 (proposé).
+l'enchainement narrative et donc combat », utile notamment sur mobile). Fiche de M14 remplie le 2026-11-01 : §7 ; le contrat attend le test du
+responsable (R1). **Mandat :** `docs/missions/M14_DEUX_MANIERES_DE_VIVRE_LE_RECIT.md`. **ADR :** 048 (proposé).
 **Code :** `src/aventure/guide.ts` (pur), `src/aventure/app.ts`.
 
 ## 1. Principes
@@ -24,8 +24,9 @@ fiche de M14. **Mandat :** `docs/missions/M14_DEUX_MANIERES_DE_VIVRE_LE_RECIT.md
 | Rencontres en vue | Forcées | **Coupées** : les joueurs de rue restent visibles, sans duel |
 | Kaï K1 à K6 | Au hasard du chemin, dans leur chapitre | **Passent avant l'objectif**, jamais manqués (§4) |
 | Cinématiques du récit | Oui | **Oui**, les mêmes |
-| Duels de rue, Épreuves, Joutes, revanches | À pied | **Par la Promenade libre**, en changeant de mode (§3) |
-| Deck, journal, menu | Oui | Oui |
+| Duels de rue | À pied | **Par la Halte**, entre deux étapes (§4 bis) |
+| Épreuves, Joutes, revanches | À pied | **Par la Promenade libre**, en changeant de mode (§3) |
+| Deck, journal, menu | Oui | Oui, réunis dans la Halte |
 
 Après le titre, la trame n'a plus de suite : le bouton disparaît et la marche revient, même en Récit guidé.
 
@@ -62,6 +63,20 @@ scène. Mouvement réduit et temps figé : `voyager` les gère déjà. Aucune ma
 
 Refuser une scène (« Pas maintenant », « Différer ») est toujours possible : le bouton la repropose.
 
+## 4 bis. La Halte (fiche M14, G1 et G2)
+
+Demande du responsable : « une interface specifique au recit guide » pour gérer le deck, les réglages et faire des duels contre
+les joueurs de rue, « semblable a notre premier interface de selection de combat ».
+
+- **Un écran entre deux étapes**, ouvert par le bouton « Halte » du HUD et réservé au Récit guidé. Il tient en une page :
+  ce qui attend (« Suite du récit », le même clic que G1), les **joueurs de rue** en cartes, puis Deck, Journal et Menu.
+- **Les joueurs de rue listés** sont ceux de la Promenade libre : mêmes rencontres, mêmes disponibilités par chapitre, même
+  tempérament annoncé, mêmes duels (`duelFacultatif`). Choisir l'un d'eux : écran noir, le joueur devant lui, sa scène s'ouvre,
+  on peut encore refuser. Le duel gagné ou perdu est compté comme à pied.
+- **Une fois par chapitre** : un joueur de rue affronté (ou refusé) quitte la liste jusqu'au chapitre suivant, comme le repos
+  de la Promenade libre (contrat 1 de M11, V4). La Halte ne devient pas un lieu d'entraînement sans fin.
+- **Hors de la Halte, rien ne change** : la trame ne dépend d'aucun duel de rue, et la Halte ne compense rien.
+
 ## 5. L'entraînement
 
 **Décision du responsable : aucune compensation d'office.** L'annexe de calibrage ne change pas. Dans les deux modes, un
@@ -90,7 +105,7 @@ sa route. Le journal des quêtes les signale. Les duels de rue ne donnent pas de
 
 | Entrée | Point | Choix appliqué |
 |---|---|---|
-| **G1** | Rythme | Un clic sur « Suite du récit » entre deux étapes |
-| **G2** | Écarts à la trame | Par le passage en Promenade libre, pas de duel de rue en Récit guidé |
-| **G3** | Garde-fou | Seuil de 40 % de victoires à la mesure, avant toute proposition de PV |
-| **G4** | Noms | « Promenade libre » et « Récit guidé » |
+| **G1** | Rythme | **Tranché, gardé** : un clic sur « Suite du récit » entre deux étapes, et la Halte (§4 bis) |
+| **G2** | Écarts à la trame | **Tranché** : duels de rue par la Halte ; Épreuves et Joutes par la Promenade libre |
+| **G3** | Garde-fou | **Gardé** : seuil de 40 % de victoires à la mesure, avant toute proposition de PV |
+| **G4** | Noms | **Gardés** : « Promenade libre » et « Récit guidé » |

@@ -1,6 +1,6 @@
 # ADR 047 — La musique, synthétisée par code : thèmes, variations, instruments calculés
 
-**Date :** 2026-10-27. **Statut : PROPOSÉ** (décisions du responsable du même jour : version semi-resserrée, synthèse
+**Date :** 2026-10-27. **Statut : APPROUVÉ (2026-11-01, fiche M13, R1, sous réserve de R3)** (décisions du responsable du même jour : version semi-resserrée, synthèse
 par code, jazz ; mandat `docs/missions/M13_MUSIQUE.md`, contrat `docs/m13/01_MUSIQUE.md`).
 
 ## Contexte
@@ -53,3 +53,7 @@ synthèse par code menée en autonomie, pour la qualité.
 « la transition devrait se faire avec une pause sans musique avant d'enchaîner vers la nouvelle » : plus de fondu enchaîné.
 Le morceau s'efface (1,8 s), un silence (1,5 s), puis le nouveau par sa levée ; le duel tendu passe par un break ; un silence
 suit aussi le jingle de fin. Code : `src/son/musique/enchainement.ts`. Ce point remplace « fondu enchaîné » des contrats 1 et 2.
+
+## Ratification (2026-11-01)
+
+Fiche M13, <https://claude.ai/artifact/7HnZxaxHX6WkA4LNkgPLwZ> : la synthèse par code, les thèmes et la musique qui suit le jeu sont reçus (R1, R2, J1 à J10) avec les amendements 1 et 2. **Réserve (R3) : le responsable choisit d'aller vers un son 16 bits** ; cette couleur sonore remplace « des timbres riches » et sera cadrée par la mission M15 avant tout code.

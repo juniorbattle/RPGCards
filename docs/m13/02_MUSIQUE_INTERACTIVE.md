@@ -1,6 +1,6 @@
 # M13 — Contrat 2 : une bande son immersive, la musique qui suit le jeu
 
-**Date :** 2026-10-28. **Statut : PROPOSÉ** (demande du responsable du même jour : « prends le temps qu'il faudra pour
+**Date :** 2026-10-28. **Statut : APPROUVÉ (2026-11-01, fiche M13, R1)** (demande du responsable du même jour : « prends le temps qu'il faudra pour
 obtenir un résultat le plus optimal possible. Je veux une bande son vraiment, mais vraiment immersive »). Complète le
 contrat 1 (`01_MUSIQUE.md`) ; ADR 047.
 

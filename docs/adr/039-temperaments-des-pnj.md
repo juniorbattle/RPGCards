@@ -1,6 +1,6 @@
 # ADR 039 — Tempéraments des PNJ par chapitre
 
-**Date :** 2026-10-26. **Statut : PROPOSÉ.** Contrat : `docs/m11/03_PROGRESSION_DES_PNJ.md`.
+**Date :** 2026-10-26. **Statut : APPROUVÉ (2026-11-01, fiche M11, R1).** Contrat : `docs/m11/03_PROGRESSION_DES_PNJ.md`.
 
 ## Contexte
 « Tout le monde progresse avec le joueur » (décision 3 du responsable), par les mécanismes existants (paliers, decks,
