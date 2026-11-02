@@ -1,0 +1,54 @@
+# M15 — Vers un son 16 bits (cadrage proposé, à valider avant tout code)
+
+**Date :** 2026-11-01. **Statut : PROPOSÉ.** **Origine :** fiche M13, entrée R3 : « aller vers un son 16 bits (une mission à cadrer) »,
+après la question du responsable (« on est sur du 16Bit ? »). **Rien n'est commencé** : ni audio, ni code.
+
+## 1. Ce que la fiche a déjà tranché
+
+Le responsable a reçu les thèmes, les versions et le comportement de la musique (M13 : R2, E1 à E12, J1 à J10), et laissé les
+instruments « à écouter d'abord » (S1 à S5). **Lecture proposée, à confirmer :** on garde l'écriture et la musique qui suit le jeu ;
+on change la palette et le mélange.
+
+| Reste | Change |
+|---|---|
+| Six thèmes, 15 versions, jingles, harmonie | Timbres de tous les instruments |
+| Synthèse par code (aucun fichier audio dans le jeu, ADR 047) | Résolution et largeur de bande du son rendu |
+| `chef.ts` : couches, ponctuations, pause entre les morceaux, ville qui grandit | Nombre de voix simultanées, donc réduction des arrangements denses |
+| Volume, faits publics seulement (ADR 011), son coupé en QA | Salles et acoustique des lieux (J8, M2), à refaire en écho de console |
+
+**Conséquence à accepter :** les vents en temps réel (M13, amendement 1), le point le plus travaillé pour le réalisme, n'ont plus de
+raison d'être. Un pupitre 16 bits est un timbre échantillonné et bouclé. Le coût de calcul devrait baisser, à mesurer (M3).
+
+## 2. La question qui décide de tout : quel « 16 bits » ?
+
+**Point à savoir :** Final Fantasy VIII et Breath of Fire III, les inspirations du mandat de M13, sont des jeux **PlayStation**, pas des
+jeux 16 bits. Leur son est plus riche que celui d'une console 16 bits. Trois directions sont donc possibles :
+
+| Option | Contrainte | Effet attendu |
+|---|---|---|
+| **A. Super Nintendo stricte** | 8 voix au total, échantillons courts à 32 kHz environ, filtre sourd, écho court | Le plus typé, le plus nostalgique ; big band et Finale fortement réduits |
+| **B. Couleur 16 bits, sans la limite stricte** | Mêmes timbres et même écho, jusqu'à 12 ou 16 voix | Le son de l'époque, les arrangements gardés presque entiers |
+| **C. Époque PlayStation** | 24 voix, meilleure bande passante, réverbération | Le plus proche de FF VIII et Breath of Fire III ; le moins « 16 bits » |
+
+**Recommandation : décider à l'oreille, pas sur ce tableau.** Le même extrait de 30 secondes (la ville, chapitre II, plus un duel) rendu
+dans les trois options, avec la version actuelle en référence, en OGG à écouter sans lancer le jeu.
+
+## 3. Lots proposés
+
+1. **Essai d'écoute** : un petit moteur d'essai hors du jeu, trois OGG par extrait. Aucun changement du jeu. Le responsable choisit.
+2. **Contrat et ADR** : la contrainte retenue, chiffrée (voix, fréquence, écho), amendement de l'ADR 047.
+3. **Palette** : instruments refaits sous la contrainte, sous un réglage désactivé par défaut.
+4. **Arrangements** : réduction aux voix permises, thème par thème, avec règles de priorité (mélodie, basse, batterie d'abord).
+5. **Salles et mélange** : écho par lieu, niveaux, reprise des mesures de M13.
+6. **Bascule** : la nouvelle palette par défaut, après écoute complète ; l'ancienne retirée sur ordre seulement.
+
+## 4. Questions au responsable
+
+- **Q1.** L'essai d'écoute (lot 1) est-il à lancer maintenant, ou après ton test complet ?
+- **Q2.** Les bruitages et les ambiances (M11, S1 à S3) passent-ils aussi en 16 bits ? **Recommandation :** oui, pour un jeu cohérent, en dernier.
+- **Q3.** La lecture du §1 (on garde l'écriture, on change la palette) est-elle la bonne ?
+
+## 5. Garanties
+
+Règles du duel, IA et images inchangées. La musique actuelle reste en place jusqu'à la bascule. Le responsable reste
+seul juge à l'écoute : une session ne peut pas écouter, elle mesure seulement.

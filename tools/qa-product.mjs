@@ -71,7 +71,7 @@ async function withPage(browser, base, vp, fn, init) {
   try {
     await fn(page, check, res);
   } catch (err) {
-    res.fails.push(`exception : ${String(err.message).split('\n')[0]}`);
+    res.fails.push(`exception : ${String(err.message).split('\n').slice(0, 14).join(' | ')}`);
     await page.screenshot({ path: `${OUT}/tmp/product-fail-${Date.now()}.png` }).catch(() => {});
   }
   if (RENDER_CHECK) res.renderCheck = await page.evaluate(() => window.__lqvRenderCheck?.() ?? null).catch(() => null);
