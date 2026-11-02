@@ -56,6 +56,8 @@ dans les trois options, avec la version actuelle en référence, en OGG à écou
 | **D2** Bruitages et ambiances | Oui, en dernier | |
 | **D3** Ce qu'on garde | **Non, certains thèmes sont à réécrire** (écart à la recommandation) | « je pense que nous devons refaire le theme championnat qui est encore brouillon dans son intonation » |
 
+| **D4** Le nouveau Championnat (passe 197) | Il me va | |
+
 **Effets :** D1 : porte d'écoute avant toute bascule, la musique actuelle reste le défaut (contrat 1, §2). D3 : le thème VI est réécrit ; cela retire pour lui la réception de la fiche M13 (R2, E10).
 
 ## 5. Garanties
