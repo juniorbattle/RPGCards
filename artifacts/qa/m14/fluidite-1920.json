@@ -1,0 +1,50 @@
+{
+ "head": "7ad1749",
+ "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "viewport": [
+  1920,
+  1080
+ ],
+ "checks": [
+  "OK Récit guidé : 60 étapes, 13 duels, 13 Préparations, 124 instants de cinématique",
+  "OK Récit guidé : aucune coupure sur 18103 images (0)",
+  "OK Promenade libre : le HUD",
+  "OK Promenade libre : aucune coupure sur 2176 images (0)",
+  "OK console propre (0)"
+ ],
+ "mesures": {
+  "guide": {
+   "images": 18103,
+   "coupures": [],
+   "lentes": [
+    {
+     "ms": 65,
+     "t": 8365,
+     "ecran": "duel:",
+     "couvre": 0.88,
+     "noir": 0.94,
+     "scene": false
+    }
+   ],
+   "pirePasNoir": 1,
+   "pirePasCam": 0.4869794104449181,
+   "pireImageVisible": 65,
+   "marche": true
+  },
+  "parcours": {
+   "etapes": 60,
+   "duels": 13,
+   "prepas": 13,
+   "cines": 124
+  },
+  "promenade": {
+   "images": 2176,
+   "coupures": [],
+   "lentes": [],
+   "pirePasNoir": 0.149729,
+   "pirePasCam": 0.1345312056865979,
+   "pireImageVisible": 21,
+   "marche": true
+  }
+ }
+}

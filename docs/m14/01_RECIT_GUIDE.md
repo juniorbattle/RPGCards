@@ -1,6 +1,6 @@
 # M14 — Contrat 1 : Promenade libre et Récit guidé
 
-**Date :** 2026-11-01, révision 3 du 2026-11-02. **Statut : RÉVISION 3, APPLIQUÉE À TITRE PROVISOIRE.** Révision 2, demandée le
+**Date :** 2026-11-01, révision 3 du 2026-11-02, fondus du même jour (§4 ter). **Statut : RÉVISION 3, APPLIQUÉE À TITRE PROVISOIRE.** Révision 2, demandée le
 2026-11-01 : « plus simple, des transitions d'ecrans noir », « resteindre le deplacement libre et favoriser la mise en scene et
 l'enchainement narrative et donc combat ». **Révision 3, retour du test du responsable (2026-11-02) :** « une structure
 theatral/cinematiographique donc afficher principalement nos cutscenes runtime et non avoir une visiblite sur la ville dans son mode
@@ -69,14 +69,14 @@ il devient la scène de la séquence suivante.
 **Refus.** Refuser une scène (« Pas maintenant », « Différer », « Plus tard », Échap) ramène à la Préparation : une scène enchaînée
 seule ne s'enchaîne qu'une fois. La Préparation la repropose.
 
-**Le noir.** Fondu au noir à la fin d'une scène ; le noir reste posé au retour d'un duel et sous la reprise, de sorte qu'aucun
-quartier ne se voie au repos. La scène s'ouvre en sortant du noir (le fondu de `voyager`), le joueur devant le personnage (point
-d'apparition `npc-<id>`), le nom du quartier s'affiche s'il a changé. La première arrivée dans un quartier joue sa cinématique de
-lieu, puis la scène. Les fenêtres (récompense, confirmation, Salle des Bannières) s'ouvrent sur un fond opaque. Mouvement réduit et
-temps figé : sans fondu.
+**Le noir.** La scène finie, son dernier cadre reste à l'écran le temps d'une respiration, bandes comprises, puis le noir se ferme ;
+aucun quartier ne se voit au repos. Le noir reste fermé au retour d'un duel et sous la reprise. La scène s'ouvre en sortant du noir, le
+joueur devant le personnage (point d'apparition `npc-<id>`) ; si le quartier a changé, son nom s'affiche d'abord sur le noir. La première
+arrivée dans un quartier joue sa cinématique de lieu, puis la scène. Les fenêtres (récompense, confirmation, Salle des Bannières)
+s'ouvrent sur un fond opaque. Mouvement réduit et temps figé : sans fondu.
 
-**Le cadre.** Tout dialogue d'une scène est cadré sur son personnage et le joueur, avec les bandes, premier plan coupé en sortant du
-noir. Les cinématiques coupées dans le menu coupent aussi ce cadre : le dialogue s'ouvre alors sur la vue ordinaire de la scène.
+**Le cadre.** Tout dialogue d'une scène est cadré sur son personnage et le joueur, avec les bandes, premier plan posé sous le
+noir. Les bandes restent du premier cadre sorti du noir au retour au noir, sans repli entre deux scènes. Les cinématiques coupées dans le menu coupent aussi ce cadre : le dialogue s'ouvre alors sur la vue ordinaire de la scène.
 
 **Ce qui vient ensuite** (`suiteRecit`, pur) :
 1. **Kaï, s'il est dû.** Un événement K se perd après son chapitre et n'a lieu que dans certains quartiers
@@ -106,6 +106,17 @@ pour la suite ».
   de la Promenade libre (contrat 1 de M11, V4). La Préparation ne devient pas un lieu d'entraînement sans fin.
 - **Hors de la Préparation, rien ne change** : la trame ne dépend d'aucun duel de rue, et la Préparation ne compense rien.
 
+## 4 ter. Les fondus (retour du test du responsable, 2026-11-02 : « trop brutales », « rendre le jeu smooth »)
+
+Pour tout le jeu d'aventure, Promenade libre comprise ; le Duel standard et le duel lui-même ne changent pas. Durées : `FONDUS`, `src/aventure/rideau.ts`.
+
+- **Un seul rideau noir** (`Rideau`), une seule courbe, qui repart de là où il en est. On ne change d'écran que sous le noir : titre, ville, Préparation, duel, résultat. Fermeture 620 ms, un souffle de 180 ms, ouverture 900 ms ; d'un quartier à l'autre en marchant, 420 et 560 ms.
+- **Le noir se lève sur une image prête :** quartier chargé, plateau peint, premier plan d'une cinématique posé.
+- **Autour d'un duel :** le dernier coup respire 650 ms, puis le noir se ferme sur le plateau encore visible ; le résultat est écrit tout de suite et monté derrière lui.
+- **Écrans de l'enveloppe, dialogues, fenêtres :** fondu enchaîné (`fantomeEcran`, `effacer`) ; une réplique qui en suit une autre garde son cadre, seul le texte change. La Préparation monte par étages.
+- **Caméra :** amorti en ressort critique (`amortir`, `src/ville/cameras.ts`), qui part et s'arrête en douceur. Une coupe dans une image visible passe par le noir, et « Passer » aussi.
+- **Sans mouvement** (mouvement réduit, temps figé) : aucun de ces fondus, comme avant.
+
 ## 5. L'entraînement
 
 **Décision du responsable : aucune compensation d'office.** L'annexe de calibrage ne change pas. Dans les deux modes, un
@@ -127,6 +138,8 @@ sa route. Le journal des quêtes les signale. Les duels de rue ne donnent pas de
 - **Tests purs (`test/m14.test.ts`) :** parité `etapeRecit` / `objectif` et personnage trouvé dans un quartier, sur les
   parcours des quatre familles et les ordres des voies ; K1 à K6 jamais manqués ; sauvegarde avec et sans le champ.
 - **Tests purs :** `enchainement` ; sur le parcours complet, la Préparation n'arrive qu'avant un duel ou un choix.
+- **Tests purs (`test/fluidite.test.ts`) :** l'amorti part et s'arrête en douceur, ne dépasse jamais sa cible, sur aucune image longue.
+- **Navigateur (`tools/m14-fluidite.mjs`) :** une sonde lit chaque image et compte les coupures visibles : écran, dialogue, fenêtre, noir, caméra.
 - **Navigateur (`tools/m14-recit-guide.mjs`, `tools/m14-preparation.mjs`) :** ni ville ni HUD entre deux scènes, prologue d'un seul tenant, première Préparation après l'affiliation, Kaï qui interrompt, refus, choix, duel de rue, reprise, changement de mode, retour de la marche après le titre.
 
 **Mobile :** le Récit guidé est pensé pour le doigt, mais le jeu mobile paysage reste différé (M04). M14 ne l'ouvre pas.

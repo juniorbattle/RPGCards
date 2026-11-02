@@ -45,15 +45,14 @@ try {
     return Math.hypot(b.x - a.x, b.z - a.z);
   };
   const dialogue = () => av(() => document.querySelector('.ville-dialog b')?.textContent ?? null);
-  // à chaque image : la ville au repos, visible, sans noir ni scène, alors que la trame a une suite ; un fondu la couvre en 3 images
+  // à chaque image : la ville visible, sans noir ni scène, alors que la trame a une suite : seulement le dernier cadre qui respire avant le noir
   const guetterRepos = () => av(() => {
-    const g = window.__repos = { images: 0, pire: 0, hud: 0 };
+    const g = window.__repos = { depuis: 0, pire: 0, hud: 0 };
     const a = window.__lqvAventure;
     const tour = () => {
       const visible = a.ecran === 'ville' && !document.querySelector('.ville-host')?.hidden;
-      const repos = visible && a.verrouRecit && !a.dialog && !a.modal && !a.cine && !a.force && !a.enVoyage && !a.apresTransition && !a.noir;
-      g.images = repos ? g.images + 1 : 0;
-      g.pire = Math.max(g.pire, g.images);
+      const repos = visible && a.verrouRecit && !a.dialog && !a.modal && !a.cine && !a.force && !a.enVoyage && !a.apresTransition && !document.querySelector('.ville-fade');
+      if (!repos) g.depuis = 0; else { g.depuis ||= performance.now(); g.pire = Math.max(g.pire, performance.now() - g.depuis); }
       const h = document.querySelector('.av-hud');
       if (a.verrouRecit && h && !h.hidden) g.hud += 1;
       requestAnimationFrame(tour);
@@ -115,6 +114,7 @@ try {
       const a = window.__lqvAventure;
       const q = (s) => document.querySelector(s);
       const vis = (s) => { const x = q(s); return !!x && !x.hidden && x.getClientRects().length > 0; };
+      if (q('.ville-fade.in')) return 'attente'; // le rideau se ferme : plus rien à cliquer sous lui
       if (vis('[data-screen="av-resultat"]')) return 'resultat';
       if (vis('[data-key="av-choix"]')) return 'variante';
       if (vis('[data-key="av-duel-go"]')) return 'preparer';
@@ -122,7 +122,7 @@ try {
       if (q('[data-key="av-bannieres"]')) return 'bannieres';
       if (q('.av-modal')) return 'modal';
       if (q('.ville-dialog')) return `dialogue:${q('.ville-dialog b')?.textContent ?? ''}`;
-      if (vis('[data-key="av-prepa"]') && !a.noir) return 'prepa';
+      if (vis('[data-key="av-prepa"]') && !q('.ville-fade.in')) return 'prepa';
       if (a.etat.competitions.championnat.titre && !a.verrouRecit) return 'fin';
       return 'attente';
     });
@@ -167,7 +167,7 @@ try {
   const fin = await av(() => { const a = window.__lqvAventure; return { titre: a.etat.competitions.championnat.titre, faits: Object.keys(a.etat.rival?.faits ?? {}).sort(), combats: a.etat.combats, chefs: Object.values(a.etat.familles).filter((f) => f === 'chef').length, repos: window.__repos }; });
   check(fin.titre && fin.chefs === 4, `la trame entière, du prologue au titre (${fin.combats - depart} combats, ${prepas.length} Préparations)`);
   check(fin.faits.join() === 'K1,K2,K3,K4,K5,K6', `Kaï K1 à K6, aucun manqué (${fin.faits.join(' ')})`);
-  check(fin.repos.pire <= 5, `jamais la ville au repos (au pire ${fin.repos.pire} images avant le noir)`);
+  check(fin.repos.pire <= 700, `jamais la ville au repos (au pire ${Math.round(fin.repos.pire)} ms de dernier cadre avant le noir)`);
   check(fin.repos.hud === 0, `jamais le HUD tant que la trame a une suite (${fin.repos.hud} images)`);
   const prologue = prepas.filter((x) => x.combats > 0 && !x.affiliation);
   check(prologue.length === 0, 'le prologue d\'un seul tenant : aucune Préparation entre le premier duel et le choix de la voie');

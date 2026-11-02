@@ -10,9 +10,13 @@
 import { h } from '../shell/ui';
 import type { Cadrage, Town } from '../ville/ville';
 import { entre, type Plan } from './cinematiques';
+import { FONDUS } from './rideau';
 
 /** Un plan joué : `action` démarre avec lui ; `finir` met tout de suite son état final (cinématique passée). */
 export interface PlanJoue extends Plan { action?: () => Promise<void>; finir?: () => void }
+
+/** Le rideau de l'aventure, pour les coupes dans une image visible et la cinématique passée. */
+export interface FonduCinema { noir: () => boolean; fermer: (ms: number) => Promise<void>; ouvrir: () => void; relacher: () => void }
 
 export interface OptionsCinema {
   /** Temps figé (captures) : aucun délai, aucun mouvement. */
@@ -24,6 +28,8 @@ export interface OptionsCinema {
   carton?: { lieu: string; ligne: string };
   /** Garder le dernier cadre à la fin (un dialogue s'ouvre dessus) ; sinon la caméra revient au joueur. */
   garder?: boolean;
+  /** Passe 200 : une coupe passe par un fondu, et passer une cinématique aussi ; sans lui, coupes franches. */
+  fondu?: FonduCinema;
   /** QA (`?cineLent=<facteur>`) : durées multipliées, pour capturer un travelling en rendu logiciel. */
   lent?: number;
 }
@@ -35,12 +41,13 @@ const cadre = (p: { at: Plan['at']; zoom?: number; hauteur?: number; tau?: numbe
 
 export class Cinema {
   private passee = false;
+  private enPasse = false;
   private reveils: (() => void)[] = [];
   private el: HTMLElement | null = null;
   private dernier: Plan | null = null;
   private n = -1;
   private readonly onKey = (e: KeyboardEvent) => {
-    if (e.code === 'Escape' || e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); this.passer(); }
+    if (e.code === 'Escape' || e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); this.passerDoux(); }
   };
 
   constructor(private readonly town: Town, private readonly o: OptionsCinema) {}
@@ -54,6 +61,15 @@ export class Cinema {
     if (this.passee) return;
     this.passee = true;
     for (const r of this.reveils.splice(0)) r();
+  }
+
+  /** Passée par le joueur : le noir d'abord, l'état final derrière lui ; le rideau se relève sur la suite. */
+  passerDoux(): void {
+    const f = this.o.fondu;
+    if (this.passee || this.enPasse) return;
+    if (!f || f.noir() || this.o.reduit) { this.passer(); return; }
+    this.enPasse = true;
+    void f.fermer(FONDUS.passer).then(() => { this.passer(); f.relacher(); });
   }
 
   /** Joue les plans dans l'ordre ; résolu à la fin (vrai si la cinématique a été passée). */
@@ -70,10 +86,15 @@ export class Cinema {
     for (const [i, p] of plans.entries()) {
       this.n = i;
       if (this.passee) { p.finir?.(); this.dernier = p; continue; }
+      // une coupe dans une image visible passe par le noir (le plan se pose et l'action démarre derrière lui)
+      const f = p.mouvement === 'coupe' && !this.o.reduit && this.o.fondu && !this.o.fondu.noir() ? this.o.fondu : null;
+      if (f) await f.fermer(FONDUS.coupe);
+      if (this.passee) { p.finir?.(); this.dernier = p; f?.relacher(); continue; }
       const act = p.action?.() ?? Promise.resolve();
       if (p.mouvement === 'travelling' && prev && !this.o.reduit) await this.travelling(prev, p);
       else {
         t.cadrer(cadre(p), p.mouvement === 'coupe' || this.o.reduit);
+        f?.ouvrir();
         await this.attendre(p.ms * (this.o.lent ?? 1));
       }
       await Promise.race([act, this.attendrePasse()]);
@@ -100,7 +121,7 @@ export class Cinema {
     window.removeEventListener('keydown', this.onKey, true);
     this.o.bandes?.rendre();
     el.classList.remove('on');
-    if (coupe) el.remove(); else setTimeout(() => el.remove(), 450);
+    if (coupe) el.remove(); else setTimeout(() => el.remove(), 460);
   }
 
   /** Rend la caméra au joueur (après le dialogue ouvert sur le dernier cadre). */
@@ -113,7 +134,7 @@ export class Cinema {
     const c = this.o.carton;
     const el = h('div', { class: 'av-cine', 'data-key': 'av-cine' },
       c ? h('div', { class: 'av-cine-carton', 'data-key': 'av-cine-carton' }, h('div', null, h('b', null, c.lieu), h('span', null, c.ligne))) : null,
-      h('button', { class: 'av-cine-passer', type: 'button', 'data-key': 'av-cine-passer', onclick: () => this.passer() }, 'Passer ▸'));
+      h('button', { class: 'av-cine-passer', type: 'button', 'data-key': 'av-cine-passer', onclick: () => this.passerDoux() }, 'Passer ▸'));
     document.body.append(el);
     this.el = el;
     if (this.o.reduit) el.classList.add('on', 'reduit');
@@ -144,7 +165,8 @@ export class Cinema {
         if (fini) return;
         const t = Math.min(1, (now - t0) / Math.max(1, b.ms * (this.o.lent ?? 1)));
         this.town.cadrer(cadre(entre(a, b, t)), true);
-        if (t >= 1) { this.reveils = this.reveils.filter((r) => r !== stop); stop(); return; }
+        // une image de plus : la caméra prend ce dernier point avant le plan suivant, qui glisse depuis lui (sans ça, il hérite de la coupe et saute)
+        if (t >= 1) { requestAnimationFrame(() => { this.reveils = this.reveils.filter((r) => r !== stop); stop(); }); return; }
         requestAnimationFrame(pas);
       };
       requestAnimationFrame(pas);
@@ -192,7 +214,7 @@ export class Bandes {
     el.classList.remove('on');
     if (immediat || this.reduit) { el.remove(); this.el = null; return; }
     if (this.retrait) clearTimeout(this.retrait);
-    this.retrait = setTimeout(() => { el.remove(); if (this.el === el) this.el = null; this.retrait = null; }, 450);
+    this.retrait = setTimeout(() => { el.remove(); if (this.el === el) this.el = null; this.retrait = null; }, 760);
   }
 }
 
@@ -200,19 +222,19 @@ export class Bandes {
 export const STYLES_CINEMA = `
 .av-cine-bandes { position: fixed; inset: 0; z-index: 2610; pointer-events: none; }
 .av-cine { position: fixed; inset: 0; z-index: 2620; pointer-events: none; }
-.av-cine-bande { position: absolute; left: 0; right: 0; height: 0; background: #020307; transition: height 0.42s ease; }
+.av-cine-bande { position: absolute; left: 0; right: 0; height: 0; background: #020307; transition: height 0.72s cubic-bezier(0.45, 0, 0.55, 1); }
 .av-cine-bande.haut { top: 0; }
 .av-cine-bande.bas { bottom: 0; }
 .av-cine-bandes.on .av-cine-bande { height: 11.5vh; }
 .av-cine-bandes.reduit .av-cine-bande { transition: none; }
-.av-cine-carton { position: absolute; left: 0; right: 0; bottom: 0; height: 11.5vh; display: grid; place-items: center; color: #ffe7b0; opacity: 0; transform: translateY(6px); transition: opacity 0.8s ease 0.5s, transform 0.8s ease 0.5s; }
+.av-cine-carton { position: absolute; left: 0; right: 0; bottom: 0; height: 11.5vh; display: grid; place-items: center; color: #ffe7b0; opacity: 0; transform: translateY(6px); transition: opacity 0.4s ease; }
 .av-cine-carton > div { display: flex; align-items: baseline; gap: 16px; }
-.av-cine.on .av-cine-carton { opacity: 1; transform: none; }
+.av-cine.on .av-cine-carton { opacity: 1; transform: none; transition: opacity 0.8s ease 0.5s, transform 0.8s ease 0.5s; }
 .av-cine.reduit .av-cine-carton { transition: none; }
 .av-cine-carton b { font: 700 clamp(24px, 3.2vw, 40px)/1 Georgia, serif; letter-spacing: 0.04em; text-shadow: 0 0 18px rgba(255, 190, 110, 0.3); }
 .av-cine-carton span { font: italic clamp(13px, 1.3vw, 17px)/1.2 Georgia, serif; color: #d8ccb4; letter-spacing: 0.14em; text-transform: uppercase; }
-.av-cine-passer { position: absolute; right: 18px; bottom: calc(11.5vh + 12px); pointer-events: auto; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(226, 196, 138, 0.55); background: rgba(10, 10, 18, 0.7); color: #f6eedc; font: 600 13px/1.2 system-ui, sans-serif; cursor: pointer; opacity: 0; transition: opacity 0.4s ease 0.6s; }
-.av-cine.on .av-cine-passer { opacity: 1; }
+.av-cine-passer { position: absolute; right: 18px; bottom: calc(11.5vh + 12px); pointer-events: auto; padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(226, 196, 138, 0.55); background: rgba(10, 10, 18, 0.7); color: #f6eedc; font: 600 13px/1.2 system-ui, sans-serif; cursor: pointer; opacity: 0; transition: opacity 0.3s ease; }
+.av-cine.on .av-cine-passer { opacity: 1; transition: opacity 0.4s ease 0.6s; }
 .av-cine.reduit .av-cine-passer { transition: none; }
 body.av-cine-actif .ville-hud, body.av-cine-actif .ville-bubble { visibility: hidden; }
 `;
