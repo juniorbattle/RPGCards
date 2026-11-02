@@ -472,3 +472,33 @@
 .sh-enc-lock .ic { width: 44px; height: 44px; padding: 9px; border-radius: 50%; background: rgba(8, 6, 9, 0.8); border: 1px solid var(--line); }
 .sh-stars .ic { width: 15px; height: 15px; }
 .sh-visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ADR 049, amendement 1 (fiche M14, S2) : l'enveloppe du Duel standard accordée à l'interface de l'aventure : coins
+   carrés, cadre dessiné par code sur les grands panneaux, boutons de la ville. Sous #shell : le duel n'est pas restylé. */
+#shell .btn { border-radius: 2px; font-family: Georgia, serif; font-weight: 600; letter-spacing: 0.01em; color: #1a1408; background: linear-gradient(180deg, #f2dcab, #d6b26e); border: 1px solid var(--lqv-or-clair); box-shadow: inset 0 0 0 1px rgba(90, 60, 20, 0.4); }
+#shell .btn:hover:not(:disabled) { filter: none; box-shadow: inset 0 0 0 1px rgba(90, 60, 20, 0.4), 0 0 12px rgba(255, 200, 120, 0.28); }
+#shell .btn.ghost { font-size: 0.9rem; color: var(--lqv-ivoire); background: linear-gradient(180deg, rgba(36, 36, 54, 0.94), rgba(16, 17, 28, 0.96)); border-color: rgba(226, 196, 138, 0.42); box-shadow: none; }
+#shell .btn.ghost:hover:not(:disabled) { color: var(--lqv-or-clair); border-color: var(--lqv-or-clair); box-shadow: 0 0 12px rgba(255, 200, 120, 0.2); }
+#shell .btn.danger { color: #fff; background: linear-gradient(180deg, #d4644f, #8e2a1e); border-color: #ffb3a6; box-shadow: none; }
+#shell .btn.ghost.danger { color: #ffc7bd; background: rgba(60, 14, 10, 0.7); border-color: rgba(255, 120, 100, 0.6); }
+
+#shell .sh-prep-col, #shell .sh-history, #shell .sh-opts, #shell .sh-help section, #shell .sh-menu-box, #shell .sh-series, #shell .sh-inspect {
+  box-sizing: border-box; border: 14px solid transparent; border-image: var(--lqv-cadre) 14 / 14px stretch; border-radius: 0; background: var(--lqv-panneau) border-box; padding: 4px 8px; box-shadow: var(--lqv-ombre);
+}
+/* un seul cadre pour les Options, un filet entre leurs lignes ; la classe .sh-help est aussi celle de l'écran : il reste à une colonne */
+#shell .sh-opts { gap: 0; }
+#shell .sh-opt { border: 0; border-bottom: 1px solid rgba(226, 196, 138, 0.18); border-radius: 0; background: none; }
+#shell .sh-opt:last-child { border-bottom: 0; }
+#shell .sh-screen.sh-help { grid-template-columns: minmax(0, 1fr); }
+#shell .sh-vs { border-radius: 2px; border-color: rgba(226, 196, 138, 0.3); }
+#shell .sh-pick, #shell .sh-tech, #shell .sh-sig, #shell .sh-ver, #shell .sh-filter, #shell .sh-coll-card, #shell .sh-enc, #shell .sh-enc .sh-face, #shell .sh-face, #shell .sh-ident-card, #shell .sh-input, #shell .sh-chip, #shell .sh-toast, #shell .sh-active, #shell .sh-effects, #shell .sh-stats, #shell .sh-deck-status, #shell .sh-fam-col, #shell .sh-menu-item, #shell .sh-bigstat, #shell .sh-badge, #shell .sh-corrupt, #shell .sh-techchip, #shell .sh-pstat { border-radius: 2px; }
+#shell .sh-enc, #shell .sh-pick, #shell .sh-tech, #shell .sh-sig, #shell .sh-ident-card, #shell .sh-coll-card, #shell .sh-stats, #shell .sh-deck-status, #shell .sh-fam-col, #shell .sh-menu-item { border-color: rgba(226, 196, 138, 0.3); }
+
+#shell .sh-home-item { border-radius: 2px; border-color: rgba(226, 196, 138, 0.36); background: linear-gradient(180deg, rgba(24, 25, 40, 0.9), rgba(10, 11, 19, 0.92)); }
+#shell .sh-home-item:hover, #shell .sh-home-item:focus-visible { border-color: var(--lqv-or-clair); box-shadow: 0 0 12px rgba(255, 200, 120, 0.2); }
+#shell .sh-home-item.primary { border: 1px solid var(--lqv-or-clair); background: linear-gradient(180deg, #f2dcab, #d6b26e); box-shadow: inset 0 0 0 1px rgba(90, 60, 20, 0.4), 0 8px 26px rgba(0, 0, 0, 0.6); }
+#shell .sh-home-item.primary .lbl { color: #1a1408; }
+#shell .sh-home-item.primary .sub { color: #3c2c12; }
+#shell .sh-home-item.primary .ico { border-radius: 2px; color: var(--lqv-or-clair); background: #1a1408; }
+#shell .sh-home-item.compact { border-radius: 2px; }
+#shell .sh-home-item.compact .lbl { font-family: Georgia, serif; }

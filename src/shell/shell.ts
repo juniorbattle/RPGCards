@@ -8,6 +8,7 @@
  * - Chaque changement de profil, de deck, d’options ou de résultat est écrit tout de suite
  *   (écriture vérifiée, copie de secours) ; un échec d’écriture est signalé, jamais caché.
  */
+import '../interface.css';
 import './shell.css';
 import type { AppParams } from '../app/params';
 import { DuelSession } from '../app/duelSession';
