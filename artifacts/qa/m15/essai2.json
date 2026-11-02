@@ -1,0 +1,22 @@
+[
+ {
+  "extrait": "championnat",
+  "option": "B",
+  "notes": 631,
+  "perdues": 0,
+  "volees": 0,
+  "voixMax": 16,
+  "voixPermises": 16,
+  "ms": 777
+ },
+ {
+  "extrait": "finale",
+  "option": "B",
+  "notes": 732,
+  "perdues": 0,
+  "volees": 11,
+  "voixMax": 16,
+  "voixPermises": 16,
+  "ms": 1041
+ }
+]

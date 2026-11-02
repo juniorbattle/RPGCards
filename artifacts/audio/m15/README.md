@@ -11,3 +11,5 @@ Page d'écoute, avec le passage d'une version à l'autre au même instant : <htt
 `actuel` : la musique du jeu. `A` : 8 voix, 16 kHz compressé. `B` : 16 voix, mêmes timbres. `C` : 24 voix, 22 kHz non compressé, réverbération. Trente secondes, 160 kbit/s, même niveau efficace (−20 dB).
 
 Mesures : `mesures.json` ; notes perdues et coupées : `artifacts/qa/m15/essai.json`. Fabrication : `npx tsx tools/m15-essai.ts`, puis `node tools/m15-essai.mjs`. Essai pour choisir une direction : timbres approximatifs, ni ornements ni placement des musiciens, aucune émulation.
+
+**Thème VI réécrit (passe 196) :** `championnat2-*.webm` et `finale2-*.webm` ; `championnat-*.webm` gardent l'ancien thème, pour comparer. Mesures : `mesures2.json`, `artifacts/qa/m15/essai2.json`.
