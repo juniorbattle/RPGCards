@@ -107,7 +107,7 @@ export function vignette(a: Apparence, tenue: string, z = 3, tete = false): HTML
  * Éditeur : vignette de l'apparence en cours, choix de la silhouette et de la coupe (vignettes), de la peau, des cheveux et
  * des yeux (pastilles). `change` reçoit chaque nouvelle apparence ; changer de silhouette reprend ses couleurs d'origine.
  */
-export function editeurApparence(o: { valeur: Apparence; tenue: string; dispo: Disponibles; change: (a: Apparence) => void }): HTMLElement {
+export function editeurApparence(o: { valeur: Apparence; tenue: string; dispo: Disponibles; change: (a: Apparence) => void; apercu?: HTMLElement }): HTMLElement {
   const d = o.dispo;
   const silhouettes = (['a', 'b'] as const).filter((s) => d.coupes[s].length > 0);
   const valable = (x: Apparence) => d.coupes[x.silhouette].includes(x.coupe ?? 0) && visagesDe(d, x).includes(x.visage ?? 0);
@@ -116,34 +116,37 @@ export function editeurApparence(o: { valeur: Apparence; tenue: string; dispo: D
   const avec = (x: Apparence): Apparence => { const { visage, ...reste } = x; return visage && visagesDe(d, reste).includes(visage) ? { ...reste, visage } : reste; };
   const racine = h('div', { class: 'av-apparence', 'data-key': 'av-apparence' });
   const rendre = () => {
+    // l'aperçu va où l'écran le place (la nouvelle aventure le met en grand, à part), sinon à gauche des choix
+    if (o.apercu) o.apercu.replaceChildren(vignette(a, o.tenue, 3));
+    racine.classList.toggle('sans-apercu', !!o.apercu);
     racine.replaceChildren(
-      h('div', { class: 'av-ap-apercu' }, vignette(a, o.tenue, 2)),
+      ...(o.apercu ? [] : [h('div', { class: 'av-ap-apercu' }, vignette(a, o.tenue, 2))]),
       h('div', { class: 'av-ap-choix' },
-        silhouettes.length > 1 ? ligne('Silhouette', silhouettes.map((s) => {
+        silhouettes.length > 1 ? ligne('Silhouette', a.silhouette.toUpperCase(), silhouettes.map((s) => {
           const c0 = d.coupes[s][0]!;
           const b = h('button', { type: 'button', class: `av-ap-sil${a.silhouette === s ? ' choisi' : ''}`, 'data-key': `av-ap-sil-${s}`, 'aria-pressed': a.silhouette === s ? 'true' : 'false', 'aria-label': `Silhouette ${s.toUpperCase()}`, onclick: () => choisir(avec({ ...APPARENCE_DEFAUT[s], ...(c0 ? { coupe: c0 } : {}), ...(a.visage ? { visage: a.visage } : {}) })) },
-            vignette({ silhouette: s, peau: a.peau, cheveux: a.cheveux, yeux: a.yeux, ...(c0 ? { coupe: c0 } : {}) }, o.tenue, 1), h('span', null, s.toUpperCase()));
+            vignette({ silhouette: s, peau: a.peau, cheveux: a.cheveux, yeux: a.yeux, ...(c0 ? { coupe: c0 } : {}) }, o.tenue, 1));
           return b;
         })) : null,
-        d.coupes[a.silhouette].length > 1 ? ligne('Coupe', d.coupes[a.silhouette].map((i) => {
+        d.coupes[a.silhouette].length > 1 ? ligne('Coupe', COUPES[a.silhouette][a.coupe ?? 0]!.nom, d.coupes[a.silhouette].map((i) => {
           const nom = COUPES[a.silhouette][i]!.nom;
           const choisie = (a.coupe ?? 0) === i;
           const { coupe: _, ...reste } = a;
           const n = avec({ ...reste, ...(i ? { coupe: i } : {}) });
           return h('button', { type: 'button', class: `av-ap-sil${choisie ? ' choisi' : ''}`, 'data-key': `av-ap-coupe-${i}`, 'aria-pressed': choisie ? 'true' : 'false', 'aria-label': `Coupe ${nom}`, title: nom, onclick: () => choisir(n) },
-            vignette(n, o.tenue, 1), h('span', null, nom));
+            vignette(n, o.tenue, 2, true));
         })) : null,
-        visagesDe(d, a).length > 1 ? ligne('Visage', visagesDe(d, a).map((k) => {
+        visagesDe(d, a).length > 1 ? ligne('Visage', VISAGES[a.visage ?? 0]!, visagesDe(d, a).map((k) => {
           const nom = VISAGES[k]!;
           const choisi = (a.visage ?? 0) === k;
           const { visage: _, ...reste } = a;
           const n = { ...reste, ...(k ? { visage: k } : {}) };
           return h('button', { type: 'button', class: `av-ap-sil${choisi ? ' choisi' : ''}`, 'data-key': `av-ap-visage-${k}`, 'aria-pressed': choisi ? 'true' : 'false', 'aria-label': `Visage ${nom}`, title: nom, onclick: () => choisir(n) },
-            vignette(n, o.tenue, 1, true), h('span', null, nom));
+            vignette(n, o.tenue, 2, true));
         })) : null,
-        ligne('Peau', PEAUX.map((t, i) => pastille(t.base, `Peau ${NOMS_PEAU[i] ?? i + 1}`, a.peau === i, `av-ap-peau-${i}`, () => choisir({ ...a, peau: i })))),
-        ligne('Cheveux', CHEVEUX.map((t, i) => pastille(t.base, `Cheveux ${NOMS_CHEVEUX[i] ?? i + 1}`, a.cheveux === i, `av-ap-cheveux-${i}`, () => choisir({ ...a, cheveux: i })))),
-        ligne('Yeux', YEUX.map((y, i) => pastille(y.iris, `Yeux ${NOMS_YEUX[i] ?? i + 1}`, a.yeux === i, `av-ap-yeux-${i}`, () => choisir({ ...a, yeux: i })))),
+        ligne('Peau', NOMS_PEAU[a.peau] ?? '', PEAUX.map((t, i) => pastille(t.base, `Peau ${NOMS_PEAU[i] ?? i + 1}`, a.peau === i, `av-ap-peau-${i}`, () => choisir({ ...a, peau: i })))),
+        ligne('Cheveux', NOMS_CHEVEUX[a.cheveux] ?? '', CHEVEUX.map((t, i) => pastille(t.base, `Cheveux ${NOMS_CHEVEUX[i] ?? i + 1}`, a.cheveux === i, `av-ap-cheveux-${i}`, () => choisir({ ...a, cheveux: i })))),
+        ligne('Yeux', NOMS_YEUX[a.yeux] ?? '', YEUX.map((y, i) => pastille(y.iris, `Yeux ${NOMS_YEUX[i] ?? i + 1}`, a.yeux === i, `av-ap-yeux-${i}`, () => choisir({ ...a, yeux: i })))),
       ),
     );
   };
@@ -152,6 +155,7 @@ export function editeurApparence(o: { valeur: Apparence; tenue: string; dispo: D
   return racine;
 }
 
-const ligne = (titre: string, items: HTMLElement[]) => h('div', { class: 'av-ap-ligne' }, h('span', { class: 'av-ap-titre' }, titre), h('div', { class: 'av-ap-items' }, ...items));
+/** Une ligne de choix : son titre, et le nom du choix en cours dessous (les vignettes n'ont plus d'étiquette, le nom est dans leur bulle). */
+const ligne = (titre: string, valeur: string, items: HTMLElement[]) => h('div', { class: 'av-ap-ligne' }, h('span', { class: 'av-ap-titre' }, titre, h('small', null, valeur)), h('div', { class: 'av-ap-items' }, ...items));
 const pastille = (couleur: string, nom: string, choisi: boolean, key: string, run: () => void) =>
   h('button', { type: 'button', class: `av-ap-pastille${choisi ? ' choisi' : ''}`, style: `background:${couleur}`, title: nom, 'aria-label': nom, 'aria-pressed': choisi ? 'true' : 'false', 'data-key': key, onclick: run });

@@ -297,32 +297,30 @@ export class AventureApp {
     // M14 : Promenade libre présélectionnée ; en QA, `?recit=guide`
     let mode: ModeRecit = this.params.qa && new URLSearchParams(location.search).get('recit') === 'guide' ? 'guide' : 'libre';
     const go = () => this.commencer(input.value.trim() || 'Duelliste', undefined, apparence, mode);
-    const texteMode = h('p', { class: 'av-sous av-recit-texte', 'data-key': 'av-recit-texte' });
-    const marquerMode = () => {
-      boutonsMode.forEach((b, i) => b.setAttribute('aria-pressed', String((i === 0 ? 'libre' : 'guide') === mode)));
-      texteMode.textContent = TEXTE_RECIT[mode];
-    };
-    const boutonsMode = (['libre', 'guide'] as const).map((m) => h('button', { class: 'ville-btn', type: 'button', 'data-key': `av-recit-${m}`, onclick: () => { mode = m; marquerMode(); } }, NOM_RECIT[m]));
+    // retour du test du responsable (2026-11-03 : « fouilli et pas assez epuree ») : le personnage à gauche, en grand, avec son
+    // nom ; à droite, son apparence puis le récit, en deux cartes ; les boutons dans le cadre
+    const marquerMode = () => boutonsMode.forEach((b, i) => { const oui = (i === 0 ? 'libre' : 'guide') === mode; b.setAttribute('aria-pressed', String(oui)); b.classList.toggle('choisi', oui); });
+    const boutonsMode = (['libre', 'guide'] as const).map((m) => h('button', { class: 'av-nv-mode', type: 'button', 'data-key': `av-recit-${m}`, onclick: () => { mode = m; marquerMode(); } }, h('b', null, NOM_RECIT[m]), h('span', null, TEXTE_RECIT[m])));
     marquerMode();
-    const zone = h('div', { class: 'av-apparence-zone' });
+    const apercu = h('div', { class: 'av-nv-apercu', 'aria-hidden': 'true' });
+    const zone = h('div', { class: 'av-nv-apparence' });
     void apparencesDisponibles(this.params.qa, new URLSearchParams(location.search).get('sprites')).then((dispo) => {
-      zone.replaceChildren(h('p', { class: 'av-label' }, 'Votre apparence'), editeurApparence({ valeur: apparence, tenue: 'gris', dispo, change: (a) => { apparence = a; } }));
+      zone.replaceChildren(editeurApparence({ valeur: apparence, tenue: 'gris', dispo, apercu, change: (a) => { apparence = a; } }));
     });
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
     this.ecranShell('scr-home av-scr',
       h('section', { class: 'av-titre av-nouveau', 'data-screen': 'av-nouveau' },
+        h('p', { class: 'av-nv-sur' }, 'Nouvelle aventure'),
         h('h1', { class: 'av-h1' }, 'De la populace'),
-        h('p', { class: 'av-sous' }, 'Vous n’avez ni famille ni Signature : seize cartes grises, quatre de chaque Rang, sans effet ni bonus. Le soir du tournoi, le Quai est plein.'),
-        h('div', { class: 'av-nouveau-grille' },
-          h('div', { class: 'av-nouveau-col' },
-            h('label', { class: 'av-label' }, 'Votre nom', input),
-            h('p', { class: 'av-label' }, 'Votre récit'),
-            h('div', { class: 'av-recit' }, ...boutonsMode),
-            texteMode,
-            h('p', { class: 'av-label' }, 'Votre deck'),
-            h('div', { class: 'av-cards' }, ...[1, 2, 3, 4].map((r) => neutreEl(`neutre-${r}`, '×4')))),
-          zone),
-        h('div', { class: 'av-actions' }, bouton('Retour', () => this.titre(), 'av-back'), bouton('Commencer', go, 'av-start', true))));
+        h('p', { class: 'av-sous' }, 'Ni famille ni Signature : seize cartes grises. Le soir du tournoi, le Quai est plein.'),
+        h('div', { class: 'av-nv' },
+          h('div', { class: 'av-nv-perso' }, apercu, h('label', { class: 'av-nv-nom' }, h('span', { class: 'av-label' }, 'Nom'), input)),
+          h('div', { class: 'av-nv-reglages' },
+            h('p', { class: 'av-label' }, 'Apparence'),
+            zone,
+            h('p', { class: 'av-label' }, 'Récit'),
+            h('div', { class: 'av-nv-modes', 'data-key': 'av-recit-texte' }, ...boutonsMode),
+            h('div', { class: 'av-actions' }, bouton('Retour', () => this.titre(), 'av-back'), bouton('Commencer', go, 'av-start', true))))));
     input.focus();
     input.select();
   }
