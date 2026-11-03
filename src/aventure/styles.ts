@@ -45,15 +45,16 @@ export function installAventureStyles(): void {
 .av-vignette { image-rendering: pixelated; display: block; }
 .av-ap-choix { display: grid; gap: 8px; }
 .av-ap-ligne { display: grid; grid-template-columns: 82px 1fr; gap: 8px; align-items: center; }
-.av-ap-titre { color: #e2c48a; font: 600 13px/1.2 system-ui, sans-serif; }
+.av-ap-titre { display: grid; gap: 1px; color: #e2c48a; font: 600 13px/1.2 system-ui, sans-serif; }
+.av-ap-titre small { color: #b9ae98; font: italic 12px/1.2 Georgia, serif; }
 .av-ap-items { display: flex; flex-wrap: wrap; gap: 6px; }
-.av-ap-pastille { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #3a3446; cursor: pointer; padding: 0; }
+.av-ap-pastille { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #3a3446; cursor: pointer; padding: 0; }
 .av-ap-pastille.choisi, .av-ap-sil.choisi { border-color: #ffe7b0; box-shadow: 0 0 0 2px rgba(255, 231, 176, 0.35); }
 .av-nouveau .av-apparence { margin: 0; max-width: none; gap: 14px; }
 .av-nouveau .av-ap-choix { gap: 5px; }
-.av-ap-sil canvas { height: 58px; width: auto; }
+.av-ap-sil canvas { height: 48px; width: auto; }
 .av-ap-sil canvas.av-tete { height: 40px; }
-.av-ap-sil { display: grid; justify-items: center; gap: 2px; padding: 3px 5px; border-radius: 2px; border: 1px solid #3a3446; background: rgba(12, 10, 20, 0.7); color: #efe6d4; font: 600 11px/1 system-ui, sans-serif; cursor: pointer; }
+.av-ap-sil { display: grid; place-items: center; width: 50px; height: 54px; box-sizing: border-box; gap: 2px; padding: 3px; border-radius: 2px; border: 1px solid #3a3446; background: rgba(12, 10, 20, 0.7); color: #efe6d4; font: 600 11px/1 system-ui, sans-serif; cursor: pointer; }
 .av-ap-pastille:focus-visible, .av-ap-sil:focus-visible { outline: 3px solid #ffe7b0; outline-offset: 2px; }
 .av-input { box-sizing: border-box; font: 600 17px/1.2 Georgia, serif; padding: 7px 10px; border-radius: 2px; border: 1px solid var(--lqv-or); background: #0f101a; color: #fff4dc; width: 100%; }
 .av-cards { --card-w: 74px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 10px 0; }
@@ -157,21 +158,35 @@ export function installAventureStyles(): void {
 .av-menu-val { color: var(--lqv-or); font-weight: 400; font-style: italic; text-align: right; }
 .av-panneau .ville-btn.primary .av-menu-val { color: inherit; }
 /* nouvelle aventure : deux colonnes, tout tient à l'écran ; le buste de la salle s'efface derrière le titre */
-#shell.av-scr:has(.av-nouveau) { background: linear-gradient(180deg, rgba(4, 6, 12, 0.9), rgba(4, 6, 12, 0.8)); }
+#shell.av-scr:has(.av-nouveau) { background: linear-gradient(180deg, rgba(4, 6, 12, 0.96), rgba(4, 6, 12, 0.9)); }
+@media (min-width: 1600px) and (min-height: 960px) { .av-nouveau { zoom: 1.25; } }
 .av-input::selection { background: var(--lqv-or); color: #1a1408; }
 .av-input:focus-visible { outline: 2px solid var(--lqv-or-clair); outline-offset: 1px; }
-.av-nouveau { width: min(1120px, 100%); }
-.av-nouveau .av-h1 { font-size: clamp(30px, 3.4vw, 46px); }
-.av-nouveau .av-sous { max-width: none; margin-bottom: 6px; font-size: 15px; }
-.av-nouveau-grille { display: grid; grid-template-columns: minmax(280px, 340px) minmax(0, 1fr); gap: 16px 26px; align-items: start; box-sizing: border-box; padding: 6px 12px; border: 14px solid transparent; border-image: var(--lqv-cadre) 14 / 14px stretch; background: var(--lqv-panneau) border-box; text-align: left; }
-.av-nouveau-col { display: grid; gap: 7px; }
-.av-nouveau-col .av-cards { --card-w: 50px; justify-content: flex-start; flex-wrap: nowrap; gap: 6px; margin: 2px 0 0; }
-.av-nouveau-col .av-recit { justify-content: stretch; gap: 0; }
-.av-nouveau-col .av-recit .ville-btn { flex: 1; margin-left: -1px; }
-.av-nouveau-col .av-recit-texte { min-height: 4.2em; margin: 0; max-width: none; font-size: 14px; line-height: 1.4; }
-.av-nouveau .av-label { margin: 0; color: var(--lqv-or); font: 700 12px/1.3 Georgia, serif; letter-spacing: 0.1em; text-transform: uppercase; }
-.av-nouveau .av-actions { display: flex; justify-content: center; gap: 10px; margin-top: 12px; }
-.av-nouveau .av-actions .av-btn { min-width: 220px; }
+.av-nouveau { width: min(1040px, 100%); }
+.av-nv-sur { margin: 0; color: var(--lqv-or); font: 700 12px/1.3 Georgia, serif; letter-spacing: 0.22em; text-transform: uppercase; }
+.av-nouveau .av-h1 { margin: 2px 0 0; font-size: clamp(30px, 3.4vw, 44px); }
+.av-nouveau .av-sous { max-width: none; margin: 2px 0 14px; font-size: 15px; }
+.av-nv { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 0; box-sizing: border-box; border: 14px solid transparent; border-image: var(--lqv-cadre) 14 / 14px stretch; background: var(--lqv-panneau) border-box; text-align: left; }
+.av-nv-perso { display: grid; grid-template-rows: 1fr auto; gap: 14px; padding: 10px 22px 14px 8px; border-right: 1px solid rgba(226, 196, 138, 0.2); }
+.av-nv-apercu { display: grid; place-items: end center; min-height: 250px; padding-bottom: 12px; background: radial-gradient(ellipse 60% 14% at 50% 94%, rgba(0, 0, 0, 0.55), transparent 70%), radial-gradient(ellipse at 50% 60%, rgba(120, 96, 60, 0.28), transparent 68%); }
+.av-nv-apercu canvas { height: 230px; width: auto; }
+.av-nv-nom { display: grid; gap: 6px; }
+.av-nv-reglages { display: grid; align-content: start; gap: 8px; padding: 10px 8px 6px 24px; }
+.av-nv-reglages > .av-label + * { margin-bottom: 8px; }
+.av-nv-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.av-nv-mode { display: grid; gap: 4px; align-content: start; padding: 10px 14px; border: 1px solid #3a3446; border-radius: 2px; background: rgba(12, 10, 20, 0.6); color: var(--lqv-ivoire); text-align: left; cursor: pointer; }
+.av-nv-mode b { font: 700 16px/1.2 Georgia, serif; color: #f6eedc; }
+.av-nv-mode span { font: italic 13px/1.4 Georgia, serif; color: #b9ae98; }
+.av-nv-mode:hover { border-color: var(--lqv-or); }
+.av-nv-mode.choisi { border-color: var(--lqv-or-clair); background: linear-gradient(180deg, rgba(214, 178, 110, 0.18), rgba(214, 178, 110, 0.06)); box-shadow: inset 0 0 0 1px rgba(255, 231, 176, 0.25); }
+.av-nv-mode.choisi b { color: #ffe7b0; }
+.av-nv-mode:focus-visible { outline: 3px solid #ffe7b0; outline-offset: 2px; }
+.av-apparence.sans-apercu { display: block; margin: 0; max-width: none; }
+.av-nv .av-ap-choix { gap: 6px; }
+.av-nv .av-ap-ligne { grid-template-columns: 112px 1fr; }
+.av-nouveau .av-label { margin: 0; color: var(--lqv-or); font: 700 12px/1.3 Georgia, serif; letter-spacing: 0.14em; text-transform: uppercase; }
+.av-nouveau .av-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px; }
+.av-nouveau .av-actions .av-btn { min-width: 170px; }
 /* résultat, journal */
 .av-bilan { margin: 4px auto 0; max-width: 620px; }
 .av-bilan p { margin: 2px 0; }
