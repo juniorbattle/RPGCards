@@ -45,12 +45,11 @@ export function installVilleStyles(): void {
 .ville-tip[hidden] { display: none; }
 .ville-dialog, .ville-dialog-sortie { position: fixed; z-index: 2700; left: 50%; bottom: 14px; transform: translateX(-50%); box-sizing: border-box; width: min(clamp(980px, 62vw, 1320px), calc(100vw - 24px)); min-height: 148px; display: flex; gap: 18px; align-items: center; padding: 6px 14px; border: 14px solid transparent; border-image: var(--lqv-cadre) 14 / 14px stretch; background: var(--lqv-panneau) border-box; color: var(--lqv-ivoire); font: clamp(17px, 1.15vw, 22px)/1.5 Georgia, serif; box-shadow: var(--lqv-ombre); }
 /* passe 200 : on entre et on sort en douceur ; une réplique qui en suit une autre garde son cadre, seul le texte change */
-@media (prefers-reduced-motion: no-preference) {
-  .ville-dialog, .av-confirm { animation: lqv-entree 0.3s cubic-bezier(0.22, 0.61, 0.36, 1); }
-  .ville-dialog.enchaine { animation: none; }
-  .ville-dialog.enchaine .ville-dialog-body > p, .ville-dialog.enchaine .ville-choices, .ville-dialog.enchaine:not(.meme-voix) > .ville-portrait, .ville-dialog.enchaine:not(.meme-voix) .ville-dialog-body > b { animation: lqv-texte 0.3s ease-out; }
-  .sortie { animation: lqv-sortie 0.22s ease-in forwards; pointer-events: none; }
-}
+/* 2026-11-03 : la classe « lqv-fondus » (posée par la ville et l'aventure selon leur réglage), plus le réglage du système */
+.lqv-fondus :is(.ville-dialog, .av-confirm) { animation: lqv-entree 0.3s cubic-bezier(0.22, 0.61, 0.36, 1); }
+.lqv-fondus .ville-dialog.enchaine { animation: none; }
+.lqv-fondus .ville-dialog.enchaine :is(.ville-dialog-body > p, .ville-choices), .lqv-fondus .ville-dialog.enchaine:not(.meme-voix) > .ville-portrait, .lqv-fondus .ville-dialog.enchaine:not(.meme-voix) .ville-dialog-body > b { animation: lqv-texte 0.3s ease-out; }
+.lqv-fondus .sortie { animation: lqv-sortie 0.22s ease-in forwards; pointer-events: none; }
 @keyframes lqv-entree { from { opacity: 0; translate: 0 8px; } to { opacity: 1; translate: 0 0; } }
 @keyframes lqv-texte { from { opacity: 0; } to { opacity: 1; } }
 @keyframes lqv-sortie { from { opacity: 1; } to { opacity: 0; } }
@@ -67,10 +66,8 @@ export function installVilleStyles(): void {
 .ville-card b { font: 700 clamp(40px, 6vw, 84px)/1 Georgia, serif; letter-spacing: 0.04em; text-shadow: 0 0 24px rgba(255, 190, 110, 0.35); }
 .ville-card span { margin-top: 10px; font: italic 18px/1.2 Georgia, serif; color: #d8ccb4; letter-spacing: 0.2em; text-transform: uppercase; }
 .ville-card.out { opacity: 0; transition: opacity 1.4s ease 1.4s; }
-@media (prefers-reduced-motion: no-preference) {
-  .ville-card.fondu { animation: lqv-carton 3.2s ease both; }
-  .ville-card.fondu.court { animation-duration: 1.3s; }
-}
+.lqv-fondus .ville-card.fondu { animation: lqv-carton 3.2s ease both; }
+.lqv-fondus .ville-card.fondu.court { animation-duration: 1.3s; }
 @keyframes lqv-carton { from { opacity: 0; } 22% { opacity: 1; } 64% { opacity: 1; } to { opacity: 0; } }
 .ville-fade { position: fixed; inset: 0; z-index: 2950; pointer-events: none; background: #04060c; opacity: 0; transition: opacity 0.28s cubic-bezier(0.45, 0, 0.55, 1); }
 .ville-fade.in { opacity: 1; }

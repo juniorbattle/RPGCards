@@ -219,6 +219,21 @@ export function ecrireCine(st: Stockage | null, actives: boolean): boolean {
 }
 
 /**
+ * Mouvement réduit de l'aventure (2026-11-03) : son propre réglage, non par défaut, et non plus celui du système. Sur le
+ * poste du responsable, Windows a les animations coupées : le navigateur annonçait « mouvement réduit », et l'aventure se
+ * jouait sans un fondu ni un travelling. `?reducedMotion=0|1` dans l'adresse l'emporte toujours (parcours de QA).
+ */
+export const CLE_MOUVEMENT = 'lqv.mouvement';
+
+export function lireMouvementReduit(st: Stockage | null): boolean {
+  try { return st?.getItem(CLE_MOUVEMENT) === 'reduit'; } catch { return false; }
+}
+
+export function ecrireMouvementReduit(st: Stockage | null, reduit: boolean): boolean {
+  try { st?.setItem(CLE_MOUVEMENT, reduit ? 'reduit' : 'plein'); return !!st; } catch { return false; }
+}
+
+/**
  * Les cinématiques sont-elles permises par l'adresse ? `?cine=0` les coupe ; en QA (`?qa=1`), seulement avec `?cine=1`
  * (les parcours automatisés d'avant restent déterministes, comme les rencontres en vue).
  */

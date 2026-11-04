@@ -74,7 +74,9 @@ const sonde = () => {
 };
 
 try {
-  const ctx = await browser.newContext({ viewport: { width: VP[0], height: VP[1] }, deviceScaleFactor: 1 });
+  // LQV_SYSTEME_REDUIT=1 : le navigateur annonce « mouvement réduit », comme sur un Windows aux animations coupées (2026-11-03) ;
+  // l'aventure garde ses fondus (son réglage, non par défaut)
+  const ctx = await browser.newContext({ viewport: { width: VP[0], height: VP[1] }, deviceScaleFactor: 1, ...(process.env.LQV_SYSTEME_REDUIT === '1' ? { reducedMotion: 'reduce' } : {}) });
   const p = await ctx.newPage();
   p.setDefaultTimeout(Number(process.env.LQV_QA_TIMEOUT) || 90000);
   watchConsole(p, issues);

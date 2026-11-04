@@ -17,7 +17,7 @@ export function installAventureStyles(): void {
 #shell.av-scr[hidden] { display: none; }
 /* passe 200 : deux écrans de l'enveloppe en fondu enchaîné */
 .shell-fantome { position: fixed; inset: 0; z-index: 2601; overflow: hidden; pointer-events: none; }
-@media (prefers-reduced-motion: no-preference) { #shell.av-entree { animation: lqv-texte 0.3s ease-out; } }
+.lqv-fondus #shell.av-entree { animation: lqv-texte 0.3s ease-out; }
 :is(#shell, .shell-fantome).av-scr { position: fixed; inset: 0; z-index: 2600; display: grid; place-items: center; overflow: auto; padding: 24px 16px; background: radial-gradient(ellipse at 50% 40%, rgba(6, 8, 16, 0.55), rgba(4, 6, 12, 0.92)); }
 .av-titre { position: relative; z-index: 1; width: min(760px, 100%); color: var(--lqv-ivoire); font: 15px/1.5 Georgia, serif; text-align: center; }
 /* titre et résultat : le texte sous le buste, jamais dessus */
@@ -70,7 +70,7 @@ export function installAventureStyles(): void {
 .av-n-pow { font: 700 calc(var(--card-w) * 0.15)/1.3 system-ui, sans-serif; color: #2a2a2e; }
 .av-n-note { position: absolute; right: 4px; top: 3px; font: 700 11px/1 system-ui, sans-serif; color: #55555c; }
 .av-modal, .av-modal-sortie { position: fixed; inset: 0; z-index: 2750; display: grid; place-items: center; padding: 12px; background: radial-gradient(ellipse at 50% 45%, rgba(4, 6, 12, 0.55), rgba(4, 6, 12, 0.86)); }
-@media (prefers-reduced-motion: no-preference) { .av-modal:not(.direct) { animation: lqv-texte 0.3s ease-out; } }
+.lqv-fondus .av-modal:not(.direct) { animation: lqv-texte 0.3s ease-out; }
 .av-confirm { width: min(780px, 100%); max-height: calc(100vh - 24px); overflow: auto; box-sizing: border-box; padding: 6px 14px; border: 14px solid transparent; border-image: var(--lqv-cadre) 14 / 14px stretch; background: var(--lqv-panneau) border-box; color: var(--lqv-ivoire); font: 15px/1.5 Georgia, serif; box-shadow: var(--lqv-ombre); scrollbar-width: thin; scrollbar-color: rgba(226, 196, 138, 0.5) transparent; }
 /* les boutons d'une fenêtre restent à l'écran quand elle défile */
 .av-confirm > .ville-choices:last-child { position: sticky; bottom: -6px; margin: 10px -14px -6px; padding: 10px 14px 6px; background: linear-gradient(180deg, transparent, rgba(9, 10, 18, 0.98) 34%); }
@@ -101,10 +101,8 @@ export function installAventureStyles(): void {
 .av-modal.noire { background: #04060c; }
 .av-modal-sortie.noire { z-index: 2970; background: none; }
 :is(#shell, .shell-fantome).av-scr.av-preparation { background: radial-gradient(ellipse at 50% 0%, #1d1a26, #0a0b13 58%, #04060c); padding: 18px 20px; }
-@media (prefers-reduced-motion: no-preference) {
-  .av-prepa-tete, .av-prepa-suite, .av-prepa-rues, .av-prepa-pied { animation: lqv-entree 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
-  .av-prepa-suite { animation-delay: 0.12s; } .av-prepa-rues { animation-delay: 0.22s; } .av-prepa-pied { animation-delay: 0.3s; }
-}
+.lqv-fondus :is(.av-prepa-tete, .av-prepa-suite, .av-prepa-rues, .av-prepa-pied) { animation: lqv-entree 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+.lqv-fondus .av-prepa-suite { animation-delay: 0.12s; } .lqv-fondus .av-prepa-rues { animation-delay: 0.22s; } .lqv-fondus .av-prepa-pied { animation-delay: 0.3s; }
 .av-prepa { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 12px; box-sizing: border-box; width: min(1560px, 100%); height: min(940px, 100%); color: var(--lqv-ivoire); font: 15px/1.5 Georgia, serif; }
 .av-prepa-tete { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 20px; padding-bottom: 6px; border-bottom: 1px solid; border-image: linear-gradient(90deg, var(--lqv-or), transparent 80%) 1; }
 .av-prepa-tete h1 { margin: 0; font: 700 clamp(30px, 3vw, 44px)/1.1 Georgia, serif; color: var(--lqv-or-clair); letter-spacing: 0.02em; }
@@ -189,7 +187,7 @@ export function installAventureStyles(): void {
 .av-nv-mode { display: grid; gap: 8px; align-content: start; min-height: 180px; padding: 22px 22px; border: 1px solid #3a3446; border-radius: 2px; background: rgba(12, 10, 20, 0.6); color: var(--lqv-ivoire); text-align: left; cursor: pointer; }
 .av-nv-mode b { font: 700 20px/1.2 Georgia, serif; color: #f6eedc; }
 .av-nv-mode span { font: italic 15px/1.5 Georgia, serif; color: #b9ae98; }
-@media (prefers-reduced-motion: reduce) { .av-nv-page, .av-nv-page.cachee { transition: none; transform: none; } }
+:root:not(.lqv-fondus) :is(.av-nv-page, .av-nv-page.cachee) { transition: none; transform: none; }
 .av-nv-mode:hover { border-color: var(--lqv-or); }
 .av-nv-mode.choisi { border-color: var(--lqv-or-clair); background: linear-gradient(180deg, rgba(214, 178, 110, 0.18), rgba(214, 178, 110, 0.06)); box-shadow: inset 0 0 0 1px rgba(255, 231, 176, 0.25); }
 .av-nv-mode.choisi b { color: #ffe7b0; }

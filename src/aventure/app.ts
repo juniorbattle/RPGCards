@@ -58,7 +58,7 @@ import { consigneVille, numeroChapitre, proximiteFanal, REPOS_VILLE_S, roleDuelA
 import { CONTRAINTE_JOUTE, famillesDominantes, manche, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, varianteDe } from './competitions';
 import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave, type DuelAventure } from './sauvegarde';
 import { installAventureStyles } from './styles';
-import { aJouer, arriveeAJouer, cadreDialogue, cadreGroupe, CARTONS_CHAPITRE, cinePermise, DUREES, ecrireCine, estChapitreCarton, LIGNES_LIEU, lireCine, plansAffiliation, plansArrivee, plansArriveeRecit, plansChapitre, plansChef, plansEmissaire, plansGuetteur, plansKaiPrologue, plansRival, plansTitre, type CadreDialogue, type CinematiqueId } from './cinematiques';
+import { aJouer, arriveeAJouer, cadreDialogue, cadreGroupe, CARTONS_CHAPITRE, cinePermise, DUREES, ecrireCine, ecrireMouvementReduit, lireMouvementReduit, estChapitreCarton, LIGNES_LIEU, lireCine, plansAffiliation, plansArrivee, plansArriveeRecit, plansChapitre, plansChef, plansEmissaire, plansGuetteur, plansKaiPrologue, plansRival, plansTitre, type CadreDialogue, type CinematiqueId } from './cinematiques';
 import { Bandes, Cinema, type FonduCinema } from './cinema';
 import { effacer, fantomeEcran, FONDUS, Rideau } from './rideau';
 import { choixVariante, conclureDuel, enjeuVariante, figureOuNull, ouvrirDuel, REGLES_DUEL } from './fin';
@@ -95,7 +95,10 @@ const de = deF;
 const la = leF;
 
 export function startAventure(d: DepsAventure): AventureApp {
+  // le mouvement réduit de l'aventure : son propre réglage (menu), plus celui du système ; l'adresse l'emporte
+  if (!new URLSearchParams(location.search).has('reducedMotion')) d.params.reducedMotion = lireMouvementReduit(stockageLocal());
   const a = new AventureApp(d);
+  a.appliquerMouvement();
   if (d.params.qa) (window as unknown as Record<string, unknown>).__lqvAventure = a;
   return a;
 }
@@ -202,6 +205,12 @@ export class AventureApp {
   get params(): AppParams { return this.d.params; }
   /** Pas de fondu : mouvement réduit, ou temps figé des captures. */
   private get sansMouvement(): boolean { return this.params.reducedMotion || this.params.freeze; }
+  /** Les fondus et entrées en CSS (dialogues, cartons, Préparation) suivent le réglage de l'aventure, plus celui du système. */
+  appliquerMouvement(): void {
+    document.documentElement.classList.toggle('lqv-fondus', !this.sansMouvement);
+    // `.reduced *` (styles.css) coupe toute transition : posée au lancement d'après le système (main.ts), elle suit ici l'aventure
+    document.documentElement.classList.toggle('reduced', this.params.reducedMotion);
+  }
   get etat() { return this.save!.etat; }
 
   // ------------------------------------------------------------------ sauvegarde
@@ -2083,6 +2092,7 @@ export class AventureApp {
       { label: `Récit : ${NOM_RECIT[this.guide ? 'guide' : 'libre'].toLowerCase()}`, key: 'menu-recit', run: () => this.changerRecit() },
       { label: 'Apparence', key: 'menu-apparence', run: () => { this.fermerDialogue(); void this.reglageApparence(); } },
       { label: `Son : ${son().reglages().coupe ? 'coupé' : `${Math.round(son().reglages().volume * 100)} %`}`, key: 'menu-son', run: () => this.reglageSon() },
+      { label: `Mouvement réduit : ${new URLSearchParams(location.search).has('reducedMotion') ? 'imposé par l’adresse' : this.params.reducedMotion ? 'oui' : 'non'}`, key: 'menu-mouvement', run: () => { if (!new URLSearchParams(location.search).has('reducedMotion')) { this.params.reducedMotion = !this.params.reducedMotion; ecrireMouvementReduit(stockageLocal(), this.params.reducedMotion); this.bandesCine?.replier(true); this.bandesCine = null; this.appliquerMouvement(); } this.fermerDialogue(); this.menu(); } },
       { label: `Cinématiques : ${!cinePermise(location.search) ? 'coupées par l’adresse' : lireCine(stockageLocal()) ? 'oui' : 'non'}`, key: 'menu-cine', run: () => { ecrireCine(stockageLocal(), !lireCine(stockageLocal())); this.fermerDialogue(); this.menu(); } },
       { label: `Conseils du duel : ${!conseilsPermis(location.search) ? 'coupés par l’adresse' : lireConseils(stockageLocal()) ? 'affichés' : 'masqués'}`, key: 'menu-conseils', run: () => this.reglageConseils() },
       { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter. Les joueurs de cartes de la ville regardent devant eux : entrer dans leur regard, c’est accepter leur défi (une bulle « ! » s’allume, ils viennent à vous) ; passez derrière eux ou à l’abri d’un étal pour les éviter. Kaï surgit à certains moments de votre histoire ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? ») ; des conseils, un à la fois, expliquent chaque phase et chaque signal des cartes la première fois qu’il paraît (« Conseils du duel », dans ce menu). Le son se règle dans ce menu (« Son »). Les grands moments de votre histoire se jouent en cinématique (première arrivée dans un quartier, Kaï qui surgit, votre affiliation, un chef vaincu, un nouveau chapitre, le Championnat) : Échap, Espace, Entrée ou « Passer » pour la passer ; « Cinématiques », dans ce menu, les coupe. « Récit », dans ce menu, passe de la Promenade libre, où l’on parcourt la ville, au Récit guidé, un film en séquences : les scènes s’enchaînent, et la Préparation, avant chaque duel, réunit le deck, le journal et les joueurs de rue ; on en change quand on veut, sans rien perdre.', [fermer(this)]) },

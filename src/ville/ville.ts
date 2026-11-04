@@ -302,6 +302,8 @@ const TILT: Record<CameraId, { amount: number; width: number }> = { frontale: { 
 
 export function createTown(o: TownOptions): Town {
   const t0 = performance.now();
+  // fondus des dialogues et cartons (`ui.ts`) : selon le réglage de qui monte la ville (la démo : le système ; l'aventure : le sien)
+  document.documentElement.classList.toggle('lqv-fondus', !o.freeze && !o.reducedMotion);
   const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance', preserveDrawingBuffer: true });
   const pixelRatio = Math.min(window.devicePixelRatio || 1, 1);
   renderer.setPixelRatio(pixelRatio);
