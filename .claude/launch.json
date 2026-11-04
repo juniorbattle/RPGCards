@@ -30,6 +30,10 @@
         "--strictPort"
       ],
       "port": 4180
+    },
+    {
+      "name": "preview-terminal",
+      "url": "http://localhost:4173"
     }
   ]
 }
