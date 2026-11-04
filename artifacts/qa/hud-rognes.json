@@ -1,0 +1,22 @@
+{
+  "res": {
+    "1280": {
+      "tours": 4,
+      "hauteurMaxPanneau": 195,
+      "defauts": []
+    },
+    "1920": {
+      "tours": 12,
+      "hauteurMaxPanneau": 243,
+      "defauts": []
+    }
+  },
+  "checks": [
+    "OK 1280 × 720 : 4 étapes de duel, aucun texte rogné ni chevauchement (panneau jusqu'à 195 px)",
+    "OK 1280 × 720 : le message tient sans défiler",
+    "OK 1920 × 1080 : 12 étapes de duel, aucun texte rogné ni chevauchement (panneau jusqu'à 243 px)",
+    "OK 1920 × 1080 : le message tient sans défiler",
+    "OK console sans erreur (0)"
+  ],
+  "erreurs": []
+}
