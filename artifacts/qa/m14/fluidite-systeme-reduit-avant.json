@@ -1,0 +1,495 @@
+{
+ "head": "12ab9ba",
+ "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "viewport": [
+  1280,
+  720
+ ],
+ "checks": [
+  "OK Récit guidé : 40 étapes, 8 duels, 8 Préparations, 64 instants de cinématique",
+  "ÉCHEC Récit guidé : aucune coupure sur 7069 images (40 : [{\"quoi\":\"écran coupé (titre:av-titre → nouveau:av-nouveau)\",\"t\":1359,\"ecran\":\"nouveau:av-nouveau\",\"couvre\":0},{\"quoi\":\"le noir saute\",\"t\":2374,\"ecran\":\"ville:\",\"couvre\":0},{\"quoi\":\"caméra coupée (4.0 m ; plan 1 ; -1.0,6.0,15.5 → -5.0,6.0,15.5)\",\"t\":2378,\"ecran\":\"ville:\",\"couvre\":0},{\"quoi\":\"le noir saute\",\"t\":3873,\"ecran\":\"ville:\",\"couvre\":1}])",
+  "OK Promenade libre : le HUD",
+  "ÉCHEC Promenade libre : aucune coupure sur 2038 images (7 : [{\"quoi\":\"écran coupé (titre:av-titre → nouveau:av-nouveau)\",\"t\":644,\"ecran\":\"nouveau:av-nouveau\",\"couvre\":0},{\"quoi\":\"écran coupé (nouveau:av-nouveau → ville:)\",\"t\":1067,\"ecran\":\"ville:\",\"couvre\":0},{\"quoi\":\"caméra coupée (6.8 m ; plan 2 ; -1.2,8.7,30.9 → -5.0,7.4,25.4)\",\"t\":5029,\"ecran\":\"ville:\",\"couvre\":0},{\"quoi\":\"dialogue coupé\",\"t\":6962,\"ecran\":\"ville:\",\"couvre\":0}])",
+  "OK console propre (0)"
+ ],
+ "mesures": {
+  "guide": {
+   "images": 7069,
+   "coupures": [
+    {
+     "quoi": "écran coupé (titre:av-titre → nouveau:av-nouveau)",
+     "t": 1359,
+     "ecran": "nouveau:av-nouveau",
+     "couvre": 0
+    },
+    {
+     "quoi": "le noir saute",
+     "t": 2374,
+     "ecran": "ville:",
+     "couvre": 0
+    },
+    {
+     "quoi": "caméra coupée (4.0 m ; plan 1 ; -1.0,6.0,15.5 → -5.0,6.0,15.5)",
+     "t": 2378,
+     "ecran": "ville:",
+     "couvre": 0
+    },
+    {
+     "quoi": "le noir saute",
+     "t": 3873,
+     "ecran": "ville:",
+     "couvre": 1
+    },
+    {
+     "quoi": "le noir saute",
+     "t": 4019,
+     "ecran": "ville:",
+     "couvre": 0
+    },
+    {
+     "quoi": "écran coupé (ville: → duel:)",
+     "t": 5617,
+     "ecran": "duel:",
+     "couvre": 0
+    },
+    {
+     "quoi": "dialogue coupé",
+     "t": 5617,
+     "ecran": "duel:",
+     "couvre": 0
+    },
+    {
+     "quoi": "écran coupé (duel: → resultat:av-resultat)",
+     "t": 6310,
+     "ecran": "resultat:av-resultat",
+     "couvre": 0
+    },
+    {
+     "quoi": "dialogue coupé",
+     "t": 11157,
+     "ecran": "ville:",
+     "couvre": 0
+    },
+    {
+     "quoi": "le noir saute",
+     "t": 14151,
+     "ecran": "ville:",
+     "couvre": 0
+    },
+    {
+     "quoi": "caméra coupée (8.9 m ; plan hors cinématique ; 12.4,2.0,8.9 → 11.0,4.2,17.4)",
+     "t": 14429,
+     "ecran": "ville:",
+     "couvre": 0
+    },
+    {
+     "quoi": "écran coupé (ville: → preparation:av-prepa)",
+     "t": 14630,
+     "ecran": "preparation:av-prepa",
+     "couvre": 0
+    },
+    {
+     "quoi": "le noir saute",
+     "t": 15830,
+     "ecran": "ville:",
+     "couvre": 0
+    },
+    {
+     "quoi": "caméra coupée (4.0 m ; plan 1 ; -0.7,6.0,15.5 → -4.7,6.0,15.5)",
+     "t": 16066,
+     "ecran": "ville:",
+     "couvre": 0
+    },
+    {
+     "quoi": "caméra coupée (6.4 m ; plan hors cinématique ; -4.7,6.0,15.5 → -5.5,2.5,10.2)",
+     "t": 18273,
+     "ecran": "ville:",
+     "couvre": 0
+    },
+    {
+     "quoi": "écran coupé (ville: → duel:)",
+     "t": 19476,
+     "ecran": "duel:",
+     "couvre": 0
+    },
+    {
+     "quoi": "dialogue coupé",
+     "t": 19476,
+     "ecran": "duel:",
+     "couvre": 0
+    },
+    {
+     "quoi": "écran coupé (duel: → resultat:av-resultat)",
+     "t": 20165,
+     "ecran": "resultat:av-resultat",
+     "couvre": 0
+    },
+    {
+     "quoi": "le noir saute",
+     "t": 21228,
+     "ecran": "ville:",
+     "couvre": 1
+    },
+    {
+     "quoi": "écran coupé (ville: → duel:)",
+     "t": 24250,
+     "ecran": "duel:",
+     "couvre": 0
+    },
+    {
+     "quoi": "dialogue coupé",
+     "t": 24250,
+     "ecran": "duel:",
+     "couvre": 0
+    },
+    {
+     "quoi": "écran coupé (duel: → resultat:av-resultat)",
+     "t": 24947,
+     "ecran": "resultat:av-resultat",
+     "couvre": 0
+    },
+    {
+     "quoi": "le noir saute",
+     "t": 26015,
+     "ecran": "ville:",
+     "couvre": 1
+    },
+    {
+     "quoi": "le noir saute",
+     "t": 26119,
+     "ecran": "preparation:av-prepa",
+     "couvre": 0
+    },
+    {
+     "quoi": "le noir saute",
+     "t": 27826,
+     "ecran": "ville:",
+     "couvre": 0
+    },
+    {
+     "quoi": "écran coupé (ville: → duel:)",
+     "t": 28836,
+     "ecran": "duel:",
+     "couvre": 0
+    },
+    {
+     "quoi": "dialogue coupé",
+     "t": 28836,
+     "ecran": "duel:",
+     "couvre": 0
+    },
+    {
+     "quoi": "écran coupé (duel: → resultat:av-resultat)",
+     "t": 29538,
+     "ecran": "resultat:av-resultat",
+     "couvre": 0
+    },
+    {
+     "quoi": "le noir saute",
+     "t": 30606,
+     "ecran": "ville:",
+     "couvre": 1
+    },
+    {
+     "quoi": "le noir saute",
+     "t": 31605,
+     "ecran": "ville:",
+     "couvre": 1
+    },
+    {
+     "quoi": "le noir saute",
+     "t": 31618,
+     "ecran": "ville:",
+     "couvre": 0
+    },
+    {
+     "quoi": "écran coupé (ville: → duel:)",
+     "t": 32513,
+     "ecran": "duel:",
+     "couvre": 0
+    },
+    {
+     "quoi": "dialogue coupé",
+     "t": 32513,
+     "ecran": "duel:",
+     "couvre": 0
+    },
+    {
+     "quoi": "écran coupé (duel: → resultat:av-resultat)",
+     "t": 33209,
+     "ecran": "resultat:av-resultat",
+     "couvre": 0
+    },
+    {
+     "quoi": "le noir saute",
+     "t": 34204,
+     "ecran": "ville:",
+     "couvre": 1
+    },
+    {
+     "quoi": "le noir saute",
+     "t": 34215,
+     "ecran": "ville:",
+     "couvre": 0
+    },
+    {
+     "quoi": "le noir saute",
+     "t": 34951,
+     "ecran": "ville:",
+     "couvre": 1
+    },
+    {
+     "quoi": "le noir saute",
+     "t": 36176,
+     "ecran": "preparation:av-prepa",
+     "couvre": 0
+    },
+    {
+     "quoi": "écran coupé (ville: → duel:)",
+     "t": 39330,
+     "ecran": "duel:",
+     "couvre": 0
+    },
+    {
+     "quoi": "dialogue coupé",
+     "t": 39330,
+     "ecran": "duel:",
+     "couvre": 0
+    }
+   ],
+   "lentes": [
+    {
+     "ms": 748,
+     "t": 1308,
+     "ecran": "titre:av-titre",
+     "couvre": 0,
+     "noir": 0,
+     "scene": false
+    },
+    {
+     "ms": 129,
+     "t": 1577,
+     "ecran": "nouveau:av-nouveau",
+     "couvre": 0,
+     "noir": 0,
+     "scene": false
+    },
+    {
+     "ms": 91,
+     "t": 4764,
+     "ecran": "ville:",
+     "couvre": 0,
+     "noir": 0,
+     "scene": true
+    },
+    {
+     "ms": 102,
+     "t": 5617,
+     "ecran": "duel:",
+     "couvre": 0,
+     "noir": 0,
+     "scene": false
+    },
+    {
+     "ms": 297,
+     "t": 5928,
+     "ecran": "duel:",
+     "couvre": 0,
+     "noir": 0,
+     "scene": false
+    },
+    {
+     "ms": 195,
+     "t": 14630,
+     "ecran": "preparation:av-prepa",
+     "couvre": 0,
+     "noir": 0,
+     "scene": false
+    },
+    {
+     "ms": 289,
+     "t": 19476,
+     "ecran": "duel:",
+     "couvre": 0,
+     "noir": 0,
+     "scene": false
+    },
+    {
+     "ms": 85,
+     "t": 19581,
+     "ecran": "duel:",
+     "couvre": 0,
+     "noir": 0,
+     "scene": false
+    },
+    {
+     "ms": 151,
+     "t": 24416,
+     "ecran": "duel:",
+     "couvre": 0,
+     "noir": 0,
+     "scene": false
+    },
+    {
+     "ms": 269,
+     "t": 29121,
+     "ecran": "duel:",
+     "couvre": 0,
+     "noir": 0,
+     "scene": false
+    },
+    {
+     "ms": 120,
+     "t": 32644,
+     "ecran": "duel:",
+     "couvre": 0,
+     "noir": 0,
+     "scene": false
+    },
+    {
+     "ms": 140,
+     "t": 39330,
+     "ecran": "duel:",
+     "couvre": 0,
+     "noir": 0,
+     "scene": false
+    },
+    {
+     "ms": 66,
+     "t": 47267,
+     "ecran": "duel:",
+     "couvre": 0,
+     "noir": 0,
+     "scene": false
+    }
+   ],
+   "pirePasNoir": 1,
+   "pirePasCam": 8.94642004908552,
+   "pireImageVisible": 748.1000000238419,
+   "marche": true
+  },
+  "parcours": {
+   "etapes": 40,
+   "duels": 8,
+   "prepas": 8,
+   "cines": 64
+  },
+  "promenade": {
+   "images": 2038,
+   "coupures": [
+    {
+     "quoi": "écran coupé (titre:av-titre → nouveau:av-nouveau)",
+     "t": 644,
+     "ecran": "nouveau:av-nouveau",
+     "couvre": 0
+    },
+    {
+     "quoi": "écran coupé (nouveau:av-nouveau → ville:)",
+     "t": 1067,
+     "ecran": "ville:",
+     "couvre": 0
+    },
+    {
+     "quoi": "caméra coupée (6.8 m ; plan 2 ; -1.2,8.7,30.9 → -5.0,7.4,25.4)",
+     "t": 5029,
+     "ecran": "ville:",
+     "couvre": 0
+    },
+    {
+     "quoi": "dialogue coupé",
+     "t": 6962,
+     "ecran": "ville:",
+     "couvre": 0
+    },
+    {
+     "quoi": "caméra coupée (6.4 m ; plan 2 ; 0.0,8.7,30.7 → -3.0,7.4,25.2)",
+     "t": 11846,
+     "ecran": "ville:",
+     "couvre": 0
+    },
+    {
+     "quoi": "écran coupé (ville: → titre:av-titre)",
+     "t": 13696,
+     "ecran": "titre:av-titre",
+     "couvre": 0
+    },
+    {
+     "quoi": "dialogue coupé",
+     "t": 13696,
+     "ecran": "titre:av-titre",
+     "couvre": 0
+    }
+   ],
+   "lentes": [
+    {
+     "ms": 257,
+     "t": 464,
+     "ecran": "titre:av-titre",
+     "couvre": 0,
+     "noir": 0,
+     "scene": false
+    },
+    {
+     "ms": 115,
+     "t": 794,
+     "ecran": "nouveau:av-nouveau",
+     "couvre": 0,
+     "noir": 0,
+     "scene": false
+    },
+    {
+     "ms": 243,
+     "t": 1067,
+     "ecran": "ville:",
+     "couvre": 0,
+     "noir": 0,
+     "scene": true
+    },
+    {
+     "ms": 92,
+     "t": 1204,
+     "ecran": "ville:",
+     "couvre": 0,
+     "noir": 0,
+     "scene": true
+    },
+    {
+     "ms": 240,
+     "t": 7705,
+     "ecran": "ville:",
+     "couvre": 0,
+     "noir": 0,
+     "scene": true
+    },
+    {
+     "ms": 84,
+     "t": 7937,
+     "ecran": "ville:",
+     "couvre": 0,
+     "noir": 0,
+     "scene": true
+    },
+    {
+     "ms": 74,
+     "t": 13230,
+     "ecran": "ville:",
+     "couvre": 0,
+     "noir": 0,
+     "scene": false
+    },
+    {
+     "ms": 83,
+     "t": 13480,
+     "ecran": "ville:",
+     "couvre": 0,
+     "noir": 0,
+     "scene": false
+    }
+   ],
+   "pirePasNoir": 0,
+   "pirePasCam": 10.690743288628223,
+   "pireImageVisible": 257.30000001192093,
+   "marche": true
+  }
+ }
+}

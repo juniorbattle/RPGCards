@@ -1,5 +1,5 @@
 {
- "head": "b21393f",
+ "head": "12ab9ba",
  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
  "viewport": [
   1280,
@@ -7,28 +7,52 @@
  ],
  "checks": [
   "OK Récit guidé : 120 étapes, 19 duels, 36 Préparations, 196 instants de cinématique",
-  "OK Récit guidé : aucune coupure sur 35524 images (0)",
+  "OK Récit guidé : aucune coupure sur 35807 images (0)",
   "OK Promenade libre : le HUD",
-  "OK Promenade libre : aucune coupure sur 2868 images (0)",
+  "OK Promenade libre : aucune coupure sur 2901 images (0)",
   "OK console propre (0)"
  ],
  "mesures": {
   "guide": {
-   "images": 35524,
+   "images": 35807,
    "coupures": [],
    "lentes": [
     {
-     "ms": 78,
-     "t": 154022,
+     "ms": 132,
+     "t": 1717,
+     "ecran": "nouveau:av-nouveau",
+     "couvre": 0.93,
+     "noir": 0.95,
+     "scene": false
+    },
+    {
+     "ms": 67,
+     "t": 41266,
      "ecran": "duel:",
-     "couvre": 0.02,
-     "noir": 0.02,
+     "couvre": 0.06,
+     "noir": 0.05,
+     "scene": false
+    },
+    {
+     "ms": 61,
+     "t": 42624,
+     "ecran": "resultat:av-resultat",
+     "couvre": 0.43,
+     "noir": 0.46,
+     "scene": false
+    },
+    {
+     "ms": 64,
+     "t": 174670,
+     "ecran": "preparation:av-prepa",
+     "couvre": 0.93,
+     "noir": 0.97,
      "scene": false
     }
    ],
    "pirePasNoir": 1,
-   "pirePasCam": 0.31959208761309676,
-   "pireImageVisible": 77.5,
+   "pirePasCam": 1.0730879166994822,
+   "pireImageVisible": 131.80000001192093,
    "marche": true
   },
   "parcours": {
@@ -38,29 +62,12 @@
    "cines": 196
   },
   "promenade": {
-   "images": 2868,
+   "images": 2901,
    "coupures": [],
-   "lentes": [
-    {
-     "ms": 60,
-     "t": 789,
-     "ecran": "nouveau:av-nouveau",
-     "couvre": 0.93,
-     "noir": 0.94,
-     "scene": false
-    },
-    {
-     "ms": 95,
-     "t": 884,
-     "ecran": "nouveau:av-nouveau",
-     "couvre": 0.88,
-     "noir": 0.93,
-     "scene": false
-    }
-   ],
-   "pirePasNoir": 0.13626899999999997,
-   "pirePasCam": 0.06818308041411263,
-   "pireImageVisible": 95.30000001192093,
+   "lentes": [],
+   "pirePasNoir": 0.12343100000000007,
+   "pirePasCam": 0.06732837965698639,
+   "pireImageVisible": 48.19999998807907,
    "marche": true
   }
  }

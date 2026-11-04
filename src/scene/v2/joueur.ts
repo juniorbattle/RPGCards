@@ -8,7 +8,7 @@
 import { drawEmblem } from '../../art/emblems';
 import { paletteOf } from '../../art/palette';
 import type { Family } from '../../game/catalog/cards';
-import { APPARENCE_DEFAUT, CHEVEUX, PEAUX, YEUX, coupeDe, estOrigine, idJoueur, type Apparence, type CoupePortrait } from '../../ville/apparence';
+import { APPARENCE_DEFAUT, CHEVEUX, PEAUX, YEUX, coupeDe, estOrigine, idJoueur, type Apparence, type CoupePortrait, type Silhouette } from '../../ville/apparence';
 import {
   backCanvasH, canvas, clipped, edgeBand, EYE_CX, fill, mirrored, P, softShade, stroke, taper, torsoCanvasH, translatedPath,
   type BrowShape, type Cubic, type FigureV2Kit,
@@ -32,12 +32,19 @@ let C: Couleurs = C_ORIGINE;
  * ombrées), bouclée (contour en boucles).
  */
 let COUPE: CoupePortrait = 'carre';
+/**
+ * Silhouette du portrait en cours de dessin (retour du responsable, 2026-11-03 : « les portraits du joueur doivent être
+ * cohérents avec la personnalisation ») : B a la mâchoire plus carrée, le cou plus large, les lèvres sans couleur, les
+ * joues sans rose, des sourcils plus épais et des cils plus légers, comme sa feuille de la ville.
+ */
+let SIL: Silhouette = 'a';
 const COURT = () => COUPE !== 'carre';
-const avec = <T>(c: Couleurs, coupe: CoupePortrait, f: () => T): T => {
-  const [pc, pk] = [C, COUPE];
+const avec = <T>(c: Couleurs, coupe: CoupePortrait, sil: Silhouette, f: () => T): T => {
+  const [pc, pk, ps] = [C, COUPE, SIL];
   C = c;
   COUPE = coupe;
-  try { return f(); } finally { C = pc; COUPE = pk; }
+  SIL = sil;
+  try { return f(); } finally { C = pc; COUPE = pk; SIL = ps; }
 };
 
 /** Couleurs d'une apparence (`apparence.ts`) : peau, cheveux et iris ; le trait et les lèvres d'origine. */
@@ -47,6 +54,8 @@ function couleursApparence(a: Apparence): Couleurs {
   const y = YEUX[a.yeux]!;
   return {
     ...C_ORIGINE,
+    // silhouette B : lèvres de la couleur de la peau, à peine plus sombres
+    ...(a.silhouette === 'b' ? { lipUp: mix(p.deep, C_ORIGINE.line, 0.35), lipLow: mix(p.shade, p.deep, 0.35), lipHi: p.base } : {}),
     skinHi: p.hi, skin: p.base, skinShade: p.shade, skinDeep: p.deep,
     hair: h.base, hairShade: h.shade, hairDeep: h.deep, hairHi: h.hi, hairSheen: mix(h.hi, '#ffffff', 0.5), hairRim: mix(h.hi, '#ffffff', 0.3),
     brow: h.deep, browHi: h.shade,
@@ -77,6 +86,8 @@ function mix(a: string, b: string, t: number): string {
 // ---------------------------------------------------------------------------------------------------------------
 // Formes principales (espace H)
 
+/** Visage de la silhouette B : même front et mêmes yeux, mâchoire plus large et menton plus carré. */
+const FACE_B = 'M128,52 C95,52 61,61 52,95 C46,117 46,141 47,160 C48,186 50,208 57,226 C65,244 90,260 110,266 C120,269.5 136,269.5 146,266 C166,260 191,244 199,226 C206,208 208,186 209,160 C210,141 210,117 204,95 C195,61 161,52 128,52 Z';
 const FACE = 'M128,52 C95,52 61,61 52,95 C46,117 46,141 47,160 C48,181 52,204 62,223 C72,240 94,257 112,265 C120,268.5 136,268.5 144,265 C162,257 184,240 194,223 C204,204 208,181 209,160 C210,141 210,117 204,95 C195,61 161,52 128,52 Z';
 /** Pan gauche du carré : encadre la joue, pointes effilées qui se recourbent sous la mâchoire. */
 const SIDE = 'M66,64 C58,90 53,122 53,154 C53,180 56,204 62,224 C66,238 70,250 76,266 C72,262 68,258 64,254 C64,260 62,266 58,272 C55,264 52,258 48,252 C46,258 44,262 40,264 C36,246 32,206 32,164 C32,126 34,92 40,64 Z';
@@ -111,11 +122,6 @@ function drawHead(): HTMLCanvasElement {
   const { c, ctx } = canvas(256, 312);
   // Arrière du carré : sombre derrière la mâchoire et du côté de l’ombre (occlusion).
   // queue de cheval : houppe au-dessus du crâne, derrière la tête ; chignon bas : sur la nuque, de part et d'autre du cou
-  if (COUPE === 'queue') {
-    const queue = P('M150,30 C160,4 196,-6 222,8 C214,10 206,16 202,24 C214,24 224,30 230,40 C210,34 188,36 170,44 Z');
-    fill(ctx, queue, C.hairShade);
-    clipped(ctx, queue, () => { taper(ctx, [160, 26, 180, 10, 200, 6, 218, 10], 0, 3, 0, C.hairHi, 0.7); taper(ctx, [168, 40, 188, 30, 208, 30, 226, 38], 0.2, 1.2, 0.2, C.hairDeep, 0.7); });
-  }
   if (COUPE === 'chignon') {
     for (const [cx, s] of [[84, -1], [172, 1]] as const) {
       const chignon = P(`M${cx - 30},236 C${cx - 30},210 ${cx + 30},210 ${cx + 30},236 C${cx + 30},258 ${cx - 30},258 ${cx - 30},236 Z`);
@@ -144,7 +150,7 @@ function drawHead(): HTMLCanvasElement {
   });
   // Cou, dans l’ombre de la mâchoire, arrêté sur l’encolure.
   clipped(ctx, NECKLINE, () => {
-    const neck = P('M102,212 C104,246 102,276 94,310 L162,310 C154,276 152,246 154,212 Z');
+    const neck = P(SIL === 'b' ? 'M96,212 C98,246 96,276 86,310 L170,310 C160,276 158,246 160,212 Z' : 'M102,212 C104,246 102,276 94,310 L162,310 C154,276 152,246 154,212 Z');
     fill(ctx, neck, C.skinShade);
     clipped(ctx, neck, () => {
       fill(ctx, 'M100,256 C105,272 103,290 98,308 L118,308 C114,292 110,274 104,256 Z', C.skin, 0.9);
@@ -154,13 +160,15 @@ function drawHead(): HTMLCanvasElement {
     });
   });
   // Visage : aplat, puis modelé en aplats découpés dans la silhouette.
-  const face = P(FACE);
+  const face = P(SIL === 'b' ? FACE_B : FACE);
   fill(ctx, face, C.skin);
   clipped(ctx, face, () => {
     softShade(ctx, 'M204,70 C208,104 206,132 208,156 C206,170 198,182 188,192 C180,200 174,212 172,226 C170,242 160,258 144,268 L250,300 L250,40 Z', C.skinShade);
     // Ombres portées de la frange, du bandeau et des pans (lumière en haut à gauche).
     // (bouclée : l'ombre douce de la frange de boucles, pas celle des pointes de la frange balayée)
     if (COUPE === 'boucles') fill(ctx, 'M40,104 C80,116 176,116 216,104 L216,122 C176,128 80,128 40,122 Z', C.skinShade, 0.55);
+    // côtés rasés : pas de frange, l'ombre du seul bandeau sur le front
+    else if (COUPE === 'rase') fill(ctx, translatedPath(BAND, 2, 5), C.skinShade, 0.6);
     else fill(ctx, translatedPath(FRINGE, 3, 6), C.skinShade, 0.8);
     fill(ctx, translatedPath(SIDE, 4, 3), C.skinShade, 0.7);
     mirrored(ctx, 128, () => fill(ctx, translatedPath(SIDE, -2, 3), C.skinDeep, 0.5));
@@ -189,7 +197,7 @@ function drawHead(): HTMLCanvasElement {
     // Reflets : pommette gauche, front ; joues à peine rosées.
     fill(ctx, 'M54,170 C61,166 71,165.4 80,168 C71,169 63,171.4 56,175 Z', C.skinHi, 0.6);
     fill(ctx, 'M84,96 C96,92 112,91 124,93 C112,96 98,99 88,104 Z', C.skinHi, 0.3);
-    for (const [cx, a] of [[78, 0.2], [180, 0.15]] as const) {
+    for (const [cx, a] of SIL === 'b' ? [] : [[78, 0.2], [180, 0.15]] as const) {
       const g = ctx.createRadialGradient(cx, 190, 2, cx, 190, 22);
       g.addColorStop(0, `rgba(226,128,118,${a})`);
       g.addColorStop(1, 'rgba(226,128,118,0)');
@@ -205,7 +213,15 @@ function drawHead(): HTMLCanvasElement {
     [[144, 265, 162, 257, 184, 240, 194, 223], 1.8, 2.3, 2.3],
     [[194, 223, 204, 204, 208, 181, 209, 150], 2.3, 2, 0.9],
   ];
-  for (const [s, a, b, d] of contour) taper(ctx, s, a, b, d, C.line, 0.85);
+  const contourB: Array<[Cubic, number, number, number]> = [
+    [[47, 150, 47.5, 176, 49, 200, 53, 214], 0.4, 0.9, 1.1],
+    [[53, 214, 54, 219, 55, 222, 57, 226], 1.1, 1.3, 1.5],
+    [[57, 226, 65, 244, 90, 260, 110, 266], 1.5, 1.9, 1.7],
+    [[110, 266, 120, 269.5, 136, 269.5, 146, 266], 1.7, 2, 1.9],
+    [[146, 266, 166, 260, 191, 244, 199, 226], 1.9, 2.4, 2.3],
+    [[199, 226, 206, 208, 208, 186, 209, 150], 2.3, 2, 0.9],
+  ];
+  for (const [s, a, b, d] of SIL === 'b' ? contourB : contour) taper(ctx, s, a, b, d, C.line, 0.85);
   return c;
 }
 
@@ -237,7 +253,7 @@ function drawFront(o: Outfit, family: Tenue): HTMLCanvasElement {
   });
   // bouclée (retour du responsable, passe 175 : « la frange devant n'est pas bonne ») : pas de frange balayée, une frange
   // de boucles (plus bas)
-  if (COUPE !== 'boucles') {
+  if (COUPE !== 'boucles' && COUPE !== 'rase') {
     // Frange balayée, dessus du crâne et raie à droite.
     const fringe = P(FRINGE);
     fill(ctx, fringe, C.hair);
@@ -267,6 +283,61 @@ function drawFront(o: Outfit, family: Tenue): HTMLCanvasElement {
       taper(ctx, a, 0.3, 0.9, 0.2, C.hairDeep, 0.85);
       taper(ctx, b, 0.2, 1, 0.3, C.hairDeep, 0.85);
     }
+  }
+  // côtés rasés (comme la feuille de la ville) : tempes rasées, front dégagé, crête dressée et balayée vers l'arrière
+  if (COUPE === 'rase') {
+    const tempe = () => {
+      const t = P('M42,84 C38,104 40,124 48,140 L58,138 C52,120 52,102 58,86 Z');
+      fill(ctx, t, C.hairDeep, 0.32);
+      clipped(ctx, t, () => { for (const y of [96, 108, 120, 132]) taper(ctx, [44, y, 47, y + 1, 51, y + 1, 55, y], 0, 0.8, 0, C.hairDeep, 0.35); });
+    };
+    tempe();
+    mirrored(ctx, 128, tempe);
+    const pointes: Array<[number, number]> = [[66, 18], [88, 4], [110, -4], [132, -6], [154, -2], [176, 8], [196, 26]];
+    const bases = [64, 82, 102, 124, 146, 168, 188, 200];
+    const creux = (i: number) => (i === pointes.length - 1 ? 40 : 30);
+    let d = 'M50,98 C44,72 52,48 64,36';
+    for (let i = 0; i < pointes.length; i++) d += ` L${pointes[i]![0]},${pointes[i]![1]} L${bases[i + 1]},${creux(i)}`;
+    d += ' C210,56 214,78 206,98 C170,84 86,84 50,98 Z';
+    const crete = P(d);
+    fill(ctx, crete, C.hair);
+    clipped(ctx, crete, () => {
+      fill(ctx, 'M150,-10 L260,-10 L260,110 L150,110 Z', C.hairShade, 0.5);
+      edgeBand(ctx, crete, -3, -4, C.hairShade, 0.8, box);
+      for (let i = 0; i < pointes.length; i++) {
+        const [px, py] = pointes[i]!;
+        const bx = (bases[i]! + bases[i + 1]!) / 2;
+        taper(ctx, [bx, 84, bx + (px - bx) * 0.3, 60, px + (bx - px) * 0.25, py + 18, px, py + 2], 0.5, 4, 0, C.hairHi, i < 4 ? 0.6 : 0.3);
+        const b = bases[i + 1]!;
+        taper(ctx, [b, 86, b, 66, b - 1, 48, b, creux(i)], 0.2, 1.1, 0.2, C.hairDeep, 0.7);
+      }
+    });
+    stroke(ctx, crete, C.hairDeep, 1, 0.75);
+  }
+  // queue de cheval (comme la feuille de la ville) : chignon haut noué sur le crâne, longues mèches le long du visage
+  if (COUPE === 'queue') {
+    const meche = (clair: number) => {
+      const m = P('M62,92 C54,122 52,162 54,202 C55,222 58,238 64,254 C59,250 55,246 50,240 C46,220 42,182 42,142 C42,118 46,100 52,88 Z');
+      fill(ctx, m, C.hair);
+      clipped(ctx, m, () => {
+        edgeBand(ctx, m, -4, -2, C.hairShade, 0.85, box);
+        taper(ctx, [52, 110, 47, 150, 47, 190, 52, 230], 0.4, 3, 0.4, C.hairHi, clair);
+        taper(ctx, [58, 104, 52, 150, 51, 196, 56, 240], 0.2, 1, 0.2, C.hairDeep, 0.7);
+      });
+      taper(ctx, [62, 92, 54, 122, 52, 162, 54, 202], 0.3, 1, 0.3, C.hairDeep, 0.8);
+    };
+    meche(0.55);
+    mirrored(ctx, 128, () => meche(0.25));
+    const noeud = P('M100,30 C98,8 112,-4 128,-4 C144,-4 158,8 156,30 C146,24 110,24 100,30 Z');
+    fill(ctx, noeud, C.hair);
+    clipped(ctx, noeud, () => {
+      fill(ctx, 'M128,-10 L170,-10 L170,40 L128,40 Z', C.hairShade, 0.5);
+      taper(ctx, [106, 22, 108, 8, 118, 0, 130, -1], 0, 3.4, 0, C.hairHi, 0.7);
+      taper(ctx, [128, 26, 128, 16, 130, 6, 134, -2], 0.2, 1, 0.2, C.hairDeep, 0.6);
+    });
+    stroke(ctx, noeud, C.hairDeep, 1, 0.8);
+    // le lien qui serre la queue sous le chignon
+    fill(ctx, 'M104,30 C114,25 142,25 152,30 L151,36 C141,31 115,31 105,36 Z', C.hairDeep, 0.9);
   }
   // courte effilée : une longue mèche balayée sur le front, de la raie jusqu'au sourcil
   if (COUPE === 'effilee') {
@@ -404,6 +475,12 @@ const VISAGES_PORTRAIT: Record<number, { brows?: Partial<Record<BrowShape, strin
   },
 };
 
+/** Silhouette B au visage d'origine : sourcils épais et droits, comme sur sa feuille de la ville. */
+const VISAGE_B: (typeof VISAGES_PORTRAIT)[number] = {
+  brows: { rest: 'M3,14.2 C16,10.8 30,9.6 43,9.6 C54,9.6 62,10.8 68.6,12.6 C71,13.6 71.2,18.4 69.4,20.4 C61,19.2 51,18.6 41,18.6 C28,18.6 15,19.4 3,21 Z' },
+  lashWeight: 0.9,
+};
+
 const KITS = new Map<string, FigureV2Kit>();
 
 /**
@@ -418,14 +495,15 @@ export function playerKitV2(family: Tenue, apparence: Apparence = APPARENCE_DEFA
   const origine = estOrigine(apparence);
   const C = origine ? C_ORIGINE : couleursApparence(apparence);
   const coupe = coupeDe(apparence).portrait;
-  const dessin = <T>(f: () => T) => (origine ? f : () => avec(C, coupe, f));
-  const visage = VISAGES_PORTRAIT[apparence.visage ?? 0];
+  const dessin = <T>(f: () => T) => (origine ? f : () => avec(C, coupe, apparence.silhouette, f));
+  const visage = VISAGES_PORTRAIT[apparence.visage ?? 0] ?? (apparence.silhouette === 'b' ? VISAGE_B : undefined);
+  const cils = (visage?.lashWeight ?? 0.9) * (apparence.silhouette === 'b' ? 0.75 : 1);
   const kit: FigureV2Kit = {
     id,
     colors: {
       skinShade: C.skinShade, line: C.line, lineSoft: C.lineSoft, lash: C.lash, lashSoft: C.lashSoft, brow: C.brow, browHi: C.browHi,
       lipUp: C.lipUp, lipLow: C.lipLow, lipHi: C.lipHi, iris: C.iris, irisDeep: C.irisDeep, irisLight: C.irisLight, irisAmber: C.irisAmber,
-      pupil: C.pupil, irisGlow: '170,205,255', lashWeight: visage?.lashWeight ?? 0.9, lashWing: visage?.lashWing ?? false, lashStrands: false,
+      pupil: C.pupil, irisGlow: '170,205,255', lashWeight: cils, lashWing: visage?.lashWing ?? false, lashStrands: false,
     },
     brows: visage?.brows ? { ...BROWS_JOUEUR, ...visage.brows } : BROWS_JOUEUR,
     ...(visage?.moods ? { moods: visage.moods } : {}),
