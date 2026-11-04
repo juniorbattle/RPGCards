@@ -37,7 +37,9 @@ export function installAventureStyles(): void {
 .av-btn b { font: 700 19px/1.2 Georgia, serif; } .av-btn small { color: var(--lqv-sepia); font: 13px/1.3 Georgia, serif; }
 .av-btn.primary { background: linear-gradient(180deg, #f2dcab, #d6b26e); color: #1a1408; border-color: var(--lqv-or-clair); box-shadow: inset 0 0 0 1px rgba(90, 60, 20, 0.4); } .av-btn.primary small { color: #3a2e18; }
 .av-btn:focus-visible, .ville-btn:focus-visible { outline: 3px solid #ffe7b0; outline-offset: 2px; }
-.av-profil { margin: 0; color: #d8ccb4; font-size: 13px; }
+.av-profil { display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline; gap: 2px 0; margin: 2px 0 0; color: #d8ccb4; font-size: 13.5px; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9); }
+.av-profil b { color: var(--lqv-or-clair); font-size: 16px; }
+.av-profil > span::before { content: "◆"; margin: 0 9px; color: var(--lqv-or); font-size: 8px; vertical-align: 2px; }
 .av-link { color: #b8c4dc; font-size: 13px; }
 .av-label { display: block; margin-top: 14px; color: #efe6d4; }
 .av-apparence { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; margin: 6px auto 0; max-width: 620px; text-align: left; }
@@ -220,7 +222,9 @@ export function installAventureStyles(): void {
 .av-quete ul { list-style: none; padding-left: 0; margin: 2px 0; } .av-quete li.faite { color: #b8e6a0; }
 .av-tech { display: grid; place-items: center; width: 74px; height: 104px; border-radius: 6px; border: 1px solid #e2c48a; background: #1a1622; color: #ffe7b0; font-size: 12px; text-align: center; }
 .av-tech b { font: 700 11px/1 system-ui, sans-serif; color: #cfc3ac; text-transform: uppercase; } .av-tech span { font: 700 14px/1.2 Georgia, serif; }
-.av-resultat .av-h1 { font-size: clamp(34px, 4vw, 52px); }
+.av-resultat .av-h1 { font-size: clamp(30px, min(3.4vw, 5.2vh), 56px); }
+.av-resultat.av-accroche { margin-bottom: 1.6vh; }
+@media (min-width: 1600px) and (min-height: 960px) { .av-titre.av-resultat { zoom: 1.2; } }
 .av-confirm.av-ecran { width: min(1240px, 100%); max-height: calc(100vh - 24px); }
 .av-ecran-tete { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .av-onglets { display: flex; gap: 2px; margin: 8px 0 8px; flex-wrap: wrap; border-bottom: 1px solid rgba(226, 196, 138, 0.3); }
@@ -269,6 +273,74 @@ export function installAventureStyles(): void {
 .av-transition { margin: 6px 0; padding: 5px 12px; border-left: 2px solid var(--lqv-or); background: rgba(226, 196, 138, 0.07); }
 .av-standard { color: #ffe7b0; font-weight: 700; }
 .av-cards.av-deja .card { filter: saturate(0.6) brightness(0.8); }
+/* passe 207 — retour du test (2026-11-04) : « textes de résultat et récompenses trop en vrac », « manque de mise en valeur des
+   textes » : un vocabulaire commun. Le mot qui compte (nom, nombre, carte, Technique) en or clair ; un surtitre en petites
+   capitales ; des lignes titrées (.av-fiche) ; des étapes numérotées (.av-etapes) ; les cartes gagnées avec leur nom. */
+:is(.av-titre, .av-confirm, .av-prepa) :is(p, dd, li) b { color: var(--lqv-or-clair); font-weight: 700; }
+.av-surtitre { margin: 0 0 -2px; color: var(--lqv-or); font: 700 13px/1.3 Georgia, serif; letter-spacing: 0.26em; text-transform: uppercase; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9); }
+.av-trait > span b { color: var(--lqv-ivoire); font-style: normal; }
+.av-aide b { color: var(--lqv-ivoire); }
+/* le résultat : l'issue en couleur, puis un bilan en cases */
+.av-titre.av-resultat { width: min(980px, 100%); }
+.av-resultat .av-items { margin-top: 12px; }
+.av-resultat.issue-victoire .av-h1 { color: #ffe9b8; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6), 0 0 34px rgba(255, 196, 100, 0.5); }
+.av-resultat.issue-defaite .av-h1 { color: #f0c0b0; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6), 0 0 30px rgba(214, 84, 60, 0.4); }
+.av-resultat.issue-abandon .av-h1 { color: #cfc7b8; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6); }
+.av-bilan-panneau { display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; box-sizing: border-box; margin: 4px auto 0; padding: 2px 6px 2px; border: 14px solid transparent; border-image: var(--lqv-cadre) 14 / 14px stretch; background: var(--lqv-panneau) border-box; box-shadow: var(--lqv-ombre); text-align: left; }
+.lqv-fondus .av-bilan-panneau { animation: lqv-entree 0.45s 0.1s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+.av-bilan-panneau h3 { margin: 0 0 6px; color: var(--lqv-or); font: 700 12px/1.3 Georgia, serif; letter-spacing: 0.16em; text-transform: uppercase; }
+.av-bilan-cases { display: contents; }
+.av-bilan-case, .av-bilan-gains { box-sizing: border-box; padding: 7px 14px 8px; border: 1px solid rgba(226, 196, 138, 0.2); background: rgba(9, 10, 18, 0.5); }
+.av-bilan-case { flex: 1 1 190px; }
+.av-bilan-gains { flex: 2 1 300px; display: flex; flex-direction: column; }
+.av-pv { display: flex; align-items: baseline; gap: 10px; margin: 2px 0 0; font: 700 26px/1.1 Georgia, serif; }
+.av-pv b { color: var(--lqv-or-clair); font-size: 38px; text-shadow: 0 0 18px rgba(255, 196, 100, 0.3); }
+.av-pv-avant { color: var(--lqv-sepia); }
+.av-fleche { color: var(--lqv-or); font-size: 22px; }
+.av-pv small { margin-left: -6px; color: var(--lqv-sepia); font: 15px/1 Georgia, serif; }
+.av-bilan-aide { display: block; margin-top: 6px; color: var(--lqv-sepia); font: italic 13px/1.35 Georgia, serif; }
+.av-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.av-stat { display: grid; justify-items: center; align-content: start; gap: 4px; text-align: center; }
+.av-stat b { color: var(--lqv-or-clair); font: 700 34px/1 Georgia, serif; }
+.av-stat span { color: var(--lqv-sepia); font: 12.5px/1.25 Georgia, serif; }
+.av-gains { --card-w: 74px; display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 12px 18px; margin: auto 0; }
+.av-gains.nombreuses { --card-w: 52px; gap: 8px 10px; max-height: 40vh; overflow-y: auto; }
+.av-gain { display: grid; justify-items: center; gap: 6px; margin: 0; text-align: center; }
+.av-gain .card { cursor: default; }
+.av-gain figcaption { display: grid; max-width: calc(var(--card-w) + 48px); }
+.av-gain figcaption b { color: var(--lqv-or-clair); font: 700 13.5px/1.25 Georgia, serif; }
+.av-gain figcaption small { color: var(--lqv-sepia); font: italic 12.5px/1.25 Georgia, serif; }
+/* au résultat, sous le buste : cartes à la taille de l'écran ; une ou deux cartes, la légende à côté */
+.av-resultat .av-gains { --card-w: clamp(48px, min(4.6vw, 7vh), 88px); }
+.av-gains.peu .av-gain { grid-template-columns: auto auto; align-items: center; gap: 0 12px; text-align: left; }
+.av-gains.peu .av-gain figcaption { max-width: 160px; }
+.av-choix-carte .av-btn { min-width: 0; width: 100%; padding: 8px 12px; } .av-choix-carte .av-btn b { font-size: 16px; }
+.av-gain-pile { --card-w: 52px; display: flex; gap: 4px; }
+.av-gain-large figcaption { max-width: none; }
+.av-bilan-rien { margin: auto 0; color: var(--lqv-sepia); font: italic 15px/1.4 Georgia, serif; text-align: center; }
+.av-bilan-note { flex: 1 1 100%; margin: 0; padding: 6px 6px 0; border-top: 1px solid rgba(226, 196, 138, 0.2); color: var(--lqv-ivoire); font: italic 15.5px/1.45 Georgia, serif; text-align: center; }
+/* le choix de la variante : la consigne en tête du cadre, les trois cartes dessous */
+.av-ecran-choix .av-bilan-panneau { display: block; padding: 6px 16px 10px; text-align: center; }
+.av-choix-consigne { font-size: 13px !important; }
+.av-choix-aide { margin: 0 auto 4px; max-width: 640px; color: var(--lqv-sepia); font: italic 14px/1.45 Georgia, serif; }
+.av-choix-carte > b { display: flex; align-items: center; gap: 7px; color: var(--lqv-or-clair); font: 700 16px/1.2 Georgia, serif; }
+.av-choix-lettre { display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid var(--lqv-or); color: var(--lqv-or); font: 700 12px/1 Georgia, serif; }
+/* fenêtres : lignes titrées, étapes, Technique */
+.av-fiche { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 18px; align-items: baseline; margin: 10px 0 4px; }
+.av-fiche dt { color: var(--lqv-or); font: 700 12px/1.6 Georgia, serif; letter-spacing: 0.14em; text-transform: uppercase; }
+.av-fiche dd { margin: 0; padding-bottom: 8px; border-bottom: 1px solid rgba(226, 196, 138, 0.12); color: var(--lqv-ivoire); }
+.av-fiche dd:last-of-type { border-bottom: 0; padding-bottom: 0; }
+.av-fiche .av-enjeu { --card-w: 60px; flex-wrap: wrap; }
+.av-enjeu > span { display: grid; } .av-enjeu > span b { color: var(--lqv-or-clair); font-size: 16px; } .av-enjeu > span small { color: var(--lqv-sepia); font-style: italic; }
+.av-rien { color: var(--lqv-sepia); font-style: italic; }
+.av-etapes { display: grid; gap: 6px; margin: 4px 0 6px; padding: 0; list-style: none; counter-reset: etape; }
+.av-etapes li { display: grid; grid-template-columns: 26px minmax(0, 1fr) minmax(0, 1.15fr); align-items: baseline; gap: 0 4px; counter-increment: etape; }
+.av-etapes li::before { content: counter(etape); display: grid; place-items: center; width: 20px; height: 20px; align-self: center; border: 1px solid var(--lqv-or); color: var(--lqv-or); font: 700 12px/1 Georgia, serif; }
+.av-etapes li > span:last-child { justify-self: end; padding-left: 14px; color: var(--lqv-sepia); font-style: italic; text-align: right; }
+.av-tech-ligne { display: flex; align-items: baseline; gap: 14px; margin: 6px 0; padding: 6px 12px; border-left: 2px solid var(--lqv-or); background: rgba(226, 196, 138, 0.07); }
+.av-tech-nom { display: grid; flex: none; } .av-tech-nom small { color: var(--lqv-or); font: 700 10.5px/1.3 Georgia, serif; letter-spacing: 0.14em; text-transform: uppercase; } .av-tech-nom b { color: var(--lqv-or-clair); font: 700 17px/1.2 Georgia, serif; }
+.av-tech-ligne > span:last-child { color: var(--lqv-sepia); font-size: 14px; line-height: 1.4; }
+.av-recompense .av-gains { margin: 8px 0 4px; }
 ${STYLES_CINEMA}`;
   document.head.append(s);
 }
