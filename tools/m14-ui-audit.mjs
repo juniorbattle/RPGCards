@@ -41,10 +41,14 @@ try {
   await p.waitForSelector('[data-key="av-new"]');
   await shot('titre-neuf');
   await p.click('[data-key="av-new"]');
-  await p.waitForSelector('[data-key="av-start"]');
+  await p.waitForSelector('[data-key="av-suite"]');
   await p.waitForSelector('.av-ap-sil, .av-apparence', { timeout: 20000 }).catch(() => {});
   await shot('nouvelle-aventure');
   await p.fill('[data-key="av-name"]', 'Lou');
+  await p.click('[data-key="av-suite"]');
+  await p.waitForSelector('[data-key="av-start"]', { state: 'visible' });
+  await p.waitForTimeout(400);
+  await shot('nouvelle-aventure-recit');
   await p.click('[data-key="av-start"]');
   await pret();
   await p.waitForFunction(() => !document.querySelector('.ville-card'), null, { timeout: 15000 }).catch(() => {});

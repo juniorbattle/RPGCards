@@ -54,7 +54,7 @@ try {
   check((await p.$$('.av-neutre')).length === 4, 'création : les quatre Rangs de cartes grises (×4) présentés');
   await shot('nouvelle-aventure');
   await p.fill('[data-key="av-name"]', 'Ana');
-  await p.click('[data-key="av-start"]');
+  await p.click('[data-key="av-suite"]'); await p.click('[data-key="av-start"]');
   await townReady();
   let e = await etat();
   check(e.deck.cartes.length === 16 && e.deck.cartes.every((c) => c.startsWith('neutre-')) && e.deck.signature === null, 'départ : deck de 16 neutres, sans Signature');

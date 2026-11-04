@@ -64,7 +64,7 @@ try {
   await p.goto(`${server.base}/?aventure=1&qa=1&aiDelay=0&reducedMotion=1&profileSeed=9`, { timeout: Number(process.env.LQV_QA_NAV_TIMEOUT) || 90000 });
   await p.click('[data-key="av-new"]');
   await p.fill('[data-key="av-name"]', 'Bo');
-  await p.click('[data-key="av-start"]');
+  await p.click('[data-key="av-suite"]'); await p.click('[data-key="av-start"]');
   await townReady();
   const faits = [
     { type: 'scene', id: 'P2' }, { type: 'duelPrologue', issue: 'victoire', faits: { assautsGagnes: 1, gardesGagnees: 3, interferencesReussies: 0 } },

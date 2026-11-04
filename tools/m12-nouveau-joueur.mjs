@@ -89,7 +89,7 @@ try {
   await p.click('[data-key="av-new"]');
   await p.fill('[data-key="av-name"]', 'Nouveau');
   await shot('nouvelle-aventure');
-  await p.click('[data-key="av-start"]');
+  await p.click('[data-key="av-suite"]'); await p.click('[data-key="av-start"]');
   await townReady();
   check(await cine('arrivee-quai'), 'première arrivée sur le Quai : cinématique jouée, passable');
   await shot('quai');

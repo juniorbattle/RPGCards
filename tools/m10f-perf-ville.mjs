@@ -29,7 +29,7 @@ try {
   if (depart) await p.click('[data-key="av-depart"]');
   else {
     await p.click('[data-key="av-new"]');
-    await p.click('[data-key="av-start"]');
+    await p.click('[data-key="av-suite"]'); await p.click('[data-key="av-start"]');
   }
   const pret = (id) => p.waitForFunction((x) => { const t = window.__lqvAventure?.town; return !!t && t.ilot.id === x && t.stats().frames > 2 && !document.querySelector('.ville-host').hidden && !document.querySelector('.ville-fade'); }, id, { timeout: 120000 });
   for (const id of ['quai', 'parvis', 'ruelles', 'cour', 'port', 'haute']) {

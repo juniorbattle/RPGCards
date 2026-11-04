@@ -67,7 +67,7 @@ try {
   renderer = rendererLabel(await webglRenderer(p).catch(() => null));
   await p.click('[data-key="av-new"]');
   await p.fill('[data-key="av-name"]', 'Lou');
-  await p.click('[data-key="av-start"]');
+  await p.click('[data-key="av-suite"]'); await p.click('[data-key="av-start"]');
   await townReady();
   check(await av(() => window.__lqvAventure.quaiRangs === true), 'la ville en rangs est affichée (QA : dioramas admis)');
   const refus = await av((evs) => window.__lqvAventure.qaFaits(evs), [

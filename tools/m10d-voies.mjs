@@ -132,7 +132,7 @@ try {
   renderer = await webglRenderer(p);
   await p.click('[data-key="av-new"]');
   await p.fill('[data-key="av-name"]', 'Alex');
-  await p.click('[data-key="av-start"]');
+  await p.click('[data-key="av-suite"]'); await p.click('[data-key="av-start"]');
   await townReady();
   // Prologue (issue imposée), la foule, le premier émissaire : « Différer »
   await lancer('kai-prologue');

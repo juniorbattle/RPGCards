@@ -296,9 +296,11 @@ export class AventureApp {
     let apparence: Apparence = { ...APPARENCE_DEFAUT.a };
     // M14 : Promenade libre présélectionnée ; en QA, `?recit=guide`
     let mode: ModeRecit = this.params.qa && new URLSearchParams(location.search).get('recit') === 'guide' ? 'guide' : 'libre';
-    const go = () => this.commencer(input.value.trim() || 'Duelliste', undefined, apparence, mode);
-    // retour du test du responsable (2026-11-03 : « fouilli et pas assez epuree ») : le personnage à gauche, en grand, avec son
-    // nom ; à droite, son apparence puis le récit, en deux cartes ; les boutons dans le cadre
+    const nom = () => input.value.trim() || 'Duelliste';
+    const go = () => this.commencer(nom(), undefined, apparence, mode);
+    // retours du test du responsable (2026-11-03 : « fouilli et pas assez epuree », puis « peut etre que le choix du recit doit
+    // etre dans un autre panel ») : deux étapes dans le même cadre, le personnage toujours à gauche ; 1. son nom et son
+    // apparence, 2. le récit, en deux grandes cartes ; les deux pages occupent la même case, le cadre ne change pas de taille
     const marquerMode = () => boutonsMode.forEach((b, i) => { const oui = (i === 0 ? 'libre' : 'guide') === mode; b.setAttribute('aria-pressed', String(oui)); b.classList.toggle('choisi', oui); });
     const boutonsMode = (['libre', 'guide'] as const).map((m) => h('button', { class: 'av-nv-mode', type: 'button', 'data-key': `av-recit-${m}`, onclick: () => { mode = m; marquerMode(); } }, h('b', null, NOM_RECIT[m]), h('span', null, TEXTE_RECIT[m])));
     marquerMode();
@@ -307,21 +309,42 @@ export class AventureApp {
     void apparencesDisponibles(this.params.qa, new URLSearchParams(location.search).get('sprites')).then((dispo) => {
       zone.replaceChildren(editeurApparence({ valeur: apparence, tenue: 'gris', dispo, apercu, change: (a) => { apparence = a; } }));
     });
-    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
+    const champNom = h('label', { class: 'av-nv-nom' }, h('span', { class: 'av-label' }, 'Nom'), input);
+    const nomFixe = h('p', { class: 'av-nv-nom-fixe' });
+    const etapes = [h('span', null, '1 · Personnage'), h('span', null, '2 · Récit')];
+    const page1 = h('div', { class: 'av-nv-page', 'data-etape': '1' },
+      h('p', { class: 'av-label' }, 'Apparence'),
+      zone,
+      h('div', { class: 'av-actions' }, bouton('Retour', () => this.titre(), 'av-back'), bouton('Suivant', () => montrer(2), 'av-suite', true)));
+    const page2 = h('div', { class: 'av-nv-page', 'data-etape': '2' },
+      h('p', { class: 'av-nv-question' }, 'Comment voulez-vous vivre le récit ?'),
+      h('div', { class: 'av-nv-modes', 'data-key': 'av-recit-texte' }, ...boutonsMode),
+      h('p', { class: 'av-nv-note' }, 'Vous pourrez en changer à tout moment, dans le menu de l’aventure.'),
+      h('div', { class: 'av-actions' }, bouton('Retour', () => montrer(1), 'av-nv-retour'), bouton('Commencer', go, 'av-start', true)));
+    const montrer = (n: 1 | 2) => {
+      page1.classList.toggle('cachee', n !== 1);
+      page2.classList.toggle('cachee', n !== 2);
+      page1.inert = n !== 1;
+      page2.inert = n !== 2;
+      etapes.forEach((e, i) => e.classList.toggle('actif', i === n - 1));
+      champNom.hidden = n !== 1;
+      nomFixe.hidden = n !== 2;
+      nomFixe.textContent = nom();
+      if (n === 1) input.focus();
+      else boutonsMode[mode === 'libre' ? 0 : 1]?.focus();
+    };
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') montrer(2); });
     this.ecranShell('scr-home av-scr',
       h('section', { class: 'av-titre av-nouveau', 'data-screen': 'av-nouveau' },
         h('p', { class: 'av-nv-sur' }, 'Nouvelle aventure'),
         h('h1', { class: 'av-h1' }, 'De la populace'),
         h('p', { class: 'av-sous' }, 'Ni famille ni Signature : seize cartes grises. Le soir du tournoi, le Quai est plein.'),
         h('div', { class: 'av-nv' },
-          h('div', { class: 'av-nv-perso' }, apercu, h('label', { class: 'av-nv-nom' }, h('span', { class: 'av-label' }, 'Nom'), input)),
+          h('div', { class: 'av-nv-perso' }, apercu, champNom, nomFixe),
           h('div', { class: 'av-nv-reglages' },
-            h('p', { class: 'av-label' }, 'Apparence'),
-            zone,
-            h('p', { class: 'av-label' }, 'Récit'),
-            h('div', { class: 'av-nv-modes', 'data-key': 'av-recit-texte' }, ...boutonsMode),
-            h('div', { class: 'av-actions' }, bouton('Retour', () => this.titre(), 'av-back'), bouton('Commencer', go, 'av-start', true))))));
-    input.focus();
+            h('p', { class: 'av-nv-etapes', 'aria-hidden': 'true' }, ...etapes),
+            h('div', { class: 'av-nv-pages' }, page1, page2)))));
+    montrer(1);
     input.select();
   }
 

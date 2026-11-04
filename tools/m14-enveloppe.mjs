@@ -86,8 +86,8 @@ try {
   check(await j.evaluate(() => { const b = document.querySelector('[data-key="av-new"]').getBoundingClientRect(); const s = document.querySelector('.av-titre'); return getComputedStyle(s).position === 'relative' && getComputedStyle(s).zIndex === '1' && b.height > 0; }), 'le titre passe devant le dégradé de l’accueil');
   writeFileSync(`${DIR}/${String(++n).padStart(2, '0')}-lancement-titre.png`, await j.screenshot());
   await j.click('[data-key="av-new"]');
-  await j.waitForSelector('[data-key="av-start"]');
-  await j.click('[data-key="av-start"]');
+  await j.waitForSelector('[data-key="av-suite"]');
+  await j.click('[data-key="av-suite"]'); await j.click('[data-key="av-start"]');
   await j.waitForSelector('.av-cartouche', { timeout: 120000 });
   for (let i = 0; i < 14; i++) { await j.keyboard.press('Escape'); await j.waitForTimeout(350); }
   check(await j.isVisible('.av-cartouche') && await j.$('.sh-home') === null, 'nouvelle aventure : le HUD en cartouche de la nouvelle interface');
