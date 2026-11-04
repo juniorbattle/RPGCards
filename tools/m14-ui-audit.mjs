@@ -19,7 +19,9 @@ try {
   p.setDefaultTimeout(60000);
   watchConsole(p, issues);
   const shot = async (name) => {
-    await p.waitForTimeout(250);
+    // depuis le rideau commun (passe 200), un écran s'ouvre sous le noir : attendre que le noir et les fondus soient levés
+    await p.waitForFunction(() => !document.querySelector('.ville-fade.in, .sortie, .shell-fantome'), null, { timeout: 8000 }).catch(() => {});
+    await p.waitForTimeout(2600); // l'écran de résultat et le titre entrent par un fondu d'environ 2 s
     await p.screenshot({ path: `${DIR}/${String(++n).padStart(2, '0')}-${name}.png` });
     // un panneau plus haut ou plus large que la fenêtre, ou un texte coupé, est un défaut d'interface
     const d = await p.evaluate(() => {

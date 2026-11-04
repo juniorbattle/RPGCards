@@ -44,7 +44,7 @@ import { estDepart, estFamille, etatDepart, type Depart } from './departs';
 import { cleSuite, enchainement, etapeRecit, ILOTS_RECIT, joueursDeRue, NOM_RECIT, quartierDe, suiteRecit, TEXTE_RECIT, type EtapeRecit, type JoueurRue, type ModeRecit } from './guide';
 import { ilotAventure, ilotBase, nomIlot } from './ilots';
 import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, RANGS, rangNeutre, roleDe, cheffe, chefVaincu, leChef, ROLES, ROMAIN, type EtatFamille } from './modele';
-import { pvJoueur } from './paliers';
+import { pvJoueur, PV_PAR_COMBAT } from './paliers';
 import { objectif, quetes } from './quetes';
 import { aGain, collectionDe, prochaineVariante, variantesIdentite, type Gain } from './registre';
 import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue, duelRival, personnalite, type DuelPrevu } from './rencontres';
@@ -276,7 +276,8 @@ export class AventureApp {
       const col = collectionDe(s.etat.registre);
       const sous = s.duel ? 'Reprendre le duel en cours' : objectif(s.etat);
       items.push(bouton('Continuer l’aventure', () => this.continuer(), 'av-continue', true, sous));
-      items.push(h('p', { class: 'av-profil' }, h('b', null, s.profil.nom), ` · ${CHAPITRE[chapitreDetaille(s.etat)]} · ${s.etat.affiliation ? `voie ${de(s.etat.affiliation)}` : 'sans famille'} · ${col.basics.length * 4} cartes familiales, ${col.variantes.length} variante(s), ${col.signatures.length} Signature(s)`));
+      // la sauvegarde en trois temps : qui, où en est le récit, ce que contient la collection (accords au singulier comme au pluriel)
+      items.push(h('p', { class: 'av-profil' }, h('b', null, s.profil.nom), h('span', null, `${CHAPITRE[chapitreDetaille(s.etat)]} · ${s.etat.affiliation ? `voie ${de(s.etat.affiliation)}` : 'sans famille'}`), h('span', null, `${nombre(col.basics.length * 4, 'carte familiale', 'cartes familiales')} · ${nombre(col.variantes.length, 'variante', 'variantes')} · ${nombre(col.signatures.length, 'Signature', 'Signatures')}`)));
     }
     items.push(bouton('Nouvelle aventure', () => void this.nouveau(), 'av-new', !s, 'Seize cartes grises, aucune famille : tout commence sur le Quai'));
     // heure de ville (finalisation de la ville, passe 137) : `?aventure=1&depart=III[&famille=Ronce]`, une aventure d'essai
@@ -1387,9 +1388,13 @@ export class AventureApp {
       h('p', null, m.credo),
       h('h3', null, 'Vous recevrez tout de suite'),
       h('div', { class: 'av-cards' }, ...[1, 2, 3, 4].map((r) => cardEl(`${f}-${r}-basic`, { artSeed: this.params.artSeed, tag: 'div' }))),
-      h('p', null, `Les quatre cartes de base ${de(f)} (I à IV) : une carte grise de chaque Rang leur cède sa place dans votre deck. Et la Technique ${m.technique} (${TECHNIQUES[m.technique].text})`),
+      h('p', null, `Les quatre cartes de base ${de(f)} (I à IV) : une carte grise de chaque Rang leur cède sa place dans votre deck.`),
+      ligneTechnique(m.technique),
       h('h3', null, 'Ensuite'),
-      h('p', null, `Défier ${c!.nom} (${roleDe(c!)}), puis ${b!.nom} (${roleDe(b!)}), puis ${ch!.nom} (${roleDe(ch!)}) : chaque lieutenant vaincu donne une variante, ${leChef(f)} donne sa Signature ∞.`),
+      h('ol', { class: 'av-etapes' },
+        h('li', null, h('span', null, h('b', null, c!.nom), `, ${roleDe(c!)}`), h('span', null, 'une variante')),
+        h('li', null, h('span', null, h('b', null, b!.nom), `, ${roleDe(b!)}`), h('span', null, 'une variante')),
+        h('li', null, h('span', null, h('b', null, ch!.nom), `, ${roleDe(ch!)}`), h('span', null, 'sa Signature ∞'))),
       h('h3', null, 'Ce qui ne change pas'),
       h('p', null, `Les autres familles restent ouvertes ; quand ${leChef(f)} ${de(f)} sera ${cheffe(f) ? 'vaincue' : 'vaincu'}, vous pourrez engager leur défi à la Salle des Bannières. ${changement && quittee ? `Les cartes déjà reçues restent à vous. Vos adversaires ne comptent que les familles que vous avez rejointes ou dont vous avez engagé le défi : ${la(quittee)} ne comptera qu’à l’engagement de son défi.` : 'Jusqu’à votre premier défi de lieutenant, vous pourrez encore changer de voie.'}`),
       h('div', { class: 'ville-choices' },
@@ -1553,7 +1558,7 @@ export class AventureApp {
     };
     // M11-C : les joueurs de la rue et les membres parlent selon leur tempérament et vos duels passés (catalogue)
     const texte = kai
-      ? `${ligneKai} (défi facultatif, sans récompense ; vos duels contre lui : ${gagnes} victoire(s) sur ${contreKai.length})`
+      ? `${ligneKai} (défi facultatif, sans récompense ; vos duels contre lui : ${nombre(gagnes, 'victoire', 'victoires')} sur ${contreKai.length})`
       : `${this.replique(id, 'parole', membre ?? RUE[id] ?? '« Une partie, pour passer le temps ? »')} (duel de rue, sans récompense)`;
     this.dire(capital(r.nom), texte, [
       { label: 'Accepter', key: 'dlg-duel', primary: true, run: () => this.preparer(duelFacultatif(id, this.etat, this.prochaineGraine(), this.save!.historique)) },
@@ -1599,7 +1604,7 @@ export class AventureApp {
     const enjeu = (x: typeof c) => (x!.enjeu.kind === 'variante' ? auChoix(x!.enjeu.defId) : `la Signature ∞ ${de(f)}`);
     const remis = ap.basicsDeja
       ? `Les quatre cartes de base ${de(f)} sont déjà à vous (${gb ? minuscule(origineGain(gb)) : 'registre'}) : rien n’est remis une seconde fois.${ap.techniqueDeja ? ` La Technique ${m.technique} est déjà apprise.` : ''}`
-      : `Les quatre cartes de base ${de(f)} (I à IV)${ap.techniqueDeja ? ` ; la Technique ${m.technique} est déjà apprise.` : `, et la Technique ${m.technique} (${TECHNIQUES[m.technique].text})`}`;
+      : `Les quatre cartes de base ${de(f)} (I à IV)${ap.techniqueDeja ? ` ; la Technique ${m.technique} est déjà apprise.` : '.'}`;
     const deck = ap.basicsDeja
       ? `Votre deck ne change pas (${ap.neutres[0]} carte${ap.neutres[0] > 1 ? 's' : ''} grise${ap.neutres[0] > 1 ? 's' : ''}).`
       : `Une carte grise de chaque Rang cède sa place à la Basic du même Rang : ${ap.neutres[0]} → ${ap.neutres[1]} cartes grises.`;
@@ -1609,10 +1614,15 @@ export class AventureApp {
       h('h3', null, ap.basicsDeja ? 'Déjà à vous' : 'Vous recevrez tout de suite'),
       h('div', { class: `av-cards${ap.basicsDeja ? ' av-deja' : ''}` }, ...[1, 2, 3, 4].map((r) => cardEl(`${f}-${r}-basic`, { artSeed: this.params.artSeed, tag: 'div' }))),
       h('p', { 'data-key': 'av-engagement-basics' }, remis),
+      !ap.basicsDeja && !ap.techniqueDeja ? ligneTechnique(m.technique) : null,
       h('h3', null, 'Votre deck'),
       h('p', { class: 'av-transition', 'data-key': 'av-engagement-deck' }, deck, ap.standard ? h('b', { class: 'av-standard' }, ` ${STANDARD}`) : null),
       h('h3', null, 'Ensuite'),
-      h('p', null, `Défier ${c!.nom}, ${c!.titre} (${enjeu(c)}), puis ${b!.nom} (${enjeu(b)}), puis ${ch!.nom} (${enjeu(ch)}) ; leur maison : ${m.nom}, ${OU_ILOT[m.ilot]}. Dans le quartier, l’Épreuve (${nomCarte(varianteDe(f, 1))}) ; après le bras droit, la Joute de la maison (${nomCarte(varianteDe(f, 2))}).`),
+      h('ol', { class: 'av-etapes' },
+        h('li', null, h('span', null, h('b', null, c!.nom), `, ${c!.titre}`), h('span', null, enjeu(c))),
+        h('li', null, h('span', null, h('b', null, b!.nom), `, ${b!.titre}`), h('span', null, enjeu(b))),
+        h('li', null, h('span', null, h('b', null, ch!.nom), `, ${ch!.titre}`), h('span', null, enjeu(ch)))),
+      h('p', { class: 'av-aide' }, 'Leur maison : ', h('b', null, m.nom), `, ${OU_ILOT[m.ilot]}. Dans le quartier, l’Épreuve (${nomCarte(varianteDe(f, 1))}) ; après le bras droit, la Joute de la maison (${nomCarte(varianteDe(f, 2))}).`),
       h('h3', null, 'Ce qui ne change pas'),
       h('p', null, `Votre famille reste ${la(e.affiliation!)}. Les autres défis restent ouverts, dans l’ordre que vous voulez ; une défaite ne ferme rien.`),
       h('div', { class: 'ville-choices' },
@@ -1648,15 +1658,19 @@ export class AventureApp {
     // avenant 09 : une variante au choix (trois cartes) à la première victoire, la suivante qui manque en revanche
     const ev = enjeuVariante(this.etat, prevu.rencontre);
     const carte = (id: string) => cardEl(id, { artSeed: this.params.artSeed, tag: 'div' });
-    const enjeuEl = () => ev && 'choix' in ev ? h('div', { class: 'av-enjeu' }, h('span', null, 'En jeu (première victoire) : une variante au choix, '), ...ev.choix.map(carte))
-      : ev ? h('div', { class: 'av-enjeu' }, h('span', null, 'En jeu (revanche) : '), carte(ev.suivante))
-      : prevu.enjeu?.startsWith('sig-') && CATALOG[prevu.enjeu] ? h('div', { class: 'av-enjeu' }, h('span', null, 'En jeu (première victoire) : '), carte(prevu.enjeu))
-      : h('p', null, 'Aucune récompense en jeu.');
+    const enjeuEl = () => ev && 'choix' in ev ? h('div', { class: 'av-enjeu' }, h('span', null, h('b', null, 'Une variante au choix'), h('small', null, 'à la première victoire')), ...ev.choix.map(carte))
+      : ev ? h('div', { class: 'av-enjeu' }, h('span', null, h('b', null, nomCarte(ev.suivante)), h('small', null, 'en revanche')), carte(ev.suivante))
+      : prevu.enjeu?.startsWith('sig-') && CATALOG[prevu.enjeu] ? h('div', { class: 'av-enjeu' }, h('span', null, h('b', null, CATALOG[prevu.enjeu]!.name), h('small', null, 'à la première victoire')), carte(prevu.enjeu))
+      : h('span', { class: 'av-rien' }, 'Aucune récompense en jeu.');
+    const p1 = prevu.config.players.p1.hp;
+    const p2 = prevu.config.players.p2.hp;
     const panel = h('div', { class: 'av-confirm av-prep', 'data-key': 'av-preparation' },
-      h('div', { class: 'av-confirm-head' }, h('img', { class: 'ville-portrait', alt: '', src: portraitUrl(prevu.personnalite, this.params.artSeed) }), h('div', null, h('h2', null, prevu.titre), h('p', { class: 'av-devise' }, `Lieu : ${LIEU[prevu.venue]} · PV ${prevu.config.players.p1.hp} contre ${prevu.config.players.p2.hp}`))),
-      enjeuEl(),
-      h('p', { class: 'av-proto', 'data-key': 'av-deck-adverse' }, `Adversaire : ${prevu.note}`),
-      h('p', { class: 'av-proto', 'data-key': 'av-deck-reel' }, `Votre deck : ${resumeDeck(this.etat.deck)} ; Techniques ${this.etat.deck.techniques.join(' et ')}.`),
+      h('div', { class: 'av-confirm-head' }, h('img', { class: 'ville-portrait', alt: '', src: portraitUrl(prevu.personnalite, this.params.artSeed) }), h('div', null, h('h2', null, prevu.titre), h('p', { class: 'av-devise' }, LIEU[prevu.venue]))),
+      h('dl', { class: 'av-fiche' },
+        h('dt', null, 'En jeu'), h('dd', null, enjeuEl()),
+        h('dt', null, 'Points de vie'), h('dd', null, 'Vous ', h('b', null, String(p1)), ' · ', prevu.personnalite.name, ' ', h('b', null, String(p2))),
+        h('dt', null, 'Adversaire'), h('dd', { 'data-key': 'av-deck-adverse' }, prevu.note),
+        h('dt', null, 'Votre deck'), h('dd', { 'data-key': 'av-deck-reel' }, `${resumeDeck(this.etat.deck)} ; Techniques `, h('b', null, this.etat.deck.techniques.join(' et ')), '.')),
       h('div', { class: 'ville-choices' },
         h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-duel-go', onclick: () => this.lancer(prevu) }, 'Commencer le duel'),
         forcee ? null : h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-duel-back', onclick: () => this.fermerModal() }, 'Plus tard')),
@@ -1847,18 +1861,21 @@ export class AventureApp {
     son().jouer('gain');
     const ident = CATALOG[ids[0]!]!;
     this.ecranShell('scr-result av-scr',
-      h('section', { class: 'av-titre av-resultat av-choix', 'data-screen': 'av-choix' },
+      h('section', { class: 'av-titre av-resultat av-ecran-choix', 'data-screen': 'av-choix' },
+        decouperTitre(prevu.titre).genre ? h('p', { class: 'av-surtitre' }, decouperTitre(prevu.titre).genre!) : null,
         h('h1', { class: 'av-h1' }, 'Victoire'),
-        h('p', { class: 'av-sous' }, `${prevu.titre} · choisissez votre carte`),
-        h('p', null, `${ident.name} : une variante au choix entre au registre et remplace la carte de base dans votre deck. Les deux autres se gagnent ensuite, en revanche ou au titre du Championnat.`),
+        h('p', { class: 'av-trait' }, h('span', null, 'contre ', h('b', null, decouperTitre(prevu.titre).adversaire))),
+        h('div', { class: 'av-bilan-panneau' },
+          h('h3', { class: 'av-choix-consigne' }, `Choisissez votre ${ident.name}`),
+          h('p', { class: 'av-choix-aide' }, 'La variante choisie entre au registre et remplace la carte de base dans votre deck. Les deux autres se gagnent ensuite, en revanche ou au titre du Championnat.'),
         h('div', { class: 'av-choix-cartes' }, ...ids.map((id, i) => {
           const d = CATALOG[id]!;
           return h('div', { class: 'av-choix-carte', 'data-key': `av-choix-carte-${id}` },
             cardEl(id, { artSeed: this.params.artSeed, tag: 'div' }),
-            h('b', null, `${'ABC'[i]} · ${d.effect ? EFFECTS[d.effect].name : d.name}`),
+            h('b', null, h('span', { class: 'av-choix-lettre' }, 'ABC'[i]!), d.effect ? EFFECTS[d.effect].name : d.name),
             h('small', null, d.effect ? EFFECT_SUMMARY[d.effect] : ''),
             bouton('Prendre cette carte', () => ok(id), `av-choix-${id}`, i === 0));
-        }))));
+        })))));
     this.rideau.ouvrir();
   }
 
@@ -1876,14 +1893,35 @@ export class AventureApp {
     const note = prologue ? 'Quelle que soit l’issue, la foule a tout vu.'
       : r.prevu.rencontre.startsWith('champ:') ? (r.issue === 'victoire' ? (r.gains.length ? 'Le titre est à vous : les variantes qui vous manquaient encore entrent au registre.' : 'Le Championnat avance : aucune carte avant le titre.') : 'Rien n’est perdu : la manche peut se rejouer.')
       : r.prevu.rencontre.startsWith('epreuve:') ? (r.issue === 'victoire' ? (r.gains.length ? 'Épreuve remportée : la variante entre au registre.' : 'Duel gagné : la série continue.') : 'La série repart du début.') : r.issue === 'victoire' ? (r.gains.length ? 'Votre victoire entre au registre.' : 'Revanche : rien de nouveau au registre (aucune duplication ; les trois variantes sont déjà à vous).') : 'Rien n’est perdu : le défi reste ouvert.';
+    // retour du test (2026-11-04) : « trop en vrac, pas assez mis en structure » : l'issue, l'adversaire, puis un bilan en
+    // cases titrées (entraînement, ce que la foule a vu), les cartes gagnées avec leur nom, la note du moment à part
+    const t = decouperTitre(r.prevu.titre);
+    const pvMonte = r.pv[1] > r.pv[0];
+    const stat = (n: number, un: string, plusieurs: string) => h('div', { class: 'av-stat' }, h('b', null, String(n)), h('span', null, n > 1 ? plusieurs : un));
+    const cartes = r.gains.flatMap((g) => gainLegendes(g, this.params.artSeed));
     this.ecranShell('scr-result av-scr',
-      h('section', { class: 'av-titre av-resultat av-accroche', 'data-screen': 'av-resultat' },
+      h('section', { class: `av-titre av-resultat av-accroche issue-${r.issue}`, 'data-screen': 'av-resultat' },
+        t.genre ? h('p', { class: 'av-surtitre' }, t.genre) : null,
         h('h1', { class: 'av-h1' }, titre),
-        h('p', { class: 'av-trait' }, `${r.prevu.titre} · ${r.turns} tour${r.turns > 1 ? 's' : ''}`),
-        h('p', null, note),
-        h('p', { class: 'av-pv', 'data-key': 'av-pv' }, r.pv[1] > r.pv[0] ? `Entraînement : vos PV passent de ${r.pv[0]} à ${r.pv[1]}.` : `Un abandon ne compte pas comme un combat : vos PV restent à ${r.pv[0]}.`),
-        prologue ? h('p', { class: 'av-proto', 'data-key': 'av-faits' }, `Ce que la foule a vu (faits publics du duel) : ${r.faits.assautsGagnes} Clash(es) gagné(s) en Assaut, ${r.faits.gardesGagnees} en Garde, ${r.faits.interferencesReussies} Interférence(s) réussie(s).`) : null,
-        r.gains.length ? h('div', { class: `av-cards${r.gains.length > 8 ? ' nombreuses' : ''}` }, ...r.gains.flatMap((g) => gainEls(g, this.params.artSeed))) : null,
+        h('p', { class: 'av-trait' }, h('span', null, 'contre ', h('b', null, t.adversaire), t.detail ? ` · ${t.detail}` : '', ` · ${r.turns} tour${r.turns > 1 ? 's' : ''}`)),
+        h('div', { class: 'av-bilan-panneau' },
+          h('div', { class: 'av-bilan-cases' },
+            h('div', { class: 'av-bilan-case' },
+              h('h3', null, 'Entraînement'),
+              h('p', { class: 'av-pv', 'data-key': 'av-pv' }, ...(pvMonte
+                ? [h('span', { class: 'av-pv-avant' }, String(r.pv[0])), h('span', { class: 'av-fleche', 'aria-label': 'passent à' }, '→'), h('b', null, String(r.pv[1])), h('small', null, ' PV')]
+                : [h('b', null, String(r.pv[0])), h('small', null, ' PV')])),
+              h('small', { class: 'av-bilan-aide' }, pvMonte ? `+${PV_PAR_COMBAT} à chaque combat mené à son terme.` : 'Un abandon ne compte pas.')),
+            prologue ? h('div', { class: 'av-bilan-case', 'data-key': 'av-faits' },
+              h('h3', null, 'Ce que la foule a vu'),
+              h('div', { class: 'av-stats' },
+                stat(r.faits.assautsGagnes, 'Clash gagné en Assaut', 'Clashes gagnés en Assaut'),
+                stat(r.faits.gardesGagnees, 'Clash gagné en Garde', 'Clashes gagnés en Garde'),
+                stat(r.faits.interferencesReussies, 'Interférence réussie', 'Interférences réussies'))) : null),
+          h('div', { class: 'av-bilan-gains' },
+            h('h3', null, r.gains.length ? 'Entre au registre' : 'Récompense'),
+            cartes.length ? h('div', { class: `av-gains${cartes.length > 8 ? ' nombreuses' : cartes.length <= 2 ? ' peu' : ''}` }, ...cartes) : h('p', { class: 'av-bilan-rien' }, 'Aucune carte cette fois.')),
+          h('p', { class: 'av-bilan-note' }, note)),
         h('div', { class: 'av-items' }, bouton(this.verrouRecit ? 'Continuer' : 'Retour en ville', () => this.fondre(() => this.apresResultat()), 'av-retour', true))));
     this.rideau.ouvrir();
   }
@@ -2089,8 +2127,9 @@ export class AventureApp {
     if (gains.length) son().jouer('gain');
     const panel = h('div', { class: 'av-confirm av-recompense', 'data-key': 'av-recompense' },
       h('h2', null, titre),
-      gains.length ? h('p', null, 'Inscription au registre des gains (une seule fois : un rechargement ou une reprise ne le dupliquent pas).') : null,
-      gains.length ? h('div', { class: 'av-cards' }, ...gains.flatMap((g) => gainEls(g, this.params.artSeed))) : null,
+      gains.length ? h('h3', null, 'Entre au registre') : null,
+      gains.length ? h('div', { class: 'av-gains' }, ...gains.flatMap((g) => gainLegendes(g, this.params.artSeed))) : null,
+      gains.length ? h('p', { class: 'av-aide' }, 'Inscrit une seule fois : un rechargement ou une reprise ne le duplique pas.') : null,
       ...notes.map((n, i) => h('p', { class: 'av-transition', 'data-key': `av-recompense-note-${i}` }, n)),
       h('div', { class: 'ville-choices' }, h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-continuer', onclick: () => { this.fermerModal(); suite(); } }, 'Continuer')));
     this.ouvrirModal(panel);
@@ -2420,6 +2459,32 @@ function resumeDeck(d: DeckAv): string {
   const parFam = FAMILIES.map((f) => [f, d.cartes.filter((c) => CATALOG[c]?.family === f)] as const).filter(([, cs]) => cs.length);
   const fam = parFam.map(([f, cs]) => { const v = cs.filter((c) => CATALOG[c]!.rarity !== 'Basic').length; return `${cs.length} ${f}${v ? ` (${v} variante${v > 1 ? 's' : ''})` : ''}`; });
   return `${[n ? `${n} neutre${n > 1 ? 's' : ''}` : '', ...fam].filter(Boolean).join(' + ')}, ${d.signature ? `Signature ${CATALOG[`sig-${d.signature}`]!.name}` : 'sans Signature'}`;
+}
+
+/** « 1 variante », « 0 variante », « 2 variantes ». */
+const nombre = (n: number, un: string, plusieurs: string): string => `${n} ${n > 1 ? plusieurs : un}`;
+
+/** Une Technique reçue : son nom en évidence, ce qu'elle fait dessous. */
+function ligneTechnique(t: TechniqueId): HTMLElement {
+  return h('div', { class: 'av-tech-ligne' }, h('span', { class: 'av-tech-nom' }, h('small', null, 'Technique'), h('b', null, t)), h('span', null, TECHNIQUES[t].text));
+}
+
+/** Titre d'une rencontre « Genre — détail — adversaire » : le genre en surtitre, l'adversaire en évidence, le détail entre les deux. */
+function decouperTitre(titre: string): { genre: string | null; adversaire: string; detail: string | null } {
+  const p = titre.split(' — ');
+  if (p.length < 2) return { genre: null, adversaire: titre, detail: null };
+  return { genre: p[0]!, adversaire: p[p.length - 1]!, detail: p.length > 2 ? p.slice(1, -1).join(' · ') : null };
+}
+
+/** Chaque gain avec sa légende : nom de la carte, puis sa variante ou sa nature (Basic, Signature, Technique). */
+function gainLegendes(g: Gain, artSeed: number): HTMLElement[] {
+  const fig = (el: HTMLElement | HTMLElement[], nom: string, nature: string, cls = '') => h('figure', { class: `av-gain ${cls}` }, ...(Array.isArray(el) ? el : [el]), h('figcaption', null, h('b', null, nom), h('small', null, nature)));
+  if (g.kind === 'technique') return [fig(gainEls(g, artSeed)[0]!, g.items[0]!, 'Technique')];
+  if (g.kind === 'neutres') return [fig(h('div', { class: 'av-gain-pile' }, ...gainEls(g, artSeed)), 'Seize cartes grises', 'quatre par Rang', 'av-gain-large')];
+  return g.items.map((id) => {
+    const d = CATALOG[id]!;
+    return fig(cardEl(id, { artSeed, tag: 'div' }), d.name, d.signature ? 'Signature ∞' : d.effect ? EFFECTS[d.effect].name : 'Basic');
+  });
 }
 
 function gainEls(g: Gain, artSeed: number): HTMLElement[] {
