@@ -65,13 +65,16 @@ try {
 
   // (1) le choix du mode
   await p.click('[data-key="av-new"]');
-  await p.waitForSelector('[data-key="av-recit-guide"]');
+  await p.fill('[data-key="av-name"]', 'Lou');
+  await shot('nouvelle-aventure-personnage');
+  await p.click('[data-key="av-suite"]');
+  await p.waitForSelector('[data-key="av-recit-guide"]', { state: 'visible' });
+  check(!(await p.isVisible('[data-key="av-name"]')) && (await p.textContent('.av-nv-nom-fixe')) === 'Lou', 'deuxième étape : le récit seul, le nom gardé sous le personnage');
   const presse = (k) => p.getAttribute(`[data-key="av-recit-${k}"]`, 'aria-pressed');
   check(await presse('libre') === 'true' && await presse('guide') === 'false', 'nouvelle aventure : Promenade libre présélectionnée');
   await p.click('[data-key="av-recit-guide"]');
   check(await presse('guide') === 'true' && /événement en événement/.test(await p.textContent('[data-key="av-recit-texte"]')), 'Récit guidé choisi, son texte affiché');
   await shot('choix-du-mode');
-  await p.fill('[data-key="av-name"]', 'Lou');
   await p.click('[data-key="av-start"]');
   await pret();
   await guetterRepos();
@@ -183,7 +186,7 @@ try {
   if (conf) await conf.click();
   await p.waitForSelector('[data-key="av-name"]');
   check(await presse('guide') === 'true', '`?recit=guide` en QA présélectionne le mode');
-  await p.click('[data-key="av-start"]');
+  await p.click('[data-key="av-suite"]'); await p.click('[data-key="av-start"]');
   await pret();
   await scene();
   await p.reload();
@@ -212,8 +215,8 @@ try {
   await p.waitForFunction(() => /Recommencer/.test(document.body.textContent) || !!document.querySelector('[data-key="av-name"]'));
   const conf2 = await p.$('button:has-text("Recommencer")');
   if (conf2) await conf2.click();
-  await p.waitForSelector('[data-key="av-start"]');
-  await p.click('[data-key="av-start"]');
+  await p.waitForSelector('[data-key="av-suite"]');
+  await p.click('[data-key="av-suite"]'); await p.click('[data-key="av-start"]');
   await pret();
   await p.waitForTimeout(800);
   check(await p.$('[data-key="av-prepa"]') === null && await hud() && await marche() > 0.05 && await av(() => !('recit' in window.__lqvAventure.save)), 'Promenade libre : ni Préparation, ni marche coupée, ni champ');

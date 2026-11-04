@@ -59,7 +59,7 @@ try {
   await p.evaluate(() => { try { localStorage.removeItem('lqv.cine'); } catch { /* */ } });
   await p.click('[data-key="av-new"]');
   await p.fill('[data-key="av-name"]', 'Lou');
-  await p.click('[data-key="av-start"]');
+  await p.click('[data-key="av-suite"]'); await p.click('[data-key="av-start"]');
 
   // (1) première arrivée sur le Quai
   await p.waitForFunction(() => !!document.querySelector('.av-cine.on'), null, { timeout: 120000 });
@@ -197,7 +197,7 @@ try {
   await q.goto(`${server.base}/?aventure=1&qa=1&aiDelay=0&profileSeed=31`, { timeout: Number(process.env.LQV_QA_NAV_TIMEOUT) || 90000 });
   await q.click('[data-key="av-new"]');
   await q.fill('[data-key="av-name"]', 'Lou');
-  await q.click('[data-key="av-start"]');
+  await q.click('[data-key="av-suite"]'); await q.click('[data-key="av-start"]');
   await q.waitForSelector('.ville-card', { timeout: 120000 });
   check(!(await q.$('.av-cine')) && !(await q.evaluate(() => window.__lqvAventure.cine)), 'QA sans `?cine=1` : le carton d’avant, aucune cinématique');
   await ctx2.close();
@@ -229,7 +229,7 @@ try {
   await r.evaluate(() => { try { localStorage.removeItem('lqv.cine'); } catch { /* */ } });
   await r.click('[data-key="av-new"]');
   await r.fill('[data-key="av-name"]', 'Bo');
-  await r.click('[data-key="av-start"]');
+  await r.click('[data-key="av-suite"]'); await r.click('[data-key="av-start"]');
   await r.waitForFunction(() => !!document.querySelector('.av-cine'), null, { timeout: 120000 });
   await r.keyboard.press('Escape');
   await rfini();

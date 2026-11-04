@@ -48,7 +48,7 @@ try {
   await p.screenshot({ path: join(OUT, '02-apparence-choisie.png') });
   const textes = await p.evaluate(() => document.querySelector('[data-key="av-apparence"]').closest('section').innerText);
   check(!/\b(homme|femme|masculin|féminin|garçon|fille)\b/i.test(textes), 'aucun mot genré à l’écran de création');
-  await p.click('[data-key="av-start"]');
+  await p.click('[data-key="av-suite"]'); await p.click('[data-key="av-start"]');
   await townReady();
   await p.waitForTimeout(1500);
   check(norm((await save()).apparence) === norm({ silhouette: 'b', coupe: 1, visage: 2, peau: 4, cheveux: 3, yeux: 1 }), `sauvegarde : ${JSON.stringify((await save()).apparence)}`);

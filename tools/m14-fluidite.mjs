@@ -91,6 +91,7 @@ try {
 
   // Récit guidé : du titre au prologue, puis la trame, en jouant les scènes jusqu'au bout (quelques cinématiques passées)
   await p.click('[data-key="av-new"]');
+  await p.click('[data-key="av-suite"]');
   await p.click('[data-key="av-recit-guide"]');
   await p.click('[data-key="av-start"]');
   await rafale('titre-vers-ville', 4, 160);
@@ -165,8 +166,8 @@ try {
   await p.waitForFunction(() => /Recommencer/.test(document.body.textContent) || !!document.querySelector('[data-key="av-name"]'));
   const conf = await p.$('button:has-text("Recommencer")');
   if (conf) await conf.click();
-  await p.waitForSelector('[data-key="av-start"]');
-  await p.click('[data-key="av-start"]');
+  await p.waitForSelector('[data-key="av-suite"]');
+  await p.click('[data-key="av-suite"]'); await p.click('[data-key="av-start"]');
   await p.waitForFunction(() => { const a = window.__lqvAventure; return !!a?.town && a.ecran === 'ville' && !a.cine && !document.querySelector('.ville-fade'); }, null, { timeout: 120000 });
   check(await vis('.av-hud'), 'Promenade libre : le HUD');
   await p.waitForTimeout(600);

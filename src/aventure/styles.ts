@@ -171,12 +171,25 @@ export function installAventureStyles(): void {
 .av-nv-apercu { display: grid; place-items: end center; min-height: 250px; padding-bottom: 12px; background: radial-gradient(ellipse 60% 14% at 50% 94%, rgba(0, 0, 0, 0.55), transparent 70%), radial-gradient(ellipse at 50% 60%, rgba(120, 96, 60, 0.28), transparent 68%); }
 .av-nv-apercu canvas { height: 230px; width: auto; }
 .av-nv-nom { display: grid; gap: 6px; }
-.av-nv-reglages { display: grid; align-content: start; gap: 8px; padding: 10px 8px 6px 24px; }
-.av-nv-reglages > .av-label + * { margin-bottom: 8px; }
-.av-nv-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.av-nv-mode { display: grid; gap: 4px; align-content: start; padding: 10px 14px; border: 1px solid #3a3446; border-radius: 2px; background: rgba(12, 10, 20, 0.6); color: var(--lqv-ivoire); text-align: left; cursor: pointer; }
-.av-nv-mode b { font: 700 16px/1.2 Georgia, serif; color: #f6eedc; }
-.av-nv-mode span { font: italic 13px/1.4 Georgia, serif; color: #b9ae98; }
+.av-nv-reglages { display: grid; grid-template-rows: auto 1fr; gap: 12px; padding: 10px 8px 6px 24px; }
+/* deux étapes dans la même case : le cadre garde la taille de la plus grande ; l'étape cachée s'efface */
+.av-nv-etapes { display: flex; gap: 22px; margin: 0; padding-bottom: 8px; border-bottom: 1px solid rgba(226, 196, 138, 0.16); font: 700 12px/1.3 Georgia, serif; letter-spacing: 0.14em; text-transform: uppercase; color: #6f6656; }
+.av-nv-etapes .actif { color: var(--lqv-or-clair); }
+.av-nv-pages { display: grid; }
+.av-nv-page { grid-area: 1 / 1; display: grid; grid-template-rows: auto auto 1fr auto; align-content: start; gap: 8px; transition: opacity 0.25s ease, transform 0.25s ease; }
+.av-nv-page.cachee { visibility: hidden; opacity: 0; transform: translateX(10px); transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s 0.2s; }
+.av-nv-page > .av-label + * { margin-bottom: 8px; }
+.av-nv-page > .av-actions { grid-row: -2 / -1; align-self: end; }
+.av-nv-nom-fixe { display: grid; align-content: center; margin: 0; text-align: center; font: 700 24px/1.2 Georgia, serif; color: #f6eedc; letter-spacing: 0.02em; }
+.av-nv-nom, .av-nv-nom-fixe { min-height: 64px; }
+.av-nv-nom[hidden], .av-nv-nom-fixe[hidden] { display: none; }
+.av-nv-question { margin: 6px 0 6px; font: 700 22px/1.25 Georgia, serif; color: #f6eedc; }
+.av-nv-note { margin: 4px 0 0; font: italic 13px/1.4 Georgia, serif; color: #8f8573; }
+.av-nv-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.av-nv-mode { display: grid; gap: 8px; align-content: start; min-height: 180px; padding: 22px 22px; border: 1px solid #3a3446; border-radius: 2px; background: rgba(12, 10, 20, 0.6); color: var(--lqv-ivoire); text-align: left; cursor: pointer; }
+.av-nv-mode b { font: 700 20px/1.2 Georgia, serif; color: #f6eedc; }
+.av-nv-mode span { font: italic 15px/1.5 Georgia, serif; color: #b9ae98; }
+@media (prefers-reduced-motion: reduce) { .av-nv-page, .av-nv-page.cachee { transition: none; transform: none; } }
 .av-nv-mode:hover { border-color: var(--lqv-or); }
 .av-nv-mode.choisi { border-color: var(--lqv-or-clair); background: linear-gradient(180deg, rgba(214, 178, 110, 0.18), rgba(214, 178, 110, 0.06)); box-shadow: inset 0 0 0 1px rgba(255, 231, 176, 0.25); }
 .av-nv-mode.choisi b { color: #ffe7b0; }
