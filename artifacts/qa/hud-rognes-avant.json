@@ -1,0 +1,43 @@
+{
+  "res": {
+    "1280": {
+      "tours": 6,
+      "hauteurMaxPanneau": 162,
+      "defauts": [
+        {
+          "quoi": "rogne",
+          "el": "msg",
+          "texte": "Choix tactiques secretsProvisoire : 2 contre 4 · ×1 · Le rival domine au Rang · 0 / 12 (hypothèse : le rival conserve).",
+          "besoin": 53,
+          "boite": 34
+        },
+        {
+          "quoi": "defile",
+          "el": "msg",
+          "texte": "Choix tactiques secretsProvisoire : 2 contre 4 · ×1 · Le rival domine au Rang · 0 / 12 (hypothèse : le rival conserve)."
+        }
+      ]
+    },
+    "1920": {
+      "tours": 10,
+      "hauteurMaxPanneau": 243,
+      "defauts": [
+        {
+          "quoi": "rogne",
+          "el": "variant",
+          "texte": "Basic",
+          "besoin": 25,
+          "boite": 23
+        }
+      ]
+    }
+  },
+  "checks": [
+    "ÉCHEC 1280 × 720 : 6 étapes de duel, aucun texte rogné ni chevauchement (panneau jusqu'à 162 px)",
+    "ÉCHEC 1280 × 720 : le message tient sans défiler",
+    "ÉCHEC 1920 × 1080 : 10 étapes de duel, aucun texte rogné ni chevauchement (panneau jusqu'à 243 px)",
+    "OK 1920 × 1080 : le message tient sans défiler",
+    "OK console sans erreur (0)"
+  ],
+  "erreurs": []
+}
