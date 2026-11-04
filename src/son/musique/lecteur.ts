@@ -333,6 +333,15 @@ export class Lecteur {
     return p;
   }
 
+  /** Mesure (QA) : les versions qui sonnent à l'instant donné, sur chaque piste (commencées, pas encore éteintes). */
+  sonnent(t = this.ctx.currentTime): Array<{ piste: string; version: VersionId; jusqua: number | null }> {
+    const out: Array<{ piste: string; version: VersionId; jusqua: number | null }> = [];
+    for (const [nom, p] of this.pistes) for (const inst of [p.cur, ...p.sortantes]) {
+      if (inst && inst.debut <= t && (inst.arret === null || inst.arret > t)) out.push({ piste: nom, version: inst.v.id, jusqua: inst.arret });
+    }
+    return out;
+  }
+
   enCours(piste = 'fond'): VersionId | null { return this.pistes.get(piste)?.cur?.v.id ?? null; }
 
   /**

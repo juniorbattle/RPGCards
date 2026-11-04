@@ -1,0 +1,199 @@
+{
+  "head": "315a658",
+  "duels": 3,
+  "releves": 2310,
+  "doubles": 0,
+  "plages": [],
+  "suite": [
+    {
+      "k": "nouveau | fond:I-1",
+      "t": 0
+    },
+    {
+      "k": "cine | fond:I-1",
+      "t": 0.96
+    },
+    {
+      "k": "cine | silence",
+      "t": 2.95
+    },
+    {
+      "k": "ville | silence",
+      "t": 3.65
+    },
+    {
+      "k": "ville | fond:I-3",
+      "t": 4.45
+    },
+    {
+      "k": "cine | fond:I-3",
+      "t": 4.81
+    },
+    {
+      "k": "dialogue:Kaï, le gris du Quai | fond:I-3",
+      "t": 6.2
+    },
+    {
+      "k": "ville | fond:I-3",
+      "t": 7.45
+    },
+    {
+      "k": "duel | fond:I-3",
+      "t": 8.21
+    },
+    {
+      "k": "duel | silence",
+      "t": 10.01
+    },
+    {
+      "k": "duel | fond:V-1",
+      "t": 11.5
+    },
+    {
+      "k": "duel | silence",
+      "t": 21.8
+    },
+    {
+      "k": "resultat | silence",
+      "t": 24.48
+    },
+    {
+      "k": "resultat | fond:I-2",
+      "t": 26.56
+    },
+    {
+      "k": "dialogue:La foule | fond:I-2",
+      "t": 29.9
+    },
+    {
+      "k": "dialogue:Kaï | fond:I-2",
+      "t": 31.61
+    },
+    {
+      "k": "dialogue:Kaï | silence",
+      "t": 32.1
+    },
+    {
+      "k": "cine | silence",
+      "t": 33.21
+    },
+    {
+      "k": "cine | fond:I-3",
+      "t": 33.61
+    },
+    {
+      "k": "dialogue:Tessa, cadette de la Cendre | fond:I-3",
+      "t": 36.99
+    },
+    {
+      "k": "ville | fond:I-3",
+      "t": 38.25
+    },
+    {
+      "k": "cine | fond:I-3",
+      "t": 39.47
+    },
+    {
+      "k": "ville | fond:I-3",
+      "t": 42.95
+    },
+    {
+      "k": "preparation | fond:I-3",
+      "t": 44.21
+    },
+    {
+      "k": "dialogue:Tessa, cadette de la Cendre | fond:I-3",
+      "t": 47.9
+    },
+    {
+      "k": "ville | fond:I-3",
+      "t": 49.26
+    },
+    {
+      "k": "duel | fond:I-3",
+      "t": 49.87
+    },
+    {
+      "k": "duel | silence",
+      "t": 52.3
+    },
+    {
+      "k": "duel | fond:IV-1",
+      "t": 53.8
+    },
+    {
+      "k": "duel | silence",
+      "t": 81
+    },
+    {
+      "k": "resultat | silence",
+      "t": 83.65
+    },
+    {
+      "k": "resultat | fond:I-2",
+      "t": 85.75
+    },
+    {
+      "k": "ville | fond:I-2",
+      "t": 88.67
+    },
+    {
+      "k": "preparation | fond:I-2",
+      "t": 88.7
+    },
+    {
+      "k": "preparation | silence",
+      "t": 90.55
+    },
+    {
+      "k": "preparation | fond:I-3",
+      "t": 92.05
+    },
+    {
+      "k": "ville | fond:I-3",
+      "t": 92.35
+    },
+    {
+      "k": "cine | fond:I-3",
+      "t": 92.43
+    },
+    {
+      "k": "dialogue:Kaï — La Braise | fond:I-3",
+      "t": 94.1
+    },
+    {
+      "k": "dialogue:Kaï — La Braise | silence",
+      "t": 94.8
+    },
+    {
+      "k": "ville | silence",
+      "t": 95.35
+    },
+    {
+      "k": "duel | silence",
+      "t": 96
+    },
+    {
+      "k": "duel | fond:V-1",
+      "t": 96.3
+    },
+    {
+      "k": "duel | silence",
+      "t": 105.25
+    },
+    {
+      "k": "resultat | silence",
+      "t": 107.4
+    },
+    {
+      "k": "resultat | fond:I-2",
+      "t": 110
+    }
+  ],
+  "checks": [
+    "OK 3 duels joués jusqu'au bout, 2310 relevés",
+    "OK aucun instant où deux morceaux sonnent ensemble (0 plage(s))",
+    "OK console sans erreur (0)"
+  ],
+  "erreurs": []
+}

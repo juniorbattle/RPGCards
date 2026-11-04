@@ -80,6 +80,11 @@ interface Choix { label: string; key: string; primary?: boolean; refus?: boolean
 const SERRE_OUVERTURE = 0.8;
 const TAU_OUVERTURE = 1.1;
 
+/** Kaï après le duel du prologue, jusqu'au choix de la voie ; et la place où l'émissaire s'arrête devant le joueur. */
+const KAI_VAINCU = 'kai-vaincu';
+const EMISSAIRE_ARRIVEE = { x: 14.2, z: 1.8 };
+/** Le pas de côté de Kaï quand l'émissaire arrive : vers le fond, entre le joueur et l'émissaire, sans les cacher. */
+const KAI_ECART = { x: 13.0, z: -0.5 };
 const FOULE = [
   { id: 'foule-1', apparence: 'pnj-docker-12', nom: 'un docker', at: { x: 10.6, z: 1.8 }, facing: 'droite' as const, ligne: 'Tu as vu ça ? Avec des cartes grises ! Les familles ne vont pas te lâcher.' },
   { id: 'foule-2', apparence: 'pnj-marchande-14', nom: 'une marchande', at: { x: 16.4, z: 1.6 }, facing: 'gauche' as const, ligne: 'Les gens de la Cendre aiment ceux qui frappent fort ; ceux de la Ronce, ceux qui tiennent. Le Voile regarde les yeux, l’Astre regarde tout.' },
@@ -405,9 +410,16 @@ export class AventureApp {
     if (e.premier && e.affiliation === null && !e.scenes.includes('P6')) {
       const em = emissaire(e.premier);
       if (id === 'quai') {
+        // retour du test (2026-11-03) : l'émissaire ne prend plus la place de Kaï ; il s'arrête devant le joueur, côté quai
         out = out.filter((p) => p.apparence !== em.apparence);
-        out.push({ id: `emissaire-${e.premier}`, apparence: em.apparence, nom: em.nom, at: { x: 13.6, z: 0.9 }, facing: 'gauche', repere: '!', genre: 'structurante' });
+        out.push({ id: `emissaire-${e.premier}`, apparence: em.apparence, nom: em.nom, at: { ...EMISSAIRE_ARRIVEE }, facing: 'gauche', repere: '!', genre: 'structurante' });
       } else if (id === em.ilot) out = out.filter((p) => p.apparence !== em.apparence);
+    }
+    // Kaï, vaincu ou non, reste où il a joué jusqu'au choix de la voie (P6) : la foule lui parle, l'émissaire arrive
+    // devant lui (retour du test du 2026-11-03 : il disparaissait, et l'émissaire se tenait déjà à sa place)
+    if (id === 'quai' && e.prologue !== null && e.affiliation === null && !e.scenes.includes('P6')) {
+      out = out.filter((p) => p.apparence !== KAI_PROLOGUE.apparence);
+      out.push({ id: KAI_VAINCU, apparence: KAI_PROLOGUE.apparence, nom: KAI_PROLOGUE.nom, at: KAI_PROLOGUE.at, facing: KAI_PROLOGUE.facing, repere: null, genre: 'ambiance' });
     }
     // M11-A : Kaï surgit (événement fixe) : il quitte sa place de bras droit le temps de la scène
     if (this.rivalScene && this.town?.ilotId() === id) {
@@ -1278,6 +1290,7 @@ export class AventureApp {
   parler(id: string): void {
     const foule = FOULE.find((f) => f.id === id);
     if (foule) return this.dire(capital(foule.nom), foule.ligne, [fermer(this)], foule.apparence);
+    if (id === KAI_VAINCU) return this.dire('Kaï', this.etat.prologue === 'victoire' ? '« La prochaine fois, je ne te ferai pas de cadeau. Va voir les familles, elles t’attendent. »' : '« Pas mal, avec des cartes grises. Va voir les familles, elles t’attendent. »', [fermer(this)], KAI_PROLOGUE.apparence);
     this.faire({ type: 'rencontre', personne: id });
     if (id === KAI_PROLOGUE.id) return this.kaiPrologue();
     if (id.startsWith('emissaire-')) return this.emissaireDialog(id.slice(10) as Family);
@@ -1349,6 +1362,7 @@ export class AventureApp {
   /** P5–P6 : l'émissaire présente sa famille ; Accepter (→ confirmation), Différer, Chercher une autre voie. */
   private emissaireDialog(f: Family, cadre?: CadreDialogue | null): void {
     const fig = emissaire(f);
+    this.town?.cacherNpc(fig.apparence, false);
     const m = MAISONS[f];
     const premier = this.etat.premier === f && !this.etat.scenes.includes('P6');
     const autres = FAMILIES.filter((x) => x !== f).map((x) => `${emissaire(x).nom} ${de(x)}`).join(', ');
@@ -1933,6 +1947,8 @@ export class AventureApp {
     const foule = FOULE.map((f) => this.ou(f.apparence) ?? f.at);
     const cadreFoule = j ? cadreGroupe([...foule, j]) : null;
     const kai = this.ou('braise');
+    // l'émissaire n'entre en scène qu'en fendant la foule
+    if (e.premier && !e.scenes.includes('P6')) t?.cacherNpc(emissaire(e.premier).apparence, true);
     this.dire('La foule', victoire ? '« Des cartes grises ont battu la Braise du quai ! Des cartes de rien ! »' : '« Avec des cartes grises, tenir tête à Kaï jusqu’au bout… Des cartes de rien ! »', [{
       label: 'Suivant', key: 'dlg-next', primary: true, run: () => this.dire('Kaï', victoire ? '« La prochaine fois, je ne te ferai pas de cadeau. »' : '« Pas mal. Avec des cartes grises. »', [{
         label: 'Suivant', key: 'dlg-next', primary: true, run: () => { void this.emissaireFendLaFoule(e.premier ?? 'Astre', foule); },
@@ -1945,14 +1961,16 @@ export class AventureApp {
     const t = this.town;
     const em = emissaire(f);
     const at = this.ou(em.apparence);
-    if (!t || !at || !this.scene('prologue-foule')) { this.emissaireDialog(f, t && at ? cadreDialogue(at, t.walker().pos) : null); return; }
+    if (!t || !at || !this.scene('prologue-foule')) { t?.cacherNpc(em.apparence, false); this.emissaireDialog(f, t && at ? cadreDialogue(at, t.walker().pos) : null); return; }
     this.fermerDialogue();
     const j = { ...t.walker().pos };
     const depart = { x: Math.min(t.ilot.bounds.x1 - 1, at.x + 4.5), z: at.z };
     const [groupe, duo] = plansEmissaire(foule, at, j);
+    // encore caché : il gagne le bord de la rue, et n'apparaît qu'à la coupe
+    await t.walkNpc(em.apparence, depart, 1000, 'gauche');
     await this.jouerCine({ bandes: true, garder: true }, [
       // coupe sur la foule : l'émissaire part du bord de la rue, hors du cadre d'avant
-      { ...groupe!, mouvement: 'coupe', action: () => t.walkNpc(em.apparence, depart, 1000, 'gauche') },
+      { ...groupe!, mouvement: 'coupe', action: async () => { t.cacherNpc(em.apparence, false); void t.walkNpc(KAI_PROLOGUE.apparence, KAI_ECART, 1.2, regardVers(KAI_ECART, j)); } },
       { ...duo!, action: () => t.walkNpc(em.apparence, at, 1.5, regardVers(at, j)), finir: () => { void t.walkNpc(em.apparence, at, 1000, regardVers(at, j)); } },
     ]);
     if (this.town !== t) return;
