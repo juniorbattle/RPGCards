@@ -60,6 +60,16 @@ const MAX_VOIX = 12;
 
 function stockage(): Storage | null { try { return typeof localStorage !== 'undefined' ? localStorage : null; } catch { return null; } }
 
+/** Les bruitages qui ont une hauteur (écrits autour de do) : sous la musique, ils suivent l'accord qui sonne. */
+export const TONALS: ReadonlySet<SonId> = new Set<SonId>(['revelation', 'degats', 'degats-adverse', 'garde', 'interference', 'signature', 'victoire', 'defaite', 'repere', 'rival', 'gain', 'activation', 'annule', 'sceau', 'regard', 'titre']);
+
+/** Le facteur qui porte do sur la fondamentale `classe` (0 = do … 11 = si), au plus près (de -6 à +5 demi-tons) ; 1 sans accord. */
+export function transposition(classe: number | null): number {
+  if (classe === null) return 1;
+  const n = ((classe % 12) + 12) % 12;
+  return 2 ** ((n > 5 ? n - 12 : n) / 12);
+}
+
 export function creerMoteurSon(search = typeof location !== 'undefined' ? location.search : '', st: Pick<Storage, 'getItem' | 'setItem'> | null = stockage()): MoteurSon {
   const permis = sonPermis(search);
   let reg = lireReglages(st);
@@ -133,12 +143,16 @@ export function creerMoteurSon(search = typeof location !== 'undefined' ? locati
   }
 
   // --- briques de synthèse ---
-  const ton = (dest: AudioNode, t: number, f: number, type: OscillatorType, dur: number, gain: number, o: { vers?: number; attaque?: number } = {}): void => {
+  // retour du test (2026-11-03, « deux musiques en même temps » en duel) : sous la musique, les bruitages tonals (écrits en
+  // do et en sol) sont transposés sur la fondamentale de l'accord qui sonne (`transposition`, le temps d'une recette)
+  let transpo = 1;
+  const ton = (dest: AudioNode, t: number, f0: number, type: OscillatorType, dur: number, gain: number, o: { vers?: number; attaque?: number } = {}): void => {
     const c = ctx!;
     const osc = c.createOscillator();
     osc.type = type;
+    const f = f0 * transpo;
     osc.frequency.setValueAtTime(f, t);
-    if (o.vers) osc.frequency.exponentialRampToValueAtTime(o.vers, t + dur);
+    if (o.vers) osc.frequency.exponentialRampToValueAtTime(o.vers * transpo, t + dur);
     const g = c.createGain();
     const a = o.attaque ?? 0.005;
     g.gain.setValueAtTime(0.0001, t);
@@ -210,13 +224,17 @@ export function creerMoteurSon(search = typeof location !== 'undefined' ? locati
       src.start(); l.start();
       arrets.push(() => { try { src.stop(); l.stop(); } catch { /* déjà arrêtés */ } });
     };
+    // sous la musique (réglée au-dessus de 0), aucune note tenue ni tintement : seulement le souffle du lieu
+    const sousMusique = permis && !reg.coupe && reg.musique > 0;
     const bourdon = (f: number, gain: number): void => {
+      if (sousMusique) return;
       const o = c.createOscillator(); o.frequency.value = f;
       const g = c.createGain(); g.gain.value = gain;
       o.connect(g).connect(sortie); o.start();
       arrets.push(() => { try { o.stop(); } catch { /* déjà arrêté */ } });
     };
     const ponctuer = (toutes: number, f: number[], gain: number): void => {
+      if (sousMusique) return;
       let k = 0;
       const h = setInterval(() => { if (!ctx) return; const t = c.currentTime; f.forEach((x, i) => ton(sortie, t + i * 0.05, x * (1 + (k % 3) * 0.02), 'sine', 2.2, gain)); k++; }, toutes * 1000);
       arrets.push(() => clearInterval(h));
@@ -313,7 +331,9 @@ export function creerMoteurSon(search = typeof location !== 'undefined' ? locati
       }
       if (voix >= MAX_VOIX) return;
       const dest = id === 'ui' || id === 'ui-retour' ? bus.ui : bus.effets;
+      transpo = TONALS.has(id) && musiqueActive() ? transposition(orch!.tonique()) : 1;
       const dur = RECETTES[id](dest, ctx.currentTime + 0.005);
+      transpo = 1;
       voix++;
       setTimeout(() => { voix = Math.max(0, voix - 1); }, (dur + 0.1) * 1000);
     },

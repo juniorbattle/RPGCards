@@ -37,7 +37,15 @@ export function banqueWorker(sr: number, instrs: InstrId[], progres: (n: number,
 
 const CALCULES = Object.keys(DEFS) as InstrId[];
 
-export interface EtatOrchestre { pret: boolean; version: VersionId | null; couches: Record<string, number>; libre: number; focus: boolean; assourdi: boolean; sources: Record<string, { version: VersionId | null; x: number }> }
+const NOTES: Record<string, number> = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+/** La classe de hauteur de la fondamentale d'un symbole d'accord (« Ebm7 » → 3), ou null. */
+export function classeDe(sym: string | null): number | null {
+  const m = sym ? /^([A-G])([#b]?)/.exec(sym) : null;
+  if (!m) return null;
+  return (NOTES[m[1]!]! + (m[2] === '#' ? 1 : m[2] === 'b' ? 11 : 0)) % 12;
+}
+
+export interface EtatOrchestre { pret: boolean; version: VersionId | null; couches: Record<string, number>; libre: number; focus: boolean; assourdi: boolean; sources: Record<string, { version: VersionId | null; x: number }>; sonnent: ReturnType<Lecteur['sonnent']> }
 
 export class Orchestre {
   private readonly lecteur: Lecteur;
@@ -152,8 +160,12 @@ export class Orchestre {
     }
     const t = Math.max(l.enCours() ? l.prochain('temps') : now + 0.05, this.libre);
     const d = l.jingle(id, t);
-    l.retirer(-9, t, d);
+    // retour du test (2026-11-03) : le fond se tait le temps du jingle (atténué de 9 dB, on entendait deux morceaux)
+    l.retirer(-60, t - 0.15, d + 0.3);
   }
+
+  /** La fondamentale de l'accord qui sonne (0 = do … 11 = si), ou null hors musique : les bruitages tonals s'y accordent. */
+  tonique(): number | null { return classeDe(this.lecteur.accordA(this.ctx.currentTime + 0.02)); }
 
   focus(on: boolean): void { if (on !== this.etatFocus) { this.etatFocus = on; this.lecteur.focus(on); } }
   assourdir(on: boolean): void { if (on !== this.etatSourd) { this.etatSourd = on; this.lecteur.assourdir(on); } }
@@ -171,7 +183,7 @@ export class Orchestre {
   }
 
   etat(): EtatOrchestre {
-    return { pret: this.pret, version: this.lecteur.enCours(), couches: { ...this.joue.couches }, libre: this.libre, focus: this.etatFocus, assourdi: this.etatSourd, sources: Object.fromEntries(this.sources) };
+    return { pret: this.pret, version: this.lecteur.enCours(), couches: { ...this.joue.couches }, libre: this.libre, focus: this.etatFocus, assourdi: this.etatSourd, sources: Object.fromEntries(this.sources), sonnent: this.lecteur.sonnent() };
   }
 
   fermer(): void {

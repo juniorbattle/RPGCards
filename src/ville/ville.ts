@@ -151,6 +151,11 @@ export interface Town {
   plateau(garder: readonly string[] | 'tous' | null): void;
   /** Un personnage sur place regarde ailleurs (un personnage qui marche finit sa marche). */
   tournerNpc(id: string, face: Facing): void;
+  /**
+   * Un personnage de l'îlot hors de la scène, le temps qu'il y entre (l'émissaire du prologue avant de fendre la foule) :
+   * caché, repère compris ; gardé d'un remontage de l'îlot à l'autre.
+   */
+  cacherNpc(id: string, cache: boolean): void;
   /** Position courante d'un personnage de l'îlot (QA, M11-A) ; null s'il n'y est pas. */
   npcAt(id: string): Vec2 | null;
   /** Hauteur des personnages dans l'îlot courant (m), pour placer les bulles au-dessus des têtes. */
@@ -394,6 +399,7 @@ export function createTown(o: TownOptions): Town {
   /** M11-A : personnages déplacés (approche) : position, regard, marche en cours ; gardés si le décor remonte l'îlot
    *  (diorama décidé après coup), effacés à un changement d'îlot (`goTo`). */
   const npcState = new Map<string, { pos: Vec2; face?: Facing; walk?: { to: Vec2; speed: number; face: Facing; phase: number; done: () => void } }>();
+  const npcCaches = new Set<string>();
   const makeNpcs = (): NpcSprite[] => def.npcs.map((n) => {
     const s = createWalkerSprite(n.id);
     s.setHeight(walkerH());
@@ -613,6 +619,9 @@ export function createTown(o: TownOptions): Town {
     playerSprite.set(walker.pos, walker.facing, walker.phase, walker.moving, time);
     for (const e of npcSprites) {
       const { n, s } = e;
+      const cache = npcCaches.has(n.id);
+      s.group.visible = !cache;
+      e.marker.visible = !!e.kind && !cache;
       // M11-A : un personnage qui marche (approche) suit sa position propre et son regard de marche
       const st = npcState.get(n.id);
       if (st?.walk) { s.set(st.pos, regard(st.pos, st.walk.to, st.walk.face), st.walk.phase, true, time); continue; }
@@ -849,6 +858,7 @@ export function createTown(o: TownOptions): Town {
       for (const e of npcSprites) { if (garder === null || garder === 'tous' || garder.includes(e.n.id)) scene.add(e.s.group); else e.s.group.removeFromParent(); }
       for (const p of passers) { if (garder === null) scene.add(p.s.group); else p.s.group.removeFromParent(); }
     },
+    cacherNpc(id, cache) { if (cache) npcCaches.add(id); else npcCaches.delete(id); },
     tournerNpc(id, face) {
       const e = npcSprites.find((x) => x.n.id === id);
       const st = npcState.get(id);
