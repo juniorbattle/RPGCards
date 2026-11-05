@@ -22,6 +22,7 @@ import type { ArenaHandle, ArenaLayout } from '../scene/arena';
 import { Controller } from './controller';
 import type { AppParams } from './params';
 import type { Scenario } from './scenarios';
+import { estManette } from '../entree/manette';
 
 export interface DuelSessionOptions {
   app: HTMLElement;
@@ -190,7 +191,7 @@ export class DuelSession {
     else if (/^[1-6]$/.test(k)) {
       const id = c.handIds()[Number(k) - 1];
       if (id) { c.clickHandCard(id); (app.querySelector(`[data-key="hand-${CSS.escape(id)}"]`) as HTMLElement | null)?.focus(); }
-    } else if (k === 'n' || (k === 'enter' && !(document.activeElement instanceof HTMLButtonElement) && !(document.activeElement as HTMLElement | null)?.getAttribute('role'))) {
+    } else if (k === 'n' || (k === 'enter' && !estManette(e) && !(document.activeElement instanceof HTMLButtonElement) && !(document.activeElement as HTMLElement | null)?.getAttribute('role'))) {
       (app.querySelector('[data-primary-action]:not(:disabled)') as HTMLButtonElement | null)?.click();
     }
   }

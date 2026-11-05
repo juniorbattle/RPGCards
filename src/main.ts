@@ -15,8 +15,11 @@ import { prepStats, setPrepMode } from './scene/rival';
 import { playerFigure } from './art/portrait';
 import { setCardArtVersion } from './art/cardArt';
 import { DEFAULT_VENUE, type VenueId } from './presentation/venues';
+import { installerManette } from './entree/manette';
 
 const params = readParams();
+// manette de console : rien ne change tant qu'aucune ne se signale (src/entree/manette.ts)
+installerManette();
 // M12 (ADR 044) : dessin des cartes choisi avant toute illustration (`?cartes=v1` : celui d'avant)
 setCardArtVersion(params.cartes);
 document.documentElement.classList.toggle('cartes-v1', params.cartes === 'v1');
