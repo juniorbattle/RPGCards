@@ -17,6 +17,8 @@ import { ELITE_JOUTE, famillesDominantes, MEMBRES_EPREUVE, signatureTenante, var
 import { evenementDef, type KId } from './rival';
 import { NOM_TEMPERAMENT, profilTemperament, temperamentDe } from './temperaments';
 import { adversaire, adversaireMiroir, PALIER_NOM, pvJoueur, type Adversaire, type RoleAdverse } from './paliers';
+import { collectionDe } from './registre';
+import { pointCollecte } from './collecteDonnees';
 
 export interface DuelPrevu {
   rencontre: string;
@@ -44,9 +46,34 @@ export function personnalite(apparence: string, o: { nom: string; titre: string;
  */
 export const niveauDe = (e: AventureEtat): number => FAMILIES.filter((f) => e.familles[f] === 'affilie' || e.familles[f] === 'defiee' || e.familles[f] === 'chef').length;
 
+/**
+ * M16 (fiche T5) : à armes égales tant que le joueur n'a qu'une Technique : l'adversaire n'en équipe pas plus que le
+ * joueur n'en a apprises (au moins une, deux au plus). Les aventures d'avant (deux Techniques dès le départ) ne changent pas.
+ */
+export const techniquesAdverses = (e: AventureEtat): number => Math.max(1, Math.min(2, collectionDe(e.registre).techniques.length));
+
 /** Configuration d'un duel : le joueur (deck d'aventure, PV de ses combats) contre l'adversaire de son palier. */
 function config(e: AventureEtat, seed: number, adv: Adversaire, nom: string): GameConfig {
-  return { seed, players: { p1: siegeAventure(e.deck, 'Vous', pvJoueur(e.combats)), p2: siegeAventure(adv.deck, nom, adv.pv) } };
+  const deck = { ...adv.deck, techniques: adv.deck.techniques.slice(0, techniquesAdverses(e)) };
+  return { seed, players: { p1: siegeAventure(e.deck, 'Vous', pvJoueur(e.combats)), p2: siegeAventure(deck, nom, adv.pv) } };
+}
+
+/**
+ * M16 (fiche C3) : le duel contre le gardien d'un point de collecte : un joueur de rue de son quartier (palier `rue`),
+ * sans autre récompense que la carte qu'il garde (le point se ramasse ensuite).
+ */
+export function duelGardien(pointId: string, e: AventureEtat, seed: number): DuelPrevu {
+  const p = pointCollecte(pointId);
+  if (!p?.gardien) throw new Error(`Point sans gardien : ${pointId}`);
+  const g = p.gardien;
+  const base = personalityById(g.apparence)!;
+  const adv = adversaire('rue', base.family, niveauDe(e));
+  const nom = g.nom.charAt(0).toUpperCase() + g.nom.slice(1);
+  const pers = personnalite(g.apparence, { nom, titre: 'garde une carte trouvée en ville', profil: adv.profil });
+  return {
+    rencontre: `gardien:${p.id}`, titre: `Une carte en jeu — ${nom}`, personnalite: pers, venue: 'rue', enjeu: null,
+    config: config(e, seed, adv, nom), note: `${note(nom, adv)} En jeu : la carte qu’il garde, ${p.lieu}.`,
+  };
 }
 const note = (nom: string, adv: Adversaire): string => `${nom} (palier : ${PALIER_NOM[adv.palier]}) joue ${adv.texte}.`;
 

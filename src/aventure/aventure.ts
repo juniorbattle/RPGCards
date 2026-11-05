@@ -10,6 +10,9 @@ import { accorder, aGain, collectionDe, gainBasics, gainNeutres, gainSignature, 
 import { deckDepart, equiperTechnique, equiperVersion, integrerBasics, standardLegal, type DeckAv } from './deck';
 import type { EtatRival, KId } from './rival';
 import { finEpreuve, finFinale, finJoute, finMiroir, finPoule, manche, nouvellesCompetitions, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, type EtatCompetitions } from './competitions';
+import type { TechniqueId } from '../game/catalog/techniques';
+import { pointCollecte } from './collecteDonnees';
+import { gardienPresent, pointActif, varianteValable, variantesATrouver } from './collecte';
 
 /** Faits PUBLICS d'un duel (journal public du joueur) : aucun secret (ADR 011, ADR 029 §5). */
 export interface FaitsPublics {
@@ -54,7 +57,19 @@ export interface AventureEtat {
   ombres?: string[];
   /** M11-A : événements fixes du rival accomplis (K1 à K6) et leur issue (`rival.ts`, contrat 2). */
   rival?: EtatRival;
+  /**
+   * M16 (fiche T1 à T6) : calendrier des Techniques gagnées : une seule au départ, l'autre Technique de la rue à la
+   * première victoire sur un cadet, celle d'une famille à la victoire sur son chef. Absent : le calendrier d'avant (les
+   * aventures déjà commencées gardent tout, T6).
+   */
+  calendrier?: 'm16';
+  /** M16 : points de collecte de la ville (`collecte.ts`) : trouvés, gardiens vaincus, pistes entendues. */
+  collecte?: EtatCollecte;
 }
+
+/** M16 : état des points de collecte (facultatif, sans migration). */
+export interface EtatCollecte { trouves: string[]; gardiens: string[]; pistes: string[] }
+export const collecteDe = (e: AventureEtat): EtatCollecte => e.collecte ?? { trouves: [], gardiens: [], pistes: [] };
 
 export type Evenement =
   | { type: 'scene'; id: SceneId }
@@ -75,7 +90,13 @@ export type Evenement =
   /** M10-E : le défi de Kaï (l'ombre) mené à son terme, dans le chapitre en cours. */
   | { type: 'ombre'; issue: Issue }
   /** M11-A : un événement fixe du rival mené à son terme (duel gagné ou perdu, ou scène) ; un abandon le laisse dû. */
-  | { type: 'rival'; id: KId; issue: Issue | 'scene' };
+  | { type: 'rival'; id: KId; issue: Issue | 'scene' }
+  /** M16 : un point de collecte ramassé ; `variante` : la carte tirée (`recompensePoint`), absente s'il n'y a plus rien à trouver. */
+  | { type: 'collecte'; point: string; variante?: string }
+  /** M16 : le duel contre le gardien d'un point de collecte, mené à son terme. */
+  | { type: 'gardien'; point: string; issue: Issue }
+  /** M16 : une rumeur a donné la piste d'un point de collecte. */
+  | { type: 'piste'; point: string };
 
 export interface Resultat {
   etat: AventureEtat;
@@ -85,12 +106,33 @@ export interface Resultat {
   refus?: string;
 }
 
-export function nouvelleAventure(at: string): AventureEtat {
+/**
+ * Nouvelle aventure. `technique` (M16, fiche T1) : la seule Technique du départ, Sondage ou Recentrage, au choix du joueur ;
+ * elle installe le calendrier M16. Sans elle, le calendrier d'avant (les deux Techniques de la rue au départ).
+ */
+export function nouvelleAventure(at: string, technique?: TechniqueId): AventureEtat {
   const familles = Object.fromEntries(FAMILIES.map((f) => [f, 'inconnue'])) as Record<Family, EtatFamille>;
-  const base: AventureEtat = { scenes: ['P0'], familles, affiliation: null, premier: null, prologue: null, engages: [], vaincues: [], registre: [], deck: deckDepart(), visites: [], rencontres: [], changements: [], competitions: nouvellesCompetitions(), combats: 0 };
+  const m16 = !!technique && TECHNIQUES_RUE.includes(technique);
+  const deck = m16 ? { ...deckDepart(), techniques: [technique!] } : deckDepart();
+  const base: AventureEtat = { scenes: ['P0'], familles, affiliation: null, premier: null, prologue: null, engages: [], vaincues: [], registre: [], deck, visites: [], rencontres: [], changements: [], competitions: nouvellesCompetitions(), combats: 0, ...(m16 ? { calendrier: 'm16' as const } : {}) };
   let reg = accorder(base.registre, gainNeutres(at)).registre;
-  for (const t of TECHNIQUES_RUE) reg = accorder(reg, gainTechnique(t, 'P0', at)).registre;
+  for (const t of m16 ? [technique!] : TECHNIQUES_RUE) reg = accorder(reg, gainTechnique(t, 'P0', at)).registre;
   return { ...base, registre: reg };
+}
+
+/** M16 : la Technique d'une famille se gagne-t-elle avec ses cartes de base (calendrier d'avant) ou face à son chef ? */
+export const techniqueAuChef = (e: AventureEtat): boolean => e.calendrier === 'm16';
+
+/**
+ * M16 : les Techniques qu'une première victoire contre cette figure ferait apprendre (préparation, dialogue, écrans) :
+ * l'autre Technique de la rue contre un premier cadet, celle de la famille contre son chef ; vide au calendrier d'avant.
+ */
+export function techniquesEnJeu(e: AventureEtat, rencontre: string): TechniqueId[] {
+  if (!techniqueAuChef(e)) return [];
+  const fig = FIGURES.find((x) => x.id === rencontre);
+  if (!fig || e.vaincues.includes(fig.id)) return [];
+  const t = fig.role === 'cadet' ? TECHNIQUES_RUE : fig.role === 'chef' ? [MAISONS[fig.famille].technique] : [];
+  return t.filter((x) => !aGain(e.registre, `technique:${x}`));
 }
 
 const capitale = (x: string) => x.charAt(0).toUpperCase() + x.slice(1);
@@ -249,6 +291,11 @@ function appliquerBrut(e0: AventureEtat, ev: Evenement, at: string): Resultat {
       if (!joue(e, 'P7')) e.scenes.push('P7');
       const nouveauxBasics = !aGain(e.registre, `basics:${ev.famille}`);
       grant(gainBasics(ev.famille, `P7:${ev.famille}`, at));
+      // M16 (fiche T3) : la Technique de la famille se gagne face à son chef, plus avec ses cartes de base
+      if (techniqueAuChef(e)) {
+        if (nouveauxBasics) e.deck = integrerBasics(e.deck, ev.famille);
+        return { etat: e, gains };
+      }
       grant(gainTechnique(MAISONS[ev.famille].technique, `P7:${ev.famille}`, at));
       if (nouveauxBasics) e.deck = equiperTechnique(integrerBasics(e.deck, ev.famille), MAISONS[ev.famille].technique);
       return { etat: e, gains };
@@ -273,7 +320,7 @@ function appliquerBrut(e0: AventureEtat, ev: Evenement, at: string): Resultat {
       e.familles[ev.famille] = 'defiee';
       const nouveauxBasics = !aGain(e.registre, `basics:${ev.famille}`);
       grant(gainBasics(ev.famille, `engagement:${ev.famille}`, at));
-      grant(gainTechnique(MAISONS[ev.famille].technique, `engagement:${ev.famille}`, at));
+      if (!techniqueAuChef(e)) grant(gainTechnique(MAISONS[ev.famille].technique, `engagement:${ev.famille}`, at));
       if (nouveauxBasics) e.deck = integrerBasics(e.deck, ev.famille);
       return { etat: e, gains };
     }
@@ -307,6 +354,16 @@ function appliquerBrut(e0: AventureEtat, ev: Evenement, at: string): Resultat {
         grant(gainSignature(fig.famille, src, at));
         e.familles[fig.famille] = 'chef';
         if (e.deck.signature === null) e.deck = { ...e.deck, signature: fig.famille };
+      }
+      // M16 : les Techniques gagnées (fiche T2 : l'autre Technique de la rue à la première victoire sur un cadet ;
+      // T3 : celle de la famille à la victoire sur son chef), équipées s'il reste une place (deux au plus)
+      if (premiere && techniqueAuChef(e)) {
+        const apprises = fig.role === 'cadet' ? TECHNIQUES_RUE : fig.role === 'chef' ? [MAISONS[fig.famille].technique] : [];
+        for (const t of apprises) {
+          if (aGain(e.registre, `technique:${t}`)) continue;
+          grant(gainTechnique(t, `${fig.role === 'chef' ? 'chef' : 'cadet'}:${fig.id}`, at));
+          if (e.deck.techniques.length < 2) e.deck = equiperTechnique(e.deck, t);
+        }
       }
       return { etat: e, gains };
     }
@@ -373,6 +430,37 @@ function appliquerBrut(e0: AventureEtat, ev: Evenement, at: string): Resultat {
       // M10-E : le défi de Kaï, une fois par chapitre au plus (le directeur le garantit) ; aucune carte, aucune statistique
       const ch = chapitreDetaille(e);
       if (ev.issue !== 'abandon' && ch !== 'prologue' && !(e.ombres ?? []).includes(ch)) e.ombres = [...(e.ombres ?? []), ch];
+      return { etat: e, gains };
+    }
+
+    case 'collecte': {
+      // M16 (fiche C1 à C5) : un point allumé, pas encore ramassé, son gardien battu s'il en a un ; la variante doit manquer
+      // et venir d'une famille rejointe ou engagée ; s'il n'y a plus rien à trouver, le point s'éteint sans carte
+      const p = pointCollecte(ev.point);
+      if (!p) return refuse('Point de collecte inconnu.');
+      if (!pointActif(e, p)) return refuse('Ce point de collecte n’est pas allumé.');
+      if (gardienPresent(e, p)) return refuse(`${capitale(p.gardien!.nom)} garde cette carte : battez-le d’abord.`);
+      const c = collecteDe(e);
+      if (ev.variante) {
+        if (!varianteValable(e, ev.variante)) return refuse('Cette carte ne peut pas se trouver ici.');
+        const refus = grant(gainVariante(ev.variante, `collecte:${p.id}`, at));
+        if (refus) return refuse(refus);
+      } else if (variantesATrouver(e).length) return refuse('Ce point a une carte à donner.');
+      e.collecte = { ...c, trouves: [...c.trouves, p.id] };
+      return { etat: e, gains };
+    }
+
+    case 'gardien': {
+      const p = pointCollecte(ev.point);
+      if (!p || p.garde !== 'gardien') return refuse('Ce point n’a pas de gardien.');
+      const c = collecteDe(e);
+      if (ev.issue === 'victoire' && !c.gardiens.includes(p.id)) e.collecte = { ...c, gardiens: [...c.gardiens, p.id] };
+      return { etat: e, gains };
+    }
+
+    case 'piste': {
+      const c = collecteDe(e);
+      if (pointCollecte(ev.point) && !c.pistes.includes(ev.point)) e.collecte = { ...c, pistes: [...c.pistes, ev.point] };
       return { etat: e, gains };
     }
 

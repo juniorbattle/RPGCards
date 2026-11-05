@@ -8,6 +8,9 @@ import { chapitre, statutDefi, type AventureEtat } from './aventure';
 import { cheffe, chefVaincu, deF, emissaire, figureDe, KAI_PROLOGUE, MAISONS, ROLES } from './modele';
 import { aGain } from './registre';
 import { EVENEMENTS_RIVAL } from './rival';
+import { collecteDe } from './aventure';
+import { POINTS_COLLECTE } from './collecteDonnees';
+import { bilanCollecte, pointActif } from './collecte';
 
 export interface Quete {
   id: string;
@@ -95,6 +98,20 @@ export function quetes(e: AventureEtat): Quete[] {
     const faits = e.ombres ?? [];
     out.push({ id: 'ombre', titre: 'L’ombre de Kaï', type: 'rival', etapes: (['I', 'II', 'III', 'IV', 'V'] as const).map((ch) => ({ texte: `Chapitre ${ch} : relever le défi de Kaï (facultatif)`, faite: faits.includes(ch) })) });
   }
+  // M16 : la chasse aux cartes de la ville (Promenade libre) : les points allumés, ceux trouvés, les pistes entendues
+  if (f) {
+    const c = collecteDe(e);
+    const vus = POINTS_COLLECTE.filter((p) => c.trouves.includes(p.id) || pointActif(e, p));
+    if (vus.length) {
+      out.push({ id: 'collecte', titre: `Les cartes de la ville (${bilanCollecte(e).trouves}/${POINTS_COLLECTE.length}, en Promenade libre)`, type: 'facultative', etapes: vus.map((p) => ({
+        texte: c.trouves.includes(p.id) ? `Trouvée ${p.lieu} (${nomIlotCourt[p.ilot] ?? p.ilot})`
+          : c.pistes.includes(p.id) ? `Une piste : ${p.piste.replace(/^« |»$/g, '').trim()}`
+          : p.garde === 'gardien' ? `Une carte gardée (${nomIlotCourt[p.ilot] ?? p.ilot}) : une lueur, et quelqu’un devant`
+          : `Une lueur quelque part (${nomIlotCourt[p.ilot] ?? p.ilot}) ; les passants en parlent`,
+        faite: c.trouves.includes(p.id),
+      })) });
+    }
+  }
   for (const x of FAMILIES) {
     if (!aGain(e.registre, `basics:${x}`)) continue;
     out.push({ id: `competitions:${x}`, titre: `Compétitions ${deF(x)} (facultatives)`, type: 'facultative', etapes: [
@@ -106,3 +123,6 @@ export function quetes(e: AventureEtat): Quete[] {
 }
 
 const nomV = (d: string) => (CATALOG[d] ? cardTitle(CATALOG[d]!) : d);
+
+/** Noms courts des quartiers (Journal de la chasse). */
+const nomIlotCourt: Record<string, string> = { quai: 'le Quai', parvis: 'le Parvis', ruelles: 'les Ruelles', cour: 'la Grande Cour', port: 'la Place du Fanal', haute: 'la Ville haute' };

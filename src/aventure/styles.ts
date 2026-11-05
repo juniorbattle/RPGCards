@@ -359,6 +359,32 @@ export function installAventureStyles(): void {
 .av-tech-ligne > b { color: var(--lqv-or-clair); font: 700 17px/1.2 Georgia, serif; }
 .av-tech-ligne > .av-info { margin-left: 0; }
 .av-nv-mode { min-height: 110px; align-content: center; }
+/* M16 : la Technique de départ (nouvelle aventure) */
+.av-nv-page:has(.av-nv-techs) { grid-template-rows: auto auto auto auto 1fr auto; }
+.av-nv-techs { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.av-nv-tech { display: grid; gap: 4px; align-content: center; min-height: 64px; padding: 10px 18px; border: 1px solid #3a3446; border-radius: 2px; background: rgba(12, 10, 20, 0.6); color: var(--lqv-ivoire); text-align: left; cursor: pointer; font: inherit; }
+.av-nv-tech b { font: 700 17px/1.2 Georgia, serif; color: #f6eedc; }
+.av-nv-tech span { font: italic 14px/1.4 Georgia, serif; color: #b9ae98; }
+.av-nv-tech:hover { border-color: var(--lqv-or); }
+.av-nv-tech.choisi { border-color: var(--lqv-or-clair); background: linear-gradient(180deg, rgba(214, 178, 110, 0.18), rgba(214, 178, 110, 0.06)); box-shadow: inset 0 0 0 1px rgba(255, 231, 176, 0.25); }
+.av-nv-tech.choisi b { color: #ffe7b0; }
+.av-nv-tech:focus-visible { outline: 3px solid #ffe7b0; outline-offset: 2px; }
+.av-tech-quand { color: var(--lqv-sepia); font-style: italic; font-size: 14px; }
+/* M16 : les cartes qui scintillent dans ce quartier (HUD) */
+.av-hud .av-lueurs { margin-top: 6px; padding-left: 16px; color: #ffe3a0; font: italic clamp(14px, 1vw, 19px)/1.35 Georgia, serif; text-shadow: 0 0 8px rgba(255, 200, 110, 0.55), 0 1px 3px rgba(0, 0, 0, 0.9); }
+/* M16 : la découverte d'une carte en ville */
+.av-decouverte { text-align: center; }
+.av-decouverte .av-fiche { text-align: left; }
+.av-decouverte-scene { position: relative; display: grid; place-items: center; height: 220px; margin: 6px 0 4px; perspective: 700px; }
+.av-decouverte-halo { position: absolute; inset: 0; margin: auto; width: 230px; height: 230px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 226, 150, 0.55) 0%, rgba(255, 196, 100, 0.22) 38%, rgba(255, 170, 70, 0) 70%); animation: av-halo 2.4s ease-in-out infinite; }
+.av-decouverte-carte { position: relative; --card-w: 128px; animation: av-retourne 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both; transform-style: preserve-3d; filter: drop-shadow(0 0 18px rgba(255, 210, 120, 0.55)); }
+.av-decouverte-carte .card { --card-h: calc(var(--card-w) * 1.4); --radius: calc(var(--card-w) * 0.07); }
+.av-decouverte-nom { display: grid; gap: 2px; margin: 4px 0 8px; }
+.av-decouverte-nom b { color: var(--lqv-or-clair); font: 700 22px/1.2 Georgia, serif; }
+.av-decouverte-nom small { color: var(--lqv-sepia); font-style: italic; }
+@keyframes av-retourne { 0% { transform: rotateY(180deg) scale(0.6); opacity: 0; } 45% { opacity: 1; } 100% { transform: rotateY(0) scale(1); opacity: 1; } }
+@keyframes av-halo { 0%, 100% { transform: scale(0.94); opacity: 0.8; } 50% { transform: scale(1.06); opacity: 1; } }
+.av-decouverte.calme .av-decouverte-carte, .av-decouverte.calme .av-decouverte-halo { animation: none; }
 ${STYLES_CINEMA}`
   document.head.append(s);
 }

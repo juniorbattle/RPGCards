@@ -92,22 +92,22 @@ export const MAISONS: Record<Family, Maison> = {
   Cendre: {
     famille: 'Cendre', nom: 'la Maison du Chantier', ilot: 'quai', devise: '« Le feu ne recule pas. »', technique: 'Lecture',
     credo: 'Pression et prise de risque : on gagne en prenant l’initiative, et même un coup perdu doit coûter à l’adversaire.',
-    offre: 'Chez nous, on frappe le premier. Rejoins la Cendre : tu recevras nos quatre cartes de base, et la Lecture pour sentir venir les coups.',
+    offre: 'Chez nous, on frappe le premier. Rejoins la Cendre : nos quatre cartes de base sont à toi ; la Lecture, pour sentir venir les coups, attend qui fera ses preuves.',
   },
   Ronce: {
     famille: 'Ronce', nom: 'le Fanal', ilot: 'quai', devise: '« Ce qui tient, dure. »', technique: 'Rupture',
     credo: 'Garde, contrôle et préservation : on gagne en tenant, en usant l’élan adverse, en ne perdant rien.',
-    offre: 'Tu as tenu face à Kaï. La Ronce garde le feu du port : rejoins-nous, nos quatre cartes de base et la Rupture sont à toi.',
+    offre: 'Tu as tenu face à Kaï. La Ronce garde le feu du port : rejoins-nous : nos quatre cartes de base sont à toi, et la Rupture attend qui fera ses preuves.',
   },
   Voile: {
     famille: 'Voile', nom: 'la maison de la Fontaine', ilot: 'ruelles', devise: '« Celui qui voit choisit. »', technique: 'Dissipation',
     credo: 'Information, camouflage et perturbation : on gagne avant le Clash, en sachant et en cachant.',
-    offre: 'J’ai vu tes yeux pendant le duel : tu lisais. Le Voile t’offre ses quatre cartes de base, et la Dissipation pour défaire les ruses.',
+    offre: 'J’ai vu tes yeux pendant le duel : tu lisais. Le Voile t’offre ses quatre cartes de base ; la Dissipation, pour défaire les ruses, attend qui fera ses preuves.',
   },
   Astre: {
     famille: 'Astre', nom: 'l’Observatoire du Parvis', ilot: 'parvis', devise: '« Tout revient, tout s’assemble. »', technique: 'Ancrage',
     credo: 'Adaptation, recirculation, synergies : on gagne en combinant les voies et en faisant revenir ses meilleures cartes.',
-    offre: 'Les étoiles ont remarqué ton jeu. L’Astre unit ce que les autres séparent : nos quatre cartes de base et l’Ancrage t’attendent.',
+    offre: 'Les étoiles ont remarqué ton jeu. L’Astre unit ce que les autres séparent : nos quatre cartes de base sont à toi, et l’Ancrage attend qui fera ses preuves.',
   },
 };
 

@@ -9,6 +9,7 @@ import type { AventureEtat } from './aventure';
 import { varianteDe } from './competitions';
 import { deF, FIGURES, figureDe, MAISONS, NEUTRES, RANGS, TECHNIQUES_RUE, type EtatFamille } from './modele';
 import { collectionDe, variantesIdentite, type Gain } from './registre';
+import { pointCollecte } from './collecteDonnees';
 
 export interface EntreeCollection {
   /** Définition (`Cendre-3-…`, `sig-Cendre`) ou Technique. */
@@ -48,6 +49,9 @@ export function origineGain(g: Gain): string {
   if (k === 'epreuve') return `Épreuve du quartier ${deF(f)}`;
   if (k === 'joute') return `Joute de la maison ${deF(f)}`;
   if (k === 'championnat') return 'Titre du Championnat';
+  // M16 : trouvée en ville ; Techniques gagnées face à un cadet ou un chef
+  if (k === 'collecte') { const p = pointCollecte(a ?? ''); return p ? `Trouvée en ville, ${p.lieu}` : 'Trouvée en ville'; }
+  if (k === 'cadet' || k === 'chef') { const fig = FIGURES.find((x) => x.id === g.source.slice(k.length + 1)); return fig ? `Victoire contre ${fig.nom}` : 'Victoire en duel'; }
   if (k === 'duel') {
     const fig = g.kind === 'variante'
       ? FIGURES.find((x) => x.enjeu.kind === 'variante' && CATALOG[x.enjeu.defId]!.identity === CATALOG[g.items[0]!]?.identity)
@@ -91,7 +95,7 @@ export function vueCollection(e: AventureEtat): VueCollection {
       const une = ids.some((id) => gain(`variante:${id}`));
       return ids.map((id) => {
         const g = gain(`variante:${id}`);
-        return { id, possedee: !!g, dansDeck: deck.has(id), texte: g ? origineGain(g) : voieVariante(id, une), lettre: variantLetter(CATALOG[id]!) ?? undefined };
+        return { id, possedee: !!g, dansDeck: deck.has(id), texte: g ? origineGain(g) : `${voieVariante(id, une)} ; ou la trouver en ville, en Promenade libre`, lettre: variantLetter(CATALOG[id]!) ?? undefined };
       });
     });
     const gs = gain(`signature:${f}`);
@@ -103,7 +107,10 @@ export function vueCollection(e: AventureEtat): VueCollection {
   const techniques = TECHNIQUE_IDS.map((t: TechniqueId) => {
     const g = gain(`technique:${t}`);
     const maison = FAMILIES.find((f) => MAISONS[f].technique === t);
-    const voie = TECHNIQUES_RUE.includes(t) ? 'Départ : la rue' : maison ? `Avec les cartes de base ${deF(maison)}` : 'Non enseignée dans l’aventure';
+    // M16 : au calendrier des Techniques gagnées, l'autre Technique de la rue au premier cadet, celle d'une famille à son chef
+    const m16 = e.calendrier === 'm16';
+    const voie = TECHNIQUES_RUE.includes(t) ? (m16 ? 'Battre un premier cadet, ou la choisir au départ' : 'Départ : la rue')
+      : maison ? (m16 ? `Battre ${figureDe(maison, 'chef').nom}, ${figureDe(maison, 'chef').titre}` : `Avec les cartes de base ${deF(maison)}`) : 'Non enseignée dans l’aventure';
     return { id: t, possedee: !!g, dansDeck: e.deck.techniques.includes(t), texte: g ? origineGain(g) : voie };
   });
   const neutres = RANGS.map((r) => ({ id: NEUTRES[r].defId, possedees: col.neutres[r], dansDeck: e.deck.cartes.filter((c) => c === NEUTRES[r].defId).length }));

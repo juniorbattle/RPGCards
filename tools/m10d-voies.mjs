@@ -209,7 +209,7 @@ try {
   // Le Voile : quatre Basics, 8 → 4 cartes grises
   r = await engager('Voile', 'Engager le Voile : quatre Basics, une carte grise de chaque Rang cède sa place');
   check(/Vous recevrez|cartes de base du Voile \(I à IV\)/.test(r.t.basics) && /8 → 4/.test(r.t.deck), `confirmation (Voile) : « ${r.t.deck} »`);
-  check(r.cartes === 4 && grises(r.apres) === 4 && r.apres.registre.some((g) => g.key === 'basics:Voile') && r.apres.registre.some((g) => g.key === 'technique:Dissipation'), 'Voile engagé : quatre Basics et la Dissipation remises, 4 cartes grises restent');
+  check(r.cartes === 4 && grises(r.apres) === 4 && r.apres.registre.some((g) => g.key === 'basics:Voile') && (r.apres.calendrier === 'm16' ? !r.apres.registre.some((g) => g.key === 'technique:Dissipation') : r.apres.registre.some((g) => g.key === 'technique:Dissipation')), 'Voile engagé : quatre Basics remises (la Dissipation au chef au calendrier M16, avec elles sinon), 4 cartes grises restent');
   check(/Gaspard|Lior/.test(await texte('[data-key="ville-objective"]')), `objectif : ${await texte('[data-key="ville-objective"]')}`);
   await voyager('ruelles');
   // Lior : duel JOUÉ par le pilote des QA jusqu'au bout
