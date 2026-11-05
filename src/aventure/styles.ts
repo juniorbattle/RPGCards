@@ -311,7 +311,6 @@ export function installAventureStyles(): void {
 .av-gain figcaption b { color: var(--lqv-or-clair); font: 700 13.5px/1.25 Georgia, serif; }
 .av-gain figcaption small { color: var(--lqv-sepia); font: italic 12.5px/1.25 Georgia, serif; }
 /* au résultat, sous le buste : cartes à la taille de l'écran ; une ou deux cartes, la légende à côté */
-.av-resultat .av-gains { --card-w: clamp(48px, min(4.6vw, 7vh), 88px); }
 .av-gains.peu .av-gain { grid-template-columns: auto auto; align-items: center; gap: 0 12px; text-align: left; }
 .av-gains.peu .av-gain figcaption { max-width: 160px; }
 .av-choix-carte .av-btn { min-width: 0; width: 100%; padding: 8px 12px; } .av-choix-carte .av-btn b { font-size: 16px; }
@@ -330,7 +329,7 @@ export function installAventureStyles(): void {
 .av-fiche dt { color: var(--lqv-or); font: 700 12px/1.6 Georgia, serif; letter-spacing: 0.14em; text-transform: uppercase; }
 .av-fiche dd { margin: 0; padding-bottom: 8px; border-bottom: 1px solid rgba(226, 196, 138, 0.12); color: var(--lqv-ivoire); }
 .av-fiche dd:last-of-type { border-bottom: 0; padding-bottom: 0; }
-.av-fiche .av-enjeu { --card-w: 60px; flex-wrap: wrap; }
+.av-fiche .av-enjeu { flex-wrap: wrap; }
 .av-enjeu > span { display: grid; } .av-enjeu > span b { color: var(--lqv-or-clair); font-size: 16px; } .av-enjeu > span small { color: var(--lqv-sepia); font-style: italic; }
 .av-rien { color: var(--lqv-sepia); font-style: italic; }
 .av-etapes { display: grid; gap: 6px; margin: 4px 0 6px; padding: 0; list-style: none; counter-reset: etape; }
@@ -341,6 +340,11 @@ export function installAventureStyles(): void {
 .av-tech-nom { display: grid; flex: none; } .av-tech-nom small { color: var(--lqv-or); font: 700 10.5px/1.3 Georgia, serif; letter-spacing: 0.14em; text-transform: uppercase; } .av-tech-nom b { color: var(--lqv-or-clair); font: 700 17px/1.2 Georgia, serif; }
 .av-tech-ligne > span:last-child { color: var(--lqv-sepia); font-size: 14px; line-height: 1.4; }
 .av-recompense .av-gains { margin: 8px 0 4px; }
+/* passe 208 — retour du test : « les cartes n'ont pas toujours les mêmes dimensions ». --card-h est calculée une seule fois
+   sur :root (96 px × 1,4 = 134 px) et héritée telle quelle : un conteneur qui ne changeait que --card-w donnait des cartes
+   étirées (60 × 134 à la préparation, au résultat) ou trapues (108 × 134 au choix). Chaque carte de l'aventure reprend sa
+   hauteur à 1,4 fois sa largeur, comme au duel. */
+:is(.av-titre, .av-confirm, .av-prepa, .av-modal, .av-cards, .av-choix-cartes, .av-enjeu, .av-deck-cards, .av-rang-cases, .av-choix, .av-col-cartes, .av-gains, .av-gain-pile) .card { --card-h: calc(var(--card-w) * 1.4); --radius: calc(var(--card-w) * 0.07); }
 ${STYLES_CINEMA}`;
   document.head.append(s);
 }

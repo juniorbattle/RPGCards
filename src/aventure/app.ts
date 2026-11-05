@@ -1650,7 +1650,7 @@ export class AventureApp {
     return duelSeed(s.profil.graine, s.compteur);
   }
 
-  /** Préparation (dialogue) : adversaire, lieu, PV, enjeu annoncé, les deux decks ; puis le duel. */
+  /** Préparation (dialogue) : adversaire, lieu, enjeu, PV, rien de plus (retour du test, passe 208 : « le minimum ») ; puis le duel. */
   private preparer(prevu: DuelPrevu, forcee = false): void {
     this.fermerDialogue();
     // M14 : la Préparation a déjà tout dit, et la scène l'enjeu : pas de fenêtre de plus devant le duel
@@ -1668,9 +1668,7 @@ export class AventureApp {
       h('div', { class: 'av-confirm-head' }, h('img', { class: 'ville-portrait', alt: '', src: portraitUrl(prevu.personnalite, this.params.artSeed) }), h('div', null, h('h2', null, prevu.titre), h('p', { class: 'av-devise' }, LIEU[prevu.venue]))),
       h('dl', { class: 'av-fiche' },
         h('dt', null, 'En jeu'), h('dd', null, enjeuEl()),
-        h('dt', null, 'Points de vie'), h('dd', null, 'Vous ', h('b', null, String(p1)), ' · ', prevu.personnalite.name, ' ', h('b', null, String(p2))),
-        h('dt', null, 'Adversaire'), h('dd', { 'data-key': 'av-deck-adverse' }, prevu.note),
-        h('dt', null, 'Votre deck'), h('dd', { 'data-key': 'av-deck-reel' }, `${resumeDeck(this.etat.deck)} ; Techniques `, h('b', null, this.etat.deck.techniques.join(' et ')), '.')),
+        h('dt', null, 'Points de vie'), h('dd', { 'data-key': 'av-pv-duel' }, 'Vous ', h('b', null, String(p1)), ' · ', prevu.personnalite.name, ' ', h('b', null, String(p2)))),
       h('div', { class: 'ville-choices' },
         h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-duel-go', onclick: () => this.lancer(prevu) }, 'Commencer le duel'),
         forcee ? null : h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-duel-back', onclick: () => this.fermerModal() }, 'Plus tard')),
