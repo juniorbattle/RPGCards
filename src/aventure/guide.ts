@@ -17,6 +17,9 @@ export type ModeRecit = 'libre' | 'guide';
 
 export const NOM_RECIT: Readonly<Record<ModeRecit, string>> = { libre: 'Promenade libre', guide: 'Récit guidé' };
 
+/** Passe 209 : l'accroche visible sur la carte du choix ; le texte entier au survol. */
+export const ACCROCHE_RECIT: Readonly<Record<ModeRecit, string>> = { libre: 'La ville à pied, à votre rythme.', guide: 'La trame, scène après scène.' };
+
 export const TEXTE_RECIT: Readonly<Record<ModeRecit, string>> = {
   libre: 'Parcourez la ville à pied et affrontez tous les joueurs de rue en menant votre quête.',
   guide: 'Vivez la trame comme un film, d’événement en événement : ses scènes s’enchaînent, avec une Préparation avant chaque duel.',

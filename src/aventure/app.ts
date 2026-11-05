@@ -41,7 +41,7 @@ import { basculerTechnique, choixPourCase, equiperSignature, rangDe, remplacerCa
 import { origineGain, vueCollection, type EntreeCollection } from './collection';
 import { conclure, convoquer, decider, poses, rencontreDef, type Pose } from './directeur';
 import { estDepart, estFamille, etatDepart, type Depart } from './departs';
-import { cleSuite, enchainement, etapeRecit, ILOTS_RECIT, joueursDeRue, NOM_RECIT, quartierDe, suiteRecit, TEXTE_RECIT, type EtapeRecit, type JoueurRue, type ModeRecit } from './guide';
+import { cleSuite, enchainement, etapeRecit, ILOTS_RECIT, joueursDeRue, NOM_RECIT, ACCROCHE_RECIT, quartierDe, suiteRecit, TEXTE_RECIT, type EtapeRecit, type JoueurRue, type ModeRecit } from './guide';
 import { ilotAventure, ilotBase, nomIlot } from './ilots';
 import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, RANGS, rangNeutre, roleDe, cheffe, chefVaincu, leChef, ROLES, ROMAIN, type EtatFamille } from './modele';
 import { pvJoueur, PV_PAR_COMBAT } from './paliers';
@@ -58,6 +58,7 @@ import { consigneVille, numeroChapitre, proximiteFanal, REPOS_VILLE_S, roleDuelA
 import { CONTRAINTE_JOUTE, famillesDominantes, manche, ouvertChampionnat, statutEpreuve, statutFinale, statutJoute, statutPoule, varianteDe } from './competitions';
 import { CATALOG_AVENTURE, MagasinAventure, nouvelleSauvegarde, verifierDuel, type AventureSave, type DuelAventure } from './sauvegarde';
 import { installAventureStyles } from './styles';
+import { installerInfobulles, info, pastille } from './infobulle';
 import { aJouer, arriveeAJouer, cadreDialogue, cadreGroupe, CARTONS_CHAPITRE, cinePermise, DUREES, ecrireCine, ecrireMouvementReduit, lireMouvementReduit, estChapitreCarton, LIGNES_LIEU, lireCine, plansAffiliation, plansArrivee, plansArriveeRecit, plansChapitre, plansChef, plansEmissaire, plansGuetteur, plansKaiPrologue, plansRival, plansTitre, type CadreDialogue, type CinematiqueId } from './cinematiques';
 import { Bandes, Cinema, type FonduCinema } from './cinema';
 import { effacer, fantomeEcran, FONDUS, Rideau } from './rideau';
@@ -74,7 +75,7 @@ export interface DepsAventure {
 }
 
 /** `refus` : remettre à plus tard, ce qui n'a de sens qu'en Promenade libre ; le Récit guidé ne le propose pas. */
-interface Choix { label: string; key: string; primary?: boolean; refus?: boolean; run: () => void }
+interface Choix { label: string; key: string; primary?: boolean; refus?: boolean; info?: string; run: () => void }
 
 /** M14 : le travelling avant qui ouvre une scène du Récit guidé : d'un peu plus loin, en glissant. */
 const SERRE_OUVERTURE = 0.8;
@@ -186,6 +187,7 @@ export class AventureApp {
   constructor(readonly d: DepsAventure) {
     installVilleStyles();
     installAventureStyles();
+    installerInfobulles();
     document.title = 'Les Quatre Voies — Aventure';
     window.addEventListener('pagehide', () => this.memoriser());
     // M14 : la Préparation n'a pas de ville pour entendre Échap ; fenêtres et dialogues ont le leur
@@ -275,11 +277,12 @@ export class AventureApp {
     if (s) {
       const col = collectionDe(s.etat.registre);
       const sous = s.duel ? 'Reprendre le duel en cours' : objectif(s.etat);
-      items.push(bouton('Continuer l’aventure', () => this.continuer(), 'av-continue', true, sous));
+      // passe 209 : l'objectif au survol ; un duel en cours reste dit sous le bouton
+      items.push(s.duel ? bouton('Continuer l’aventure', () => this.continuer(), 'av-continue', true, sous) : info(bouton('Continuer l’aventure', () => this.continuer(), 'av-continue', true), sous));
       // la sauvegarde en trois temps : qui, où en est le récit, ce que contient la collection (accords au singulier comme au pluriel)
-      items.push(h('p', { class: 'av-profil' }, h('b', null, s.profil.nom), h('span', null, `${CHAPITRE[chapitreDetaille(s.etat)]} · ${s.etat.affiliation ? `voie ${de(s.etat.affiliation)}` : 'sans famille'}`), h('span', null, `${nombre(col.basics.length * 4, 'carte familiale', 'cartes familiales')} · ${nombre(col.variantes.length, 'variante', 'variantes')} · ${nombre(col.signatures.length, 'Signature', 'Signatures')}`)));
+      items.push(info(h('p', { class: 'av-profil' }, h('b', null, s.profil.nom), h('span', null, `${CHAPITRE[chapitreDetaille(s.etat)]} · ${s.etat.affiliation ? `voie ${de(s.etat.affiliation)}` : 'sans famille'}`)), `Collection : ${nombre(col.basics.length * 4, 'carte familiale', 'cartes familiales')} · ${nombre(col.variantes.length, 'variante', 'variantes')} · ${nombre(col.signatures.length, 'Signature', 'Signatures')}`));
     }
-    items.push(bouton('Nouvelle aventure', () => void this.nouveau(), 'av-new', !s, 'Seize cartes grises, aucune famille : tout commence sur le Quai'));
+    items.push(info(bouton('Nouvelle aventure', () => void this.nouveau(), 'av-new', !s), 'Seize cartes grises, aucune famille : tout commence sur le Quai.'));
     // heure de ville (finalisation de la ville, passe 137) : `?aventure=1&depart=III[&famille=Ronce]`, une aventure d'essai
     // au début d'un chapitre (faits appliqués par la machine) ; sans ce paramètre, rien ne change
     const q = new URLSearchParams(location.search);
@@ -291,7 +294,7 @@ export class AventureApp {
     if (this.charge.status === 'illisible') items.push(h('p', { class: 'warn' }, `${this.charge.raison} « Nouvelle aventure » la mettra à l’écart (sans l’effacer).`));
     if (this.charge.status === 'future') items.push(h('p', { class: 'warn' }, this.charge.raison));
     if (this.charge.status === 'indisponible') items.push(h('p', { class: 'warn' }, 'Stockage local indisponible : l’aventure ne pourra pas être conservée.'));
-    items.push(h('a', { class: 'av-link', href: `${location.pathname}?standard=1`, 'data-key': 'av-standard' }, 'Jeu standard (duels, Tournoi du Quai)'));
+    items.push(info(h('a', { class: 'av-link', href: `${location.pathname}?standard=1`, 'data-key': 'av-standard' }, 'Jeu standard'), 'Duels libres et Tournoi du Quai, hors du récit.'));
     this.ecranShell('scr-home av-scr',
       h('section', { class: 'av-titre av-accroche', 'data-screen': 'av-titre', 'aria-labelledby': 'av-t' },
         h('div', { class: 'av-emblems', 'aria-hidden': 'true', html: FAMILIES.map((f) => `<span class="fam-${f}">${emblemSvg(f, 30)}</span>`).join('') }),
@@ -317,7 +320,7 @@ export class AventureApp {
     // etre dans un autre panel ») : deux étapes dans le même cadre, le personnage toujours à gauche ; 1. son nom et son
     // apparence, 2. le récit, en deux grandes cartes ; les deux pages occupent la même case, le cadre ne change pas de taille
     const marquerMode = () => boutonsMode.forEach((b, i) => { const oui = (i === 0 ? 'libre' : 'guide') === mode; b.setAttribute('aria-pressed', String(oui)); b.classList.toggle('choisi', oui); });
-    const boutonsMode = (['libre', 'guide'] as const).map((m) => h('button', { class: 'av-nv-mode', type: 'button', 'data-key': `av-recit-${m}`, onclick: () => { mode = m; marquerMode(); } }, h('b', null, NOM_RECIT[m]), h('span', null, TEXTE_RECIT[m])));
+    const boutonsMode = (['libre', 'guide'] as const).map((m) => info(h('button', { class: 'av-nv-mode', type: 'button', 'data-key': `av-recit-${m}`, onclick: () => { mode = m; marquerMode(); } }, h('b', null, NOM_RECIT[m]), h('span', null, ACCROCHE_RECIT[m])), TEXTE_RECIT[m]));
     marquerMode();
     const apercu = h('div', { class: 'av-nv-apercu', 'aria-hidden': 'true' });
     const zone = h('div', { class: 'av-nv-apparence' });
@@ -332,9 +335,8 @@ export class AventureApp {
       zone,
       h('div', { class: 'av-actions' }, bouton('Retour', () => this.titre(), 'av-back'), bouton('Suivant', () => montrer(2), 'av-suite', true)));
     const page2 = h('div', { class: 'av-nv-page', 'data-etape': '2' },
-      h('p', { class: 'av-nv-question' }, 'Comment voulez-vous vivre le récit ?'),
+      h('p', { class: 'av-nv-question' }, 'Comment voulez-vous vivre le récit ?', pastille('Vous pourrez en changer à tout moment, dans le menu de l’aventure.')),
       h('div', { class: 'av-nv-modes', 'data-key': 'av-recit-texte' }, ...boutonsMode),
-      h('p', { class: 'av-nv-note' }, 'Vous pourrez en changer à tout moment, dans le menu de l’aventure.'),
       h('div', { class: 'av-actions' }, bouton('Retour', () => montrer(1), 'av-nv-retour'), bouton('Commencer', go, 'av-start', true)));
     const montrer = (n: 1 | 2) => {
       page1.classList.toggle('cachee', n !== 1);
@@ -352,8 +354,7 @@ export class AventureApp {
     this.ecranShell('scr-home av-scr',
       h('section', { class: 'av-titre av-nouveau', 'data-screen': 'av-nouveau' },
         h('p', { class: 'av-nv-sur' }, 'Nouvelle aventure'),
-        h('h1', { class: 'av-h1' }, 'De la populace'),
-        h('p', { class: 'av-sous' }, 'Ni famille ni Signature : seize cartes grises. Le soir du tournoi, le Quai est plein.'),
+        info(h('h1', { class: 'av-h1' }, 'De la populace'), 'Ni famille ni Signature : seize cartes grises. Le soir du tournoi, le Quai est plein.'),
         h('div', { class: 'av-nv' },
           h('div', { class: 'av-nv-perso' }, apercu, champNom, nomFixe),
           h('div', { class: 'av-nv-reglages' },
@@ -1110,8 +1111,7 @@ export class AventureApp {
               ? h('div', { class: 'av-prepa-liste', 'data-key': 'av-prepa-joueurs' }, ...joueurs.map((j) => this.carteRue(j)))
               : h('p', { class: 'av-sous', 'data-key': 'av-prepa-vide' }, 'Aucun joueur de rue ne vous attend pour ce chapitre.')) : null),
         h('footer', { class: 'av-prepa-pied' },
-          h('p', { class: 'av-proto', 'data-key': 'av-prepa-resume' }, `Votre deck : ${resumeDeck(e.deck)}.`),
-          h('div', { class: 'ville-choices' }, outil('Deck', 'av-prepa-deck', () => this.collection()), outil('Journal', 'av-prepa-journal', () => this.journal()), outil('Menu', 'av-prepa-menu', () => this.menu())))));
+          h('div', { class: 'ville-choices' }, info(outil('Deck', 'av-prepa-deck', () => this.collection()), `Votre deck : ${resumeDeck(e.deck)}.`), outil('Journal', 'av-prepa-journal', () => this.journal()), outil('Menu', 'av-prepa-menu', () => this.menu())))));
     this.rideau.ouvrir();
   }
 
@@ -1164,8 +1164,8 @@ export class AventureApp {
   private rendrePreparation(): void {
     if (this.ecran !== 'preparation' || this.dialog || this.modal) return;
     const hote = this.d.shellHost;
-    const resume = hote.querySelector('[data-key="av-prepa-resume"]');
-    if (resume) resume.textContent = `Votre deck : ${resumeDeck(this.etat.deck)}.`;
+    const deck = hote.querySelector<HTMLElement>('[data-key="av-prepa-deck"]');
+    if (deck) info(deck, `Votre deck : ${resumeDeck(this.etat.deck)}.`);
     hote.querySelector<HTMLElement>('[data-shell-primary]')?.focus({ preventScroll: true });
   }
 
@@ -1384,21 +1384,18 @@ export class AventureApp {
     const [c, b, ch] = ROLES.map((r) => figureDe(f, r));
     const quittee = this.etat.affiliation;
     const panel = h('div', { class: `av-confirm fam-${f}`, 'data-key': 'av-confirmation' },
-      h('div', { class: 'av-confirm-head' }, h('span', { class: `av-emb fam-${f}`, html: emblemSvg(f, 46) }), h('div', null, h('h2', null, `Rejoindre ${la(f)}`), h('p', { class: 'av-devise' }, `${m.nom} · ${m.devise}`))),
-      h('p', null, m.credo),
-      h('h3', null, 'Vous recevrez tout de suite'),
+      h('div', { class: 'av-confirm-head' }, h('span', { class: `av-emb fam-${f}`, html: emblemSvg(f, 46) }), h('div', null, h('h2', null, `Rejoindre ${la(f)}`), h('p', { class: 'av-devise' }, `${m.nom} · ${m.devise}`, pastille(m.credo)))),
+      h('h3', null, 'Vous recevrez tout de suite', pastille(`Les quatre cartes de base ${de(f)} (I à IV) : une carte grise de chaque Rang leur cède sa place dans votre deck.`)),
       h('div', { class: 'av-cards' }, ...[1, 2, 3, 4].map((r) => cardEl(`${f}-${r}-basic`, { artSeed: this.params.artSeed, tag: 'div' }))),
-      h('p', null, `Les quatre cartes de base ${de(f)} (I à IV) : une carte grise de chaque Rang leur cède sa place dans votre deck.`),
       ligneTechnique(m.technique),
       h('h3', null, 'Ensuite'),
       h('ol', { class: 'av-etapes' },
         h('li', null, h('span', null, h('b', null, c!.nom), `, ${roleDe(c!)}`), h('span', null, 'une variante')),
         h('li', null, h('span', null, h('b', null, b!.nom), `, ${roleDe(b!)}`), h('span', null, 'une variante')),
         h('li', null, h('span', null, h('b', null, ch!.nom), `, ${roleDe(ch!)}`), h('span', null, 'sa Signature ∞'))),
-      h('h3', null, 'Ce qui ne change pas'),
-      h('p', null, `Les autres familles restent ouvertes ; quand ${leChef(f)} ${de(f)} sera ${cheffe(f) ? 'vaincue' : 'vaincu'}, vous pourrez engager leur défi à la Salle des Bannières. ${changement && quittee ? `Les cartes déjà reçues restent à vous. Vos adversaires ne comptent que les familles que vous avez rejointes ou dont vous avez engagé le défi : ${la(quittee)} ne comptera qu’à l’engagement de son défi.` : 'Jusqu’à votre premier défi de lieutenant, vous pourrez encore changer de voie.'}`),
+      changement && quittee ? h('p', { class: 'av-aide' }, 'Changement de voie : les cartes déjà reçues restent à vous.', pastille(`Vos adversaires ne comptent que les familles que vous avez rejointes ou dont vous avez engagé le défi : ${la(quittee)} ne comptera qu’à l’engagement de son défi.`)) : null,
       h('div', { class: 'ville-choices' },
-        h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-confirmer', onclick: () => this.confirmer(f, changement) }, 'Confirmer l’affiliation'),
+        info(h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-confirmer', onclick: () => this.confirmer(f, changement) }, 'Confirmer l’affiliation'), `Les autres familles restent ouvertes ; quand ${leChef(f)} ${de(f)} sera ${cheffe(f) ? 'vaincue' : 'vaincu'}, vous pourrez engager leur défi à la Salle des Bannières.${changement && quittee ? '' : ' Jusqu’à votre premier défi de lieutenant, vous pourrez encore changer de voie.'}`),
         h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-revenir', onclick: () => this.fermerModal() }, 'Revenir')));
     this.ouvrirModal(panel);
   }
@@ -1575,17 +1572,15 @@ export class AventureApp {
     const e = this.etat;
     if (!e.affiliation) return this.dire('La Salle des Bannières', '« Le tournoi est réservé aux duellistes des familles. Revenez quand vous appartiendrez à une Voie. » La porte reste close.', [fermer(this)]);
     this.fermerDialogue();
-    const cartes = bannieres(e).map((b) => h('div', { class: `av-banniere fam-${b.famille} etat-${b.etat}`, 'data-key': `av-banniere-${b.famille}`, 'data-etat': b.etat },
+    const cartes = bannieres(e).map((b) => info(h('div', { class: `av-banniere fam-${b.famille} etat-${b.etat}`, 'data-key': `av-banniere-${b.famille}`, 'data-etat': b.etat },
       h('span', { class: `av-emb fam-${b.famille}`, html: emblemSvg(b.famille, 40) }),
       h('b', null, capital(la(b.famille))),
       h('span', { class: 'av-banniere-etat' }, b.etat === 'conquise' ? chefVaincu(b.famille) : ETAT_BANNIERE[b.etat]),
-      h('small', null, b.texte),
-      b.etat === 'engageable' ? h('button', { class: 'ville-btn primary', type: 'button', 'data-key': `dlg-engager-${b.famille}`, onclick: () => this.confirmationEngagement(b.famille) }, 'Engager le défi…') : null));
+      b.etat === 'fermee' ? h('small', null, b.texte) : null,
+      b.etat === 'engageable' ? h('button', { class: 'ville-btn primary', type: 'button', 'data-key': `dlg-engager-${b.famille}`, onclick: () => this.confirmationEngagement(b.famille) }, 'Engager le défi…') : null), b.etat === 'fermee' ? null : b.texte));
     this.ouvrirModal(h('div', { class: 'av-confirm av-large', 'data-key': 'av-bannieres' },
-      h('h2', null, 'La Salle des Bannières'),
-      h('p', null, 'Le maître de table montre les quatre bannières. « Ici, on engage officiellement le défi d’une famille. Entrer dans son quartier, parler à ses membres ou battre l’un d’eux dans la rue n’engage rien : c’est ici, et nulle part ailleurs. »'),
+      h('h2', null, 'La Salle des Bannières', pastille('Le maître de table montre les quatre bannières. « Ici, on engage officiellement le défi d’une famille. Entrer dans son quartier, parler à ses membres ou battre l’un d’eux dans la rue n’engage rien : c’est ici, et nulle part ailleurs. »')),
       h('div', { class: 'av-bannieres' }, ...cartes),
-      h('p', { class: 'av-proto', 'data-key': 'av-bannieres-deck' }, `Votre deck : ${resumeDeck(e.deck)}.`),
       h('div', { class: 'ville-choices' }, h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-bannieres-fermer', onclick: () => this.fermerModal() }, 'Fermer'))));
   }
 
@@ -1601,7 +1596,8 @@ export class AventureApp {
     const m = MAISONS[f];
     const [c, b, ch] = ROLES.map((r) => figureDe(f, r));
     const gb = e.registre.find((g) => g.key === `basics:${f}`);
-    const enjeu = (x: typeof c) => (x!.enjeu.kind === 'variante' ? auChoix(x!.enjeu.defId) : `la Signature ∞ ${de(f)}`);
+    const enjeu = (x: typeof c) => (x!.enjeu.kind === 'variante' ? 'une variante au choix' : 'sa Signature ∞');
+    const enjeuDetail = (x: typeof c) => (x!.enjeu.kind === 'variante' ? auChoix(x!.enjeu.defId) : `la Signature ∞ ${de(f)}`);
     const remis = ap.basicsDeja
       ? `Les quatre cartes de base ${de(f)} sont déjà à vous (${gb ? minuscule(origineGain(gb)) : 'registre'}) : rien n’est remis une seconde fois.${ap.techniqueDeja ? ` La Technique ${m.technique} est déjà apprise.` : ''}`
       : `Les quatre cartes de base ${de(f)} (I à IV)${ap.techniqueDeja ? ` ; la Technique ${m.technique} est déjà apprise.` : '.'}`;
@@ -1609,24 +1605,18 @@ export class AventureApp {
       ? `Votre deck ne change pas (${ap.neutres[0]} carte${ap.neutres[0] > 1 ? 's' : ''} grise${ap.neutres[0] > 1 ? 's' : ''}).`
       : `Une carte grise de chaque Rang cède sa place à la Basic du même Rang : ${ap.neutres[0]} → ${ap.neutres[1]} cartes grises.`;
     this.ouvrirModal(h('div', { class: `av-confirm fam-${f}`, 'data-key': 'av-engagement' },
-      h('div', { class: 'av-confirm-head' }, h('span', { class: `av-emb fam-${f}`, html: emblemSvg(f, 46) }), h('div', null, h('h2', null, `Engager le défi ${de(f)}`), h('p', { class: 'av-devise' }, `${m.nom} · ${m.devise}`))),
-      h('p', null, m.credo),
-      h('h3', null, ap.basicsDeja ? 'Déjà à vous' : 'Vous recevrez tout de suite'),
+      h('div', { class: 'av-confirm-head' }, h('span', { class: `av-emb fam-${f}`, html: emblemSvg(f, 46) }), h('div', null, h('h2', null, `Engager le défi ${de(f)}`), h('p', { class: 'av-devise' }, `${m.nom} · ${m.devise}`, pastille(m.credo)))),
+      ap.basicsDeja ? h('h3', null, 'Déjà à vous') : h('h3', { 'data-key': 'av-engagement-basics' }, 'Vous recevrez tout de suite', pastille(remis)),
       h('div', { class: `av-cards${ap.basicsDeja ? ' av-deja' : ''}` }, ...[1, 2, 3, 4].map((r) => cardEl(`${f}-${r}-basic`, { artSeed: this.params.artSeed, tag: 'div' }))),
-      h('p', { 'data-key': 'av-engagement-basics' }, remis),
+      ap.basicsDeja ? h('p', { 'data-key': 'av-engagement-basics' }, remis) : null,
       !ap.basicsDeja && !ap.techniqueDeja ? ligneTechnique(m.technique) : null,
       h('h3', null, 'Votre deck'),
       h('p', { class: 'av-transition', 'data-key': 'av-engagement-deck' }, deck, ap.standard ? h('b', { class: 'av-standard' }, ` ${STANDARD}`) : null),
-      h('h3', null, 'Ensuite'),
+      h('h3', null, 'Ensuite', pastille(`Leur maison : ${m.nom}, ${OU_ILOT[m.ilot]}. Dans le quartier, l’Épreuve (${nomCarte(varianteDe(f, 1))}) ; après le bras droit, la Joute de la maison (${nomCarte(varianteDe(f, 2))}).`)),
       h('ol', { class: 'av-etapes' },
-        h('li', null, h('span', null, h('b', null, c!.nom), `, ${c!.titre}`), h('span', null, enjeu(c))),
-        h('li', null, h('span', null, h('b', null, b!.nom), `, ${b!.titre}`), h('span', null, enjeu(b))),
-        h('li', null, h('span', null, h('b', null, ch!.nom), `, ${ch!.titre}`), h('span', null, enjeu(ch)))),
-      h('p', { class: 'av-aide' }, 'Leur maison : ', h('b', null, m.nom), `, ${OU_ILOT[m.ilot]}. Dans le quartier, l’Épreuve (${nomCarte(varianteDe(f, 1))}) ; après le bras droit, la Joute de la maison (${nomCarte(varianteDe(f, 2))}).`),
-      h('h3', null, 'Ce qui ne change pas'),
-      h('p', null, `Votre famille reste ${la(e.affiliation!)}. Les autres défis restent ouverts, dans l’ordre que vous voulez ; une défaite ne ferme rien.`),
+        ...[c, b, ch].map((x) => info(h('li', null, h('span', null, h('b', null, x!.nom), `, ${x!.titre}`), h('span', null, enjeu(x))), capital(enjeuDetail(x))))),
       h('div', { class: 'ville-choices' },
-        h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-engager-confirmer', onclick: () => this.engager(f) }, 'Engager le défi'),
+        info(h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-engager-confirmer', onclick: () => this.engager(f) }, 'Engager le défi'), `Votre famille reste ${la(e.affiliation!)}. Les autres défis restent ouverts, dans l’ordre que vous voulez ; une défaite ne ferme rien.`),
         h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-engager-revenir', onclick: () => this.salleDesBannieres() }, 'Revenir'))));
   }
 
@@ -1672,7 +1662,7 @@ export class AventureApp {
       h('div', { class: 'ville-choices' },
         h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-duel-go', onclick: () => this.lancer(prevu) }, 'Commencer le duel'),
         forcee ? null : h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-duel-back', onclick: () => this.fermerModal() }, 'Plus tard')),
-      forcee ? h('p', { class: 'av-proto', 'data-key': 'av-duel-force' }, 'Ce duel ne se refuse pas. Vous pourrez l’abandonner depuis le menu du duel, sans rien perdre.') : null);
+      forcee ? h('p', { class: 'av-aide', 'data-key': 'av-duel-force' }, 'Ce duel ne se refuse pas.', pastille('Vous pourrez l’abandonner depuis le menu du duel, sans rien perdre.')) : null);
     this.ouvrirModal(panel, forcee);
   }
 
@@ -1864,8 +1854,7 @@ export class AventureApp {
         h('h1', { class: 'av-h1' }, 'Victoire'),
         h('p', { class: 'av-trait' }, h('span', null, 'contre ', h('b', null, decouperTitre(prevu.titre).adversaire))),
         h('div', { class: 'av-bilan-panneau' },
-          h('h3', { class: 'av-choix-consigne' }, `Choisissez votre ${ident.name}`),
-          h('p', { class: 'av-choix-aide' }, 'La variante choisie entre au registre et remplace la carte de base dans votre deck. Les deux autres se gagnent ensuite, en revanche ou au titre du Championnat.'),
+          h('h3', { class: 'av-choix-consigne' }, `Choisissez votre ${ident.name}`, pastille('La variante choisie entre au registre et remplace la carte de base dans votre deck. Les deux autres se gagnent ensuite, en revanche ou au titre du Championnat.')),
         h('div', { class: 'av-choix-cartes' }, ...ids.map((id, i) => {
           const d = CATALOG[id]!;
           return h('div', { class: 'av-choix-carte', 'data-key': `av-choix-carte-${id}` },
@@ -1905,11 +1894,10 @@ export class AventureApp {
         h('div', { class: 'av-bilan-panneau' },
           h('div', { class: 'av-bilan-cases' },
             h('div', { class: 'av-bilan-case' },
-              h('h3', null, 'Entraînement'),
+              h('h3', null, 'Entraînement', pastille(pvMonte ? `+${PV_PAR_COMBAT} PV à chaque combat mené à son terme.` : 'Un abandon ne fait pas monter vos PV.')),
               h('p', { class: 'av-pv', 'data-key': 'av-pv' }, ...(pvMonte
                 ? [h('span', { class: 'av-pv-avant' }, String(r.pv[0])), h('span', { class: 'av-fleche', 'aria-label': 'passent à' }, '→'), h('b', null, String(r.pv[1])), h('small', null, ' PV')]
-                : [h('b', null, String(r.pv[0])), h('small', null, ' PV')])),
-              h('small', { class: 'av-bilan-aide' }, pvMonte ? `+${PV_PAR_COMBAT} à chaque combat mené à son terme.` : 'Un abandon ne compte pas.')),
+                : [h('b', null, String(r.pv[0])), h('small', null, ' PV')])),),
             prologue ? h('div', { class: 'av-bilan-case', 'data-key': 'av-faits' },
               h('h3', null, 'Ce que la foule a vu'),
               h('div', { class: 'av-stats' },
@@ -2055,8 +2043,8 @@ export class AventureApp {
       const p = personnalite(apparence, { nom: titre, titre: '' });
       box.append(h('img', { class: 'ville-portrait', alt: '', src: portraitUrl(p, this.params.artSeed) }));
     }
-    const row = h('div', { class: 'ville-choices' }, ...choix.map((c) => h('button', { class: `ville-btn${c.primary ? ' primary' : ''}`, type: 'button', 'data-key': c.key, onclick: () => c.run() }, ...(panneau ? ligneMenu(c.label) : [c.label]))));
-    box.append(h('div', { class: 'ville-dialog-body' }, h('b', null, titre), h('p', null, texte), row));
+    const row = h('div', { class: 'ville-choices' }, ...choix.map((c) => info(h('button', { class: `ville-btn${c.primary ? ' primary' : ''}`, type: 'button', 'data-key': c.key, onclick: () => c.run() }, ...(panneau ? ligneMenu(c.label) : [c.label])), c.info)));
+    box.append(h('div', { class: 'ville-dialog-body' }, h('b', null, titre), texte ? h('p', null, texte) : null, row));
     // M14 : une scène du Récit guidé ne se quitte pas à Échap, sauf si elle a un bouton pour se fermer
     const tenue = this.dialogueTenu = forcee || (this.verrouRecit && !choix.some((c) => c.key === 'dlg-close'));
     box.addEventListener('keydown', (e) => { if (e.key === 'Escape') { e.stopPropagation(); if (!tenue) this.fermerDialogue(); } });
@@ -2125,9 +2113,8 @@ export class AventureApp {
     if (gains.length) son().jouer('gain');
     const panel = h('div', { class: 'av-confirm av-recompense', 'data-key': 'av-recompense' },
       h('h2', null, titre),
-      gains.length ? h('h3', null, 'Entre au registre') : null,
+      gains.length ? h('h3', null, 'Entre au registre', pastille('Inscrit une seule fois : un rechargement ou une reprise ne le duplique pas.')) : null,
       gains.length ? h('div', { class: 'av-gains' }, ...gains.flatMap((g) => gainLegendes(g, this.params.artSeed))) : null,
-      gains.length ? h('p', { class: 'av-aide' }, 'Inscrit une seule fois : un rechargement ou une reprise ne le duplique pas.') : null,
       ...notes.map((n, i) => h('p', { class: 'av-transition', 'data-key': `av-recompense-note-${i}` }, n)),
       h('div', { class: 'ville-choices' }, h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-continuer', onclick: () => { this.fermerModal(); suite(); } }, 'Continuer')));
     this.ouvrirModal(panel);
@@ -2140,7 +2127,7 @@ export class AventureApp {
     if (this.force) return;
     if (this.modal) { this.fermerModal(); return; }
     if (this.dialog) { if (!this.dialogueTenu) this.fermerDialogue(); return; }
-    this.dire('Menu', 'L’aventure est sauvegardée à chaque étape.', [
+    this.dire('Menu', '', [
       { label: 'Reprendre', key: 'dlg-close', primary: true, run: () => this.fermerDialogue() },
       { label: 'Deck et collection', key: 'menu-deck', run: () => { this.fermerDialogue(); this.collection(); } },
       { label: 'Journal des quêtes', key: 'menu-journal', run: () => { this.fermerDialogue(); this.journal(); } },
@@ -2235,7 +2222,7 @@ export class AventureApp {
       const sel = caseSel;
       const choix = sel === null ? [] : choixPourCase(draft, col, sel);
       const panneau = sel === null
-        ? h('p', { class: 'av-aide' }, 'Choisissez une case pour voir ce qui peut y entrer : une neutre, ou la Basic ou une variante possédée d’une identité qui n’est pas déjà dans le deck.')
+        ? h('p', { class: 'av-aide' }, 'Choisissez une case pour la changer.', pastille('Peut y entrer : une neutre, ou la Basic ou une variante possédée d’une identité qui n’est pas déjà dans le deck.'))
         : h('div', { class: 'av-choix', 'data-key': 'av-choix' },
           h('p', null, choix.length > 1 ? `Rang ${ROMAIN[rangDe(draft.cartes[sel]!)]} : mettre dans cette case` : 'Aucune autre carte possédée pour cette case (une identité ne se joue qu’une fois).'),
           ...choix.map((c) => h('button', {
@@ -2243,7 +2230,7 @@ export class AventureApp {
             onclick: () => { draft = remplacerCase(draft, col, sel, c); caseSel = null; render(); },
           }, carte(c), h('small', null, c === draft.cartes[sel] ? `${version(c)} (en place)` : version(c)))));
       const sigs = h('div', { class: 'ville-choices' }, ...[null, ...col.signatures].map((f) => h('button', { class: `ville-btn${draft.signature === f ? ' primary' : ''}`, type: 'button', 'data-key': `av-sig-${f ?? 'aucune'}`, onclick: () => { draft = equiperSignature(draft, f); render(); } }, f ? CATALOG[`sig-${f}`]!.name : 'Aucune')));
-      const techs = h('div', { class: 'ville-choices' }, ...col.techniques.map((t: TechniqueId) => h('button', { class: `ville-btn${draft.techniques.includes(t) ? ' primary' : ''}`, type: 'button', 'data-key': `av-tech-${t}`, title: TECHNIQUES[t].text, onclick: () => { draft = basculerTechnique(draft, col, t); render(); } }, t)));
+      const techs = h('div', { class: 'ville-choices' }, ...col.techniques.map((t: TechniqueId) => h('button', { class: `ville-btn${draft.techniques.includes(t) ? ' primary' : ''}`, type: 'button', 'data-key': `av-tech-${t}`, 'data-info': TECHNIQUES[t].text, onclick: () => { draft = basculerTechnique(draft, col, t); render(); } }, t)));
       const cote = h('div', { class: 'av-deck-cote' },
         panneau,
         h('h3', null, `Signature (${col.signatures.length ? `${col.signatures.length} possédée${col.signatures.length > 1 ? 's' : ''}, une seule équipée` : 'aucune : battez un chef'})`),
@@ -2259,11 +2246,12 @@ export class AventureApp {
 
     const vueCollectionEl = (): HTMLElement[] => {
       const v = vueCollection(s.etat);
-      const entree = (x: EntreeCollection, titre: string) => h('div', { class: `av-col-entree${x.possedee ? '' : ' verrou'}`, 'data-key': `av-col-${x.id}`, 'data-possedee': x.possedee ? 'true' : 'false' },
-        h('span', { class: 'av-col-titre' }, titre), cardEl(x.id, { artSeed: art, tag: 'div' }),
-        h('span', { class: 'av-col-texte' }, `${x.possedee ? '' : '🔒 '}${x.texte}`), x.dansDeck ? h('span', { class: 'av-badge' }, 'dans le deck') : null);
+      // passe 209 : comment gagner la carte (ou d'où elle vient) se lit au survol
+      const entree = (x: EntreeCollection, titre: string) => info(h('div', { class: `av-col-entree${x.possedee ? '' : ' verrou'}`, 'data-key': `av-col-${x.id}`, 'data-possedee': x.possedee ? 'true' : 'false' },
+        h('span', { class: 'av-col-titre' }, `${x.possedee ? '' : '🔒 '}${titre}`), cardEl(x.id, { artSeed: art, tag: 'div' }),
+        x.dansDeck ? h('span', { class: 'av-badge' }, 'dans le deck') : null), x.texte);
       return [
-        h('p', null, `Cartes familiales et Signatures : ${v.compte.possedees} sur ${v.compte.total}. Rien n’est caché : chaque carte dit comment la gagner.`),
+        h('p', null, 'Cartes familiales et Signatures : ', h('b', null, String(v.compte.possedees)), ` sur ${v.compte.total}`, pastille('Rien n’est caché : survolez une carte pour savoir comment la gagner.')),
         h('h3', null, 'Neutres (la populace)'),
         h('div', { class: 'av-cards' }, ...v.neutres.map((n) => h('div', { class: 'av-col-entree' }, neutreEl(n.id, `×${n.possedees}`), h('span', { class: 'av-col-texte' }, `${n.dansDeck} dans le deck`)))),
         ...v.familles.map((f) => h('section', { class: `av-col-fam fam-${f.famille}`, 'data-key': `av-col-fam-${f.famille}` },
@@ -2273,12 +2261,12 @@ export class AventureApp {
             ...RANGS.flatMap((r, i) => [entree(f.basics[i]!, `Basic ${ROMAIN[r]}`), ...f.variantes.slice(3 * i, 3 * i + 3).map((x) => entree(x, `${ROMAIN[r]} ${x.lettre ?? ''}`.trim()))]),
             entree(f.signature, 'Signature')))),
         h('h3', null, 'Techniques'),
-        h('ul', { class: 'av-col-techs' }, ...v.techniques.map((t) => h('li', { class: t.possedee ? 'faite' : '', title: TECHNIQUES[t.id as TechniqueId].text }, `${t.possedee ? '✓' : '🔒'} ${t.id} — ${t.texte}${t.dansDeck ? ' (équipée)' : ''}`))),
+        h('ul', { class: 'av-col-techs' }, ...v.techniques.map((t) => h('li', { class: t.possedee ? 'faite' : '', 'data-info': TECHNIQUES[t.id as TechniqueId].text }, `${t.possedee ? '✓' : '🔒'} ${t.id} — ${t.texte}${t.dansDeck ? ' (équipée)' : ''}`))),
       ];
     };
 
     const vueRegistre = (): HTMLElement[] => [
-      h('p', null, 'Chaque gain est inscrit une fois, avec son origine : une reprise n’en ajoute jamais ; une revanche gagnée ne donne qu’une variante pas encore possédée.'),
+      h('p', null, nombre(s.etat.registre.length, 'gain inscrit', 'gains inscrits'), pastille('Chaque gain est inscrit une fois, avec son origine : une reprise n’en ajoute jamais ; une revanche gagnée ne donne qu’une variante pas encore possédée.')),
       h('ol', { class: 'av-registre', 'data-key': 'av-registre' }, ...s.etat.registre.map((g) => h('li', null, `${nomGain(g)} — ${origineGain(g)}`))),
     ];
 
@@ -2464,7 +2452,7 @@ const nombre = (n: number, un: string, plusieurs: string): string => `${n} ${n >
 
 /** Une Technique reçue : son nom en évidence, ce qu'elle fait dessous. */
 function ligneTechnique(t: TechniqueId): HTMLElement {
-  return h('div', { class: 'av-tech-ligne' }, h('span', { class: 'av-tech-nom' }, h('small', null, 'Technique'), h('b', null, t)), h('span', null, TECHNIQUES[t].text));
+  return h('div', { class: 'av-tech-ligne' }, h('small', null, 'Technique'), h('b', null, t), pastille(TECHNIQUES[t].text));
 }
 
 /** Titre d'une rencontre « Genre — détail — adversaire » : le genre en surtitre, l'adversaire en évidence, le détail entre les deux. */

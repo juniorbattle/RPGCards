@@ -73,7 +73,7 @@ try {
   const presse = (k) => p.getAttribute(`[data-key="av-recit-${k}"]`, 'aria-pressed');
   check(await presse('libre') === 'true' && await presse('guide') === 'false', 'nouvelle aventure : Promenade libre présélectionnée');
   await p.click('[data-key="av-recit-guide"]');
-  check(await presse('guide') === 'true' && /événement en événement/.test(await p.textContent('[data-key="av-recit-texte"]')), 'Récit guidé choisi, son texte affiché');
+  check(await presse('guide') === 'true' && /événement en événement/.test(await p.getAttribute('[data-key="av-recit-guide"]', 'data-info')), 'Récit guidé choisi, son texte en infobulle (passe 209)');
   await shot('choix-du-mode');
   await p.click('[data-key="av-start"]');
   await pret();
