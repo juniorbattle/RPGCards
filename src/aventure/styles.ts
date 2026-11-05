@@ -345,6 +345,20 @@ export function installAventureStyles(): void {
    étirées (60 × 134 à la préparation, au résultat) ou trapues (108 × 134 au choix). Chaque carte de l'aventure reprend sa
    hauteur à 1,4 fois sa largeur, comme au duel. */
 :is(.av-titre, .av-confirm, .av-prepa, .av-modal, .av-cards, .av-choix-cartes, .av-enjeu, .av-deck-cards, .av-rang-cases, .av-choix, .av-col-cartes, .av-gains, .av-gain-pile) .card { --card-h: calc(var(--card-w) * 1.4); --radius: calc(var(--card-w) * 0.07); }
-${STYLES_CINEMA}`;
+/* passe 209 — retour du test : « encore trop de texte descriptif visible […] des tooltips si on a besoin d'infos
+   supplémentaires ». L'écran garde l'essentiel ; le détail se lit dans une bulle (infobulle.ts), au survol ou au clavier,
+   sur l'élément lui-même ou sur une pastille « i » posée à côté d'un titre. */
+.lqv-infobulle { position: fixed; z-index: 5000; max-width: min(340px, calc(100vw - 16px)); box-sizing: border-box; padding: 8px 12px; border: 1px solid rgba(226, 196, 138, 0.7); background: linear-gradient(180deg, #1b1c2b, #10111b); box-shadow: 0 10px 28px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgba(0, 0, 0, 0.6); color: var(--lqv-ivoire); font: 14px/1.45 Georgia, serif; text-align: left; pointer-events: none; opacity: 0; transform: translateY(3px); transition: opacity 0.14s ease-out, transform 0.14s ease-out; }
+.lqv-infobulle.dessous { transform: translateY(-3px); }
+.lqv-infobulle.visible { opacity: 1; transform: none; }
+.av-info { display: inline-grid; place-items: center; width: 17px; height: 17px; margin: 0 0 0 8px; padding: 0; vertical-align: 0.12em; border: 1px solid rgba(226, 196, 138, 0.75); border-radius: 50%; background: rgba(226, 196, 138, 0.08); color: var(--lqv-or); font: italic 700 11px/1 Georgia, serif; letter-spacing: 0; text-transform: none; cursor: help; transition: background 0.15s, color 0.15s; }
+.av-info:hover, .av-info:focus-visible { background: var(--lqv-or); color: #1a1408; outline: none; }
+:is(.av-titre, .av-confirm, .av-prepa, .av-ecran, .av-modal, .shell) [data-info]:not(button):not(a) { cursor: help; }
+.av-tech-ligne { align-items: center; gap: 10px; }
+.av-tech-ligne > small { color: var(--lqv-or); font: 700 10.5px/1.3 Georgia, serif; letter-spacing: 0.14em; text-transform: uppercase; }
+.av-tech-ligne > b { color: var(--lqv-or-clair); font: 700 17px/1.2 Georgia, serif; }
+.av-tech-ligne > .av-info { margin-left: 0; }
+.av-nv-mode { min-height: 110px; align-content: center; }
+${STYLES_CINEMA}`
   document.head.append(s);
 }
