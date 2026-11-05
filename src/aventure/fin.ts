@@ -57,7 +57,11 @@ export function choixVariante(e: AventureEtat, rencontre: string): string[] | nu
   }
   if (!identite) return null;
   const ids = variantesIdentite(identite);
-  return ids.some((v) => aGain(e.registre, `variante:${v}`)) ? null : ids;
+  // M16 (contrat §2.5) : une variante de l'identité déjà trouvée en ville : le choix porte sur celles qui manquent encore
+  // (une seule qui manque : elle est donnée sans choix ; aucune : plus rien à gagner ici)
+  const manquantes = ids.filter((v) => !aGain(e.registre, `variante:${v}`));
+  if (manquantes.length === ids.length) return ids;
+  return manquantes.length >= 2 && ids.some((v) => e.registre.find((g) => g.key === `variante:${v}`)?.source.startsWith('collecte:')) ? manquantes : null;
 }
 
 /**
@@ -122,6 +126,9 @@ export function conclureDuel(s: AventureSave, duel: DuelAventure, events: readon
     refus = r.refus;
     s.etat = r.etat;
     gains = r.gains;
+  } else if (rencontre.startsWith('gardien:')) {
+    // M16 : le gardien d'un point de collecte battu laisse sa carte (le point se ramasse ensuite) ; perdu, il la garde
+    s.etat = appliquer(s.etat, { type: 'gardien', point: rencontre.slice(8), issue }, at).etat;
   } else if (rencontre.startsWith('rival:') && isKId(rencontre.slice(6))) {
     // M11-A : événement fixe du rival ; accompli à l'issue d'un duel mené à son terme (un abandon le laisse dû)
     s.etat = appliquer(s.etat, { type: 'rival', id: rencontre.slice(6) as KId, issue }, at).etat;

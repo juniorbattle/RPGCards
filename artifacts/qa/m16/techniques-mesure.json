@@ -1,0 +1,389 @@
+{
+  "head": "6b8cf45",
+  "duelsParCas": 200,
+  "secondes": 86,
+  "tableau": [
+    {
+      "cas": "prologue — Kaï, cartes grises",
+      "avant": 67,
+      "sondage": 67,
+      "recentrage": 72.5,
+      "ecartSondage": 0,
+      "ecartRecentrage": 5.5
+    },
+    {
+      "cas": "chapitre I — duel de rue (populace)",
+      "avant": 63.5,
+      "sondage": 75,
+      "recentrage": 64.5,
+      "ecartSondage": 11.5,
+      "ecartRecentrage": 1
+    },
+    {
+      "cas": "chapitre I — Épreuve Cendre",
+      "avant": 72.5,
+      "sondage": 73,
+      "recentrage": 72.5,
+      "ecartSondage": 0.5,
+      "ecartRecentrage": 0
+    },
+    {
+      "cas": "chapitre I — premier cadet Cendre",
+      "avant": 56.5,
+      "sondage": 57.5,
+      "recentrage": 55.5,
+      "ecartSondage": 1,
+      "ecartRecentrage": -1
+    },
+    {
+      "cas": "chapitre I — Épreuve Voile",
+      "avant": 68.5,
+      "sondage": 72.5,
+      "recentrage": 68.5,
+      "ecartSondage": 4,
+      "ecartRecentrage": 0
+    },
+    {
+      "cas": "chapitre I — premier cadet Voile",
+      "avant": 58,
+      "sondage": 57.5,
+      "recentrage": 58,
+      "ecartSondage": -0.5,
+      "ecartRecentrage": 0
+    },
+    {
+      "cas": "chapitre I — Épreuve Ronce",
+      "avant": 70.5,
+      "sondage": 70,
+      "recentrage": 70,
+      "ecartSondage": -0.5,
+      "ecartRecentrage": -0.5
+    },
+    {
+      "cas": "chapitre I — premier cadet Ronce",
+      "avant": 61.5,
+      "sondage": 66,
+      "recentrage": 61,
+      "ecartSondage": 4.5,
+      "ecartRecentrage": -0.5
+    },
+    {
+      "cas": "chapitre I — Épreuve Astre",
+      "avant": 69,
+      "sondage": 70,
+      "recentrage": 71.5,
+      "ecartSondage": 1,
+      "ecartRecentrage": 2.5
+    },
+    {
+      "cas": "chapitre I — premier cadet Astre",
+      "avant": 66.5,
+      "sondage": 64.5,
+      "recentrage": 66,
+      "ecartSondage": -2,
+      "ecartRecentrage": -0.5
+    }
+  ],
+  "lignes": [
+    {
+      "cas": "prologue — Kaï, cartes grises",
+      "calendrier": "avant (2 contre 2)",
+      "victoires": 134,
+      "duels": 200,
+      "taux": 67,
+      "tours": 5.8,
+      "joueur": "Sondage + Recentrage",
+      "adversaire": "Sondage + Recentrage"
+    },
+    {
+      "cas": "chapitre I — duel de rue (populace)",
+      "calendrier": "avant (2 contre 2)",
+      "victoires": 127,
+      "duels": 200,
+      "taux": 63.5,
+      "tours": 6.1,
+      "joueur": "Recentrage + Lecture",
+      "adversaire": "Sondage + Recentrage"
+    },
+    {
+      "cas": "chapitre I — Épreuve Cendre",
+      "calendrier": "avant (2 contre 2)",
+      "victoires": 145,
+      "duels": 200,
+      "taux": 72.5,
+      "tours": 5.7,
+      "joueur": "Recentrage + Lecture",
+      "adversaire": "Sondage + Lecture"
+    },
+    {
+      "cas": "chapitre I — premier cadet Cendre",
+      "calendrier": "avant (2 contre 2)",
+      "victoires": 113,
+      "duels": 200,
+      "taux": 56.5,
+      "tours": 7.1,
+      "joueur": "Recentrage + Lecture",
+      "adversaire": "Sondage + Lecture"
+    },
+    {
+      "cas": "chapitre I — Épreuve Voile",
+      "calendrier": "avant (2 contre 2)",
+      "victoires": 137,
+      "duels": 200,
+      "taux": 68.5,
+      "tours": 5.8,
+      "joueur": "Recentrage + Dissipation",
+      "adversaire": "Sondage + Dissipation"
+    },
+    {
+      "cas": "chapitre I — premier cadet Voile",
+      "calendrier": "avant (2 contre 2)",
+      "victoires": 116,
+      "duels": 200,
+      "taux": 58,
+      "tours": 7,
+      "joueur": "Recentrage + Dissipation",
+      "adversaire": "Sondage + Dissipation"
+    },
+    {
+      "cas": "chapitre I — Épreuve Ronce",
+      "calendrier": "avant (2 contre 2)",
+      "victoires": 141,
+      "duels": 200,
+      "taux": 70.5,
+      "tours": 5.6,
+      "joueur": "Recentrage + Rupture",
+      "adversaire": "Sondage + Rupture"
+    },
+    {
+      "cas": "chapitre I — premier cadet Ronce",
+      "calendrier": "avant (2 contre 2)",
+      "victoires": 123,
+      "duels": 200,
+      "taux": 61.5,
+      "tours": 6.8,
+      "joueur": "Recentrage + Rupture",
+      "adversaire": "Sondage + Rupture"
+    },
+    {
+      "cas": "chapitre I — Épreuve Astre",
+      "calendrier": "avant (2 contre 2)",
+      "victoires": 138,
+      "duels": 200,
+      "taux": 69,
+      "tours": 5.5,
+      "joueur": "Recentrage + Ancrage",
+      "adversaire": "Sondage + Ancrage"
+    },
+    {
+      "cas": "chapitre I — premier cadet Astre",
+      "calendrier": "avant (2 contre 2)",
+      "victoires": 133,
+      "duels": 200,
+      "taux": 66.5,
+      "tours": 6.9,
+      "joueur": "Recentrage + Ancrage",
+      "adversaire": "Sondage + Ancrage"
+    },
+    {
+      "cas": "prologue — Kaï, cartes grises",
+      "calendrier": "M16, Sondage (1 contre 1)",
+      "victoires": 134,
+      "duels": 200,
+      "taux": 67,
+      "tours": 5.8,
+      "joueur": "Sondage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — duel de rue (populace)",
+      "calendrier": "M16, Sondage (1 contre 1)",
+      "victoires": 150,
+      "duels": 200,
+      "taux": 75,
+      "tours": 5.8,
+      "joueur": "Sondage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — Épreuve Cendre",
+      "calendrier": "M16, Sondage (1 contre 1)",
+      "victoires": 146,
+      "duels": 200,
+      "taux": 73,
+      "tours": 5.8,
+      "joueur": "Sondage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — premier cadet Cendre",
+      "calendrier": "M16, Sondage (1 contre 1)",
+      "victoires": 115,
+      "duels": 200,
+      "taux": 57.5,
+      "tours": 7,
+      "joueur": "Sondage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — Épreuve Voile",
+      "calendrier": "M16, Sondage (1 contre 1)",
+      "victoires": 145,
+      "duels": 200,
+      "taux": 72.5,
+      "tours": 5.7,
+      "joueur": "Sondage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — premier cadet Voile",
+      "calendrier": "M16, Sondage (1 contre 1)",
+      "victoires": 115,
+      "duels": 200,
+      "taux": 57.5,
+      "tours": 6.9,
+      "joueur": "Sondage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — Épreuve Ronce",
+      "calendrier": "M16, Sondage (1 contre 1)",
+      "victoires": 140,
+      "duels": 200,
+      "taux": 70,
+      "tours": 5.5,
+      "joueur": "Sondage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — premier cadet Ronce",
+      "calendrier": "M16, Sondage (1 contre 1)",
+      "victoires": 132,
+      "duels": 200,
+      "taux": 66,
+      "tours": 6.6,
+      "joueur": "Sondage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — Épreuve Astre",
+      "calendrier": "M16, Sondage (1 contre 1)",
+      "victoires": 140,
+      "duels": 200,
+      "taux": 70,
+      "tours": 5.7,
+      "joueur": "Sondage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — premier cadet Astre",
+      "calendrier": "M16, Sondage (1 contre 1)",
+      "victoires": 129,
+      "duels": 200,
+      "taux": 64.5,
+      "tours": 7,
+      "joueur": "Sondage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "prologue — Kaï, cartes grises",
+      "calendrier": "M16, Recentrage (1 contre 1)",
+      "victoires": 145,
+      "duels": 200,
+      "taux": 72.5,
+      "tours": 5.7,
+      "joueur": "Recentrage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — duel de rue (populace)",
+      "calendrier": "M16, Recentrage (1 contre 1)",
+      "victoires": 129,
+      "duels": 200,
+      "taux": 64.5,
+      "tours": 6.1,
+      "joueur": "Recentrage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — Épreuve Cendre",
+      "calendrier": "M16, Recentrage (1 contre 1)",
+      "victoires": 145,
+      "duels": 200,
+      "taux": 72.5,
+      "tours": 5.6,
+      "joueur": "Recentrage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — premier cadet Cendre",
+      "calendrier": "M16, Recentrage (1 contre 1)",
+      "victoires": 111,
+      "duels": 200,
+      "taux": 55.5,
+      "tours": 7.2,
+      "joueur": "Recentrage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — Épreuve Voile",
+      "calendrier": "M16, Recentrage (1 contre 1)",
+      "victoires": 137,
+      "duels": 200,
+      "taux": 68.5,
+      "tours": 5.8,
+      "joueur": "Recentrage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — premier cadet Voile",
+      "calendrier": "M16, Recentrage (1 contre 1)",
+      "victoires": 116,
+      "duels": 200,
+      "taux": 58,
+      "tours": 7,
+      "joueur": "Recentrage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — Épreuve Ronce",
+      "calendrier": "M16, Recentrage (1 contre 1)",
+      "victoires": 140,
+      "duels": 200,
+      "taux": 70,
+      "tours": 5.6,
+      "joueur": "Recentrage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — premier cadet Ronce",
+      "calendrier": "M16, Recentrage (1 contre 1)",
+      "victoires": 122,
+      "duels": 200,
+      "taux": 61,
+      "tours": 6.8,
+      "joueur": "Recentrage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — Épreuve Astre",
+      "calendrier": "M16, Recentrage (1 contre 1)",
+      "victoires": 143,
+      "duels": 200,
+      "taux": 71.5,
+      "tours": 5.5,
+      "joueur": "Recentrage",
+      "adversaire": "Sondage"
+    },
+    {
+      "cas": "chapitre I — premier cadet Astre",
+      "calendrier": "M16, Recentrage (1 contre 1)",
+      "victoires": 132,
+      "duels": 200,
+      "taux": 66,
+      "tours": 6.9,
+      "joueur": "Recentrage",
+      "adversaire": "Sondage"
+    }
+  ]
+}

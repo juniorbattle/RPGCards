@@ -18,6 +18,21 @@
 | T6 | Aventures en cours | Gardent tout ; calendrier pour les nouvelles aventures |
 | S1 | Calendrier | Développer avant le test complet du responsable |
 
-## Décisions du responsable
+## Décisions du responsable (fiche remplie le 2026-11-05, consignée à la passe 212)
 
-_À consigner quand la fiche sera remplie._
+| Id | Choix | Écart |
+|---|---|---|
+| C1 | Variante manquante d'une famille rejointe ou engagée | — |
+| C2 | Un par quartier et par chapitre (une dizaine) | — |
+| C3 | Mélange : libres, gardés, annoncés par rumeur | — |
+| C4 | Carte qui scintille, toujours visible | — |
+| C5 | Réservés à la Promenade libre | — |
+| T1 | Au choix, Sondage ou Recentrage, à la nouvelle aventure | — |
+| T2 | Première victoire sur un cadet | — |
+| T3 | **Victoire sur le chef, avec la Signature** | **écart** : la recommandation était le bras droit |
+| T4 | Amendement accepté (une ou deux Techniques) | — |
+| T5 | Une seule pour les premiers paliers, mesuré | — |
+| T6 | Gardent tout, calendrier pour les nouvelles | — |
+| S1 | Avant mon test complet | — |
+
+Aucune note écrite. Consigne du responsable en remettant la fiche : « le mode promenade doit permettre d'apporter ce côté captivant » (la découverte des points de collecte doit être mise en valeur : piste, garde, carte révélée).

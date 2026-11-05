@@ -45,8 +45,14 @@ function devant(p: Pose): { x: number; z: number; face: 'dos' | 'gauche' | 'droi
 /** Le nom d'un îlot dans l'aventure : les îlots en rangs du laboratoire portent une mention (« le Quai (en rangs, preuve) »). */
 export const nomIlot = (id: IlotId, quaiRangs = false, ouverts: ReadonlySet<IlotId> = new Set()): string => ilotBase(id, quaiRangs, ouverts).ilot.name.replace(/ \([^)]*\)$/, '');
 
-/** Définition d'îlot de l'aventure : l'îlot M09 nu + les personnages posés par le directeur. */
-export function ilotAventure(id: IlotId, poses: readonly Pose[], quaiRangs = false, ouverts: ReadonlySet<IlotId> = new Set()): IlotDef {
+/** M16 : rayon de la zone d'un point de collecte (on s'en approche pour ramasser la carte). */
+const COLLECTE_R = 1.1;
+
+/**
+ * Définition d'îlot de l'aventure : l'îlot M09 nu + les personnages posés par le directeur ; `tresors` (M16) : les points
+ * de collecte allumés de cet îlot (une zone « info » chacun, ciblée `collecte:<id>` ; ce ne sont pas des obstacles).
+ */
+export function ilotAventure(id: IlotId, poses: readonly Pose[], quaiRangs = false, ouverts: ReadonlySet<IlotId> = new Set(), tresors: ReadonlyArray<{ id: string; at: { x: number; z: number }; label: string }> = []): IlotDef {
   const d = ilotBase(id, quaiRangs, ouverts);
   const nu = ilotNu(id, quaiRangs, ouverts);
   const npcs: IlotNpc[] = poses.map((p) => ({ id: p.apparence, at: p.at, facing: p.facing, role: p.genre === 'structurante' ? 'rival' : 'duel' }));
@@ -55,7 +61,8 @@ export function ilotAventure(id: IlotId, poses: readonly Pose[], quaiRangs = fal
     name: nomIlot(id, quaiRangs, ouverts),
     discs: [...nu.discs, ...poses.map((p): Disc => ({ ...p.at, r: NPC_R }))],
     // la cible d'une zone « parler » est l'identifiant de la RENCONTRE (le produit décide, la ville ne lit rien)
-    zones: [...nu.zones, ...poses.map((p): Zone => ({ id: `npc-${p.id}`, kind: 'parler', label: parlerA(p.nom), target: p.id, area: { x: p.at.x, z: p.at.z, r: TALK } }))],
+    zones: [...nu.zones, ...poses.map((p): Zone => ({ id: `npc-${p.id}`, kind: 'parler', label: parlerA(p.nom), target: p.id, area: { x: p.at.x, z: p.at.z, r: TALK } })),
+      ...tresors.map((t): Zone => ({ id: `collecte-${t.id}`, kind: 'info', label: t.label, target: `collecte:${t.id}`, area: { x: t.at.x, z: t.at.z, r: COLLECTE_R } }))],
     spawns: { ...nu.spawns, ...Object.fromEntries(poses.map((p) => [`npc-${p.id}`, devant(p)])) },
   };
   return { ...d, ilot, npcs };

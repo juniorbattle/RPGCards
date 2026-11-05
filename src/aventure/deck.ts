@@ -52,7 +52,8 @@ export function validerDeckAv(d: DeckAv, col: CollectionAv): ProblemeDeck[] {
     if (neutres[r]! > col.neutres[r]) out.push({ code: 'neutres', text: `Plus de neutres de Rang ${['', 'I', 'II', 'III', 'IV'][r]} que possédées.` });
   }
   if (d.signature !== null && !col.signatures.includes(d.signature)) out.push({ code: 'signature', text: `Signature ${d.signature} non possédée.` });
-  if (d.techniques.length !== 2 || new Set(d.techniques).size !== 2) out.push({ code: 'techniques', text: 'Équipez exactement deux Techniques distinctes.' });
+  // M16 (fiche T4, amendement de R-AV et d'ARB-M10-04) : une ou deux Techniques distinctes (le moteur en accepte deux au plus)
+  if (d.techniques.length < 1 || d.techniques.length > 2 || new Set(d.techniques).size !== d.techniques.length) out.push({ code: 'techniques', text: 'Équipez une ou deux Techniques distinctes.' });
   for (const t of d.techniques) if (!(TECHNIQUE_IDS as readonly string[]).includes(t) || !col.techniques.includes(t)) out.push({ code: 'techniques', text: `Technique ${t} non apprise.` });
   return out;
 }
@@ -111,9 +112,9 @@ export function remplacerCase(d: DeckAv, col: CollectionAv, i: number, defId: st
   return { ...d, cartes: trier(cartes) };
 }
 
-/** Équipe ou retire une Technique apprise (deux au plus : la plus ancienne cède sa place). */
+/** Équipe ou retire une Technique apprise (deux au plus : la plus ancienne cède sa place ; M16 : jamais moins d'une). */
 export function basculerTechnique(d: DeckAv, col: CollectionAv, t: TechniqueId): DeckAv {
-  if (d.techniques.includes(t)) return { ...d, techniques: d.techniques.filter((x) => x !== t) };
+  if (d.techniques.includes(t)) return d.techniques.length > 1 ? { ...d, techniques: d.techniques.filter((x) => x !== t) } : d;
   if (!col.techniques.includes(t)) return d;
   return { ...d, techniques: [...d.techniques, t].slice(-2) };
 }

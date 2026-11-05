@@ -18,6 +18,7 @@ import { nouveauDirecteur, type EtatDirecteur } from './directeur';
 import { nouvellesCompetitions } from './competitions';
 import { validerDeckAv } from './deck';
 import { SCENES } from './modele';
+import type { TechniqueId } from '../game/catalog/techniques';
 import { collectionDe, controlerRegistre } from './registre';
 
 export const CLE_AVENTURE = 'lqv.aventure';
@@ -76,11 +77,12 @@ export interface AventureSave {
   conseils?: string[];
 }
 
-export function nouvelleSauvegarde(now: Date, nom: string, graine: number, apparence?: Apparence): AventureSave {
+/** `technique` (M16, fiche T1) : la seule Technique du départ ; sans elle, le calendrier d'avant (QA, outils, tests). */
+export function nouvelleSauvegarde(now: Date, nom: string, graine: number, apparence?: Apparence, technique?: TechniqueId): AventureSave {
   const t = now.toISOString();
   return {
     schema: SCHEMA_AVENTURE, gameVersion: GAME_VERSION, createdAt: t, updatedAt: t, profil: { nom, graine: graine >>> 0, ...(apparence && !estOrigine(apparence) ? { apparence } : {}) },
-    etat: nouvelleAventure(t), directeur: nouveauDirecteur(graine), ville: { ilot: 'quai', pos: null }, duel: null, historique: [], compteur: 0,
+    etat: nouvelleAventure(t, technique), directeur: nouveauDirecteur(graine), ville: { ilot: 'quai', pos: null }, duel: null, historique: [], compteur: 0,
   };
 }
 

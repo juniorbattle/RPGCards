@@ -89,7 +89,7 @@ describe('M10-C — éditeur de deck de l’aventure (R-AV case par case)', () =
     }
   });
 
-  it('Techniques : deux au plus, seulement apprises ; retirer puis remettre', () => {
+  it('Techniques : une ou deux (M16, fiche T4), seulement apprises ; retirer puis remettre, jamais la dernière', () => {
     const e = run(prologue(), [{ type: 'confirmer', famille: 'Voile' }]).etat;
     const col = collectionDe(e.registre);
     expect(e.deck.techniques).toEqual(['Recentrage', 'Dissipation']);
@@ -97,7 +97,8 @@ describe('M10-C — éditeur de deck de l’aventure (R-AV case par case)', () =
     expect(d.techniques).toEqual(['Dissipation', 'Sondage']);
     d = basculerTechnique(d, col, 'Sondage');
     expect(d.techniques).toEqual(['Dissipation']);
-    expect(validerDeckAv(d, col).map((p) => p.code)).toContain('techniques');
+    expect(validerDeckAv(d, col).map((p) => p.code)).not.toContain('techniques');
+    expect(basculerTechnique(d, col, 'Dissipation')).toBe(d);
     const inconnue = TECHNIQUE_IDS.find((t) => !col.techniques.includes(t))!;
     expect(basculerTechnique(d, col, inconnue)).toBe(d);
   });
@@ -113,10 +114,10 @@ describe('M10-C — écran Collection (vue dérivée du registre)', () => {
     // avenant 09 : trois variantes par Rang, A, B et C, la même voie (une au choix)
     expect(cendre.variantes.map((x) => x.lettre)).toEqual(['A', 'B', 'C', 'A', 'B', 'C', 'A', 'B', 'C', 'A', 'B', 'C']);
     expect(cendre.variantes.filter((x) => x.lettre === 'A').map((x) => x.texte)).toEqual([
-      'Gagner l’Épreuve du quartier de la Cendre (trois victoires d’affilée ; une variante au choix)',
-      'Gagner la Joute de la maison de la Cendre (une variante au choix)',
-      'Battre Tessa, cadette de la Cendre (une variante au choix)',
-      'Battre Kaï, la Braise du quai, bras droit de la Cendre (une variante au choix)',
+      'Gagner l’Épreuve du quartier de la Cendre (trois victoires d’affilée ; une variante au choix) ; ou la trouver en ville, en Promenade libre',
+      'Gagner la Joute de la maison de la Cendre (une variante au choix) ; ou la trouver en ville, en Promenade libre',
+      'Battre Tessa, cadette de la Cendre (une variante au choix) ; ou la trouver en ville, en Promenade libre',
+      'Battre Kaï, la Braise du quai, bras droit de la Cendre (une variante au choix) ; ou la trouver en ville, en Promenade libre',
     ]);
     for (let i = 0; i < 12; i += 3) expect(new Set(cendre.variantes.slice(i, i + 3).map((x) => x.texte)).size).toBe(1);
     expect(cendre.signature.texte).toBe('Battre Bran, le Premier Feu, chef de la Cendre');
@@ -134,7 +135,7 @@ describe('M10-C — écran Collection (vue dérivée du registre)', () => {
     expect(v.compte.total).toBe(4 * 17);
     expect(v.familles[0]!.variantes).toHaveLength(12);
     // une variante de l'identité possédée : les deux autres se gagnent en revanche (ou au titre)
-    expect(astre.variantes.find((x) => x.lettre === 'B' && CATALOG[x.id]!.rank === 3)!.texte).toBe(`Battre de nouveau ${figureDe('Astre', 'cadet').nom} (revanche), ou remporter le Championnat`);
+    expect(astre.variantes.find((x) => x.lettre === 'B' && CATALOG[x.id]!.rank === 3)!.texte).toBe(`Battre de nouveau ${figureDe('Astre', 'cadet').nom} (revanche), ou remporter le Championnat ; ou la trouver en ville, en Promenade libre`);
     expect(v.neutres.map((n) => n.dansDeck)).toEqual([3, 3, 3, 3]);
     for (const g of e.registre) expect(origineGain(g)).not.toBe(g.source);
   });

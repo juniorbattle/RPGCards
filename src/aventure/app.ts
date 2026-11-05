@@ -36,18 +36,20 @@ import { spritePolicy } from '../ville/spritesExternes';
 import { installVilleStyles, promptBubble } from '../ville/ui';
 import { createTown, type Cadrage, type Town } from '../ville/ville';
 import { decideVille } from '../ville/villeRangs';
-import { apercuEngagement, appliquer, bannieres, chapitre, chapitreDetaille, peutChanger, peutConfirmer, statutDefi, type AventureEtat, type EtatBanniere, type Evenement, type FaitsPublics, type Issue } from './aventure';
+import { apercuEngagement, appliquer, bannieres, chapitre, chapitreDetaille, peutChanger, peutConfirmer, statutDefi, techniqueAuChef, techniquesEnJeu, type AventureEtat, type EtatBanniere, type Evenement, type FaitsPublics, type Issue } from './aventure';
 import { basculerTechnique, choixPourCase, equiperSignature, rangDe, remplacerCase, standardLegal, validerDeckAv, type DeckAv } from './deck';
 import { origineGain, vueCollection, type EntreeCollection } from './collection';
 import { conclure, convoquer, decider, poses, rencontreDef, type Pose } from './directeur';
 import { estDepart, estFamille, etatDepart, type Depart } from './departs';
 import { cleSuite, enchainement, etapeRecit, ILOTS_RECIT, joueursDeRue, NOM_RECIT, ACCROCHE_RECIT, quartierDe, suiteRecit, TEXTE_RECIT, type EtapeRecit, type JoueurRue, type ModeRecit } from './guide';
 import { ilotAventure, ilotBase, nomIlot } from './ilots';
-import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, RANGS, rangNeutre, roleDe, cheffe, chefVaincu, leChef, ROLES, ROMAIN, type EtatFamille } from './modele';
+import { aF, deF, emissaire, figure, figureDe, leF, REPLIQUES, TENANTE, isNeutre, KAI_PROLOGUE, MAISONS, NEUTRES, RANGS, rangNeutre, roleDe, cheffe, chefVaincu, leChef, ROLES, ROMAIN, TECHNIQUES_RUE, type EtatFamille } from './modele';
 import { pvJoueur, PV_PAR_COMBAT } from './paliers';
 import { objectif, quetes } from './quetes';
 import { aGain, collectionDe, prochaineVariante, variantesIdentite, type Gain } from './registre';
-import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelJoute, duelPrologue, duelRival, personnalite, type DuelPrevu } from './rencontres';
+import { duelChampionnat, duelEpreuve, duelFacultatif, duelFigure, duelGardien, duelJoute, duelPrologue, duelRival, personnalite, type DuelPrevu } from './rencontres';
+import { bilanCollecte, gardienPresent, pisteAEntendre, pointActif, pointsActifs, recompensePoint } from './collecte';
+import { pointCollecte } from './collecteDonnees';
 import { detecter, guetteursActifs, pointApproche, pointSurgissement, regardDe, regardVers, TOURNENT_LA_TETE } from './vue';
 import { evenementDef, evenementRival, isKId, type EvenementRival, type KId } from './rival';
 import { choisir, memoireVide, type Contexte, type Moment } from './repliques';
@@ -315,7 +317,13 @@ export class AventureApp {
     // M14 : Promenade libre présélectionnée ; en QA, `?recit=guide`
     let mode: ModeRecit = this.params.qa && new URLSearchParams(location.search).get('recit') === 'guide' ? 'guide' : 'libre';
     const nom = () => input.value.trim() || 'Duelliste';
-    const go = () => this.commencer(nom(), undefined, apparence, mode);
+    // M16 (fiche T1) : une seule Technique au départ, au choix ; Sondage présélectionnée ; en QA, `?technique=Recentrage`
+    const qTech = new URLSearchParams(location.search).get('technique');
+    let technique: TechniqueId = TECHNIQUES_RUE.includes(qTech as TechniqueId) ? qTech as TechniqueId : 'Sondage';
+    const go = () => this.commencer(nom(), undefined, apparence, mode, technique);
+    const marquerTech = () => boutonsTech.forEach((b, i) => { const oui = TECHNIQUES_RUE[i] === technique; b.setAttribute('aria-pressed', String(oui)); b.classList.toggle('choisi', oui); });
+    const boutonsTech = TECHNIQUES_RUE.map((tq) => info(h('button', { class: 'av-nv-tech', type: 'button', 'data-key': `av-tech-${tq}`, onclick: () => { technique = tq; marquerTech(); } }, h('b', null, tq), h('span', null, ACCROCHE_TECH[tq] ?? '')), `${TECHNIQUES[tq].text} ${TECHNIQUES[tq].timing} ; coût : ${TECHNIQUES[tq].cost} Insight.`));
+    marquerTech();
     // retours du test du responsable (2026-11-03 : « fouilli et pas assez epuree », puis « peut etre que le choix du recit doit
     // etre dans un autre panel ») : deux étapes dans le même cadre, le personnage toujours à gauche ; 1. son nom et son
     // apparence, 2. le récit, en deux grandes cartes ; les deux pages occupent la même case, le cadre ne change pas de taille
@@ -337,6 +345,8 @@ export class AventureApp {
     const page2 = h('div', { class: 'av-nv-page', 'data-etape': '2' },
       h('p', { class: 'av-nv-question' }, 'Comment voulez-vous vivre le récit ?', pastille('Vous pourrez en changer à tout moment, dans le menu de l’aventure.')),
       h('div', { class: 'av-nv-modes', 'data-key': 'av-recit-texte' }, ...boutonsMode),
+      h('p', { class: 'av-nv-question' }, 'Votre première Technique ?', pastille('Une seule au départ. L’autre Technique de la rue se gagne contre un premier cadet ; celle de chaque famille, contre son chef.')),
+      h('div', { class: 'av-nv-techs' }, ...boutonsTech),
       h('div', { class: 'av-actions' }, bouton('Retour', () => montrer(1), 'av-nv-retour'), bouton('Commencer', go, 'av-start', true)));
     const montrer = (n: 1 | 2) => {
       page1.classList.toggle('cachee', n !== 1);
@@ -373,12 +383,12 @@ export class AventureApp {
     this.commencer('Duelliste', (e) => etatDepart(e, dep, fam, new Date().toISOString()));
   }
 
-  private commencer(nom: string, depart?: (e: AventureEtat) => AventureEtat, apparence?: Apparence, mode: ModeRecit = 'libre'): void {
+  private commencer(nom: string, depart?: (e: AventureEtat) => AventureEtat, apparence?: Apparence, mode: ModeRecit = 'libre', technique?: TechniqueId): void {
     if (this.rideau.enCours) return;
     const forced = this.params.qa ? Number(new URLSearchParams(location.search).get('profileSeed')) : NaN;
     const graine = Number.isInteger(forced) && forced > 0 ? forced >>> 0 : (crypto.getRandomValues(new Uint32Array(1))[0] ?? Date.now()) >>> 0;
     if (this.charge.status === 'illisible') this.store.ecarter();
-    this.save = nouvelleSauvegarde(new Date(), nom, graine, apparence);
+    this.save = nouvelleSauvegarde(new Date(), nom, graine, apparence, technique);
     this.charge = { status: 'ok', save: this.save };
     this.save.etat = appliquer(this.save.etat, { type: 'scene', id: 'P1' }, new Date().toISOString()).etat;
     if (depart) this.save.etat = depart(this.save.etat);
@@ -432,7 +442,21 @@ export class AventureApp {
     if (id === 'quai' && this.etat.prologue !== null && this.etat.affiliation === null) {
       for (const f of FOULE) if (!out.some((p) => p.apparence === f.apparence)) out.push({ id: f.id, apparence: f.apparence, nom: f.nom, at: f.at, facing: f.facing, repere: null, genre: 'ambiance' });
     }
+    // M16 (fiche C3) : le gardien d'un point de collecte se tient près de sa carte (« ! » tant qu'il n'est pas battu) ;
+    // il repart quand la carte est ramassée ; Promenade libre seulement (C5)
+    if (!this.guide) for (const p of pointsActifs(e, id)) if (p.gardien && !out.some((x) => x.apparence === p.gardien!.apparence)) out.push({ id: `gardien:${p.id}`, apparence: p.gardien.apparence, nom: p.gardien.nom, at: p.gardien.at, facing: p.gardien.facing, repere: gardienPresent(e, p) ? '!' : null, genre: 'facultative' });
     return out;
+  }
+
+  /** M16 : les points de collecte allumés d'un îlot (zones à ramasser) ; aucun en Récit guidé (fiche C5). */
+  private tresorsDe(id: IlotId): Array<{ id: string; at: { x: number; z: number }; label: string }> {
+    if (this.guide || !this.save) return [];
+    return pointsActifs(this.etat, id).map((p) => ({ id: p.id, at: p.at, label: gardienPresent(this.etat, p) ? 'Approcher de la lueur' : 'Ramasser la carte' }));
+  }
+
+  /** M16 : les cartes qui scintillent, pour toute la ville (la ville montre celles de l'îlot courant). */
+  private majTresors(): void {
+    this.town?.setTresors(this.guide || !this.save ? [] : pointsActifs(this.etat).map((p) => ({ id: p.id, ilot: p.ilot, at: p.at })));
   }
 
   /** Point de décision du directeur des rencontres (entrée dans un îlot, retour d'un duel). */
@@ -463,7 +487,7 @@ export class AventureApp {
       host: this.host, artSeed: this.params.artSeed, camera: 'frontale', player: this.look, ilot: at, spawn: 'arrivee',
       freeze: this.params.freeze, reducedMotion: this.params.reducedMotion,
       sprites: spritePolicy(this.params.qa, q.get('sprites')), decors: decorPolicy(this.params.qa, q.get('decors')), rig: parseRig(q.get('rig')),
-      ilotDefOf: (id) => ilotAventure(id, this.posesDe(id), this.quaiRangs, this.ouverts),
+      ilotDefOf: (id) => ilotAventure(id, this.posesDe(id), this.quaiRangs, this.ouverts, this.tresorsDe(id)),
       ...(this.quaiRangs ? { decorsManifest: MANIFESTE_RANGS } : {}),
       onInteract: (z) => this.interagir(z),
       onMenu: () => this.menu(),
@@ -472,6 +496,7 @@ export class AventureApp {
     const pos = this.save!.ville.pos;
     if (pos && !blocked(this.town.ilot, pos)) this.town.place(pos);
     this.bubble = promptBubble(this.town, () => { const z = this.town?.zone(); if (z) this.interagir(z); }, (z) => z.label);
+    this.majTresors();
   }
 
   private detruireVille(): void {
@@ -581,7 +606,7 @@ export class AventureApp {
   }
 
   private cle(id: IlotId): string {
-    return JSON.stringify(this.posesDe(id).map((p) => [p.id, p.at.x, p.at.z]));
+    return JSON.stringify([...this.posesDe(id).map((p) => [p.id, p.at.x, p.at.z, p.repere]), ...this.tresorsDe(id).map((x) => [x.id, x.label])]);
   }
 
   /** Les personnages de l'îlot ont changé (progression) : l'îlot est remonté, le joueur reste où il est. */
@@ -606,6 +631,7 @@ export class AventureApp {
     if (!this.verrouRecit) for (const p of this.posesDe(this.town.ilotId())) m[p.apparence] = p.repere;
     if (this.alerte) m[this.alerte] = 'vu';
     this.town.setMarkers(m);
+    this.majTresors();
   }
 
   private renderHud(): HTMLElement {
@@ -615,12 +641,20 @@ export class AventureApp {
       h('div', { class: 'av-cartouche' },
         h('div', { class: 'ville-place' }, h('b', { 'data-key': 'ville-place' }, capital(t.ilot.name))),
         h('div', { class: 'av-hud-ligne' }, h('span', { class: 'av-chapitre', 'data-key': 'av-chapitre' }), h('span', { class: 'av-statut', 'data-key': 'av-statut' })),
-        h('div', { class: 'ville-objective', 'data-key': 'ville-objective' }, objectif(this.etat))),
+        h('div', { class: 'ville-objective', 'data-key': 'ville-objective' }, objectif(this.etat)),
+        h('div', { class: 'av-lueurs', 'data-key': 'av-lueurs', hidden: true })),
       h('div', { class: 'ville-tools' }, b('Journal', 'av-journal', () => this.journal()), b('Deck', 'av-deck', () => this.collection()), h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-menu', onclick: (e: Event) => { (e.currentTarget as HTMLElement).blur(); this.menu(); } }, 'Menu', h('kbd', null, 'Échap'))),
       h('div', { class: 'av-qa-decor', 'data-key': 'av-qa-decor', hidden: true }));
   }
 
   private majHud(): void {
+    // M16 : les cartes qui scintillent dans ce quartier (Promenade libre)
+    const lu = this.hud?.querySelector<HTMLElement>('[data-key="av-lueurs"]');
+    if (lu && this.town) {
+      const n = this.guide ? 0 : pointsActifs(this.etat, this.town.ilotId()).length;
+      const txt = n ? `✦ ${n === 1 ? 'Une carte scintille' : `${n} cartes scintillent`} dans ce quartier` : '';
+      if (lu.textContent !== txt) { lu.textContent = txt; lu.hidden = !n; }
+    }
     const o = this.hud?.querySelector<HTMLElement>('[data-key="ville-objective"]');
     const txt = objectif(this.etat);
     if (o && o.textContent !== txt) o.textContent = txt;
@@ -1261,6 +1295,8 @@ export class AventureApp {
     if (z.kind === 'porte' && z.target === 'salle') return this.salleDesBannieres();
     if (z.kind === 'porte' && z.target === 'fanal') return this.dire('Le Fanal', `La taverne du port, maison de la Ronce. ${this.etat.affiliation ? (this.quaiRangs ? 'Gaspard et Maëlle y tiennent la maison ; Mère Aubépine veille plus haut, dans la ruelle des Lanternes.' : 'Gaspard, Maëlle et Mère Aubépine y tiennent la maison.') : 'On dit que la Ronce y garde le feu du port.'}`, [fermer(this)]);
     if (z.kind === 'porte' && z.target === 'arene') return this.championnatDialog();
+    // M16 : un point de collecte (la carte qui scintille)
+    if (z.kind === 'info' && z.target?.startsWith('collecte:')) return this.ramasser(z.target.slice(9));
     // Quai en rangs : les balises des passages ne sont que des repères (leur nom s'affiche en approchant)
     if (z.kind === 'info' && z.target?.startsWith('rang-')) return;
     const INFO: Record<string, string> = {
@@ -1299,16 +1335,63 @@ export class AventureApp {
     if (id.startsWith('epreuve-')) return this.epreuveDialog(id.slice(8) as Family);
     if (id.startsWith('joute-')) return this.jouteDialog(id.slice(6) as Family);
     if (id === 'heraut') return this.heraut();
+    if (id.startsWith('gardien:')) return this.gardienDialog(id.slice(8));
     const r = rencontreDef(id);
     if (r?.genre === 'ambiance') return this.rumeur(id);
     if (r) return this.facultatif(id);
+  }
+
+  /** M16 (fiche C3) : le gardien d'un point de collecte : un duel pour la carte ; battu, il la laisse. */
+  private gardienDialog(id: string): void {
+    const p = pointCollecte(id);
+    if (!p?.gardien || !pointActif(this.etat, p)) return;
+    const g = p.gardien;
+    if (!gardienPresent(this.etat, p)) return this.dire(capital(g.nom), '« Une partie est une partie. La carte est à toi : ramasse-la. »', [fermer(this)], g.apparence);
+    this.dire(capital(g.nom), `${g.ligne} (une carte en jeu, ${p.lieu})`, [
+      { label: 'Jouer pour la carte', key: 'dlg-duel', primary: true, run: () => this.preparer(duelGardien(id, this.etat, this.prochaineGraine())) },
+      { label: 'Plus tard', key: 'dlg-close', refus: true, run: () => this.fermerDialogue() },
+    ], g.apparence);
+  }
+
+  /** M16 (fiche C1 à C4) : ramasser la carte d'un point de collecte : le gardien d'abord, puis la carte révélée. */
+  private ramasser(id: string): void {
+    const p = pointCollecte(id);
+    if (!p || !pointActif(this.etat, p) || this.guide) return;
+    if (gardienPresent(this.etat, p)) return this.gardienDialog(id);
+    const v = recompensePoint(this.etat, id, this.save!.profil.graine);
+    const gains = this.faire({ type: 'collecte', point: id, ...(v ? { variante: v } : {}) });
+    if (gains === null) return;
+    this.decouverte(p.lieu, v, p.ilot);
+    this.rafraichir();
+  }
+
+  /** M16 : la découverte d'une carte en ville : la lueur, la carte qui se retourne, son nom, le compte de la chasse. */
+  private decouverte(lieu: string, defId: string | null, _ilot: IlotId): void {
+    son().jouer(defId ? 'gain' : 'repere');
+    const b = bilanCollecte(this.etat);
+    const d = defId ? CATALOG[defId] : null;
+    const equipee = !!defId && this.etat.deck.cartes.includes(defId);
+    const panel = h('div', { class: `av-confirm av-decouverte${this.sansMouvement ? ' calme' : ''}`, 'data-key': 'av-decouverte' },
+      h('p', { class: 'av-surtitre' }, 'Trouvée en ville'),
+      h('h2', null, d ? 'Une carte dans la lueur' : 'La lueur s’éteint'),
+      d ? h('div', { class: 'av-decouverte-scene' }, h('div', { class: 'av-decouverte-halo', 'aria-hidden': 'true' }), h('div', { class: 'av-decouverte-carte' }, cardEl(defId!, { artSeed: this.params.artSeed, tag: 'div' }))) : null,
+      d ? h('p', { class: 'av-decouverte-nom' }, h('b', null, d.name), h('small', null, `${d.effect ? EFFECTS[d.effect].name : 'variante'} · ${de(d.family)}`)) : h('p', { class: 'av-transition' }, 'Rien de neuf : toutes les variantes de vos familles sont déjà à vous. Les prochaines lueurs donneront des cartes des familles que vous rejoindrez.'),
+      h('dl', { class: 'av-fiche' },
+        h('dt', null, 'Trouvée'), h('dd', null, capital(lieu)),
+        h('dt', null, 'La chasse'), h('dd', { 'data-key': 'av-decouverte-compte' }, h('b', null, `${b.trouves} / ${b.total}`), ' cartes de la ville'),
+        ...(d ? [h('dt', null, 'Votre deck'), h('dd', null, equipee ? 'Équipée à la place de sa carte de base.' : 'À équiper dans l’éditeur de deck.')] : [])),
+      h('div', { class: 'ville-choices' }, h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-continuer', onclick: () => this.fermerModal() }, 'Continuer')));
+    this.ouvrirModal(panel);
   }
 
   /** Les rumeurs de la ville (M10-E, ambiance) : une réplique qui suit l'aventure (faits publics), sans duel ; le passant repart. */
   private rumeur(id: string): void {
     const r = rencontreDef(id)!;
     // M11-C : les rumeurs viennent du catalogue (chapitre, îlot ; jamais deux fois de suite la même)
-    const ligne = this.replique(id, 'rumeur', '« Ce soir, toute la ville joue aux cartes. »');
+    // M16 (fiche C3) : en Promenade libre, une rumeur met d'abord sur la piste d'une carte qui scintille quelque part
+    const piste = this.guide ? null : pisteAEntendre(this.etat);
+    if (piste) this.faire({ type: 'piste', point: piste.id });
+    const ligne = piste ? piste.piste : this.replique(id, 'rumeur', '« Ce soir, toute la ville joue aux cartes. »');
     // le passant reste pendant qu'il parle (la ville se relit à la fermeture du dialogue), puis repart (passe 136 : il
     // disparaissait dès l'ouverture, `dire` relisant la ville avant d'ouvrir)
     this.dire(capital(r.nom), ligne, [fermer(this)], r.apparence);
@@ -1387,12 +1470,12 @@ export class AventureApp {
       h('div', { class: 'av-confirm-head' }, h('span', { class: `av-emb fam-${f}`, html: emblemSvg(f, 46) }), h('div', null, h('h2', null, `Rejoindre ${la(f)}`), h('p', { class: 'av-devise' }, `${m.nom} · ${m.devise}`, pastille(m.credo)))),
       h('h3', null, 'Vous recevrez tout de suite', pastille(`Les quatre cartes de base ${de(f)} (I à IV) : une carte grise de chaque Rang leur cède sa place dans votre deck.`)),
       h('div', { class: 'av-cards' }, ...[1, 2, 3, 4].map((r) => cardEl(`${f}-${r}-basic`, { artSeed: this.params.artSeed, tag: 'div' }))),
-      ligneTechnique(m.technique),
+      techniqueAuChef(this.etat) ? ligneTechniqueChef(m.technique, ch!.nom) : ligneTechnique(m.technique),
       h('h3', null, 'Ensuite'),
       h('ol', { class: 'av-etapes' },
-        h('li', null, h('span', null, h('b', null, c!.nom), `, ${roleDe(c!)}`), h('span', null, 'une variante')),
+        h('li', null, h('span', null, h('b', null, c!.nom), `, ${roleDe(c!)}`), h('span', null, techniquesEnJeu(this.etat, c!.id).length ? `une variante · ${techniquesEnJeu(this.etat, c!.id).join(', ')}` : 'une variante')),
         h('li', null, h('span', null, h('b', null, b!.nom), `, ${roleDe(b!)}`), h('span', null, 'une variante')),
-        h('li', null, h('span', null, h('b', null, ch!.nom), `, ${roleDe(ch!)}`), h('span', null, 'sa Signature ∞'))),
+        h('li', null, h('span', null, h('b', null, ch!.nom), `, ${roleDe(ch!)}`), h('span', null, techniquesEnJeu(this.etat, ch!.id).length ? `sa Signature ∞ · ${m.technique}` : 'sa Signature ∞'))),
       changement && quittee ? h('p', { class: 'av-aide' }, 'Changement de voie : les cartes déjà reçues restent à vous.', pastille(`Vos adversaires ne comptent que les familles que vous avez rejointes ou dont vous avez engagé le défi : ${la(quittee)} ne comptera qu’à l’engagement de son défi.`)) : null,
       h('div', { class: 'ville-choices' },
         info(h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-confirmer', onclick: () => this.confirmer(f, changement) }, 'Confirmer l’affiliation'), `Les autres familles restent ouvertes ; quand ${leChef(f)} ${de(f)} sera ${cheffe(f) ? 'vaincue' : 'vaincu'}, vous pourrez engager leur défi à la Salle des Bannières.${changement && quittee ? '' : ' Jusqu’à votre premier défi de lieutenant, vous pourrez encore changer de voie.'}`),
@@ -1452,7 +1535,7 @@ export class AventureApp {
     const suivante = fig.enjeu.kind === 'variante' ? prochaineVariante(e.registre, CATALOG[fig.enjeu.defId]!.identity) : null;
     const enjeu = st.deja
       ? (suivante ? `Revanche : en jeu, ${nomCarte(suivante)}, une autre variante de la carte gagnée.` : 'Revanche, sans récompense : vos victoires sont déjà au registre.')
-      : `En jeu : ${fig.enjeu.kind === 'variante' ? auChoix(fig.enjeu.defId) : `la Signature ∞ ${de(fig.famille)}`}.`;
+      : `En jeu : ${fig.enjeu.kind === 'variante' ? auChoix(fig.enjeu.defId) : `la Signature ∞ ${de(fig.famille)}`}${techniquesEnJeu(e, fig.id).length ? `, et la Technique ${techniquesEnJeu(e, fig.id).join(' ou ')}` : ''}.`;
     if (!st.ouvert) return this.dire(`${fig.nom}, ${fig.titre}`, `« Pas encore. » ${st.raison}`, [fermer(this)], fig.apparence);
     // M11-C : au premier défi d'une figure d'une autre famille, elle a entendu parler de votre parcours
     const contexte = !st.deja && fig.famille !== e.affiliation ? this.replique(`defi-${fig.famille}`, 'defi') : '';
@@ -1596,7 +1679,7 @@ export class AventureApp {
     const m = MAISONS[f];
     const [c, b, ch] = ROLES.map((r) => figureDe(f, r));
     const gb = e.registre.find((g) => g.key === `basics:${f}`);
-    const enjeu = (x: typeof c) => (x!.enjeu.kind === 'variante' ? 'une variante au choix' : 'sa Signature ∞');
+    const enjeu = (x: typeof c) => (x!.enjeu.kind === 'variante' ? 'une variante au choix' : techniquesEnJeu(e, x!.id).length ? `sa Signature ∞ · ${m.technique}` : 'sa Signature ∞');
     const enjeuDetail = (x: typeof c) => (x!.enjeu.kind === 'variante' ? auChoix(x!.enjeu.defId) : `la Signature ∞ ${de(f)}`);
     const remis = ap.basicsDeja
       ? `Les quatre cartes de base ${de(f)} sont déjà à vous (${gb ? minuscule(origineGain(gb)) : 'registre'}) : rien n’est remis une seconde fois.${ap.techniqueDeja ? ` La Technique ${m.technique} est déjà apprise.` : ''}`
@@ -1609,7 +1692,7 @@ export class AventureApp {
       ap.basicsDeja ? h('h3', null, 'Déjà à vous') : h('h3', { 'data-key': 'av-engagement-basics' }, 'Vous recevrez tout de suite', pastille(remis)),
       h('div', { class: `av-cards${ap.basicsDeja ? ' av-deja' : ''}` }, ...[1, 2, 3, 4].map((r) => cardEl(`${f}-${r}-basic`, { artSeed: this.params.artSeed, tag: 'div' }))),
       ap.basicsDeja ? h('p', { 'data-key': 'av-engagement-basics' }, remis) : null,
-      !ap.basicsDeja && !ap.techniqueDeja ? ligneTechnique(m.technique) : null,
+      !ap.basicsDeja && !ap.techniqueDeja ? (techniqueAuChef(e) ? ligneTechniqueChef(m.technique, ch!.nom) : ligneTechnique(m.technique)) : null,
       h('h3', null, 'Votre deck'),
       h('p', { class: 'av-transition', 'data-key': 'av-engagement-deck' }, deck, ap.standard ? h('b', { class: 'av-standard' }, ` ${STANDARD}`) : null),
       h('h3', null, 'Ensuite', pastille(`Leur maison : ${m.nom}, ${OU_ILOT[m.ilot]}. Dans le quartier, l’Épreuve (${nomCarte(varianteDe(f, 1))}) ; après le bras droit, la Joute de la maison (${nomCarte(varianteDe(f, 2))}).`)),
@@ -1657,7 +1740,8 @@ export class AventureApp {
     const panel = h('div', { class: 'av-confirm av-prep', 'data-key': 'av-preparation' },
       h('div', { class: 'av-confirm-head' }, h('img', { class: 'ville-portrait', alt: '', src: portraitUrl(prevu.personnalite, this.params.artSeed) }), h('div', null, h('h2', null, prevu.titre), h('p', { class: 'av-devise' }, LIEU[prevu.venue]))),
       h('dl', { class: 'av-fiche' },
-        h('dt', null, 'En jeu'), h('dd', null, enjeuEl()),
+        h('dt', null, 'En jeu'), h('dd', null, prevu.rencontre.startsWith('gardien:') ? h('span', { class: 'av-rien' }, 'La carte qu’il garde, à ramasser après votre victoire.') : enjeuEl()),
+        ...(techniquesEnJeu(this.etat, prevu.rencontre).length ? [h('dt', null, 'Technique'), h('dd', { 'data-key': 'av-tech-en-jeu' }, ...techniquesEnJeu(this.etat, prevu.rencontre).map((tq) => info(h('b', null, tq), TECHNIQUES[tq].text)), h('small', null, ' à la première victoire'))] : []),
         h('dt', null, 'Points de vie'), h('dd', { 'data-key': 'av-pv-duel' }, 'Vous ', h('b', null, String(p1)), ' · ', prevu.personnalite.name, ' ', h('b', null, String(p2)))),
       h('div', { class: 'ville-choices' },
         h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-duel-go', onclick: () => this.lancer(prevu) }, 'Commencer le duel'),
@@ -2137,7 +2221,7 @@ export class AventureApp {
       { label: `Mouvement réduit : ${new URLSearchParams(location.search).has('reducedMotion') ? 'imposé par l’adresse' : this.params.reducedMotion ? 'oui' : 'non'}`, key: 'menu-mouvement', run: () => { if (!new URLSearchParams(location.search).has('reducedMotion')) { this.params.reducedMotion = !this.params.reducedMotion; ecrireMouvementReduit(stockageLocal(), this.params.reducedMotion); this.bandesCine?.replier(true); this.bandesCine = null; this.appliquerMouvement(); } this.fermerDialogue(); this.menu(); } },
       { label: `Cinématiques : ${!cinePermise(location.search) ? 'coupées par l’adresse' : lireCine(stockageLocal()) ? 'oui' : 'non'}`, key: 'menu-cine', run: () => { ecrireCine(stockageLocal(), !lireCine(stockageLocal())); this.fermerDialogue(); this.menu(); } },
       { label: `Conseils du duel : ${!conseilsPermis(location.search) ? 'coupés par l’adresse' : lireConseils(stockageLocal()) ? 'affichés' : 'masqués'}`, key: 'menu-conseils', run: () => this.reglageConseils() },
-      { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. À la manette (Xbox, PlayStation…) : stick gauche ou croix pour marcher et pour passer d’un bouton à l’autre, A (Croix) pour parler et valider, B (Rond) pour revenir, Start (Options) pour le menu ; une cinématique se passe avec B ou Start. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter. Les joueurs de cartes de la ville regardent devant eux : entrer dans leur regard, c’est accepter leur défi (une bulle « ! » s’allume, ils viennent à vous) ; passez derrière eux ou à l’abri d’un étal pour les éviter. Kaï surgit à certains moments de votre histoire ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? ») ; des conseils, un à la fois, expliquent chaque phase et chaque signal des cartes la première fois qu’il paraît (« Conseils du duel », dans ce menu). Le son se règle dans ce menu (« Son »). Les grands moments de votre histoire se jouent en cinématique (première arrivée dans un quartier, Kaï qui surgit, votre affiliation, un chef vaincu, un nouveau chapitre, le Championnat) : Échap, Espace, Entrée ou « Passer » pour la passer ; « Cinématiques », dans ce menu, les coupe. « Récit », dans ce menu, passe de la Promenade libre, où l’on parcourt la ville, au Récit guidé, un film en séquences : les scènes s’enchaînent, et la Préparation, avant chaque duel, réunit le deck, le journal et les joueurs de rue ; on en change quand on veut, sans rien perdre.', [fermer(this)]) },
+      { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. En Promenade libre, des cartes scintillent en ville, une ou deux par chapitre : ramassez-les ; certaines sont gardées par un joueur de rue, et les passants « ? » mettent sur la piste (Journal : « Les cartes de la ville »). Une seule Technique au départ : l’autre Technique de la rue se gagne contre un premier cadet, celle de chaque famille contre son chef. À la manette (Xbox, PlayStation…) : stick gauche ou croix pour marcher et pour passer d’un bouton à l’autre, A (Croix) pour parler et valider, B (Rond) pour revenir, Start (Options) pour le menu ; une cinématique se passe avec B ou Start. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter. Les joueurs de cartes de la ville regardent devant eux : entrer dans leur regard, c’est accepter leur défi (une bulle « ! » s’allume, ils viennent à vous) ; passez derrière eux ou à l’abri d’un étal pour les éviter. Kaï surgit à certains moments de votre histoire ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? ») ; des conseils, un à la fois, expliquent chaque phase et chaque signal des cartes la première fois qu’il paraît (« Conseils du duel », dans ce menu). Le son se règle dans ce menu (« Son »). Les grands moments de votre histoire se jouent en cinématique (première arrivée dans un quartier, Kaï qui surgit, votre affiliation, un chef vaincu, un nouveau chapitre, le Championnat) : Échap, Espace, Entrée ou « Passer » pour la passer ; « Cinématiques », dans ce menu, les coupe. « Récit », dans ce menu, passe de la Promenade libre, où l’on parcourt la ville, au Récit guidé, un film en séquences : les scènes s’enchaînent, et la Préparation, avant chaque duel, réunit le deck, le journal et les joueurs de rue ; on en change quand on veut, sans rien perdre.', [fermer(this)]) },
       { label: 'Écran titre', key: 'menu-home', run: () => { this.fermerDialogue(); this.fondre(() => this.titre()); } },
     ], undefined, false, null, true);
   }
@@ -2395,6 +2479,7 @@ function titreRencontre(id: string): string {
   if (k === 'epreuve') return `Épreuve du quartier ${deF(a as Family)}`;
   if (k === 'joute') return `Joute de la maison ${deF(a as Family)}`;
   if (k === 'rival' && a && isKId(a)) return `Kaï — ${evenementDef(a).titre}`;
+  if (k === 'gardien') { const p = pointCollecte(a ?? ''); return p?.gardien ? `${capital(p.gardien.nom)}, pour une carte ${p.lieu}` : 'Une carte gardée'; }
   if (k === 'champ') return a === 'poule' ? `Championnat, poule : ${figureDe(b as Family, 'chef').nom}` : a === 'miroir' ? 'Championnat, le Miroir' : 'Championnat, la Finale';
   const r = rencontreDef(id);
   return r ? capital(r.nom) : id;
@@ -2449,6 +2534,14 @@ function resumeDeck(d: DeckAv): string {
 
 /** « 1 variante », « 0 variante », « 2 variantes ». */
 const nombre = (n: number, un: string, plusieurs: string): string => `${n} ${n > 1 ? plusieurs : un}`;
+
+/** M16 : ce que dit chaque Technique de la rue, en une ligne (nouvelle aventure). */
+const ACCROCHE_TECH: Partial<Record<TechniqueId, string>> = { Sondage: 'Voir une carte de la main adverse.', Recentrage: 'Changer une carte de sa main.' };
+
+/** M16 : la Technique d'une famille, à gagner face à son chef. */
+function ligneTechniqueChef(tq: TechniqueId, chef: string): HTMLElement {
+  return h('div', { class: 'av-tech-ligne' }, h('small', null, 'Technique'), h('b', null, tq), h('span', { class: 'av-tech-quand' }, `face à ${chef}`), pastille(`${TECHNIQUES[tq].text} Elle s’apprend en battant ${chef}.`));
+}
 
 /** Une Technique reçue : son nom en évidence, ce qu'elle fait dessous. */
 function ligneTechnique(t: TechniqueId): HTMLElement {

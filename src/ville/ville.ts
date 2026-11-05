@@ -140,6 +140,13 @@ export interface Town {
   /** Repères au-dessus des personnages de l'îlot (« ! » : un défi à relever ; « ? » : quelqu'un à écouter). */
   setMarkers(m: Readonly<Record<string, '!' | '?' | 'vu' | null>>): void;
   /**
+   * M16 (points de collecte) : les cartes qui scintillent au sol, dessinées par code, pour toute la ville (chaque îlot
+   * montre les siennes) ; remplace la liste. Immobiles en temps figé ou en mouvement réduit, toujours lumineuses.
+   */
+  setTresors(list: ReadonlyArray<{ id: string; ilot: string; at: Vec2 }>): void;
+  /** M16 (QA) : les cartes qui scintillent dans l'îlot courant. */
+  tresors(): string[];
+  /**
    * M11-A (rencontres en vue, rival) : fait marcher un personnage de l'îlot (identifiant de personnalité) jusqu'à `to`, à
    * `speed` m/s, puis le tourne vers `face` ; résolu à l'arrivée (tout de suite en temps figé ou mouvement réduit). La
    * logique (où, quand) est dans l'appelant ; un remontage de l'îlot remet chacun à sa place.
@@ -401,6 +408,7 @@ export function createTown(o: TownOptions): Town {
    *  (diorama décidé après coup), effacés à un changement d'îlot (`goTo`). */
   const npcState = new Map<string, { pos: Vec2; face?: Facing; walk?: { to: Vec2; speed: number; face: Facing; phase: number; done: () => void } }>();
   const npcCaches = new Set<string>();
+  let markersVoulus: Readonly<Record<string, '!' | '?' | 'vu' | null>> = {};
   const makeNpcs = (): NpcSprite[] => def.npcs.map((n) => {
     const s = createWalkerSprite(n.id);
     s.setHeight(walkerH());
@@ -409,11 +417,39 @@ export function createTown(o: TownOptions): Town {
     applySheet(n.id, s);
     const marker = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.42), new THREE.MeshBasicMaterial({ map: markerTexture('!'), transparent: true, depthWrite: false, color: new THREE.Color(1.5, 1.5, 1.5) }));
     marker.position.set(n.at.x, markerY(), n.at.z + 0.02);
-    marker.visible = false;
     marker.renderOrder = 3;
     scene.add(marker);
-    return { n, s, marker, kind: null };
+    // M16 : les repères demandés restent après un remontage de l'îlot (décor décidé après coup, retour de voyage)
+    const k = markersVoulus[n.id] ?? null;
+    marker.visible = !!k;
+    if (k) { marker.scale.setScalar(k === 'vu' ? 1.7 : 1); (marker.material as THREE.MeshBasicMaterial).map = markerTexture(k); }
+    return { n, s, marker, kind: k };
   });
+  // M16 : cartes qui scintillent (points de collecte) : une carte dorée qui flotte et tourne doucement, un halo qui pulse,
+  // une lueur au sol ; dessinées par code (aucune image), remontées avec l'îlot
+  type TresorSprite = { id: string; at: Vec2; carte: THREE.Mesh; halo: THREE.Mesh; sol: THREE.Mesh; rai: THREE.Mesh; ph: number };
+  let tresorsDef: Array<{ id: string; ilot: string; at: Vec2 }> = [];
+  let tresors: TresorSprite[] = [];
+  const makeTresors = (): TresorSprite[] => tresorsDef.filter((t) => t.ilot === def.id).map((t, i) => {
+    const k = walkerH() / WALKER_H;
+    const tex = tresorTextures();
+    const carte = new THREE.Mesh(new THREE.PlaneGeometry(0.4 * k, 0.55 * k), new THREE.MeshBasicMaterial({ map: tex.carte, transparent: true, depthWrite: false, side: THREE.DoubleSide, color: new THREE.Color(1.12, 1.08, 1.0) }));
+    const halo = new THREE.Mesh(new THREE.PlaneGeometry(1.7 * k, 1.7 * k), new THREE.MeshBasicMaterial({ map: tex.halo, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.9 }));
+    const sol = new THREE.Mesh(new THREE.PlaneGeometry(2.0 * k, 2.0 * k), new THREE.MeshBasicMaterial({ map: tex.sol, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.6 }));
+    // un rai de lumière qui monte de la carte : on la voit de loin, d'un bout du quartier à l'autre
+    const rai = new THREE.Mesh(new THREE.PlaneGeometry(0.6 * k, 2.8 * k), new THREE.MeshBasicMaterial({ map: tex.rai, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.5 }));
+    rai.position.set(t.at.x, 1.4 * k, t.at.z - 0.02);
+    sol.rotation.x = -Math.PI / 2;
+    sol.position.set(t.at.x, 0.02, t.at.z);
+    carte.renderOrder = 2;
+    halo.renderOrder = 1;
+    scene.add(sol, rai, halo, carte);
+    return { id: t.id, at: { ...t.at }, carte, halo, sol, rai, ph: i * 1.7 + t.at.x };
+  });
+  const disposeTresors = () => {
+    for (const t of tresors) for (const m of [t.carte, t.halo, t.sol, t.rai]) { m.removeFromParent(); m.geometry.dispose(); (m.material as THREE.Material).dispose(); }
+    tresors = [];
+  };
   // Passants : va-et-vient sur une ligne z, déterministe (figé avec `freeze`) ; ils s'arrêtent si le joueur est juste
   // devant eux (pas d'obstacle dynamique dans la logique pure : on ne traverse pas, on attend).
   type PasserSprite = { a: Passer; s: WalkerSprite; x: number; dir: 1 | -1; phase: number; blocked: boolean };
@@ -642,6 +678,21 @@ export function createTown(o: TownOptions): Town {
       e.marker.position.set(at.x, markerY() + (e.kind === 'vu' ? 0.3 : o.freeze ? 0 : Math.sin(time * 2.4 + e.n.at.x) * 0.05), at.z + 0.02);
     }
     for (const p of passers) p.s.set({ x: p.x, z: p.a.z }, p.dir > 0 ? 'droite' : 'gauche', p.phase, !o.freeze && !p.blocked, time);
+    // M16 : les cartes qui scintillent (immobiles en temps figé ou en mouvement réduit, toujours lumineuses)
+    const calme = o.freeze || o.reducedMotion;
+    for (const t of tresors) {
+      const k = walkerH() / WALKER_H;
+      const bob = calme ? 0 : Math.sin(time * 2 + t.ph) * 0.05 * k;
+      const y = 0.62 * k + bob;
+      t.carte.position.set(t.at.x, y, t.at.z + 0.01);
+      t.carte.rotation.y = calme ? 0.3 : Math.sin(time * 1.3 + t.ph) * 0.65;
+      t.halo.position.set(t.at.x, y, t.at.z);
+      const eclat = calme ? 0 : Math.max(0, Math.sin(time * 5.3 + t.ph * 2) - 0.92) * 4;
+      (t.halo.material as THREE.MeshBasicMaterial).opacity = calme ? 0.8 : 0.6 + 0.22 * Math.sin(time * 3.1 + t.ph) + eclat;
+      t.halo.scale.setScalar(calme ? 1 : 1 + 0.08 * Math.sin(time * 3.1 + t.ph) + eclat * 0.3);
+      (t.sol.material as THREE.MeshBasicMaterial).opacity = calme ? 0.6 : 0.5 + 0.15 * Math.sin(time * 2 + t.ph);
+      (t.rai.material as THREE.MeshBasicMaterial).opacity = calme ? 0.45 : 0.38 + 0.14 * Math.sin(time * 1.6 + t.ph) + eclat * 0.4;
+    }
     focus.set(camAt().x, 0.9, camAt().z).project(camera);
     finish.uniforms.uFocusY!.value = THREE.MathUtils.clamp(focus.y * 0.5 + 0.5, 0.2, 0.8);
     if (dof.enabled && def.dof) {
@@ -726,6 +777,7 @@ export function createTown(o: TownOptions): Town {
     scene.remove(playerSprite.group);
     for (const e of npcSprites) { pending.delete(e.s); e.s.dispose(); e.marker.geometry.dispose(); (e.marker.material as THREE.Material).dispose(); }
     for (const p of passers) { pending.delete(p.s); p.s.dispose(); }
+    disposeTresors();
     world.dispose();
   };
   /** Monte la scène de l'îlot `def` selon la décision de son décor, puis le joueur, les PNJ et les passants. */
@@ -737,6 +789,7 @@ export function createTown(o: TownOptions): Town {
     playerSprite.setHeight(walkerH());
     npcSprites = makeNpcs();
     passers = makePassers();
+    tresors = makeTresors();
     plateauCle = '';
   };
   /**
@@ -837,6 +890,7 @@ export function createTown(o: TownOptions): Town {
     cadrer(c, snap = false) { cadrage = c ? { ...c, at: { ...c.at } } : null; if (snap) coupe = true; },
     cameraParams: () => rig.params,
     setMarkers(m) {
+      markersVoulus = { ...m };
       for (const e of npcSprites) {
         const k = m[e.n.id] ?? null;
         if (k !== e.kind) {
@@ -848,6 +902,14 @@ export function createTown(o: TownOptions): Town {
         }
       }
     },
+    setTresors(list) {
+      const cle = (l: ReadonlyArray<{ id: string; ilot: string; at: Vec2 }>) => l.map((t) => `${t.id}@${t.ilot}:${t.at.x},${t.at.z}`).join('|');
+      if (cle(list) === cle(tresorsDef)) return;
+      tresorsDef = list.map((t) => ({ id: t.id, ilot: t.ilot, at: { ...t.at } }));
+      disposeTresors();
+      tresors = makeTresors();
+    },
+    tresors: () => tresors.map((t) => t.id),
     walkNpc(id, to, speed, face) {
       const e = npcSprites.find((x) => x.n.id === id);
       if (!e) return Promise.resolve();
@@ -891,6 +953,8 @@ export function createTown(o: TownOptions): Town {
       for (const p of passers) p.s.dispose();
       for (const t of MARKERS.values()) t.dispose();
       MARKERS.clear();
+      disposeTresors();
+      if (TRESOR) { for (const t of Object.values(TRESOR)) t.dispose(); TRESOR = null; }
       world.dispose();
       decors.release(def.id);
       refl.dispose();
@@ -899,6 +963,82 @@ export function createTown(o: TownOptions): Town {
       renderer.domElement.remove();
     },
   };
+}
+
+/**
+ * M16 : textures de la carte qui scintille (points de collecte), dessinées par code : le dos d'une carte du jeu (nuit,
+ * cadre or, les quatre losanges des Voies), un halo doré, une lueur au sol.
+ */
+let TRESOR: { carte: THREE.CanvasTexture; halo: THREE.CanvasTexture; sol: THREE.CanvasTexture; rai: THREE.CanvasTexture } | null = null;
+function tresorTextures(): NonNullable<typeof TRESOR> {
+  if (TRESOR) return TRESOR;
+  const toile = (w: number, h: number, dessin: (g: CanvasRenderingContext2D) => void) => {
+    const c = document.createElement('canvas');
+    c.width = w;
+    c.height = h;
+    dessin(c.getContext('2d')!);
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+  };
+  const carte = toile(96, 132, (g) => {
+    const r = 10;
+    const chemin = (x: number, y: number, w: number, h: number, rr: number) => {
+      g.beginPath();
+      g.moveTo(x + rr, y); g.arcTo(x + w, y, x + w, y + h, rr); g.arcTo(x + w, y + h, x, y + h, rr); g.arcTo(x, y + h, x, y, rr); g.arcTo(x, y, x + w, y, rr);
+      g.closePath();
+    };
+    const fond = g.createLinearGradient(0, 0, 96, 132);
+    fond.addColorStop(0, '#2a2f4a');
+    fond.addColorStop(1, '#14172a');
+    chemin(4, 4, 88, 124, r);
+    g.fillStyle = fond;
+    g.fill();
+    g.lineWidth = 6;
+    g.strokeStyle = '#f0cf78';
+    g.stroke();
+    chemin(13, 13, 70, 106, 6);
+    g.lineWidth = 2;
+    g.strokeStyle = 'rgba(240, 207, 120, 0.7)';
+    g.stroke();
+    // les quatre losanges des Voies, en croix autour d'une étoile
+    g.fillStyle = '#ffe3a0';
+    const losange = (x: number, y: number, s: number) => { g.beginPath(); g.moveTo(x, y - s); g.lineTo(x + s * 0.7, y); g.lineTo(x, y + s); g.lineTo(x - s * 0.7, y); g.closePath(); g.fill(); };
+    losange(48, 44, 11); losange(48, 88, 11); losange(28, 66, 11); losange(68, 66, 11);
+    g.beginPath(); g.arc(48, 66, 5, 0, Math.PI * 2); g.fill();
+    // un reflet en biais
+    const reflet = g.createLinearGradient(10, 10, 86, 122);
+    reflet.addColorStop(0.35, 'rgba(255,255,255,0)');
+    reflet.addColorStop(0.5, 'rgba(255,255,255,0.28)');
+    reflet.addColorStop(0.65, 'rgba(255,255,255,0)');
+    chemin(4, 4, 88, 124, r);
+    g.fillStyle = reflet;
+    g.fill();
+  });
+  const radial = (w: number, h: number, stops: Array<[number, string]>) => toile(w, h, (g) => {
+    const d = g.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, w / 2);
+    for (const [o, c] of stops) d.addColorStop(o, c);
+    g.fillStyle = d;
+    g.fillRect(0, 0, w, h);
+  });
+  const halo = radial(128, 128, [[0, 'rgba(255, 228, 150, 0.95)'], [0.25, 'rgba(255, 200, 110, 0.45)'], [0.6, 'rgba(255, 170, 70, 0.12)'], [1, 'rgba(255, 160, 60, 0)']]);
+  const sol = radial(128, 128, [[0, 'rgba(255, 215, 130, 0.8)'], [0.4, 'rgba(255, 190, 100, 0.3)'], [1, 'rgba(255, 170, 80, 0)']]);
+  const rai = toile(64, 256, (g) => {
+    const v = g.createLinearGradient(0, 256, 0, 0);
+    v.addColorStop(0, 'rgba(255, 220, 140, 0.9)');
+    v.addColorStop(0.35, 'rgba(255, 205, 120, 0.35)');
+    v.addColorStop(1, 'rgba(255, 190, 100, 0)');
+    g.fillStyle = v;
+    g.fillRect(0, 0, 64, 256);
+    // bords adoucis : le rai s'efface sur les côtés
+    g.globalCompositeOperation = 'destination-in';
+    const hz = g.createLinearGradient(0, 0, 64, 0);
+    hz.addColorStop(0, 'rgba(0,0,0,0)'); hz.addColorStop(0.5, 'rgba(0,0,0,1)'); hz.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = hz;
+    g.fillRect(0, 0, 64, 256);
+  });
+  TRESOR = { carte, halo, sol, rai };
+  return TRESOR;
 }
 
 const MARKERS = new Map<string, THREE.CanvasTexture>();
