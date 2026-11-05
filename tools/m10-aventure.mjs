@@ -70,7 +70,7 @@ try {
   await parler('kai-prologue');
   await p.click('[data-key="dlg-duel"]');
   await p.waitForSelector('[data-key="av-preparation"]');
-  check(/cartes grises/.test(await p.textContent('[data-key="av-deck-adverse"]')) && /16 neutres/.test(await p.textContent('[data-key="av-deck-reel"]')), 'préparation : les deux decks annoncés (seize cartes grises de chaque côté)');
+  check(/Vous [0-9]+/.test(await p.textContent('[data-key="av-pv-duel"]')) && !(await p.$('[data-key="av-deck-adverse"]')), 'préparation : le minimum (enjeu, points de vie ; plus le détail des decks, passe 208)');
   await shot('preparation-prologue');
   await p.click('[data-key="av-duel-go"]');
   await duelPret();
