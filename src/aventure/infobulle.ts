@@ -5,6 +5,7 @@
  * que l'essentiel ; le détail (règle, origine d'une carte, conséquence d'un choix) se lit à la demande.
  */
 import { h } from '../presentation/dom';
+import { focusVisible } from '../entree/manette';
 
 const DELAI = 220;
 let bulle: HTMLElement | null = null;
@@ -50,7 +51,7 @@ export function installerInfobulles(): void {
   // au clavier seulement : un focus posé par le code à l'ouverture d'une fenêtre n'ouvre pas de bulle
   document.addEventListener('focusin', (e) => {
     const el = (e.target as Element | null)?.closest?.('[data-info]') ?? null;
-    if (!el || !(e.target as Element).matches(':focus-visible')) return;
+    if (!el || !focusVisible(e.target as Element)) return;
     cacher();
     cible = el;
     montrer(el);

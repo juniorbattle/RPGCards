@@ -24,6 +24,7 @@ import { techniqueSeal, triggerIcon } from './effectIcons';
 import { animatedIn, cls, domDifference, fresh, h, listen, patchChildren, tracked } from './dom';
 import { moodLabel, rivalLine } from './rivalLines';
 import { STANCE_ICON, stanceBanner } from './stance';
+import { focusVisible } from '../entree/manette';
 
 export { STANCE_ICON, stanceBanner };
 
@@ -400,7 +401,8 @@ function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
     zone.dataset.key = 'zone-primary';
     zone.setAttribute('aria-label', dr.primaryId ? 'Primaire posée (cliquer pour la reprendre en main)' : 'Emplacement Primaire : poser une carte (obligatoire)');
     listen(zone, 'click', () => c.clickZone('primary'));
-    listen(zone, 'keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); c.clickZone('primary'); } });
+    // un bouton posé dans la case (posture ASSAUT / GARDE) garde sa touche : sans cela, Entrée sur GARDE reprenait la carte
+    listen(zone, 'keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && !(e.target as HTMLElement).closest('button')) { e.preventDefault(); c.clickZone('primary'); } });
   }
   if (dr.primaryId && committing) {
     const defId = c.defIdOf(dr.primaryId);
@@ -449,7 +451,7 @@ function inspectHooks(c: Controller, defId: string, focusable: boolean): Record<
     onpointerleave: (e: PointerEvent) => { if (e.pointerType === 'mouse') inspect(c, null); },
   };
   if (focusable) {
-    hooks.onfocus = (e: FocusEvent) => { if ((e.target as HTMLElement).matches(':focus-visible')) inspect(c, defId); };
+    hooks.onfocus = (e: FocusEvent) => { if (focusVisible(e.target as HTMLElement)) inspect(c, defId); };
     hooks.onblur = () => inspect(c, null);
   }
   return hooks;
@@ -541,7 +543,7 @@ function slotZone(c: Controller, who: 'me' | 'opp', slot: SlotIndex, s: SlotView
     zone.dataset.key = `zone-${who}-${slot}`;
     zone.setAttribute('aria-label', zoneAria(c, who, slot, s));
     listen(zone, 'click', (e) => { if ((e.target as HTMLElement).closest('.menu')) return; c.clickZone(key); });
-    listen(zone, 'keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && !(e.target as HTMLElement).closest('.menu')) { e.preventDefault(); c.clickZone(key); } });
+    listen(zone, 'keydown', (e) => { if ((e.key === 'Enter' || e.key === ' ') && !(e.target as HTMLElement).closest('.menu, button')) { e.preventDefault(); c.clickZone(key); } });
   }
   return zone;
 }

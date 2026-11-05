@@ -28,6 +28,7 @@ import { U } from './materiaux';
 import { LAYER_NOREFLECT, PlanarReflection } from './reflets';
 import type { QuaiScene } from './scene';
 import { WALKER_H, createWalkerSprite, recolorTargets, type WalkerSprite } from './sprites';
+import { definirMarche, marcheManette } from '../entree/manette';
 import { createSheetResolver, type ExternalReport, type SheetSpec, type SpritePolicy } from './spritesExternes';
 
 export interface TownOptions {
@@ -574,6 +575,8 @@ export function createTown(o: TownOptions): Town {
   window.addEventListener('keyup', onKey, true);
   const blurAll = () => keys.clear();
   window.addEventListener('blur', blurAll);
+  // manette : elle fait marcher tant que la ville n'est ni en pause ni verrouillée ; ailleurs elle parcourt les écrans
+  const lacherManette = definirMarche(() => !paused && !locked);
   // Clic au sol : rayon de la caméra par le pixel (dé-projection), intersection avec le plan y = 0.
   const onClick = (e: PointerEvent) => {
     if (locked || e.button !== 0) return;
@@ -606,7 +609,9 @@ export function createTown(o: TownOptions): Town {
     let x = 0;
     let z = 0;
     for (const k of keys) { const d = KEYMAP[k]; if (d) { x += d[0]; z += d[1]; } }
-    return { x, z };
+    // manette : stick gauche analogique (une poussée légère marche, à fond on court) ou croix
+    const m = marcheManette();
+    return { x: x + m.x, z: z + m.z };
   };
   const focus = new THREE.Vector3();
   /** Profondeur de vue (m) d'un point du monde, à la verticale de la caméra. */
@@ -880,6 +885,7 @@ export function createTown(o: TownOptions): Town {
       window.removeEventListener('keydown', onKey, true);
       window.removeEventListener('keyup', onKey, true);
       window.removeEventListener('blur', blurAll);
+      lacherManette();
       playerSprite.dispose();
       for (const { s, marker } of npcSprites) { s.dispose(); marker.geometry.dispose(); (marker.material as THREE.Material).dispose(); }
       for (const p of passers) p.s.dispose();

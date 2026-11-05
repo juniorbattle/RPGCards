@@ -11,6 +11,7 @@ import { h } from '../shell/ui';
 import type { Cadrage, Town } from '../ville/ville';
 import { entre, type Plan } from './cinematiques';
 import { FONDUS } from './rideau';
+import { estManette } from '../entree/manette';
 
 /** Un plan joué : `action` démarre avec lui ; `finir` met tout de suite son état final (cinématique passée). */
 export interface PlanJoue extends Plan { action?: () => Promise<void>; finir?: () => void }
@@ -47,6 +48,8 @@ export class Cinema {
   private dernier: Plan | null = null;
   private n = -1;
   private readonly onKey = (e: KeyboardEvent) => {
+    // à la manette, seuls B et Start (Échap) passent : A ne coupe pas une cinématique par mégarde
+    if (estManette(e) && e.code !== 'Escape') return;
     if (e.code === 'Escape' || e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); this.passerDoux(); }
   };
 
