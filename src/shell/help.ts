@@ -36,6 +36,9 @@ const SECTIONS: Array<[string, string[]]> = [
     'Insight : réserve de 0 à 2 (départ 1), +1 par tour au plus (Garde victorieuse contre Assaut, Interférence réussie, certains effets).',
     'Une Technique par tour, payée à la déclaration : Sondage (1), Recentrage (1), Lecture (2), Ancrage (1), Rupture (2), Dissipation (1). Leur fenêtre s’affiche dans les commandes.',
   ]],
+  ['Apprendre en jouant', [
+    'Le menu « Apprendre » (accueil) ouvre les leçons du maître de table : six leçons de base, une minute chacune (le Clash, Assaut ou Garde, les Secondaires, les choix tactiques, Interférer, Insight et Technique), puis une leçon par élément (familles, effets des variantes, regards privés, chaque Technique, la Signature, la prolongation). Chaque leçon se rejoue à volonté.',
+  ]],
   ['Lire le rival', [
     'Le rival est une IA qui ne voit que ce que vous verriez à sa place. Ses expressions et répliques réagissent aux seuls faits publics : ce ne sont pas des indices sur ses choix secrets.',
   ]],

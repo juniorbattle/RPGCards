@@ -28,7 +28,7 @@ export interface SideSetup {
   deckTop?: string[];
 }
 
-export function fixture(cfg: GameConfig, p1: SideSetup, p2: SideSetup, opts: { turn?: number; phase?: 'COMMIT' | 'PREPARE' } = {}): GameState {
+export function fixture(cfg: GameConfig, p1: SideSetup, p2: SideSetup, opts: { turn?: number; phase?: 'COMMIT' | 'PREPARE' | 'START' } = {}): GameState {
   const { state } = createGame(cfg);
   const s = structuredClone(state);
   const turn = opts.turn ?? 5;
@@ -60,7 +60,9 @@ export function fixture(cfg: GameConfig, p1: SideSetup, p2: SideSetup, opts: { t
     if (setup.hp !== undefined) p.hp = setup.hp;
   }
   s.phase = opts.phase ?? 'COMMIT';
-  s.awaiting = s.phase === 'COMMIT' ? ['p1', 'p2'] : (['p1', 'p2'] as PlayerId[]).filter((pid) => s.players[pid].slots.some((x) => x && !x.active && x.placedTurn < turn));
+  // M17 : début de tour (leçons des Techniques précoces) : attendu qui peut payer Sondage ou Recentrage
+  const precoce = (pid: PlayerId) => { const p = s.players[pid]; return p.techniques.some((t) => (t === 'Sondage' || t === 'Recentrage')) && p.insight >= 1; };
+  s.awaiting = s.phase === 'COMMIT' ? ['p1', 'p2'] : s.phase === 'START' ? (['p1', 'p2'] as PlayerId[]).filter(precoce) : (['p1', 'p2'] as PlayerId[]).filter((pid) => s.players[pid].slots.some((x) => x && !x.active && x.placedTurn < turn));
   s.pending = {};
   assertInvariants(s);
   return s;

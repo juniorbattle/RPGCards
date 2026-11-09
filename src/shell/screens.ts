@@ -58,6 +58,8 @@ export function renderHome(sh: Shell): HTMLElement {
   // fiche M12, N2 : l'accueil mène à l'aventure, comme l'écran titre de l'aventure mène au jeu standard
   items.push(homeItem('Aventure', 'swords', () => { location.href = `${location.pathname}?aventure=1`; }, 'home-aventure', { hint: 'La ville, les quatre familles et le Championnat' }));
   const tail: HTMLElement[] = [
+    // M17 (fiche, A5 et B4) : les leçons du duel
+    homeItem('Apprendre', 'star', () => sh.apprendre(), 'home-apprendre', { hint: 'Leçons du duel : jouer pour comprendre, à votre rythme', compact: true }),
     homeItem('Options', 'options', () => sh.go({ type: 'open', screen: 'options' }), 'home-options', { hint: 'Rythme, mouvement, texte, sauvegarde', compact: true }),
     homeItem('Aide', 'help', () => sh.go({ type: 'open', screen: 'help' }), 'home-help', { hint: 'Aide et règles : prise en main, Rang et Puissance, raccourcis', compact: true }),
   ];

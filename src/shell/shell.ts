@@ -38,6 +38,10 @@ import { renderDeck } from './deckEditor';
 import { renderOptions } from './options';
 import { renderHelp } from './help';
 import { duelTip } from './tips';
+import { Seance, ouvrirSeance } from '../lecons/seance';
+import { bibliotheque, demanderProfil, leconsAProposer, offrirLecons } from '../lecons/ecrans';
+import { aRevoir, conseilsEteints, ecrireLecons, leconsPermises, lireLecons, marquerDemande, stockageLecons } from '../lecons/progression';
+import { estLeconId, type LeconId } from '../lecons/catalogue';
 import { son } from '../son/moteur';
 import { consigneVille, musiqueEcran } from '../son/musique/chef';
 
@@ -87,6 +91,8 @@ export class Shell {
   hubBoard = false;
   /** Adversaire dont l’affiche a été survolée ou focalisée en dernier (préparé en priorité, M08 C3). */
   private preferred: string | null = null;
+  /** M17 : séance de leçons en cours (elle prend le plateau ; l'enveloppe se cache). */
+  private seance: Seance | null = null;
 
   constructor(readonly d: ShellDeps) {
     this.store = new SaveStore(SaveStore.browser());
@@ -98,6 +104,8 @@ export class Shell {
     this.explicit = new Set([...new URLSearchParams(window.location.search).keys()]);
     this.applyOptions();
     document.addEventListener('keydown', this.keyHandler);
+    // M17 : crochet QA explicite (`?qa=1`) : lancer une séance de leçons sans passer par l'accueil
+    if (this.params.qa) (window as unknown as Record<string, unknown>).__lqvLecons = { lancer: (ids: LeconId[]) => this.lancerLecons(ids), active: () => !!this.seance };
     this.render();
   }
 
@@ -350,13 +358,16 @@ export class Shell {
 
   private tipFor(c: Controller) {
     if (!this.save?.options.tips) return null;
-    return duelTip(c, this.save.tipsSeen);
+    // M17 (B5) : une leçon faite éteint les conseils qu'elle couvre
+    return duelTip(c, [...this.save.tipsSeen, ...conseilsEteints(lireLecons(stockageLecons()).faites)]);
   }
 
   /** Outils du duel propres à l’enveloppe ; `false` = comportement par défaut de la session. */
   private duelTool(t: string): boolean {
     if (t === 'menu') { this.setOverlay('menu'); return true; }
     if (t === 'help') { this.setOverlay('help'); return true; }
+    // M17 (B3) : « Revoir en leçon » : proposée au retour à l'accueil
+    if (t.startsWith('lecon:')) { const id = t.slice(6); if (estLeconId(id)) ecrireLecons(stockageLecons(), aRevoir(lireLecons(stockageLecons()), id)); return true; }
     if (t.startsWith('tip:')) {
       if (this.save) {
         const seen = new Set(this.save.tipsSeen);
@@ -445,6 +456,8 @@ export class Shell {
   render(): void {
     const host = this.d.shellHost;
     const s = this.flow;
+    // M17 : une séance de leçons a le plateau ; l'enveloppe reste cachée jusqu'à sa fin
+    if (this.seance) { host.hidden = true; return; }
     const inDuel = s.screen === 'duel';
     const scr = s.screen === 'home' && this.homeMode === 'new' ? 'new' : s.screen;
     // M08 C1 : aucune préparation de personnage pendant un duel (jamais pendant une commande).
@@ -495,6 +508,44 @@ export class Shell {
     const keep = focusKey ? host.querySelector<HTMLElement>(`[data-key="${CSS.escape(focusKey)}"]`) : null;
     const primary = keep ?? host.querySelector<HTMLElement>('[data-shell-primary]:not(:disabled)') ?? host.querySelector<HTMLElement>('.sh-title');
     if (primary && !host.hidden) primary.focus({ preventScroll: true });
+    // M17 (A5) : au premier lancement, à l'accueil, la question du profil puis les leçons qu'il propose
+    if (s.screen === 'home' && this.homeMode !== 'new' && !this.d.hub && leconsPermises(location.search) && !lireLecons(stockageLecons()).demande) queueMicrotask(() => void this.premiereFois());
+    // M17 (B3) : une leçon demandée depuis un conseil du duel (« Revoir en leçon ») est proposée au premier écran hors duel
+    else if (!inDuel && leconsPermises(location.search) && lireLecons(stockageLecons()).aRevoir.length) queueMicrotask(() => this.revoir());
+  }
+
+  /** M17 (B3) : propose les leçons à revoir ; « Essayer maintenant » lance la séance. */
+  private revoir(): void {
+    if (this.seance || this.flow.screen === 'duel' || document.querySelector('.lecon-offre, .lecon-profil-overlay, .sh-confirm')) return;
+    const ids = lireLecons(stockageLecons()).aRevoir;
+    if (ids.length) void offrirLecons(ids, 'Tu voulais revoir ce qui s’est passé pendant le duel : une minute à ma table ?').then((oui) => { if (oui) this.lancerLecons(ids); });
+  }
+
+  /** M17 : la question du profil, une seule fois, puis les leçons de base de ce profil. */
+  private async premiereFois(): Promise<void> {
+    if (this.seance || document.querySelector('.lecon-profil-overlay') || lireLecons(stockageLecons()).demande) return;
+    ecrireLecons(stockageLecons(), marquerDemande(lireLecons(stockageLecons())));
+    const p = await demanderProfil('Bienvenue. Les duels des Quatre Voies se jouent en Clashs. Pour que le maître de table t’explique ce qu’il faut, et seulement ce qu’il faut :');
+    if (p && this.flow.screen === 'home') this.lancerLecons(leconsAProposer(p));
+  }
+
+  /** M17 (A5, B4) : « Apprendre » : la bibliothèque des leçons (la question du profil d'abord, si elle n'a jamais été posée). */
+  apprendre(): void {
+    if (this.seance) return;
+    const e = lireLecons(stockageLecons());
+    if (!e.profil) { void demanderProfil().then((p) => { if (p) { const ids = leconsAProposer(p); if (ids.length) this.lancerLecons(ids); else bibliotheque((x) => this.lancerLecons(x)); } }); return; }
+    bibliotheque((ids) => this.lancerLecons(ids));
+  }
+
+  /** M17 : lance une séance sur le plateau ; l'accueil revient à sa fin, sous le noir. */
+  lancerLecons(ids: LeconId[]): void {
+    if (this.seance || !ids.length) return;
+    holdPreparation(true);
+    this.d.shellHost.hidden = true;
+    this.seance = ouvrirSeance({
+      app: this.d.app, params: this.params, ensureArena: (p, v) => this.d.ensureArena(p, v),
+      fin: (_faites, leverNoir) => { this.seance = null; this.renderedScreen = ''; this.render(); leverNoir(); },
+    }, ids);
   }
 
   /**
@@ -551,7 +602,7 @@ export class Shell {
   }
 
   private onKey(e: KeyboardEvent): void {
-    if (document.querySelector('.sh-confirm')) return;
+    if (this.seance || document.querySelector('.sh-confirm')) return;
     if (e.key !== 'Escape') return;
     if (this.flow.screen === 'duel') {
       if (this.flow.overlay === 'menu') this.setOverlay(null);

@@ -26,6 +26,10 @@ import type { VenueId } from '../presentation/venues';
 import { duelSeed, SaveStore } from '../product/save';
 import { webglAvailable, type ArenaHandle } from '../scene/arena';
 import { confirmDialog, h } from '../shell/ui';
+import { Seance, ouvrirSeance } from '../lecons/seance';
+import { bibliotheque, demanderProfil, leconsAProposer, offrirLecons } from '../lecons/ecrans';
+import { aProposer, aRevoir as leconARevoir, conseilsEteints, ecrireLecons, leconsDebloquees, leconsPermises, lireLecons, marquerDemande, marquerProposee, stockageLecons } from '../lecons/progression';
+import { estLeconId, LECONS_BASE, PARTENAIRE, type LeconId } from '../lecons/catalogue';
 import { APPARENCE_DEFAUT, estOrigine, idJoueur, type Apparence } from '../ville/apparence';
 import { apparencesDisponibles, editeurApparence } from './apparence';
 import { parseRig } from '../ville/cameras';
@@ -125,7 +129,9 @@ export class AventureApp {
   private look = '';
   private live: { session: DuelSession; duel: DuelAventure; prevu: DuelPrevu } | null = null;
   /** Écran courant (QA, aide au rendu). */
-  ecran: 'titre' | 'nouveau' | 'ville' | 'preparation' | 'duel' | 'choix' | 'resultat' = 'titre';
+  ecran: 'titre' | 'nouveau' | 'ville' | 'preparation' | 'duel' | 'choix' | 'resultat' | 'lecon' = 'titre';
+  /** M17 : séance de leçons en cours (elle a le plateau ; la ville est cachée). */
+  private seance: Seance | null = null;
   private posesAffichees = '';
   /**
    * ARB-M10-12 : le Quai de l'aventure est le Quai en quatre rangs ; depuis la reprise de M09, toute la ville est en rangs
@@ -1725,6 +1731,7 @@ export class AventureApp {
 
   /** Préparation (dialogue) : adversaire, lieu, enjeu, PV, rien de plus (retour du test, passe 208 : « le minimum ») ; puis le duel. */
   private preparer(prevu: DuelPrevu, forcee = false): void {
+    if (prevu.rencontre === 'prologue' && this.offrirEntrainement(prevu)) return;
     this.fermerDialogue();
     // M14 : la Préparation a déjà tout dit, et la scène l'enjeu : pas de fenêtre de plus devant le duel
     if (this.verrouRecit) { this.lancer(prevu); return; }
@@ -1784,9 +1791,11 @@ export class AventureApp {
         if (t === 'menu') { void this.menuDuel(); return true; }
         // M12 : un conseil lu (« Compris ») est mémorisé dans la sauvegarde de l'aventure
         if (t.startsWith('tip:') && this.save) { this.save.conseils = conseilLu(this.save.conseils, t.slice(4)); this.persist(); this.live?.session.render(); return true; }
+        // M17 (B3) : « Revoir en leçon » : proposée au prochain moment calme
+        if (t.startsWith('lecon:')) { const id = t.slice(6); if (estLeconId(id)) ecrireLecons(stockageLecons(), leconARevoir(lireLecons(stockageLecons()), id)); return true; }
         return false;
       },
-      tip: (c) => (this.save && conseilsPermis(location.search) && lireConseils(stockageLocal()) ? duelTip(c, this.save.conseils ?? []) : null),
+      tip: (c) => (this.save && conseilsPermis(location.search) && lireConseils(stockageLocal()) ? duelTip(c, [...(this.save.conseils ?? []), ...conseilsEteints(lireLecons(stockageLecons()).faites)]) : null),
       onCommand: (c) => this.pointDeSauvegarde(id, c),
       onEnded: (c) => this.finDuel(c, false),
       // M13 : le rôle musical de la rencontre (Kaï, Championnat, Finale, Maison, duel ordinaire)
@@ -1997,6 +2006,7 @@ export class AventureApp {
   }
 
   private apresResultat(): void {
+    if (this.proposerLecons(() => this.apresResultat())) return;
     const r = this.dernierResultat!;
     const rencontre = r.prevu.rencontre;
     this.d.arena()?.setPaused(true);
@@ -2200,11 +2210,79 @@ export class AventureApp {
       gains.length ? h('h3', null, 'Entre au registre', pastille('Inscrit une seule fois : un rechargement ou une reprise ne le duplique pas.')) : null,
       gains.length ? h('div', { class: 'av-gains' }, ...gains.flatMap((g) => gainLegendes(g, this.params.artSeed))) : null,
       ...notes.map((n, i) => h('p', { class: 'av-transition', 'data-key': `av-recompense-note-${i}` }, n)),
-      h('div', { class: 'ville-choices' }, h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-continuer', onclick: () => { this.fermerModal(); suite(); } }, 'Continuer')));
+      h('div', { class: 'ville-choices' }, h('button', { class: 'ville-btn primary', type: 'button', 'data-key': 'av-continuer', onclick: () => { this.fermerModal(); if (!this.proposerLecons(suite)) suite(); } }, 'Continuer')));
     this.ouvrirModal(panel);
   }
 
+  // -------------------------------------------------------------------------
+  // M17 — apprendre le duel (contrat `docs/m17/01_TUTORIEL_DU_DUEL.md`)
+
+  /** A4 : avant le duel du prologue, le maître de table propose une partie d'entraînement (une fois) ; refusable. */
+  private offrirEntrainement(prevu: DuelPrevu): boolean {
+    const e = lireLecons(stockageLecons());
+    if (!leconsPermises(location.search) || e.proposees.includes('clash') || LECONS_BASE.every((id) => e.faites.includes(id))) return false;
+    ecrireLecons(stockageLecons(), marquerProposee(e, [...LECONS_BASE]));
+    this.fermerDialogue();
+    this.dire(PARTENAIRE, 'Avant de jouer devant la foule, une partie d’entraînement à ma table ? Une minute par leçon, pour apprendre le duel en jouant. Kaï peut attendre.', [
+      { label: 'Volontiers', key: 'dlg-lecons', primary: true, run: () => { this.fermerDialogue(); void this.entrainement(prevu); } },
+      { label: 'Je connais le duel', key: 'dlg-lecons-non', run: () => { ecrireLecons(stockageLecons(), marquerDemande(lireLecons(stockageLecons()))); this.preparer(prevu); } },
+    ]);
+    return true;
+  }
+
+  /** La question du profil (si besoin), puis les leçons qu'il propose ; ensuite, le duel du prologue. */
+  private async entrainement(prevu: DuelPrevu): Promise<void> {
+    const p = lireLecons(stockageLecons()).profil ?? await demanderProfil();
+    const ids = p ? leconsAProposer(p) : [];
+    if (!ids.length) { this.preparer(prevu); return; }
+    this.lancerLecons(ids, () => { if (!this.verrouRecit) this.entrerVille(false, undefined, true); this.preparer(prevu); });
+  }
+
+  /** B1 : les leçons des éléments que le joueur possède désormais (hors Techniques de départ), ou à revoir (B3). */
+  private leconsNouvelles(): LeconId[] {
+    const reg = this.etat.registre;
+    const c = collectionDe(reg);
+    const depart = new Set(reg.filter((g) => g.kind === 'technique' && g.source === 'P0').map((g) => g.items[0]));
+    return aProposer(lireLecons(stockageLecons()), leconsDebloquees({ familles: c.basics.length > 0, variantes: c.variantes, techniques: c.techniques.filter((t) => !depart.has(t)), signature: c.signatures.length > 0 }));
+  }
+
+  /** B1 : propose les leçons nouvelles ; `puis` ensuite (après la séance, ou tout de suite). Vrai si une proposition s'est ouverte. */
+  private proposerLecons(puis: () => void): boolean {
+    if (!this.save || this.seance || !leconsPermises(location.search)) return false;
+    const ids = this.leconsNouvelles();
+    if (!ids.length) return false;
+    void offrirLecons(ids).then((oui) => (oui ? this.lancerLecons(ids, puis) : puis()));
+    return true;
+  }
+
+  /** Une séance de leçons sous le noir ; à sa fin, `apres`, ou retour à l'écran d'où l'on venait. */
+  private lancerLecons(ids: LeconId[], apres?: () => void): void {
+    if (this.seance || !ids.length) { apres?.(); return; }
+    const retour = this.ecran;
+    this.fondre(() => {
+      this.cacherVille();
+      this.ecran = 'lecon';
+      this.d.shellHost.hidden = true;
+      this.d.shellHost.className = 'shell';
+      this.d.shellHost.replaceChildren();
+      this.seance = ouvrirSeance({
+        app: this.d.app, params: this.params, ensureArena: (p, v) => this.d.ensureArena(p, v),
+        fin: (_faites, lever) => {
+          this.seance = null;
+          this.rideau.poser();
+          lever();
+          this.d.app.hidden = true;
+          if (apres) apres();
+          else if (retour === 'preparation') this.preparation();
+          else this.entrerVille(false, undefined, true);
+        },
+      }, ids);
+      this.rideau.ouvrir();
+    });
+  }
+
   private menu(): void {
+    if (this.seance) return;
     // M11 : Échap passe une cinématique
     if (this.cine) { this.cine.passerDoux(); return; }
     // M11-A : une rencontre forcée ne s'esquive pas par le menu (on peut abandonner le duel, sans perte)
@@ -2215,13 +2293,14 @@ export class AventureApp {
       { label: 'Reprendre', key: 'dlg-close', primary: true, run: () => this.fermerDialogue() },
       { label: 'Deck et collection', key: 'menu-deck', run: () => { this.fermerDialogue(); this.collection(); } },
       { label: 'Journal des quêtes', key: 'menu-journal', run: () => { this.fermerDialogue(); this.journal(); } },
+      { label: 'Leçons', key: 'menu-lecons', run: () => { this.fermerDialogue(); bibliotheque((ids) => this.lancerLecons(ids)); } },
       { label: `Récit : ${NOM_RECIT[this.guide ? 'guide' : 'libre'].toLowerCase()}`, key: 'menu-recit', run: () => this.changerRecit() },
       { label: 'Apparence', key: 'menu-apparence', run: () => { this.fermerDialogue(); void this.reglageApparence(); } },
       { label: `Son : ${son().reglages().coupe ? 'coupé' : `${Math.round(son().reglages().volume * 100)} %`}`, key: 'menu-son', run: () => this.reglageSon() },
       { label: `Mouvement réduit : ${new URLSearchParams(location.search).has('reducedMotion') ? 'imposé par l’adresse' : this.params.reducedMotion ? 'oui' : 'non'}`, key: 'menu-mouvement', run: () => { if (!new URLSearchParams(location.search).has('reducedMotion')) { this.params.reducedMotion = !this.params.reducedMotion; ecrireMouvementReduit(stockageLocal(), this.params.reducedMotion); this.bandesCine?.replier(true); this.bandesCine = null; this.appliquerMouvement(); } this.fermerDialogue(); this.menu(); } },
       { label: `Cinématiques : ${!cinePermise(location.search) ? 'coupées par l’adresse' : lireCine(stockageLocal()) ? 'oui' : 'non'}`, key: 'menu-cine', run: () => { ecrireCine(stockageLocal(), !lireCine(stockageLocal())); this.fermerDialogue(); this.menu(); } },
       { label: `Conseils du duel : ${!conseilsPermis(location.search) ? 'coupés par l’adresse' : lireConseils(stockageLocal()) ? 'affichés' : 'masqués'}`, key: 'menu-conseils', run: () => this.reglageConseils() },
-      { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. En Promenade libre, des cartes scintillent en ville, une ou deux par chapitre : ramassez-les ; certaines sont gardées par un joueur de rue, et les passants « ? » mettent sur la piste (Journal : « Les cartes de la ville »). Une seule Technique au départ : l’autre Technique de la rue se gagne contre un premier cadet, celle de chaque famille contre son chef. À la manette (Xbox, PlayStation…) : stick gauche ou croix pour marcher et pour passer d’un bouton à l’autre, A (Croix) pour parler et valider, B (Rond) pour revenir, Start (Options) pour le menu ; une cinématique se passe avec B ou Start. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter. Les joueurs de cartes de la ville regardent devant eux : entrer dans leur regard, c’est accepter leur défi (une bulle « ! » s’allume, ils viennent à vous) ; passez derrière eux ou à l’abri d’un étal pour les éviter. Kaï surgit à certains moments de votre histoire ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? ») ; des conseils, un à la fois, expliquent chaque phase et chaque signal des cartes la première fois qu’il paraît (« Conseils du duel », dans ce menu). Le son se règle dans ce menu (« Son »). Les grands moments de votre histoire se jouent en cinématique (première arrivée dans un quartier, Kaï qui surgit, votre affiliation, un chef vaincu, un nouveau chapitre, le Championnat) : Échap, Espace, Entrée ou « Passer » pour la passer ; « Cinématiques », dans ce menu, les coupe. « Récit », dans ce menu, passe de la Promenade libre, où l’on parcourt la ville, au Récit guidé, un film en séquences : les scènes s’enchaînent, et la Préparation, avant chaque duel, réunit le deck, le journal et les joueurs de rue ; on en change quand on veut, sans rien perdre.', [fermer(this)]) },
+      { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. En Promenade libre, des cartes scintillent en ville, une ou deux par chapitre : ramassez-les ; certaines sont gardées par un joueur de rue, et les passants « ? » mettent sur la piste (Journal : « Les cartes de la ville »). Une seule Technique au départ : l’autre Technique de la rue se gagne contre un premier cadet, celle de chaque famille contre son chef. À la manette (Xbox, PlayStation…) : stick gauche ou croix pour marcher et pour passer d’un bouton à l’autre, A (Croix) pour parler et valider, B (Rond) pour revenir, Start (Options) pour le menu ; une cinématique se passe avec B ou Start. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter. Les joueurs de cartes de la ville regardent devant eux : entrer dans leur regard, c’est accepter leur défi (une bulle « ! » s’allume, ils viennent à vous) ; passez derrière eux ou à l’abri d’un étal pour les éviter. Kaï surgit à certains moments de votre histoire ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? ») ; des conseils, un à la fois, expliquent chaque phase et chaque signal des cartes la première fois qu’il paraît (« Conseils du duel », dans ce menu). Le maître de table donne des leçons jouables d’une minute : les bases du duel avant le prologue, puis chaque nouvel élément quand vous l’obtenez ; « Leçons », dans ce menu, les rejoue toutes. Le son se règle dans ce menu (« Son »). Les grands moments de votre histoire se jouent en cinématique (première arrivée dans un quartier, Kaï qui surgit, votre affiliation, un chef vaincu, un nouveau chapitre, le Championnat) : Échap, Espace, Entrée ou « Passer » pour la passer ; « Cinématiques », dans ce menu, les coupe. « Récit », dans ce menu, passe de la Promenade libre, où l’on parcourt la ville, au Récit guidé, un film en séquences : les scènes s’enchaînent, et la Préparation, avant chaque duel, réunit le deck, le journal et les joueurs de rue ; on en change quand on veut, sans rien perdre.', [fermer(this)]) },
       { label: 'Écran titre', key: 'menu-home', run: () => { this.fermerDialogue(); this.fondre(() => this.titre()); } },
     ], undefined, false, null, true);
   }

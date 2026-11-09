@@ -47,7 +47,7 @@ export interface BoardHooks {
    */
   product?: { menu: true };
   /** Conseil contextuel non intrusif (M04), au-dessus des commandes ; « Compris » → outil `tip:<id>`. */
-  tip?: () => { id: string; title: string; text: string } | null;
+  tip?: () => { id: string; title: string; text: string; lecon?: string } | null;
 }
 
 /** Éléments qui glissent de leur ancienne place lors d’un passage de vue A ↔ B. */
@@ -877,7 +877,10 @@ function tipBox(c: Controller, hooks: BoardHooks): HTMLElement | null {
   return h('aside', { class: 'tip', role: 'note', 'aria-label': `Conseil : ${t.title}`, 'data-tip': t.id },
     h('b', { class: 'tip-title' }, t.title),
     h('span', { class: 'tip-text' }, t.text),
-    h('button', { class: 'tool tip-ok', type: 'button', 'data-key': 'tip-ok', onclick: () => hooks.onToggleTool(`tip:${t.id}`) }, 'Compris'));
+    h('div', { class: 'tip-actions' },
+      // M17 (B3) : la leçon qui explique ce qui vient de se passer, proposée au prochain moment calme
+      t.lecon ? h('button', { class: 'tool tip-lecon', type: 'button', 'data-key': 'tip-lecon', onclick: () => { hooks.onToggleTool(`lecon:${t.lecon}`); hooks.onToggleTool(`tip:${t.id}`); } }, 'Revoir en leçon') : null,
+      h('button', { class: 'tool tip-ok', type: 'button', 'data-key': 'tip-ok', onclick: () => hooks.onToggleTool(`tip:${t.id}`) }, 'Compris')));
 }
 
 function endOverlay(c: Controller): HTMLElement {

@@ -109,3 +109,10 @@ Le profil se change dans le menu ; il ne touche ni au duel, ni à l'IA, ni à la
 
 Format des leçons, style de guidage, personnage, place dans l'aventure et le jeu standard, profil ; moment et portée
 des leçons des nouveaux éléments, effets adverses, bibliothèque, sort des conseils, règle pour la suite ; calendrier.
+
+## 9. Livraison (passe 215)
+
+Livré tel que ci-dessus. Choix d'exécution : les leçons faites et le profil sont gardés par navigateur (`lqv.lecons`), pour le
+jeu standard comme pour l'aventure, plutôt que dans la sauvegarde de l'aventure (§7) : ce que le joueur sait du duel ne dépend
+pas d'une aventure. La leçon « Insight et Technique » enseigne Sondage ; Recentrage a sa propre leçon. Détail et preuves :
+`JOURNAL.md`, passe 215 ; `node tools/m17-lecons.mjs`, planche `screenshots/qa/m17/`.

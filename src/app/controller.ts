@@ -42,6 +42,18 @@ export interface ActivationSink {
   stop(): void;
 }
 
+/**
+ * M17 : un geste du joueur soumis à la garde d'une leçon (le maître de table n'accepte que le geste attendu ; le reste
+ * est inactif). Hors leçon, aucune garde : rien ne change.
+ */
+export type GesteJoueur =
+  | { k: 'carte'; id: string }
+  | { k: 'case'; cle: DropKey | 'opp0' | 'opp1' }
+  | { k: 'posture'; st: Stance }
+  | { k: 'mode'; slot: SlotIndex; mode: TacticPlan['mode'] }
+  | { k: 'tech'; t: TechniqueId }
+  | { k: 'commande'; cmd: PlayerCommand | { type: 'nextTurn' } };
+
 export interface UiState {
   phaseKey: string;
   selected: string | null;
@@ -136,6 +148,8 @@ export class Controller {
   private commandFn: (() => void) | null = null;
   /** Vrai après `dispose()` : plus aucune minuterie, commande ni rendu (sortie du duel sans rechargement). */
   disposed = false;
+  /** M17 : garde d'une leçon ; renvoie la raison d'un refus (montrée au joueur), ou `null`. */
+  garde: ((g: GesteJoueur) => string | null) | null = null;
 
   /**
    * `resume` : commandes déjà jouées de ce duel (reprise après fermeture). Elles sont rejouées sur le
@@ -648,9 +662,17 @@ export class Controller {
     else this.aiTimer = window.setTimeout(run, Math.max(this.params.aiDelay, this.activationsUntil - performance.now()));
   }
 
+  /** M17 : geste refusé par la garde d'une leçon (raison montrée) ? */
+  private refuse(g: GesteJoueur): boolean {
+    const r = this.garde?.(g) ?? null;
+    if (r) this.toast(r, 'info');
+    return !!r;
+  }
+
   /** Point d’entrée unique vers le moteur ; refus explicite sans mutation. */
   apply(cmd: PlayerCommand | { type: 'nextTurn' }): boolean {
     if (this.disposed) return false;
+    if ((cmd.type === 'nextTurn' || cmd.player === 'p1') && this.refuse({ k: 'commande', cmd })) return false;
     // Une animation ne bloque jamais une commande valide : la séquence est achevée d’abord.
     if (this.sequencing && (cmd.type === 'nextTurn' || checkCommand(this.match.state, cmd) === null)) this.skipSequence();
     if (cmd.type !== 'nextTurn') {
@@ -697,6 +719,7 @@ export class Controller {
   dropCard(cardId: string, key: DropKey): void {
     const reason = this.dropCheck(cardId, key);
     if (reason) { this.toast(reason); return; }
+    if (key !== 'hand' && (this.refuse({ k: 'carte', id: cardId }) || this.refuse({ k: 'case', cle: key }))) return;
     const dr = this.ui.draft;
     if (key === 'hand') {
       if (dr.primaryId === cardId) { dr.primaryId = null; dr.stance = null; }
@@ -716,6 +739,7 @@ export class Controller {
 
   clickHandCard(cardId: string): void {
     const v = this.view;
+    if (v.awaitingMe && (v.phase === 'START' || this.editingCommit()) && this.refuse({ k: 'carte', id: cardId })) return;
     if (v.phase === 'START' && v.awaitingMe) {
       if (this.ui.recentrageArmed) {
         this.ui.startTech = { id: 'Recentrage', cardId };
@@ -765,6 +789,7 @@ export class Controller {
   }
 
   setStance(st: Stance): void {
+    if (this.refuse({ k: 'posture', st })) return;
     if (this.view.phase === 'LECTURE_CHANGE') { this.ui.lectureStance = st; this.renderFn(); return; }
     if (!this.editingCommit() || !this.ui.draft.primaryId) { this.toast('Posez d’abord une Primaire.'); return; }
     this.ui.draft.stance = st;
@@ -806,6 +831,7 @@ export class Controller {
   // Début de tour / préparation / Dissipation / Lecture
 
   toggleStartTech(t: TechniqueId): void {
+    if (this.refuse({ k: 'tech', t })) return;
     if (t === 'Sondage') this.ui.startTech = this.ui.startTech?.id === 'Sondage' ? null : { id: 'Sondage' };
     if (t === 'Recentrage') {
       if (this.ui.startTech?.id === 'Recentrage') this.ui.startTech = null;
@@ -823,6 +849,7 @@ export class Controller {
     if (!s) return;
     if (s.state === 'charging') return this.toast('Secondaire en chargement : révélation possible au tour suivant seulement.');
     if (s.state === 'active') return this.toast('Cette Secondaire est déjà active.');
+    if (this.refuse({ k: 'case', cle: slot === 0 ? 'slot0' : 'slot1' })) return;
     this.ui.reveal = this.ui.reveal.includes(slot) ? this.ui.reveal.filter((x) => x !== slot) : [...this.ui.reveal, slot];
     this.renderFn();
   }
@@ -851,6 +878,7 @@ export class Controller {
     const s = v.me.slots[slot];
     if (v.phase === 'PREPARE' && v.awaitingMe) return this.toggleReveal(slot);
     if (v.phase === 'TACTICS' && v.awaitingMe) {
+      if (this.refuse({ k: 'case', cle: slot === 0 ? 'slot0' : 'slot1' })) return;
       if (this.ui.techTargeting === 'Ancrage') {
         const plan = this.ui.plans[slot];
         if (!s || s.state !== 'active' || !plan || plan.mode === 'keep') return this.toast('Ancrage : désignez une de vos Secondaires engagées (Rang, Dégâts ou Interférer).');
@@ -894,6 +922,7 @@ export class Controller {
   }
 
   choosePlan(slot: SlotIndex, mode: TacticPlan['mode']): void {
+    if (this.refuse({ k: 'mode', slot, mode })) return;
     const blocked = this.modeBlocked(slot, mode);
     if (blocked) return this.toast(blocked);
     if (mode === 'interfere') {
@@ -911,6 +940,7 @@ export class Controller {
   clickOppSlot(slot: SlotIndex): void {
     const v = this.view;
     const s = v.opp.slots[slot];
+    if (['DISSIPATION', 'REPEL', 'TACTICS'].includes(v.phase) && this.refuse({ k: 'case', cle: slot === 0 ? 'opp0' : 'opp1' })) return;
     if (v.phase === 'DISSIPATION' && v.awaitingMe) {
       if (!s?.maskSource) return this.toast('Dissipation : visez la Secondaire adverse qui maintient le camouflage (Dissimulation).');
       this.ui.dissipTarget = this.ui.dissipTarget === slot ? null : slot;
@@ -940,6 +970,7 @@ export class Controller {
   }
 
   toggleTacticsTech(t: 'Ancrage' | 'Rupture'): void {
+    if (this.refuse({ k: 'tech', t })) return;
     if (this.ui.tacticsTech?.id === t || this.ui.techTargeting === t) {
       this.ui.tacticsTech = null;
       this.ui.techTargeting = null;

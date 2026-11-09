@@ -9,7 +9,7 @@ import type { Controller } from '../app/controller';
 import { cardDef, EFFECTS, INSTANT_PRIMARY_EFFECTS } from '../game/catalog/cards';
 import { visibleEvents } from '../game/visibility/view';
 
-export interface Tip { id: string; title: string; text: string }
+export interface Tip { id: string; title: string; text: string; /** M17 (B3) : la leçon qui l'explique (« Revoir en leçon »). */ lecon?: string }
 
 const TIPS: Record<string, Tip> = {
   start: { id: 'start', title: 'Début de tour', text: 'Votre main se complète à 4 cartes. Sondage et Recentrage (Techniques de début) s’utilisent ici si elles sont équipées et que l’Insight suffit ; sinon, validez.' },
@@ -34,6 +34,35 @@ function ceTour(c: Controller): { effet: boolean; regard: boolean } {
   return { effet: evs.some((e) => e.kind === 'effect' || e.kind === 'technique'), regard: evs.some((e) => e.kind === 'peek' && e.vis === 'p1') };
 }
 
+/**
+ * M17 (fiche, B3) : la première fois qu'un effet adverse change le Clash, « Ce qui vient de se passer », avec la leçon
+ * qui l'explique. Faits publics de ce tour seulement (ADR 011) : une Interférence réussie du rival, sa Signature
+ * annoncée, sa Dissipation, sa Rupture, un effet de ses cartes, une prolongation.
+ */
+const ADVERSES: Record<string, Tip> = {
+  'adv-interference': { id: 'adv-interference', title: 'Ce qui vient de se passer', text: 'Le rival a Interféré : une de ses Secondaires, de Rang imprimé égal ou supérieur, a annulé un de tes soutiens. Ton Clash s’est joué sans lui.', lecon: 'interferer' },
+  'adv-signature': { id: 'adv-signature', title: 'Ce qui vient de se passer', text: 'Le rival a engagé sa Signature, de Rang ∞ : elle bat toute Primaire ordinaire. Elle est annoncée dès son verrouillage ; si tu avais déjà verrouillé, tu pouvais réviser une fois.', lecon: 'signature' },
+  'adv-dissipation': { id: 'adv-dissipation', title: 'Ce qui vient de se passer', text: 'Le rival a joué Dissipation : ton camouflage est levé jusqu’à la fin du tour.', lecon: 'tech-Dissipation' },
+  'adv-rupture': { id: 'adv-rupture', title: 'Ce qui vient de se passer', text: 'Le rival a joué Rupture : sa Garde a gagné, et ta Secondaire active est retournée dans ta main.', lecon: 'tech-Rupture' },
+  'adv-effet': { id: 'adv-effet', title: 'Ce qui vient de se passer', text: 'Un effet d’une carte du rival a joué : il est montré au centre de l’écran, et le journal du duel le garde.', lecon: 'effets' },
+  'adv-prolongation': { id: 'adv-prolongation', title: 'Ce qui vient de se passer', text: 'Double K.-O. : vous êtes tombés ensemble. Personne ne perd : prolongation, 1 PV chacun.', lecon: 'prolongation' },
+};
+
+function adverse(c: Controller, seen: readonly string[]): Tip | null {
+  const turn = c.view.turn;
+  const evs = visibleEvents(c.match.events, 'p1').filter((e) => e.turn === turn);
+  const lui = (e: { data: Record<string, unknown> }) => e.data.player === 'p2';
+  const ids: string[] = [];
+  if (evs.some((e) => e.kind === 'overtime')) ids.push('adv-prolongation');
+  if (evs.some((e) => e.kind === 'signatureAnnounced' && lui(e))) ids.push('adv-signature');
+  if (evs.some((e) => e.kind === 'interference' && lui(e) && e.data.success === true)) ids.push('adv-interference');
+  if (evs.some((e) => e.kind === 'dissipation' && lui(e))) ids.push('adv-dissipation');
+  if (evs.some((e) => e.kind === 'effect' && lui(e) && e.data.effect === 'rupture' && e.data.status === 'success')) ids.push('adv-rupture');
+  if (evs.some((e) => e.kind === 'effect' && lui(e) && e.data.status === 'success' && e.data.effect !== 'rupture' && !e.data.technique)) ids.push('adv-effet');
+  const id = ids.find((x) => !seen.includes(x));
+  return id ? ADVERSES[id]! : null;
+}
+
 /** Conseil à montrer maintenant (le premier non lu pour cette situation), ou `null`. */
 export function duelTip(c: Controller, seen: readonly string[]): Tip | null {
   const v = c.view;
@@ -43,6 +72,8 @@ export function duelTip(c: Controller, seen: readonly string[]): Tip | null {
   const m12 = M12.some((id) => !seen.includes(id)) ? ceTour(c) : { effet: false, regard: false };
   const regard = m12.regard ? want('prive') : null;
   if (v.phase === 'RESOLVED') {
+    const adv = adverse(c, seen);
+    if (adv) return adv;
     const r = v.lastClash;
     if (r?.zeroDamageRankWin) return want('zero') ?? want('resolved');
     return want('resolved') ?? (m12.effet ? want('temps') : null) ?? regard ?? (r?.guardWin ? want('insight') : null);
@@ -66,4 +97,4 @@ export function duelTip(c: Controller, seen: readonly string[]): Tip | null {
 const M12 = ['reveler', 'arme', 'pastille', 'temps', 'prive'];
 const triggerDe = (defId: string): string | null => { const d = cardDef(defId); return d.effect && !d.signature ? EFFECTS[d.effect].trigger : null; };
 
-export const TIP_IDS = Object.keys(TIPS);
+export const TIP_IDS = [...Object.keys(TIPS), ...Object.keys(ADVERSES)];

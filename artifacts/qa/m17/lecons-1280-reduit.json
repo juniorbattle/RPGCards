@@ -1,0 +1,344 @@
+{
+  "head": "291f1bc",
+  "viewport": [
+    1280,
+    720
+  ],
+  "reduit": true,
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "modes": [
+    "souris",
+    "clavier"
+  ],
+  "checks": [
+    "OK souris : profil déjà choisi, la question n’est pas posée",
+    "OK souris · clash : finie (14 gestes, 2.8 s)",
+    "OK souris · posture : finie (14 gestes, 2.6 s)",
+    "OK souris · secondaires : finie (20 gestes, 4.6 s)",
+    "OK souris · tactique : finie (20 gestes, 4.3 s)",
+    "OK souris · interferer : finie (13 gestes, 3 s)",
+    "OK souris · insight : finie (11 gestes, 2.6 s)",
+    "OK souris · familles : finie (7 gestes, 1.9 s)",
+    "OK souris · effets : finie (9 gestes, 2.4 s)",
+    "OK souris · regard : finie (7 gestes, 2 s)",
+    "OK souris · tech-Sondage : finie (6 gestes, 1.6 s)",
+    "OK souris · tech-Recentrage : finie (7 gestes, 1.6 s)",
+    "OK souris · tech-Lecture : finie (7 gestes, 1.6 s)",
+    "OK souris · tech-Ancrage : finie (9 gestes, 1.9 s)",
+    "OK souris · tech-Rupture : finie (8 gestes, 1.7 s)",
+    "OK souris · tech-Dissipation : finie (6 gestes, 1.4 s)",
+    "OK souris · signature : finie (4 gestes, 1.1 s)",
+    "OK souris · prolongation : finie (9 gestes, 1.9 s)",
+    "OK geste hors consigne refusé : « Pas cette carte : Neutre IV. »",
+    "OK Échap : pause de la leçon ; quitter ramène l’accueil (« Apprendre » visible)",
+    "OK mouvement réduit : appliqué",
+    "OK clavier : profil déjà choisi, la question n’est pas posée",
+    "OK clavier · clash : finie (14 gestes, 2.3 s)",
+    "OK clavier · posture : finie (14 gestes, 2.4 s)",
+    "OK clavier · secondaires : finie (20 gestes, 3.2 s)",
+    "OK clavier · tactique : finie (20 gestes, 3.2 s)",
+    "OK clavier · interferer : finie (12 gestes, 1.9 s)",
+    "OK clavier · insight : finie (11 gestes, 1.8 s)",
+    "OK clavier · familles : finie (7 gestes, 1.1 s)",
+    "OK clavier · effets : finie (9 gestes, 1.4 s)",
+    "OK clavier · regard : finie (7 gestes, 1.2 s)",
+    "OK clavier · tech-Sondage : finie (6 gestes, 1 s)",
+    "OK clavier · tech-Recentrage : finie (7 gestes, 1.1 s)",
+    "OK clavier · tech-Lecture : finie (7 gestes, 1.2 s)",
+    "OK clavier · tech-Ancrage : finie (9 gestes, 1.5 s)",
+    "OK clavier · tech-Rupture : finie (7 gestes, 1.2 s)",
+    "OK clavier · tech-Dissipation : finie (6 gestes, 1 s)",
+    "OK clavier · signature : finie (4 gestes, 0.7 s)",
+    "OK clavier · prolongation : finie (9 gestes, 1.5 s)",
+    "OK clavier : aucun geste replié sur la souris (0)",
+    "OK premier lancement : la question du profil s’ouvre à l’accueil",
+    "OK profil « habitué » : trois leçons (Leçon 1 / 3 · Le Clash)",
+    "OK phrases courtes (Pose Neutre IV en ASSAUT (je joue un Rang II).)",
+    "OK la question n’est pas reposée",
+    "OK « Apprendre » : la bibliothèque, 17 leçons",
+    "OK aventure : le maître de table propose l’entraînement avant le prologue",
+    "OK aventure : les six leçons du profil « découverte »",
+    "OK aventure : en quittant les leçons, le noir se lève sur la ville et la préparation du duel contre Kaï",
+    "OK aventure : « Leçons » dans le menu ouvre la bibliothèque",
+    "OK aventure : l’entraînement n’est proposé qu’une fois"
+  ],
+  "issues": [],
+  "resultats": {
+    "souris": {
+      "clash": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 14,
+        "s": 2.8
+      },
+      "posture": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 14,
+        "s": 2.6
+      },
+      "secondaires": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 20,
+        "s": 4.6
+      },
+      "tactique": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 20,
+        "s": 4.3
+      },
+      "interferer": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 13,
+        "s": 3
+      },
+      "insight": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 11,
+        "s": 2.6
+      },
+      "familles": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 7,
+        "s": 1.9
+      },
+      "effets": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 9,
+        "s": 2.4
+      },
+      "regard": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 7,
+        "s": 2
+      },
+      "tech-Sondage": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 1,
+        "refus": 0,
+        "gestes": 6,
+        "s": 1.6
+      },
+      "tech-Recentrage": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 1,
+        "refus": 0,
+        "gestes": 7,
+        "s": 1.6
+      },
+      "tech-Lecture": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 7,
+        "s": 1.6
+      },
+      "tech-Ancrage": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 9,
+        "s": 1.9
+      },
+      "tech-Rupture": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 8,
+        "s": 1.7
+      },
+      "tech-Dissipation": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 1,
+        "refus": 0,
+        "gestes": 6,
+        "s": 1.4
+      },
+      "signature": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 4,
+        "s": 1.1
+      },
+      "prolongation": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 9,
+        "s": 1.9
+      }
+    },
+    "clavier": {
+      "clash": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 14,
+        "s": 2.3
+      },
+      "posture": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 14,
+        "s": 2.4
+      },
+      "secondaires": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 20,
+        "s": 3.2
+      },
+      "tactique": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 20,
+        "s": 3.2
+      },
+      "interferer": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 12,
+        "s": 1.9
+      },
+      "insight": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 11,
+        "s": 1.8
+      },
+      "familles": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 7,
+        "s": 1.1
+      },
+      "effets": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 9,
+        "s": 1.4
+      },
+      "regard": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 7,
+        "s": 1.2
+      },
+      "tech-Sondage": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 1,
+        "refus": 0,
+        "gestes": 6,
+        "s": 1
+      },
+      "tech-Recentrage": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 1,
+        "refus": 0,
+        "gestes": 7,
+        "s": 1.1
+      },
+      "tech-Lecture": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 7,
+        "s": 1.2
+      },
+      "tech-Ancrage": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 9,
+        "s": 1.5
+      },
+      "tech-Rupture": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 7,
+        "s": 1.2
+      },
+      "tech-Dissipation": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 1,
+        "refus": 0,
+        "gestes": 6,
+        "s": 1
+      },
+      "signature": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 4,
+        "s": 0.7
+      },
+      "prolongation": {
+        "fin": true,
+        "faite": true,
+        "anneaux": 2,
+        "refus": 0,
+        "gestes": 9,
+        "s": 1.5
+      }
+    }
+  }
+}
