@@ -1,7 +1,8 @@
 # M17 — Apprendre le duel : tutoriel de base et leçons des nouveaux éléments (contrat, PROPOSÉ)
 
-> **Statut : PROPOSÉ le 2026-11-09 (passe 213).** Fiche d'arbitrages publiée (`docs/FICHE_ARBITRAGES_M17.md`) ; rien n'est
-> codé avant qu'elle soit remplie et consignée.
+> **Statut : APPROUVÉ le 2026-11-09 (fiche remplie, consignée à la passe 214 ; `docs/FICHE_ARBITRAGES_M17.md`).** Treize
+> choix sur la recommandation ; **un écart (S1) : développé avant le test complet du responsable** ; clôture repoussée le
+> temps de M17 (S2). Règle B6 inscrite à `AGENTS.md`.
 > Demande du responsable (2026-11-09) : « il va être nécessaire d'intégrer un tutoriel de combat pour bien cerner les
 > concepts, mais aussi lorsque nous aurons de nouveaux éléments de gameplay (les variantes, les Signatures, etc.), afin
 > que tout type de profil de joueur puisse bien comprendre le jeu ».

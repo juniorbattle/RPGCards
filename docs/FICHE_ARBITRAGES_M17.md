@@ -26,4 +26,21 @@
 
 ## Décisions du responsable
 
-*À consigner quand la fiche sera remplie.*
+Fiche remplie le 2026-11-09 (17 h 25 à 17 h 27), consignée à la passe 214. **Treize choix sur la recommandation ; un écart : S1, M17 se développe AVANT le test complet du responsable.** Aucune note.
+
+| Id | Choix |
+|---|---|
+| A1 | Six leçons courtes et jouables |
+| A2 | Mise en lumière, le reste inactif, puis un tour libre |
+| A3 | Le maître de table |
+| A4 | Proposé avant le prologue, refusable |
+| A5 | « Apprendre » à l'accueil, proposé au premier lancement |
+| A6 | Une question, trois profils |
+| B1 | Leçon proposée à l'obtention |
+| B2 | Tous les éléments de la liste |
+| B3 | Une ligne au résultat, la première fois |
+| B4 | Écran « Leçons » dans le menu |
+| B5 | Gardés ; une leçon faite éteint ses conseils |
+| B6 | Règle inscrite : chaque nouvel élément avec sa leçon |
+| **S1** | **Avant mon test complet** (écart à la recommandation) |
+| S2 | Repousser la clôture le temps de M17 |
