@@ -239,7 +239,7 @@ export class Seance {
       .map((e) => e.getBoundingClientRect()).filter((r) => r.width > 0 && r.height > 0);
     const pad = 6;
     // M18 : le panneau s'écarte aussi d'un menu tactique ouvert d'office ou d'une question posée sur place (tour libre compris)
-    const ouverts = [...document.querySelectorAll<HTMLElement>('#app .menu, #app .ask, #app .centre-act')].map((e) => e.getBoundingClientRect()).filter((r) => r.width > 0 && r.height > 0);
+    const ouverts = [...document.querySelectorAll<HTMLElement>('#app .menu, #app .ask, #app .decision')].map((e) => e.getBoundingClientRect()).filter((r) => r.width > 0 && r.height > 0);
     this.eviter([...rects, ...ouverts]);
     const cle = rects.map((r) => `${Math.round(r.x)},${Math.round(r.y)},${Math.round(r.width)},${Math.round(r.height)}`).join('|') + `@${W}x${H}`;
     if (this.voile.dataset.cle === cle) return;

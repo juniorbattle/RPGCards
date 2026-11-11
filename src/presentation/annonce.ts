@@ -81,6 +81,11 @@ export class Annonceur {
     this.timer = window.setTimeout(() => { if (el.isConnected) el.remove(); }, total + 40);
   }
 
+  /** QA : une étape annoncée par son panneau de décision plutôt que par le bandeau. */
+  noter(a: Annonce): void {
+    this.vues.push(`${a.titre} · ${a.texte} (panneau)`);
+  }
+
   effacer(): void {
     window.clearTimeout(this.timer);
     this.host.replaceChildren();

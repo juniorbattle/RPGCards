@@ -832,22 +832,43 @@ button { font: inherit; color: inherit; }
 .ask-cout { font-family: system-ui, sans-serif; font-size: 0.7rem; color: var(--ink-dim); }
 .ask-q { margin: 0; text-align: center; font-size: 0.82rem; line-height: 1.3; color: #f1e9dc; }
 .ask-btns, .centre-btns { display: flex; gap: 0.45rem; justify-content: center; }
-.ask-reserve { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 7; display: grid; gap: 0.3rem; justify-items: stretch; }
-.ask-reserve .btn { padding: 0.32rem 0.7rem; font-size: 0.8rem; }
-.zone .centre-act { position: absolute; left: 50%; bottom: calc(100% + 1.55rem); transform: translateX(-50%); z-index: 8; display: grid; justify-items: center; gap: 0.25rem; pointer-events: auto; }
-.centre-act > .btn:not(.ghost) { padding: 0.62rem 2.2rem; font-size: 1.15rem; letter-spacing: 0.06em; }
-.centre-hint { padding: 0.1rem 0.6rem; border-radius: 999px; background: rgba(10, 7, 10, 0.72); color: #f1e9dc; font-size: 0.74rem; white-space: nowrap; text-shadow: 0 1px 2px #000; }
-.centre-act .stance { position: static; transform: none; }
 .menu.assiste { min-width: 15.5rem; }
 .menu.assiste button small { color: #f1e2c0; }
-/* « Engager » au-dessus de la case : l'aide « Le rival engage… » de la case adverse, déjà dite par son HUD, s'efface */
-#app:has(.side.me .centre-act) .side.opp .zone.primary > .empty-hint { visibility: hidden; }
 .ask-revision { max-width: min(26rem, 60vw); }
 .inspector.droite { left: auto; right: var(--g); }
 .menu.assiste .menu-titre-a { display: grid; gap: 0.05rem; }
 .menu.assiste .menu-titre-a b { font-family: Georgia, serif; font-size: 0.86rem; color: var(--gold-hi); }
 .menu.assiste .menu-titre-a span { color: #f1e9dc; font-size: 0.74rem; }
 .menu.assiste .menu-titre-a small { color: var(--ink-dim); font-size: 0.66rem; }
-.centre-act > .btn:has(.eng-l2) { display: grid; justify-items: center; gap: 0; padding: 0.38rem 1.5rem 0.42rem; line-height: 1.05; }
-.centre-act .eng-l1 { font-size: 1.15rem; letter-spacing: 0.06em; }
-.centre-act .eng-l2 { font-family: system-ui, sans-serif; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.04em; opacity: 0.85; }
+/* M18 — le panneau de décision (retour du responsable : « le bouton Engager n'est pas assez mis en avant ») : toutes les
+   décisions du tour au même endroit, au centre de la table au-dessus des rangées ; éclairé, contrasté, la réponse en
+   grand. En mouvement réduit, la pulsation s'arrête, l'éclat reste. */
+.decision { position: absolute; z-index: 7; left: 50%; top: 41%; translate: -50% -50%; display: grid; justify-items: center; gap: 0.32rem; min-width: min(23rem, 72vw); max-width: min(34rem, 82vw); padding: 0.65rem 1.4rem 0.75rem; text-align: center; border-radius: 14px; border: 2px solid var(--gold-hi); background: radial-gradient(120% 140% at 50% 0%, rgba(58, 40, 18, 0.97), rgba(14, 9, 7, 0.97) 70%); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.75), 0 14px 36px rgba(0, 0, 0, 0.85), 0 0 38px rgba(255, 206, 120, 0.42); pointer-events: auto; }
+.decision-sur { font-size: 0.68rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-hi); }
+.decision-titre { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.35rem; font-family: Georgia, serif; font-size: clamp(1.05rem, 2.3vh, 1.45rem); color: #faf4e8; line-height: 1.25; }
+.decision-titre .seal { display: inline-flex; }
+.decision-carte { color: var(--gold-hi); }
+.decision-mode { padding: 0.04rem 0.5rem; border-radius: 6px; font-family: system-ui, sans-serif; font-size: 0.82em; font-weight: 900; letter-spacing: 0.06em; color: #fff; }
+.decision-mode.assault { background: linear-gradient(180deg, var(--assault), #b8231a 60%, #7a140d); }
+.decision-mode.guard { background: linear-gradient(180deg, var(--guard), #1d4fb8 60%, #123477); }
+.decision-aide { margin: 0; font-size: 0.8rem; line-height: 1.3; color: #e9dfcc; }
+.decision-btns { display: flex; gap: 0.6rem; justify-content: center; margin-top: 0.1rem; }
+.decision-btns > .btn:not(.ghost) { min-width: 11rem; padding: 0.7rem 2.4rem; font-size: clamp(1.15rem, 2.4vh, 1.5rem); letter-spacing: 0.08em; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.7), 0 6px 18px rgba(0, 0, 0, 0.6), 0 0 26px rgba(255, 214, 140, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.5); }
+.decision-btns > .btn.ghost { align-self: center; font-size: 0.85rem; padding: 0.5rem 1rem; }
+.decision .stance { position: static; transform: none; translate: none; margin-top: 0.15rem; }
+.decision .stance .chip { font-size: 0.95rem; padding: 0.5rem 1.2rem; }
+/* Panneau et bandeau ancrés juste au-dessus de la rangée du rival (jamais sur une carte), vue A comme vue B. */
+.decision { top: calc(46.8% - 1.8rem); translate: -50% -100%; gap: 0.25rem; padding: 0.55rem 1.3rem 0.6rem; }
+.view-b .decision { top: calc(30.5% - 1.8rem); }
+.decision-btns > .btn:not(.ghost) { padding: 0.58rem 2.4rem; }
+.annonce { top: calc(46.8% - 1.8rem); translate: -50% -100%; }
+/* La réserve interrogée par le panneau s'éclaire (même or que le panneau). */
+.zone.question > .zone-floor, .zone.question:has(> .card) > .zone-floor { visibility: visible; border-style: solid; border-color: var(--gold-hi); border-width: 2px; box-shadow: 0 0 0 3px rgba(255, 226, 160, 0.45), 0 0 28px rgba(255, 214, 140, 0.6); }
+.zone.question > .card.on-board { box-shadow: 0 0 0 3px var(--gold-hi), 0 0 26px rgba(255, 214, 140, 0.7), 0 6px 16px rgba(0, 0, 0, 0.65); }
+.decision-carte.ligne { flex-basis: 100%; font-size: 0.82em; }
+/* Retour du responsable (passe 221) : le panneau et le bandeau cachaient le visage du rival ; ils descendent sur la
+   rangée du rival (permis), leur bas juste au-dessus de la rangée du joueur, dont les cartes restent visibles. */
+.decision, .annonce { top: calc(62.9% - 2.6rem); translate: -50% -100%; }
+.view-b .decision, :root:has(#app.view-b) .annonce { top: calc(46.5% - 2.6rem); }
+.ask-ligne.avec-btn { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.22rem 0.3rem 0.22rem 0.95rem; pointer-events: auto; }
+.ask-ligne.avec-btn .btn { padding: 0.25rem 0.8rem; font-size: 0.78rem; }

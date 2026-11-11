@@ -1,1 +1,1 @@
-Planche M17 (leçons) : a194f4d, 1280×720.
+Planche M17 (leçons) : 4d26290, 1280×720.

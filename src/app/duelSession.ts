@@ -13,7 +13,7 @@ import { artCacheSize } from '../art/cardArt';
 import { artWarmStats, warmCardArt } from '../art/artWarmup';
 import { buildMemory } from '../game/ai/memory';
 import { viewFor, visibleEvents } from '../game/visibility/view';
-import { patchBeat, patchInspector, patchRivalBubble, renderApp, renderCheckStats, type BoardHooks } from '../presentation/board';
+import { panneauDecisionPresent, patchBeat, patchInspector, patchRivalBubble, renderApp, renderCheckStats, type BoardHooks } from '../presentation/board';
 import { ClashStage } from '../presentation/clashStage';
 import { ActivationStage } from '../presentation/activationStage';
 import { DragManager } from '../presentation/drag';
@@ -214,7 +214,12 @@ export class DuelSession {
     if (!c.assiste) { this.annonceur.effacer(); this.planifierSuite(); return; }
     const v = c.view;
     const a = c.sequencing || this.suspendu ? null : annonceDe({ seed: v.seed, turn: v.turn, phase: v.phase, awaitingMe: v.awaitingMe, repelMine: !!v.repel?.mine, handCount: v.me.handCount, activeSlots: v.me.slots.filter((s) => s?.state === 'active').length, lectureSeen: v.lectureSeen ?? null });
-    if (a && a.cle !== this.derniereAnnonce) {
+    // le panneau de décision occupe la même place et dit déjà l'étape : le bandeau s'efface devant lui
+    if (panneauDecisionPresent(c)) {
+      window.clearTimeout(this.annonceTimer);
+      this.annonceur.effacer();
+      if (a && a.cle !== this.derniereAnnonce) { this.derniereAnnonce = a.cle; this.annonceur.noter(a); }
+    } else if (a && a.cle !== this.derniereAnnonce) {
       // un temps fort occupe le centre de l'écran (une Technique, un regard) : le bandeau attend qu'il soit passé
       window.clearTimeout(this.annonceTimer);
       if (this.acts.busy && !this.o.params.freeze) this.annonceTimer = window.setTimeout(() => { if (!c.disposed) this.assister(); }, 200);

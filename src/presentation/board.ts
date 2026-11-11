@@ -70,6 +70,9 @@ function buildApp(c: Controller, hooks: BoardHooks): DocumentFragment {
   );
   // M18 (R2) : au tour assisté, le dernier Clash résumé sur une ligne jusqu'au Clash suivant
   if (c.assiste && c.bilan && !c.sequencing) f.append(bilanLine(c));
+  // M18 : les décisions du tour, au même endroit, au centre de la table
+  const decision = panneauDecision(c);
+  if (decision) f.append(decision);
   const tip = tipBox(c, hooks);
   if (tip) f.append(tip);
   if (c.ui.toast) f.append(fresh(h('div', { class: cls('toast', c.ui.toast.kind === 'info' && 'info'), role: 'status', 'aria-live': 'polite' }, c.ui.toast.text)));
@@ -306,6 +309,8 @@ export function boardKey(c: Controller): string {
 }
 
 function board(c: Controller): HTMLElement {
+  // menu tactique refermé : la prochaine ouverture reprendra le focus
+  if (c.ui.menuSlot === null) menuFocalise = '';
   // M07 : nom de la phase en filigrane sur la ligne médiane de la table (repère « où en est le tour », à la
   // manière de Duel Links) ; décoratif, la frise de phase et les commandes portent l’information accessible.
   const phase = PHASES.find((p) => p.match.includes(c.view.phase))?.label ?? '';
@@ -349,11 +354,7 @@ function announcedSignature(c: Controller, who: 'me' | 'opp', defId: string): HT
 }
 
 function primaryZone(c: Controller, who: 'me' | 'opp'): HTMLElement {
-  const zone = primaryZoneBase(c, who);
-  // M18 (G1) : au tour assisté, le geste qui conclut (Engager, Valider…) au-dessus de la case Primaire
-  const act = who === 'me' && c.assiste ? actionCentre(c) : null;
-  if (act) { zone.append(act); zone.classList.add('has-centre'); }
-  return zone;
+  return primaryZoneBase(c, who);
 }
 
 function primaryZoneBase(c: Controller, who: 'me' | 'opp'): HTMLElement {
@@ -515,7 +516,8 @@ function slotZone(c: Controller, who: 'me' | 'opp', slot: SlotIndex, s: SlotView
         }
       }
       // M18 (R3) : au tour assisté, la question posée sur la réserve elle-même
-      if (c.assiste && c.reservesEnAttente().includes(slot)) zone.append(reserveQuestion(c, slot));
+      // M18 : la réserve interrogée s'éclaire ; la question se pose dans le panneau de décision
+      if (c.assiste && c.reservesEnAttente()[0] === slot) zone.classList.add('question');
     }
     if (v.phase === 'TACTICS' && v.awaitingMe && s) interactive = true;
     if (v.phase === 'TACTICS' && s?.state === 'active') {
@@ -577,6 +579,9 @@ function planBadge(mode: string, extra: string, cancelled: boolean): HTMLElement
 /** M12 : le mode tactique qui déclenche l'effet d'une Secondaire. */
 const MODE_TRIGGER: Readonly<Record<string, string>> = { rank: 'use-rank', damage: 'use-damage', interfere: 'use-interfere' };
 
+/** Ouverture de menu tactique déjà focalisée (une fois par ouverture). */
+let menuFocalise = '';
+
 function tacticsMenu(c: Controller, slot: SlotIndex): HTMLElement {
   const cur = c.ui.plans[slot]?.mode ?? null;
   const card = c.view.me.slots[slot]?.card;
@@ -599,7 +604,13 @@ function tacticsMenu(c: Controller, slot: SlotIndex): HTMLElement {
     item('damage', a ? `Dégâts ${c.supportLabel(slot, 'damage')}` : 'Amplifier les dégâts', c.supportLabel(slot, 'damage') + ' au multiplicateur'),
     item('interfere', 'Interférer', a ? 'annule un soutien adverse ; cible ensuite' : 'puis choisir la cible adverse'),
   ));
-  queueMicrotask(() => (menu.querySelector('button:not(:disabled)') as HTMLElement | null)?.focus());
+  // le focus se pose une fois, à l'ouverture du menu : un re-rendu (le rival qui verrouille) ne ramène plus le joueur
+  // sur la première option pendant qu'il descend dans la liste (clavier, manette)
+  const ouverture = `${c.view.seed}:${c.view.turn}:${slot}:${c.ui.menuSlot}`;
+  if (menuFocalise !== ouverture) {
+    menuFocalise = ouverture;
+    queueMicrotask(() => { if (!menu.contains(document.activeElement)) (menu.querySelector('button:not(:disabled)') as HTMLElement | null)?.focus(); });
+  }
   return menu;
 }
 
@@ -964,35 +975,18 @@ function commandAssiste(c: Controller, head: (who: string) => HTMLElement): HTML
     techChips(c));
 }
 
-/**
- * La consigne du moment, au-dessus de la main (une seule) : la question de la Technique utilisable (« Utiliser » /
- * « Non »), sinon la phrase du geste attendu. Rien quand l'action parle d'elle-même (« Engager » au centre).
- */
+/** La consigne du moment, en une ligne au-dessus de la main (le geste attendu) ; les décisions ont leur panneau. */
 function consigneMain(c: Controller): HTMLElement | null {
   const v = c.view;
   // un Repoussement se choisit pendant que le Clash se présente encore
   if (c.sequencing && !(v.phase === 'REPEL' && v.repel?.mine)) return null;
-  // la révision (avenant 08) : la Signature adverse annoncée reste visible ; la question se pose au-dessus de la main
-  if (v.phase === 'REVISION' && v.awaitingMe) {
-    return h('div', { class: 'ask ask-tech ask-revision', role: 'group', 'aria-label': 'Révision de l’engagement', 'data-key': 'ask-revision' },
-      h('p', { class: 'ask-q' }, 'Le rival a annoncé sa Signature : garde ton engagement, ou change-le une fois.'),
-      h('div', { class: 'ask-btns' },
-        askBtn('Garder', 'act-revision-keep', () => c.keepRevision(), { primary: true, next: true }),
-        askBtn('Engager la révision', 'act-revision', () => c.lockCommit(), { ghost: true, disabled: !c.engagementPret() })));
-  }
-  const t = c.questionTech();
-  if (t) {
-    const def = TECHNIQUES[t];
-    return h('div', { class: 'ask ask-tech', role: 'group', 'aria-label': `${t} : ${QUESTION_TECH[t]}`, 'data-key': `ask-tech-${t}` },
-      h('div', { class: 'ask-head' }, cardArtVersion() === 'v2' ? h('span', { class: 'seal', html: techniqueSeal(t, 18) }) : null, h('b', null, t), h('span', { class: 'ask-cout' }, `${def.cost} Insight`)),
-      h('p', { class: 'ask-q', title: def.text }, t === 'Recentrage' ? 'Clique la carte à glisser sous ta pioche (tu en pioches une autre), ou :' : QUESTION_TECH[t]),
-      h('div', { class: 'ask-btns' },
-        // le Recentrage se répond d'un clic sur la carte elle-même
-        t === 'Recentrage' ? null : askBtn('Utiliser', `tech-oui-${t}`, () => c.repondreTech(t, true), { next: true, title: def.text }),
-        askBtn(t === 'Recentrage' ? 'Pas de Recentrage' : 'Non', `tech-non-${t}`, () => c.repondreTech(t, false), { ghost: true })));
-  }
+  if (panneauDecisionPresent(c)) return null;
   const ligne = consigneTexte(c);
   if (!ligne) return null;
+  // le Repoussement se joue sur la rangée du rival : pas de panneau par-dessus, « Renoncer » dans la consigne
+  if (v.phase === 'REPEL' && v.repel?.mine) {
+    return h('div', { class: 'ask ask-ligne avec-btn', role: 'group', 'aria-label': 'Repoussement', 'data-key': 'consigne' }, h('span', null, ligne), askBtn('Renoncer', 'act-repel-skip', () => c.skipRepel(), { ghost: true }));
+  }
   return h('div', { class: 'ask ask-ligne', role: 'status', 'aria-live': 'polite', 'data-key': 'consigne' }, ligne);
 }
 
@@ -1008,7 +1002,6 @@ function consigneTexte(c: Controller): string {
       if (ui.recentrageArmed) return 'Recentrage : clique la carte à glisser sous ta pioche.';
       return '';
     }
-    case 'PREPARE': return c.reservesEnAttente().length > 1 ? 'Réponds sur chaque réserve : la révéler, ou la garder cachée.' : '';
     case 'COMMIT':
     case 'REVISION': {
       const dr = ui.draft;
@@ -1027,30 +1020,86 @@ function consigneTexte(c: Controller): string {
   }
 }
 
-/** G1 : au-dessus de la case Primaire, le geste qui conclut l'étape (ou la question qui s'y pose). */
-function actionCentre(c: Controller): HTMLElement | null {
+/** Le panneau de décision est-il à l'écran (une Technique, l'engagement, la révision, le mode, le Repoussement) ? */
+export function panneauDecisionPresent(c: Controller): boolean {
   const v = c.view;
-  if (c.sequencing && !(v.phase === 'REPEL' && v.repel?.mine)) return null;
-  const box = (...kids: Array<HTMLElement | string | null>) => h('div', { class: 'centre-act', role: 'group', 'aria-label': 'Action du tour' }, ...kids);
-  const hint = (t: string) => h('span', { class: 'centre-hint' }, t);
-  if (v.phase === 'REPEL' && v.repel?.mine) return box(hint('Repoussement : renvoie une Secondaire adverse'), askBtn('Renoncer', 'act-repel-skip', () => c.skipRepel(), { ghost: true }));
-  if (!v.awaitingMe) return null;
-  switch (v.phase) {
-    case 'COMMIT': {
-      if (!c.engagementPret()) return null;
-      // le seul cas où l'engagement attend un geste de plus : la Secondaire facultative, refusée (« sans Secondaire ») ;
-      // poser une Secondaire engage tout de suite
-      // deux lignes, à la largeur de la colonne Primaire : les Secondaires adverses voisines restent visibles
-      const sans = c.peutAjouterSecondaire();
-      return box(askBtn(sans ? [h('span', { class: 'eng-l1' }, 'Engager'), h('span', { class: 'eng-l2' }, 'sans Secondaire')] : 'Engager', 'act-commit', () => c.lockCommit(), { primary: true, next: true, title: sans ? 'Engager la Primaire seule (poser une Secondaire engage aussi)' : 'Engager' }), sans ? hint('ou pose une Secondaire') : null);
+  if (!c.assiste) return false;
+  // le Repoussement se joue en cliquant une carte du rival : jamais de panneau dessus (consigne et « Renoncer » au-dessus de la main)
+  if (!v.awaitingMe || c.sequencing || v.phase === 'REPEL') return false;
+  // une carte choisie dans la main : la barre de pose posée sur elle est la question du moment
+  if (c.ui.selected && c.editingCommit()) return false;
+  return v.phase === 'REVISION' || v.phase === 'LECTURE_CHANGE' || c.reservesEnAttente().length > 0 || !!c.questionTech() || (v.phase === 'COMMIT' && c.engagementPret());
+}
+
+/** Focus d'office, une fois par décision (clavier, manette : Entrée ou A répondent tout de suite). */
+let decisionFocalisee = '';
+
+/**
+ * Retour du responsable (2026-11-11) : « le bouton Engager n'est pas assez mis en avant… cela force le joueur à chercher
+ * où valider son action ». Toutes les décisions du tour se posent au même endroit, au centre de la table, au-dessus des
+ * rangées (jamais sur une carte) : un panneau éclairé, la question en clair, ce qu'elle engage, et la réponse attendue
+ * en grand. Le bandeau d'étape s'efface devant lui (`DuelSession.assister`).
+ */
+function panneauDecision(c: Controller): HTMLElement | null {
+  if (!panneauDecisionPresent(c)) return null;
+  const v = c.view;
+  const surtitre = (t: string) => h('span', { class: 'decision-sur' }, `Tour ${v.turn} · ${t}`);
+  const titre = (t: string | Array<HTMLElement | string>) => h('b', { class: 'decision-titre' }, t);
+  const aide = (t: string) => h('p', { class: 'decision-aide' }, t);
+  const boutons = (...b: Array<HTMLElement | null>) => h('div', { class: 'decision-btns' }, ...b);
+  const panneau = (cle: string, label: string, ...kids: Array<HTMLElement | null>) => {
+    const el = h('section', { class: cls('decision', cle.startsWith('ask-tech') && 'ask-tech'), role: 'group', 'aria-label': label, 'data-key': cle }, ...kids);
+    const id = `${v.seed}:${v.turn}:${v.phase}:${cle}`;
+    if (id !== decisionFocalisee) {
+      decisionFocalisee = id;
+      queueMicrotask(() => document.querySelector<HTMLElement>(`[data-key="${cle}"] [data-primary-action], [data-key="${cle}"] .btn.next, [data-key="${cle}"] .chip`)?.focus({ preventScroll: true }));
     }
-    case 'LECTURE_CHANGE': {
-      const st = c.ui.lectureStance ?? v.me.primary?.stance ?? null;
-      return box(hint(`Le rival a engagé en ${v.lectureSeen === 'assault' ? 'ASSAUT' : 'GARDE'}. Ton mode :`), stanceChips(c, st));
-    }
-    // aux choix tactiques, aucun bouton : le dernier choix (Conserver compris) les envoie (retour du responsable, 2026-11-11)
-    default: return null;
+    return el;
+  };
+  if (v.phase === 'REVISION') {
+    return panneau('ask-revision', 'Révision de l’engagement', surtitre('Révision'), titre('Le rival a annoncé sa Signature'),
+      aide('Garde ton engagement, ou change-le une seule fois (le changement est définitif).'),
+      boutons(askBtn('Garder', 'act-revision-keep', () => c.keepRevision(), { primary: true, next: true }),
+        askBtn('Engager la révision', 'act-revision', () => c.lockCommit(), { ghost: true, disabled: !c.engagementPret() })));
   }
+  if (v.phase === 'LECTURE_CHANGE') {
+    const st = c.ui.lectureStance ?? v.me.primary?.stance ?? null;
+    const seen = v.lectureSeen === 'assault';
+    return panneau('decision-lecture', 'Ton mode après la Lecture', surtitre('Lecture'),
+      titre(['Le rival a engagé en ', h('span', { class: cls('decision-mode', seen ? 'assault' : 'guard') }, seen ? 'ASSAUT' : 'GARDE')]),
+      aide('Choisis ton mode : ton choix l’engage.'), stanceChips(c, st));
+  }
+  const reserve = c.reservesEnAttente()[0];
+  if (reserve !== undefined) {
+    const card = v.me.slots[reserve]?.card;
+    const def = card ? cardDef(card.defId) : null;
+    const effet = def?.effect && EFFECTS[def.effect].trigger === 'secondary-reveal' ? def.effect : null;
+    const reste = c.reservesEnAttente().length;
+    return panneau(`decision-reserve-${reserve}`, `Secondaire ${reserve + 1} prête : la révéler ?`, surtitre(`Préparation${reste > 1 ? ` · ${reste} réserves` : ''}`),
+      titre(['Révéler ta Secondaire ', String(reserve + 1), ' ?', def ? h('span', { class: 'decision-carte ligne' }, cardTitle(def)) : '']),
+      aide(effet ? `RÉVÉLER : ${EFFECTS[effet].name}, ${EFFECT_SUMMARY[effet]}` : 'Révélée, elle devient ACTIVE et soutient ta Primaire ce tour ; cachée, elle reste un mystère pour le rival.'),
+      boutons(askBtn('Révéler', `reveal-oui-${reserve}`, () => c.repondreReserve(reserve, true), { primary: true, next: true }),
+        askBtn('Garder cachée', `reveal-non-${reserve}`, () => c.repondreReserve(reserve, false), { ghost: true })));
+  }
+  const t = c.questionTech();
+  if (t) {
+    const def = TECHNIQUES[t];
+    return panneau(`ask-tech-${t}`, `${t} : ${QUESTION_TECH[t]}`, surtitre(`Technique · ${def.cost} Insight`),
+      titre([cardArtVersion() === 'v2' ? h('span', { class: 'seal', html: techniqueSeal(t, 20) }) : '', t]),
+      h('p', { class: 'decision-aide', title: def.text }, t === 'Recentrage' ? 'Clique la carte de ta main à glisser sous ta pioche (tu en pioches une autre).' : QUESTION_TECH[t]),
+      boutons(
+        // le Recentrage se répond d'un clic sur la carte elle-même
+        t === 'Recentrage' ? null : askBtn('Utiliser', `tech-oui-${t}`, () => c.repondreTech(t, true), { next: true, title: def.text }),
+        askBtn(t === 'Recentrage' ? 'Pas de Recentrage' : 'Non', `tech-non-${t}`, () => c.repondreTech(t, false), { ghost: true })));
+  }
+  // l'engagement prêt : la Primaire et sa posture posées, une Secondaire encore possible (sinon il est déjà parti)
+  const dr = c.ui.draft;
+  const prim = dr.primaryId ? cardDef(c.defIdOf(dr.primaryId)) : null;
+  const assaut = dr.stance === 'assault';
+  return panneau('decision-engager', 'Engager le tour', surtitre('Engagement'),
+    titre(['Ta Primaire : ', h('span', { class: 'decision-carte' }, prim ? cardTitle(prim) : ''), ' en ', h('span', { class: cls('decision-mode', assaut ? 'assault' : 'guard') }, assaut ? 'ASSAUT' : 'GARDE')]),
+    boutons(askBtn('Engager', 'act-commit', () => c.lockCommit(), { primary: true, next: true, title: 'Engager sans Secondaire (poser une Secondaire engage aussi)' })),
+    aide('ou ajoute une Secondaire : carte de ta main → SECONDAIRE (elle engage aussi)'));
 }
 
 /**
@@ -1065,13 +1114,6 @@ function menuTitreAssiste(c: Controller, slot: SlotIndex): HTMLElement {
     h('b', null, `Secondaire ${slot + 1}${actives.length > 1 ? ` · ${rang} sur ${actives.length}` : ''}`),
     h('span', null, dernier ? 'Choix secret ; ton choix envoie le tour.' : 'Choix secret ; puis l’autre Secondaire.'),
     h('small', null, 'Effet sur le Clash si le rival conserve :'));
-}
-
-/** R3 : « Révéler » ou « Garder cachée », posés sur la réserve prête. */
-function reserveQuestion(c: Controller, slot: SlotIndex): HTMLElement {
-  return h('div', { class: 'ask ask-reserve', role: 'group', 'aria-label': `Secondaire ${slot + 1} prête : la révéler ?` },
-    askBtn('Révéler', `reveal-oui-${slot}`, () => c.repondreReserve(slot, true), { next: true, title: 'Révélée, elle devient ACTIVE et pourra soutenir ta Primaire ce tour.' }),
-    askBtn('Garder cachée', `reveal-non-${slot}`, () => c.repondreReserve(slot, false), { ghost: true, title: 'Cachée, elle reste un mystère pour le rival (inactive).' }));
 }
 
 export type { TechniqueId };

@@ -16,6 +16,12 @@
 > Secondaire est posée ou impossible) engage ; seul l'engagement sans Secondaire garde « Engager sans Secondaire ». Une cible
 > unique (Interférer, Rupture, Ancrage, Dissipation) est prise d'office ; le Recentrage se répond en cliquant la carte. Le
 > point 4 du §3 ne garde que ce bouton ; le point 5 vaut avec cette règle.
+>
+> **Amendement du responsable (2026-11-11, passe 220) :** « le bouton engager n'est pas assez mis en avant… cela force le
+> joueur à chercher où valider son action ». Toutes les décisions du tour (l'engagement, les réserves, les Techniques, la
+> révision, le mode après la Lecture) se posent **dans un seul panneau, au centre de la table**, sur la rangée du rival (son visage dégagé), juste
+> au-dessus de la rangée du joueur : la question en clair, ce qu'elle engage, la réponse en grand ; la carte concernée
+> s'éclaire. Les points 3 et 4 du §3 valent avec ce panneau (au lieu de « sur la carte » et « au-dessus de la case »).
 
 > **Statut : APPROUVÉ le 2026-11-11 (fiche remplie, consignée à la passe 217 ; `docs/FICHE_ARBITRAGES_M18.md`).** Les huit
 > choix sur la recommandation ; développement maintenant (P2), le responsable poursuit son test hors combat en attendant.
