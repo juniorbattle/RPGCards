@@ -4,7 +4,7 @@
  */
 import { cardDef, cardTitle, EFFECTS, type EffectId } from '../catalog/cards';
 import { guardHalf } from '../engine/clash';
-import type { ClashReport, GameEvent, PlayerId, RevealedTactic, SlotIndex, Stance } from '../model/types';
+import type { ClashReport, GameEvent, PlayerId, PublicEffect, RevealedTactic, SlotIndex, Stance } from '../model/types';
 
 export interface JournalLine {
   seq: number;
@@ -193,10 +193,25 @@ export function buildJournal(events: readonly GameEvent[], viewer: PlayerId): Jo
 /** Verdict grammatical selon le point de vue (D-04) ; distingue les trois cas exigés. */
 /** Avenant 07 (V3.3, G-02) : « la Garde absorbe a », la moitié de sa Puissance ou, si le plancher d’un dégât la plafonne,
  *  ce qu’il en reste. `absorbed` vient du rapport du moteur (`guardAbsorption`), jamais recalculé ici. */
-export function guardAbsorbedText(absorbed: number, guardPower: number): string {
-  return absorbed < guardHalf(guardPower)
-    ? `la Garde absorbe ${absorbed} (plafonnée : au moins 1 dégât passe)`
-    : `la Garde absorbe ${absorbed} (moitié de sa Puissance ${guardPower})`;
+export function guardAbsorbedText(absorbed: number, guardPower: number, assaultPower: number | null = null, effects: readonly PublicEffect[] = []): string {
+  // Avenant 09 : Rempart (trois quarts), Fournaise (quart ; les deux ensemble s'annulent), Percée (2 de moins) modifient
+  // la part absorbée ; seuls les effets PUBLIÉS sont nommés (ADR 011 : une source camouflée reste générique).
+  const ok = (id: EffectId) => effects.some((e) => e.effect === id && e.status === 'success');
+  const rempart = ok('rempart');
+  const fournaise = ok('fournaise');
+  const percee = ok('percee');
+  const masque = effects.some((e) => e.masked && e.effect === null && e.status === 'success' && e.detail === 'la Garde adverse absorbe moins');
+  if (!rempart && !fournaise && !percee && !masque) {
+    return absorbed < guardHalf(guardPower)
+      ? `la Garde absorbe ${absorbed} (plafonnée : au moins 1 dégât passe)`
+      : `la Garde absorbe ${absorbed} (moitié de sa Puissance ${guardPower})`;
+  }
+  const noms = [rempart && 'Rempart', fournaise && 'Fournaise', percee && 'Percée : 2 de moins', masque && 'effet d’une Secondaire masquée'].filter((x): x is string => !!x);
+  if (masque) return `la Garde absorbe ${absorbed} (Puissance ${guardPower} ; ${noms.join(', ')})`;
+  const part = rempart === fournaise ? 'moitié' : rempart ? 'trois quarts' : 'quart';
+  const nominal = Math.ceil(({ moitié: 2, 'trois quarts': 3, quart: 1 }[part] * guardPower) / 4);
+  const plafond = assaultPower !== null && nominal > assaultPower - 1 ? ', plafonnée : au moins 1 dégât passe' : '';
+  return `la Garde absorbe ${absorbed} (${part} de sa Puissance ${guardPower}${plafond} ; ${noms.join(', ')})`;
 }
 
 export function verdictText(r: ClashReport, viewer: PlayerId): string {
@@ -213,7 +228,7 @@ export function verdictText(r: ClashReport, viewer: PlayerId): string {
   if (r.stances[l] === 'guard') {
     // Avenant 07 (V3.3) : plus de victoire au Rang sans blessure ; cas gardé par prudence (invariant testé).
     if (r.zeroDamageRankWin) return `${dom} au Rang (${sc[w]} contre ${sc[l]}), mais 0 blessure : la Garde absorbe tout (Puissance ${r.powers[w]} − ${r.absorbed} = 0).`;
-    return `${dom} au Rang (${sc[w]} contre ${sc[l]}) ; ${guardAbsorbedText(r.absorbed, r.powers[l])} : (${r.powers[w]} − ${r.absorbed}) × ${m} = ${r.baseDamage[l]}.`;
+    return `${dom} au Rang (${sc[w]} contre ${sc[l]}) ; ${guardAbsorbedText(r.absorbed, r.powers[l], r.powers[w], r.effects)} : (${r.powers[w]} − ${r.absorbed}) × ${m} = ${r.baseDamage[l]}.`;
   }
   return `${W ? 'Vous remportez' : 'Le rival remporte'} la confrontation des Assauts au Rang (${sc[w]} contre ${sc[l]}) : ${r.powers[w]} × ${m} = ${r.baseDamage[l]}.`;
 }

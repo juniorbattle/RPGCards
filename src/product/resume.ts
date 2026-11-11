@@ -3,9 +3,11 @@
  * rejeu des commandes sur le moteur pur et comparaison du hash (état + journal complet). Pur.
  */
 import { CATALOG_VERSION, replay } from '../game/replay/replay';
+import { RULES_LABEL } from '../game/model/types';
 import type { ActiveDuel } from './save';
 
-export const RULES = 'V3.0+delta-V3.3.2';
+/** Étiquette des règles (seule source : `RULES_LABEL`, `model/types.ts`). */
+export const RULES = RULES_LABEL;
 
 export function verifyActiveCore(a: ActiveDuel): { ok: true } | { ok: false; reason: string } {
   if (a.catalog !== CATALOG_VERSION) return { ok: false, reason: `Catalogue différent (${a.catalog}).` };

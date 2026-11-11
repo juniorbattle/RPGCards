@@ -127,7 +127,7 @@ describe('Avenant 08 — secrets, IA, Lecture (S-08, 5 à 8)', () => {
 
 describe('Avenant 08 — résolution, replay, reprise, journal (S-08, 9 à 11)', () => {
   it('9 et 10 : replay déterministe avec annonces ; reprise d’un duel sauvegardé pendant l’engagement ; étiquette', () => {
-    expect(RULES).toBe('V3.0+delta-V3.3.2');
+    expect(RULES).toBe('V3.0+delta-V3.4'); // fiche de clôture, A1 et A3 (passe 224)
     const m = autoplay({ ...DEFAULT_CONFIG, seed: 808 }, 200, undefined, ['p2', 'p1']);
     expect(annonces(m.events).length).toBeGreaterThan(0);
     expect(replay(m.record()).hash).toBe(m.hash());

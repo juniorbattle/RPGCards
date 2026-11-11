@@ -128,7 +128,7 @@ describe('Amendement 1 — IA, replay, reprise, journal (A1-5, 9 et 10)', () => 
     expect(decide(sans, PROFILES.equilibre!, 1)).toEqual({ type: 'revise', player: 'p2', commit: null });
   });
   it('10 : replay déterministe avec révisions ; reprise pendant la fenêtre ; étiquette précédente refusée', () => {
-    expect(RULES).toBe('V3.0+delta-V3.3.2');
+    expect(RULES).toBe('V3.0+delta-V3.4'); // fiche de clôture, A1 et A3 (passe 224)
     let m = autoplay({ ...DEFAULT_CONFIG, seed: 1 }, 200, undefined, ['p2', 'p1']);
     for (let seed = 2; seed < 60 && !m.events.some((e) => e.kind === 'revisionOpened'); seed++) m = autoplay({ ...DEFAULT_CONFIG, seed }, 200, undefined, ['p2', 'p1']);
     expect(m.events.some((e) => e.kind === 'revisionOpened')).toBe(true);

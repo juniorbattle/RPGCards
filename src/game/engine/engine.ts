@@ -6,12 +6,12 @@
 import { buildDeck, cardDef, EFFECTS, INSTANT_PRIMARY_EFFECTS, type CardDef, type Family } from '../catalog/cards';
 import { INSIGHT_MAX, INSIGHT_START, TECHNIQUES, type TechniqueId } from '../catalog/techniques';
 import {
-  other, PLAYERS, RuleError, SLOTS,
+  other, PLAYERS, RuleError, RULES_LABEL, SLOTS,
   type ClashReport, type Command, type CommitChoice, type GameConfig, type GameEvent, type GameState, type Phase, type PublicEffect,
   type PlayerCommand, type PlayerId, type PlayerState, type SecondarySlot, type SecondaryState,
   type SlotIndex, type Stance, type TacticPlan, type Visibility,
 } from '../model/types';
-import { computeClash, damageBonus, rankBonus, rankSupport, damageCoefficient, type ClashInput, type ClashUse } from './clash';
+import { computeClash, damageBonus, interferenceReaches, rankBonus, rankSupport, damageCoefficient, type ClashInput, type ClashUse } from './clash';
 import { hiddenSource, maskedOrigin, ownerEffect, publicEffect, publishInsight, type Concealment, type Observed } from './publication';
 import { nextInt, seedToState, shuffleInPlace } from './rng';
 import { assertInvariants } from './invariants';
@@ -71,7 +71,7 @@ export function secondaryState(state: GameState, slot: SecondarySlot): Secondary
 export function createGame(config: GameConfig = DEFAULT_CONFIG): { state: GameState; events: GameEvent[] } {
   const state: GameState = {
     schema: 1,
-    rules: 'V3.0+delta-V3.3.2',
+    rules: RULES_LABEL,
     seed: config.seed,
     rng: seedToState(config.seed),
     turn: 0,
@@ -335,7 +335,7 @@ function validate(state: GameState, cmd: PlayerCommand): void {
           const t = o.slots[plan.target];
           if (!t?.active) throw new RuleError('Interférence : la cible doit être une Secondaire adverse active.');
           const masked = o.mask?.target === plan.target;
-          if (!masked && (defOf(state, sl.cardId).rank ?? 0) < (defOf(state, t.cardId).rank ?? 0)) {
+          if (!masked && !interferenceReaches(defOf(state, sl.cardId), defOf(state, t.cardId))) {
             throw new RuleError('Interférence : Rang imprimé insuffisant contre cette cible.');
           }
         }
@@ -517,6 +517,9 @@ function applyPrepare(ctx: Ctx): void {
   }
   // Effets de révélation (ordre déterministe p1 puis p2). Celui d’une carte camouflée n’a aucune
   // conséquence publique (observation privée) : il n’est annoncé qu’à son propriétaire (ADR 011).
+  // Escarbille et Sève : conditions évaluées ensemble sur les PV d'avant toute révélation (instantané), pour que l'issue
+  // ne dépende pas du siège (p1 puis p2).
+  const hpAvant: Record<PlayerId, number> = { p1: s.players.p1.hp, p2: s.players.p2.hp };
   for (const pid of PLAYERS) {
     const p = s.players[pid];
     for (const i of revealed[pid]) {
@@ -537,8 +540,8 @@ function applyPrepare(ctx: Ctx): void {
         ctx.emit(pid, 'peek', { player: pid, source: 'Sextant', defIds: p.deck.slice(-2).reverse().map((c) => ctx.def(c).defId), own: true });
       } else if (def.effect === 'escarbille' || def.effect === 'seve') {
         // Conséquences publiques (PV, pioche) : une carte camouflée les annonce sous une origine générique (ADR 011).
-        const o = s.players[other(pid)];
-        const ok = def.effect === 'escarbille' ? p.hp > 1 : p.hp < o.hp && p.hp < p.maxHp;
+        const mine = hpAvant[pid];
+        const ok = def.effect === 'escarbille' ? mine > 1 : mine < hpAvant[other(pid)] && mine < p.maxHp;
         const masked = concealed(s, pid, i);
         const data = { player: pid, effect: def.effect, status: ok ? 'success' : 'failed', detail: '' };
         if (ok && def.effect === 'escarbille') {
@@ -781,9 +784,11 @@ function resolveClash(ctx: Ctx): void {
       if (u.mode !== 'interfere') continue;
       const o = s.players[other(pid)];
       const tMasked = u.target !== undefined && concealed(s, other(pid), u.target);
+      // ADR 011 : contre une cible masquée engagée, la raison d'un échec reste générique (ni son Rang ni son effet,
+      // Leurre comprise, ne se déduisent de la raison publique).
       ctx.emit('public', 'interference', {
         player: pid, slot: u.slot, target: u.target, success: u.success, cancelled: u.cancelled,
-        reason: u.success ? 'cible engagée annulée' : !u.targetEngaged ? 'cible Conservée' : u.targetProtected ? 'cible protégée par son effet' : 'Rang imprimé insuffisant',
+        reason: u.success ? 'cible engagée annulée' : !u.targetEngaged ? 'cible Conservée' : tMasked ? 'sans succès contre une Secondaire masquée' : u.targetProtected ? 'cible protégée par son effet' : 'Rang imprimé insuffisant',
         targetDefId: tMasked ? null : u.targetRank !== null ? ctx.def(o.slots[u.target!]!.cardId).defId : null,
         targetFamily: u.targetRank !== null ? ctx.def(o.slots[u.target!]!.cardId).family : null,
       });
@@ -799,6 +804,14 @@ function resolveClash(ctx: Ctx): void {
     const u = out.uses[pid].find((x) => x.slot === m.target && !x.cancelled);
     if (u?.mode === 'rank') maskedRank[pid] = true;
     if (u?.mode === 'damage') maskedMult[pid] = true;
+  }
+  // Décision A1 (fiche de clôture, V3.0 §9.3) : PV, dégâts et soins d'un seul tenant (`PV − dégâts + soins`, plafonné à
+  // PV_max), puis le K.-O. : un soin ne sauve pas d'un coup mortel. Les événements montrent les PV après les dégâts
+  // (jamais sous 0), puis le soin réellement rendu.
+  const finalHp: Record<PlayerId, number> = { p1: 0, p2: 0 };
+  for (const pid of PLAYERS) {
+    const p = s.players[pid];
+    finalHp[pid] = Math.min(p.maxHp, p.hp - out.damage[pid] + out.heal[pid]);
   }
   for (const pid of PLAYERS) {
     const p = s.players[pid];
@@ -820,7 +833,7 @@ function resolveClash(ctx: Ctx): void {
     if (h > 0) {
       const p = s.players[pid];
       const before = p.hp;
-      p.hp = Math.min(p.maxHp, p.hp + h);
+      p.hp = Math.max(0, finalHp[pid]);
       seen.healed[pid] = p.hp - before;
       const data = { player: pid, amount: p.hp - before, hp: p.hp };
       // Un soin nul venu d’une source camouflée n’a aucune conséquence publique.

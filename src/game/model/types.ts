@@ -5,6 +5,15 @@ export type PlayerId = 'p1' | 'p2';
 export const PLAYERS: readonly PlayerId[] = ['p1', 'p2'];
 export const other = (p: PlayerId): PlayerId => (p === 'p1' ? 'p2' : 'p1');
 
+/**
+ * Étiquette des règles du duel, SEULE source (moteur, sauvegardes du Duel standard et de l'aventure, rejeux) : V3.0, delta
+ * V3.2, avenants 07 (Garde), 08 et son amendement 1 (Signatures annoncées, révision), 09 (48 variantes) avec les décisions
+ * A1 et A2 de la fiche de clôture (soin et K.-O. d'un seul tenant ; trois lectures ratifiées). Un duel sauvegardé sous une
+ * autre étiquette n'est jamais rejoué : il recommence.
+ */
+export const RULES_LABEL = 'V3.0+delta-V3.4' as const;
+export type RulesLabel = typeof RULES_LABEL;
+
 export type Stance = 'assault' | 'guard';
 export type SlotIndex = 0 | 1;
 export const SLOTS: readonly SlotIndex[] = [0, 1];
@@ -124,7 +133,7 @@ export interface GameConfig {
 
 export interface GameState {
   schema: 1;
-  rules: 'V3.0+delta-V3.3.2';
+  rules: RulesLabel;
   seed: number;
   rng: number;
   turn: number;

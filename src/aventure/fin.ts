@@ -4,7 +4,7 @@
  * le même code. Pur hormis la mutation de la sauvegarde passée en paramètre (comme l'application) ; aucune règle de duel.
  */
 import { CATALOG, type Family } from '../game/catalog/cards';
-import type { GameEvent } from '../game/model/types';
+import { RULES_LABEL, type GameEvent } from '../game/model/types';
 import { appliquer, type AventureEtat, type Evenement, type FaitsPublics, type Issue } from './aventure';
 import { battre, conclure, noterVu } from './directeur';
 import { chapitreDetaille } from './aventure';
@@ -17,8 +17,8 @@ import { aGain, prochaineVariante, variantesIdentite, type Gain } from './regist
 import type { DuelPrevu } from './rencontres';
 import { CATALOG_AVENTURE, type AventureSave, type DuelAventure } from './sauvegarde';
 
-/** Étiquette des règles des duels de l'aventure (celle du moteur, `RULES`). */
-export const REGLES_DUEL = 'V3.0+delta-V3.3.2';
+/** Étiquette des règles (seule source : `RULES_LABEL`, `model/types.ts`). */
+export const REGLES_DUEL = RULES_LABEL;
 
 export const figureOuNull = (id: string) => { try { return figure(id); } catch { return null; } };
 

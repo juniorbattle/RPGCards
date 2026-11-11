@@ -10,7 +10,7 @@ import type { PvPublics } from '../son/musique/chef';
 import { TECHNIQUES, type TechniqueId } from '../game/catalog/techniques';
 import { decide, PROFILES } from '../game/ai/policy';
 import { buildMemory } from '../game/ai/memory';
-import { computeClash, damageCoefficient, rankSupport, type ClashUse } from '../game/engine/clash';
+import { computeClash, damageCoefficient, interferenceReaches, rankSupport, type ClashUse } from '../game/engine/clash';
 import { checkCommand } from '../game/engine/engine';
 import { Match } from '../game/match';
 import type { Command, GameConfig, GameEvent, PlayerCommand, PlayerId, SlotIndex, Stance, StartTechnique, TacticPlan, TacticsTechnique } from '../game/model/types';
@@ -996,12 +996,12 @@ export class Controller {
     const v = this.view;
     const mine = v.me.slots[slot];
     if (!mine?.card) return [];
-    const r = cardDef(mine.card.defId).rank ?? 0;
+    const src = cardDef(mine.card.defId);
     const out: SlotIndex[] = [];
     for (const t of v.opp.slots) {
       if (!t || t.state !== 'active') continue;
       if (!t.card || t.masked) { out.push(t.slot); continue; } // cible masquée : à l’aveugle (§7.3)
-      if (r >= (cardDef(t.card.defId).rank ?? 0)) out.push(t.slot);
+      if (interferenceReaches(src, cardDef(t.card.defId))) out.push(t.slot); // règle unique du moteur (Contre-jour compris)
     }
     return out;
   }

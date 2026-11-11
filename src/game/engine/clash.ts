@@ -174,6 +174,16 @@ export function guardAbsorption(assaultPower: number, guardPower: number): numbe
   return Math.min(guardHalf(guardPower), assaultPower - 1);
 }
 
+/**
+ * Seule règle de légalité du Rang d'une Interférence (§7.3 ; avenant 09, Contre-jour) : le Rang imprimé de la Secondaire
+ * qui interfère atteint celui de la cible (Contre-jour : un cran de plus). Partagée par le Clash, le moteur (validation
+ * des commandes), l'interface (cibles permises) et l'IA, pour qu'aucun des quatre ne refuse ce que les autres admettent.
+ * Une cible masquée se vise à l'aveugle : cette fonction ne s'applique alors qu'au Clash, sur la carte réelle.
+ */
+export function interferenceReaches(source: CardDef, target: CardDef): boolean {
+  return (source.rank ?? 0) + (source.effect === 'contrejour' ? 1 : 0) >= (target.rank ?? 0);
+}
+
 export function primaryScore(primary: CardDef, rankSupports: number[]): number {
   if (primary.signature) return Infinity;
   return (primary.rank ?? 0) + rankSupports.reduce((a, b) => a + b, 0);
@@ -195,8 +205,8 @@ export function computeClash(input: ClashInput): ClashOutcome {
       const targetUse = uses[o].find((x) => x.slot === u.target);
       u.targetRank = targetActive?.def.rank ?? null;
       u.targetEngaged = !!targetUse;
-      // avenant 09 : Contre-jour réussit aussi contre un Rang imprimé supérieur d'un cran
-      const rankOk = !!targetActive && (u.def.rank ?? 0) + (u.def.effect === 'contrejour' ? 1 : 0) >= (targetActive.def.rank ?? 99);
+      // avenant 09 : Contre-jour réussit aussi contre un Rang imprimé supérieur d'un cran (`interferenceReaches`)
+      const rankOk = !!targetActive && interferenceReaches(u.def, targetActive.def);
       // avenant 09 : Leurre engagée en Rang déjoue toute Interférence dirigée contre elle
       u.targetProtected = !!targetUse && targetUse.def.effect === 'leurre' && targetUse.mode === 'rank';
       u.success = !!targetActive && !!targetUse && rankOk && !u.targetProtected;

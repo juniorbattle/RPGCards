@@ -6,7 +6,10 @@ import { applyCommand, createGame } from '../engine/engine';
 import { hashString } from '../engine/rng';
 import type { Command, GameConfig, GameEvent, GameState } from '../model/types';
 
-export const CATALOG_VERSION = 'catalogue-initial-V3.0+16v+4s+6t';
+/** Version du catalogue des duels : 16 identités en 48 variantes (avenant 09), 4 Signatures, 6 Techniques (les neutres de
+ *  l'aventure : `CATALOG_AVENTURE`). Incrémentée à chaque changement de carte : un duel sauvegardé sous une autre version
+ *  recommence. */
+export const CATALOG_VERSION = 'catalogue-V3.0+48v+4s+6t';
 
 export interface ReplayRecord {
   format: 'lqv-replay/1';

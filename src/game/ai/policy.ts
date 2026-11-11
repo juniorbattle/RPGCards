@@ -5,7 +5,7 @@
  */
 import { BASIC_POWER, cardDef, FAMILIES, SIGNATURES, type CardDef, type Family, type OrdinaryRank } from '../catalog/cards';
 import { TECHNIQUES, type TechniqueId } from '../catalog/techniques';
-import { computeClash, type ClashInput, type ClashSideInput, type ClashUse } from '../engine/clash';
+import { computeClash, interferenceReaches, type ClashInput, type ClashSideInput, type ClashUse } from '../engine/clash';
 import { hashString, makeRng } from '../engine/rng';
 import type { PlayerCommand, SlotIndex, Stance, StartTechnique, TacticPlan, TacticsTechnique } from '../model/types';
 import type { PlayerView, SlotView } from '../visibility/view';
@@ -102,7 +102,7 @@ function enumeratePlans(actives: Array<{ slot: SlotIndex; def: CardDef }>, stanc
     opts.push({ plan: { mode: 'rank' }, use: { slot: a.slot, def: a.def, mode: 'rank' } });
     if (stance === 'assault') opts.push({ plan: { mode: 'damage' }, use: { slot: a.slot, def: a.def, mode: 'damage' } });
     for (const t of oppActive) {
-      if (t.masked || (a.def.rank ?? 0) >= (t.def.rank ?? 99)) opts.push({ plan: { mode: 'interfere', target: t.slot }, use: { slot: a.slot, def: a.def, mode: 'interfere', target: t.slot } });
+      if (t.masked || interferenceReaches(a.def, t.def)) opts.push({ plan: { mode: 'interfere', target: t.slot }, use: { slot: a.slot, def: a.def, mode: 'interfere', target: t.slot } });
     }
     return { slot: a.slot, opts };
   });
@@ -503,7 +503,7 @@ function decideTactics2(view: PlayerView, profile: AiProfile, rng: () => number,
   // N2-4 : un adversaire qui a déjà interféré peut interférer sur notre Secondaire la plus forte
   if (oppActive.length && myActive.length && (memory?.oppInterferences ?? 0) > 0) {
     const cible = [...myActive].sort((a, b) => (b.def.rank ?? 0) - (a.def.rank ?? 0))[0]!;
-    const uses = oppActive.filter((a) => a.masked || (a.def.rank ?? 0) >= (cible.def.rank ?? 99)).map((a) => ({ slot: a.slot, def: a.def, mode: 'interfere' as const, target: cible.slot }));
+    const uses = oppActive.filter((a) => a.masked || interferenceReaches(a.def, cible.def)).map((a) => ({ slot: a.slot, def: a.def, mode: 'interfere' as const, target: cible.slot }));
     if (uses.length) {
       const wI = Math.min(0.4, 0.1 + 0.1 * memory!.oppInterferences);
       for (const sc of scen) sc.w *= 1 - wI;
