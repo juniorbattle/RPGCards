@@ -1,7 +1,7 @@
-# M18 — Le tour fluide : l'action au centre (contrat, PROPOSÉ)
+# M18 — Le tour fluide : l'action au centre (contrat, APPROUVÉ)
 
-> **Statut : PROPOSÉ le 2026-11-11 (passe 216).** Fiche d'arbitrages publiée (`docs/FICHE_ARBITRAGES_M18.md`) ; rien n'est
-> codé avant qu'elle soit remplie et consignée.
+> **Statut : APPROUVÉ le 2026-11-11 (fiche remplie, consignée à la passe 217 ; `docs/FICHE_ARBITRAGES_M18.md`).** Les huit
+> choix sur la recommandation ; développement maintenant (P2), le responsable poursuit son test hors combat en attendant.
 > Retour du test complet du responsable (2026-11-11) : « le jeu manque de clarté au niveau de la manipulation lors du
 > système de combat ; les joueurs ne savent pas ce qu'il faut faire lors des étapes du combat et perdent le fil ; être
 > obligé de cliquer sur le bouton à droite pour la phase suivante n'est pas intuitif… peut-être que nous devrions annoncer

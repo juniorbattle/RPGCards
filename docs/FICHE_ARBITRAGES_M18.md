@@ -21,4 +21,15 @@
 
 ## Décisions du responsable
 
-*À consigner quand la fiche sera remplie.*
+Fiche remplie le 2026-11-11 (6 h 43 à 6 h 46), consignée à la passe 217. **Les huit choix sur la recommandation**, aucune note.
+
+| Id | Choix |
+|---|---|
+| R1 | Bandeau bref à chaque étape où j'ai la main, et au début du tour |
+| R2 | Enchaînement automatique après une courte pause |
+| R3 | Question sur la carte ou la Technique concernée |
+| G1 | Bouton au-dessus de la case Primaire |
+| G2 | Menus ouverts d'eux-mêmes, effet sur le Clash dans chaque option |
+| G3 | Une consigne sur place, panneau réduit, fiche au survol |
+| P1 | Partout, assisté par défaut, classique en option |
+| P2 | Maintenant ; le responsable poursuit le test hors combat en attendant |
