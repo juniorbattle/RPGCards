@@ -10,9 +10,19 @@
 // (4) Planche avant / après de chaque étape.
 // Usage : npm run build && [LQV_VP=1920x1080] [LQV_MODES=souris,clavier,manette] [LQV_REDUIT=1] [LQV_TOURS=4] node tools/m18-tour.mjs [dossier] [rapport.json]
 import { execSync } from 'node:child_process';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync as ecrireBrut } from 'node:fs';
 import { dirname } from 'node:path';
 import { launch, rendererLabel, startPreview, watchConsole, webglRenderer } from './browser.mjs';
+
+/** Écriture qui réessaie : sous Windows, un fichier déjà présent peut être verrouillé un instant (erreur UNKNOWN, -4094). */
+function writeFileSync(path, data) {
+  for (let i = 0; ; i++) {
+    try { return ecrireBrut(path, data); } catch (e) {
+      if (i >= 8) throw e;
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 250 * (i + 1));
+    }
+  }
+}
 
 const VP = (process.env.LQV_VP ?? '1280x720').split('x').map(Number);
 const REDUIT = process.env.LQV_REDUIT === '1';
@@ -117,6 +127,7 @@ const ETAT = () => {
     actNext: [...app.querySelectorAll('[data-key="act-next"]')].some(vis),
     boutonsPanneau,
     primaire: [...app.querySelectorAll('[data-primary-action]')].filter(vis).map((b) => b.dataset.key),
+    valider: [...app.querySelectorAll('[data-key="act-tactics"]')].some(vis),
     consignes: [...app.querySelectorAll('.ask-tech, .ask-ligne')].filter((e) => e.getClientRects().length).length,
     tip: !!app.querySelector('.tip'),
     annonce: document.querySelector('#annonce .annonce')?.textContent ?? '',
@@ -133,14 +144,15 @@ const GESTE_ASSISTE = (tour) => {
   const vis = (s) => [...document.querySelectorAll(s)].some((e) => e.getClientRects().length && !e.disabled);
   if (v.phase === 'REPEL' && v.repel?.mine) { const z = document.querySelector('.side.opp .zone.targetable'); return z ? `[data-key="${z.dataset.key}"]` : k('act-repel-skip'); }
   if (!v.awaitingMe) return null;
-  const tech = document.querySelector('.ask-tech [data-key^="tech-oui-"]');
+  const tech = document.querySelector('.ask-tech[data-key^="ask-tech-"]');
   if (tech) { const t = tech.dataset.key.slice(9); return k(`tech-${t === 'Sondage' ? 'oui' : 'non'}-${t}`); }
   const reserve = document.querySelector('[data-key^="reveal-oui-"]');
   if (reserve) return k(reserve.dataset.key);
   if (c.ui.menuSlot !== null) { const i = c.ui.menuSlot; return vis(k(`menu-${i}-rank`)) ? k(`menu-${i}-rank`) : k(`menu-${i}-keep`); }
   if (c.ui.targetingFor !== null) { const z = document.querySelector('.side.opp .zone.targetable'); return z ? `[data-key="${z.dataset.key}"]` : null; }
   switch (v.phase) {
-    case 'TACTICS': return k('act-tactics');
+    // aux choix tactiques, aucun bouton à cliquer : le dernier choix les envoie
+    case 'TACTICS': return null;
     case 'REVISION': return k('act-revision-keep');
     case 'LECTURE_CHANGE': return k('stance-guard');
     case 'COMMIT': {
@@ -239,6 +251,7 @@ async function jouerDuel(p, j, tour, captures) {
       consignesMax = Math.max(consignesMax, s.consignes);
       if (s.tip) tips++;
       if (s.actNext) fautes.push(`tour ${s.turn} ${s.phase} : « Tour suivant » affiché`);
+      if (s.valider) fautes.push(`tour ${s.turn} ${s.phase} : bouton « Valider » des choix tactiques`);
       if (s.boutonsPanneau.some((b) => b !== 'act-skip')) fautes.push(`tour ${s.turn} ${s.phase} : bouton dans le panneau (${s.boutonsPanneau.join(', ')})`);
     }
     const sel = await av(tour === 'assiste' ? GESTE_ASSISTE : GESTE_CLASSIQUE, s.turn);
@@ -290,7 +303,8 @@ try {
     check(r.attentes.length >= TOURS && r.attentes.every((ms) => ms <= lim), `${mode} : le tour suivant commence seul après le Clash, sans geste (${r.attentes.join(', ')} ms)`);
     check(r.consignesMax <= 1, `${mode} : une seule consigne à la fois (au plus ${r.consignesMax})`);
     check(r.tips === 0, `${mode} : aucun conseil contextuel (la consigne en tient lieu)`);
-    check((a?.annonces?.length ?? 0) >= TOURS, `${mode} : bandeaux d’étape (${a?.annonces?.length ?? 0}) : ${(a?.annonces ?? []).slice(0, 3).join(' | ')}…`);
+    // un bandeau retardé par un temps fort au centre est sauté si le joueur a déjà répondu à l'étape : au moins un tour sur deux
+    check((a?.annonces?.length ?? 0) >= Math.ceil(TOURS / 2) + 1, `${mode} : bandeaux d’étape (${a?.annonces?.length ?? 0}) : ${(a?.annonces ?? []).slice(0, 3).join(' | ')}…`);
     if (mode !== 'souris') check(j.replis === 0, `${mode} : aucun geste replié sur la souris (${j.replis})`);
     if (REDUIT) check(await p.evaluate(() => document.documentElement.classList.contains('reduced')), `${mode} : mouvement réduit appliqué`);
     await ctx.close();

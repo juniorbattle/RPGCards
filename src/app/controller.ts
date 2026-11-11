@@ -778,6 +778,7 @@ export class Controller {
       dr.slot = key === 'slot0' ? 0 : 1;
     }
     this.ui.selected = null;
+    if (key !== 'hand' && this.suiteEngagement()) return;
     this.renderFn();
   }
 
@@ -785,6 +786,11 @@ export class Controller {
     const v = this.view;
     if (v.awaitingMe && (v.phase === 'START' || this.editingCommit()) && this.refuse({ k: 'carte', id: cardId })) return;
     if (v.phase === 'START' && v.awaitingMe) {
+      // M18 (un clic) : la question du Recentrage se répond en cliquant la carte à glisser sous la pioche
+      if (this.assiste && !this.ui.recentrageArmed && this.questionTech() === 'Recentrage') {
+        this.toggleStartTech('Recentrage');
+        if (!this.ui.recentrageArmed) return;
+      }
       if (this.ui.recentrageArmed) {
         this.ui.startTech = { id: 'Recentrage', cardId };
         this.ui.recentrageArmed = false;
@@ -846,7 +852,29 @@ export class Controller {
     }
     if (!this.editingCommit() || !this.ui.draft.primaryId) { this.toast('Posez d’abord une Primaire.'); return; }
     this.ui.draft.stance = st;
+    if (this.suiteEngagement()) return;
     this.renderFn();
+  }
+
+  /** M18 : une Secondaire peut encore s'ajouter au brouillon (une autre carte de la main, hors Signature). */
+  peutAjouterSecondaire(): boolean {
+    const dr = this.ui.draft;
+    return this.editingCommit() && !dr.secondaryId && (this.view.me.hand ?? []).some((x) => x.cardId !== dr.primaryId && !cardDef(x.defId).signature);
+  }
+
+  /**
+   * Règle du responsable (2026-11-11) : chaque étape en un clic si possible, sans valider. À l'Engagement du tour assisté,
+   * le geste qui complète tout engage : la posture si la Secondaire est déjà posée (ou impossible), la Secondaire si la
+   * Primaire et sa posture le sont. Seul l'engagement sans Secondaire demande « Engager sans Secondaire » (le « Non » de
+   * la Secondaire facultative). La révision (avenant 08) garde ses deux réponses.
+   */
+  private suiteEngagement(): boolean {
+    const v = this.view;
+    const dr = this.ui.draft;
+    if (!this.assiste || v.phase !== 'COMMIT' || !v.awaitingMe || !dr.primaryId || !dr.stance) return false;
+    if (!dr.secondaryId && this.peutAjouterSecondaire()) return false;
+    this.lockCommit();
+    return true;
   }
 
   /** Engagement en cours d’édition : phase d’engagement, ou ma révision (avenant 08, amendement 1). */
@@ -938,6 +966,7 @@ export class Controller {
         if (!s || s.state !== 'active' || !plan || plan.mode === 'keep') return this.toast('Ancrage : désignez une de vos Secondaires engagées (Rang, Dégâts ou Interférer).');
         this.ui.tacticsTech = { id: 'Ancrage', slot };
         this.ui.techTargeting = null;
+        if (this.suiteTactique()) return;
         return this.renderFn();
       }
       if (!s) return;
@@ -982,6 +1011,13 @@ export class Controller {
     const blocked = this.modeBlocked(slot, mode);
     if (blocked) return this.toast(blocked);
     if (mode === 'interfere') {
+      // M18 (un clic si possible) : une seule cible permise, elle est prise d'office
+      const cibles = this.legalTargets(slot);
+      if (this.assiste && cibles.length === 1) {
+        this.ui.menuSlot = null;
+        this.ui.targetingFor = slot;
+        return this.clickOppSlot(cibles[0]!);
+      }
       this.ui.targetingFor = slot;
       this.ui.menuSlot = null;
       if (!this.assiste) this.toast('Interférer : cliquez une Secondaire adverse active (surlignée).', 'info');
@@ -1012,6 +1048,7 @@ export class Controller {
         if (s?.state !== 'active') return this.toast('Rupture : visez une Secondaire adverse active.');
         this.ui.tacticsTech = { id: 'Rupture', targetSlot: slot };
         this.ui.techTargeting = null;
+        if (this.suiteTactique()) return;
         return this.renderFn();
       }
       if (this.ui.targetingFor !== null) {
@@ -1041,8 +1078,8 @@ export class Controller {
     this.renderFn();
   }
 
-  lockTactics(): void {
-    this.apply({ type: 'tactics', player: 'p1', plans: this.ui.plans, technique: this.ui.tacticsTech });
+  lockTactics(): boolean {
+    return this.apply({ type: 'tactics', player: 'p1', plans: this.ui.plans, technique: this.ui.tacticsTech });
   }
 
   skipRepel(): void {
@@ -1078,6 +1115,27 @@ export class Controller {
     if (!this.assiste) return;
     if (!this.ui.menusFaits.includes(slot)) this.ui.menusFaits.push(slot);
     this.ouvrirMenuSuivant();
+    this.suiteTactique();
+  }
+
+  /**
+   * Retour du responsable (2026-11-11) : pas de bouton « Valider » aux choix tactiques. Dès que chaque Secondaire active
+   * a son choix (Conserver compris) et que la Technique éventuelle est répondue (cible comprise), les choix partent.
+   * Rend vrai si la commande est partie (ou a été refusée, puis remise à zéro).
+   */
+  private suiteTactique(): boolean {
+    const v = this.view;
+    if (!this.assiste || v.phase !== 'TACTICS' || !v.awaitingMe) return false;
+    if (this.menusEnAttente().length || this.ui.menuSlot !== null || this.ui.targetingFor !== null || this.ui.techTargeting || this.questionTech()) return false;
+    if (this.lockTactics()) return true;
+    // refusée (garde d'une leçon) : les menus se rouvrent
+    this.ui.plans = [null, null];
+    this.ui.menusFaits = [];
+    this.ui.tacticsTech = null;
+    this.ui.repondu = this.ui.repondu.filter((x) => !x.startsWith('tech:'));
+    this.ouvrirMenuSuivant();
+    this.renderFn();
+    return true;
   }
 
   /** Secondaires actives dont le menu reste à ouvrir (ni choix, ni menu refermé). */
@@ -1155,6 +1213,7 @@ export class Controller {
       if (v.phase === 'DISSIPATION') return this.lockDissipation(false);
       if (v.phase === 'LECTURE') return this.lecture(false);
       if (v.phase === 'TACTICS' && (this.ui.tacticsTech?.id === t || this.ui.techTargeting === t)) { this.ui.tacticsTech = null; this.ui.techTargeting = null; }
+      if (v.phase === 'TACTICS' && this.suiteTactique()) return;
       return this.renderFn();
     }
     switch (v.phase) {
@@ -1171,9 +1230,20 @@ export class Controller {
         return;
       }
       case 'LECTURE': return this.lecture(true);
-      case 'TACTICS':
-        if (t === 'Ancrage' || t === 'Rupture') { if (this.ui.techTargeting !== t && this.ui.tacticsTech?.id !== t) this.toggleTacticsTech(t); }
+      case 'TACTICS': {
+        if (t !== 'Ancrage' && t !== 'Rupture') return;
+        if (this.ui.techTargeting !== t && this.ui.tacticsTech?.id !== t) this.toggleTacticsTech(t);
+        if (this.ui.techTargeting !== t) return;
+        // un clic si possible : une seule cible, prise d'office
+        if (t === 'Rupture') {
+          const c = v.opp.slots.filter((s) => s?.state === 'active').map((s) => s!.slot);
+          if (c.length === 1) this.clickOppSlot(c[0]!);
+        } else {
+          const c = ([0, 1] as const).filter((i) => v.me.slots[i]?.state === 'active' && this.ui.plans[i] && this.ui.plans[i]!.mode !== 'keep');
+          if (c.length === 1) this.clickMySlot(c[0]!);
+        }
         return;
+      }
       default: return;
     }
   }

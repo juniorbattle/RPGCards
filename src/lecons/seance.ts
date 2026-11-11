@@ -238,7 +238,9 @@ export class Seance {
     const rects = cibles.flatMap((s) => [...document.querySelectorAll<HTMLElement>(s)].filter((e) => e.offsetParent !== null || e.getClientRects().length).slice(0, 1))
       .map((e) => e.getBoundingClientRect()).filter((r) => r.width > 0 && r.height > 0);
     const pad = 6;
-    this.eviter(rects);
+    // M18 : le panneau s'écarte aussi d'un menu tactique ouvert d'office ou d'une question posée sur place (tour libre compris)
+    const ouverts = [...document.querySelectorAll<HTMLElement>('#app .menu, #app .ask, #app .centre-act')].map((e) => e.getBoundingClientRect()).filter((r) => r.width > 0 && r.height > 0);
+    this.eviter([...rects, ...ouverts]);
     const cle = rects.map((r) => `${Math.round(r.x)},${Math.round(r.y)},${Math.round(r.width)},${Math.round(r.height)}`).join('|') + `@${W}x${H}`;
     if (this.voile.dataset.cle === cle) return;
     this.voile.dataset.cle = cle;
@@ -467,7 +469,8 @@ function consigneAssistee(c: Controller, s: GameState, a: PlayerCommand): { fair
   switch (a.type) {
     case 'commit': {
       const r = consigneClassique(c, s, a);
-      return r.cibles.includes(sel.btn('act-commit')) ? { faire: 'Engage.', cibles: [sel.btn('act-commit')] } : r;
+      // poser la Secondaire engage le tour ; sans Secondaire, « Engager sans Secondaire »
+      return r.cibles.includes(sel.btn('act-commit')) ? { faire: 'Engage, sans Secondaire.', cibles: [sel.btn('act-commit')] } : r;
     }
     case 'prepare': {
       const i = c.reservesEnAttente()[0];
@@ -494,13 +497,14 @@ function consigneAssistee(c: Controller, s: GameState, a: PlayerCommand): { fair
           if (q) return non(q);
         }
       } else if (q) return non(q);
-      return { faire: 'Valide tes choix.', cibles: [sel.btn('act-tactics')] };
+      // aucun « Valider » au tour assisté : le dernier choix envoie les choix tactiques
+      return { faire: '', cibles: [] };
     }
     case 'start': {
       const tq = a.technique;
       if (tq) {
         const carte = 'cardId' in tq ? defDe(s, tq.cardId) : null;
-        if (tq.id === 'Recentrage' && ui.recentrageArmed) return { faire: `Clique ${nomCarte(carte)} dans ta main.`, cibles: [sel.main(s.players.p1.hand.find((x) => s.cards[x]!.defId === carte) ?? '')] };
+        if (tq.id === 'Recentrage' && (ui.recentrageArmed || q === 'Recentrage')) return { faire: `Clique ${nomCarte(carte)} dans ta main.`, cibles: [sel.main(s.players.p1.hand.find((x) => s.cards[x]!.defId === carte) ?? '')] };
         if (q === tq.id) return { faire: `Utilise ${tq.id}.`, cibles: [sel.btn(`tech-oui-${tq.id}`)] };
       }
       return q ? non(q) : { faire: '', cibles: [] };

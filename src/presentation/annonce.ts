@@ -34,7 +34,7 @@ export function annonceDe(s: SituationAnnonce): Annonce | null {
       case 'REVISION': return 'Le rival a annoncé sa Signature : tu peux réviser';
       case 'LECTURE': return 'Lecture possible';
       case 'LECTURE_CHANGE': return `Lecture : le rival est en ${s.lectureSeen === 'assault' ? 'ASSAUT' : 'GARDE'}`;
-      case 'TACTICS': return s.activeSlots > 0 ? 'Tes Secondaires peuvent agir' : 'Rupture possible';
+      case 'TACTICS': return s.activeSlots > 0 ? (s.activeSlots > 1 ? 'Choisis l’action de chaque Secondaire' : 'Choisis l’action de ta Secondaire') : 'Rupture possible';
       case 'REPEL': return 'Repoussement : choisis une Secondaire adverse';
       default: return null;
     }

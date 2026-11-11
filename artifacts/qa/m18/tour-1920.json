@@ -1,5 +1,5 @@
 {
-  "head": "a870c52",
+  "head": "a194f4d",
   "viewport": [
     1920,
     1080
@@ -13,29 +13,29 @@
     "manette"
   ],
   "checks": [
-    "OK classique : 4 tours joués (51.6 s) ; gestes par tour {\"1\":8,\"2\":10,\"3\":6,\"4\":4}, moyenne 7",
-    "OK souris : 4 tours joués au tour assisté (46.5 s)",
-    "OK souris : gestes par tour {\"1\":6,\"2\":7,\"3\":4,\"4\":3}, moyenne 5 (classique : 7)",
+    "OK classique : 4 tours joués (50.4 s) ; gestes par tour {\"1\":8,\"2\":10,\"3\":6,\"4\":4}, moyenne 7",
+    "OK souris : 4 tours joués au tour assisté (45.2 s)",
+    "OK souris : gestes par tour {\"1\":5,\"2\":6,\"3\":4,\"4\":3}, moyenne 4.5 (classique : 7)",
     "OK souris : moins de gestes par tour qu’au tour classique",
     "OK souris : aucun bouton n’attend quand il n’y a rien à choisir",
-    "OK souris : le tour suivant commence seul après le Clash, sans geste (1555, 1399, 1514, 1543 ms)",
+    "OK souris : le tour suivant commence seul après le Clash, sans geste (1507, 1349, 1506, 1540 ms)",
     "OK souris : une seule consigne à la fois (au plus 1)",
     "OK souris : aucun conseil contextuel (la consigne en tient lieu)",
-    "OK souris : bandeaux d’étape (5) : Tour 1 · Début du tour : une Technique est prête | Tour 1 · Engagement : choisis ta Primaire | Tour 2 · Préparation : révèle ou garde tes réserves…",
-    "OK clavier : 4 tours joués au tour assisté (40.4 s)",
-    "OK clavier : gestes par tour {\"1\":6,\"2\":7,\"3\":4,\"4\":3}, moyenne 5 (classique : 7)",
+    "OK souris : bandeaux d’étape (6) : Tour 1 · Début du tour : une Technique est prête | Tour 1 · Engagement : choisis ta Primaire | Tour 2 · Préparation : révèle ou garde tes réserves…",
+    "OK clavier : 4 tours joués au tour assisté (40.2 s)",
+    "OK clavier : gestes par tour {\"1\":5,\"2\":6,\"3\":4,\"4\":3}, moyenne 4.5 (classique : 7)",
     "OK clavier : moins de gestes par tour qu’au tour classique",
     "OK clavier : aucun bouton n’attend quand il n’y a rien à choisir",
-    "OK clavier : le tour suivant commence seul après le Clash, sans geste (1501, 1358, 1490, 1465 ms)",
+    "OK clavier : le tour suivant commence seul après le Clash, sans geste (1544, 1337, 1515, 1504 ms)",
     "OK clavier : une seule consigne à la fois (au plus 1)",
     "OK clavier : aucun conseil contextuel (la consigne en tient lieu)",
-    "OK clavier : bandeaux d’étape (4) : Tour 1 · Début du tour : une Technique est prête | Tour 2 · Préparation : révèle ou garde tes réserves | Tour 2 · Tes Secondaires peuvent agir…",
+    "OK clavier : bandeaux d’étape (3) : Tour 1 · Début du tour : une Technique est prête | Tour 2 · Préparation : révèle ou garde tes réserves | Tour 2 · Repoussement : choisis une Secondaire adverse…",
     "OK clavier : aucun geste replié sur la souris (0)",
-    "OK manette : 4 tours joués au tour assisté (46 s)",
-    "OK manette : gestes par tour {\"1\":6,\"2\":7,\"3\":4,\"4\":3}, moyenne 5 (classique : 7)",
+    "OK manette : 4 tours joués au tour assisté (44.5 s)",
+    "OK manette : gestes par tour {\"1\":5,\"2\":6,\"3\":4,\"4\":3}, moyenne 4.5 (classique : 7)",
     "OK manette : moins de gestes par tour qu’au tour classique",
     "OK manette : aucun bouton n’attend quand il n’y a rien à choisir",
-    "OK manette : le tour suivant commence seul après le Clash, sans geste (1502, 1162, 1553, 1475 ms)",
+    "OK manette : le tour suivant commence seul après le Clash, sans geste (1478, 1161, 1545, 1461 ms)",
     "OK manette : une seule consigne à la fois (au plus 1)",
     "OK manette : aucun conseil contextuel (la consigne en tient lieu)",
     "OK manette : bandeaux d’étape (7) : Tour 1 · Début du tour : une Technique est prête | Tour 1 · Engagement : choisis ta Primaire | Tour 2 · Préparation : révèle ou garde tes réserves…",
@@ -55,81 +55,30 @@
       },
       "moyenne": 7,
       "attentes": [
-        1277,
-        323,
-        298,
-        309
+        1064,
+        322,
+        316,
+        325
       ],
       "fautes": [],
       "consignesMax": 0,
       "tips": 0,
       "annonces": [],
-      "s": 51.6
+      "s": 50.4
     },
     "souris": {
       "gestesParTour": {
-        "1": 6,
-        "2": 7,
+        "1": 5,
+        "2": 6,
         "3": 4,
         "4": 3
       },
-      "moyenne": 5,
+      "moyenne": 4.5,
       "attentes": [
-        1555,
-        1399,
-        1514,
-        1543
-      ],
-      "fautes": [],
-      "consignesMax": 1,
-      "tips": 0,
-      "annonces": [
-        "Tour 1 · Début du tour : une Technique est prête",
-        "Tour 1 · Engagement : choisis ta Primaire",
-        "Tour 2 · Préparation : révèle ou garde tes réserves",
-        "Tour 2 · Tes Secondaires peuvent agir",
-        "Tour 2 · Repoussement : choisis une Secondaire adverse"
-      ],
-      "s": 46.5
-    },
-    "clavier": {
-      "gestesParTour": {
-        "1": 6,
-        "2": 7,
-        "3": 4,
-        "4": 3
-      },
-      "moyenne": 5,
-      "attentes": [
-        1501,
-        1358,
-        1490,
-        1465
-      ],
-      "fautes": [],
-      "consignesMax": 1,
-      "tips": 0,
-      "annonces": [
-        "Tour 1 · Début du tour : une Technique est prête",
-        "Tour 2 · Préparation : révèle ou garde tes réserves",
-        "Tour 2 · Tes Secondaires peuvent agir",
-        "Tour 2 · Repoussement : choisis une Secondaire adverse"
-      ],
-      "s": 40.4
-    },
-    "manette": {
-      "gestesParTour": {
-        "1": 6,
-        "2": 7,
-        "3": 4,
-        "4": 3
-      },
-      "moyenne": 5,
-      "attentes": [
-        1502,
-        1162,
-        1553,
-        1475
+        1507,
+        1349,
+        1506,
+        1540
       ],
       "fautes": [],
       "consignesMax": 1,
@@ -139,11 +88,62 @@
         "Tour 1 · Engagement : choisis ta Primaire",
         "Tour 2 · Préparation : révèle ou garde tes réserves",
         "Tour 2 · Engagement : choisis ta Primaire",
-        "Tour 2 · Tes Secondaires peuvent agir",
+        "Tour 2 · Choisis l’action de ta Secondaire",
+        "Tour 2 · Repoussement : choisis une Secondaire adverse"
+      ],
+      "s": 45.2
+    },
+    "clavier": {
+      "gestesParTour": {
+        "1": 5,
+        "2": 6,
+        "3": 4,
+        "4": 3
+      },
+      "moyenne": 4.5,
+      "attentes": [
+        1544,
+        1337,
+        1515,
+        1504
+      ],
+      "fautes": [],
+      "consignesMax": 1,
+      "tips": 0,
+      "annonces": [
+        "Tour 1 · Début du tour : une Technique est prête",
+        "Tour 2 · Préparation : révèle ou garde tes réserves",
+        "Tour 2 · Repoussement : choisis une Secondaire adverse"
+      ],
+      "s": 40.2
+    },
+    "manette": {
+      "gestesParTour": {
+        "1": 5,
+        "2": 6,
+        "3": 4,
+        "4": 3
+      },
+      "moyenne": 4.5,
+      "attentes": [
+        1478,
+        1161,
+        1545,
+        1461
+      ],
+      "fautes": [],
+      "consignesMax": 1,
+      "tips": 0,
+      "annonces": [
+        "Tour 1 · Début du tour : une Technique est prête",
+        "Tour 1 · Engagement : choisis ta Primaire",
+        "Tour 2 · Préparation : révèle ou garde tes réserves",
+        "Tour 2 · Engagement : choisis ta Primaire",
+        "Tour 2 · Choisis l’action de ta Secondaire",
         "Tour 2 · Repoussement : choisis une Secondaire adverse",
         "Tour 4 · Engagement : choisis ta Primaire"
       ],
-      "s": 46
+      "s": 44.5
     }
   }
 }

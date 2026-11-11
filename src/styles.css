@@ -814,7 +814,7 @@ button { font: inherit; color: inherit; }
    Une seule consigne, à l'endroit de l'action ; le bandeau d'étape au centre de la table (animé par le script, opacité
    seule en mouvement réduit) ; le panneau de droite réduit à l'étape, l'Insight et les Techniques. */
 #annonce { position: fixed; inset: 0; pointer-events: none; z-index: 40; }
-.annonce { position: absolute; left: 50%; top: 47%; translate: -50% -50%; display: grid; justify-items: center; gap: 0.1rem; min-width: min(34rem, 80vw); padding: 0.55rem 2.4rem 0.65rem; text-align: center; background: linear-gradient(90deg, rgba(8, 6, 10, 0), rgba(8, 6, 10, 0.86) 18%, rgba(8, 6, 10, 0.86) 82%, rgba(8, 6, 10, 0)); border-block: 1px solid rgba(232, 196, 128, 0.55); color: #faf4e8; text-shadow: 0 1px 3px #000; }
+.annonce { position: absolute; left: 50%; top: 41%; translate: -50% -50%; display: grid; justify-items: center; gap: 0.1rem; min-width: min(34rem, 80vw); padding: 0.55rem 2.4rem 0.65rem; text-align: center; background: linear-gradient(90deg, rgba(8, 6, 10, 0), rgba(8, 6, 10, 0.86) 18%, rgba(8, 6, 10, 0.86) 82%, rgba(8, 6, 10, 0)); border-block: 1px solid rgba(232, 196, 128, 0.55); color: #faf4e8; text-shadow: 0 1px 3px #000; }
 .annonce-tour { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-hi); }
 .annonce-texte { font-family: Georgia, serif; font-size: clamp(1.05rem, 2.6vh, 1.6rem); font-weight: 700; letter-spacing: 0.02em; }
 .bilan-line { position: absolute; z-index: 6; top: calc(var(--g) * 0.6 + 1.85rem); left: 50%; transform: translateX(-50%); padding: 0.16rem 0.8rem; border-radius: 999px; background: rgba(10, 7, 10, 0.72); border: 1px solid var(--line-dim); font-size: 0.74rem; color: var(--ink-dim); white-space: nowrap; pointer-events: auto; }
@@ -840,9 +840,14 @@ button { font: inherit; color: inherit; }
 .centre-act .stance { position: static; transform: none; }
 .menu.assiste { min-width: 15.5rem; }
 .menu.assiste button small { color: #f1e2c0; }
-.zone .centre-act.cote { left: calc(50% + var(--card-w) * 0.56); bottom: 22%; transform: none; justify-items: start; }
-.centre-act.cote > .btn:not(.ghost) { padding: 0.5rem 1rem; font-size: 1rem; }
 /* « Engager » au-dessus de la case : l'aide « Le rival engage… » de la case adverse, déjà dite par son HUD, s'efface */
-#app:has(.side.me .centre-act:not(.cote)) .side.opp .zone.primary > .empty-hint { visibility: hidden; }
+#app:has(.side.me .centre-act) .side.opp .zone.primary > .empty-hint { visibility: hidden; }
 .ask-revision { max-width: min(26rem, 60vw); }
 .inspector.droite { left: auto; right: var(--g); }
+.menu.assiste .menu-titre-a { display: grid; gap: 0.05rem; }
+.menu.assiste .menu-titre-a b { font-family: Georgia, serif; font-size: 0.86rem; color: var(--gold-hi); }
+.menu.assiste .menu-titre-a span { color: #f1e9dc; font-size: 0.74rem; }
+.menu.assiste .menu-titre-a small { color: var(--ink-dim); font-size: 0.66rem; }
+.centre-act > .btn:has(.eng-l2) { display: grid; justify-items: center; gap: 0; padding: 0.38rem 1.5rem 0.42rem; line-height: 1.05; }
+.centre-act .eng-l1 { font-size: 1.15rem; letter-spacing: 0.06em; }
+.centre-act .eng-l2 { font-family: system-ui, sans-serif; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.04em; opacity: 0.85; }

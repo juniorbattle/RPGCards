@@ -8,6 +8,14 @@
 > pendant la présentation du Clash, le panneau garde le récit des temps et « Passer » ; aux choix tactiques, « Valider »
 > se pose à côté de la case Primaire (la Primaire adverse révélée reste visible) ; la révision (avenant 08) se pose
 > au-dessus de la main.
+>
+> **Amendement du responsable (2026-11-11, passe 219, après avoir vu la livraison) :** « de manière générale il faut que
+> nos actions pour chaque étape se fassent en 1 clic si possible sans besoin de valider ». Le geste qui complète une étape
+> l'envoie ; un bouton ne reste que pour refuser un élément facultatif. Aux choix tactiques, **pas de bouton « Valider »** :
+> le dernier choix (« Conserver » compris) envoie les choix. À l'Engagement, poser la Secondaire (ou la posture, si la
+> Secondaire est posée ou impossible) engage ; seul l'engagement sans Secondaire garde « Engager sans Secondaire ». Une cible
+> unique (Interférer, Rupture, Ancrage, Dissipation) est prise d'office ; le Recentrage se répond en cliquant la carte. Le
+> point 4 du §3 ne garde que ce bouton ; le point 5 vaut avec cette règle.
 
 > **Statut : APPROUVÉ le 2026-11-11 (fiche remplie, consignée à la passe 217 ; `docs/FICHE_ARBITRAGES_M18.md`).** Les huit
 > choix sur la recommandation ; développement maintenant (P2), le responsable poursuit son test hors combat en attendant.

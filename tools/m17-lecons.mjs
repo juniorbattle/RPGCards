@@ -108,8 +108,10 @@ const LIBRE = () => {
   if (c.sequencing) return vis(k('act-skip')) ? k('act-skip') : null;
   if (v.phase === 'RESOLVED') return vis(k('act-next')) ? k('act-next') : null;
   if (!v.awaitingMe) return null;
+  // M18 : au tour assisté, le menu tactique ouvert d'office : « Conserver » (le dernier choix envoie le tour)
+  if (c.assiste && v.phase === 'TACTICS' && c.ui.menuSlot !== null) return k(`menu-${c.ui.menuSlot}-keep`);
   // M18 : au tour assisté, les « Non » des questions posées sur place (et le tour suivant s'enchaîne seul)
-  const par = { START: ['act-start', 'tech-non-Sondage', 'tech-non-Recentrage'], PREPARE: ['act-prepare', 'reveal-non-0', 'reveal-non-1'], DISSIPATION: ['act-dissip-pass', 'tech-non-Dissipation'], LECTURE: ['act-lecture-pass', 'tech-non-Lecture'], LECTURE_CHANGE: ['act-lecture-stance', 'stance-assault'], REVISION: ['act-revision-keep'], TACTICS: ['act-tactics'], REPEL: ['act-repel-skip'] }[v.phase];
+  const par = { START: ['act-start', 'tech-non-Sondage', 'tech-non-Recentrage'], PREPARE: ['act-prepare', 'reveal-non-0', 'reveal-non-1'], DISSIPATION: ['act-dissip-pass', 'tech-non-Dissipation'], LECTURE: ['act-lecture-pass', 'tech-non-Lecture'], LECTURE_CHANGE: ['act-lecture-stance', 'stance-assault'], REVISION: ['act-revision-keep'], TACTICS: ['act-tactics', 'tech-non-Rupture', 'tech-non-Ancrage'], REPEL: ['act-repel-skip'] }[v.phase];
   if (par) return par.map(k).find(vis) ?? null;
   if (v.phase === 'COMMIT') {
     const dr = c.ui.draft;

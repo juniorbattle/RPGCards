@@ -585,7 +585,7 @@ function tacticsMenu(c: Controller, slot: SlotIndex): HTMLElement {
   const item = (mode: 'keep' | 'rank' | 'damage' | 'interfere', label: string, hint: string) => {
     const blocked = c.modeBlocked(slot, mode);
     // M18 (G2) : au tour assisté, chaque option dit ce qu'elle change au Clash (si le rival conserve)
-    if (c.assiste && !blocked && mode !== 'interfere') hint = c.apercuMode(slot, mode);
+    if (c.assiste && !blocked && mode !== 'interfere') hint = mode === 'keep' ? `ne joue pas ce tour, reste active · ${c.apercuMode(slot, mode)}` : `elle s’engage · ${c.apercuMode(slot, mode)}`;
     // M12 : le mode qui déclenche l'effet de la carte porte son icône et le nom de l'effet
     const fires = !!def?.effect && trig === MODE_TRIGGER[mode];
     return h('button', { type: 'button', class: fires ? 'fires' : null, 'data-key': `menu-${slot}-${mode}`, 'aria-pressed': String(cur === mode), disabled: !!blocked, title: blocked ?? (fires ? `${EFFECTS[def!.effect!].name} : ${EFFECT_SUMMARY[def!.effect!]}` : ''), onclick: (e: Event) => { e.stopPropagation(); c.choosePlan(slot, mode); } },
@@ -593,7 +593,7 @@ function tacticsMenu(c: Controller, slot: SlotIndex): HTMLElement {
   };
   const a = c.assiste;
   const menu = fresh(h('div', { class: cls('menu', slot === 0 ? 'left' : 'right', a && 'assiste'), role: 'menu', 'aria-label': `Action de la Secondaire ${slot + 1}` },
-    h('div', { class: 'menu-title' }, a ? `Secondaire ${slot + 1} · choix secret ; si le rival conserve :` : 'Choix secret (révélé après verrouillage commun)'),
+    h('div', { class: 'menu-title' }, a ? menuTitreAssiste(c, slot) : 'Choix secret (révélé après verrouillage commun)'),
     item('keep', 'Conserver', 'reste active, non dépensée'),
     item('rank', a ? `Rang ${c.supportLabel(slot, 'rank')}` : 'Amplifier le Rang', c.supportLabel(slot, 'rank') + ' au score'),
     item('damage', a ? `Dégâts ${c.supportLabel(slot, 'damage')}` : 'Amplifier les dégâts', c.supportLabel(slot, 'damage') + ' au multiplicateur'),
@@ -936,7 +936,7 @@ const QUESTION_TECH: Record<TechniqueId, string> = {
 };
 
 /** Un bouton du tour assisté ; ne propage jamais le clic à la case qui le porte (une case cliquée reprend sa carte). */
-function askBtn(label: string, key: string, onclick: () => void, opts: { ghost?: boolean; primary?: boolean; next?: boolean; disabled?: boolean; title?: string } = {}): HTMLElement {
+function askBtn(label: string | Array<HTMLElement | string>, key: string, onclick: () => void, opts: { ghost?: boolean; primary?: boolean; next?: boolean; disabled?: boolean; title?: string } = {}): HTMLElement {
   return h('button', {
     class: cls('btn', opts.ghost && 'ghost', opts.next && !opts.disabled && 'next'), type: 'button', 'data-key': key, title: opts.title ?? null,
     'data-primary-action': opts.primary ? 'true' : null, disabled: opts.disabled ? true : null,
@@ -985,10 +985,11 @@ function consigneMain(c: Controller): HTMLElement | null {
     const def = TECHNIQUES[t];
     return h('div', { class: 'ask ask-tech', role: 'group', 'aria-label': `${t} : ${QUESTION_TECH[t]}`, 'data-key': `ask-tech-${t}` },
       h('div', { class: 'ask-head' }, cardArtVersion() === 'v2' ? h('span', { class: 'seal', html: techniqueSeal(t, 18) }) : null, h('b', null, t), h('span', { class: 'ask-cout' }, `${def.cost} Insight`)),
-      h('p', { class: 'ask-q', title: def.text }, QUESTION_TECH[t]),
+      h('p', { class: 'ask-q', title: def.text }, t === 'Recentrage' ? 'Clique la carte à glisser sous ta pioche (tu en pioches une autre), ou :' : QUESTION_TECH[t]),
       h('div', { class: 'ask-btns' },
-        askBtn('Utiliser', `tech-oui-${t}`, () => c.repondreTech(t, true), { next: true, title: def.text }),
-        askBtn('Non', `tech-non-${t}`, () => c.repondreTech(t, false), { ghost: true })));
+        // le Recentrage se répond d'un clic sur la carte elle-même
+        t === 'Recentrage' ? null : askBtn('Utiliser', `tech-oui-${t}`, () => c.repondreTech(t, true), { next: true, title: def.text }),
+        askBtn(t === 'Recentrage' ? 'Pas de Recentrage' : 'Non', `tech-non-${t}`, () => c.repondreTech(t, false), { ghost: true })));
   }
   const ligne = consigneTexte(c);
   if (!ligne) return null;
@@ -1012,9 +1013,9 @@ function consigneTexte(c: Controller): string {
     case 'REVISION': {
       const dr = ui.draft;
       if (!c.editingCommit()) return '';
-      if (ui.selected) return 'ASSAUT ou GARDE : en Primaire. SECONDAIRE : face cachée.';
+      if (ui.selected) return dr.primaryId && dr.stance ? 'SECONDAIRE : face cachée ; elle engage le tour.' : dr.secondaryId ? 'ASSAUT ou GARDE : ta Primaire ; elle engage le tour.' : 'ASSAUT ou GARDE : en Primaire. SECONDAIRE : face cachée.';
       if (!dr.primaryId) return 'Choisis ta Primaire : clique une carte de ta main, ou glisse-la sur PRIMAIRE.';
-      if (!dr.stance) return 'Choisis ASSAUT ou GARDE pour ta Primaire.';
+      if (!dr.stance) return dr.secondaryId ? 'Choisis ASSAUT ou GARDE : ta posture engage le tour.' : 'Choisis ASSAUT ou GARDE pour ta Primaire.';
       return '';
     }
     case 'TACTICS':
@@ -1031,26 +1032,39 @@ function actionCentre(c: Controller): HTMLElement | null {
   const v = c.view;
   if (c.sequencing && !(v.phase === 'REPEL' && v.repel?.mine)) return null;
   const box = (...kids: Array<HTMLElement | string | null>) => h('div', { class: 'centre-act', role: 'group', 'aria-label': 'Action du tour' }, ...kids);
-  // aux choix tactiques, la Primaire adverse est révélée : « Valider » se pose à côté de la case, sans la couvrir
-  const cote = (...kids: Array<HTMLElement | string | null>) => h('div', { class: 'centre-act cote', role: 'group', 'aria-label': 'Action du tour' }, ...kids);
   const hint = (t: string) => h('span', { class: 'centre-hint' }, t);
   if (v.phase === 'REPEL' && v.repel?.mine) return box(hint('Repoussement : renvoie une Secondaire adverse'), askBtn('Renoncer', 'act-repel-skip', () => c.skipRepel(), { ghost: true }));
   if (!v.awaitingMe) return null;
   switch (v.phase) {
     case 'COMMIT': {
       if (!c.engagementPret()) return null;
-      const peutSecondaire = !c.ui.draft.secondaryId && (v.me.hand ?? []).some((x) => x.cardId !== c.ui.draft.primaryId && !cardDef(x.defId).signature);
-      return box(askBtn('Engager', 'act-commit', () => c.lockCommit(), { primary: true, next: true }), peutSecondaire ? hint('ou ajoute une Secondaire') : null);
+      // le seul cas où l'engagement attend un geste de plus : la Secondaire facultative, refusée (« sans Secondaire ») ;
+      // poser une Secondaire engage tout de suite
+      // deux lignes, à la largeur de la colonne Primaire : les Secondaires adverses voisines restent visibles
+      const sans = c.peutAjouterSecondaire();
+      return box(askBtn(sans ? [h('span', { class: 'eng-l1' }, 'Engager'), h('span', { class: 'eng-l2' }, 'sans Secondaire')] : 'Engager', 'act-commit', () => c.lockCommit(), { primary: true, next: true, title: sans ? 'Engager la Primaire seule (poser une Secondaire engage aussi)' : 'Engager' }), sans ? hint('ou pose une Secondaire') : null);
     }
     case 'LECTURE_CHANGE': {
       const st = c.ui.lectureStance ?? v.me.primary?.stance ?? null;
       return box(hint(`Le rival a engagé en ${v.lectureSeen === 'assault' ? 'ASSAUT' : 'GARDE'}. Ton mode :`), stanceChips(c, st));
     }
-    case 'TACTICS':
-      if (c.ui.targetingFor !== null || c.ui.techTargeting) return null;
-      return cote(askBtn('Valider', 'act-tactics', () => c.lockTactics(), { primary: true, next: c.ui.menuSlot === null }), c.menusEnAttente().length || c.ui.menuSlot !== null ? hint('sans choix : Conserver') : null);
+    // aux choix tactiques, aucun bouton : le dernier choix (Conserver compris) les envoie (retour du responsable, 2026-11-11)
     default: return null;
   }
+}
+
+/**
+ * G2 : le titre du menu tactique ouvert d'office : quelle Secondaire (« 1 sur 2 »), que le choix est secret, que le
+ * dernier choix envoie le tour, et l'hypothèse des aperçus (le rival conserve).
+ */
+function menuTitreAssiste(c: Controller, slot: SlotIndex): HTMLElement {
+  const actives = ([0, 1] as const).filter((i) => c.view.me.slots[i]?.state === 'active');
+  const rang = actives.indexOf(slot) + 1;
+  const dernier = c.menusEnAttente().filter((i) => i !== slot).length === 0;
+  return h('span', { class: 'menu-titre-a' },
+    h('b', null, `Secondaire ${slot + 1}${actives.length > 1 ? ` · ${rang} sur ${actives.length}` : ''}`),
+    h('span', null, dernier ? 'Choix secret ; ton choix envoie le tour.' : 'Choix secret ; puis l’autre Secondaire.'),
+    h('small', null, 'Effet sur le Clash si le rival conserve :'));
 }
 
 /** R3 : « Révéler » ou « Garder cachée », posés sur la réserve prête. */

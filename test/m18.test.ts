@@ -38,7 +38,8 @@ describe('M18 (R1) — les annonces d’étape', () => {
   const s = (over: Partial<SituationAnnonce>): SituationAnnonce => ({ seed: 1, turn: 3, phase: 'COMMIT', awaitingMe: true, repelMine: false, handCount: 4, activeSlots: 0, lectureSeen: null, ...over });
   it('une annonce par étape où le joueur a la main, avec le numéro du tour', () => {
     expect(annonceDe(s({}))).toEqual({ cle: '1:3:COMMIT', titre: 'Tour 3', texte: 'Engagement : choisis ta Primaire' });
-    expect(annonceDe(s({ phase: 'TACTICS', activeSlots: 1 }))?.texte).toBe('Tes Secondaires peuvent agir');
+    expect(annonceDe(s({ phase: 'TACTICS', activeSlots: 1 }))?.texte).toBe('Choisis l’action de ta Secondaire');
+    expect(annonceDe(s({ phase: 'TACTICS', activeSlots: 2 }))?.texte).toBe('Choisis l’action de chaque Secondaire');
     expect(annonceDe(s({ phase: 'TACTICS', activeSlots: 0 }))?.texte).toBe('Rupture possible');
     expect(annonceDe(s({ phase: 'PREPARE' }))?.texte).toMatch(/révèle ou garde/);
     expect(annonceDe(s({ phase: 'START', handCount: 5 }))?.texte).toMatch(/défausse/);
@@ -83,8 +84,9 @@ function gestesAssistes(c: Controller, cmd: PlayerCommand): void {
         const q = c.questionTech();
         if (!q || c.view.phase !== 'START') return false;
         const veut = cmd.technique?.id === q;
-        c.repondreTech(q, veut);
+        // le Recentrage : un clic sur la carte
         if (veut && cmd.technique && 'cardId' in cmd.technique) c.clickHandCard(cmd.technique.cardId);
+        else c.repondreTech(q, veut);
         return true;
       });
       return;
@@ -101,8 +103,14 @@ function gestesAssistes(c: Controller, cmd: PlayerCommand): void {
         const slot = cmd.slot ?? cmd.replaceSlot ?? null;
         if (slot === null) { c.clickHandCard(cmd.secondaryId); c.placeSelected('secondary'); } else c.dropCard(cmd.secondaryId, slot === 0 ? 'slot0' : 'slot1');
       }
-      expect(c.engagementPret()).toBe(true);
-      return c.lockCommit();
+      // un clic par geste : poser la Secondaire (ou la posture, si plus rien ne peut s'ajouter) engage tout de suite ;
+      // sans Secondaire, un seul geste de plus, « Engager sans Secondaire »
+      if (c.view.phase === 'COMMIT' && c.view.awaitingMe) {
+        expect(cmd.secondaryId, 'la Secondaire posée aurait dû engager').toBeNull();
+        expect(c.engagementPret()).toBe(true);
+        c.lockCommit();
+      }
+      return;
     }
     case 'revise': return cmd.commit ? c.lockCommit() : c.keepRevision();
     case 'tactics': {
@@ -111,7 +119,8 @@ function gestesAssistes(c: Controller, cmd: PlayerCommand): void {
         const i = c.ui.menuSlot;
         if (i === null) return false;
         const plan = cmd.plans[i];
-        if (plan?.mode === 'interfere') { c.choosePlan(i, 'interfere'); c.clickOppSlot(plan.target!); } else c.choosePlan(i, plan?.mode ?? 'keep');
+        // une cible unique est prise d'office ; sinon, le clic sur la cible
+        if (plan?.mode === 'interfere') { c.choosePlan(i, 'interfere'); if (c.ui.targetingFor === i) c.clickOppSlot(plan.target!); } else c.choosePlan(i, plan?.mode ?? 'keep');
         return true;
       });
       expect(c.menusEnAttente()).toEqual([]);
@@ -120,9 +129,11 @@ function gestesAssistes(c: Controller, cmd: PlayerCommand): void {
       if (t) {
         expect(q).toBe(t.id);
         c.repondreTech(t.id, true);
-        if (t.id === 'Ancrage') c.clickMySlot(t.slot); else c.clickOppSlot(t.targetSlot);
+        if (c.ui.techTargeting === t.id) { if (t.id === 'Ancrage') c.clickMySlot(t.slot); else c.clickOppSlot(t.targetSlot); }
       } else if (q) c.repondreTech(q, false);
-      return c.lockTactics();
+      // aucun « Valider » : le dernier choix a envoyé les choix tactiques
+      expect(c.view.phase === 'TACTICS' && c.view.awaitingMe, 'choix tactiques envoyés au dernier choix').toBe(false);
+      return;
     }
     case 'repel': return cmd.targetSlot === null ? c.skipRepel() : c.clickOppSlot(cmd.targetSlot as SlotIndex);
     default: throw new Error(`commande inattendue : ${(cmd as PlayerCommand).type}`);
