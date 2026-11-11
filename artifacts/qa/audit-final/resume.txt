@@ -1,0 +1,57 @@
+typecheck rc=0 22s
+tests rc=0 86s
+build rc=0 22s
+sim rc=0 10s
+qa-browser rc=1 1s
+qa-product rc=1 2s
+qa-rc rc=1 1s
+qa-techniques rc=1 2s
+qa-aventure rc=1 1s
+qa-maison rc=1 2s
+qa-voies rc=1 1s
+qa-vivante rc=1 2s
+qa-championnat rc=1 1s
+qa-vue rc=1 2s
+m14-recit-guide rc=1 1s
+m14-preparation rc=1 0s
+m16-chasse rc=1 1s
+m17-lecons rc=1 1s
+m18-tour rc=1 1s
+manette rc=1 1s
+FIN
+--- relance des parcours
+qa-browser rc=1 2s
+qa-product rc=1 1s
+qa-rc rc=1 2s
+qa-techniques rc=1 2s
+qa-aventure rc=1 1s
+qa-maison rc=1 2s
+qa-voies rc=1 2s
+qa-vivante rc=1 2s
+qa-championnat rc=1 2s
+qa-vue rc=1 1s
+m14-recit-guide rc=1 0s
+m14-preparation rc=1 0s
+m16-chasse rc=1 1s
+m17-lecons rc=1 1s
+m18-tour rc=1 1s
+manette rc=1 1s
+FIN
+--- relance des parcours
+qa-browser rc=1 154s
+qa-product rc=0 230s
+qa-rc rc=0 306s
+qa-techniques rc=1 172s
+qa-aventure rc=1 92s
+qa-maison rc=1 56s
+qa-voies rc=0 111s
+qa-vivante rc=1 61s
+qa-championnat rc=0 40s
+qa-vue rc=0 29s
+m14-recit-guide rc=0 149s
+m14-preparation rc=0 33s
+m16-chasse rc=0 32s
+m17-lecons rc=0 322s
+m18-tour rc=0 197s
+manette rc=0 38s
+FIN

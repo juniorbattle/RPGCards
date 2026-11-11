@@ -1,0 +1,36 @@
+{
+ "head": "8a947eb",
+ "viewport": [
+  1280,
+  720
+ ],
+ "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "checks": [
+  "OK Promenade libre : pas de Préparation",
+  "OK Récit guidé : la Préparation s'ouvre seule",
+  "OK plein écran opaque : ni ville ni HUD derrière",
+  "OK joueurs de rue listés (rue-docker, rue-joueuse, rue-commis, rue-cour, rue-port, rue-haute)",
+  "OK tout tient sans défilement (720/720, liste 410/410)",
+  "OK chaque joueur a son portrait",
+  "OK pas de carton de lieu devant la Préparation",
+  "OK noms des quartiers tels que dans le jeu",
+  "OK le bouton « Suite du récit » a le focus (Entrée, Espace)",
+  "OK Échap ouvre le menu",
+  "OK le deck depuis la Préparation, qui reste derrière",
+  "OK le journal depuis la Préparation",
+  "OK les réglages depuis la Préparation",
+  "OK défier : écran noir",
+  "OK le joueur est devant lui (port)",
+  "OK choisi à la Préparation, il ne se refuse plus",
+  "OK le résultat dit « Continuer », pas « Retour en ville »",
+  "OK affronté, il quitte la liste jusqu’au chapitre suivant",
+  "OK le duel compte comme à pied (5 combats)",
+  "OK deux familles engagées ()",
+  "OK le choix sur l'écran, sans bouton général (cadet-Cendre, cadet-Voile)",
+  "OK Kaï surgit à la place de l'étape choisie",
+  "OK le résultat dit « Continuer », pas « Retour en ville »",
+  "OK retour à la Préparation, le choix proposé de nouveau",
+  "OK la personne choisie ouvre sa scène"
+ ],
+ "issues": []
+}
