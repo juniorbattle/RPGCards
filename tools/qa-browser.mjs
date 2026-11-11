@@ -112,7 +112,9 @@ try {
     { name: 'mobile-rotation-touch', seed: 505, viewport: { width: 390, height: 844 }, mode: 'touch', tech: 'Sondage,Rupture', isMobile: true,
       rotate: [{ afterTurns: 1, viewport: { width: 844, height: 390 } }, { afterTurns: 4, viewport: { width: 390, height: 844 } }, { afterTurns: 6, viewport: { width: 844, height: 390 } }, { afterTurns: 9, viewport: { width: 960, height: 540 } }] },
   ];
-  const plans = only ? plans0.filter((p) => p.name.includes(only)) : plans0;
+  // fiche de clôture (E2) : le mobile est hors de la 1.0 ; ses parcours sortent de la porte (gardés : `LQV_MOBILE=1` ou
+  // `QA_ONLY=mobile` les jouent)
+  const plans = only ? plans0.filter((p) => p.name.includes(only)) : plans0.filter((p) => !p.isMobile || process.env.LQV_MOBILE === '1');
   for (const p of plans) {
     const r = await runDuel(browser, server.base, p);
     report.runs.push(r);

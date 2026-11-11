@@ -207,9 +207,7 @@ export function renderBoard(sh: Shell): HTMLElement {
     h('div', { class: 'sh-actions' },
       btn('Accueil', () => sh.go({ type: 'home' }), { ghost: true, key: 'board-home' }),
       btn('Collection', () => sh.go({ type: 'open', screen: 'collection' }), { ghost: true, key: 'board-collection' }),
-      btn('Deck', () => sh.go({ type: 'open', screen: 'deck' }), { ghost: true, key: 'board-deck' }),
-      // M09 V2 (`?demo=1`) : le tableau classique, ouvert depuis le menu de la ville, y ramène.
-      sh.d.hub ? btn('Retour au Quai', () => { sh.hubBoard = false; sh.render(); }, { key: 'board-ville', primary: true }) : null));
+      btn('Deck', () => sh.go({ type: 'open', screen: 'deck' }), { ghost: true, key: 'board-deck' })));
 }
 
 /** Difficulté en étoiles (1 à 3), nommée pour les lecteurs d’écran. */
@@ -345,7 +343,7 @@ export function renderResult(sh: Shell): HTMLElement {
       btn('Accueil', () => sh.go({ type: 'home' }), { ghost: true, key: 'result-home' }),
       sh.playable().includes(enc.id) ? btn(enc.kind === 'series' ? 'Rejouer la manche' : 'Revanche', () => sh.go({ type: 'prep', encounterId: enc.id }), { ghost: true, key: 'result-rematch' }) : null,
       next ? btn(`Manche suivante : ${personalityOf(next.rival).name}`, () => sh.go({ type: 'prep', encounterId: next.id }), { key: 'result-next', primary: true }) : null,
-      btn(sh.d.hub ? 'Retour au Quai' : 'Rencontres', () => sh.go({ type: 'board' }), { key: 'result-board', primary: !next, ghost: !!next })));
+      btn('Rencontres', () => sh.go({ type: 'board' }), { key: 'result-board', primary: !next, ghost: !!next })));
 }
 
 function bigStat(k: string, v: string): HTMLElement {

@@ -51,7 +51,9 @@ try {
   await shot('titre');
   await p.click('[data-key="av-new"]');
   await p.waitForSelector('[data-key="av-name"]');
-  check((await p.$$('.av-neutre')).length === 4, 'création : les quatre Rangs de cartes grises (×4) présentés');
+  // fiche de clôture (E2) : contrôle accordé à l'écran de création en deux étapes (passes 202 et 203) : le départ, « De la
+  // populace », dit les seize cartes grises (en infobulle) ; le personnage, puis le récit
+  check(/De la populace/.test(await p.textContent('[data-screen="av-nouveau"]') ?? '') && /seize cartes grises/.test(await p.getAttribute('[data-screen="av-nouveau"] [data-info*="cartes grises"]', 'data-info') ?? '') && !!(await p.$('[data-key="av-suite"]')), 'création : « De la populace », seize cartes grises (infobulle) ; deux étapes, le personnage puis le récit');
   await shot('nouvelle-aventure');
   await p.fill('[data-key="av-name"]', 'Ana');
   await p.click('[data-key="av-suite"]'); await p.click('[data-key="av-start"]');

@@ -26,7 +26,7 @@ Puis ouvrir <http://localhost:4173/?aventure=1>. Sans `qa=1`, le jeu n'affiche q
 - **Avec votre aventure** : « Continuer l'aventure ».
 - **À un chapitre donné**, sans tout rejouer : ajouter `&depart=` suivi du chapitre (`I` à `V`) et, si l'on veut,
   `&famille=` (`Cendre`, `Ronce`, `Voile` ou `Astre` ; `Cendre` par défaut), par exemple
-  <http://localhost:4173/?aventure=1&depart=III&famille=Ronce>. L'écran titre propose alors « Commencer au chapitre III
+  <http://localhost:4173/?aventure=1&qa=1&depart=III&famille=Ronce> (crochet de test : `qa=1` exigé depuis la fiche de clôture, E3). L'écran titre propose alors « Commencer au chapitre III
   (heure de ville) » : une aventure d'essai, au début du chapitre (prologue gagné, famille rejointe, chefs vaincus
   jusque-là, chaque duel compté). **Elle remplace l'aventure en cours** (une confirmation le demande) ; le jeu standard
   n'est pas touché.

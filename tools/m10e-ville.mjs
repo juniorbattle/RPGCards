@@ -166,7 +166,10 @@ try {
     for (let i = 0; i < 6; i++) {
       const ps = await poses(q);
       for (const x of ps) vus.add(x.id);
-      check(ps.length <= 2 && ps.every((x) => def.ids.includes(x.id)), `${q}, arrivée ${i + 1} : ${ps.map((x) => x.id).join(', ') || 'personne'} (rencontres du quartier seulement, deux au plus)`);
+      // fiche de clôture (E2) : le gardien d'un point de collecte (M16) garde sa carte à sa place ; il n'est pas une rencontre
+      // du directeur (ni compté dans les deux au plus)
+      const dir = ps.filter((x) => !x.id.startsWith('gardien:'));
+      check(dir.length <= 2 && dir.every((x) => def.ids.includes(x.id)), `${q}, arrivée ${i + 1} : ${dir.map((x) => x.id).join(', ') || 'personne'} (rencontres du quartier seulement, deux au plus ; gardiens à part : ${ps.length - dir.length})`);
       const r = !lue && ps.find((x) => x.genre === 'ambiance' || x.genre === 'facultative');
       if (r) {
         await devant(r.id);

@@ -295,7 +295,8 @@ export class AventureApp {
     // heure de ville (finalisation de la ville, passe 137) : `?aventure=1&depart=III[&famille=Ronce]`, une aventure d'essai
     // au début d'un chapitre (faits appliqués par la machine) ; sans ce paramètre, rien ne change
     const q = new URLSearchParams(location.search);
-    const dep = q.get('depart');
+    // fiche de clôture (E3) : crochet de test, seulement avec `?qa=1`
+    const dep = this.params.qa ? q.get('depart') : null;
     if (estDepart(dep)) {
       const fam = estFamille(q.get('famille')) ? q.get('famille') as Family : 'Cendre';
       items.push(bouton(`Commencer au chapitre ${dep} (heure de ville)`, () => void this.commencerDepart(dep, fam), 'av-depart', false, `Aventure d’essai : voie ${de(fam)}, ${dep === 'I' ? 'famille rejointe' : 'chefs vaincus jusqu’à ce chapitre'} ; elle remplace l’aventure en cours`));
@@ -343,7 +344,7 @@ export class AventureApp {
     let mode: ModeRecit = this.params.qa && new URLSearchParams(location.search).get('recit') === 'guide' ? 'guide' : 'libre';
     const nom = () => input.value.trim() || 'Duelliste';
     // M16 (fiche T1) : une seule Technique au départ, au choix ; Sondage présélectionnée ; en QA, `?technique=Recentrage`
-    const qTech = new URLSearchParams(location.search).get('technique');
+    const qTech = this.params.qa ? new URLSearchParams(location.search).get('technique') : null;
     let technique: TechniqueId = TECHNIQUES_RUE.includes(qTech as TechniqueId) ? qTech as TechniqueId : 'Sondage';
     const go = () => this.commencer(nom(), undefined, apparence, mode, technique);
     const marquerTech = () => boutonsTech.forEach((b, i) => { const oui = TECHNIQUES_RUE[i] === technique; b.setAttribute('aria-pressed', String(oui)); b.classList.toggle('choisi', oui); });

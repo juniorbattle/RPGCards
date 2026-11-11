@@ -89,7 +89,8 @@ try {
   await p.click('[data-key="av-confirmer"]');
   await p.waitForSelector('[data-key="av-recompense"]');
   let e = await etat();
-  check(e.affiliation === 'Cendre' && e.registre.some((g) => g.key === 'basics:Cendre') && e.deck.techniques.includes('Lecture'), 'confirmation : affiliation à la Cendre, quatre Basics et la Lecture');
+  // fiche de clôture (E2) : M16 (fiche T3) : la Technique d'une famille se gagne contre son chef, plus à l'affiliation
+  check(e.affiliation === 'Cendre' && e.registre.some((g) => g.key === 'basics:Cendre') && !e.registre.some((g) => g.key === 'technique:Lecture'), 'confirmation : affiliation à la Cendre et ses quatre Basics (la Lecture se gagne contre le chef, M16)');
   await shot('recompense-basics-cendre', 1200, 'Affiliation : les quatre Basics de la Cendre et la Lecture');
   await p.click('[data-key="av-continuer"]');
   await townReady();
@@ -115,7 +116,8 @@ try {
   await p.waitForSelector('[data-key="av-col-fam-Cendre"]');
   const possede = await p.$$eval('[data-possedee="true"]', (els) => els.map((x) => x.dataset.key));
   check(possede.length === 4 && possede.every((k) => /Cendre-\d-basic/.test(k)), `Collection : ${possede.length} cartes familiales possédées (les Basics de la Cendre)`);
-  check(/Battre Tessa/.test(await p.textContent('[data-key="av-col-Cendre-3-ferveur"]')), 'Collection : la variante III dit comment la gagner (Battre Tessa)');
+  // fiche de clôture (E2) : la manière de gagner une carte est passée en infobulle (passe 209)
+  check(/Battre Tessa/.test((await p.textContent('[data-key="av-col-Cendre-3-ferveur"]')) + ' ' + ((await p.getAttribute('[data-key="av-col-Cendre-3-ferveur"]', 'data-info')) ?? '') + ' ' + ((await p.$eval('[data-key="av-col-Cendre-3-ferveur"]', (el) => [...el.querySelectorAll('[data-info]')].map((x) => x.getAttribute('data-info')).join(' ')).catch(() => '')) ?? '')), 'Collection : la variante III dit comment la gagner (Battre Tessa, en infobulle)');
   await shot('collection-depart');
   await p.click('[data-key="av-onglet-registre"]');
   await p.waitForSelector('[data-key="av-registre"]');

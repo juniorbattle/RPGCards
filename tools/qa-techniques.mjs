@@ -4,6 +4,8 @@
 // Assertions : résultat, coût et Insight, cibles légales / refusées, zones, journal (sans doublon),
 // informations cachées (DOM, scène du Clash, temps forts M12, export public), console. Sortie : artifacts/qa/qa-techniques.json
 // + captures $TECH_OUT (défaut screenshots/qa/m03-1b/ ; une passe ultérieure garde ses preuves à part).
+// Fiche de clôture (E2) : le mobile est hors de la 1.0 ; le parcours tactile 390 sort de la porte (gardé comme outil :
+// `LQV_MOBILE=1` le joue).
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { launch, startPreview, view, waitDecision, watchConsole } from './browser.mjs';
@@ -16,7 +18,7 @@ const ONLY = process.env.QA_ONLY ?? '';
 
 const MODES = [
   { name: 'souris-1280', viewport: { width: 1280, height: 720 }, touch: false },
-  { name: 'tactile-390', viewport: { width: 390, height: 844 }, touch: true },
+  ...(process.env.LQV_MOBILE === '1' ? [{ name: 'tactile-390', viewport: { width: 390, height: 844 }, touch: true }] : []),
 ];
 
 const lqv = (page, fn, arg) => page.evaluate(fn, arg);

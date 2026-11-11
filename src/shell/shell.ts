@@ -43,7 +43,7 @@ import { bibliotheque, demanderProfil, leconsAProposer, offrirLecons } from '../
 import { aRevoir, conseilsEteints, ecrireLecons, leconsPermises, lireLecons, marquerDemande, stockageLecons } from '../lecons/progression';
 import { estLeconId, type LeconId } from '../lecons/catalogue';
 import { son } from '../son/moteur';
-import { consigneVille, musiqueEcran } from '../son/musique/chef';
+import { musiqueEcran } from '../son/musique/chef';
 
 export interface ShellDeps {
   shellHost: HTMLElement;
@@ -55,8 +55,6 @@ export interface ShellDeps {
   resetArena(): void;
   /** Arène courante (ou `null`). */
   arena(): ArenaHandle | null;
-  /** M09 V2 (provisoire, `?demo=1`) : la ville remplace le tableau des rencontres ; absent en jeu par défaut. */
-  hub?: { show(sh: Shell): HTMLElement; hide(): void };
 }
 
 /** Duel en cours dans cette page (son état durable est `save.activeDuel`). */
@@ -87,8 +85,6 @@ export class Shell {
   private lastPersistError = 0;
   /** Écran du dernier rendu (le focus et le défilement ne sont conservés que sur le même écran). */
   private renderedScreen = '';
-  /** M09 V2 (`?demo=1`) : vrai quand le tableau classique est demandé depuis le menu de la ville (sinon la ville). */
-  hubBoard = false;
   /** Adversaire dont l’affiche a été survolée ou focalisée en dernier (préparé en priorité, M08 C3). */
   private preferred: string | null = null;
   /** M17 : séance de leçons en cours (elle prend le plateau ; l'enveloppe se cache). */
@@ -477,18 +473,7 @@ export class Shell {
       if (arena) this.prepareUpcoming();
     }
     // M13 : la musique de l'écran (le duel a la sienne, posée par sa session)
-    if (!inDuel) son().musique.vouloir(this.d.hub && s.screen === 'board' && !this.hubBoard ? consigneVille('quai') : musiqueEcran(scr));
-    // M09 V2 (`?demo=1`) : au tableau des rencontres, la ville prend l'écran (HUD dans l'enveloppe, transparente aux clics).
-    if (this.d.hub && (s.screen === 'duel' || s.screen === 'home')) this.hubBoard = false;
-    if (this.d.hub && s.screen === 'board' && !this.hubBoard) {
-      host.className = 'shell scr-ville';
-      host.hidden = false;
-      host.replaceChildren(this.d.hub.show(this));
-      this.renderedScreen = 'ville';
-      document.title = 'Les Quatre Voies — le Quai';
-      return;
-    }
-    this.d.hub?.hide();
+    if (!inDuel) son().musique.vouloir(musiqueEcran(scr));
     const screenKey = `${scr}:${s.overlay ?? ''}`;
     const same = screenKey === this.renderedScreen;
     // Même écran (ex. bascule d’une carte du deck) : focus et défilement conservés ; sinon, action principale.
@@ -510,7 +495,7 @@ export class Shell {
     const primary = keep ?? host.querySelector<HTMLElement>('[data-shell-primary]:not(:disabled)') ?? host.querySelector<HTMLElement>('.sh-title');
     if (primary && !host.hidden) primary.focus({ preventScroll: true });
     // M17 (A5) : au premier lancement, à l'accueil, la question du profil puis les leçons qu'il propose
-    if (s.screen === 'home' && this.homeMode !== 'new' && !this.d.hub && leconsPermises(location.search) && !lireLecons(stockageLecons()).demande) queueMicrotask(() => void this.premiereFois());
+    if (s.screen === 'home' && this.homeMode !== 'new' && leconsPermises(location.search) && !lireLecons(stockageLecons()).demande) queueMicrotask(() => void this.premiereFois());
     // M17 (B3) : une leçon demandée depuis un conseil du duel (« Revoir en leçon ») est proposée au premier écran hors duel
     else if (!inDuel && leconsPermises(location.search) && lireLecons(stockageLecons()).aRevoir.length) queueMicrotask(() => this.revoir());
   }

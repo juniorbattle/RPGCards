@@ -6,23 +6,19 @@ import { readParams, type AppParams } from './app/params';
 import { SCENARIOS } from './app/scenarios';
 import { backEl, cardEl } from './presentation/cardView';
 import { cls, h } from './presentation/dom';
-import { createArena, webglAvailable, type ArenaHandle } from './scene/arena';
+import { createArena, type ArenaHandle } from './scene/arena';
 import { DuelSession } from './app/duelSession';
 import { Shell } from './shell/shell';
 import { PERSONALITIES, personalityById, personalityFor, type RivalPersonality } from './presentation/personalities';
 import { figureCost, figureLayers, portraitCost } from './scene/figureBench';
 import { prepStats, setPrepMode } from './scene/rival';
 import { playerFigure } from './art/portrait';
-import { setCardArtVersion } from './art/cardArt';
 import { DEFAULT_VENUE, type VenueId } from './presentation/venues';
 import { installerManette } from './entree/manette';
 
 const params = readParams();
 // manette de console : rien ne change tant qu'aucune ne se signale (src/entree/manette.ts)
 installerManette();
-// M12 (ADR 044) : dessin des cartes choisi avant toute illustration (`?cartes=v1` : celui d'avant)
-setCardArtVersion(params.cartes);
-document.documentElement.classList.toggle('cartes-v1', params.cartes === 'v1');
 // M08 C1 : préparation des rivaux aux temps morts (`?qa=1&prep=art|off` pour la mesure) ; état lisible en QA.
 setPrepMode(params.prep);
 if (params.qa) (window as unknown as Record<string, unknown>).__lqvPrep = prepStats;
@@ -152,24 +148,6 @@ function gallery(): void {
   (window as unknown as Record<string, unknown>).__artGenMs = Math.round((performance.now() - t0) * 10) / 10;
 }
 
-/** Hub de la démo chargé à la demande (import dynamique : rien dans le jeu par défaut) ; HUD provisoire en attendant. */
-function lazyHub(): NonNullable<ConstructorParameters<typeof Shell>[0]['hub']> {
-  let hub: import('./ville/demo').DemoHub | null = null;
-  let wanted: Shell | null = null;
-  const load = import('./ville/demo').then((m) => {
-    hub = new m.DemoHub();
-    if (wanted && wanted.flow.screen === 'board') wanted.render();
-  });
-  void load;
-  return {
-    show(sh) {
-      wanted = sh;
-      if (hub) return hub.show(sh);
-      return h('div', { class: 'ville-hud' }, h('div', { class: 'sh-sub', style: 'position:fixed;left:16px;top:16px' }, 'Le Quai se prépare…'));
-    },
-    hide() { wanted = null; hub?.hide(); },
-  };
-}
 
 function resetArena(): void {
   arena?.dispose();
@@ -192,7 +170,7 @@ else if (query.get('musique') === '1') {
   void import('./son/musique/labo').then((m) => m.lancerLabo({ qa: params.qa }));
 }
 else if (params.autostart) start(makeConfig(params, params.sig ?? 'Cendre', params.techs ?? ['Lecture', 'Ancrage']), params.scenario);
-else if (query.get('setup') === '1') setupScreen();
+else if (params.qa && query.get('setup') === '1') setupScreen();
 // Le mode Aventure, ce que le jeu ouvre par défaut (`params.aventure`), chargé à la demande.
 else if (params.aventure) {
   // lot de correction de clôture : un échec au démarrage se dit (jamais un écran vide), avec le chemin du jeu standard
@@ -204,8 +182,7 @@ else if (params.aventure) {
   });
 }
 else {
-  // M09 V2 (provisoire, `?demo=1`) : la ville, chargée à la demande, remplace le tableau des rencontres ; sans WebGL, la
-  // démo reste le jeu habituel (tableau des rencontres, arène en repli CSS).
-  const shell = new Shell({ shellHost: document.getElementById('shell')!, app, params, ensureArena, resetArena, arena: () => arena, hub: params.demo && webglAvailable() ? lazyHub() : undefined });
+  // fiche de clôture (E3) : la démo de la ville (`?demo=1`) est retirée ; le Duel standard garde son tableau des rencontres
+  const shell = new Shell({ shellHost: document.getElementById('shell')!, app, params, ensureArena, resetArena, arena: () => arena });
   if (params.qa) (window as unknown as Record<string, unknown>).__lqvShell = shell;
 }

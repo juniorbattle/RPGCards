@@ -47,19 +47,15 @@ export interface AppParams {
    *  responsable du 2026-10-19 (fiche C3 : accueil interactif −22 % sur la 780M, −16 % sur la RTX 4060) ;
    *  `qa=1&compileAsync=0` rend l'ancien comportement (mesure). */
   compileAsync: boolean;
-  /** M09 V2 (provisoire, `demo=1`) : démo jouable, le Quai remplace le tableau des rencontres. Faux en jeu par défaut. */
-  demo: boolean;
   /**
    * Le mode Aventure : ce que le jeu ouvre par défaut (ordre du responsable, 2026-11-01). Le jeu standard s'ouvre par
-   * `standard=1` ; les outils de QA (`qa=1`), la démo et les scénarios le gardent sans cela, `aventure=1` force l'aventure.
+   * `standard=1` ; les outils de QA (`qa=1`) le gardent sans cela, `aventure=1` force l'aventure.
    */
   aventure: boolean;
   /** M08 C2 (QA, `qa=1&venueCache=1`) : nombre de décors gardés montés (mesure du changement de lieu). Null en jeu : défaut de l’arène. */
   venueCache: number | null;
   /** M08 C1 : préparation des rivaux aux temps morts ; `qa=1&prep=art|off` = couches seules, ou rien (mesure). */
   prep: 'full' | 'art' | 'off';
-  /** M12 (ADR 044) : dessin des cartes ; `cartes=v1` : le dessin d'avant M12 (comparaison). */
-  cartes: 'v1' | 'v2';
   /**
    * M18 (contrat `docs/m18/01_TOUR_FLUIDE.md`, P1) : « Tour assisté » (par défaut : bandeau d'étape, tour suivant enchaîné,
    * questions sur place, « Engager » au centre) ou « Tour classique » (l'affichage d'avant M18). `?tour=assiste|classique`
@@ -94,6 +90,8 @@ export function choisirTour(search: string, memorise: () => TourMode): TourMode 
 
 export function readParams(search = window.location.search): AppParams {
   const q = new URLSearchParams(search);
+  // fiche de clôture (E3) : les crochets de test (graine, duel direct, scénarios, galerie) ne s'ouvrent qu'avec `qa=1`
+  const qa = q.get('qa') === '1';
   const num = (k: string, def: number) => {
     const v = Number(q.get(k));
     return q.has(k) && Number.isFinite(v) ? v : def;
@@ -101,21 +99,21 @@ export function readParams(search = window.location.search): AppParams {
   const sig = q.get('sig');
   const techs = q.get('tech');
   return {
-    seed: Math.floor(num('seed', 20261016)),
+    seed: qa ? Math.floor(num('seed', 20261016)) : 20261016,
     artSeed: Math.floor(num('artSeed', 7)),
     sig: sig && (FAMILIES as readonly string[]).includes(sig) ? (sig as Family) : null,
     techs: techs ? (techs.split(',').filter((t) => (TECHNIQUE_IDS as readonly string[]).includes(t)).slice(0, 2) as TechniqueId[]) : null,
-    autostart: q.get('autostart') === '1' || q.has('scenario'),
+    autostart: qa && (q.get('autostart') === '1' || q.has('scenario')),
     // règle du responsable (§6 bis) : le mouvement réduit est un réglage du jeu, désactivé par défaut, jamais déduit du
     // système seul (le poste du responsable a les animations de Windows coupées) ; l'adresse l'emporte (QA)
     reducedMotion: q.has('reducedMotion') ? q.get('reducedMotion') === '1' : false,
     freeze: q.get('freeze') === '1',
     qa: q.get('qa') === '1',
-    scenario: q.get('scenario'),
+    scenario: qa ? q.get('scenario') : null,
     scale: Math.min(1.5, Math.max(0.8, num('scale', 1))),
     hp: Math.max(1, Math.floor(num('hp', 90))),
     aiDelay: Math.max(0, num('aiDelay', 650)),
-    gallery: q.get('gallery') === '1',
+    gallery: qa && q.get('gallery') === '1',
     view: q.get('view') === 'A' || q.get('cam') === 'frontal' ? 'A' : q.get('view') === 'B' || q.get('cam') === 'tilted' ? 'B' : 'auto',
     pace: q.get('pace') === 'fast' ? 'fast' : q.get('pace') === 'instant' ? 'instant' : 'normal',
     rival: q.get('rival'),
@@ -127,12 +125,10 @@ export function readParams(search = window.location.search): AppParams {
     renderCheck: q.get('qa') === '1' && q.get('renderCheck') === '1',
     artCheck: q.get('qa') === '1' && q.get('artCheck') === '1',
     venue: q.get('qa') === '1' && isVenueId(q.get('venue')) ? (q.get('venue') as VenueId) : null,
-    demo: q.get('demo') === '1',
-    aventure: q.get('aventure') === '1' || !['qa', 'standard', 'demo', 'autostart'].some((k) => q.get(k) === '1') && !q.has('scenario'),
+    aventure: q.get('aventure') === '1' || !['qa', 'standard'].some((k) => q.get(k) === '1'),
     compileAsync: !(q.get('qa') === '1' && q.get('compileAsync') === '0'),
     venueCache: q.get('qa') === '1' && q.has('venueCache') ? Math.max(1, Math.floor(Number(q.get('venueCache')) || 1)) : null,
     prep: q.get('qa') === '1' && (q.get('prep') === 'art' || q.get('prep') === 'off') ? (q.get('prep') as 'art' | 'off') : 'full',
-    cartes: q.get('cartes') === 'v1' ? 'v1' : 'v2',
     tour: choisirTour(search, lireTour),
   };
 }

@@ -4,9 +4,21 @@ dist/
 .DS_Store
 artifacts/qa/tmp/
 
-# Local environment files (machine-local, never committed)
-.env.local
-.env.*.local
+# Local environment files (machine-local, never committed) ; fiche de clôture (E5) : tout `.env*`
+.env
+.env.*
+.env*.local
+!.env.example
 
 # Brouillons d'images générées (références de conception, jamais commités ; voir AGENTS)
 art-gen/
+
+# Fiche de clôture (E5) : les captures régénérées par les outils de QA ne sont plus suivies ; seules les planches de
+# preuve (citées par le journal) entrent dans le dépôt. Les captures déjà suivies le restent (nettoyage de clôture, plus
+# tard, sans réécrire l'historique).
+screenshots/qa/**/*.png
+screenshots/qa/**/*.jpg
+screenshots/qa/**/*.webp
+screenshots/qa/**/*.webm
+screenshots/qa/**/*.gif
+!screenshots/qa/**/planche*.png

@@ -50,16 +50,9 @@ const SECTIONS: Array<[string, string[]]> = [
   ]],
 ];
 
-/** Démo de la ville (`?demo=1`, M09 V2 provisoire) seulement : ses commandes, en tête de l'aide. */
-const TOWN: [string, string[]] = ['La ville (démo)', [
-  'Marcher : ZQSD, WASD ou flèches (Maj : pas lent), ou clic au sol. Parler, entrer, sortir : E, Entrée ou Espace près d’une bulle, ou clic sur la bulle.',
-  'Échap ou le bouton « Menu » : deck, collection, options, aide, accueil, et « Toutes les rencontres » (tableau classique). Repères : « ? » quelqu’un à écouter, « ! » un défi.',
-  'Un défi ouvre la préparation (deck, Techniques, lieu) puis le duel ; à la fin, « Retour au Quai » vous ramène devant votre adversaire.',
-]];
-
 export function renderHelp(sh: Shell, inDuel: boolean): HTMLElement {
-  const sections = sh.d.hub ? [TOWN, ...SECTIONS] : SECTIONS;
-  return screen('help', 'Aide et règles', 'Règlement V3.0 + avenants V3.2 et V3.3. Mise en scène, rivaux et progression sont des prototypes.',
+  const sections = SECTIONS;
+  return screen('help', 'Aide et règles', 'Règlement V3.0, avenants V3.2, V3.3 et V3.4 (avenant 09 : les 48 variantes).',
     h('div', { class: 'sh-help' }, sections.map(([t, ps]) => h('section', null, h('h2', null, t), ps.map((p) => h('p', null, p))))),
     h('div', { class: 'sh-actions' }, inDuel
       ? btn('Retour au menu du duel', () => sh.setOverlay('menu'), { key: 'help-back', primary: true })
