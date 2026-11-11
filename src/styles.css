@@ -809,3 +809,40 @@ button { font: inherit; color: inherit; }
   @supports (anchor-name: --a) { .place-bar { translate: -50% 1.5rem; } }
   .zone > .stance { bottom: auto; top: calc(100% + 0.2rem); }
 }
+
+/* --- M18 : le tour assisté (contrat docs/m18/01_TOUR_FLUIDE.md) ------------------------------------------------
+   Une seule consigne, à l'endroit de l'action ; le bandeau d'étape au centre de la table (animé par le script, opacité
+   seule en mouvement réduit) ; le panneau de droite réduit à l'étape, l'Insight et les Techniques. */
+#annonce { position: fixed; inset: 0; pointer-events: none; z-index: 40; }
+.annonce { position: absolute; left: 50%; top: 47%; translate: -50% -50%; display: grid; justify-items: center; gap: 0.1rem; min-width: min(34rem, 80vw); padding: 0.55rem 2.4rem 0.65rem; text-align: center; background: linear-gradient(90deg, rgba(8, 6, 10, 0), rgba(8, 6, 10, 0.86) 18%, rgba(8, 6, 10, 0.86) 82%, rgba(8, 6, 10, 0)); border-block: 1px solid rgba(232, 196, 128, 0.55); color: #faf4e8; text-shadow: 0 1px 3px #000; }
+.annonce-tour { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold-hi); }
+.annonce-texte { font-family: Georgia, serif; font-size: clamp(1.05rem, 2.6vh, 1.6rem); font-weight: 700; letter-spacing: 0.02em; }
+.bilan-line { position: absolute; z-index: 6; top: calc(var(--g) * 0.6 + 1.85rem); left: 50%; transform: translateX(-50%); padding: 0.16rem 0.8rem; border-radius: 999px; background: rgba(10, 7, 10, 0.72); border: 1px solid var(--line-dim); font-size: 0.74rem; color: var(--ink-dim); white-space: nowrap; pointer-events: auto; }
+.bilan-line .bl-tour { color: var(--gold-hi); font-weight: 700; }
+.bilan-line b { color: #faf4e8; }
+.bilan-line b.perte { color: #ffb4a6; }
+.command.assiste:not(.seq) { min-height: 0; gap: 0.3rem; padding: 0.5rem 0.7rem; }
+.cmd-insight { display: flex; align-items: center; gap: 0.35rem; font-size: 0.72rem; color: var(--ink-dim); }
+.cmd-insight .pip { width: 0.62rem; height: 0.62rem; }
+.hand > .ask { position: absolute; left: 50%; bottom: calc(100% + 0.7rem); transform: translateX(-50%); z-index: 6; }
+.ask-ligne { padding: 0.28rem 0.95rem; border-radius: 999px; background: rgba(10, 7, 10, 0.82); border: 1px solid rgba(232, 196, 128, 0.5); color: #faf4e8; font-size: 0.82rem; white-space: nowrap; text-shadow: 0 1px 2px #000; pointer-events: none; }
+.ask-tech { display: grid; gap: 0.3rem; justify-items: center; padding: 0.55rem 0.85rem 0.6rem; border-radius: 12px; background: var(--panel-solid); border: 1px solid var(--gold); box-shadow: 0 10px 28px rgba(0, 0, 0, 0.8), 0 0 18px rgba(255, 210, 130, 0.25); min-width: 17rem; max-width: min(30rem, 60vw); }
+.ask-head { display: flex; align-items: center; gap: 0.45rem; font-family: Georgia, serif; color: var(--gold-hi); font-size: 1rem; }
+.ask-head .seal { display: inline-flex; }
+.ask-cout { font-family: system-ui, sans-serif; font-size: 0.7rem; color: var(--ink-dim); }
+.ask-q { margin: 0; text-align: center; font-size: 0.82rem; line-height: 1.3; color: #f1e9dc; }
+.ask-btns, .centre-btns { display: flex; gap: 0.45rem; justify-content: center; }
+.ask-reserve { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 7; display: grid; gap: 0.3rem; justify-items: stretch; }
+.ask-reserve .btn { padding: 0.32rem 0.7rem; font-size: 0.8rem; }
+.zone .centre-act { position: absolute; left: 50%; bottom: calc(100% + 1.55rem); transform: translateX(-50%); z-index: 8; display: grid; justify-items: center; gap: 0.25rem; pointer-events: auto; }
+.centre-act > .btn:not(.ghost) { padding: 0.62rem 2.2rem; font-size: 1.15rem; letter-spacing: 0.06em; }
+.centre-hint { padding: 0.1rem 0.6rem; border-radius: 999px; background: rgba(10, 7, 10, 0.72); color: #f1e9dc; font-size: 0.74rem; white-space: nowrap; text-shadow: 0 1px 2px #000; }
+.centre-act .stance { position: static; transform: none; }
+.menu.assiste { min-width: 15.5rem; }
+.menu.assiste button small { color: #f1e2c0; }
+.zone .centre-act.cote { left: calc(50% + var(--card-w) * 0.56); bottom: 22%; transform: none; justify-items: start; }
+.centre-act.cote > .btn:not(.ghost) { padding: 0.5rem 1rem; font-size: 1rem; }
+/* « Engager » au-dessus de la case : l'aide « Le rival engage… » de la case adverse, déjà dite par son HUD, s'efface */
+#app:has(.side.me .centre-act:not(.cote)) .side.opp .zone.primary > .empty-hint { visibility: hidden; }
+.ask-revision { max-width: min(26rem, 60vw); }
+.inspector.droite { left: auto; right: var(--g); }

@@ -52,7 +52,13 @@ export type GesteJoueur =
   | { k: 'posture'; st: Stance }
   | { k: 'mode'; slot: SlotIndex; mode: TacticPlan['mode'] }
   | { k: 'tech'; t: TechniqueId }
-  | { k: 'commande'; cmd: PlayerCommand | { type: 'nextTurn' } };
+  | { k: 'commande'; cmd: PlayerCommand | { type: 'nextTurn' } }
+  /** M18 (tour assisté) : « Non » à une question facultative (garder une réserve cachée, ne pas utiliser une Technique). */
+  | { k: 'refus'; quoi: 'reserve'; slot: SlotIndex }
+  | { k: 'refus'; quoi: 'tech'; t: TechniqueId };
+
+/** M18 : le bilan du dernier Clash, résumé sur une ligne jusqu'au Clash suivant (faits publics). */
+export interface Bilan { turn: number; me: number; opp: number; prolongation: boolean }
 
 export interface UiState {
   phaseKey: string;
@@ -74,6 +80,10 @@ export interface UiState {
   floaters: Array<{ side: 'me' | 'opp'; text: string; heal: boolean; id: number }>;
   flipPrimaries: boolean;
   journalOpen: boolean;
+  /** M18 (tour assisté) : questions facultatives déjà répondues par « Non » (`tech:<id>`, `reserve:<case>`). */
+  repondu: string[];
+  /** M18 (tour assisté) : Secondaires dont le menu tactique a été ouvert d'office puis répondu ou refermé. */
+  menusFaits: SlotIndex[];
 }
 
 const freshUi = (phaseKey: string, keep?: Partial<UiState>): UiState => ({
@@ -96,6 +106,8 @@ const freshUi = (phaseKey: string, keep?: Partial<UiState>): UiState => ({
   floaters: keep?.floaters ?? [],
   flipPrimaries: false,
   journalOpen: keep?.journalOpen ?? false,
+  repondu: [],
+  menusFaits: [],
 });
 
 export interface Preview {
@@ -105,6 +117,16 @@ export interface Preview {
   dealt: number;
   taken: number;
   outcome: string;
+  /** M18 : qui l'emporte dans cette hypothèse (`null` : égalité d'Assauts ou deux Gardes). */
+  gagne: 'me' | 'opp' | null;
+}
+
+/** M18 : ce qu'une hypothèse change au Clash, en quelques mots (« tu gagnes 6 contre 4 : 5 dégâts »). */
+export function resumeApercu(p: Preview): string {
+  const score = `${p.myScore} contre ${p.oppScore}`;
+  if (p.gagne === 'me') return p.dealt > 0 ? `tu gagnes ${score} : ${p.dealt} dégât${p.dealt > 1 ? 's' : ''}` : `tu gagnes ${score}, sans dégât`;
+  if (p.gagne === 'opp') return p.taken > 0 ? `tu perds ${score} : −${p.taken} PV` : `tu perds ${score}, sans dégât`;
+  return `${p.outcome.toLowerCase()} (${score})`;
 }
 
 export class Controller {
@@ -150,6 +172,13 @@ export class Controller {
   disposed = false;
   /** M17 : garde d'une leçon ; renvoie la raison d'un refus (montrée au joueur), ou `null`. */
   garde: ((g: GesteJoueur) => string | null) | null = null;
+  /** M18 : le dernier Clash résumé (ligne du tour assisté), effacé quand le Clash suivant commence. */
+  bilan: Bilan | null = null;
+
+  /** M18 (P1) : tour assisté (questions sur place, enchaînement) ou classique (l'affichage d'avant). Lu à chaque usage. */
+  get assiste(): boolean {
+    return this.params.tour === 'assiste';
+  }
 
   /**
    * `resume` : commandes déjà jouées de ce duel (reprise après fermeture). Elles sont rejouées sur le
@@ -167,6 +196,14 @@ export class Controller {
     this.ui = freshUi('');
     this.arena?.setFamilies(config.players.p1.signature, config.players.p2.signature);
     this.refresh([]);
+    this.noterBilan();
+  }
+
+  /** M18 : retient le bilan du Clash du tour (s'il y en a un) pour la ligne du tour assisté. */
+  private noterBilan(): void {
+    const r = this.view.lastClash;
+    if (!r) return;
+    this.bilan = { turn: r.turn, me: r.damage.p1, opp: r.damage.p2, prolongation: !!this.view.overtime && this.view.me.hp === 1 && this.view.opp.hp === 1 };
   }
 
   onRender(fn: () => void): void {
@@ -235,6 +272,8 @@ export class Controller {
     if (key !== this.ui.phaseKey) {
       const draftBefore = this.ui.draft;
       this.ui = freshUi(key, this.ui);
+      // M18 (G3) : au tour assisté, la fiche d'une carte ne survit pas à l'étape (elle ne vient qu'au survol)
+      if (this.assiste) this.ui.inspect = null;
       // Préremplissages ergonomiques (jamais de choix caché imposé) :
       if (this.view.phase === 'LECTURE_CHANGE') this.ui.lectureStance = this.view.me.primary?.stance ?? null;
       // Avenant 08, amendement 1 : pendant la révision du rival, mon engagement verrouillé reste affiché ; pour la mienne,
@@ -245,6 +284,8 @@ export class Controller {
         const held = rev.held;
         this.ui.draft = { primaryId: held.primaryId, stance: held.stance, secondaryId: held.secondaryId, slot: held.secondaryId ? (held.replaceSlot ?? held.slot ?? null) : null };
       }
+      // M18 (G2) : aux choix tactiques, le menu de la première Secondaire active s'ouvre de lui-même
+      this.ouvrirMenuSuivant();
     }
     this.playFx(immediate);
     this.updateView();
@@ -273,6 +314,7 @@ export class Controller {
     const prim = this.view.reveal.primaries;
     const script = buildClashScript(vis, 'p1', prim ? { p1: prim.me, p2: prim.opp } : null);
     this.seq = { beats, index: -1, hp: hpBeforeSequence(events, finalHp), hidden: new Set(vis.map((e) => e.seq)), done: false, rendered: false, before, events: vis, script };
+    this.bilan = null;
     this.motionFn?.({ type: 'begin', script });
   }
 
@@ -442,6 +484,7 @@ export class Controller {
     this.seqTimer = 0;
     this.seq.done = true;
     this.seq.index = this.seq.beats.length;
+    this.noterBilan();
     this.motionFn?.({ type: 'end' });
     this.rebuildJournal();
     this.renderFn();
@@ -748,12 +791,15 @@ export class Controller {
       } else if (v.me.handCount > 4) {
         this.ui.trim = this.ui.trim.includes(cardId) ? this.ui.trim.filter((x) => x !== cardId) : [...this.ui.trim, cardId];
       }
+      // M18 : au tour assisté, le Début se valide seul dès que tout est répondu
+      if (this.assiste && this.suiteDebut()) return;
       this.renderFn();
       return;
     }
-    if (!this.editingCommit()) { this.ui.inspect = this.defIdOf(cardId); this.renderFn(); return; }
+    // M18 (G3) : au tour assisté, la fiche de la carte ne vient qu'au survol (ou à l'appui long), jamais au clic
+    if (!this.editingCommit()) { if (!this.assiste) { this.ui.inspect = this.defIdOf(cardId); this.renderFn(); } return; }
     this.ui.selected = this.ui.selected === cardId ? null : cardId;
-    this.ui.inspect = this.defIdOf(cardId);
+    if (!this.assiste) this.ui.inspect = this.defIdOf(cardId);
     this.renderFn();
   }
 
@@ -790,7 +836,13 @@ export class Controller {
 
   setStance(st: Stance): void {
     if (this.refuse({ k: 'posture', st })) return;
-    if (this.view.phase === 'LECTURE_CHANGE') { this.ui.lectureStance = st; this.renderFn(); return; }
+    if (this.view.phase === 'LECTURE_CHANGE') {
+      this.ui.lectureStance = st;
+      // M18 : au tour assisté, choisir son mode le valide (répondre fait avancer)
+      if (this.assiste && this.view.awaitingMe) return this.lockLectureStance();
+      this.renderFn();
+      return;
+    }
     if (!this.editingCommit() || !this.ui.draft.primaryId) { this.toast('Posez d’abord une Primaire.'); return; }
     this.ui.draft.stance = st;
     this.renderFn();
@@ -835,13 +887,13 @@ export class Controller {
     if (t === 'Sondage') this.ui.startTech = this.ui.startTech?.id === 'Sondage' ? null : { id: 'Sondage' };
     if (t === 'Recentrage') {
       if (this.ui.startTech?.id === 'Recentrage') this.ui.startTech = null;
-      else { this.ui.recentrageArmed = !this.ui.recentrageArmed; if (this.ui.recentrageArmed) this.toast('Recentrage : cliquez la carte de main à placer sous la pioche.', 'info'); }
+      else { this.ui.recentrageArmed = !this.ui.recentrageArmed; if (this.ui.recentrageArmed && !this.assiste) this.toast('Recentrage : cliquez la carte de main à placer sous la pioche.', 'info'); }
     }
     this.renderFn();
   }
 
-  lockStart(): void {
-    this.apply({ type: 'start', player: 'p1', discard: this.ui.trim, technique: this.ui.startTech });
+  lockStart(): boolean {
+    return this.apply({ type: 'start', player: 'p1', discard: this.ui.trim, technique: this.ui.startTech });
   }
 
   toggleReveal(slot: SlotIndex): void {
@@ -854,8 +906,8 @@ export class Controller {
     this.renderFn();
   }
 
-  lockPrepare(): void {
-    this.apply({ type: 'prepare', player: 'p1', reveal: this.ui.reveal });
+  lockPrepare(): boolean {
+    return this.apply({ type: 'prepare', player: 'p1', reveal: this.ui.reveal });
   }
 
   lockDissipation(use: boolean): void {
@@ -876,7 +928,8 @@ export class Controller {
   clickMySlot(slot: SlotIndex): void {
     const v = this.view;
     const s = v.me.slots[slot];
-    if (v.phase === 'PREPARE' && v.awaitingMe) return this.toggleReveal(slot);
+    // M18 : au tour assisté, cliquer une réserve prête, c'est répondre « Révéler » (ou revenir sur sa réponse)
+    if (v.phase === 'PREPARE' && v.awaitingMe) return this.assiste && s?.state === 'hidden' ? this.repondreReserve(slot, !this.ui.reveal.includes(slot)) : this.toggleReveal(slot);
     if (v.phase === 'TACTICS' && v.awaitingMe) {
       if (this.refuse({ k: 'case', cle: slot === 0 ? 'slot0' : 'slot1' })) return;
       if (this.ui.techTargeting === 'Ancrage') {
@@ -889,11 +942,13 @@ export class Controller {
       if (!s) return;
       if (s.state === 'charging') return this.toast('Secondaire en chargement : inutilisable ce tour.');
       if (s.state === 'hidden') return this.toast('Réserve cachée inactive : révélez-la au début d’un tour pour l’utiliser.');
+      // M18 : refermer un menu ouvert d'office, c'est garder « Conserver » (le menu suivant s'ouvre)
+      if (this.assiste && this.ui.menuSlot === slot) return this.cancel();
       this.ui.menuSlot = this.ui.menuSlot === slot ? null : slot;
       this.ui.targetingFor = null;
       return this.renderFn();
     }
-    if (s?.card) { this.ui.inspect = s.card.defId; this.renderFn(); }
+    if (s?.card && !this.assiste) { this.ui.inspect = s.card.defId; this.renderFn(); }
   }
 
   /** Raison d’indisponibilité d’un mode pour un emplacement (null = disponible). */
@@ -928,12 +983,13 @@ export class Controller {
     if (mode === 'interfere') {
       this.ui.targetingFor = slot;
       this.ui.menuSlot = null;
-      this.toast('Interférer : cliquez une Secondaire adverse active (surlignée).', 'info');
+      if (!this.assiste) this.toast('Interférer : cliquez une Secondaire adverse active (surlignée).', 'info');
       return this.renderFn();
     }
     this.ui.plans[slot] = { mode };
     if (this.ui.tacticsTech?.id === 'Ancrage' && this.ui.tacticsTech.slot === slot && mode === 'keep') this.ui.tacticsTech = null;
     this.ui.menuSlot = null;
+    this.menuFait(slot);
     this.renderFn();
   }
 
@@ -963,10 +1019,11 @@ export class Controller {
         if (!this.legalTargets(from).includes(slot)) return this.toast('Interférence : Rang imprimé insuffisant contre cette cible.');
         this.ui.plans[from] = { mode: 'interfere', target: slot };
         this.ui.targetingFor = null;
+        this.menuFait(from);
         return this.renderFn();
       }
     }
-    if (s?.card) { this.ui.inspect = s.card.defId; this.renderFn(); }
+    if (s?.card && !this.assiste) { this.ui.inspect = s.card.defId; this.renderFn(); }
   }
 
   toggleTacticsTech(t: 'Ancrage' | 'Rupture'): void {
@@ -978,7 +1035,7 @@ export class Controller {
       if (t === 'Rupture' && this.view.me.primary?.stance !== 'guard') return this.toast('Rupture exige une Primaire en Garde.');
       this.ui.techTargeting = t;
       this.ui.tacticsTech = null;
-      this.toast(t === 'Ancrage' ? 'Ancrage : cliquez une de vos Secondaires engagées.' : 'Rupture : cliquez une Secondaire adverse active.', 'info');
+      if (!this.assiste) this.toast(t === 'Ancrage' ? 'Ancrage : cliquez une de vos Secondaires engagées.' : 'Rupture : cliquez une Secondaire adverse active.', 'info');
     }
     this.renderFn();
   }
@@ -996,12 +1053,157 @@ export class Controller {
   }
 
   cancel(): void {
+    const menu = this.ui.menuSlot;
+    const cible = this.ui.targetingFor;
     this.ui.selected = null;
     this.ui.menuSlot = null;
     this.ui.targetingFor = null;
     this.ui.techTargeting = null;
     this.ui.recentrageArmed = false;
+    // M18 : refermer un menu ouvert d'office (ou renoncer à une cible), c'est garder « Conserver » ; le suivant s'ouvre
+    if (this.assiste && this.view.phase === 'TACTICS') {
+      if (menu !== null) this.menuFait(menu);
+      if (cible !== null) this.menuFait(cible);
+    }
     this.renderFn();
+  }
+
+  // ------------------------------------------------------------------------
+  // M18 — le tour assisté : questions facultatives posées sur place, menus ouverts d'eux-mêmes, étapes validées
+  // dès que tout est répondu. Aucune règle ne change : chaque réponse passe par les mêmes commandes et la même garde.
+
+  /** Une Secondaire répondue (ou refermée) aux choix tactiques : le menu de la suivante s'ouvre. */
+  private menuFait(slot: SlotIndex): void {
+    if (!this.assiste) return;
+    if (!this.ui.menusFaits.includes(slot)) this.ui.menusFaits.push(slot);
+    this.ouvrirMenuSuivant();
+  }
+
+  /** Secondaires actives dont le menu reste à ouvrir (ni choix, ni menu refermé). */
+  menusEnAttente(): SlotIndex[] {
+    const v = this.view;
+    if (!this.assiste || v.phase !== 'TACTICS' || !v.awaitingMe) return [];
+    return ([0, 1] as const).filter((i) => v.me.slots[i]?.state === 'active' && !this.ui.plans[i] && !this.ui.menusFaits.includes(i));
+  }
+
+  /** G2 : ouvre d'office le menu de la première Secondaire active sans réponse (rien si un ciblage est en cours). */
+  private ouvrirMenuSuivant(): void {
+    if (!this.assiste || this.ui.menuSlot !== null || this.ui.targetingFor !== null || this.ui.techTargeting) return;
+    const next = this.menusEnAttente()[0];
+    if (next !== undefined) this.ui.menuSlot = next;
+  }
+
+  /** La Technique utilisable sur laquelle le joueur est interrogé maintenant (une à la fois), ou null. */
+  questionTech(): TechniqueId | null {
+    const v = this.view;
+    if (!this.assiste || !v.awaitingMe || this.sequencing) return null;
+    const libre = (t: TechniqueId) => this.canUseTech(t) && !this.ui.repondu.includes(`tech:${t}`);
+    switch (v.phase) {
+      case 'START': {
+        if (this.ui.trim.length !== Math.max(0, v.me.handCount - 4) || this.ui.startTech || this.ui.recentrageArmed) return null;
+        return (['Sondage', 'Recentrage'] as const).find(libre) ?? null;
+      }
+      case 'DISSIPATION': return libre('Dissipation') ? 'Dissipation' : null;
+      case 'LECTURE': return libre('Lecture') ? 'Lecture' : null;
+      case 'TACTICS': {
+        if (this.menusEnAttente().length || this.ui.menuSlot !== null || this.ui.targetingFor !== null || this.ui.techTargeting || this.ui.tacticsTech) return null;
+        if (libre('Rupture') && v.me.primary?.stance === 'guard' && v.opp.slots.some((s) => s?.state === 'active')) return 'Rupture';
+        if (libre('Ancrage') && this.ui.plans.some((p) => p && p.mode !== 'keep')) return 'Ancrage';
+        return null;
+      }
+      default: return null;
+    }
+  }
+
+  /** Réserves prêtes encore sans réponse (Préparation du tour assisté). */
+  reservesEnAttente(): SlotIndex[] {
+    const v = this.view;
+    if (!this.assiste || v.phase !== 'PREPARE' || !v.awaitingMe) return [];
+    return ([0, 1] as const).filter((i) => v.me.slots[i]?.state === 'hidden' && !this.ui.reveal.includes(i) && !this.ui.repondu.includes(`reserve:${i}`));
+  }
+
+  /** R3 : « Révéler » ou « Garder cachée » sur une réserve prête ; la dernière réponse valide la Préparation. */
+  repondreReserve(slot: SlotIndex, oui: boolean): void {
+    if (this.view.phase !== 'PREPARE' || !this.view.awaitingMe) return;
+    if (oui) {
+      if (!this.ui.reveal.includes(slot)) this.toggleReveal(slot);
+      if (!this.ui.reveal.includes(slot)) return;
+    } else {
+      if (this.refuse({ k: 'refus', quoi: 'reserve', slot })) return;
+      this.ui.reveal = this.ui.reveal.filter((x) => x !== slot);
+      if (!this.ui.repondu.includes(`reserve:${slot}`)) this.ui.repondu.push(`reserve:${slot}`);
+    }
+    if (this.reservesEnAttente().length) return this.renderFn();
+    if (!this.lockPrepare()) {
+      // refusée (garde d'une leçon) : les questions reviennent
+      this.ui.reveal = [];
+      this.ui.repondu = this.ui.repondu.filter((x) => !x.startsWith('reserve:'));
+      this.renderFn();
+    }
+  }
+
+  /** R3 : « Utiliser » ou « Non » sur la Technique utilisable ; répondre fait avancer, sans autre bouton. */
+  repondreTech(t: TechniqueId, oui: boolean): void {
+    const v = this.view;
+    if (!v.awaitingMe) return;
+    if (!oui) {
+      if (this.refuse({ k: 'refus', quoi: 'tech', t })) return;
+      if (!this.ui.repondu.includes(`tech:${t}`)) this.ui.repondu.push(`tech:${t}`);
+      if (v.phase === 'START' && this.ui.startTech?.id === t) this.ui.startTech = null;
+      if (v.phase === 'START') { if (!this.suiteDebut()) this.renderFn(); return; }
+      if (v.phase === 'DISSIPATION') return this.lockDissipation(false);
+      if (v.phase === 'LECTURE') return this.lecture(false);
+      if (v.phase === 'TACTICS' && (this.ui.tacticsTech?.id === t || this.ui.techTargeting === t)) { this.ui.tacticsTech = null; this.ui.techTargeting = null; }
+      return this.renderFn();
+    }
+    switch (v.phase) {
+      case 'START':
+        if (t === 'Sondage' && this.ui.startTech?.id !== 'Sondage') this.toggleStartTech('Sondage');
+        if (t === 'Recentrage' && !this.ui.recentrageArmed && this.ui.startTech?.id !== 'Recentrage') this.toggleStartTech('Recentrage');
+        if (this.ui.startTech || this.ui.recentrageArmed) this.suiteDebut();
+        return;
+      case 'DISSIPATION': {
+        const cible = v.opp.slots.findIndex((s) => !!s?.maskSource);
+        if (cible < 0) return this.toast('Dissipation : aucune Dissimulation adverse à viser.');
+        if (this.ui.dissipTarget !== cible) this.clickOppSlot(cible as SlotIndex);
+        if (this.ui.dissipTarget === cible) this.lockDissipation(true);
+        return;
+      }
+      case 'LECTURE': return this.lecture(true);
+      case 'TACTICS':
+        if (t === 'Ancrage' || t === 'Rupture') { if (this.ui.techTargeting !== t && this.ui.tacticsTech?.id !== t) this.toggleTacticsTech(t); }
+        return;
+      default: return;
+    }
+  }
+
+  /**
+   * Début du tour assisté : valide dès que les défausses sont faites et la Technique répondue (ou sa carte de
+   * Recentrage choisie). Rend vrai si la commande est partie (ou a été refusée et remise à zéro).
+   */
+  private suiteDebut(): boolean {
+    const v = this.view;
+    if (!this.assiste || v.phase !== 'START' || !v.awaitingMe) return false;
+    if (this.ui.trim.length !== Math.max(0, v.me.handCount - 4) || this.ui.recentrageArmed) return false;
+    if (!this.ui.startTech && this.questionTech()) return false;
+    if (this.lockStart()) return true;
+    this.ui.startTech = null;
+    this.ui.repondu = this.ui.repondu.filter((x) => !x.startsWith('tech:'));
+    this.renderFn();
+    return true;
+  }
+
+  /** Engagement prêt à conclure (Primaire et posture posées) : le bouton « Engager » paraît au-dessus de la case. */
+  engagementPret(): boolean {
+    return this.editingCommit() && !!this.ui.draft.primaryId && !!this.ui.draft.stance;
+  }
+
+  /** G2 : ce qu'un mode change au Clash, dans l'hypothèse où le rival conserve tout (faits connus du joueur seulement). */
+  apercuMode(slot: SlotIndex, mode: 'keep' | 'rank' | 'damage'): string {
+    const plans: [TacticPlan | null, TacticPlan | null] = [this.ui.plans[0], this.ui.plans[1]];
+    plans[slot] = { mode };
+    const p = this.preview(plans);
+    return p ? resumeApercu(p) : '';
   }
 
   canUseTech(t: TechniqueId): boolean {
@@ -1011,7 +1213,7 @@ export class Controller {
 
   // ------------------------------------------------------------------------
   /** Prévision PROVISOIRE (§13.3) : hypothèse « l’adversaire conserve tout » — aucune info cachée. */
-  preview(): Preview | null {
+  preview(plans: readonly [TacticPlan | null, TacticPlan | null] = this.ui.plans): Preview | null {
     const v = this.view;
     const prim = v.reveal.primaries;
     if (!prim || v.phase !== 'TACTICS') return null;
@@ -1020,7 +1222,7 @@ export class Controller {
     const myActive = v.me.slots.filter((s) => s?.state === 'active' && s.card).map((s) => ({ slot: s!.slot, def: cardDef(s!.card!.defId) }));
     const uses: ClashUse[] = [];
     for (const a of myActive) {
-      const p = this.ui.plans[a.slot];
+      const p = plans[a.slot];
       if (!p || p.mode === 'keep') continue;
       if (p.mode === 'interfere') uses.push({ slot: a.slot, def: a.def, mode: 'interfere', target: p.target! });
       else uses.push({ slot: a.slot, def: a.def, mode: p.mode });
@@ -1036,7 +1238,7 @@ export class Controller {
     else if (out.outcome === 'tie-assault') outcome = 'Égalité d’Assauts : impacts simultanés';
     else if (out.guardWin) outcome = out.winner === 'p1' ? 'Votre Garde l’emporte' : 'La Garde adverse l’emporte';
     else outcome = out.winner === 'p1' ? (out.zeroDamageRankWin ? 'Vous dominez au Rang mais la Garde absorbe tout (0)' : 'Vous dominez au Rang') : 'Le rival domine au Rang';
-    return { myScore: fmt(out.scores.p1), oppScore: fmt(out.scores.p2), myMult: out.multipliers.p1, dealt: out.damage.p2, taken: out.damage.p1, outcome };
+    return { myScore: fmt(out.scores.p1), oppScore: fmt(out.scores.p2), myMult: out.multipliers.p1, dealt: out.damage.p2, taken: out.damage.p1, outcome, gagne: out.winner === 'p1' ? 'me' : out.winner === 'p2' ? 'opp' : null };
   }
 
   supportLabel(slot: SlotIndex, mode: 'rank' | 'damage'): string {

@@ -43,8 +43,8 @@ const sel = {
 };
 const MODE = { assault: 'ASSAUT', guard: 'GARDE' } as const;
 
-/** Ce que le maître de table montre maintenant. */
-interface Guide { dire: string; faire: string; cibles: string[]; cle: string }
+/** Ce que le maître de table montre maintenant (`continuer` : M18, tour assisté, le Clash expliqué attend le joueur). */
+interface Guide { dire: string; faire: string; cibles: string[]; cle: string; continuer?: boolean }
 
 export class Seance {
   private session: DuelSession | null = null;
@@ -113,6 +113,8 @@ export class Seance {
     this.session = new DuelSession({
       app: this.hote.app, arena, config: scenario.config, params: this.hote.params, scenario, personality: perso, product: { menu: true },
       lieu: 'salle',
+      // M18 (tour assisté) : après un Clash que le maître de table explique, le tour suivant attend le joueur ; leçon finie : rien
+      suite: (c) => (leconFinie(this.lecon, c.match.state) ? 'non' : tourDe(this.lecon, c.view.turn)?.apres ? 'clic' : 'auto'),
       onTool: (t) => {
         if (t === 'menu' || t === 'help') { this.ouvrirPause(); return true; }
         return t.startsWith('tip:');
@@ -154,6 +156,13 @@ export class Seance {
       case 'posture': return (a.type === 'commit' || a.type === 'lectureStance') && a.stance === g.st ? null : `Le mode attendu : ${a.type === 'commit' || a.type === 'lectureStance' ? MODE[a.stance] : '—'}.`;
       case 'mode': return a.type === 'tactics' && (a.plans[g.slot]?.mode ?? 'keep') === g.mode ? null : `Ta Secondaire ${g.slot + 1} : ${a.type === 'tactics' ? modeNom(a.plans[g.slot]) : '—'}.`;
       case 'tech': return (a.type === 'start' || a.type === 'tactics') && a.technique?.id === g.t ? null : 'Pas de cette Technique ici.';
+      // M18 (tour assisté) : « Non » à une question facultative, permis si le geste attendu ne s'en sert pas
+      case 'refus':
+        if (g.quoi === 'reserve') return a.type === 'prepare' && !a.reveal.includes(g.slot) ? null : `Révèle ta Secondaire ${g.slot + 1}.`;
+        if (a.type === 'start' || a.type === 'tactics') return a.technique?.id === g.t ? `Utilise ${g.t}.` : null;
+        if (a.type === 'lecture') return a.use ? 'Utilise Lecture.' : null;
+        if (a.type === 'dissipate') return a.targetSlot !== null ? 'Utilise Dissipation.' : null;
+        return null;
     }
   }
 
@@ -167,6 +176,11 @@ export class Seance {
     if (c.sequencing) return { dire: txt(tour?.apres) ? 'Regarde le Clash…' : 'Regarde…', faire: '', cibles: [], cle: `seq:${v.turn}` };
     if (v.phase === 'RESOLVED' || v.phase === 'ENDED') {
       const fin = leconFinie(l, c.match.state);
+      // M18 : au tour assisté, pas de « Tour suivant » ; le Clash expliqué attend « Continuer » (ou un clic, Espace)
+      if (c.assiste) {
+        const attend = !fin && !!tour?.apres;
+        return { dire: txt(tour?.apres) || (fin ? 'Bien joué.' : 'Clash résolu.'), faire: attend ? 'Continue quand tu as lu.' : '', cibles: attend ? [sel.btn('lecon-continuer')] : [], cle: `res:${v.turn}:${fin}:a`, continuer: attend };
+      }
       return { dire: txt(tour?.apres) || (fin ? 'Bien joué.' : 'Clash résolu.'), faire: fin ? '' : 'Tour suivant.', cibles: fin ? [] : [sel.btn('act-next')], cle: `res:${v.turn}:${fin}` };
     }
     const { geste, libre } = this.gesteCourant(c);
@@ -207,8 +221,12 @@ export class Seance {
       el('div', 'lecon-plaque', [el('b', null, PARTENAIRE), el('span', 'lecon-titre', `${n > 1 ? `Leçon ${this.i + 1} / ${n} · ` : 'Leçon · '}${this.lecon.titre}`)]),
       el('p', 'lecon-dire', g.dire),
       g.faire ? el('p', 'lecon-faire', g.faire) : el('span', null),
-      bouton('Menu', 'lecon-menu', () => this.ouvrirPause(), 'ghost'),
+      el('div', 'lecon-boutons', [
+        g.continuer ? bouton('Continuer', 'lecon-continuer', () => { this.session?.abreger(); }) : null,
+        bouton('Menu', 'lecon-menu', () => this.ouvrirPause(), 'ghost'),
+      ]),
     );
+    if (g.continuer) (this.coach.querySelector<HTMLElement>('[data-key="lecon-continuer"]'))?.focus({ preventScroll: true });
     this.coach.dataset.cle = g.cle;
   }
 
@@ -361,6 +379,12 @@ function casesPermises(s: GameState, a: PlayerCommand): string[] {
 }
 
 function consigne(c: Controller, s: GameState, a: PlayerCommand): { faire: string; cibles: string[] } {
+  // M18 : au tour assisté, mêmes consignes, nouveaux gestes (questions sur place, « Engager », menus ouverts d'office)
+  if (c.assiste) { const r = consigneAssistee(c, s, a); if (r) return r; }
+  return consigneClassique(c, s, a);
+}
+
+function consigneClassique(c: Controller, s: GameState, a: PlayerCommand): { faire: string; cibles: string[] } {
   const ui = c.ui;
   const main = (defId: string | null) => { const id = s.players.p1.hand.find((x) => s.cards[x]!.defId === defId); return id ? sel.main(id) : ''; };
   switch (a.type) {
@@ -428,6 +452,63 @@ function consigne(c: Controller, s: GameState, a: PlayerCommand): { faire: strin
       return { faire: 'Dissipe.', cibles: [sel.btn('act-dissip')] };
     case 'repel': return { faire: 'Clique ma Secondaire surlignée.', cibles: a.targetSlot === null ? [] : [sel.opp(a.targetSlot)] };
     default: return { faire: '', cibles: [] };
+  }
+}
+
+/**
+ * M18 — la consigne au tour assisté : les questions facultatives se répondent sur place (« Révéler » / « Garder cachée »,
+ * « Utiliser » / « Non »), le menu tactique s'ouvre de lui-même, « Engager » et « Valider » concluent. Null : la consigne
+ * du tour classique vaut telle quelle (pose des cartes, cibles, Repoussement).
+ */
+function consigneAssistee(c: Controller, s: GameState, a: PlayerCommand): { faire: string; cibles: string[] } | null {
+  const ui = c.ui;
+  const q = c.questionTech();
+  const non = (t: string) => ({ faire: `Pas de ${t} ce tour : réponds « Non ».`, cibles: [sel.btn(`tech-non-${t}`)] });
+  switch (a.type) {
+    case 'commit': {
+      const r = consigneClassique(c, s, a);
+      return r.cibles.includes(sel.btn('act-commit')) ? { faire: 'Engage.', cibles: [sel.btn('act-commit')] } : r;
+    }
+    case 'prepare': {
+      const i = c.reservesEnAttente()[0];
+      if (i === undefined) return { faire: '', cibles: [] };
+      return a.reveal.includes(i) ? { faire: `Révèle ta Secondaire ${i + 1}.`, cibles: [sel.btn(`reveal-oui-${i}`)] } : { faire: `Garde ta Secondaire ${i + 1} cachée.`, cibles: [sel.btn(`reveal-non-${i}`)] };
+    }
+    case 'tactics': {
+      for (const i of [0, 1] as const) {
+        const p = a.plans[i];
+        const mode = p?.mode ?? 'keep';
+        if (ui.menuSlot === i) return { faire: `Choisis « ${modeNom(p)} ».`, cibles: [sel.btn(`menu-${i}-${mode}`)] };
+        const cur = ui.plans[i];
+        const ok = (cur?.mode ?? 'keep') === mode && (mode !== 'interfere' || cur?.target === p?.target);
+        if (ok) continue;
+        if (mode === 'interfere' && ui.targetingFor === i) return { faire: 'Clique ma Secondaire surlignée.', cibles: [sel.opp(p!.target!)] };
+        return { faire: `Clique ta Secondaire ${i + 1}.`, cibles: [sel.slot(i)] };
+      }
+      const tq = a.technique;
+      if (tq) {
+        const fait = ui.tacticsTech?.id === tq.id && ('slot' in tq ? (ui.tacticsTech as { slot?: number }).slot === tq.slot : (ui.tacticsTech as { targetSlot?: number }).targetSlot === tq.targetSlot);
+        if (!fait) {
+          if (ui.techTargeting === tq.id) return tq.id === 'Ancrage' ? { faire: `Désigne ta Secondaire ${tq.slot + 1}.`, cibles: [sel.slot(tq.slot)] } : { faire: 'Vise ma Secondaire active.', cibles: [sel.opp(tq.targetSlot)] };
+          if (q === tq.id) return { faire: `Utilise ${tq.id}.`, cibles: [sel.btn(`tech-oui-${tq.id}`)] };
+          if (q) return non(q);
+        }
+      } else if (q) return non(q);
+      return { faire: 'Valide tes choix.', cibles: [sel.btn('act-tactics')] };
+    }
+    case 'start': {
+      const tq = a.technique;
+      if (tq) {
+        const carte = 'cardId' in tq ? defDe(s, tq.cardId) : null;
+        if (tq.id === 'Recentrage' && ui.recentrageArmed) return { faire: `Clique ${nomCarte(carte)} dans ta main.`, cibles: [sel.main(s.players.p1.hand.find((x) => s.cards[x]!.defId === carte) ?? '')] };
+        if (q === tq.id) return { faire: `Utilise ${tq.id}.`, cibles: [sel.btn(`tech-oui-${tq.id}`)] };
+      }
+      return q ? non(q) : { faire: '', cibles: [] };
+    }
+    case 'lecture': return a.use ? { faire: 'Utilise Lecture.', cibles: [sel.btn('tech-oui-Lecture')] } : non('Lecture');
+    case 'lectureStance': return { faire: `Choisis ${MODE[a.stance]}.`, cibles: [sel.btn(`stance-${a.stance}`)] };
+    case 'dissipate': return a.targetSlot !== null ? { faire: 'Utilise Dissipation : vise ma Dissimulation.', cibles: [sel.btn('tech-oui-Dissipation')] } : non('Dissipation');
+    default: return null;
   }
 }
 

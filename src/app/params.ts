@@ -60,6 +60,36 @@ export interface AppParams {
   prep: 'full' | 'art' | 'off';
   /** M12 (ADR 044) : dessin des cartes ; `cartes=v1` : le dessin d'avant M12 (comparaison). */
   cartes: 'v1' | 'v2';
+  /**
+   * M18 (contrat `docs/m18/01_TOUR_FLUIDE.md`, P1) : « Tour assisté » (par défaut : bandeau d'étape, tour suivant enchaîné,
+   * questions sur place, « Engager » au centre) ou « Tour classique » (l'affichage d'avant M18). `?tour=assiste|classique`
+   * l'emporte ; sinon le réglage du joueur (`lqv.tour`, ce navigateur) ; en QA (`qa=1`) sans `tour=`, le tour classique
+   * (parcours et comparaisons d'avant inchangés).
+   */
+  tour: TourMode;
+}
+
+export type TourMode = 'assiste' | 'classique';
+export const CLE_TOUR = 'lqv.tour';
+
+/** Le réglage du tour mémorisé dans ce navigateur (assisté par défaut ; un stockage refusé ne casse rien). */
+export function lireTour(): TourMode {
+  try { return globalThis.localStorage?.getItem(CLE_TOUR) === 'classique' ? 'classique' : 'assiste'; } catch { return 'assiste'; }
+}
+
+export function ecrireTour(t: TourMode): void {
+  try { globalThis.localStorage?.setItem(CLE_TOUR, t); } catch { /* stockage refusé : réglage de la session seulement */ }
+}
+
+/** Le tour imposé par l'adresse (`?tour=`), ou null. */
+export function tourDeLAdresse(search: string): TourMode | null {
+  const t = new URLSearchParams(search).get('tour');
+  return t === 'classique' || t === 'assiste' ? t : null;
+}
+
+/** Choix du tour : l'adresse, puis le QA (classique), puis le réglage du joueur. */
+export function choisirTour(search: string, memorise: () => TourMode): TourMode {
+  return tourDeLAdresse(search) ?? (new URLSearchParams(search).get('qa') === '1' ? 'classique' : memorise());
 }
 
 export function readParams(search = window.location.search): AppParams {
@@ -102,5 +132,6 @@ export function readParams(search = window.location.search): AppParams {
     venueCache: q.get('qa') === '1' && q.has('venueCache') ? Math.max(1, Math.floor(Number(q.get('venueCache')) || 1)) : null,
     prep: q.get('qa') === '1' && (q.get('prep') === 'art' || q.get('prep') === 'off') ? (q.get('prep') as 'art' | 'off') : 'full',
     cartes: q.get('cartes') === 'v1' ? 'v1' : 'v2',
+    tour: choisirTour(search, lireTour),
   };
 }

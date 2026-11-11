@@ -7,6 +7,7 @@ import { downloadText } from './screens';
 import type { Shell } from './shell';
 import { btn, chip, cls, confirmDialog, h, screen } from './ui';
 import { son } from '../son/moteur';
+import { ecrireTour, tourDeLAdresse } from '../app/params';
 
 export function renderOptions(sh: Shell, inDuel: boolean): HTMLElement {
   const save = sh.save;
@@ -24,6 +25,11 @@ export function renderOptions(sh: Shell, inDuel: boolean): HTMLElement {
     h('div', { class: 'sh-seg', role: 'radiogroup', 'aria-labelledby': `opt-${key}` }, items.map(([k, t, on, fn]) => h('button', { class: cls('sh-filter', on && 'on'), type: 'button', role: 'radio', 'aria-checked': String(on), 'data-key': `opt-${key}-${k}`, onclick: () => commit(fn) }, t))));
   const rows: HTMLElement[] = [
     seg('Rythme des animations', 'pace', [['normal', 'Normal', p.pace === 'normal', () => { p.pace = 'normal'; if (save) save.options.pace = 'normal'; }], ['fast', 'Rapide', p.pace === 'fast', () => { p.pace = 'fast'; if (save) save.options.pace = 'fast'; }], ['instant', 'Instantané', p.pace === 'instant', () => { p.pace = 'instant'; if (save) save.options.pace = 'instant'; }]]),
+    // M18 (P1) : le tour du duel ; « Assisté » (par défaut) annonce les étapes et enchaîne, « Classique » garde l'affichage d'avant
+    seg(`Tour du duel${tourDeLAdresse(location.search) ? ' (imposé par l’adresse)' : ''}`, 'tour', [
+      ['assiste', 'Assisté', p.tour === 'assiste', () => { if (!tourDeLAdresse(location.search)) { p.tour = 'assiste'; ecrireTour('assiste'); } }],
+      ['classique', 'Classique', p.tour === 'classique', () => { if (!tourDeLAdresse(location.search)) { p.tour = 'classique'; ecrireTour('classique'); } }],
+    ]),
     seg('Mouvement réduit', 'motion', [
       ['system', 'Comme le système', save ? o!.reducedMotion === null : false, () => { if (save) save.options.reducedMotion = null; else p.reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false; }],
       ['on', 'Activé', save ? o!.reducedMotion === true : p.reducedMotion, () => { if (save) save.options.reducedMotion = true; else p.reducedMotion = true; }],

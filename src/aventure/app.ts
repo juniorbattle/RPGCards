@@ -11,7 +11,7 @@
  */
 import '../interface.css';
 import '../shell/shell.css';
-import type { AppParams } from '../app/params';
+import { ecrireTour, tourDeLAdresse, type AppParams } from '../app/params';
 import { DuelSession } from '../app/duelSession';
 import type { Controller } from '../app/controller';
 import { portraitUrl } from '../art/portrait';
@@ -1876,17 +1876,25 @@ export class AventureApp {
         h('div', { class: 'dialog sh-dialog' },
           h('h2', null, 'Duel en pause'),
           h('p', null, `Contre ${live.prevu.personnalite.name}. Le duel est sauvegardé à chaque action : en le quittant, vous le reprendrez exactement où il en est.`),
-          h('div', { class: 'btn-row' }, b('Abandonner…', 'menu-abandon', 'abandon', 'ghost danger'), b('Sauvegarder et quitter', 'menu-quit', 'quit', 'ghost'), b('Reprendre le duel', 'menu-resume', 'resume'))));
+          h('div', { class: 'btn-row' }, b('Abandonner…', 'menu-abandon', 'abandon', 'ghost danger'), b('Sauvegarder et quitter', 'menu-quit', 'quit', 'ghost'), b(`Tour : ${this.params.tour === 'assiste' ? 'assisté' : 'classique'}`, 'menu-tour', 'tour', 'ghost'), b('Reprendre le duel', 'menu-resume', 'resume'))));
       document.addEventListener('keydown', onKey, true);
       document.body.append(overlay);
       overlay.querySelector<HTMLElement>('[data-key="menu-resume"]')?.focus();
     });
     live.session.suspended = false;
+    if (choix === 'tour') { this.basculerTour(); live.session.render(); return this.menuDuel(); }
     if (choix === 'quit') return this.quitterDuel();
     if (choix === 'abandon') {
       const a = await confirmDialog({ title: 'Abandonner le duel ?', text: 'Compté comme un abandon : rien n’est perdu, le défi reste ouvert.', confirm: 'Abandonner', danger: true });
       if (a === 'confirm' && this.live === live) this.finDuel(live.session.controller, true);
     }
+  }
+
+  /** M18 (P1) : bascule le tour du duel (assisté ↔ classique), mémorisé dans ce navigateur ; l'adresse l'emporte. */
+  private basculerTour(): void {
+    if (tourDeLAdresse(location.search)) return;
+    this.params.tour = this.params.tour === 'assiste' ? 'classique' : 'assiste';
+    ecrireTour(this.params.tour);
   }
 
   private quitterDuel(): void {
@@ -2300,6 +2308,8 @@ export class AventureApp {
       { label: `Mouvement réduit : ${new URLSearchParams(location.search).has('reducedMotion') ? 'imposé par l’adresse' : this.params.reducedMotion ? 'oui' : 'non'}`, key: 'menu-mouvement', run: () => { if (!new URLSearchParams(location.search).has('reducedMotion')) { this.params.reducedMotion = !this.params.reducedMotion; ecrireMouvementReduit(stockageLocal(), this.params.reducedMotion); this.bandesCine?.replier(true); this.bandesCine = null; this.appliquerMouvement(); } this.fermerDialogue(); this.menu(); } },
       { label: `Cinématiques : ${!cinePermise(location.search) ? 'coupées par l’adresse' : lireCine(stockageLocal()) ? 'oui' : 'non'}`, key: 'menu-cine', run: () => { ecrireCine(stockageLocal(), !lireCine(stockageLocal())); this.fermerDialogue(); this.menu(); } },
       { label: `Conseils du duel : ${!conseilsPermis(location.search) ? 'coupés par l’adresse' : lireConseils(stockageLocal()) ? 'affichés' : 'masqués'}`, key: 'menu-conseils', run: () => this.reglageConseils() },
+      // M18 (P1) : « Tour assisté » (par défaut) ou « Tour classique » (l'affichage d'avant), mémorisé dans ce navigateur
+      { label: `Tour du duel : ${tourDeLAdresse(location.search) ? 'imposé par l’adresse' : this.params.tour === 'assiste' ? 'assisté' : 'classique'}`, key: 'menu-tour', run: () => { this.basculerTour(); this.fermerDialogue(); this.menu(); } },
       { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. En Promenade libre, des cartes scintillent en ville, une ou deux par chapitre : ramassez-les ; certaines sont gardées par un joueur de rue, et les passants « ? » mettent sur la piste (Journal : « Les cartes de la ville »). Une seule Technique au départ : l’autre Technique de la rue se gagne contre un premier cadet, celle de chaque famille contre son chef. À la manette (Xbox, PlayStation…) : stick gauche ou croix pour marcher et pour passer d’un bouton à l’autre, A (Croix) pour parler et valider, B (Rond) pour revenir, Start (Options) pour le menu ; une cinématique se passe avec B ou Start. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter. Les joueurs de cartes de la ville regardent devant eux : entrer dans leur regard, c’est accepter leur défi (une bulle « ! » s’allume, ils viennent à vous) ; passez derrière eux ou à l’abri d’un étal pour les éviter. Kaï surgit à certains moments de votre histoire ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? ») ; des conseils, un à la fois, expliquent chaque phase et chaque signal des cartes la première fois qu’il paraît (« Conseils du duel », dans ce menu). Le maître de table donne des leçons jouables d’une minute : les bases du duel avant le prologue, puis chaque nouvel élément quand vous l’obtenez ; « Leçons », dans ce menu, les rejoue toutes. Le son se règle dans ce menu (« Son »). Les grands moments de votre histoire se jouent en cinématique (première arrivée dans un quartier, Kaï qui surgit, votre affiliation, un chef vaincu, un nouveau chapitre, le Championnat) : Échap, Espace, Entrée ou « Passer » pour la passer ; « Cinématiques », dans ce menu, les coupe. « Récit », dans ce menu, passe de la Promenade libre, où l’on parcourt la ville, au Récit guidé, un film en séquences : les scènes s’enchaînent, et la Préparation, avant chaque duel, réunit le deck, le journal et les joueurs de rue ; on en change quand on veut, sans rien perdre.', [fermer(this)]) },
       { label: 'Écran titre', key: 'menu-home', run: () => { this.fermerDialogue(); this.fondre(() => this.titre()); } },
     ], undefined, false, null, true);

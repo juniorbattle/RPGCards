@@ -68,6 +68,9 @@ export function duelTip(c: Controller, seen: readonly string[]): Tip | null {
   const v = c.view;
   const want = (id: string) => (seen.includes(id) ? null : TIPS[id]!);
   if (v.phase === 'ENDED') return null;
+  // M18 (G3) : au tour assisté, les conseils contextuels cèdent la place à la consigne posée sur place ; restent ceux qui
+  // mènent à une leçon M17 (« Ce qui vient de se passer », après le Clash : la pause du tour suivant les attend)
+  if (c.assiste) return v.phase === 'RESOLVED' ? adverse(c, seen) : null;
   // les signaux M12 ne se cherchent qu'une fois tous lus ou non (coût : un filtre du journal par rendu)
   const m12 = M12.some((id) => !seen.includes(id)) ? ceTour(c) : { effet: false, regard: false };
   const regard = m12.regard ? want('prive') : null;

@@ -23,6 +23,10 @@ import { Controller } from './controller';
 import type { AppParams } from './params';
 import type { Scenario } from './scenarios';
 import { estManette } from '../entree/manette';
+import { annonceDe, Annonceur } from '../presentation/annonce';
+
+/** M18 (R2) : pause avant le tour suivant enchaîné seul (ms, au rythme normal ; le rythme la raccourcit). */
+export const PAUSE_SUITE = 1500;
 
 export interface DuelSessionOptions {
   app: HTMLElement;
@@ -47,6 +51,12 @@ export interface DuelSessionOptions {
   musique?: RoleDuel;
   /** M13 : le lieu du duel (rue, bar, salle, arène) : la musique y prend son acoustique. */
   lieu?: string;
+  /**
+   * M18 (tour assisté) : comment le tour suivant s'enchaîne après la Résolution : seul après une courte pause (`auto`,
+   * par défaut), au clic ou à Espace seulement (`clic` : une leçon dont le maître de table explique le Clash), ou pas du
+   * tout (`non` : leçon finie).
+   */
+  suite?: (c: Controller) => 'auto' | 'clic' | 'non';
 }
 
 export class DuelSession {
@@ -56,8 +66,20 @@ export class DuelSession {
   private readonly acts: ActivationStage;
   private readonly drag: DragManager;
   /** Vrai pendant qu’un écran de l’enveloppe (menu, confirmation) recouvre le plateau. */
-  suspended = false;
+  get suspended(): boolean { return this.suspendu; }
+  set suspended(v: boolean) {
+    this.suspendu = v;
+    // M18 : la pause du tour suivant ne court pas sous un menu ; elle repart à sa fermeture
+    if (!this.controller?.disposed) this.planifierSuite();
+  }
+  private suspendu = false;
   private endedNotified = false;
+  /** M18 (R1) : le bandeau d'étape du tour assisté, sur son propre hôte. */
+  private readonly annonceur: Annonceur;
+  private derniereAnnonce = '';
+  private suiteTimer = 0;
+  private suiteCle = '';
+  private annonceTimer = 0
 
   constructor(private readonly o: DuelSessionOptions) {
     const { app, params } = o;
@@ -83,8 +105,12 @@ export class DuelSession {
       renderApp(app, c, hooks);
       this.syncLayout();
       this.checkEnded();
+      this.assister();
     };
     this.render = render;
+    let annonceHost = document.getElementById('annonce');
+    if (!annonceHost) { annonceHost = document.createElement('div'); annonceHost.id = 'annonce'; document.body.append(annonceHost); }
+    this.annonceur = new Annonceur(annonceHost);
     window.addEventListener('resize', () => this.syncLayout(), { signal });
     // Jeton du regard de début de tour lu au DÉBUT de l’interaction (voir endHold).
     let downToken = -1;
@@ -145,6 +171,8 @@ export class DuelSession {
     app.addEventListener('click', (e) => {
       const el = (e.target as HTMLElement).closest<HTMLElement>('.hand [data-drag-card]');
       if (el && e.detail === 0) c.clickHandCard(el.dataset.dragCard!);
+      // M18 (R2) : au tour assisté, un clic sur la table abrège la pause avant le tour suivant
+      if (!(e.target as HTMLElement).closest('button, a, input, .tools, .drawer, .tip, .inspector, .menu')) this.abreger();
     }, { signal });
     window.addEventListener('keydown', (e) => this.key(e), { signal });
     render();
@@ -168,6 +196,62 @@ export class DuelSession {
     this.o.arena?.setLayout(l);
   }
 
+  /**
+   * M18 — le tour assisté après chaque rendu : le bandeau de l'étape (une fois par étape où le joueur a la main) et la
+   * pause avant le tour suivant. Rien au tour classique.
+   */
+  private assister(): void {
+    const c = this.controller;
+    if (!c.assiste) { this.annonceur.effacer(); this.planifierSuite(); return; }
+    const v = c.view;
+    const a = c.sequencing || this.suspendu ? null : annonceDe({ seed: v.seed, turn: v.turn, phase: v.phase, awaitingMe: v.awaitingMe, repelMine: !!v.repel?.mine, handCount: v.me.handCount, activeSlots: v.me.slots.filter((s) => s?.state === 'active').length, lectureSeen: v.lectureSeen ?? null });
+    if (a && a.cle !== this.derniereAnnonce) {
+      // un temps fort occupe le centre de l'écran (une Technique, un regard) : le bandeau attend qu'il soit passé
+      window.clearTimeout(this.annonceTimer);
+      if (this.acts.busy && !this.o.params.freeze) this.annonceTimer = window.setTimeout(() => { if (!c.disposed) this.assister(); }, 200);
+      else {
+        this.derniereAnnonce = a.cle;
+        this.annonceur.montrer(a, { reduit: this.o.params.reducedMotion, fige: this.o.params.freeze });
+      }
+    }
+    this.planifierSuite();
+  }
+
+  /** Vrai quand le tour suivant attend (Résolution présentée, tour assisté, aucun écran par-dessus). */
+  private attendSuite(): boolean {
+    const c = this.controller;
+    return c.assiste && !c.disposed && !this.suspendu && c.view.phase === 'RESOLVED' && !c.sequencing && (this.o.suite?.(c) ?? 'auto') !== 'non';
+  }
+
+  /**
+   * R2 : après la Résolution, le tour suivant commence seul après une courte pause (un clic ou Espace l'abrège). Elle
+   * attend qu'un conseil « Ce qui vient de se passer » soit refermé ; une leçon peut attendre le clic (`suite`).
+   */
+  private planifierSuite(): void {
+    const c = this.controller;
+    const cle = `${c.view.seed}:${c.view.turn}`;
+    const auto = this.attendSuite() && (this.o.suite?.(c) ?? 'auto') === 'auto' && !this.o.tip?.(c);
+    if (!auto) { window.clearTimeout(this.suiteTimer); this.suiteTimer = 0; this.suiteCle = ''; return; }
+    if (this.suiteTimer && this.suiteCle === cle) return;
+    window.clearTimeout(this.suiteTimer);
+    this.suiteCle = cle;
+    this.suiteTimer = window.setTimeout(() => { this.suiteTimer = 0; this.suiteCle = ''; if (this.attendSuite()) c.nextTurn(); }, PAUSE_SUITE * c.paceFactor());
+  }
+
+  /** R2 : abrège la pause avant le tour suivant (clic sur la table, Espace, Entrée, N ; « Continuer » d'une leçon). */
+  abreger(): boolean {
+    if (!this.attendSuite()) return false;
+    window.clearTimeout(this.suiteTimer);
+    this.suiteTimer = 0;
+    this.controller.nextTurn();
+    return true;
+  }
+
+  /** QA (M18) : bandeaux montrés et pause en cours. */
+  assistStats(): { annonces: string[]; suite: boolean; attend: boolean } {
+    return { annonces: [...this.annonceur.vues], suite: !!this.suiteTimer, attend: this.attendSuite() };
+  }
+
   private checkEnded(): void {
     const c = this.controller;
     if (this.endedNotified || c.view.phase !== 'ENDED' || c.sequencing) return;
@@ -184,6 +268,8 @@ export class DuelSession {
     const app = this.o.app;
     if (e.target instanceof HTMLInputElement) return;
     const k = e.key.toLowerCase();
+    // M18 (R2) : Espace, Entrée ou N abrègent la pause avant le tour suivant (sauf sur un bouton, qui garde sa touche)
+    if ((k === ' ' || k === 'enter' || k === 'n') && !(document.activeElement instanceof HTMLButtonElement) && this.attendSuite()) { e.preventDefault(); this.abreger(); return; }
     if (k === 'escape') { c.cancel(); return; }
     if (k === 'v' && !e.ctrlKey && !e.metaKey) { c.toggleView(); return; }
     if (k === 'a' && !e.ctrlKey && !e.metaKey) c.setStance('assault');
@@ -247,11 +333,17 @@ export class DuelSession {
       // QA passe 13 (`renderCheck=1`) : rendus ciblés comparés à un rendu complet du même état.
       renderCheck: () => renderCheckStats(),
       cardInfo: (defId: string) => ({ title: cardTitle(cardDef(defId)), name: cardDef(defId).name, effect: cardDef(defId).effect ? EFFECTS[cardDef(defId).effect!].name : null }),
+      // QA M18 : tour assisté (bandeaux montrés, pause du tour suivant)
+      assist: () => ({ tour: this.o.params.tour, ...this.assistStats() }),
     };
   }
 
   /** Retire tout : minuteries du contrôleur, écouteurs, scène du Clash, contenu du plateau. */
   dispose(): void {
+    window.clearTimeout(this.suiteTimer);
+    window.clearTimeout(this.annonceTimer);
+    this.suiteTimer = 0;
+    this.annonceur.effacer();
     son().ambiance(null);
     son().musique.finDuel();
     this.controller.dispose();

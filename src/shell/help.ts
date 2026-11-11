@@ -17,7 +17,7 @@ const SECTIONS: Array<[string, string[]]> = [
     '3. Engagement : une Primaire obligatoire (glisser ou clic puis clic sur la case) en ASSAUT ou en GARDE ; une nouvelle Secondaire facultative, face cachée, qui CHARGE ce tour.',
     '4. Révélation simultanée des Primaires (bandeau rouge ASSAUT, bleu GARDE).',
     '5. Choix tactiques secrets et simultanés pour chaque Secondaire ACTIVE : Conserver, Amplifier le Rang, Amplifier les dégâts (Assaut seulement) ou Interférer.',
-    '6. Résolution du Clash, puis les deux Primaires partent à la défausse ; « Tour suivant ».',
+    '6. Résolution du Clash, puis les deux Primaires partent à la défausse ; le tour suivant s’enchaîne seul (tour assisté, un clic ou Espace l’abrège) ou par « Tour suivant » (tour classique, dans les Options).',
   ]],
   ['Rang et Puissance : deux mesures distinctes', [
     'RANG = priorité : le plus haut score de Rang gagne le Clash. Une Signature ∞ bat toute Primaire ordinaire ; deux Signatures sont à égalité. Une Signature engagée est annoncée face visible dès son verrouillage ; son mode (Assaut ou Garde) reste secret jusqu’à la révélation. Si l’adversaire avait déjà verrouillé, il peut réviser son engagement une fois, définitivement.',

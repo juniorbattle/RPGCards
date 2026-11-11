@@ -16,6 +16,8 @@ const CSS = `
 .lecon-dire { margin: 0; }
 .lecon-faire { margin: 0; padding: 0.35rem 0.55rem; border-radius: 8px; background: rgba(255, 211, 107, 0.12); border-left: 3px solid #ffd36b; color: #fff3cf; font-weight: 600; }
 .lecon-coach .btn { justify-self: start; padding: 0.2rem 0.7rem; font-size: 0.78em; }
+.lecon-boutons { display: flex; gap: 0.45rem; align-items: center; } /* M18 : « Continuer » (tour assisté) à côté de « Menu » */
+.lecon-boutons .btn:not(.ghost) { padding: 0.32rem 1rem; font-size: 0.9em; }
 .lecon-rideau { position: fixed; inset: 0; z-index: 2900; background: #04060c; opacity: 0; pointer-events: none; transition: opacity 0.6s cubic-bezier(0.45, 0, 0.55, 1); }
 .lecon-rideau.on { opacity: 1; pointer-events: auto; }
 .lecon-fin h2, .lecon-dialog h2 { margin: 0.2rem 0 0.4rem; }
