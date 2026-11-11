@@ -79,7 +79,8 @@ export class DuelSession {
   private derniereAnnonce = '';
   private suiteTimer = 0;
   private suiteCle = '';
-  private annonceTimer = 0
+  private annonceTimer = 0;
+  private attendaitTouche = false
 
   constructor(private readonly o: DuelSessionOptions) {
     const { app, params } = o;
@@ -114,7 +115,11 @@ export class DuelSession {
     window.addEventListener('resize', () => this.syncLayout(), { signal });
     // Jeton du regard de début de tour lu au DÉBUT de l’interaction (voir endHold).
     let downToken = -1;
+    // M18 : un clic n'abrège la pause d'après le Clash que s'il a commencé pendant elle (le clic qui répond à un choix,
+    // un Repoussement par exemple, ne saute pas aussi le résultat)
+    let abregeable = false;
     app.addEventListener('pointerdown', (e) => {
+      abregeable = this.attendSuite();
       pointerHeld = true;
       downToken = c.holdToken;
       // Tactile : le toucher suivant referme l’inspection ouverte par un appui long (panneau non interactif).
@@ -172,8 +177,12 @@ export class DuelSession {
       const el = (e.target as HTMLElement).closest<HTMLElement>('.hand [data-drag-card]');
       if (el && e.detail === 0) c.clickHandCard(el.dataset.dragCard!);
       // M18 (R2) : au tour assisté, un clic sur la table abrège la pause avant le tour suivant
-      if (!(e.target as HTMLElement).closest('button, a, input, .tools, .drawer, .tip, .inspector, .menu')) this.abreger();
+      if (abregeable && !(e.target as HTMLElement).closest('button, a, input, .tools, .drawer, .tip, .inspector, .menu')) this.abreger();
+      abregeable = false;
     }, { signal });
+    // M18 : la pause d'après le Clash lue avant que la touche n'agisse (Entrée sur une case qui répond à un choix ne
+    // saute pas aussi le résultat)
+    window.addEventListener('keydown', () => { this.attendaitTouche = this.attendSuite(); }, { capture: true, signal });
     window.addEventListener('keydown', (e) => this.key(e), { signal });
     render();
     if (params.qa) this.exposeQa();
@@ -269,7 +278,7 @@ export class DuelSession {
     if (e.target instanceof HTMLInputElement) return;
     const k = e.key.toLowerCase();
     // M18 (R2) : Espace, Entrée ou N abrègent la pause avant le tour suivant (sauf sur un bouton, qui garde sa touche)
-    if ((k === ' ' || k === 'enter' || k === 'n') && !(document.activeElement instanceof HTMLButtonElement) && this.attendSuite()) { e.preventDefault(); this.abreger(); return; }
+    if ((k === ' ' || k === 'enter' || k === 'n') && !(document.activeElement instanceof HTMLButtonElement) && this.attendaitTouche && this.attendSuite()) { e.preventDefault(); this.abreger(); return; }
     if (k === 'escape') { c.cancel(); return; }
     if (k === 'v' && !e.ctrlKey && !e.metaKey) { c.toggleView(); return; }
     if (k === 'a' && !e.ctrlKey && !e.metaKey) c.setStance('assault');

@@ -187,3 +187,11 @@ describe('M18 — le tour classique ne change pas', () => {
     c.dispose();
   });
 });
+
+describe('M18 (G2) — gagner sans blesser', () => {
+  it('c’est la Garde qui tient', () => {
+    const p: Preview = { myScore: '4', oppScore: '4', myMult: 1, dealt: 0, taken: 0, outcome: 'Votre Garde l’emporte', gagne: 'me' };
+    expect(resumeApercu(p)).toBe('ta Garde tient 4 contre 4 : aucun dégât');
+    expect(resumeApercu({ ...p, gagne: 'opp' })).toBe('sa Garde tient 4 contre 4 : aucun dégât');
+  });
+});

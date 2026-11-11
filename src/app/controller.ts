@@ -124,8 +124,9 @@ export interface Preview {
 /** M18 : ce qu'une hypothèse change au Clash, en quelques mots (« tu gagnes 6 contre 4 : 5 dégâts »). */
 export function resumeApercu(p: Preview): string {
   const score = `${p.myScore} contre ${p.oppScore}`;
-  if (p.gagne === 'me') return p.dealt > 0 ? `tu gagnes ${score} : ${p.dealt} dégât${p.dealt > 1 ? 's' : ''}` : `tu gagnes ${score}, sans dégât`;
-  if (p.gagne === 'opp') return p.taken > 0 ? `tu perds ${score} : −${p.taken} PV` : `tu perds ${score}, sans dégât`;
+  // gagner sans blesser, c'est la Garde qui l'emporte (un Assaut victorieux inflige toujours au moins 1, avenant 07)
+  if (p.gagne === 'me') return p.dealt > 0 ? `tu gagnes ${score} : ${p.dealt} dégât${p.dealt > 1 ? 's' : ''}` : `ta Garde tient ${score} : aucun dégât`;
+  if (p.gagne === 'opp') return p.taken > 0 ? `tu perds ${score} : −${p.taken} PV` : `sa Garde tient ${score} : aucun dégât`;
   return `${p.outcome.toLowerCase()} (${score})`;
 }
 

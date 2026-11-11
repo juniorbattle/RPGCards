@@ -4,7 +4,8 @@
 //     avec sa raison ; la leçon finie est enregistrée ; l'accueil revient. (2) Premier lancement : la question du profil.
 // (3) Aventure : l'entraînement proposé avant le prologue, refusable, mène aux leçons puis au duel contre Kaï ; « Leçons »
 //     dans le menu. (4) Planche des leçons (captures du premier geste de chacune).
-// Usage : npm run build && [LQV_VP=1920x1080] [LQV_MODES=souris,clavier,manette] [LQV_REDUIT=1] node tools/m17-lecons.mjs [dossier] [rapport.json]
+// M18 : les leçons se jouent au tour assisté (le défaut du jeu, `LQV_TOUR=assiste`) ou au tour classique (`LQV_TOUR=classique`).
+// Usage : npm run build && [LQV_VP=1920x1080] [LQV_MODES=souris,clavier,manette] [LQV_REDUIT=1] [LQV_TOUR=classique] node tools/m17-lecons.mjs [dossier] [rapport.json]
 import { execSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
@@ -13,7 +14,8 @@ import { launch, rendererLabel, startPreview, watchConsole, webglRenderer } from
 const VP = (process.env.LQV_VP ?? '1280x720').split('x').map(Number);
 const REDUIT = process.env.LQV_REDUIT === '1';
 const MODES = (process.env.LQV_MODES ?? 'souris,clavier,manette').split(',');
-const SUFFIXE = `${VP[0]}${REDUIT ? '-reduit' : ''}`;
+const TOUR = process.env.LQV_TOUR === 'classique' ? 'classique' : 'assiste';
+const SUFFIXE = `${VP[0]}${REDUIT ? '-reduit' : ''}${TOUR === 'classique' ? '-classique' : ''}`;
 const DIR = process.argv[2] ?? `screenshots/qa/m17/${SUFFIXE}`;
 const OUT = process.argv[3] ?? `artifacts/qa/m17/lecons-${SUFFIXE}.json`;
 const LECONS = ['clash', 'posture', 'secondaires', 'tactique', 'interferer', 'insight', 'familles', 'effets', 'regard', 'tech-Sondage', 'tech-Recentrage', 'tech-Lecture', 'tech-Ancrage', 'tech-Rupture', 'tech-Dissipation', 'signature', 'prolongation'];
@@ -27,7 +29,7 @@ const check = (ok, what) => { checks.push(`${ok ? 'OK' : 'ÉCHEC'} ${what}`); co
 const B = { A: 0, B: 1, START: 9, HAUT: 12, BAS: 13, GAUCHE: 14, DROITE: 15 };
 const planche = [];
 let renderer = '';
-const rq = REDUIT ? '&reducedMotion=1' : '';
+const rq = `${REDUIT ? '&reducedMotion=1' : ''}&tour=${TOUR}`;
 
 async function contexte(manette) {
   const ctx = await browser.newContext({ viewport: { width: VP[0], height: VP[1] }, deviceScaleFactor: 1 });
@@ -106,8 +108,9 @@ const LIBRE = () => {
   if (c.sequencing) return vis(k('act-skip')) ? k('act-skip') : null;
   if (v.phase === 'RESOLVED') return vis(k('act-next')) ? k('act-next') : null;
   if (!v.awaitingMe) return null;
-  const par = { START: 'act-start', PREPARE: 'act-prepare', DISSIPATION: 'act-dissip-pass', LECTURE: 'act-lecture-pass', LECTURE_CHANGE: 'act-lecture-stance', REVISION: 'act-revision-keep', TACTICS: 'act-tactics', REPEL: 'act-repel-skip' }[v.phase];
-  if (par) return k(par);
+  // M18 : au tour assisté, les « Non » des questions posées sur place (et le tour suivant s'enchaîne seul)
+  const par = { START: ['act-start', 'tech-non-Sondage', 'tech-non-Recentrage'], PREPARE: ['act-prepare', 'reveal-non-0', 'reveal-non-1'], DISSIPATION: ['act-dissip-pass', 'tech-non-Dissipation'], LECTURE: ['act-lecture-pass', 'tech-non-Lecture'], LECTURE_CHANGE: ['act-lecture-stance', 'stance-assault'], REVISION: ['act-revision-keep'], TACTICS: ['act-tactics'], REPEL: ['act-repel-skip'] }[v.phase];
+  if (par) return par.map(k).find(vis) ?? null;
   if (v.phase === 'COMMIT') {
     const dr = c.ui.draft;
     if (!dr.primaryId) return c.ui.selected ? k('place-assault') : '.hand [data-drag-card]';
@@ -272,7 +275,7 @@ try {
   }
   writeFileSync(`${DIR}/README.md`, `Planche M17 (leçons) : ${head}, ${VP.join('×')}${REDUIT ? ', mouvement réduit' : ''}.\n`);
   mkdirSync(dirname(OUT), { recursive: true });
-  writeFileSync(OUT, JSON.stringify({ head, viewport: VP, reduit: REDUIT, renderer, modes: MODES, checks, issues, resultats }, null, 2));
+  writeFileSync(OUT, JSON.stringify({ head, viewport: VP, reduit: REDUIT, tour: TOUR, renderer, modes: MODES, checks, issues, resultats }, null, 2));
 } finally {
   await browser.close();
   server.stop();

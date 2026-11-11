@@ -1,4 +1,13 @@
-# M18 — Le tour fluide : l'action au centre (contrat, APPROUVÉ)
+# M18 — Le tour fluide : l'action au centre (contrat, APPROUVÉ ; LIVRÉ à la passe 218, à jouer)
+
+> **Livraison (passe 218, JOURNAL) :** `src/presentation/annonce.ts` (bandeau), `src/app/controller.ts` (questions,
+> menus ouverts d'office, aperçu des modes), `src/presentation/board.ts` (consigne sur place, « Engager », « Valider »,
+> panneau réduit, ligne du dernier Clash), `src/app/duelSession.ts` (enchaînement du tour suivant), `src/app/params.ts`
+> (`?tour=assiste|classique`, `lqv.tour`) ; leçons accordées (`src/lecons/seance.ts`) ; `tools/m18-tour.mjs`,
+> `test/m18.test.ts`. Choix d'exécution : en QA (`qa=1`) sans `tour=`, le tour classique (parcours d'avant inchangés) ;
+> pendant la présentation du Clash, le panneau garde le récit des temps et « Passer » ; aux choix tactiques, « Valider »
+> se pose à côté de la case Primaire (la Primaire adverse révélée reste visible) ; la révision (avenant 08) se pose
+> au-dessus de la main.
 
 > **Statut : APPROUVÉ le 2026-11-11 (fiche remplie, consignée à la passe 217 ; `docs/FICHE_ARBITRAGES_M18.md`).** Les huit
 > choix sur la recommandation ; développement maintenant (P2), le responsable poursuit son test hors combat en attendant.

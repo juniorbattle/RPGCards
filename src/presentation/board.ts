@@ -624,7 +624,7 @@ function command(c: Controller): HTMLElement {
   if (beat && c.seq) {
     actions.append(btn('Passer ⏭', () => c.skipSequence(), { key: 'act-skip', ghost: true }));
     if (v.phase === 'RESOLVED' && !c.assiste) actions.append(btn('Tour suivant', () => c.nextTurn(), { key: 'act-next' }));
-    if (v.phase === 'REPEL' && v.repel?.mine) actions.append(btn('Renoncer au Repoussement', () => c.skipRepel(), { key: 'act-repel-skip', ghost: true }));
+    if (v.phase === 'REPEL' && v.repel?.mine && !c.assiste) actions.append(btn('Renoncer au Repoussement', () => c.skipRepel(), { key: 'act-repel-skip', ghost: true }));
     return h('section', { class: cls('command', 'seq', c.assiste && 'assiste'), 'aria-label': 'Résolution du Clash' }, h('div', { class: 'cmd-phase' }, h('span', { class: 'ph' }, 'Résolution'), h('span', { class: 'who', 'data-beat-step': '' }, `${c.seq.index + 1} / ${c.seq.beats.length}`)), beatMsg(c), actions, techChips(c));
   }
   // M18 (G3) : au tour assisté, le panneau ne garde que l'étape, l'Insight et les Techniques ; la consigne est sur place
@@ -970,7 +970,8 @@ function commandAssiste(c: Controller, head: (who: string) => HTMLElement): HTML
  */
 function consigneMain(c: Controller): HTMLElement | null {
   const v = c.view;
-  if (c.sequencing) return null;
+  // un Repoussement se choisit pendant que le Clash se présente encore
+  if (c.sequencing && !(v.phase === 'REPEL' && v.repel?.mine)) return null;
   // la révision (avenant 08) : la Signature adverse annoncée reste visible ; la question se pose au-dessus de la main
   if (v.phase === 'REVISION' && v.awaitingMe) {
     return h('div', { class: 'ask ask-tech ask-revision', role: 'group', 'aria-label': 'Révision de l’engagement', 'data-key': 'ask-revision' },
@@ -1028,7 +1029,7 @@ function consigneTexte(c: Controller): string {
 /** G1 : au-dessus de la case Primaire, le geste qui conclut l'étape (ou la question qui s'y pose). */
 function actionCentre(c: Controller): HTMLElement | null {
   const v = c.view;
-  if (c.sequencing) return null;
+  if (c.sequencing && !(v.phase === 'REPEL' && v.repel?.mine)) return null;
   const box = (...kids: Array<HTMLElement | string | null>) => h('div', { class: 'centre-act', role: 'group', 'aria-label': 'Action du tour' }, ...kids);
   // aux choix tactiques, la Primaire adverse est révélée : « Valider » se pose à côté de la case, sans la couvrir
   const cote = (...kids: Array<HTMLElement | string | null>) => h('div', { class: 'centre-act cote', role: 'group', 'aria-label': 'Action du tour' }, ...kids);
