@@ -1,0 +1,54 @@
+{
+  "commit": "6f5a2fa",
+  "date": "2026-11-11T20:32:16.515Z",
+  "duelsParMesure": 1600,
+  "marge": 6,
+  "ms": 201831,
+  "results": [
+    {
+      "label": "Cendre-1 B Tison",
+      "wins": 782,
+      "games": 1600,
+      "turns": 9.560625,
+      "rate": 48.875,
+      "delta": -1.125,
+      "flag": false
+    },
+    {
+      "label": "Cendre-1 C Escarbille",
+      "wins": 763,
+      "games": 1600,
+      "turns": 9.699375,
+      "rate": 47.6875,
+      "delta": -2.3125,
+      "flag": false
+    },
+    {
+      "label": "Cendre-3 B Surenchère",
+      "wins": 805,
+      "games": 1600,
+      "turns": 9.58875,
+      "rate": 50.3125,
+      "delta": 0.3125,
+      "flag": false
+    },
+    {
+      "label": "Cendre-4 C Phénix",
+      "wins": 811,
+      "games": 1600,
+      "turns": 9.609375,
+      "rate": 50.6875,
+      "delta": 0.6875,
+      "flag": false
+    },
+    {
+      "label": "Astre-1 B Boussole",
+      "wins": 857,
+      "games": 1600,
+      "turns": 9.75625,
+      "rate": 53.5625,
+      "delta": 3.5625,
+      "flag": false
+    }
+  ]
+}

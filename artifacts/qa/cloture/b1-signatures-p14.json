@@ -1,0 +1,175 @@
+{
+ "commit": "6f5a2fa",
+ "date": "2026-11-11T20:34:08.544Z",
+ "duelsParPaire": 1200,
+ "brasier": 14,
+ "ms": 330239,
+ "paires": [
+  {
+   "a": "Cendre",
+   "b": "Voile",
+   "profils": "équilibré",
+   "wins": 661,
+   "games": 1200,
+   "rate": 55.083333333333336,
+   "turns": 9.515,
+   "signatureJouee": 94.25
+  },
+  {
+   "a": "Cendre",
+   "b": "Ronce",
+   "profils": "équilibré",
+   "wins": 655,
+   "games": 1200,
+   "rate": 54.583333333333336,
+   "turns": 9.690833333333334,
+   "signatureJouee": 94.75
+  },
+  {
+   "a": "Cendre",
+   "b": "Astre",
+   "profils": "équilibré",
+   "wins": 646,
+   "games": 1200,
+   "rate": 53.833333333333336,
+   "turns": 9.656666666666666,
+   "signatureJouee": 94.91666666666667
+  },
+  {
+   "a": "Voile",
+   "b": "Ronce",
+   "profils": "équilibré",
+   "wins": 593,
+   "games": 1200,
+   "rate": 49.416666666666664,
+   "turns": 9.865,
+   "signatureJouee": 95.33333333333333
+  },
+  {
+   "a": "Voile",
+   "b": "Astre",
+   "profils": "équilibré",
+   "wins": 596,
+   "games": 1200,
+   "rate": 49.666666666666664,
+   "turns": 9.800833333333333,
+   "signatureJouee": 95.16666666666667
+  },
+  {
+   "a": "Ronce",
+   "b": "Astre",
+   "profils": "équilibré",
+   "wins": 606,
+   "games": 1200,
+   "rate": 50.5,
+   "turns": 9.9025,
+   "signatureJouee": 95.41666666666667
+  },
+  {
+   "a": "Cendre",
+   "b": "Voile",
+   "profils": "tournants",
+   "wins": 647,
+   "games": 1200,
+   "rate": 53.916666666666664,
+   "turns": 9.611666666666666,
+   "signatureJouee": 92.91666666666667
+  },
+  {
+   "a": "Cendre",
+   "b": "Ronce",
+   "profils": "tournants",
+   "wins": 667,
+   "games": 1200,
+   "rate": 55.583333333333336,
+   "turns": 9.606666666666667,
+   "signatureJouee": 93.41666666666667
+  },
+  {
+   "a": "Cendre",
+   "b": "Astre",
+   "profils": "tournants",
+   "wins": 620,
+   "games": 1200,
+   "rate": 51.666666666666664,
+   "turns": 9.580833333333333,
+   "signatureJouee": 92.91666666666667
+  },
+  {
+   "a": "Voile",
+   "b": "Ronce",
+   "profils": "tournants",
+   "wins": 630,
+   "games": 1200,
+   "rate": 52.5,
+   "turns": 9.658333333333333,
+   "signatureJouee": 94
+  },
+  {
+   "a": "Voile",
+   "b": "Astre",
+   "profils": "tournants",
+   "wins": 600,
+   "games": 1200,
+   "rate": 50,
+   "turns": 9.5775,
+   "signatureJouee": 92.83333333333333
+  },
+  {
+   "a": "Ronce",
+   "b": "Astre",
+   "profils": "tournants",
+   "wins": 609,
+   "games": 1200,
+   "rate": 50.75,
+   "turns": 9.6725,
+   "signatureJouee": 93.08333333333333
+  }
+ ],
+ "parSignature": {
+  "equilibre": {
+   "Cendre": {
+    "rate": 54.5,
+    "wins": 1962,
+    "games": 3600
+   },
+   "Voile": {
+    "rate": 48,
+    "wins": 1728,
+    "games": 3600
+   },
+   "Ronce": {
+    "rate": 48.833333333333336,
+    "wins": 1758,
+    "games": 3600
+   },
+   "Astre": {
+    "rate": 48.666666666666664,
+    "wins": 1752,
+    "games": 3600
+   }
+  },
+  "tournants": {
+   "Cendre": {
+    "rate": 53.72222222222222,
+    "wins": 1934,
+    "games": 3600
+   },
+   "Voile": {
+    "rate": 49.52777777777778,
+    "wins": 1783,
+    "games": 3600
+   },
+   "Ronce": {
+    "rate": 47.55555555555556,
+    "wins": 1712,
+    "games": 3600
+   },
+   "Astre": {
+    "rate": 49.19444444444444,
+    "wins": 1771,
+    "games": 3600
+   }
+  }
+ }
+}

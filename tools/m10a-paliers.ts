@@ -7,6 +7,9 @@
 //     la Joute (variante II) avant le chef, soit 6 combats de plus par famille.
 // Les adversaires sont ceux de `src/aventure/paliers.ts` (`adversaire` : deck selon le niveau du joueur, PV, profil d'IA).
 // Le joueur est joué par l'IA « équilibré » : un ordre de grandeur, pas une mesure du plaisir de jeu.
+// Calendrier M16 (lot de correction de clôture) : `LQV_TECHNIQUE=Sondage|Recentrage` commence l'aventure avec cette seule
+// Technique (l'autre au premier cadet, celle d'une famille à son chef) ; l'adversaire n'équipe pas plus de Techniques que le
+// joueur n'en a apprises (`techniquesAdverses`, comme en jeu). Sans la variable : le calendrier d'avant.
 // Usage : npx tsx tools/m10a-paliers.ts [duels par famille et par étape] [sortie.json]
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
@@ -15,6 +18,8 @@ import { FAMILIES, type Family } from '../src/game/catalog/cards';
 import { PROFILES } from '../src/game/ai/policy';
 import { autoplay } from '../src/game/match';
 import type { GameConfig, PlayerId } from '../src/game/model/types';
+import type { TechniqueId } from '../src/game/catalog/techniques';
+import { techniquesAdverses } from '../src/aventure/rencontres';
 import { appliquer, nouvelleAventure, type AventureEtat, type Evenement } from '../src/aventure/aventure';
 import { siegeAventure, type DeckAv } from '../src/aventure/deck';
 import { adversaire, COMPOSITION, PROFIL_ROLE, pvJoueur, PV_ADVERSE, PV_DEPART, PV_PAR_COMBAT, type RoleAdverse } from '../src/aventure/paliers';
@@ -30,6 +35,7 @@ const OUT = process.argv[3];
 /** `LQV_ORDRE=adversaire` : l’adversaire (p2) verrouille en premier, comme le rival du jeu (avenant 08, S-07.3). */
 const ORDRE: PlayerId[] = process.env.LQV_ORDRE === 'adversaire' ? ['p2', 'p1'] : ['p1', 'p2'];
 const AT = '2026-10-20T12:00:00.000Z';
+const TECHNIQUE = (process.env.LQV_TECHNIQUE || undefined) as TechniqueId | undefined;
 const F0 = { assautsGagnes: 0, gardesGagnees: 0, interferencesReussies: 0 };
 const apply = (e: AventureEtat, evs: Evenement[]): AventureEtat => evs.reduce((x, ev) => { const r = appliquer(x, ev, AT); if (r.refus) throw new Error(`${ev.type} : ${r.refus}`); return r.etat; }, e);
 
@@ -62,8 +68,9 @@ const ligne = (d: DeckAv) => {
 };
 
 /** Duels de série : `n` duels du joueur contre l'adversaire ; victoires et tours. */
-function serie(deckJ: DeckAv, pvJ: number, role: RoleAdverse, famille: Family | null, niveau: number, graine: number, stats: StatsClash): { w: number; tours: number; adv: ReturnType<typeof adversaire> } {
-  const adv = adversaire(role, famille, niveau);
+function serie(deckJ: DeckAv, pvJ: number, role: RoleAdverse, famille: Family | null, niveau: number, graine: number, stats: StatsClash, nAdv = 2): { w: number; tours: number; adv: ReturnType<typeof adversaire> } {
+  const adv0 = adversaire(role, famille, niveau);
+  const adv = { ...adv0, deck: { ...adv0.deck, techniques: adv0.deck.techniques.slice(0, nAdv) } };
   // profil propre du personnage (bras droits) : celui de sa personnalité, comme en jeu
   const profil = adv.profil ?? personalityById(figureDe(famille!, 'brasDroit').apparence)!.aiProfile;
   let w = 0; let tours = 0;
@@ -84,7 +91,7 @@ function mesurer(cle: string, titre: string, voie: Voie, e: AventureEtat, combat
   const niveau = collectionDe(e.registre).basics.length;
   const pvJ = pvJoueur(combats);
   const stats = lignes.get(cle)?.stats ?? { direct: statsVides(), entraine: statsVides() };
-  const r = serie(e.deck, pvJ, role, famille, niveau, 9000 + FAMILIES.indexOf(f1) * 7 + (voie === 'entraine' ? 3 : 0), stats[voie]);
+  const r = serie(e.deck, pvJ, role, famille, niveau, 9000 + FAMILIES.indexOf(f1) * 7 + (voie === 'entraine' ? 3 : 0), stats[voie], techniquesAdverses(e));
   const l: Ligne = lignes.get(cle) ?? ({ stats, titre, adv: r.adv.texte, palier: r.adv.palier, pvAdv: r.adv.pv, profil: role === 'brasDroit' ? 'propre au personnage' : r.adv.profil, deck: {}, pv: { direct: [], entraine: [] }, v: { direct: 0, entraine: 0 }, d: { direct: 0, entraine: 0 }, t: { direct: 0, entraine: 0 } } as Ligne);
   l.deck[voie] = ligne(e.deck); l.pv[voie].push(pvJ); l.v[voie] += r.w; l.d[voie] += N; l.t[voie] += r.tours;
   lignes.set(cle, l);
@@ -92,7 +99,7 @@ function mesurer(cle: string, titre: string, voie: Voie, e: AventureEtat, combat
 const t0 = Date.now();
 for (const voie of ['direct', 'entraine'] as const) {
   for (const f1 of FAMILIES) {
-    let e = apply(nouvelleAventure(AT), [{ type: 'scene', id: 'P1' }, { type: 'scene', id: 'P2' }]);
+    let e = apply(nouvelleAventure(AT, TECHNIQUE), [{ type: 'scene', id: 'P1' }, { type: 'scene', id: 'P2' }]);
     let combats = 0;
     for (const et of trame(f1)) {
       // duels facultatifs de la voie entraînée, mesurés aussi (lignes à part) : Épreuve et rue avant le cadet, Joute et
@@ -129,5 +136,5 @@ for (const l of lignes.values()) console.log(`| ${l.titre} | ${l.palier} : ${l.a
 if (OUT) {
   mkdirSync(dirname(OUT), { recursive: true });
   const head = execSync('git rev-parse --short HEAD').toString().trim();
-  writeFileSync(OUT, JSON.stringify({ commit: head, ordre: ORDRE, duelsParFamilleEtEtape: N, pv: { depart: PV_DEPART, parCombat: PV_PAR_COMBAT }, pvAdverses: PV_ADVERSE, profils: PROFIL_ROLE, composition: COMPOSITION, lignes: [...lignes.values()].map(({ stats, ...l }) => ({ ...l, statsClash: { direct: stats.direct.duels ? resume(stats.direct) : null, entraine: stats.entraine.duels ? resume(stats.entraine) : null } })) }, null, 1) + '\n');
+  writeFileSync(OUT, JSON.stringify({ commit: head, calendrier: TECHNIQUE ? `m16 (${TECHNIQUE})` : 'avant M16', ordre: ORDRE, duelsParFamilleEtEtape: N, pv: { depart: PV_DEPART, parCombat: PV_PAR_COMBAT }, pvAdverses: PV_ADVERSE, profils: PROFIL_ROLE, composition: COMPOSITION, lignes: [...lignes.values()].map(({ stats, ...l }) => ({ ...l, statsClash: { direct: stats.direct.duels ? resume(stats.direct) : null, entraine: stats.entraine.duels ? resume(stats.entraine) : null } })) }, null, 1) + '\n');
 }

@@ -3,7 +3,8 @@
 // (variantes A) où I joue V, contre le même deck où I joue A ; seul I diffère. Taux de victoire du côté V (50 % = neutre),
 // durée des duels. Puis deck tout B et deck tout C contre deck tout A. Sortie : artifacts/qa/m12/variantes/mesure.json et
 // mesure.md. Usage : npx tsx tools/m12-variantes-mesure.ts [duels par variante, défaut 400] [filtre : identité ou nom, ex. Escarbille]
-// (avec un filtre : seules les lignes qui le contiennent, sortie mesure-<filtre>.json et .md).
+// (avec un filtre : seules les lignes qui le contiennent, sortie mesure-<filtre>.json et .md ; plusieurs filtres séparés par
+// des virgules, ex. « Tison,Surenchère » ; `LQV_OUT=<dossier>` change le dossier de sortie).
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { EFFECTS, FAMILIES, VARIANTS, type Family } from '../src/game/catalog/cards';
@@ -15,7 +16,8 @@ import type { GameConfig, PlayerId } from '../src/game/model/types';
 
 const N = Number(process.argv[2] ?? 400);
 const FILTRE = process.argv[3] ?? '';
-const OUT = 'artifacts/qa/m12/variantes';
+const OUT = process.env.LQV_OUT ?? 'artifacts/qa/m12/variantes';
+const FILTRES = FILTRE.split(',').map((x) => x.trim()).filter(Boolean);
 mkdirSync(OUT, { recursive: true });
 const commit = execSync('git rev-parse --short HEAD').toString().trim();
 const IDS = FAMILIES.flatMap((f) => ([1, 2, 3, 4] as const).map((r) => ({ f, r, id: `${f}-${r}` })));
@@ -57,7 +59,7 @@ if (!FILTRE) results.push(measure('témoin A contre A', deck({}), deck({}), N, 1
 for (const { f, r, id } of IDS) {
   for (const k of [1, 2] as const) {
     const [e] = VARIANTS[f][r][k]!;
-    if (FILTRE && !`${id} ${EFFECTS[e].name}`.includes(FILTRE)) continue;
+    if (FILTRES.length && !FILTRES.some((f) => `${id} ${EFFECTS[e].name}`.includes(f))) continue;
     const res = measure(`${id} ${k === 1 ? 'B' : 'C'} ${EFFECTS[e].name}`, deck({ [id]: `${id}-${e}` }), deck({}), N, 1000 + k * 100 + IDS.findIndex((x) => x.id === id) * 7);
     results.push(res);
     process.stdout.write(`${res.label.padEnd(36)} ${res.rate.toFixed(1)} % (${res.games})${res.flag ? '  ← hors marge' : ''}\n`);

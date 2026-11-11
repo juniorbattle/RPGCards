@@ -67,12 +67,14 @@ function basicDef(family: Family, rank: OrdinaryRank): CardDef {
   return cardDef(`${family}-${rank}-basic`);
 }
 
-/** Pool d’identités adverses non localisées publiquement (main + pioche + cachées), en version Basic. */
-function unknownOpponentPool(view: PlayerView): CardDef[] {
+/** Pool d’identités adverses non localisées (main + pioche + cachées), en version Basic ; une Secondaire adverse vue dans sa
+ *  case par un regard privé (mémoire) n'est pas dans sa main. */
+function unknownOpponentPool(view: PlayerView, memory: AiMemory | null = null): CardDef[] {
   const seen = new Set<string>();
   const add = (defId: string | null | undefined) => { if (defId) seen.add(cardDef(defId).identity); };
   view.opp.discard.forEach(add);
   view.opp.slots.forEach((s) => add(s?.card?.defId));
+  Object.values(memory?.oppSlots ?? {}).forEach(add);
   if (view.reveal.primaries) add(view.reveal.primaries.opp.defId);
   const pool: CardDef[] = [];
   for (const f of FAMILIES) for (const r of RANKS) if (!seen.has(`${f}-${r}`)) pool.push(basicDef(f, r));
@@ -92,6 +94,37 @@ function activeDefs(slots: [SlotView | null, SlotView | null], fallbackMasked: b
     else if (fallbackMasked) out.push({ slot: s.slot, def: GENERIC_MASKED });
   }
   return out;
+}
+
+/** Secondaires adverses actives : la carte publique, ou celle vue par un regard privé avant d'être masquée (mémoire) ;
+ *  sinon l'hypothèse générique. `masked` : visée à l'aveugle (§7.3), quelle que soit la carte supposée. */
+function oppActives(view: PlayerView, memory: AiMemory | null): Array<{ slot: SlotIndex; def: CardDef; masked: boolean }> {
+  const out: Array<{ slot: SlotIndex; def: CardDef; masked: boolean }> = [];
+  for (const s of view.opp.slots) {
+    if (!s || s.state !== 'active') continue;
+    if (s.card) out.push({ slot: s.slot, def: cardDef(s.card.defId), masked: false });
+    else {
+      const vu = memory?.oppSlots?.[s.slot];
+      out.push({ slot: s.slot, def: vu ? cardDef(vu) : GENERIC_MASKED, masked: true });
+    }
+  }
+  return out;
+}
+
+/**
+ * Recentrage (niveaux 1 et 2 ; lot de correction de clôture, B2) : une carte de Rang I glissée sous la pioche quand la main
+ * n'a ni Rang III ni Rang IV ni Signature, sauf si le sommet connu de la pioche (Repère, Sextant) ne vaut pas mieux.
+ */
+function carteARecentrer(rest: ReadonlyArray<{ cardId: string; def: CardDef }>, memory: AiMemory | null): string | null {
+  const faible = rest.find((c) => !c.def.signature && c.def.rank === 1);
+  const forte = rest.some((c) => c.def.signature || (c.def.rank ?? 0) >= 3);
+  if (!faible || forte) return null;
+  const top = memory?.myDeckTop?.[0];
+  if (top) {
+    const t = cardDef(top);
+    if (!t.signature && (t.rank ?? 0) <= 1) return null;
+  }
+  return faible.cardId;
 }
 
 type PlanCombo = { plans: [TacticPlan | null, TacticPlan | null]; uses: ClashUse[] };
@@ -166,8 +199,11 @@ export function decide(view: PlayerView, profile: AiProfile = PROFILES.equilibre
       const excess = Math.max(0, hand.length - 4);
       const sorted = [...defs].sort((a, b) => (a.def.signature ? 99 : a.def.rank!) - (b.def.signature ? 99 : b.def.rank!));
       const discard = sorted.slice(0, excess).map((c) => c.cardId);
-      let technique: { id: 'Sondage' } | null = null;
-      if (canTech(view, 'Sondage') && rng() < profile.techniqueRate * 0.7) technique = { id: 'Sondage' };
+      let technique: StartTechnique | null = null;
+      // lot de correction de clôture (B2) : le niveau 1 joue aussi Recentrage (sa mesure portait sur un joueur sans Technique)
+      const aRecentrer = canTech(view, 'Recentrage') ? carteARecentrer(sorted.slice(excess), memory) : null;
+      if (aRecentrer && rng() < profile.techniqueRate) technique = { id: 'Recentrage', cardId: aRecentrer };
+      else if (canTech(view, 'Sondage') && rng() < profile.techniqueRate * 0.7) technique = { id: 'Sondage' };
       return { type: 'start', player: pid, discard, technique };
     }
     case 'PREPARE': {
@@ -204,7 +240,7 @@ export function decide(view: PlayerView, profile: AiProfile = PROFILES.equilibre
       return { type: 'lectureStance', player: pid, stance };
     }
     case 'TACTICS':
-      return decideTactics(view, profile, rng);
+      return decideTactics(view, profile, rng, memory);
     case 'REPEL': {
       const choices = view.repel?.choices ?? [];
       if (!choices.length) return { type: 'repel', player: pid, targetSlot: null };
@@ -231,8 +267,8 @@ function decideCommit(view: PlayerView, profile: AiProfile, rng: () => number, m
   const pid = view.viewer;
   const hand = (view.me.hand ?? []).map((c) => ({ ...c, def: cardDef(c.defId) }));
   const myActive = activeDefs(view.me.slots, false);
-  const oppActiveRaw = activeDefs(view.opp.slots, true);
-  const pool = unknownOpponentPool(view);
+  const oppActiveSeen = oppActives(view, memory);
+  const pool = unknownOpponentPool(view, memory);
   const samples: CardDef[] = [];
   // Mémoire autorisée : les cartes vues dans la main adverse (et non vues la quitter) pèsent davantage.
   const known = pool.filter((d) => memory?.knownOppHand.includes(d.identity));
@@ -252,7 +288,7 @@ function decideCommit(view: PlayerView, profile: AiProfile, rng: () => number, m
       let total = 0;
       for (const oppPrim of samples) {
         const oppStance: Stance = rng() < pAssault ? 'assault' : 'guard';
-        const oppActive = oppActiveRaw.map((a) => ({ ...a, masked: a.def === GENERIC_MASKED }));
+        const oppActive = oppActiveSeen;
         // Supposition : l’adversaire engage ses actives au mieux pour lui en Rang/Dégâts.
         const oppUses: ClashUse[] = oppActive.map((a) => ({ slot: a.slot, def: a.def, mode: oppStance === 'assault' && rng() < 0.5 ? 'damage' : 'rank' }));
         const combos = enumeratePlans(myActive, stance, oppActive);
@@ -301,14 +337,14 @@ function secondaryValue(def: CardDef): number {
   return [0, 2.2, 2.8, 2.6, 2.0][r]! + (def.effect ? bonus[def.effect] ?? 0.3 : 0);
 }
 
-function decideTactics(view: PlayerView, profile: AiProfile, rng: () => number): PlayerCommand {
+function decideTactics(view: PlayerView, profile: AiProfile, rng: () => number, memory: AiMemory | null): PlayerCommand {
   const pid = view.viewer;
   const myPrim = cardDef(view.reveal.primaries!.me.defId);
   const myStance = view.reveal.primaries!.me.stance;
   const oppPrim = cardDef(view.reveal.primaries!.opp.defId);
   const oppStance = view.reveal.primaries!.opp.stance;
   const myActive = activeDefs(view.me.slots, false);
-  const oppActive = activeDefs(view.opp.slots, true).map((a) => ({ ...a, masked: a.def === GENERIC_MASKED }));
+  const oppActive = oppActives(view, memory);
   const combos = enumeratePlans(myActive, myStance, oppActive);
   const scen = oppScenarios(oppActive, oppStance);
   let best: { v: number; combo: PlanCombo } | null = null;
@@ -356,7 +392,7 @@ function profilCourse(view: PlayerView, p: AiProfile): AiProfile {
 function oppPrimaries2(view: PlayerView, memory: AiMemory | null, profile: AiProfile): Array<{ def: CardDef; w: number }> {
   const announced = view.reveal.signatures.opp;
   if (announced) return [{ def: cardDef(announced), w: 1 }];
-  const pool = unknownOpponentPool(view);
+  const pool = unknownOpponentPool(view, memory);
   const neutres = memory?.oppNeutral || view.opp.signatureFamily === null;
   const seenNeutre = (r: number) => view.opp.discard.filter((d) => d === `neutre-${r}`).length;
   const out = pool.map((def) => ({ def, w: memory?.knownOppHand.includes(def.identity) ? 1 + 3 * profile.memoryWeight : 1 }));
@@ -377,10 +413,9 @@ function decide2(view: PlayerView, profile0: AiProfile, aiSeed: number, memory: 
       const discard = sorted.slice(0, excess).map((c) => c.cardId);
       const rest = sorted.slice(excess);
       let technique: StartTechnique | null = null;
-      // N2-6 : Recentrage d'une carte de Rang I quand la main n'a ni Rang III ni Rang IV (ni Signature)
-      const faible = rest.find((c) => !c.def.signature && c.def.rank === 1);
-      const forte = rest.some((c) => c.def.signature || (c.def.rank ?? 0) >= 3);
-      if (canTech(view, 'Recentrage') && faible && !forte) technique = { id: 'Recentrage', cardId: faible.cardId };
+      // N2-6 : Recentrage d'une carte de Rang I quand la main n'a ni Rang III ni Rang IV (ni Signature), sauf sommet connu faible
+      const aRecentrer = canTech(view, 'Recentrage') ? carteARecentrer(rest, memory) : null;
+      if (aRecentrer) technique = { id: 'Recentrage', cardId: aRecentrer };
       // Sondage : seulement si l'Insight ne manque pas à une Lecture ou une Rupture du tour
       else if (canTech(view, 'Sondage')) {
         const garde = (view.me.techniques.includes('Lecture') || view.me.techniques.includes('Rupture')) ? 2 : 0;
@@ -435,7 +470,7 @@ function decideCommit2(view: PlayerView, profile: AiProfile, rng: () => number, 
   const pid = view.viewer;
   const hand = (view.me.hand ?? []).map((c) => ({ ...c, def: cardDef(c.defId) }));
   const myActive = activeDefs(view.me.slots, false);
-  const oppActive = activeDefs(view.opp.slots, true).map((a) => ({ ...a, masked: a.def === GENERIC_MASKED }));
+  const oppActive = oppActives(view, memory);
   const prims = oppPrimaries2(view, memory, profile);
   const wTot = prims.reduce((a, x) => a + x.w, 0);
   let best: { v: number; cardId: string; stance: Stance } | null = null;
@@ -497,7 +532,7 @@ function decideTactics2(view: PlayerView, profile: AiProfile, rng: () => number,
   const oppPrim = cardDef(view.reveal.primaries!.opp.defId);
   const oppStance = view.reveal.primaries!.opp.stance;
   const myActive = activeDefs(view.me.slots, false);
-  const oppActive = activeDefs(view.opp.slots, true).map((a) => ({ ...a, masked: a.def === GENERIC_MASKED }));
+  const oppActive = oppActives(view, memory);
   const combos = enumeratePlans(myActive, myStance, oppActive);
   const scen = oppScenarios(oppActive, oppStance);
   // N2-4 : un adversaire qui a déjà interféré peut interférer sur notre Secondaire la plus forte
