@@ -1,0 +1,24 @@
+typecheck rc=0 10s 
+tests rc=0 36s       Tests  939 passed (939)
+build rc=0 14s 
+sim rc=0 7s 
+qa-product rc=0 205s QA produit OK (9 parcours) — artifacts/qa/qa-product.json
+qa-rc rc=0 251s QA RC OK (9 campagnes) — artifacts/qa/qa-rc.json
+qa-browser rc=0 113s QA navigateur M03 OK (3 duels complets) — rapport artifacts/qa/qa-browser.json
+qa-techniques rc=0 33s 
+qa-aventure rc=0 84s 
+qa-maison rc=0 50s 29/29 contrôles ; console : aucune erreur
+qa-voies rc=0 102s 62/62 contrôles ; console : aucune erreur
+qa-vivante rc=0 57s 35/35 contrôles ; console : aucune erreur
+qa-championnat rc=0 40s 
+qa-vue rc=0 32s 29/29 contrôles ; console : aucune erreur
+m14-recit-guide rc=0 128s 
+m14-recit-guide-defauts rc=1 110s (sélecteur périmé de l'outil ; relancé après correction : rc=0, 45/45)
+m14-preparation rc=0 32s 
+m16-chasse rc=0 28s 
+m17-lecons rc=0 451s 131/131 contrôles · console : vide
+m18-tour rc=0 295s 35/35 contrôles · console : vide
+m18-tour-reduit rc=0 294s 38/38 contrôles · console : vide
+m18-tour-systeme-reduit rc=0 295s 35/35 contrôles · console : vide
+manette rc=0 36s 
+FIN

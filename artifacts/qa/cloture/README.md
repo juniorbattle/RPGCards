@@ -79,3 +79,40 @@ et par étape ; l'adversaire n'équipe pas plus de Techniques que le joueur n'en
 Les deux départs ne diffèrent qu'au prologue et au premier cadet (ensuite, le joueur a les deux Techniques de la rue).
 **G3 : toutes les étapes au-dessus de 40 %, aucune compensation à proposer.** Fichiers : `voie-directe-m16-sondage.*`,
 `voie-directe-m16-recentrage.*`.
+
+## Étape 6 — avenant 09 versé, campagne de vérification (passe 229)
+
+Campagne sur le build de `4b02654` (étapes 1 à 5 sur `main`), un outil à la fois, Chrome sur la Radeon 780M (`LQV_GPU=1`),
+1280 × 720 ; résumé `campagne/resume.txt`, rapports JSON `campagne/rapports/` (journaux `*.log` gardés hors de git ; les rapports
+suivis du dépôt et les captures régénérées sont remis à leur version de `main`, fiche E5).
+
+| Vérification | Résultat |
+|---|---|
+| `tsc --noEmit` | vert |
+| `vitest` | **939 / 939** (73 fichiers) |
+| `npm run build` | vert ; `three` 547 kB et code du jeu 715 kB, sans sourcemap |
+| Simulation (`npm run sim`, 200 duels) | 8,69 tours en moyenne, 20 prolongations, aucune erreur |
+| `qa:product` | 9 parcours |
+| `qa:rc` (salle, bar, arène) | 9 campagnes |
+| `qa:browser` | 3 duels de bureau (mobile hors de la porte, E2) |
+| `qa:techniques` | 4 / 4 (souris 1280 ; tactile hors de la porte) |
+| `qa:aventure` | 48 contrôles, aucun échec |
+| `qa:maison` | 29 / 29 |
+| `qa:voies` | 62 / 62 |
+| `qa:vivante` | 35 / 35 |
+| `qa:championnat` | 13 contrôles, aucun échec |
+| `qa:vue` | 29 / 29 |
+| `m14-recit-guide` | 45 / 45 |
+| **`m14-recit-guide` aux réglages par défaut d'un joueur** (`LQV_M14_DEFAUTS=1` : cinématiques, conseils, tour assisté, choix de la variante) | **45 / 45**, du prologue au titre (premier passage arrêté par un sélecteur périmé de l'outil, `[data-key="av-choix"]` au lieu de `[data-screen="av-choix"]` ; corrigé, relancé) |
+| `m14-preparation` | 25 / 25 |
+| `m16-chasse` | 27 / 27 |
+| `m17-lecons` (tour assisté) | **131 / 131** (dix-neuf leçons, souris, clavier, manette, aucun ancien vocabulaire) |
+| `m18-tour` | **35 / 35** (révision, `tenir=1` compris) |
+| `m18-tour`, mouvement réduit du jeu (`LQV_REDUIT=1`) | **38 / 38** |
+| `m18-tour`, mouvement réduit du système émulé (`LQV_SYSTEME_REDUIT=1`, §6 bis) | **35 / 35** |
+| `manette` | 34 / 34 |
+
+Planches de preuve (`screenshots/qa/cloture/`) : la révision au tour assisté, avant et après la modification
+(`planche-revision-avant.png`, `planche-revision-apres.png`) ; l'aperçu tactique sur deux lignes
+(`planche-apercu-deux-lignes.png` : « si le rival conserve : ta Garde tient 4 contre 4 » / « s'il amplifie : tu perds 4
+contre 7 : −6 PV », le cas relevé par l'audit).

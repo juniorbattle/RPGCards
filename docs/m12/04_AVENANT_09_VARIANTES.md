@@ -1,6 +1,10 @@
 # M12 — Avenant 09 : trois variantes par identité (48 variantes)
 
-**Date :** 2026-10-27. **Statut : PROPOSÉ, APPLIQUÉ À TITRE PROVISOIRE** sur décision du responsable du même jour :
+> **VERSÉ SOUS `contracts/09_AVENANT_VARIANTES.md` le 2026-11-11 (passe 229)** : fiche de clôture, A3 (étiquette
+> `V3.0+delta-V3.4`, avec A1 et A2 ; mesures B1 et B2 : aucun ajustement). Le texte qui fait foi est désormais celui de
+> `contracts/` ; ce document reste l'historique de la proposition.
+
+**Date :** 2026-10-27. **Statut d'origine : PROPOSÉ, APPLIQUÉ À TITRE PROVISOIRE** sur décision du responsable du même jour :
 « j'aime [que] chaque rang de chaque famille ait 3 variants. Donc 48 variants » ; puis, à la question de cette session,
 « intégrer au jeu », « choix à la victoire » (aventure) et « oui, dans l'éditeur » (Duel standard). Les textes ci-dessous
 sont relus par le responsable pendant son test complet ; validés, ils seront versés tels quels sous `contracts/`

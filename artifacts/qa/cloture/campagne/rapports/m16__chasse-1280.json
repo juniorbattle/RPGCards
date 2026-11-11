@@ -1,0 +1,38 @@
+{
+  "head": "4b02654",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "viewport": [
+    1280,
+    720
+  ],
+  "checks": [
+    "OK nouvelle aventure : Sondage présélectionnée",
+    "OK Recentrage choisie",
+    "OK son effet en infobulle",
+    "OK la page du récit et de la Technique tient à l’écran",
+    "OK une seule Technique apprise et équipée (Recentrage)",
+    "OK deux cartes scintillent sur le Quai (quai-caisses,quai-chapelle)",
+    "OK le HUD le dit (« ✦ 2 cartes scintillent dans ce quartier »)",
+    "OK la bulle propose de ramasser (Ramasser la carte)",
+    "OK la découverte montre une variante de la Cendre (Cendre-2-percee)",
+    "OK le compte de la chasse (1 / 10 cartes de la ville)",
+    "OK le point ramassé s’éteint",
+    "OK le HUD n’en compte plus qu’une",
+    "OK le dialogue du cadet met la Technique en jeu",
+    "OK la préparation la montre",
+    "OK à armes égales : la cadette n’équipe qu’une Technique ([\"Sondage\"])",
+    "OK le résultat donne la Technique Sondage",
+    "OK les deux Techniques équipées",
+    "OK la Lecture gagnée face à Bran (avec la Signature)",
+    "OK la carte gardée scintille au Parvis",
+    "OK sa gardienne se tient à côté",
+    "OK la lueur gardée : la gardienne propose le duel",
+    "OK la préparation : la carte en jeu",
+    "OK la gardienne battue",
+    "OK la carte ramassée après le duel (2 / 10)",
+    "OK le Journal tient « Les cartes de la ville »",
+    "OK en Récit guidé, aucune carte ne scintille",
+    "OK console propre (0)"
+  ],
+  "issues": []
+}

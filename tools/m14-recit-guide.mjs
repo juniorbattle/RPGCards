@@ -12,7 +12,9 @@ import { dirname } from 'node:path';
 import { launch, rendererLabel, startPreview, watchConsole, webglRenderer } from './browser.mjs';
 
 const VP = (process.env.LQV_VP ?? '1280x720').split('x').map(Number);
-const CINE = process.env.LQV_M14_CINE ? '&cine=1' : '';
+// fiche de clôture : `LQV_M14_DEFAUTS=1` joue la trame aux réglages par défaut d'un joueur (cinématiques, conseils, tour assisté,
+// choix de la variante) ; `LQV_M14_CINE=1` : les cinématiques seules
+const CINE = process.env.LQV_M14_DEFAUTS ? '&cine=1&conseils=1&tour=assiste&choix=1' : process.env.LQV_M14_CINE ? '&cine=1' : '';
 const DIR = process.argv[2] ?? `screenshots/qa/m14/recit-guide-${VP[0]}`;
 const OUT = process.argv[3] ?? `artifacts/qa/m14/recit-guide-${VP[0]}.json`;
 const head = execSync('git rev-parse --short HEAD').toString().trim();
@@ -112,7 +114,7 @@ try {
       const vis = (s) => { const x = q(s); return !!x && !x.hidden && x.getClientRects().length > 0; };
       if (q('.ville-fade.in')) return 'attente'; // le rideau se ferme : plus rien à cliquer sous lui
       if (vis('[data-screen="av-resultat"]')) return 'resultat';
-      if (vis('[data-key="av-choix"]')) return 'variante';
+      if (vis('[data-screen="av-choix"]')) return 'variante'; // l'écran du choix de la variante (`choix=1`)
       if (a.ecran === 'duel') return window.__lqv?.controller?.view?.awaitingMe ? 'duel' : 'attente';
       if (vis('[data-key="av-duel-go"]')) return 'fenetre-de-duel';
       if (a.cine) return 'cine';
@@ -136,11 +138,12 @@ try {
       await p.waitForFunction(() => !document.querySelector('[data-key="av-prepa"]'));
       check(await p.$('.ville-fade') !== null, 'écran noir à la suite du récit');
     } else if (vu === 'resultat') await p.click('[data-key="av-retour"]');
-    else if (vu === 'variante') await p.click('[data-key="av-choix"] button');
+    else if (vu === 'variante') await p.click('[data-screen="av-choix"] .av-choix-carte button');
     else if (vu === 'fenetre-de-duel') throw new Error('une fenêtre de duel en Récit guidé');
     else if (vu === 'duel') {
       await av(() => window.__lqvAventure.qaTerminer('victoire'));
-      await p.waitForSelector('[data-screen="av-resultat"]');
+      // avec `choix=1` (réglages par défaut d'un joueur), l'écran du choix de la variante peut venir avant le résultat
+      await p.waitForSelector('[data-screen="av-resultat"], [data-screen="av-choix"]');
     } else if (vu === 'bannieres') {
       await p.click('.av-banniere.etat-engageable button');
       await p.waitForFunction(() => !document.querySelector('[data-key="av-bannieres"]') || !!document.querySelector('.av-modal .primary'));
