@@ -149,11 +149,14 @@ export class Seance {
     const a = geste.attendu(s);
     switch (g.k) {
       case 'commande':
-        if (geste.apresPartenaire && s.awaiting.includes('p2') && !s.pending.p2) return 'Attends que le maître de table ait verrouillé.';
+        if (geste.apresPartenaire && s.awaiting.includes('p2') && !s.pending.p2) return 'Attends que le maître de table ait engagé sa carte.';
         return ecartGeste(s, a, g.cmd as PlayerCommand);
       case 'carte': return cartesPermises(s, a).includes(defDe(s, g.id) ?? '') ? null : `Pas cette carte : ${cartesPermises(s, a).map(nomCarte).join(', ') || 'suis la consigne'}.`;
       case 'case': return casesPermises(s, a).includes(g.cle) ? null : 'Pas ici : suis la lumière.';
-      case 'posture': return (a.type === 'commit' || a.type === 'lectureStance') && a.stance === g.st ? null : `Le mode attendu : ${a.type === 'commit' || a.type === 'lectureStance' ? MODE[a.stance] : '—'}.`;
+      case 'posture': {
+        const st = a.type === 'commit' || a.type === 'lectureStance' ? a.stance : a.type === 'revise' ? a.commit?.stance ?? null : null;
+        return st === g.st ? null : `Le mode attendu : ${st ? MODE[st] : '—'}.`;
+      }
       case 'mode': return a.type === 'tactics' && (a.plans[g.slot]?.mode ?? 'keep') === g.mode ? null : `Ta Secondaire ${g.slot + 1} : ${a.type === 'tactics' ? modeNom(a.plans[g.slot]) : '—'}.`;
       case 'tech': return (a.type === 'start' || a.type === 'tactics') && a.technique?.id === g.t ? null : 'Pas de cette Technique ici.';
       // M18 (tour assisté) : « Non » à une question facultative, permis si le geste attendu ne s'en sert pas
@@ -187,7 +190,7 @@ export class Seance {
     if (libre) return { dire: txt(tour?.dire), faire: '', cibles: [], cle: `libre:${v.turn}` };
     if (!geste) return { dire: txt(tour?.gestes?.find((x) => x.phase === v.phase)?.dire) || (c.aiThinking ? 'Je réfléchis…' : 'À moi…'), faire: '', cibles: [], cle: `att:${v.turn}:${v.phase}` };
     const s = c.match.state;
-    if (geste.apresPartenaire && s.awaiting.includes('p2') && !s.pending.p2) return { dire: txt(geste.dire), faire: 'Attends que je verrouille…', cibles: [], cle: `apres:${v.turn}` };
+    if (geste.apresPartenaire && s.awaiting.includes('p2') && !s.pending.p2) return { dire: txt(geste.dire), faire: 'Attends que j’engage ma carte…', cibles: [], cle: `apres:${v.turn}` };
     const { faire, cibles } = consigne(c, s, geste.attendu(s));
     return { dire: txt(geste.dire), faire, cibles, cle: `${v.turn}:${v.phase}:${faire}` };
   }
@@ -353,7 +356,10 @@ const defDe = (s: GameState, id: string | null | undefined): string | null => (i
 
 function cartesPermises(s: GameState, a: PlayerCommand): string[] {
   if (a.type === 'commit') return [defDe(s, a.primaryId), defDe(s, a.secondaryId)].filter((x): x is string => !!x);
-  if (a.type === 'start' && a.technique && 'cardId' in a.technique) return [defDe(s, a.technique.cardId)!];
+  // la révision (D1) : la nouvelle Primaire (et sa Secondaire éventuelle)
+  if (a.type === 'revise') return a.commit ? [defDe(s, a.commit.primaryId), defDe(s, a.commit.secondaryId)].filter((x): x is string => !!x) : [];
+  // le début du tour : les cartes à défausser (D1), la carte du Recentrage
+  if (a.type === 'start') return [...a.discard.map((id) => defDe(s, id)!), ...(a.technique && 'cardId' in a.technique ? [defDe(s, a.technique.cardId)!] : [])];
   return [];
 }
 
@@ -366,6 +372,7 @@ function slotSecondaire(s: GameState, a: Extract<PlayerCommand, { type: 'commit'
 function casesPermises(s: GameState, a: PlayerCommand): string[] {
   switch (a.type) {
     case 'commit': return ['primary', 'hand', ...(a.secondaryId ? [slotCle(slotSecondaire(s, a))] : [])];
+    case 'revise': return a.commit ? ['primary', 'hand', ...(a.commit.secondaryId ? [slotCle(slotSecondaire(s, { type: 'commit', player: a.player, ...a.commit }))] : [])] : [];
     case 'prepare': return a.reveal.map(slotCle);
     case 'tactics': {
       const out: string[] = [];
@@ -401,6 +408,7 @@ function consigneClassique(c: Controller, s: GameState, a: PlayerCommand): { fai
       const sd = defDe(s, a.secondaryId);
       if (sd && defDe(s, dr.secondaryId) !== sd) {
         const i = slotSecondaire(s, a);
+        if (ui.selected && defDe(s, ui.selected) === sd && ui.choixCase) return { faire: `Clique la case SECONDAIRE ${i + 1} : ${nomCarte(sd)} y remplace ta réserve.`, cibles: [sel.slot(i)] };
         if (ui.selected && defDe(s, ui.selected) === sd) return { faire: `Pose ${nomCarte(sd)} en SECONDAIRE (bouton au-dessus de la carte), ou sur la case SECONDAIRE ${i + 1}.`, cibles: [sel.btn('place-secondary'), sel.slot(i)] };
         return { faire: `Choisis ${nomCarte(sd)}, puis pose-la face cachée sur la case SECONDAIRE ${i + 1}.`, cibles: [main(sd), sel.slot(i)] };
       }
@@ -434,6 +442,8 @@ function consigneClassique(c: Controller, s: GameState, a: PlayerCommand): { fai
       return { faire: 'Verrouille tes choix.', cibles: [sel.btn('act-tactics')] };
     }
     case 'start': {
+      const aDefausser = defausseRestante(c, s, a);
+      if (aDefausser) return aDefausser;
       const tq = a.technique;
       if (tq) {
         const carte = 'cardId' in tq ? defDe(s, tq.cardId) : null;
@@ -453,8 +463,23 @@ function consigneClassique(c: Controller, s: GameState, a: PlayerCommand): { fai
       if (a.targetSlot !== null && ui.dissipTarget !== a.targetSlot) return { faire: 'Clique ma Dissimulation.', cibles: [sel.opp(a.targetSlot)] };
       return { faire: 'Dissipe.', cibles: [sel.btn('act-dissip')] };
     case 'repel': return { faire: 'Clique ma Secondaire surlignée.', cibles: a.targetSlot === null ? [] : [sel.opp(a.targetSlot)] };
+    case 'revise': {
+      if (!a.commit) return { faire: 'Garde ton engagement.', cibles: [sel.btn('act-revision-keep')] };
+      const r = consigneClassique(c, s, { type: 'commit', player: a.player, ...a.commit });
+      // l'engagement révisé prêt : « Engager la révision »
+      return r.cibles.includes(sel.btn('act-commit')) ? { faire: 'Engage la révision.', cibles: [sel.btn('act-revision')] } : r;
+    }
     default: return { faire: '', cibles: [] };
   }
+}
+
+/** D1 : la défausse du début du tour, carte par carte (clic dans la main). */
+function defausseRestante(c: Controller, s: GameState, a: Extract<PlayerCommand, { type: 'start' }>): { faire: string; cibles: string[] } | null {
+  const faites = c.ui.trim.map((id) => defDe(s, id));
+  const reste = a.discard.map((id) => defDe(s, id)).filter((d) => { const i = faites.indexOf(d); if (i < 0) return true; faites.splice(i, 1); return false; });
+  if (!reste.length) return null;
+  const id = s.players.p1.hand.find((x) => s.cards[x]!.defId === reste[0] && !c.ui.trim.includes(x));
+  return { faire: `Défausse ${nomCarte(reste[0] ?? null)} : clique-la dans ta main.`, cibles: id ? [sel.main(id)] : [] };
 }
 
 /**
@@ -501,6 +526,8 @@ function consigneAssistee(c: Controller, s: GameState, a: PlayerCommand): { fair
       return { faire: '', cibles: [] };
     }
     case 'start': {
+      const aDefausser = defausseRestante(c, s, a);
+      if (aDefausser) return aDefausser;
       const tq = a.technique;
       if (tq) {
         const carte = 'cardId' in tq ? defDe(s, tq.cardId) : null;
@@ -512,6 +539,15 @@ function consigneAssistee(c: Controller, s: GameState, a: PlayerCommand): { fair
     case 'lecture': return a.use ? { faire: 'Utilise Lecture.', cibles: [sel.btn('tech-oui-Lecture')] } : non('Lecture');
     case 'lectureStance': return { faire: `Choisis ${MODE[a.stance]}.`, cibles: [sel.btn(`stance-${a.stance}`)] };
     case 'dissipate': return a.targetSlot !== null ? { faire: 'Utilise Dissipation : vise ma Dissimulation.', cibles: [sel.btn('tech-oui-Dissipation')] } : non('Dissipation');
+    case 'revise': {
+      if (!a.commit) return { faire: 'Garde ton engagement.', cibles: [sel.btn('act-revision-keep')] };
+      const dr = ui.draft;
+      const p = defDe(s, a.commit.primaryId);
+      // la nouvelle Primaire choisie : sa posture (barre de pose) ; posée avec le bon mode : « Engager la révision »
+      if (defDe(s, dr.primaryId) === p && dr.stance === a.commit.stance && !a.commit.secondaryId === !dr.secondaryId) return { faire: 'Engage la révision.', cibles: [sel.btn('act-revision')] };
+      if (defDe(s, dr.primaryId) === p) return { faire: `Choisis ${MODE[a.commit.stance]}.`, cibles: [sel.btn(`stance-${a.commit.stance}`)] };
+      return null;
+    }
     default: return null;
   }
 }

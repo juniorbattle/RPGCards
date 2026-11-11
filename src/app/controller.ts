@@ -84,6 +84,8 @@ export interface UiState {
   repondu: string[];
   /** M18 (tour assisté) : Secondaires dont le menu tactique a été ouvert d'office puis répondu ou refermé. */
   menusFaits: SlotIndex[];
+  /** Fiche de clôture (contrat 05) : deux cases pleines, la carte choisie attend que le joueur désigne la case à remplacer. */
+  choixCase: boolean;
 }
 
 const freshUi = (phaseKey: string, keep?: Partial<UiState>): UiState => ({
@@ -108,6 +110,7 @@ const freshUi = (phaseKey: string, keep?: Partial<UiState>): UiState => ({
   journalOpen: keep?.journalOpen ?? false,
   repondu: [],
   menusFaits: [],
+  choixCase: false,
 });
 
 export interface Preview {
@@ -158,6 +161,12 @@ export class Controller {
   private activationSink: ActivationSink | null = null;
   /** Fin estimée de la file des temps forts (horloge `performance.now()`) : le rival attend jusque-là. */
   private activationsUntil = 0;
+  /**
+   * Fiche de clôture (audit, M18) : un temps fort occupe le centre de l'écran (posé par la session) : le panneau de décision
+   * attend qu'il soit passé, comme le bandeau d'étape ; `panneauRetenu` : il a attendu, la file vidée le fait paraître.
+   */
+  centreOccupe: () => boolean = () => false;
+  panneauRetenu = false;
   /** Un temps fort attend le clic du joueur : la résolution et le rival attendent `activationsDrained`. */
   private seqWaiting = false;
   private aiWaiting = false;
@@ -411,6 +420,7 @@ export class Controller {
   activationsDrained(): void {
     if (this.disposed) return;
     if (this.activationsUntil === Infinity) this.activationsUntil = 0;
+    if (this.panneauRetenu) { this.panneauRetenu = false; this.renderFn(); }
     if (this.seqWaiting) {
       this.seqWaiting = false;
       const q = this.seq;
@@ -778,6 +788,7 @@ export class Controller {
       dr.slot = key === 'slot0' ? 0 : 1;
     }
     this.ui.selected = null;
+    this.ui.choixCase = false;
     if (key !== 'hand' && this.suiteEngagement()) return;
     this.renderFn();
   }
@@ -806,6 +817,7 @@ export class Controller {
     // M18 (G3) : au tour assisté, la fiche de la carte ne vient qu'au survol (ou à l'appui long), jamais au clic
     if (!this.editingCommit()) { if (!this.assiste) { this.ui.inspect = this.defIdOf(cardId); this.renderFn(); } return; }
     this.ui.selected = this.ui.selected === cardId ? null : cardId;
+    this.ui.choixCase = false;
     if (!this.assiste) this.ui.inspect = this.defIdOf(cardId);
     this.renderFn();
   }
@@ -834,6 +846,8 @@ export class Controller {
     if (!id) return;
     if (choice === 'secondary') {
       const free = this.view.me.slots.findIndex((s) => s === null);
+      // deux cases pleines (contrat 05) : jamais la case 1 d'office ; le joueur désigne la Secondaire à remplacer (REMPLACE)
+      if (free < 0) { this.ui.choixCase = true; this.renderFn(); return; }
       this.dropCard(id, free === 1 ? 'slot1' : 'slot0');
       return;
     }
@@ -901,6 +915,15 @@ export class Controller {
     }
     const cmd: PlayerCommand = { type: 'commit', player: 'p1', ...choice };
     this.apply(cmd);
+  }
+
+  /** Avenant 08, amendement 1 : le brouillon de ma révision diffère-t-il de l'engagement verrouillé (carte, mode, Secondaire, case) ? */
+  revisionModifiee(): boolean {
+    const held = this.view.phase === 'REVISION' ? this.view.revision?.held : null;
+    if (!held) return false;
+    const dr = this.ui.draft;
+    const caseHeld = held.secondaryId ? (held.replaceSlot ?? held.slot ?? null) : null;
+    return dr.primaryId !== held.primaryId || dr.stance !== held.stance || dr.secondaryId !== held.secondaryId || (dr.secondaryId ? dr.slot : null) !== caseHeld;
   }
 
   /** Avenant 08, amendement 1 : garder l’engagement verrouillé. */
@@ -1094,6 +1117,7 @@ export class Controller {
     const menu = this.ui.menuSlot;
     const cible = this.ui.targetingFor;
     this.ui.selected = null;
+    this.ui.choixCase = false;
     this.ui.menuSlot = null;
     this.ui.targetingFor = null;
     this.ui.techTargeting = null;
@@ -1277,14 +1301,40 @@ export class Controller {
     return p ? resumeApercu(p) : '';
   }
 
+  /**
+   * D3 (fiche de clôture) : le même mode si le rival amplifie : il engage ses Secondaires actives VISIBLES en soutien (Rang ;
+   * Dégâts aussi s'il est en Assaut), la combinaison la plus coûteuse pour le joueur. Information visible seulement
+   * (ADR 011) : une Secondaire masquée n'est jamais estimée, seulement signalée. Null : le rival n'a rien à amplifier.
+   */
+  apercuAmplifie(slot: SlotIndex, mode: 'keep' | 'rank' | 'damage'): string | null {
+    const v = this.view;
+    const prim = v.reveal.primaries;
+    if (!prim || v.phase !== 'TACTICS') return null;
+    const visibles = v.opp.slots.filter((x) => x?.state === 'active' && x.card && !x.masked).map((x) => ({ slot: x!.slot, def: cardDef(x!.card!.defId) }));
+    const masquee = v.opp.slots.some((x) => x?.state === 'active' && (!x.card || x.masked));
+    if (!visibles.length) return masquee ? 'sa Secondaire masquée peut changer l’issue' : null;
+    const modes: Array<'rank' | 'damage'> = prim.opp.stance === 'assault' ? ['rank', 'damage'] : ['rank'];
+    let combos: ClashUse[][] = [[]];
+    for (const a of visibles) combos = combos.flatMap((u) => modes.map((m) => [...u, { slot: a.slot, def: a.def, mode: m }]));
+    const plans: [TacticPlan | null, TacticPlan | null] = [this.ui.plans[0], this.ui.plans[1]];
+    plans[slot] = { mode };
+    let pire: Preview | null = null;
+    for (const uses of combos) {
+      const p = this.preview(plans, uses);
+      if (p && (!pire || p.taken - p.dealt > pire.taken - pire.dealt)) pire = p;
+    }
+    return pire ? `${resumeApercu(pire)}${masquee ? ' (sans sa Secondaire masquée)' : ''}` : null;
+  }
+
   canUseTech(t: TechniqueId): boolean {
     const me = this.view.me;
     return me.techniques.includes(t) && me.techniqueUsed === null && me.insight >= TECHNIQUES[t].cost;
   }
 
   // ------------------------------------------------------------------------
-  /** Prévision PROVISOIRE (§13.3) : hypothèse « l’adversaire conserve tout » — aucune info cachée. */
-  preview(plans: readonly [TacticPlan | null, TacticPlan | null] = this.ui.plans): Preview | null {
+  /** Prévision PROVISOIRE (§13.3) : hypothèse « l’adversaire conserve tout » (`oppUses` : ses soutiens VISIBLES supposés,
+   *  aperçu « s'il amplifie », D3) — aucune info cachée. */
+  preview(plans: readonly [TacticPlan | null, TacticPlan | null] = this.ui.plans, oppUses: ClashUse[] = []): Preview | null {
     const v = this.view;
     const prim = v.reveal.primaries;
     if (!prim || v.phase !== 'TACTICS') return null;
@@ -1301,7 +1351,7 @@ export class Controller {
     const oppActive = v.opp.slots.filter((s) => s?.state === 'active' && s.card && !s.masked).map((s) => ({ slot: s!.slot, def: cardDef(s!.card!.defId) }));
     const out = computeClash({
       p1: { primary: myPrim, stance: prim.me.stance, active: myActive, uses },
-      p2: { primary: oppPrim, stance: prim.opp.stance, active: oppActive, uses: [] },
+      p2: { primary: oppPrim, stance: prim.opp.stance, active: oppActive, uses: oppUses },
     });
     const fmt = (n: number) => (Number.isFinite(n) ? String(n) : '∞');
     let outcome = '';

@@ -8,6 +8,9 @@
 // (2) Tour classique, même graine : les gestes par tour d'avant M18 (comparaison) et les captures « avant ».
 // (3) Le réglage : Options du jeu standard et menu de l'aventure.
 // (4) Planche avant / après de chaque étape.
+// (5) Fiche de clôture : la révision au tour assisté (scénario `signature-annonce`, le joueur engage avant la Signature du
+//     rival) : le panneau nomme la Signature, dit comment modifier, « Engager la révision » passe en action principale ;
+//     puis un duel au tour assisté avec les temps forts tenus au clic (`tenir=1`) : aucun ne passe sur le panneau de décision.
 // Usage : npm run build && [LQV_VP=1920x1080] [LQV_MODES=souris,clavier,manette] [LQV_REDUIT=1] [LQV_TOURS=4] node tools/m18-tour.mjs [dossier] [rapport.json]
 import { execSync } from 'node:child_process';
 import { mkdirSync, writeFileSync as ecrireBrut } from 'node:fs';
@@ -28,7 +31,7 @@ const VP = (process.env.LQV_VP ?? '1280x720').split('x').map(Number);
 const REDUIT = process.env.LQV_REDUIT === '1';
 const MODES = (process.env.LQV_MODES ?? 'souris,clavier,manette').split(',');
 const TOURS = Number(process.env.LQV_TOURS) || 4;
-const SUFFIXE = `${VP[0]}${REDUIT ? '-reduit' : ''}`;
+const SUFFIXE = `${VP[0]}${REDUIT ? "-reduit" : ""}${process.env.LQV_SYSTEME_REDUIT === "1" ? "-systeme-reduit" : ""}`;
 const DIR = process.argv[2] ?? `screenshots/qa/m18/${SUFFIXE}`;
 const OUT = process.argv[3] ?? `artifacts/qa/m18/tour-${SUFFIXE}.json`;
 const head = execSync('git rev-parse --short HEAD').toString().trim();
@@ -46,7 +49,8 @@ const planche = {};
 const ETAPES = [['start', 'Début : Technique'], ['prepare', 'Préparation'], ['commit', 'Engagement : carte choisie'], ['pret', 'Engagement : prêt'], ['tactics', 'Choix tactiques'], ['resolu', 'Après le Clash'], ['annonce', 'Bandeau d’étape']];
 
 async function contexte(manette) {
-  const ctx = await browser.newContext({ viewport: { width: VP[0], height: VP[1] }, deviceScaleFactor: 1 });
+  // §6 bis : `LQV_SYSTEME_REDUIT=1` émule le mouvement réduit du système (le jeu l'ignore : son réglage propre, désactivé)
+  const ctx = await browser.newContext({ viewport: { width: VP[0], height: VP[1] }, deviceScaleFactor: 1, reducedMotion: process.env.LQV_SYSTEME_REDUIT === '1' ? 'reduce' : 'no-preference' });
   if (manette) await ctx.addInitScript(() => {
     const pad = { id: 'Manette simulée (STANDARD GAMEPAD)', index: 0, connected: true, mapping: 'standard', timestamp: 0, axes: [0, 0, 0, 0], vibrationActuator: null, hapticActuators: [], buttons: Array.from({ length: 17 }, () => ({ pressed: false, touched: false, value: 0 })) };
     Object.defineProperty(Navigator.prototype, 'getGamepads', { configurable: true, value: () => [pad, null, null, null] });
@@ -202,13 +206,14 @@ const GESTE_CLASSIQUE = (tour) => {
  * Joue `TOURS` tours. Rend les gestes par tour et les contrôles « rien n'attend » ; capture la première occurrence de
  * chaque étape (`captures` : clé de la planche).
  */
-async function jouerDuel(p, j, tour, captures) {
+async function jouerDuel(p, j, tour, captures, tenir = false) {
   const av = (fn, arg) => p.evaluate(fn, arg);
   const gestesParTour = {};
   const attentes = []; // durée (ms) entre la fin du Clash présenté et le tour suivant, sans geste
   const fautes = [];
   let consignesMax = 0;
   let tips = 0;
+  let tenus = 0;
   let resoluDepuis = 0;
   let resoluTour = 0;
   let precedent = '';
@@ -230,6 +235,24 @@ async function jouerDuel(p, j, tour, captures) {
     if (resoluDepuis && s.turn > resoluTour) { attentes.push(Date.now() - resoluDepuis); resoluDepuis = 0; }
     { const d = `${s.turn}:${s.phase}:${s.me}:${s.seq}`; if (process.env.LQV_M18_DEBUG && d !== precedentDebug) { precedentDebug = d; console.log(`  ${d} ${Date.now() - t0}`); } }
     if (s.fin || s.turn > TOURS) break;
+    // `tenir=1` : un temps fort qui concerne le joueur attend son clic ; il ne doit jamais couvrir le panneau de décision
+    if (tenir) {
+      const t = await av(() => {
+        const a = document.querySelector('#activations .act.tenu');
+        if (!a) return null;
+        const r = a.getBoundingClientRect();
+        const d = [...document.querySelectorAll('#app .decision')].find((e) => e.getClientRects().length);
+        const q = d?.getBoundingClientRect();
+        return { chevauche: !!q && r.left < q.right && q.left < r.right && r.top < q.bottom && q.top < r.bottom, cle: a.dataset.key ?? '' };
+      });
+      if (t) {
+        if (t.chevauche) fautes.push(`tour ${s.turn} ${s.phase} : temps fort tenu (${t.cle}) par-dessus le panneau de décision`);
+        tenus++;
+        await j.agir('#activations .act.tenu');
+        await p.waitForTimeout(250);
+        continue;
+      }
+    }
     const cle = `${s.turn}:${s.phase}:${s.me}:${s.seq}`;
     // bandeau d'étape : capturé à sa première apparition
     if (tour === 'assiste' && s.annonce && s.turn >= 2) await capturer('annonce');
@@ -267,7 +290,7 @@ async function jouerDuel(p, j, tour, captures) {
     gestesParTour[s.turn] = (gestesParTour[s.turn] ?? 0) + 1;
     await p.waitForTimeout(170);
   }
-  return { gestesParTour, attentes, fautes: [...new Set(fautes)], consignesMax, tips, s: Math.round((Date.now() - t0) / 100) / 10, final: await av(ETAT) };
+  return { gestesParTour, attentes, fautes: [...new Set(fautes)], consignesMax, tips, tenus, s: Math.round((Date.now() - t0) / 100) / 10, final: await av(ETAT) };
 }
 
 const moyenne = (o) => { const v = Object.values(o); return v.length ? Math.round((v.reduce((a, b) => a + b, 0) / v.length) * 10) / 10 : 0; };
@@ -349,6 +372,43 @@ try {
     check(/classique/.test(l1 ?? '') && /assisté/.test(l2 ?? '') && stocke === 'assiste', `menu de l’aventure : « ${l1?.trim()} » → « ${l2?.trim()} » (mémorisé : ${stocke})`);
     await ctx.close();
   }
+  // (5) la révision au tour assisté : le joueur engage avant la Signature du rival (le rival attend 3 s), puis révise
+  {
+    const { ctx, p } = await contexte(false);
+    const av = (fn, arg) => p.evaluate(fn, arg);
+    await p.goto(`${server.base}/?qa=1&tour=assiste&scenario=signature-annonce&aiDelay=3000${REDUIT ? '&reducedMotion=1' : ''}`, { timeout: 90000 });
+    await p.waitForFunction(() => window.__lqv?.controller?.view.phase === 'COMMIT', null, { timeout: 60000 });
+    const id = await av(() => { const s = window.__lqv.controller.match.state; return s.players.p1.hand.find((x) => s.cards[x].defId === 'Cendre-4-basic'); });
+    await p.click(`[data-key="hand-${id}"]`);
+    await p.click('[data-key="place-assault"]');
+    await p.click('[data-key="act-commit"]');
+    await p.waitForFunction(() => window.__lqv.controller.view.phase === 'REVISION' && !!document.querySelector('[data-key="ask-revision"]'), null, { timeout: 20000 }).catch(() => {});
+    const avant = await av(() => ({ texte: document.querySelector('[data-key="ask-revision"]')?.textContent ?? '', primaire: [...document.querySelectorAll('[data-primary-action]')].filter((e) => e.getClientRects().length && !e.disabled).map((e) => e.dataset.key) }));
+    writeFileSync(`${DIR}/revision-avant.png`, await p.screenshot());
+    check(/Couronne de Ronce/.test(avant.texte) && /change-le une seule fois/.test(avant.texte) && avant.primaire.includes('act-revision-keep'), `révision : le panneau nomme la Signature et dit comment modifier ; « Garder » en action principale (${avant.primaire.join(', ')})`);
+    await p.click('[data-key="stance-guard"]');
+    await p.waitForTimeout(250);
+    const apres = await av(() => ({ pret: !!document.querySelector('[data-key="ask-revision-prete"]'), primaire: [...document.querySelectorAll('[data-primary-action]')].filter((e) => e.getClientRects().length && !e.disabled).map((e) => e.dataset.key), focus: document.activeElement?.dataset?.key ?? '' }));
+    writeFileSync(`${DIR}/revision-apres.png`, await p.screenshot());
+    check(apres.pret && apres.primaire.includes('act-revision') && !apres.primaire.includes('act-revision-keep') && apres.focus === 'act-revision', `révision : le brouillon changé, « Engager la révision » devient l’action principale et prend le focus (${apres.primaire.join(', ')} ; focus ${apres.focus})`);
+    await p.click('[data-key="act-revision"]');
+    await p.waitForFunction(() => window.__lqv.controller.view.phase !== 'REVISION', null, { timeout: 10000 }).catch(() => {});
+    const rev = await av(() => window.__lqv.controller.match.commands.filter((c) => c.type === 'revise').pop() ?? null);
+    check(!!rev?.commit && rev.commit.stance === 'guard', `révision : engagée (${rev?.commit ? `nouvel engagement en ${rev.commit.stance}` : 'aucune'})`);
+    await ctx.close();
+  }
+  // (5 bis) un duel au tour assisté avec les temps forts tenus au clic (`tenir=1`), à la souris
+  {
+    const { ctx, p } = await contexte(false);
+    const j = joueur(p, 'souris');
+    await p.goto(`${server.base}/?qa=1&tour=assiste&tenir=1&${DUEL}`, { timeout: 90000 });
+    await p.waitForFunction(() => !!window.__lqv?.controller, null, { timeout: 60000 });
+    const r = await jouerDuel(p, j, 'assiste', false, true);
+    resultats.tenir = r;
+    check(r.final?.turn > TOURS || r.final?.fin, `tenir=1 : ${TOURS} tours joués au tour assisté (${r.s} s), ${r.tenus} temps fort(s) tenu(s) au clic`);
+    check(r.fautes.length === 0, `tenir=1 : aucun temps fort sur le panneau de décision, aucun bouton n’attend sans choix${r.fautes.length ? ` (${r.fautes.slice(0, 4).join(' ; ')})` : ''}`);
+    await ctx.close();
+  }
   // (4) planche avant / après
   {
     const { ctx, p } = await contexte(false);
@@ -364,7 +424,7 @@ try {
   }
   writeFileSync(`${DIR}/README.md`, `Planche M18 (le tour fluide) : ${head}, ${VP.join('×')}${REDUIT ? ', mouvement réduit' : ''}. Avant : tour classique ; après : tour assisté.\n`);
   mkdirSync(dirname(OUT), { recursive: true });
-  const resume = Object.fromEntries(Object.entries(resultats).map(([m, r]) => [m, { gestesParTour: r.gestesParTour, moyenne: moyenne(r.gestesParTour), attentes: r.attentes, fautes: r.fautes, consignesMax: r.consignesMax, tips: r.tips, annonces: r.final?.assist?.annonces ?? [], s: r.s }]));
+  const resume = Object.fromEntries(Object.entries(resultats).map(([m, r]) => [m, { gestesParTour: r.gestesParTour, moyenne: moyenne(r.gestesParTour), attentes: r.attentes, fautes: r.fautes, consignesMax: r.consignesMax, tips: r.tips, tenus: r.tenus, annonces: r.final?.assist?.annonces ?? [], s: r.s }]));
   writeFileSync(OUT, JSON.stringify({ head, viewport: VP, reduit: REDUIT, tours: TOURS, renderer, modes: MODES, checks, issues, resultats: resume }, null, 2));
 } finally {
   await browser.close();

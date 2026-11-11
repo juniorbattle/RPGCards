@@ -48,14 +48,16 @@ export interface Lecon {
   groupe: GroupeLecon;
   config: () => GameConfig;
   build: (cfg: GameConfig) => GameState;
-  partenaire: Record<string, (s: GameState) => PlayerCommand>;
+  /** Commandes du partenaire par `tour:phase` ; `null` : il attend (rejoué au geste suivant du joueur). */
+  partenaire: Record<string, (s: GameState) => PlayerCommand | null>;
   tours: TourLecon[];
   /** Conseils du duel (`src/shell/tips.ts`) qu'une leçon faite éteint (B5). */
   couvre: readonly string[];
 }
 
-export const LECONS_BASE = ['clash', 'posture', 'secondaires', 'tactique', 'interferer', 'insight'] as const;
-export const LECONS_ELEMENTS = ['familles', 'effets', 'regard', 'tech-Sondage', 'tech-Recentrage', 'tech-Lecture', 'tech-Ancrage', 'tech-Rupture', 'tech-Dissipation', 'signature', 'prolongation'] as const;
+// fiche de clôture (D1, règle B6) : « Repousser et remplacer » rejoint les bases, « Réviser face à une Signature » les éléments
+export const LECONS_BASE = ['clash', 'posture', 'secondaires', 'tactique', 'interferer', 'insight', 'repousser'] as const;
+export const LECONS_ELEMENTS = ['familles', 'effets', 'regard', 'tech-Sondage', 'tech-Recentrage', 'tech-Lecture', 'tech-Ancrage', 'tech-Rupture', 'tech-Dissipation', 'signature', 'revision', 'prolongation'] as const;
 export type LeconId = (typeof LECONS_BASE)[number] | (typeof LECONS_ELEMENTS)[number];
 export const LECON_IDS: readonly LeconId[] = [...LECONS_BASE, ...LECONS_ELEMENTS];
 export const estLeconId = (x: string): x is LeconId => (LECON_IDS as readonly string[]).includes(x);
@@ -169,7 +171,7 @@ const secondaires: Lecon = {
       { phase: 'COMMIT', attendu: engager('p1', N(4), 'assault'),
         dire: t('Pose ton Neutre IV en ASSAUT. J’attaque en Rang II.', 'Neutre IV en ASSAUT.') },
       { phase: 'TACTICS', attendu: plans('p1', [null, null]),
-        dire: t('Une Secondaire active peut soutenir ta Primaire une fois les Primaires révélées : ce sera la prochaine leçon. Pour l’instant, verrouille sans rien choisir : elle reste active.', 'Verrouille sans rien choisir.') }],
+        dire: t('Une Secondaire active peut soutenir ta Primaire une fois les Primaires révélées : ce sera la prochaine leçon. Pour l’instant, choisis « Conserver » : elle ne joue pas ce tour et reste active.', 'Conserver : elle reste active.') }],
       apres: t('Rang IV contre II : 12 dégâts. Ta Secondaire est restée ACTIVE pour la suite. Retiens les trois états : EN CHARGEMENT, RÉSERVE CACHÉE, ACTIVE.', 'Trois états : chargement, réserve cachée, active.'),
       issue: (r) => r.winner === 'p1' && r.damage.p2 === 12 },
     { tour: 3, libre: true, dire: LIBRE },
@@ -223,16 +225,45 @@ const insight: Lecon = {
   id: 'insight', groupe: 'base', titre: 'Insight et Technique', resume: 'La réserve de 0 à 2, une Technique par tour.',
   couvre: ['insight', 'start'],
   config: () => config({ techniques: ['Sondage'] }),
-  build: (cfg) => poser(cfg, { hand: [N(4), N(1), N(2), N(3)], insight: 0 }, { hand: [N(3), N(2), N(1), N(4)] }, 1),
+  // fiche de clôture (D1) : le début du tour commence par la défausse (main de cinq cartes : une carte revenue en main)
+  build: (cfg) => poser(cfg, { hand: [N(4), N(1), N(2), N(3), N(1)], insight: 0 }, { hand: [N(3), N(2), N(1), N(4)] }, 1, 'START'),
   partenaire: { '1:COMMIT': engager('p2', N(3), 'assault') },
   tours: [
-    { tour: 1, gestes: [{ phase: 'COMMIT', attendu: engager('p1', N(4), 'guard'),
+    { tour: 1, gestes: [{ phase: 'START', attendu: (s) => ({ type: 'start', player: 'p1', discard: [enMain(s, 'p1', N(1))], technique: null }),
+      dire: t('Début du tour : on joue avec quatre cartes en main. Une carte est revenue dans la tienne, tu en as cinq : défausse un de tes deux Neutres I.', 'Cinq cartes : défausse un Neutre I.') },
+    { phase: 'COMMIT', attendu: engager('p1', N(4), 'guard'),
       dire: t('L’Insight, en haut de ton cadre, paie tes Techniques. Tu n’en as aucun. J’attaque en Rang III : pose ton Neutre IV en GARDE.', 'Neutre IV en GARDE (j’attaque en Rang III).') }],
       apres: t('Ta Garde gagne contre un Assaut : +1 Insight. La réserve va de 0 à 2 ; on en gagne surtout ainsi, ou par une Interférence réussie.', 'Garde gagnante : +1 Insight (réserve 0 à 2).'),
       issue: (r) => r.guardWin && r.winner === 'p1' },
     { tour: 2, libre: true, dire: LIBRE, gestes: [{ phase: 'START', attendu: () => ({ type: 'start', player: 'p1', discard: [], technique: { id: 'Sondage' } }),
-      dire: t('Début du tour : tu as 1 Insight. Utilise Sondage (coût 1) : tu verras en secret une carte de ma main. Une seule Technique par tour.', 'Sondage (1 Insight), puis Valider.') }],
+      dire: t('Début du tour : tu as 1 Insight. Utilise Sondage (coût 1) : tu verras en secret une carte de ma main. Une seule Technique par tour.', 'Utilise Sondage (1 Insight).') }],
       apres: t('Sondage t’a montré une carte de ma main, à toi seul. L’autre Technique de la rue, Recentrage, change une carte de ta main. Leurs fenêtres s’affichent dans tes commandes.', 'Une Technique par tour, payée en Insight.') },
+  ],
+};
+
+// Fiche de clôture (D1) : le Repoussement après une Garde victorieuse, puis le remplacement d'une Secondaire (deux cases
+// pleines). Cartes grises, tour libre à la fin (A2).
+const repousser: Lecon = {
+  id: 'repousser', groupe: 'base', titre: 'Repousser et remplacer', resume: 'Garde gagnante : une réserve adverse retourne en main ; deux cases pleines : une Secondaire en remplace une.',
+  couvre: ['el-repousser'],
+  config: () => config(),
+  build: (cfg) => poser(cfg, { hand: [N(4), N(3), N(1), N(2)], slots: [{ def: N(2) }, { def: N(3) }] }, { hand: [N(2), N(1), N(3), N(4)], slots: [{ def: N(1) }, null] }, 3),
+  partenaire: { '3:COMMIT': engager('p2', N(2), 'assault'), '4:COMMIT': engager('p2', N(1), 'guard') },
+  tours: [
+    { tour: 3, gestes: [
+      { phase: 'COMMIT', attendu: engager('p1', N(4), 'guard'),
+        dire: t('J’attaque en Rang II. Pose ton Neutre IV en GARDE : une Garde qui gagne contre un Assaut a droit à un Repoussement.', 'Neutre IV en GARDE (j’attaque en Rang II).') },
+      { phase: 'REPEL', attendu: () => ({ type: 'repel', player: 'p1', targetSlot: 0 }),
+        dire: t('Ta Garde a gagné. Repousse ma réserve cachée : clique-la, elle retourne dans ma main, et ce que j’avais préparé est perdu. On peut aussi y renoncer.', 'Repousse ma réserve cachée.') }],
+      apres: t('Ma réserve est revenue dans ma main : je devrai la rejouer et la recharger. Seule une Garde victorieuse repousse, une fois par Clash.', 'Garde gagnante : une réserve adverse repoussée.'),
+      issue: (r) => r.guardWin && r.winner === 'p1' },
+    { tour: 4, gestes: [
+      { phase: 'PREPARE', attendu: reveler('p1', []),
+        dire: t('Tes deux réserves sont prêtes ; garde-les cachées pour l’instant.', 'Garde tes réserves cachées.') },
+      { phase: 'COMMIT', attendu: engager('p1', N(3), 'assault', N(1), 1),
+        dire: t('Tes deux cases sont pleines : une nouvelle Secondaire en remplace une, et la carte remplacée part à la défausse. Pose ton Neutre III en ASSAUT, puis ton Neutre I en SECONDAIRE : choisis la case 2.', 'Neutre III en ASSAUT, Neutre I sur la case 2.') }],
+      apres: t('Ton Neutre I a pris la case 2 ; l’ancienne réserve est à la défausse. La nouvelle se charge ce tour : tu pourras la révéler au prochain.', 'Remplacée : l’ancienne part à la défausse.') },
+    { tour: 5, libre: true, dire: LIBRE },
   ],
 };
 
@@ -258,7 +289,7 @@ const familles: Lecon = {
 
 const effets: Lecon = {
   id: 'effets', groupe: 'element', titre: 'Les effets des variantes', resume: 'RÉVÉLER, ARMÉ, la pastille, les temps forts.',
-  couvre: ['reveler', 'arme', 'pastille', 'temps'],
+  couvre: ['reveler', 'arme', 'pastille', 'temps', 'el-effet'],
   config: () => config({ deck: basiques(['Ronce-2-seve', 'Astre-1-boussole', 'Cendre-2-braise']) }, { deck: basiques() }),
   build: (cfg) => poser(cfg, { hand: ['Cendre-2-braise', 'Voile-3', 'Ronce-4', 'Astre-2'], slots: [{ def: 'Ronce-2-seve' }, { def: 'Astre-1-boussole', active: true }], hp: 30 }, { hand: ['Voile-1', 'Cendre-3', 'Ronce-1', 'Astre-4'] }, 3, 'PREPARE'),
   partenaire: { '3:COMMIT': engager('p2', 'Voile-1', 'assault') },
@@ -277,7 +308,7 @@ const effets: Lecon = {
 
 const regard: Lecon = {
   id: 'regard', groupe: 'element', titre: 'Regard privé et camouflage', resume: 'Ce que tu vois, ce que l’adversaire sait.',
-  couvre: ['prive'],
+  couvre: ['prive', 'el-regard'],
   config: () => config({ deck: basiques(['Voile-1-eclaireur']) }, { deck: basiques(['Voile-3-dissimulation']) }),
   build: (cfg) => poser(cfg, { hand: ['Ronce-4', 'Cendre-2', 'Astre-3', 'Voile-2'], slots: [{ def: 'Voile-1-eclaireur' }, null] }, { hand: ['Cendre-3', 'Astre-1', 'Ronce-1', 'Voile-4'], slots: [{ def: 'Voile-3-dissimulation' }, { def: 'Cendre-2' }] }, 3, 'PREPARE'),
   partenaire: { '3:PREPARE': reveler('p2', [0, 1]), '3:COMMIT': engager('p2', 'Cendre-3', 'assault'), '3:TACTICS': plans('p2', [{ mode: 'keep' }, { mode: 'rank' }]) },
@@ -288,7 +319,7 @@ const regard: Lecon = {
       { phase: 'COMMIT', attendu: engager('p1', 'Ronce-4', 'guard'),
         dire: t('J’ai révélé Dissimulation : mon autre Secondaire est masquée, tu vois sa famille, pas la carte. Pose Ronce IV en GARDE.', 'Ronce IV en GARDE.') },
       { phase: 'TACTICS', attendu: plans('p1', [null, null]),
-        dire: t('Verrouille : garde Éclaireur active.', 'Verrouille.') }],
+        dire: t('Choisis « Conserver » : Éclaireur reste active.', 'Conserver.') }],
       apres: t('Ma Secondaire masquée a soutenu mon Rang : tu as vu qu’elle jouait, pas sa valeur ni la carte. Le journal du duel garde tes regards privés ; la Technique Dissipation lève un camouflage.', 'Soutien masqué : vu, jamais identifié.'),
       issue: (r) => r.winner === 'p2' },
   ],
@@ -296,7 +327,7 @@ const regard: Lecon = {
 
 const techStart = (id: 'Sondage' | 'Recentrage'): Lecon => ({
   id: `tech-${id}`, groupe: 'element', titre: id, resume: id === 'Sondage' ? 'Voir en secret une carte de la main adverse.' : 'Remplacer une carte de ta main.',
-  couvre: ['start'],
+  couvre: ['start', `el-tech-${id}`],
   config: () => config({ techniques: [id], insight: 1 }),
   build: (cfg) => poser(cfg, { hand: [N(4), N(3), N(2), N(1)], insight: 1 }, { hand: [N(3), N(1), N(4), N(2)] }, 1, 'START'),
   partenaire: { '1:COMMIT': engager('p2', N(3), 'assault') },
@@ -304,8 +335,8 @@ const techStart = (id: 'Sondage' | 'Recentrage'): Lecon => ({
     { tour: 1, libre: true, dire: LIBRE, gestes: [{ phase: 'START',
       attendu: (s) => ({ type: 'start', player: 'p1', discard: [], technique: id === 'Sondage' ? { id } : { id, cardId: enMain(s, 'p1', N(1)) } }),
       dire: id === 'Sondage'
-        ? t('Sondage se joue au début du tour, pour 1 Insight : tu vois en secret une carte au hasard de ma main. Choisis Sondage, puis Valider.', 'Sondage, puis Valider.')
-        : t('Recentrage se joue au début du tour, pour 1 Insight : une carte de ta main va sous ta pioche, et tu en pioches une autre. Choisis Recentrage, puis ton Neutre I, puis Valider.', 'Recentrage, Neutre I, puis Valider.') }],
+        ? t('Sondage se joue au début du tour, pour 1 Insight : tu vois en secret une carte au hasard de ma main. Utilise Sondage.', 'Utilise Sondage.')
+        : t('Recentrage se joue au début du tour, pour 1 Insight : une carte de ta main va sous ta pioche, et tu en pioches une autre. Utilise Recentrage sur ton Neutre I.', 'Recentrage : ton Neutre I.') }],
       apres: id === 'Sondage'
         ? t('Tu as vu une carte de ma main ; moi, je sais seulement que tu as regardé. Une Technique par tour, payée à la déclaration.', 'Une carte vue, en secret.')
         : t('Ton Neutre I est sous ta pioche, une autre carte l’a remplacé. Une Technique par tour, payée à la déclaration.', 'Une carte changée.') },
@@ -314,18 +345,18 @@ const techStart = (id: 'Sondage' | 'Recentrage'): Lecon => ({
 
 const lecture: Lecon = {
   id: 'tech-Lecture', groupe: 'element', titre: 'Lecture', resume: 'Voir le mode adverse, puis changer le tien.',
-  couvre: [],
+  couvre: ['el-tech-Lecture'],
   config: () => config({ techniques: ['Lecture'], insight: 2 }),
   build: (cfg) => poser(cfg, { hand: [N(4), N(3), N(2), N(1)], insight: 2 }, { hand: [N(4), N(2), N(3), N(1)] }, 1),
   partenaire: { '1:COMMIT': engager('p2', N(4), 'assault') },
   tours: [
     { tour: 1, gestes: [
       { phase: 'COMMIT', attendu: engager('p1', N(4), 'assault'),
-        dire: t('Lecture joue juste après l’engagement, pour 2 Insight. Pose d’abord ton Neutre IV en ASSAUT et verrouille.', 'Neutre IV en ASSAUT.') },
+        dire: t('Lecture joue juste après l’engagement, pour 2 Insight. Engage d’abord ton Neutre IV en ASSAUT.', 'Neutre IV en ASSAUT.') },
       { phase: 'LECTURE', attendu: () => ({ type: 'lecture', player: 'p1', use: true }),
         dire: t('Utilise Lecture : tu vois le mode de ma Primaire avant la révélation.', 'Utilise Lecture.') },
       { phase: 'LECTURE_CHANGE', attendu: () => ({ type: 'lectureStance', player: 'p1', stance: 'guard' }),
-        dire: t('Je suis en ASSAUT, avec un Rang égal au tien. En GARDE, tu gagnerais l’égalité : change ton mode, puis valide.', 'Passe en GARDE, puis valide.') }],
+        dire: t('Je suis en ASSAUT, avec un Rang égal au tien. En GARDE, tu gagnerais l’égalité : passe en GARDE.', 'Passe en GARDE.') }],
       apres: t('Ta Garde gagne l’égalité : 0 dégât, +1 Insight. Sans Lecture, nos deux Assauts se touchaient en même temps.', 'Lecture : Garde gagnante à l’égalité.'),
       issue: (r) => r.guardWin && r.winner === 'p1' },
   ],
@@ -333,7 +364,7 @@ const lecture: Lecon = {
 
 const ancrage: Lecon = {
   id: 'tech-Ancrage', groupe: 'element', titre: 'Ancrage', resume: 'Une Secondaire annulée reste active sur sa case.',
-  couvre: [],
+  couvre: ['el-tech-Ancrage'],
   config: () => config({ techniques: ['Ancrage'], insight: 1 }),
   build: (cfg) => poser(cfg, { hand: [N(3), N(4), N(1), N(2)], slots: [{ def: N(2), active: true }, null], insight: 1 }, { hand: [N(2), N(3), N(1), N(4)], slots: [{ def: N(3), active: true }, null] }, 3),
   partenaire: { '3:COMMIT': engager('p2', N(2), 'assault'), '3:TACTICS': plans('p2', [{ mode: 'interfere', target: 0 }, null]) },
@@ -350,7 +381,7 @@ const ancrage: Lecon = {
 
 const rupture: Lecon = {
   id: 'tech-Rupture', groupe: 'element', titre: 'Rupture', resume: 'Garde gagnante : une Secondaire active adverse retourne en main.',
-  couvre: [],
+  couvre: ['el-tech-Rupture'],
   config: () => config({ deck: basiques(), techniques: ['Rupture'], insight: 2 }, { deck: basiques() }),
   build: (cfg) => poser(cfg, { hand: ['Ronce-4', 'Cendre-1', 'Astre-2', 'Voile-2'], insight: 2 }, { hand: ['Cendre-2', 'Ronce-1', 'Voile-1', 'Astre-1'], slots: [{ def: 'Astre-3', active: true }, null] }, 3),
   partenaire: { '3:COMMIT': engager('p2', 'Cendre-2', 'assault'), '3:TACTICS': plans('p2', [{ mode: 'keep' }, null]) },
@@ -369,20 +400,20 @@ const rupture: Lecon = {
 
 const dissipation: Lecon = {
   id: 'tech-Dissipation', groupe: 'element', titre: 'Dissipation', resume: 'Lever un camouflage avant l’engagement.',
-  couvre: [],
+  couvre: ['el-tech-Dissipation'],
   config: () => config({ deck: basiques(), techniques: ['Dissipation'] }, { deck: basiques(['Voile-3-dissimulation', 'Voile-1-eclaireur']) }),
   build: (cfg) => poser(cfg, { hand: ['Cendre-4', 'Ronce-2', 'Astre-1', 'Voile-2'] }, { hand: ['Ronce-3', 'Cendre-2', 'Astre-2', 'Ronce-1'], slots: [{ def: 'Voile-3-dissimulation' }, { def: 'Voile-1-eclaireur' }] }, 5, 'PREPARE'),
   partenaire: { '5:PREPARE': reveler('p2', [0, 1]), '5:COMMIT': engager('p2', 'Ronce-3', 'guard'), '5:TACTICS': plans('p2', [{ mode: 'keep' }, { mode: 'keep' }]) },
   tours: [
     { tour: 5, libre: true, dire: LIBRE, gestes: [{ phase: 'DISSIPATION', attendu: () => ({ type: 'dissipate', player: 'p1', targetSlot: 0 }),
-      dire: t('J’ai révélé Dissimulation : mon autre Secondaire est masquée. Dissipation (1 Insight) neutralise ce camouflage jusqu’à la fin du tour. Vise ma Dissimulation, puis Dissiper.', 'Vise ma Dissimulation, puis Dissiper.') }],
+      dire: t('J’ai révélé Dissimulation : mon autre Secondaire est masquée. Dissipation (1 Insight) neutralise ce camouflage jusqu’à la fin du tour. Utilise Dissipation sur ma Dissimulation.', 'Dissipation sur ma Dissimulation.') }],
       apres: t('Le camouflage est levé : tu as vu ma carte masquée. Ce que j’avais déjà vu, je l’ai vu ; Dissipation n’efface rien.', 'Camouflage levé.') },
   ],
 };
 
 const signature: Lecon = {
-  id: 'signature', groupe: 'element', titre: 'La Signature', resume: 'Rang ∞, annoncée au verrouillage ; l’adversaire peut réviser.',
-  couvre: [],
+  id: 'signature', groupe: 'element', titre: 'La Signature', resume: 'Rang ∞, annoncée dès son engagement ; l’adversaire peut réviser.',
+  couvre: ['el-signature'],
   config: () => config({ deck: basiques(), signature: 'Cendre' }, { deck: basiques() }),
   build: (cfg) => poser(cfg, { hand: ['sig-Cendre', 'Cendre-2', 'Voile-1', 'Astre-2'] }, { hand: ['Ronce-4', 'Ronce-1', 'Astre-1', 'Voile-2'] }, 1),
   partenaire: {
@@ -391,9 +422,28 @@ const signature: Lecon = {
   },
   tours: [
     { tour: 1, gestes: [{ phase: 'COMMIT', apresPartenaire: true, attendu: engager('p1', 'sig-Cendre', 'assault'),
-      dire: t('Ta Signature a un Rang infini : elle bat toute Primaire ordinaire. Mais elle est ANNONCÉE, face visible, dès que tu la verrouilles (ton mode reste secret), et qui a déjà verrouillé peut réviser une fois. J’ai verrouillé : pose Brasier Originel en ASSAUT.', 'Brasier Originel en ASSAUT (j’ai verrouillé).') }],
+      dire: t('Ta Signature a un Rang infini : elle bat toute Primaire ordinaire. Mais elle est ANNONCÉE, face visible, dès que tu l’engages (ton mode reste secret), et qui a déjà engagé sa carte peut réviser une fois. J’ai engagé la mienne : pose Brasier Originel en ASSAUT.', 'Brasier Originel en ASSAUT (j’ai engagé).') }],
       apres: t('Voyant ta Signature, j’ai révisé : une petite Garde plutôt que mon Rang IV. Le Rang ∞ l’emporte quand même. Une Signature ne peut jamais être Secondaire.', 'J’ai révisé ; ∞ l’emporte.'),
       issue: (r) => r.winner === 'p1' },
+  ],
+};
+
+// Fiche de clôture (D1) : la révision du joueur (avenant 08, amendement 1). Le partenaire engage APRÈS le joueur.
+const revision: Lecon = {
+  id: 'revision', groupe: 'element', titre: 'Réviser face à une Signature', resume: 'Engagé avant une Signature annoncée, tu peux changer ton engagement, une seule fois.',
+  couvre: ['el-revision'],
+  config: () => config({}, { signature: 'Cendre' }),
+  build: (cfg) => poser(cfg, { hand: [N(4), N(1), N(2), N(3)] }, { hand: ['sig-Cendre', N(2), N(3), N(1)] }, 1),
+  // le partenaire attend que le joueur ait engagé sa carte (fait public), puis engage sa Signature
+  partenaire: { '1:COMMIT': (s) => (s.pending.p1 ? engager('p2', 'sig-Cendre', 'assault')(s) : null) },
+  tours: [
+    { tour: 1, gestes: [
+      { phase: 'COMMIT', attendu: engager('p1', N(4), 'assault'),
+        dire: t('Engage ton Neutre IV en ASSAUT, avant moi : j’engagerai ma carte ensuite.', 'Neutre IV en ASSAUT (avant moi).') },
+      { phase: 'REVISION', attendu: (s) => ({ type: 'revise', player: 'p1', commit: commitDe(s, 'p1', N(1), 'guard') }),
+        dire: t('J’ai engagé ma Signature, Brasier Originel : elle est annoncée, Rang infini, elle bat toute Primaire ordinaire. Comme tu as engagé ta carte avant moi, tu peux réviser, une seule fois. Ton Neutre IV serait perdu pour rien : remplace-le par ton Neutre I en GARDE, puis engage la révision.', 'Révise : Neutre I en GARDE.') }],
+      apres: t('Tu perds ce Clash, mais avec ta plus petite carte, et ta Garde a absorbé une part des dégâts ; ton Neutre IV reste en main. On ne révise qu’une fois, et seulement si l’on a engagé avant la Signature.', 'Révision : la petite carte, la grosse gardée.'),
+      issue: (r) => r.winner === 'p2' },
   ],
 };
 
@@ -416,6 +466,7 @@ export const LECONS: Readonly<Record<LeconId, Lecon>> = {
   clash, posture, secondaires, tactique, interferer, insight,
   familles, effets, regard, 'tech-Sondage': techStart('Sondage'), 'tech-Recentrage': techStart('Recentrage'), 'tech-Lecture': lecture,
   'tech-Ancrage': ancrage, 'tech-Rupture': rupture, 'tech-Dissipation': dissipation, signature, prolongation,
+  repousser, revision,
 };
 
 export const lecon = (id: LeconId): Lecon => LECONS[id];
@@ -470,6 +521,12 @@ export function ecartGeste(s: GameState, attendu: PlayerCommand, recu: PlayerCom
       const carte = (x: typeof r.technique) => (x && 'cardId' in x ? defDe(s, x.cardId) : null);
       if (carte(r.technique) !== carte(attendu.technique)) return `La carte attendue : ${nomCarte(carte(attendu.technique))}.`;
       return r.discard.length === attendu.discard.length ? null : 'Pas de défausse ici.';
+    }
+    case 'revise': {
+      const r = recu as typeof attendu;
+      if (!attendu.commit) return r.commit ? 'Garde ton engagement.' : null;
+      if (!r.commit) return 'Révise ton engagement : suis la consigne.';
+      return ecartGeste(s, { type: 'commit', player: attendu.player, ...attendu.commit }, { type: 'commit', player: r.player, ...r.commit });
     }
     case 'lecture': return (recu as typeof attendu).use === attendu.use ? null : attendu.use ? 'Utilise Lecture.' : 'Passe.';
     case 'lectureStance': return (recu as typeof attendu).stance === attendu.stance ? null : `Passe en ${attendu.stance === 'assault' ? 'ASSAUT' : 'GARDE'}.`;

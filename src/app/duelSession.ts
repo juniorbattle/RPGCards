@@ -164,6 +164,8 @@ export class DuelSession {
       onDrained: () => c.activationsDrained(),
     });
     this.acts = acts;
+    // fiche de clôture : le panneau de décision attend la fin d'un temps fort au centre (sauf en image figée, captures)
+    c.centreOccupe = () => acts.busy && !params.freeze;
     c.onActivations({ play: (list) => acts.play(list), stop: () => acts.stop() });
     c.onBeat(() => {
       if (drag?.dragging || pointerHeld) { pendingRender = true; return; }

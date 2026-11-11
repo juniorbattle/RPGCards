@@ -30,10 +30,10 @@ export function renderOptions(sh: Shell, inDuel: boolean): HTMLElement {
       ['assiste', 'Assisté', p.tour === 'assiste', () => { if (!tourDeLAdresse(location.search)) { p.tour = 'assiste'; ecrireTour('assiste'); } }],
       ['classique', 'Classique', p.tour === 'classique', () => { if (!tourDeLAdresse(location.search)) { p.tour = 'classique'; ecrireTour('classique'); } }],
     ]),
-    seg('Mouvement réduit', 'motion', [
-      ['system', 'Comme le système', save ? o!.reducedMotion === null : false, () => { if (save) save.options.reducedMotion = null; else p.reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false; }],
+    // §6 bis : réglage du jeu, désactivé par défaut, jamais pris au système (ni « comme le système »)
+    seg(`Mouvement réduit${new URLSearchParams(location.search).has('reducedMotion') ? ' (imposé par l’adresse)' : ''}`, 'motion', [
       ['on', 'Activé', save ? o!.reducedMotion === true : p.reducedMotion, () => { if (save) save.options.reducedMotion = true; else p.reducedMotion = true; }],
-      ['off', 'Désactivé', save ? o!.reducedMotion === false : !p.reducedMotion, () => { if (save) save.options.reducedMotion = false; else p.reducedMotion = false; }],
+      ['off', 'Désactivé', save ? o!.reducedMotion !== true : !p.reducedMotion, () => { if (save) save.options.reducedMotion = false; else p.reducedMotion = false; }],
     ]),
     h('div', { class: 'sh-opt' }, h('span', { class: 'sh-opt-l' }, `Taille du texte : ${Math.round(p.scale * 100)} %`),
       h('div', { class: 'sh-seg' },

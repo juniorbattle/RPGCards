@@ -100,14 +100,15 @@ export function readParams(search = window.location.search): AppParams {
   };
   const sig = q.get('sig');
   const techs = q.get('tech');
-  const prefersReduced = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   return {
     seed: Math.floor(num('seed', 20261016)),
     artSeed: Math.floor(num('artSeed', 7)),
     sig: sig && (FAMILIES as readonly string[]).includes(sig) ? (sig as Family) : null,
     techs: techs ? (techs.split(',').filter((t) => (TECHNIQUE_IDS as readonly string[]).includes(t)).slice(0, 2) as TechniqueId[]) : null,
     autostart: q.get('autostart') === '1' || q.has('scenario'),
-    reducedMotion: q.has('reducedMotion') ? q.get('reducedMotion') === '1' : !!prefersReduced,
+    // règle du responsable (§6 bis) : le mouvement réduit est un réglage du jeu, désactivé par défaut, jamais déduit du
+    // système seul (le poste du responsable a les animations de Windows coupées) ; l'adresse l'emporte (QA)
+    reducedMotion: q.has('reducedMotion') ? q.get('reducedMotion') === '1' : false,
     freeze: q.get('freeze') === '1',
     qa: q.get('qa') === '1',
     scenario: q.get('scenario'),

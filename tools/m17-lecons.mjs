@@ -5,6 +5,8 @@
 // (3) Aventure : l'entraînement proposé avant le prologue, refusable, mène aux leçons puis au duel contre Kaï ; « Leçons »
 //     dans le menu. (4) Planche des leçons (captures du premier geste de chacune).
 // M18 : les leçons se jouent au tour assisté (le défaut du jeu, `LQV_TOUR=assiste`) ou au tour classique (`LQV_TOUR=classique`).
+// Fiche de clôture : dix-neuf leçons (« Repousser et remplacer », « Réviser face à une Signature ») ; au tour assisté, le maître
+// de table ne dit jamais « Valider », « verrouille » ni « valide » (ces boutons n'y existent pas) : contrôlé à chaque geste.
 // Usage : npm run build && [LQV_VP=1920x1080] [LQV_MODES=souris,clavier,manette] [LQV_REDUIT=1] [LQV_TOUR=classique] node tools/m17-lecons.mjs [dossier] [rapport.json]
 import { execSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -18,7 +20,9 @@ const TOUR = process.env.LQV_TOUR === 'classique' ? 'classique' : 'assiste';
 const SUFFIXE = `${VP[0]}${REDUIT ? '-reduit' : ''}${TOUR === 'classique' ? '-classique' : ''}`;
 const DIR = process.argv[2] ?? `screenshots/qa/m17/${SUFFIXE}`;
 const OUT = process.argv[3] ?? `artifacts/qa/m17/lecons-${SUFFIXE}.json`;
-const LECONS = ['clash', 'posture', 'secondaires', 'tactique', 'interferer', 'insight', 'familles', 'effets', 'regard', 'tech-Sondage', 'tech-Recentrage', 'tech-Lecture', 'tech-Ancrage', 'tech-Rupture', 'tech-Dissipation', 'signature', 'prolongation'];
+const LECONS = ['clash', 'posture', 'secondaires', 'tactique', 'interferer', 'insight', 'repousser', 'familles', 'effets', 'regard', 'tech-Sondage', 'tech-Recentrage', 'tech-Lecture', 'tech-Ancrage', 'tech-Rupture', 'tech-Dissipation', 'signature', 'revision', 'prolongation'];
+/** Au tour assisté : l'ancien vocabulaire (boutons du tour classique) ne doit jamais être dit. */
+const VOCABULAIRE_CLASSIQUE = /valider|verrouille|\bvalide\b/i;
 const head = execSync('git rev-parse --short HEAD').toString().trim();
 mkdirSync(DIR, { recursive: true });
 const server = await startPreview(Number(process.env.LQV_PREVIEW_PORT) || 4317, process.env.LQV_DIST || 'dist');
@@ -127,9 +131,11 @@ async function jouerLecon(p, j, id, capture) {
   await av((x) => window.__lqvLecons.lancer([x]), id);
   await p.waitForFunction(() => { const r = document.querySelector('.lecon-rideau'); return document.querySelector('.lecon-coach') && window.__lqv?.controller && r && !r.classList.contains('on') && +getComputedStyle(r).opacity < 0.05; }, null, { timeout: 30000 });
   let anneaux = 0; let refus = 0; let gestes = 0; let premier = true;
+  const vocabulaire = new Set();
   const t0 = Date.now();
   while (Date.now() - t0 < 60000) {
-    const st = await av(() => ({ fin: !!document.querySelector('.lecon-fin-overlay'), cibles: JSON.parse(document.querySelector('.lecon-anneaux')?.dataset.cibles || '[]'), anneaux: document.querySelectorAll('.lecon-anneau').length, toast: document.querySelector('.toast')?.textContent ?? '' }));
+    const st = await av(() => ({ fin: !!document.querySelector('.lecon-fin-overlay'), cibles: JSON.parse(document.querySelector('.lecon-anneaux')?.dataset.cibles || '[]'), anneaux: document.querySelectorAll('.lecon-anneau').length, toast: document.querySelector('.toast')?.textContent ?? '', coach: `${document.querySelector('.lecon-dire')?.textContent ?? ''} · ${document.querySelector('.lecon-faire')?.textContent ?? ''}`, consigne: document.querySelector('#app [data-key="consigne"]')?.textContent ?? '' }));
+    if (TOUR === 'assiste') for (const x of [st.coach, st.consigne]) if (VOCABULAIRE_CLASSIQUE.test(x)) vocabulaire.add(x);
     if (st.fin) break;
     if (/^Pas |Attends/.test(st.toast)) refus++;
     let sel = null;
@@ -149,11 +155,11 @@ async function jouerLecon(p, j, id, capture) {
   else { await p.keyboard.press('Escape'); await p.waitForSelector('.lecon-pause', { timeout: 5000 }).catch(() => {}); await p.click('[data-key="lecon-quitter"]').catch(() => {}); }
   await p.waitForFunction(() => !window.__lqvLecons.active() && !document.querySelector('.lecon-coach'), null, { timeout: 20000 }).catch(() => {});
   const faite = await av((x) => JSON.parse(localStorage.getItem('lqv.lecons') || '{}').faites?.includes(x) ?? false, id);
-  return { fin, faite, anneaux, refus, gestes, s: Math.round((Date.now() - t0) / 100) / 10 };
+  return { fin, faite, anneaux, refus, gestes, vocabulaire: [...vocabulaire], s: Math.round((Date.now() - t0) / 100) / 10 };
 }
 
 try {
-  // (1) les dix-sept leçons, dans chaque mode
+  // (1) les dix-neuf leçons, dans chaque mode
   const resultats = {};
   for (const mode of MODES) {
     const { ctx, p } = await contexte(mode === 'manette');
@@ -170,6 +176,7 @@ try {
       const r = await jouerLecon(p, j, id, mode === MODES[0]);
       resultats[mode][id] = r;
       check(r.fin && r.faite && r.anneaux > 0 && r.refus === 0, `${mode} · ${id} : finie (${r.gestes} gestes, ${r.s} s${r.refus ? `, ${r.refus} refus` : ''})`);
+      if (TOUR === 'assiste') check(!r.vocabulaire.length, `${mode} · ${id} : aucun « Valider », « verrouille » ni « valide » dit au tour assisté${r.vocabulaire.length ? ` (${r.vocabulaire.join(' | ')})` : ''}`);
     }
     if (mode !== 'souris') check(j.replis === 0, `${mode} : aucun geste replié sur la souris (${j.replis})`);
     // un geste hors consigne est refusé, avec sa raison
@@ -217,7 +224,7 @@ try {
     await p.click('[data-key="home-apprendre"]');
     await p.waitForSelector('.lecon-biblio');
     const lignes = await p.$$eval('.lecon-biblio .lecon-ligne', (l) => l.length);
-    check(lignes === 17, `« Apprendre » : la bibliothèque, ${lignes} leçons`);
+    check(lignes === 19, `« Apprendre » : la bibliothèque, ${lignes} leçons`);
     writeFileSync(`${DIR}/bibliotheque.png`, await p.screenshot());
     await ctx.close();
   }
@@ -242,7 +249,7 @@ try {
     await p.waitForSelector('.lecon-profil-overlay');
     await p.click('[data-key="lecon-profil-decouverte"]');
     await p.waitForFunction(() => document.querySelector('.lecon-coach') && window.__lqv?.controller && window.__lqvAventure.ecran === 'lecon');
-    check(/Leçon 1 \/ 6/.test(await p.textContent('.lecon-titre') ?? ''), 'aventure : les six leçons du profil « découverte »');
+    check(/Leçon 1 \/ 7/.test(await p.textContent('.lecon-titre') ?? ''), 'aventure : les sept leçons de base du profil « découverte »');
     await p.waitForFunction(() => +getComputedStyle(document.querySelector('.lecon-rideau')).opacity < 0.05 && !document.querySelector('.ville-fade.in'), null, { timeout: 15000 }).catch(() => {});
     writeFileSync(`${DIR}/aventure-lecon.png`, await p.screenshot());
     await p.keyboard.press('Escape');

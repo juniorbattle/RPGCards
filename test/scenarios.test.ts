@@ -29,7 +29,9 @@ class Play {
       if (!v.awaitingMe) return;
       const script = sc.rival[`${v.turn}:${v.phase}`];
       if (!script) throw new Error(`rival non scripté en ${v.turn}:${v.phase}`);
-      this.push(script(this.state));
+      const cmd = script(this.state);
+      if (!cmd) return;
+      this.push(cmd);
     }
   }
   private push(cmd: PlayerCommand): void {

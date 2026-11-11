@@ -112,7 +112,14 @@ function gestesAssistes(c: Controller, cmd: PlayerCommand): void {
       }
       return;
     }
-    case 'revise': return cmd.commit ? c.lockCommit() : c.keepRevision();
+    case 'revise': {
+      if (!cmd.commit) return c.keepRevision();
+      // fiche de clôture (D1) : réviser, c'est poser une autre Primaire (ou changer de mode), puis « Engager la révision »
+      const k = cmd.commit;
+      if (c.ui.draft.primaryId !== k.primaryId) { c.clickHandCard(k.primaryId); c.placeSelected(k.stance); } else if (c.ui.draft.stance !== k.stance) c.setStance(k.stance);
+      expect(c.revisionModifiee(), 'le brouillon de la révision diffère de l’engagement verrouillé').toBe(true);
+      return c.lockCommit();
+    }
     case 'tactics': {
       // les menus s'ouvrent d'eux-mêmes, l'un après l'autre
       fois(3, () => {
@@ -140,7 +147,7 @@ function gestesAssistes(c: Controller, cmd: PlayerCommand): void {
   }
 }
 
-describe('M18 (B6) — les dix-sept leçons au tour assisté', () => {
+describe('M18 (B6) — les dix-neuf leçons au tour assisté', () => {
   it.each(LECON_IDS)('%s : chaque geste attendu passe par les questions sur place, la leçon se termine', (id) => {
     const l = LECONS[id];
     const c = controleur(id, 'assiste');

@@ -13,8 +13,8 @@ export interface Scenario {
   description: string;
   config: GameConfig;
   build: (cfg: GameConfig) => GameState;
-  /** Commandes du rival indexées par `tour:phase`. */
-  rival: Record<string, (s: GameState) => PlayerCommand>;
+  /** Commandes du rival indexées par `tour:phase` ; `null` : il attend (le script est rejoué après le geste suivant). */
+  rival: Record<string, (s: GameState) => PlayerCommand | null>;
 }
 
 const base = (over: Partial<GameConfig['players']['p1']> = {}, over2: Partial<GameConfig['players']['p2']> = {}): GameConfig => ({

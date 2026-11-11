@@ -98,7 +98,8 @@ export interface ActiveDuel {
 
 export const HISTORY_MAX = 60;
 
-export const DEFAULT_OPTIONS: Options = { pace: 'normal', reducedMotion: null, scale: 1, tips: true, fullCollection: false, artSeed: 7 };
+// §6 bis : mouvement réduit désactivé par défaut (`null`, valeur des sauvegardes d'avant, vaut désactivé)
+export const DEFAULT_OPTIONS: Options = { pace: 'normal', reducedMotion: false, scale: 1, tips: true, fullCollection: false, artSeed: 7 };
 
 export function newSave(now: Date, name: string, seed: number, deck: DeckChoice): SaveData {
   const t = now.toISOString();

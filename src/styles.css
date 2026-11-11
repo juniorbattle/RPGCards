@@ -855,6 +855,12 @@ button { font: inherit; color: inherit; }
 .decision-btns { display: flex; gap: 0.6rem; justify-content: center; margin-top: 0.1rem; }
 .decision-btns > .btn:not(.ghost) { min-width: 11rem; padding: 0.7rem 2.4rem; font-size: clamp(1.15rem, 2.4vh, 1.5rem); letter-spacing: 0.08em; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.7), 0 6px 18px rgba(0, 0, 0, 0.6), 0 0 26px rgba(255, 214, 140, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.5); }
 .decision-btns > .btn.ghost { align-self: center; font-size: 0.85rem; padding: 0.5rem 1rem; }
+/* D2 (fiche de clôture) : les deux réponses d'une question facultative au même poids ; la lumière est sur la carte ou la Technique. */
+.decision-btns > .btn.paire:not(.ghost) { min-width: 9.5rem; padding: 0.6rem 1.6rem; font-size: clamp(1rem, 2.1vh, 1.3rem); letter-spacing: 0.06em; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.7), 0 6px 18px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.5); }
+/* D3 : l'aperçu tactique sur deux lignes (si le rival conserve, s'il amplifie). */
+.menu small.apercu { display: grid; gap: 0.05rem; }
+.menu small.apercu .ap-l.amplifie { color: #f0b9a8; }
+.tech.question { border-color: var(--gold-hi); box-shadow: 0 0 0 2px var(--gold-hi), 0 0 18px rgba(255, 214, 140, 0.7); animation: lqvPulse 1.6s ease-in-out infinite; }
 .decision .stance { position: static; transform: none; translate: none; margin-top: 0.15rem; }
 .decision .stance .chip { font-size: 0.95rem; padding: 0.5rem 1.2rem; }
 /* Panneau et bandeau ancrés juste au-dessus de la rangée du rival (jamais sur une carte), vue A comme vue B. */

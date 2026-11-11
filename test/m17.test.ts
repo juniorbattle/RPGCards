@@ -50,8 +50,9 @@ function jouer(id: LeconId): Partie {
 
 describe('M17 — les leçons se jouent sur le vrai moteur', () => {
   it('six leçons de base et onze leçons des éléments', () => {
-    expect(LECONS_BASE).toHaveLength(6);
-    expect(LECON_IDS).toHaveLength(17);
+    // fiche de clôture (D1) : « Repousser et remplacer » (base) et « Réviser face à une Signature » (élément)
+    expect(LECONS_BASE).toHaveLength(7);
+    expect(LECON_IDS).toHaveLength(19);
     for (const id of LECON_IDS) expect(LECONS[id].id).toBe(id);
   });
 
@@ -140,7 +141,8 @@ describe('M17 (B3) — « Ce qui vient de se passer »', () => {
     for (let n = 0; n < 20 && m.state.phase !== 'RESOLVED'; n++) {
       const s = m.state;
       const script = l.partenaire[`${s.turn}:${s.phase}`];
-      if (m.view('p2').awaitingMe && script) { m.submit(script(s)); continue; }
+      const c2 = m.view('p2').awaitingMe && script ? script(s) : null;
+      if (c2) { m.submit(c2); continue; }
       const g = gesteDe(l, s.turn, s.phase);
       if (m.view('p1').awaitingMe && g) m.submit(g.attendu(s));
     }

@@ -9,7 +9,13 @@ import type { Controller } from '../app/controller';
 import { cardDef, EFFECTS, INSTANT_PRIMARY_EFFECTS } from '../game/catalog/cards';
 import { visibleEvents } from '../game/visibility/view';
 
-export interface Tip { id: string; title: string; text: string; /** M17 (B3) : la leçon qui l'explique (« Revoir en leçon »). */ lecon?: string }
+export interface Tip {
+  id: string; title: string; text: string;
+  /** M17 (B3) : la leçon qui l'explique (« Revoir en leçon »). */
+  lecon?: string;
+  /** Fiche de clôture (D4) : un élément vu pour la première fois au Duel standard ; sa leçon proposée, une fois, refusable. */
+  nouveau?: true;
+}
 
 const TIPS: Record<string, Tip> = {
   start: { id: 'start', title: 'Début de tour', text: 'Votre main se complète à 4 cartes. Sondage et Recentrage (Techniques de début) s’utilisent ici si elles sont équipées et que l’Insight suffit ; sinon, validez.' },
@@ -63,19 +69,49 @@ function adverse(c: Controller, seen: readonly string[]): Tip | null {
   return id ? ADVERSES[id]! : null;
 }
 
-/** Conseil à montrer maintenant (le premier non lu pour cette situation), ou `null`. */
-export function duelTip(c: Controller, seen: readonly string[]): Tip | null {
+/**
+ * Fiche de clôture (D4) : au Duel standard, un élément de jeu paraît pour la première fois (la révision qui s'ouvre, une
+ * Signature engagée, un Repoussement, une Technique jouée, un regard privé, un effet de ses cartes) : sa leçon est
+ * proposée, une seule fois (« Voir la leçon » ou « Non merci »), au moment calme d'après le Clash. Une leçon faite l'éteint.
+ */
+const ELEMENTS: Record<string, Tip> = {
+  'el-revision': { id: 'el-revision', title: 'Nouveau : la révision', text: 'Le rival a annoncé sa Signature après ton engagement : tu pouvais changer le tien, une seule fois. Une leçon d’une minute le montre.', lecon: 'revision', nouveau: true },
+  'el-signature': { id: 'el-signature', title: 'Nouveau : ta Signature', text: 'Ta Signature, de Rang ∞, est annoncée dès que tu l’engages ; qui a engagé avant toi peut réviser. Une leçon d’une minute la montre.', lecon: 'signature', nouveau: true },
+  'el-repousser': { id: 'el-repousser', title: 'Nouveau : le Repoussement', text: 'Une Garde victorieuse a renvoyé une réserve cachée dans la main de son propriétaire. Une leçon d’une minute le montre, avec le remplacement d’une Secondaire.', lecon: 'repousser', nouveau: true },
+  'el-regard': { id: 'el-regard', title: 'Nouveau : un regard privé', text: 'Tu as vu en secret une carte du rival : le journal du duel la garde, lui ne sait pas laquelle. Une leçon d’une minute le montre.', lecon: 'regard', nouveau: true },
+  'el-effet': { id: 'el-effet', title: 'Nouveau : l’effet d’une carte', text: 'Un effet d’une de tes cartes a joué ; il est montré au centre de l’écran. Une leçon d’une minute montre quand une carte agit.', lecon: 'effets', nouveau: true },
+  ...Object.fromEntries((['Sondage', 'Recentrage', 'Lecture', 'Ancrage', 'Rupture', 'Dissipation'] as const).map((t) => [`el-tech-${t}`, { id: `el-tech-${t}`, title: `Nouveau : ${t}`, text: `La Technique ${t} vient d’être jouée. Une leçon d’une minute la montre.`, lecon: `tech-${t}`, nouveau: true as const }])),
+};
+
+function element(c: Controller, seen: readonly string[]): Tip | null {
+  const turn = c.view.turn;
+  const evs = visibleEvents(c.match.events, 'p1').filter((e) => e.turn === turn);
+  const moi = (e: { data: Record<string, unknown> }) => e.data.player === 'p1';
+  const ids: string[] = [];
+  if (evs.some((e) => e.kind === 'revisionOpened' && moi(e))) ids.push('el-revision');
+  if (evs.some((e) => e.kind === 'signatureAnnounced' && moi(e))) ids.push('el-signature');
+  if (evs.some((e) => e.kind === 'repel')) ids.push('el-repousser');
+  for (const e of evs) if (e.kind === 'technique' && typeof e.data.technique === 'string') ids.push(`el-tech-${e.data.technique}`);
+  if (evs.some((e) => e.kind === 'peek' && e.vis === 'p1' && !e.data.own)) ids.push('el-regard');
+  if (evs.some((e) => e.kind === 'effect' && moi(e) && e.data.status === 'success' && !e.data.technique && !e.data.own)) ids.push('el-effet');
+  const id = ids.find((x) => !seen.includes(x) && ELEMENTS[x]);
+  return id ? ELEMENTS[id]! : null;
+}
+
+/** Conseil à montrer maintenant (le premier non lu pour cette situation), ou `null`. `elements` (D4) : le Duel standard
+ *  propose aussi la leçon d'un élément vu pour la première fois. */
+export function duelTip(c: Controller, seen: readonly string[], elements = false): Tip | null {
   const v = c.view;
   const want = (id: string) => (seen.includes(id) ? null : TIPS[id]!);
   if (v.phase === 'ENDED') return null;
   // M18 (G3) : au tour assisté, les conseils contextuels cèdent la place à la consigne posée sur place ; restent ceux qui
   // mènent à une leçon M17 (« Ce qui vient de se passer », après le Clash : la pause du tour suivant les attend)
-  if (c.assiste) return v.phase === 'RESOLVED' ? adverse(c, seen) : null;
+  if (c.assiste) return v.phase === 'RESOLVED' ? adverse(c, seen) ?? (elements ? element(c, seen) : null) : null;
   // les signaux M12 ne se cherchent qu'une fois tous lus ou non (coût : un filtre du journal par rendu)
   const m12 = M12.some((id) => !seen.includes(id)) ? ceTour(c) : { effet: false, regard: false };
   const regard = m12.regard ? want('prive') : null;
   if (v.phase === 'RESOLVED') {
-    const adv = adverse(c, seen);
+    const adv = adverse(c, seen) ?? (elements ? element(c, seen) : null);
     if (adv) return adv;
     const r = v.lastClash;
     if (r?.zeroDamageRankWin) return want('zero') ?? want('resolved');
@@ -100,4 +136,4 @@ export function duelTip(c: Controller, seen: readonly string[]): Tip | null {
 const M12 = ['reveler', 'arme', 'pastille', 'temps', 'prive'];
 const triggerDe = (defId: string): string | null => { const d = cardDef(defId); return d.effect && !d.signature ? EFFECTS[d.effect].trigger : null; };
 
-export const TIP_IDS = [...Object.keys(TIPS), ...Object.keys(ADVERSES)];
+export const TIP_IDS = [...Object.keys(TIPS), ...Object.keys(ADVERSES), ...Object.keys(ELEMENTS)];

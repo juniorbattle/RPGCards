@@ -169,9 +169,10 @@ export class Shell {
   applyOptions(): void {
     const o = this.save?.options ?? DEFAULT_OPTIONS;
     const p = this.params;
-    const prefersReduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
     if (!this.explicit.has('pace')) p.pace = o.pace;
-    if (!this.explicit.has('reducedMotion')) p.reducedMotion = o.reducedMotion ?? prefersReduced;
+    // §6 bis : réglage propre du Duel standard et des leçons « Apprendre », désactivé par défaut (une sauvegarde d'avant,
+    // « comme le système », vaut désactivé)
+    if (!this.explicit.has('reducedMotion')) p.reducedMotion = o.reducedMotion ?? false;
     if (!this.explicit.has('scale')) p.scale = o.scale;
     if (!this.explicit.has('artSeed')) p.artSeed = o.artSeed;
     this.applyParams();
@@ -359,7 +360,7 @@ export class Shell {
   private tipFor(c: Controller) {
     if (!this.save?.options.tips) return null;
     // M17 (B5) : une leçon faite éteint les conseils qu'elle couvre
-    return duelTip(c, [...this.save.tipsSeen, ...conseilsEteints(lireLecons(stockageLecons()).faites)]);
+    return duelTip(c, [...this.save.tipsSeen, ...conseilsEteints(lireLecons(stockageLecons()).faites)], leconsPermises(location.search));
   }
 
   /** Outils du duel propres à l’enveloppe ; `false` = comportement par défaut de la session. */
