@@ -11,6 +11,8 @@ import type { IlotId } from '../ville/ilots';
 import type { Issue } from './aventure';
 import type { Temperament } from './temperaments';
 
+import type { KId } from './rival';
+
 export type Moment = 'vue' | 'parole' | 'rival' | 'rumeur' | 'revanche' | 'defi';
 export type Chapitre = 'prologue' | 'I' | 'II' | 'III' | 'IV' | 'V' | 'titre';
 
@@ -29,6 +31,8 @@ export interface Contexte {
   chefs: number;
   cheffe: boolean;
   ilot?: IlotId;
+  /** Lot de correction de clôture : l'événement fixe du rival qui se joue (K1 à K6), même rejoué dans un autre chapitre. */
+  evenement?: KId;
 }
 
 export interface Quand {
@@ -43,6 +47,8 @@ export interface Quand {
   /** Le joueur mène (plus de victoires que de défaites) ou est mené. */
   mene?: boolean;
   ilot?: IlotId[];
+  /** Événement fixe du rival ; sans événement dans le contexte, celui du chapitre (K1 au chapitre I… K6 au titre). */
+  evenement?: KId[];
 }
 
 export interface Replique { id: string; texte: string | ((c: Contexte) => string); quand?: Quand }
@@ -60,8 +66,13 @@ const tient = (q: Quand | undefined, c: Contexte): boolean => {
   if (q.jouesMax !== undefined && c.joues > q.jouesMax) return false;
   if (q.mene !== undefined && (c.victoires > c.defaites) !== q.mene) return false;
   if (q.ilot && (!c.ilot || !q.ilot.includes(c.ilot))) return false;
+  if (q.evenement) {
+    const ev = c.evenement ?? EVENEMENT_DU_CHAPITRE[c.chapitre];
+    if (!ev || !q.evenement.includes(ev)) return false;
+  }
   return true;
 };
+const EVENEMENT_DU_CHAPITRE: Partial<Record<Chapitre, KId>> = { I: 'K1', II: 'K2', III: 'K3', IV: 'K4', V: 'K5', titre: 'K6' };
 const specificite = (q: Quand | undefined): number => (q ? Object.keys(q).length : 0);
 export const texteDe = (r: Replique, c: Contexte): string => (typeof r.texte === 'string' ? r.texte : r.texte(c));
 
@@ -206,21 +217,21 @@ export const CATALOGUE: Readonly<Record<string, readonly Replique[]>> = {
   }),
   // --------------------------------------------------------------------- Kaï : les événements fixes (K1 à K6)
   kai: [
-    V('kai-K1-cendre', '« Tessa est tombée ? Pas mal, pour une recrue. Mais à la Cendre, c’est moi qu’on regarde. Montre-moi. »', { moment: ['rival'], chapitre: ['I'], voie: ['Cendre'] }),
-    V('kai-K1-autre', (c) => `« Alors comme ça, tu as choisi ${LE[c.voie ?? 'Cendre']}. Moi, la Cendre m’a pris. Voyons qui a le plus appris depuis le Quai. »`, { moment: ['rival'], chapitre: ['I'] }),
-    V('kai-K2', (c) => `« Tu as fait tomber ${c.cheffe ? 'ta cheffe' : 'ton chef'}. Toute la ville en parle. Avant d’aller frapper aux autres portes, passe par moi. »`, { moment: ['rival'], chapitre: ['II'] }),
-    V('kai-K2-mene', '« Tu mènes entre nous, je sais. Mais une Signature ne fait pas tout : prouve-le encore. »', { moment: ['rival'], chapitre: ['II'], mene: true, jouesMin: 2 }),
-    V('kai-K3', '« Une deuxième maison qui t’ouvre ses portes… Je monte aussi, tu sais. Un duel, pour garder le compte juste. »', { moment: ['rival'], chapitre: ['III'] }),
-    V('kai-K3-perdu', '« La dernière fois, tu as plié. Pas de quoi rougir : je joue de mieux en mieux. Encore une ? »', { moment: ['rival'], chapitre: ['III'], dernier: ['defaite'] }),
-    V('kai-K3-gagne', '« Tu as gagné la dernière fois. Je n’ai pensé qu’à ça. Cette fois, je lis tes Gardes. »', { moment: ['rival'], chapitre: ['III'], dernier: ['victoire'] }),
-    V('kai-rejoue-1', '« Déjà de retour ? Tant que tu ne m’as pas battu, je reste sur ton chemin. Sors tes cartes. »', { moment: ['rival'], chapitre: ['I', 'II', 'IV', 'V'], dernier: ['defaite', 'abandon'], jouesMin: 2 }),
-    V('kai-rejoue-2', '« On ne passe pas à la suite sur une défaite. Pas avec moi. Rejouons. »', { moment: ['rival'], chapitre: ['I', 'II', 'IV', 'V'], dernier: ['defaite', 'abandon'], jouesMin: 2 }),
-    V('kai-K4', '« Plus qu’une voie et tu touches au Championnat. Moi, j’y serai. Prouve-moi que toi aussi. »', { moment: ['rival'], chapitre: ['IV'] }),
-    V('kai-K4-mene', '« Je compte nos duels, tu sais. Tu mènes. Ce soir, je calcule chaque Clash. »', { moment: ['rival'], chapitre: ['IV'], mene: true, jouesMin: 3 }),
-    V('kai-K5', '« Le Championnat est ouvert. On a commencé ensemble, sur le Quai. Un dernier duel avant l’arène, pour le plaisir. »', { moment: ['rival'], chapitre: ['V'] }),
-    V('kai-K5-mene', '« Tu mènes depuis trop longtemps. Avant l’arène, je veux une dernière chance de te faire douter. »', { moment: ['rival'], chapitre: ['V'], mene: true, jouesMin: 3 }),
-    V('kai-K6', '« Le titre te va bien. » Kaï sourit. « Moi, je continue à m’entraîner. La prochaine partie, c’est quand tu veux, et je ne te ferai pas de cadeau. »', { moment: ['rival'], chapitre: ['titre'] }),
-    V('kai-K6-mene', '« Tu as gagné presque tous nos duels, et le titre avec. » Kaï vous tend la main. « On recommence à zéro ? Cette fois, c’est moi qui te poursuis. »', { moment: ['rival'], chapitre: ['titre'], mene: true, jouesMin: 3 }),
+    V('kai-K1-cendre', '« Tessa est tombée ? Pas mal, pour une recrue. Mais à la Cendre, c’est moi qu’on regarde. Montre-moi. »', { moment: ['rival'], evenement: ['K1'], voie: ['Cendre'] }),
+    V('kai-K1-autre', (c) => `« Alors comme ça, tu as choisi ${LE[c.voie ?? 'Cendre']}. Moi, la Cendre m’a pris. Voyons qui a le plus appris depuis le Quai. »`, { moment: ['rival'], evenement: ['K1'] }),
+    V('kai-K2', (c) => `« Tu as fait tomber ${c.cheffe ? 'ta cheffe' : 'ton chef'}. Toute la ville en parle. Avant d’aller frapper aux autres portes, passe par moi. »`, { moment: ['rival'], evenement: ['K2'] }),
+    V('kai-K2-mene', '« Tu mènes entre nous, je sais. Mais une Signature ne fait pas tout : prouve-le encore. »', { moment: ['rival'], evenement: ['K2'], mene: true, jouesMin: 2 }),
+    V('kai-K3', '« Une deuxième maison qui t’ouvre ses portes… Je monte aussi, tu sais. Un duel, pour garder le compte juste. »', { moment: ['rival'], evenement: ['K3'] }),
+    V('kai-K3-perdu', '« La dernière fois, tu as plié. Pas de quoi rougir : je joue de mieux en mieux. Encore une ? »', { moment: ['rival'], evenement: ['K3'], dernier: ['defaite'] }),
+    V('kai-K3-gagne', '« Tu as gagné la dernière fois. Je n’ai pensé qu’à ça. Cette fois, je lis tes Gardes. »', { moment: ['rival'], evenement: ['K3'], dernier: ['victoire'] }),
+    V('kai-rejoue-1', '« Déjà de retour ? Tant que tu ne m’as pas battu, je reste sur ton chemin. Sors tes cartes. »', { moment: ['rival'], evenement: ['K1', 'K2', 'K4', 'K5'], dernier: ['defaite', 'abandon'], jouesMin: 2 }),
+    V('kai-rejoue-2', '« On ne passe pas à la suite sur une défaite. Pas avec moi. Rejouons. »', { moment: ['rival'], evenement: ['K1', 'K2', 'K4', 'K5'], dernier: ['defaite', 'abandon'], jouesMin: 2 }),
+    V('kai-K4', '« Plus qu’une voie et tu touches au Championnat. Moi, j’y serai. Prouve-moi que toi aussi. »', { moment: ['rival'], evenement: ['K4'] }),
+    V('kai-K4-mene', '« Je compte nos duels, tu sais. Tu mènes. Ce soir, je calcule chaque Clash. »', { moment: ['rival'], evenement: ['K4'], mene: true, jouesMin: 3 }),
+    V('kai-K5', '« Le Championnat est ouvert. On a commencé ensemble, sur le Quai. Un dernier duel avant l’arène, pour le plaisir. »', { moment: ['rival'], evenement: ['K5'] }),
+    V('kai-K5-mene', '« Tu mènes depuis trop longtemps. Avant l’arène, je veux une dernière chance de te faire douter. »', { moment: ['rival'], evenement: ['K5'], mene: true, jouesMin: 3 }),
+    V('kai-K6', '« Le titre te va bien. » Kaï sourit. « Moi, je continue à m’entraîner. La prochaine partie, c’est quand tu veux, et je ne te ferai pas de cadeau. »', { moment: ['rival'], evenement: ['K6'] }),
+    V('kai-K6-mene', '« Tu as gagné presque tous nos duels, et le titre avec. » Kaï vous tend la main. « On recommence à zéro ? Cette fois, c’est moi qui te poursuis. »', { moment: ['rival'], evenement: ['K6'], mene: true, jouesMin: 3 }),
   ],
   // --------------------------------------------------------------------- les rumeurs
   rumeur: [

@@ -195,7 +195,13 @@ else if (params.autostart) start(makeConfig(params, params.sig ?? 'Cendre', para
 else if (query.get('setup') === '1') setupScreen();
 // Le mode Aventure, ce que le jeu ouvre par défaut (`params.aventure`), chargé à la demande.
 else if (params.aventure) {
-  void import('./aventure/app').then((m) => m.startAventure({ app, shellHost: document.getElementById('shell')!, params, ensureArena, arena: () => arena }));
+  // lot de correction de clôture : un échec au démarrage se dit (jamais un écran vide), avec le chemin du jeu standard
+  void import('./aventure/app').then((m) => m.startAventure({ app, shellHost: document.getElementById('shell')!, params, ensureArena, arena: () => arena })).catch((err: unknown) => {
+    console.error(err);
+    const host = document.getElementById('shell')!;
+    host.hidden = false;
+    host.innerHTML = '<section class="sh-screen" style="padding:2rem;text-align:center"><h1>Les Quatre Voies</h1><p>L’aventure n’a pas pu démarrer.</p><p><a href="?standard=1">Jeu standard</a></p></section>';
+  });
 }
 else {
   // M09 V2 (provisoire, `?demo=1`) : la ville, chargée à la demande, remplace le tableau des rencontres ; sans WebGL, la

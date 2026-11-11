@@ -22,7 +22,8 @@ export type PalierId = 'populace' | 'membre' | 'avance' | 'elite' | 'champion';
 export const PALIER_NOM: Record<PalierId, string> = { populace: 'populace', membre: 'membre de famille', avance: 'duelliste avancé', elite: 'élite', champion: 'champions' };
 
 
-/** PV du joueur : départ, puis gain par combat mené à son terme (victoire ou défaite ; un abandon ne compte pas). */
+/** PV du joueur : départ, puis gain par victoire qui apporte quelque chose (fiche de clôture, B3 : première victoire de chaque
+ *  rencontre, duels de la trame, gain au registre ; ni défaite, ni abandon, ni revanche sans gain), sans plafond. */
 export const PV_DEPART = 50;
 export const PV_PAR_COMBAT = 3;
 export const pvJoueur = (combats: number): number => PV_DEPART + PV_PAR_COMBAT * Math.max(0, combats);

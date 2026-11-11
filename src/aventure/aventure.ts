@@ -86,7 +86,9 @@ export type Evenement =
   | { type: 'visite'; lieu: string }
   | { type: 'rencontre'; personne: string }
   /** Un duel de l'aventure s'achève (tout duel : structurant, compétition, rue, rival, Championnat). */
-  | { type: 'combat'; issue: Issue }
+  /** Fiche de clôture (B3) : `compte` : la victoire apporte-t-elle quelque chose (décidé par la fin du duel) ? Absent :
+   *  toute victoire compte (outils, départs d'essai). */
+  | { type: 'combat'; issue: Issue; compte?: boolean }
   /** M10-E : le défi de Kaï (l'ombre) mené à son terme, dans le chapitre en cours. */
   | { type: 'ombre'; issue: Issue }
   /** M11-A : un événement fixe du rival mené à son terme (duel gagné ou perdu, ou scène) ; un abandon le laisse dû. */
@@ -422,8 +424,9 @@ function appliquerBrut(e0: AventureEtat, ev: Evenement, at: string): Resultat {
       return { etat: e, gains };
 
     case 'combat':
-      // AV-08 : chaque combat mené à son terme fait monter les PV du joueur ; un abandon ne compte pas.
-      if (ev.issue !== 'abandon') e.combats += 1;
+      // AV-08 amendé par la fiche de clôture (B3) : +3 PV seulement pour une victoire qui apporte quelque chose (première
+      // victoire de chaque rencontre, duels de la trame), toujours sans plafond ; ni défaite ni abandon ne comptent.
+      if (ev.issue === 'victoire' && ev.compte !== false) e.combats += 1;
       return { etat: e, gains };
 
     case 'ombre': {

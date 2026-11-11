@@ -106,7 +106,8 @@ class Parcours {
     this.scene(() => {
       const fin = conclureDuel(this.s, this.s.duel!, m.events, issue, m.state.turn, AT);
       expect(fin.refus).toBeUndefined();
-      expect(fin.pv[1]).toBe(fin.pv[0] + 3);
+      // fiche de clôture (B3) : +3 PV aux victoires qui apportent quelque chose (ici, les duels de la trame) ; rien aux défaites
+      expect(fin.pv[1]).toBe(fin.pv[0] + (issue === 'victoire' ? 3 : 0));
     });
     this.bilan.duels++;
     this.bilan.tours += m.state.turn;
@@ -191,8 +192,9 @@ describe('M10-F — parcours complet du prologue au titre (IA du joueur, graine 
       expect(e.competitions.championnat.titre).toBe(true);
       expect(chapitre(e)).toBe('champion');
       // PV : 50 + 3 par combat mené à son terme ; historique et compteur cohérents
-      expect(e.combats).toBe(p.bilan.duels);
-      expect(pvJoueur(e.combats)).toBe(50 + 3 * p.bilan.duels);
+      // fiche de clôture (B3) : une victoire qui apporte quelque chose par duel gagné de la trame ; les défaites ne comptent plus
+      expect(e.combats).toBe(p.bilan.victoires);
+      expect(pvJoueur(e.combats)).toBe(50 + 3 * p.bilan.victoires);
       expect(p.s.compteur).toBe(p.bilan.duels);
       expect(p.s.historique.length).toBe(Math.min(60, p.bilan.duels));
       expect(p.s.duel).toBeNull();
@@ -248,7 +250,7 @@ describe('M11 — parcours complet avec le rival en événements fixes (K1 à K6
     expect(Object.values(p.e.rival?.faits ?? {}).every((x) => x !== 'defaite')).toBe(true);
     expect(Object.keys(p.e.rival?.faits ?? {}).sort()).toEqual(['K1', 'K2', 'K3', 'K4', 'K5', 'K6']);
     expect(p.e.competitions.championnat.titre).toBe(true);
-    expect(p.e.combats).toBe(p.bilan.duels);
+    expect(p.e.combats).toBe(p.bilan.victoires);
     const q = quetes(p.e).find((x) => x.id === 'rival')!;
     expect(q.etapes.every((x) => x.faite)).toBe(true);
     console.log(`Astre avec le rival : ${p.bilan.duels} duels, événements ${p.rivaux.join(' ')}`);

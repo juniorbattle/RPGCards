@@ -125,7 +125,8 @@ describe('M11-A — fin des duels du rival et des guetteurs (fin.ts)', () => {
     const o = ouvrirDuel(s, prevu, AT);
     conclureDuel(s, o.duel, [], 'defaite', 9, AT);
     expect(s.etat.rival?.perdus).toEqual(['K1']);
-    expect(s.etat.combats).toBe(trame().i1!.combats + 1);
+    // fiche de clôture (B3) : une défaite ne fait plus monter les PV
+    expect(s.etat.combats).toBe(trame().i1!.combats);
     const g = ouvrirDuel(s, duelFacultatif('rue-docker', s.etat, 100), AT);
     conclureDuel(s, g.duel, [], 'victoire', 8, AT);
     expect(s.directeur.vus?.['rue-docker']).toEqual({ issue: 'victoire', battement: s.directeur.battement, chapitre: 'I' });

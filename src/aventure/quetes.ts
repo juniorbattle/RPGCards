@@ -19,14 +19,17 @@ export interface Quete {
   etapes: Array<{ texte: string; faite: boolean }>;
 }
 
-/** Objectif affiché dans la ville (première étape non faite de la quête principale ouverte). */
-export function objectif(e: AventureEtat): string {
-  if (!e.scenes.includes('P2')) return `Le Quai bruisse du tournoi. Approchez-vous des braseros, à l’est : ${KAI_PROLOGUE.nom} y attend.`;
-  if (e.prologue === null) return `${KAI_PROLOGUE.nom} vous lance un défi. Retournez le voir pour le relever.`;
+/**
+ * Objectif affiché (première étape non faite de la quête principale ouverte). `guide` (fiche M14, G5) : en Récit guidé,
+ * le joueur ne marche pas : l'objectif dit ce qui vient, jamais où aller.
+ */
+export function objectif(e: AventureEtat, guide = false): string {
+  if (!e.scenes.includes('P2')) return guide ? `Le Quai bruisse du tournoi : ${KAI_PROLOGUE.nom} vous attend près des braseros.` : `Le Quai bruisse du tournoi. Approchez-vous des braseros, à l’est : ${KAI_PROLOGUE.nom} y attend.`;
+  if (e.prologue === null) return guide ? `${KAI_PROLOGUE.nom} vous lance un défi : relevez-le.` : `${KAI_PROLOGUE.nom} vous lance un défi. Retournez le voir pour le relever.`;
   if (e.affiliation === null) {
     const p = e.premier ? emissaire(e.premier) : null;
     if (p && !e.scenes.includes('P6')) return `${p.nom}, ${deF(p.famille)}, veut vous parler.`;
-    return 'Les quatre familles vous invitent. Rendez visite à leurs émissaires et choisissez votre voie.';
+    return guide ? 'Les quatre familles vous invitent : écoutez leurs émissaires et choisissez votre voie.' : 'Les quatre familles vous invitent. Rendez visite à leurs émissaires et choisissez votre voie.';
   }
   const f = e.affiliation;
   const ch = chapitre(e);
@@ -43,13 +46,14 @@ export function objectif(e: AventureEtat): string {
       if (!e.vaincues.includes(fig.id) && statutDefi(e, fig).ouvert) return `Défiez ${fig.nom}, ${fig.titre}.`;
     }
     const conquises = FAMILIES.filter((x) => x !== f && e.familles[x] === 'chef').length;
+    const salle = guide ? 'à la Salle des Bannières' : `à la Salle des Bannières (salle de jeu de cartes${conquises ? ', sur le Quai' : ''})`;
     return conquises
-      ? `${conquises} voie${conquises > 1 ? 's' : ''} sur 3 conquise${conquises > 1 ? 's' : ''} : engagez le défi d’une autre famille à la Salle des Bannières (salle de jeu de cartes, sur le Quai).`
-      : `${cheffe(e.affiliation!) ? 'Votre cheffe est vaincue' : 'Votre chef est vaincu'} : engagez le défi d’une autre famille à la Salle des Bannières (salle de jeu de cartes).`;
+      ? `${conquises} voie${conquises > 1 ? 's' : ''} sur 3 conquise${conquises > 1 ? 's' : ''} : engagez le défi d’une autre famille ${salle}.`
+      : `${cheffe(e.affiliation!) ? 'Votre cheffe est vaincue' : 'Votre chef est vaincu'} : engagez le défi d’une autre famille ${salle}.`;
   }
   if (ch === 'championnat') {
     const m = manche(e.competitions);
-    if (m === 'poule') return `Championnat (le héraut, dans la Grande Cour, ou la porte de l’arène) — les Quatre Bannières : battez trois chefs ; la Signature change à chaque duel (${Object.keys(e.competitions.championnat.poule).length}/3).`;
+    if (m === 'poule') return `Championnat${guide ? '' : ' (le héraut, dans la Grande Cour, ou la porte de l’arène)'} — les Quatre Bannières : battez trois chefs ; la Signature change à chaque duel (${Object.keys(e.competitions.championnat.poule).length}/3).`;
     if (m === 'miroir') return 'Championnat — le Miroir : un deck construit sur vos familles les plus jouées vous attend.';
     return 'Championnat — la Finale : deux manches gagnantes contre la Tenante du titre, en changeant de Signature entre deux manches ; elle a annoncé son plan.';
   }

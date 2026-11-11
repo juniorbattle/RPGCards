@@ -106,10 +106,14 @@ export function conclureDuel(s: AventureSave, duel: DuelAventure, events: readon
   const familles = faits.familles;
   s.historique = [...s.historique, { id: duel.id, rencontre, issue, turns, at, ...(familles ? { familles } : {}) }].slice(-60);
   s.directeur = battre(s.directeur);
-  // AV-08 : les PV du joueur montent à chaque combat mené à son terme (pas à l'abandon)
   const pvAvant = pvJoueur(s.etat.combats);
-  s.etat = appliquer(s.etat, { type: 'combat', issue }, at).etat;
-  const pvApres = pvJoueur(s.etat.combats);
+  // B3 (fiche de clôture) : ce qui comptait AVANT ce duel (première victoire contre cette rencontre, série déjà gagnée)
+  const avant = s.etat;
+  const dejaVaincue = (figureOuNull(rencontre) && avant.vaincues.includes(rencontre))
+    || (rencontre.startsWith('epreuve:') && !!avant.competitions.epreuves[rencontre.slice(8) as Family]?.gagnee)
+    || (rencontre.startsWith('joute:') && !!avant.competitions.joutes[rencontre.slice(6) as Family]?.gagnee)
+    || (!figureOuNull(rencontre) && !/^(epreuve|joute):/.test(rencontre) && s.historique.slice(0, -1).some((h) => h.rencontre === rencontre && h.issue === 'victoire'));
+  const trame = rencontre === 'prologue' || rencontre.startsWith('champ:') || (rencontre.startsWith('rival:') && isKId(rencontre.slice(6)));
   if (rencontre === 'prologue') s.etat = appliquer(s.etat, { type: 'duelPrologue', issue, faits }, at).etat;
   else if (figureOuNull(rencontre)) {
     const r = appliquer(s.etat, { type: 'duelStructurant', figure: rencontre, issue, duel: duel.id, ...(variante ? { variante } : {}) }, at);
@@ -139,5 +143,9 @@ export function conclureDuel(s: AventureSave, duel: DuelAventure, events: readon
     // M10-E : l'ombre de Kaï menée à son terme compte pour la quête du rival (chapitre en cours)
     if (rencontre === 'rival-kai') s.etat = appliquer(s.etat, { type: 'ombre', issue }, at).etat;
   }
+  // AV-08 amendé (B3) : +3 PV pour une victoire qui apporte quelque chose : un gain au registre, un duel de la trame, ou la
+  // première victoire contre cette rencontre ; ni défaite, ni abandon, ni revanche sans gain
+  s.etat = appliquer(s.etat, { type: 'combat', issue, compte: gains.length > 0 || trame || !dejaVaincue }, at).etat;
+  const pvApres = pvJoueur(s.etat.combats);
   return { gains, faits, pv: [pvAvant, pvApres], ...(refus ? { refus } : {}) };
 }

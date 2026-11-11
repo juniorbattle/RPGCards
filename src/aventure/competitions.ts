@@ -1,5 +1,6 @@
 /**
- * M10-D/E (prototype `?aventure=1`, PROPOSÉ) — compétitions facultatives et Championnat des Champions, en logique PURE.
+ * M10-D/E (fiches M10-D et M10-E ; contraintes des Joutes : fiche de clôture, C1) — compétitions facultatives et Championnat
+ * des Champions, en logique PURE.
  *
  * - **Épreuve du quartier** d'une famille (ouverte avec ses Basics) : trois membres en série, PV pleins à chaque duel ;
  *   une défaite remet la série à zéro ; la première série gagnée donne la **variante de Rang I** (ARB-M10-06, option a).
@@ -16,11 +17,13 @@
  * joueur sur ses cinq derniers duels (Primaires révélées, données publiques) ; la Tenante suit un **plan public annoncé**
  * de Signatures pour les trois manches de la Finale.
  */
-import { CATALOG, FAMILIES, type Family } from '../game/catalog/cards';
-import type { TechniqueId } from '../game/catalog/techniques';
+import { CATALOG, EFFECTS, FAMILIES, type Family } from '../game/catalog/cards';
 import type { DeckAv } from './deck';
 import { deF } from './modele';
-import { accorder, aGain, gainVariante, varianteChoisie, type Gain } from './registre';
+import { accorder, aGain, gainVariante, prochaineVariante, varianteChoisie, type Gain } from './registre';
+
+/** Nom d'une variante (texte des statuts : « la variante suivante (Tison) »). */
+const nomVariante = (defId: string): string => { const d = CATALOG[defId]; return d?.effect ? EFFECTS[d.effect].name : d?.name ?? defId; };
 
 export interface EtatCompetitions {
   /** Épreuves : duels gagnés d'affilée (0 à 3) et série gagnée. */
@@ -57,10 +60,11 @@ export const ELITE_JOUTE: Record<Family, string> = { Cendre: 'pnj-docker-73', Ro
 
 /** Contrainte de construction de la Joute (texte et contrôle) : jamais une règle de duel. */
 export const CONTRAINTE_JOUTE: Record<Family, { texte: string; ok: (d: DeckAv) => boolean }> = {
-  Cendre: { texte: 'la variante Cendre IV (Contrecoup) équipée', ok: (d) => d.cartes.includes('Cendre-4-contrecoup') },
+  // fiche de clôture (C1) : contraintes accordées à l'avenant 09 (trois variantes par Rang) et à M16 (Techniques au chef)
+  Cendre: { texte: 'une variante Cendre IV équipée (Contrecoup, Fournaise ou Phénix)', ok: (d) => d.cartes.some((c) => c.startsWith('Cendre-4-') && !c.endsWith('-basic')) },
   Ronce: { texte: 'au moins trois cartes Ronce dans le deck', ok: (d) => d.cartes.filter((c) => CATALOG[c]?.family === 'Ronce').length >= 3 },
-  Voile: { texte: 'la Technique Lecture ou Dissipation équipée', ok: (d) => d.techniques.some((t: TechniqueId) => t === 'Lecture' || t === 'Dissipation') },
-  Astre: { texte: 'au moins trois familles représentées dans le deck', ok: (d) => new Set(d.cartes.map((c) => CATALOG[c]?.family).filter(Boolean)).size >= 3 },
+  Voile: { texte: 'au moins deux variantes Voile équipées', ok: (d) => d.cartes.filter((c) => { const x = CATALOG[c]; return x?.family === 'Voile' && !x.signature && x.rarity !== 'Basic'; }).length >= 2 },
+  Astre: { texte: 'au moins deux familles représentées dans le deck', ok: (d) => new Set(d.cartes.map((c) => CATALOG[c]?.family).filter(Boolean)).size >= 2 },
 };
 
 export type Statut = { ouvert: true; texte: string } | { ouvert: false; texte: string };
@@ -68,14 +72,16 @@ export type Statut = { ouvert: true; texte: string } | { ouvert: false; texte: s
 export function statutEpreuve(c: EtatCompetitions, reg: readonly Gain[], f: Family): Statut {
   if (!aGain(reg, `basics:${f}`)) return { ouvert: false, texte: `Réservée aux duellistes qui ont reçu les cartes ${deF(f)}.` };
   const e = c.epreuves[f];
-  if (e?.gagnee) return { ouvert: true, texte: 'Épreuve déjà remportée : vous pouvez la rejouer, sans récompense.' };
+  // lot de correction de clôture : rejouée, l'Épreuve donne la variante suivante qui manque (avenant 09)
+  if (e?.gagnee) return { ouvert: true, texte: prochaineVariante(reg, `${f}-1`) ? `Épreuve déjà remportée : rejouée, elle donne la variante suivante (${nomVariante(prochaineVariante(reg, `${f}-1`)!)}).` : 'Épreuve déjà remportée, ses trois variantes sont à vous : rejouée, sans récompense.' };
   return { ouvert: true, texte: `Duel ${(e?.etape ?? 0) + 1} sur 3 ; une défaite fait repartir la série du début.` };
 }
 
-export function statutJoute(c: EtatCompetitions, vaincues: readonly string[], f: Family, d: DeckAv): Statut {
+export function statutJoute(c: EtatCompetitions, vaincues: readonly string[], f: Family, d: DeckAv, reg: readonly Gain[] = []): Statut {
+  const suivante = prochaineVariante(reg, `${f}-2`);
   if (!vaincues.includes(`brasDroit-${f}`)) return { ouvert: false, texte: `Ouverte après la victoire contre le bras droit ${deF(f)}.` };
   if (!CONTRAINTE_JOUTE[f].ok(d)) return { ouvert: false, texte: `Contrainte de la Joute : ${CONTRAINTE_JOUTE[f].texte}. Ajustez votre deck.` };
-  return { ouvert: true, texte: c.joutes[f]?.gagnee ? 'Joute déjà remportée : sans récompense.' : `Contrainte respectée : ${CONTRAINTE_JOUTE[f].texte}.` };
+  return { ouvert: true, texte: c.joutes[f]?.gagnee ? (suivante ? `Joute déjà remportée : rejouée, elle donne la variante suivante (${nomVariante(suivante)}).` : 'Joute déjà remportée, ses trois variantes sont à vous : sans récompense.') : `Contrainte respectée : ${CONTRAINTE_JOUTE[f].texte}.` };
 }
 
 /**

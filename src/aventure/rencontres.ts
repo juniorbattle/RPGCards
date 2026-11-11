@@ -17,7 +17,7 @@ import { ELITE_JOUTE, famillesDominantes, MEMBRES_EPREUVE, signatureTenante, var
 import { evenementDef, type KId } from './rival';
 import { NOM_TEMPERAMENT, profilTemperament, temperamentDe } from './temperaments';
 import { adversaire, adversaireMiroir, PALIER_NOM, pvJoueur, type Adversaire, type RoleAdverse } from './paliers';
-import { collectionDe } from './registre';
+import { collectionDe, prochaineVariante } from './registre';
 import { pointCollecte } from './collecteDonnees';
 
 export interface DuelPrevu {
@@ -137,7 +137,7 @@ export function duelEpreuve(f: Family, etape: number, e: AventureEtat, seed: num
   const adv = adversaire('epreuve', f, niveauDe(e));
   const p = personnalite(id, { nom: personalityById(id)!.name, titre: `membre ${deF(f)}`, famille: f, profil: adv.profil });
   return {
-    rencontre: `epreuve:${f}`, titre: `Épreuve du quartier ${deF(f)} — duel ${etape + 1} sur 3 — ${p.name}`, personnalite: p, venue: VENUE_DE[f], enjeu: rejouee || etape < 2 ? null : varianteDe(f, 1),
+    rencontre: `epreuve:${f}`, titre: `Épreuve du quartier ${deF(f)} — duel ${etape + 1} sur 3 — ${p.name}`, personnalite: p, venue: VENUE_DE[f], enjeu: etape < 2 ? null : rejouee ? prochaineVariante(e.registre, `${f}-1`) : varianteDe(f, 1),
     config: config(e, seed, adv, p.name), note: note(p.name, adv),
   };
 }
@@ -148,7 +148,7 @@ export function duelJoute(f: Family, e: AventureEtat, seed: number, rejouee: boo
   const adv = adversaire('joute', f, niveauDe(e));
   const p = personnalite(id, { nom: personalityById(id)!.name, titre: `${personalityById(id)!.gender === 'f' ? 'championne' : 'champion'} de la Joute ${deF(f)}`, famille: f, profil: adv.profil });
   return {
-    rencontre: `joute:${f}`, titre: `Joute de la maison ${deF(f)} — ${p.name}`, personnalite: p, venue: VENUE_DE[f], enjeu: rejouee ? null : varianteDe(f, 2),
+    rencontre: `joute:${f}`, titre: `Joute de la maison ${deF(f)} — ${p.name}`, personnalite: p, venue: VENUE_DE[f], enjeu: rejouee ? prochaineVariante(e.registre, `${f}-2`) : varianteDe(f, 2),
     config: config(e, seed, adv, p.name), note: note(p.name, adv),
   };
 }

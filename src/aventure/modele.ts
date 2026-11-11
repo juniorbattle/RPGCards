@@ -1,7 +1,7 @@
 /**
- * M10-B (prototype `?aventure=1`) — DONNÉES DU MODE AVENTURE, PROPOSÉES, NON RATIFIÉES (contrats `docs/m10/`, fiche
- * `docs/FICHE_ARBITRAGES_M10.md`). Ratifié : ADR 029 (choix libre), ADR 030 (16 neutres : 4 × I à IV, sans famille, effet
- * ni bonus), ADR 031 (Basics à l'affiliation / à l'engagement, variantes aux lieutenants, Signature au chef).
+ * Données du mode Aventure (contrats `docs/m10/`, fiches M10 à M16, fiche de clôture). Ratifié : ADR 029 (choix libre),
+ * ADR 030 (16 neutres : 4 × I à IV, sans famille, effet ni bonus), ADR 031 (Basics à l'affiliation / à l'engagement,
+ * variantes aux lieutenants, Signature au chef) ; décision D2 de la fiche M11 (un seul Observatoire, dans la Ville haute).
  *
  * Données pures, sans DOM ni rendu. Les cartes neutres sont celles du moteur (`NEUTRAL_CATALOG`, avenant M10-A, AV-01) ;
  * elles entrent en duel depuis la décision du responsable sur l'ARB-M10-02 (2026-10-20).
@@ -84,8 +84,10 @@ export interface Maison {
   devise: string;
   credo: string;
   technique: TechniqueId;
-  /** Ce que dit l'émissaire en présentant la famille (prototype). */
+  /** Ce que dit l'émissaire en présentant la famille. */
   offre: string;
+  /** Où la maison se tient quand ce n'est pas là où ses figures reçoivent les défis (`ilot`) : l'Observatoire, en Ville haute. */
+  siege?: IlotId;
 }
 
 export const MAISONS: Record<Family, Maison> = {
@@ -105,7 +107,8 @@ export const MAISONS: Record<Family, Maison> = {
     offre: 'J’ai vu tes yeux pendant le duel : tu lisais. Le Voile t’offre ses quatre cartes de base ; la Dissipation, pour défaire les ruses, attend qui fera ses preuves.',
   },
   Astre: {
-    famille: 'Astre', nom: 'l’Observatoire du Parvis', ilot: 'parvis', devise: '« Tout revient, tout s’assemble. »', technique: 'Ancrage',
+    // fiche M11, D2 : un seul Observatoire, dans la Ville haute ; ses figures reçoivent les défis au Parvis
+    famille: 'Astre', nom: 'l’Observatoire de la Ville haute', ilot: 'parvis', siege: 'haute', devise: '« Tout revient, tout s’assemble. »', technique: 'Ancrage',
     credo: 'Adaptation, recirculation, synergies : on gagne en combinant les voies et en faisant revenir ses meilleures cartes.',
     offre: 'Les étoiles ont remarqué ton jeu. L’Astre unit ce que les autres séparent : nos quatre cartes de base sont à toi, et l’Ancrage attend qui fera ses preuves.',
   },
@@ -134,7 +137,7 @@ export const FIGURES: readonly Figure[] = [
   { id: 'cadet-Voile', nom: 'Lior', titre: 'cadet du Voile, colporteur des Ruelles', famille: 'Voile', role: 'cadet', apparence: 'pnj-commis-23', gender: 'm', ilot: 'ruelles', at: { x: -1.4, z: 1.0 }, facing: 'gauche', venue: 'salle', techniques: ['Lecture', 'Dissipation'], enjeu: v('Voile', 3, 'dissimulation') },
   { id: 'brasDroit-Voile', nom: 'Sélène', titre: 'liseuse du Voile, bras droit du Voile', famille: 'Voile', role: 'brasDroit', apparence: 'voile', gender: 'f', ilot: 'ruelles', at: { x: 9.6, z: -0.6 }, facing: 'gauche', venue: 'salle', techniques: ['Lecture', 'Dissipation'], enjeu: v('Voile', 4, 'silence') },
   { id: 'chef-Voile', nom: 'Ilse', titre: 'la Dame aux Voiles, cheffe du Voile', famille: 'Voile', role: 'chef', apparence: 'chef-voile', gender: 'f', ilot: 'ruelles', at: { x: 5.2, z: -1.6 }, facing: 'face', venue: 'salle', techniques: ['Lecture', 'Dissipation'], enjeu: { kind: 'signature' } },
-  // Astre — l'Observatoire du Parvis
+  // Astre — l'Observatoire de la Ville haute (ses figures reçoivent au Parvis)
   { id: 'cadet-Astre', nom: 'Mira', titre: 'cadette de l’Astre, joueuse du Parvis', famille: 'Astre', role: 'cadet', apparence: 'pnj-joueuse-29', gender: 'f', ilot: 'parvis', at: { x: -6.2, z: 0.7 }, facing: 'droite', venue: 'arene', techniques: ['Recentrage', 'Ancrage'], enjeu: v('Astre', 3, 'relance') },
   { id: 'brasDroit-Astre', nom: 'Orin', titre: 'l’arpenteur des Astres, bras droit de l’Astre', famille: 'Astre', role: 'brasDroit', apparence: 'astre', gender: 'm', ilot: 'parvis', at: { x: 2.9, z: -3.5 }, facing: 'face', venue: 'arene', techniques: ['Recentrage', 'Ancrage'], enjeu: v('Astre', 4, 'convergence') },
   { id: 'chef-Astre', nom: 'Halvard', titre: 'le Cartographe, chef de l’Astre', famille: 'Astre', role: 'chef', apparence: 'chef-astre', gender: 'm', ilot: 'parvis', at: { x: 6.4, z: -2.2 }, facing: 'gauche', venue: 'arene', techniques: ['Recentrage', 'Ancrage'], enjeu: { kind: 'signature' } },
@@ -152,7 +155,7 @@ export const emissaire = (famille: Family): Figure => figureDe(famille, 'cadet')
 /** Kaï au prologue : le gris du Quai (rival récurrent, P-N7), à l'est du Quai, près des braseros. */
 export const KAI_PROLOGUE = { id: 'kai-prologue', apparence: 'braise', nom: 'Kaï', titre: 'le gris du Quai', ilot: 'quai' as IlotId, at: { x: 13.6, z: 0.9 }, facing: 'gauche' as Facing, venue: 'rue' as VenueId };
 
-/** Réplique d'accueil de chaque figure avant son défi (textes de prototype, tirés du credo de sa famille). */
+/** Réplique d'accueil de chaque figure avant son défi (tirée du credo de sa famille ; relue au test complet, C2). */
 export const REPLIQUES: Record<string, string> = {
   'cadet-Cendre': '« Sur le Quai, tu as porté le premier coup. Ici, on verra si tu portes aussi le dernier. »',
   'brasDroit-Cendre': '« Les cartes grises du tournoi… Tu te souviens ? Moi aussi. Cette fois, je porte la braise. »',
@@ -161,10 +164,10 @@ export const REPLIQUES: Record<string, string> = {
   'brasDroit-Ronce': '« Je garde la porte de Mère Aubépine. Elle ne s’ouvre que pour qui ne cède pas. »',
   'chef-Ronce': '« Ce qui tient, dure. Montre-moi que tu dures, et la Couronne est à toi. »',
   'cadet-Voile': '« J’ai déjà vu ta main, tu sais. Enfin… peut-être. Joue, on verra. »',
-  'brasDroit-Voile': '« Je lis les duellistes avant leurs cartes. Votre jeu, je l’ai lu au Quai. »',
-  'chef-Voile': '« Celui qui voit choisit. Voyons si vous voyez assez pour mériter le Miroir. »',
+  'brasDroit-Voile': '« Je lis les duellistes avant leurs cartes. Ton jeu, je l’ai lu au Quai. »',
+  'chef-Voile': '« Celui qui voit choisit. Voyons si tu vois assez pour mériter le Miroir. »',
   'cadet-Astre': '« Tout revient, tout s’assemble. Même tes défaites, si tu sais les ramener. »',
-  'brasDroit-Astre': '« Les étoiles tournent ; les duellistes passent. Vous, vous restez. Intéressant. »',
+  'brasDroit-Astre': '« Les étoiles tournent ; les duellistes passent. Toi, tu restes. Intéressant. »',
   'chef-Astre': '« J’ai tracé la carte de chaque voie. Il me manque la tienne. »',
 };
 

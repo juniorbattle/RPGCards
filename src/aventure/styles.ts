@@ -1,5 +1,5 @@
 /**
- * M10-B — styles du prototype `?aventure=1` (chargés seulement avec le mode : le jeu par défaut n'en reçoit aucun).
+ * Styles du mode Aventure (nés du prototype M10-B ; chargés seulement avec le mode : le Duel standard n'en reçoit aucun).
  * Palette de l'enveloppe et de la ville (ivoire, or pâle, nuit) ; carte neutre blanche/grise (ADR 030) ; écrans en
  * colonne lisibles à 1280 × 720 comme à 1920 × 1080.
  */

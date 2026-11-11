@@ -90,7 +90,7 @@ const PLACES_JOUTE: Record<'Cendre' | 'Ronce' | 'Voile' | 'Astre', PlaceRencontr
   Astre: { ilot: 'parvis', at: { x: 10.4, z: -1.0 }, facing: 'gauche' },
 };
 
-/** Catalogue des rencontres de la première aventure (prototype). */
+/** Catalogue des rencontres facultatives de l'aventure (duels de rue, membres, compétitions, Kaï). */
 export const RENCONTRES: readonly RencontreDef[] = [
   {
     id: KAI_PROLOGUE.id, genre: 'structurante', apparence: KAI_PROLOGUE.apparence, nom: KAI_PROLOGUE.nom,

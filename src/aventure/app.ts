@@ -1,5 +1,5 @@
 /**
- * M10-B (PROVISOIRE, `?aventure=1`) — prototype jouable du prologue du mode Aventure : écran « Nouvelle aventure », la
+ * Le mode Aventure (M10 à M18 ; le jeu s'ouvre sur lui, passe 193) — né du prototype M10-B : écran « Nouvelle aventure », la
  * ville (le Quai, le Parvis, les Ruelles : îlots M09 réutilisés tels quels), Kaï et le duel public, la foule, les quatre
  * émissaires, le choix libre (Accepter, Différer, Chercher une autre voie), la confirmation, les quatre Basics, le premier
  * défi de lieutenant (et la suite des défis structurants, M10-C en avance). Chargé à la demande : rien dans le jeu par
@@ -143,7 +143,8 @@ export class AventureApp {
   private decisionQuai: Promise<boolean>;
   /** Les quartiers ajoutés ouverts (deuxième reprise de M09, ADR 028). */
   private ouverts: ReadonlySet<IlotId> = new Set();
-  private dernierResultat: { prevu: DuelPrevu; issue: Issue; gains: Gain[]; turns: number; faits: FaitsPublics; pv: [number, number] } | null = null;
+  /** `choisie` : la victoire donnait une variante au choix (première victoire, avenant 09). */
+  private dernierResultat: { prevu: DuelPrevu; issue: Issue; gains: Gain[]; turns: number; faits: FaitsPublics; pv: [number, number]; choisie?: boolean } | null = null;
   /** M11-A : rencontres en vue (front montant : guetteurs qui voyaient déjà le joueur ; armée après une image calme). */
   private vue = { armee: false, dedans: new Set<string>() as ReadonlySet<string> };
   /** M11-A : une rencontre forcée en cours (guetteur qui vient, Kaï qui surgit) : ni menu, ni Échap, ni autre déclenchement. */
@@ -284,7 +285,7 @@ export class AventureApp {
     const items: HTMLElement[] = [];
     if (s) {
       const col = collectionDe(s.etat.registre);
-      const sous = s.duel ? 'Reprendre le duel en cours' : objectif(s.etat);
+      const sous = s.duel ? 'Reprendre le duel en cours' : objectif(s.etat, s.recit === 'guide');
       // passe 209 : l'objectif au survol ; un duel en cours reste dit sous le bouton
       items.push(s.duel ? bouton('Continuer l’aventure', () => this.continuer(), 'av-continue', true, sous) : info(bouton('Continuer l’aventure', () => this.continuer(), 'av-continue', true), sous));
       // la sauvegarde en trois temps : qui, où en est le récit, ce que contient la collection (accords au singulier comme au pluriel)
@@ -299,8 +300,13 @@ export class AventureApp {
       const fam = estFamille(q.get('famille')) ? q.get('famille') as Family : 'Cendre';
       items.push(bouton(`Commencer au chapitre ${dep} (heure de ville)`, () => void this.commencerDepart(dep, fam), 'av-depart', false, `Aventure d’essai : voie ${de(fam)}, ${dep === 'I' ? 'famille rejointe' : 'chefs vaincus jusqu’à ce chapitre'} ; elle remplace l’aventure en cours`));
     }
-    if (this.charge.status === 'illisible') items.push(h('p', { class: 'warn' }, `${this.charge.raison} « Nouvelle aventure » la mettra à l’écart (sans l’effacer).`));
-    if (this.charge.status === 'future') items.push(h('p', { class: 'warn' }, this.charge.raison));
+    if (this.charge.status === 'illisible') {
+      const sec = this.charge.secours;
+      items.push(h('p', { class: 'warn' }, `${this.charge.raison} ${sec ? 'Vous pouvez restaurer la copie de secours, ou commencer une nouvelle aventure : ' : '« Nouvelle aventure » '}l’aventure illisible sera mise à l’écart (sans l’effacer).`));
+      // lot de correction de clôture : la copie de secours, valide, est proposée au joueur
+      if (sec) items.unshift(info(bouton('Restaurer la copie de secours', () => this.restaurerSecours(sec), 'av-restaurer', true), `${sec.profil.nom} · ${CHAPITRE[chapitreDetaille(sec.etat)]} · copie du ${new Date(sec.updatedAt).toLocaleString('fr-FR')}`));
+    }
+    if (this.charge.status === 'future') items.push(h('p', { class: 'warn' }, `${this.charge.raison} « Nouvelle aventure » demandera confirmation et la mettra à l’écart (sans l’effacer).`));
     if (this.charge.status === 'indisponible') items.push(h('p', { class: 'warn' }, 'Stockage local indisponible : l’aventure ne pourra pas être conservée.'));
     items.push(info(h('a', { class: 'av-link', href: `${location.pathname}?standard=1`, 'data-key': 'av-standard' }, 'Jeu standard'), 'Duels libres et Tournoi du Quai, hors du récit.'));
     this.ecranShell('scr-home av-scr',
@@ -312,9 +318,22 @@ export class AventureApp {
     this.rideau.ouvrir();
   }
 
+  /** Lot de correction de clôture : l'aventure illisible mise à l'écart, la copie de secours reprise. */
+  private restaurerSecours(sec: AventureSave): void {
+    const r = this.store.restaurerSecours(sec);
+    if (!r.ok) { void confirmDialog({ title: 'Restauration impossible', text: r.raison, confirm: 'Compris', cancel: 'Fermer' }); return; }
+    this.save = sec;
+    this.charge = { status: 'ok', save: sec };
+    this.titre();
+  }
+
   private async nouveau(): Promise<void> {
     if (this.save) {
       const r = await confirmDialog({ title: 'Nouvelle aventure ?', text: 'L’aventure en cours sera remplacée (le jeu standard n’est pas touché).', confirm: 'Recommencer', danger: true });
+      if (r !== 'confirm') return;
+    } else if (this.charge.status === 'future') {
+      // lot de correction de clôture (audit) : une aventure d'une version plus récente du jeu n'est jamais écrasée sans accord
+      const r = await confirmDialog({ title: 'Remplacer une aventure plus récente ?', text: 'Une aventure enregistrée par une version plus récente du jeu est sur ce navigateur. Elle sera mise à l’écart, sans être effacée.', confirm: 'Remplacer', danger: true });
       if (r !== 'confirm') return;
     }
     this.ecran = 'nouveau';
@@ -393,7 +412,7 @@ export class AventureApp {
     if (this.rideau.enCours) return;
     const forced = this.params.qa ? Number(new URLSearchParams(location.search).get('profileSeed')) : NaN;
     const graine = Number.isInteger(forced) && forced > 0 ? forced >>> 0 : (crypto.getRandomValues(new Uint32Array(1))[0] ?? Date.now()) >>> 0;
-    if (this.charge.status === 'illisible') this.store.ecarter();
+    if (this.charge.status === 'illisible' || this.charge.status === 'future') this.store.ecarter();
     this.save = nouvelleSauvegarde(new Date(), nom, graine, apparence, technique);
     this.charge = { status: 'ok', save: this.save };
     this.save.etat = appliquer(this.save.etat, { type: 'scene', id: 'P1' }, new Date().toISOString()).etat;
@@ -647,7 +666,7 @@ export class AventureApp {
       h('div', { class: 'av-cartouche' },
         h('div', { class: 'ville-place' }, h('b', { 'data-key': 'ville-place' }, capital(t.ilot.name))),
         h('div', { class: 'av-hud-ligne' }, h('span', { class: 'av-chapitre', 'data-key': 'av-chapitre' }), h('span', { class: 'av-statut', 'data-key': 'av-statut' })),
-        h('div', { class: 'ville-objective', 'data-key': 'ville-objective' }, objectif(this.etat)),
+        h('div', { class: 'ville-objective', 'data-key': 'ville-objective' }, objectif(this.etat, this.save?.recit === 'guide')),
         h('div', { class: 'av-lueurs', 'data-key': 'av-lueurs', hidden: true })),
       h('div', { class: 'ville-tools' }, b('Journal', 'av-journal', () => this.journal()), b('Deck', 'av-deck', () => this.collection()), h('button', { class: 'ville-btn', type: 'button', 'data-key': 'av-menu', onclick: (e: Event) => { (e.currentTarget as HTMLElement).blur(); this.menu(); } }, 'Menu', h('kbd', null, 'Échap'))),
       h('div', { class: 'av-qa-decor', 'data-key': 'av-qa-decor', hidden: true }));
@@ -662,7 +681,7 @@ export class AventureApp {
       if (lu.textContent !== txt) { lu.textContent = txt; lu.hidden = !n; }
     }
     const o = this.hud?.querySelector<HTMLElement>('[data-key="ville-objective"]');
-    const txt = objectif(this.etat);
+    const txt = objectif(this.etat, this.save?.recit === 'guide');
     if (o && o.textContent !== txt) o.textContent = txt;
     const pl = this.hud?.querySelector<HTMLElement>('[data-key="ville-place"]');
     const n = capital(this.town?.ilot.name ?? '');
@@ -1008,7 +1027,7 @@ export class AventureApp {
    * M11-C : une réplique du catalogue (`repliques.ts`) pour ce locuteur et ce moment, selon les faits publics (chapitre,
    * voie, tempérament, duels joués contre lui) ; jamais deux fois de suite la même (mémoire `dialogues` de la sauvegarde).
    */
-  replique(locuteur: string, moment: Moment, secours = ''): string {
+  replique(locuteur: string, moment: Moment, secours = '', evenement?: KId): string {
     const s = this.save!;
     const e = this.etat;
     const kai = locuteur === 'kai';
@@ -1026,6 +1045,7 @@ export class AventureApp {
       chefs: FAMILIES.filter((f) => e.familles[f] === 'chef').length,
       cheffe: !!e.affiliation && cheffe(e.affiliation),
       ...(this.town ? { ilot: this.town.ilotId() } : {}),
+      ...(evenement ? { evenement } : {}),
     };
     const r = choisir(locuteur, c, s.dialogues ?? memoireVide(), s.profil.graine);
     if (!r) return secours;
@@ -1040,8 +1060,9 @@ export class AventureApp {
   }
 
   /** Réplique d'un événement fixe du rival (catalogue, moment « rival »). */
-  private ligneRival(_id: KId): string {
-    return this.replique('kai', 'rival', '« On se retrouve. Un duel ? »');
+  private ligneRival(id: KId): string {
+    // lot de correction de clôture : chaque événement parle avec ses répliques, même rejoué dans un autre chapitre
+    return this.replique('kai', 'rival', '« On se retrouve. Un duel ? »', id);
   }
 
   /** QA : pose un PNJ facultatif dans l'îlot courant, à sa première place de cet îlot (parcours déterministe). */
@@ -1163,7 +1184,7 @@ export class AventureApp {
     const etape = s && 'etape' in s ? s.etape : etapeRecit(e);
     const rideau = h('button', { class: 'ville-btn primary av-suite', type: 'button', 'data-key': 'av-prepa-suite', 'data-shell-primary': 'true', onclick: () => this.leverRideau() }, 'Suite du récit ▸');
     const bloc = (...corps: Array<HTMLElement | null>) => h('div', { class: 'av-prepa-suite' }, h('h3', null, 'À suivre'), ...corps);
-    const emblemes = (titre: string) => h('div', { class: 'av-prepa-carte' }, h('div', { class: 'av-emblems', 'aria-hidden': 'true', html: FAMILIES.map((f) => `<span class="fam-${f}">${emblemSvg(f, 30)}</span>`).join('') }), h('b', null, titre), h('p', null, objectif(e)));
+    const emblemes = (titre: string) => h('div', { class: 'av-prepa-carte' }, h('div', { class: 'av-emblems', 'aria-hidden': 'true', html: FAMILIES.map((f) => `<span class="fam-${f}">${emblemSvg(f, 30)}</span>`).join('') }), h('b', null, titre), h('p', null, objectif(e, this.save?.recit === 'guide')));
     if (rejouer) {
       const prevu = duelRival(rejouer.id, e, 0);
       return bloc(this.carteSuite(prevu.personnalite, `${rejouer.titre} · une revanche à prendre`, prevu.config.players.p2.hp), rideau);
@@ -1171,7 +1192,7 @@ export class AventureApp {
     if (!etape) return bloc(this.carteKai(), rideau);
     if (etape.kind === 'bannieres') return bloc(emblemes('La Salle des Bannières'), rideau);
     if (etape.kind === 'championnat') return bloc(emblemes('Le Championnat des Champions'), rideau);
-    if (etape.kind === 'personne') return bloc(this.cartePersonne(etape.id), h('p', { class: 'av-prepa-objectif', 'data-key': 'av-prepa-objectif' }, objectif(e)), rideau);
+    if (etape.kind === 'personne') return bloc(this.cartePersonne(etape.id), h('p', { class: 'av-prepa-objectif', 'data-key': 'av-prepa-objectif' }, objectif(e, this.save?.recit === 'guide')), rideau);
     return h('div', { class: 'av-prepa-suite', 'data-key': 'av-prepa-choix' }, h('h3', null, etape.titre), h('p', null, etape.texte),
       ...etape.ids.map((id, i) => h('div', { class: 'av-prepa-option' }, this.cartePersonne(id),
         h('button', { class: `ville-btn${i === 0 ? ' primary' : ''}`, type: 'button', 'data-key': `av-prepa-choix-${id}`, 'data-shell-primary': i === 0 ? 'true' : null, onclick: () => this.leverRideau(() => this.suite(id)) }, id.startsWith('emissaire-') ? 'Écouter' : 'Défier'))));
@@ -1563,7 +1584,7 @@ export class AventureApp {
     const r = rencontreDef(`epreuve-${f}`)!;
     const etape = e.competitions.epreuves[f]?.etape ?? 0;
     const gagnee = !!e.competitions.epreuves[f]?.gagnee;
-    this.dire(capital(r.nom), `${this.replique(`epreuve-${f}`, 'parole')} « L’Épreuve du quartier : trois de nos membres, l’un après l’autre. Une défaite, et l’on recommence. » ${st.texte} ${gagnee ? '' : `Récompense : ${nomCarte(varianteDe(f, 1))}.`}`, st.ouvert ? [
+    this.dire(capital(r.nom), `${this.replique(`epreuve-${f}`, 'parole')} « L’Épreuve du quartier : trois de nos membres, l’un après l’autre. Une défaite, et l’on recommence. » ${st.texte} ${gagnee ? '' : 'Récompense : la variante de Rang I de votre choix (A, B ou C).'}`, st.ouvert ? [
       { label: `Duel ${etape + 1} sur 3`, key: 'dlg-duel', primary: true, run: () => this.preparer(duelEpreuve(f, etape, this.etat, this.prochaineGraine(), gagnee)) },
       { label: 'Plus tard', key: 'dlg-close', refus: true, run: () => this.fermerDialogue() },
     ] : [fermer(this)], r.apparence);
@@ -1572,10 +1593,10 @@ export class AventureApp {
   /** Joute de la maison (facultative) : un duel sous contrainte de construction ; variante II à la première victoire. */
   private jouteDialog(f: Family): void {
     const e = this.etat;
-    const st = statutJoute(e.competitions, e.vaincues, f, e.deck);
+    const st = statutJoute(e.competitions, e.vaincues, f, e.deck, e.registre);
     const r = rencontreDef(`joute-${f}`)!;
     const gagnee = !!e.competitions.joutes[f]?.gagnee;
-    this.dire(capital(r.nom), `${this.replique(`joute-${f}`, 'parole')} « La Joute de la maison se joue avec ${CONTRAINTE_JOUTE[f].texte}. » ${st.texte} ${gagnee ? '' : `Récompense : ${nomCarte(varianteDe(f, 2))}.`}`, st.ouvert ? [
+    this.dire(capital(r.nom), `${this.replique(`joute-${f}`, 'parole')} « La Joute de la maison se joue avec ${CONTRAINTE_JOUTE[f].texte}. » ${st.texte} ${gagnee ? '' : 'Récompense : la variante de Rang II de votre choix (A, B ou C).'}`, st.ouvert ? [
       { label: gagnee ? 'Rejouer la Joute' : 'Jouter', key: 'dlg-duel', primary: true, run: () => this.preparer(duelJoute(f, this.etat, this.prochaineGraine(), gagnee)) },
       { label: 'Plus tard', key: 'dlg-close', refus: true, run: () => this.fermerDialogue() },
     ] : [{ label: 'Ouvrir le deck', key: 'dlg-deck', run: () => { this.fermerDialogue(); this.collection(); } }, fermer(this)], r.apparence);
@@ -1701,7 +1722,7 @@ export class AventureApp {
       !ap.basicsDeja && !ap.techniqueDeja ? (techniqueAuChef(e) ? ligneTechniqueChef(m.technique, ch!.nom) : ligneTechnique(m.technique)) : null,
       h('h3', null, 'Votre deck'),
       h('p', { class: 'av-transition', 'data-key': 'av-engagement-deck' }, deck, ap.standard ? h('b', { class: 'av-standard' }, ` ${STANDARD}`) : null),
-      h('h3', null, 'Ensuite', pastille(`Leur maison : ${m.nom}, ${OU_ILOT[m.ilot]}. Dans le quartier, l’Épreuve (${nomCarte(varianteDe(f, 1))}) ; après le bras droit, la Joute de la maison (${nomCarte(varianteDe(f, 2))}).`)),
+      h('h3', null, 'Ensuite', pastille(`Leur maison : ${m.nom}${m.siege ? ` ; ses figures reçoivent les défis ${OU_ILOT[m.ilot]}` : `, ${OU_ILOT[m.ilot]}`}. Dans le quartier, l’Épreuve (${nomCarte(varianteDe(f, 1))}) ; après le bras droit, la Joute de la maison (${nomCarte(varianteDe(f, 2))}).`)),
       h('ol', { class: 'av-etapes' },
         ...[c, b, ch].map((x) => info(h('li', null, h('span', null, h('b', null, x!.nom), `, ${x!.titre}`), h('span', null, enjeu(x))), capital(enjeuDetail(x))))),
       h('div', { class: 'ville-choices' },
@@ -1924,7 +1945,7 @@ export class AventureApp {
       const fin = conclureDuel(this.save, live.duel, c.match.events, issue, v.turn, new Date().toISOString(), variante);
       if (fin.refus) this.toast(fin.refus);
       this.persist();
-      this.dernierResultat = { prevu: live.prevu, issue, gains: fin.gains, turns: v.turn, faits: fin.faits, pv: fin.pv };
+      this.dernierResultat = { prevu: live.prevu, issue, gains: fin.gains, turns: v.turn, faits: fin.faits, pv: fin.pv, choisie: variante !== undefined };
     };
     // le plateau reste à l'écran : le dernier coup respire, puis le noir, et l'écran suivant se monte derrière lui (tout est déjà écrit)
     const sortir = (ecran: () => void) => {
@@ -1978,9 +1999,7 @@ export class AventureApp {
     this.d.arena()?.setPaused(false);
     const titre = r.issue === 'victoire' ? 'Victoire' : r.issue === 'defaite' ? 'Défaite' : 'Abandon';
     const prologue = r.prevu.rencontre === 'prologue';
-    const note = prologue ? 'Quelle que soit l’issue, la foule a tout vu.'
-      : r.prevu.rencontre.startsWith('champ:') ? (r.issue === 'victoire' ? (r.gains.length ? 'Le titre est à vous : les variantes qui vous manquaient encore entrent au registre.' : 'Le Championnat avance : aucune carte avant le titre.') : 'Rien n’est perdu : la manche peut se rejouer.')
-      : r.prevu.rencontre.startsWith('epreuve:') ? (r.issue === 'victoire' ? (r.gains.length ? 'Épreuve remportée : la variante entre au registre.' : 'Duel gagné : la série continue.') : 'La série repart du début.') : r.issue === 'victoire' ? (r.gains.length ? 'Votre victoire entre au registre.' : 'Revanche : rien de nouveau au registre (aucune duplication ; les trois variantes sont déjà à vous).') : 'Rien n’est perdu : le défi reste ouvert.';
+    const note = noteResultat(r.prevu.rencontre, r.issue, r.gains, !!r.choisie, this.save?.etat.competitions);
     // retour du test (2026-11-04) : « trop en vrac, pas assez mis en structure » : l'issue, l'adversaire, puis un bilan en
     // cases titrées (entraînement, ce que la foule a vu), les cartes gagnées avec leur nom, la note du moment à part
     const t = decouperTitre(r.prevu.titre);
@@ -2554,6 +2573,38 @@ const auChoix = (defId: string) => `une variante au choix de ${CATALOG[defId]!.n
 const STANDARD = 'Format standard : 17 cartes, sans carte grise ; le validateur du mode Duel l’accepte tel quel.';
 /** État d'une bannière, lu par le joueur (Salle des Bannières). */
 const ETAT_BANNIERE: Record<EtatBanniere, string> = { accueil: 'votre famille', engageable: 'défi à engager', engagee: 'défi engagé', conquise: 'chef vaincu', fermee: 'pas encore' };
+/**
+ * Lot de correction de clôture (audit) : la note du résultat, une par type de rencontre (la trame, les figures, l'Épreuve,
+ * la Joute, Kaï, la rue, les gardiens, le Championnat). Une première victoire qui donne une variante la donne « au choix » ;
+ * une Épreuve ou une Joute rejouée, « la variante suivante ».
+ */
+export function noteResultat(rencontre: string, issue: Issue, gains: readonly Gain[], choisie: boolean, comp?: AventureEtat['competitions']): string {
+  const v = issue === 'victoire';
+  const variante = gains.some((g) => g.kind === 'variante');
+  if (rencontre === 'prologue') return 'Quelle que soit l’issue, la foule a tout vu.';
+  if (rencontre.startsWith('champ:')) return v ? (gains.length ? 'Le titre est à vous : les variantes qui vous manquaient encore entrent au registre.' : 'Le Championnat avance : aucune carte avant le titre.') : 'Rien n’est perdu : la manche peut se rejouer.';
+  if (rencontre.startsWith('epreuve:')) {
+    if (!v) return 'La série repart du début.';
+    if (variante) return choisie ? 'Épreuve remportée : la variante de votre choix entre au registre.' : 'Épreuve rejouée : la variante suivante entre au registre.';
+    const f = rencontre.slice(8) as Family;
+    return comp?.epreuves[f]?.gagnee && !comp.epreuves[f]?.etape ? 'Épreuve remportée : ses trois variantes sont déjà à vous.' : 'Duel gagné : la série continue.';
+  }
+  if (rencontre.startsWith('joute:')) {
+    if (!v) return 'Rien n’est perdu : la Joute peut se rejouer.';
+    if (variante) return choisie ? 'Joute remportée : la variante de votre choix entre au registre.' : 'Joute rejouée : la variante suivante entre au registre.';
+    return 'Joute remportée : ses trois variantes sont déjà à vous.';
+  }
+  if (rencontre.startsWith('rival:') || rencontre === 'rival-kai') return v ? 'Kaï encaisse : rien à gagner au registre, mais il ne l’oubliera pas.' : 'Kaï reviendra : tant que vous ne l’avez pas battu, il reste sur votre chemin.';
+  if (rencontre.startsWith('gardien:')) return v ? 'Le gardien s’écarte : la carte qu’il gardait est à vous.' : 'Le gardien garde sa carte : revenez le défier.';
+  if (figureOuNull(rencontre)) {
+    if (!v) return 'Rien n’est perdu : le défi reste ouvert.';
+    if (gains.length) return variante && choisie ? 'Votre victoire entre au registre : la variante de votre choix.' : variante ? 'Revanche : la variante suivante entre au registre.' : 'Votre victoire entre au registre.';
+    return 'Revanche : rien de nouveau au registre (aucune duplication ; tout ce que ce défi donne est déjà à vous).';
+  }
+  // duels de rue, membres des familles : des parties sans enjeu
+  return v ? 'Partie gagnée : la ville en parle (aucune carte en jeu).' : 'Partie perdue : rien n’est perdu, la ville en reparle.';
+}
+
 const OU_ILOT: Record<IlotId, string> = { quai: 'sur le Quai', ruelles: 'dans les Ruelles (sortie ouest du Quai)', parvis: 'sur le Parvis de l’arène (sortie est du Quai)', cour: 'dans la Grande Cour, au cœur de la ville', port: 'sur la Place du Fanal (au bout ouest de la cour de la Chapelle)', haute: 'dans la Ville haute (au bout ouest du Belvédère)' };
 /** État d'une famille, lu par le joueur (écran Collection). */
 /** Chapitre de la trame en clair (écran titre) ; épicène. */

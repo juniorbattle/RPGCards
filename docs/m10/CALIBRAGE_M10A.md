@@ -22,9 +22,10 @@ Code : `src/aventure/paliers.ts` (valeurs) ; mesure : `tools/m10a-paliers.ts` ; 
 
 ### PV du joueur
 
-**50 au départ, +3 par combat mené à son terme** (victoire **ou** défaite ; un abandon ne compte pas ; une revanche, un
-duel de rue, une compétition comptent : c'est l'entraînement). Sans plafond. L'écran de résultat l'annonce (« vos PV
-passent de 53 à 56 »).
+**50 au départ, +3 par victoire qui apporte quelque chose** (amendement 2, fiche de clôture B3, 2026-11-11 : la première
+victoire contre chaque rencontre, les duels de la trame, toute victoire qui fait entrer une carte au registre ; ni défaite,
+ni abandon, ni revanche sans gain ; avant : « +3 par combat mené à son terme, victoire ou défaite »). Sans plafond. L'écran
+de résultat l'annonce (« vos PV passent de 53 à 56 »).
 
 ### Adversaires (rôle → palier et deck selon le niveau du joueur ; PV ; IA)
 
@@ -34,7 +35,7 @@ passent de 53 à 56 »).
 | Duel de rue | populace | membre : 4 + 2 autres | membre : 4 + 4 | membre : 4 + 8 | 40 / 50 / 60 / 70 | novice |
 | Épreuve du quartier (×3) | membre : ses 4 Basics, 12 grises | 4 + 2 | 4 + 4 | 4 + 8 | 35 / 45 / 55 / 65 | novice |
 | Cadet | membre : 4 (variante III) + 2 autres, 10 grises | 4 + 4 | 4 (III, IV) + 8 | **avancé** : 4 (III, IV) + 12 | 50 / 65 / 75 / 85 | novice |
-| Bras droit | membre : 4 (variante IV) + 2 autres | 4 (III, IV, 2 autres en variante) + 8 | **avancé** (III, IV) | **avancé** (4 variantes + 2 autres) | 55 / 75 / 85 / 95 | celle du personnage (Kaï offensif, Maëlle prudente, Sélène lectrice, Orin équilibré) |
+| Bras droit | membre : 4 (variante IV) + 2 autres | 4 (III, IV, 2 autres en variante) + 8 | **avancé** (III, IV) | **avancé** (4 variantes + 2 autres) | 55 / 80 / 85 / 95 | celle du personnage (Kaï offensif, Maëlle prudente, Sélène lectrice, Orin équilibré) |
 | Joute de la maison | membre : 4 (III, IV) + 4 | 4 + 8 (2 autres en variante) | avancé (2 autres en variante) | avancé (4 variantes + 4 autres) | 60 / 75 / 85 / 90 | équilibré |
 | **Chef** | **élite** : ses 4 cartes (III, IV en variante), 12 grises, **sa Signature** | 4 variantes + 8 autres + Signature | 4 variantes + 12 (2 en variante) + Signature | 4 variantes + 12 (4 en variante) + Signature | 55 / 80 / 95 / 105 | lecteur |
 | Kaï, défi facultatif | comme un bras droit de la Cendre | | | | 60 / 70 / 80 / 90 | offensif |
@@ -138,3 +139,13 @@ telle quelle** (fiche de la Garde, E3 ; fiche de l'avenant 08, E1 ; tableau `doc
 **Confirmé à la RC de l'aventure (2026-10-25, fiche M10-F, E1 « Garder l'annexe telle quelle »)** : mesure de la RC
 `artifacts/qa/m10f/equilibre/ecarts-annexe.md` (voie directe : cadets et bras droits des familles 2 à 4 −6 à −10 points,
 chefs 45 à 48 %, Championnat 48 à 49 % ; voie entraînée égale ou plus favorable) ; tableau `docs/FICHE_ARBITRAGES_M10F.md`.
+
+## 7. Amendement 2 — les PV montent aux victoires qui apportent quelque chose (fiche de clôture, B3, 2026-11-11)
+
+Décision du responsable (fiche de clôture, B3, consignée à la passe 223) : **+3 PV seulement pour une victoire qui apporte
+quelque chose** (première victoire de chaque rencontre, duels de la trame), toujours sans plafond. Appliqué à la passe 227 :
+le compteur `combats` ne monte plus aux défaites ni aux revanches sans gain (une Épreuve ou une Joute rejouée qui donne
+la variante suivante compte, puisqu'elle apporte une carte) ; la voie directe ne change pas (toutes ses victoires sont des
+premières victoires de la trame). Le tableau du §2 donne désormais les PV du bras droit au niveau 2 tels que le code les
+applique depuis la passe 87 (**80**, et non 75 : écart relevé par l'audit de fin de projet). Mesure de la voie directe au
+calendrier M16 : `artifacts/qa/cloture/README.md` (chefs 45,5 à 53,0 %, Championnat 47,0 à 52,3 %, au-dessus du seuil G3).

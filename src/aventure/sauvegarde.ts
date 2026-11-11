@@ -17,7 +17,8 @@ import { controlerEtat, nouvelleAventure, type AventureEtat, type Issue } from '
 import { nouveauDirecteur, type EtatDirecteur } from './directeur';
 import { nouvellesCompetitions } from './competitions';
 import { validerDeckAv } from './deck';
-import { SCENES } from './modele';
+import { FIGURES, SCENES } from './modele';
+import { isKId } from './rival';
 import type { TechniqueId } from '../game/catalog/techniques';
 import { collectionDe, controlerRegistre } from './registre';
 
@@ -87,6 +88,32 @@ export function nouvelleSauvegarde(now: Date, nom: string, graine: number, appar
 }
 
 const isObj = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && x !== null && !Array.isArray(x);
+const tableauDe = (x: unknown, ok: (v: unknown) => boolean): boolean => Array.isArray(x) && x.every(ok);
+const chaine = (v: unknown): v is string => typeof v === 'string';
+const GAINS: readonly string[] = ['neutres', 'basics', 'variante', 'signature', 'technique'];
+const FIGURE_IDS = new Set(FIGURES.map((f) => f.id));
+
+/**
+ * Lot de correction de clôture (audit, sauvegarde) : la FORME de chaque champ lu par le jeu, avant toute règle (une
+ * sauvegarde JSON valide mais mal formée ne doit jamais lever d'exception plus loin : deck sans Techniques, registre avec
+ * `null`, figure inconnue, rival ou collecte invalides).
+ */
+function formeEtat(e: Record<string, unknown>): string[] {
+  const errs: string[] = [];
+  const d = e.deck;
+  if (!isObj(d) || !tableauDe(d.cartes, chaine) || !tableauDe(d.techniques, chaine) || !(d.signature === null || (FAMILIES as readonly unknown[]).includes(d.signature))) errs.push('etat.deck invalide');
+  if (!tableauDe(e.registre, (g) => isObj(g) && chaine(g.key) && GAINS.includes(g.kind as string) && tableauDe(g.items, chaine) && (g.family === null || (FAMILIES as readonly unknown[]).includes(g.family)) && chaine(g.source) && chaine(g.at))) errs.push('etat.registre invalide');
+  for (const k of ['vaincues', 'engages'] as const) if (!tableauDe(e[k], (id) => chaine(id) && FIGURE_IDS.has(id))) errs.push(`etat.${k} invalide`);
+  for (const k of ['visites', 'rencontres'] as const) if (!tableauDe(e[k], chaine)) errs.push(`etat.${k} invalide`);
+  if (!Array.isArray(e.changements)) errs.push('etat.changements invalide');
+  if (e.ombres !== undefined && !tableauDe(e.ombres, chaine)) errs.push('etat.ombres invalide');
+  const r = e.rival;
+  if (r !== undefined && !(isObj(r) && isObj(r.faits) && Object.entries(r.faits).every(([k, v]) => isKId(k) && ['victoire', 'defaite', 'scene'].includes(v as string)) && (r.perdus === undefined || tableauDe(r.perdus, (x) => chaine(x) && isKId(x))))) errs.push('etat.rival invalide');
+  const c = e.collecte;
+  if (c !== undefined && !(isObj(c) && tableauDe(c.trouves, chaine) && tableauDe(c.gardiens, chaine) && tableauDe(c.pistes, chaine))) errs.push('etat.collecte invalide');
+  if (e.calendrier !== undefined && e.calendrier !== 'm16') errs.push('etat.calendrier invalide');
+  return errs;
+}
 
 /** Validation structurelle et de cohérence ; liste vide = sauvegarde valide. */
 export function validerSauvegarde(x: unknown): string[] {
@@ -99,8 +126,7 @@ export function validerSauvegarde(x: unknown): string[] {
   if (!isObj(e)) return [...errs, 'etat : objet attendu'];
   if (!Array.isArray(e.scenes) || e.scenes.some((s) => !(SCENES as readonly string[]).includes(s))) errs.push('etat.scenes invalide');
   if (!isObj(e.familles) || FAMILIES.some((f) => typeof e.familles[f] !== 'string')) errs.push('etat.familles invalide');
-  if (!Array.isArray(e.registre)) errs.push('etat.registre invalide');
-  if (!isObj(e.deck) || !Array.isArray(e.deck.cartes)) errs.push('etat.deck invalide');
+  errs.push(...formeEtat(e as unknown as Record<string, unknown>));
   if (!isObj(e.competitions) || !isObj(e.competitions.championnat)) errs.push('etat.competitions invalide');
   if (!Number.isInteger(e.combats) || e.combats < 0) errs.push('etat.combats invalide');
   if (errs.length) return errs;
@@ -111,7 +137,14 @@ export function validerSauvegarde(x: unknown): string[] {
   if (!isObj(x.ville) || !isIlotId((x.ville as AventureSave['ville']).ilot)) errs.push('ville invalide');
   if (!Array.isArray(x.historique)) errs.push('historique invalide');
   if (x.recit !== undefined && x.recit !== 'guide') errs.push('recit invalide');
+  const duel = x.duel as DuelAventure | null | undefined;
+  if (duel !== null && duel !== undefined && !(isObj(duel) && chaine(duel.id) && chaine(duel.rencontre) && Array.isArray(duel.commands) && isObj(duel.config))) errs.push('duel invalide');
   return errs;
+}
+
+/** Validation qui ne lève jamais : une exception imprévue devient une raison (sauvegarde incohérente, jamais un écran vide). */
+export function validerSansException(x: unknown): string[] {
+  try { return validerSauvegarde(x); } catch (err) { return [`contrôle impossible (${err instanceof Error ? err.message : String(err)})`]; }
 }
 
 export type ChargeAventure =
@@ -133,7 +166,7 @@ function lire(text: string): { ok: true; save: AventureSave } | { ok: false; fut
   if (isObj(x) && isObj(x.etat) && !('competitions' in x.etat)) (x.etat as Record<string, unknown>).competitions = nouvellesCompetitions();
   // aventure/1 d'avant les PV qui montent (avenant M10-A, AV-08) : combats menés à terme retrouvés dans l'historique.
   if (isObj(x) && isObj(x.etat) && !('combats' in x.etat)) (x.etat as Record<string, unknown>).combats = Array.isArray(x.historique) ? (x.historique as DuelResume[]).filter((d) => d.issue !== 'abandon').length : 0;
-  const errs = validerSauvegarde(x);
+  const errs = validerSansException(x);
   return errs.length ? { ok: false, future: false, raison: `Sauvegarde incohérente : ${errs.slice(0, 3).join(' ; ')}` } : { ok: true, save: x as AventureSave };
 }
 
@@ -158,7 +191,7 @@ export class MagasinAventure {
   ecrire(save: AventureSave): { ok: true } | { ok: false; raison: string } {
     if (!this.storage) return { ok: false, raison: 'Stockage local indisponible.' };
     const next: AventureSave = { ...save, gameVersion: GAME_VERSION, updatedAt: this.now().toISOString() };
-    const errs = validerSauvegarde(next);
+    const errs = validerSansException(next);
     if (errs.length) return { ok: false, raison: `Sauvegarde refusée : ${errs.slice(0, 3).join(' ; ')}` };
     const text = JSON.stringify(next);
     try {
@@ -174,6 +207,15 @@ export class MagasinAventure {
     } catch (err) {
       return { ok: false, raison: `Écriture impossible (${err instanceof Error ? err.name : 'erreur'}).` };
     }
+  }
+
+  /**
+   * Lot de correction de clôture : « Restaurer la copie de secours » : l'aventure illisible est mise à l'écart (jamais
+   * détruite), la copie de secours valide devient l'aventure.
+   */
+  restaurerSecours(secours: AventureSave): { ok: true } | { ok: false; raison: string } {
+    this.ecarter();
+    return this.ecrire(secours);
   }
 
   /** Met l'aventure illisible à l'écart (jamais détruite sans trace), pour repartir de zéro. */

@@ -599,11 +599,11 @@ describe('M10-A — paliers de decks adverses et PV du joueur qui montent (AV-08
     }
   });
 
-  it('PV du joueur : 50 au départ, +3 par combat mené à son terme (victoire ou défaite), rien à l’abandon, sans plafond', () => {
+  it('PV du joueur : 50 au départ, +3 par victoire qui apporte quelque chose (B3), rien à la défaite ni à l’abandon, sans plafond', () => {
     expect(pvJoueur(0)).toBe(PV_DEPART);
     let e = prologue();
     expect(e.combats).toBe(0);
-    e = run(e, [{ type: 'combat', issue: 'victoire' }, { type: 'combat', issue: 'defaite' }, { type: 'combat', issue: 'abandon' }]).etat;
+    e = run(e, [{ type: 'combat', issue: 'victoire' }, { type: 'combat', issue: 'defaite' }, { type: 'combat', issue: 'abandon' }, { type: 'combat', issue: 'victoire', compte: true }, { type: 'combat', issue: 'victoire', compte: false }]).etat;
     expect(e.combats).toBe(2);
     expect(pvJoueur(e.combats)).toBe(PV_DEPART + 2 * PV_PAR_COMBAT);
     expect(pvJoueur(1000)).toBe(PV_DEPART + 1000 * PV_PAR_COMBAT);
