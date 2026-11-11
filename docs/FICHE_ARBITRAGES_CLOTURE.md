@@ -32,4 +32,28 @@
 
 ## Décisions du responsable
 
-*À consigner quand la fiche sera remplie.*
+Fiche remplie le 2026-11-11 (19 h 49 à 19 h 52, heure UTC), consignée à la passe 223. **Les 21 choix sur la recommandation** ; une note (E5).
+
+| Id | Choix |
+|---|---|
+| A1 | Suivre V3.0 §9.3 : dégâts et soins ensemble, puis le K.-O. |
+| A2 | Ratifier les trois lectures actuelles (Fournaise et Rempart s'annulent ; Percée après Rempart ou Fournaise ; les effets du perdant se déclenchent quand Équinoxe gagne l'égalité) |
+| A3 | Verser l'avenant 09 sous `contracts/` après le lot de correction, nouvelle étiquette (V3.0+delta-V3.4), A1 et A2 dedans |
+| B1 | Brasier : mesurer par paires de Signatures (au moins 1 000 duels chacune), ajuster d'un cran seulement au-dessus de 55 % |
+| B2 | Variantes à risque : remesurer d'abord (IA de niveau 1 qui joue Recentrage et retient les regards privés, 1 600 duels), ajuster d'un cran ce qui reste sous −4 points |
+| B3 | +3 PV seulement pour une victoire qui apporte quelque chose (première victoire de chaque rencontre, duels de la trame) ; toujours sans plafond |
+| C1 | Joutes : Cendre, une variante Cendre IV équipée ; Voile, au moins deux variantes Voile équipées ; Astre, au moins deux familles |
+| C2 | Lot de textes de la structure narrative (G5, répliques et offres de prototype, répliques propres à chaque événement de Kaï, D2) dans le lot de correction, relu au test |
+| D1 | Les quatre : leçons « Réviser face à une Signature » et « Repousser et remplacer », défausse ajoutée à la leçon du début du tour |
+| D2 | Même poids pour les deux réponses d'une question facultative (la lumière sur la carte ou la Technique ; focus sur « Utiliser ») |
+| D3 | Aperçu tactique sur deux lignes : si le rival conserve, si le rival amplifie (information visible seulement) |
+| D4 | Leçon d'un élément proposée à sa première apparition au Duel standard, une fois, refusable |
+| E1 | 0.18.0 dès le lot de correction, 1.0.0 à la version finale |
+| E2 | Mobile hors de la 1.0 : ses parcours sortent des portes de QA (gardés comme outils) |
+| E3 | Démo (`?demo=1`) et `?cartes=v1` retirées ; crochets de test réservés à `?qa=1` ; ville de secours gardée |
+| E4 | Build livré sans sourcemaps, Three.js dans son propre fichier ; décors inchangés |
+| E5 | Nouvelles captures ignorées, planches de preuve seulement ; historique inchangé. **Note du responsable : « il faudra prévoir de faire un nettoyage »** (au nettoyage de clôture : retirer du suivi les captures anciennes non citées comme preuve, sans réécrire l'historique ; toute réécriture reste soumise à un accord explicite) |
+| E6 | Documents d'entrée remis en ordre, rien de supprimé, tout rangé |
+| F1 | Lot de correction sans décision reçu |
+| F2 | Ordre de clôture : lot de correction, test complet du responsable, QA finale (aussi aux réglages par défaut d'un joueur), nettoyage, 1.0.0 |
+| F3 | Points à l'œil et à l'oreille tranchés au test complet, en une fiche de réception finale |
