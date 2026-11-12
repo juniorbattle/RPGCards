@@ -14,8 +14,8 @@ artifacts/qa/tmp/
 art-gen/
 
 # Fiche de clôture (E5) : les captures régénérées par les outils de QA ne sont plus suivies ; seules les planches de
-# preuve (citées par le journal) entrent dans le dépôt. Les captures déjà suivies le restent (nettoyage de clôture, plus
-# tard, sans réécrire l'historique).
+# preuve (citées par le journal) entrent dans le dépôt. Nettoyage du 2026-11-12 (passe 230, ordre du responsable) : seules
+# les planches et les captures citées par la documentation restent suivies.
 screenshots/qa/**/*.png
 screenshots/qa/**/*.jpg
 screenshots/qa/**/*.webp
