@@ -86,6 +86,8 @@ export interface UiState {
   menusFaits: SlotIndex[];
   /** Fiche de clôture (contrat 05) : deux cases pleines, la carte choisie attend que le joueur désigne la case à remplacer. */
   choixCase: boolean;
+  /** T1 (retours du 2026-11-13) : au tour assisté, la défausse du début du tour conclue par « Défausser ». */
+  defausseFaite: boolean;
 }
 
 const freshUi = (phaseKey: string, keep?: Partial<UiState>): UiState => ({
@@ -111,6 +113,7 @@ const freshUi = (phaseKey: string, keep?: Partial<UiState>): UiState => ({
   repondu: [],
   menusFaits: [],
   choixCase: false,
+  defausseFaite: false,
 });
 
 export interface Preview {
@@ -789,7 +792,7 @@ export class Controller {
     }
     this.ui.selected = null;
     this.ui.choixCase = false;
-    if (key !== 'hand' && this.suiteEngagement()) return;
+    // T1 (retours du 2026-11-13) : aucune pose n'engage d'elle-même ; le brouillon reste modifiable jusqu'à « Engager »
     this.renderFn();
   }
 
@@ -797,19 +800,22 @@ export class Controller {
     const v = this.view;
     if (v.awaitingMe && (v.phase === 'START' || this.editingCommit()) && this.refuse({ k: 'carte', id: cardId })) return;
     if (v.phase === 'START' && v.awaitingMe) {
-      // M18 (un clic) : la question du Recentrage se répond en cliquant la carte à glisser sous la pioche
-      if (this.assiste && !this.ui.recentrageArmed && this.questionTech() === 'Recentrage') {
-        this.toggleStartTech('Recentrage');
-        if (!this.ui.recentrageArmed) return;
-      }
+      // T2 (retours du 2026-11-13) : un clic sur une carte ne dépense jamais d'Insight. La carte du Recentrage ne se
+      // choisit qu'après « Utiliser » (`recentrageArmed`) ; sinon, le clic marque (ou rend) une carte de la défausse.
       if (this.ui.recentrageArmed) {
         this.ui.startTech = { id: 'Recentrage', cardId };
         this.ui.recentrageArmed = false;
         this.ui.trim = this.ui.trim.filter((x) => x !== cardId);
       } else if (v.me.handCount > 4) {
         this.ui.trim = this.ui.trim.includes(cardId) ? this.ui.trim.filter((x) => x !== cardId) : [...this.ui.trim, cardId];
+        // T1 : la défausse reste modifiable ; la changer rouvre « Défausser » (et la question de la Technique viendra après)
+        this.ui.defausseFaite = false;
+        if (this.assiste && this.ui.startTech?.id === 'Recentrage') this.ui.startTech = null;
+      } else if (this.assiste && this.questionTech() === 'Recentrage') {
+        this.toast('Recentrage : réponds d’abord « Utiliser » (puis choisis la carte) ou « Non ».', 'info');
+        return;
       }
-      // M18 : au tour assisté, le Début se valide seul dès que tout est répondu
+      // au tour assisté, la carte du Recentrage choisie après « Utiliser » conclut le Début (la défausse déjà conclue)
       if (this.assiste && this.suiteDebut()) return;
       this.renderFn();
       return;
@@ -866,7 +872,6 @@ export class Controller {
     }
     if (!this.editingCommit() || !this.ui.draft.primaryId) { this.toast('Posez d’abord une Primaire.'); return; }
     this.ui.draft.stance = st;
-    if (this.suiteEngagement()) return;
     this.renderFn();
   }
 
@@ -876,20 +881,9 @@ export class Controller {
     return this.editingCommit() && !dr.secondaryId && (this.view.me.hand ?? []).some((x) => x.cardId !== dr.primaryId && !cardDef(x.defId).signature);
   }
 
-  /**
-   * Règle du responsable (2026-11-11) : chaque étape en un clic si possible, sans valider. À l'Engagement du tour assisté,
-   * le geste qui complète tout engage : la posture si la Secondaire est déjà posée (ou impossible), la Secondaire si la
-   * Primaire et sa posture le sont. Seul l'engagement sans Secondaire demande « Engager sans Secondaire » (le « Non » de
-   * la Secondaire facultative). La révision (avenant 08) garde ses deux réponses.
-   */
-  private suiteEngagement(): boolean {
-    const v = this.view;
-    const dr = this.ui.draft;
-    if (!this.assiste || v.phase !== 'COMMIT' || !v.awaitingMe || !dr.primaryId || !dr.stance) return false;
-    if (!dr.secondaryId && this.peutAjouterSecondaire()) return false;
-    this.lockCommit();
-    return true;
-  }
+  // T1 (décision du responsable du 2026-11-13, remplace la règle « un clic par étape » de la passe 219) : l'engagement
+  // (Primaire, posture, Secondaire) se conclut toujours par « Engager », au centre ; le brouillon reste modifiable jusque-là,
+  // quel que soit l'ordre des gestes. Aucune pose n'engage d'elle-même. La révision (avenant 08) garde ses deux réponses.
 
   /** Engagement en cours d’édition : phase d’engagement, ou ma révision (avenant 08, amendement 1). */
   editingCommit(): boolean {
@@ -1131,8 +1125,9 @@ export class Controller {
   }
 
   // ------------------------------------------------------------------------
-  // M18 — le tour assisté : questions facultatives posées sur place, menus ouverts d'eux-mêmes, étapes validées
-  // dès que tout est répondu. Aucune règle ne change : chaque réponse passe par les mêmes commandes et la même garde.
+  // M18 — le tour assisté : questions facultatives posées au centre, menus ouverts d'eux-mêmes ; T1 (2026-11-13) : une question
+  // oui/non avance à la réponse, une étape à plusieurs choix attend son bouton (« Engager », « Valider », « Défausser »).
+  // Aucune règle ne change : chaque réponse passe par les mêmes commandes et la même garde.
 
   /** Une Secondaire répondue (ou refermée) aux choix tactiques : le menu de la suivante s'ouvre. */
   private menuFait(slot: SlotIndex): void {
@@ -1142,24 +1137,56 @@ export class Controller {
     this.suiteTactique();
   }
 
+  /** T1 : les choix tactiques comptent plusieurs choix dès que j'ai une Secondaire active (ils se concluent par « Valider »). */
+  private tactiquesAChoix(): boolean {
+    return this.view.me.slots.some((s) => s?.state === 'active');
+  }
+
   /**
-   * Retour du responsable (2026-11-11) : pas de bouton « Valider » aux choix tactiques. Dès que chaque Secondaire active
-   * a son choix (Conserver compris) et que la Technique éventuelle est répondue (cible comprise), les choix partent.
-   * Rend vrai si la commande est partie (ou a été refusée, puis remise à zéro).
+   * T1 (retours du 2026-11-13) : avec une Secondaire active, les choix tactiques attendent « Valider » (`validerTactiques`),
+   * jamais le dernier choix. Sans Secondaire active, l'étape n'est que la question de la Technique (Rupture) : elle avance à
+   * la réponse (« Non », ou la cible choisie après « Utiliser »). Rend vrai si la commande est partie (ou a été refusée).
    */
   private suiteTactique(): boolean {
     const v = this.view;
-    if (!this.assiste || v.phase !== 'TACTICS' || !v.awaitingMe) return false;
+    if (!this.assiste || v.phase !== 'TACTICS' || !v.awaitingMe || this.tactiquesAChoix()) return false;
     if (this.menusEnAttente().length || this.ui.menuSlot !== null || this.ui.targetingFor !== null || this.ui.techTargeting || this.questionTech()) return false;
     if (this.lockTactics()) return true;
-    // refusée (garde d'une leçon) : les menus se rouvrent
-    this.ui.plans = [null, null];
-    this.ui.menusFaits = [];
+    // refusée (garde d'une leçon) : la question revient
     this.ui.tacticsTech = null;
     this.ui.repondu = this.ui.repondu.filter((x) => !x.startsWith('tech:'));
-    this.ouvrirMenuSuivant();
     this.renderFn();
     return true;
+  }
+
+  /**
+   * T1 : chaque Secondaire active a son choix (« Conserver » par défaut), aucun menu ni ciblage en cours, la Technique
+   * répondue : « Valider » paraît au centre. Les choix restent modifiables (rouvrir un menu) jusqu'au clic.
+   */
+  tactiquesPretes(): boolean {
+    const v = this.view;
+    if (!this.assiste || v.phase !== 'TACTICS' || !v.awaitingMe || this.sequencing || !this.tactiquesAChoix()) return false;
+    return !this.menusEnAttente().length && this.ui.menuSlot === null && this.ui.targetingFor === null && !this.ui.techTargeting && !this.questionTech();
+  }
+
+  /** T1 : « Valider » les choix tactiques (une Secondaire sans choix garde « Conserver »). */
+  validerTactiques(): void {
+    if (!this.tactiquesPretes()) return;
+    if (!this.lockTactics()) this.renderFn();
+  }
+
+  /** T1 : la défausse du début du tour reste à conclure (main de plus de quatre cartes, « Défausser » pas encore cliqué). */
+  defausseEnCours(): boolean {
+    const v = this.view;
+    return this.assiste && v.phase === 'START' && v.awaitingMe && v.me.handCount > 4 && !this.ui.defausseFaite && !this.ui.recentrageArmed;
+  }
+
+  /** T1 : « Défausser » conclut le choix des cartes ; la question de la Technique suit, sinon le Début part. */
+  validerDefausse(): void {
+    const v = this.view;
+    if (!this.defausseEnCours() || this.ui.trim.length !== v.me.handCount - 4) return;
+    this.ui.defausseFaite = true;
+    if (!this.suiteDebut()) this.renderFn();
   }
 
   /** Secondaires actives dont le menu reste à ouvrir (ni choix, ni menu refermé). */
@@ -1183,7 +1210,8 @@ export class Controller {
     const libre = (t: TechniqueId) => this.canUseTech(t) && !this.ui.repondu.includes(`tech:${t}`);
     switch (v.phase) {
       case 'START': {
-        if (this.ui.trim.length !== Math.max(0, v.me.handCount - 4) || this.ui.startTech || this.ui.recentrageArmed) return null;
+        // T1 : la question de la Technique vient après la défausse conclue (« Défausser »)
+        if (this.ui.trim.length !== Math.max(0, v.me.handCount - 4) || (v.me.handCount > 4 && !this.ui.defausseFaite) || this.ui.startTech || this.ui.recentrageArmed) return null;
         return (['Sondage', 'Recentrage'] as const).find(libre) ?? null;
       }
       case 'DISSIPATION': return libre('Dissipation') ? 'Dissipation' : null;
@@ -1223,6 +1251,19 @@ export class Controller {
       this.ui.repondu = this.ui.repondu.filter((x) => !x.startsWith('reserve:'));
       this.renderFn();
     }
+  }
+
+  /**
+   * T2 (retours du 2026-11-13) : revenir sur « Utiliser » avant d'avoir conclu (la carte du Recentrage ou la cible de
+   * Rupture, d'Ancrage pas encore choisie, ou choisie et pas encore envoyée) : rien n'est dépensé, la question revient.
+   */
+  annulerTech(t: TechniqueId): void {
+    if (t === 'Recentrage') {
+      this.ui.recentrageArmed = false;
+      if (this.ui.startTech?.id === 'Recentrage') this.ui.startTech = null;
+    }
+    if (this.ui.tacticsTech?.id === t || this.ui.techTargeting === t) { this.ui.tacticsTech = null; this.ui.techTargeting = null; }
+    this.renderFn();
   }
 
   /** R3 : « Utiliser » ou « Non » sur la Technique utilisable ; répondre fait avancer, sans autre bouton. */
@@ -1273,13 +1314,14 @@ export class Controller {
   }
 
   /**
-   * Début du tour assisté : valide dès que les défausses sont faites et la Technique répondue (ou sa carte de
-   * Recentrage choisie). Rend vrai si la commande est partie (ou a été refusée et remise à zéro).
+   * Début du tour assisté : part dès que la défausse est conclue (« Défausser ») et la Technique répondue (ou la carte du
+   * Recentrage choisie après « Utiliser »). Rend vrai si la commande est partie (ou a été refusée et remise à zéro).
    */
   private suiteDebut(): boolean {
     const v = this.view;
     if (!this.assiste || v.phase !== 'START' || !v.awaitingMe) return false;
     if (this.ui.trim.length !== Math.max(0, v.me.handCount - 4) || this.ui.recentrageArmed) return false;
+    if (v.me.handCount > 4 && !this.ui.defausseFaite) return false;
     if (!this.ui.startTech && this.questionTech()) return false;
     if (this.lockStart()) return true;
     this.ui.startTech = null;
@@ -1288,7 +1330,7 @@ export class Controller {
     return true;
   }
 
-  /** Engagement prêt à conclure (Primaire et posture posées) : le bouton « Engager » paraît au-dessus de la case. */
+  /** Engagement prêt à conclure (Primaire et posture posées) : « Engager » paraît dans le panneau de décision. */
   engagementPret(): boolean {
     return this.editingCommit() && !!this.ui.draft.primaryId && !!this.ui.draft.stance;
   }

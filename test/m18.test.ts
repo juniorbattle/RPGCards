@@ -77,19 +77,34 @@ function controleur(id: LeconId, tour: 'assiste' | 'classique'): Controller {
 /** Les gestes du tour assisté qui produisent la commande `cmd` (aucun bouton de panneau, aucun « Tour suivant »). */
 function gestesAssistes(c: Controller, cmd: PlayerCommand): void {
   const fois = (n: number, f: () => boolean) => { for (let i = 0; i < n && f(); i++); };
+  const nb = c.match.commands.length;
+  const parti = () => c.match.commands.slice(nb).some((x) => x.type !== 'nextTurn' && x.player === 'p1');
   switch (cmd.type) {
-    case 'start':
+    case 'start': {
+      const insight = c.view.me.insight;
       for (const id of cmd.discard) c.clickHandCard(id);
+      // T1 : la défausse (plusieurs cartes à choisir) se conclut par « Défausser » ; rien ne part avant
+      if (cmd.discard.length) {
+        expect(parti(), 'la défausse attend « Défausser »').toBe(false);
+        expect(c.defausseEnCours()).toBe(true);
+        c.validerDefausse();
+      }
       fois(4, () => {
         const q = c.questionTech();
         if (!q || c.view.phase !== 'START') return false;
         const veut = cmd.technique?.id === q;
-        // le Recentrage : un clic sur la carte
-        if (veut && cmd.technique && 'cardId' in cmd.technique) c.clickHandCard(cmd.technique.cardId);
-        else c.repondreTech(q, veut);
+        // T2 : un clic sur une carte avant « Utiliser » ne dépense rien ; le Recentrage : « Utiliser », puis la carte
+        if (veut && cmd.technique && 'cardId' in cmd.technique) {
+          c.clickHandCard(cmd.technique.cardId);
+          expect(parti() || c.view.me.insight !== insight, 'un clic sur une carte ne dépense jamais d’Insight').toBe(false);
+          c.repondreTech(q, true);
+          expect(c.ui.recentrageArmed).toBe(true);
+          c.clickHandCard(cmd.technique.cardId);
+        } else c.repondreTech(q, veut);
         return true;
       });
       return;
+    }
     case 'prepare':
       fois(3, () => { const i = c.reservesEnAttente()[0]; if (i === undefined) return false; c.repondreReserve(i, cmd.reveal.includes(i)); return true; });
       return;
@@ -103,13 +118,10 @@ function gestesAssistes(c: Controller, cmd: PlayerCommand): void {
         const slot = cmd.slot ?? cmd.replaceSlot ?? null;
         if (slot === null) { c.clickHandCard(cmd.secondaryId); c.placeSelected('secondary'); } else c.dropCard(cmd.secondaryId, slot === 0 ? 'slot0' : 'slot1');
       }
-      // un clic par geste : poser la Secondaire (ou la posture, si plus rien ne peut s'ajouter) engage tout de suite ;
-      // sans Secondaire, un seul geste de plus, « Engager sans Secondaire »
-      if (c.view.phase === 'COMMIT' && c.view.awaitingMe) {
-        expect(cmd.secondaryId, 'la Secondaire posée aurait dû engager').toBeNull();
-        expect(c.engagementPret()).toBe(true);
-        c.lockCommit();
-      }
+      // T1 : aucune pose n'engage ; « Engager » conclut toujours
+      expect(parti(), 'l’engagement ne part jamais seul').toBe(false);
+      expect(c.engagementPret()).toBe(true);
+      c.lockCommit();
       return;
     }
     case 'revise': {
@@ -138,8 +150,13 @@ function gestesAssistes(c: Controller, cmd: PlayerCommand): void {
         c.repondreTech(t.id, true);
         if (c.ui.techTargeting === t.id) { if (t.id === 'Ancrage') c.clickMySlot(t.slot); else c.clickOppSlot(t.targetSlot); }
       } else if (q) c.repondreTech(q, false);
-      // aucun « Valider » : le dernier choix a envoyé les choix tactiques
-      expect(c.view.phase === 'TACTICS' && c.view.awaitingMe, 'choix tactiques envoyés au dernier choix').toBe(false);
+      // T1 : avec une Secondaire active, les choix attendent « Valider » ; sans, la réponse à la Technique les a envoyés
+      if (c.view.me.slots.some((s) => s?.state === 'active')) {
+        expect(parti(), 'les choix tactiques attendent « Valider »').toBe(false);
+        expect(c.tactiquesPretes()).toBe(true);
+        c.validerTactiques();
+      }
+      expect(c.view.phase === 'TACTICS' && c.view.awaitingMe, 'choix tactiques envoyés').toBe(false);
       return;
     }
     case 'repel': return cmd.targetSlot === null ? c.skipRepel() : c.clickOppSlot(cmd.targetSlot as SlotIndex);

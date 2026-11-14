@@ -11,9 +11,16 @@
 // (5) Fiche de clôture : la révision au tour assisté (scénario `signature-annonce`, le joueur engage avant la Signature du
 //     rival) : le panneau nomme la Signature, dit comment modifier, « Engager la révision » passe en action principale ;
 //     puis un duel au tour assisté avec les temps forts tenus au clic (`tenir=1`) : aucun ne passe sur le panneau de décision.
+// (6) Retours du test du 2026-11-13 (T1 à T3), scénario `tour-t1`, à la souris, au clavier et à la manette (et une fois de plus
+//     avec `tenir=1`) : la défausse attend « Défausser » ; un clic sur une carte au début du tour ne dépense jamais d'Insight,
+//     ni la touche de l'action principale (N, Y) sur la question d'une Technique ; le Recentrage par « Utiliser », puis la carte
+//     (« Annuler » ramène la question) ; l'engagement ne part jamais seul, dans les deux ordres (Secondaire puis Primaire,
+//     Primaire puis Secondaire), le brouillon complet reste modifiable, « Engager » a le focus ; les choix tactiques attendent
+//     « Valider » (un menu répondu se rouvre) ; la barre de pose en deux groupes titrés (« Primaire » : ASSAUT, GARDE ;
+//     « Secondaire » : Poser cachée), dans l'ordre du focus.
 // Usage : npm run build && [LQV_VP=1920x1080] [LQV_MODES=souris,clavier,manette] [LQV_REDUIT=1] [LQV_TOURS=4] node tools/m18-tour.mjs [dossier] [rapport.json]
 import { execSync } from 'node:child_process';
-import { mkdirSync, writeFileSync as ecrireBrut } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync as ecrireBrut } from 'node:fs';
 import { dirname } from 'node:path';
 import { launch, rendererLabel, startPreview, watchConsole, webglRenderer } from './browser.mjs';
 
@@ -148,6 +155,12 @@ const GESTE_ASSISTE = (tour) => {
   const vis = (s) => [...document.querySelectorAll(s)].some((e) => e.getClientRects().length && !e.disabled);
   if (v.phase === 'REPEL' && v.repel?.mine) { const z = document.querySelector('.side.opp .zone.targetable'); return z ? `[data-key="${z.dataset.key}"]` : k('act-repel-skip'); }
   if (!v.awaitingMe) return null;
+  // T1 : la défausse du début du tour, puis « Défausser »
+  if (document.querySelector('[data-key="decision-defausse"]')) {
+    if (vis(k('act-start'))) return k('act-start');
+    const id = (v.me.hand ?? []).map((x) => x.cardId).find((x) => !c.ui.trim.includes(x));
+    return id ? k(`hand-${id}`) : null;
+  }
   const tech = document.querySelector('.ask-tech[data-key^="ask-tech-"]');
   if (tech) { const t = tech.dataset.key.slice(9); return k(`tech-${t === 'Sondage' ? 'oui' : 'non'}-${t}`); }
   const reserve = document.querySelector('[data-key^="reveal-oui-"]');
@@ -155,8 +168,8 @@ const GESTE_ASSISTE = (tour) => {
   if (c.ui.menuSlot !== null) { const i = c.ui.menuSlot; return vis(k(`menu-${i}-rank`)) ? k(`menu-${i}-rank`) : k(`menu-${i}-keep`); }
   if (c.ui.targetingFor !== null) { const z = document.querySelector('.side.opp .zone.targetable'); return z ? `[data-key="${z.dataset.key}"]` : null; }
   switch (v.phase) {
-    // aux choix tactiques, aucun bouton à cliquer : le dernier choix les envoie
-    case 'TACTICS': return null;
+    // T1 : aux choix tactiques, les menus répondus, « Valider » au centre
+    case 'TACTICS': return vis(k('act-tactics')) ? k('act-tactics') : null;
     case 'REVISION': return k('act-revision-keep');
     case 'LECTURE_CHANGE': return k('stance-guard');
     case 'COMMIT': {
@@ -274,7 +287,6 @@ async function jouerDuel(p, j, tour, captures, tenir = false) {
       consignesMax = Math.max(consignesMax, s.consignes);
       if (s.tip) tips++;
       if (s.actNext) fautes.push(`tour ${s.turn} ${s.phase} : « Tour suivant » affiché`);
-      if (s.valider) fautes.push(`tour ${s.turn} ${s.phase} : bouton « Valider » des choix tactiques`);
       if (s.boutonsPanneau.some((b) => b !== 'act-skip')) fautes.push(`tour ${s.turn} ${s.phase} : bouton dans le panneau (${s.boutonsPanneau.join(', ')})`);
     }
     const sel = await av(tour === 'assiste' ? GESTE_ASSISTE : GESTE_CLASSIQUE, s.turn);
@@ -291,6 +303,177 @@ async function jouerDuel(p, j, tour, captures, tenir = false) {
     await p.waitForTimeout(170);
   }
   return { gestesParTour, attentes, fautes: [...new Set(fautes)], consignesMax, tips, tenus, s: Math.round((Date.now() - t0) / 100) / 10, final: await av(ETAT) };
+}
+
+/**
+ * (6) Retours du test du 2026-11-13 : T1 (un bouton si plusieurs choix), T2 (Techniques par « Utiliser / Non »), T3 (deux
+ * groupes de pose), joués comme un joueur dans le mode demandé.
+ */
+async function controlesT1(mode, tenir) {
+  const nom = `T1-T3 ${mode}${tenir ? ' (tenir=1)' : ''}`;
+  const { ctx, p } = await contexte(mode === 'manette');
+  const j = joueur(p, mode);
+  const av = (fn, arg) => p.evaluate(fn, arg);
+  const url = `${server.base}/?qa=1&tour=assiste&scenario=tour-t1&aiDelay=300${tenir ? '&tenir=1' : ''}${REDUIT ? '&reducedMotion=1' : ''}`;
+  const E = () => av(() => {
+    const c = window.__lqv.controller;
+    const v = c.view;
+    const vis = (s) => [...document.querySelectorAll(s)].some((e) => e.getClientRects().length && !e.disabled);
+    return {
+      phase: v.phase, me: v.awaitingMe, insight: v.me.insight, cmds: c.match.commands.filter((x) => x.player === 'p1').map((x) => x.type),
+      dernier: c.match.commands.filter((x) => x.player === 'p1').pop() ?? null, draft: { ...c.ui.draft }, trim: [...c.ui.trim], arme: c.ui.recentrageArmed, menu: c.ui.menuSlot,
+      panneau: [...document.querySelectorAll('#app .decision')].filter((e) => e.getClientRects().length).map((e) => e.dataset.key),
+      focus: document.activeElement?.dataset?.key ?? '', primaire: [...document.querySelectorAll('#app [data-primary-action]')].filter((e) => e.getClientRects().length && !e.disabled).map((e) => e.dataset.key),
+      annuler: vis('[data-key="act-recentrage-annuler"]'),
+    };
+  });
+  const idDe = (def) => av((d) => { const s = window.__lqv.controller.match.state; return s.players.p1.hand.find((x) => s.cards[x].defId === d) ?? null; }, def);
+  const main = async (def) => `[data-key="hand-${await idDe(def)}"]`;
+  /** Attend une condition sur l'état ; avec `tenir=1`, un temps fort tenu au clic se fait partir comme un joueur. */
+  const attendre = async (f, quoi, ms = 15000) => {
+    const t0 = Date.now();
+    while (Date.now() - t0 < ms) {
+      if (tenir && await av(() => !!document.querySelector('#activations .act.tenu'))) { await j.agir('#activations .act.tenu'); await p.waitForTimeout(200); continue; }
+      const e = await E();
+      if (f(e)) return e;
+      await p.waitForTimeout(120);
+    }
+    const e = await E();
+    console.log(`  ${nom} : délai dépassé (${quoi}) : ${JSON.stringify({ ...e, dernier: undefined })}`);
+    return e;
+  };
+  /** Un temps fort au centre (la Technique jouée, le regard) passe d'abord, comme pour un joueur ; tenu au clic (`tenir=1`), on le fait partir. */
+  const calme = async () => {
+    const t0 = Date.now();
+    while (Date.now() - t0 < 15000) {
+      const a = await av(() => ({ tenu: !!document.querySelector('#activations .act.tenu'), occupe: !!window.__lqv.activations?.().busy }));
+      if (a.tenu) { await j.agir('#activations .act.tenu'); await p.waitForTimeout(200); continue; }
+      if (!a.occupe) { await p.waitForTimeout(120); return; }
+      await p.waitForTimeout(120);
+    }
+  };
+  const geste = async (sel) => { await calme(); await j.agir(sel); await p.waitForTimeout(260); };
+  const Ec = async () => { await calme(); return E(); };
+  const touchePrincipale = async () => {
+    if (mode === 'manette') { await av(() => window.__pad.set(3, true)); await p.waitForTimeout(80); await av(() => window.__pad.set(3, false)); }
+    else await p.keyboard.press('n');
+    await p.waitForTimeout(300);
+  };
+  const ouvrir = async () => {
+    await p.goto(url, { timeout: 90000 });
+    await p.waitForFunction(() => window.__lqv?.controller?.view.phase === 'START', null, { timeout: 60000 });
+    return attendre((e) => e.panneau.includes('decision-defausse'), 'panneau de la défausse');
+  };
+  try {
+    // --- début du tour : défausse, puis la question du Recentrage
+    let e = await ouvrir();
+    check(e.panneau.includes('decision-defausse') && !e.primaire.includes('act-start'), `${nom} : défausse : « Défausser » au centre, inactif tant qu’aucune carte n’est choisie`);
+    await geste(await main('Cendre-1-basic'));
+    e = await Ec();
+    check(e.trim.length === 1 && e.cmds.length === 0 && e.insight === 1 && e.focus === 'act-start', `${nom} : défausse : la carte choisie, rien ne part, « Défausser » prend le focus (focus ${e.focus})`);
+    await geste('[data-key="act-start"]');
+    e = await attendre((x) => x.panneau.includes('ask-tech-Recentrage'), 'question du Recentrage');
+    check(e.panneau.includes('ask-tech-Recentrage') && e.cmds.length === 0 && e.focus === 'tech-oui-Recentrage' && !e.primaire.includes('tech-oui-Recentrage'), `${nom} : après « Défausser », la question du Recentrage (focus sur « Utiliser », qui n’est pas l’action principale ; focus ${e.focus})`);
+    if (mode !== 'souris') {
+      await touchePrincipale();
+      e = await E();
+      check(e.insight === 1 && e.cmds.length === 0 && !e.arme && e.panneau.includes('ask-tech-Recentrage'), `${nom} : la touche de l’action principale (${mode === 'manette' ? 'Y' : 'N'}) ne répond pas à la question d’une Technique`);
+    }
+    // T2 : un clic sur une carte pendant la question ne dépense rien (il rouvre la défausse)
+    const voile = await main('Voile-2-basic');
+    await geste(voile);
+    e = await Ec();
+    check(e.insight === 1 && e.cmds.length === 0 && !e.arme && e.panneau.includes('decision-defausse'), `${nom} : un clic sur une carte au début du tour ne dépense jamais d’Insight (Insight ${e.insight}, la défausse rouverte)`);
+    await geste(voile);
+    await geste('[data-key="act-start"]');
+    e = await attendre((x) => x.panneau.includes('ask-tech-Recentrage'), 'question du Recentrage (2)');
+    await geste('[data-key="tech-oui-Recentrage"]');
+    e = await Ec();
+    check(e.arme && e.insight === 1 && e.cmds.length === 0 && e.annuler, `${nom} : « Utiliser » : la carte du Recentrage se choisit ensuite (rien n’est dépensé), « Annuler » proposé`);
+    await geste('[data-key="act-recentrage-annuler"]');
+    e = await Ec();
+    check(!e.arme && e.insight === 1 && e.panneau.includes('ask-tech-Recentrage'), `${nom} : « Annuler » ramène la question, sans rien dépenser`);
+    await geste('[data-key="tech-oui-Recentrage"]');
+    const ronce = await idDe('Ronce-2-basic');
+    await geste(`[data-key="hand-${ronce}"]`);
+    e = await attendre((x) => x.cmds.includes('start'), 'Début envoyé');
+    check(e.dernier?.type === 'start' && e.dernier.technique?.id === 'Recentrage' && e.dernier.technique.cardId === ronce && e.dernier.discard.length === 1, `${nom} : « Utiliser », puis la carte : le Début part avec la défausse et le Recentrage`);
+    // --- engagement, Secondaire d'abord, puis Primaire et posture
+    e = await attendre((x) => x.phase === 'COMMIT' && x.me, 'Engagement');
+    const sec1 = await idDe('Voile-2-basic');
+    const prim = await idDe('Cendre-4-basic');
+    await geste(`[data-key="hand-${sec1}"]`);
+    const barre = await av(() => {
+      const b = document.querySelector('.place-bar');
+      if (!b) return null;
+      const g = [...b.querySelectorAll('.place-groupe')].map((x) => ({ titre: x.querySelector('.place-titre')?.textContent ?? '', boutons: [...x.querySelectorAll('button')].map((y) => y.dataset.key) }));
+      const ordre = [...b.querySelectorAll('button')].map((y) => y.dataset.key);
+      const libelle = b.querySelector('[data-key="place-secondary"] .place-label')?.textContent ?? '';
+      const r1 = b.querySelector('[data-key="place-groupe-primaire"]')?.getBoundingClientRect(); const r2 = b.querySelector('[data-key="place-groupe-secondaire"]')?.getBoundingClientRect();
+      return { g, ordre, libelle, separes: !!r1 && !!r2 && r2.top >= r1.bottom };
+    });
+    check(!!barre && barre.g.length === 2 && barre.g[0].titre === 'Primaire' && barre.g[0].boutons.join() === 'place-assault,place-guard' && barre.g[1].titre === 'Secondaire' && barre.g[1].boutons.join() === 'place-secondary' && barre.libelle === 'POSER CACHÉE' && barre.separes && barre.ordre.join() === 'place-assault,place-guard,place-secondary',
+      `${nom} : barre de pose en deux groupes titrés (${barre ? barre.g.map((x) => `${x.titre} : ${x.boutons.join(', ')}`).join(' / ') : 'absente'})`);
+    if (mode === 'souris' && !tenir) writeFileSync(`${DIR}/t3-barre.png`, await p.screenshot());
+    await geste('[data-key="place-secondary"]');
+    await geste(`[data-key="hand-${prim}"]`);
+    await geste('[data-key="place-guard"]');
+    await p.waitForTimeout(400);
+    e = await Ec();
+    check(e.phase === 'COMMIT' && e.me && !e.cmds.includes('commit') && e.panneau.includes('decision-engager') && e.focus === 'act-commit', `${nom} : Secondaire puis Primaire : l’engagement ne part pas seul ; « Engager » au centre, avec le focus (focus ${e.focus})`);
+    if (mode === 'souris' && !tenir) writeFileSync(`${DIR}/t1-engager.png`, await p.screenshot());
+    // le brouillon complet se modifie : le mode, la Secondaire reprise puis une autre posée
+    await geste('[data-key="stance-assault"]');
+    await geste('[data-key="zone-me-1"]');
+    const sec2 = await idDe('Astre-1-basic');
+    await geste(`[data-key="hand-${sec2}"]`);
+    await geste('[data-key="place-secondary"]');
+    e = await Ec();
+    check(e.phase === 'COMMIT' && !e.cmds.includes('commit') && e.draft.stance === 'assault' && e.draft.secondaryId === sec2 && e.focus === 'act-commit', `${nom} : le brouillon complet reste modifiable (mode changé, Secondaire reprise et remplacée), rien d’envoyé ; le focus revient sur « Engager » (focus ${e.focus})`);
+    await geste('[data-key="act-commit"]');
+    e = await attendre((x) => x.cmds.includes('commit'), 'engagement envoyé');
+    check(e.dernier?.type === 'commit' && e.dernier.primaryId === prim && e.dernier.stance === 'assault' && e.dernier.secondaryId === sec2, `${nom} : « Engager » envoie le brouillon modifié`);
+    // --- choix tactiques : « Valider »
+    e = await attendre((x) => x.phase === 'TACTICS' && x.me && x.menu === 0, 'menu tactique ouvert');
+    await geste('[data-key="menu-0-rank"]');
+    await p.waitForTimeout(300);
+    e = await Ec();
+    check(e.phase === 'TACTICS' && !e.cmds.includes('tactics') && e.panneau.includes('decision-valider') && e.focus === 'act-tactics', `${nom} : le menu répondu n’envoie pas les choix ; « Valider » au centre, avec le focus (focus ${e.focus})`);
+    if (mode === 'souris' && !tenir) writeFileSync(`${DIR}/t1-valider.png`, await p.screenshot());
+    await geste('[data-key="zone-me-0"]');
+    e = await Ec();
+    check(e.menu === 0 && !e.panneau.includes('decision-valider'), `${nom} : un menu répondu se rouvre (clic sur la Secondaire)`);
+    await geste('[data-key="menu-0-keep"]');
+    await geste('[data-key="act-tactics"]');
+    e = await attendre((x) => x.cmds.includes('tactics'), 'choix tactiques envoyés');
+    check(e.dernier?.type === 'tactics' && (e.dernier.plans[0]?.mode ?? 'keep') === 'keep', `${nom} : « Valider » envoie le choix modifié (Conserver)`);
+    // --- engagement dans l'autre ordre : Primaire et posture, puis Secondaire
+    e = await ouvrir();
+    await geste(await main('Cendre-1-basic'));
+    await geste('[data-key="act-start"]');
+    await attendre((x) => x.panneau.includes('ask-tech-Recentrage'), 'question du Recentrage (3)');
+    await geste('[data-key="tech-non-Recentrage"]');
+    e = await attendre((x) => x.phase === 'COMMIT' && x.me, 'Engagement (2)');
+    check(e.dernier?.type === 'start' && e.dernier.technique === null && e.insight === 1, `${nom} : « Non » au Recentrage : le Début part avec la seule défausse`);
+    const p2 = await idDe('Cendre-4-basic');
+    const s2 = await idDe('Voile-2-basic');
+    await geste(`[data-key="hand-${p2}"]`);
+    await geste('[data-key="place-assault"]');
+    e = await Ec();
+    check(!e.cmds.includes('commit') && e.panneau.includes('decision-engager'), `${nom} : Primaire et posture posées : « Engager » au centre, rien d’envoyé`);
+    await geste(`[data-key="hand-${s2}"]`);
+    await geste('[data-key="place-secondary"]');
+    await p.waitForTimeout(400);
+    e = await Ec();
+    check(e.phase === 'COMMIT' && e.me && !e.cmds.includes('commit') && e.draft.secondaryId === s2 && e.focus === 'act-commit', `${nom} : Primaire puis Secondaire : l’engagement ne part pas seul ; le focus sur « Engager » (focus ${e.focus})`);
+    await geste('[data-key="act-commit"]');
+    e = await attendre((x) => x.cmds.includes('commit'), 'engagement envoyé (2)');
+    check(e.dernier?.type === 'commit' && e.dernier.primaryId === p2 && e.dernier.secondaryId === s2, `${nom} : « Engager » envoie Primaire et Secondaire`);
+    if (mode !== 'souris') check(j.replis === 0, `${nom} : aucun geste replié sur la souris (${j.replis})`);
+  } catch (err) {
+    check(false, `${nom} : erreur ${err?.message ?? err}`);
+  }
+  await ctx.close();
 }
 
 const moyenne = (o) => { const v = Object.values(o); return v.length ? Math.round((v.reduce((a, b) => a + b, 0) / v.length) * 10) / 10 : 0; };
@@ -409,6 +592,8 @@ try {
     check(r.fautes.length === 0, `tenir=1 : aucun temps fort sur le panneau de décision, aucun bouton n’attend sans choix${r.fautes.length ? ` (${r.fautes.slice(0, 4).join(' ; ')})` : ''}`);
     await ctx.close();
   }
+  // (6) T1 à T3 (retours du test du 2026-11-13), sur le scénario `tour-t1`
+  for (const [mode, tenir] of [...MODES.map((m) => [m, false]), ['souris', true]]) await controlesT1(mode, tenir);
   // (4) planche avant / après
   {
     const { ctx, p } = await contexte(false);
@@ -419,6 +604,15 @@ try {
     await p.waitForTimeout(400);
     writeFileSync(`${DIR}/planche-avant-apres.png`, await p.screenshot({ fullPage: true }));
     for (const [k] of ETAPES) for (const cote of ['avant', 'apres']) if (planche[k]?.[cote]) writeFileSync(`${DIR}/${k}-${cote}.png`, Buffer.from(planche[k][cote], 'base64'));
+    // T1 à T3 (retours du 2026-11-13) : « Engager » et « Valider » au centre, la barre de pose en deux groupes
+    const t13 = [['t1-engager', 'T1 : l’engagement complet attend « Engager » (modifiable jusque-là)'], ['t1-valider', 'T1 : les choix tactiques attendent « Valider »'], ['t3-barre', 'T3 : la barre de pose en deux groupes, « Primaire » et « Secondaire »']].filter(([f]) => existsSync(`${DIR}/${f}.png`));
+    if (t13.length) {
+      const figures = t13.map(([f, l]) => `<figure style="margin:0"><img style="width:100%;display:block" src="data:image/png;base64,${readFileSync(`${DIR}/${f}.png`).toString('base64')}"><figcaption style="padding:4px 2px">${l}</figcaption></figure>`).join('');
+      await p.setViewportSize({ width: 1900, height: 460 });
+      await p.setContent(`<html><body style="margin:0;background:#111;color:#eee;font:15px system-ui;padding:8px"><h2 style="margin:4px 0 8px">Retours du test du 2026-11-13 (T1 à T3), tour assisté · ${head} · ${VP.join('×')}${REDUIT ? ' · mouvement réduit' : ''}</h2><div style="display:grid;grid-template-columns:repeat(${t13.length},1fr);gap:8px">${figures}</div></body></html>`);
+      await p.waitForTimeout(300);
+      writeFileSync(`${DIR}/planche-t1-t3.png`, await p.screenshot({ fullPage: true }));
+    }
     check(Object.keys(planche).length >= 5, `planche avant / après : ${ETAPES.filter(([k]) => planche[k]).map(([, n]) => n).join(', ')}`);
     await ctx.close();
   }

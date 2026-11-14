@@ -166,6 +166,22 @@ export const SCENARIOS: Record<string, Scenario> = {
       '5:TACTICS': () => ({ type: 'tactics', player: 'p2', plans: [{ mode: 'keep' }, { mode: 'damage' }], technique: null }),
     },
   },
+  // Retours du test du 2026-11-13 (T1, T2) : une main de cinq cartes (défausse conclue par « Défausser »), Recentrage
+  // payable (jamais au clic sur une carte), une case libre pour la Secondaire (engagement conclu par « Engager », dans les
+  // deux ordres), une Secondaire active (choix tactiques conclus par « Valider »). `tools/m18-tour.mjs`, section 6.
+  'tour-t1': {
+    id: 'tour-t1',
+    title: 'Tour assisté : un bouton si plusieurs choix',
+    description: 'Défausse, Recentrage par « Utiliser », engagement dans les deux ordres puis « Engager », choix tactiques puis « Valider ».',
+    config: base({ techniques: ['Recentrage'] }),
+    build: (cfg) => fixture(cfg,
+      { hand: ['Cendre-4', 'Voile-2', 'Astre-1', 'Ronce-2', 'Cendre-1'], slots: [{ def: 'Cendre-3', active: true }, null], insight: 1 },
+      { hand: ['Ronce-3', 'Astre-2', 'Voile-1', 'Ronce-1'], slots: [{ def: 'Voile-4', active: true }, null] }, { turn: 5, phase: 'START' }),
+    rival: {
+      '5:COMMIT': (s) => ({ type: 'commit', player: 'p2', primaryId: idOf(s, 'p2', d('Ronce-3')), stance: 'guard', secondaryId: null, replaceSlot: null }),
+      '5:TACTICS': () => ({ type: 'tactics', player: 'p2', plans: [{ mode: 'keep' }, null], technique: null }),
+    },
+  },
   doubleko: {
     id: 'doubleko',
     title: 'Double K.-O. — prolongation',

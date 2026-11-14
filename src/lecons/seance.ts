@@ -401,7 +401,7 @@ function consigneClassique(c: Controller, s: GameState, a: PlayerCommand): { fai
       const dr = ui.draft;
       const p = defDe(s, a.primaryId);
       if (defDe(s, dr.primaryId) !== p) {
-        if (ui.selected && defDe(s, ui.selected) === p) return { faire: `Pose ${nomCarte(p)} en ${MODE[a.stance]} (bouton au-dessus de la carte), ou sur la case PRIMAIRE.`, cibles: [sel.btn(`place-${a.stance}`), sel.prim] };
+        if (ui.selected && defDe(s, ui.selected) === p) return { faire: `Pose ${nomCarte(p)} en Primaire : ${MODE[a.stance]} (au-dessus de la carte), ou sur la case PRIMAIRE.`, cibles: [sel.btn(`place-${a.stance}`), sel.prim] };
         return { faire: `Choisis ${nomCarte(p)} dans ta main, ou glisse-la sur la case PRIMAIRE.`, cibles: [main(p), sel.prim] };
       }
       if (dr.stance !== a.stance) return { faire: `Choisis ${MODE[a.stance]}.`, cibles: [sel.btn(`stance-${a.stance}`)] };
@@ -409,7 +409,7 @@ function consigneClassique(c: Controller, s: GameState, a: PlayerCommand): { fai
       if (sd && defDe(s, dr.secondaryId) !== sd) {
         const i = slotSecondaire(s, a);
         if (ui.selected && defDe(s, ui.selected) === sd && ui.choixCase) return { faire: `Clique la case SECONDAIRE ${i + 1} : ${nomCarte(sd)} y remplace ta réserve.`, cibles: [sel.slot(i)] };
-        if (ui.selected && defDe(s, ui.selected) === sd) return { faire: `Pose ${nomCarte(sd)} en SECONDAIRE (bouton au-dessus de la carte), ou sur la case SECONDAIRE ${i + 1}.`, cibles: [sel.btn('place-secondary'), sel.slot(i)] };
+        if (ui.selected && defDe(s, ui.selected) === sd) return { faire: `Pose ${nomCarte(sd)} en Secondaire : « Poser cachée » (au-dessus de la carte), ou sur la case SECONDAIRE ${i + 1}.`, cibles: [sel.btn('place-secondary'), sel.slot(i)] };
         return { faire: `Choisis ${nomCarte(sd)}, puis pose-la face cachée sur la case SECONDAIRE ${i + 1}.`, cibles: [main(sd), sel.slot(i)] };
       }
       if (!sd && dr.secondaryId) return { faire: 'Pas de Secondaire ce tour : clique-la pour la reprendre en main.', cibles: [sel.slot(dr.slot ?? 0)] };
@@ -483,8 +483,9 @@ function defausseRestante(c: Controller, s: GameState, a: Extract<PlayerCommand,
 }
 
 /**
- * M18 — la consigne au tour assisté : les questions facultatives se répondent sur place (« Révéler » / « Garder cachée »,
- * « Utiliser » / « Non »), le menu tactique s'ouvre de lui-même, « Engager » et « Valider » concluent. Null : la consigne
+ * M18 — la consigne au tour assisté : les questions facultatives se répondent au centre (« Révéler » / « Garder cachée »,
+ * « Utiliser » / « Non ») et avancent à la réponse ; le menu tactique s'ouvre de lui-même ; T1 (2026-11-13) : « Engager »,
+ * « Valider » et « Défausser » concluent les étapes à plusieurs choix, rien ne part seul. Null : la consigne
  * du tour classique vaut telle quelle (pose des cartes, cibles, Repoussement).
  */
 function consigneAssistee(c: Controller, s: GameState, a: PlayerCommand): { faire: string; cibles: string[] } | null {
@@ -494,8 +495,8 @@ function consigneAssistee(c: Controller, s: GameState, a: PlayerCommand): { fair
   switch (a.type) {
     case 'commit': {
       const r = consigneClassique(c, s, a);
-      // poser la Secondaire engage le tour ; sans Secondaire, « Engager sans Secondaire »
-      return r.cibles.includes(sel.btn('act-commit')) ? { faire: 'Engage, sans Secondaire.', cibles: [sel.btn('act-commit')] } : r;
+      // T1 (retours du 2026-11-13) : le brouillon complet attend « Engager », au centre (aucune pose n'engage d'elle-même)
+      return r.cibles.includes(sel.btn('act-commit')) ? { faire: 'Engage.', cibles: [sel.btn('act-commit')] } : r;
     }
     case 'prepare': {
       const i = c.reservesEnAttente()[0];
@@ -522,16 +523,19 @@ function consigneAssistee(c: Controller, s: GameState, a: PlayerCommand): { fair
           if (q) return non(q);
         }
       } else if (q) return non(q);
-      // aucun « Valider » au tour assisté : le dernier choix envoie les choix tactiques
-      return { faire: '', cibles: [] };
+      // T1 : avec une Secondaire active, « Valider » conclut les choix tactiques ; sans, la réponse à la Technique les a envoyés
+      return c.tactiquesPretes() ? { faire: 'Valide tes choix.', cibles: [sel.btn('act-tactics')] } : { faire: '', cibles: [] };
     }
     case 'start': {
       const aDefausser = defausseRestante(c, s, a);
       if (aDefausser) return aDefausser;
+      // T1 : la défausse se conclut par « Défausser »
+      if (c.defausseEnCours()) return { faire: 'Défausse : « Défausser ».', cibles: [sel.btn('act-start')] };
       const tq = a.technique;
       if (tq) {
         const carte = 'cardId' in tq ? defDe(s, tq.cardId) : null;
-        if (tq.id === 'Recentrage' && (ui.recentrageArmed || q === 'Recentrage')) return { faire: `Clique ${nomCarte(carte)} dans ta main.`, cibles: [sel.main(s.players.p1.hand.find((x) => s.cards[x]!.defId === carte) ?? '')] };
+        // T2 : la carte du Recentrage se choisit après « Utiliser » (un clic sur une carte ne dépense jamais d'Insight)
+        if (tq.id === 'Recentrage' && ui.recentrageArmed) return { faire: `Clique ${nomCarte(carte)} dans ta main.`, cibles: [sel.main(s.players.p1.hand.find((x) => s.cards[x]!.defId === carte) ?? '')] };
         if (q === tq.id) return { faire: `Utilise ${tq.id}.`, cibles: [sel.btn(`tech-oui-${tq.id}`)] };
       }
       return q ? non(q) : { faire: '', cibles: [] };

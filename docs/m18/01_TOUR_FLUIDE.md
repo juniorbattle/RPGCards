@@ -23,6 +23,19 @@
 > au-dessus de la rangée du joueur : la question en clair, ce qu'elle engage, la réponse en grand ; la carte concernée
 > s'éclaire. Les points 3 et 4 du §3 valent avec ce panneau (au lieu de « sur la carte » et « au-dessus de la case »).
 
+> **Décisions du responsable (2026-11-13, T1 à T3 de `docs/RETOURS_TEST_2026-11-13.md` ; appliquées à la passe 233) :
+> elles remplacent la règle « un clic par étape » de la passe 219.** T1 : **un bouton dès qu'il y a plusieurs choix**.
+> L'engagement (Primaire, posture, Secondaire) se conclut toujours par « Engager », au centre, avec le focus ; le brouillon
+> reste modifiable jusque-là, quel que soit l'ordre des gestes. Les choix tactiques gardent leurs menus ouverts d'office
+> (« Conserver » par défaut) et se concluent par « Valider » au même endroit ; un menu répondu se rouvre. La défausse du
+> début du tour se conclut par « Défausser ». Les questions oui/non (« Révéler » / « Garder cachée », « Utiliser » /
+> « Non », « Garder » / « Engager la révision », le mode après la Lecture) avancent toujours à la réponse ; sans Secondaire
+> active, la seule question de Rupture avance aussi à la réponse. T2 : **toutes les Techniques passent par « Utiliser /
+> Non »** ; la carte du Recentrage se choisit après « Utiliser » (« Annuler » ramène la question), jamais d'Insight dépensé
+> par un clic sur une carte ; « Utiliser » prend le focus sans être l'action principale (N, Y) ; la pastille d'une Technique
+> ne répond que si elle est la question posée. T3 : **la barre de pose en deux groupes titrés**, « Primaire » (ASSAUT,
+> GARDE) et « Secondaire » (Poser cachée), aux deux tours.
+>
 > **Statut : APPROUVÉ le 2026-11-11 (fiche remplie, consignée à la passe 217 ; `docs/FICHE_ARBITRAGES_M18.md`).** Les huit
 > choix sur la recommandation ; développement maintenant (P2), le responsable poursuit son test hors combat en attendant.
 > Retour du test complet du responsable (2026-11-11) : « le jeu manque de clarté au niveau de la manipulation lors du

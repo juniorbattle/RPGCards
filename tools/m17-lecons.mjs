@@ -5,8 +5,10 @@
 // (3) Aventure : l'entraînement proposé avant le prologue, refusable, mène aux leçons puis au duel contre Kaï ; « Leçons »
 //     dans le menu. (4) Planche des leçons (captures du premier geste de chacune).
 // M18 : les leçons se jouent au tour assisté (le défaut du jeu, `LQV_TOUR=assiste`) ou au tour classique (`LQV_TOUR=classique`).
-// Fiche de clôture : dix-neuf leçons (« Repousser et remplacer », « Réviser face à une Signature ») ; au tour assisté, le maître
-// de table ne dit jamais « Valider », « verrouille » ni « valide » (ces boutons n'y existent pas) : contrôlé à chaque geste.
+// Fiche de clôture : dix-neuf leçons (« Repousser et remplacer », « Réviser face à une Signature »). Retours du test du
+// 2026-11-13 (T1) : au tour assisté, « Engager », « Valider » et « Défausser » concluent les étapes à plusieurs choix ; le maître
+// de table et la consigne n'annoncent jamais d'engagement ni d'envoi automatique, et ne disent pas « verrouille » (bouton du
+// tour classique) : contrôlé à chaque geste.
 // Usage : npm run build && [LQV_VP=1920x1080] [LQV_MODES=souris,clavier,manette] [LQV_REDUIT=1] [LQV_TOUR=classique] node tools/m17-lecons.mjs [dossier] [rapport.json]
 import { execSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -21,8 +23,8 @@ const SUFFIXE = `${VP[0]}${REDUIT ? '-reduit' : ''}${TOUR === 'classique' ? '-cl
 const DIR = process.argv[2] ?? `screenshots/qa/m17/${SUFFIXE}`;
 const OUT = process.argv[3] ?? `artifacts/qa/m17/lecons-${SUFFIXE}.json`;
 const LECONS = ['clash', 'posture', 'secondaires', 'tactique', 'interferer', 'insight', 'repousser', 'familles', 'effets', 'regard', 'tech-Sondage', 'tech-Recentrage', 'tech-Lecture', 'tech-Ancrage', 'tech-Rupture', 'tech-Dissipation', 'signature', 'revision', 'prolongation'];
-/** Au tour assisté : l'ancien vocabulaire (boutons du tour classique) ne doit jamais être dit. */
-const VOCABULAIRE_CLASSIQUE = /valider|verrouille|\bvalide\b/i;
+/** Au tour assisté (T1) : ni engagement ni envoi automatique annoncé, ni « verrouille » (bouton du tour classique). */
+const VOCABULAIRE_CLASSIQUE = /verrouille|engage le tour|elle engage|engage aussi|envoie (le tour|les choix|tes choix)|engage tout de suite/i;
 const head = execSync('git rev-parse --short HEAD').toString().trim();
 mkdirSync(DIR, { recursive: true });
 const server = await startPreview(Number(process.env.LQV_PREVIEW_PORT) || 4317, process.env.LQV_DIST || 'dist');
@@ -112,8 +114,13 @@ const LIBRE = () => {
   if (c.sequencing) return vis(k('act-skip')) ? k('act-skip') : null;
   if (v.phase === 'RESOLVED') return vis(k('act-next')) ? k('act-next') : null;
   if (!v.awaitingMe) return null;
-  // M18 : au tour assisté, le menu tactique ouvert d'office : « Conserver » (le dernier choix envoie le tour)
+  // M18 : au tour assisté, le menu tactique ouvert d'office : « Conserver » (puis « Valider », T1)
   if (c.assiste && v.phase === 'TACTICS' && c.ui.menuSlot !== null) return k(`menu-${c.ui.menuSlot}-keep`);
+  // T1 : la défausse du début du tour (plusieurs cartes), puis « Défausser »
+  if (c.assiste && document.querySelector('[data-key="decision-defausse"]') && !vis(k('act-start'))) {
+    const id = (v.me.hand ?? []).map((x) => x.cardId).find((x) => !c.ui.trim.includes(x));
+    return id ? k(`hand-${id}`) : null;
+  }
   // M18 : au tour assisté, les « Non » des questions posées sur place (et le tour suivant s'enchaîne seul)
   const par = { START: ['act-start', 'tech-non-Sondage', 'tech-non-Recentrage'], PREPARE: ['act-prepare', 'reveal-non-0', 'reveal-non-1'], DISSIPATION: ['act-dissip-pass', 'tech-non-Dissipation'], LECTURE: ['act-lecture-pass', 'tech-non-Lecture'], LECTURE_CHANGE: ['act-lecture-stance', 'stance-assault'], REVISION: ['act-revision-keep'], TACTICS: ['act-tactics', 'tech-non-Rupture', 'tech-non-Ancrage'], REPEL: ['act-repel-skip'] }[v.phase];
   if (par) return par.map(k).find(vis) ?? null;
@@ -176,7 +183,7 @@ try {
       const r = await jouerLecon(p, j, id, mode === MODES[0]);
       resultats[mode][id] = r;
       check(r.fin && r.faite && r.anneaux > 0 && r.refus === 0, `${mode} · ${id} : finie (${r.gestes} gestes, ${r.s} s${r.refus ? `, ${r.refus} refus` : ''})`);
-      if (TOUR === 'assiste') check(!r.vocabulaire.length, `${mode} · ${id} : aucun « Valider », « verrouille » ni « valide » dit au tour assisté${r.vocabulaire.length ? ` (${r.vocabulaire.join(' | ')})` : ''}`);
+      if (TOUR === 'assiste') check(!r.vocabulaire.length, `${mode} · ${id} : ni engagement ni envoi automatique annoncé, ni « verrouille », au tour assisté${r.vocabulaire.length ? ` (${r.vocabulaire.join(' | ')})` : ''}`);
     }
     if (mode !== 'souris') check(j.replis === 0, `${mode} : aucun geste replié sur la souris (${j.replis})`);
     // un geste hors consigne est refusé, avec sa raison

@@ -162,7 +162,7 @@ const secondaires: Lecon = {
   partenaire: { '1:COMMIT': engager('p2', N(1), 'assault'), '2:COMMIT': engager('p2', N(2), 'assault') },
   tours: [
     { tour: 1, gestes: [{ phase: 'COMMIT', attendu: engager('p1', N(2), 'guard', N(3), 0),
-      dire: t('Avec ta Primaire, tu peux poser une Secondaire, face cachée, sur une case libre. Pose Neutre II en GARDE en Primaire, et Neutre III sur la case SECONDAIRE 1. J’attaque en Rang I.', 'Neutre II en GARDE, Neutre III en Secondaire 1.') }],
+      dire: t('Avec ta Primaire, tu peux poser une Secondaire, face cachée, sur une case libre. Pose Neutre II en Primaire, en GARDE, et Neutre III en Secondaire (« Poser cachée ») sur la case 1, puis engage. J’attaque en Rang I.', 'Neutre II en GARDE, Neutre III en Secondaire 1, puis engage.') }],
       apres: t('Ta Garde tient. Ta Secondaire a passé ce tour EN CHARGEMENT : une Secondaire ne sert jamais le tour où on la pose.', 'Ta Secondaire charge : inutilisable ce tour.'),
       issue: (r) => r.guardWin && r.winner === 'p1' },
     { tour: 2, gestes: [
@@ -261,7 +261,7 @@ const repousser: Lecon = {
       { phase: 'PREPARE', attendu: reveler('p1', []),
         dire: t('Tes deux réserves sont prêtes ; garde-les cachées pour l’instant.', 'Garde tes réserves cachées.') },
       { phase: 'COMMIT', attendu: engager('p1', N(3), 'assault', N(1), 1),
-        dire: t('Tes deux cases sont pleines : une nouvelle Secondaire en remplace une, et la carte remplacée part à la défausse. Pose ton Neutre III en ASSAUT, puis ton Neutre I en SECONDAIRE : choisis la case 2.', 'Neutre III en ASSAUT, Neutre I sur la case 2.') }],
+        dire: t('Tes deux cases sont pleines : une nouvelle Secondaire en remplace une, et la carte remplacée part à la défausse. Pose ton Neutre III en ASSAUT, puis ton Neutre I en Secondaire (« Poser cachée ») : choisis la case 2, et engage.', 'Neutre III en ASSAUT, Neutre I sur la case 2, puis engage.') }],
       apres: t('Ton Neutre I a pris la case 2 ; l’ancienne réserve est à la défausse. La nouvelle se charge ce tour : tu pourras la révéler au prochain.', 'Remplacée : l’ancienne part à la défausse.') },
     { tour: 5, libre: true, dire: LIBRE },
   ],

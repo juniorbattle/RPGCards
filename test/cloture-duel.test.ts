@@ -41,6 +41,8 @@ describe('les phrases du maître de table, accordées au tour assisté', () => {
       return [l.resume, ...l.tours.flatMap((t) => [...(t.dire ?? []), ...(t.apres ?? []), ...(t.gestes ?? []).flatMap((g) => [...g.dire])])];
     });
     for (const x of textes) expect(x, x).not.toMatch(/valider|verrouille|\bvalide\b/i);
+    // T1 (retours du 2026-11-13) : aucune phrase n'annonce d'engagement ni d'envoi automatique
+    for (const x of textes) expect(x, x).not.toMatch(/engage le tour|elle engage|engage aussi|envoie (le tour|les choix|tes choix)/i);
   });
 });
 
@@ -73,7 +75,7 @@ describe('révision au tour assisté (avenant 08, amendement 1)', () => {
 });
 
 describe('deux cases pleines : REMPLACE, la case choisie avant d’engager', () => {
-  it('« SECONDAIRE » sur deux cases pleines n’engage rien : le joueur désigne la case ; la case 2 choisie, l’engagement part avec elle', () => {
+  it('« Poser cachée » sur deux cases pleines n’engage rien : le joueur désigne la case ; la case 2 choisie, « Engager » l’envoie', () => {
     for (const tour of ['assiste', 'classique'] as const) {
       const cfg = cfgBase();
       const scenario = { id: 'remplace', title: 'remplace', description: '', config: cfg, build: (k: GameConfig) => fixture(k, { hand: ['Cendre-4', 'Voile-1', 'Astre-2', 'Ronce-3'], slots: [{ def: 'Cendre-2' }, { def: 'Voile-3', active: true }] }, { hand: ['Ronce-4', 'Astre-1', 'Voile-2', 'Cendre-1'] }), rival: {} };
@@ -87,11 +89,13 @@ describe('deux cases pleines : REMPLACE, la case choisie avant d’engager', () 
       expect(c.ui.choixCase, tour).toBe(true);
       expect(c.ui.draft.secondaryId).toBeNull();
       expect(c.match.commands.some((x) => x.type === 'commit' && x.player === 'p1')).toBe(false);
+      const voile = id('Voile-1-basic');
       c.clickZone('slot1');
-      // au tour assisté, la case choisie engage aussitôt (un clic) ; au tour classique, le brouillon attend « Valider »
-      if (tour === 'classique') expect(c.ui.draft.secondaryId).toBe(id('Voile-1-basic'));
-      if (tour === 'classique') expect(c.ui.draft.slot).toBe(1);
-      if (tour === 'classique') c.lockCommit();
+      // T1 (retours du 2026-11-13) : aux deux tours, la case choisie reste au brouillon ; « Engager » (« Valider ») l'envoie
+      expect(c.ui.draft.secondaryId, tour).toBe(voile);
+      expect(c.ui.draft.slot, tour).toBe(1);
+      expect(c.match.commands.some((x) => x.type === 'commit' && x.player === 'p1'), tour).toBe(false);
+      c.lockCommit();
       const commit = c.match.commands.find((x) => x.type === 'commit' && x.player === 'p1') as Extract<PlayerCommand, { type: 'commit' }>;
       expect(commit.replaceSlot, tour).toBe(1);
       c.dispose();
