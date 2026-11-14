@@ -31,4 +31,18 @@
 | T3 | Poses d'une carte choisie | **Deux groupes titrés** : « Primaire » (Assaut, Garde), puis, séparé, « Secondaire » (Poser cachée). |
 | T4 | Marche de côté | **Par code d'abord.** Jambes et bras redessinés par code sur un cycle complet de 8 temps, pour les 32 feuilles, aucune image générée ; une planche animée à l'œil du responsable ; de nouvelles images seulement si ça ne tient pas, avec son accord. |
 
-Les leçons (règle B6) suivent la même règle ; le tour classique est inchangé.
+Les leçons (règle B6) suivent la même règle. Le tour classique garde ses boutons (« Valider », « Verrouiller ») ; seule la
+décision T3 vaut aussi pour lui (la barre de pose est commune aux deux tours).
+
+## Application (passes 233 et 234, session de développement)
+
+- **T1 à T3 (passe 233)** : `src/app/controller.ts` (plus d'engagement ni d'envoi automatique ; « Défausser »,
+  « Valider » ; Recentrage après « Utiliser » ; `annulerTech`), `src/presentation/board.ts` (panneau central : défausse,
+  « Engager » avec le brouillon et ce qui le modifie, « Valider » avec les choix et l'aperçu ; barre de pose en deux groupes
+  titrés ; « Utiliser » ne répond jamais à la touche de l'action principale), scénario de QA `tour-t1`, leçons accordées
+  (`src/lecons/`), `test/retours-2026-11-13.test.ts`, `tools/m18-tour.mjs` (section 6), `tools/m17-lecons.mjs`.
+- **T4 (passe 234)** : `src/ville/marcheProfil.ts` (cycle de huit temps redessiné par code, au chargement, en mémoire),
+  `src/ville/sprites.ts` (feuille dérivée 8 × 4, temps choisi selon la phase), `test/marche-huit.test.ts` (32 feuilles) ;
+  planches `screenshots/qa/retours-2026-11-13/planche-profil-huit.png` et `planche-marche-huit-jeu.png`, capture animée
+  `marche-huit-1280.webm` (non suivie par git ; `node tools/marche-huit-video.mjs` la refait). **À l'œil du responsable** ;
+  de nouvelles images seulement avec son accord.

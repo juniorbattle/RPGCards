@@ -1,0 +1,862 @@
+{
+ "ilot": "quai",
+ "fps": 30,
+ "apparence": null,
+ "viewport": {
+  "width": 1280,
+  "height": 720
+ },
+ "directions": {
+  "droite": [
+   {
+    "x": -16.56,
+    "phase": 0.62,
+    "facing": "droite",
+    "moving": true,
+    "temps": 5
+   },
+   {
+    "x": -16.349,
+    "phase": 0.777,
+    "facing": "droite",
+    "moving": true,
+    "temps": 6
+   },
+   {
+    "x": -16.136,
+    "phase": 0.933,
+    "facing": "droite",
+    "moving": true,
+    "temps": 7
+   },
+   {
+    "x": -15.923,
+    "phase": 0.091,
+    "facing": "droite",
+    "moving": true,
+    "temps": 1
+   },
+   {
+    "x": -15.71,
+    "phase": 0.248,
+    "facing": "droite",
+    "moving": true,
+    "temps": 2
+   },
+   {
+    "x": -15.497,
+    "phase": 0.406,
+    "facing": "droite",
+    "moving": true,
+    "temps": 3
+   },
+   {
+    "x": -15.337,
+    "phase": 0.524,
+    "facing": "droite",
+    "moving": true,
+    "temps": 4
+   },
+   {
+    "x": -15.124,
+    "phase": 0.681,
+    "facing": "droite",
+    "moving": true,
+    "temps": 5
+   },
+   {
+    "x": -14.91,
+    "phase": 0.839,
+    "facing": "droite",
+    "moving": true,
+    "temps": 7
+   },
+   {
+    "x": -14.697,
+    "phase": 0.997,
+    "facing": "droite",
+    "moving": true,
+    "temps": 0
+   },
+   {
+    "x": -14.484,
+    "phase": 0.154,
+    "facing": "droite",
+    "moving": true,
+    "temps": 1
+   },
+   {
+    "x": -14.27,
+    "phase": 0.312,
+    "facing": "droite",
+    "moving": true,
+    "temps": 2
+   },
+   {
+    "x": -14.11,
+    "phase": 0.43,
+    "facing": "droite",
+    "moving": true,
+    "temps": 3
+   },
+   {
+    "x": -13.897,
+    "phase": 0.587,
+    "facing": "droite",
+    "moving": true,
+    "temps": 5
+   },
+   {
+    "x": -13.684,
+    "phase": 0.745,
+    "facing": "droite",
+    "moving": true,
+    "temps": 6
+   },
+   {
+    "x": -13.47,
+    "phase": 0.903,
+    "facing": "droite",
+    "moving": true,
+    "temps": 7
+   },
+   {
+    "x": -13.257,
+    "phase": 0.06,
+    "facing": "droite",
+    "moving": true,
+    "temps": 0
+   },
+   {
+    "x": -13.044,
+    "phase": 0.218,
+    "facing": "droite",
+    "moving": true,
+    "temps": 2
+   },
+   {
+    "x": -12.884,
+    "phase": 0.336,
+    "facing": "droite",
+    "moving": true,
+    "temps": 3
+   },
+   {
+    "x": -12.67,
+    "phase": 0.494,
+    "facing": "droite",
+    "moving": true,
+    "temps": 4
+   },
+   {
+    "x": -12.457,
+    "phase": 0.651,
+    "facing": "droite",
+    "moving": true,
+    "temps": 5
+   },
+   {
+    "x": -12.244,
+    "phase": 0.809,
+    "facing": "droite",
+    "moving": true,
+    "temps": 6
+   },
+   {
+    "x": -12.03,
+    "phase": 0.966,
+    "facing": "droite",
+    "moving": true,
+    "temps": 0
+   },
+   {
+    "x": -11.817,
+    "phase": 0.124,
+    "facing": "droite",
+    "moving": true,
+    "temps": 1
+   },
+   {
+    "x": -11.657,
+    "phase": 0.242,
+    "facing": "droite",
+    "moving": true,
+    "temps": 2
+   },
+   {
+    "x": -11.444,
+    "phase": 0.4,
+    "facing": "droite",
+    "moving": true,
+    "temps": 3
+   },
+   {
+    "x": -11.23,
+    "phase": 0.557,
+    "facing": "droite",
+    "moving": true,
+    "temps": 4
+   },
+   {
+    "x": -11.017,
+    "phase": 0.715,
+    "facing": "droite",
+    "moving": true,
+    "temps": 6
+   },
+   {
+    "x": -10.804,
+    "phase": 0.872,
+    "facing": "droite",
+    "moving": true,
+    "temps": 7
+   },
+   {
+    "x": -10.59,
+    "phase": 0.03,
+    "facing": "droite",
+    "moving": true,
+    "temps": 0
+   },
+   {
+    "x": -10.377,
+    "phase": 0.187,
+    "facing": "droite",
+    "moving": true,
+    "temps": 1
+   },
+   {
+    "x": -10.217,
+    "phase": 0.306,
+    "facing": "droite",
+    "moving": true,
+    "temps": 2
+   },
+   {
+    "x": -10.004,
+    "phase": 0.463,
+    "facing": "droite",
+    "moving": true,
+    "temps": 4
+   },
+   {
+    "x": -9.79,
+    "phase": 0.621,
+    "facing": "droite",
+    "moving": true,
+    "temps": 5
+   },
+   {
+    "x": -9.577,
+    "phase": 0.778,
+    "facing": "droite",
+    "moving": true,
+    "temps": 6
+   },
+   {
+    "x": -9.364,
+    "phase": 0.936,
+    "facing": "droite",
+    "moving": true,
+    "temps": 7
+   },
+   {
+    "x": -9.15,
+    "phase": 0.094,
+    "facing": "droite",
+    "moving": true,
+    "temps": 1
+   },
+   {
+    "x": -8.99,
+    "phase": 0.212,
+    "facing": "droite",
+    "moving": true,
+    "temps": 2
+   },
+   {
+    "x": -8.777,
+    "phase": 0.369,
+    "facing": "droite",
+    "moving": true,
+    "temps": 3
+   },
+   {
+    "x": -8.564,
+    "phase": 0.527,
+    "facing": "droite",
+    "moving": true,
+    "temps": 4
+   },
+   {
+    "x": -8.35,
+    "phase": 0.684,
+    "facing": "droite",
+    "moving": true,
+    "temps": 5
+   },
+   {
+    "x": -8.137,
+    "phase": 0.842,
+    "facing": "droite",
+    "moving": true,
+    "temps": 7
+   },
+   {
+    "x": -7.924,
+    "phase": 1,
+    "facing": "droite",
+    "moving": true,
+    "temps": 0
+   },
+   {
+    "x": -7.71,
+    "phase": 0.157,
+    "facing": "droite",
+    "moving": true,
+    "temps": 1
+   },
+   {
+    "x": -7.497,
+    "phase": 0.315,
+    "facing": "droite",
+    "moving": true,
+    "temps": 3
+   },
+   {
+    "x": -7.284,
+    "phase": 0.472,
+    "facing": "droite",
+    "moving": true,
+    "temps": 4
+   },
+   {
+    "x": -7.07,
+    "phase": 0.63,
+    "facing": "droite",
+    "moving": true,
+    "temps": 5
+   },
+   {
+    "x": -6.857,
+    "phase": 0.787,
+    "facing": "droite",
+    "moving": true,
+    "temps": 6
+   },
+   {
+    "x": -6.644,
+    "phase": 0.945,
+    "facing": "droite",
+    "moving": true,
+    "temps": 0
+   },
+   {
+    "x": -6.484,
+    "phase": 0.063,
+    "facing": "droite",
+    "moving": true,
+    "temps": 1
+   },
+   {
+    "x": -6.27,
+    "phase": 0.221,
+    "facing": "droite",
+    "moving": true,
+    "temps": 2
+   },
+   {
+    "x": -6.057,
+    "phase": 0.378,
+    "facing": "droite",
+    "moving": true,
+    "temps": 3
+   },
+   {
+    "x": -5.844,
+    "phase": 0.536,
+    "facing": "droite",
+    "moving": true,
+    "temps": 4
+   },
+   {
+    "x": -5.63,
+    "phase": 0.694,
+    "facing": "droite",
+    "moving": true,
+    "temps": 6
+   },
+   {
+    "x": -5.417,
+    "phase": 0.851,
+    "facing": "droite",
+    "moving": true,
+    "temps": 7
+   },
+   {
+    "x": -5.257,
+    "phase": 0.969,
+    "facing": "droite",
+    "moving": true,
+    "temps": 0
+   },
+   {
+    "x": -5.044,
+    "phase": 0.127,
+    "facing": "droite",
+    "moving": true,
+    "temps": 1
+   },
+   {
+    "x": -4.83,
+    "phase": 0.284,
+    "facing": "droite",
+    "moving": true,
+    "temps": 2
+   },
+   {
+    "x": -4.617,
+    "phase": 0.442,
+    "facing": "droite",
+    "moving": true,
+    "temps": 4
+   },
+   {
+    "x": -4.404,
+    "phase": 0.6,
+    "facing": "droite",
+    "moving": true,
+    "temps": 5
+   }
+  ],
+  "gauche": [
+   {
+    "x": -4.911,
+    "phase": 0.62,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 5
+   },
+   {
+    "x": -5.122,
+    "phase": 0.777,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 6
+   },
+   {
+    "x": -5.335,
+    "phase": 0.933,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 7
+   },
+   {
+    "x": -5.548,
+    "phase": 0.091,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 1
+   },
+   {
+    "x": -5.761,
+    "phase": 0.248,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 2
+   },
+   {
+    "x": -5.974,
+    "phase": 0.406,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 3
+   },
+   {
+    "x": -6.134,
+    "phase": 0.524,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 4
+   },
+   {
+    "x": -6.347,
+    "phase": 0.681,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 5
+   },
+   {
+    "x": -6.561,
+    "phase": 0.839,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 7
+   },
+   {
+    "x": -6.774,
+    "phase": 0.997,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 0
+   },
+   {
+    "x": -6.987,
+    "phase": 0.154,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 1
+   },
+   {
+    "x": -7.201,
+    "phase": 0.312,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 2
+   },
+   {
+    "x": -7.414,
+    "phase": 0.469,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 4
+   },
+   {
+    "x": -7.574,
+    "phase": 0.587,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 5
+   },
+   {
+    "x": -7.787,
+    "phase": 0.745,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 6
+   },
+   {
+    "x": -8.001,
+    "phase": 0.903,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 7
+   },
+   {
+    "x": -8.214,
+    "phase": 0.06,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 0
+   },
+   {
+    "x": -8.427,
+    "phase": 0.218,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 2
+   },
+   {
+    "x": -8.641,
+    "phase": 0.375,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 3
+   },
+   {
+    "x": -8.801,
+    "phase": 0.494,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 4
+   },
+   {
+    "x": -9.014,
+    "phase": 0.651,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 5
+   },
+   {
+    "x": -9.227,
+    "phase": 0.809,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 6
+   },
+   {
+    "x": -9.441,
+    "phase": 0.966,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 0
+   },
+   {
+    "x": -9.654,
+    "phase": 0.124,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 1
+   },
+   {
+    "x": -9.867,
+    "phase": 0.281,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 2
+   },
+   {
+    "x": -10.027,
+    "phase": 0.4,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 3
+   },
+   {
+    "x": -10.294,
+    "phase": 0.597,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 5
+   },
+   {
+    "x": -10.454,
+    "phase": 0.715,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 6
+   },
+   {
+    "x": -10.667,
+    "phase": 0.872,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 7
+   },
+   {
+    "x": -10.881,
+    "phase": 0.03,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 0
+   },
+   {
+    "x": -11.094,
+    "phase": 0.187,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 1
+   },
+   {
+    "x": -11.254,
+    "phase": 0.306,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 2
+   },
+   {
+    "x": -11.467,
+    "phase": 0.463,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 4
+   },
+   {
+    "x": -11.681,
+    "phase": 0.621,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 5
+   },
+   {
+    "x": -11.894,
+    "phase": 0.778,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 6
+   },
+   {
+    "x": -12.107,
+    "phase": 0.936,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 7
+   },
+   {
+    "x": -12.321,
+    "phase": 0.094,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 1
+   },
+   {
+    "x": -12.534,
+    "phase": 0.251,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 2
+   },
+   {
+    "x": -12.694,
+    "phase": 0.369,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 3
+   },
+   {
+    "x": -12.907,
+    "phase": 0.527,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 4
+   },
+   {
+    "x": -13.121,
+    "phase": 0.684,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 5
+   },
+   {
+    "x": -13.334,
+    "phase": 0.842,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 7
+   },
+   {
+    "x": -13.547,
+    "phase": 1,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 0
+   },
+   {
+    "x": -13.761,
+    "phase": 0.157,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 1
+   },
+   {
+    "x": -13.867,
+    "phase": 0.236,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 2
+   },
+   {
+    "x": -14.081,
+    "phase": 0.394,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 3
+   },
+   {
+    "x": -14.294,
+    "phase": 0.551,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 4
+   },
+   {
+    "x": -14.507,
+    "phase": 0.709,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 6
+   },
+   {
+    "x": -14.721,
+    "phase": 0.866,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 7
+   },
+   {
+    "x": -14.934,
+    "phase": 0.024,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 0
+   },
+   {
+    "x": -15.094,
+    "phase": 0.142,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 1
+   },
+   {
+    "x": -15.307,
+    "phase": 0.3,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 2
+   },
+   {
+    "x": -15.521,
+    "phase": 0.457,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 4
+   },
+   {
+    "x": -15.734,
+    "phase": 0.615,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 5
+   },
+   {
+    "x": -15.947,
+    "phase": 0.772,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 6
+   },
+   {
+    "x": -16.161,
+    "phase": 0.93,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 7
+   },
+   {
+    "x": -16.374,
+    "phase": 0.087,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 1
+   },
+   {
+    "x": -16.534,
+    "phase": 0.206,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 2
+   },
+   {
+    "x": -16.747,
+    "phase": 0.363,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 3
+   },
+   {
+    "x": -16.961,
+    "phase": 0.521,
+    "facing": "gauche",
+    "moving": true,
+    "temps": 4
+   }
+  ]
+ },
+ "console": [],
+ "checks": [
+  "OK le cycle de profil du protagoniste compte huit temps ([0,1,2,3,4,5,6,7])",
+  "OK droite : les huit temps paraissent, dans l'ordre (567123457012356702345601234670124567123457013456012346701245)",
+  "OK gauche : les huit temps paraissent, dans l'ordre (567123457012456702345601235670124567123457012346701245671234)",
+  "OK capture animée : screenshots\\qa\\retours-2026-11-13\\marche-huit-1280.webm (822 Kio)"
+ ]
+}

@@ -18,7 +18,8 @@ import type { Family } from '../game/catalog/cards';
 import { NPC_HAIRS, NPC_SKINS, npcLook, type Accessory, type HairCut, type Tone } from '../presentation/npcs';
 import { COMMON_GLSL, U } from './materiaux';
 import { CHEVEUX, PEAUX, YEUX, coupeDe, estOrigine, lireIdJoueur, type Yeux } from './apparence';
-import { cyclePlan, ecartPieds, posePassage } from './passage';
+import { cyclePlan } from './passage';
+import { cycleProfil8, TEMPS_PROFIL } from './marcheProfil';
 import { classerTeintes, repeindre } from './teintes';
 import type { Facing } from './monde';
 import { DEFAULT_ANCHOR, DEFAULT_FIGURE_H, RAMP_STEPS, RECOLOR_SLOTS, keyColor, type RecolorSlot, type SheetSpec } from './spritesExternes';
@@ -771,54 +772,69 @@ function cycleFeuille(im: CanvasImageSource & { width: number; height: number },
 
 /** Teintes repeintes d'une feuille du protagoniste (`teintes.ts`) : peau, cheveux et yeux de son apparence. */
 interface Teintes { code: string; peau: Tone; cheveux: Tone; yeux: Yeux }
-const DERIVEES = new WeakMap<object, Map<string, { texture: THREE.Texture; ecart: number } | null>>();
+/** Feuille dérivée du protagoniste : sa texture, le pas dessiné (px d'art, 0 sans plan) et sa grille (colonnes, rangées). */
+interface Derivee { texture: THREE.Texture; ecart: number; grille: readonly [number, number]; huit: boolean }
+const DERIVEES = new WeakMap<object, Map<string, Derivee | null>>();
+
+/** Grille de la feuille dérivée qui porte la marche de profil en huit temps : la feuille (5 × 3) et une rangée de 8 temps. */
+export const GRILLE_HUIT = [TEMPS_PROFIL, ROWS + 1] as const;
 
 /**
- * Feuille dérivée du protagoniste : copie en pixels d'art de la feuille chargée (l'image approuvée n'est pas modifiée),
- * les deux colonnes de passage de la rangée de profil redessinées (plan `spec.profil`, `passage.ts` : jambes sous le
- * corps) et, pour une apparence choisie, la peau, les cheveux et les yeux repeints (`teintes.ts`). Mesure aussi l'écart
- * des pieds des deux contacts (px d'art, 0 sans plan). Une fois par image et par apparence ; null sans canevas lisible.
+ * Feuille dérivée du protagoniste : copie en pixels d'art de la feuille chargée (l'image approuvée n'est pas modifiée) et,
+ * pour une apparence choisie, la peau, les cheveux et les yeux repeints (`teintes.ts`). Avec un plan de marche
+ * (`spec.profil`), T4 (décision du responsable du 2026-11-13) : une quatrième rangée porte la marche de profil en huit
+ * temps redessinée par code (`marcheProfil.ts` : jambes et bottes redessinées, haut du corps repris de la feuille, corps
+ * qui monte et descend), et le pas dessiné (px d'art) règle la foulée annoncée au monde. Une fois par image et par
+ * apparence ; null sans canevas lisible. La feuille dérivée n'existe qu'en mémoire.
  */
-function feuilleDerivee(im: CanvasImageSource & { width: number; height: number }, spec: SheetSpec, retournee: boolean, teintes: Teintes | null): { texture: THREE.Texture; ecart: number } | null {
+function feuilleDerivee(im: CanvasImageSource & { width: number; height: number }, spec: SheetSpec, retournee: boolean, teintes: Teintes | null): Derivee | null {
   let parImage = DERIVEES.get(im);
   if (!parImage) { parImage = new Map(); DERIVEES.set(im, parImage); }
   const cle = teintes?.code ?? '';
   if (parImage.has(cle)) return parImage.get(cle)!;
-  let out: { texture: THREE.Texture; ecart: number } | null = null;
+  let out: Derivee | null = null;
   try {
     const [cw, ch] = spec.cell!;
     const plan = spec.profil;
+    // la feuille, en pixels d'art, sur un canevas de travail (5 × 3 cases)
+    const t = document.createElement('canvas');
+    t.width = cw * COLS;
+    t.height = ch * ROWS;
+    const tg = t.getContext('2d', { willReadFrequently: true });
+    const grille: readonly [number, number] = plan ? GRILLE_HUIT : [COLS, ROWS];
     const c = document.createElement('canvas');
-    c.width = cw * COLS;
-    c.height = ch * ROWS;
+    c.width = cw * grille[0];
+    c.height = ch * grille[1];
     const g = c.getContext('2d', { willReadFrequently: true });
-    if (g) {
+    if (tg && g) {
       // au plus proche, au centre des blocs agrandis ; remise à l'endroit d'une image retournée à la création
-      g.imageSmoothingEnabled = false;
-      if (retournee) { g.translate(0, c.height); g.scale(1, -1); }
-      g.drawImage(im, 0, 0, c.width, c.height);
+      tg.imageSmoothingEnabled = false;
+      if (retournee) { tg.translate(0, t.height); tg.scale(1, -1); }
+      tg.drawImage(im, 0, 0, t.width, t.height);
+      tg.setTransform(1, 0, 0, 1, 0, 0);
       if (teintes) {
-        const tout = g.getImageData(0, 0, c.width, c.height);
-        const f = { px: tout.data, w: c.width, h: c.height };
+        const tout = tg.getImageData(0, 0, t.width, t.height);
+        const f = { px: tout.data, w: t.width, h: t.height };
         repeindre(f, classerTeintes(f, cw, ch), teintes);
-        g.putImageData(tout, 0, 0);
+        tg.putImageData(tout, 0, 0);
       }
-      const sol = Math.round(spec.anchor[1]) - 1;
-      const hanche = sol - Math.round(spec.figureH / 3);
-      const lire = (col: number) => ({ px: g.getImageData(col * cw, 2 * ch, cw, ch).data, w: cw, h: ch });
-      const ecart = plan ? (ecartPieds(lire(plan.contacts[0]), sol) + ecartPieds(lire(plan.contacts[1]), sol)) / 2 : 0;
-      for (const col of !plan || plan.dessines ? [] : plan.passages) {
-        const k = lire(col);
-        posePassage(k, sol, hanche);
-        g.putImageData(new ImageData(k.px as Uint8ClampedArray<ArrayBuffer>, cw, ch), col * cw, 2 * ch);
+      g.imageSmoothingEnabled = false;
+      g.drawImage(t, 0, 0);
+      let ecart = 0;
+      if (plan) {
+        // T4 : la marche de profil en huit temps, sur la quatrième rangée
+        const cases = [0, 1, 2, 3, 4].map((col) => ({ px: tg.getImageData(col * cw, 2 * ch, cw, ch).data, w: cw, h: ch }));
+        const cyc = cycleProfil8(cases, { sol: Math.round(spec.anchor[1]) - 1, ancreX: Math.round(spec.anchor[0]), figureH: spec.figureH }, plan.contacts);
+        cyc.temps.forEach((k, i) => g.putImageData(new ImageData(new Uint8ClampedArray(k.px), cw, ch), i * cw, ROWS * ch));
+        ecart = cyc.pas;
       }
       const texture = new THREE.CanvasTexture(c);
-      texture.name = 'feuille:passages';
+      texture.name = plan ? 'feuille:marche-huit' : 'feuille:teintes';
       texture.colorSpace = THREE.NoColorSpace;
       texture.magFilter = THREE.NearestFilter;
       texture.minFilter = THREE.NearestFilter;
       texture.generateMipmaps = false;
-      if (ecart > 0 || !plan) out = { texture, ecart };
+      if (ecart > 0 || !plan) out = { texture, ecart, grille, huit: !!plan };
     }
   } catch { out = null; }
   parImage.set(cle, out);
@@ -878,6 +894,9 @@ export function createWalkerSprite(id: string): WalkerSprite {
   let profil: readonly number[] | null = null;
   let foulee: number | null = null;
   let artPx = 0;
+  // grille de la texture (la feuille dérivée du protagoniste porte une rangée de plus : la marche de profil en huit temps)
+  let grille: readonly [number, number] = [COLS, ROWS];
+  let huit = false;
   const shadow = new THREE.Mesh(
     new THREE.PlaneGeometry(0.95, 0.5),
     new THREE.MeshBasicMaterial({ map: contactShadow(), transparent: true, depthWrite: false, color: 0xffffff }),
@@ -897,11 +916,18 @@ export function createWalkerSprite(id: string): WalkerSprite {
       group.position.set(pos.x, 0, pos.z);
       uniforms.uWorld.value.set(pos.x, 0, pos.z);
       const row = facing === 'face' ? 0 : facing === 'dos' ? 1 : 2;
-      const k = Math.floor(phase * 4) % 4;
-      // de profil, une feuille alterne foulée et passage (`cycleProfil`), la figure soulevée d'un pixel d'art au passage
-      const col = !moving ? 0 : row === 2 && profil ? profil[k]! : 1 + k;
-      body.position.y = moving && row === 2 && profil && k % 2 ? artPx : 0;
-      uniforms.uOff.value.set(col, ROWS - 1 - row);
+      if (moving && row === 2 && huit) {
+        // T4 : la marche de profil en huit temps (rangée du bas de la feuille dérivée), le temps le plus proche de la phase
+        // (le pied d'appui dérive d'au plus un huitième de pas) ; le balancement du corps est dessiné dans les temps
+        uniforms.uOff.value.set(Math.floor(phase * TEMPS_PROFIL + 0.5) % TEMPS_PROFIL, 0);
+        body.position.y = 0;
+      } else {
+        const k = Math.floor(phase * 4) % 4;
+        // de profil, une feuille alterne foulée et passage (`cycleProfil`), la figure soulevée d'un pixel d'art au passage
+        const col = !moving ? 0 : row === 2 && profil ? profil[k]! : 1 + k;
+        body.position.y = moving && row === 2 && profil && k % 2 ? artPx : 0;
+        uniforms.uOff.value.set(col, grille[1] - 1 - row);
+      }
       uniforms.uFlip.value = facing === 'gauche' ? 1 : 0;
       // ancrage hors du milieu de la case (feuille) : le miroir du profil gauche le renverse
       if (ax !== 0) body.position.x = facing === 'gauche' ? -ax : ax;
@@ -913,9 +939,16 @@ export function createWalkerSprite(id: string): WalkerSprite {
     setSheet({ texture, spec }) {
       uniforms.tAtlas.value = texture;
       const im = texture.image as { width?: number; height?: number } | undefined;
+      // une texture sans `flipY` porte une image déjà retournée à la création
+      const source = texture.image as CanvasImageSource & { width: number; height: number };
+      // protagoniste : marche de profil en huit temps redessinée par code (plan du manifeste) et teintes de son apparence
+      const derivee = im && spec.pixel && spec.cell && (spec.profil || teintes) ? feuilleDerivee(source, spec, !texture.flipY, teintes) : null;
+      grille = derivee ? derivee.grille : [COLS, ROWS];
+      huit = !!derivee?.huit;
+      uniforms.uCell.value.set(1 / grille[0], 1 / grille[1]);
       if (spec.pixel && spec.cell) {
         // pas d'un pixel d'art (et non d'un pixel de la feuille) : liserés d'un pixel d'art, lecture au centre des blocs
-        uniforms.uArt.value.set(spec.cell[0] * COLS, spec.cell[1] * ROWS);
+        uniforms.uArt.value.set(spec.cell[0] * grille[0], spec.cell[1] * grille[1]);
         uniforms.uTexel.value.set(1 / spec.cell[0], 1 / spec.cell[1]);
       } else if (im?.width && im.height) uniforms.uTexel.value.set(COLS / im.width, ROWS / im.height);
       const pixel = !!spec.pixel;
@@ -924,12 +957,9 @@ export function createWalkerSprite(id: string): WalkerSprite {
         else delete mat.defines.PIXEL;
         mat.needsUpdate = true;
       }
-      // une texture sans `flipY` porte une image déjà retournée à la création
-      const source = texture.image as CanvasImageSource & { width: number; height: number };
-      // protagoniste : plan de marche de profil (passages redessinés par code, foulée mesurée sur les contacts) et teintes
-      const derivee = im && spec.pixel && spec.cell && (spec.profil || teintes) ? feuilleDerivee(source, spec, !texture.flipY, teintes) : null;
       if (derivee) uniforms.tAtlas.value = derivee.texture;
-      profil = derivee && spec.profil ? cyclePlan(spec.profil) : im ? cycleFeuille(source, spec, !texture.flipY) : null;
+      // QA : le cycle de profil (les huit temps de la rangée dérivée, ou les colonnes de la feuille)
+      profil = huit ? Array.from({ length: TEMPS_PROFIL }, (_, k) => k) : derivee && spec.profil ? cyclePlan(spec.profil) : im ? cycleFeuille(source, spec, !texture.flipY) : null;
       foulee = derivee && derivee.ecart > 0 ? (2 * derivee.ecart * WALKER_H) / spec.figureH : null;
       artPx = WALKER_H / spec.figureH;
       const panel = walkerPanel(spec);
