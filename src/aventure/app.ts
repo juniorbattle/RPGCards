@@ -38,6 +38,7 @@ import { MANIFESTE_RANGS, QUARTIERS_AJOUTES, type IlotId } from '../ville/ilots'
 import { blocked, type Facing, type Vec2, type Zone } from '../ville/monde';
 import { spritePolicy } from '../ville/spritesExternes';
 import { installVilleStyles, promptBubble } from '../ville/ui';
+import { repereEcran, type RepereEcran } from '../ville/repereEcran';
 import { createTown, type Cadrage, type Town } from '../ville/ville';
 import { decideVille } from '../ville/villeRangs';
 import { apercuEngagement, appliquer, bannieres, chapitre, chapitreDetaille, peutChanger, peutConfirmer, statutDefi, techniqueAuChef, techniquesEnJeu, type AventureEtat, type EtatBanniere, type Evenement, type FaitsPublics, type Issue } from './aventure';
@@ -70,6 +71,7 @@ import { Bandes, Cinema, type FonduCinema } from './cinema';
 import { effacer, fantomeEcran, FONDUS, Rideau } from './rideau';
 import { choixVariante, conclureDuel, enjeuVariante, figureOuNull, ouvrirDuel, REGLES_DUEL } from './fin';
 import { conseilLu, conseilsPermis, ecrireConseils, lireConseils } from './conseils';
+import { ecrireRepere, guidage, lireRepere, reperePermis, type Guidage } from './repereObjectif';
 import { duelTip } from '../shell/tips';
 
 export interface DepsAventure {
@@ -192,6 +194,10 @@ export class AventureApp {
   private rivalScene: { id: KId; at: Vec2; facing: Facing } | null = null;
   /** M11-A : bulle « ! » d'alerte (identifiant de personnalité). */
   private alerte: string | null = null;
+  /** Passe 240 : le repère d'objectif de la Promenade libre (calque à l'écran ; guidage recalculé quand l'aventure change). */
+  private reperes: RepereEcran | null = null;
+  private guidageVu: { etat: AventureEtat; directeur: AventureSave['directeur']; ilot: IlotId; g: Guidage | null } | null = null;
+  private repereAffiche = reperePermis(location.search) && lireRepere(stockageLocal());
 
   constructor(readonly d: DepsAventure) {
     installVilleStyles();
@@ -522,6 +528,8 @@ export class AventureApp {
     const pos = this.save!.ville.pos;
     if (pos && !blocked(this.town.ilot, pos)) this.town.place(pos);
     this.bubble = promptBubble(this.town, () => { const z = this.town?.zone(); if (z) this.interagir(z); }, (z) => z.label);
+    this.reperes = repereEcran(this.town, () => this.margesRepere());
+    this.guidageVu = null;
     this.majTresors();
   }
 
@@ -540,9 +548,12 @@ export class AventureApp {
     this.town?.dispose();
     this.host?.remove();
     this.bubble?.el.remove();
+    this.reperes?.detruire();
     this.town = null;
     this.host = null;
     this.bubble = null;
+    this.reperes = null;
+    this.guidageVu = null;
   }
 
   private cacherVille(): void {
@@ -561,6 +572,7 @@ export class AventureApp {
     son().musique.focus(false);
     this.recit = false;
     this.bouge = 0;
+    this.reperes?.montrer(null);
     if (!this.town || this.host?.hidden) return;
     this.memoriser();
     cancelAnimationFrame(this.raf);
@@ -622,6 +634,7 @@ export class AventureApp {
       this.majHud();
       this.tickMonde();
       this.majMusique();
+      this.majRepere();
     };
     loop();
     if (this.guide) this.town?.setInputLocked(this.verrouRecit);
@@ -710,6 +723,45 @@ export class AventureApp {
     // M14 : pas de HUD tant que la trame a une suite, la ville n'est qu'un décor de scène
     const cache = this.verrouRecit;
     if (this.hud && this.hud.hidden !== cache) this.hud.hidden = cache;
+  }
+
+  /**
+   * Passe 240 : le repère d'objectif (Promenade libre seulement). Il se tait pendant un dialogue, une fenêtre (menu, deck,
+   * journal), une cinématique, une rencontre forcée, un voyage, le rideau noir et hors de la ville (duel, Préparation) ; il se
+   * coupe dans le menu. Le guidage n'est recalculé que si l'aventure, le directeur ou le quartier ont changé.
+   */
+  private majRepere(): void {
+    const r = this.reperes;
+    const t = this.town;
+    if (!r || !t || !this.save) return;
+    const actif = this.repereAffiche && !this.guide && this.ecran === 'ville' && !this.dialog && !this.modal && !this.cine && !this.force && !this.enVoyage
+      && !this.rideau.enCours && !this.host?.hidden && !this.hud?.hidden && !document.querySelector('.ville-card');
+    if (!actif) { r.montrer(null); return; }
+    const ilot = t.ilotId();
+    const vu = this.guidageVu;
+    if (!vu || vu.etat !== this.save.etat || vu.directeur !== this.save.directeur || vu.ilot !== ilot) {
+      this.guidageVu = { etat: this.save.etat, directeur: this.save.directeur, ilot, g: this.calculerGuidage(ilot) };
+    }
+    r.montrer(this.guidageVu?.g?.reperes ?? null);
+    r.maj();
+  }
+
+  /** Le guidage du quartier courant : la cible de l'étape, ou le passage vers son quartier (`repereObjectif.ts`). */
+  private calculerGuidage(ici: IlotId): Guidage | null {
+    return guidage(this.etat, {
+      ici, ilots: this.ilotsRecit, quaiRangs: this.quaiRangs, kai: this.mondeActif,
+      posesDe: (id) => this.posesDe(id),
+      zonesDe: (id) => (id === ici && this.town ? this.town.ilot.zones : ilotBase(id, this.quaiRangs, this.ouverts).ilot.zones),
+      sortiesDe: (id) => ilotBase(id, this.quaiRangs, this.ouverts).exits,
+      nomDe: (id) => nomIlot(id, this.quaiRangs, this.ouverts),
+    });
+  }
+
+  /** Le cadre utile des repères : sous le cartouche (sa hauteur suit l'objectif), à distance des bords. */
+  private margesRepere(): { haut: number; bas: number; gauche: number; droite: number } {
+    const c = this.hud?.querySelector<HTMLElement>('.av-cartouche')?.getBoundingClientRect();
+    const k = Math.min(1.5, Math.max(1, window.innerWidth / 1280));
+    return { haut: Math.max(96, (c?.bottom ?? 0) + 28 * k), bas: 64 * k, gauche: 56 * k, droite: 56 * k };
   }
 
   /** Carton de lieu ; `court` (Récit guidé) : il ouvre la scène, qui l'attend (`tickMonde`). */
@@ -2390,6 +2442,8 @@ export class AventureApp {
       { label: 'Journal des quêtes', key: 'menu-journal', run: () => { this.fermerDialogue(); this.journal(); } },
       { label: 'Leçons', key: 'menu-lecons', run: () => { this.fermerDialogue(); bibliotheque((ids) => this.lancerLecons(ids)); } },
       { label: `Récit : ${NOM_RECIT[this.guide ? 'guide' : 'libre'].toLowerCase()}`, key: 'menu-recit', run: () => this.changerRecit() },
+      // passe 240 : le repère d'objectif de la Promenade libre (en QA, seulement avec `?repere=1` : le menu reste identique)
+      ...(this.params.qa && !reperePermis(location.search) ? [] : [{ label: `Repère d’objectif : ${!reperePermis(location.search) ? 'coupé par l’adresse' : lireRepere(stockageLocal()) ? 'affiché' : 'masqué'}`, key: 'menu-repere', run: () => { if (reperePermis(location.search)) { ecrireRepere(stockageLocal(), !lireRepere(stockageLocal())); this.repereAffiche = lireRepere(stockageLocal()); } this.fermerDialogue(); this.menu(); } }]),
       { label: 'Apparence', key: 'menu-apparence', run: () => { this.fermerDialogue(); void this.reglageApparence(); } },
       { label: `Son : ${son().reglages().coupe ? 'coupé' : `${Math.round(son().reglages().volume * 100)} %`}`, key: 'menu-son', run: () => this.reglageSon() },
       { label: `Mouvement réduit : ${new URLSearchParams(location.search).has('reducedMotion') ? 'imposé par l’adresse' : this.params.reducedMotion ? 'oui' : 'non'}`, key: 'menu-mouvement', run: () => { if (!new URLSearchParams(location.search).has('reducedMotion')) { this.params.reducedMotion = !this.params.reducedMotion; ecrireMouvementReduit(stockageLocal(), this.params.reducedMotion); this.bandesCine?.replier(true); this.bandesCine = null; this.appliquerMouvement(); } this.fermerDialogue(); this.menu(); } },
@@ -2397,7 +2451,7 @@ export class AventureApp {
       { label: `Conseils du duel : ${!conseilsPermis(location.search) ? 'coupés par l’adresse' : lireConseils(stockageLocal()) ? 'affichés' : 'masqués'}`, key: 'menu-conseils', run: () => this.reglageConseils() },
       // M18 (P1) : « Tour assisté » (par défaut) ou « Tour classique » (l'affichage d'avant), mémorisé dans ce navigateur
       { label: `Tour du duel : ${tourDeLAdresse(location.search) ? 'imposé par l’adresse' : this.params.tour === 'assiste' ? 'assisté' : 'classique'}`, key: 'menu-tour', run: () => { this.basculerTour(); this.fermerDialogue(); this.menu(); } },
-      { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. En Promenade libre, des cartes scintillent en ville, une ou deux par chapitre : ramassez-les ; certaines sont gardées par un joueur de rue, et les passants « ? » mettent sur la piste (Journal : « Les cartes de la ville »). Une seule Technique au départ : l’autre Technique de la rue se gagne contre un premier cadet, celle de chaque famille contre son chef. À la manette (Xbox, PlayStation…) : stick gauche ou croix pour marcher et pour passer d’un bouton à l’autre, A (Croix) pour parler et valider, B (Rond) pour revenir, Start (Options) pour le menu ; une cinématique se passe avec B ou Start. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter. Les joueurs de cartes de la ville regardent devant eux : entrer dans leur regard, c’est accepter leur défi (une bulle « ! » s’allume, ils viennent à vous) ; passez derrière eux ou à l’abri d’un étal pour les éviter. Kaï surgit à certains moments de votre histoire ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? ») ; des conseils, un à la fois, expliquent chaque phase et chaque signal des cartes la première fois qu’il paraît (« Conseils du duel », dans ce menu). Le maître de table donne des leçons jouables d’une minute : les bases du duel avant le prologue, puis chaque nouvel élément quand vous l’obtenez ; « Leçons », dans ce menu, les rejoue toutes. Le son se règle dans ce menu (« Son »). Les grands moments de votre histoire se jouent en cinématique (première arrivée dans un quartier, Kaï qui surgit, votre affiliation, un chef vaincu, un nouveau chapitre, le Championnat) : Échap, Espace, Entrée ou « Passer » pour la passer ; « Cinématiques », dans ce menu, les coupe. « Récit », dans ce menu, passe de la Promenade libre, où l’on parcourt la ville, au Récit guidé, un film en séquences : les scènes s’enchaînent, et la Préparation, avant chaque duel, réunit le deck, le journal et les joueurs de rue ; on en change quand on veut, sans rien perdre.', [fermer(this)]) },
+      { label: 'Aide', key: 'menu-help', run: () => this.dire('Aide de l’aventure', 'Marcher : ZQSD, WASD, flèches ou clic au sol (Maj : pas lent). Parler, entrer, sortir : E, Entrée ou Espace, ou clic sur la bulle. Échap : menu. En Promenade libre, des cartes scintillent en ville, une ou deux par chapitre : ramassez-les ; certaines sont gardées par un joueur de rue, et les passants « ? » mettent sur la piste (Journal : « Les cartes de la ville »). Une seule Technique au départ : l’autre Technique de la rue se gagne contre un premier cadet, celle de chaque famille contre son chef. À la manette (Xbox, PlayStation…) : stick gauche ou croix pour marcher et pour passer d’un bouton à l’autre, A (Croix) pour parler et valider, B (Rond) pour revenir, Start (Options) pour le menu ; une cinématique se passe avec B ou Start. Repères : « ! » un défi ou une scène, « ? » quelqu’un à écouter. Les joueurs de cartes de la ville regardent devant eux : entrer dans leur regard, c’est accepter leur défi (une bulle « ! » s’allume, ils viennent à vous) ; passez derrière eux ou à l’abri d’un étal pour les éviter. Kaï surgit à certains moments de votre histoire ; l’objectif du moment s’affiche en haut, le Journal suit vos quêtes. ' + (reperePermis(location.search) ? 'En Promenade libre, un losange d’or montre où se joue la prochaine étape du récit, ou le passage qui y mène ; « Repère d’objectif », dans ce menu, le masque. ' : '') + 'Deck : seize cartes, quatre par Rang, une Signature au plus, deux Techniques ; la Collection dit comment gagner chaque carte. Vos PV montent de 3 à chaque combat mené à son terme, victoire ou défaite ; une défaite ne fait rien perdre, le défi reste ouvert. Après votre chef, engagez les autres familles à la Salle des Bannières ; les quatre chefs vaincus ouvrent le Championnat des Champions. L’aventure est sauvegardée à chaque étape, un duel à chaque action (menu du duel : sauvegarder et quitter). Les duels se jouent comme dans le jeu standard (aide du duel : bouton « ? ») ; des conseils, un à la fois, expliquent chaque phase et chaque signal des cartes la première fois qu’il paraît (« Conseils du duel », dans ce menu). Le maître de table donne des leçons jouables d’une minute : les bases du duel avant le prologue, puis chaque nouvel élément quand vous l’obtenez ; « Leçons », dans ce menu, les rejoue toutes. Le son se règle dans ce menu (« Son »). Les grands moments de votre histoire se jouent en cinématique (première arrivée dans un quartier, Kaï qui surgit, votre affiliation, un chef vaincu, un nouveau chapitre, le Championnat) : Échap, Espace, Entrée ou « Passer » pour la passer ; « Cinématiques », dans ce menu, les coupe. « Récit », dans ce menu, passe de la Promenade libre, où l’on parcourt la ville, au Récit guidé, un film en séquences : les scènes s’enchaînent, et la Préparation, avant chaque duel, réunit le deck, le journal et les joueurs de rue ; on en change quand on veut, sans rien perdre.', [fermer(this)]) },
       { label: 'Écran titre', key: 'menu-home', run: () => { this.fermerDialogue(); this.fondre(() => this.titre()); } },
     ], undefined, false, null, true);
   }

@@ -177,7 +177,7 @@ export interface Town {
   /** Réglages de la caméra de l'îlot courant (bornes du point visé comprises), pour composer une cinématique. */
   cameraParams(): Readonly<RigParams>;
   /** Position écran (px CSS) d'un point du monde, pour les bulles DOM. */
-  project(p: { x: number; y: number; z: number }): { x: number; y: number; visible: boolean };
+  project(p: { x: number; y: number; z: number }): { x: number; y: number; visible: boolean; /** devant la caméra (repère d'objectif, passe 240) */ devant?: boolean };
   dispose(): void;
 }
 
@@ -943,7 +943,7 @@ export function createTown(o: TownOptions): Town {
     project(p) {
       const v = new THREE.Vector3(p.x, p.y, p.z).project(camera);
       const r = renderer.domElement.getBoundingClientRect();
-      return { x: r.left + (v.x * 0.5 + 0.5) * r.width, y: r.top + (-v.y * 0.5 + 0.5) * r.height, visible: v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1 };
+      return { x: r.left + (v.x * 0.5 + 0.5) * r.width, y: r.top + (-v.y * 0.5 + 0.5) * r.height, visible: v.z < 1 && Math.abs(v.x) < 1.1 && Math.abs(v.y) < 1.1, devant: v.z < 1 };
     },
     dispose() {
       cancelAnimationFrame(raf);

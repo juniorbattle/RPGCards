@@ -1,0 +1,184 @@
+{
+  "head": "f44cfc3",
+  "renderer": "Chrome headless, GPU réel : ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "viewport": [
+    1280,
+    720
+  ],
+  "checks": [
+    "OK prologue : le guide vise Kaï (Kaï)",
+    "OK le losange au-dessus de Kaï, dans le cadre (948, 411)",
+    "OK il le nomme (« Kaï »)",
+    "OK jamais cliquable ni focalisable (souris, clavier, manette passent au travers)",
+    "OK son nom tient dans l’écran",
+    "OK Kaï hors champ : la flèche au bord droit (droite, 1224, 411)",
+    "OK la flèche est dessinée",
+    "OK tout près de Kaï, le losange s’efface, la bulle reste (« Parler à Kaï »)",
+    "OK au Parvis : « Retour au Quai » (Kaï)",
+    "OK le passage montré (dans le cadre)",
+    "OK dialogue ouvert : aucun repère",
+    "OK dialogue fermé : le repère revient",
+    "OK menu ouvert : aucun repère",
+    "OK le menu dit « Repère d’objectif : affiché » (par défaut)",
+    "OK un clic le masque (mémorisé dans ce navigateur)",
+    "OK masqué : aucun repère en ville",
+    "OK rétabli : le repère revient",
+    "OK le choix de la voie : Tessa, Gaspard",
+    "OK la figure du chapitre I posée (cadet-Cendre : quai)",
+    "OK dans son quartier, le losange vise Tessa",
+    "OK fenêtre d’avant-duel : aucun repère",
+    "OK en duel : aucun repère",
+    "OK au résultat : aucun repère",
+    "OK retour en ville : l’objectif a changé (« Kaï »)",
+    "OK après la cheffe ou le chef : « La Salle des Bannières »",
+    "OK le losange au-dessus de la porte de la salle",
+    "OK Championnat, depuis le Quai : « Monter vers la Grande Cour » (Championnat des Champions)",
+    "OK dans la Grande Cour : « Le héraut du Tournoi » (Championnat des Champions)",
+    "OK Récit guidé : aucun repère sur 4,5 s (écran : preparation)",
+    "OK à la Préparation : aucun repère",
+    "OK retour à la Promenade libre : le repère revient",
+    "OK à la manette, la croix atteint « Repère d’objectif »",
+    "OK A le masque",
+    "OK menu refermé (B) : aucun repère",
+    "OK A le rétablit : le repère revient",
+    "OK le focus de la manette ne se pose jamais sur un repère",
+    "OK réglage par défaut : fondu (0.35s) et flottement (lqv-repere-flotte)",
+    "OK « Mouvement réduit » : ni fondu (0s) ni flottement (none)",
+    "OK mouvement réduit : le repère s’efface d’un coup à l’ouverture du menu",
+    "OK en QA sans `repere=1` : aucun repère, aucune entrée de menu",
+    "OK console propre (0)"
+  ],
+  "issues": [],
+  "vues": {
+    "prologue-kai": {
+      "ilot": "quai",
+      "reperes": [
+        {
+          "id": "kai-prologue",
+          "nom": "Kaï",
+          "detail": null,
+          "x": 948,
+          "y": 411,
+          "dedans": true,
+          "cote": "dessus",
+          "visible": true
+        }
+      ]
+    },
+    "prologue-hors-champ": {
+      "ilot": "quai",
+      "reperes": [
+        {
+          "id": "kai-prologue",
+          "nom": "Kaï",
+          "detail": null,
+          "x": 1224,
+          "y": 411,
+          "dedans": false,
+          "cote": "droite",
+          "visible": true
+        }
+      ]
+    },
+    "parvis-passage": {
+      "ilot": "parvis",
+      "reperes": [
+        {
+          "id": "sortie-quai",
+          "nom": "Retour au Quai",
+          "detail": "Kaï",
+          "x": 252,
+          "y": 430,
+          "dedans": true,
+          "cote": "dessus",
+          "visible": true
+        }
+      ]
+    },
+    "choix-emissaires": {
+      "ilot": "quai",
+      "reperes": [
+        {
+          "id": "emissaire-Cendre",
+          "nom": "Tessa",
+          "detail": null,
+          "x": 270,
+          "y": 413,
+          "dedans": true,
+          "cote": "dessus",
+          "visible": true
+        },
+        {
+          "id": "emissaire-Ronce",
+          "nom": "Gaspard",
+          "detail": null,
+          "x": 1138,
+          "y": 412,
+          "dedans": true,
+          "cote": "dessus",
+          "visible": true
+        }
+      ]
+    },
+    "chapitre-1-figure": {
+      "ilot": "quai",
+      "reperes": [
+        {
+          "id": "cadet-Cendre",
+          "nom": "Tessa",
+          "detail": null,
+          "x": 279,
+          "y": 409,
+          "dedans": true,
+          "cote": "dessus",
+          "visible": true
+        }
+      ]
+    },
+    "bannieres-porte": {
+      "ilot": "quai",
+      "reperes": [
+        {
+          "id": "porte-salle",
+          "nom": "La Salle des Bannières",
+          "detail": null,
+          "x": 486,
+          "y": 409,
+          "dedans": true,
+          "cote": "dessus",
+          "visible": true
+        }
+      ]
+    },
+    "championnat-passage": {
+      "ilot": "quai",
+      "reperes": [
+        {
+          "id": "sortie-cour",
+          "nom": "Monter vers la Grande Cour",
+          "detail": "Championnat des Champions",
+          "x": 776,
+          "y": 364,
+          "dedans": true,
+          "cote": "dessus",
+          "visible": true
+        }
+      ]
+    },
+    "championnat-heraut": {
+      "ilot": "cour",
+      "reperes": [
+        {
+          "id": "heraut",
+          "nom": "Le héraut du Tournoi",
+          "detail": "Championnat des Champions",
+          "x": 493,
+          "y": 348,
+          "dedans": true,
+          "cote": "dessus",
+          "visible": true
+        }
+      ]
+    }
+  }
+}
