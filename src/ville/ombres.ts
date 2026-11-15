@@ -109,6 +109,28 @@ export function ombrePortee(r: PlateRect, at: readonly [number, number, number],
   return { kind: 'portee', x: px + dx * (len / 2 - 0.1), z: pz + dz * (len / 2 - 0.1), w, d: len, alpha, angle: Math.atan2(-dx, -dz) };
 }
 
+/** Emprise au sol d'une rampe (escalier ou perron en vrai 3D, `volumes.ts`) : de x0 à x1, du mur (z0) à la marche du bas
+ *  (z1), sa hauteur au palier (m). */
+export interface PiedRampe { x0: number; x1: number; z0: number; z1: number; h: number }
+
+/** Ombre d'une rampe : débord sur les côtés et devant la marche du bas (m), opacité au pied. */
+export const OMBRE_RAMPE = { bord: 0.3, avant: 0.8, alpha: 0.5 } as const;
+
+/**
+ * Ombres au sol d'une rampe (pur ; essai de profondeur, levier 2) : son emprise, plus sombre contre le mur et fondue au-delà
+ * de la marche du bas (la rampe en cache le cœur, l'ombre en dépasse devant et sur les côtés), et l'ombre portée par la
+ * lanterne la plus proche quand il y en a une, comme pour un objet de sa largeur et de sa hauteur (`ombrePortee`).
+ */
+export function ombresRampe(p: PiedRampe, lumieres: readonly DecorLight[] = []): Ombre[] {
+  const w = p.x1 - p.x0 + 2 * OMBRE_RAMPE.bord;
+  const d = p.z1 - p.z0 + OMBRE_RAMPE.avant;
+  const out: Ombre[] = [{ kind: 'pied', x: (p.x0 + p.x1) / 2, z: p.z0 + d / 2, w, d, alpha: OMBRE_RAMPE.alpha }];
+  const r: PlateRect = { center: [(p.x0 + p.x1) / 2, p.h / 2, (p.z0 + p.z1) / 2], w: p.x1 - p.x0, h: p.h, orient: 'face' };
+  const portee = ombrePortee(r, [r.center[0], 0, p.z1], lumieres);
+  if (portee) out.push(portee);
+  return out;
+}
+
 const FRAG = /* glsl */ `
 uniform float uAlpha; uniform float uKind; uniform float uFlip;
 uniform sampler2D tProfil; uniform vec4 uSil;

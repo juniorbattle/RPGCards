@@ -215,8 +215,7 @@ export const RELIEFS: Readonly<Record<string, readonly Forme[]>> = {
  * Le morceau d'image d'un plan (`uv` : u0, v0, u1, v1, comptés depuis le haut) touche-t-il une forme de relief ? Un plan
  * sans relief garde le nuanceur d'origine (aucun lancer de rayon pour rien).
  */
-export function reliefDansMorceau(file: string, size: readonly [number, number], uv: readonly [number, number, number, number] = [0, 0, 1, 1]): boolean {
-  const formes = RELIEFS[file];
+export function reliefDansMorceau(file: string, size: readonly [number, number], uv: readonly [number, number, number, number] = [0, 0, 1, 1], formes: readonly Forme[] | undefined = RELIEFS[file]): boolean {
   if (!formes?.length) return false;
   const [x0, y0, x1, y1] = [uv[0] * size[0], uv[1] * size[1], uv[2] * size[0], uv[3] * size[1]];
   return formes.some((f) => {

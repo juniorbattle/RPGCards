@@ -1,0 +1,60 @@
+{
+ "vues": [
+  {
+   "id": "gauche",
+   "at": {
+    "x": -11.5,
+    "z": -3
+   },
+   "face": "gauche"
+  },
+  {
+   "id": "centre",
+   "at": {
+    "x": 0,
+    "z": 0.6
+   },
+   "face": "dos"
+  },
+  {
+   "id": "droite",
+   "at": {
+    "x": 11.5,
+    "z": -3
+   },
+   "face": "droite"
+  },
+  {
+   "id": "escalier",
+   "at": {
+    "x": 14.6,
+    "z": -10.6
+   },
+   "face": "droite"
+  },
+  {
+   "id": "estrade",
+   "at": {
+    "x": -7.5,
+    "z": -5.6
+   },
+   "face": "dos"
+  },
+  {
+   "id": "facade",
+   "at": {
+    "x": 3.2,
+    "z": -10.9
+   },
+   "face": "gauche"
+  }
+ ],
+ "variantes": [
+  "apres"
+ ],
+ "tailles": [
+  1280,
+  1920
+ ],
+ "erreurs": []
+}
