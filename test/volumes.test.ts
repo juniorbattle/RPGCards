@@ -3,7 +3,7 @@
 // saillies, ombres au sol des rampes ; l'essai ne vaut que pour la Grande Cour et se coupe par l'adresse.
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { encoder, RELIEF_MAX, RELIEF_MIN, reliefDansMorceau, RELIEFS, sommets } from '../src/ville/reliefs';
+import { encoder, profCyl, RELIEF_MAX, RELIEF_MIN, reliefDansMorceau, RELIEFS, sommets } from '../src/ville/reliefs';
 import { OMBRE_RAMPE, ombresRampe } from '../src/ville/ombres';
 import { ILOTS_RANGS } from '../src/ville/ilots';
 import { inArea } from '../src/ville/monde';
@@ -26,15 +26,17 @@ const morceau = (p: Plan): MorceauPlan => {
 };
 
 describe('essai de profondeur : périmètre', () => {
-  it('la Grande Cour et le Quai seulement ; ?volume=0 et ?relief=0 le coupent', () => {
-    expect([...ILOTS_ESSAI]).toEqual(['cour', 'quai']);
+  it('les six quartiers en rangs ; ?volume=0 et ?relief=0 le coupent', () => {
+    expect([...ILOTS_ESSAI].sort()).toEqual(['cour', 'haute', 'parvis', 'port', 'quai', 'ruelles']);
     expect(volumeActif('cour', '')).toBe(true);
     expect(volumeActif('cour', '?ville=1&volume=0')).toBe(false);
     expect(volumeActif('cour', '?relief=0')).toBe(false);
     expect(volumeActif('quai', '')).toBe(true);
     expect(volumeActif('quai', '?volume=0')).toBe(false);
-    expect(volumeActif('ruelles', '')).toBe(false);
-    expect(volumeActif('parvis', '?ville=1')).toBe(false);
+    expect(volumeActif('ruelles', '')).toBe(true);
+    expect(volumeActif('haute', '?relief=0')).toBe(false);
+    expect(volumeActif('parvis', '?ville=1')).toBe(true);
+    expect(volumeActif('inconnu', '')).toBe(false);
   });
 
   it('les formes d’origine ne changent pas (les autres quartiers gardent le relief de la passe 162)', () => {
@@ -47,6 +49,23 @@ describe('essai de profondeur : périmètre', () => {
 });
 
 describe('essai de profondeur : données', () => {
+  it('chaque façade peinte des six quartiers a ses volumes (frises, monuments, façades du premier rang et des cœurs)', () => {
+    const m = JSON.parse(readFileSync('public/decors/manifest-profondeur.json', 'utf8')) as { ilots: Record<string, { plans: Record<string, Plan> }> };
+    const facades = new Set<string>();
+    for (const ilot of ILOTS_ESSAI) for (const p of Object.values(m.ilots[ilot]!.plans)) if (p.orient === 'face' && /^(rangs-frise|rangs-monuments|villes-|quartiers-)/.test(p.file) && p.file !== 'villes-objets.png') facades.add(p.file);
+    expect(facades.size).toBeGreaterThanOrEqual(11);
+    for (const file of facades) expect(FORMES_ESSAI[file]?.length ?? 0, file).toBeGreaterThan(8);
+  });
+
+  it('volume rond : demi-cercle des bords au centre, symétrique', () => {
+    expect(profCyl(0, 1.6, 0)).toBeCloseTo(1.6, 9);
+    expect(profCyl(1, 1.6, 0)).toBeCloseTo(1.6, 9);
+    expect(profCyl(0.5, 1.6, 0)).toBeCloseTo(0, 9);
+    expect(profCyl(0.25, -0.15, -1.2)).toBeCloseTo(profCyl(0.75, -0.15, -1.2), 9);
+    // plus bombé qu'une pente droite : au quart, déjà 87 % de l'avancée
+    expect(profCyl(0.25, 0, 1)).toBeCloseTo(Math.sqrt(0.75), 9);
+  });
+
   it('formes et découpes dans leur image, profondeurs dans les bornes de la carte', () => {
     for (const file of new Set([...Object.keys(FORMES_ESSAI), ...Object.keys(RAMPES)])) {
       const size = taille(file);
@@ -105,7 +124,7 @@ describe('essai de profondeur : les rampes occupent le sol', () => {
   for (const ilot of [...ILOTS_ESSAI]) {
     it(`${ilot} : les emprises des rampes ne recouvrent ni point d'apparition, ni personnage, ni zone, ni chemin lumineux`, () => {
       const m = JSON.parse(readFileSync('public/decors/manifest-profondeur.json', 'utf8')) as { ilots: Record<string, { plans: Record<string, Plan> }> };
-      const em = emprisesRampes(Object.values(m.ilots[ilot]!.plans));
+      const em = emprisesRampes(Object.entries(m.ilots[ilot]!.plans).map(([id, p]) => ({ ...p, id: `${ilot}/${id}` })));
       expect(em.length).toBeGreaterThan(0);
       const def = ILOTS_RANGS[ilot as keyof typeof ILOTS_RANGS];
       const marge = 0.35;

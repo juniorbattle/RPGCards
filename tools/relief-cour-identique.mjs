@@ -1,7 +1,7 @@
 // Essai de profondeur (retour du responsable du 2026-11-14) : ce qu'il ne doit pas changer, au pixel près, contre un build
-// d'avant l'essai (`LQV_DIST_AVANT`) : les quatre quartiers hors de l'essai (par défaut), la Grande Cour et le Quai avec
-// `?volume=0` (le relief de la passe 162) et avec `?relief=0` (sans relief). Horloge tenue (images à pas fixe), mêmes
-// positions, temps figé (`freeze=1`). Témoins : la Grande Cour et le Quai de l'essai doivent, eux, différer.
+// d'avant l'essai (`LQV_DIST_AVANT`) : les six quartiers en rangs avec `?volume=0` (le relief de la passe 162) et avec
+// `?relief=0` (sans relief), et la ville d'avant les rangs (laboratoire sans `profondeur`). Horloge tenue (images à pas fixe), mêmes
+// positions, temps figé (`freeze=1`). Témoins : les six quartiers de l'essai doivent, eux, différer.
 // Usage : npm run build && LQV_DIST_AVANT=<dist d'avant> node tools/relief-cour-identique.mjs [rapport.json]
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
@@ -12,20 +12,22 @@ const AVANT = process.env.LQV_DIST_AVANT;
 if (!AVANT) throw new Error('LQV_DIST_AVANT : le build d’avant l’essai');
 const port = Number(process.env.LQV_PREVIEW_PORT) || 4393;
 const CAS = [
-  ...['parvis', 'ruelles', 'port', 'haute'].map((ilot) => ({ id: ilot, avant: `&ilot=${ilot}`, apres: `&ilot=${ilot}`, egal: true })),
-  ...['cour', 'quai'].flatMap((ilot) => [
+  // la ville d'avant les rangs (laboratoire sans `profondeur`) : l'essai ne la touche pas
+  { id: 'quai d’avant les rangs', avant: '&ilot=quai&profondeur=0', apres: '&ilot=quai&profondeur=0', egal: true },
+  ...['cour', 'quai', 'parvis', 'ruelles', 'port', 'haute'].flatMap((ilot) => [
     { id: `${ilot}-volume0`, avant: `&ilot=${ilot}`, apres: `&ilot=${ilot}&volume=0`, egal: true },
     { id: `${ilot}-relief0`, avant: `&ilot=${ilot}&relief=0`, apres: `&ilot=${ilot}&relief=0`, egal: true },
     { id: `${ilot}-essai (témoin)`, avant: `&ilot=${ilot}`, apres: `&ilot=${ilot}`, egal: false },
   ]),
   // contre-épreuve : le même build deux fois (la capture est-elle reproductible ?)
   { id: 'parvis, même build (contre-épreuve)', avant: '&ilot=parvis', apres: '&ilot=parvis', egal: true, memeBuild: true },
+  { id: 'haute, même build (contre-épreuve)', avant: '&ilot=haute', apres: '&ilot=haute', egal: true, memeBuild: true },
 ];
 const capture = async (browser, base, q) => {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 });
   const p = await ctx.newPage();
   await p.clock.install({ time: 0 });
-  await p.goto(`${base}/?ville=1&qa=1&freeze=1&profondeur=1&decors=approuvees&sprites=approuvees${q}`);
+  await p.goto(`${base}/?ville=1&qa=1&freeze=1${q.includes('profondeur=') ? '' : '&profondeur=1'}&decors=approuvees&sprites=approuvees${q}`);
   for (let i = 0; i < 600; i++) {
     await p.clock.runFor(100);
     if (await p.evaluate(() => !!window.__lqvVille && window.__lqvVille.town.stats().frames > 3)) break;

@@ -1,6 +1,6 @@
 // Essai de profondeur du décor (retour du responsable du 2026-11-14 : bâtiments « collés/écrasés », surtout « les
 // bâtiments dans les zones profondes ») : captures du laboratoire, le joueur à plusieurs endroits du premier rang et des
-// rangs profonds de la Grande Cour et du Quai, aux variantes demandées (`?relief=0` : sans relief ; `?volume=0` : le
+// rangs profonds des six quartiers (la Grande Cour et le Quai d'abord), aux variantes demandées (`?relief=0` : sans relief ; `?volume=0` : le
 // relief de la passe 162 seul, le rendu d'avant l'essai ; par défaut : l'essai), en 1280 et 1920 (vues de contrôle :
 // `normales`, `ombres` ; `sanshalo` : sans le halo du protagoniste). Sorties : PNG `<îlot>-<vue>-<variante>-<largeur>.png`
 // sous le dossier donné (non suivis) et `artifacts/qa/retours-2026-11-14/captures.json` (positions, variantes, erreurs).
@@ -12,7 +12,7 @@ import { launch, startPreview, watchConsole } from './browser.mjs';
 const OUT = process.argv[2] ?? 'screenshots/qa/retours-2026-11-14/brut';
 const VARIANTES = (process.argv[3] ?? 'avant,apres').split(',');
 const TAILLES = (process.argv[4] ?? '1280,1920').split(',').map(Number);
-const ILOTS = (process.argv[5] ?? 'cour,quai').split(',');
+const ILOTS = (process.argv[5] ?? 'cour,quai,parvis,ruelles,port,haute').split(',');
 const PARAMS = { sans: '&relief=0', avant: '&volume=0', apres: '', sanshalo: '&halo=0', normales: '&volume=normales', ombres: '&volume=ombres' };
 /** Les vues, par îlot : premier rang, puis rangs profonds (`profond: true`). */
 export const VUES = {
@@ -37,6 +37,34 @@ export const VUES = {
     { id: 'placette-puits', at: { x: -2.6, z: -26.3 }, face: 'gauche', profond: true },
     { id: 'cour-chapelle', at: { x: 0, z: -38.5 }, face: 'dos', profond: true },
   ],
+  // généralisation (« Oui, généralise ») : les quatre autres quartiers, placés à leurs points d'apparition
+  parvis: [
+    { id: 'rang1', spawn: 'arrivee', face: 'dos' },
+    { id: 'rue-gradins', spawn: 'rue-gradins', face: 'dos', profond: true },
+    { id: 'place-paris', spawn: 'place-paris', face: 'dos', profond: true },
+    { id: 'rue-lices', spawn: 'rue-lices', face: 'dos', profond: true },
+    { id: 'placette-tableau', spawn: 'placette-tableau', face: 'dos', profond: true },
+    { id: 'cour-champions', spawn: 'cour-champions', face: 'dos', profond: true },
+  ],
+  ruelles: [
+    { id: 'rang1', spawn: 'arrivee', face: 'dos' },
+    { id: 'ruelle-tanneurs', spawn: 'ruelle-tanneurs', face: 'dos', profond: true },
+    { id: 'placette-olivier', spawn: 'placette-olivier', face: 'dos', profond: true },
+    { id: 'ruelle-voile', spawn: 'ruelle-voile', face: 'dos', profond: true },
+    { id: 'cour-guilde', spawn: 'cour-guilde', face: 'dos', profond: true },
+  ],
+  port: [
+    { id: 'rang1', spawn: 'arrivee', face: 'dos' },
+    { id: 'rue-cordiers', spawn: 'rue-cordiers', face: 'dos', profond: true },
+    { id: 'placette-filets', spawn: 'placette-filets', face: 'dos', profond: true },
+    { id: 'cour-ronce', spawn: 'cour-ronce', face: 'dos', profond: true },
+  ],
+  haute: [
+    { id: 'rang1', spawn: 'arrivee', face: 'dos' },
+    { id: 'rue-astronomes', spawn: 'rue-astronomes', face: 'dos', profond: true },
+    { id: 'jardin-spheres', spawn: 'jardin-spheres', face: 'dos', profond: true },
+    { id: 'parvis-observatoire', spawn: 'parvis-observatoire', face: 'dos', profond: true },
+  ],
 };
 mkdirSync(OUT, { recursive: true });
 const server = await startPreview(Number(process.env.LQV_PREVIEW_PORT) || 4393, process.env.LQV_DIST || 'dist');
@@ -59,7 +87,7 @@ try {
         }
         await p.clock.runFor(1500);
         for (const vue of VUES[ilot]) {
-          await p.evaluate(({ at, face }) => window.__lqvVille.town.place(at, face), vue);
+          await p.evaluate(({ at, spawn, face }) => { const t = window.__lqvVille.town; const s = spawn ? t.ilot.spawns[spawn] : at; t.place({ x: s.x, z: s.z }, face); }, vue);
           await p.clock.runFor(1500);
           await p.screenshot({ path: join(OUT, `${ilot}-${vue.id}-${v}-${W}.png`) });
         }

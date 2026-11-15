@@ -26,6 +26,33 @@ const PLANCHES = [
     ['cour', 'belvedere-centre', 'Belvédère, au centre'],
     ['cour', 'belvedere-ouest', 'Belvédère, côté ouest'],
   ] },
+  { nom: 'planche-profond-parvis', titre: 'Parvis de l’arène, du premier rang aux rangs profonds', vues: [
+    ['parvis', 'rang1', 'Premier rang : la porte du Tournoi (tours rondes, loggia, bannières)'],
+    ['parvis', 'rue-gradins', 'Rue des Gradins'],
+    ['parvis', 'place-paris', 'Place des paris'],
+    ['parvis', 'rue-lices', 'Rue des Lices'],
+    ['parvis', 'placette-tableau', 'Placette du tableau'],
+    ['parvis', 'cour-champions', 'Cour des Champions (l’arène au fond)'],
+  ] },
+  { nom: 'planche-profond-ruelles', titre: 'Ruelles, du premier rang aux rangs profonds', vues: [
+    ['ruelles', 'rang1', 'Premier rang : la rangée du canal'],
+    ['ruelles', 'ruelle-tanneurs', 'Ruelle des Tanneurs'],
+    ['ruelles', 'placette-olivier', 'Placette de l’Olivier'],
+    ['ruelles', 'ruelle-voile', 'Ruelle du Voile'],
+    ['ruelles', 'cour-guilde', 'Cour de la guilde'],
+  ] },
+  { nom: 'planche-profond-port', titre: 'Place du Fanal, du premier rang aux rangs profonds', vues: [
+    ['port', 'rang1', 'Premier rang : le phare et les remises'],
+    ['port', 'rue-cordiers', 'Rue des Cordiers'],
+    ['port', 'placette-filets', 'Placette des Filets'],
+    ['port', 'cour-ronce', 'Cour de la Ronce'],
+  ] },
+  { nom: 'planche-profond-haute', titre: 'Ville haute, du premier rang aux rangs profonds', vues: [
+    ['haute', 'rang1', 'Premier rang : les Hôtels (balcons, bannières)'],
+    ['haute', 'rue-astronomes', 'Rue des Astronomes'],
+    ['haute', 'jardin-spheres', 'Jardin des sphères'],
+    ['haute', 'parvis-observatoire', 'Parvis de l’Observatoire (la rotonde au fond)'],
+  ] },
   { nom: 'planche-cour', titre: 'Grande Cour, premier rang', vues: [
     ['cour', 'gauche', 'Le joueur à gauche'],
     ['cour', 'centre', 'Le joueur au centre'],
@@ -42,6 +69,10 @@ const DETAILS = [
   ['quai', 'rue-haute-ouest', [0, 140, 520, 520], 'Rue Haute : la maison à l’escalier au fond, galerie et remise creusées'],
   ['quai', 'place-halle', [380, 130, 1000, 470], 'Place de la Halle : l’étage à colombages qui avance sur les arcades'],
   ['cour', 'droite', [1050, 190, 1280, 430], 'Grande Cour : la maison à l’escalier, la volée en vrai 3D'],
+  ['haute', 'parvis-observatoire', [380, 110, 900, 360], 'Ville haute : la rotonde, le tambour et la coupole de l’Observatoire en volumes ronds'],
+  ['port', 'rang1', [380, 110, 900, 400], 'Place du Fanal : le phare en tour ronde, les remises dont l’étage avance'],
+  ['parvis', 'rang1', [380, 110, 1100, 420], 'Parvis : la porte du Tournoi, tours rondes, loggia et balcon à mâchicoulis'],
+  ['ruelles', 'ruelle-tanneurs', [150, 130, 800, 450], 'Ruelles : la ruelle des Tanneurs, la volée du fond (avancée réduite à 1,4 m), la remise creusée'],
   ['cour', 'facade', [380, 120, 900, 380], 'Grande Cour : le balcon aux bannières, ombre sous la saillie, arêtes accrochées par le halo'],
 ];
 const b64 = (f) => `data:image/png;base64,${readFileSync(f).toString('base64')}`;

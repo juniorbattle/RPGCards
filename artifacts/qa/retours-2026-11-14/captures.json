@@ -149,6 +149,124 @@
     "face": "dos",
     "profond": true
    }
+  ],
+  "parvis": [
+   {
+    "id": "rang1",
+    "spawn": "arrivee",
+    "face": "dos"
+   },
+   {
+    "id": "rue-gradins",
+    "spawn": "rue-gradins",
+    "face": "dos",
+    "profond": true
+   },
+   {
+    "id": "place-paris",
+    "spawn": "place-paris",
+    "face": "dos",
+    "profond": true
+   },
+   {
+    "id": "rue-lices",
+    "spawn": "rue-lices",
+    "face": "dos",
+    "profond": true
+   },
+   {
+    "id": "placette-tableau",
+    "spawn": "placette-tableau",
+    "face": "dos",
+    "profond": true
+   },
+   {
+    "id": "cour-champions",
+    "spawn": "cour-champions",
+    "face": "dos",
+    "profond": true
+   }
+  ],
+  "ruelles": [
+   {
+    "id": "rang1",
+    "spawn": "arrivee",
+    "face": "dos"
+   },
+   {
+    "id": "ruelle-tanneurs",
+    "spawn": "ruelle-tanneurs",
+    "face": "dos",
+    "profond": true
+   },
+   {
+    "id": "placette-olivier",
+    "spawn": "placette-olivier",
+    "face": "dos",
+    "profond": true
+   },
+   {
+    "id": "ruelle-voile",
+    "spawn": "ruelle-voile",
+    "face": "dos",
+    "profond": true
+   },
+   {
+    "id": "cour-guilde",
+    "spawn": "cour-guilde",
+    "face": "dos",
+    "profond": true
+   }
+  ],
+  "port": [
+   {
+    "id": "rang1",
+    "spawn": "arrivee",
+    "face": "dos"
+   },
+   {
+    "id": "rue-cordiers",
+    "spawn": "rue-cordiers",
+    "face": "dos",
+    "profond": true
+   },
+   {
+    "id": "placette-filets",
+    "spawn": "placette-filets",
+    "face": "dos",
+    "profond": true
+   },
+   {
+    "id": "cour-ronce",
+    "spawn": "cour-ronce",
+    "face": "dos",
+    "profond": true
+   }
+  ],
+  "haute": [
+   {
+    "id": "rang1",
+    "spawn": "arrivee",
+    "face": "dos"
+   },
+   {
+    "id": "rue-astronomes",
+    "spawn": "rue-astronomes",
+    "face": "dos",
+    "profond": true
+   },
+   {
+    "id": "jardin-spheres",
+    "spawn": "jardin-spheres",
+    "face": "dos",
+    "profond": true
+   },
+   {
+    "id": "parvis-observatoire",
+    "spawn": "parvis-observatoire",
+    "face": "dos",
+    "profond": true
+   }
   ]
  },
  "variantes": [
@@ -160,7 +278,10 @@
   1920
  ],
  "ilots": [
-  "quai"
+  "parvis",
+  "ruelles",
+  "port",
+  "haute"
  ],
  "erreurs": []
 }

@@ -26,9 +26,10 @@ import { RELIEF_MAX, RELIEF_MIN, RELIEFS, type Forme } from './reliefs';
  */
 export const REGLAGES = { creux: 0.25, garde: 1, ciel: 0.24, cotes: 0.3, arete: 1.6, areteMax: 0.35, haloPlat: 0.12, haloArete: 2.6, albedo: 0.035 } as const;
 
-/** Îlots où l'essai est actif : la Grande Cour, puis le Quai en quatre rangs (précision du responsable : « ce sont surtout
- *  les bâtiments dans les zones profondes », les rangs du fond). */
-export const ILOTS_ESSAI: ReadonlySet<string> = new Set(['cour', 'quai']);
+/** Îlots où l'essai est actif (dioramas en rangs seulement) : la Grande Cour, puis le Quai en quatre rangs (précision du
+ *  responsable : « ce sont surtout les bâtiments dans les zones profondes »), puis, l'essai validé (« Oui c'est mieux on
+ *  valide », 2026-11-15) et généralisé (« Oui, généralise »), les six quartiers. */
+export const ILOTS_ESSAI: ReadonlySet<string> = new Set(['quai', 'parvis', 'ruelles', 'cour', 'port', 'haute']);
 
 /** L'essai est-il actif pour cet îlot, avec ces paramètres d'adresse ? */
 export function volumeActif(ilot: string, search = ''): boolean {
@@ -73,6 +74,20 @@ export const RAMPES: Readonly<Record<string, readonly Rampe[]>> = {
     { poly: [[655, 535], [655, 457], [909, 457], [909, 535]], haut: 459, bas: 534, saillie: 1.1, flanc: [568, 466, 650, 528] },
   ],
 };
+
+/**
+ * Avancée d'une rampe réduite pour un plan donné (`îlot/plan`) : la même volée peinte paraît dans plusieurs rangs ; là où la
+ * ruelle devant elle porte un chemin lumineux ou un point d'apparition, elle avance moins.
+ */
+export const SAILLIES_PLAN: Readonly<Record<string, number>> = {
+  // Parvis, rang 3 : le chemin lumineux du rang passe à 2 m du mur
+  'parvis/fond-rang3--5': 1.6,
+  // Ruelles, ruelle des Tanneurs : le point d'apparition de la ruelle est à 2 m du mur
+  'ruelles/fond-rang2--31': 1.4,
+};
+
+/** La rampe telle qu'elle est posée dans un plan (`îlot/plan`) : son avancée éventuellement réduite. */
+export const rampeDuPlan = (r: Rampe, plan?: string): Rampe => (plan && SAILLIES_PLAN[plan] !== undefined ? { ...r, saillie: Math.min(r.saillie, SAILLIES_PLAN[plan]!) } : r);
 
 /** Jettée (étage à colombages qui avance sur le rez-de-chaussée de pierre), toit compris : profondeur constante. */
 const jettee = (x0: number, y0: number, x1: number, y1: number, prof = -0.5): Forme => ({ rect: [x0, y0, x1, y1], prof });
@@ -198,6 +213,89 @@ export const FORMES_ESSAI: Readonly<Record<string, readonly Forme[]>> = {
     { rect: [3590, 600, 3800, 834], prof: 1.6 },
     { rect: [3800, 380, 3902, 470], prof: -0.5 },
   ],
+  // le Parvis : la porte du Tournoi (tours rondes, loggia, balcon à mâchicoulis, bannières, lanternes ; formes d'origine)
+  'villes-parvis-porte.png': [
+    { rect: [194, 299, 1257, 403], prof: 0.5 },
+    { rect: [194, 403, 1257, 472], prof: -0.3 },
+    { rect: [194, 472, 1257, 514], prof: -0.2 },
+    { cyl: [0, 100, 191, 931], prof: [-0.15, -1.2] },
+    { cyl: [1273, 100, 1440, 931], prof: [-0.15, -1.2] },
+    ...(RELIEFS['villes-parvis-porte.png'] ?? []).slice(2),
+    banniere(317, 400, 257, 580, 611, -0.5), banniere(525, 607, 257, 580, 611, -0.5), banniere(815, 896, 257, 580, 611, -0.5), banniere(1032, 1115, 257, 580, 611, -0.5),
+    { rect: [447, 576, 493, 785], prof: -0.45 }, { rect: [937, 576, 989, 785], prof: -0.45 },
+  ],
+  // le cœur du Parvis : l'arène (corniches, pilastres, arcades hautes à balcons, portes basses, grande porte, braseros)
+  'villes-parvis-arene.png': [
+    { rect: [0, 285, 1502, 340], prof: -0.25 },
+    { rect: [0, 542, 1502, 583], prof: -0.2 },
+    ...([[35, 97], [160, 271], [354, 465], [542, 639], [688, 799], [840, 944], [1042, 1146], [1229, 1333], [1403, 1472]] as const).map(([a, b]): Forme => fenetre(a, b, 354, 535, 0.8)),
+    { rect: [0, 493, 1502, 535], prof: -0.2 },
+    ...([[35, 83], [167, 271], [354, 465], [1042, 1146], [1229, 1333], [1410, 1465]] as const).map(([a, b]): Forme => fenetre(a, b, 611, 875, 0.35)),
+    { arc: [653, 847, 700, 597, 875], prof: 0.5 },
+    ...([[97, 142], [292, 340], [479, 531], [965, 1014], [1167, 1215], [1361, 1410]] as const).map(([a, b]): Forme => ({ rect: [a, 257, b, 880], prof: -0.35 })),
+    { rect: [542, 785, 608, 875], prof: -0.5 }, { rect: [882, 785, 951, 875], prof: -0.5 },
+    { rect: [549, 639, 583, 736], prof: -0.45 }, { rect: [910, 639, 944, 736], prof: -0.45 },
+  ],
+  // les Ruelles : la rangée du canal (étages à colombages qui avancent, bannières de la haute maison, linge, lanternes ;
+  // formes d'origine : auvents, vitrine, portes, oriel)
+  'villes-ruelles-canal.png': [
+    jettee(0, 140, 247, 684, -0.4), jettee(247, 150, 470, 688, -0.4), jettee(470, 160, 735, 700, -0.4), jettee(735, 0, 1030, 700, -0.4), jettee(1030, 220, 1250, 693, -0.4), jettee(1250, 250, 1486, 688, -0.4),
+    banniere(780, 820, 347, 680, 700, -0.6), banniere(953, 993, 347, 680, 700, -0.6),
+    { rect: [520, 500, 707, 593], prof: -0.55 },
+    { rect: [771, 727, 797, 833], prof: -0.4 }, { rect: [969, 727, 997, 833], prof: -0.4 },
+    ...(RELIEFS['villes-ruelles-canal.png'] ?? []),
+  ],
+  // le cœur des Ruelles : la maison de la guilde (corniche, fenêtres de l'étage, piliers, bannières ; formes d'origine :
+  // clocheton, galerie, arcades ouvertes)
+  'villes-ruelles-guilde.png': [
+    { rect: [0, 400, 1443, 440], prof: -0.25 },
+    ...([[140, 300], [520, 667], [767, 947], [1193, 1287]] as const).map(([a, b]): Forme => ({ rect: [a, 453, b, 553], prof: 0.15 })),
+    ...(RELIEFS['villes-ruelles-guilde.png'] ?? []),
+    ...([[40, 80], [320, 357], [700, 736], [989, 1027], [1347, 1387], [1387, 1433]] as const).map(([a, b]): Forme => ({ rect: [a, 640, b, 972], prof: -0.25 })),
+    banniere(371, 449, 460, 880, 920, -0.75), banniere(1020, 1096, 460, 880, 920, -0.75),
+  ],
+  // la Place du Fanal : le phare (tour ronde, chambre de la lanterne, galerie), les deux remises à pignon (étages qui
+  // avancent), bannières, lanternes ; formes d'origine : remise des cordiers, portail, porte du phare
+  'quartiers-port-fanal.png': [
+    jettee(0, 270, 600, 655, -0.35), jettee(820, 270, 1416, 655, -0.35),
+    { cyl: [618, 250, 802, 962], prof: [0.4, -0.5] },
+    { cyl: [640, 90, 780, 190], prof: [0.1, -0.6] },
+    { cyl: [600, 187, 822, 260], prof: [0, -0.9] },
+    ...(RELIEFS['quartiers-port-fanal.png'] ?? []),
+    banniere(40, 100, 607, 800, 830, -0.45), banniere(1320, 1380, 607, 800, 830, -0.45),
+    { rect: [600, 760, 627, 840], prof: -0.7 }, { rect: [787, 760, 820, 840], prof: -0.7 },
+  ],
+  // le cœur de la Place du Fanal : la maison de la Ronce (avant-corps, fenêtres, piliers du portail, bannières, lanternes ;
+  // formes d'origine : clocheton, balcon, portail)
+  'quartiers-port-ronce.png': [
+    { rect: [545, 200, 820, 965], prof: -0.35 },
+    ...([[140, 427, 193, 527], [313, 427, 367, 527], [980, 427, 1033, 527], [1200, 427, 1253, 527], [213, 680, 273, 800], [1093, 680, 1153, 800]] as const).map(([a, b, c, d]): Forme => ({ rect: [a, b, c, d], prof: 0.18 })),
+    ...(RELIEFS['quartiers-port-ronce.png'] ?? []),
+    { rect: [540, 607, 593, 933], prof: -0.55 }, { rect: [793, 607, 847, 933], prof: -0.55 },
+    banniere(460, 527, 573, 890, 920, -0.4), banniere(843, 909, 573, 890, 920, -0.4),
+    { rect: [384, 680, 424, 800], prof: -0.45 }, { rect: [944, 680, 987, 800], prof: -0.45 },
+  ],
+  // la Ville haute : les Hôtels (corniche, pilastres, fenêtres en retrait, balcons de fer forgé, bannières ; formes
+  // d'origine : arcades du rez-de-chaussée)
+  'quartiers-haute-hotels.png': [
+    { rect: [0, 373, 1487, 400], prof: -0.25 },
+    ...([[157, 213], [320, 373], [524, 573], [933, 983], [1447, 1487]] as const).map(([a, b]): Forme => ({ rect: [a, 400, b, 951], prof: -0.25 })),
+    ...([[67, 140], [240, 313], [407, 480], [720, 787], [1060, 1113], [1207, 1260], [1353, 1407]] as const).map(([a, b]): Forme => ({ rect: [a, 440, b, 547], prof: 0.15 })),
+    ...(RELIEFS['quartiers-haute-hotels.png'] ?? []),
+    ...([[49, 149], [213, 324], [387, 496], [627, 667], [700, 807], [840, 880], [1036, 1136], [1171, 1287], [1329, 1433]] as const).map(([a, b]): Forme => ({ rect: [a, 547, b, 600], prof: -0.45 })),
+    banniere(576, 629, 360, 640, 667, -0.45), banniere(873, 927, 360, 640, 667, -0.45),
+  ],
+  // le cœur de la Ville haute : l'Observatoire (coupole, tambour et rotonde en volumes ronds ; entrée ouverte d'origine,
+  // piliers, bannières, lanternes)
+  'quartiers-haute-observatoire.png': [
+    { cyl: [373, 0, 900, 300], prof: [3.6, 3] },
+    { cyl: [355, 300, 909, 527], prof: [2.2, 1.5] },
+    { cyl: [0, 507, 1260, 939], prof: [1.6, 0] },
+    ...(RELIEFS['quartiers-haute-observatoire.png'] ?? []).slice(2),
+    { rect: [453, 600, 496, 933], prof: -0.35 }, { rect: [773, 600, 816, 933], prof: -0.35 },
+    banniere(327, 393, 580, 880, 907, -0.25), banniere(880, 943, 580, 880, 907, -0.25),
+    { rect: [407, 707, 447, 813], prof: -0.3 }, { rect: [820, 707, 860, 813], prof: -0.3 },
+  ],
   // les monuments des rangs : l'étage à colombages de la Halle et ses bannières ; la maison du Puits (formes d'origine,
   // son perron en rampe) ; la chapelle
   'rangs-monuments.png': [
@@ -241,13 +339,12 @@ export function flou(src: Float32Array, w: number, h: number, r: number): Float3
         s += a[o + Math.min(w - 1, x + r + 1)]! - a[o + Math.max(0, x - r)]!;
       }
     }
-    for (let x = 0; x < w; x++) {
-      let s = 0;
-      for (let k = -r; k <= r; k++) s += b[Math.min(h - 1, Math.max(0, k)) * w + x]!;
-      for (let y = 0; y < h; y++) {
-        a[y * w + x] = s / n;
-        s += b[Math.min(h - 1, y + r + 1) * w + x]! - b[Math.max(0, y - r) * w + x]!;
-      }
+    // passe verticale ligne par ligne (sommes de colonnes courantes) : l'image se lit dans l'ordre de la mémoire
+    const col = new Float64Array(w);
+    for (let k = -r; k <= r; k++) { const o = Math.min(h - 1, Math.max(0, k)) * w; for (let x = 0; x < w; x++) col[x]! += b[o + x]!; }
+    for (let y = 0; y < h; y++) {
+      const o = y * w; const oa = Math.min(h - 1, y + r + 1) * w; const os = Math.max(0, y - r) * w;
+      for (let x = 0; x < w; x++) { a[o + x] = col[x]! / n; col[x]! += b[oa + x]! - b[os + x]!; }
     }
   }
   return a;
@@ -341,7 +438,8 @@ export function texelsVolume(profR: ArrayLike<number>, w: number, h: number, mpt
   for (let i = 0; i < w * h; i++) prof[i] = RELIEF_MIN + (profR[i]! / 255) * (RELIEF_MAX - RELIEF_MIN);
   const lisse = flou(prof, w, h, Math.min(8, Math.max(1, Math.round(0.12 / mpt))));
   const { sx, sy } = pentes(lisse, w, h);
-  const lit = ombrage(flou(prof, w, h, 1), w, h, mpt);
+  // l'ombre des saillies sur la carte lissée (douce d'elle-même)
+  const lit = ombrage(lisse, w, h, mpt);
   const out = new Uint8Array(w * h * 4);
   for (let y = 0; y < h; y++) {
     const o = (h - 1 - y) * w;
@@ -429,7 +527,7 @@ export function rampeDansMorceau(r: Rampe, size: readonly [number, number], uv: 
 }
 
 /** Plan d'un diorama, vu de l'essai (entrée du manifeste). */
-export interface PlanEssai { file: string; size: readonly [number, number]; uv?: readonly [number, number, number, number]; at: readonly [number, number, number]; width: number; orient: string }
+export interface PlanEssai { /** `îlot/plan` */ id?: string; file: string; size: readonly [number, number]; uv?: readonly [number, number, number, number]; at: readonly [number, number, number]; width: number; orient: string }
 
 /** Morceau d'image d'un plan de face (entrée du manifeste). */
 export function morceauDuPlan(p: PlanEssai): MorceauPlan {
@@ -450,8 +548,9 @@ export function emprisesRampes(plans: readonly PlanEssai[]): { x0: number; z0: n
   const out: { x0: number; z0: number; x1: number; z1: number }[] = [];
   for (const p of plans) {
     if (p.orient !== 'face') continue;
-    for (const r of RAMPES[p.file] ?? []) {
-      if (!rampeDansMorceau(r, p.size, p.uv ?? [0, 0, 1, 1])) continue;
+    for (const r0 of RAMPES[p.file] ?? []) {
+      if (!rampeDansMorceau(r0, p.size, p.uv ?? [0, 0, 1, 1])) continue;
+      const r = rampeDuPlan(r0, p.id);
       const m = morceauDuPlan(p);
       const xs = r.poly.map(([x, y]) => sommetRampe(m, r, x, y)[0]);
       out.push({ x0: Math.min(...xs) + EMPRISE_RETRAIT, z0: m.z - 0.05, x1: Math.max(...xs) - EMPRISE_RETRAIT, z1: m.z + r.saillie });

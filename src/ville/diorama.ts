@@ -19,8 +19,8 @@ import { finish, type LightDef, type QuaiScene } from './scene';
 import { plateRect, type DecorLight, type PreparedDiorama, type PreparedPlate } from './decors';
 import { cheminMesh } from './chemins';
 import { ombreMesh, ombresDuPlan, ombresRampe, profilPied, type Ombre, type PiedRampe } from './ombres';
-import { BIAIS_MAX, encoder, RELIEF_MAX, RELIEF_MIN, reliefDansMorceau, RELIEFS, sommets } from './reliefs';
-import { dansPoly, emprisesRampes, flancsRampe, formesVolume, metresParPixel, PENTE_MAX, RAMPES, rampeDansMorceau, REGLAGES, sommetRampe, texelsVolume, TROU, volumeActif, type MorceauPlan, type Rampe } from './volumes';
+import { BIAIS_MAX, encoder, profCyl, RELIEF_MAX, RELIEF_MIN, reliefDansMorceau, RELIEFS, sommets } from './reliefs';
+import { dansPoly, emprisesRampes, flancsRampe, formesVolume, metresParPixel, PENTE_MAX, RAMPES, rampeDansMorceau, rampeDuPlan, REGLAGES, sommetRampe, texelsVolume, TROU, volumeActif, type MorceauPlan, type Rampe } from './volumes';
 
 /** Réglages de l'essai de profondeur, écrits dans le nuanceur. */
 const VOLUME_GLSL = Object.fromEntries(Object.entries(REGLAGES).map(([k, v]) => [k, v.toFixed(3)])) as Record<keyof typeof REGLAGES, string>;
@@ -290,7 +290,13 @@ function reliefTexture(file: string, size: readonly [number, number], volume?: {
     pts.forEach(([x, y], i) => (i ? g.lineTo(x * k, y * k) : g.moveTo(x * k, y * k)));
     g.closePath();
     if (typeof f.prof === 'number') g.fillStyle = gris(f.prof);
-    else {
+    else if ('cyl' in f) {
+      // volume rond : profondeur en demi-cercle d'un bord à l'autre (essai de profondeur)
+      const [x0, , x1] = f.cyl;
+      const gr = g.createLinearGradient(x0 * k, 0, x1 * k, 0);
+      for (let i = 0; i <= 16; i++) gr.addColorStop(i / 16, gris(profCyl(i / 16, f.prof[0], f.prof[1])));
+      g.fillStyle = gr;
+    } else {
       const ys = pts.map((q) => q[1]);
       const gr = g.createLinearGradient(0, Math.min(...ys) * k, 0, Math.max(...ys) * k);
       gr.addColorStop(0, gris(f.prof[0]));
@@ -528,7 +534,7 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
   // relief des plans (retour du 2026-10-29) : une carte par image, partagée par ses plans ; `?relief=0` le coupe (comparaison)
   const sansRelief = typeof location !== 'undefined' && new URLSearchParams(location.search).get('relief') === '0';
   // essai de profondeur (retour du 2026-11-14, `volumes.ts`) : îlots de l'essai seulement ; `?volume=0` le coupe
-  const volume = typeof location !== 'undefined' && volumeActif(def.id, location.search);
+  const volume = profond && typeof location !== 'undefined' && volumeActif(def.id, location.search);
   const halo = haloUniforms();
   // `?halo=0` (QA) : sans le halo du protagoniste, pour le comparer
   const sansHalo = typeof location !== 'undefined' && new URLSearchParams(location.search).get('halo') === '0';
@@ -581,7 +587,7 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
     const extras: THREE.ShaderMaterial[] = [];
     const ombresRampes: Ombre[] = [];
     for (const rp of rampes) {
-      const built = rampeMeshes(p, rp, profond, halo);
+      const built = rampeMeshes(p, rampeDuPlan(rp, `${d.ilot}/${p.id}`), profond, halo);
       for (const m of built.meshes) { meshes.push(m); faces.push({ mesh: m, z: r.center[2] }); }
       extras.push(...built.mats);
       ombresRampes.push(...ombresRampe(built.pied, d.lights));
@@ -665,7 +671,7 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
   };
   const avantPlan = (z: number | null) => { for (const f of faces) f.mesh.visible = z === null || f.z <= z + 2; };
   // escaliers en vrai 3D : leurs emprises au sol, obstacles de l'îlot monté (`ville.ts`)
-  const obstacles = volume ? emprisesRampes(d.plates.map((p) => p.entry)) : [];
+  const obstacles = volume ? emprisesRampes(d.plates.map((p) => ({ ...p.entry, id: `${d.ilot}/${p.id}` }))) : [];
   if (!mistMats.length && !cutaways.length && !cheminMats.length && !volume) return { ...base, avantPlan };
   return { ...base, avantPlan, obstacles, focus: cutaways.length || volume ? focus : undefined, update: (time: number) => { base.update(time); for (const mm of [...mistMats, ...cheminMats]) mm.uniforms.uT!.value = time; } };
 }

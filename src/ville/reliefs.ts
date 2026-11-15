@@ -22,7 +22,10 @@ export type Prof = number | readonly [number, number];
 export type Forme =
   | { arc: readonly [number, number, number, number, number]; prof: Prof }
   | { rect: readonly [number, number, number, number]; prof: Prof }
-  | { poly: readonly (readonly [number, number])[]; prof: Prof };
+  | { poly: readonly (readonly [number, number])[]; prof: Prof }
+  /** essai de profondeur (2026-11-14) : un volume rond (tour, phare, rotonde), rectangle x0, y0, x1, y1 dont la profondeur
+   *  suit un demi-cercle d'un bord à l'autre : `prof` = [aux bords, au centre] */
+  | { cyl: readonly [number, number, number, number]; prof: readonly [number, number] };
 
 /** Bornes des profondeurs encodées (m) : saillie jusqu'à 2,5 m devant le plan, retrait jusqu'à 4 m derrière. */
 export const RELIEF_MIN = -2.5;
@@ -52,8 +55,12 @@ export function sommetsArc(a: readonly [number, number, number, number, number],
 export function sommets(f: Forme): [number, number][] {
   if ('arc' in f) return sommetsArc(f.arc);
   if ('rect' in f) { const [x0, y0, x1, y1] = f.rect; return [[x0, y0], [x1, y0], [x1, y1], [x0, y1]]; }
+  if ('cyl' in f) { const [x0, y0, x1, y1] = f.cyl; return [[x0, y0], [x1, y0], [x1, y1], [x0, y1]]; }
   return f.poly.map(([x, y]) => [x, y]);
 }
+
+/** Profondeur d'un volume rond à la fraction `t` (0 à 1) de sa largeur : demi-cercle des bords au centre. */
+export const profCyl = (t: number, bords: number, centre: number): number => bords + (centre - bords) * Math.sqrt(Math.max(0, 1 - (2 * t - 1) ** 2));
 
 /** Disque (rose, oculus) en polygone. */
 const disque = (cx: number, cy: number, r: number, prof: Prof): Forme => ({ poly: Array.from({ length: 20 }, (_, i) => [cx + Math.cos((i / 20) * Math.PI * 2) * r, cy + Math.sin((i / 20) * Math.PI * 2) * r] as const), prof });

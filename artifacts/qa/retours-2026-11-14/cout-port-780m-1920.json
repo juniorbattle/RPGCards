@@ -1,0 +1,156 @@
+{
+ "commit": "723cc73",
+ "ilot": "port",
+ "depart": "rue-cordiers",
+ "viewport": [
+  1920,
+  1080
+ ],
+ "args": [
+  "--disable-gpu-vsync",
+  "--disable-frame-rate-limit"
+ ],
+ "passages": {
+  "sans": [
+   {
+    "images": 302,
+    "moyenneMs": 13.35,
+    "medianeMs": 13.8,
+    "p95Ms": 30.7,
+    "maxMs": 33,
+    "appels": 163,
+    "programmes": 20,
+    "textures": 50,
+    "buildMs": 414,
+    "firstFrameMs": 1102
+   },
+   {
+    "images": 421,
+    "moyenneMs": 9.59,
+    "medianeMs": 8.1,
+    "p95Ms": 16,
+    "maxMs": 33.1,
+    "appels": 163,
+    "programmes": 20,
+    "textures": 50,
+    "buildMs": 203,
+    "firstFrameMs": 334
+   },
+   {
+    "images": 302,
+    "moyenneMs": 13.34,
+    "medianeMs": 13.7,
+    "p95Ms": 29.4,
+    "maxMs": 34.5,
+    "appels": 163,
+    "programmes": 20,
+    "textures": 50,
+    "buildMs": 248,
+    "firstFrameMs": 411
+   }
+  ],
+  "avant": [
+   {
+    "images": 304,
+    "moyenneMs": 13.29,
+    "medianeMs": 13.2,
+    "p95Ms": 31.1,
+    "maxMs": 33.5,
+    "appels": 163,
+    "programmes": 21,
+    "textures": 55,
+    "buildMs": 242,
+    "firstFrameMs": 467
+   },
+   {
+    "images": 293,
+    "moyenneMs": 13.75,
+    "medianeMs": 13.5,
+    "p95Ms": 30,
+    "maxMs": 34.2,
+    "appels": 163,
+    "programmes": 21,
+    "textures": 55,
+    "buildMs": 233,
+    "firstFrameMs": 410
+   },
+   {
+    "images": 296,
+    "moyenneMs": 13.6,
+    "medianeMs": 13,
+    "p95Ms": 29.8,
+    "maxMs": 34.5,
+    "appels": 163,
+    "programmes": 21,
+    "textures": 55,
+    "buildMs": 278,
+    "firstFrameMs": 470
+   }
+  ],
+  "apres": [
+   {
+    "images": 466,
+    "moyenneMs": 8.65,
+    "medianeMs": 8.2,
+    "p95Ms": 13.9,
+    "maxMs": 30.8,
+    "appels": 178,
+    "programmes": 23,
+    "textures": 55,
+    "buildMs": 401,
+    "firstFrameMs": 685
+   },
+   {
+    "images": 284,
+    "moyenneMs": 14.24,
+    "medianeMs": 14.1,
+    "p95Ms": 30.4,
+    "maxMs": 32.5,
+    "appels": 178,
+    "programmes": 23,
+    "textures": 55,
+    "buildMs": 459,
+    "firstFrameMs": 648
+   },
+   {
+    "images": 281,
+    "moyenneMs": 14.3,
+    "medianeMs": 14.1,
+    "p95Ms": 30.4,
+    "maxMs": 34.4,
+    "appels": 178,
+    "programmes": 23,
+    "textures": 55,
+    "buildMs": 455,
+    "firstFrameMs": 628
+   }
+  ]
+ },
+ "synthese": {
+  "sans": {
+   "moyenneMs": 13.34,
+   "p95Ms": 29.4,
+   "buildMs": 248,
+   "appels": 163,
+   "programmes": 20
+  },
+  "avant": {
+   "moyenneMs": 13.6,
+   "p95Ms": 30,
+   "buildMs": 242,
+   "appels": 163,
+   "programmes": 21
+  },
+  "apres": {
+   "moyenneMs": 14.24,
+   "p95Ms": 30.4,
+   "buildMs": 455,
+   "appels": 178,
+   "programmes": 23
+  },
+  "ecartEssaiMs": 0.64,
+  "ecartReliefMs": 0.26
+ },
+ "renderer": "ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "console": []
+}

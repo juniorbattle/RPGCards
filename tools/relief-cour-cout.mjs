@@ -13,7 +13,8 @@ import { EXTRA_ARGS, launch, startPreview, watchConsole, webglRenderer } from '.
 const VP = (process.env.LQV_VP ?? '1280x720').split('x').map(Number);
 // `LQV_ILOT` : l'îlot mesuré (défaut : la Grande Cour) ; le Quai part de la ruelle des Lanternes (rangs profonds)
 const ILOT = process.env.LQV_ILOT ?? 'cour';
-const DEPART = ILOT === 'quai' ? { x: -12, z: -26.3 } : { x: -6, z: -4 };
+// départ dans un rang profond (point d'apparition) ; la Grande Cour, sur sa place
+const DEPART = { quai: { x: -12, z: -26.3 }, cour: { x: -6, z: -4 }, parvis: 'rue-lices', ruelles: 'ruelle-voile', port: 'rue-cordiers', haute: 'rue-astronomes' }[ILOT] ?? 'arrivee';
 const OUT = process.argv[2] ?? `artifacts/qa/retours-2026-11-14/cout-${ILOT}-${VP[0]}.json`;
 const VARIANTES = { sans: '&relief=0', avant: '&volume=0', apres: '' };
 const PASSAGES = 3;
@@ -32,7 +33,7 @@ try {
       await p.goto(`${server.base}/?ville=1&qa=1&profondeur=1&ilot=${ILOT}&decors=approuvees&sprites=approuvees${q}`);
       report.renderer ??= await webglRenderer(p).catch(() => null);
       await p.waitForFunction(() => !!window.__lqvVille && window.__lqvVille.town.stats().frames > 3, null, { timeout: 120000 });
-      await p.evaluate((at) => window.__lqvVille.town.place(at, 'droite'), DEPART);
+      await p.evaluate((at) => { const t = window.__lqvVille.town; const s = typeof at === 'string' ? t.ilot.spawns[at] : at; t.place({ x: s.x, z: s.z }, 'droite'); }, DEPART);
       await p.waitForTimeout(1500);
       await p.evaluate(() => { const iv = []; window.__cIv = iv; let last = performance.now(); const tick = (t) => { if (window.__cIv !== iv) return; iv.push(t - last); last = t; requestAnimationFrame(tick); }; requestAnimationFrame(tick); });
       await p.keyboard.down('KeyD'); await p.waitForTimeout(2000); await p.keyboard.up('KeyD');

@@ -2,25 +2,7 @@
  "avant": "C:/Users/miche/AppData/Local/Temp/claude/cb9b1ca56f2856c2/4006b461-124f-4494-b2fc-04afb6fbcdf6/scratchpad/dist-avant",
  "cas": [
   {
-   "id": "parvis",
-   "attendu": "identique",
-   "pixelsDifferents": 0,
-   "ok": true
-  },
-  {
-   "id": "ruelles",
-   "attendu": "identique",
-   "pixelsDifferents": 0,
-   "ok": true
-  },
-  {
-   "id": "port",
-   "attendu": "identique",
-   "pixelsDifferents": 0,
-   "ok": true
-  },
-  {
-   "id": "haute",
+   "id": "quai d’avant les rangs",
    "attendu": "identique",
    "pixelsDifferents": 0,
    "ok": true
@@ -62,7 +44,85 @@
    "ok": true
   },
   {
+   "id": "parvis-volume0",
+   "attendu": "identique",
+   "pixelsDifferents": 0,
+   "ok": true
+  },
+  {
+   "id": "parvis-relief0",
+   "attendu": "identique",
+   "pixelsDifferents": 0,
+   "ok": true
+  },
+  {
+   "id": "parvis-essai (témoin)",
+   "attendu": "différent",
+   "pixelsDifferents": 359232,
+   "ok": true
+  },
+  {
+   "id": "ruelles-volume0",
+   "attendu": "identique",
+   "pixelsDifferents": 0,
+   "ok": true
+  },
+  {
+   "id": "ruelles-relief0",
+   "attendu": "identique",
+   "pixelsDifferents": 0,
+   "ok": true
+  },
+  {
+   "id": "ruelles-essai (témoin)",
+   "attendu": "différent",
+   "pixelsDifferents": 418076,
+   "ok": true
+  },
+  {
+   "id": "port-volume0",
+   "attendu": "identique",
+   "pixelsDifferents": 0,
+   "ok": true
+  },
+  {
+   "id": "port-relief0",
+   "attendu": "identique",
+   "pixelsDifferents": 0,
+   "ok": true
+  },
+  {
+   "id": "port-essai (témoin)",
+   "attendu": "différent",
+   "pixelsDifferents": 377889,
+   "ok": true
+  },
+  {
+   "id": "haute-volume0",
+   "attendu": "identique",
+   "pixelsDifferents": 0,
+   "ok": true
+  },
+  {
+   "id": "haute-relief0",
+   "attendu": "identique",
+   "pixelsDifferents": 0,
+   "ok": true
+  },
+  {
+   "id": "haute-essai (témoin)",
+   "attendu": "différent",
+   "pixelsDifferents": 305055,
+   "ok": true
+  },
+  {
    "id": "parvis, même build (contre-épreuve)",
+   "attendu": "identique",
+   "pixelsDifferents": 0,
+   "ok": true
+  },
+  {
+   "id": "haute, même build (contre-épreuve)",
    "attendu": "identique",
    "pixelsDifferents": 0,
    "ok": true
