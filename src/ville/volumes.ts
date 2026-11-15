@@ -26,8 +26,9 @@ import { RELIEF_MAX, RELIEF_MIN, RELIEFS, type Forme } from './reliefs';
  */
 export const REGLAGES = { creux: 0.25, garde: 1, ciel: 0.24, cotes: 0.3, arete: 1.6, areteMax: 0.35, haloPlat: 0.12, haloArete: 2.6, albedo: 0.035 } as const;
 
-/** Îlots où l'essai est actif. */
-export const ILOTS_ESSAI: ReadonlySet<string> = new Set(['cour']);
+/** Îlots où l'essai est actif : la Grande Cour, puis le Quai en quatre rangs (précision du responsable : « ce sont surtout
+ *  les bâtiments dans les zones profondes », les rangs du fond). */
+export const ILOTS_ESSAI: ReadonlySet<string> = new Set(['cour', 'quai']);
 
 /** L'essai est-il actif pour cet îlot, avec ces paramètres d'adresse ? */
 export function volumeActif(ilot: string, search = ''): boolean {
@@ -52,12 +53,21 @@ export interface Rampe {
 }
 
 /**
- * Les rampes, par image. La volée de la maison à l'escalier (rangs du fond, à droite de la Grande Cour : la porte de
- * l'étage, 4,5 m plus haut, la volée et son parapet courbe) et les marches de l'estrade des duels (0,7 m).
+ * Les rampes, par image. La volée de la maison à l'escalier (frise A des rangs du fond, à droite de la Grande Cour, au
+ * fond de la rue Haute et de la cour de la Chapelle : la porte de l'étage, 4,5 m plus haut, la volée et son parapet
+ * courbe), les deux volées de la frise B (la même maison, en miroir, et une autre), le perron de la maison du Puits, les
+ * marches de l'estrade des duels (0,7 m).
  */
 export const RAMPES: Readonly<Record<string, readonly Rampe[]>> = {
   'rangs-frise-a.png': [
     { poly: [[1722, 834], [1722, 716], [1744, 700], [1760, 642], [1776, 602], [1787, 562], [1860, 559], [1875, 600], [1874, 834]], haut: 562, bas: 834, saillie: 2.6, flanc: [1726, 718, 1800, 832] },
+  ],
+  'rangs-frise-b.png': [
+    { poly: [[845, 834], [845, 600], [858, 560], [935, 556], [955, 610], [980, 660], [1000, 705], [1008, 834]], haut: 560, bas: 834, saillie: 2.6, flanc: [920, 718, 1000, 832] },
+    { poly: [[3168, 834], [3168, 712], [3200, 660], [3222, 610], [3236, 563], [3300, 559], [3322, 600], [3322, 834]], haut: 562, bas: 834, saillie: 1.7, flanc: [3172, 718, 3240, 832] },
+  ],
+  'rangs-monuments.png': [
+    { poly: [[958, 864], [958, 757], [1062, 757], [1062, 864]], haut: 759, bas: 864, saillie: 1.3, flanc: [930, 770, 958, 858] },
   ],
   'villes-objets.png': [
     { poly: [[655, 535], [655, 457], [909, 457], [909, 535]], haut: 459, bas: 534, saillie: 1.1, flanc: [568, 466, 650, 528] },
@@ -132,6 +142,69 @@ export const FORMES_ESSAI: Readonly<Record<string, readonly Forme[]>> = {
     { rect: [1902, 586, 2112, 834], prof: 0.9 },
     { rect: [2142, 586, 2348, 834], prof: 1.6 },
     { rect: [1895, 568, 2380, 588], prof: -0.25 },
+    // la suite de la frise (rangs du fond du Quai) : la maison de pierre et son auvent, la maison aux fleurs, le portail,
+    // l'oriel sous son auvent, la bannière, la boutique au store
+    jettee(2720, 120, 3000, 560, -0.4), jettee(3260, 130, 3510, 560, -0.4), jettee(3510, 220, 3700, 560, -0.4), jettee(3700, 70, 3989, 548, -0.4),
+    { rect: [2360, 320, 2420, 500], prof: -0.5 },
+    { poly: [[2538, 500], [2722, 500], [2722, 572], [2538, 572]], prof: [-0.15, -0.8] },
+    { rect: [2560, 660, 2622, 834], prof: 0.3 },
+    banniere(2638, 2682, 300, 430, 452, -0.45),
+    { rect: [2740, 460, 2982, 522], prof: -0.55 },
+    { rect: [2760, 690, 2812, 834], prof: 0.3 },
+    { arc: [3030, 3200, 690, 610, 834], prof: 0.5 },
+    { rect: [3290, 500, 3462, 532], prof: -0.35 },
+    { poly: [[3280, 585], [3482, 585], [3486, 626], [3276, 626]], prof: [-0.2, -0.8] },
+    { rect: [3300, 640, 3480, 790], prof: -0.45 },
+    banniere(3510, 3562, 450, 580, 600, -0.5),
+    { rect: [3600, 640, 3662, 834], prof: 0.3 },
+    { poly: [[3730, 555], [3962, 555], [3966, 642], [3726, 642]], prof: [-0.2, -0.95] },
+    { rect: [3780, 660, 3952, 790], prof: 0.3 },
+    { rect: [3700, 680, 3762, 834], prof: 0.3 },
+  ],
+  // frise B des rangs du fond (le Quai, les flancs de la Grande Cour) : étages qui avancent, galeries et remises, balcons,
+  // auvents, oriels, portes et portails en retrait ; les deux maisons à l'escalier (volées en rampes)
+  'rangs-frise-b.png': [
+    jettee(0, 90, 345, 500, -0.35), jettee(1450, 70, 1720, 545, -0.4), jettee(1720, 120, 1990, 545, -0.4), jettee(1990, 120, 2250, 545, -0.4), jettee(2250, 130, 2720, 545, -0.4), jettee(3800, 120, 3951, 520, -0.4),
+    { poly: [[0, 500], [172, 500], [176, 562], [0, 562]], prof: [-0.2, -0.85] },
+    { rect: [250, 290, 352, 490], prof: -0.55 },
+    { rect: [85, 650, 140, 834], prof: 0.3 },
+    // la maison à la galerie : poutre, deux baies en retrait, linge pendu
+    { rect: [345, 570, 805, 590], prof: -0.25 },
+    { rect: [370, 600, 572, 834], prof: 0.9 },
+    { rect: [620, 610, 792, 834], prof: 0.9 },
+    { rect: [520, 330, 640, 400], prof: -0.35 },
+    // la maison à l'escalier (en miroir) : la porte de l'étage ; la remise et ses vantaux (formes d'origine)
+    { rect: [875, 440, 917, 556], prof: 0.3 },
+    { rect: [1020, 555, 1450, 595], prof: -0.45 },
+    ...(RELIEFS['rangs-frise-b.png'] ?? []).slice(1, 5),
+    { rect: [1460, 470, 1702, 522], prof: -0.55 },
+    { rect: [1500, 700, 1562, 834], prof: 0.3 },
+    { arc: [1770, 1940, 720, 640, 834], prof: 0.5 },
+    { rect: [2010, 500, 2232, 542], prof: -0.35 },
+    { rect: [2030, 600, 2232, 800], prof: -0.45 },
+    banniere(2250, 2292, 450, 570, 592, -0.45),
+    { poly: [[2460, 555], [2702, 555], [2706, 640], [2456, 640]], prof: [-0.2, -0.95] },
+    { rect: [2470, 650, 2680, 800], prof: 0.3 },
+    { rect: [2330, 670, 2392, 834], prof: 0.3 },
+    // la remise de la maison de pierre (formes d'origine) et son auvent
+    { rect: [2720, 555, 3100, 595], prof: -0.45 },
+    ...(RELIEFS['rangs-frise-b.png'] ?? []).slice(5, 8),
+    { rect: [2725, 600, 2830, 834], prof: -0.35 },
+    // la seconde maison à l'escalier : la porte de l'étage ; la maison à la galerie, son linge, son passage sombre
+    { rect: [3268, 440, 3322, 556], prof: 0.3 },
+    { rect: [3550, 330, 3680, 410], prof: -0.35 },
+    { rect: [3335, 578, 3800, 596], prof: -0.25 },
+    { rect: [3342, 600, 3562, 834], prof: 0.9 },
+    { rect: [3590, 600, 3800, 834], prof: 1.6 },
+    { rect: [3800, 380, 3902, 470], prof: -0.5 },
+  ],
+  // les monuments des rangs : l'étage à colombages de la Halle et ses bannières ; la maison du Puits (formes d'origine,
+  // son perron en rampe) ; la chapelle
+  'rangs-monuments.png': [
+    jettee(20, 372, 680, 562, -0.4),
+    banniere(53, 100, 400, 545, 575, -0.5),
+    banniere(593, 647, 400, 545, 575, -0.5),
+    ...(RELIEFS['rangs-monuments.png'] ?? []).filter((f) => !('rect' in f && f.rect[0] === 936)),
   ],
 };
 
@@ -353,4 +426,36 @@ export function flancsRampe(m: MorceauPlan, r: Rampe, n = 12): { cote: 'gauche' 
 export function rampeDansMorceau(r: Rampe, size: readonly [number, number], uv: readonly [number, number, number, number]): boolean {
   const [x0, y0, x1, y1] = [uv[0] * size[0], uv[1] * size[1], uv[2] * size[0], uv[3] * size[1]];
   return r.poly.every(([x, y]) => x >= x0 - 0.5 && x <= x1 + 0.5 && y >= y0 - 0.5 && y <= y1 + 0.5);
+}
+
+/** Plan d'un diorama, vu de l'essai (entrée du manifeste). */
+export interface PlanEssai { file: string; size: readonly [number, number]; uv?: readonly [number, number, number, number]; at: readonly [number, number, number]; width: number; orient: string }
+
+/** Morceau d'image d'un plan de face (entrée du manifeste). */
+export function morceauDuPlan(p: PlanEssai): MorceauPlan {
+  const uv = p.uv ?? [0, 0, 1, 1];
+  const h = p.width * (((uv[3] - uv[1]) * p.size[1]) / ((uv[2] - uv[0]) * p.size[0]));
+  return { size: p.size, uv, x: p.at[0], y: p.at[1], z: p.at[2], w: p.width, h };
+}
+
+/** Rétrécissement de l'emprise d'une rampe sur ses côtés (m) : limons et parapets débordent à peine au sol. */
+export const EMPRISE_RETRAIT = 0.1;
+
+/**
+ * Emprises au sol des rampes d'un diorama (pur) : une rampe en vrai 3D occupe le sol, du mur à sa marche du bas, sur la
+ * largeur du bas de la volée ; ces rectangles deviennent des obstacles de l'îlot (on ne marche plus dans un escalier, et
+ * il ne cache plus le personnage qui s'y serait glissé ; rangs profonds aux ruelles de 4 à 7 m).
+ */
+export function emprisesRampes(plans: readonly PlanEssai[]): { x0: number; z0: number; x1: number; z1: number }[] {
+  const out: { x0: number; z0: number; x1: number; z1: number }[] = [];
+  for (const p of plans) {
+    if (p.orient !== 'face') continue;
+    for (const r of RAMPES[p.file] ?? []) {
+      if (!rampeDansMorceau(r, p.size, p.uv ?? [0, 0, 1, 1])) continue;
+      const m = morceauDuPlan(p);
+      const xs = r.poly.map(([x, y]) => sommetRampe(m, r, x, y)[0]);
+      out.push({ x0: Math.min(...xs) + EMPRISE_RETRAIT, z0: m.z - 0.05, x1: Math.max(...xs) - EMPRISE_RETRAIT, z1: m.z + r.saillie });
+    }
+  }
+  return out;
 }

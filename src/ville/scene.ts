@@ -23,6 +23,8 @@ export interface QuaiScene {
   focus?(p: { x: number; z: number }, snap: boolean, cam?: { z: number }): void;
   /** M14 : retire les plans plantés entre la caméra et la profondeur `z` ; `null` : tous sont là. */
   avantPlan?(z: number | null): void;
+  /** Essai de profondeur : emprises au sol des escaliers en vrai 3D, obstacles de l'îlot monté (`volumes.ts`). */
+  obstacles?: readonly { x0: number; z0: number; x1: number; z1: number }[];
   stats(): { meshes: number; textures: number; lights: number };
   dispose(): void;
 }

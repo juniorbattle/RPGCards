@@ -5,8 +5,10 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { encoder, RELIEF_MAX, RELIEF_MIN, reliefDansMorceau, RELIEFS, sommets } from '../src/ville/reliefs';
 import { OMBRE_RAMPE, ombresRampe } from '../src/ville/ombres';
+import { ILOTS_RANGS } from '../src/ville/ilots';
+import { inArea } from '../src/ville/monde';
 import {
-  bordsLigne, dansPoly, flancsRampe, flou, FORMES_ESSAI, formesVolume, ILOTS_ESSAI, metresParPixel, normale, ombrage, OMBRAGE,
+  bordsLigne, dansPoly, emprisesRampes, flancsRampe, flou, FORMES_ESSAI, formesVolume, ILOTS_ESSAI, metresParPixel, normale, ombrage, OMBRAGE,
   pentes, PENTE_MAX, pointPlan, RAMPES, rampeDansMorceau, sommetRampe, texelsVolume, TROU, volumeActif, type MorceauPlan,
 } from '../src/ville/volumes';
 
@@ -24,12 +26,14 @@ const morceau = (p: Plan): MorceauPlan => {
 };
 
 describe('essai de profondeur : périmètre', () => {
-  it('la Grande Cour seulement ; ?volume=0 et ?relief=0 le coupent', () => {
-    expect([...ILOTS_ESSAI]).toEqual(['cour']);
+  it('la Grande Cour et le Quai seulement ; ?volume=0 et ?relief=0 le coupent', () => {
+    expect([...ILOTS_ESSAI]).toEqual(['cour', 'quai']);
     expect(volumeActif('cour', '')).toBe(true);
     expect(volumeActif('cour', '?ville=1&volume=0')).toBe(false);
     expect(volumeActif('cour', '?relief=0')).toBe(false);
-    expect(volumeActif('quai', '')).toBe(false);
+    expect(volumeActif('quai', '')).toBe(true);
+    expect(volumeActif('quai', '?volume=0')).toBe(false);
+    expect(volumeActif('ruelles', '')).toBe(false);
     expect(volumeActif('parvis', '?ville=1')).toBe(false);
   });
 
@@ -74,6 +78,18 @@ describe('essai de profondeur : données', () => {
     }
   });
 
+  it('rangs profonds du Quai : les volées des frises et le perron du Puits ont leur rampe dans leurs plans', () => {
+    const dans = (id: string) => { const p = plans[`quai/${id}`]!; return (RAMPES[p.file] ?? []).filter((r) => rampeDansMorceau(r, p.size, p.uv!)).length; };
+    // la maison à l'escalier au fond de la rue Haute (frise A) et de la cour de la Chapelle
+    expect(dans('fond-rang2--31')).toBe(1);
+    expect(dans('fond-rang4--31')).toBe(1);
+    // la frise B : la volée en miroir au fond de la ruelle des Lanternes, l'autre sur un flanc
+    expect(dans('fond-rang3--31') + dans('fond-rang3-9') + dans('flanc-rang4--31') + dans('flanc-rang2--31')).toBeGreaterThanOrEqual(2);
+    expect(dans('fond-placette-puits')).toBe(1);
+    // toutes les images des rangs profonds du Quai ont des volumes dans l'essai
+    for (const file of ['rangs-frise-a.png', 'rangs-frise-b.png', 'rangs-monuments.png']) expect(FORMES_ESSAI[file]!.length, file).toBeGreaterThan(15);
+  });
+
   it('la maison à l’escalier et l’estrade de la Grande Cour ont leur rampe dans leur plan', () => {
     const maison = plans['cour/fond-rang1-15-1']!;
     const estrade = plans['cour/estrade']!;
@@ -83,6 +99,35 @@ describe('essai de profondeur : données', () => {
     const ouest = plans['cour/fond-rang1--34-1']!;
     expect(RAMPES[ouest.file]!.some((r) => rampeDansMorceau(r, ouest.size, ouest.uv!))).toBe(false);
   });
+});
+
+describe('essai de profondeur : les rampes occupent le sol', () => {
+  for (const ilot of [...ILOTS_ESSAI]) {
+    it(`${ilot} : les emprises des rampes ne recouvrent ni point d'apparition, ni personnage, ni zone, ni chemin lumineux`, () => {
+      const m = JSON.parse(readFileSync('public/decors/manifest-profondeur.json', 'utf8')) as { ilots: Record<string, { plans: Record<string, Plan> }> };
+      const em = emprisesRampes(Object.values(m.ilots[ilot]!.plans));
+      expect(em.length).toBeGreaterThan(0);
+      const def = ILOTS_RANGS[ilot as keyof typeof ILOTS_RANGS];
+      const marge = 0.35;
+      const dans = (p: { x: number; z: number }) => em.some((r) => p.x > r.x0 - marge && p.x < r.x1 + marge && p.z > r.z0 - marge && p.z < r.z1 + marge);
+      for (const [k, sp] of Object.entries(def.ilot.spawns)) expect(dans(sp), `${ilot} apparition ${k}`).toBe(false);
+      for (const n of def.npcs) expect(dans(n.at), `${ilot} PNJ ${n.id}`).toBe(false);
+      // chaque zone reste atteignable : un point de sa surface au moins hors des emprises (et de leur marge)
+      for (const z of def.ilot.zones) {
+        const a = z.area as { x0?: number; x?: number; z0?: number; z?: number; x1?: number; z1?: number; r?: number };
+        const [x0, z0, x1, z1] = a.x !== undefined ? [a.x - a.r!, a.z! - a.r!, a.x + a.r!, a.z! + a.r!] : [a.x0!, a.z0!, a.x1!, a.z1!];
+        let libre = false;
+        for (let i = 0; i <= 10 && !libre; i++) for (let j = 0; j <= 10 && !libre; j++) { const p = { x: x0 + ((x1 - x0) * i) / 10, z: z0 + ((z1 - z0) * j) / 10 }; if (inArea(p, z.area) && !dans(p)) libre = true; }
+        expect(libre, `${ilot} zone ${z.id}`).toBe(true);
+      }
+      for (const c of def.chemins ?? []) for (let t = 0; t <= 1; t += 0.05) {
+        const p = { x: c.x0 + (c.x1 - c.x0) * t, z: c.z0 + (c.z1 - c.z0) * t };
+        expect(em.some((r) => inArea(p, r)), `${ilot} chemin ${JSON.stringify(c)}`).toBe(false);
+      }
+      // on passe encore : chaque emprise laisse au moins 1 m libre devant elle dans la zone praticable, ou sort de la zone
+      for (const r of em) expect(r.z1 + 1 <= def.ilot.bounds.z1 || r.x0 > def.ilot.bounds.x1 || r.x1 < def.ilot.bounds.x0).toBe(true);
+    });
+  }
 });
 
 describe('essai de profondeur : découpe et rampe', () => {

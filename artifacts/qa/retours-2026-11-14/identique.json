@@ -2,12 +2,6 @@
  "avant": "C:/Users/miche/AppData/Local/Temp/claude/cb9b1ca56f2856c2/4006b461-124f-4494-b2fc-04afb6fbcdf6/scratchpad/dist-avant",
  "cas": [
   {
-   "id": "quai",
-   "attendu": "identique",
-   "pixelsDifferents": 0,
-   "ok": true
-  },
-  {
    "id": "parvis",
    "attendu": "identique",
    "pixelsDifferents": 0,
@@ -46,11 +40,29 @@
   {
    "id": "cour-essai (témoin)",
    "attendu": "différent",
-   "pixelsDifferents": 296908,
+   "pixelsDifferents": 311029,
    "ok": true
   },
   {
-   "id": "quai, même build (contre-épreuve)",
+   "id": "quai-volume0",
+   "attendu": "identique",
+   "pixelsDifferents": 0,
+   "ok": true
+  },
+  {
+   "id": "quai-relief0",
+   "attendu": "identique",
+   "pixelsDifferents": 0,
+   "ok": true
+  },
+  {
+   "id": "quai-essai (témoin)",
+   "attendu": "différent",
+   "pixelsDifferents": 107358,
+   "ok": true
+  },
+  {
+   "id": "parvis, même build (contre-épreuve)",
    "attendu": "identique",
    "pixelsDifferents": 0,
    "ok": true

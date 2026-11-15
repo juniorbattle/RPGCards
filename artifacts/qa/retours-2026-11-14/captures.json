@@ -1,60 +1,166 @@
 {
- "vues": [
-  {
-   "id": "gauche",
-   "at": {
-    "x": -11.5,
-    "z": -3
+ "vues": {
+  "cour": [
+   {
+    "id": "gauche",
+    "at": {
+     "x": -11.5,
+     "z": -3
+    },
+    "face": "gauche"
    },
-   "face": "gauche"
-  },
-  {
-   "id": "centre",
-   "at": {
-    "x": 0,
-    "z": 0.6
+   {
+    "id": "centre",
+    "at": {
+     "x": 0,
+     "z": 0.6
+    },
+    "face": "dos"
    },
-   "face": "dos"
-  },
-  {
-   "id": "droite",
-   "at": {
-    "x": 11.5,
-    "z": -3
+   {
+    "id": "droite",
+    "at": {
+     "x": 11.5,
+     "z": -3
+    },
+    "face": "droite"
    },
-   "face": "droite"
-  },
-  {
-   "id": "escalier",
-   "at": {
-    "x": 14.6,
-    "z": -10.6
+   {
+    "id": "escalier",
+    "at": {
+     "x": 14.6,
+     "z": -10.6
+    },
+    "face": "droite"
    },
-   "face": "droite"
-  },
-  {
-   "id": "estrade",
-   "at": {
-    "x": -7.5,
-    "z": -5.6
+   {
+    "id": "estrade",
+    "at": {
+     "x": -7.5,
+     "z": -5.6
+    },
+    "face": "dos"
    },
-   "face": "dos"
-  },
-  {
-   "id": "facade",
-   "at": {
-    "x": 3.2,
-    "z": -10.9
+   {
+    "id": "facade",
+    "at": {
+     "x": 3.2,
+     "z": -10.9
+    },
+    "face": "gauche"
    },
-   "face": "gauche"
-  }
- ],
+   {
+    "id": "passage-est",
+    "at": {
+     "x": 14.1,
+     "z": -15.5
+    },
+    "face": "dos",
+    "profond": true
+   },
+   {
+    "id": "belvedere-est",
+    "at": {
+     "x": 11,
+     "z": -22.4
+    },
+    "face": "droite",
+    "profond": true
+   },
+   {
+    "id": "belvedere-centre",
+    "at": {
+     "x": 0,
+     "z": -22.6
+    },
+    "face": "dos",
+    "profond": true
+   },
+   {
+    "id": "belvedere-ouest",
+    "at": {
+     "x": -11,
+     "z": -22.4
+    },
+    "face": "gauche",
+    "profond": true
+   }
+  ],
+  "quai": [
+   {
+    "id": "rang1",
+    "at": {
+     "x": 0,
+     "z": 1.5
+    },
+    "face": "dos"
+   },
+   {
+    "id": "rue-haute-ouest",
+    "at": {
+     "x": -9,
+     "z": -14
+    },
+    "face": "gauche",
+    "profond": true
+   },
+   {
+    "id": "rue-haute-est",
+    "at": {
+     "x": 9,
+     "z": -14
+    },
+    "face": "droite",
+    "profond": true
+   },
+   {
+    "id": "place-halle",
+    "at": {
+     "x": 7,
+     "z": -19.5
+    },
+    "face": "dos",
+    "profond": true
+   },
+   {
+    "id": "ruelle-lanternes",
+    "at": {
+     "x": 0,
+     "z": -27
+    },
+    "face": "dos",
+    "profond": true
+   },
+   {
+    "id": "placette-puits",
+    "at": {
+     "x": -2.6,
+     "z": -26.3
+    },
+    "face": "gauche",
+    "profond": true
+   },
+   {
+    "id": "cour-chapelle",
+    "at": {
+     "x": 0,
+     "z": -38.5
+    },
+    "face": "dos",
+    "profond": true
+   }
+  ]
+ },
  "variantes": [
+  "avant",
   "apres"
  ],
  "tailles": [
   1280,
   1920
+ ],
+ "ilots": [
+  "quai"
  ],
  "erreurs": []
 }

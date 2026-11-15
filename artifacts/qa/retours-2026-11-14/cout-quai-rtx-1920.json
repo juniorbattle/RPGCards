@@ -1,0 +1,160 @@
+{
+ "commit": "7e57f82",
+ "ilot": "quai",
+ "depart": {
+  "x": -12,
+  "z": -26.3
+ },
+ "viewport": [
+  1920,
+  1080
+ ],
+ "args": [
+  "--force_high_performance_gpu",
+  "--disable-gpu-vsync",
+  "--disable-frame-rate-limit"
+ ],
+ "passages": {
+  "sans": [
+   {
+    "images": 1969,
+    "moyenneMs": 2.04,
+    "medianeMs": 0.9,
+    "p95Ms": 12.4,
+    "maxMs": 23.4,
+    "appels": 201,
+    "programmes": 20,
+    "textures": 60,
+    "buildMs": 396,
+    "firstFrameMs": 1018
+   },
+   {
+    "images": 1767,
+    "moyenneMs": 2.27,
+    "medianeMs": 1.3,
+    "p95Ms": 11.8,
+    "maxMs": 16.5,
+    "appels": 201,
+    "programmes": 20,
+    "textures": 60,
+    "buildMs": 292,
+    "firstFrameMs": 444
+   },
+   {
+    "images": 1959,
+    "moyenneMs": 2.05,
+    "medianeMs": 0.9,
+    "p95Ms": 13.3,
+    "maxMs": 16.7,
+    "appels": 201,
+    "programmes": 20,
+    "textures": 60,
+    "buildMs": 255,
+    "firstFrameMs": 405
+   }
+  ],
+  "avant": [
+   {
+    "images": 1791,
+    "moyenneMs": 2.24,
+    "medianeMs": 0.9,
+    "p95Ms": 15.1,
+    "maxMs": 19,
+    "appels": 201,
+    "programmes": 21,
+    "textures": 65,
+    "buildMs": 263,
+    "firstFrameMs": 452
+   },
+   {
+    "images": 1602,
+    "moyenneMs": 2.51,
+    "medianeMs": 1.1,
+    "p95Ms": 16.1,
+    "maxMs": 19.1,
+    "appels": 201,
+    "programmes": 21,
+    "textures": 65,
+    "buildMs": 277,
+    "firstFrameMs": 444
+   },
+   {
+    "images": 1781,
+    "moyenneMs": 2.25,
+    "medianeMs": 1,
+    "p95Ms": 14.5,
+    "maxMs": 18.9,
+    "appels": 201,
+    "programmes": 21,
+    "textures": 65,
+    "buildMs": 253,
+    "firstFrameMs": 403
+   }
+  ],
+  "apres": [
+   {
+    "images": 1468,
+    "moyenneMs": 2.73,
+    "medianeMs": 1.9,
+    "p95Ms": 10.3,
+    "maxMs": 19,
+    "appels": 248,
+    "programmes": 23,
+    "textures": 65,
+    "buildMs": 525,
+    "firstFrameMs": 819
+   },
+   {
+    "images": 1586,
+    "moyenneMs": 2.52,
+    "medianeMs": 1.3,
+    "p95Ms": 12.8,
+    "maxMs": 17.3,
+    "appels": 248,
+    "programmes": 23,
+    "textures": 65,
+    "buildMs": 541,
+    "firstFrameMs": 705
+   },
+   {
+    "images": 1605,
+    "moyenneMs": 2.5,
+    "medianeMs": 1.4,
+    "p95Ms": 12.2,
+    "maxMs": 19.5,
+    "appels": 248,
+    "programmes": 23,
+    "textures": 65,
+    "buildMs": 512,
+    "firstFrameMs": 665
+   }
+  ]
+ },
+ "synthese": {
+  "sans": {
+   "moyenneMs": 2.05,
+   "p95Ms": 12.4,
+   "buildMs": 292,
+   "appels": 201,
+   "programmes": 20
+  },
+  "avant": {
+   "moyenneMs": 2.25,
+   "p95Ms": 15.1,
+   "buildMs": 263,
+   "appels": 201,
+   "programmes": 21
+  },
+  "apres": {
+   "moyenneMs": 2.52,
+   "p95Ms": 12.2,
+   "buildMs": 525,
+   "appels": 248,
+   "programmes": 23
+  },
+  "ecartEssaiMs": 0.27,
+  "ecartReliefMs": 0.2
+ },
+ "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4060 Laptop GPU (0x000028E0) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+ "console": []
+}

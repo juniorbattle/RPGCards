@@ -20,7 +20,7 @@ import { plateRect, type DecorLight, type PreparedDiorama, type PreparedPlate } 
 import { cheminMesh } from './chemins';
 import { ombreMesh, ombresDuPlan, ombresRampe, profilPied, type Ombre, type PiedRampe } from './ombres';
 import { BIAIS_MAX, encoder, RELIEF_MAX, RELIEF_MIN, reliefDansMorceau, RELIEFS, sommets } from './reliefs';
-import { dansPoly, flancsRampe, formesVolume, metresParPixel, PENTE_MAX, RAMPES, rampeDansMorceau, REGLAGES, sommetRampe, texelsVolume, TROU, volumeActif, type MorceauPlan, type Rampe } from './volumes';
+import { dansPoly, emprisesRampes, flancsRampe, formesVolume, metresParPixel, PENTE_MAX, RAMPES, rampeDansMorceau, REGLAGES, sommetRampe, texelsVolume, TROU, volumeActif, type MorceauPlan, type Rampe } from './volumes';
 
 /** Réglages de l'essai de profondeur, écrits dans le nuanceur. */
 const VOLUME_GLSL = Object.fromEntries(Object.entries(REGLAGES).map(([k, v]) => [k, v.toFixed(3)])) as Record<keyof typeof REGLAGES, string>;
@@ -532,6 +532,10 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
   const halo = haloUniforms();
   // `?halo=0` (QA) : sans le halo du protagoniste, pour le comparer
   const sansHalo = typeof location !== 'undefined' && new URLSearchParams(location.search).get('halo') === '0';
+  // mesures de l'écrasement des rangs profonds (QA seulement) : `?brume=0` sans les nappes de brume, `?voile=0` sans le
+  // voile atmosphérique des plans, `?brouillard=0` sans la brume du moteur dans la matière des plans
+  const qaQ = typeof location !== 'undefined' ? new URLSearchParams(location.search) : null;
+  const qaSans = (k: string) => qaQ?.get('qa') === '1' && qaQ.get(k) === '0';
   const vueQa = typeof location === 'undefined' ? undefined : ({ normales: 1, ombres: 2 } as const)[new URLSearchParams(location.search).get('volume') ?? ''];
   const reliefs = new Map<string, THREE.Texture | null>();
   const reliefDe = (p: PreparedPlate): THREE.Texture | null => {
@@ -561,6 +565,8 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
     }
     const mpt = metresParPixel(morceauDe(p)) / 0.5;
     const mat = plateMaterial(p, profond, reliefDe(p), volume ? { volume: { mpt }, halo, vue: vueQa } : {});
+    if (qaSans('voile')) mat.uniforms.uVoile!.value = 0;
+    if (qaSans('brouillard')) mat.uniforms.uFog!.value = 0;
     const mesh = new THREE.Mesh(g, mat);
     mesh.name = `plan:${d.ilot}/${p.id}`;
     mesh.position.set(...r.center);
@@ -601,7 +607,7 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
   }));
   // brume entre les plans (passe 60) : nappes du moteur, comme celles du décor par code
   const mistMats: THREE.ShaderMaterial[] = [];
-  if (d.mists.length) {
+  if (d.mists.length && !qaSans('brume')) {
     const tex = mistTexture(artSeed);
     textures.push(tex);
     for (const m of d.mists) { const { mesh, mat } = mistPlane(tex, m); meshes.push(mesh); mistMats.push(mat); }
@@ -658,6 +664,8 @@ export function buildDiorama(def: IlotDef, d: PreparedDiorama, artSeed: number):
     }
   };
   const avantPlan = (z: number | null) => { for (const f of faces) f.mesh.visible = z === null || f.z <= z + 2; };
+  // escaliers en vrai 3D : leurs emprises au sol, obstacles de l'îlot monté (`ville.ts`)
+  const obstacles = volume ? emprisesRampes(d.plates.map((p) => p.entry)) : [];
   if (!mistMats.length && !cutaways.length && !cheminMats.length && !volume) return { ...base, avantPlan };
-  return { ...base, avantPlan, focus: cutaways.length || volume ? focus : undefined, update: (time: number) => { base.update(time); for (const mm of [...mistMats, ...cheminMats]) mm.uniforms.uT!.value = time; } };
+  return { ...base, avantPlan, obstacles, focus: cutaways.length || volume ? focus : undefined, update: (time: number) => { base.update(time); for (const mm of [...mistMats, ...cheminMats]) mm.uniforms.uT!.value = time; } };
 }

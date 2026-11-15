@@ -1,0 +1,1274 @@
+{
+ "zones": {
+  "gauche": [
+   0,
+   130,
+   427,
+   480
+  ],
+  "centre": [
+   427,
+   130,
+   853,
+   480
+  ],
+  "droite": [
+   853,
+   130,
+   1280,
+   480
+  ]
+ },
+ "vues": [
+  {
+   "ilot": "quai",
+   "id": "rue-haute-ouest",
+   "at": {
+    "x": -9,
+    "z": -14
+   },
+   "face": "gauche"
+  },
+  {
+   "ilot": "quai",
+   "id": "place-halle",
+   "at": {
+    "x": 7,
+    "z": -19.5
+   },
+   "face": "dos"
+  },
+  {
+   "ilot": "quai",
+   "id": "ruelle-lanternes",
+   "at": {
+    "x": 0,
+    "z": -27
+   },
+   "face": "dos"
+  },
+  {
+   "ilot": "quai",
+   "id": "placette-puits",
+   "at": {
+    "x": -11,
+    "z": -30.5
+   },
+   "face": "dos"
+  },
+  {
+   "ilot": "quai",
+   "id": "cour-chapelle",
+   "at": {
+    "x": 0,
+    "z": -38.5
+   },
+   "face": "dos"
+  },
+  {
+   "ilot": "cour",
+   "id": "passage-est",
+   "at": {
+    "x": 14.1,
+    "z": -15.5
+   },
+   "face": "dos"
+  },
+  {
+   "ilot": "cour",
+   "id": "belvedere-est",
+   "at": {
+    "x": 11,
+    "z": -22.4
+   },
+   "face": "droite"
+  }
+ ],
+ "synthese": {
+  "avant": {
+   "contraste": "0 %",
+   "etendue": "0 %",
+   "noir": 0,
+   "detail": "0 %"
+  },
+  "sans brume (nappes)": {
+   "contraste": "-2 %",
+   "etendue": "-3 %",
+   "noir": -0.1,
+   "detail": "1 %"
+  },
+  "sans voile": {
+   "contraste": "3 %",
+   "etendue": "3 %",
+   "noir": -3.5,
+   "detail": "5 %"
+  },
+  "sans brouillard": {
+   "contraste": "4 %",
+   "etendue": "4 %",
+   "noir": -2.1,
+   "detail": "5 %"
+  },
+  "sans les trois": {
+   "contraste": "4 %",
+   "etendue": "3 %",
+   "noir": -5.4,
+   "detail": "11 %"
+  },
+  "sans relief": {
+   "contraste": "-1 %",
+   "etendue": "-1 %",
+   "noir": 0,
+   "detail": "0 %"
+  },
+  "essai": {
+   "contraste": "0 %",
+   "etendue": "0 %",
+   "noir": -0.5,
+   "detail": "-2 %"
+  }
+ },
+ "mesures": {
+  "quai/rue-haute-ouest": {
+   "avant": {
+    "gauche": {
+     "moyenne": 25.6,
+     "contraste": 12.5,
+     "etendue": 35,
+     "noir": 11.1,
+     "detail": 6.6
+    },
+    "centre": {
+     "moyenne": 35.6,
+     "contraste": 20.6,
+     "etendue": 59.5,
+     "noir": 14.2,
+     "detail": 10.01
+    },
+    "droite": {
+     "moyenne": 29.7,
+     "contraste": 21.4,
+     "etendue": 51.4,
+     "noir": 11.9,
+     "detail": 8
+    }
+   },
+   "sans brume (nappes)": {
+    "gauche": {
+     "moyenne": 24,
+     "contraste": 11.6,
+     "etendue": 30.6,
+     "noir": 11.1,
+     "detail": 6.86
+    },
+    "centre": {
+     "moyenne": 35.6,
+     "contraste": 20.6,
+     "etendue": 59.5,
+     "noir": 14.2,
+     "detail": 10.01
+    },
+    "droite": {
+     "moyenne": 29.7,
+     "contraste": 21.4,
+     "etendue": 51.4,
+     "noir": 11.9,
+     "detail": 8
+    }
+   },
+   "sans voile": {
+    "gauche": {
+     "moyenne": 25.5,
+     "contraste": 12.5,
+     "etendue": 35.2,
+     "noir": 10.9,
+     "detail": 6.62
+    },
+    "centre": {
+     "moyenne": 35.1,
+     "contraste": 20.5,
+     "etendue": 59.2,
+     "noir": 14.1,
+     "detail": 10.13
+    },
+    "droite": {
+     "moyenne": 29.4,
+     "contraste": 21.6,
+     "etendue": 51.9,
+     "noir": 11.4,
+     "detail": 8.04
+    }
+   },
+   "sans brouillard": {
+    "gauche": {
+     "moyenne": 23.6,
+     "contraste": 12.8,
+     "etendue": 35.6,
+     "noir": 9.4,
+     "detail": 7
+    },
+    "centre": {
+     "moyenne": 34.2,
+     "contraste": 21.3,
+     "etendue": 61.3,
+     "noir": 12.5,
+     "detail": 10.5
+    },
+    "droite": {
+     "moyenne": 26.8,
+     "contraste": 23.1,
+     "etendue": 53.9,
+     "noir": 9,
+     "detail": 8.74
+    }
+   },
+   "sans les trois": {
+    "gauche": {
+     "moyenne": 21.8,
+     "contraste": 12.1,
+     "etendue": 31.7,
+     "noir": 9.1,
+     "detail": 7.32
+    },
+    "centre": {
+     "moyenne": 33.6,
+     "contraste": 21.3,
+     "etendue": 61.1,
+     "noir": 12.2,
+     "detail": 10.63
+    },
+    "droite": {
+     "moyenne": 26.6,
+     "contraste": 23.3,
+     "etendue": 54.5,
+     "noir": 8.4,
+     "detail": 8.76
+    }
+   },
+   "sans relief": {
+    "gauche": {
+     "moyenne": 25.4,
+     "contraste": 12.2,
+     "etendue": 34.4,
+     "noir": 11.5,
+     "detail": 6.57
+    },
+    "centre": {
+     "moyenne": 35.6,
+     "contraste": 20.6,
+     "etendue": 59.6,
+     "noir": 14.2,
+     "detail": 10.04
+    },
+    "droite": {
+     "moyenne": 29.7,
+     "contraste": 21.5,
+     "etendue": 51.9,
+     "noir": 11.9,
+     "detail": 7.98
+    }
+   },
+   "essai": {
+    "gauche": {
+     "moyenne": 25,
+     "contraste": 12.5,
+     "etendue": 34.5,
+     "noir": 10.6,
+     "detail": 6.38
+    },
+    "centre": {
+     "moyenne": 35.5,
+     "contraste": 20.7,
+     "etendue": 59.6,
+     "noir": 13.9,
+     "detail": 9.94
+    },
+    "droite": {
+     "moyenne": 29.1,
+     "contraste": 21.6,
+     "etendue": 51.3,
+     "noir": 11.2,
+     "detail": 7.74
+    }
+   }
+  },
+  "quai/place-halle": {
+   "avant": {
+    "gauche": {
+     "moyenne": 29.5,
+     "contraste": 18.1,
+     "etendue": 55.8,
+     "noir": 10.9,
+     "detail": 8.56
+    },
+    "centre": {
+     "moyenne": 34.3,
+     "contraste": 28.4,
+     "etendue": 73.7,
+     "noir": 12.7,
+     "detail": 12.06
+    },
+    "droite": {
+     "moyenne": 25.6,
+     "contraste": 15.6,
+     "etendue": 37.3,
+     "noir": 10.9,
+     "detail": 6.52
+    }
+   },
+   "sans brume (nappes)": {
+    "gauche": {
+     "moyenne": 29.4,
+     "contraste": 18.1,
+     "etendue": 55.8,
+     "noir": 10.9,
+     "detail": 8.55
+    },
+    "centre": {
+     "moyenne": 34.3,
+     "contraste": 28.4,
+     "etendue": 73.7,
+     "noir": 12.7,
+     "detail": 12.06
+    },
+    "droite": {
+     "moyenne": 24.5,
+     "contraste": 15.4,
+     "etendue": 34.6,
+     "noir": 10.9,
+     "detail": 6.75
+    }
+   },
+   "sans voile": {
+    "gauche": {
+     "moyenne": 29.3,
+     "contraste": 18.2,
+     "etendue": 56,
+     "noir": 10.8,
+     "detail": 8.57
+    },
+    "centre": {
+     "moyenne": 34.2,
+     "contraste": 28.4,
+     "etendue": 73.2,
+     "noir": 12.7,
+     "detail": 12.1
+    },
+    "droite": {
+     "moyenne": 25.2,
+     "contraste": 15.7,
+     "etendue": 36.7,
+     "noir": 10.9,
+     "detail": 6.55
+    }
+   },
+   "sans brouillard": {
+    "gauche": {
+     "moyenne": 27,
+     "contraste": 19.2,
+     "etendue": 57.9,
+     "noir": 8.9,
+     "detail": 9.06
+    },
+    "centre": {
+     "moyenne": 32.7,
+     "contraste": 29.3,
+     "etendue": 75.8,
+     "noir": 11,
+     "detail": 12.64
+    },
+    "droite": {
+     "moyenne": 23,
+     "contraste": 16.2,
+     "etendue": 38.7,
+     "noir": 8.2,
+     "detail": 7.01
+    }
+   },
+   "sans les trois": {
+    "gauche": {
+     "moyenne": 26.6,
+     "contraste": 19.3,
+     "etendue": 58.1,
+     "noir": 8.7,
+     "detail": 9.06
+    },
+    "centre": {
+     "moyenne": 32.5,
+     "contraste": 29.2,
+     "etendue": 75.4,
+     "noir": 11,
+     "detail": 12.69
+    },
+    "droite": {
+     "moyenne": 21.1,
+     "contraste": 16,
+     "etendue": 35.5,
+     "noir": 8.1,
+     "detail": 7.3
+    }
+   },
+   "sans relief": {
+    "gauche": {
+     "moyenne": 29.7,
+     "contraste": 18.1,
+     "etendue": 55.7,
+     "noir": 11.2,
+     "detail": 8.65
+    },
+    "centre": {
+     "moyenne": 34,
+     "contraste": 28.2,
+     "etendue": 72.2,
+     "noir": 12.8,
+     "detail": 11.61
+    },
+    "droite": {
+     "moyenne": 25.7,
+     "contraste": 15.7,
+     "etendue": 37.4,
+     "noir": 10.9,
+     "detail": 6.52
+    }
+   },
+   "essai": {
+    "gauche": {
+     "moyenne": 29.1,
+     "contraste": 18,
+     "etendue": 55.7,
+     "noir": 10.6,
+     "detail": 8.41
+    },
+    "centre": {
+     "moyenne": 33.6,
+     "contraste": 28.5,
+     "etendue": 73.6,
+     "noir": 12.4,
+     "detail": 11.66
+    },
+    "droite": {
+     "moyenne": 25.5,
+     "contraste": 16,
+     "etendue": 37.2,
+     "noir": 10.9,
+     "detail": 6.48
+    }
+   }
+  },
+  "quai/ruelle-lanternes": {
+   "avant": {
+    "gauche": {
+     "moyenne": 32.3,
+     "contraste": 17.9,
+     "etendue": 49.8,
+     "noir": 14.6,
+     "detail": 7.36
+    },
+    "centre": {
+     "moyenne": 43.1,
+     "contraste": 21.8,
+     "etendue": 60.4,
+     "noir": 22.2,
+     "detail": 9.24
+    },
+    "droite": {
+     "moyenne": 34.3,
+     "contraste": 23.2,
+     "etendue": 57.7,
+     "noir": 15.9,
+     "detail": 6.7
+    }
+   },
+   "sans brume (nappes)": {
+    "gauche": {
+     "moyenne": 30.7,
+     "contraste": 17.3,
+     "etendue": 48.1,
+     "noir": 14.6,
+     "detail": 7.49
+    },
+    "centre": {
+     "moyenne": 42.5,
+     "contraste": 21.7,
+     "etendue": 60,
+     "noir": 22.2,
+     "detail": 9.21
+    },
+    "droite": {
+     "moyenne": 33.3,
+     "contraste": 23.1,
+     "etendue": 57.6,
+     "noir": 15.9,
+     "detail": 6.86
+    }
+   },
+   "sans voile": {
+    "gauche": {
+     "moyenne": 30.4,
+     "contraste": 18.7,
+     "etendue": 52.7,
+     "noir": 10.7,
+     "detail": 7.63
+    },
+    "centre": {
+     "moyenne": 38.7,
+     "contraste": 23.5,
+     "etendue": 66.2,
+     "noir": 15.1,
+     "detail": 10.01
+    },
+    "droite": {
+     "moyenne": 31,
+     "contraste": 24.1,
+     "etendue": 61.8,
+     "noir": 11.1,
+     "detail": 7.22
+    }
+   },
+   "sans brouillard": {
+    "gauche": {
+     "moyenne": 29.6,
+     "contraste": 18.7,
+     "etendue": 51.6,
+     "noir": 12,
+     "detail": 7.98
+    },
+    "centre": {
+     "moyenne": 42.1,
+     "contraste": 22.4,
+     "etendue": 62.4,
+     "noir": 20.3,
+     "detail": 9.54
+    },
+    "droite": {
+     "moyenne": 31.8,
+     "contraste": 24.7,
+     "etendue": 61.2,
+     "noir": 12.7,
+     "detail": 7.24
+    }
+   },
+   "sans les trois": {
+    "gauche": {
+     "moyenne": 25.5,
+     "contraste": 18.9,
+     "etendue": 52.2,
+     "noir": 8.9,
+     "detail": 8.46
+    },
+    "centre": {
+     "moyenne": 36.7,
+     "contraste": 24.2,
+     "etendue": 68.4,
+     "noir": 12.7,
+     "detail": 10.38
+    },
+    "droite": {
+     "moyenne": 27.1,
+     "contraste": 25.4,
+     "etendue": 64,
+     "noir": 9,
+     "detail": 7.97
+    }
+   },
+   "sans relief": {
+    "gauche": {
+     "moyenne": 32.1,
+     "contraste": 17.7,
+     "etendue": 49.3,
+     "noir": 14.6,
+     "detail": 7.21
+    },
+    "centre": {
+     "moyenne": 43.1,
+     "contraste": 21.8,
+     "etendue": 60.3,
+     "noir": 22.2,
+     "detail": 9.23
+    },
+    "droite": {
+     "moyenne": 33.8,
+     "contraste": 22.2,
+     "etendue": 53.2,
+     "noir": 15.9,
+     "detail": 6.63
+    }
+   },
+   "essai": {
+    "gauche": {
+     "moyenne": 32.1,
+     "contraste": 18.2,
+     "etendue": 49.8,
+     "noir": 14.5,
+     "detail": 7.29
+    },
+    "centre": {
+     "moyenne": 42.7,
+     "contraste": 21.6,
+     "etendue": 60.2,
+     "noir": 22.1,
+     "detail": 9.02
+    },
+    "droite": {
+     "moyenne": 33.6,
+     "contraste": 23.5,
+     "etendue": 56.6,
+     "noir": 15.6,
+     "detail": 6.54
+    }
+   }
+  },
+  "quai/placette-puits": {
+   "avant": {
+    "gauche": {
+     "moyenne": 29.7,
+     "contraste": 19.2,
+     "etendue": 46.9,
+     "noir": 14.7,
+     "detail": 6.83
+    },
+    "centre": {
+     "moyenne": 42,
+     "contraste": 25.9,
+     "etendue": 71.2,
+     "noir": 17.4,
+     "detail": 11.86
+    },
+    "droite": {
+     "moyenne": 32.1,
+     "contraste": 15.7,
+     "etendue": 43.5,
+     "noir": 18.3,
+     "detail": 6.38
+    }
+   },
+   "sans brume (nappes)": {
+    "gauche": {
+     "moyenne": 28.1,
+     "contraste": 18.3,
+     "etendue": 41.3,
+     "noir": 14.7,
+     "detail": 7.03
+    },
+    "centre": {
+     "moyenne": 42,
+     "contraste": 25.9,
+     "etendue": 71.2,
+     "noir": 17.4,
+     "detail": 11.86
+    },
+    "droite": {
+     "moyenne": 31.8,
+     "contraste": 15.8,
+     "etendue": 43.8,
+     "noir": 17.8,
+     "detail": 6.39
+    }
+   },
+   "sans voile": {
+    "gauche": {
+     "moyenne": 26.5,
+     "contraste": 20.4,
+     "etendue": 50.8,
+     "noir": 10,
+     "detail": 7.25
+    },
+    "centre": {
+     "moyenne": 38.1,
+     "contraste": 27,
+     "etendue": 73.7,
+     "noir": 13.9,
+     "detail": 12.65
+    },
+    "droite": {
+     "moyenne": 28.1,
+     "contraste": 16.5,
+     "etendue": 46.6,
+     "noir": 12.7,
+     "detail": 6.99
+    }
+   },
+   "sans brouillard": {
+    "gauche": {
+     "moyenne": 28,
+     "contraste": 19.5,
+     "etendue": 47.4,
+     "noir": 13.4,
+     "detail": 7.2
+    },
+    "centre": {
+     "moyenne": 41,
+     "contraste": 26.6,
+     "etendue": 74,
+     "noir": 14.9,
+     "detail": 12.23
+    },
+    "droite": {
+     "moyenne": 29.8,
+     "contraste": 16.7,
+     "etendue": 47.5,
+     "noir": 14,
+     "detail": 6.79
+    }
+   },
+   "sans les trois": {
+    "gauche": {
+     "moyenne": 22.8,
+     "contraste": 19.5,
+     "etendue": 45,
+     "noir": 8.8,
+     "detail": 7.89
+    },
+    "centre": {
+     "moyenne": 37,
+     "contraste": 27.7,
+     "etendue": 75.5,
+     "noir": 12.4,
+     "detail": 13.07
+    },
+    "droite": {
+     "moyenne": 25.3,
+     "contraste": 17.4,
+     "etendue": 48.8,
+     "noir": 10,
+     "detail": 7.46
+    }
+   },
+   "sans relief": {
+    "gauche": {
+     "moyenne": 29.6,
+     "contraste": 19.1,
+     "etendue": 46.3,
+     "noir": 14.7,
+     "detail": 6.8
+    },
+    "centre": {
+     "moyenne": 41.7,
+     "contraste": 25.8,
+     "etendue": 71,
+     "noir": 17.1,
+     "detail": 11.65
+    },
+    "droite": {
+     "moyenne": 32,
+     "contraste": 15.7,
+     "etendue": 43.3,
+     "noir": 18.2,
+     "detail": 6.37
+    }
+   },
+   "essai": {
+    "gauche": {
+     "moyenne": 29.4,
+     "contraste": 19.4,
+     "etendue": 47.3,
+     "noir": 14.5,
+     "detail": 6.76
+    },
+    "centre": {
+     "moyenne": 41.6,
+     "contraste": 26.1,
+     "etendue": 71.1,
+     "noir": 17.3,
+     "detail": 11.66
+    },
+    "droite": {
+     "moyenne": 31.5,
+     "contraste": 15.8,
+     "etendue": 43.4,
+     "noir": 17.7,
+     "detail": 6.22
+    }
+   }
+  },
+  "quai/cour-chapelle": {
+   "avant": {
+    "gauche": {
+     "moyenne": 37.6,
+     "contraste": 16.3,
+     "etendue": 49.1,
+     "noir": 21,
+     "detail": 6.02
+    },
+    "centre": {
+     "moyenne": 39.5,
+     "contraste": 19.5,
+     "etendue": 50.7,
+     "noir": 21.7,
+     "detail": 9.72
+    },
+    "droite": {
+     "moyenne": 34.3,
+     "contraste": 12.6,
+     "etendue": 39.3,
+     "noir": 21.1,
+     "detail": 5.17
+    }
+   },
+   "sans brume (nappes)": {
+    "gauche": {
+     "moyenne": 34.9,
+     "contraste": 14.5,
+     "etendue": 44.5,
+     "noir": 20.5,
+     "detail": 6.19
+    },
+    "centre": {
+     "moyenne": 39.4,
+     "contraste": 19.5,
+     "etendue": 50.6,
+     "noir": 21.7,
+     "detail": 9.72
+    },
+    "droite": {
+     "moyenne": 32.1,
+     "contraste": 10.7,
+     "etendue": 32.4,
+     "noir": 20.3,
+     "detail": 5.23
+    }
+   },
+   "sans voile": {
+    "gauche": {
+     "moyenne": 31.9,
+     "contraste": 17.9,
+     "etendue": 54.5,
+     "noir": 12.7,
+     "detail": 6.83
+    },
+    "centre": {
+     "moyenne": 36.2,
+     "contraste": 20.1,
+     "etendue": 52.9,
+     "noir": 17.2,
+     "detail": 10.16
+    },
+    "droite": {
+     "moyenne": 27.9,
+     "contraste": 14.1,
+     "etendue": 45.3,
+     "noir": 11.9,
+     "detail": 5.96
+    }
+   },
+   "sans brouillard": {
+    "gauche": {
+     "moyenne": 35.7,
+     "contraste": 17.2,
+     "etendue": 51.9,
+     "noir": 17.9,
+     "detail": 6.44
+    },
+    "centre": {
+     "moyenne": 38,
+     "contraste": 20.3,
+     "etendue": 53.7,
+     "noir": 18.7,
+     "detail": 10.3
+    },
+    "droite": {
+     "moyenne": 32.4,
+     "contraste": 13.4,
+     "etendue": 41.6,
+     "noir": 17.6,
+     "detail": 5.55
+    }
+   },
+   "sans les trois": {
+    "gauche": {
+     "moyenne": 26.7,
+     "contraste": 16.7,
+     "etendue": 51.6,
+     "noir": 9.7,
+     "detail": 7.56
+    },
+    "centre": {
+     "moyenne": 34.3,
+     "contraste": 21,
+     "etendue": 55.9,
+     "noir": 14.1,
+     "detail": 10.79
+    },
+    "droite": {
+     "moyenne": 22.8,
+     "contraste": 12.5,
+     "etendue": 38.6,
+     "noir": 8.9,
+     "detail": 6.53
+    }
+   },
+   "sans relief": {
+    "gauche": {
+     "moyenne": 37.6,
+     "contraste": 16.3,
+     "etendue": 48.7,
+     "noir": 21.2,
+     "detail": 6.03
+    },
+    "centre": {
+     "moyenne": 39.4,
+     "contraste": 19.4,
+     "etendue": 50.3,
+     "noir": 21.7,
+     "detail": 9.65
+    },
+    "droite": {
+     "moyenne": 34.3,
+     "contraste": 12.6,
+     "etendue": 39.3,
+     "noir": 21.1,
+     "detail": 5.17
+    }
+   },
+   "essai": {
+    "gauche": {
+     "moyenne": 37.1,
+     "contraste": 16.3,
+     "etendue": 48.9,
+     "noir": 20.5,
+     "detail": 5.93
+    },
+    "centre": {
+     "moyenne": 39.3,
+     "contraste": 19.7,
+     "etendue": 50.4,
+     "noir": 21.5,
+     "detail": 9.63
+    },
+    "droite": {
+     "moyenne": 34.1,
+     "contraste": 12.7,
+     "etendue": 39.6,
+     "noir": 20.7,
+     "detail": 5.06
+    }
+   }
+  },
+  "cour/passage-est": {
+   "avant": {
+    "gauche": {
+     "moyenne": 40.3,
+     "contraste": 36.2,
+     "etendue": 117.5,
+     "noir": 10.2,
+     "detail": 17.22
+    },
+    "centre": {
+     "moyenne": 41.6,
+     "contraste": 32,
+     "etendue": 98.1,
+     "noir": 13.5,
+     "detail": 16.22
+    },
+    "droite": {
+     "moyenne": 24.9,
+     "contraste": 13.5,
+     "etendue": 33.8,
+     "noir": 10.2,
+     "detail": 8.05
+    }
+   },
+   "sans brume (nappes)": {
+    "gauche": {
+     "moyenne": 40.3,
+     "contraste": 36.2,
+     "etendue": 117.5,
+     "noir": 10.2,
+     "detail": 17.22
+    },
+    "centre": {
+     "moyenne": 41.6,
+     "contraste": 32,
+     "etendue": 98.1,
+     "noir": 13.5,
+     "detail": 16.22
+    },
+    "droite": {
+     "moyenne": 24.8,
+     "contraste": 13.5,
+     "etendue": 33.8,
+     "noir": 10.2,
+     "detail": 8.05
+    }
+   },
+   "sans voile": {
+    "gauche": {
+     "moyenne": 40.3,
+     "contraste": 36.2,
+     "etendue": 117.5,
+     "noir": 10.2,
+     "detail": 17.2
+    },
+    "centre": {
+     "moyenne": 41.5,
+     "contraste": 32,
+     "etendue": 98.1,
+     "noir": 13.5,
+     "detail": 16.21
+    },
+    "droite": {
+     "moyenne": 24.8,
+     "contraste": 13.4,
+     "etendue": 33.7,
+     "noir": 10.2,
+     "detail": 8.04
+    }
+   },
+   "sans brouillard": {
+    "gauche": {
+     "moyenne": 40,
+     "contraste": 36.9,
+     "etendue": 119.9,
+     "noir": 9.5,
+     "detail": 17.49
+    },
+    "centre": {
+     "moyenne": 41.1,
+     "contraste": 32.5,
+     "etendue": 99.7,
+     "noir": 12.6,
+     "detail": 16.52
+    },
+    "droite": {
+     "moyenne": 22.8,
+     "contraste": 13.7,
+     "etendue": 34.5,
+     "noir": 9.1,
+     "detail": 8.4
+    }
+   },
+   "sans les trois": {
+    "gauche": {
+     "moyenne": 39.9,
+     "contraste": 36.9,
+     "etendue": 120,
+     "noir": 9.4,
+     "detail": 17.46
+    },
+    "centre": {
+     "moyenne": 40.9,
+     "contraste": 32.5,
+     "etendue": 99.7,
+     "noir": 12.6,
+     "detail": 16.51
+    },
+    "droite": {
+     "moyenne": 22.7,
+     "contraste": 13.7,
+     "etendue": 34.3,
+     "noir": 9.1,
+     "detail": 8.38
+    }
+   },
+   "sans relief": {
+    "gauche": {
+     "moyenne": 40.6,
+     "contraste": 35.9,
+     "etendue": 114.9,
+     "noir": 10.2,
+     "detail": 17.4
+    },
+    "centre": {
+     "moyenne": 41.1,
+     "contraste": 31.7,
+     "etendue": 96.6,
+     "noir": 13.2,
+     "detail": 15.95
+    },
+    "droite": {
+     "moyenne": 25.1,
+     "contraste": 13.4,
+     "etendue": 33.9,
+     "noir": 10.7,
+     "detail": 8.09
+    }
+   },
+   "essai": {
+    "gauche": {
+     "moyenne": 38.9,
+     "contraste": 37.2,
+     "etendue": 122.2,
+     "noir": 8.4,
+     "detail": 16.55
+    },
+    "centre": {
+     "moyenne": 39.3,
+     "contraste": 31,
+     "etendue": 95.4,
+     "noir": 11.5,
+     "detail": 15.66
+    },
+    "droite": {
+     "moyenne": 24,
+     "contraste": 13.4,
+     "etendue": 32.8,
+     "noir": 9.2,
+     "detail": 7.68
+    }
+   }
+  },
+  "cour/belvedere-est": {
+   "avant": {
+    "gauche": {
+     "moyenne": 39.4,
+     "contraste": 13.5,
+     "etendue": 38.6,
+     "noir": 24.2,
+     "detail": 4.62
+    },
+    "centre": {
+     "moyenne": 44.1,
+     "contraste": 15.8,
+     "etendue": 43.3,
+     "noir": 29,
+     "detail": 5.63
+    },
+    "droite": {
+     "moyenne": 29.2,
+     "contraste": 16.6,
+     "etendue": 54.5,
+     "noir": 9.9,
+     "detail": 6.3
+    }
+   },
+   "sans brume (nappes)": {
+    "gauche": {
+     "moyenne": 39.3,
+     "contraste": 13.6,
+     "etendue": 39.2,
+     "noir": 23.5,
+     "detail": 4.63
+    },
+    "centre": {
+     "moyenne": 44.1,
+     "contraste": 15.8,
+     "etendue": 43.3,
+     "noir": 29,
+     "detail": 5.63
+    },
+    "droite": {
+     "moyenne": 28.3,
+     "contraste": 16.2,
+     "etendue": 54.5,
+     "noir": 9.9,
+     "detail": 6.4
+    }
+   },
+   "sans voile": {
+    "gauche": {
+     "moyenne": 31.2,
+     "contraste": 14,
+     "etendue": 39.5,
+     "noir": 15.7,
+     "detail": 5.03
+    },
+    "centre": {
+     "moyenne": 34.5,
+     "contraste": 16.8,
+     "etendue": 49.1,
+     "noir": 17.5,
+     "detail": 6.03
+    },
+    "droite": {
+     "moyenne": 27.1,
+     "contraste": 14.8,
+     "etendue": 44.3,
+     "noir": 9.9,
+     "detail": 6.35
+    }
+   },
+   "sans brouillard": {
+    "gauche": {
+     "moyenne": 39.1,
+     "contraste": 13.9,
+     "etendue": 39.9,
+     "noir": 23,
+     "detail": 4.82
+    },
+    "centre": {
+     "moyenne": 44,
+     "contraste": 16.1,
+     "etendue": 44.4,
+     "noir": 28,
+     "detail": 5.77
+    },
+    "droite": {
+     "moyenne": 27.7,
+     "contraste": 17.3,
+     "etendue": 55.4,
+     "noir": 8.8,
+     "detail": 6.62
+    }
+   },
+   "sans les trois": {
+    "gauche": {
+     "moyenne": 28.9,
+     "contraste": 14.5,
+     "etendue": 40.8,
+     "noir": 13.9,
+     "detail": 5.26
+    },
+    "centre": {
+     "moyenne": 32.4,
+     "contraste": 17.2,
+     "etendue": 49.7,
+     "noir": 17,
+     "detail": 6.17
+    },
+    "droite": {
+     "moyenne": 23.8,
+     "contraste": 14.7,
+     "etendue": 44.6,
+     "noir": 8.8,
+     "detail": 6.78
+    }
+   },
+   "sans relief": {
+    "gauche": {
+     "moyenne": 39.4,
+     "contraste": 13.5,
+     "etendue": 38.6,
+     "noir": 24.1,
+     "detail": 4.62
+    },
+    "centre": {
+     "moyenne": 44.1,
+     "contraste": 15.8,
+     "etendue": 43.3,
+     "noir": 29,
+     "detail": 5.63
+    },
+    "droite": {
+     "moyenne": 29.2,
+     "contraste": 16.7,
+     "etendue": 54.5,
+     "noir": 9.9,
+     "detail": 6.29
+    }
+   },
+   "essai": {
+    "gauche": {
+     "moyenne": 39.3,
+     "contraste": 13.3,
+     "etendue": 38.4,
+     "noir": 24.1,
+     "detail": 4.58
+    },
+    "centre": {
+     "moyenne": 43.8,
+     "contraste": 15.7,
+     "etendue": 42.7,
+     "noir": 28.7,
+     "detail": 5.59
+    },
+    "droite": {
+     "moyenne": 29.1,
+     "contraste": 16.7,
+     "etendue": 54.7,
+     "noir": 9.8,
+     "detail": 6.27
+    }
+   }
+  }
+ }
+}

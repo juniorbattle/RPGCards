@@ -11,14 +11,17 @@ import { dirname } from 'node:path';
 import { EXTRA_ARGS, launch, startPreview, watchConsole, webglRenderer } from './browser.mjs';
 
 const VP = (process.env.LQV_VP ?? '1280x720').split('x').map(Number);
-const OUT = process.argv[2] ?? `artifacts/qa/retours-2026-11-14/cout-${VP[0]}.json`;
+// `LQV_ILOT` : l'îlot mesuré (défaut : la Grande Cour) ; le Quai part de la ruelle des Lanternes (rangs profonds)
+const ILOT = process.env.LQV_ILOT ?? 'cour';
+const DEPART = ILOT === 'quai' ? { x: -12, z: -26.3 } : { x: -6, z: -4 };
+const OUT = process.argv[2] ?? `artifacts/qa/retours-2026-11-14/cout-${ILOT}-${VP[0]}.json`;
 const VARIANTES = { sans: '&relief=0', avant: '&volume=0', apres: '' };
 const PASSAGES = 3;
 const head = execSync('git rev-parse --short HEAD').toString().trim();
 const server = await startPreview(Number(process.env.LQV_PREVIEW_PORT) || 4393, process.env.LQV_DIST || 'dist');
 const browser = await launch();
 const issues = [];
-const report = { commit: head, viewport: VP, args: EXTRA_ARGS, passages: {}, synthese: {} };
+const report = { commit: head, ilot: ILOT, depart: DEPART, viewport: VP, args: EXTRA_ARGS, passages: {}, synthese: {} };
 const mediane = (a) => { const s = [...a].sort((x, y) => x - y); return s[Math.floor(s.length / 2)]; };
 try {
   for (let k = 0; k < PASSAGES; k++) {
@@ -26,10 +29,10 @@ try {
       const ctx = await browser.newContext({ viewport: { width: VP[0], height: VP[1] }, deviceScaleFactor: 1 });
       const p = await ctx.newPage();
       watchConsole(p, issues);
-      await p.goto(`${server.base}/?ville=1&qa=1&profondeur=1&ilot=cour&decors=approuvees&sprites=approuvees${q}`);
+      await p.goto(`${server.base}/?ville=1&qa=1&profondeur=1&ilot=${ILOT}&decors=approuvees&sprites=approuvees${q}`);
       report.renderer ??= await webglRenderer(p).catch(() => null);
       await p.waitForFunction(() => !!window.__lqvVille && window.__lqvVille.town.stats().frames > 3, null, { timeout: 120000 });
-      await p.evaluate(() => window.__lqvVille.town.place({ x: -6, z: -4 }, 'droite'));
+      await p.evaluate((at) => window.__lqvVille.town.place(at, 'droite'), DEPART);
       await p.waitForTimeout(1500);
       await p.evaluate(() => { const iv = []; window.__cIv = iv; let last = performance.now(); const tick = (t) => { if (window.__cIv !== iv) return; iv.push(t - last); last = t; requestAnimationFrame(tick); }; requestAnimationFrame(tick); });
       await p.keyboard.down('KeyD'); await p.waitForTimeout(2000); await p.keyboard.up('KeyD');

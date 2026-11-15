@@ -1,7 +1,7 @@
 // Essai de profondeur (retour du responsable du 2026-11-14) : ce qu'il ne doit pas changer, au pixel près, contre un build
-// d'avant l'essai (`LQV_DIST_AVANT`) : les cinq autres quartiers de la ville en rangs (par défaut), la Grande Cour avec
+// d'avant l'essai (`LQV_DIST_AVANT`) : les quatre quartiers hors de l'essai (par défaut), la Grande Cour et le Quai avec
 // `?volume=0` (le relief de la passe 162) et avec `?relief=0` (sans relief). Horloge tenue (images à pas fixe), mêmes
-// positions, temps figé (`freeze=1`). Un témoin : la Grande Cour de l'essai doit, elle, différer.
+// positions, temps figé (`freeze=1`). Témoins : la Grande Cour et le Quai de l'essai doivent, eux, différer.
 // Usage : npm run build && LQV_DIST_AVANT=<dist d'avant> node tools/relief-cour-identique.mjs [rapport.json]
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
@@ -12,12 +12,14 @@ const AVANT = process.env.LQV_DIST_AVANT;
 if (!AVANT) throw new Error('LQV_DIST_AVANT : le build d’avant l’essai');
 const port = Number(process.env.LQV_PREVIEW_PORT) || 4393;
 const CAS = [
-  ...['quai', 'parvis', 'ruelles', 'port', 'haute'].map((ilot) => ({ id: ilot, avant: `&ilot=${ilot}`, apres: `&ilot=${ilot}`, egal: true })),
-  { id: 'cour-volume0', avant: '&ilot=cour', apres: '&ilot=cour&volume=0', egal: true },
-  { id: 'cour-relief0', avant: '&ilot=cour&relief=0', apres: '&ilot=cour&relief=0', egal: true },
-  { id: 'cour-essai (témoin)', avant: '&ilot=cour', apres: '&ilot=cour', egal: false },
+  ...['parvis', 'ruelles', 'port', 'haute'].map((ilot) => ({ id: ilot, avant: `&ilot=${ilot}`, apres: `&ilot=${ilot}`, egal: true })),
+  ...['cour', 'quai'].flatMap((ilot) => [
+    { id: `${ilot}-volume0`, avant: `&ilot=${ilot}`, apres: `&ilot=${ilot}&volume=0`, egal: true },
+    { id: `${ilot}-relief0`, avant: `&ilot=${ilot}&relief=0`, apres: `&ilot=${ilot}&relief=0`, egal: true },
+    { id: `${ilot}-essai (témoin)`, avant: `&ilot=${ilot}`, apres: `&ilot=${ilot}`, egal: false },
+  ]),
   // contre-épreuve : le même build deux fois (la capture est-elle reproductible ?)
-  { id: 'quai, même build (contre-épreuve)', avant: '&ilot=quai', apres: '&ilot=quai', egal: true, memeBuild: true },
+  { id: 'parvis, même build (contre-épreuve)', avant: '&ilot=parvis', apres: '&ilot=parvis', egal: true, memeBuild: true },
 ];
 const capture = async (browser, base, q) => {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 });

@@ -352,8 +352,11 @@ export function createTown(o: TownOptions): Town {
     dioramaCamera = st.state === 'diorama' ? st.diorama.camera : null;
     return st.state === 'diorama' ? buildDiorama(d, st.diorama, o.artSeed) : d.build(o.artSeed);
   };
+  /** Essai de profondeur : les escaliers en vrai 3D du diorama monté sont des obstacles de l'îlot (on n'y marche pas). */
+  const avecObstacles = (d: IlotDef, w: QuaiScene): IlotDef => (w.obstacles?.length ? { ...d, ilot: { ...d.ilot, rects: [...d.ilot.rects, ...w.obstacles] } } : d);
   const decorAtStart = decors.peek(def.id);
   let world: QuaiScene = buildWorld(def, decorAtStart);
+  def = avecObstacles(def, world);
   let scene = world.scene;
   const camera = new THREE.PerspectiveCamera(30, 16 / 9, 0.5, 400);
   // la caméra principale voit aussi ce que le reflet ne montre pas (sol, eau, brumes)
@@ -783,6 +786,7 @@ export function createTown(o: TownOptions): Town {
   /** Monte la scène de l'îlot `def` selon la décision de son décor, puis le joueur, les PNJ et les passants. */
   const mountWorld = (st: DecorState) => {
     world = buildWorld(def, st);
+    def = avecObstacles(def, world);
     scene = world.scene;
     renderPass.scene = scene;
     scene.add(playerSprite.group);
