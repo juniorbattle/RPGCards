@@ -1,8 +1,8 @@
 # ADR 050 — La profondeur du décor peint : volumes éclairés, ombres au sol, escaliers en vrai 3D
 
-**Date :** 2026-11-15. **Statut : ESSAI VALIDÉ PAR LE RESPONSABLE** (« Oui c'est mieux on valide », 2026-11-15, sur la
-Grande Cour et le Quai en quatre rangs ; passes 236 à 238). La généralisation aux quatre autres quartiers reste à
-décider. Complète l'ADR 028 (décor en diorama de plans peints) et le relief de la passe 162.
+**Date :** 2026-11-15. **Statut : APPROUVÉ ET GÉNÉRALISÉ** (essai validé par le responsable, « Oui c'est mieux on
+valide », sur la Grande Cour et le Quai en quatre rangs, passes 236 à 238 ; généralisé aux six quartiers en rangs sur son
+ordre, « Oui, généralise », passe 239). Complète l'ADR 028 (décor en diorama de plans peints) et le relief de la passe 162.
 
 ## Constat
 
@@ -30,23 +30,26 @@ Trois leviers, choisis par le responsable, tous par code (`src/ville/volumes.ts`
    (`flancsRampe`), trou derrière la rampe assombri ; **leurs emprises sont des obstacles de l'îlot monté**
    (`emprisesRampes`, `QuaiScene.obstacles`, `avecObstacles` dans `ville.ts`) : on n'entre pas dans un escalier.
 
-Périmètre : `ILOTS_ESSAI` (la Grande Cour et le Quai). `?volume=0` redonne le rendu de la passe 162 et `?relief=0` le
+Périmètre : `ILOTS_ESSAI`, les six quartiers en rangs (dioramas en rangs seulement ; la ville d'avant les rangs reste
+identique). Volumes ronds (tours, phare, rotonde) : forme `cyl` du relief (`profCyl`). Une volée peinte paraît dans
+plusieurs rangs ; là où un chemin lumineux ou un point d'apparition est devant elle, son avancée est réduite
+(`SAILLIES_PLAN`). `?volume=0` redonne le rendu de la passe 162 et `?relief=0` le
 rendu sans relief, au pixel près (`tools/relief-cour-identique.mjs`).
 
 ## Garanties
 
 Aucune image générée ni modifiée sur le disque (formes, découpes et cartes tracées au chargement) ; aucun drapeau
-`approved` touché ; caméra frontale inchangée ; quartiers hors de l'essai identiques au pixel près. Une rampe ne recouvre
+`approved` touché ; caméra frontale inchangée ; la ville d'avant les rangs identique au pixel près. Une rampe ne recouvre
 ni point d'apparition, ni personnage, ni chemin lumineux, et chaque zone reste atteignable (`test/volumes.test.ts`).
 
 ## Coût
 
 Grande Cour : Radeon 780M +0,08 ms (1280) et +0,67 ms (1920) ; RTX 4060 +0,1 ms. Rangs profonds du Quai : 780M +0,29 ms et
-+0,58 ms (9,7 ms par image en 1920, p95 15,1 ms) ; RTX +0,12 et +0,27 ms. Première entrée dans un îlot de l'essai : +160 à
++0,58 ms (9,7 ms par image en 1920, p95 15,1 ms) ; RTX +0,12 et +0,27 ms. Quatre autres quartiers (passe 239) : RTX +0,03 à +0,25 ms ; 780M +0,4 à +0,8 ms
+(au Parvis, dans le bruit de la mesure). Calcul des cartes optimisé (flou vertical ligne par ligne) : 75 à 85 ms par frise. Première entrée dans un îlot de l'essai : +160 à
 310 ms (cartes calculées au processeur, sous le rideau ; gardées en mémoire ensuite, environ 6 Mo).
 
 ## Suites ouvertes
 
-Généraliser aux quatre autres quartiers (écrire `FORMES_ESSAI` et `RAMPES` de leurs images, élargir `ILOTS_ESSAI`, refaire
-la vérification au pixel près et les planches ; le calcul des cartes pourra passer dans un travailleur) ; alléger le voile
-et la brume des rangs profonds ; le quatrième levier non retenu, « épaisseur des façades ».
+Alléger le voile et la brume des rangs profonds ; le quatrième levier non retenu, « épaisseur des façades » ; passer le
+calcul des cartes dans un travailleur si la première entrée dans un quartier se sent.
