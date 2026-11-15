@@ -1159,22 +1159,68 @@ export class AventureApp {
     const s = this.save!;
     const e = this.etat;
     const joueurs = joueursDeRue(s.directeur, e, this.ilotsRecit, this.quaiRangs);
-    const outil = (label: string, key: string, run: () => void) => h('button', { class: 'ville-btn', type: 'button', 'data-key': key, onclick: run }, label);
+    const fam = e.affiliation;
+    // le titre du chapitre en deux temps : « Chapitre II » en grand, « les trois voies » dessous
+    const [chap, ...arc] = CHAPITRE[chapitreDetaille(e)].split(', ');
+    const outil = (label: string, key: string, icone: string, run: () => void) => h('button', { class: 'ville-btn av-prepa-outil', type: 'button', 'data-key': key, onclick: run },
+      h('span', { class: 'av-prepa-icone', 'aria-hidden': 'true', html: icone }), label);
     this.ecranShell('av-scr av-preparation',
-      h('section', { class: 'av-prepa', 'data-screen': 'av-prepa', 'data-key': 'av-prepa', 'aria-labelledby': 'av-prepa-t' },
+      h('section', { class: `av-prepa${fam ? ` fam-${fam}` : ''}`, 'data-screen': 'av-prepa', 'data-key': 'av-prepa', 'aria-labelledby': 'av-prepa-t', style: `--fond: url("${FOND_PREPA[this.ilotDeLaSuite()]}")` },
+        // fond d'ambiance : les façades éclairées du quartier où se joue la suite (images du jeu, assombries par CSS)
+        h('div', { class: 'av-prepa-fond', 'aria-hidden': 'true' }),
         h('header', { class: 'av-prepa-tete' },
-          h('h1', { id: 'av-prepa-t' }, 'Préparation'),
-          h('p', { 'data-key': 'av-prepa-etat' }, `${CHAPITRE[chapitreDetaille(e)]} · ${e.affiliation ? `voie ${de(e.affiliation)}` : 'sans famille'} · ${pvJoueur(e.combats)} PV`)),
-        h('div', { class: `av-prepa-grille${e.affiliation ? '' : ' seule'}` },
+          h('div', { class: 'av-prepa-titres' },
+            h('span', { class: 'av-prepa-sur' }, 'Préparation'),
+            h('h1', { id: 'av-prepa-t' }, chap!, arc.length ? h('span', { class: 'av-prepa-arc' }, capital(arc.join(', '))) : null)),
+          h('div', { class: 'av-prepa-etat', 'data-key': 'av-prepa-etat' },
+            fam
+              ? h('span', { class: `av-chip fam-${fam}` }, h('span', { class: 'av-chip-embleme', 'aria-hidden': 'true', html: emblemSvg(fam, 18) }), `Voie ${de(fam)}`)
+              : h('span', { class: 'av-chip' }, 'Sans famille'),
+            h('span', { class: 'av-chip' }, h('b', null, String(pvJoueur(e.combats))), ' PV'))),
+        h('div', { class: `av-prepa-grille${fam ? '' : ' seule'}` },
           this.aSuivre(),
-          e.affiliation ? h('div', { class: 'av-prepa-rues' },
-            h('h3', null, 'Joueurs de rue'),
+          fam ? h('div', { class: 'av-prepa-rues' },
+            h('div', { class: 'av-prepa-rues-tete' },
+              h('h3', null, 'Joueurs de rue'),
+              joueurs.length ? h('span', { class: 'av-prepa-compte' }, joueurs.length > 1 ? `${joueurs.length} vous attendent` : '1 vous attend') : null),
             joueurs.length
-              ? h('div', { class: 'av-prepa-liste', 'data-key': 'av-prepa-joueurs' }, ...joueurs.map((j) => this.carteRue(j)))
-              : h('p', { class: 'av-sous', 'data-key': 'av-prepa-vide' }, 'Aucun joueur de rue ne vous attend pour ce chapitre.')) : null),
+              ? h('div', { class: 'av-prepa-liste', 'data-key': 'av-prepa-joueurs' }, ...joueurs.map((j, i) => this.carteRue(j, i)))
+              : h('p', { class: 'av-sous av-prepa-vide', 'data-key': 'av-prepa-vide' }, 'Aucun joueur de rue ne vous attend pour ce chapitre.')) : null),
         h('footer', { class: 'av-prepa-pied' },
-          h('div', { class: 'ville-choices' }, info(outil('Deck', 'av-prepa-deck', () => this.collection()), `Votre deck : ${resumeDeck(e.deck)}.`), outil('Journal', 'av-prepa-journal', () => this.journal()), outil('Menu', 'av-prepa-menu', () => this.menu())))));
+          h('div', { class: 'ville-choices' },
+            info(outil('Deck', 'av-prepa-deck', ICONE_PREPA.deck, () => this.collection()), `Votre deck : ${resumeDeck(e.deck)}.`),
+            outil('Journal', 'av-prepa-journal', ICONE_PREPA.journal, () => this.journal()),
+            outil('Menu', 'av-prepa-menu', ICONE_PREPA.menu, () => this.menu())))));
     this.rideau.ouvrir();
+  }
+
+  /** Le quartier où se joue la suite annoncée (fond de la Préparation) ; la Grande Cour à défaut. */
+  private ilotDeLaSuite(): IlotId {
+    const s = this.prochaineSuite();
+    if (s && 'rival' in s) return s.rival.ilot;
+    const etape = s && 'etape' in s ? s.etape : etapeRecit(this.etat);
+    if (!etape) return 'quai';
+    if (etape.kind === 'bannieres') return 'quai';
+    if (etape.kind === 'championnat') return 'parvis';
+    const id = etape.kind === 'personne' ? etape.id : etape.ids[0];
+    return (id ? quartierDe(id, this.ilotsRecit, (x) => this.posesDe(x)) : null) ?? 'cour';
+  }
+
+  /**
+   * Quitter la Préparation en douceur : la carte choisie s'éclaire pendant que le reste s'estompe et que le noir monte
+   * (le rideau part aussitôt, comme avant). Rien ne reste marqué si le rideau ne part pas (une fenêtre ouverte, par exemple).
+   */
+  private partir(declencheur: EventTarget | null, run: () => void): void {
+    const sec = this.d.shellHost.querySelector<HTMLElement>('.av-prepa');
+    if (!sec || sec.classList.contains('av-prepa-depart')) return;
+    const carte = declencheur instanceof Element ? declencheur.closest<HTMLElement>('.av-rue, .av-prepa-option, .av-prepa-suite') : null;
+    sec.classList.add('av-prepa-depart');
+    carte?.classList.add('choisi');
+    run();
+    if (this.ecran === 'preparation' && !this.rideau.enCours && !this.rideau.noir) {
+      sec.classList.remove('av-prepa-depart');
+      carte?.classList.remove('choisi');
+    }
   }
 
   /** « À suivre » : l'étape de la trame (Kaï surgit à sa place, sans s'annoncer), un duel de Kaï à rejouer, ou le choix du joueur. */
@@ -1183,9 +1229,13 @@ export class AventureApp {
     const s = this.prochaineSuite();
     const rejouer = s && 'rival' in s && e.rival?.perdus?.includes(s.rival.k.id) ? s.rival.k : null;
     const etape = s && 'etape' in s ? s.etape : etapeRecit(e);
-    const rideau = h('button', { class: 'ville-btn primary av-suite', type: 'button', 'data-key': 'av-prepa-suite', 'data-shell-primary': 'true', onclick: () => this.leverRideau() }, 'Suite du récit ▸');
+    const rideau = h('button', { class: 'ville-btn primary av-suite', type: 'button', 'data-key': 'av-prepa-suite', 'data-shell-primary': 'true', onclick: (ev: Event) => this.partir(ev.currentTarget, () => this.leverRideau()) },
+      h('span', null, 'Suite du récit'), h('span', { class: 'av-suite-fleche', 'aria-hidden': 'true' }, '▸'));
     const bloc = (...corps: Array<HTMLElement | null>) => h('div', { class: 'av-prepa-suite' }, h('h3', null, 'À suivre'), ...corps);
-    const emblemes = (titre: string) => h('div', { class: 'av-prepa-carte' }, h('div', { class: 'av-emblems', 'aria-hidden': 'true', html: FAMILIES.map((f) => `<span class="fam-${f}">${emblemSvg(f, 30)}</span>`).join('') }), h('b', null, titre), h('p', null, objectif(e, this.save?.recit === 'guide')));
+    // bannières, Championnat : les quatre emblèmes en grand, sur leur halo
+    const emblemes = (titre: string) => h('div', { class: 'av-prepa-carte av-prepa-lieu' },
+      h('div', { class: 'av-emblems av-prepa-emblemes', 'aria-hidden': 'true', html: FAMILIES.map((f, i) => `<span class="fam-${f}" style="--i: ${i}">${emblemSvg(f, 64)}</span>`).join('') }),
+      h('b', null, titre), h('p', { class: 'av-prepa-objectif' }, objectif(e, this.save?.recit === 'guide')));
     if (rejouer) {
       const prevu = duelRival(rejouer.id, e, 0);
       return bloc(this.carteSuite(prevu.personnalite, `${rejouer.titre} · une revanche à prendre`, prevu.config.players.p2.hp), rideau);
@@ -1194,19 +1244,24 @@ export class AventureApp {
     if (etape.kind === 'bannieres') return bloc(emblemes('La Salle des Bannières'), rideau);
     if (etape.kind === 'championnat') return bloc(emblemes('Le Championnat des Champions'), rideau);
     if (etape.kind === 'personne') return bloc(this.cartePersonne(etape.id), h('p', { class: 'av-prepa-objectif', 'data-key': 'av-prepa-objectif' }, objectif(e, this.save?.recit === 'guide')), rideau);
-    return h('div', { class: 'av-prepa-suite', 'data-key': 'av-prepa-choix' }, h('h3', null, etape.titre), h('p', null, etape.texte),
-      ...etape.ids.map((id, i) => h('div', { class: 'av-prepa-option' }, this.cartePersonne(id),
-        h('button', { class: `ville-btn${i === 0 ? ' primary' : ''}`, type: 'button', 'data-key': `av-prepa-choix-${id}`, 'data-shell-primary': i === 0 ? 'true' : null, onclick: () => this.leverRideau(() => this.suite(id)) }, id.startsWith('emissaire-') ? 'Écouter' : 'Défier'))));
+    // un choix entre deux personnes : deux cartes côte à côte, chacune son bouton
+    return h('div', { class: 'av-prepa-suite av-prepa-choix', 'data-key': 'av-prepa-choix' }, h('h3', null, etape.titre), h('p', { class: 'av-prepa-consigne' }, etape.texte),
+      h('div', { class: 'av-prepa-options' }, ...etape.ids.map((id, i) => h('div', { class: 'av-prepa-option' }, this.cartePersonne(id),
+        h('button', { class: `ville-btn${i === 0 ? ' primary' : ''}`, type: 'button', 'data-key': `av-prepa-choix-${id}`, 'data-shell-primary': i === 0 ? 'true' : null, onclick: (ev: Event) => this.partir(ev.currentTarget, () => this.leverRideau(() => this.suite(id))) }, id.startsWith('emissaire-') ? 'Écouter' : 'Défier')))));
   }
 
   private carteKai(): HTMLElement {
     return this.carteSuite(personnalite(KAI_PROLOGUE.apparence, { nom: KAI_PROLOGUE.nom, titre: KAI_PROLOGUE.titre }), 'Il vous attend.');
   }
 
+  /** Le personnage qui attend : son portrait en grand, encadré à la couleur de sa famille, son emblème en médaillon. */
   private carteSuite(p: DuelPrevu['personnalite'], ligne: string, pv?: number): HTMLElement {
-    return h('article', { class: `av-prepa-carte av-rue fam-${p.family}` },
-      h('img', { class: 'ville-portrait', alt: '', src: portraitUrl(p, this.params.artSeed) }),
-      h('div', { class: 'av-rue-texte' }, h('b', null, p.name), h('span', null, ligne), pv ? h('span', { class: 'av-rue-bilan' }, `${pv} PV`) : null));
+    const fam = p.family;
+    return h('article', { class: `av-prepa-carte av-heros fam-${fam}` },
+      h('div', { class: 'av-heros-cadre' },
+        h('img', { class: 'ville-portrait', alt: '', src: portraitUrl(p, this.params.artSeed) }),
+        fam ? h('span', { class: 'av-heros-embleme', 'aria-hidden': 'true', html: emblemSvg(fam, 22) }) : null),
+      h('div', { class: 'av-heros-texte' }, h('b', null, p.name), h('span', null, ligne), pv ? h('span', { class: 'av-tag av-tag-pv' }, `${pv} PV`) : null));
   }
 
   /** Une personne de la trame : son portrait, son quartier, les PV du duel qu'elle propose. */
@@ -1231,21 +1286,33 @@ export class AventureApp {
     hote.querySelector<HTMLElement>('[data-shell-primary]')?.focus({ preventScroll: true });
   }
 
-  private carteRue(j: JoueurRue): HTMLElement {
+  /** Un joueur de rue : carte verticale, portrait au cadre de sa famille, étiquettes, « Défier » sur toute la largeur. */
+  private carteRue(j: JoueurRue, i = 0): HTMLElement {
     const s = this.save!;
     const e = this.etat;
     const prevu = duelFacultatif(j.id, e, 0, s.historique);
     const p = prevu.personnalite;
+    const fam = p.family;
     const joues = s.historique.filter((x) => x.rencontre === j.id && x.issue !== 'abandon');
     const gagnes = joues.filter((x) => x.issue === 'victoire').length;
     const t = temperamentDe(j.id, e, s.historique);
-    return h('article', { class: `av-rue fam-${p.family}`, 'data-key': `av-rue-${j.id}` },
+    const defier = h('button', { class: 'ville-btn av-rue-defier', type: 'button', 'data-key': `av-defier-${j.id}`, onclick: (ev: Event) => this.partir(ev.currentTarget, () => this.defierRue(j)) }, 'Défier');
+    return h('article', {
+      class: `av-rue fam-${fam}`, 'data-key': `av-rue-${j.id}`, style: `--i: ${i}`,
+      // toute la carte répond au clic, le bouton reste la cible du clavier et de la manette
+      onclick: (ev: Event) => { if (!(ev.target instanceof Element && ev.target.closest('button'))) defier.click(); },
+    },
+    h('div', { class: 'av-rue-cadre' },
       h('img', { class: 'ville-portrait', alt: '', src: portraitUrl(p, this.params.artSeed) }),
-      h('div', { class: 'av-rue-texte' },
-        h('b', null, p.name),
-        h('span', null, `${capital(nomIlot(j.ilot, this.quaiRangs, this.ouverts))}${t ? ` · ${NOM_TEMPERAMENT[t]}` : ''}`),
-        h('span', { class: 'av-rue-bilan' }, `${prevu.config.players.p2.hp} PV · ${joues.length ? `${gagnes} V, ${joues.length - gagnes} D` : 'jamais affronté'}`),
-        h('button', { class: 'ville-btn', type: 'button', 'data-key': `av-defier-${j.id}`, onclick: () => this.defierRue(j) }, 'Défier')));
+      fam ? h('span', { class: 'av-rue-embleme', 'aria-hidden': 'true', html: emblemSvg(fam, 16) }) : null,
+      h('span', { class: 'av-tag av-tag-pv av-rue-pv' }, `${prevu.config.players.p2.hp} PV`)),
+    h('div', { class: 'av-rue-texte' },
+      h('b', null, p.name),
+      h('span', { class: 'av-rue-lieu' }, capital(nomIlot(j.ilot, this.quaiRangs, this.ouverts))),
+      h('div', { class: 'av-rue-tags' },
+        t ? h('span', { class: 'av-tag' }, NOM_TEMPERAMENT[t]) : null,
+        h('span', { class: `av-tag${joues.length ? ' av-tag-bilan' : ''}` }, joues.length ? `${gagnes} V · ${joues.length - gagnes} D` : 'jamais affronté'))),
+    defier);
   }
 
   /** Écran noir, le joueur devant le joueur de rue, sa scène s'ouvre : comme à pied, on peut encore refuser. */
@@ -2611,6 +2678,20 @@ const OU_ILOT: Record<IlotId, string> = { quai: 'sur le Quai', ruelles: 'dans le
 /** Chapitre de la trame en clair (écran titre) ; épicène. */
 const CHAPITRE: Record<ReturnType<typeof chapitreDetaille>, string> = { prologue: 'Prologue', I: 'Chapitre I, la maison', II: 'Chapitre II, les trois voies', III: 'Chapitre III, les trois voies', IV: 'Chapitre IV, les trois voies', V: 'Chapitre V, le Championnat', titre: 'Titre remporté' };
 const ISSUE: Record<Issue, string> = { victoire: 'Victoire', defaite: 'Défaite', abandon: 'Abandon' };
+/**
+ * Fond de la Préparation (retour du responsable du 2026-11-14) : les façades éclairées du quartier où se joue la suite,
+ * images du jeu déjà approuvées (`public/decors/`), assombries et floutées par CSS seulement.
+ */
+const FOND_PREPA: Record<IlotId, string> = {
+  quai: 'decors/quai-facades.png', parvis: 'decors/villes-parvis-arene.png', ruelles: 'decors/villes-ruelles-guilde.png',
+  cour: 'decors/villes-cour-facades.png', port: 'decors/quartiers-port-fanal.png', haute: 'decors/quartiers-haute-observatoire.png',
+};
+/** Icônes des outils de la Préparation (traits, couleur du texte). */
+const ICONE_PREPA = {
+  deck: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="3.5" y="5.5" width="11" height="15" rx="1.6" transform="rotate(-8 9 13)"/><rect x="9.5" y="3.5" width="11" height="15" rx="1.6" transform="rotate(6 15 11)"/></svg>',
+  journal: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4.5 5.5c2.6-1.3 5.2-1.3 7.5.3 2.3-1.6 4.9-1.6 7.5-.3v13c-2.6-1.3-5.2-1.3-7.5.3-2.3-1.6-4.9-1.6-7.5-.3z"/><path d="M12 5.8v13"/></svg>',
+  menu: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h14"/></svg>',
+} as const;
 /** Nom lisible d'une rencontre de l'historique (identifiant de `DuelAventure.rencontre`). */
 function titreRencontre(id: string): string {
   const [k, a, b] = id.split(':');

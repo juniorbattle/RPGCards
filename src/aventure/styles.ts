@@ -102,39 +102,111 @@ export function installAventureStyles(): void {
 .ville-fade.in { pointer-events: auto; }
 .av-modal.noire { background: #04060c; }
 .av-modal-sortie.noire { z-index: 2970; background: none; }
-:is(#shell, .shell-fantome).av-scr.av-preparation { background: radial-gradient(ellipse at 50% 0%, #1d1a26, #0a0b13 58%, #04060c); padding: 18px 20px; }
-.lqv-fondus :is(.av-prepa-tete, .av-prepa-suite, .av-prepa-rues, .av-prepa-pied) { animation: lqv-entree 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
-.lqv-fondus .av-prepa-suite { animation-delay: 0.12s; } .lqv-fondus .av-prepa-rues { animation-delay: 0.22s; } .lqv-fondus .av-prepa-pied { animation-delay: 0.3s; }
-.av-prepa { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: 12px; box-sizing: border-box; width: min(1560px, 100%); height: min(940px, 100%); color: var(--lqv-ivoire); font: 15px/1.5 Georgia, serif; }
-.av-prepa-tete { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 20px; padding-bottom: 6px; border-bottom: 1px solid; border-image: linear-gradient(90deg, var(--lqv-or), transparent 80%) 1; }
-.av-prepa-tete h1 { margin: 0; font: 700 clamp(30px, 3vw, 44px)/1.1 Georgia, serif; color: var(--lqv-or-clair); letter-spacing: 0.02em; }
-.av-prepa-tete p { margin: 0; color: var(--lqv-or); font: italic clamp(15px, 1.1vw, 19px)/1.3 Georgia, serif; }
-.av-prepa-grille { display: grid; grid-template-columns: minmax(340px, 5fr) minmax(0, 7fr); gap: 18px; min-height: 0; }
-.av-prepa-grille.seule { grid-template-columns: minmax(0, 620px); justify-content: center; }
-.av-prepa h3 { margin: 0 0 6px; font: 700 13px/1.3 Georgia, serif; letter-spacing: 0.1em; text-transform: uppercase; color: var(--lqv-or); }
-.av-prepa-suite { display: flex; flex-direction: column; gap: 10px; min-height: 0; overflow: auto; box-sizing: border-box; padding: 6px 14px; border: 14px solid transparent; border-image: var(--lqv-cadre) 14 / 14px stretch; background: var(--lqv-panneau) border-box; scrollbar-width: thin; }
-.av-prepa-suite > h3 { margin: 0; } .av-prepa-suite > p { margin: 0; }
-.av-prepa-suite .av-suite { margin-top: auto; align-self: stretch; }
-.av-prepa-carte { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
-.av-prepa-carte b { font: 700 22px/1.2 Georgia, serif; color: var(--lqv-or-clair); } .av-prepa-carte p { margin: 0; }
-/* « À suivre » : le personnage en grand ; dans un choix, une ligne par personne */
-.av-prepa-suite > .av-prepa-carte.av-rue { align-items: center; padding: 0; border: 0; background: none; }
-.av-prepa-suite > .av-prepa-carte .ville-portrait { width: clamp(150px, 26vh, 300px); height: auto; aspect-ratio: 5 / 6; }
-.av-prepa-suite > .av-prepa-carte .av-rue-texte { flex: none; align-items: center; gap: 2px; }
-.av-prepa-suite > .av-prepa-carte .av-rue-texte b { font-size: clamp(22px, 1.6vw, 30px); }
-.av-prepa-suite > .av-prepa-carte .av-rue-texte span { font-size: 15px; }
-.av-prepa-option .av-prepa-carte { flex-direction: row; align-items: stretch; text-align: left; }
-.av-prepa-objectif { font-size: 16px; line-height: 1.4; text-align: center; }
-.av-prepa-option { display: flex; align-items: center; gap: 10px; } .av-prepa-option .av-rue { flex: 1; min-width: 0; } .av-prepa-option .ville-btn { flex: none; }
-.av-prepa-rues { display: flex; flex-direction: column; min-height: 0; }
-.av-prepa-liste { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; align-content: start; min-height: 0; overflow: auto; scrollbar-width: thin; scrollbar-color: rgba(226, 196, 138, 0.5) transparent; }
+/* Préparation du Récit guidé, refaite (retour du responsable du 2026-11-14 : « plus jolie et fluide », on y revient souvent) :
+   fond d'ambiance du quartier de la suite, « À suivre » en héros, joueurs de rue en galerie, départ en douceur */
+:is(#shell, .shell-fantome).av-scr.av-preparation { display: block; background: radial-gradient(ellipse at 50% 0%, #1d1a26, #0a0b13 58%, #04060c); padding: 0; overflow: hidden; }
+:is(.av-prepa, .av-rue, .av-heros, .av-chip).fam-Cendre { --fam: #ff8a4a; --famc: #d0541f; } :is(.av-prepa, .av-rue, .av-heros, .av-chip).fam-Voile { --fam: #a8b8ff; --famc: #5d63c4; }
+:is(.av-prepa, .av-rue, .av-heros, .av-chip).fam-Ronce { --fam: #8fdc6a; --famc: #3f8a46; } :is(.av-prepa, .av-rue, .av-heros, .av-chip).fam-Astre { --fam: #ffd36b; --famc: #c9a23a; }
+.av-prepa { --fam: #f2dcab; --famc: #b8924e; position: relative; isolation: isolate; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: clamp(10px, 1.7vh, 20px); box-sizing: border-box; width: 100%; height: 100%; padding: clamp(14px, 2.6vh, 34px) clamp(18px, 3.2vw, 72px); color: var(--lqv-ivoire); font: 15px/1.5 Georgia, serif; }
+.av-prepa-fond { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.av-prepa-fond::before { content: ""; position: absolute; inset: -3%; background: var(--fond) center 85% / cover no-repeat; filter: blur(2px) brightness(0.62) saturate(0.9); transform: scale(1.04); will-change: transform; }
+.av-prepa-fond::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 46% 58% at 24% 58%, color-mix(in srgb, var(--fam) 16%, transparent), transparent 72%), linear-gradient(180deg, rgba(4, 6, 12, 0.7), rgba(4, 6, 12, 0.08) 28%, rgba(4, 6, 12, 0.16) 64%, rgba(4, 6, 12, 0.86)), radial-gradient(ellipse 85% 75% at 50% 50%, transparent 58%, rgba(0, 0, 0, 0.55)); }
+.lqv-fondus .av-prepa-fond::before { animation: av-prepa-derive 38s ease-in-out infinite alternate; }
+@keyframes av-prepa-derive { from { transform: scale(1.04) translate3d(-1.2%, 0.4%, 0); } to { transform: scale(1.1) translate3d(1.2%, -0.8%, 0); } }
+.lqv-fondus :is(.av-prepa-tete, .av-prepa-suite, .av-prepa-rues-tete, .av-prepa-vide, .av-prepa-pied) { animation: lqv-entree 0.55s cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+.lqv-fondus .av-prepa-suite { animation-delay: 0.1s; } .lqv-fondus :is(.av-prepa-rues-tete, .av-prepa-vide) { animation-delay: 0.18s; } .lqv-fondus .av-prepa-pied { animation-delay: 0.5s; }
+.lqv-fondus .av-prepa-liste .av-rue { animation: lqv-entree 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) both; animation-delay: calc(0.24s + var(--i, 0) * 0.07s); }
+/* en-tête : surtitre, chapitre, pastilles */
+.av-prepa-tete { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 6px 24px; padding-bottom: clamp(8px, 1.2vh, 14px); border-bottom: 1px solid; border-image: linear-gradient(90deg, var(--lqv-or), rgba(226, 196, 138, 0.25) 55%, transparent) 1; }
+.av-prepa-titres { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.av-prepa-sur { font: 700 12px/1.2 Georgia, serif; letter-spacing: 0.26em; text-transform: uppercase; color: var(--lqv-or); }
+.av-prepa-tete h1 { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 14px; font: 700 clamp(28px, 3.2vw, 54px)/1.08 Georgia, serif; color: var(--lqv-or-clair); letter-spacing: 0.02em; text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6), 0 0 28px rgba(255, 190, 110, 0.25); }
+.av-prepa-arc { font: italic 400 clamp(16px, 1.45vw, 26px)/1.2 Georgia, serif; color: #e7d6b2; letter-spacing: 0; text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9); }
+.av-prepa-etat { display: flex; flex-wrap: wrap; gap: 8px; }
+.av-chip { display: inline-flex; align-items: center; gap: 7px; padding: 5px 14px 5px 10px; border: 1px solid rgba(226, 196, 138, 0.38); border-radius: 999px; background: rgba(8, 9, 16, 0.62); color: var(--lqv-ivoire); font: 600 clamp(13px, 0.95vw, 16px)/1.2 Georgia, serif; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35); }
+.av-chip b { color: var(--lqv-or-clair); font-size: 1.12em; }
+.av-chip:is(.fam-Cendre, .fam-Voile, .fam-Ronce, .fam-Astre) { border-color: color-mix(in srgb, var(--fam) 55%, transparent); }
+.av-chip-embleme { display: grid; place-items: center; color: var(--fam); } .av-chip-embleme svg { width: 18px; height: 18px; }
+/* grille : le héros à gauche, la galerie à droite */
+.av-prepa-grille { display: grid; grid-template-columns: minmax(300px, 4fr) minmax(0, 7fr); gap: clamp(14px, 2.2vw, 40px); min-height: 0; }
+.av-prepa-grille.seule { grid-template-columns: minmax(0, 560px); justify-content: center; }
+.av-prepa h3 { margin: 0; font: 700 12.5px/1.3 Georgia, serif; letter-spacing: 0.2em; text-transform: uppercase; color: var(--lqv-or); }
+/* « À suivre » */
+.av-prepa-suite { position: relative; display: flex; flex-direction: column; align-items: stretch; gap: clamp(8px, 1.3vh, 14px); min-height: 0; box-sizing: border-box; padding: clamp(10px, 1.8vh, 22px) clamp(12px, 1.4vw, 26px); border: 14px solid transparent; border-image: var(--lqv-cadre) 14 / 14px stretch; background: linear-gradient(180deg, rgba(22, 20, 32, 0.84), rgba(8, 9, 16, 0.92)) border-box; box-shadow: var(--lqv-ombre), 0 0 70px color-mix(in srgb, var(--fam) 12%, transparent); overflow: hidden; }
+.av-prepa-suite > h3 { text-align: center; }
+.av-prepa-carte { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; min-height: 0; }
+.av-prepa-carte p { margin: 0; }
+.av-prepa-objectif { margin: 0; color: #e8dcc2; font: italic clamp(14px, 1vw, 17px)/1.45 Georgia, serif; text-align: center; text-wrap: balance; }
+.av-heros-cadre { position: relative; flex: none; isolation: isolate; }
+.av-heros-cadre::before { content: ""; position: absolute; inset: -18%; z-index: -1; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--fam, #f2dcab) 34%, transparent), transparent 66%); }
+.lqv-fondus .av-heros-cadre::before { animation: av-halo 5.5s ease-in-out infinite alternate; }
+@keyframes av-halo { from { opacity: 0.6; transform: scale(0.94); } to { opacity: 1; transform: scale(1.04); } }
+.av-heros .ville-portrait { display: block; width: clamp(120px, 26vh, 330px); height: auto; aspect-ratio: 5 / 6; object-fit: cover; border: 2px solid var(--famc, var(--lqv-or)); border-radius: 3px; box-shadow: 0 0 0 4px rgba(4, 5, 10, 0.75), 0 0 0 5px color-mix(in srgb, var(--fam, #f2dcab) 45%, transparent), 0 14px 34px rgba(0, 0, 0, 0.6); }
+.av-heros-embleme { position: absolute; left: 50%; bottom: -14px; translate: -50% 0; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #0b0c14; color: var(--fam); box-shadow: 0 0 0 2px var(--famc), 0 0 14px color-mix(in srgb, var(--fam) 50%, transparent); }
+.av-heros-embleme svg { width: 22px; height: 22px; }
+.av-heros-texte { display: flex; flex-direction: column; align-items: center; gap: 3px; margin-top: 10px; }
+.av-heros-texte b { font: 700 clamp(22px, 1.75vw, 34px)/1.15 Georgia, serif; color: var(--lqv-or-clair); text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8); }
+.av-heros-texte > span:not(.av-tag) { color: #e2d3b4; font-size: clamp(14px, 0.95vw, 16px); }
+.av-heros-texte .av-tag { margin-top: 3px; }
+.av-prepa-lieu { flex: 1; justify-content: center; gap: 12px; }
+.av-prepa-lieu b { font: 700 clamp(24px, 1.9vw, 36px)/1.15 Georgia, serif; color: var(--lqv-or-clair); text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8); }
+.av-prepa-emblemes { gap: clamp(10px, 1.4vw, 26px); }
+.av-prepa-emblemes span { display: grid; place-items: center; width: clamp(54px, 5vw, 92px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, currentColor 22%, transparent), transparent 70%); filter: drop-shadow(0 0 10px color-mix(in srgb, currentColor 45%, transparent)); }
+.av-prepa-emblemes svg { width: 70%; height: 70%; }
+.lqv-fondus .av-prepa-emblemes span { animation: av-flotte 4.2s ease-in-out infinite; animation-delay: calc(var(--i, 0) * -1.05s); }
+@keyframes av-flotte { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.av-prepa-suite .av-suite { position: relative; overflow: hidden; margin-top: auto; align-self: stretch; display: flex; justify-content: center; align-items: center; gap: 12px; padding: clamp(11px, 1.6vh, 18px) 18px; font: 700 clamp(18px, 1.35vw, 25px)/1.1 Georgia, serif; letter-spacing: 0.02em; }
+.av-suite-fleche { display: inline-block; font-size: 0.8em; }
+.lqv-fondus .av-suite-fleche { animation: av-fleche 1.8s ease-in-out infinite; }
+@keyframes av-fleche { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
+.lqv-fondus .av-prepa-suite .av-suite::after { content: ""; position: absolute; inset: 0; background: linear-gradient(105deg, transparent 38%, rgba(255, 252, 238, 0.55) 50%, transparent 62%); transform: translateX(-120%); animation: av-reflet 4.2s ease-in-out 1.2s infinite; pointer-events: none; }
+@keyframes av-reflet { 0% { transform: translateX(-120%); } 32%, 100% { transform: translateX(120%); } }
+/* un choix entre deux personnes : côte à côte */
+.av-prepa-consigne { margin: 0; text-align: center; color: #e8dcc2; font: italic clamp(14px, 1vw, 17px)/1.4 Georgia, serif; }
+.av-prepa-options { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 20px); align-items: stretch; }
+.av-prepa-option { display: flex; flex-direction: column; justify-content: space-between; gap: 10px; min-width: 0; padding: 10px; border: 1px solid rgba(226, 196, 138, 0.22); border-radius: 3px; background: rgba(6, 7, 12, 0.4); }
+.av-prepa-option .av-heros .ville-portrait { width: clamp(96px, 19vh, 230px); }
+.av-prepa-option .av-heros-texte b { font-size: clamp(18px, 1.35vw, 26px); }
+.av-prepa-option .ville-btn { align-self: stretch; padding: 10px 12px; font-size: clamp(15px, 1.05vw, 19px); }
+/* joueurs de rue : la galerie */
+.av-prepa-rues { display: flex; flex-direction: column; gap: clamp(8px, 1.2vh, 14px); min-height: 0; }
+.av-prepa-rues-tete { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.av-prepa-compte { color: #d8ccb4; font: italic 14px/1.2 Georgia, serif; }
+.av-prepa-vide { margin: auto; text-align: center; }
+.av-prepa-liste { flex: 1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: clamp(10px, 1.4vw, 22px); min-height: 0; overflow: hidden; padding: 6px; margin: -6px; }
+.av-rue { position: relative; display: grid; grid-template-rows: minmax(0, 1fr) auto auto; gap: 8px; min-height: 0; padding: 8px 8px 10px; border: 1px solid rgba(226, 196, 138, 0.28); border-radius: 3px; background: linear-gradient(180deg, rgba(20, 19, 30, 0.86), rgba(8, 9, 16, 0.92)); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45); cursor: pointer; }
+.lqv-fondus .av-rue { transition: transform 0.22s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.22s, border-color 0.22s, opacity 0.35s, filter 0.35s; }
+.av-rue:hover, .av-rue:focus-within { transform: translateY(-4px); border-color: color-mix(in srgb, var(--fam) 70%, transparent); box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55), 0 0 24px color-mix(in srgb, var(--fam) 30%, transparent); }
+.av-rue-cadre { position: relative; min-height: 0; overflow: hidden; border-radius: 2px; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--famc) 70%, transparent); }
+.av-rue-cadre::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(6, 7, 12, 0.55)); pointer-events: none; }
+.av-rue .ville-portrait { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+.av-rue-pv { position: absolute; right: 6px; bottom: 6px; z-index: 1; background: rgba(6, 7, 12, 0.82); }
+.lqv-fondus .av-rue .ville-portrait { transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1), filter 0.4s; }
+.av-rue:hover .ville-portrait, .av-rue:focus-within .ville-portrait { transform: scale(1.05); filter: brightness(1.08); }
+.av-rue-embleme { position: absolute; top: 6px; left: 6px; z-index: 1; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: rgba(6, 7, 12, 0.8); color: var(--fam); box-shadow: 0 0 0 1px color-mix(in srgb, var(--fam) 60%, transparent); }
+.av-rue-embleme svg { width: 16px; height: 16px; }
+.av-rue-texte { display: flex; flex-direction: column; gap: 3px; min-width: 0; line-height: 1.25; }
+.av-rue-texte b { font: 700 clamp(16px, 1.15vw, 21px)/1.15 Georgia, serif; color: var(--lqv-or-clair); }
+.av-rue-lieu { color: #d8ccb4; font-size: clamp(12.5px, 0.85vw, 15px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.av-rue-tags { display: flex; flex-wrap: nowrap; gap: 4px; margin-top: 2px; overflow: hidden; }
+.av-tag { display: inline-flex; align-items: center; padding: 1px 8px; border: 1px solid rgba(226, 196, 138, 0.26); border-radius: 999px; background: rgba(255, 255, 255, 0.04); color: #e8dcc2; font: 12px/1.5 Georgia, serif; white-space: nowrap; }
+.av-tag-pv { color: var(--lqv-or-clair); border-color: rgba(242, 220, 171, 0.45); font-weight: 700; }
+.av-tag-bilan { color: #cfe8bf; border-color: rgba(143, 220, 106, 0.4); }
+.av-rue-defier { justify-self: stretch; padding: 8px 10px; font-size: clamp(14px, 1vw, 17px); }
+.av-rue:hover .av-rue-defier, .av-rue:focus-within .av-rue-defier { border-color: var(--lqv-or-clair); color: #fff4dc; box-shadow: 0 0 12px rgba(255, 200, 120, 0.28); }
+/* pied : les outils en pastilles */
 .av-prepa-pied { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
-.av-prepa-pied p { margin: 0; min-width: 0; } .av-prepa-pied .ville-choices { flex: none; margin: 0; }
-.av-rue { display: flex; gap: 10px; align-items: stretch; padding: 8px; border: 1px solid rgba(226, 196, 138, 0.3); background: rgba(9, 10, 18, 0.5); }
-.av-rue .ville-portrait { flex: none; width: 92px; height: 112px; object-fit: cover; }
-.av-rue-texte { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; font-size: 14px; line-height: 1.3; } .av-rue-texte b { font-size: 16px; color: var(--lqv-or-clair); }
-.av-rue-bilan { color: rgba(240, 232, 214, 0.72); } .av-rue .ville-btn { margin-top: auto; align-self: flex-start; }
-@media (max-width: 860px) { .av-prepa { height: auto; } .av-prepa-grille { grid-template-columns: 1fr; } .av-prepa-pied { flex-direction: column; align-items: stretch; } }
+.av-prepa-pied .ville-choices { flex: none; margin: 0; gap: 10px; }
+.av-prepa-outil { display: inline-flex; align-items: center; gap: 8px; padding: 7px 18px 7px 13px; border-radius: 999px; font-size: clamp(14px, 0.95vw, 17px); background: rgba(10, 11, 19, 0.72); }
+.av-prepa-icone { display: grid; place-items: center; color: var(--lqv-or); } .av-prepa-icone svg { width: 18px; height: 18px; }
+.av-prepa-outil:hover .av-prepa-icone, .av-prepa-outil:focus-visible .av-prepa-icone { color: var(--lqv-or-clair); }
+/* départ : la carte choisie s'éclaire, le reste s'estompe pendant que le noir monte */
+.lqv-fondus .av-prepa :is(.av-prepa-suite, .av-prepa-option, .av-prepa-tete, .av-prepa-pied, .av-prepa-rues-tete) { transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.35s; }
+/* le filtre, et non l'opacité, que l'animation d'entrée garde à 1 */
+.av-prepa-depart :is(.av-rue, .av-prepa-option):not(.choisi), .av-prepa-depart .av-prepa-suite:not(.choisi):not(:has(.choisi)), .av-prepa-depart :is(.av-prepa-tete, .av-prepa-pied, .av-prepa-rues-tete) { filter: saturate(0.4) brightness(0.38); }
+.av-prepa-depart .choisi { transform: scale(1.035); box-shadow: 0 0 0 1px var(--lqv-or-clair), 0 0 46px color-mix(in srgb, var(--fam, #f2dcab) 55%, transparent); }
+.av-prepa-depart .av-prepa-suite.choisi { transform: scale(1.015); }
+@media (max-width: 860px) { .av-prepa { height: auto; } .av-prepa-grille { grid-template-columns: 1fr; } .av-prepa-liste { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; grid-auto-rows: 240px; } .av-prepa-pied { flex-direction: column; align-items: stretch; } }
 /* le HUD : un seul cartouche à gauche, les outils à droite, sur un voile qui garde le décor visible */
 .av-hud::before { content: ""; position: absolute; inset: 0 0 auto 0; height: clamp(168px, 16vw, 300px); pointer-events: none; background: linear-gradient(180deg, rgba(4, 5, 10, 0.86), rgba(4, 5, 10, 0.5) 52%, rgba(4, 5, 10, 0)); }
 .av-cartouche { position: absolute; left: 22px; top: 14px; max-width: min(max(620px, 44vw), calc(100vw - 340px)); text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9); }
